@@ -212,7 +212,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
         return ExecutionResult::Failed;
     if (saveFormFactors_)
     {
-        auto result = for_each_pair_early(unweightedSQ.atomTypeMix().begin(), unweightedSQ.atomTypeMix().end(),
+        auto result = for_each_pair_early(unweightedSQ.atomTypeMix(),
                                           [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool>
                                           {
                                               if (i == j)

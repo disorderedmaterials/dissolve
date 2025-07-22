@@ -347,7 +347,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, Configuration
     double qCentre;
     int bin;
     auto &types = cfg->atomTypePopulations();
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, types,
                             [&](int typeI, auto &atd1, int typeJ, auto &atd2)
                             {
                                 // Retrieve partial container and make sure its tag is set

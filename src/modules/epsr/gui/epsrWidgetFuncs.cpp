@@ -109,7 +109,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         {
             // Add experimentally-determined partial S(Q)
             dissolve::for_each_pair(
-                ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+                ParallelPolicies::seq, atomTypes,
                 [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                 {
                     const std::string id = std::format("{}-{}", at1->name(), at2->name());
@@ -152,7 +152,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
 
             // Add experimentally-determined partial g(r)
             dissolve::for_each_pair(
-                ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+                ParallelPolicies::seq, atomTypes,
                 [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                 {
                     const std::string id = std::format("{}-{}", at1->name(), at2->name());
@@ -183,7 +183,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         else if (ui_.PotentialsButton->isChecked())
         {
             // Add on additional potentials
-            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                                     [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                                     {
                                         const std::string id = std::format("{}-{}", at1->name(), at2->name());

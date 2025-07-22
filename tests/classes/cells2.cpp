@@ -94,7 +94,7 @@ class CellsPBCTest : public ::testing::Test
         {
             const auto &nbrs = cellArray.neighbours(*cellArray.cell(n));
 
-            dissolve::for_each_pair(ParallelPolicies::seq, nbrs.begin(), nbrs.end(),
+            dissolve::for_each_pair(ParallelPolicies::seq, nbrs,
                                     [&](auto i, auto &nbri, auto j, auto &nbrj)
                                     {
                                         if (i != j)

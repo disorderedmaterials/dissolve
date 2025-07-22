@@ -12,6 +12,8 @@
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
+#include <ranges>
+
 // Set target data
 void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                           const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap)
@@ -135,7 +137,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
 
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
         auto success = for_each_pair_early(
-            unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
+            unweightedsq.atomTypeMix(),
             [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool>
             {
                 // Locate the corresponding Bragg intensities for this atom type pair
@@ -170,7 +172,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
                            [v0](auto &val) { return val * 2.0 * pow(M_PI, 2) / v0; });
 
         // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
-        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
+        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix(),
                                 [&braggPartials](auto i, auto &atd1, auto j, auto &atd2)
                                 {
                                     // Subtract self-scattering level if types are equivalent
@@ -182,7 +184,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
                                 });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
-        dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedsq.nAtomTypes(),
+        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.nAtomTypes(),
                                 [&](const int i, const int j)
                                 {
                                     // Note: Intramolecular broadening will not be applied to bound terms within the

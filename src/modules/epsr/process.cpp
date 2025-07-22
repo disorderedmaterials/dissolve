@@ -217,7 +217,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     // Create storage for our summed UnweightedSQ
     auto &calculatedUnweightedSQ = moduleData.realise<Array2D<Data1D>>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
-    dissolve::for_each_pair(ParallelPolicies::par, atomTypes.begin(), atomTypes.end(),
+    dissolve::for_each_pair(ParallelPolicies::par, atomTypes,
                             [&](int i, auto at1, int j, auto at2) {
                                 calculatedUnweightedSQ[{i, j}].setTag(std::format("{}-{}", at1->name(), at2->name()));
                             });
@@ -498,7 +498,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
         // Add the unweighted from this target to our combined, unweighted S(Q) data
         auto &types = scatteringMatrix_.atomTypes();
-        dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, types,
                                 [&](int i, const auto &at1, int j, const auto &at2)
                                 {
                                     auto pairIndex = scatteringMatrix_.pairIndexOf(at1, at2);
@@ -549,7 +549,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
     auto success = for_each_pair_early(
-        atomTypes.begin(), atomTypes.end(),
+        atomTypes,
         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
         {
             // Copy and rename the data for clarity
@@ -608,7 +608,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
      */
     auto &estimatedGR = moduleData.realise<Array2D<Data1D>>("EstimatedGR", name_, GenericItem::InRestartFileFlag);
     estimatedGR.initialise(nAtomTypes, nAtomTypes, true);
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                             [&](int i, auto at1, int j, auto at2)
                             {
                                 auto &expGR = estimatedGR[{i, j}];
@@ -635,7 +635,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
         dissolve::for_each_pair(
-            ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+            ParallelPolicies::seq, atomTypes,
             [&](int i, auto at1, int j, auto at2)
             {
                 auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.columnIndex(at1, at2), dataIndex}];
@@ -673,7 +673,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     {
         // Sum fluctuation coefficients in to the potential coefficients
         auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
-        dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                                 [&](int i, auto at1, int j, auto at2)
                                 {
                                     auto &potCoeff = coefficients[{i, j}];
@@ -741,7 +741,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     // Save data?
     if (saveEmpiricalPotentials_)
     {
-        if (!for_each_pair_early(atomTypes.begin(), atomTypes.end(),
+        if (!for_each_pair_early(atomTypes,
                                  [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
                                  {
                                      // Grab pointer to the relevant pair potential
@@ -760,7 +760,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     {
         auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
 
-        if (!for_each_pair_early(atomTypes.begin(), atomTypes.end(),
+        if (!for_each_pair_early(atomTypes,
                                  [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
                                  {
                                      // Grab reference to coefficients

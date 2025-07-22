@@ -61,7 +61,7 @@ void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 
     // Set up array matrices for partials
     dissolve::for_each_pair(
-        ParallelPolicies::seq, ps.atomTypeMix().begin(), ps.atomTypeMix().end(),
+        ParallelPolicies::seq, ps.atomTypeMix(),
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
             const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
