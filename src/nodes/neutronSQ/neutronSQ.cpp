@@ -13,10 +13,8 @@
 
 NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
-    addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
-    addInput<IsotopologueSet>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
-                              isotopologueSet_);
+    addInput<PartialSet *>("UnweightedSQ", "Unweighted partial S(Q)", unweightedSQ_);
+    addInput<PartialSet *>("UnweightedGR", "Unweighted partials g(r)", unweightedGR_);
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(

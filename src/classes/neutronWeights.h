@@ -8,6 +8,9 @@
 #include "templates/array2D.h"
 #include <vector>
 
+// Forward Declarations
+class IsotopologueSet;
+
 // Neutron Weights Container
 class NeutronWeights
 {
@@ -60,6 +63,9 @@ class NeutronWeights
     void calculateWeightingMatrices();
 
     public:
+    // Create from species populations and isotopologues
+    void create(const std::map<const Species *, double> &populations, const IsotopologueSet &isotopologues,
+                const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Create AtomType list and matrices based on stored Isotopologues information
     void createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Reduce data to be naturally-weighted

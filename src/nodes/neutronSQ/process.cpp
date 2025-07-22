@@ -132,17 +132,19 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     /*
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
+
+    // Get the real species populations from the input unweightedSQ
+    auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
+
     // Calculate and store weights_
     /*
     auto& weights_ = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name(),
         GenericItem::InRestartFileFlag);
     */
-    calculateWeights(weights_);
+    calculateWeights(realSpeciesPopulations);
+
     message("Isotopologue and isotope composition:\n\n");
     weights_.print();
-
-    // Get the real species populations from the input unweightedSQ
-    auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     /*
@@ -159,44 +161,16 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedSQ_->setUpPartials(unweightedSQ_->atomTypeMix());
     }
 
-    // Update the isotopologue set
-    for (const auto &[species, _] : realSpeciesPopulations)
-    {
-        for (const auto &isotopologue : species->isotopologues())
-        {
-            auto iso = isotopologue.get();
-            auto it = namedWeights_.find(iso->name());
-            if (it != namedWeights_.end())
-                isotopologueSet_.add(iso, it->second);
-        }
-    }
-
     // Calculate weighted S(Q)
-    calculateWeightedSQ(*unweightedSQ_, *weightedSQ_, weights_, normaliseTo_);
+    calculateWeightedSQ();
 
     // Save data if requested
-    /*
-    if (saveSQ_ && (!MPIRunMaster(processPool(), weightedSQ.save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))))
+    if (saveSQ_ && !weightedSQ_->save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))
         return NodeConstants::ProcessResult::Failed;
-    */
 
     /*
-     * Transform UnweightedGR from underlying RDF data into WeightedGR.
+     * Transform UnweightedGR from into WeightedGR.
      */
-
-    // Get summed unweighted g(r) from the RDFMOdule
-    /*
-    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
-    {
-        error("Couldn't locate summed unweighted g(r) data.\n");
-        return NodeConstants::ProcessResult::Failed;
-    }
-    */
-
-    /*
-    const auto& unweightedGR =
-        dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
-    */
 
     // Create/retrieve PartialSet for summed weighted g(r)
     /*
@@ -214,13 +188,12 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     }
 
     // Calculate weighted g(r)
-    calculateWeightedGR(*unweightedGR_, *weightedGR_, weights_, normaliseTo_);
+    calculateWeightedGR();
 
     // Save data if requested
-    /*
-    if (saveGR_ && (!MPIRunMaster(processPool(), weightedGR.save(name(), "WeightedGR", "gr", "r, Angstroms"))))
+    if (saveGR_ && !weightedGR_->save(name(), "WeightedGR", "gr", "r, Angstroms"))
         return NodeConstants::ProcessResult::Failed;
-    */
+
     // Calculate representative total g(r) from FT of calculated F(Q)
     /*
     auto& repGR = dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", name(),
