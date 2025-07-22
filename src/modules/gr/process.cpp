@@ -35,7 +35,7 @@ Module::ExecutionResult GRModule::process(Dissolve &dissolve)
 
     /*
      * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or
-     * multiple independent Configurations, we must loop over the specified targetConfigurations_ and calculate the partials
+     * multiple independent Configurations, we must loop over the specified targetConfiguration_ and calculate the partials
      * for each.
      */
 
