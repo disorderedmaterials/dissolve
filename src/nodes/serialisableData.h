@@ -10,7 +10,7 @@
 class SerialisableData
 {
     public:
-    SerialisableData(std::string_view key);
+    SerialisableData(std::string_view key) : key_(key) {}
     virtual ~SerialisableData() = default;
 
     /*
