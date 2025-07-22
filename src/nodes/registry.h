@@ -40,6 +40,6 @@ class EnumRegistry
     public:
     static void instantiateOptions();
 
-    static bool hasEnumOption(std::type_info enumType);
-    static EnumOptionsBase *options(std::type_info enumType);
+    static bool hasEnumOption(std::type_index enumType);
+    static EnumOptionsBase *options(std::type_index enumType);
 };

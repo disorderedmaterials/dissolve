@@ -4,6 +4,8 @@
 #include "nodes/registry.h"
 #include "base/enumOptions.h"
 #include "base/enumOptionsBase.h"
+#include "math/averaging.h"
+#include "math/windowFunction.h"
 #include "nodes/add.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
@@ -109,14 +111,16 @@ std::unique_ptr<Node> NodeRegistry::produce(Graph *parent, std::string_view node
 
 std::map<std::type_index, std::shared_ptr<EnumOptionsBase>> EnumRegistry::options_;
 
-bool EnumRegistry::hasEnumOption(std::type_info enumType)
+bool EnumRegistry::hasEnumOption(std::type_index enumType)
 {
-  return false;
+  instantiateOptions();
+  return options_.contains(enumType);
 }
 
-EnumOptionsBase *EnumRegistry::options(std::type_info enumType)
+EnumOptionsBase *EnumRegistry::options(std::type_index enumType)
 {
-  return nullptr;
+  instantiateOptions();
+  return options_[enumType].get();
 }
 
 void EnumRegistry::instantiateOptions()
@@ -129,5 +133,9 @@ void EnumRegistry::instantiateOptions()
       return std::make_shared<std::remove_reference_t<decltype(x)>>(x);
     };
 
-    options_ = {{typeid(GRNode::PartialsMethod), wrap(GRNode::partialsMethods())}};
+    options_ = {
+        {typeid(GRNode::PartialsMethod), wrap(GRNode::partialsMethods())},
+        {typeid(MDNode::TimestepType), wrap(MDNode::timestepType())},
+        {typeid(WindowFunction::Form), wrap(WindowFunction::forms())},
+        {typeid(Averaging::AveragingScheme), wrap(Averaging::averagingSchemes())}};
 }

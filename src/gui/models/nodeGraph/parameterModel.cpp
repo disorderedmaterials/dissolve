@@ -3,6 +3,7 @@
 
 #include "parameterModel.h"
 #include "nodes/number.h"
+#include "nodes/registry.h"
 #include <qvariant.h>
 
 enum Roles
@@ -33,6 +34,8 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return QVariant::fromValue(it->second->get<Number>().asInteger());
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
+            if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
+              return QString::fromStdString("Enum Options");
             return QString::fromStdString("Unrepresentable");
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))
