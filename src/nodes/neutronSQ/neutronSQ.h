@@ -91,8 +91,4 @@ class NeutronSQNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
-
-    public:
-    // Run set-up stage
-    bool setUp(Flags<KeywordBase::KeywordSignal> actionSignals);
 };
