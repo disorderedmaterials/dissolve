@@ -2,6 +2,8 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/registry.h"
+#include "base/enumOptions.h"
+#include "base/enumOptionsBase.h"
 #include "nodes/add.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
@@ -95,4 +97,37 @@ std::unique_ptr<Node> NodeRegistry::produce(Graph *parent, std::string_view node
         Messenger::exception("Attempted to create node of unknown type: {}\n", nodeType);
 
     return producers_.at(nodeType)(parent);
+}
+
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+
+std::map<std::type_index, std::shared_ptr<EnumOptionsBase>> EnumRegistry::options_;
+
+bool EnumRegistry::hasEnumOption(std::type_info enumType)
+{
+  return false;
+}
+
+EnumOptionsBase *EnumRegistry::options(std::type_info enumType)
+{
+  return nullptr;
+}
+
+void EnumRegistry::instantiateOptions()
+{
+    if (!options_.empty())
+      return;
+
+    auto wrap = [](auto &&x) -> std::shared_ptr<EnumOptionsBase>
+    {
+      return std::make_shared<std::remove_reference_t<decltype(x)>>(x);
+    };
+
+    options_ = {{typeid(GRNode::PartialsMethod), wrap(GRNode::partialsMethods())}};
 }

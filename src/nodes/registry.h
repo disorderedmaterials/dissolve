@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumOptionsBase.h"
 #include "node.h"
 #include <string>
 #include <vector>
@@ -28,4 +29,17 @@ class NodeRegistry
     static std::vector<std::string_view> getNodeTypesFuzzy(std::string_view weakNodeType);
     // Produce a node of the given type with the specified Graph parent
     static std::unique_ptr<Node> produce(Graph *parent, std::string_view nodeType);
+};
+
+// Registry of EnumOptions
+class EnumRegistry
+{
+    private:
+    static std::map<std::type_index, std::shared_ptr<EnumOptionsBase>> options_;
+
+    public:
+    static void instantiateOptions();
+
+    static bool hasEnumOption(std::type_info enumType);
+    static EnumOptionsBase *options(std::type_info enumType);
 };
