@@ -5,8 +5,14 @@
 
 GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Inputs
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+
+    // Outputs
+    addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
+
+    // Options
     addOption<Number>("BinWidth", "Bin width (spacing in r) to use", binWidth_);
     addOption<std::optional<Number>>("Range", "Maximum r to calculate g(r) out to", requestedRange_);
     addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
@@ -21,7 +27,9 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
         internalTest_);
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
-    addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
+
+    // Serialisables
+    addSerialisable("unweightedGR", unweightedGR_);
 }
 
 // Return enum option info for NormalisationType
