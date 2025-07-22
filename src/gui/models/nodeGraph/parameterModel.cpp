@@ -35,13 +35,16 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
-              return QString::fromStdString("Enum Options");
+                return QVariant::fromValue(EnumRegistry::options(it->second->storedDataType())->nOptions());
             return QString::fromStdString("Unrepresentable");
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))
                 return "number";
             if (it->second->storedDataType() == typeid(bool))
                 return "bool";
+            if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
+                return "enum";
+
             return "unknown";
 
         default:

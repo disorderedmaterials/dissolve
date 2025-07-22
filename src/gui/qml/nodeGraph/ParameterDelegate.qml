@@ -29,6 +29,16 @@ DelegateChooser {
         }
     }
     DelegateChoice {
+        roleValue: "enum"
+
+        ComboBox {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+            model: param
+        }
+    }
+    DelegateChoice {
         Text {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
