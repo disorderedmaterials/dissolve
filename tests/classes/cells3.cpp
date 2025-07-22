@@ -59,7 +59,7 @@ class CellsEnergyTest : public ::testing::Test
         auto *box = cfg->box();
         auto *pp = dissolve_.pairPotential("Ar", "Ar");
         auto energy = 0.0;
-        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules().begin(), cfg->molecules().end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
                                 {
                                     if (i == j)
@@ -79,7 +79,7 @@ class CellsEnergyTest : public ::testing::Test
         auto *box = cfg->box();
         auto *pp = dissolve_.pairPotential("Ar", "Ar");
         auto energy = 0.0;
-        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules().begin(), cfg->molecules().end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
                                 {
                                     if (i == j)

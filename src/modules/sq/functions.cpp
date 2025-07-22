@@ -10,6 +10,8 @@
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
+#include <ranges>
+
 /*
  * Public Functions
  */
@@ -28,7 +30,7 @@ bool SQModule::calculateUnweightedSQ(const PartialSet &unweightedgr, PartialSet 
     Timer timer;
     timer.start();
     dissolve::for_each_pair(
-        ParallelPolicies::par, 0, unweightedgr.nAtomTypes(),
+        ParallelPolicies::par, unweightedgr.nAtomTypes(),
         [&](int n, int m)
         {
             // Total partial

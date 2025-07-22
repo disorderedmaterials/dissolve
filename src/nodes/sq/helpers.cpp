@@ -29,7 +29,7 @@ bool SQNode::calculateUnweightedSQ(const PartialSet &unweightedgr, PartialSet &u
     Timer timer;
     timer.start();
     dissolve::for_each_pair(
-        ParallelPolicies::par, 0, unweightedgr.nAtomTypes(),
+        ParallelPolicies::par, unweightedgr.nAtomTypes(),
         [&](int n, int m)
         {
             // Total partial

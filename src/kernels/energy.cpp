@@ -282,7 +282,7 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
     if (includeIntraMolecular)
     {
         auto intra = 0.0;
-        dissolve::for_each_pair(ParallelPolicies::seq, 0, mol.nAtoms(),
+        dissolve::for_each_pair(ParallelPolicies::seq, mol.nAtoms(),
                                 [&](int i, int j)
                                 {
                                     if (i == j)

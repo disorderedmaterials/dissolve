@@ -159,7 +159,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<
             auto &fLocal = combinableUnbound.local();
 
             // Interatomic interactions between atoms in this cell, excluding those within the same molecule
-            dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms().begin(), cellI->atoms().end(),
+            dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms(),
                                     [&](int indexI, const auto &i, int indexJ, const auto &j)
                                     {
                                         if (indexI == indexJ)
@@ -199,7 +199,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<
 
             // Pair potential interactions between atoms within the molecule
             if (!flags.isSet(ExcludeIntraMolecularPairPotential))
-                dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
+                dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms(),
                                         [&](int indexI, const auto &i, int indexJ, const auto &j)
                                         {
                                             if (indexI == indexJ)
