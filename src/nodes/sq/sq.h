@@ -58,8 +58,8 @@ class SQNode : public Node
      */
     public:
     // Calculate unweighted S(Q) from unweighted g(r)
-    bool calculateUnweightedSQ(const PartialSet &unweightedgr, PartialSet &unweightedsq, double qMin, double qDelta,
-                               double qMax, double rho, const WindowFunction &windowFunction, Function1DWrapper broadening);
+    bool calculateUnweightedSQ();
+
     /*
      * Processing
      */

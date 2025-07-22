@@ -78,8 +78,7 @@ NodeConstants::ProcessResult SQNode::process()
     */
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(*unweightedGR_, *unweightedSQ_, qMin, qDelta, qMax, unweightedGR_->effectiveDensity(),
-                               WindowFunction(windowFunction_), qBroadening_))
+    if (!calculateUnweightedSQ())
         return NodeConstants::ProcessResult::Failed;
 
     /*
