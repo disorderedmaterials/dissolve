@@ -141,6 +141,9 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     message("Isotopologue and isotope composition:\n\n");
     weights_.print();
 
+    // Get the real species populations from the input unweightedSQ
+    auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
+
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     /*
     auto [weightedSQ, wSQstatus] = dissolve.processingModuleData().realiseIf<PartialSet>(
@@ -149,14 +152,15 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
     */
 
-    if (!weightedGR_)
+    // Set up the weighted SQ storage if needed
+    if (!weightedSQ_)
     {
-        weightedSQ_.emplace(unweightedSQ_->speciesPopulations());
+        weightedSQ_.emplace(realSpeciesPopulations);
         weightedSQ_->setUpPartials(unweightedSQ_->atomTypeMix());
     }
 
-    auto &population = weightedGR_->speciesPopulations();
-    for (const auto &[species, _] : population)
+    // Update the isotopologue set
+    for (const auto &[species, _] : realSpeciesPopulations)
     {
         for (const auto &isotopologue : species->isotopologues())
         {
@@ -202,9 +206,10 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedGR.setUpPartials(unweightedGR.atomTypeMix());
     */
 
+    // Set up weighted GR storage if we need it
     if (!weightedGR_)
     {
-        weightedGR_.emplace(unweightedGR_->speciesPopulations());
+        weightedGR_.emplace(realSpeciesPopulations);
         weightedGR_->setUpPartials(unweightedGR_->atomTypeMix());
     }
 

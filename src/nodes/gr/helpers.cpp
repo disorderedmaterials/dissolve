@@ -261,7 +261,7 @@ bool GRNode::calculateGRCells(Configuration *cfg, PartialSet &partialSet, const 
 PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const double rdfBinWidth)
 {
     if (!originalgr_)
-        originalgr_.emplace(speciesPopulations());
+        originalgr_.emplace(realSpeciesPopulations());
     originalgr_.value().setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
 
     return originalgr_.value();
@@ -271,7 +271,7 @@ PartialSet &GRNode::originalGR(Configuration *cfg, const double rdfRange, const 
 PartialSet &GRNode::unweightedGR()
 {
     if (!unweightedGR_)
-        unweightedGR_.emplace(speciesPopulations());
+        unweightedGR_.emplace(realSpeciesPopulations());
 
     return unweightedGR_.value();
 }
@@ -280,7 +280,7 @@ PartialSet &GRNode::unweightedGR()
 PartialSet &GRNode::summedUnweightedGR()
 {
     if (!summedUnweightedGR_)
-        summedUnweightedGR_.emplace(speciesPopulations());
+        summedUnweightedGR_.emplace(realSpeciesPopulations());
 
     return summedUnweightedGR_.value();
 }
@@ -312,23 +312,21 @@ double GRNode::effectiveDensity() const
 }
 
 // Calculate and return used species populations based on target Configurations
-SpeciesPopulations GRNode::speciesPopulations() const
+std::map<const Species *, double> GRNode::realSpeciesPopulations() const
 {
-    std::vector<std::pair<const Species *, double>> populations;
+    std::map<const Species *, double> populations;
 
     for (auto *cfg : targetConfigurations_)
     {
         // TODO Get weight for configuration
         auto weight = 1.0;
 
-        for (const auto &spPop : cfg->speciesPopulations())
+        for (const auto &[sp, population] : cfg->speciesPopulations())
         {
-            auto it = std::find_if(populations.begin(), populations.end(),
-                                   [&spPop](auto &data) { return data.first == spPop.first; });
-            if (it != populations.end())
-                it->second += spPop.second * weight;
+            if (populations.contains(sp))
+                populations[sp] += population * weight;
             else
-                populations.emplace_back(spPop.first, spPop.second * weight);
+                populations[sp] = population * weight;
         }
     }
 

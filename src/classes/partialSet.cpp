@@ -12,7 +12,10 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-PartialSet::PartialSet(const SpeciesPopulations &speciesPopulations) : speciesPopulations_(speciesPopulations) {}
+PartialSet::PartialSet(const std::map<const Species *, double> &realSpeciesPopulations)
+    : realSpeciesPopulations_(realSpeciesPopulations)
+{
+}
 
 PartialSet::~PartialSet()
 {
@@ -268,7 +271,7 @@ Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
 
 // Species populations
-SpeciesPopulations &PartialSet::speciesPopulations() { return speciesPopulations_; }
+const std::map<const Species *, double> &PartialSet::realSpeciesPopulations() const { return realSpeciesPopulations_; }
 
 // Save all partials and total
 bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,

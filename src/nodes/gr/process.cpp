@@ -112,7 +112,12 @@ NodeConstants::ProcessResult GRNode::process()
         return NodeConstants::ProcessResult::Failed;
 
     unweightedGR().setEffectiveDensity(effectiveDensity());
-    unweightedGR().speciesPopulations() = speciesPopulations();
+
+    // Set the real species populations
+    std::map<const Species *, double> realSpeciesPopulations;
+    // TODO
+    //    std::transform(targetConfigurations_.)
+    //    unweightedGR().realSpeciesPopulations() = speciesPopulations();
 
     return NodeConstants::ProcessResult::Success;
 }
