@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include <ranges>
+
 #include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
@@ -45,7 +47,7 @@ bool GRModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
     const auto *box = cfg->box();
 
     dissolve::for_each_pair(
-        ParallelPolicies::seq, cfg->atoms().begin(), cfg->atoms().end(),
+        ParallelPolicies::seq, cfg->atoms(),
         [box, &partialSet](auto i, auto &ii, auto j, auto &jj)
         {
             if (&ii != &jj)
@@ -377,7 +379,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     {
         const auto &atoms = mol->atoms();
 
-        dissolve::for_each_pair(ParallelPolicies::seq, atoms.begin(), atoms.end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, atoms,
                                 [box, &originalgr](int index, auto &i, int jndex, auto &j)
                                 {
                                     // Ignore atom on itself
@@ -407,7 +409,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
 
     timer.start();
     auto success =
-        for_each_pair_early(0, originalgr.nAtomTypes(),
+        for_each_pair_early(originalgr.nAtomTypes(),
                             [&originalgr](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
                                 // Create unbound histogram from total and bound data
@@ -467,19 +469,19 @@ bool GRModule::calculateUnweightedGR(Configuration *cfg, const PartialSet &origi
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
     auto &types = unweightedgr.atomTypeMix();
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, types,
                             [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
                             { Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, true, true); });
 
     // Add broadened bound partials back in to full partials
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, types,
                             [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
                             { unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j); });
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
-        dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, types,
                                 [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
                                 {
                                     Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
@@ -567,7 +569,7 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
 
     for_each_pair_early(
 
-        atomTypes.begin(), atomTypes.end(),
+        atomTypes,
         [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
         {
             // Full partial

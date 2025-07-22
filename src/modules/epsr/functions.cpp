@@ -74,7 +74,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
     Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve.processingModuleData(), nAtomTypes, ncoeffp);
 
     auto result = for_each_pair_early(
-        atomTypes.begin(), atomTypes.end(),
+        atomTypes,
         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
         {
             auto &potCoeff = coefficients[{i, j}];

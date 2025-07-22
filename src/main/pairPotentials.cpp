@@ -119,7 +119,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                           pairPotentials_.end());
 
     // Second step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
-    if (!for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+    if (!for_each_pair_early(coreData_.atomTypes(),
                              [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
                              {
                                  // Try to locate existing pair potential between these atom types

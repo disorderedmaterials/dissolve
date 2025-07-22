@@ -118,7 +118,7 @@ void NeutronWeights::calculateWeightingMatrices()
     double ci, cj, bi, bj;
 
     // Determine atomic concentration products, bound coherent products, and full scattering weights
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
                             [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
                             {
                                 ci = atd1.fraction();
@@ -166,7 +166,7 @@ void NeutronWeights::calculateWeightingMatrices()
             auto weight = speciesWeight * isoWeight.weight();
             const auto *tope = isoWeight.isotopologue();
 
-            dissolve::for_each_pair(ParallelPolicies::seq, speciesAtomTypes.begin(), speciesAtomTypes.end(),
+            dissolve::for_each_pair(ParallelPolicies::seq, speciesAtomTypes,
                                     [&](int spTypeI, const AtomTypeData &atd1, int spTypeJ, const AtomTypeData &atd2)
                                     {
                                         // First, check that both of atom types used in the species are present in the weights
@@ -200,7 +200,7 @@ void NeutronWeights::calculateWeightingMatrices()
     }
 
     // Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
                             [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
                             {
                                 // Skip this pair if there are no such intramolecular interactions

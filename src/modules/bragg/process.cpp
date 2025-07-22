@@ -89,7 +89,7 @@ Module::ExecutionResult BraggModule::process(Dissolve &dissolve)
         // Save intensity data
         auto &types = targetConfiguration_->atomTypePopulations();
         auto success = for_each_pair_early(
-            types.begin(), types.end(),
+            types,
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool>
             {
                 LineParser intensityParser;

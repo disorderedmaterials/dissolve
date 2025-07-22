@@ -355,7 +355,7 @@ void ScatteringMatrix::initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &e
     // Copy atom types and construct pairs
     atomTypes_.resize(typeMix.nItems());
     std::transform(typeMix.begin(), typeMix.end(), atomTypes_.begin(), [](const auto &atd) { return atd.atomType(); });
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.begin(), atomTypes_.end(),
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
                             [this](int i, auto &at1, int j, auto &at2) { typePairs_.emplace_back(at1, at2); });
 
     // Create partials array
