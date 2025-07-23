@@ -8,7 +8,7 @@
 #include "templates/doubleKeyedMap.h"
 
 // Set of Partials
-class PartialSet
+class PartialSet : public Serialisable<>
 {
     public:
     PartialSet() = default;
@@ -116,4 +116,8 @@ class PartialSet
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

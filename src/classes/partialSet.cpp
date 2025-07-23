@@ -570,3 +570,16 @@ bool PartialSet::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue PartialSet::serialise() const
+{
+    SerialisedValue result;
+    result["half"] = half_;
+    result["size"] = atomTypeMix_.nItems();
+    result["atomTypeMix"] = atomTypeMix_.serialise();
+    return result;
+}
+
+// Read values from a serialisable value
+void PartialSet::deserialise(const SerialisedValue &node) {}
