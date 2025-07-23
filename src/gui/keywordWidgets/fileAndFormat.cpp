@@ -15,7 +15,8 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, FileAndF
 {
     ui_.setupUi(this);
 
-    enumOptionsModel_.setData(keyword_->data().formats());
+    // FIXME: Fix the enumOptionsModel
+    // enumOptionsModel_.setData(keyword_->data().formats());
 
     refreshing_ = true;
 

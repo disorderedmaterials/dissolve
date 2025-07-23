@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
+
+#include "enumRegistry.h"
+#include "data/structureFactors.h"
+#include "gui/models/enumOptionsModel.h"
+#include "math/windowFunction.h"
+#include "nodes/gr/gr.h"
+#include "nodes/md/md.h"
+
+std::map<std::type_index, std::shared_ptr<EnumOptionsModel>> EnumRegistry::options_;
+
+bool EnumRegistry::hasEnumOption(std::type_index enumType)
+{
+    instantiateOptions();
+    return options_.contains(enumType);
+}
+
+std::shared_ptr<EnumOptionsModel> EnumRegistry::options(std::type_index enumType)
+{
+    instantiateOptions();
+    return options_[enumType];
+}
+
+void EnumRegistry::instantiateOptions()
+{
+    if (!options_.empty())
+        return;
+
+    auto wrap = [](auto &&x) -> std::shared_ptr<EnumOptionsModel>
+    {
+        std::shared_ptr<EnumOptionsModel> result = std::make_shared<EnumOptionsModel>();
+        std::shared_ptr<EnumOptionsBase> copy{std::make_shared<std::remove_reference_t<decltype(x)>>(x)};
+        result->setData(copy);
+        return result;
+    };
+
+    options_ = {{typeid(StructureFactors::NormalisationType), wrap(StructureFactors::normalisationTypes())},
+                {typeid(GRNode::PartialsMethod), wrap(GRNode::partialsMethods())},
+                {typeid(MDNode::TimestepType), wrap(MDNode::timestepType())},
+                {typeid(WindowFunction::Form), wrap(WindowFunction::forms())},
+                {typeid(Averaging::AveragingScheme), wrap(Averaging::averagingSchemes())}};
+}

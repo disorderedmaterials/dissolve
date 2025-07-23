@@ -36,6 +36,8 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             model: param
+            textRole: "display"
+            valueRole: "display"
         }
     }
     DelegateChoice {

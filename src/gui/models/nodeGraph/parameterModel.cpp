@@ -2,6 +2,8 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "parameterModel.h"
+#include "gui/models/enumOptionsModel.h"
+#include "gui/models/nodeGraph/enumRegistry.h"
 #include "nodes/number.h"
 #include "nodes/registry.h"
 #include <qvariant.h>
@@ -13,6 +15,8 @@ enum Roles
     TYPE,
     DATA,
 };
+
+class EnumModel;
 
 ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
 
@@ -35,7 +39,12 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
-                return QVariant::fromValue(EnumRegistry::options(it->second->storedDataType())->nOptions());
+            {
+                auto result = EnumRegistry::options(it->second->storedDataType());
+                // return QVariant::fromValue(result);
+                return QVariant::fromValue(result.get());
+            }
+            // return QVariant::fromValue(EnumRegistry::options(it->second->storedDataType())->nOptions());
             return QString::fromStdString("Unrepresentable");
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))
