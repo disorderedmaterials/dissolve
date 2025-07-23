@@ -126,10 +126,10 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         {
             Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
             if (!exportFormat.exportData(storedData))
-                return false;
+                return NodeConstants::ProcessResult::Failed;
             Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
             if (!exportFormatFT.exportData(storedDataFT))
-                return false;
+                return NodeConstants::ProcessResult::Failed;
         }
     }
 
