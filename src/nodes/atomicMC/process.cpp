@@ -1,9 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/timer.h"
 #include "classes/box.h"
-#include "classes/changeStore.h"
 #include "classes/configuration.h"
-#include "classes/regionalDistributor.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
@@ -30,11 +30,6 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("Target acceptance rate is {}.\n", targetAcceptanceRate);
     message("\n");
 
-    // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
-
-    // Create a local ChangeStore and EnergyKernel
-    ChangeStore changeStore;
     auto kernel =
         KernelProducer::energyKernel(targetConfiguration_, dissolve().potentialMap(), dissolve().pairPotentialRange());
 
@@ -45,86 +40,62 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     EnergyResult er;
 
     Timer timer;
-    while (distributor.cycle())
+    // Loop over target Molecules
+    for (auto mol : targetConfiguration_->molecules())
     {
-        // Get next set of Molecule targets from the distributor
-        auto &targetMolecules = distributor.assignedMolecules();
+        /*
+         * Calculation Begins
+         */
 
-        // Loop over target Molecules
-        for (auto molId : targetMolecules)
+        // Loop over atoms in the Molecule
+        for (const auto &i : mol->atoms())
         {
-            /*
-             * Calculation Begins
-             */
+            // Calculate reference energies for the Atom
+            er = kernel->totalEnergy(*i);
+            currentEnergy = er.totalUnbound();
+            currentIntraEnergy = er.geometry() * termScale;
 
-            // Get Molecule pointer
-            std::shared_ptr<Molecule> mol = targetConfiguration_->molecule(molId);
-
-            // Set current Atom targets in ChangeStore (whole Molecule)
-            changeStore.add(mol);
-            auto storeIndex = 0;
-
-            // Loop over atoms in the Molecule
-            for (const auto &i : mol->atoms())
+            // Loop over number of shakes per Atom
+            for (auto n = 0; n < nShakesPerAtom; ++n)
             {
-                // Calculate reference energies for the Atom
+                auto moveInitialPos = i->r();
+
+                // Create a random translation vector
+                rDelta.set(DissolveMath::randomPlusMinusOne() * stepSize, DissolveMath::randomPlusMinusOne() * stepSize,
+                           DissolveMath::randomPlusMinusOne() * stepSize);
+
+                // Translate Atom and update its Cell position
+                i->translateCoordinates(rDelta);
+                targetConfiguration_->updateAtomLocation(i);
+
+                // Calculate new energy
                 er = kernel->totalEnergy(*i);
-                currentEnergy = er.totalUnbound();
-                currentIntraEnergy = er.geometry() * termScale;
+                newEnergy = er.totalUnbound();
+                newIntraEnergy = er.geometry() * termScale;
 
-                // Loop over number of shakes per Atom
-                for (auto n = 0; n < nShakesPerAtom; ++n)
+                // Trial the transformed Atom position
+                delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
+                accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
+
+                // Increase attempt counters
+                if (accept)
                 {
-                    // Create a random translation vector
-                    rDelta.set(DissolveMath::randomPlusMinusOne() * stepSize, DissolveMath::randomPlusMinusOne() * stepSize,
-                               DissolveMath::randomPlusMinusOne() * stepSize);
-
-                    // Translate Atom and update its Cell position
-                    i->translateCoordinates(rDelta);
-                    targetConfiguration_->updateAtomLocation(i);
-
-                    // Calculate new energy
-                    er = kernel->totalEnergy(*i);
-                    newEnergy = er.totalUnbound();
-                    newIntraEnergy = er.geometry() * termScale;
-
-                    // Trial the transformed Atom position
-                    delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
-                    accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
-
-                    if (accept)
-                    {
-                        // Accept new (current) position of target Atom
-                        changeStore.updateAtom(storeIndex);
-                        currentEnergy = newEnergy;
-                    }
-                    else
-                        changeStore.revert(storeIndex);
-
-                    // Increase attempt counters
-                    if (accept)
-                    {
-                        totalDelta += delta;
-                        ++nAccepted;
-                    }
-                    ++nAttempts;
+                    totalDelta += delta;
+                    ++nAccepted;
                 }
-
-                // Increment index of target atom in ChangeStore
-                ++storeIndex;
+                else
+                {
+                    // Move not accepted - revert to initial position
+                    i->setCoordinates(moveInitialPos);
+                    targetConfiguration_->updateAtomLocation(i);
+                }
+                ++nAttempts;
             }
-
-            // Store modifications to Atom positions ready for broadcast later
-            changeStore.storeAndReset();
-
-            /*
-             * Calculation End
-             */
         }
 
-        // Now all target Molecules have been processes, broadcast the changes made
-        changeStore.apply(targetConfiguration_);
-        changeStore.reset();
+        /*
+         * Calculation End
+         */
     }
 
     timer.stop();
