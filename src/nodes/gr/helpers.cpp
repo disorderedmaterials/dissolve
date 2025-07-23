@@ -314,7 +314,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
         const auto &atoms = mol->atoms();
 
         dissolve::for_each_pair(ParallelPolicies::seq, atoms,
-        [&, box](int index, auto &i, int jndex, auto &j)
+                                [&, box](int index, auto &i, int jndex, auto &j)
                                 {
                                     // Ignore atom on itself
                                     if (index == jndex)
