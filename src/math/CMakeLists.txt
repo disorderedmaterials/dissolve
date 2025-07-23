@@ -1,5 +1,6 @@
 add_library(
   math
+  averager.h
   averaging.cpp
   averaging.h
   combinations.cpp

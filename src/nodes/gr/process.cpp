@@ -25,8 +25,7 @@ NodeConstants::ProcessResult GRNode::process()
         message("Partials will be calculated out to {} Angstroms.\n", requestedRange_.value().asDouble());
     message("Bin-width to use is {} Angstroms.\n", binWidth_.asDouble());
     if (averagingLength_)
-        message("Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asDouble(),
-                Averaging::averagingSchemes().keyword(averagingScheme_));
+        message("Partials will be averaged over {} sets.\n", averagingLength_.value().asDouble());
     else
         message("No averaging of partials will be performed.\n");
     if (intraBroadening_.form() == Functions1D::Form::None)

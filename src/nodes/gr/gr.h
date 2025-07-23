@@ -8,13 +8,10 @@
 #include "classes/partialSet.h"
 #include "classes/species.h"
 #include "items/list.h"
-#include "math/averaging.h"
-#include "math/data1D.h"
+#include "math/averager.h"
 #include "math/function1D.h"
-#include "nodes/graph.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
-#include "nodes/parameter.h"
 #include <vector>
 
 class GRNode : public Node
@@ -49,10 +46,10 @@ class GRNode : public Node
     std::optional<PartialSet> rawGR_;
     // Unweighted g(r)
     std::optional<PartialSet> unweightedGR_;
+    // Averaged unweighted g(r)
+    Averager<PartialSet> averagedUnweightedGR_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_{5};
-    // Weighting scheme to use when averaging partials
-    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Bin width (spacing in r) to use
     Number binWidth_{0.001};
     // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
