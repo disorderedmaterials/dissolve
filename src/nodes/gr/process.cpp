@@ -79,17 +79,9 @@ NodeConstants::ProcessResult GRNode::process()
     bool alreadyUpToDate;
     calculateRawGR(grRange, alreadyUpToDate);
 
-    // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
-    /*
+    // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
-    {
-        // Store the current fingerprint, since we must ensure we retain it in the averaged T.
-        std::string currentFingerprint{rawGR_.fingerprint()};
-
-        Averaging::average<PartialSet>(dissolve().processingModuleData(), std::format("{}//OriginalGR",
-    targetConfiguration_->niceName()), name(), averagingLength_.value().asDouble(), averagingScheme_);
-    }
-    */
+        (*rawGR_) = rawGRHistory_.average(*rawGR_, averagingLength_.value().asInteger());
 
     /*
     // Perform internal test of original g(r)?

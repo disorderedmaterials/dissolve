@@ -5,12 +5,13 @@
 
 #include <memory>
 #include <vector>
+#include "base/serialiser.h"
 
-// Data Averaging
-template <class T> class Averager
+// Data History
+template <class T> class History
 {
     private:
-    // Historical data
+    // Stored historical data
     std::vector<std::unique_ptr<T>> history_;
 
     public:
@@ -22,7 +23,7 @@ template <class T> class Averager
 
         // Prune old data to get to the averagingLength
         while (history_.size() > averagingLength)
-            history_.pop_front();
+            history_.erase(history_.begin());
 
         // Perform averaging of the datasets that we have
         T averaged;
@@ -32,4 +33,13 @@ template <class T> class Averager
 
         return averaged;
     };
+    // Express data as a serialisable value
+    SerialisedValue serialise()
+    requires (std::is_base_of_v<Serialisable<>, T>)
+    {
+        SerialisedValue result;
+        result["size"] = history_.size();
+        Serialisable<>::fromVectorToTable(history_, "data", result);
+        return result;
+    }
 };

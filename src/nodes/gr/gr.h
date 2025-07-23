@@ -8,7 +8,7 @@
 #include "classes/partialSet.h"
 #include "classes/species.h"
 #include "items/list.h"
-#include "math/averager.h"
+#include "math/history.h"
 #include "math/function1D.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
@@ -44,10 +44,10 @@ class GRNode : public Node
     Configuration *targetConfiguration_{nullptr};
     // Raw simulation g(r)
     std::optional<PartialSet> rawGR_;
+    // Historical raw g(r)
+    History<PartialSet> rawGRHistory_;
     // Unweighted g(r)
     std::optional<PartialSet> unweightedGR_;
-    // Averaged unweighted g(r)
-    Averager<PartialSet> averagedUnweightedGR_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_{5};
     // Bin width (spacing in r) to use
