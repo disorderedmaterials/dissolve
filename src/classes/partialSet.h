@@ -135,6 +135,7 @@ class PartialSet
     void operator+=(const PartialSet &source);
     void operator-=(const double delta);
     void operator*=(const double factor);
+    PartialSet operator*(const double factor) const;
 
     /*
      * Searchers
