@@ -8,8 +8,8 @@
 #include "classes/partialSet.h"
 #include "classes/species.h"
 #include "items/list.h"
-#include "math/history.h"
 #include "math/function1D.h"
+#include "math/history.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
 #include <vector>

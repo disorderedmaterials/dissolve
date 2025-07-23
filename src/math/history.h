@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include <memory>
 #include <vector>
-#include "base/serialiser.h"
 
 // Data History
 template <class T> class History
@@ -35,7 +35,7 @@ template <class T> class History
     };
     // Express data as a serialisable value
     SerialisedValue serialise()
-    requires (std::is_base_of_v<Serialisable<>, T>)
+        requires(std::is_base_of_v<Serialisable<>, T>)
     {
         SerialisedValue result;
         result["size"] = history_.size();
