@@ -30,6 +30,9 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("Target acceptance rate is {}.\n", targetAcceptanceRate);
     message("\n");
 
+    auto kernel =
+        KernelProducer::energyKernel(targetConfiguration_, dissolve().potentialMap(), dissolve().pairPotentialRange());
+
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
     double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
@@ -55,9 +58,11 @@ NodeConstants::ProcessResult AtomicMCNode::process()
             // Loop over number of shakes per Atom
             for (auto n = 0; n < nShakesPerAtom; ++n)
             {
+                auto moveInitialPos = i->r();
+
                 // Create a random translation vector
                 rDelta.set(DissolveMath::randomPlusMinusOne() * stepSize, DissolveMath::randomPlusMinusOne() * stepSize,
-                            DissolveMath::randomPlusMinusOne() * stepSize);
+                           DissolveMath::randomPlusMinusOne() * stepSize);
 
                 // Translate Atom and update its Cell position
                 i->translateCoordinates(rDelta);
@@ -77,6 +82,12 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                 {
                     totalDelta += delta;
                     ++nAccepted;
+                }
+                else
+                {
+                    // Move not accepted - revert to initial position
+                    i->setCoordinates(moveInitialPos);
+                    targetConfiguration_->updateAtomLocation(i);
                 }
                 ++nAttempts;
             }
