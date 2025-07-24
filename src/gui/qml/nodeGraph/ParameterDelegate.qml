@@ -35,9 +35,10 @@ DelegateChooser {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
-            model: param
+            model: innerModel
             textRole: "display"
             valueRole: "display"
+            currentIndex: param
         }
     }
     DelegateChoice {

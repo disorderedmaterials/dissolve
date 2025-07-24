@@ -9,9 +9,12 @@
 #include "nodes/number.h"
 #include "templates/algorithms.h"
 #include "templates/flags.h"
+#include <stdexcept>
 #include <string>
 #include <typeindex>
 #include <vector>
+
+#include <iostream>
 
 // Forward Declarations
 class Node;
@@ -109,6 +112,8 @@ class ParameterBase : public Serialisable<>
     virtual bool assign(ParameterBase *other) = 0;
     // Return whether this parameter accepts the output type of the other
     virtual bool acceptsOutput(ParameterBase *other) const = 0;
+    // The type's representation as a raw int (only valid for int and enum)
+    virtual int asInt() const { return -1; }
     // Get the parameter's value
     template <typename DataClass> DataClass get()
     {
@@ -223,6 +228,16 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             return AllowedEdgeCount::AnyNumber;
         else
             return AllowedEdgeCount::One;
+    }
+    // The type's representation as a raw int (only valid for int and enum)
+    int asInt() const override
+    {
+        if constexpr (std::is_integral_v<DataClass>)
+            return data_;
+        if constexpr (std::is_enum_v<DataClass>)
+            return static_cast<int>(data_);
+
+        Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
     }
 
     /*

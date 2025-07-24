@@ -14,6 +14,7 @@ enum Roles
     DESCRIPTION,
     TYPE,
     DATA,
+    MODEL,
 };
 
 class EnumModel;
@@ -39,12 +40,7 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
-            {
-                auto result = EnumRegistry::options(it->second->storedDataType());
-                // return QVariant::fromValue(result);
-                return QVariant::fromValue(result.get());
-            }
-            // return QVariant::fromValue(EnumRegistry::options(it->second->storedDataType())->nOptions());
+                return QVariant::fromValue(it->second->asInt());
             return QString::fromStdString("Unrepresentable");
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))
@@ -55,6 +51,9 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return "enum";
 
             return "unknown";
+        case MODEL:
+            if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
+                return QVariant::fromValue(EnumRegistry::options(it->second->storedDataType()).get());
 
         default:
             return {};
@@ -69,5 +68,6 @@ QHash<int, QByteArray> ParameterModel::roleNames() const
     result[Qt::UserRole + (int)DESCRIPTION] = "description";
     result[Qt::UserRole + (int)DATA] = "param";
     result[Qt::UserRole + (int)TYPE] = "type";
+    result[Qt::UserRole + (int)MODEL] = "innerModel";
     return result;
 }
