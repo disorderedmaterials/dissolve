@@ -5,7 +5,7 @@
 
 GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<Configuration *>("Configurations", "Set target configuration(s) for the module", targetConfiguration_)
+    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
     addOption<Number>("BinWidth", "Bin width (spacing in r) to use", binWidth_);
     addOption<std::optional<Number>>("Range", "Maximum r to calculate g(r) out to", requestedRange_);
