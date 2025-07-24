@@ -16,6 +16,8 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             checked: param
+
+            onClicked: param = !param
         }
     }
     DelegateChoice {
@@ -26,6 +28,20 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             value: param
+
+            onValueModified: param = value
+        }
+    }
+    DelegateChoice {
+        roleValue: "string"
+
+        TextField {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+            text: param
+
+            onTextChanged: param = text
         }
     }
     DelegateChoice {
@@ -35,10 +51,12 @@ DelegateChooser {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
+            currentIndex: param
             model: innerModel
             textRole: "display"
             valueRole: "display"
-            currentIndex: param
+
+            onActivated: idx => param = idx
         }
     }
     DelegateChoice {

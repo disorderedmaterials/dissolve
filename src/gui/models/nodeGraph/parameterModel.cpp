@@ -39,6 +39,8 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return QVariant::fromValue(it->second->get<Number>().asInteger());
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
+            if (it->second->storedDataType() == typeid(std::string))
+                return QString::fromStdString(it->second->get<std::string>());
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return QVariant::fromValue(it->second->asInt());
             return QString::fromStdString("Unrepresentable");
@@ -47,6 +49,8 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return "number";
             if (it->second->storedDataType() == typeid(bool))
                 return "bool";
+            if (it->second->storedDataType() == typeid(std::string))
+                return "string";
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return "enum";
 
@@ -58,6 +62,24 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
         default:
             return {};
     }
+}
+
+// Update parameter info
+bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    auto it = std::next(values_.begin(), index.row())->second;
+    if (it->storedDataType() == typeid(bool))
+        it->set<bool>(value.toBool());
+    if (it->storedDataType() == typeid(Number))
+    {
+        if (it->get<Number>().isInteger())
+            it->set<Number>(value.toInt());
+        else
+            it->set<Number>(value.toFloat());
+    }
+    if (EnumRegistry::hasEnumOption(it->storedDataType()))
+        it->asInt(value.toInt());
+    return true;
 }
 
 // Return the mapping between role index and QML value name.  This is required by QAbstractListModel

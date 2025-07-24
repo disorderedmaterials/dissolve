@@ -114,6 +114,9 @@ class ParameterBase : public Serialisable<>
     virtual bool acceptsOutput(ParameterBase *other) const = 0;
     // The type's representation as a raw int (only valid for int and enum)
     virtual int asInt() const { return -1; }
+    // Set type's repreentation as a raw int (only valid for int and enum)
+    virtual void asInt(int value) { return; }
+
     // Get the parameter's value
     template <typename DataClass> DataClass get()
     {
@@ -238,6 +241,17 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             return static_cast<int>(data_);
 
         Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
+    }
+    // Set type's repreentation as a raw int (only valid for int and enum)
+    void asInt(int value) override
+    {
+        if constexpr (std::is_integral_v<DataClass>)
+            data_ = value;
+        else if constexpr (std::is_enum_v<DataClass>)
+            data_ = static_cast<DataClass>(value);
+        else
+            Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
+        return;
     }
 
     /*
