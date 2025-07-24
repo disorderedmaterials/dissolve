@@ -33,14 +33,16 @@ std::string_view Isotopologue::name() const { return name_; }
 void Isotopologue::update()
 {
     // Prune any types in our list that are not used in the parent species
-    const auto &atomTypes = parent_->atomTypes();
+    const auto &atomTypes = parent_->atomTypePopulations();
     isotopes_.erase(std::remove_if(isotopes_.begin(), isotopes_.end(),
                                    [&atomTypes](auto value) { return !atomTypes.contains(std::get<0>(value)); }),
                     isotopes_.end());
 
     // Add in any used atom types that are not currently in the list
-    for (const auto &atd : atomTypes)
+    for (const auto &[atomType, pop] : atomTypes)
     {
+        if (!isotopes_.contains(std::string(atomType->name())))
+            isotopes_[name] = Sears91::isotopeData(atomType->)
         auto it = std::find_if(isotopes_.begin(), isotopes_.end(),
                                [&atd](auto value) { return std::get<0>(value) == atd.atomType(); });
         if (it == isotopes_.end())

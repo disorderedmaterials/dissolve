@@ -269,13 +269,13 @@ double Species::mass() const
                            { return acc + (i.isPresence(SpeciesAtom::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
 
-// Calculate and return atom types used in the Species
-AtomTypeMix Species::atomTypes() const
+// Calculate and return atom type populations
+AtomTypeSet Species::atomTypePopulations() const
 {
-    AtomTypeMix mix;
+    AtomTypeSet mix;
     for (const auto &i : atoms_)
         if (i.atomType())
-            mix.add(i.atomType(), 1);
+            mix.add(i.atomType()->name(), 1);
     return mix;
 }
 

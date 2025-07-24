@@ -48,8 +48,8 @@ class Isotopologue : public Serialisable<const CoreData &>
      * Isotope Definition
      */
     private:
-    // AtomType references and their assigned Isotopes
-    std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> isotopes_;
+    // AtomType names and their assigned Isotopes
+    std::map<std::string, Sears91::IsotopeData> isotopes_;
 
     public:
     // Update current AtomType/Isotopes against parent Species
@@ -61,8 +61,8 @@ class Isotopologue : public Serialisable<const CoreData &>
     // Return Isotope for specified AtomType
     Sears91::Isotope atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
-    std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes();
-    const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
+    std::map<std::string, Sears91::IsotopeData> &isotopes();
+    const std::map<std::string, Sears91::IsotopeData> &isotopes() const;
 
     // Express as a serialisable value
     SerialisedValue serialise() const override;

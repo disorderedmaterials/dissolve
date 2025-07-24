@@ -4,12 +4,11 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 
 // Forward Declarations
 class AtomType;
-class CoreData;
-class LineParser;
 
 // AtomType Set
 class AtomTypeSet
@@ -24,8 +23,8 @@ class AtomTypeSet
      * Set
      */
     private:
-    // Map of atom type name to real population
-    std::map<std::string, double> set_;
+    // Map of atom type to real population
+    std::map<const std::shared_ptr<AtomType>, double> set_;
 
     public:
     // Clear all data
@@ -33,28 +32,21 @@ class AtomTypeSet
     // Zero populations of all types
     void zero();
     // Add (to) the named AtomType
-    void add(std::string_view atomTypeName, double popAdd = 0);
-    // // Check for presence of AtomType
-    // bool contains(const std::shared_ptr<AtomType> &atomType) const;
+    void add(const std::shared_ptr<AtomType> &atomType, double popAdd = 0);
+    // Add the specified set into ours
+    void add(const AtomTypeSet &set);
+    // Check for presence of AtomType
+    bool contains(const std::shared_ptr<AtomType> &atomType) const;
     // Return number of AtomType/Isotopes
     int nItems() const;
     // Return opening iterator
-    std::map<std::string, double>::const_iterator begin() const;
+    std::map<const std::shared_ptr<AtomType>, double>::const_iterator begin() const;
     // Return ending iterator
-    std::map<std::string, double>::const_iterator end() const;
+    std::map<const std::shared_ptr<AtomType>, double>::const_iterator end() const;
     // Return total population of all types
     double totalPopulation() const;
     // Return map of fractional populations of types
-    std::map<std::string, double> fractional() const;
+    std::map<const std::shared_ptr<AtomType>, double> fractional() const;
     // Print AtomType populations
     void print() const;
-
-    /*
-     * Serialisation
-     */
-    public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
 };

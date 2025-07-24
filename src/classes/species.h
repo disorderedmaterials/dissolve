@@ -4,22 +4,16 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/atomTypeMix.h"
+#include "classes/atomTypeSet.h"
 #include "classes/box.h"
-#include "classes/cellArray.h"
 #include "classes/isotopologue.h"
-#include "classes/isotopologueWeight.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
 #include "classes/speciesSite.h"
 #include "classes/speciesTorsion.h"
-#include "io/import/coordinates.h"
-#include <list>
-#include <map>
 #include <memory>
-#include <variant>
 #include <vector>
 
 // Forward Declarations
@@ -116,8 +110,8 @@ class Species : public Serialisable<const CoreData &>
     int atomSelectionVersion() const;
     // Return total atomic mass of Species
     double mass() const;
-    // Calculate and return atom types used in the Species
-    AtomTypeMix atomTypes() const;
+    // Calculate and return atom type populations
+    AtomTypeSet atomTypePopulations() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters
