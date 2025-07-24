@@ -68,8 +68,6 @@ class NeutronWeights
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Create AtomType list and matrices based on stored Isotopologues information
     void createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
-    // Reduce data to be naturally-weighted
-    void naturalise();
     // Return AtomTypeMix
     const AtomTypeMix &atomTypes() const;
     // Return number of used AtomTypes

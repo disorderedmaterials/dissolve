@@ -91,16 +91,6 @@ void AtomTypeData::finalise(double totalAtoms)
         boundCoherent_ += topeData.fraction() * Sears91::boundCoherent(topeData.isotope());
 }
 
-// Remove any existing isotopes, and add only the natural isotope
-void AtomTypeData::naturalise()
-{
-    // Clear the isotopes list and add on the natural isotope, keeping the current population
-    isotopes_.clear();
-    auto &topeData = isotopes_.emplace_back(Sears91::naturalIsotope(atomType_->Z()), population_);
-    topeData.finalise(population_);
-    boundCoherent_ = Sears91::boundCoherent(topeData.isotope());
-}
-
 // Return the number of defined Isotopes
 int AtomTypeData::nIsotopes() const { return isotopes_.size(); }
 

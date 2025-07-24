@@ -51,8 +51,6 @@ class AtomTypeData
     bool exchangeable() const;
     // Finalise, calculating fractional populations etc.
     void finalise(double nWorldAtoms);
-    // Remove any existing isotopes, and add only the natural isotope
-    void naturalise();
     // Return the number of defined Isotopes
     int nIsotopes() const;
     // Return if specified Isotope is already in the list

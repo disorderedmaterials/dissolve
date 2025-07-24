@@ -116,13 +116,6 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
     }
 }
 
-// Make all AtomTypeData in the list reference only their natural isotope
-void AtomTypeMix::naturalise()
-{
-    for (auto &atd : types_)
-        atd.naturalise();
-}
-
 // Check for presence of AtomType
 bool AtomTypeMix::contains(const std::shared_ptr<AtomType> &atomType) const
 {

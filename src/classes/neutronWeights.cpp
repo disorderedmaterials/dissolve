@@ -271,16 +271,6 @@ void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<A
     valid_ = true;
 }
 
-// Reduce data to be naturally-weighted
-void NeutronWeights::naturalise()
-{
-    atomTypes_.naturalise();
-
-    calculateWeightingMatrices();
-
-    valid_ = true;
-}
-
 // Return AtomTypeMix
 const AtomTypeMix &NeutronWeights::atomTypes() const { return atomTypes_; }
 
