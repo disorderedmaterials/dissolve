@@ -49,7 +49,7 @@ class Isotopologue : public Serialisable<const CoreData &>
      */
     private:
     // AtomType names and their assigned Isotopes
-    std::map<std::string, Sears91::IsotopeData> isotopes_;
+    std::map<std::shared_ptr<AtomType>, Sears91::Isotope> isotopes_;
 
     public:
     // Update current AtomType/Isotopes against parent Species

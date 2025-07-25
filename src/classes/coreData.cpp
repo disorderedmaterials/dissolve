@@ -95,7 +95,7 @@ int CoreData::removeUnusedAtomTypes()
     atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
                                     [&](const auto &at)
                                     {
-                                        if (set.contains(at->name()))
+                                        if (set.contains(at))
                                             return false;
                                         else
                                         {
