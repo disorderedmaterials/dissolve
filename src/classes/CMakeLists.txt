@@ -6,7 +6,6 @@ add_library(
   atomType.cpp
   atomTypeData.cpp
   atomTypeMix.cpp
-  atomTypeSet.cpp
   bondFunctions.cpp
   box.cpp
   boxCubic.cpp
@@ -84,7 +83,6 @@ add_library(
   atomTypeData.h
   atomType.h
   atomTypeMix.h
-  atomTypeSet.h
   bondFunctions.h
   box.h
   braggReflection.h

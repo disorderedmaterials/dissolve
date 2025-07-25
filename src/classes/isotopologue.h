@@ -6,6 +6,7 @@
 #include "base/serialiser.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
+#include "templates/keyedVector.h"
 #include <map>
 #include <memory>
 #include <tuple>
@@ -49,7 +50,7 @@ class Isotopologue : public Serialisable<const CoreData &>
      */
     private:
     // AtomType names and their assigned Isotopes
-    std::map<std::shared_ptr<AtomType>, Sears91::Isotope> isotopes_;
+    KeyedVector<const AtomType *, Sears91::Isotope> isotopes_;
 
     public:
     // Update current AtomType/Isotopes against parent Species
@@ -57,13 +58,17 @@ class Isotopologue : public Serialisable<const CoreData &>
     // Validate current AtomType/Isotopes against available AtomTypes
     void checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
     // Set AtomType/Isotope pair in list
-    void setAtomTypeIsotope(std::shared_ptr<AtomType> at, Sears91::Isotope tope);
+    void setAtomTypeIsotope(const AtomType *atomType, Sears91::Isotope tope);
     // Return Isotope for specified AtomType
-    Sears91::Isotope atomTypeIsotope(std::shared_ptr<AtomType> at) const;
+    Sears91::Isotope atomTypeIsotope(const AtomType *atomType) const;
     // Return AtomType/Isotope pairs list
-    std::map<std::string, Sears91::IsotopeData> &isotopes();
-    const std::map<std::string, Sears91::IsotopeData> &isotopes() const;
+    KeyedVector<const AtomType *, Sears91::Isotope> &isotopes();
+    const KeyedVector<const AtomType *, Sears91::Isotope> &isotopes() const;
 
+    /*
+     * Serialisation
+     */
+    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

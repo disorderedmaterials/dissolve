@@ -105,7 +105,7 @@ void IsotopologueSetKeywordWidget::currentItemChanged()
         const auto *topes =
             setModel_.data(index.parent().isValid() ? index.parent() : index, Qt::UserRole).value<const Isotopologues *>();
         assert(topes);
-        ui_.AddIsotopologueButton->setEnabled(topes->nIsotopologues() < topes->species()->nIsotopologues() + 1);
+        ui_.AddIsotopologueButton->setEnabled(topes->mix().size() < topes->species()->nIsotopologues() + 1);
     }
 }
 
@@ -129,14 +129,14 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
         // Check if this is a completely "natural" specification
         if (std::count_if(topes.mix().begin(), topes.mix().end(),
                           [&topes](const auto &isoWeight)
-                          { return isoWeight.first == topes.species()->naturalIsotopologue(); }) == topes.nIsotopologues())
+                          { return isoWeight.first == topes.species()->naturalIsotopologue(); }) == topes.mix().size())
         {
             text += std::format("{}{}[Natural]", text.empty() ? "" : ", ", topes.species()->name());
             ++nNatural;
         }
         else
         {
-            if (topes.nIsotopologues() == 1)
+            if (topes.mix().size() == 1)
                 text += std::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
                                     topes.mix().begin()->first->name());
             else

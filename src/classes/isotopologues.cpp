@@ -43,14 +43,8 @@ double Isotopologues::summedWeight() const
 // Return the normalised populations
 KeyedVector<const Isotopologue *, double> Isotopologues::normalised() const
 {
-    auto result = mix_;
-
     auto sum = summedWeight();
-
-    for (auto &weight : std::views::values(result))
-        weight /= sum;
-
-    return result;
+    return mix_.operated([sum](const auto &value) { return value / sum; });
 }
 
 /*

@@ -3,56 +3,84 @@
 
 #pragma once
 
+#include "templates/optionalRef.h"
+#include <functional>
 #include <vector>
 
 // Keyed Vector
-template <typename KeyClass, typename DataClass> class KeyedVector
+template <typename KeyClass, typename ValueClass> class KeyedVector
 {
     public:
-    using KeyValuePair = std::pair<KeyClass, DataClass>;
+    using KeyValuePair = std::pair<KeyClass, ValueClass>;
 
     private:
     // Vector of data
     std::vector<KeyValuePair> data_;
 
     public:
-    DataClass &operator[](KeyClass key)
-    {
-        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
-        return (it == data_.end()) ? data_.emplace(KeyValuePair(key, DataClass())).second : it->second;
-    }
     // Set / overwrite key
-    void set(const KeyClass key, DataClass data) { operator[](key) = data; }
+    void set(KeyClass key, ValueClass value) { operator[](key) = value; }
     // Add to existing key (or create new)
-    void add(const KeyClass key, DataClass data)
+    void add(KeyClass key, ValueClass value)
     {
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it == data_.end())
-            data_.emplace(KeyValuePair(key, data));
+            data_.emplace({key, value});
         else
-            it->second += data;
+            it->second += value;
     }
     // Remove the specified key
-    void remove(KeyClass key)
+    void erase(KeyClass key)
     {
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it != data_.end())
             data_.erase(it);
+    }
+    // Remove matching keys
+    void erase(std::function<bool(const KeyClass &key)> lambda)
+    {
+        data_.erase(std::remove_if(data_.begin(), data_.end(), [lambda](const auto &pair) { return lambda(pair.first); }),
+                    data_.end());
     }
     // Return whether the specified key exists
     bool contains(KeyClass key) const
     {
         return std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; }) != data_.end();
     }
+    // Element access operator []
+    ValueClass &operator[](KeyClass key)
+    {
+        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        return (it == data_.end()) ? data_.emplace(KeyValuePair(key, ValueClass())).second : it->second;
+    }
+    // Get keyed value
+    OptionalReferenceWrapper<ValueClass> get(KeyClass key) const
+    {
+        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        if (it == data_.end())
+            return {};
+        else
+            return it->second;
+    }
+    // Indexed access
+    KeyValuePair &pair(int index) { return data_[index]; }
+    const KeyValuePair &pair(int index) const { return data_[index]; }
+    KeyClass &key(int index) { return data_[index].first; }
+    const KeyClass &key(int index) const { return data_[index].first; }
+    ValueClass &value(int index) { return data_[index].second; }
+    const ValueClass &value(int index) const { return data_[index].second; }
     // Iterators
     std::vector<KeyValuePair>::const_iterator begin() { return data_.begin(); }
     std::vector<KeyValuePair>::const_iterator begin() const { return data_.begin(); }
     std::vector<KeyValuePair>::const_iterator end() { return data_.end(); }
     std::vector<KeyValuePair>::const_iterator end() const { return data_.end(); }
+    // Return the underlying vector
+    std::vector<KeyValuePair> &vector() { return data_; }
+    const std::vector<KeyValuePair> &vector() const { return data_; }
     // Return number of pairs
     int size() const { return data_.size(); }
     // Return a copy of the vector with values modified by the provided lambda
-    std::vector<KeyValuePair> operated(std::function<DataClass(const DataClass &original)> lambda)
+    KeyedVector<KeyClass, ValueClass> operated(std::function<ValueClass(const ValueClass &original)> lambda) const
     {
         auto result = data_;
         for (auto &[_, value] : result)

@@ -20,7 +20,7 @@ void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
     auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
                            [iso](auto &data) { return data.species() == iso->parent(); });
     if (it != isotopologues_.end())
-        it->add(iso, relativeWeight);
+        it->mix().add(iso, relativeWeight);
     else
     {
         isotopologues_.emplace_back(iso->parent(), 0);

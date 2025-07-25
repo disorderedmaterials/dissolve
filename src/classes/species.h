@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/atomTypeSet.h"
 #include "classes/box.h"
 #include "classes/isotopologue.h"
 #include "classes/speciesAngle.h"
@@ -13,6 +12,7 @@
 #include "classes/speciesImproper.h"
 #include "classes/speciesSite.h"
 #include "classes/speciesTorsion.h"
+#include "templates/keyedVector.h"
 #include <memory>
 #include <vector>
 
@@ -111,7 +111,7 @@ class Species : public Serialisable<const CoreData &>
     // Return total atomic mass of Species
     double mass() const;
     // Calculate and return atom type populations
-    AtomTypeSet atomTypePopulations() const;
+    KeyedVector<const AtomType *, double> atomTypePopulations() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters

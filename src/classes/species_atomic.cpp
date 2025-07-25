@@ -270,13 +270,13 @@ double Species::mass() const
 }
 
 // Calculate and return atom type populations
-AtomTypeSet Species::atomTypePopulations() const
+KeyedVector<const AtomType *, double> Species::atomTypePopulations() const
 {
-    AtomTypeSet mix;
+    KeyedVector<const AtomType *, double> result;
     for (const auto &i : atoms_)
         if (i.atomType())
-            mix.add(i.atomType()->name(), 1);
-    return mix;
+            result.add(i.atomType().get(), 1);
+    return result;
 }
 
 // Clear AtomType assignments for all atoms
