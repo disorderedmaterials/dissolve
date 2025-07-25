@@ -225,8 +225,8 @@ void NeutronWeights::create(const std::map<const Species *, double> &populations
         if (isoRef)
         {
             const Isotopologues &topes = *isoRef;
-            for (const auto &isoWeight : topes.mix())
-                addIsotopologue(sp, pop, isoWeight.isotopologue(), isoWeight.weight());
+            for (const auto &[iso, weight] : topes.mix())
+                addIsotopologue(sp, pop, iso, weight);
         }
         else
             addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
