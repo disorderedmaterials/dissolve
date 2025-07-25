@@ -44,13 +44,11 @@ class GRNode : public Node
 
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
-    // Original g(r)
-    std::optional<PartialSet> originalgr_;
+    Configuration *targetConfiguration_{nullptr};
+    // Raw simulation g(r)
+    std::optional<PartialSet> rawGR_;
     // Unweighted g(r)
     std::optional<PartialSet> unweightedGR_;
-    // Summed unweighted g(r)
-    std::optional<PartialSet> summedUnweightedGR_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_{5};
     // Weighting scheme to use when averaging partials
@@ -71,40 +69,25 @@ class GRNode : public Node
     std::optional<Number> requestedRange_;
     // Whether to save partials and total functions to disk
     bool save_{false};
-    // Whether to save original (unbroadened) partials and total functions to disk
-    bool saveOriginal_{false};
+    // Whether to save raw partials and total functions to disk
+    bool saveRaw_{false};
 
     /*
      * Functions
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
-    bool calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);
+    bool calculateGRTestSerial();
     // Calculate partial g(r) with optimised double-loop
-    bool calculateGRSimple(Configuration *cfg, PartialSet &partialSet, const double rdfRange);
+    bool calculateGRSimple();
     // Calculate partial g(r) utilising Cell neighbour lists
-    bool calculateGRCells(Configuration *cfg, PartialSet &partialSet, const double binWidth);
+    bool calculateGRCells(double grRange);
 
     public:
-    // Get original g(r), constructing if empty
-    PartialSet &originalGR(Configuration *cfg, const double rdfRange, const double rdfBinWidth);
-    // Get unweighted g(r), constructing if empty
-    PartialSet &unweightedGR();
-    // Get summed unweighted g(r), constructing if empty
-    PartialSet &summedUnweightedGR();
-    // Calculate and return effective density based on target Configurations
-    double effectiveDensity() const;
-    // Calculate and return used species populations based on target Configurations
-    SpeciesPopulations speciesPopulations() const;
-    // (Re)calculate partial g(r) for the specified Configuration
-    bool calculateGR(Configuration *cfg, PartialSet &originalgr, PartialsMethod method, const double rdfRange,
-                     const double rdfBinWidth, bool &alreadyUpToDate);
+    // Calculate raw partials
+    bool calculateRawGR(const double grRange, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
-    bool calculateUnweightedGR(Configuration *cfg, const PartialSet &originalgr, PartialSet &weightedgr,
-                               const Function1DWrapper intraBroadening, int smoothing);
-    // Sum unweighted g(r) over the supplied Module's target Configurations
-    bool sumUnweightedGR(std::string_view targetPrefix, std::string_view parentPrefix,
-                         const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR);
+    bool calculateUnweightedGR();
     // Test supplied PartialSets against each other
     bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data

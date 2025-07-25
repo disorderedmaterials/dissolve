@@ -13,14 +13,12 @@
 class Configuration;
 class Interpolator;
 
-using SpeciesPopulations = std::vector<std::pair<const Species *, double>>;
-
 // Set of Partials
 class PartialSet
 {
     public:
     PartialSet() = default;
-    PartialSet(const SpeciesPopulations &speciesPopulations);
+    PartialSet(const std::map<const Species *, double> &realSpeciesPopulations);
     ~PartialSet();
 
     /*
@@ -52,7 +50,7 @@ class PartialSet
     // Effective density
     double rho_;
     // Species populations
-    std::vector<std::pair<const Species *, double>> speciesPopulations_;
+    std::map<const Species *, double> realSpeciesPopulations_;
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
@@ -104,8 +102,8 @@ class PartialSet
     // Return total unbound function
     Data1D &unboundTotal();
     const Data1D &unboundTotal() const;
-    // Species populations
-    SpeciesPopulations &speciesPopulations();
+    // Return real species populations
+    const std::map<const Species *, double> &realSpeciesPopulations() const;
     // Save all partials and total
     bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
     // Name all object based on the supplied prefix

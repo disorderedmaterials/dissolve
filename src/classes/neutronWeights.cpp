@@ -4,6 +4,7 @@
 #include "classes/neutronWeights.h"
 #include "base/lineParser.h"
 #include "classes/atomType.h"
+#include "classes/isotopologueSet.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
 #include "items/deserialisers.h"
@@ -213,6 +214,29 @@ void NeutronWeights::calculateWeightingMatrices()
                                 intramolecularWeights_[{typeI, typeJ}] /= intraNorm[{typeI, typeJ}];
                                 intramolecularWeights_[{typeI, typeJ}] *= ci * cj * (typeI == typeJ ? 1 : 2);
                             });
+}
+
+// Create from species populations and isotopologues
+void NeutronWeights::create(const std::map<const Species *, double> &populations, const IsotopologueSet &isotopologues,
+                            const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+{
+    clear();
+
+    for (auto &[sp, pop] : populations)
+    {
+        // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
+        auto isoRef = isotopologues.getIsotopologues(sp);
+        if (isoRef)
+        {
+            const Isotopologues &topes = *isoRef;
+            for (const auto &isoWeight : topes.mix())
+                addIsotopologue(sp, pop, isoWeight.isotopologue(), isoWeight.weight());
+        }
+        else
+            addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
+    }
+
+    createFromIsotopologues(exchangeableTypes);
 }
 
 // Create AtomType list and matrices based on stored Isotopologues information
