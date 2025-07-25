@@ -33,6 +33,33 @@ DelegateChooser {
         }
     }
     DelegateChoice {
+        roleValue: "optional number"
+
+        Row {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+
+            CheckBox {
+                checked: param != null
+
+                onClicked: {
+                    if (param == null) {
+                        param = 0;
+                    } else {
+                        param = null;
+                    }
+                }
+            }
+            SpinBox {
+                enabled: param != null
+                value: param
+
+                onValueModified: param = value
+            }
+        }
+    }
+    DelegateChoice {
         roleValue: "string"
 
         TextField {

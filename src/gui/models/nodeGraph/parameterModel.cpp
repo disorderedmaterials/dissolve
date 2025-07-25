@@ -39,6 +39,11 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return QVariant::fromValue(it->second->get<Number>().asInteger());
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
+            if (it->second->storedDataType() == typeid(std::optional<Number>))
+            {
+                auto value = it->second->get<std::optional<Number>>();
+                return value ? QVariant::fromValue(value->asInteger()) : QVariant();
+            }
             if (it->second->storedDataType() == typeid(std::string))
                 return QString::fromStdString(it->second->get<std::string>());
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
@@ -47,6 +52,8 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))
                 return "number";
+            if (it->second->storedDataType() == typeid(std::optional<Number>))
+                return "optional number";
             if (it->second->storedDataType() == typeid(bool))
                 return "bool";
             if (it->second->storedDataType() == typeid(std::string))
@@ -76,6 +83,19 @@ bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, in
             it->set<Number>(value.toInt());
         else
             it->set<Number>(value.toFloat());
+    }
+    if (it->storedDataType() == typeid(std::optional<Number>))
+    {
+        if (value.toString().isNull())
+            it->set<std::optional<Number>>({});
+        else
+        {
+            auto original = it->get<std::optional<Number>>();
+            if (original.has_value() && original->isInteger())
+                it->set<std::optional<Number>>(value.toString().toInt());
+            else
+                it->set<std::optional<Number>>(value.toString().toInt());
+        }
     }
     if (EnumRegistry::hasEnumOption(it->storedDataType()))
         it->asInt(value.toInt());
