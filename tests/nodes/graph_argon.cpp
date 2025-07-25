@@ -106,6 +106,10 @@ TEST_F(GraphArgonTest, InitSimulation)
     EXPECT_EQ(cfg->nMolecules(), insertNode_->getInputValue<Number>("Population").asInteger());
 };
 
-TEST_F(GraphArgonTest, AdvancedSimulation) { createGraph(true); }
+TEST_F(GraphArgonTest, AdvancedSimulation)
+{
+    createGraph(true);
+    ASSERT_EQ(neutronSQNode_->run(), NodeConstants::ProcessResult::Success);
+}
 
 } // namespace UnitTest
