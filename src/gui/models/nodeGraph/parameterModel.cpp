@@ -2,7 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "parameterModel.h"
-#include "gui/models/enumOptionsModel.h"
+#include "gui/models/nodeGraph/enumOptionsModel.h"
 #include "gui/models/nodeGraph/enumRegistry.h"
 #include "nodes/number.h"
 #include "nodes/registry.h"

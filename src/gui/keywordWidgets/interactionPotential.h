@@ -5,7 +5,7 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/ui_interactionPotential.h"
-#include "gui/models/enumOptionsModel.h"
+#include "gui/models/nodeGraph/enumOptionsModel.h"
 #include "keywords/interactionPotential.h"
 #include <QWidget>
 

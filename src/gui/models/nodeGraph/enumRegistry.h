@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumOptionsBase.h"
-#include "gui/models/enumOptionsModel.h"
+#include "gui/models/nodeGraph/enumOptionsModel.h"
 #include <map>
 #include <memory>
 #include <typeindex>

@@ -123,7 +123,6 @@ qt6_wrap_cpp(
   atomTypeModel.h
   braggReflectionModel.h
   dataManagerSimulationModel.h
-  enumOptionsModel.h
   expressionVariableVectorModel.h
   forcefieldModel.h
   isotopologueSetModel.h
