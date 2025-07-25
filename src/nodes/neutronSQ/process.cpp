@@ -15,27 +15,57 @@
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/sq/sq.h"
 
-// Run set-up stage
-bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
+// Run main processing
+NodeConstants::ProcessResult NeutronSQNode::process()
 {
+    // Print argument/parameter summary
+    if (referenceWindowFunction_ == WindowFunction::Form::None)
+        message("No window function will be applied when calculating representative g(r) from S(Q).");
+    else
+        message("Window function to be applied when calculating representative g(r) from S(Q) is {}.",
+                WindowFunction::forms().keyword(referenceWindowFunction_));
+    if (normaliseTo_ == StructureFactors::NoNormalisation)
+        message("NeutronSQ: No normalisation will be applied to total F(Q).\n");
+    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
+        message("NeutronSQ: Total F(Q) will be normalised to <b**2>");
+    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+        message("NeutronSQ: Total F(Q) will be normalised to <b>**2");
+    if (saveSQ_)
+        message("NeutronSQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
+    if (saveGR_)
+        message("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");
+    if (saveRepresentativeGR_)
+        message("NeutronSQ: Representative G(r) will be saved.\n");
+    message("\n");
+
+    // Get the real species populations from the input unweightedSQ
+    auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
+
+    // Calculate and store weights_
+    /*
+    auto& weights_ = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name(),
+        GenericItem::InRestartFileFlag);
+    */
+    calculateWeights(realSpeciesPopulations);
+    message("Isotopologue and isotope composition:\n\n");
+    weights_.print();
+
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename() && actionSignals.isSetOrNone(KeywordBase::ReloadExternalData))
+    if (referenceFQ_.hasFilename())
     {
         // Load the data
         Data1D referenceData;
         if (!referenceFQ_.importData(referenceData))
         {
             error("[SETUP {}] Failed to load reference data '{}'.\n", name(), referenceFQ_.filename());
-            return false;
+            return NodeConstants::ProcessResult::Failed;
         }
 
         // Normalise reference data to be consistent with the calculated data
         if (referenceNormalisedTo_ != normaliseTo_)
         {
-            // We need the neutron weights_ in order to do the normalisation
-            calculateWeights(weights_);
             auto factor = 1.0;
 
             // Set up the multiplication factors
@@ -96,50 +126,16 @@ bool NeutronSQNode::setUp(Flags<KeywordBase::KeywordSignal> actionSignals)
         {
             Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
             if (!exportFormat.exportData(storedData))
-                return false;
+                return NodeConstants::ProcessResult::Failed;
             Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
             if (!exportFormatFT.exportData(storedDataFT))
-                return false;
+                return NodeConstants::ProcessResult::Failed;
         }
     }
-
-    return true;
-}
-
-// Run main processing
-NodeConstants::ProcessResult NeutronSQNode::process()
-{
-    // Print argument/parameter summary
-    if (referenceWindowFunction_ == WindowFunction::Form::None)
-        message("No window function will be applied when calculating representative g(r) from S(Q).");
-    else
-        message("Window function to be applied when calculating representative g(r) from S(Q) is {}.",
-                WindowFunction::forms().keyword(referenceWindowFunction_));
-    if (normaliseTo_ == StructureFactors::NoNormalisation)
-        message("NeutronSQ: No normalisation will be applied to total F(Q).\n");
-    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
-        message("NeutronSQ: Total F(Q) will be normalised to <b**2>");
-    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
-        message("NeutronSQ: Total F(Q) will be normalised to <b>**2");
-    if (saveSQ_)
-        message("NeutronSQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
-    if (saveGR_)
-        message("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");
-    if (saveRepresentativeGR_)
-        message("NeutronSQ: Representative G(r) will be saved.\n");
-    message("\n");
 
     /*
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
-    // Calculate and store weights_
-    /*
-    auto& weights_ = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name(),
-        GenericItem::InRestartFileFlag);
-    */
-    calculateWeights(weights_);
-    message("Isotopologue and isotope composition:\n\n");
-    weights_.print();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     /*
@@ -149,50 +145,23 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
     */
 
-    if (!weightedGR_)
+    // Set up the weighted SQ storage if needed
+    if (!weightedSQ_)
     {
-        weightedSQ_.emplace(unweightedSQ_->speciesPopulations());
+        weightedSQ_.emplace(realSpeciesPopulations);
         weightedSQ_->setUpPartials(unweightedSQ_->atomTypeMix());
     }
 
-    auto &population = weightedGR_->speciesPopulations();
-    for (const auto &[species, _] : population)
-    {
-        for (const auto &isotopologue : species->isotopologues())
-        {
-            auto iso = isotopologue.get();
-            auto it = namedWeights_.find(iso->name());
-            if (it != namedWeights_.end())
-                isotopologueSet_.add(iso, it->second);
-        }
-    }
-
     // Calculate weighted S(Q)
-    calculateWeightedSQ(*unweightedSQ_, *weightedSQ_, weights_, normaliseTo_);
+    calculateWeightedSQ();
 
     // Save data if requested
-    /*
-    if (saveSQ_ && (!MPIRunMaster(processPool(), weightedSQ.save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))))
+    if (saveSQ_ && !weightedSQ_->save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))
         return NodeConstants::ProcessResult::Failed;
-    */
 
     /*
-     * Transform UnweightedGR from underlying RDF data into WeightedGR.
+     * Transform UnweightedGR from into WeightedGR.
      */
-
-    // Get summed unweighted g(r) from the RDFMOdule
-    /*
-    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
-    {
-        error("Couldn't locate summed unweighted g(r) data.\n");
-        return NodeConstants::ProcessResult::Failed;
-    }
-    */
-
-    /*
-    const auto& unweightedGR =
-        dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
-    */
 
     // Create/retrieve PartialSet for summed weighted g(r)
     /*
@@ -202,20 +171,20 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedGR.setUpPartials(unweightedGR.atomTypeMix());
     */
 
+    // Set up weighted GR storage if we need it
     if (!weightedGR_)
     {
-        weightedGR_.emplace(unweightedGR_->speciesPopulations());
+        weightedGR_.emplace(realSpeciesPopulations);
         weightedGR_->setUpPartials(unweightedGR_->atomTypeMix());
     }
 
     // Calculate weighted g(r)
-    calculateWeightedGR(*unweightedGR_, *weightedGR_, weights_, normaliseTo_);
+    calculateWeightedGR();
 
     // Save data if requested
-    /*
-    if (saveGR_ && (!MPIRunMaster(processPool(), weightedGR.save(name(), "WeightedGR", "gr", "r, Angstroms"))))
+    if (saveGR_ && !weightedGR_->save(name(), "WeightedGR", "gr", "r, Angstroms"))
         return NodeConstants::ProcessResult::Failed;
-    */
+
     // Calculate representative total g(r) from FT of calculated F(Q)
     /*
     auto& repGR = dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", name(),

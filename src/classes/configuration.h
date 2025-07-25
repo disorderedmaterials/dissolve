@@ -76,7 +76,7 @@ class Configuration : public Serialisable<const CoreData &>
      */
     private:
     // Species populations present in the Configuration
-    std::vector<std::pair<const Species *, int>> speciesPopulations_;
+    std::map<const Species *, int> speciesPopulations_;
     // AtomType populations in the configuration
     AtomTypeMix atomTypePopulations_;
     // Contents version, incremented whenever Configuration content or Atom positions change
@@ -96,7 +96,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Adjust population of specified Species in the Configuration
     void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
-    const std::vector<std::pair<const Species *, int>> &speciesPopulations() const;
+    const std::map<const Species *, int> &speciesPopulations() const;
     // Return population of specified species within the Configuration
     int speciesPopulation(const Species *sp) const;
     // Return if the specified Species is present in the Configuration
