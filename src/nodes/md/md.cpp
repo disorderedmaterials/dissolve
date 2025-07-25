@@ -28,6 +28,7 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
     addOption<bool>("IntraOnly",
                     "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
                     intramolecularForcesOnly_);
+    addOutput<Configuration *>("Configuration", "Output configuration for the module", targetConfiguration_);
 }
 
 std::string_view MDNode::type() const { return "MD"; }

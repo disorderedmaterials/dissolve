@@ -15,6 +15,7 @@ EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
                    stabilityWindow_);
 
     addOption<bool>("Save", "Save calculated energies to disk, one file per targeted configuration", save_);
+    addOutput<Configuration *>("Configuration", "Output configuration for the module", targetConfiguration_);
 }
 
 std::string_view EnergyNode::type() const { return "Energy"; }
