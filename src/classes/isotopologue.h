@@ -55,8 +55,6 @@ class Isotopologue : public Serialisable<const CoreData &>
     public:
     // Update current AtomType/Isotopes against parent Species
     void update();
-    // Validate current AtomType/Isotopes against available AtomTypes
-    void checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
     // Set AtomType/Isotope pair in list
     void setAtomTypeIsotope(const AtomType *atomType, Sears91::Isotope tope);
     // Return Isotope for specified AtomType

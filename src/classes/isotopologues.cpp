@@ -80,7 +80,7 @@ bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
             return false;
         }
 
-        add(iso, parser.argd(1));
+        mix_.set(iso, parser.argd(1));
     }
 
     return true;
@@ -128,6 +128,6 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
                             auto iso = species_->findIsotopologue(name);
                             if (!iso)
                                 throw toml::type_error(std::format("Cannot find iso {}", name), location);
-                            add(iso, item.as_floating());
+                            mix_.set(iso, item.as_floating());
                         });
 }

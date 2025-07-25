@@ -51,9 +51,9 @@ void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
     auto &topes = set.isotopologues()[topeIndex];
     const auto *sp = topes.species();
 
-    if (!topes.contains(sp->naturalIsotopologue()))
+    if (!topes.mix().contains(sp->naturalIsotopologue()))
     {
-        beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
+        beginInsertRows(createIndex(topeIndex, 0), topes.mix().size(), topes.mix().size());
         set.add(sp->naturalIsotopologue(), 1.0);
         endInsertRows();
     }
@@ -61,9 +61,9 @@ void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
     {
         for (auto &tope : sp->isotopologues())
         {
-            if (!topes.contains(tope.get()))
+            if (!topes.mix().contains(tope.get()))
             {
-                beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
+                beginInsertRows(createIndex(topeIndex, 0), topes.mix().size(), topes.mix().size());
                 set.add(tope.get(), 1.0);
                 endInsertRows();
                 break;
@@ -94,9 +94,9 @@ void IsotopologueSetModel::removeIndex(const QModelIndex index)
     {
         // Secondary item (IsotopologueWeight)
         auto &topes = set.isotopologues()[index.parent().row()];
-        auto &mixItem = topes.mix()[index.row()];
+        auto mixItem = topes.mix().key(index.row());
         beginRemoveRows(index.parent(), index.row(), index.row());
-        topes.remove(&mixItem);
+        topes.mix().erase(mixItem);
         endRemoveRows();
     }
 
@@ -114,7 +114,7 @@ int IsotopologueSetModel::rowCount(const QModelIndex &parent) const
 
     if (!parent.isValid())
         return set_->get().isotopologues().size();
-    return set_->get().isotopologues()[parent.row()].nIsotopologues();
+    return set_->get().isotopologues()[parent.row()].mix().size();
 }
 
 int IsotopologueSetModel::columnCount(const QModelIndex &parent) const { return 3; }
@@ -161,7 +161,7 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
 
     // Secondary item (Isotopologue/Weight)
     const auto &tope = set.isotopologues()[index.parent().row()];
-    const auto &mixItem = tope.mix()[index.row()];
+    const auto &[iso, weight] = tope.mix().pair(index.row());
     if (!index.parent().parent().isValid())
     {
         switch (role)
@@ -169,12 +169,12 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
             case Qt::DisplayRole:
             case Qt::EditRole:
                 if (index.column() == 1)
-                    return QString::fromStdString(std::string(mixItem.isotopologue()->name()));
+                    return QString::fromStdString(std::string(iso->name()));
                 else if (index.column() == 2)
-                    return mixItem.weight();
+                    return weight;
                 break;
             case Qt::UserRole:
-                return QVariant::fromValue(&mixItem);
+                return QVariant::fromValue(iso);
             default:
                 return {};
         }
@@ -234,24 +234,24 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
         return false;
 
     auto &tope = set.isotopologues()[index.parent().row()];
-    auto &mixItem = tope.mix()[index.row()];
+    auto &[iso, weight] = tope.mix().pair(index.row());
 
     if (index.column() == 1)
     {
         // Convert value to Isotopologue for species
-        const auto *iso = tope.species()->findIsotopologue(value.toString().toStdString());
-        if (!iso || iso == mixItem.isotopologue())
+        const auto *namedIso = tope.species()->findIsotopologue(value.toString().toStdString());
+        if (!namedIso || namedIso == iso)
             return false;
-        mixItem.setIsotopologue(iso);
+        tope.mix().changeKey(iso, namedIso);
         Q_EMIT(dataChanged(index, index));
         return true;
     }
     else if (index.column() == 2)
     {
-        const auto weight = value.toDouble();
-        if (weight < 0.0)
+        const auto newWeight = value.toDouble();
+        if (newWeight < 0.0)
             return false;
-        mixItem.setWeight(weight);
+        weight = newWeight;
         Q_EMIT(dataChanged(index, index));
         return true;
     }

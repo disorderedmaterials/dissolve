@@ -18,6 +18,8 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
     std::vector<KeyValuePair> data_;
 
     public:
+    // Clear data
+    void clear() { data_.clear(); }
     // Set / overwrite key
     void set(KeyClass key, ValueClass value) { operator[](key) = value; }
     // Add to existing key (or create new)
@@ -25,9 +27,15 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
     {
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it == data_.end())
-            data_.emplace({key, value});
+            data_.emplace_back(key, value);
         else
             it->second += value;
+    }
+    // Merge keys / values from the supplied KeyedVector, replacing any existing values
+    void merge(const KeyedVector<KeyClass, ValueClass> &other)
+    {
+        for (auto &[key, value] : other)
+            operator[](key) = value;
     }
     // Remove the specified key
     void erase(KeyClass key)
@@ -47,14 +55,35 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
     {
         return std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; }) != data_.end();
     }
+    // Change key for another, overwriting the destination key if it already exists
+    void changeKey(KeyClass fromKey, KeyClass toKey)
+    {
+        auto fromIt = std::ranges::find_if(data_, [&fromKey](const auto &pair) { return pair.first == fromKey; });
+        if (fromIt == data_.end())
+            return;
+
+        auto toIt = std::ranges::find_if(data_, [&toKey](const auto &pair) { return pair.first == toKey; });
+        if (toIt == data_.end())
+        {
+            // Just replace the existing key
+            fromIt->first = toKey;
+        }
+        else
+        {
+            // Set the toKey value to the fromKey value, then remove fromKey
+            toIt->second = fromIt->second;
+            erase(fromKey);
+        }
+    }
     // Element access operator []
     ValueClass &operator[](KeyClass key)
+        requires(std::is_default_constructible_v<ValueClass>)
     {
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
-        return (it == data_.end()) ? data_.emplace(KeyValuePair(key, ValueClass())).second : it->second;
+        return (it == data_.end()) ? data_.emplace_back(key, ValueClass()).second : it->second;
     }
     // Get keyed value
-    OptionalReferenceWrapper<ValueClass> get(KeyClass key) const
+    const std::optional<ValueClass> get(KeyClass key) const
     {
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it == data_.end())
@@ -82,9 +111,9 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
     // Return a copy of the vector with values modified by the provided lambda
     KeyedVector<KeyClass, ValueClass> operated(std::function<ValueClass(const ValueClass &original)> lambda) const
     {
-        auto result = data_;
-        for (auto &[_, value] : result)
-            value = lambda(value);
+        KeyedVector<KeyClass, ValueClass> result;
+        for (auto &[key, value] : data_)
+            result.set(key, lambda(value));
         return result;
     }
 };

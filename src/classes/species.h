@@ -277,7 +277,7 @@ class Species : public Serialisable<const CoreData &>
 
     public:
     // Update current Isotopologues
-    void updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes = std::nullopt);
+    void updateIsotopologues();
     // Return natural (empty) Isotopologue
     const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species

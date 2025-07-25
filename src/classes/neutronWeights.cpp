@@ -62,10 +62,10 @@ void NeutronWeights::addIsotopologue(const Species *sp, double speciesPopulation
     if (it == isotopologueMixtures_.end())
     {
         isotopologueMixtures_.emplace_back(sp, speciesPopulation);
-        isotopologueMixtures_.back().add(iso, isotopologueRelativePopulation);
+        isotopologueMixtures_.back().mix().add(iso, isotopologueRelativePopulation);
     }
     else
-        it->add(iso, isotopologueRelativePopulation);
+        it->mix().add(iso, isotopologueRelativePopulation);
 }
 
 // Return whether an Isotopologues definition exists for the provided Species
@@ -85,10 +85,10 @@ void NeutronWeights::print() const
         for (auto it = topes.mix().begin(); it != topes.mix().end(); ++it)
         {
             if (it == topes.mix().begin())
-                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", topes.species()->name(), it->isotopologue()->name(),
-                                 topes.speciesPopulation(), it->weight());
+                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", topes.species()->name(), it->first->name(),
+                                 topes.speciesPopulation(), it->second);
             else
-                Messenger::print("                   {:<15}              {}\n", it->isotopologue()->name(), it->weight());
+                Messenger::print("                   {:<15}              {}\n", it->first->name(), it->second);
         }
     }
 
@@ -157,22 +157,20 @@ void NeutronWeights::calculateWeightingMatrices()
 
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
         const auto *sp = topes.species();
-        const auto &speciesAtomTypes = sp->atomTypes();
+        const auto &atomTypePopulations = sp->atomTypePopulations();
 
         // Loop over Isotopologues defined for this mixture
-        for (auto &isoWeight : topes.mix())
+        for (auto &[iso, weight] : topes.mix())
         {
             // Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the
             // fractional Isotopologue weight in the mix.
-            auto weight = speciesWeight * isoWeight.weight();
-            const auto *tope = isoWeight.isotopologue();
 
-            dissolve::for_each_pair(ParallelPolicies::seq, speciesAtomTypes,
-                                    [&](int spTypeI, const AtomTypeData &atd1, int spTypeJ, const AtomTypeData &atd2)
+            dissolve::for_each_pair(ParallelPolicies::seq, atomTypePopulations,
+                                    [&](int spTypeI, const auto &atPop1, int spTypeJ, const auto &atPop2)
                                     {
                                         // First, check that both of atom types used in the species are present in the weights
                                         // atomTypes_. They may legitimately not be if, for example, they are phantom atoms.
-                                        auto optPairIndex = atomTypes_.indexOf(atd1.atomType(), atd2.atomType());
+                                        auto optPairIndex = atomTypes_.indexOf(atPop1.first, atPop2.first);
                                         if (!optPairIndex)
                                             return;
                                         auto &[typeI, typeJ] = *optPairIndex;
@@ -182,12 +180,10 @@ void NeutronWeights::calculateWeightingMatrices()
 
                                         // If an AtomType is exchangeable, add the averaged scattering length from the local
                                         // AtomTypesList instead of its actual isotopic length.
-                                        bi = localI.exchangeable()
-                                                 ? bi = localI.boundCoherent()
-                                                 : Sears91::boundCoherent(tope->atomTypeIsotope(atd1.atomType()));
-                                        bj = localJ.exchangeable()
-                                                 ? localJ.boundCoherent()
-                                                 : Sears91::boundCoherent(tope->atomTypeIsotope(atd2.atomType()));
+                                        bi = localI.exchangeable() ? bi = localI.boundCoherent()
+                                                                   : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
+                                        bj = localJ.exchangeable() ? localJ.boundCoherent()
+                                                                   : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 
                                         // Convert from fm to barns
                                         bi *= 0.1;
@@ -242,26 +238,22 @@ void NeutronWeights::create(const std::map<const Species *, double> &populations
 // Create AtomType list and matrices based on stored Isotopologues information
 void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
-    // Loop over Isotopologues entries and ensure relative populations of Isotopologues sum to 1.0
-    for (auto &topes : isotopologueMixtures_)
-        topes.normalise();
-
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
     for (auto &topes : isotopologueMixtures_)
     {
+        // Get normalised weights
+        auto normalised = topes.normalised();
         // Loop over the Isotopologues in the mixture
-        for (const auto &isoWeight : topes.mix())
+        for (const auto &[iso, weight] : normalised)
         {
-            const auto *top = isoWeight.isotopologue();
-
             // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
             // Isotopologue
             for (const auto &i : topes.species()->atoms())
                 if (i.isPresence(SpeciesAtom::Presence::Physical))
-                    atomTypes_.addIsotope(i.atomType(), top->atomTypeIsotope(i.atomType()),
-                                          isoWeight.weight() * topes.speciesPopulation());
+                    atomTypes_.addIsotope(i.atomType(), iso->atomTypeIsotope(i.atomType().get()),
+                                          weight * topes.speciesPopulation());
         }
     }
     atomTypes_.finalise(exchangeableTypes);

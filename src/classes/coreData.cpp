@@ -86,16 +86,16 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
 int CoreData::removeUnusedAtomTypes()
 {
     // Create an atom type set over all species
-    AtomTypeSet set;
+    KeyedVector<const AtomType *, double> speciesAtomTypes;
     for (auto &sp : species_)
-        set.add(sp->atomTypePopulations());
+        speciesAtomTypes.merge(sp->atomTypePopulations());
 
     auto oldSize = atomTypes_.size();
 
     atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
                                     [&](const auto &at)
                                     {
-                                        if (set.contains(at))
+                                        if (speciesAtomTypes.contains(at.get()))
                                             return false;
                                         else
                                         {

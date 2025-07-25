@@ -40,25 +40,16 @@ void Isotopologue::update()
     for (const auto &[atomType, pop] : atomTypes)
     {
         if (!isotopes_.contains(atomType))
-            isotopes_[atomType] = Sears91::naturalIsotope(atomType->Z());
+            isotopes_.set(atomType, Sears91::naturalIsotope(atomType->Z()));
     }
-}
-
-// Validate current AtomType/Isotopes against available AtomTypes
-void Isotopologue::checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
-{
-    for (const auto &at : atomTypes)
-        isotopes_.erase(
-            std::remove_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; }),
-            isotopes_.end());
 }
 
 // Set Isotope associated to AtomType
 void Isotopologue::setAtomTypeIsotope(const AtomType *atomType, Sears91::Isotope isotope)
 {
-    assert(at);
+    assert(atomType);
 
-    isotopes_[atomType] = isotope;
+    isotopes_.set(atomType, isotope);
 }
 
 // Return Isotope for specified AtomType
@@ -95,6 +86,6 @@ void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &core
         if (value.is_string())
             continue;
         auto at = coreData.findAtomType(name);
-        setAtomTypeIsotope(at, Sears91::isotope(at->Z(), value.as_integer()));
+        setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), value.as_integer()));
     }
 }
