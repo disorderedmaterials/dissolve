@@ -80,8 +80,8 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
         PotentialData value;
         auto key = parser.args(0);
         value.count = parser.argi(1);
-        value.at1 = coreData.findAtomType(parser.args(2));
-        value.at2 = coreData.findAtomType(parser.args(3));
+        value.at1 = coreData.findAtomType(parser.args(2)).get();
+        value.at2 = coreData.findAtomType(parser.args(3)).get();
 
         if (!value.potential.deserialise(parser))
             return false;

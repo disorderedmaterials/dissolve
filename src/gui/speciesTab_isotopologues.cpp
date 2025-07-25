@@ -47,7 +47,7 @@ void SpeciesTab::on_IsotopologuesTree_customContextMenuRequested(const QPoint &p
         for (auto &[atomType, tope] : iso->isotopes())
             if (atomType->Z() == Elements::H && tope != targetTope)
             {
-                tope = targetTope;
+                iso->isotopes().set(atomType, targetTope);
                 changesMade = true;
             }
 

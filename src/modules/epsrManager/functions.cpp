@@ -5,7 +5,7 @@
 #include "modules/epsrManager/epsrManager.h"
 
 // Return key for supplied atom type pair
-std::string EPSRManagerModule::pairKey(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2)
+std::string EPSRManagerModule::pairKey(const AtomType *at1, const AtomType *at2)
 {
     if (at1->name() < at2->name())
         return std::format("{}-{}", at1->name(), at2->name());

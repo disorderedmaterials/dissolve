@@ -69,13 +69,13 @@ const std::vector<PairPotential::Definition> &Dissolve::pairPotentials() const {
 PairPotential *Dissolve::pairPotential(int n) { return std::get<2>(pairPotentials_[n]).get(); }
 
 // Return specified PairPotential (if defined)
-PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
+PairPotential *Dissolve::pairPotential(const AtomType *at1, const AtomType *at2) const
 {
     auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(),
                            [at1, at2](const auto &ppDef)
                            {
-                               return (std::get<0>(ppDef) == at1 && std::get<1>(ppDef) == at2) ||
-                                      (std::get<0>(ppDef) == at2 && std::get<1>(ppDef) == at1);
+                               return (std::get<0>(ppDef).get() == at1 && std::get<1>(ppDef).get() == at2) ||
+                                      (std::get<0>(ppDef).get() == at2 && std::get<1>(ppDef).get() == at1);
                            });
     return it != pairPotentials_.end() ? std::get<2>(*it).get() : nullptr;
 }
@@ -120,10 +120,10 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 
     // Second step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
     dissolve::for_each_pair(ParallelPolicies::seq, coreData_.atomTypes(),
-                            [&](int typeI, const auto &at1, int typeJ, const auto &at2)
-                            {
-                                // Try to locate existing pair potential between these atom types
-                                auto *pot = pairPotential(at1, at2);
+                             [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+                             {
+                                 // Try to locate existing pair potential between these atom types
+                                 auto *pot = pairPotential(at1.get(), at2.get());
 
                                 // If it doesn't exist we create it
                                 if (!pot)

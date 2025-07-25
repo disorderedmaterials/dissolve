@@ -102,7 +102,7 @@ class Dissolve : public Serialisable<>
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
     // Return specified PairPotential (if defined)
-    PairPotential *pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
+    PairPotential *pairPotential(const AtomType *at1, const AtomType *at2) const;
     PairPotential *pairPotential(std::string_view at1Name, std::string_view at2Name) const;
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;

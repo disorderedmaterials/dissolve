@@ -81,15 +81,7 @@ TEST(PotentialSetTest, Averaging)
     const auto value2 = 4.0;
     const auto averagingLength = 10;
 
-    auto A = std::make_shared<AtomType>();
-    auto B = std::make_shared<AtomType>();
-    auto C = std::make_shared<AtomType>();
-    auto D = std::make_shared<AtomType>();
-
-    A->setName("A");
-    B->setName("B");
-    C->setName("C");
-    D->setName("D");
+    AtomType A("A"), B("B"), C("C"), D("D");
 
     x.addPoint(1, value);
     y.addPoint(1, value2);
@@ -97,34 +89,34 @@ TEST(PotentialSetTest, Averaging)
     for (auto n = 0; n <= 2 * averagingLength; n++)
     {
         PotentialSet pots;
-        pots.potentialMap()["A-A"].at1 = A;
-        pots.potentialMap()["A-A"].at2 = A;
+        pots.potentialMap()["A-A"].at1 = &A;
+        pots.potentialMap()["A-A"].at2 = &A;
         pots.potentialMap()["A-A"].potential = x;
 
-        pots.potentialMap()["A-B"].at1 = A;
-        pots.potentialMap()["A-B"].at2 = B;
+        pots.potentialMap()["A-B"].at1 = &A;
+        pots.potentialMap()["A-B"].at2 = &B;
         pots.potentialMap()["A-B"].potential = x;
 
-        pots.potentialMap()["A-C"].at1 = A;
-        pots.potentialMap()["A-C"].at2 = C;
+        pots.potentialMap()["A-C"].at1 = &A;
+        pots.potentialMap()["A-C"].at2 = &C;
         pots.potentialMap()["A-C"].potential = y;
 
-        pots.potentialMap()["A-D"].at1 = A;
-        pots.potentialMap()["A-D"].at2 = D;
+        pots.potentialMap()["A-D"].at1 = &A;
+        pots.potentialMap()["A-D"].at2 = &D;
         pots.potentialMap()["A-D"].potential = y;
 
         originalPotentialsObject.first = pots;
         Averaging::average<PotentialSet>(moduleData, "PotentialSet", "module", averagingLength,
                                          Averaging::AveragingScheme::LinearAveraging);
 
-        EXPECT_EQ(A, pots.potentialMap()["A-A"].at1);
-        EXPECT_EQ(A, pots.potentialMap()["A-A"].at2);
-        EXPECT_EQ(A, pots.potentialMap()["A-B"].at1);
-        EXPECT_EQ(B, pots.potentialMap()["A-B"].at2);
-        EXPECT_EQ(A, pots.potentialMap()["A-C"].at1);
-        EXPECT_EQ(C, pots.potentialMap()["A-C"].at2);
-        EXPECT_EQ(A, pots.potentialMap()["A-D"].at1);
-        EXPECT_EQ(D, pots.potentialMap()["A-D"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-A"].at1);
+        EXPECT_EQ(&A, pots.potentialMap()["A-A"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-B"].at1);
+        EXPECT_EQ(&B, pots.potentialMap()["A-B"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-C"].at1);
+        EXPECT_EQ(&C, pots.potentialMap()["A-C"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-D"].at1);
+        EXPECT_EQ(&D, pots.potentialMap()["A-D"].at2);
 
         EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));
         EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));
@@ -157,15 +149,7 @@ TEST(PotentialSetTest, Averaging2)
     const auto value2 = 4.0;
     const auto averagingLength = 10;
 
-    auto A = std::make_shared<AtomType>();
-    auto B = std::make_shared<AtomType>();
-    auto C = std::make_shared<AtomType>();
-    auto D = std::make_shared<AtomType>();
-
-    A->setName("A");
-    B->setName("B");
-    C->setName("C");
-    D->setName("D");
+    AtomType A("A"), B("B"), C("C"), D("D");
 
     x.addPoint(1, value);
     y.addPoint(1, value2);
@@ -173,34 +157,34 @@ TEST(PotentialSetTest, Averaging2)
     for (auto n = 0; n <= 2 * averagingLength; n++)
     {
         PotentialSet pots;
-        pots.potentialMap()["A-A"].at1 = A;
-        pots.potentialMap()["A-A"].at2 = A;
+        pots.potentialMap()["A-A"].at1 = &A;
+        pots.potentialMap()["A-A"].at2 = &A;
         pots.potentialMap()["A-A"].potential = x;
 
-        pots.potentialMap()["A-B"].at1 = A;
-        pots.potentialMap()["A-B"].at2 = B;
+        pots.potentialMap()["A-B"].at1 = &A;
+        pots.potentialMap()["A-B"].at2 = &B;
         pots.potentialMap()["A-B"].potential = x;
 
-        pots.potentialMap()["A-C"].at1 = A;
-        pots.potentialMap()["A-C"].at2 = C;
+        pots.potentialMap()["A-C"].at1 = &A;
+        pots.potentialMap()["A-C"].at2 = &C;
         pots.potentialMap()["A-C"].potential = y;
 
-        pots.potentialMap()["A-D"].at1 = A;
-        pots.potentialMap()["A-D"].at2 = D;
+        pots.potentialMap()["A-D"].at1 = &A;
+        pots.potentialMap()["A-D"].at2 = &D;
         pots.potentialMap()["A-D"].potential = y;
 
         originalPotentialsObject.first = pots;
         Averaging::average<PotentialSet>(moduleData, "PotentialSet", "module", averagingLength,
                                          Averaging::AveragingScheme::LinearAveraging);
 
-        EXPECT_EQ(A, pots.potentialMap()["A-A"].at1);
-        EXPECT_EQ(A, pots.potentialMap()["A-A"].at2);
-        EXPECT_EQ(A, pots.potentialMap()["A-B"].at1);
-        EXPECT_EQ(B, pots.potentialMap()["A-B"].at2);
-        EXPECT_EQ(A, pots.potentialMap()["A-C"].at1);
-        EXPECT_EQ(C, pots.potentialMap()["A-C"].at2);
-        EXPECT_EQ(A, pots.potentialMap()["A-D"].at1);
-        EXPECT_EQ(D, pots.potentialMap()["A-D"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-A"].at1);
+        EXPECT_EQ(&A, pots.potentialMap()["A-A"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-B"].at1);
+        EXPECT_EQ(&B, pots.potentialMap()["A-B"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-C"].at1);
+        EXPECT_EQ(&C, pots.potentialMap()["A-C"].at2);
+        EXPECT_EQ(&A, pots.potentialMap()["A-D"].at1);
+        EXPECT_EQ(&D, pots.potentialMap()["A-D"].at2);
 
         EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));
         EXPECT_EQ(2.0, pots.potentialMap()["A-A"].potential.value(0));

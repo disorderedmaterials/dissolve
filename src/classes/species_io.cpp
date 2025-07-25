@@ -398,7 +398,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
+                    iso->setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), A));
                 }
                 break;
             case (Species::SpeciesKeyword::NAngles):

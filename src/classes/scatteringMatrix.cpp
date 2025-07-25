@@ -25,13 +25,13 @@ bool ScatteringMatrix::qDependentWeighting() const
 int ScatteringMatrix::nAtomTypes() const { return atomTypes_.size(); }
 
 // Return atom types
-const std::vector<std::shared_ptr<AtomType>> &ScatteringMatrix::atomTypes() const { return atomTypes_; }
+const std::vector<const AtomType *> &ScatteringMatrix::atomTypes() const { return atomTypes_; }
 
 // Return atom type at index specified
-std::shared_ptr<AtomType> ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
+const AtomType *ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
 
 // Return index of atom type in our local vector
-int ScatteringMatrix::indexOf(const std::shared_ptr<AtomType> &typeI) const
+int ScatteringMatrix::indexOf(const AtomType *typeI) const
 {
     auto it = std::find(atomTypes_.begin(), atomTypes_.end(), typeI);
     assert(it != atomTypes_.end());
@@ -39,14 +39,13 @@ int ScatteringMatrix::indexOf(const std::shared_ptr<AtomType> &typeI) const
 }
 
 // Return index pair of atom types in our local vector
-std::tuple<int, int> ScatteringMatrix::pairIndexOf(const std::shared_ptr<AtomType> &typeI,
-                                                   const std::shared_ptr<AtomType> &typeJ) const
+std::pair<int, int> ScatteringMatrix::pairIndexOf(const AtomType *typeI, const AtomType *typeJ) const
 {
     return {indexOf(typeI), indexOf(typeJ)};
 }
 
 // Return column index of specified AtomType pair
-int ScatteringMatrix::columnIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
+int ScatteringMatrix::columnIndex(const AtomType *typeI, const AtomType *typeJ) const
 {
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -456,8 +455,8 @@ bool ScatteringMatrix::updateReferenceData(const Data1D &weightedData, double fa
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
-                                               const std::shared_ptr<AtomType> &at2, double dataWeight, double factor)
+bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const AtomType *at1, const AtomType *at2,
+                                               double dataWeight, double factor)
 {
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());

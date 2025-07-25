@@ -11,10 +11,6 @@
 #include "modules/epsrManager/epsrManager.h"
 #include "templates/array2D.h"
 
-// Forward Declarations
-class Configuration;
-class Interpolator;
-
 // Set of Potentials
 class PotentialSet
 {
@@ -32,7 +28,7 @@ class PotentialSet
     {
         Data1D potential;
         double count{0};
-        std::shared_ptr<AtomType> at1, at2;
+        const AtomType *at1, *at2;
     };
     // Map of named potentials to data
     std::map<std::string, PotentialData> potentials_;

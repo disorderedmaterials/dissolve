@@ -109,8 +109,8 @@ void NeutronSQModule::calculateWeights(const GRModule *rdfModule, NeutronWeights
         if (isoRef)
         {
             const Isotopologues &topes = *isoRef;
-            for (const auto &isoWeight : topes.mix())
-                weights.addIsotopologue(sp, pop, isoWeight.isotopologue(), isoWeight.weight());
+            for (const auto &[iso, weight] : topes.mix())
+                weights.addIsotopologue(sp, pop, iso, weight);
         }
         else
             weights.addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);

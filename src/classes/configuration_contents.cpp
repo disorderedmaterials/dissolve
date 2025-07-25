@@ -225,7 +225,7 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     // Update atom type population and set local type index
     if (sourceAtom->isPresence(SpeciesAtom::Presence::Physical))
     {
-        auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType(), 1);
+        auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType().get(), 1);
         newAtom.setLocalTypeIndex(atdIndex);
     }
     else

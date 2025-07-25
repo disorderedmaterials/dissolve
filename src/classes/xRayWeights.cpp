@@ -70,7 +70,7 @@ bool XRayWeights::setUp(std::vector<std::pair<const Species *, int>> &speciesPop
     atomTypeMix_.clear();
     for (auto &spPop : speciesPopulations)
         for (const auto &i : spPop.first->atoms())
-            atomTypeMix_.add(i.atomType(), spPop.second);
+            atomTypeMix_.add(i.atomType().get(), spPop.second);
 
     // Perform final setup based on now-completed atomtypes list
     return finalise(formFactors);
@@ -81,7 +81,7 @@ void XRayWeights::addSpecies(const Species *sp, int population)
 {
     for (const auto &i : sp->atoms())
         if (i.isPresence(SpeciesAtom::Presence::Physical))
-            atomTypeMix_.add(i.atomType(), population);
+            atomTypeMix_.add(i.atomType().get(), population);
 
     valid_ = false;
 }
