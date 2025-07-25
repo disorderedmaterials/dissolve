@@ -47,8 +47,6 @@ class NeutronSQNode : public Node
     std::map<std::string_view, double> namedWeights_{{"Ar36", 36}};
     // Exchangeable atom types
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
-    // Isotopologues to use in weighting
-    IsotopologueSet isotopologueSet_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
@@ -80,14 +78,12 @@ class NeutronSQNode : public Node
      * Functions
      */
     public:
-    // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
-    bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
-                             StructureFactors::NormalisationType normalisation);
-    // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
-    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
-                             StructureFactors::NormalisationType normalisation);
-    // Calculate neutron weights for relevant Configuration targets
-    void calculateWeights(NeutronWeights &weights) const;
+    // Calculate weighted g(r)
+    bool calculateWeightedGR();
+    // Calculate weighted S(Q)
+    bool calculateWeightedSQ();
+    // Calculate neutron weights matrix
+    void calculateWeights(const std::map<const Species *, double> &realSpeciesPopulations);
 
     /*
      * Processing
@@ -95,8 +91,4 @@ class NeutronSQNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
-
-    public:
-    // Run set-up stage
-    bool setUp(Flags<KeywordBase::KeywordSignal> actionSignals);
 };

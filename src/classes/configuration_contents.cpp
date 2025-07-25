@@ -31,35 +31,27 @@ const AtomTypeMix &Configuration::atomTypePopulations() const { return atomTypeP
 // Adjust population of specified Species in the Configuration
 void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
 {
-    auto it = std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
-                           [sp](const auto &data) { return data.first == sp; });
-    if (it == speciesPopulations_.end())
+    if (speciesPopulations_.contains(sp))
+        speciesPopulations_[sp] += delta;
+    else
     {
         if (delta < 0)
             Messenger::exception("Can't decrease population of Species '{}' as it is not in the list.\n", sp->name());
-        speciesPopulations_.emplace_back(sp, delta);
+        speciesPopulations_[sp] = delta;
     }
-    else
-        it->second += delta;
 }
 
 // Return Species populations within the Configuration
-const std::vector<std::pair<const Species *, int>> &Configuration::speciesPopulations() const { return speciesPopulations_; }
+const std::map<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
 // Return population of specified species within the Configuration
 int Configuration::speciesPopulation(const Species *sp) const
 {
-    auto it = std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
-                           [sp](const auto &spInfo) { return spInfo.first == sp; });
-    return it == speciesPopulations_.end() ? 0 : it->second;
+    return speciesPopulations_.contains(sp) ? speciesPopulations_.at(sp) : 0;
 }
 
 // Return if the specified Species is present in the Configuration
-bool Configuration::containsSpecies(const Species *sp)
-{
-    return std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
-                        [sp](const auto &data) { return data.first == sp; }) != speciesPopulations_.end();
-}
+bool Configuration::containsSpecies(const Species *sp) { return speciesPopulations_.contains(sp); }
 
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
@@ -72,11 +64,11 @@ double Configuration::totalCharge(bool ppIncludeCoulomb) const
 // Return the total atomic mass present in the Configuration
 double Configuration::atomicMass() const
 {
-    double mass = 0.0;
+    auto mass = 0.0;
 
     // Get total molar mass in configuration
-    for (const auto &spPop : speciesPopulations_)
-        mass += spPop.first->mass() * spPop.second;
+    for (const auto &[sp, population] : speciesPopulations_)
+        mass += sp->mass() * population;
 
     // Convert to absolute mass
     return mass / DissolveMath::Avogadro;
