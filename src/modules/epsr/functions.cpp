@@ -73,57 +73,55 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
     // Get coefficients array
     Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve.processingModuleData(), nAtomTypes, ncoeffp);
 
-    auto result = for_each_pair_early(
-        atomTypes,
-        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-        {
-            auto &potCoeff = coefficients[{i, j}];
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
+                            [&](int i, auto at1, int j, auto at2)
+                            {
+                                auto &potCoeff = coefficients[{i, j}];
 
-            // Regenerate empirical potential from the stored coefficients
-            Data1D ep;
-            if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
-            {
-                // Construct our fitting object and generate the potential using it
-                GaussFit generator(ep);
-                generator.set(rmaxpt, potCoeff, sigma1);
-                ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(),
-                                             dissolve.pairPotentialRange(), sigma2 / sigma1);
-            }
-            else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
-            {
-                // Construct our fitting object and generate the potential using it
-                // We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho not
-                // present in our denominator
-                PoissonFit generator(ep);
-                generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
-                ep = generator.approximation(FunctionSpace::RealSpace, 1.0 / averagedRho, 0.0, dissolve.pairPotentialDelta(),
-                                             dissolve.pairPotentialRange());
-            }
+                                // Regenerate empirical potential from the stored coefficients
+                                Data1D ep;
+                                if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
+                                {
+                                    // Construct our fitting object and generate the potential using it
+                                    GaussFit generator(ep);
+                                    generator.set(rmaxpt, potCoeff, sigma1);
+                                    ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0,
+                                                                 dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(),
+                                                                 sigma2 / sigma1);
+                                }
+                                else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
+                                {
+                                    // Construct our fitting object and generate the potential using it
+                                    // We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho
+                                    // not present in our denominator
+                                    PoissonFit generator(ep);
+                                    generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
+                                    ep = generator.approximation(FunctionSpace::RealSpace, 1.0 / averagedRho, 0.0,
+                                                                 dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+                                }
 
-            // Multiply by truncation function
-            truncate(ep, rminpt, rmaxpt);
+                                // Multiply by truncation function
+                                truncate(ep, rminpt, rmaxpt);
 
-            // Put potentials in vector
-            empiricalPotentials_.emplace_back(at1, at2, ep);
+                                // Put potentials in vector
+                                empiricalPotentials_.emplace_back(at1, at2, ep);
 
-            // Apply potentials?
-            if (applyPotentials_)
-            {
-                // Set the additional potential in the main processing data
-                dissolve.processingModuleData().realise<Data1D>(
-                    std::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
-                    GenericItem::InRestartFileFlag) = ep;
+                                // Apply potentials?
+                                if (applyPotentials_)
+                                {
+                                    // Set the additional potential in the main processing data
+                                    dissolve.processingModuleData().realise<Data1D>(
+                                        std::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                                        GenericItem::InRestartFileFlag) = ep;
 
-                // Grab pointer to the relevant pair potential (if it exists)
-                auto *pp = dissolve.pairPotential(at1, at2);
-                if (pp)
-                    pp->setAdditionalPotential(ep);
-            }
+                                    // Grab pointer to the relevant pair potential (if it exists)
+                                    auto *pp = dissolve.pairPotential(at1, at2);
+                                    if (pp)
+                                        pp->setAdditionalPotential(ep);
+                                }
+                            });
 
-            return EarlyReturn<bool>::Continue;
-        });
-
-    return result.value_or(true);
+    return true;
 }
 
 // Generate and return single empirical potential function
