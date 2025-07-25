@@ -41,8 +41,8 @@ void Isotopologue::update()
     // Add in any used atom types that are not currently in the list
     for (const auto &[atomType, pop] : atomTypes)
     {
-        if (!isotopes_.contains(std::string(atomType->name())))
-            isotopes_[name] = Sears91::isotopeData(atomType->) auto it = std::find_if(
+        if (!isotopes_.contains(atomType))
+            isotopes_[atomType] = Sears91::isotopeData(atomType->) auto it = std::find_if(
                 isotopes_.begin(), isotopes_.end(), [&atd](auto value) { return std::get<0>(value) == atd.atomType(); });
         if (it == isotopes_.end())
             isotopes_.emplace_back(atd.atomType(), Sears91::naturalIsotope(atd.atomType()->Z()));

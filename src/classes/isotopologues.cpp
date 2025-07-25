@@ -29,49 +29,10 @@ const Species *Isotopologues::species() const { return species_; }
 // Return associated Species population
 double Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 
-// Add specific Isotopologue to list
-void Isotopologues::add(const Isotopologue *iso, double relativeWeight)
-{
-    if (mix_.contains(iso))
-        mix_[iso] += relativeWeight;
-    else
-        mix_[iso] = relativeWeight;
-}
-
-// Set Isotopologue component in list
-void Isotopologues::set(const Isotopologue *iso, double relativeWeight)
-{
-    assert(iso);
-
-    if (mix_.contains(iso))
-        mix_[iso] = relativeWeight;
-    else
-        Messenger::exception(
-            "Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
-            iso->name());
-}
-
-// Remove references to the specified Isotopologue
-void Isotopologues::remove(const Isotopologue *iso)
-{
-    mix_.erase(
-        std::remove_if(mix_.begin(), mix_.end(), [iso](const auto &isoWeight) { return isoWeight.isotopologue() == iso; }),
-        mix_.end());
-}
-
-// Remove the specified Isotopologue weight
-void Isotopologues::remove(Isotopologue *iso) { mix_.erase(iso); }
-
-// Return whether the mix contains the specified Isotopologue
-bool Isotopologues::contains(const Isotopologue *iso) const { return mix_.contains(iso); }
-
 // Return Isotopologue/weight mix
-std::map<const Isotopologue *, double> &Isotopologues::mix() { return mix_; }
+KeyedVector<const Isotopologue *, double> &Isotopologues::mix() { return mix_; }
 
-const std::map<const Isotopologue *, double> &Isotopologues::mix() const { return mix_; }
-
-// Return number of Isotopologues in list
-int Isotopologues::nIsotopologues() const { return mix_.size(); }
+const KeyedVector<const Isotopologue *, double> &Isotopologues::mix() const { return mix_; }
 
 // Return summed weight over all isotopologues
 double Isotopologues::summedWeight() const
@@ -80,7 +41,7 @@ double Isotopologues::summedWeight() const
 }
 
 // Return the normalised populations
-std::map<const Isotopologue *, double> Isotopologues::normalised() const
+KeyedVector<const Isotopologue *, double> Isotopologues::normalised() const
 {
     auto result = mix_;
 

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "templates/keyedVector.h"
 #include <map>
 
 // Forward Declarations
@@ -28,7 +29,7 @@ class Isotopologues : public Serialisable<const CoreData &>
     // Population of associated Species
     double speciesPopulation_;
     // Weighted Isotopologue mixture
-    std::map<const Isotopologue *, double> mix_;
+    KeyedVector<const Isotopologue *, double> mix_;
 
     public:
     // Set associated Species and population
@@ -37,25 +38,13 @@ class Isotopologues : public Serialisable<const CoreData &>
     const Species *species() const;
     // Return associated Species population
     double speciesPopulation() const;
-    // Add specific Isotopologue to list
-    void add(const Isotopologue *iso, double relativeWeight);
-    // Set Isotopologue component in list
-    void set(const Isotopologue *iso, double relativeWeight);
-    // Remove references to the specified Isotopologue
-    void remove(const Isotopologue *iso);
-    // Remove the specified Isotopologue weight
-    void remove(Isotopologue *iso);
-    // Return whether the mix contains the specified Isotopologue
-    bool contains(const Isotopologue *iso) const;
     // Return Isotopologue/weight mix
-    std::map<const Isotopologue *, double> &mix();
-    const std::map<const Isotopologue *, double> &mix() const;
-    // Return number of Isotopologues in mix
-    int nIsotopologues() const;
+    KeyedVector<const Isotopologue *, double> &mix();
+    const KeyedVector<const Isotopologue *, double> &mix() const;
     // Return summed weight over all isotopologues
     double summedWeight() const;
     // Return the normalised populations
-    std::map<const Isotopologue *, double> normalised() const;
+    KeyedVector<const Isotopologue *, double> normalised() const;
 
     /*
      * Serialisation
