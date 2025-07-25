@@ -15,9 +15,6 @@ InteractionPotentialKeywordWidget::InteractionPotentialKeywordWidget(QWidget *pa
     refreshing_ = true;
 
     // Populate combo with the available forms
-    // FIXME: Fix the enumOptionsModel
-    // auto options = std::make_shared<EnumOptionsBase>(keyword_->formOptions());
-    // formModel_.setData(options);
     ui_.FormCombo->clear();
     ui_.FormCombo->setModel(EnumRegistry::options(typeid(int)).get());
 

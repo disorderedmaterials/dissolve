@@ -22,8 +22,6 @@ class EnumOptionsModel : public QAbstractListModel
     public:
     // Set source EnumOptions data
     void setData(std::shared_ptr<const EnumOptionsBase> options);
-    // FIXME: Drop this after debugging
-    std::shared_ptr<const EnumOptionsBase> access() { return enumOptions_; }
 
     /*
      * QAbstractItemModel overrides
