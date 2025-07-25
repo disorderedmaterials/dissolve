@@ -39,7 +39,6 @@ add_library(
   isotopologue.cpp
   isotopologues.cpp
   isotopologueSet.cpp
-  isotopologueWeight.cpp
   kVector.cpp
   localMolecule.cpp
   molecule.cpp
@@ -105,7 +104,6 @@ add_library(
   isotopologue.h
   isotopologues.h
   isotopologueSet.h
-  isotopologueWeight.h
   kVector.h
   localMolecule.h
   molecule.h

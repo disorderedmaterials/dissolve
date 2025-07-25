@@ -39,8 +39,8 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     void remove(const Species *sp);
     // Remove any occurrences of the specified Isotopologue
     void remove(const Isotopologue *iso);
-    // Remove the specified IsotopologueWeight
-    void remove(IsotopologueWeight *isoWeight);
+    // Remove the specified Isotopologue weight
+    void remove(Isotopologue *iso);
     // Return whether Isotopologues for the specified Species exists
     bool contains(const Species *sp) const;
     // Return Isotopologues for the specified Species

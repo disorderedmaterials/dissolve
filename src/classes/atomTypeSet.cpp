@@ -39,10 +39,7 @@ void AtomTypeSet::add(const AtomTypeSet &set)
 }
 
 // Check for presence of named AtomType
-bool AtomTypeSet::contains(const std::shared_ptr<AtomType> &atomType) const
-{
-    return set_.contains(atomType);
-}
+bool AtomTypeSet::contains(const std::shared_ptr<AtomType> &atomType) const { return set_.contains(atomType); }
 
 // Return number of AtomType/Isotopes
 int AtomTypeSet::nItems() const { return set_.size(); }
