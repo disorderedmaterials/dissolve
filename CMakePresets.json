@@ -126,13 +126,6 @@
 	    "displayName": "CLI Debug Nix Build",
 	    "description": "The preset for a CLI debug build on a Nix system with tests",
 	    "inherits": ["base", "Debug", "nix"]
-	},
-
-        {
-            "name": "SCARF",
-            "displayName": "SCARF build",
-            "description": "Best setup for SCARF",
-	    "inherits" : ["MPI-Release"]
-        }
+	}
     ]
 }
