@@ -34,7 +34,7 @@ void AtomTypeMix::zero()
 }
 
 // Add the specified AtomType to the list, returning data object and its index in the vector
-std::pair<AtomTypeData &, int> AtomTypeMix::add(std::shared_ptr<AtomType> atomType, double population)
+std::pair<AtomTypeData &, int> AtomTypeMix::add(const AtomType *atomType, double population)
 {
     // Search the list for the AtomType provided.
     auto atd =
@@ -69,9 +69,9 @@ void AtomTypeMix::add(const AtomTypeMix &source)
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeMix::addIsotope(std::shared_ptr<AtomType> atomType, Sears91::Isotope tope, double popAdd)
+void AtomTypeMix::addIsotope(const AtomType *atomType, Sears91::Isotope tope, double popAdd)
 {
-    auto &atd = std::get<0>(add(std::move(atomType)));
+    auto &atd = std::get<0>(add(atomType));
     atd.add(tope, popAdd);
 }
 
@@ -94,7 +94,8 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
     for (auto &atd : types_)
     {
         // If this type is not exchangeable, move on
-        if (std::find(exchangeableTypes.begin(), exchangeableTypes.end(), atd.atomType()) == exchangeableTypes.end())
+        if (std::find_if(exchangeableTypes.begin(), exchangeableTypes.end(),
+                         [&atd](const auto &exchType) { return atd.atomType() == exchType.get(); }) == exchangeableTypes.end())
             continue;
 
         // Sum total atomic fraction and weighted bound coherent scattering length
@@ -107,7 +108,8 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
     for (auto &atd : types_)
     {
         // If this type is not exchangaeble, move on
-        if (std::find(exchangeableTypes.begin(), exchangeableTypes.end(), atd.atomType()) == exchangeableTypes.end())
+        if (std::find_if(exchangeableTypes.begin(), exchangeableTypes.end(),
+                         [&atd](const auto &exchType) { return atd.atomType() == exchType.get(); }) == exchangeableTypes.end())
             continue;
 
         // Set the bound coherent scattering length of this component to the average of all exchangable components
@@ -117,14 +119,14 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
 }
 
 // Check for presence of AtomType
-bool AtomTypeMix::contains(const std::shared_ptr<AtomType> &atomType) const
+bool AtomTypeMix::contains(const AtomType *atomType) const
 {
     return std::find_if(types_.begin(), types_.end(), [atomType](const auto &atd) { return atd.atomType() == atomType; }) !=
            types_.end();
 }
 
 // Check for presence of AtomType/Isotope pair
-bool AtomTypeMix::contains(const std::shared_ptr<AtomType> &atomType, Sears91::Isotope tope) const
+bool AtomTypeMix::contains(const AtomType *atomType, Sears91::Isotope tope) const
 {
     return std::find_if(types_.begin(), types_.end(),
                         [&atomType, tope](const auto &typeData)
@@ -144,7 +146,7 @@ std::vector<AtomTypeData>::const_iterator AtomTypeMix::begin() const { return ty
 std::vector<AtomTypeData>::const_iterator AtomTypeMix::end() const { return types_.end(); }
 
 // Return index of AtomType
-std::optional<int> AtomTypeMix::indexOf(const std::shared_ptr<AtomType> &atomType) const
+std::optional<int> AtomTypeMix::indexOf(const AtomType *atomType) const
 {
     auto it = std::find_if(types_.begin(), types_.end(), [atomType](const auto &atd) { return atd.atomType() == atomType; });
     if (it == types_.end())
@@ -165,8 +167,7 @@ std::optional<int> AtomTypeMix::indexOf(std::string_view name) const
 }
 
 // Return indices of AtomType pair
-std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const std::shared_ptr<AtomType> &at1,
-                                                        const std::shared_ptr<AtomType> &at2) const
+std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const AtomType *at1, const AtomType *at2) const
 {
     auto count = 0, index = -1;
     for (auto &atd : types_)
@@ -201,7 +202,7 @@ double AtomTypeMix::totalPopulation() const
 }
 
 // Return nth referenced AtomType
-const std::shared_ptr<AtomType> AtomTypeMix::atomType(int n) const
+const AtomType *AtomTypeMix::atomType(int n) const
 {
     assert(n >= 0 && n < types_.size());
 
@@ -209,7 +210,7 @@ const std::shared_ptr<AtomType> AtomTypeMix::atomType(int n) const
 }
 
 // Return AtomTypeData for specified AtomType
-OptionalReferenceWrapper<const AtomTypeData> AtomTypeMix::atomTypeData(const std::shared_ptr<AtomType> &atomType) const
+OptionalReferenceWrapper<const AtomTypeData> AtomTypeMix::atomTypeData(const AtomType *atomType) const
 {
     auto it = std::find_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return atomType == atd.atomType(); });
     if (it == types_.end())
@@ -273,7 +274,7 @@ bool AtomTypeMix::deserialise(LineParser &parser, const CoreData &coreData)
         auto nIsotopes = parser.argi(4);
 
         // Create AtomTypeData
-        auto &atd = types_.emplace_back(atomType, population, fraction, boundCoherent);
+        auto &atd = types_.emplace_back(atomType.get(), population, fraction, boundCoherent);
 
         // For each of the nIsotopes, read (and check) A, population, and fraction
         for (auto i = 0; i < nIsotopes; ++i)

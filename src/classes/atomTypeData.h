@@ -8,21 +8,19 @@
 
 // Forward Declarations
 class AtomType;
-class AtomTypeMix;
 
 // AtomTypeData Definition
 class AtomTypeData
 {
     public:
-    AtomTypeData(const std::shared_ptr<AtomType> &type, double population = 0, double fraction = 0, double boundCoherent = 0,
-                 int nIso = 0);
+    AtomTypeData(const AtomType *atomType, double population = 0, double fraction = 0, double boundCoherent = 0, int nIso = 0);
 
     /*
      * Properties
      */
     private:
-    // Reference AtomType
-    std::shared_ptr<AtomType> atomType_;
+    // Referenced AtomType
+    const AtomType *atomType_;
     // Whether the AtomType has been marked as exchangeable
     bool exchangeable_{false};
     // Isotopes information (if any)
@@ -43,8 +41,8 @@ class AtomTypeData
     void setIsotope(Sears91::Isotope tope, double pop, double fraction);
     // Zero populations
     void zeroPopulations();
-    // Return reference AtomType
-    std::shared_ptr<AtomType> atomType() const;
+    // Return referenced AtomType
+    const AtomType *atomType() const;
     // Set exchangeable flag
     void setAsExchangeable();
     // Return whether the associated AtomType is exchangeable

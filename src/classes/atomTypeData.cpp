@@ -11,9 +11,8 @@
 #include "classes/isotopeData.h"
 #include "data/isotopes.h"
 
-AtomTypeData::AtomTypeData(const std::shared_ptr<AtomType> &type, double population, double fraction, double boundCoherent,
-                           int nIso)
-    : atomType_(type), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
+AtomTypeData::AtomTypeData(const AtomType *atomType, double population, double fraction, double boundCoherent, int nIso)
+    : atomType_(atomType), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.resize(nIso, IsotopeData());
 }
@@ -67,7 +66,7 @@ void AtomTypeData::zeroPopulations()
 }
 
 // Return reference AtomType
-std::shared_ptr<AtomType> AtomTypeData::atomType() const { return atomType_; }
+const AtomType *AtomTypeData::atomType() const { return atomType_; }
 
 // Set exchangeable flag
 void AtomTypeData::setAsExchangeable() { exchangeable_ = true; }
