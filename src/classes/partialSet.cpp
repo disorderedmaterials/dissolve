@@ -37,20 +37,20 @@ void PartialSet::initialise(const AtomTypeMix &atomTypeMix, bool half)
     auto nTypes = atomTypeMix_.nItems();
     half_ = half;
 
-    partials_.initialise(nTypes, nTypes, half_);
-    boundPartials_.initialise(nTypes, nTypes, half_);
-    unboundPartials_.initialise(nTypes, nTypes, half_);
-    emptyBoundPartials_.initialise(nTypes, nTypes, half_);
-    emptyBoundPartials_ = false;
+    partials_.clear(half_);
+    boundPartials_.clear(half_);
+    unboundPartials_.clear(half_);
+    emptyBoundPartials_.clear(half_);
 
-    // Set up array matrices for partials
+    // Create data for partials and set tags
     dissolve::for_each_pair(
-        ParallelPolicies::par, atomTypeMix_,
+        ParallelPolicies::seq, atomTypeMix_,
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
-            partials_[{n, m}].setTag(std::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
-            boundPartials_[{n, m}].setTag(std::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
-            unboundPartials_[{n, m}].setTag(std::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
+            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+            partials_.get(key).setTag(std::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
+            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
+            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
         },
         half_);
 
@@ -67,16 +67,13 @@ void PartialSet::initialise(const AtomTypeMix &atomTypeMix, bool half)
 void PartialSet::reset()
 {
     // Zero partials
-    dissolve::for_each_pair(
-        ParallelPolicies::par, atomTypeMix_.nItems(),
-        [&](int i, int j)
-        {
-            std::ranges::fill(partials_[{i, j}].values(), 0.0);
-            std::ranges::fill(boundPartials_[{i, j}].values(), 0.0);
-            std::ranges::fill(unboundPartials_[{i, j}].values(), 0.0);
-            emptyBoundPartials_[{i, j}] = true;
-        },
-        half_);
+    for (auto &partial : std::views::values(partials_))
+        std::ranges::fill(partial.values(), 0.0);
+    for (auto &partial : std::views::values(boundPartials_))
+        std::ranges::fill(partial.values(), 0.0);
+    for (auto &partial : std::views::values(unboundPartials_))
+        std::ranges::fill(partial.values(), 0.0);
+    emptyBoundPartials_.clear(half_);
 
     // Zero totals
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
@@ -96,17 +93,17 @@ void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = f
 // Return fingerprint of partials
 std::string_view PartialSet::fingerprint() const { return fingerprint_; }
 
-// Return full atom-atom partial specified
-Data1D &PartialSet::partial(int i, int j) { return partials_[{i, j}]; }
-const Data1D &PartialSet::partial(int i, int j) const { return partials_[{i, j}]; }
+// Return full atom-atom partials
+DoubleKeyedMap<Data1D> &PartialSet::partials() { return partials_; }
+const DoubleKeyedMap<Data1D> &PartialSet::partials() const { return partials_; }
 
-// Return atom-atom partial for unbound pairs
-Data1D &PartialSet::unboundPartial(int i, int j) { return unboundPartials_[{i, j}]; }
-const Data1D &PartialSet::unboundPartial(int i, int j) const { return unboundPartials_[{i, j}]; }
+// Return bound atom-atom partials
+DoubleKeyedMap<Data1D> &PartialSet::boundPartials() { return boundPartials_; }
+const DoubleKeyedMap<Data1D> &PartialSet::boundPartials() const { return boundPartials_; }
 
-// Return atom-atom partial for bound pairs
-Data1D &PartialSet::boundPartial(int i, int j) { return boundPartials_[{i, j}]; }
-const Data1D &PartialSet::boundPartial(int i, int j) const { return boundPartials_[{i, j}]; }
+// Return unbound atom-atom partials
+DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() { return unboundPartials_; }
+const DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() const { return unboundPartials_; }
 
 // Return emptyBound flag
 char &PartialSet::emptyBoundPartial(int i, int j) { return emptyBoundPartials_[{i, j}]; }
@@ -128,9 +125,9 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
     }
 
     // Copy x and y arrays from one of the partials, and zero the latter
-    boundTotal_.initialise(partials_[{0, 0}]);
-    unboundTotal_.initialise(partials_[{0, 0}]);
-    total_.initialise(partials_[{0, 0}]);
+    boundTotal_.initialise(partials_.begin()->second);
+    unboundTotal_.initialise(partials_.begin()->second);
+    total_.initialise(partials_.begin()->second);
     std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
@@ -139,17 +136,18 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
         ParallelPolicies::seq, atomTypeMix_,
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
         {
+            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+
             // Set weighting factor if requested
             auto factor = applyConcentrationWeights ? at1.fraction() * at2.fraction() * (typeI == typeJ ? 1.0 : 2.0) : 1.0;
 
             // Sum bound term
-            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
-                           boundPartials_[{typeI, typeJ}].values().begin(), boundTotal_.values().begin(),
-                           [=](auto total, auto partial) { return total + partial * factor; });
+            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(), boundPartials_.get(key).values().begin(),
+                           boundTotal_.values().begin(), [=](auto total, auto partial) { return total + partial * factor; });
 
             // Sum unbound term
             std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
-                           unboundPartials_[{typeI, typeJ}].values().begin(), unboundTotal_.values().begin(),
+                           unboundPartials_.get(key).values().begin(), unboundTotal_.values().begin(),
                            [=](auto total, auto partial) { return total + partial * factor; });
         },
         half_);
@@ -171,9 +169,9 @@ void PartialSet::formTRTotals(NeutronWeights weights)
     }
 
     // Copy x and y arrays from one of the partials, and zero the latter
-    boundTotal_.initialise(partials_[{0, 0}]);
-    unboundTotal_.initialise(partials_[{0, 0}]);
-    total_.initialise(partials_[{0, 0}]);
+    boundTotal_.initialise(partials_.begin()->second);
+    unboundTotal_.initialise(partials_.begin()->second);
+    total_.initialise(partials_.begin()->second);
     std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
@@ -182,17 +180,18 @@ void PartialSet::formTRTotals(NeutronWeights weights)
         ParallelPolicies::seq, atomTypeMix_,
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
         {
+            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+
             // Set weighting factor if requested
             auto factor = at1.fraction() * weights.boundCoherentProduct(typeI, typeJ);
 
             // Sum bound term
-            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
-                           boundPartials_[{typeI, typeJ}].values().begin(), boundTotal_.values().begin(),
-                           [=](auto total, auto partial) { return total + partial * factor; });
+            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(), boundPartials_.get(key).values().begin(),
+                           boundTotal_.values().begin(), [=](auto total, auto partial) { return total + partial * factor; });
 
             // Sum unbound term
             std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
-                           unboundPartials_[{typeI, typeJ}].values().begin(), unboundTotal_.values().begin(),
+                           unboundPartials_.get(key).values().begin(), unboundTotal_.values().begin(),
                            [=](auto total, auto partial) { return total + partial * factor; });
         },
         half_);
@@ -233,6 +232,8 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
         atomTypeMix_,
         [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
         {
+            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+
             // Open file and check that we're OK to proceed writing to it
             std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
             Messenger::printVerbose("Writing partial file '{}'...\n", filename);
@@ -241,9 +242,10 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
             if (!parser.isFileGoodForWriting())
                 return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-            auto &full = partials_[{typeI, typeJ}];
-            auto &bound = boundPartials_[{typeI, typeJ}];
-            auto &unbound = unboundPartials_[{typeI, typeJ}];
+            auto &full = partials_.get(key);
+            auto &bound = boundPartials_.get(key);
+            auto &unbound = unboundPartials_.get(key);
+            ;
             parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
             for (auto n = 0; n < full.nValues(); ++n)
                 parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),

@@ -7,6 +7,7 @@
 #include "classes/neutronWeights.h"
 #include "math/data1D.h"
 #include "templates/array2D.h"
+#include "templates/doubleKeyedMap.h"
 
 // Forward Declarations
 class Configuration;
@@ -29,13 +30,13 @@ class PartialSet
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Pair matrix, containing full atom-atom partial
-    Array2D<Data1D> partials_;
+    DoubleKeyedMap<Data1D> partials_;
     // Unbound matrix, containing atom-atom partial of unbound pairs
-    Array2D<Data1D> unboundPartials_;
+    DoubleKeyedMap<Data1D> unboundPartials_;
     // Bound matrix, containing atom-atom partial of bound pairs
-    Array2D<Data1D> boundPartials_;
+    DoubleKeyedMap<Data1D> boundPartials_;
     // Bound flag matrix, specifying if bound partials are empty
-    Array2D<char> emptyBoundPartials_;
+    DoubleKeyedMap<char> emptyBoundPartials_;
     // Total functions
     Data1D boundTotal_, unboundTotal_, total_;
     // Check for full or half matrix
@@ -58,18 +59,15 @@ class PartialSet
     void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of partials
     std::string_view fingerprint() const;
-    // Return full atom-atom partial specified
-    Data1D &partial(int i, int j);
-    const Data1D &partial(int i, int j) const;
-    // Return atom-atom partial for unbound pairs
-    Data1D &unboundPartial(int i, int j);
-    const Data1D &unboundPartial(int i, int j) const;
-    // Return atom-atom partial for bound pairs
-    Data1D &boundPartial(int i, int j);
-    const Data1D &boundPartial(int i, int j) const;
-    // Return empty bound partial flag
-    char &emptyBoundPartial(int i, int j);
-    const char &emptyBoundPartial(int i, int j) const;
+    // Return full atom-atom partials
+    DoubleKeyedMap<Data1D> &partials();
+    const DoubleKeyedMap<Data1D> &partials() const;
+    // Return bound atom-atom partials
+    DoubleKeyedMap<Data1D> &boundPartials();
+    const DoubleKeyedMap<Data1D> &boundPartials() const;
+    // Return unbound atom-atom partials
+    DoubleKeyedMap<Data1D> &unboundPartials();
+    const DoubleKeyedMap<Data1D> &unboundPartials() const;
     // Return whether specified bound partial is empty
     bool isBoundPartialEmpty(int i, int j) const;
     // Sum partials into totals
