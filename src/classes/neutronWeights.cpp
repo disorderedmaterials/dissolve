@@ -166,7 +166,7 @@ void NeutronWeights::calculateWeightingMatrices()
             // fractional Isotopologue weight in the mix.
 
             dissolve::for_each_pair(ParallelPolicies::seq, atomTypePopulations,
-                                    [&](int spTypeI, const auto &atPop1, int spTypeJ, const auto &atPop2)
+                                    [&, iso, weight](int spTypeI, const auto &atPop1, int spTypeJ, const auto &atPop2)
                                     {
                                         // First, check that both of atom types used in the species are present in the weights
                                         // atomTypes_. They may legitimately not be if, for example, they are phantom atoms.
