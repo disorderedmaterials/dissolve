@@ -120,10 +120,10 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 
     // Second step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
     dissolve::for_each_pair(ParallelPolicies::seq, coreData_.atomTypes(),
-                             [&](int typeI, const auto &at1, int typeJ, const auto &at2)
-                             {
-                                 // Try to locate existing pair potential between these atom types
-                                 auto *pot = pairPotential(at1.get(), at2.get());
+                            [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+                            {
+                                // Try to locate existing pair potential between these atom types
+                                auto *pot = pairPotential(at1.get(), at2.get());
 
                                 // If it doesn't exist we create it
                                 if (!pot)
