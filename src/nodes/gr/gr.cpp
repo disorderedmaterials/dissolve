@@ -11,8 +11,6 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
     addOption<std::optional<Number>>("Range", "Maximum r to calculate g(r) out to", requestedRange_);
     addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
                                      averagingLength_);
-    addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging partials",
-                                          averagingScheme_);
     addOption<Function1DWrapper>("IntraBroadening", "Type of broadening to apply to intramolecular g(r)", intraBroadening_);
     addOption<std::optional<Number>>("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)", nSmooths_);
     addOption<bool>("Save", "Whether to save partials and total functions to disk", save_);

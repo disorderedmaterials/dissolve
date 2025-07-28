@@ -499,6 +499,13 @@ void PartialSet::operator*=(const double factor)
     unboundTotal_ *= factor;
 }
 
+PartialSet PartialSet::operator*(const double factor) const
+{
+    auto result = (*this);
+    result *= factor;
+    return result;
+}
+
 /*
  * Searchers
  */
