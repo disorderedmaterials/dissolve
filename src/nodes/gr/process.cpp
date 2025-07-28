@@ -25,8 +25,7 @@ NodeConstants::ProcessResult GRNode::process()
         message("Partials will be calculated out to {} Angstroms.\n", requestedRange_.value().asDouble());
     message("Bin-width to use is {} Angstroms.\n", binWidth_.asDouble());
     if (averagingLength_)
-        message("Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asDouble(),
-                Averaging::averagingSchemes().keyword(averagingScheme_));
+        message("Partials will be averaged over {} sets.\n", averagingLength_.value().asDouble());
     else
         message("No averaging of partials will be performed.\n");
     if (intraBroadening_.form() == Functions1D::Form::None)
@@ -80,17 +79,9 @@ NodeConstants::ProcessResult GRNode::process()
     bool alreadyUpToDate;
     calculateRawGR(grRange, alreadyUpToDate);
 
-    // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
-    /*
+    // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
-    {
-        // Store the current fingerprint, since we must ensure we retain it in the averaged T.
-        std::string currentFingerprint{rawGR_.fingerprint()};
-
-        Averaging::average<PartialSet>(dissolve().processingModuleData(), std::format("{}//OriginalGR",
-    targetConfiguration_->niceName()), name(), averagingLength_.value().asDouble(), averagingScheme_);
-    }
-    */
+        (*rawGR_) = rawGRHistory_.average(*rawGR_, averagingLength_.value().asInteger());
 
     /*
     // Perform internal test of original g(r)?

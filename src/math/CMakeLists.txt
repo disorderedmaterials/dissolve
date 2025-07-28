@@ -39,6 +39,7 @@ add_library(
   histogram2D.h
   histogram3D.cpp
   histogram3D.h
+  history.h
   integerHistogram1D.cpp
   integerHistogram1D.h
   integrator.cpp
