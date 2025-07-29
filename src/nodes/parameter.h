@@ -242,8 +242,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
         Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
     }
-    // Set type's repreentation as a raw int (only valid for int and enum)
-    void asInt(int value) override
+    // Set type's representation as a raw int (only valid for int and enum)
+    void setFromInt(int value) override
     {
         if constexpr (std::is_integral_v<DataClass>)
             data_ = value;
