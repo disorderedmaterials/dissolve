@@ -113,9 +113,9 @@ class ParameterBase : public Serialisable<>
     // Return whether this parameter accepts the output type of the other
     virtual bool acceptsOutput(ParameterBase *other) const = 0;
     // The type's representation as a raw int (only valid for int and enum)
-    virtual int asInt() const { return -1; }
-    // Set type's repreentation as a raw int (only valid for int and enum)
-    virtual void asInt(int value) { return; }
+    virtual int getAsInt() const { return -1; }
+    // Set type's representation as a raw int (only valid for int and enum)
+    virtual void setFromInt(int value) { return; }
 
     // Get the parameter's value
     template <typename DataClass> DataClass get()
