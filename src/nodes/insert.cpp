@@ -6,6 +6,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "math/mathFunc.h"
+#include "dissolve.h"
 
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -196,6 +197,8 @@ NodeConstants::ProcessResult InsertNode::process()
             mol->transform(box, transform);
         }
     }
+
+    configuration_->cells().generate(box, configuration_->requestedCellDivisionLength(), dissolve().potentialMap().range());
 
     Messenger::print("[InsertRandom] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n",
                      configuration_->atomicDensity().value_or(0.0), configuration_->chemicalDensity().value_or(0.0));
