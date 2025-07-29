@@ -64,7 +64,7 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Set variables
-      appName=Dissolve-GUI-${{ runner.arch }}
+      appName=Dissolve-GUI-QML-${{ runner.arch }}
       appDirName=${appName}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ inputs.currentVersion }}
       dmgName=Dissolve-GUI-${{ inputs.currentVersion }}-${{ runner.arch }}
