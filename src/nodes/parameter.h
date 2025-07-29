@@ -233,7 +233,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             return AllowedEdgeCount::One;
     }
     // The type's representation as a raw int (only valid for int and enum)
-    int asInt() const override
+    int getAsInt() const override
     {
         if constexpr (std::is_integral_v<DataClass>)
             return data_;
