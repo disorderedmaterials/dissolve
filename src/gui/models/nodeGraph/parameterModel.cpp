@@ -17,8 +17,6 @@ enum Roles
     MODEL,
 };
 
-class EnumModel;
-
 ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
 
 // Return number of parameters (required by QAbstractListModel)
