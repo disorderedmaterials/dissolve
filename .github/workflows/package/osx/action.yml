@@ -50,7 +50,7 @@ runs:
       packageName=Dissolve-GUI-QML-${{ runner.arch }}-${{ inputs.currentVersion }}
 
       # Prepare the dmg file content
-      ./prep-dmg -a Dissolve-GUI-QML-${{ runner.arch }} -v ${{ inputs.currentVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -q src/gui/qml
+      ./prep-dmg -a Dissolve-GUI-QML-${{ runner.arch }} -v ${{ inputs.currentVersion }} -b build/bin/dissolve-gui-qml.app/Contents/MacOS/dissolve-gui-qml -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui-qml.app/Contents/Info.plist -q src/gui/qml
 
       # Copy dependencies into Frameworks folder in app bundle
       cp -v ./build/antlr4-cppruntime/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
@@ -73,7 +73,7 @@ runs:
       sed -i -e "s/Dissolve.icns/${appName}.icns/g" ${packageName}/${appDirName}/Contents/Info.plist
 
       # Create DMG
-      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-QML-${{ inputs.currentVersion }}/${appDirName}/Contents/Resources/${appName}.icns "Dissolve GUI" ${dmgName}.dmg
+      dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./${packageName}/${appDirName} -D icon=./Dissolve-GUI-${{ inputs.currentVersion }}/${appDirName}/Contents/Resources/${appName}.icns "Dissolve GUI" ${dmgName}.dmg
 
       # Collect artifacts
       mkdir packages
