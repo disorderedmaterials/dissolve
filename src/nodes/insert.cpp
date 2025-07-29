@@ -5,8 +5,8 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "math/mathFunc.h"
 #include "dissolve.h"
+#include "math/mathFunc.h"
 
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
