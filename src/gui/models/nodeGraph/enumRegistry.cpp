@@ -29,9 +29,8 @@ void EnumRegistry::instantiateOptions()
 
     auto wrap = [](auto &&x) -> std::shared_ptr<EnumOptionsModel>
     {
-        std::shared_ptr<EnumOptionsModel> result = std::make_shared<EnumOptionsModel>();
-        std::shared_ptr<EnumOptionsBase> copy{std::make_shared<std::remove_reference_t<decltype(x)>>(x)};
-        result->setData(copy);
+        auto result = std::make_shared<EnumOptionsModel>();
+        result->setData(std::make_shared<std::remove_reference_t<decltype(x)>>(x));
         return result;
     };
 
