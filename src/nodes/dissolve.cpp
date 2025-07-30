@@ -37,9 +37,7 @@ const std::vector<std::shared_ptr<AtomType>> DissolveGraph::atomTypes(const Conf
     return atomTypes;
 }
 
-bool DissolveGraph::updatePairPotentials(Dissolve &dissolve,
-                                                                 const std::vector<std::shared_ptr<AtomType>> &atomTypes,
-                                                                 std::optional<bool> useCombinationRulesHint)
+bool DissolveGraph::updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes, std::optional<bool> useCombinationRulesHint)
 {
     auto &potentialMap = dissolve.potentialMap();
 
