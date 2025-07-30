@@ -25,7 +25,7 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  * Functions
  */
 
-const std::vector<std::shared_ptr<AtomType>> DissolveGraph::atomTypes(const Configuration* configuration)
+const std::vector<std::shared_ptr<AtomType>> DissolveGraph::atomTypes(const Configuration *configuration)
 {
     auto pop = configuration->atomTypePopulations();
     std::vector<std::shared_ptr<AtomType>> atomTypes;
@@ -37,7 +37,8 @@ const std::vector<std::shared_ptr<AtomType>> DissolveGraph::atomTypes(const Conf
     return atomTypes;
 }
 
-bool DissolveGraph::updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes, std::optional<bool> useCombinationRulesHint)
+bool DissolveGraph::updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                                         std::optional<bool> useCombinationRulesHint)
 {
     auto &potentialMap = dissolve.potentialMap();
 

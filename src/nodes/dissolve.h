@@ -41,5 +41,6 @@ class DissolveGraph : public Graph
      */
     public:
     static const std::vector<std::shared_ptr<AtomType>> atomTypes(const Configuration *configuration);
-    static bool updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes, std::optional<bool> useCombinationRulesHint = {});
+    static bool updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                                     std::optional<bool> useCombinationRulesHint = {});
 };
