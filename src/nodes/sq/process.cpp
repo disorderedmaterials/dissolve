@@ -65,7 +65,7 @@ NodeConstants::ProcessResult SQNode::process()
     if (!unweightedSQ_)
     {
         unweightedSQ_.emplace(realSpeciesPopulations);
-        unweightedSQ_->setUpPartials(unweightedGR_->atomTypeMix());
+        unweightedSQ_->initialise(unweightedGR_->atomTypeMix());
     }
 
     /*

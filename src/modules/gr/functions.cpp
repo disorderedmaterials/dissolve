@@ -9,9 +9,6 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "classes/speciesAngle.h"
-#include "classes/speciesBond.h"
-#include "classes/speciesTorsion.h"
 #include "main/dissolve.h"
 #include "math/combinations.h"
 #include "math/error.h"
@@ -20,7 +17,6 @@
 #include "modules/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
-#include <iterator>
 #include <tuple>
 
 /*
@@ -212,13 +208,10 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange)
                        dissolve::counting_iterator<int>(comb.getNumCombinations()), unaryOp);
     auto histograms = combinableHistograms.finalize();
 
-    //    void addHistogramsToPartialSet(Array2D<Histogram1D> &histograms, PartialSet &target)
-    for (auto k = 0; k < target.nAtomTypes(); ++k)
-        for (auto j = 0; j < target.nAtomTypes(); ++j)
-        {
-            auto &histo = target.fullHistogram(k, j);
-            histo = std::move(histograms[{k, j}]);
-        }
+    // Copy the final calculated full histograms to the HistogramSet
+    for (auto k = 0; k < histograms_->atomTypeMix().nItems(); ++k)
+        for (auto j = 0; j < histograms_->atomTypeMix().nItems(); ++j)
+            histograms_->fullHistogram(k, j) = histograms[{k, j}];
 
     // Atoms within the same cell
     for (int n = 0; n < cellArray.nCells(); ++n)
@@ -364,14 +357,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
      */
 
     const auto *box = cfg->box();
-    const auto &cells = cfg->cells();
-
-    // Set start/stride for parallel loop (pool solo)
-    auto offset = 0;
-    auto nChunks = 1;
-
     timer.start();
-
     // Loop over molecules
     for (auto &mol : cfg->molecules())
     {
@@ -509,7 +495,7 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, std::string_view tar
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes);
+    summedUnweightedGR.initialise(combinedAtomTypes);
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // Vector for simplicity
