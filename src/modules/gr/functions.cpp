@@ -331,7 +331,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
         histograms_.emplace();
         histograms_->initialise(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
     }
-    histograms_.reset();
+    histograms_->zeroBins();
 
     /*
      * Calculate full (intra+inter) partials

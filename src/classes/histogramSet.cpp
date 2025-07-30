@@ -22,6 +22,8 @@ HistogramSet::~HistogramSet()
 // Initialise histograms
 void HistogramSet::initialise(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth)
 {
+    atomTypeMix_ = atomTypeMix;
+
     auto nTypes = atomTypeMix_.nItems();
 
     fullHistograms_.initialise(nTypes, nTypes, half_);
@@ -45,6 +47,17 @@ void HistogramSet::clear()
     fullHistograms_.clear();
     boundHistograms_.clear();
     unboundHistograms_.clear();
+}
+
+// Zero histogram bins
+void HistogramSet::zeroBins()
+{
+    for (auto &histo : fullHistograms_.linearArray())
+        histo.zeroBins();
+    for (auto &histo : boundHistograms_.linearArray())
+        histo.zeroBins();
+    for (auto &histo : unboundHistograms_.linearArray())
+        histo.zeroBins();
 }
 
 // Return atom types list

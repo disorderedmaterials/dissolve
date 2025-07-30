@@ -274,7 +274,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
         histograms_.emplace();
         histograms_->initialise(targetConfiguration_->atomTypePopulations(), grRange, binWidth_.asDouble());
     }
-    histograms_.reset();
+    histograms_->zeroBins();
 
     /*
      * Calculate full (intra+inter) partials
