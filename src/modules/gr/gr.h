@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/histogramSet.h"
 #include "classes/partialSet.h"
 #include "math/averaging.h"
 #include "math/function1D.h"
@@ -59,17 +60,19 @@ class GRModule : public Module
     bool save_{false};
     // Whether to save original (unbroadened) partials and total functions to disk
     bool saveOriginal_{false};
+    // Histograms for RDF calculation
+    std::optional<HistogramSet> histograms_;
 
     /*
      * Functions
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
-    bool calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);
+    bool calculateGRTestSerial(Configuration *cfg);
     // Calculate partial g(r) with optimised double-loop
-    bool calculateGRSimple(Configuration *cfg, PartialSet &partialSet, const double rdfRange);
+    bool calculateGRSimple(Configuration *cfg, const double rdfRange);
     // Calculate partial g(r) utilising Cell neighbour lists
-    bool calculateGRCells(Configuration *cfg, PartialSet &partialSet, const double binWidth);
+    bool calculateGRCells(Configuration *cfg, const double binWidth);
 
     public:
     // Calculate and return effective density based on target Configurations

@@ -19,10 +19,6 @@ PartialSet::PartialSet(const std::map<const Species *, double> &realSpeciesPopul
 
 PartialSet::~PartialSet()
 {
-    fullHistograms_.clear();
-    boundHistograms_.clear();
-    unboundHistograms_.clear();
-
     partials_.clear();
     boundPartials_.clear();
     emptyBoundPartials_.clear();
@@ -33,21 +29,8 @@ PartialSet::~PartialSet()
  * Set of Partials
  */
 
-// Set up PartialSet
-bool PartialSet::setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth)
-{
-    // Set up partial arrays
-    if (!setUpPartials(atomTypeMix, half_))
-        return false;
-
-    // Initialise histograms for g(r) calculation
-    setUpHistograms(rdfRange, binWidth);
-
-    return true;
-}
-
-// Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix, bool half)
+// Initialise
+void PartialSet::initialise(const AtomTypeMix &atomTypeMix, bool half)
 {
     // Copy type array
     atomTypeMix_ = atomTypeMix;
@@ -78,42 +61,11 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix, bool half)
     total_.clear();
     boundTotal_.clear();
     unboundTotal_.clear();
-
-    return true;
-}
-
-// Set up histogram arrays for g(r) calculation
-void PartialSet::setUpHistograms(double rdfRange, double binWidth)
-{
-    auto nTypes = atomTypeMix_.nItems();
-
-    fullHistograms_.initialise(nTypes, nTypes, half_);
-    boundHistograms_.initialise(nTypes, nTypes, half_);
-    unboundHistograms_.initialise(nTypes, nTypes, half_);
-
-    dissolve::for_each_pair(
-        ParallelPolicies::par, nTypes,
-        [&](int i, int j)
-        {
-            fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-            boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-            unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-        },
-        half_);
 }
 
 // Reset partial arrays
 void PartialSet::reset()
 {
-    // Zero histogram bins if present
-    for (auto n = 0; n < fullHistograms_.nRows(); ++n)
-        for (auto m = n; m < fullHistograms_.nColumns(); ++m)
-        {
-            fullHistograms_[{n, m}].zeroBins();
-            boundHistograms_[{n, m}].zeroBins();
-            unboundHistograms_[{n, m}].zeroBins();
-        }
-
     // Zero partials
     dissolve::for_each_pair(
         ParallelPolicies::par, atomTypeMix_.nItems(),
@@ -144,15 +96,6 @@ void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = f
 // Return fingerprint of partials
 std::string_view PartialSet::fingerprint() const { return fingerprint_; }
 
-// Return full histogram specified
-Histogram1D &PartialSet::fullHistogram(int i, int j) { return fullHistograms_[{i, j}]; }
-
-// Return bound histogram specified
-Histogram1D &PartialSet::boundHistogram(int i, int j) { return boundHistograms_[{i, j}]; }
-
-// Return unbound histogram specified
-Histogram1D &PartialSet::unboundHistogram(int i, int j) { return unboundHistograms_[{i, j}]; }
-
 // Return full atom-atom partial specified
 Data1D &PartialSet::partial(int i, int j) { return partials_[{i, j}]; }
 const Data1D &PartialSet::partial(int i, int j) const { return partials_[{i, j}]; }
@@ -164,6 +107,10 @@ const Data1D &PartialSet::unboundPartial(int i, int j) const { return unboundPar
 // Return atom-atom partial for bound pairs
 Data1D &PartialSet::boundPartial(int i, int j) { return boundPartials_[{i, j}]; }
 const Data1D &PartialSet::boundPartial(int i, int j) const { return boundPartials_[{i, j}]; }
+
+// Return emptyBound flag
+char &PartialSet::emptyBoundPartial(int i, int j) { return emptyBoundPartials_[{i, j}]; }
+const char &PartialSet::emptyBoundPartial(int i, int j) const { return emptyBoundPartials_[{i, j}]; }
 
 // Return whether specified bound partial is empty
 bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPartials_[{i, j}]; }
@@ -344,28 +291,6 @@ void PartialSet::adjust(double delta)
     unboundTotal_ += delta;
 }
 
-// Form partials from stored Histogram data
-void PartialSet::formPartials(double boxVolume)
-{
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypeMix_,
-        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-        {
-            // Calculate RDFs from histogram data
-            calculateRDF(partials_[{n, m}], fullHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
-                         &at1 == &at2 ? 2.0 : 1.0);
-            calculateRDF(boundPartials_[{n, m}], boundHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
-                         &at1 == &at2 ? 2.0 : 1.0);
-            calculateRDF(unboundPartials_[{n, m}], unboundHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
-                         &at1 == &at2 ? 2.0 : 1.0);
-
-            // Set flags for bound partials specifying if they are empty (i.e. there are no
-            // contributions of that type)
-            emptyBoundPartials_[{n, m}] = boundHistograms_[{n, m}].nBinned() == 0;
-        },
-        half_);
-}
-
 // Add in partials from source PartialSet to our own
 bool PartialSet::addPartials(PartialSet &source, double weighting)
 {
@@ -408,29 +333,6 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     Interpolator::addInterpolated(source.unboundTotal_, unboundTotal_, weighting);
 
     return true;
-}
-
-// Calculate RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
-                              int nSurrounding, double multiplier)
-{
-    auto nBins = histogram.nBins();
-    double delta = histogram.binWidth();
-    const auto &bins = histogram.bins();
-
-    destination.clear();
-
-    double shellVolume, factor, r = 0.5 * delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
-    for (auto n = 0; n < nBins; ++n)
-    {
-        shellVolume = (4.0 / 3.0) * M_PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
-        factor = nCentres * (shellVolume * numberDensity);
-
-        destination.addPoint(r, bins[n] * (multiplier / factor));
-
-        r += delta;
-        lowerShellLimit += delta;
-    }
 }
 
 /*
