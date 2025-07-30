@@ -37,20 +37,22 @@ const std::vector<std::shared_ptr<AtomType>> DissolveGraph::atomTypes(const Conf
     return atomTypes;
 }
 
-bool DissolveGraph::updatePairPotentials(const std::vector<std::shared_ptr<AtomType>>& atomTypes, std::optional<bool> useCombinationRulesHint)
+bool DissolveGraph::updatePairPotentials(Dissolve &dissolve,
+                                                                 const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                                                                 std::optional<bool> useCombinationRulesHint)
 {
-    auto &potentialMap = dissolve().potentialMap();
+    auto &potentialMap = dissolve.potentialMap();
 
-    Node::message("Updating pair potentials...\n");
+    Messenger::print("Updating pair potentials...\n");
     potentialMap.clear();
 
-    auto useCombinationRules = useCombinationRulesHint.value_or(dissolve().useCombinationRules());
+    auto useCombinationRules = useCombinationRulesHint.value_or(dissolve.useCombinationRules());
 
     // Set the charge hadling for all pair potentials
-    PairPotential::setIncludeCoulombPotential(dissolve().atomTypeChargeSource());
+    PairPotential::setIncludeCoulombPotential(dissolve.atomTypeChargeSource());
 
     // First step - remove any pair potentials which reference non-existent atom types
-    auto &pairPotentials = dissolve().pairPotentials();
+    auto &pairPotentials = dissolve.pairPotentials();
     pairPotentials.erase(
         std::remove_if(pairPotentials.begin(), pairPotentials.end(),
                        [&](const auto &pot)
@@ -65,14 +67,14 @@ bool DissolveGraph::updatePairPotentials(const std::vector<std::shared_ptr<AtomT
                             [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                             {
                                 // Try to locate existing pair potential between these atom types
-                                auto *pot = dissolve().pairPotential(at1, at2);
+                                auto *pot = dissolve.pairPotential(at1, at2);
 
                                 // If it doesn't exist we create it
                                 if (!pot)
                                 {
                                     Messenger::print("Creating new PairPotential for interaction between '{}' and '{}'...\n",
                                                      at1->name(), at2->name());
-                                    pot = dissolve().addPairPotential(at1, at2);
+                                    pot = dissolve.addPairPotential(at1, at2);
                                 }
 
                                 // Update basic parameters
@@ -93,7 +95,7 @@ bool DissolveGraph::updatePairPotentials(const std::vector<std::shared_ptr<AtomT
     // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
     for (auto &&[at1, at2, pot] : pairPotentials)
     {
-        pot->tabulate(dissolve().pairPotentialRange(), dissolve().pairPotentialDelta(), at1->charge() * at2->charge());
+        pot->tabulate(dissolve.pairPotentialRange(), dissolve.pairPotentialDelta(), at1->charge() * at2->charge());
     }
 
     // Fourth step - set any additional potential
@@ -107,5 +109,5 @@ bool DissolveGraph::updatePairPotentials(const std::vector<std::shared_ptr<AtomT
         */
     }
 
-    return potentialMap.initialise(atomTypes, dissolve().pairPotentials(), dissolve().pairPotentialRange());
+    return potentialMap.initialise(atomTypes, dissolve.pairPotentials(), dissolve.pairPotentialRange());
 }
