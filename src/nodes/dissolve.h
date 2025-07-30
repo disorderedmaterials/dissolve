@@ -35,4 +35,11 @@ class DissolveGraph : public Graph
     public:
     // Return dissolve
     Dissolve &dissolve() const override;
+
+    /*
+     * Functions
+     */
+    private:
+    static const std::vector<std::shared_ptr<AtomType>> atomTypes(const Configuration *configuration);
+    bool updatePairPotentials(const std::vector<std::shared_ptr<AtomType>> &atomTypes, std::optional<bool> useCombinationRulesHint = {});
 };

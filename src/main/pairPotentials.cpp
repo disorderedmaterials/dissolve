@@ -65,6 +65,8 @@ PairPotential *Dissolve::addPairPotential(const std::shared_ptr<AtomType> &at1, 
 // Return first PairPotential in list
 const std::vector<PairPotential::Definition> &Dissolve::pairPotentials() const { return pairPotentials_; }
 
+std::vector<PairPotential::Definition> &Dissolve::pairPotentials() { return pairPotentials_; }
+
 // Return nth PairPotential in list
 PairPotential *Dissolve::pairPotential(int n) { return std::get<2>(pairPotentials_[n]).get(); }
 
@@ -95,6 +97,7 @@ PairPotential *Dissolve::pairPotential(std::string_view at1Name, std::string_vie
 
 // Return map for PairPotentials
 const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
+PotentialMap &Dissolve::potentialMap() { return potentialMap_; }
 
 // Update all pair potentials
 bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
