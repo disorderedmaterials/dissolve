@@ -25,6 +25,24 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  * Functions
  */
 
+// Add new atom type to atom types
+const std::shared_ptr<AtomType> DissolveGraph::addAtomType(std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                                                           Elements::Element Z)
+{
+    auto newAtomType = std::make_shared<AtomType>();
+    atomTypes.push_back(newAtomType);
+
+    // Create a suitable unique name
+    newAtomType->setName(DissolveSys::uniqueName(Elements::symbol(Z), atomTypes,
+                                                 [&](const auto &at) { return newAtomType == at ? "" : at->name(); }));
+
+    // Set data
+    newAtomType->setZ(Z);
+    newAtomType->setIndex(atomTypes.size() - 1);
+
+    return newAtomType;
+}
+
 const std::vector<std::shared_ptr<AtomType>> DissolveGraph::atomTypes(const Configuration *configuration)
 {
     auto pop = configuration->atomTypePopulations();

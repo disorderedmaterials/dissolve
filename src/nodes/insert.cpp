@@ -13,6 +13,7 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
     addInput<Configuration *>("Configuration", "Target configuration to insert into", configuration_);
     addOutput<Configuration *>("Configuration", "Modified configuration", configuration_);
     addInput<const Species *>("Species", "Species to add - all resulting molecules will have identical geometry", species_);
+    addInput<const std::vector<std::shared_ptr<AtomType>> *>("AtomTypes", "AtomTypes owned by the node", atomTypes_);
     addInput<const MoleculeSet *>("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
 
     addInput<Number>("Population", "Population of the target to add", population_);
@@ -148,6 +149,10 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
 // Run main processing
 NodeConstants::ProcessResult InsertNode::process()
 {
+    // Add atom type and update pair potentials
+    if (!DissolveGraph::updatePairPotentials(dissolve(), *atomTypes_))
+        return NodeConstants::ProcessResult::Failed;
+
     // Get target MoleculeSet
     MoleculeSet speciesMoleculeSet;
     if (species_)
