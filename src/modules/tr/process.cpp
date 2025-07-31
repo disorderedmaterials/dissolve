@@ -54,7 +54,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
 
     // Make weightedGR Partial set
     PartialSet representativeGR;
-    representativeGR.setUpPartials(unweightedSQ.atomTypeMix(), false);
+    representativeGR.initialise(unweightedSQ.atomTypeMix(), false);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
@@ -63,7 +63,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
     auto [weightedTR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedTR.setUpPartials(unweightedGR.atomTypeMix(), false);
+        weightedTR.initialise(unweightedGR.atomTypeMix(), false);
 
     // Get Q-range and window function to use for transformation of reference F(Q) to G(r)
     auto refftQMin = refQMin_.value_or(0.0);
@@ -126,7 +126,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
     auto [representativeTR, rTRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("RepresentativeTR", name_, GenericItem::InRestartFileFlag);
     if (rTRstatus == GenericItem::ItemStatus::Created)
-        representativeTR.setUpPartials(representativeGR.atomTypeMix(), false);
+        representativeTR.initialise(representativeGR.atomTypeMix(), false);
 
     dissolve::for_each_pair(
         ParallelPolicies::par, representativeGR.nAtomTypes(),

@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "classes/configuration.h"
+#include "classes/histogramSet.h"
 #include "classes/partialSet.h"
 #include "classes/species.h"
 #include "items/list.h"
@@ -68,6 +69,8 @@ class GRNode : public Node
     bool save_{false};
     // Whether to save raw partials and total functions to disk
     bool saveRaw_{false};
+    // Histograms for RDF calculation
+    std::optional<HistogramSet> histograms_;
 
     /*
      * Functions

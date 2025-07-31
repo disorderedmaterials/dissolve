@@ -89,7 +89,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
         dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     auto &unweightedsq = uSQObject.first;
     if (uSQObject.second == GenericItem::ItemStatus::Created)
-        unweightedsq.setUpPartials(unweightedgr.atomTypeMix());
+        unweightedsq.initialise(unweightedgr.atomTypeMix());
 
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
