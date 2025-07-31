@@ -9,9 +9,6 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "classes/speciesAngle.h"
-#include "classes/speciesBond.h"
-#include "classes/speciesTorsion.h"
 #include "main/dissolve.h"
 #include "math/combinations.h"
 #include "math/error.h"
@@ -20,51 +17,37 @@
 #include "modules/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
-#include <iterator>
 #include <tuple>
-
-namespace
-{
-void addHistogramsToPartialSet(Array2D<Histogram1D> &histograms, PartialSet &target)
-{
-    for (auto k = 0; k < target.nAtomTypes(); ++k)
-        for (auto j = 0; j < target.nAtomTypes(); ++j)
-        {
-            auto &histo = target.fullHistogram(k, j);
-            histo = std::move(histograms[{k, j}]);
-        }
-}
-} // namespace
 
 /*
  * Private Functions
  */
 
 // Calculate partial g(r) in serial with simple double-loop
-bool GRModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
+bool GRModule::calculateGRTestSerial(Configuration *cfg)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, cfg->atoms(),
-        [box, &partialSet](auto i, auto &ii, auto j, auto &jj)
+        [&, box](auto i, auto &ii, auto j, auto &jj)
         {
             if (&ii != &jj)
-                partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
+                histograms_->fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
         });
 
     return true;
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool GRModule::calculateGRSimple(Configuration *cfg, PartialSet &partialSet, const double binWidth)
+bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth)
 {
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
 
     // Construct local arrays of atom type positions
-    nTypes = partialSet.nAtomTypes();
+    nTypes = histograms_->atomTypeMix().nItems();
     Messenger::printVerbose("Constructing local partial working arrays for {} types.\n", nTypes);
     const auto *box = cfg->box();
     std::vector<Vector3 *> r(nTypes);
@@ -103,9 +86,9 @@ bool GRModule::calculateGRSimple(Configuration *cfg, PartialSet &partialSet, con
     for (typeI = 0; typeI < nTypes; ++typeI)
     {
         ri = r[typeI];
-        auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
+        auto &histogram = histograms_->fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
-        nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
+        nPoints = histograms_->fullHistogram(typeI, typeI).nBins();
         PairIterator pairs(maxr[typeI]);
         std::for_each(pairs.begin(), pairs.end(),
                       [box, bins, rbin, ri, nPoints, &histogram](auto it)
@@ -139,9 +122,9 @@ bool GRModule::calculateGRSimple(Configuration *cfg, PartialSet &partialSet, con
                 continue;
 
             rj = r[typeJ];
-            auto &histogram = partialSet.fullHistogram(typeI, typeJ).bins();
+            auto &histogram = histograms_->fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
-            nPoints = partialSet.fullHistogram(typeI, typeJ).nBins();
+            nPoints = histograms_->fullHistogram(typeI, typeJ).nBins();
             for (i = 0; i < maxr[typeI]; ++i)
             {
                 centre = ri[i];
@@ -164,19 +147,19 @@ bool GRModule::calculateGRSimple(Configuration *cfg, PartialSet &partialSet, con
     return true;
 }
 
-bool GRModule::calculateGRCells(Configuration *cfg, PartialSet &partialSet, const double rdfRange)
+bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange)
 {
     auto &cellArray = cfg->cells();
     Combinations comb(cellArray.nCells());
 
     auto combinableHistograms = dissolve::CombinableValue<Array2D<Histogram1D>>(
-        [&partialSet]()
+        [&]()
         {
             Array2D<Histogram1D> histograms;
-            histograms.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes(), true);
-            for (auto i = 0; i < partialSet.nAtomTypes(); ++i)
-                for (auto j = i; j < partialSet.nAtomTypes(); ++j)
-                    histograms[{i, j}] = partialSet.fullHistogram(i, j);
+            histograms.initialise(histograms_->atomTypeMix().nItems(), histograms_->atomTypeMix().nItems(), true);
+            for (auto i = 0; i < histograms_->atomTypeMix().nItems(); ++i)
+                for (auto j = i; j < histograms_->atomTypeMix().nItems(); ++j)
+                    histograms[{i, j}] = histograms_->fullHistogram(i, j);
             return histograms;
         });
 
@@ -224,7 +207,11 @@ bool GRModule::calculateGRCells(Configuration *cfg, PartialSet &partialSet, cons
     dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(0),
                        dissolve::counting_iterator<int>(comb.getNumCombinations()), unaryOp);
     auto histograms = combinableHistograms.finalize();
-    addHistogramsToPartialSet(histograms, partialSet);
+
+    // Copy the final calculated full histograms to the HistogramSet
+    for (auto k = 0; k < histograms_->atomTypeMix().nItems(); ++k)
+        for (auto j = 0; j < histograms_->atomTypeMix().nItems(); ++j)
+            histograms_->fullHistogram(k, j) = histograms[{k, j}];
 
     // Atoms within the same cell
     for (int n = 0; n < cellArray.nCells(); ++n)
@@ -236,7 +223,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, PartialSet &partialSet, cons
         PairIterator pairs(atomsI.size());
         std::for_each(
             pairs.begin(), pairs.end(),
-            [&atomsI, &partialSet](auto it)
+            [&](auto it)
             {
                 auto [idx, jdx] = it;
                 if (idx == jdx)
@@ -248,7 +235,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, PartialSet &partialSet, cons
                 if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
                 {
                     // No need to perform MIM since we're in the same cell
-                    partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());
+                    histograms_->fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());
                 }
             });
     }
@@ -321,7 +308,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
         processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->name()), name_, GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
-        originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
+        originalgr.initialise(cfg->atomTypePopulations());
 
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -339,24 +326,28 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     /*
      * Make sure histograms are set up, and reset any existing data
      */
-
-    originalgr.setUpHistograms(rdfRange, rdfBinWidth);
-    originalgr.reset();
+    if (!histograms_)
+    {
+        histograms_.emplace();
+        histograms_->initialise(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
+    }
+    histograms_->zeroBins();
 
     /*
      * Calculate full (intra+inter) partials
      */
 
     Timer timer;
+    originalgr.reset();
     if (method == GRModule::TestMethod)
-        calculateGRTestSerial(cfg, originalgr);
+        calculateGRTestSerial(cfg);
     else if (method == GRModule::SimpleMethod)
-        calculateGRSimple(cfg, originalgr, rdfBinWidth);
+        calculateGRSimple(cfg, rdfBinWidth);
     else if (method == GRModule::CellsMethod)
-        calculateGRCells(cfg, originalgr, rdfRange);
+        calculateGRCells(cfg, rdfRange);
     else if (method == GRModule::AutoMethod)
     {
-        cfg->nAtoms() > 10000 ? calculateGRCells(cfg, originalgr, rdfRange) : calculateGRSimple(cfg, originalgr, rdfBinWidth);
+        cfg->nAtoms() > 10000 ? calculateGRCells(cfg, rdfRange) : calculateGRSimple(cfg, rdfBinWidth);
     }
     timer.stop();
     Messenger::print("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
@@ -366,21 +357,14 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
      */
 
     const auto *box = cfg->box();
-    const auto &cells = cfg->cells();
-
-    // Set start/stride for parallel loop (pool solo)
-    auto offset = 0;
-    auto nChunks = 1;
-
     timer.start();
-
     // Loop over molecules
     for (auto &mol : cfg->molecules())
     {
         const auto &atoms = mol->atoms();
 
         dissolve::for_each_pair(ParallelPolicies::seq, atoms,
-                                [box, &originalgr](int index, auto &i, int jndex, auto &j)
+                                [&, box](int index, auto &i, int jndex, auto &j)
                                 {
                                     // Ignore atom on itself
                                     if (index == jndex)
@@ -394,7 +378,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
                                     if (typeJ == AtomType::Ignore)
                                         return;
 
-                                    originalgr.boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
+                                    histograms_->boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
                                 });
     }
 
@@ -408,21 +392,21 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
      */
 
     timer.start();
-    auto success =
-        for_each_pair_early(originalgr.nAtomTypes(),
-                            [&originalgr](auto typeI, auto typeJ) -> EarlyReturn<bool>
-                            {
-                                // Create unbound histogram from total and bound data
-                                originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-                                originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+    auto success = for_each_pair_early(
+        originalgr.nAtomTypes(),
+        [&](auto typeI, auto typeJ) -> EarlyReturn<bool>
+        {
+            // Create unbound histogram from total and bound data
+            histograms_->unboundHistogram(typeI, typeJ) = histograms_->fullHistogram(typeI, typeJ);
+            histograms_->unboundHistogram(typeI, typeJ).add(histograms_->boundHistogram(typeI, typeJ), -1.0);
 
-                                return EarlyReturn<bool>::Continue;
-                            });
+            return EarlyReturn<bool>::Continue;
+        });
     if (success.has_value() && !success.value())
         return false;
 
-    // Transform histogram data into radial distribution functions
-    originalgr.formPartials(box->volume());
+    // Transform histogram data into partials and store
+    histograms_->formPartials(originalgr, box->volume());
 
     // Sum total functions
     originalgr.formTotals(true);
@@ -511,7 +495,7 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, std::string_view tar
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes);
+    summedUnweightedGR.initialise(combinedAtomTypes);
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // Vector for simplicity

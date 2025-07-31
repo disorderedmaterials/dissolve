@@ -71,7 +71,7 @@ NodeConstants::ProcessResult GRNode::process()
     if (!rawGR_)
     {
         rawGR_.emplace(realSpeciesPopulations);
-        rawGR_->setUp(targetConfiguration_->atomTypePopulations(), grRange, binWidth_.asDouble());
+        rawGR_->initialise(targetConfiguration_->atomTypePopulations());
         unweightedGR_->setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
     }
 

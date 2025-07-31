@@ -9,6 +9,7 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/sampledData1D.h"
+#include "math/sampledDouble.h"
 
 /*
  * Data1D

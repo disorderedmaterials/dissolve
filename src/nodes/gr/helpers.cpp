@@ -5,9 +5,6 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/speciesAngle.h"
-#include "classes/speciesBond.h"
-#include "classes/speciesTorsion.h"
 #include "main/dissolve.h"
 #include "math/combinations.h"
 #include "math/error.h"
@@ -16,21 +13,7 @@
 #include "nodes/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
-#include <iterator>
 #include <tuple>
-
-namespace
-{
-void addHistogramsToPartialSet(Array2D<Histogram1D> &histograms, PartialSet &target)
-{
-    for (auto k = 0; k < target.nAtomTypes(); ++k)
-        for (auto j = 0; j < target.nAtomTypes(); ++j)
-        {
-            auto &histo = target.fullHistogram(k, j);
-            histo = std::move(histograms[{k, j}]);
-        }
-}
-} // namespace
 
 /*
  * Private Functions
@@ -47,7 +30,7 @@ bool GRNode::calculateGRTestSerial()
         [&, box](auto i, auto &ii, auto j, auto &jj)
         {
             if (&ii != &jj)
-                rawGR_->fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
+                histograms_->fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
         });
 
     return true;
@@ -99,9 +82,9 @@ bool GRNode::calculateGRSimple()
     for (typeI = 0; typeI < nTypes; ++typeI)
     {
         ri = r[typeI];
-        auto &histogram = rawGR_->fullHistogram(typeI, typeI).bins();
+        auto &histogram = histograms_->fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
-        nPoints = rawGR_->fullHistogram(typeI, typeI).nBins();
+        nPoints = histograms_->fullHistogram(typeI, typeI).nBins();
         PairIterator pairs(maxr[typeI]);
         std::for_each(pairs.begin(), pairs.end(),
                       [box, bins, rbin, ri, nPoints, &histogram](auto it)
@@ -135,9 +118,9 @@ bool GRNode::calculateGRSimple()
                 continue;
 
             rj = r[typeJ];
-            auto &histogram = rawGR_->fullHistogram(typeI, typeJ).bins();
+            auto &histogram = histograms_->fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
-            nPoints = rawGR_->fullHistogram(typeI, typeJ).nBins();
+            nPoints = histograms_->fullHistogram(typeI, typeJ).nBins();
             for (i = 0; i < maxr[typeI]; ++i)
             {
                 centre = ri[i];
@@ -175,7 +158,7 @@ bool GRNode::calculateGRCells(double grRange)
             histograms.initialise(rawGR_->nAtomTypes(), rawGR_->nAtomTypes(), true);
             for (auto i = 0; i < rawGR_->nAtomTypes(); ++i)
                 for (auto j = i; j < rawGR_->nAtomTypes(); ++j)
-                    histograms[{i, j}] = rawGR_->fullHistogram(i, j);
+                    histograms[{i, j}] = histograms_->fullHistogram(i, j);
             return histograms;
         });
 
@@ -223,7 +206,15 @@ bool GRNode::calculateGRCells(double grRange)
     dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(0),
                        dissolve::counting_iterator<int>(comb.getNumCombinations()), unaryOp);
     auto histograms = combinableHistograms.finalize();
-    addHistogramsToPartialSet(histograms, *rawGR_);
+    // Copy the final calculated full histograms to the HistogramSet
+    for (auto k = 0; k < histograms_->atomTypeMix().nItems(); ++k)
+        for (auto j = 0; j < histograms_->atomTypeMix().nItems(); ++j)
+            histograms_->fullHistogram(k, j) = histograms[{k, j}];
+
+    // Copy the final calculated full histograms to the HistogramSet
+    for (auto k = 0; k < histograms_->atomTypeMix().nItems(); ++k)
+        for (auto j = 0; j < histograms_->atomTypeMix().nItems(); ++j)
+            histograms_->fullHistogram(k, j) = histograms[{k, j}];
 
     // Atoms within the same cell
     for (int n = 0; n < cellArray.nCells(); ++n)
@@ -247,7 +238,7 @@ bool GRNode::calculateGRCells(double grRange)
                 if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
                 {
                     // No need to perform MIM since we're in the same cell
-                    rawGR_->fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());
+                    histograms_->fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());
                 }
             });
     }
@@ -278,8 +269,12 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      * Make sure histograms are set up, and reset any existing data
      */
 
-    rawGR_->setUpHistograms(grRange, binWidth_.asDouble());
-    rawGR_->reset();
+    if (!histograms_)
+    {
+        histograms_.emplace();
+        histograms_->initialise(targetConfiguration_->atomTypePopulations(), grRange, binWidth_.asDouble());
+    }
+    histograms_->zeroBins();
 
     /*
      * Calculate full (intra+inter) partials
@@ -304,8 +299,6 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      */
 
     const auto *box = targetConfiguration_->box();
-    const auto &cells = targetConfiguration_->cells();
-
     timer.start();
 
     // Loop over molecules
@@ -328,7 +321,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
                                     if (typeJ == AtomType::Ignore)
                                         return;
 
-                                    rawGR_->boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
+                                    histograms_->boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
                                 });
     }
 
@@ -342,21 +335,21 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      */
 
     timer.start();
-    auto success =
-        for_each_pair_early(rawGR_->nAtomTypes(),
-                            [&](auto typeI, auto typeJ) -> EarlyReturn<bool>
-                            {
-                                // Create unbound histogram from total and bound data
-                                rawGR_->unboundHistogram(typeI, typeJ) = rawGR_->fullHistogram(typeI, typeJ);
-                                rawGR_->unboundHistogram(typeI, typeJ).add(rawGR_->boundHistogram(typeI, typeJ), -1.0);
+    auto success = for_each_pair_early(
+        rawGR_->nAtomTypes(),
+        [&](auto typeI, auto typeJ) -> EarlyReturn<bool>
+        {
+            // Create unbound histogram from total and bound data
+            histograms_->unboundHistogram(typeI, typeJ) = histograms_->fullHistogram(typeI, typeJ);
+            histograms_->unboundHistogram(typeI, typeJ).add(histograms_->boundHistogram(typeI, typeJ), -1.0);
 
-                                return EarlyReturn<bool>::Continue;
-                            });
+            return EarlyReturn<bool>::Continue;
+        });
     if (success.has_value() && !success.value())
         return false;
 
     // Transform histogram data into radial distribution functions
-    rawGR_->formPartials(box->volume());
+    histograms_->formPartials(*rawGR_, box->volume());
 
     // Sum total functions
     rawGR_->formTotals(true);

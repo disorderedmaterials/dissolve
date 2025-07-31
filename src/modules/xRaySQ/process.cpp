@@ -202,7 +202,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     auto [weightedSQ, wSQtatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", name_, GenericItem::InRestartFileFlag);
     if (wSQtatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
+        weightedSQ.initialise(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
@@ -258,7 +258,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
+        weightedGR.initialise(unweightedSQ.atomTypeMix());
 
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
