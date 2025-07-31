@@ -8,13 +8,6 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-HistogramSet::~HistogramSet()
-{
-    fullHistograms_.clear();
-    boundHistograms_.clear();
-    unboundHistograms_.clear();
-}
-
 /*
  * Data
  */
@@ -24,19 +17,19 @@ void HistogramSet::initialise(const AtomTypeMix &atomTypeMix, double rdfRange, d
 {
     atomTypeMix_ = atomTypeMix;
 
-    auto nTypes = atomTypeMix_.nItems();
-
-    fullHistograms_.initialise(nTypes, nTypes, half_);
-    boundHistograms_.initialise(nTypes, nTypes, half_);
-    unboundHistograms_.initialise(nTypes, nTypes, half_);
+    fullHistograms_.clear(half_);
+    boundHistograms_.clear(half_);
+    unboundHistograms_.clear(half_);
 
     dissolve::for_each_pair(
-        ParallelPolicies::par, nTypes,
-        [&](int i, int j)
+        ParallelPolicies::seq, atomTypeMix_,
+        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
-            fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-            boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-            unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+
+            fullHistograms_.get(key).initialise(0.0, rdfRange, binWidth);
+            boundHistograms_.get(key).initialise(0.0, rdfRange, binWidth);
+            unboundHistograms_.get(key).initialise(0.0, rdfRange, binWidth);
         },
         half_);
 }
@@ -52,11 +45,11 @@ void HistogramSet::clear()
 // Zero histogram bins
 void HistogramSet::zeroBins()
 {
-    for (auto &histo : fullHistograms_.linearArray())
+    for (auto &histo : std::views::values(fullHistograms_.map()))
         histo.zeroBins();
-    for (auto &histo : boundHistograms_.linearArray())
+    for (auto &histo : std::views::values(boundHistograms_.map()))
         histo.zeroBins();
-    for (auto &histo : unboundHistograms_.linearArray())
+    for (auto &histo : std::views::values(unboundHistograms_.map()))
         histo.zeroBins();
 }
 
@@ -69,14 +62,14 @@ void HistogramSet::setFingerprint(std::string_view fingerprint) { fingerprint_ =
 // Return fingerprint of partials
 std::string_view HistogramSet::fingerprint() const { return fingerprint_; }
 
-// Return full histogram specified
-Histogram1D &HistogramSet::fullHistogram(int i, int j) { return fullHistograms_[{i, j}]; }
+// Return full histogram
+DoubleKeyedMap<Histogram1D> &HistogramSet::fullHistograms() { return fullHistograms_; }
 
-// Return bound histogram specified
-Histogram1D &HistogramSet::boundHistogram(int i, int j) { return boundHistograms_[{i, j}]; }
+// Return bound histogram
+DoubleKeyedMap<Histogram1D> &HistogramSet::boundHistograms() { return boundHistograms_; }
 
-// Return unbound histogram specified
-Histogram1D &HistogramSet::unboundHistogram(int i, int j) { return unboundHistograms_[{i, j}]; }
+// Return unbound histogram
+DoubleKeyedMap<Histogram1D> &HistogramSet::unboundHistograms() { return unboundHistograms_; }
 
 /*
  * Manipulation
@@ -89,17 +82,19 @@ void HistogramSet::formPartials(PartialSet &partials, double boxVolume)
         ParallelPolicies::seq, atomTypeMix_,
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
+            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+
             // Calculate RDFs from histogram data
-            calculateRDF(partials.partial(n, m), fullHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
+            calculateRDF(partials.partials().get(key), fullHistograms_.get(key), boxVolume, at1.population(), at2.population(),
                          &at1 == &at2 ? 2.0 : 1.0);
-            calculateRDF(partials.boundPartial(n, m), boundHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
-                         &at1 == &at2 ? 2.0 : 1.0);
-            calculateRDF(partials.unboundPartial(n, m), unboundHistograms_[{n, m}], boxVolume, at1.population(),
+            calculateRDF(partials.boundPartials().get(key), boundHistograms_.get(key), boxVolume, at1.population(),
+                         at2.population(), &at1 == &at2 ? 2.0 : 1.0);
+            calculateRDF(partials.unboundPartials().get(key), unboundHistograms_.get(key), boxVolume, at1.population(),
                          at2.population(), &at1 == &at2 ? 2.0 : 1.0);
 
             // Set flags for bound partials specifying if they are empty (i.e. there are no
             // contributions of that type)
-            partials.emptyBoundPartial(n, m) = boundHistograms_[{n, m}].nBinned() == 0;
+            partials.emptyBoundPartials().get(key) = boundHistograms_.get(key).nBinned() == 0;
         },
         half_);
 }
