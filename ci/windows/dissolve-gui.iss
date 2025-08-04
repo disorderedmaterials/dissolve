@@ -5,7 +5,7 @@
 #define MyAppVersion GetEnv('DISSOLVE_VERSION')
 #define MyAppPublisher "Team Dissolve"
 #define MyAppURL "https://www.projectdissolve.com/"
-#define MyAppExeName "Dissolve-GUI.exe"
+#define MyAppExeName "Dissolve-GUI-QML.exe"
 
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
 #define DissolveDir GetEnv('DISSOLVE_DIR')
@@ -27,11 +27,11 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={commonpf}\Dissolve-GUI
+DefaultDirName={commonpf}\Dissolve-GUI-QML
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
-OutputBaseFilename=Dissolve-GUI-{#MyAppVersion}-Win64
+OutputBaseFilename=Dissolve-GUI-QML-{#MyAppVersion}-Win64
 SetupIconFile=Dissolve.ico
 Compression=lzma
 SolidCompression=yes
@@ -44,9 +44,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#DeployDir}\install\bin\*"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\install\plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
-Source: "{#DeployDir}\install\qml\*"; DestDir: "{app}\qml"; Flags: recursesubdirs
-Source: "{#DeployDir}\install\translations\*"; DestDir: "{app}\translations"
+; Source: "{#DeployDir}\install\plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
+; Source: "{#DeployDir}\install\qml\*"; DestDir: "{app}\qml"; Flags: recursesubdirs
+; Source: "{#DeployDir}\install\translations\*"; DestDir: "{app}\translations"
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#FreetypeDir}\freetype.dll"; DestDir: "{app}\bin"

@@ -5,7 +5,6 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/ui_fileAndFormat.h"
-#include "gui/models/enumOptionsModel.h"
 #include "keywords/fileAndFormat.h"
 #include <QWidget>
 
@@ -34,8 +33,6 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
     private:
     // Main form declaration
     Ui::FileAndFormatWidget ui_;
-    // Model for enum options
-    EnumOptionsModel enumOptionsModel_;
 
     private Q_SLOTS:
     void on_FileEdit_editingFinished();

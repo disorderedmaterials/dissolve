@@ -5,7 +5,6 @@
 
 #include "base/units.h"
 #include "gui/mainTab.h"
-#include "gui/models/enumOptionsModel.h"
 #include "gui/models/externalPotentialModel.h"
 #include "gui/models/generatorModel.h"
 #include "gui/models/globalPotentialFilterProxy.h"

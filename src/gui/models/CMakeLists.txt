@@ -10,7 +10,6 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     dissolveModel.h
-    enumOptionsModel.h
     forcefieldModel.h
     isotopologueSetModel.h
     masterAngleModel.h
@@ -69,7 +68,6 @@ set(models_SRCS
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
     dissolveModelImageProvider.h
-    enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
     ffSortFilterModel.cpp
@@ -125,7 +123,6 @@ qt6_wrap_cpp(
   atomTypeModel.h
   braggReflectionModel.h
   dataManagerSimulationModel.h
-  enumOptionsModel.h
   expressionVariableVectorModel.h
   forcefieldModel.h
   isotopologueSetModel.h

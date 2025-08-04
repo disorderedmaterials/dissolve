@@ -21,6 +21,9 @@ class ParameterModel : public QAbstractListModel
     // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+    // Update parameter info
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+
     // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
     QHash<int, QByteArray> roleNames() const override;
 
