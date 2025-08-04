@@ -21,7 +21,8 @@ template <typename ValueClass> class DoubleKeyedMap
     DoubleKeyedMap(bool mirrored = false) : mirroredAreEquivalent_(mirrored) {}
 
     private:
-    const std::string separator_{"//"};
+    // Separator to use in key creation
+    std::string separator_{"//"};
     // Map of data
     std::map<std::string, ValueClass> data_;
     // Whether the mirrored key pairs A-B and B-A are equivalent
@@ -29,7 +30,7 @@ template <typename ValueClass> class DoubleKeyedMap
 
     private:
     // Return the full key for the specified pair
-    const std::string key(std::string_view A, std::string_view B) { return std::format("{}{}{}", A, separator_, B); }
+    const std::string key(std::string_view A, std::string_view B) const { return std::format("{}{}{}", A, separator_, B); }
     // Return iterator to the specified key if it exists, obeying mirrored equivalents
     std::map<std::string, ValueClass>::iterator find(std::string_view A, std::string_view B)
     {
@@ -59,6 +60,8 @@ template <typename ValueClass> class DoubleKeyedMap
         data_.clear();
         mirroredAreEquivalent_ = mirrored;
     }
+    // Return whether the mirrored key pairs A-B and B-A are equivalent
+    bool mirroredAreEquivalent() const { return mirroredAreEquivalent_; }
     // Set / overwrite key
     void set(std::string_view A, std::string_view B, ValueClass value)
     {

@@ -11,27 +11,25 @@
 bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
                                        StructureFactors::NormalisationType normalisation)
 {
-    int typeI, typeJ;
-    for (typeI = 0; typeI < unweightedgr.nAtomTypes(); ++typeI)
-    {
-        for (typeJ = typeI; typeJ < unweightedgr.nAtomTypes(); ++typeJ)
-        {
-            auto weight = weights.weight(typeI, typeJ, 0.0);
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedgr.atomTypeMix(),
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+                            {
+                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                auto weight = weights.weight(typeI, typeJ, 0.0);
 
-            // Bound (intramolecular) partial (multiplied by the bound term weight)
-            weightedgr.boundPartial(typeI, typeJ).copyArrays(unweightedgr.boundPartial(typeI, typeJ));
-            weightedgr.boundPartial(typeI, typeJ) *= weight;
+                                // Bound (intramolecular) partial (multiplied by the bound term weight)
+                                weightedgr.boundPartials().get(key).copyArrays(unweightedgr.boundPartials().get(key));
+                                weightedgr.boundPartials().get(key) *= weight;
 
-            // Unbound partial (multiplied by the full weight)
-            weightedgr.unboundPartial(typeI, typeJ).copyArrays(unweightedgr.unboundPartial(typeI, typeJ));
-            weightedgr.unboundPartial(typeI, typeJ) -= 1.0;
-            weightedgr.unboundPartial(typeI, typeJ) *= weight;
+                                // Unbound partial (multiplied by the full weight)
+                                weightedgr.unboundPartials().get(key).copyArrays(unweightedgr.unboundPartials().get(key));
+                                weightedgr.unboundPartials().get(key) -= 1.0;
+                                weightedgr.unboundPartials().get(key) *= weight;
 
-            // Full partial, summing bound and unbound terms
-            weightedgr.partial(typeI, typeJ).copyArrays(weightedgr.unboundPartial(typeI, typeJ));
-            weightedgr.partial(typeI, typeJ) += weightedgr.boundPartial(typeI, typeJ);
-        }
-    }
+                                // Full partial, summing bound and unbound terms
+                                weightedgr.partials().get(key).copyArrays(weightedgr.unboundPartials().get(key));
+                                weightedgr.partials().get(key) += weightedgr.boundPartials().get(key);
+                            });
 
     // Form total G(r)
     weightedgr.formTotals(false);
@@ -55,25 +53,23 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
 bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
                                        StructureFactors::NormalisationType normalisation)
 {
-    int typeI, typeJ;
-    for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
-    {
-        for (typeJ = typeI; typeJ < unweightedsq.nAtomTypes(); ++typeJ)
-        {
-            // Weight bound and unbound S(Q) and sum into full partial
-            auto qWeights = weights.weight(typeI, typeJ, unweightedsq.boundPartial(typeI, typeJ).xAxis());
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedsq.atomTypeMix(),
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+                            {
+                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                // Weight bound and unbound S(Q) and sum into full partial
+                                auto qWeights = weights.weight(typeI, typeJ, unweightedsq.boundPartials().get(key).xAxis());
 
-            // Bound (intramolecular) and unbound partials
-            weightedsq.boundPartial(typeI, typeJ).copyArrays(unweightedsq.boundPartial(typeI, typeJ));
-            weightedsq.boundPartial(typeI, typeJ) *= qWeights;
-            weightedsq.unboundPartial(typeI, typeJ).copyArrays(unweightedsq.unboundPartial(typeI, typeJ));
-            weightedsq.unboundPartial(typeI, typeJ) *= qWeights;
+                                // Bound (intramolecular) and unbound partials
+                                weightedsq.boundPartials().get(key).copyArrays(unweightedsq.boundPartials().get(key));
+                                weightedsq.boundPartials().get(key) *= qWeights;
+                                weightedsq.unboundPartials().get(key).copyArrays(unweightedsq.unboundPartials().get(key));
+                                weightedsq.unboundPartials().get(key) *= qWeights;
 
-            // Full partial (sum of bound and unbound terms)
-            weightedsq.partial(typeI, typeJ).copyArrays(weightedsq.unboundPartial(typeI, typeJ));
-            weightedsq.partial(typeI, typeJ) += weightedsq.boundPartial(typeI, typeJ);
-        }
-    }
+                                // Full partial (sum of bound and unbound terms)
+                                weightedsq.partials().get(key).copyArrays(weightedsq.unboundPartials().get(key));
+                                weightedsq.partials().get(key) += weightedsq.boundPartials().get(key);
+                            });
 
     // Form total structure factor
     weightedsq.formTotals(false);

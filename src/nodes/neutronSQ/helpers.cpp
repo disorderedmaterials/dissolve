@@ -8,28 +8,26 @@
 // Calculate weighted g(r)
 bool NeutronSQNode::calculateWeightedGR()
 {
-    int typeI, typeJ;
-    for (typeI = 0; typeI < unweightedGR_->nAtomTypes(); ++typeI)
-    {
-        for (typeJ = typeI; typeJ < unweightedGR_->nAtomTypes(); ++typeJ)
-        {
-            double weight = weights_.weight(typeI, typeJ);
-            double intraWeight = weights_.intramolecularWeight(typeI, typeJ);
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedGR_->atomTypeMix(),
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+                            {
+                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                double weight = weights_.weight(typeI, typeJ);
+                                double intraWeight = weights_.intramolecularWeight(typeI, typeJ);
 
-            // Bound (intramolecular) partial (multiplied by the bound term weight)
-            weightedGR_->boundPartial(typeI, typeJ).copyArrays(unweightedGR_->boundPartial(typeI, typeJ));
-            weightedGR_->boundPartial(typeI, typeJ) *= intraWeight;
+                                // Bound (intramolecular) partial (multiplied by the bound term weight)
+                                weightedGR_->boundPartials().get(key).copyArrays(unweightedGR_->boundPartials().get(key));
+                                weightedGR_->boundPartials().get(key) *= intraWeight;
 
-            // Unbound partial (multiplied by the full weight)
-            weightedGR_->unboundPartial(typeI, typeJ).copyArrays(unweightedGR_->unboundPartial(typeI, typeJ));
-            weightedGR_->unboundPartial(typeI, typeJ) -= 1.0;
-            weightedGR_->unboundPartial(typeI, typeJ) *= weight;
+                                // Unbound partial (multiplied by the full weight)
+                                weightedGR_->unboundPartials().get(key).copyArrays(unweightedGR_->unboundPartials().get(key));
+                                weightedGR_->unboundPartials().get(key) -= 1.0;
+                                weightedGR_->unboundPartials().get(key) *= weight;
 
-            // Full partial, summing bound and unbound terms
-            weightedGR_->partial(typeI, typeJ).copyArrays(weightedGR_->unboundPartial(typeI, typeJ));
-            weightedGR_->partial(typeI, typeJ) += weightedGR_->boundPartial(typeI, typeJ);
-        }
-    }
+                                // Full partial, summing bound and unbound terms
+                                weightedGR_->partials().get(key).copyArrays(weightedGR_->unboundPartials().get(key));
+                                weightedGR_->partials().get(key) += weightedGR_->boundPartials().get(key);
+                            });
 
     // Calculate and normalise total to form factor if requested
     weightedGR_->formTotals(false);
@@ -51,28 +49,26 @@ bool NeutronSQNode::calculateWeightedGR()
 // Calculate weighted S(Q)
 bool NeutronSQNode::calculateWeightedSQ()
 {
-    int typeI, typeJ;
-    for (typeI = 0; typeI < unweightedSQ_->nAtomTypes(); ++typeI)
-    {
-        for (typeJ = typeI; typeJ < unweightedSQ_->nAtomTypes(); ++typeJ)
-        {
-            // Weight bound and unbound S(Q) and sum into full partial
-            double weight = weights_.weight(typeI, typeJ);
-            double boundWeight = weights_.intramolecularWeight(typeI, typeJ);
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedSQ_->atomTypeMix(),
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+                            {
+                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                // Weight bound and unbound S(Q) and sum into full partial
+                                double weight = weights_.weight(typeI, typeJ);
+                                double boundWeight = weights_.intramolecularWeight(typeI, typeJ);
 
-            // Bound (intramolecular) partial (multiplied by the bound term weight)
-            weightedSQ_->boundPartial(typeI, typeJ).copyArrays(unweightedSQ_->boundPartial(typeI, typeJ));
-            weightedSQ_->boundPartial(typeI, typeJ) *= boundWeight;
+                                // Bound (intramolecular) partial (multiplied by the bound term weight)
+                                weightedSQ_->boundPartials().get(key).copyArrays(unweightedSQ_->boundPartials().get(key));
+                                weightedSQ_->boundPartials().get(key) *= boundWeight;
 
-            // Unbound partial (multiplied by the full weight)
-            weightedSQ_->unboundPartial(typeI, typeJ).copyArrays(unweightedSQ_->unboundPartial(typeI, typeJ));
-            weightedSQ_->unboundPartial(typeI, typeJ) *= weight;
+                                // Unbound partial (multiplied by the full weight)
+                                weightedSQ_->unboundPartials().get(key).copyArrays(unweightedSQ_->unboundPartials().get(key));
+                                weightedSQ_->unboundPartials().get(key) *= weight;
 
-            // Full partial (sum of bound and unbound terms)
-            weightedSQ_->partial(typeI, typeJ).copyArrays(weightedSQ_->unboundPartial(typeI, typeJ));
-            weightedSQ_->partial(typeI, typeJ) += weightedSQ_->boundPartial(typeI, typeJ);
-        }
-    }
+                                // Full partial (sum of bound and unbound terms)
+                                weightedSQ_->partials().get(key).copyArrays(weightedSQ_->unboundPartials().get(key));
+                                weightedSQ_->partials().get(key) += weightedSQ_->boundPartials().get(key);
+                            });
 
     // Form total structure factor
     weightedSQ_->formTotals(false);

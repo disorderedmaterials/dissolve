@@ -503,7 +503,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                 {
                                     auto pairIndex = scatteringMatrix_.pairIndexOf(at1, at2);
 
-                                    const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
+                                    const auto &partialIJ = unweightedSQ.unboundPartials().get(at1->name(), at2->name());
                                     Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[pairIndex],
                                                                   1.0 / targets_.size());
                                 });

@@ -133,7 +133,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
         Array2D<Data1D> braggPartials;
         braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
         for (auto &partial : braggPartials)
-            partial.initialise(unweightedsq.partial(0, 0));
+            partial.initialise(unweightedsq.partials().begin()->second);
 
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
         auto success = for_each_pair_early(
@@ -184,14 +184,15 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
                                 });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
-        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.nAtomTypes(),
-                                [&](const int i, const int j)
+        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix(),
+                                [&](auto i, auto &atd1, auto j, auto &atd2)
                                 {
                                     // Note: Intramolecular broadening will not be applied to bound terms within the
                                     // calculated Bragg scattering
-                                    auto &bound = unweightedsq.boundPartial(i, j);
-                                    auto &unbound = unweightedsq.unboundPartial(i, j);
-                                    auto &partial = unweightedsq.partial(i, j);
+                                    auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                    auto &bound = unweightedsq.boundPartials().get(key);
+                                    auto &unbound = unweightedsq.unboundPartials().get(key);
+                                    auto &partial = unweightedsq.partials().get(key);
                                     auto &bragg = braggPartials[{i, j}];
 
                                     for (auto n = 0; n < bound.nValues(); ++n)

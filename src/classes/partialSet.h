@@ -70,7 +70,7 @@ class PartialSet
     const DoubleKeyedMap<Data1D> &unboundPartials() const;
     // Return bound empty flags
     DoubleKeyedMap<bool> &emptyBoundPartials();
-    const DoubleKeyedMap<Data1D> &emptyBoundPartials() const;
+    const DoubleKeyedMap<bool> &emptyBoundPartials() const;
     // Return whether specified bound partial is empty
     bool isBoundPartialEmpty(int i, int j) const;
     // Sum partials into totals
@@ -103,7 +103,7 @@ class PartialSet
 
     public:
     // Add in partials from source PartialSet to our own, with specified weighting
-    bool addPartials(PartialSet &source, double weighting);
+    void addPartials(PartialSet &source, double weighting);
 
     /*
      * Operators

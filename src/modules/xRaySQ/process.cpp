@@ -212,28 +212,28 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
         return ExecutionResult::Failed;
     if (saveFormFactors_)
     {
-        auto result = for_each_pair_early(unweightedSQ.atomTypeMix(),
-                                          [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool>
-                                          {
-                                              if (i == j)
-                                              {
-                                                  Data1D atomicData = unweightedSQ.partial(i, i);
-                                                  atomicData.values() = weights.formFactor(i, atomicData.xAxis());
-                                                  Data1DExportFileFormat exportFormat(
-                                                      std::format("{}-{}.form", name(), at1.atomTypeName()));
-                                                  if (!exportFormat.exportData(atomicData))
-                                                      return false;
-                                              }
+        auto result = for_each_pair_early(
+            unweightedSQ.atomTypeMix(),
+            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool>
+            {
+                if (i == j)
+                {
+                    Data1D atomicData = unweightedSQ.partials().get(at1.atomTypeName(), at2.atomTypeName());
+                    atomicData.values() = weights.formFactor(i, atomicData.xAxis());
+                    Data1DExportFileFormat exportFormat(std::format("{}-{}.form", name(), at1.atomTypeName()));
+                    if (!exportFormat.exportData(atomicData))
+                        return false;
+                }
 
-                                              Data1D ffData = unweightedSQ.partial(i, j);
-                                              ffData.values() = weights.weight(i, j, ffData.xAxis());
-                                              Data1DExportFileFormat exportFormat(
-                                                  std::format("{}-{}-{}.form", name(), at1.atomTypeName(), at2.atomTypeName()));
-                                              if (!exportFormat.exportData(ffData))
-                                                  return false;
+                Data1D ffData = unweightedSQ.partials().get(at1.atomTypeName(), at2.atomTypeName());
+                ffData.values() = weights.weight(i, j, ffData.xAxis());
+                Data1DExportFileFormat exportFormat(
+                    std::format("{}-{}-{}.form", name(), at1.atomTypeName(), at2.atomTypeName()));
+                if (!exportFormat.exportData(ffData))
+                    return false;
 
-                                              return EarlyReturn<bool>::Continue;
-                                          });
+                return EarlyReturn<bool>::Continue;
+            });
 
         if (!result.value_or(true))
         {

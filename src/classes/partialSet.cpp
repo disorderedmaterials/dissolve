@@ -106,11 +106,8 @@ DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() { return unboundPartials_;
 const DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() const { return unboundPartials_; }
 
 // Return emptyBound flag
-char &PartialSet::emptyBoundPartial(int i, int j) { return emptyBoundPartials_[{i, j}]; }
-const char &PartialSet::emptyBoundPartial(int i, int j) const { return emptyBoundPartials_[{i, j}]; }
-
-// Return whether specified bound partial is empty
-bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPartials_[{i, j}]; }
+DoubleKeyedMap<bool> &PartialSet::emptyBoundPartials() { return emptyBoundPartials_; }
+const DoubleKeyedMap<bool> &PartialSet::emptyBoundPartials() const { return emptyBoundPartials_; }
 
 // Sum partials into total
 void PartialSet::formTotals(bool applyConcentrationWeights)
@@ -245,7 +242,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
             auto &full = partials_.get(key);
             auto &bound = boundPartials_.get(key);
             auto &unbound = unboundPartials_.get(key);
-            ;
+
             parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
             for (auto n = 0; n < full.nValues(); ++n)
                 parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
@@ -278,63 +275,43 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    dissolve::for_each_pair(
-        ParallelPolicies::par, atomTypeMix_,
-        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-        {
-            partials_[{n, m}] += delta;
-            boundPartials_[{n, m}] += delta;
-            unboundPartials_[{n, m}] += delta;
-        },
-        half_);
+    // Full partials
+    dissolve::for_each(ParallelPolicies::par, partials_.begin(), partials_.end(),
+                       [delta](auto &pair) { pair.second += delta; });
 
+    // Bound partials
+    dissolve::for_each(ParallelPolicies::par, boundPartials_.begin(), boundPartials_.end(),
+                       [delta](auto &pair) { pair.second += delta; });
+
+    // Unbound partials
+    dissolve::for_each(ParallelPolicies::par, unboundPartials_.begin(), unboundPartials_.end(),
+                       [delta](auto &pair) { pair.second += delta; });
+
+    // Totals
     total_ += delta;
     boundTotal_ += delta;
     unboundTotal_ += delta;
 }
 
 // Add in partials from source PartialSet to our own
-bool PartialSet::addPartials(PartialSet &source, double weighting)
+void PartialSet::addPartials(PartialSet &source, double weighting)
 {
-    auto sourceNTypes = source.atomTypeMix_.nItems();
-    for (auto typeI = 0; typeI < sourceNTypes; ++typeI)
-    {
-        const auto atI = source.atomTypeMix_.atomType(typeI);
-        auto localI = atomTypeMix_.indexOf(atI);
-        if (!localI)
-        {
-            return Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                    atI->name());
-        }
+    // Full partials
+    for (auto &[key, partial] : source.partials_.map())
+        Interpolator::addInterpolated(partial, partials_.map()[key], weighting);
 
-        for (auto typeJ = typeI; typeJ < sourceNTypes; ++typeJ)
-        {
-            const auto atJ = source.atomTypeMix_.atomType(typeJ);
-            auto localJ = atomTypeMix_.indexOf(atJ);
-            if (!localJ)
-            {
-                return Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                        atJ->name());
-            }
+    // Bound partials
+    for (auto &[key, partial] : source.boundPartials_.map())
+        Interpolator::addInterpolated(partial, boundPartials_.map()[key], weighting);
 
-            // Add interpolated source partials to our set
-            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{*localI, *localJ}], weighting);
-            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{*localI, *localJ}], weighting);
-            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{*localI, *localJ}], weighting);
-
-            // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
-            // correctly
-            if (!source.isBoundPartialEmpty(typeI, typeJ))
-                emptyBoundPartials_[{typeI, typeJ}] = false;
-        }
-    }
+    // Unbound partials
+    for (auto &[key, partial] : source.unboundPartials_.map())
+        Interpolator::addInterpolated(partial, unboundPartials_.map()[key], weighting);
 
     // Add total function
     Interpolator::addInterpolated(source.total_, total_, weighting);
     Interpolator::addInterpolated(source.boundTotal_, boundTotal_, weighting);
     Interpolator::addInterpolated(source.unboundTotal_, unboundTotal_, weighting);
-
-    return true;
 }
 
 /*
@@ -345,40 +322,17 @@ void PartialSet::operator+=(const double delta) { adjust(delta); }
 
 void PartialSet::operator+=(const PartialSet &source)
 {
-    assert(source.nAtomTypes() != 0);
+    // Full partials
+    for (auto &[key, partial] : source.partials_.map())
+        partials_.map()[key] += partial;
 
-    // If we currently contain no data, just copy the source data
-    if (atomTypeMix_.nItems() == 0)
-    {
-        (*this) = source;
-        return;
-    }
+    // Bound partials
+    for (auto &[key, partial] : source.boundPartials_.map())
+        boundPartials_.map()[key] += partial;
 
-    // Loop over partials in source set
-    const auto &types = source.atomTypeMix();
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, types,
-        [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
-        {
-            auto optPairIndex = atomTypeMix_.indexOf(atd1.atomType(), atd2.atomType());
-            if (!optPairIndex)
-            {
-                Messenger::error("AtomType pair '{}-{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atd1.atomTypeName(), atd2.atomTypeName());
-                return;
-            }
-            auto &[localI, localJ] = *optPairIndex;
-
-            // Add interpolated source partials to our set
-            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{localI, localJ}]);
-            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{localI, localJ}]);
-            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{localI, localJ}]);
-
-            // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
-            if (!source.isBoundPartialEmpty(typeI, typeJ))
-                emptyBoundPartials_[{typeI, typeJ}] = false;
-        },
-        half_);
+    // Unbound partials
+    for (auto &[key, partial] : source.unboundPartials_.map())
+        unboundPartials_.map()[key] += partial;
 
     // Add total function
     Interpolator::addInterpolated(source.total(), total_);
@@ -388,15 +342,17 @@ void PartialSet::operator-=(const double delta) { adjust(-delta); }
 
 void PartialSet::operator*=(const double factor)
 {
-    dissolve::for_each_pair(
-        ParallelPolicies::par, atomTypeMix_.nItems(),
-        [&](auto n, auto m)
-        {
-            partials_[{n, m}] *= factor;
-            boundPartials_[{n, m}] *= factor;
-            unboundPartials_[{n, m}] *= factor;
-        },
-        half_);
+    // Full partials
+    dissolve::for_each(ParallelPolicies::par, partials_.begin(), partials_.end(),
+                       [factor](auto &pair) { pair.second *= factor; });
+
+    // Bound partials
+    dissolve::for_each(ParallelPolicies::par, boundPartials_.begin(), boundPartials_.end(),
+                       [factor](auto &pair) { pair.second *= factor; });
+
+    // Unbound partials
+    dissolve::for_each(ParallelPolicies::par, unboundPartials_.begin(), unboundPartials_.end(),
+                       [factor](auto &pair) { pair.second *= factor; });
 
     total_ *= factor;
     boundTotal_ *= factor;
@@ -417,17 +373,18 @@ PartialSet PartialSet::operator*(const double factor) const
 // Return Data1D with specified tag, if it exists
 OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view tag) const
 {
-    auto fullIt = std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    auto fullIt =
+        std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.second.tag() == tag; });
     if (fullIt != partials_.end())
-        return *fullIt;
-    auto boundIt =
-        std::find_if(boundPartials_.begin(), boundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+        return fullIt->second;
+    auto boundIt = std::find_if(boundPartials_.begin(), boundPartials_.end(),
+                                [tag](const auto &data) { return data.second.tag() == tag; });
     if (boundIt != boundPartials_.end())
-        return *boundIt;
-    auto unboundIt =
-        std::find_if(unboundPartials_.begin(), unboundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+        return boundIt->second;
+    auto unboundIt = std::find_if(unboundPartials_.begin(), unboundPartials_.end(),
+                                  [tag](const auto &data) { return data.second.tag() == tag; });
     if (unboundIt != unboundPartials_.end())
-        return *unboundIt;
+        return unboundIt->second;
     if (total_.tag() == tag)
         return total_;
     if (boundTotal_.tag() == tag)
@@ -461,91 +418,39 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     atomTypeMix_.clear();
     if (!atomTypeMix_.deserialise(parser, coreData))
         return false;
-    auto nTypes = atomTypeMix_.nItems();
 
-    // Read partials
-    partials_.initialise(nTypes, nTypes, half_);
-    boundPartials_.initialise(nTypes, nTypes, half_);
-    unboundPartials_.initialise(nTypes, nTypes, half_);
-    emptyBoundPartials_.initialise(nTypes, nTypes, half_);
-    emptyBoundPartials_ = false;
+    // Clear partials
+    partials_.clear(half_);
+    boundPartials_.clear(half_);
+    unboundPartials_.clear(half_);
+    emptyBoundPartials_.clear(half_);
 
-    for_each_pair_early(
-        nTypes,
-        [&](int typeI, int typeJ) -> EarlyReturn<bool>
-        {
-            auto &part = partials_[{typeI, typeJ}];
-            auto &bound = boundPartials_[{typeI, typeJ}];
-            auto &unbound = unboundPartials_[{typeI, typeJ}];
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    auto nPartials = parser.argi(0);
 
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            part.setTag(parser.argsv(0));
-            bound.setTag(parser.argsv(1));
-            unbound.setTag(parser.argsv(2));
+    // Read in individual partials
+    for (auto n = 0; n < nPartials; ++n)
+    {
+        // Read key
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        auto key = parser.args(0);
 
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            auto nPoints = parser.argi(0);
-            auto partError = parser.argb(1);
-            if (partError)
-                part.addErrors();
-            auto boundError = parser.argb(2);
-            if (boundError)
-                bound.addErrors();
-            auto unboundError = parser.argb(3);
-            if (unboundError)
-                unbound.addErrors();
-
-            part.xAxis().reserve(nPoints);
-            part.values().reserve(nPoints);
-            if (part.valuesHaveErrors())
-                part.errors().reserve(nPoints);
-            bound.xAxis().reserve(nPoints);
-            bound.values().reserve(nPoints);
-            if (bound.valuesHaveErrors())
-                bound.errors().reserve(nPoints);
-            unbound.xAxis().reserve(nPoints);
-            unbound.values().reserve(nPoints);
-            if (unbound.valuesHaveErrors())
-                unbound.errors().reserve(nPoints);
-
-            for (auto n = 0; n < nPoints; ++n)
-            {
-                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                    return false;
-                int argIndex = 0;
-                auto x = parser.argd(argIndex++);
-                part.xAxis().push_back(x);
-                bound.xAxis().push_back(x);
-                unbound.xAxis().push_back(x);
-                argIndex = readDataPoint(argIndex, parser, part);
-                argIndex = readDataPoint(argIndex, parser, bound);
-                argIndex = readDataPoint(argIndex, parser, unbound);
-            }
-            return EarlyReturn<bool>::Continue;
-        },
-        half_);
+        if (!partials_.map()[key].deserialise(parser))
+            return false;
+        if (!boundPartials_.map()[key].deserialise(parser))
+            return false;
+        if (!unboundPartials_.map()[key].deserialise(parser))
+            return false;
+    }
 
     // Read totals
     if (!total_.deserialise(parser))
         return false;
-    if (GenericList::baseDataVersion() == GenericList::DeserialisableDataVersion::Version08X)
-    {
-        // Writing of bound & unbound totals introduced in 0.9.0
-        boundTotal_.initialise(total_);
-        unboundTotal_.initialise(total_);
-    }
-    else
-    {
-        if (!boundTotal_.deserialise(parser))
-            return false;
-        if (!unboundTotal_.deserialise(parser))
-            return false;
-    }
-
-    // Read empty bound flags
-    if (!GenericItemDeserialiser::deserialise<Array2D<char>>(emptyBoundPartials_, parser))
+    if (!boundTotal_.deserialise(parser))
+        return false;
+    if (!unboundTotal_.deserialise(parser))
         return false;
 
     return true;
@@ -567,39 +472,28 @@ bool PartialSet::serialise(LineParser &parser) const
 
     // Write out AtomTypes first
     atomTypeMix_.serialise(parser);
-    auto nTypes = atomTypeMix_.nItems();
 
-    // Write individual Data1D
-    auto success = for_each_pair_early(
-        nTypes,
-        [&](int typeI, int typeJ) -> EarlyReturn<bool>
-        {
-            const auto &part = partials_[{typeI, typeJ}];
-            const auto &bound = boundPartials_[{typeI, typeJ}];
-            const auto &unbound = unboundPartials_[{typeI, typeJ}];
-
-            // Write tag
-            if (!parser.writeLineF("'{}' '{}' '{}'\n", part.tag(), bound.tag(), unbound.tag()))
-                return false;
-
-            // Write axis size and errors flag
-            if (!parser.writeLineF("{} {} {} {}\n", part.xAxis().size(), DissolveSys::btoa(part.valuesHaveErrors()),
-                                   DissolveSys::btoa(bound.valuesHaveErrors()), DissolveSys::btoa(unbound.valuesHaveErrors())))
-                return false;
-
-            for (auto i = 0; i < part.xAxis().size(); ++i)
-            {
-                if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
-                                       writeDataPoint(i, unbound)))
-                    return false;
-            }
-
-            return EarlyReturn<bool>::Continue;
-        },
-        half_);
-
-    if (!success.value_or(true))
+    // Write number of keys to expect
+    if (!parser.writeLineF("{}\n", partials_.size()))
         return false;
+
+    // Write partials using the full partials as the master key set
+    for (const auto &[key, partial] : partials_)
+    {
+        auto &bound = boundPartials_.map().at(key);
+        auto &unbound = unboundPartials_.map().at(key);
+
+        // Write key
+        if (!parser.writeLineF("{}\n", key))
+            return false;
+
+        if (!partial.serialise(parser))
+            return false;
+        if (!bound.serialise(parser))
+            return false;
+        if (!unbound.serialise(parser))
+            return false;
+    }
 
     // Write totals
     if (!total_.serialise(parser))
@@ -607,10 +501,6 @@ bool PartialSet::serialise(LineParser &parser) const
     if (!boundTotal_.serialise(parser))
         return false;
     if (!unboundTotal_.serialise(parser))
-        return false;
-
-    // Write empty bound flags
-    if (!GenericItemSerialiser::serialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;

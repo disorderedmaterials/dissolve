@@ -29,25 +29,35 @@ bool SQModule::calculateUnweightedSQ(const PartialSet &unweightedgr, PartialSet 
     // Don't subtract 1.0 from the bound partials
     Timer timer;
     timer.start();
-    dissolve::for_each_pair(
-        ParallelPolicies::par, unweightedgr.nAtomTypes(),
-        [&](int n, int m)
-        {
-            // Total partial
-            unweightedsq.partial(n, m).copyArrays(unweightedgr.partial(n, m));
-            unweightedsq.partial(n, m) -= 1.0;
-            Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
 
-            // Bound partial
-            unweightedsq.boundPartial(n, m).copyArrays(unweightedgr.boundPartial(n, m));
-            Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+    // Full partials
+    dissolve::for_each(ParallelPolicies::par, unweightedgr.partials().begin(), unweightedgr.partials().end(),
+                       [&](const auto &pair)
+                       {
+                           auto &sq = unweightedsq.partials().map()[pair.first];
+                           sq.copyArrays(pair.second);
+                           sq -= 1.0;
+                           Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+                       });
 
-            // Unbound partial
-            unweightedsq.unboundPartial(n, m).copyArrays(unweightedgr.unboundPartial(n, m));
-            unweightedsq.unboundPartial(n, m) -= 1.0;
-            Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction,
-                            broadening);
-        });
+    // Bound partials
+    dissolve::for_each(ParallelPolicies::par, unweightedgr.boundPartials().begin(), unweightedgr.boundPartials().end(),
+                       [&](const auto &pair)
+                       {
+                           auto &sq = unweightedsq.boundPartials().map()[pair.first];
+                           sq.copyArrays(pair.second);
+                           Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+                       });
+
+    // Unbound partials
+    dissolve::for_each(ParallelPolicies::par, unweightedgr.unboundPartials().begin(), unweightedgr.unboundPartials().end(),
+                       [&](const auto &pair)
+                       {
+                           auto &sq = unweightedsq.unboundPartials().map()[pair.first];
+                           sq.copyArrays(pair.second);
+                           sq -= 1.0;
+                           Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+                       });
 
     // Sum into total
     unweightedsq.formTotals(true);
