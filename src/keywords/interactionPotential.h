@@ -21,6 +21,7 @@ class InteractionPotentialBaseKeyword : public KeywordBase
     // Source EnumBaseOptions for functional form
     EnumOptionsBase &formOptions_;
 
+    protected:
     public:
     // Return EnumBaseOptions for functional form
     const EnumOptionsBase &formOptions() const { return formOptions_; }
@@ -46,7 +47,8 @@ template <class Functions> class InteractionPotentialKeyword : public Interactio
 {
     public:
     explicit InteractionPotentialKeyword(InteractionPotential<Functions> &data)
-        : InteractionPotentialBaseKeyword(optionData_), data_(data), optionData_(Functions::forms())
+        : InteractionPotentialBaseKeyword(optionData_), data_(data), optionData_(Functions::forms()),
+          formOptionsType_(typeid(Functions))
     {
     }
     ~InteractionPotentialKeyword() override = default;
@@ -59,11 +61,14 @@ template <class Functions> class InteractionPotentialKeyword : public Interactio
     InteractionPotential<Functions> &data_;
     // Related form enum data
     EnumOptions<typename Functions::Form> optionData_;
+    const std::type_index formOptionsType_;
 
     public:
     // Return reference to data
     InteractionPotential<Functions> &data() { return data_; }
     const InteractionPotential<Functions> &data() const { return data_; }
+
+    const std::type_index formOptionsType() const { return formOptionsType_; }
 
     /*
      * Arguments

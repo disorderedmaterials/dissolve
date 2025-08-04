@@ -17,11 +17,11 @@ class EnumOptionsModel : public QAbstractListModel
 
     private:
     // Source EnumOptions data
-    OptionalReferenceWrapper<const EnumOptionsBase> enumOptions_;
+    std::shared_ptr<const EnumOptionsBase> enumOptions_;
 
     public:
     // Set source EnumOptions data
-    void setData(const EnumOptionsBase &options);
+    void setData(std::shared_ptr<const EnumOptionsBase> options);
 
     /*
      * QAbstractItemModel overrides

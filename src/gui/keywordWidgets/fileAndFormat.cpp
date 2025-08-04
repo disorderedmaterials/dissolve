@@ -3,6 +3,7 @@
 
 #include "gui/keywordWidgets/fileAndFormat.h"
 #include "gui/keywordWidgets/dialog.h"
+#include "gui/models/nodeGraph/enumRegistry.h"
 #include "io/fileAndFormat.h"
 #include "main/dissolve.h"
 #include <QComboBox>
@@ -15,13 +16,11 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, FileAndF
 {
     ui_.setupUi(this);
 
-    enumOptionsModel_.setData(keyword_->data().formats());
-
     refreshing_ = true;
 
     // Populate combo with the file formats available
     ui_.FormatCombo->clear();
-    ui_.FormatCombo->setModel(&enumOptionsModel_);
+    ui_.FormatCombo->setModel(EnumRegistry::options(typeid(int)).get());
 
     // If the FileAndFormat has keyword options, enable the options button.
     ui_.OptionsButton->setEnabled(keyword_->hasOptions());

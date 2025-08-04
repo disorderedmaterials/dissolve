@@ -2,7 +2,10 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "parameterModel.h"
+#include "gui/models/nodeGraph/enumOptionsModel.h"
+#include "gui/models/nodeGraph/enumRegistry.h"
 #include "nodes/number.h"
+#include "nodes/registry.h"
 #include <qvariant.h>
 
 enum Roles
@@ -11,6 +14,7 @@ enum Roles
     DESCRIPTION,
     TYPE,
     DATA,
+    MODEL,
 };
 
 ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
@@ -33,17 +37,67 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return QVariant::fromValue(it->second->get<Number>().asInteger());
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
+            if (it->second->storedDataType() == typeid(std::optional<Number>))
+            {
+                auto value = it->second->get<std::optional<Number>>();
+                return value ? QVariant::fromValue(value->asInteger()) : QVariant();
+            }
+            if (it->second->storedDataType() == typeid(std::string))
+                return QString::fromStdString(it->second->get<std::string>());
+            if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
+                return QVariant::fromValue(it->second->getAsInt());
             return QString::fromStdString("Unrepresentable");
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))
                 return "number";
+            if (it->second->storedDataType() == typeid(std::optional<Number>))
+                return "optional number";
             if (it->second->storedDataType() == typeid(bool))
                 return "bool";
+            if (it->second->storedDataType() == typeid(std::string))
+                return "string";
+            if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
+                return "enum";
+
             return "unknown";
+        case MODEL:
+            if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
+                return QVariant::fromValue(EnumRegistry::options(it->second->storedDataType()).get());
 
         default:
             return {};
     }
+}
+
+// Update parameter info
+bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    auto it = std::next(values_.begin(), index.row())->second;
+    if (it->storedDataType() == typeid(bool))
+        it->set<bool>(value.toBool());
+    if (it->storedDataType() == typeid(Number))
+    {
+        if (it->get<Number>().isInteger())
+            it->set<Number>(value.toInt());
+        else
+            it->set<Number>(value.toFloat());
+    }
+    if (it->storedDataType() == typeid(std::optional<Number>))
+    {
+        if (value.toString().isNull())
+            it->set<std::optional<Number>>({});
+        else
+        {
+            auto original = it->get<std::optional<Number>>();
+            if (original.has_value() && original->isInteger())
+                it->set<std::optional<Number>>(value.toString().toInt());
+            else
+                it->set<std::optional<Number>>(value.toString().toInt());
+        }
+    }
+    if (EnumRegistry::hasEnumOption(it->storedDataType()))
+        it->setFromInt(value.toInt());
+    return true;
 }
 
 // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
@@ -54,5 +108,6 @@ QHash<int, QByteArray> ParameterModel::roleNames() const
     result[Qt::UserRole + (int)DESCRIPTION] = "description";
     result[Qt::UserRole + (int)DATA] = "param";
     result[Qt::UserRole + (int)TYPE] = "type";
+    result[Qt::UserRole + (int)MODEL] = "innerModel";
     return result;
 }
