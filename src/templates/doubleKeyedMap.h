@@ -115,4 +115,24 @@ template <typename ValueClass> class DoubleKeyedMap
     const std::map<std::string, ValueClass> &map() const { return data_; }
     // Return number of data in map
     int size() const { return data_.size(); }
+
+    /*
+     * Look-Up Table
+     */
+    public:
+    // Return look-up table mapping element indices in the supplied vector to corresponding map entries
+    template <std::ranges::range Range, class Lam>
+    Array2D<typename std::map<std::string, ValueClass>::iterator> lookUpTable(Range keyedObjects, Lam keyGetter)
+    {
+        Array2D<typename std::map<std::string, ValueClass>::iterator> result;
+        auto nElements = keyedObjects.size();
+        result.initialise(nElements, nElements, mirroredAreEquivalent_);
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, keyedObjects,
+            [&](int i, const auto &itemI, int j, const auto &itemJ) {
+                result[{i, j}] = find(keyGetter(itemI), keyGetter(itemJ));
+            },
+            mirroredAreEquivalent_);
+        return result;
+    }
 };
