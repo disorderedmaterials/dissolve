@@ -2,6 +2,10 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/registry.h"
+#include "base/enumOptions.h"
+#include "base/enumOptionsBase.h"
+#include "math/averaging.h"
+#include "math/windowFunction.h"
 #include "nodes/add.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
@@ -44,7 +48,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
-                  // {"Energy", makeDerivedNode<EnergyNode>()},
+                  {"Energy", makeDerivedNode<EnergyNode>()},
                   {"GR", makeDerivedNode<GRNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
                   {"GR", makeDerivedNode<GRNode>()},
@@ -52,7 +56,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
-                  // {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
+                  {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},
                   {"SQ", makeDerivedNode<SQNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},

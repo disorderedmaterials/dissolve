@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2026 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
-#include "gui/models/enumOptionsModel.h"
+#include "gui/models/nodeGraph/enumOptionsModel.h"
 #include "base/enumOptionsBase.h"
 
 // Set source AtomType data
-void EnumOptionsModel::setData(const EnumOptionsBase &options)
+void EnumOptionsModel::setData(std::shared_ptr<const EnumOptionsBase> options)
 {
     beginResetModel();
+
     enumOptions_ = options;
     endResetModel();
 }
@@ -19,7 +20,7 @@ void EnumOptionsModel::setData(const EnumOptionsBase &options)
 int EnumOptionsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return enumOptions_ ? enumOptions_->get().nOptions() : 0;
+    return enumOptions_ ? enumOptions_->nOptions() : 0;
 }
 
 QVariant EnumOptionsModel::data(const QModelIndex &index, int role) const
@@ -27,7 +28,7 @@ QVariant EnumOptionsModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole || index.column() != 0)
         return {};
 
-    return QString::fromStdString(enumOptions_->get().keywordByIndex(index.row()));
+    return QString::fromStdString(enumOptions_->keywordByIndex(index.row()));
 }
 
 Qt::ItemFlags EnumOptionsModel::flags(const QModelIndex &index) const

@@ -252,24 +252,6 @@ target_include_directories(
 # Add GUI targets
 if(GUI)
 
-  # Main Dissolve GUI
-  qt_add_executable(${gui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui.cpp)
-
-  # Set project-local include directories for target
-  target_include_directories(
-    ${gui_target_name}
-    PRIVATE ${PROJECT_SOURCE_DIR}/src
-            ${PROJECT_BINARY_DIR}/src
-            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
-            ${FREETYPE_INCLUDE_DIRS}
-            ${Qt6Core_INCLUDE_DIRS}
-            ${Qt6Gui_INCLUDE_DIRS}
-            ${Qt6OpenGL_INCLUDE_DIRS}
-            ${Qt6Widgets_INCLUDE_DIRS}
-            ${Qt6OpenGL_INCLUDE_DIRS}
-            ${Qt6OpenGLWidgets_INCLUDE_DIRS}
-  )
-
   # Dissolve QML GUI
   qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
   set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
@@ -368,34 +350,6 @@ if(GUI)
 
   add_subdirectory(QuickPlot/src)
 
-  # Main Dissolve GUI
-  target_link_libraries(
-    ${gui_target_name}
-    PUBLIC ${WHOLE_ARCHIVE_FLAG}
-           ${BASIC_LINK_LIBS}
-           # Module gui libs
-           ${MODULEGUI_LINK_LIBS}
-           moduleWidgetProducer
-           # Main gui libs
-           render
-           widgets
-           keywordWidgets
-           delegates
-           models
-           gui
-           ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE # External libs
-            Qt6::Widgets
-            Qt6::Core
-            Qt6::Quick3D
-            OpenGL::GL
-            ${GUI_LINK_LIBS}
-            ${FREETYPE_LIBRARIES}
-            ${FTGL_LIBRARIES}
-            ${CORE_LINK_LIBS}
-            ${THREADING_LINK_LIBS}
-  )
-
   set_target_properties(${qmlgui_target_name} PROPERTIES QML_IMPORT_PATH ${QT_QML_OUTPUT_DIRECTORY})
 
   # Link to models when developing QML Dissolve in Visual Studio
@@ -421,17 +375,6 @@ if(GUI)
             Qt6::Quick3D Qt6::Qml Qt6::Widgets ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
 
-  qt_generate_deploy_qml_app_script(
-    TARGET
-    ${gui_target_name}
-    FILENAME_VARIABLE
-    deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
-    MACOS_BUNDLE_POST_BUILD
-    NO_UNSUPPORTED_PLATFORM_ERROR
-    DEPLOY_USER_QML_MODULES_ON_UNSUPPORTED_PLATFORM
-  )
-  install(SCRIPT ${deploy_script})
 endif(GUI)
 
 # Install for MSVC

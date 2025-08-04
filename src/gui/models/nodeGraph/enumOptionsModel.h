@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2026 Team Dissolve and contributors
+// Copyright (c) 2025 Team Dissolve and contributors
 
 #pragma once
 
@@ -17,11 +17,11 @@ class EnumOptionsModel : public QAbstractListModel
 
     private:
     // Source EnumOptions data
-    OptionalReferenceWrapper<const EnumOptionsBase> enumOptions_;
+    std::shared_ptr<const EnumOptionsBase> enumOptions_;
 
     public:
     // Set source EnumOptions data
-    void setData(const EnumOptionsBase &options);
+    void setData(std::shared_ptr<const EnumOptionsBase> options);
 
     /*
      * QAbstractItemModel overrides

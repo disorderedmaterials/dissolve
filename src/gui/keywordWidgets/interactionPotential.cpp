@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/keywordWidgets/interactionPotential.h"
+#include "gui/models/nodeGraph/enumRegistry.h"
 #include "main/dissolve.h"
 #include <QComboBox>
 
@@ -14,9 +15,8 @@ InteractionPotentialKeywordWidget::InteractionPotentialKeywordWidget(QWidget *pa
     refreshing_ = true;
 
     // Populate combo with the available forms
-    formModel_.setData(keyword_->formOptions());
     ui_.FormCombo->clear();
-    ui_.FormCombo->setModel(&formModel_);
+    ui_.FormCombo->setModel(EnumRegistry::options(typeid(int)).get());
 
     // Set current information
     updateWidgetValues(coreData_);

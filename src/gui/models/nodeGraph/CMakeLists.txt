@@ -1,6 +1,15 @@
-set(nodeGraphModels_MOC_HDRS exampleGraphModel.h graphModelBase.h graphEdgeModel.h graphNodeModel.h generatorGraphModel.h nodeWrapper.h)
+set(nodeGraphModels_MOC_HDRS
+    enumOptionsModel.h
+    enumRegistry.h
+    exampleGraphModel.h
+    graphModelBase.h
+    graphEdgeModel.h
+    graphNodeModel.h
+    generatorGraphModel.h
+    nodeWrapper.h
+)
 
-set(nodeGraphModel_SRCS graphEdgeModel.cpp graphModel.cpp graphNodeModel.cpp parameterModel.cpp)
+set(nodeGraphModel_SRCS enumOptionsModel.cpp enumRegistry.cpp graphEdgeModel.cpp graphModel.cpp graphNodeModel.cpp parameterModel.cpp)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 

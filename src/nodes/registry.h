@@ -4,7 +4,6 @@
 #pragma once
 
 #include "node.h"
-#include <string>
 #include <vector>
 
 using NodeProducer = std::function<std::unique_ptr<Node>(Graph *parent)>;
