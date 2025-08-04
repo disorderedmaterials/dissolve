@@ -79,8 +79,9 @@ void AccumulateModuleWidget::createPartialSetRenderables(std::string_view target
                                                    std::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, unbound.second.tag()),
-                                                   std::format("{} (Unbound)", id), "Unbound");
+        graph_->createRenderable<RenderableData1D>(
+            std::format("{}//{}//{}", module_->name(), targetPrefix, unbound.second.tag()), std::format("{} (Unbound)", id),
+            "Unbound");
     }
 }
 
