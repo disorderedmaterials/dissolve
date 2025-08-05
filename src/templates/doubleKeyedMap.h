@@ -3,9 +3,8 @@
 
 #pragma once
 
-#include "templates/optionalRef.h"
+#include "templates/algorithms.h"
 #include <format>
-#include <functional>
 #include <map>
 
 /*
