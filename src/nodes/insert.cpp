@@ -149,10 +149,6 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
 // Run main processing
 NodeConstants::ProcessResult InsertNode::process()
 {
-    // Add atom type and update pair potentials
-    if (!DissolveGraph::updatePairPotentials(dissolve(), *atomTypes_))
-        return NodeConstants::ProcessResult::Failed;
-
     // Get target MoleculeSet
     MoleculeSet speciesMoleculeSet;
     if (species_)
@@ -203,7 +199,7 @@ NodeConstants::ProcessResult InsertNode::process()
         }
     }
 
-    configuration_->cells().generate(box, configuration_->requestedCellDivisionLength(), dissolve().potentialMap().range());
+    configuration_->updateCells(dissolve().potentialMap().range());
 
     Messenger::print("[InsertRandom] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n",
                      configuration_->atomicDensity().value_or(0.0), configuration_->chemicalDensity().value_or(0.0));

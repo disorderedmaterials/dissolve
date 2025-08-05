@@ -31,6 +31,8 @@ class DissolveGraph : public Graph
     private:
     // Dissolve reference
     Dissolve &dissolve_;
+    // Potential map cache
+    inline static std::map<const Configuration *, std::unique_ptr<PotentialMap>> potentialMapCache_;
 
     public:
     // Return dissolve
@@ -40,9 +42,6 @@ class DissolveGraph : public Graph
      * Functions
      */
     public:
-    // Add new atom type to atom types
-    static const std::shared_ptr<AtomType> addAtomType(std::vector<std::shared_ptr<AtomType>> &atomTypes, Elements::Element Z);
-    // Update pair potentials
-    static bool updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes,
-                                     std::optional<bool> useCombinationRulesHint = {});
+    // Return potential map based on configuration atom types
+    static PotentialMap &potentialMap(const Configuration *configuration);
 };
