@@ -42,8 +42,6 @@ class DissolveGraph : public Graph
     public:
     // Add new atom type to atom types
     static const std::shared_ptr<AtomType> addAtomType(std::vector<std::shared_ptr<AtomType>> &atomTypes, Elements::Element Z);
-    // Return atom types belonging to configuration
-    static const std::vector<std::shared_ptr<AtomType>> atomTypes(const Configuration *configuration);
     // Update pair potentials
     static bool updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes,
                                      std::optional<bool> useCombinationRulesHint = {});

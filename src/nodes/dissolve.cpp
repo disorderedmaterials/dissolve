@@ -43,18 +43,6 @@ const std::shared_ptr<AtomType> DissolveGraph::addAtomType(std::vector<std::shar
     return newAtomType;
 }
 
-const std::vector<std::shared_ptr<AtomType>> DissolveGraph::atomTypes(const Configuration *configuration)
-{
-    auto pop = configuration->atomTypePopulations();
-    std::vector<std::shared_ptr<AtomType>> atomTypes;
-    atomTypes.resize(pop.nItems());
-
-    for (int i = 0; i < pop.nItems(); i++)
-        atomTypes[i] = pop.atomType(i);
-
-    return atomTypes;
-}
-
 bool DissolveGraph::updatePairPotentials(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes,
                                          std::optional<bool> useCombinationRulesHint)
 {
