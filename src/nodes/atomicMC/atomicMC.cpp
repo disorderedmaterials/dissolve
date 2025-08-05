@@ -12,7 +12,7 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
     addOption<Number>("TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", targetAcceptanceRate_);
     addOption<Number>("StepSizeMax", "Maximum allowed value for step size, in Angstroms", stepSizeMax_);
     addOption<Number>("StepSizeMin", "Minimum allowed value for step size, in Angstroms", stepSizeMin_);
-    addOutput<Configuration *>("Configuration", "Output configuration for the module", targetConfiguration_);
+    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
 }
 
 std::string_view AtomicMCNode::type() const { return "AtomicMC"; }
