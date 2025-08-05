@@ -89,6 +89,12 @@ class Configuration : public Serialisable<const CoreData &>
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
     std::vector<Atom> atoms_;
+    // Atom type indices per Atom
+    std::vector<int> typeIndices_;
+
+    private:
+    // Add new Atom to Configuration
+    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
 
     public:
     // Empty contents of Configuration, leaving core definitions intact
@@ -133,8 +139,6 @@ class Configuration : public Serialisable<const CoreData &>
     const std::vector<std::shared_ptr<Molecule>> &molecules() const;
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
-    // Add new Atom to Configuration
-    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
     // Return the number of atoms in the configuration (or only those with the specified presence)
     int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
     // Return Atom array
@@ -147,6 +151,8 @@ class Configuration : public Serialisable<const CoreData &>
     // Scale contents of the box by the specified factors along each axis
     void funky(std::vector<bool> &flags, std::vector<std::shared_ptr<Atom>> &atoms, int i);
     void scaleContents(Vector3 scaleFactors);
+    // Update and return atom type indices per Atom
+    const std::vector<int> &updateTypeIndexing();
 
     /*
      * Periodic Box and Cells

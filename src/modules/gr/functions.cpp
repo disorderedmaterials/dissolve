@@ -29,15 +29,18 @@ bool GRModule::calculateGRTestSerial(Configuration *cfg)
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
-    auto lut = histograms_->fullHistograms().lookUpTable(cfg->atomTypePopulations())
+    // Get / update the type indexing and generate a suitable histogram LUT
+    auto &typeIndices = cfg->updateTypeIndexing();
+    auto lut = histograms_->fullHistograms().lookUpTable(cfg->atomTypePopulations(),
+                                                         [](const auto &atd) { return atd.atomTypeName(); });
 
-                   dissolve::for_each_pair(ParallelPolicies::seq, cfg->atoms(),
-                                           [&, box](auto i, auto &ii, auto j, auto &jj)
-                                           {
-                                               if (&ii != &jj)
-                                                   histograms_->fullHistogram(ii.localTypeIndex(), jj.localTypeIndex())
-                                                       .bin(box->minimumDistance(ii.r(), jj.r()));
-                                           });
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, cfg->atoms(),
+        [&, box](auto i, auto &atomI, auto j, auto &atomJ)
+        {
+            if (i != j)
+                lut[{typeIndices[i], typeIndices[j]}]->second.bin(box->minimumDistance(atomI.r(), atomJ.r()));
+        });
 
     return true;
 }

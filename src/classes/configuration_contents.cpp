@@ -10,6 +10,42 @@
 #include <memory>
 #include <numeric>
 
+/*
+ * Private Functions
+ */
+
+// Add new Atom to Configuration, with Molecule parent specified
+Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r)
+{
+    // Create new Atom object and set its source pointer
+    auto &newAtom = atoms_.emplace_back();
+    newAtom.setSpeciesAtom(sourceAtom);
+
+    // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
+    molecule->addAtom(&newAtom);
+
+    // Set the position
+    newAtom.setCoordinates(r);
+
+    // Update atom type population and set local type index
+    if (sourceAtom->isPresence(SpeciesAtom::Presence::Physical))
+    {
+        auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType().get(), 1);
+        newAtom.setLocalTypeIndex(atdIndex);
+    }
+    else
+        newAtom.setLocalTypeIndex(AtomType::Ignore);
+
+    // Set master index for pair potential lookup
+    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
+
+    return newAtom;
+}
+
+/*
+ * Public Functions
+ */
+
 // Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
 {
@@ -209,34 +245,6 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 // Return nth Molecule
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
-// Add new Atom to Configuration, with Molecule parent specified
-Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r)
-{
-    // Create new Atom object and set its source pointer
-    auto &newAtom = atoms_.emplace_back();
-    newAtom.setSpeciesAtom(sourceAtom);
-
-    // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(&newAtom);
-
-    // Set the position
-    newAtom.setCoordinates(r);
-
-    // Update atom type population and set local type index
-    if (sourceAtom->isPresence(SpeciesAtom::Presence::Physical))
-    {
-        auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType().get(), 1);
-        newAtom.setLocalTypeIndex(atdIndex);
-    }
-    else
-        newAtom.setLocalTypeIndex(AtomType::Ignore);
-
-    // Set master index for pair potential lookup
-    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
-
-    return newAtom;
-}
-
 // Return the number of atoms in the configuration (or only those with the specified presence)
 int Configuration::nAtoms(SpeciesAtom::Presence withPresence) const
 {
@@ -317,3 +325,29 @@ bool Configuration::energyIsStable() const { return energyIsStable_; }
 void Configuration::setEnergyGradient(double grad) { energyGradient_ = grad; }
 
 double Configuration::getEnergyGradient() const { return energyGradient_; }
+
+// Update and return atom type indices per Atom
+const std::vector<int> &Configuration::updateTypeIndexing()
+{
+    // If the indexing vector is the correct size, nothing to do
+    if (typeIndices_.size() == atoms_.size())
+        return typeIndices_;
+
+    typeIndices_.clear();
+    typeIndices_.resize(atoms_.size());
+    std::ranges::fill(typeIndices_, AtomType::Ignore);
+
+    // Loop over atom types
+    for (auto n = 0; n < atomTypePopulations_.nItems(); ++n)
+    {
+        const AtomType *atomType = atomTypePopulations_.atomType(n);
+
+        // Search the atoms_ vector for matching atom types (physical atoms only)
+        for (auto &&[atom, index] : zip(atoms_, typeIndices_))
+            if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical) &&
+                atom.speciesAtom()->atomType().get() == atomType)
+                index = n;
+    }
+
+    return typeIndices_;
+}
