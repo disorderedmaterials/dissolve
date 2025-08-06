@@ -1,7 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    outdated.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
   };
@@ -141,7 +141,7 @@
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs system pkgs
             ++ check_libs pkgs ++ (with pkgs; [
-              clang-tools
+              llvmPackages_20.clang-tools
 
               (onedpl pkgs)
 
@@ -165,15 +165,15 @@
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
             export LIBGL_DRIVERS_PATH=${
               pkgs.lib.makeSearchPathOutput "lib" "lib/dri"
-              [ pkgs.mesa.drivers ]
+              [ pkgs.mesa ]
             }
             export LIBVA_DRIVERS_PATH=${
               pkgs.lib.makeSearchPathOutput "out" "lib/dri"
-              [ pkgs.mesa.drivers ]
+              [ pkgs.mesa ]
             }
-            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
+            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json
             export LD_LIBRARY_PATH=${
-              pkgs.lib.makeLibraryPath [ pkgs.mesa.drivers ]
+              pkgs.lib.makeLibraryPath [ pkgs.mesa ]
             }:${
               pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [ pkgs.libvdpau ]
             }:${
