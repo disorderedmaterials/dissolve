@@ -24,6 +24,7 @@ stamp-h1
 ui_*
 moc_*
 *.kdev4
+/.cache/
 build/
 build-*/
 *.exe
