@@ -136,6 +136,9 @@ bool AtomTypeMix::contains(const AtomType *atomType, Sears91::Isotope tope) cons
 // Return number of AtomType/Isotopes
 int AtomTypeMix::nItems() const { return types_.size(); }
 
+// Return size of the mix (equivalent to nItems(), added for standard container "compliance")
+int AtomTypeMix::size() const { return types_.size(); }
+
 // Return first item
 const AtomTypeData &AtomTypeMix::first() const { return types_.front(); }
 

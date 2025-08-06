@@ -52,6 +52,8 @@ class AtomTypeMix
     bool contains(const AtomType *atomType, Sears91::Isotope tope) const;
     // Return number of AtomType/Isotopes
     int nItems() const;
+    // Return size of the mix (equivalent to nItems(), added for standard container "compliance")
+    int size() const;
     // Return first item in list
     const AtomTypeData &first() const;
     // Return opening iterator

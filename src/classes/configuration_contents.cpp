@@ -27,14 +27,9 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     // Set the position
     newAtom.setCoordinates(r);
 
-    // Update atom type population and set local type index
+    // Update atom type population (physical atoms only)
     if (sourceAtom->isPresence(SpeciesAtom::Presence::Physical))
-    {
-        auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType().get(), 1);
-        newAtom.setLocalTypeIndex(atdIndex);
-    }
-    else
-        newAtom.setLocalTypeIndex(AtomType::Ignore);
+        atomTypePopulations_.add(sourceAtom->atomType().get(), 1);
 
     // Set master index for pair potential lookup
     newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
@@ -51,6 +46,7 @@ void Configuration::empty()
 {
     molecules_.clear();
     atoms_.clear();
+    typeIndices_.clear();
     atomTypePopulations_.clear();
     appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();

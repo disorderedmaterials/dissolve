@@ -81,6 +81,10 @@ template <typename ValueClass> class DoubleKeyedMap
     bool contains(std::string_view A, std::string_view B) const { return find(A, B) != data_.end(); }
     // Get keyed value
     ValueClass &get(const std::pair<std::string_view, std::string_view> &pair) { return get(pair.first, pair.second); }
+    const ValueClass &get(const std::pair<std::string_view, std::string_view> &pair) const
+    {
+        return get(pair.first, pair.second);
+    }
     ValueClass &get(std::string_view A, std::string_view B)
     {
         auto it = find(A, B);
@@ -91,11 +95,8 @@ template <typename ValueClass> class DoubleKeyedMap
         }
         else
             return it->second;
-    };
-    const ValueClass &get(const std::pair<std::string_view, std::string_view> &pair) const
-    {
-        return get(pair.first, pair.second);
     }
+
     const ValueClass &get(std::string_view A, std::string_view B) const
     {
         auto it = find(A, B);
@@ -103,6 +104,14 @@ template <typename ValueClass> class DoubleKeyedMap
             throw(std::runtime_error(std::format("Key {} is not in DoubleKeyedMap.\n", key(A, B))));
         else
             return it->second;
+    }
+    ValueClass &get(const std::string key)
+    {
+        return data_[key];
+    }
+    const ValueClass &at(const std::string key) const
+    {
+        return data_.at(key);
     }
     // Iterators
     std::map<std::string, ValueClass>::iterator begin() { return data_.begin(); }

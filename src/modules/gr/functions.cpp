@@ -24,29 +24,24 @@
  */
 
 // Calculate partial g(r) in serial with simple double-loop
-bool GRModule::calculateGRTestSerial(Configuration *cfg)
+bool GRModule::calculateGRTestSerial(Configuration *cfg, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
-
-    // Get / update the type indexing and generate a suitable histogram LUT
-    auto &typeIndices = cfg->updateTypeIndexing();
-    auto lut = histograms_->fullHistograms().lookUpTable(cfg->atomTypePopulations(),
-                                                         [](const auto &atd) { return atd.atomTypeName(); });
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, cfg->atoms(),
         [&, box](auto i, auto &atomI, auto j, auto &atomJ)
         {
             if (i != j)
-                lut[{typeIndices[i], typeIndices[j]}]->second.bin(box->minimumDistance(atomI.r(), atomJ.r()));
+                fullLUT[{typeIndices[i], typeIndices[j]}]->second.bin(box->minimumDistance(atomI.r(), atomJ.r()));
         });
 
     return true;
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth)
+bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT)
 {
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -71,12 +66,11 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth)
     }
 
     // Loop over Atoms and construct arrays
-    for (auto &atom : cfg->atoms())
+    for (auto &&[atom, index] : zip(cfg->atoms(), typeIndices))
     {
-        m = atom.localTypeIndex();
-        if (m == AtomType::Ignore)
+        if (index == AtomType::Ignore)
             continue;
-        r[m][nr[m]++] = atom.r();
+        r[index][nr[index]++] = atom.r();
     }
 
     Messenger::printVerbose("Ready..\n");
@@ -91,9 +85,9 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth)
     for (typeI = 0; typeI < nTypes; ++typeI)
     {
         ri = r[typeI];
-        auto &histogram = histograms_->fullHistogram(typeI, typeI).bins();
+        auto &histogram = fullLUT[{typeI, typeI}]->second.bins();
         bins = binss[typeI];
-        nPoints = histograms_->fullHistogram(typeI, typeI).nBins();
+        nPoints = histogram.size();
         PairIterator pairs(maxr[typeI]);
         std::for_each(pairs.begin(), pairs.end(),
                       [box, bins, rbin, ri, nPoints, &histogram](auto it)
@@ -127,9 +121,9 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth)
                 continue;
 
             rj = r[typeJ];
-            auto &histogram = histograms_->fullHistogram(typeI, typeJ).bins();
+            auto &histogram = fullLUT[{typeI, typeJ}]->second.bins();
             bins = binss[typeJ];
-            nPoints = histograms_->fullHistogram(typeI, typeJ).nBins();
+            nPoints = histogram.size();
             for (i = 0; i < maxr[typeI]; ++i)
             {
                 centre = ri[i];
@@ -152,7 +146,7 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth)
     return true;
 }
 
-bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange)
+bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT)
 {
     auto &cellArray = cfg->cells();
     Combinations comb(cellArray.nCells());
@@ -164,7 +158,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange)
             histograms.initialise(histograms_->atomTypeMix().nItems(), histograms_->atomTypeMix().nItems(), true);
             for (auto i = 0; i < histograms_->atomTypeMix().nItems(); ++i)
                 for (auto j = i; j < histograms_->atomTypeMix().nItems(); ++j)
-                    histograms[{i, j}] = histograms_->fullHistogram(i, j);
+                    histograms[{i, j}] = fullLUT[{i, j}]->second;
             return histograms;
         });
 
@@ -216,7 +210,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange)
     // Copy the final calculated full histograms to the HistogramSet
     for (auto k = 0; k < histograms_->atomTypeMix().nItems(); ++k)
         for (auto j = 0; j < histograms_->atomTypeMix().nItems(); ++j)
-            histograms_->fullHistogram(k, j) = histograms[{k, j}];
+            fullLUT[{k,j}]->second = histograms[{k, j}];
 
     // Atoms within the same cell
     for (int n = 0; n < cellArray.nCells(); ++n)
@@ -233,14 +227,15 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange)
                 auto [idx, jdx] = it;
                 if (idx == jdx)
                     return;
+# THIS IS WRONG!!!!
                 auto &i = atomsI[idx];
-                auto typeI = i->localTypeIndex();
+                auto typeI = typeIndices[idx];
                 auto &j = atomsI[jdx];
-                auto typeJ = j->localTypeIndex();
+                auto typeJ = typeIndices[jdx];
                 if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
                 {
                     // No need to perform MIM since we're in the same cell
-                    histograms_->fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin((i->r() - j->r()).magnitude());
+                    fullLUT[{typeI, typeJ}]->second.bin((i->r() - j->r()).magnitude());
                 }
             });
     }
@@ -338,6 +333,15 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     }
     histograms_->zeroBins();
 
+    // Get / update the type indexing and generate LUTs for all histogram types
+    auto &typeIndices = cfg->updateTypeIndexing();
+    auto fullLUT = histograms_->fullHistograms().lookUpTable(cfg->atomTypePopulations(),
+                                                         [](const auto &atd) { return atd.atomTypeName(); });
+    auto boundLUT = histograms_->boundHistograms().lookUpTable(cfg->atomTypePopulations(),
+                                                         [](const auto &atd) { return atd.atomTypeName(); });
+    auto unboundLUT = histograms_->unboundHistograms().lookUpTable(cfg->atomTypePopulations(),
+                                                         [](const auto &atd) { return atd.atomTypeName(); });
+
     /*
      * Calculate full (intra+inter) partials
      */
@@ -345,14 +349,14 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     Timer timer;
     originalgr.reset();
     if (method == GRModule::TestMethod)
-        calculateGRTestSerial(cfg);
+        calculateGRTestSerial(cfg, typeIndices, fullLUT);
     else if (method == GRModule::SimpleMethod)
-        calculateGRSimple(cfg, rdfBinWidth);
+        calculateGRSimple(cfg, rdfBinWidth, typeIndices, fullLUT);
     else if (method == GRModule::CellsMethod)
-        calculateGRCells(cfg, rdfRange);
+        calculateGRCells(cfg, rdfRange, typeIndices, fullLUT);
     else if (method == GRModule::AutoMethod)
     {
-        cfg->nAtoms() > 10000 ? calculateGRCells(cfg, rdfRange) : calculateGRSimple(cfg, rdfBinWidth);
+        cfg->nAtoms() > 10000 ? calculateGRCells(cfg, rdfRange, typeIndices, fullLUT) : calculateGRSimple(cfg, rdfBinWidth, typeIndices, fullLUT);
     }
     timer.stop();
     Messenger::print("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
@@ -363,6 +367,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
 
     const auto *box = cfg->box();
     timer.start();
+
     // Loop over molecules
     for (auto &mol : cfg->molecules())
     {
@@ -375,15 +380,15 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
                                     if (index == jndex)
                                         return;
 
-                                    auto typeI = i->localTypeIndex();
+                                    auto typeI = typeIndices[index];
                                     if (typeI == AtomType::Ignore)
                                         return;
 
-                                    auto typeJ = j->localTypeIndex();
+                                    auto typeJ = typeIndices[jndex];
                                     if (typeJ == AtomType::Ignore)
                                         return;
 
-                                    histograms_->boundHistogram(typeI, typeJ).bin(box->minimumDistance(i->r(), j->r()));
+                                    boundLUT[{typeI, typeJ}]->second.bin(box->minimumDistance(i->r(), j->r()));
                                 });
     }
 
@@ -402,8 +407,8 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
         [&](auto typeI, auto typeJ) -> EarlyReturn<bool>
         {
             // Create unbound histogram from total and bound data
-            histograms_->unboundHistogram(typeI, typeJ) = histograms_->fullHistogram(typeI, typeJ);
-            histograms_->unboundHistogram(typeI, typeJ).add(histograms_->boundHistogram(typeI, typeJ), -1.0);
+            unboundLUT[{typeI, typeJ}]->second = fullLUT[{typeI, typeJ}]->second;
+            unboundLUT[{typeI, typeJ}]->second.add(boundLUT[{typeI, typeJ}]->second, -1.0);
 
             return EarlyReturn<bool>::Continue;
         });
@@ -431,52 +436,30 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
 bool GRModule::calculateUnweightedGR(Configuration *cfg, const PartialSet &originalgr, PartialSet &unweightedgr,
                                      const Function1DWrapper intraBroadening, int smoothing)
 {
-    // If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to
-    // maintain the incremental versioning of the data)
-    if (unweightedgr.nAtomTypes() == 0)
-        unweightedgr = originalgr;
-    else
-    {
-        for (auto i = 0; i < unweightedgr.nAtomTypes(); ++i)
-        {
-            for (auto j = i; j < unweightedgr.nAtomTypes(); ++j)
-            {
-                unweightedgr.boundPartial(i, j).copyArrays(originalgr.boundPartial(i, j));
-                unweightedgr.unboundPartial(i, j).copyArrays(originalgr.unboundPartial(i, j));
-                unweightedgr.partial(i, j).copyArrays(originalgr.partial(i, j));
-            }
-        }
-        unweightedgr.total().copyArrays(originalgr.total());
-    }
+    unweightedgr = originalgr;
 
     // Remove bound partial from full partial
-    for (auto i = 0; i < unweightedgr.nAtomTypes(); ++i)
-    {
-        for (auto j = i; j < unweightedgr.nAtomTypes(); ++j)
-            unweightedgr.partial(i, j) -= originalgr.boundPartial(i, j);
-    }
+    for (auto &[key, fullPartial] : unweightedgr.partials())
+        fullPartial -= originalgr.boundPartials().at(key);
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
-    auto &types = unweightedgr.atomTypeMix();
-    dissolve::for_each_pair(ParallelPolicies::seq, types,
-                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
-                            { Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, true, true); });
+    for (auto &boundPartial : std::views::values(unweightedgr.boundPartials()))
+        Filters::convolve(boundPartial, intraBroadening, true, true);
 
     // Add broadened bound partials back in to full partials
-    dissolve::for_each_pair(ParallelPolicies::seq, types,
-                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
-                            { unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j); });
+    for (auto &[key, fullPartial] : unweightedgr.partials())
+        fullPartial += unweightedgr.boundPartials().at(key);
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
-        dissolve::for_each_pair(ParallelPolicies::seq, types,
-                                [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
-                                {
-                                    Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
-                                    Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
-                                    Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
-                                });
+        // Iterate over keys / full partials
+        for (auto &[key, fullPartial] : unweightedgr.partials())
+        {
+            Filters::movingAverage(fullPartial, smoothing);
+            Filters::movingAverage(unweightedgr.boundPartials().get(key), smoothing);
+            Filters::movingAverage(unweightedgr.unboundPartials().get(key), smoothing);
+        }
     }
 
     // Calculate total
@@ -562,8 +545,10 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
         atomTypes,
         [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
         {
+            DoubleKeyedMapKey key{typeI.atomTypeName(), typeJ.atomTypeName()};
+
             // Full partial
-            auto errorReport = Error::percent(setA.partial(n, m), setB.partial(n, m));
+            auto errorReport = Error::percent(setA.partials().get(key), setB.partials().get(key));
             Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference full partial '{}-{}' has {} error of {:7.3f}{} with calculated data and is "
                              "{} (threshold is {:6.3f}%)\n\n",
@@ -574,7 +559,7 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
                 return false;
 
             // Bound partial
-            errorReport = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
+            errorReport = Error::percent(setA.boundPartials().get(key), setB.boundPartials().get(key));
             Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference bound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
                              "is {} (threshold is {:6.3f}%)\n\n",
@@ -585,7 +570,7 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
                 return false;
 
             // Unbound reference
-            errorReport = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
+            errorReport = Error::percent(setA.unboundPartials().get(key), setB.unboundPartials().get(key));
             Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference unbound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
                              "is {} (threshold is {:6.3f}%)\n\n",
@@ -638,21 +623,21 @@ bool GRModule::testReferencePartial(const PartialSet &partials, double testThres
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 
         // AtomTypes are valid, so check the 'target'
+        DoubleKeyedMapKey key{partials.atomTypeMix()[*indexI].atomTypeName(), partials.atomTypeMix()[*indexJ].atomTypeName()};
         Error::ErrorReport errorReport;
         if (DissolveSys::sameString(target, "bound"))
         {
-            errorReport = Error::percent(partials.boundPartial(*indexI, *indexJ), testData);
+            errorReport = Error::percent(partials.boundPartials().get(key), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
-
         else if (DissolveSys::sameString(target, "unbound"))
         {
-            errorReport = Error::percent(partials.unboundPartial(*indexI, *indexJ), testData);
+            errorReport = Error::percent(partials.unboundPartials().get(key), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
         else if (DissolveSys::sameString(target, "full"))
         {
-            errorReport = Error::percent(partials.partial(*indexI, *indexJ), testData);
+            errorReport = Error::percent(partials.partials().get(key), testData);
             Messenger::print(Error::errorReportString(errorReport));
         }
 

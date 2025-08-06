@@ -68,11 +68,11 @@ class GRModule : public Module
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
-    bool calculateGRTestSerial(Configuration *cfg);
+    bool calculateGRTestSerial(Configuration *cfg, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT);
     // Calculate partial g(r) with optimised double-loop
-    bool calculateGRSimple(Configuration *cfg, const double rdfRange);
+    bool calculateGRSimple(Configuration *cfg, const double rdfRange, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT);
     // Calculate partial g(r) utilising Cell neighbour lists
-    bool calculateGRCells(Configuration *cfg, const double binWidth);
+    bool calculateGRCells(Configuration *cfg, const double binWidth, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT);
 
     public:
     // Calculate and return effective density based on target Configurations

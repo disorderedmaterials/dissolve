@@ -246,6 +246,9 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
     // Zero k-vector cos/sin contributions
     std::for_each(braggKVectors.begin(), braggKVectors.end(), [](auto &kvec) { kvec.zeroCosSinTerms(); });
 
+    // Get / update the type indexing and generate LUTs for all histogram types
+    auto &typeIndices = cfg->updateTypeIndexing();
+
     // Loop over atoms
     timer.start();
     for (n = 0; n < nAtoms; ++n)
@@ -255,7 +258,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
             continue;
 
         // Grab localTypeIndex and array pointers for this atom
-        localTypeIndex = atoms[n].localTypeIndex();
+        localTypeIndex = typeIndices[n];
 
         cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
         cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);
