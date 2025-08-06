@@ -97,7 +97,8 @@ Module::ExecutionResult AxisAngleModule::process(Dissolve &dissolve)
     DataOperator2D dAxisAngleNormaliser(dAxisAngleNormalised);
     // Normalise by value / sin(y) / sin(yDelta)
     dAxisAngleNormaliser.operate(
-        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value) {
+        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+        {
             return (symmetric_ ? value : value * 2.0) / sin(DissolveMath::toRadians(y)) / sin(DissolveMath::toRadians(yDelta));
         });
     // Normalise by A site population

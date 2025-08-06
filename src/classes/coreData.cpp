@@ -581,8 +581,8 @@ Configuration *CoreData::addConfiguration()
     auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
-    newConfiguration->setName(DissolveSys::uniqueName(
-        "NewConfiguration", configurations_, [&](const auto &cfg) { return newConfiguration == cfg ? "" : cfg->name(); }));
+    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_, [&](const auto &cfg)
+                                                      { return newConfiguration == cfg ? "" : cfg->name(); }));
 
     return newConfiguration.get();
 }
@@ -703,17 +703,13 @@ SerialisedValue CoreData::Masters::serialise() const
 // Read values from a serialisable value
 void CoreData::Masters::deserialise(const SerialisedValue &node)
 {
-    Serialisable::toMap(node, "bonds",
-                        [this](const std::string &name, const SerialisedValue &bond)
+    Serialisable::toMap(node, "bonds", [this](const std::string &name, const SerialisedValue &bond)
                         { bonds.emplace_back(std::make_unique<MasterBond>(name))->deserialise(bond); });
-    Serialisable::toMap(node, "angles",
-                        [this](const std::string &name, const SerialisedValue &angle)
+    Serialisable::toMap(node, "angles", [this](const std::string &name, const SerialisedValue &angle)
                         { angles.emplace_back(std::make_unique<MasterAngle>(name))->deserialise(angle); });
-    Serialisable::toMap(node, "torsions",
-                        [this](const std::string &name, const SerialisedValue &torsion)
+    Serialisable::toMap(node, "torsions", [this](const std::string &name, const SerialisedValue &torsion)
                         { torsions.emplace_back(std::make_unique<MasterTorsion>(name))->deserialise(torsion); });
-    Serialisable::toMap(node, "impropers",
-                        [this](const std::string &name, const SerialisedValue &improper)
+    Serialisable::toMap(node, "impropers", [this](const std::string &name, const SerialisedValue &improper)
                         { impropers.emplace_back(std::make_unique<MasterImproper>(name))->deserialise(improper); });
     return;
 }

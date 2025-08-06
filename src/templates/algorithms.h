@@ -30,8 +30,8 @@ template <typename T> class EarlyReturn
 
     public:
     using inner = T;
-    EarlyReturn(Type t = Type::Continue, std::optional<T> v = std::nullopt) : type_(t), value_(v){};
-    EarlyReturn(const T &val) : type_(Type::Return), value_(val){};
+    EarlyReturn(Type t = Type::Continue, std::optional<T> v = std::nullopt) : type_(t), value_(v) {};
+    EarlyReturn(const T &val) : type_(Type::Return), value_(val) {};
     Type type() const { return type_; }
     std::optional<T> value() const { return value_; }
 };
@@ -82,7 +82,7 @@ template <class Lam> auto for_each_pair_early(int count, Lam lambda, bool half =
 template <typename... Args> class ZipIterator
 {
     public:
-    ZipIterator(std::tuple<Args...> args) : source_(std::move(args)){};
+    ZipIterator(std::tuple<Args...> args) : source_(std::move(args)) {};
     bool operator!=(ZipIterator<Args...> other)
     {
         return std::apply(

@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stdexcept>
 
-Vector3::Vector3(const double xx, const double yy, const double zz) : x(xx), y(yy), z(zz){};
+Vector3::Vector3(const double xx, const double yy, const double zz) : x(xx), y(yy), z(zz) {};
 
 /*
  * Set / adjust / retrieve

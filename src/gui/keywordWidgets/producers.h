@@ -56,9 +56,8 @@ class KeywordWidgetProducer
     }
     template <class K> void registerNullProducer()
     {
-        producers_[typeid(K *)] = [&](KeywordBase *keyword, const CoreData &coreData) {
-            return WidgetKeywordProduct{nullptr, nullptr};
-        };
+        producers_[typeid(K *)] = [&](KeywordBase *keyword, const CoreData &coreData)
+        { return WidgetKeywordProduct{nullptr, nullptr}; };
     }
     // Produce object of specified type
     std::pair<QWidget *, KeywordWidgetBase *> produce(KeywordBase *keyword, CoreData &coreData) const;
