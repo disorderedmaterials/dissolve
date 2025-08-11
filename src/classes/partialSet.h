@@ -25,8 +25,8 @@ class PartialSet
      * Partials Data
      */
     private:
-    // AtomTypeMix used to generate matrices
-    AtomTypeMix atomTypeMix_;
+    // AtomTypes and fractional populations
+    KeyedVector<const AtomType *, double> atomTypeFractions_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Pair matrix, containing full atom-atom partial
@@ -46,13 +46,13 @@ class PartialSet
 
     public:
     // Initialise
-    void initialise(const AtomTypeMix &atomTypMix, bool half = true);
+    void initialise(const KeyedVector<const AtomType *, int> &typePopulations, bool half = true);
     // Reset partial arrays
     void reset();
     // Return number of AtomTypes used to generate matrices
     int nAtomTypes() const;
-    // Return atom types mis
-    const AtomTypeMix &atomTypeMix() const;
+    // Return fractional atom type populations
+    const KeyedVector<const AtomType *, double> &atomTypeFractions() const;
     // Set new fingerprint
     void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of partials

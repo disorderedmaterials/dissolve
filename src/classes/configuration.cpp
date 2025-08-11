@@ -75,9 +75,6 @@ bool Configuration::generate(const GeneratorContext &generatorContext)
     // Make sure all objects know about each other
     updateObjectRelationships();
 
-    // Finalise atom type populations
-    atomTypePopulations_.finalise();
-
     // Link targeted potentials to atoms
     linkTargetedPotentials();
 

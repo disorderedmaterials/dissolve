@@ -27,10 +27,6 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     // Set the position
     newAtom.setCoordinates(r);
 
-    // Update atom type population (physical atoms only)
-    if (sourceAtom->isPresence(SpeciesAtom::Presence::Physical))
-        atomTypePopulations_.add(sourceAtom->atomType().get(), 1);
-
     // Set master index for pair potential lookup
     newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
 
@@ -46,7 +42,6 @@ void Configuration::empty()
 {
     molecules_.clear();
     atoms_.clear();
-    atomTypePopulations_.clear();
     appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();
     globalPotentials_.clear();
@@ -57,11 +52,32 @@ void Configuration::empty()
     typeIndicesValid_ = false;
 }
 
-// Return atom type populations for this Configuration
-const AtomTypeMix &Configuration::atomTypePopulations() const { return atomTypePopulations_; }
-
 // Return Species populations within the Configuration
 const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
+
+// Return atom type populations for this Configuration
+KeyedVector<const AtomType *, int> Configuration::atomTypePopulations() const
+{
+    KeyedVector<const AtomType *, int> populations;
+    for (const auto &[sp, speciesPopulation] : speciesPopulations_)
+    {
+        for (const auto &[atomType, atomPopulation] : sp->atomTypePopulations())
+            populations[atomType] += speciesPopulation * atomPopulation;
+    }
+    return populations;
+}
+
+// Return atom type index map
+std::map<const AtomType *, int> Configuration::atomTypeIndexMap() const
+{
+    auto populations = atomTypePopulations();
+
+    std::map<const AtomType *, int> typeMap;
+    for (auto n = 0; n < populations.size(); ++n)
+        typeMap[populations.key(n)] = n;
+
+    return typeMap;
+}
 
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
@@ -315,11 +331,14 @@ void Configuration::updateTypeIndexing()
     if (typeIndicesValid_)
         return;
 
+    // Get the atom type index map
+    auto typeMap = atomTypeIndexMap();
+
     // Loop over atoms
     for (auto &atom : atoms_)
     {
         if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical))
-            atom.setConfigurationTypeIndex(*atomTypePopulations_.indexOf(atom.speciesAtom()->atomType().get()));
+            atom.setConfigurationTypeIndex(typeMap[atom.speciesAtom()->atomType().get()]);
         else
             atom.setConfigurationTypeIndex(AtomType::Ignore);
     }

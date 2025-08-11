@@ -81,8 +81,6 @@ class Configuration : public Serialisable<const CoreData &>
     private:
     // Species populations present in the Configuration
     KeyedVector<const Species *, int> speciesPopulations_;
-    // AtomType populations in the configuration
-    AtomTypeMix atomTypePopulations_;
     // Molecule vector
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
@@ -99,12 +97,12 @@ class Configuration : public Serialisable<const CoreData &>
     public:
     // Empty contents of Configuration
     void empty();
-    // Return specified used type
-    std::shared_ptr<AtomType> atomTypes(int index);
-    // Return atom type populations for this Configuration
-    const AtomTypeMix &atomTypePopulations() const;
     // Return Species populations within the Configuration
     const KeyedVector<const Species *, int> &speciesPopulations() const;
+    // Return atom type populations for this Configuration
+    KeyedVector<const AtomType *, int> atomTypePopulations() const;
+    // Return atom type index map
+    std::map<const AtomType *, int> atomTypeIndexMap() const;
     // Return the total charge of the Configuration
     double totalCharge(bool ppIncludeCoulomb) const;
     // Return the total atomic mass present in the Configuration

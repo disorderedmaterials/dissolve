@@ -41,7 +41,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
 
     // Grab some useful values
     const auto *box = cfg->box();
-    auto nTypes = cfg->atomTypePopulations().nItems();
+    auto nTypes = cfg->atomTypePopulations().size();
     auto nAtoms = cfg->nAtoms(SpeciesAtom::Presence::Physical);
     auto &atoms = cfg->atoms();
 
@@ -315,7 +315,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, Configuration
     const auto nReflections = braggReflections.size();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
-    const auto nTypes = cfg->atomTypePopulations().nItems();
+    const auto nTypes = cfg->atomTypePopulations().size();
     auto braggPartialsObject = moduleData.realiseIf<Array2D<Data1D>>("OriginalBragg", name(), GenericItem::InRestartFileFlag);
     auto &braggPartials = braggPartialsObject.first;
     if (braggPartialsObject.second == GenericItem::ItemStatus::Created)
@@ -346,13 +346,13 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, Configuration
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
     int bin;
-    auto &types = cfg->atomTypePopulations();
+    auto types = cfg->atomTypePopulations();
     dissolve::for_each_pair(ParallelPolicies::seq, types,
-                            [&](int typeI, auto &atd1, int typeJ, auto &atd2)
+                            [&](int typeI, auto &popI, int typeJ, auto &popJ)
                             {
                                 // Retrieve partial container and make sure its tag is set
                                 auto &partial = braggPartials[{typeI, typeJ}];
-                                partial.setTag(std::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
+                                partial.setTag(std::format("{}-{}", popI.first->name(), popJ.first->name()));
 
                                 // Loop over defined Bragg reflections
                                 for (auto n = 0; n < nReflections; ++n)
@@ -381,7 +381,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, Configuration *cfg, 
     const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", name());
     const auto nReflections = braggReflections.size();
 
-    const auto nTypes = cfg->atomTypePopulations().nItems();
+    const auto nTypes = cfg->atomTypePopulations().size();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
@@ -405,7 +405,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, Configuration *cfg, 
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        auto &types = cfg->atomTypePopulations();
+        auto types = cfg->atomTypePopulations();
         int typeI = 0;
         for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {

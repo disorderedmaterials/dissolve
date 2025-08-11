@@ -58,9 +58,9 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth,
     int *bins;
 
     n = 0;
-    for (auto &atd : cfg->atomTypePopulations())
+    for (auto &[atomType, population] : cfg->atomTypePopulations())
     {
-        maxr[n] = atd.population();
+        maxr[n] = population;
         nr[n] = 0;
         r[n] = new Vector3[maxr[n]];
         binss[n] = new int[maxr[n]];

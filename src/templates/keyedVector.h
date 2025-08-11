@@ -95,8 +95,8 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it == data_.end())
             return {};
-        else
-            return it->second;
+
+        return it->second;
     }
     // Get keyed value or return default if it doesn't exist
     ValueClass valueOr(KeyClass key, ValueClass defaultValue) const
@@ -104,8 +104,8 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it == data_.end())
             return defaultValue;
-        else
-            return it->second;
+
+        return it->second;
     }
     // Indexed access
     KeyValuePair &pair(int index) { return data_[index]; }
