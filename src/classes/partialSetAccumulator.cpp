@@ -39,6 +39,7 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
     }
 
     // Total
+    total_.setTag(source.total().tag());
     total_ += source.total();
 
     ++nAccumulated_;
