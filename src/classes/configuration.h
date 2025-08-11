@@ -97,7 +97,7 @@ class Configuration : public Serialisable<const CoreData &>
     Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
 
     public:
-    // Empty contents of Configuration, leaving core definitions intact
+    // Empty contents of Configuration
     void empty();
     // Return specified used type
     std::shared_ptr<AtomType> atomTypes(int index);
@@ -149,7 +149,6 @@ class Configuration : public Serialisable<const CoreData &>
     // Unfold molecule coordinates
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
-    void funky(std::vector<bool> &flags, std::vector<std::shared_ptr<Atom>> &atoms, int i);
     void scaleContents(Vector3 scaleFactors);
     // Update and return atom type indices per Atom
     const std::vector<int> &updateTypeIndexing();
