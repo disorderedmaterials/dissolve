@@ -77,10 +77,17 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
     }
     // Element access operator []
     ValueClass &operator[](KeyClass key)
-        requires(std::is_default_constructible_v<ValueClass>)
+        requires(std::is_default_constructible_v<ValueClass> &&
+                 !(std::is_integral_v<ValueClass> || std::is_floating_point_v<ValueClass>))
     {
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         return (it == data_.end()) ? data_.emplace_back(key, ValueClass()).second : it->second;
+    }
+    ValueClass &operator[](KeyClass key)
+        requires(std::is_integral_v<ValueClass> || std::is_floating_point_v<ValueClass>)
+    {
+        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        return (it == data_.end()) ? data_.emplace_back(key, 0).second : it->second;
     }
     // Get keyed value
     const std::optional<ValueClass> get(KeyClass key) const
@@ -88,6 +95,15 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it == data_.end())
             return {};
+        else
+            return it->second;
+    }
+    // Get keyed value or return default if it doesn't exist
+    ValueClass valueOr(KeyClass key, ValueClass defaultValue) const
+    {
+        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        if (it == data_.end())
+            return defaultValue;
         else
             return it->second;
     }

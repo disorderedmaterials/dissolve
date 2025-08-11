@@ -52,7 +52,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     const auto &instances = site->instances();
     auto *targetSpecies = site->parent();
 
-    auto sPop = configuration_->speciesPopulation(targetSpecies);
+    auto sPop = configuration_->speciesPopulations().valueOr(targetSpecies, 0);
     if (sPop == 0)
         return true;
 

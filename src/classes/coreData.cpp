@@ -755,7 +755,7 @@ void CoreData::removeReferencesTo(Species *data)
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
     for (auto &cfg : configurations_)
-        if (cfg->containsSpecies(data))
+        if (cfg->speciesPopulations().contains(data))
             cfg->empty();
 }
 void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(this, data); }

@@ -60,30 +60,8 @@ void Configuration::empty()
 // Return atom type populations for this Configuration
 const AtomTypeMix &Configuration::atomTypePopulations() const { return atomTypePopulations_; }
 
-// Adjust population of specified Species in the Configuration
-void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
-{
-    if (speciesPopulations_.contains(sp))
-        speciesPopulations_[sp] += delta;
-    else
-    {
-        if (delta < 0)
-            Messenger::exception("Can't decrease population of Species '{}' as it is not in the list.\n", sp->name());
-        speciesPopulations_[sp] = delta;
-    }
-}
-
 // Return Species populations within the Configuration
-const std::map<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
-
-// Return population of specified species within the Configuration
-int Configuration::speciesPopulation(const Species *sp) const
-{
-    return speciesPopulations_.contains(sp) ? speciesPopulations_.at(sp) : 0;
-}
-
-// Return if the specified Species is present in the Configuration
-bool Configuration::containsSpecies(const Species *sp) { return speciesPopulations_.contains(sp); }
+const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
@@ -141,7 +119,7 @@ std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
     newMolecule->setSpecies(sp);
 
     // Update the relevant Species population
-    adjustSpeciesPopulation(sp, 1);
+    ++speciesPopulations_[sp];
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
     auto previousNAtoms = atoms_.size();
@@ -174,7 +152,7 @@ std::shared_ptr<Molecule> Configuration::copyMolecule(const Molecule &sourceMole
     newMolecule->setSpecies(sp);
 
     // Update the relevant Species population
-    adjustSpeciesPopulation(sp, 1);
+    ++speciesPopulations_[sp];
 
     // Copy the source molecule's coordinates
     for (const auto *atom : sourceMolecule.atoms())
@@ -196,7 +174,7 @@ void Configuration::removeMolecules(const Species *sp)
                                             auto offset = mol->globalAtomOffset();
                                             for (auto i = 0; i < mol->nAtoms(); ++i)
                                                 atoms_[offset + i].setMolecule(nullptr);
-                                            adjustSpeciesPopulation(mol->species(), -1);
+                                            --speciesPopulations_[mol->species()];
                                             return true;
                                         }
                                         else
@@ -223,7 +201,7 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                             auto offset = mol->globalAtomOffset();
                                             for (auto i = 0; i < mol->nAtoms(); ++i)
                                                 atoms_[offset + i].setMolecule(nullptr);
-                                            adjustSpeciesPopulation(mol->species(), -1);
+                                            --speciesPopulations_[mol->species()];
                                             return true;
                                         }
                                         else

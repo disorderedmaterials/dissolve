@@ -179,7 +179,7 @@ bool Dissolve::prepare()
         {
             auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().getConfiguration("Configuration");
             for (auto &sp : coreData_.species())
-                if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
+                if (cfg->speciesPopulations().contains(sp.get()) && !sp->attachedAtomListsGenerated())
                 {
                     Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
                                      "terms in Species '{}'...\n",
