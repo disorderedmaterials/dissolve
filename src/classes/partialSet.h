@@ -35,8 +35,6 @@ class PartialSet
     DoubleKeyedMap<Data1D> unboundPartials_;
     // Bound matrix, containing atom-atom partial of bound pairs
     DoubleKeyedMap<Data1D> boundPartials_;
-    // Bound flag matrix, specifying if bound partials are empty
-    DoubleKeyedMap<bool> emptyBoundPartials_;
     // Total functions
     Data1D boundTotal_, unboundTotal_, total_;
     // Check for full or half matrix
@@ -68,11 +66,6 @@ class PartialSet
     // Return unbound atom-atom partials
     DoubleKeyedMap<Data1D> &unboundPartials();
     const DoubleKeyedMap<Data1D> &unboundPartials() const;
-    // Return bound empty flags
-    DoubleKeyedMap<bool> &emptyBoundPartials();
-    const DoubleKeyedMap<bool> &emptyBoundPartials() const;
-    // Return whether specified bound partial is empty
-    bool isBoundPartialEmpty(int i, int j) const;
     // Sum partials into totals
     void formTotals(bool applyConcentrationWeights);
     // Sum partials into totals for TR

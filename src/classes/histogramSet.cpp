@@ -91,10 +91,6 @@ void HistogramSet::formPartials(PartialSet &partials, double boxVolume)
                          at2.population(), &at1 == &at2 ? 2.0 : 1.0);
             calculateRDF(partials.unboundPartials().get(key), unboundHistograms_.get(key), boxVolume, at1.population(),
                          at2.population(), &at1 == &at2 ? 2.0 : 1.0);
-
-            // Set flags for bound partials specifying if they are empty (i.e. there are no
-            // contributions of that type)
-            partials.emptyBoundPartials().get(key) = boundHistograms_.get(key).nBinned() == 0;
         },
         half_);
 }

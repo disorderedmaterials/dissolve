@@ -21,7 +21,6 @@ PartialSet::~PartialSet()
 {
     partials_.clear();
     boundPartials_.clear();
-    emptyBoundPartials_.clear();
     unboundPartials_.clear();
 }
 
@@ -40,7 +39,6 @@ void PartialSet::initialise(const AtomTypeMix &atomTypeMix, bool half)
     partials_.clear(half_);
     boundPartials_.clear(half_);
     unboundPartials_.clear(half_);
-    emptyBoundPartials_.clear(half_);
 
     // Create data for partials and set tags
     dissolve::for_each_pair(
@@ -73,7 +71,6 @@ void PartialSet::reset()
         std::ranges::fill(partial.values(), 0.0);
     for (auto &partial : std::views::values(unboundPartials_))
         std::ranges::fill(partial.values(), 0.0);
-    emptyBoundPartials_.clear(half_);
 
     // Zero totals
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
@@ -104,10 +101,6 @@ const DoubleKeyedMap<Data1D> &PartialSet::boundPartials() const { return boundPa
 // Return unbound atom-atom partials
 DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() { return unboundPartials_; }
 const DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() const { return unboundPartials_; }
-
-// Return emptyBound flag
-DoubleKeyedMap<bool> &PartialSet::emptyBoundPartials() { return emptyBoundPartials_; }
-const DoubleKeyedMap<bool> &PartialSet::emptyBoundPartials() const { return emptyBoundPartials_; }
 
 // Sum partials into total
 void PartialSet::formTotals(bool applyConcentrationWeights)
@@ -423,7 +416,6 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     partials_.clear(half_);
     boundPartials_.clear(half_);
     unboundPartials_.clear(half_);
-    emptyBoundPartials_.clear(half_);
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
