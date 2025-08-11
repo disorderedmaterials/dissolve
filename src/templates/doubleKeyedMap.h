@@ -105,14 +105,8 @@ template <typename ValueClass> class DoubleKeyedMap
         else
             return it->second;
     }
-    ValueClass &get(const std::string key)
-    {
-        return data_[key];
-    }
-    const ValueClass &at(const std::string key) const
-    {
-        return data_.at(key);
-    }
+    ValueClass &get(const std::string key) { return data_[key]; }
+    const ValueClass &at(const std::string key) const { return data_.at(key); }
     // Iterators
     std::map<std::string, ValueClass>::iterator begin() { return data_.begin(); }
     std::map<std::string, ValueClass>::const_iterator begin() const { return data_.begin(); }

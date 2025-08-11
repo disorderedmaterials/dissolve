@@ -46,7 +46,6 @@ void Configuration::empty()
 {
     molecules_.clear();
     atoms_.clear();
-    typeIndices_.clear();
     atomTypePopulations_.clear();
     appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();
@@ -54,7 +53,8 @@ void Configuration::empty()
     targetedPotentials_.clear();
     cells_.clear();
 
-    ++contentsVersion_;
+    ++version_;
+    typeIndicesValid_ = false;
 }
 
 // Return atom type populations for this Configuration
@@ -124,11 +124,11 @@ std::optional<double> Configuration::chemicalDensity() const
     return atomicMass() / (box_->volume() / 1.0E24);
 }
 
-// Return version of current contents
-int Configuration::contentsVersion() const { return contentsVersion_; }
+// Return version (atomic positions and composition)
+int Configuration::version() const { return version_; }
 
 // Increment version of current contents
-void Configuration::incrementContentsVersion() { ++contentsVersion_; }
+void Configuration::notifyAtomicPositionsChanged() { ++version_; }
 
 // Add Molecule to Configuration based on the supplied Species
 std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
@@ -159,6 +159,8 @@ std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
 
     newMolecule->updateAtoms(atoms_, previousNAtoms);
 
+    typeIndicesValid_ = false;
+
     return newMolecule;
 }
 
@@ -177,6 +179,8 @@ std::shared_ptr<Molecule> Configuration::copyMolecule(const Molecule &sourceMole
     // Copy the source molecule's coordinates
     for (const auto *atom : sourceMolecule.atoms())
         addAtom(atom->speciesAtom(), newMolecule, atom->r());
+
+    typeIndicesValid_ = false;
 
     return newMolecule;
 }
@@ -203,6 +207,8 @@ void Configuration::removeMolecules(const Species *sp)
     // Now remove any atoms which have no molecule parent
     atoms_.erase(std::remove_if(atoms_.begin(), atoms_.end(), [](const auto &atom) { return !atom.molecule(); }), atoms_.end());
 
+    typeIndicesValid_ = false;
+
     updateObjectRelationships();
 }
 
@@ -227,6 +233,8 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
 
     // Now remove any atoms which have no molecule parent
     atoms_.erase(std::remove_if(atoms_.begin(), atoms_.end(), [](const auto &atom) { return !atom.molecule(); }), atoms_.end());
+
+    typeIndicesValid_ = false;
 
     updateObjectRelationships();
 }
@@ -309,7 +317,7 @@ void Configuration::scaleContents(Vector3 scaleFactors)
         }
     }
 
-    ++contentsVersion_;
+    ++version_;
 }
 
 // Energy stable flag
@@ -322,28 +330,21 @@ void Configuration::setEnergyGradient(double grad) { energyGradient_ = grad; }
 
 double Configuration::getEnergyGradient() const { return energyGradient_; }
 
-// Update and return atom type indices per Atom
-const std::vector<int> &Configuration::updateTypeIndexing()
+// Update type indices per Atom
+void Configuration::updateTypeIndexing()
 {
-    // If the indexing vector is the correct size, nothing to do
-    if (typeIndices_.size() == atoms_.size())
-        return typeIndices_;
+    // Are we currently up-to-date
+    if (typeIndicesValid_)
+        return;
 
-    typeIndices_.clear();
-    typeIndices_.resize(atoms_.size());
-    std::ranges::fill(typeIndices_, AtomType::Ignore);
-
-    // Loop over atom types
-    for (auto n = 0; n < atomTypePopulations_.nItems(); ++n)
+    // Loop over atoms
+    for (auto &atom : atoms_)
     {
-        const AtomType *atomType = atomTypePopulations_.atomType(n);
-
-        // Search the atoms_ vector for matching atom types (physical atoms only)
-        for (auto &&[atom, index] : zip(atoms_, typeIndices_))
-            if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical) &&
-                atom.speciesAtom()->atomType().get() == atomType)
-                index = n;
+        if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical))
+            atom.setConfigurationTypeIndex(*atomTypePopulations_.indexOf(atom.speciesAtom()->atomType().get()));
+        else
+            atom.setConfigurationTypeIndex(AtomType::Ignore);
     }
 
-    return typeIndices_;
+    typeIndicesValid_ = true;
 }

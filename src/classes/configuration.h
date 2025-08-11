@@ -83,14 +83,14 @@ class Configuration : public Serialisable<const CoreData &>
     std::map<const Species *, int> speciesPopulations_;
     // AtomType populations in the configuration
     AtomTypeMix atomTypePopulations_;
-    // Contents version, incremented whenever Configuration content or Atom positions change
-    VersionCounter contentsVersion_;
     // Molecule vector
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
     std::vector<Atom> atoms_;
-    // Atom type indices per Atom
-    std::vector<int> typeIndices_;
+    // Configuration version, incremented whenever atom positions or atomic composition changes
+    VersionCounter version_;
+    // Flag stating whether local Atom type indices are up-to-date
+    bool typeIndicesValid_{false};
 
     private:
     // Add new Atom to Configuration
@@ -119,10 +119,10 @@ class Configuration : public Serialisable<const CoreData &>
     std::optional<double> atomicDensity() const;
     // Return the chemical density (g/cm3) of the Configuration
     std::optional<double> chemicalDensity() const;
-    // Return version of current contents
-    int contentsVersion() const;
-    // Increment version of current contents
-    void incrementContentsVersion();
+    // Return version (atomic positions and composition)
+    int version() const;
+    // Flag that one or more atomic positions have changed
+    void notifyAtomicPositionsChanged();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
     addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
@@ -150,8 +150,8 @@ class Configuration : public Serialisable<const CoreData &>
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
     void scaleContents(Vector3 scaleFactors);
-    // Update and return atom type indices per Atom
-    const std::vector<int> &updateTypeIndexing();
+    // Update type indices per Atom
+    void updateTypeIndexing();
 
     /*
      * Periodic Box and Cells

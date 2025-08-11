@@ -24,24 +24,26 @@
  */
 
 // Calculate partial g(r) in serial with simple double-loop
-bool GRModule::calculateGRTestSerial(Configuration *cfg, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT)
+bool GRModule::calculateGRTestSerial(Configuration *cfg,
+                                     const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
 
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, cfg->atoms(),
-        [&, box](auto i, auto &atomI, auto j, auto &atomJ)
-        {
-            if (i != j)
-                fullLUT[{typeIndices[i], typeIndices[j]}]->second.bin(box->minimumDistance(atomI.r(), atomJ.r()));
-        });
+    dissolve::for_each_pair(ParallelPolicies::seq, cfg->atoms(),
+                            [&, box](auto i, auto &atomI, auto j, auto &atomJ)
+                            {
+                                if (i != j)
+                                    fullLUT[{atomI.configurationTypeIndex(), atomJ.configurationTypeIndex()}]->second.bin(
+                                        box->minimumDistance(atomI.r(), atomJ.r()));
+                            });
 
     return true;
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT)
+bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth,
+                                 const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -66,11 +68,11 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth, cons
     }
 
     // Loop over Atoms and construct arrays
-    for (auto &&[atom, index] : zip(cfg->atoms(), typeIndices))
+    for (auto &atom : cfg->atoms())
     {
-        if (index == AtomType::Ignore)
+        if (atom.configurationTypeIndex() == AtomType::Ignore)
             continue;
-        r[index][nr[index]++] = atom.r();
+        r[atom.configurationTypeIndex()][nr[atom.configurationTypeIndex()]++] = atom.r();
     }
 
     Messenger::printVerbose("Ready..\n");
@@ -146,7 +148,8 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth, cons
     return true;
 }
 
-bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange, const std::vector<int> &typeIndices, const Array2D<typename std::map<std::string, Histogram1D>::iterator> & fullLUT)
+bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange,
+                                const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
     auto &cellArray = cfg->cells();
     Combinations comb(cellArray.nCells());
@@ -183,7 +186,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange, const
         // quicker than working out if we need to given the absence of a 2D look-up array
         for (auto &i : atomsI)
         {
-            auto typeI = i->localTypeIndex();
+            auto typeI = i->configurationTypeIndex();
             if (typeI == AtomType::Ignore)
                 continue;
 
@@ -191,7 +194,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange, const
 
             for (auto &j : atomsJ)
             {
-                auto typeJ = j->localTypeIndex();
+                auto typeJ = j->configurationTypeIndex();
                 if (typeJ == AtomType::Ignore)
                     continue;
 
@@ -210,7 +213,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange, const
     // Copy the final calculated full histograms to the HistogramSet
     for (auto k = 0; k < histograms_->atomTypeMix().nItems(); ++k)
         for (auto j = 0; j < histograms_->atomTypeMix().nItems(); ++j)
-            fullLUT[{k,j}]->second = histograms[{k, j}];
+            fullLUT[{k, j}]->second = histograms[{k, j}];
 
     // Atoms within the same cell
     for (int n = 0; n < cellArray.nCells(); ++n)
@@ -220,24 +223,23 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange, const
 
         // Add contributions between atoms in cellI
         PairIterator pairs(atomsI.size());
-        std::for_each(
-            pairs.begin(), pairs.end(),
-            [&](auto it)
-            {
-                auto [idx, jdx] = it;
-                if (idx == jdx)
-                    return;
-# THIS IS WRONG!!!!
-                auto &i = atomsI[idx];
-                auto typeI = typeIndices[idx];
-                auto &j = atomsI[jdx];
-                auto typeJ = typeIndices[jdx];
-                if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
-                {
-                    // No need to perform MIM since we're in the same cell
-                    fullLUT[{typeI, typeJ}]->second.bin((i->r() - j->r()).magnitude());
-                }
-            });
+        std::for_each(pairs.begin(), pairs.end(),
+                      [&](auto it)
+                      {
+                          auto [idx, jdx] = it;
+                          if (idx == jdx)
+                              return;
+
+                          auto &i = atomsI[idx];
+                          auto typeI = i->configurationTypeIndex();
+                          auto &j = atomsI[jdx];
+                          auto typeJ = j->configurationTypeIndex();
+                          if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
+                          {
+                              // No need to perform MIM since we're in the same cell
+                              fullLUT[{typeI, typeJ}]->second.bin((i->r() - j->r()).magnitude());
+                          }
+                      });
     }
     return true;
 }
@@ -313,7 +315,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(originalgr.fingerprint(), std::format("{}", cfg->version())) &&
         (method != GRModule::TestMethod))
     {
         Messenger::print("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
@@ -333,14 +335,14 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     }
     histograms_->zeroBins();
 
-    // Get / update the type indexing and generate LUTs for all histogram types
-    auto &typeIndices = cfg->updateTypeIndexing();
+    // Make sure type indexing is up-to-date and generate LUTs for all histogram types
+    cfg->updateTypeIndexing();
     auto fullLUT = histograms_->fullHistograms().lookUpTable(cfg->atomTypePopulations(),
-                                                         [](const auto &atd) { return atd.atomTypeName(); });
+                                                             [](const auto &atd) { return atd.atomTypeName(); });
     auto boundLUT = histograms_->boundHistograms().lookUpTable(cfg->atomTypePopulations(),
-                                                         [](const auto &atd) { return atd.atomTypeName(); });
+                                                               [](const auto &atd) { return atd.atomTypeName(); });
     auto unboundLUT = histograms_->unboundHistograms().lookUpTable(cfg->atomTypePopulations(),
-                                                         [](const auto &atd) { return atd.atomTypeName(); });
+                                                                   [](const auto &atd) { return atd.atomTypeName(); });
 
     /*
      * Calculate full (intra+inter) partials
@@ -349,14 +351,14 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     Timer timer;
     originalgr.reset();
     if (method == GRModule::TestMethod)
-        calculateGRTestSerial(cfg, typeIndices, fullLUT);
+        calculateGRTestSerial(cfg, fullLUT);
     else if (method == GRModule::SimpleMethod)
-        calculateGRSimple(cfg, rdfBinWidth, typeIndices, fullLUT);
+        calculateGRSimple(cfg, rdfBinWidth, fullLUT);
     else if (method == GRModule::CellsMethod)
-        calculateGRCells(cfg, rdfRange, typeIndices, fullLUT);
+        calculateGRCells(cfg, rdfRange, fullLUT);
     else if (method == GRModule::AutoMethod)
     {
-        cfg->nAtoms() > 10000 ? calculateGRCells(cfg, rdfRange, typeIndices, fullLUT) : calculateGRSimple(cfg, rdfBinWidth, typeIndices, fullLUT);
+        cfg->nAtoms() > 10000 ? calculateGRCells(cfg, rdfRange, fullLUT) : calculateGRSimple(cfg, rdfBinWidth, fullLUT);
     }
     timer.stop();
     Messenger::print("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
@@ -380,11 +382,11 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
                                     if (index == jndex)
                                         return;
 
-                                    auto typeI = typeIndices[index];
+                                    auto typeI = i->configurationTypeIndex();
                                     if (typeI == AtomType::Ignore)
                                         return;
 
-                                    auto typeJ = typeIndices[jndex];
+                                    auto typeJ = j->configurationTypeIndex();
                                     if (typeJ == AtomType::Ignore)
                                         return;
 
@@ -402,16 +404,15 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
      */
 
     timer.start();
-    auto success = for_each_pair_early(
-        originalgr.nAtomTypes(),
-        [&](auto typeI, auto typeJ) -> EarlyReturn<bool>
-        {
-            // Create unbound histogram from total and bound data
-            unboundLUT[{typeI, typeJ}]->second = fullLUT[{typeI, typeJ}]->second;
-            unboundLUT[{typeI, typeJ}]->second.add(boundLUT[{typeI, typeJ}]->second, -1.0);
+    auto success = for_each_pair_early(originalgr.nAtomTypes(),
+                                       [&](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                                       {
+                                           // Create unbound histogram from total and bound data
+                                           unboundLUT[{typeI, typeJ}]->second = fullLUT[{typeI, typeJ}]->second;
+                                           unboundLUT[{typeI, typeJ}]->second.add(boundLUT[{typeI, typeJ}]->second, -1.0);
 
-            return EarlyReturn<bool>::Continue;
-        });
+                                           return EarlyReturn<bool>::Continue;
+                                       });
     if (success.has_value() && !success.value())
         return false;
 
@@ -427,7 +428,7 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
      * Partials are now up-to-date
      */
 
-    originalgr.setFingerprint(std::format("{}", cfg->contentsVersion()));
+    originalgr.setFingerprint(std::format("{}", cfg->version()));
 
     return true;
 }
@@ -517,8 +518,7 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, std::string_view tar
             return Messenger::error("No density available for target configuration '{}'\n", cfg->name());
 
         // Update fingerprint
-        fingerprint +=
-            fingerprint.empty() ? std::format("{}", cfg->contentsVersion()) : std::format("_{}", cfg->contentsVersion());
+        fingerprint += fingerprint.empty() ? std::format("{}", cfg->version()) : std::format("_{}", cfg->version());
 
         // Calculate weighting factor
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;

@@ -25,11 +25,11 @@ double Atom::y() const { return r_.y; }
 // Return z-coordinate
 double Atom::z() const { return r_.z; }
 
-// Set local AtomType index
-void Atom::setLocalTypeIndex(int id) { localTypeIndex_ = id; }
+// Set AtomType index in parent Configuration
+void Atom::setConfigurationTypeIndex(int id) { configurationTypeIndex_ = id; }
 
-// Return local AtomType index
-int Atom::localTypeIndex() const { return localTypeIndex_; }
+// Return AtomType index in parent Configuration
+int Atom::configurationTypeIndex() const { return configurationTypeIndex_; }
 
 // Set master AtomType index
 void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }

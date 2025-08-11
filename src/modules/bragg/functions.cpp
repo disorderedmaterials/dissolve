@@ -23,7 +23,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
 {
     // Check to see if the arrays are up-to-date
     auto braggDataVersion = moduleData.valueOr<int>("Version", name_, -1);
-    alreadyUpToDate = braggDataVersion == cfg->contentsVersion();
+    alreadyUpToDate = braggDataVersion == cfg->version();
     if (alreadyUpToDate)
         return true;
 
@@ -246,9 +246,6 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
     // Zero k-vector cos/sin contributions
     std::for_each(braggKVectors.begin(), braggKVectors.end(), [](auto &kvec) { kvec.zeroCosSinTerms(); });
 
-    // Get / update the type indexing and generate LUTs for all histogram types
-    auto &typeIndices = cfg->updateTypeIndexing();
-
     // Loop over atoms
     timer.start();
     for (n = 0; n < nAtoms; ++n)
@@ -258,7 +255,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
             continue;
 
         // Grab localTypeIndex and array pointers for this atom
-        localTypeIndex = typeIndices[n];
+        localTypeIndex = atoms[n].configurationTypeIndex();
 
         cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
         cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);
@@ -304,7 +301,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
     std::for_each(braggReflections.begin(), braggReflections.end(), [divisor](auto &reflxn) { reflxn *= divisor; });
 
     // Store the new version of the data
-    moduleData.realise<int>("Version", name_) = cfg->contentsVersion();
+    moduleData.realise<int>("Version", name_) = cfg->version();
 
     return true;
 }

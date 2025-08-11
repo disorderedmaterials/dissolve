@@ -36,7 +36,7 @@ const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
 bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 {
     // Are we already up-to-date?
-    if (configurationIndex_ == cfg->contentsVersion())
+    if (configurationIndex_ == cfg->version())
         return true;
 
     // Set the defining information for the stack
@@ -46,7 +46,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     sitesHaveOrientation_ = speciesSite_->hasAxes();
 
     // Set new index and clear old arrays
-    configurationIndex_ = configuration_->contentsVersion();
+    configurationIndex_ = configuration_->version();
     sites_.clear();
 
     const auto &instances = site->instances();

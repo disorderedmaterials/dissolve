@@ -77,11 +77,11 @@ class GRNode : public Node
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
-    bool calculateGRTestSerial();
+    bool calculateGRTestSerial(const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
     // Calculate partial g(r) with optimised double-loop
-    bool calculateGRSimple();
+    bool calculateGRSimple(const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
     // Calculate partial g(r) utilising Cell neighbour lists
-    bool calculateGRCells(double grRange);
+    bool calculateGRCells(double grRange, const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
 
     public:
     // Calculate raw partials
