@@ -115,9 +115,9 @@ template <typename KeyClass, typename ValueClass> class KeyedVector
     ValueClass &value(int index) { return data_[index].second; }
     const ValueClass &value(int index) const { return data_[index].second; }
     // Iterators
-    std::vector<KeyValuePair>::const_iterator begin() { return data_.begin(); }
+    std::vector<KeyValuePair>::iterator begin() { return data_.begin(); }
     std::vector<KeyValuePair>::const_iterator begin() const { return data_.begin(); }
-    std::vector<KeyValuePair>::const_iterator end() { return data_.end(); }
+    std::vector<KeyValuePair>::iterator end() { return data_.end(); }
     std::vector<KeyValuePair>::const_iterator end() const { return data_.end(); }
     // Return the underlying vector
     std::vector<KeyValuePair> &vector() { return data_; }

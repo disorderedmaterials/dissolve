@@ -12,48 +12,22 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-PartialSet::PartialSet(const std::map<const Species *, double> &realSpeciesPopulations)
-    : realSpeciesPopulations_(realSpeciesPopulations)
+// Initialise data maps
+void PartialSet::createMaps()
 {
-}
-
-PartialSet::~PartialSet()
-{
-    partials_.clear();
-    boundPartials_.clear();
-    unboundPartials_.clear();
-}
-
-/*
- * Set of Partials
- */
-
-// Initialise
-void PartialSet::initialise(const KeyedVector<const AtomType *, int> &typePopulations, bool half)
-{
-    // Create fractional types vector
-    atomTypeFractions_.clear();
-    auto populationSum = std::accumulate(typePopulations.begin(), typePopulations.end(), 0.0,
-                                         [](const auto acc, const auto &pop) { return acc + pop.second; });
-    for (const auto &[atomType, population] : typePopulations)
-        atomTypeFractions_[atomType] = population / double(populationSum);
-
-    auto nTypes = atomTypeFractions_.size();
-    half_ = half;
-
     partials_.clear(half_);
     boundPartials_.clear(half_);
     unboundPartials_.clear(half_);
 
     // Create data for partials and set tags
     dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypeFractions_,
+        ParallelPolicies::seq, atomTypeFractions(),
         [&](int n, const auto &popI, int m, const auto &popJ)
         {
-            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name()());
-            partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()()));
-            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()()));
-            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()()));
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+            partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()));
+            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
+            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
         },
         half_);
 
@@ -64,6 +38,28 @@ void PartialSet::initialise(const KeyedVector<const AtomType *, int> &typePopula
     total_.clear();
     boundTotal_.clear();
     unboundTotal_.clear();
+}
+
+// Initialise
+void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half)
+{
+    // Take integer species populations and convert to real
+    realSpeciesPopulations_.clear();
+    for (const auto &[species, population] : speciesPopulations)
+        realSpeciesPopulations_[species] = double(population);
+
+    half_ = half;
+
+    createMaps();
+}
+
+// Initialise based on supplied PartialSet
+void PartialSet::initialise(const PartialSet &partialSet)
+{
+    realSpeciesPopulations_ = partialSet.realSpeciesPopulations_;
+    half_ = partialSet.half_;
+
+    createMaps();
 }
 
 // Reset partial arrays
@@ -83,11 +79,26 @@ void PartialSet::reset()
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
 }
 
-// Return number of AtomTypes used to generate matrices
-int PartialSet::nAtomTypes() const { return atomTypeFractions_.size(); }
-
 // Return fractional atom type populations
-const KeyedVector<const AtomType *, double> &PartialSet::atomTypeFractions() const { return atomTypeFractions_; }
+KeyedVector<const AtomType *, double> PartialSet::atomTypeFractions() const
+{
+    KeyedVector<const AtomType *, double> result;
+    auto sum = 0.0;
+    for (const auto &[species, speciesPopulation] : realSpeciesPopulations_)
+    {
+        for (const auto &[atomType, typePopulation] : species->atomTypePopulations())
+        {
+            result[atomType] += typePopulation * speciesPopulation;
+            sum += typePopulation * speciesPopulation;
+        }
+    }
+
+    // Normalise to 1.0
+    for (auto &[_, typePopulation] : result)
+        typePopulation /= sum;
+
+    return result;
+}
 
 // Set new fingerprint
 void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
@@ -110,14 +121,7 @@ const DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() const { return unbou
 // Sum partials into total
 void PartialSet::formTotals(bool applyConcentrationWeights)
 {
-    auto nTypes = atomTypeFractions_.size();
-    if (nTypes == 0)
-    {
-        total_.clear();
-        boundTotal_.clear();
-        unboundTotal_.clear();
-        return;
-    }
+    auto typeFractions = atomTypeFractions();
 
     // Copy x and y arrays from one of the partials, and zero the latter
     boundTotal_.initialise(partials_.begin()->second);
@@ -128,7 +132,7 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
     dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypeFractions_,
+        ParallelPolicies::seq, typeFractions,
         [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
         {
             DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
@@ -154,14 +158,7 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
 // Sum partials into total for TR
 void PartialSet::formTRTotals(NeutronWeights weights)
 {
-    auto nTypes = atomTypeFractions_.size();
-    if (nTypes == 0)
-    {
-        total_.clear();
-        boundTotal_.clear();
-        unboundTotal_.clear();
-        return;
-    }
+    auto typeFractions = atomTypeFractions();
 
     // Copy x and y arrays from one of the partials, and zero the latter
     boundTotal_.initialise(partials_.begin()->second);
@@ -172,13 +169,13 @@ void PartialSet::formTRTotals(NeutronWeights weights)
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
     dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypeFractions_,
-        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
         {
-            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
 
             // Set weighting factor if requested
-            auto factor = at1.fraction() * weights.boundCoherentProduct(typeI, typeJ);
+            auto factor = popI.second * weights.boundCoherentProduct(indexI, indexJ);
 
             // Sum bound term
             std::transform(boundTotal_.values().begin(), boundTotal_.values().end(), boundPartials_.get(key).values().begin(),
@@ -212,7 +209,7 @@ Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
 
 // Species populations
-const std::map<const Species *, double> &PartialSet::realSpeciesPopulations() const { return realSpeciesPopulations_; }
+const KeyedVector<const Species *, double> &PartialSet::realSpeciesPopulations() const { return realSpeciesPopulations_; }
 
 // Save all partials and total
 bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
@@ -220,17 +217,19 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 {
     assert(!prefix.empty());
 
+    auto typeFractions = atomTypeFractions();
+
     LineParser parser;
 
     // Write partials
     for_each_pair_early(
-        atomTypeFractions_,
-        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
+        typeFractions,
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ) -> EarlyReturn<bool>
         {
-            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
 
             // Open file and check that we're OK to proceed writing to it
-            std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
+            std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, popI.first->name(), popJ.first->name(), suffix)};
             Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
             parser.openOutput(filename, true);
@@ -412,10 +411,19 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     fingerprint_ = parser.argsv(0);
     half_ = parser.hasArg(1) ? parser.argb(1) : true;
 
-    // Read atom types
-    atomTypeFractions_.clear();
-    if (!atomTypeFractions_.deserialise(parser, coreData))
+    // Read species populations
+    realSpeciesPopulations_.clear();
+
+    // Write out species populations first
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
+    auto nSpecies = parser.argi(0);
+    for (auto n = 0; n < nSpecies; ++n)
+    {
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        realSpeciesPopulations_[coreData.findSpecies(parser.argsv(0))] = parser.argd(1);
+    }
 
     // Clear partials
     partials_.clear(half_);
@@ -467,8 +475,12 @@ bool PartialSet::serialise(LineParser &parser) const
     if (!parser.writeLineF("'{}'  {}\n", fingerprint_, half_))
         return false;
 
-    // Write out AtomTypes first
-    atomTypeFractions_.serialise(parser);
+    // Write out species populations first
+    if (!parser.writeLineF("{}\n", realSpeciesPopulations_.size()))
+        return false;
+    for (auto &[species, population] : realSpeciesPopulations_)
+        if (!parser.writeLineF("{} {}\n", species->name(), population))
+            return false;
 
     // Write number of keys to expect
     if (!parser.writeLineF("{}\n", partials_.size()))

@@ -79,6 +79,16 @@ std::map<const AtomType *, int> Configuration::atomTypeIndexMap() const
     return typeMap;
 }
 
+// Return used atom type vector
+std::vector<const AtomType *> Configuration::atomTypeVector() const
+{
+    auto populations = atomTypePopulations();
+    std::vector<const AtomType *> result(populations.size());
+    std::transform(populations.vector().begin(), populations.vector().end(), result.begin(),
+                   [](const auto &pop) { return pop.first; });
+    return result;
+}
+
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
 {

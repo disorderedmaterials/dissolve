@@ -92,7 +92,8 @@ class GRModule : public Module
     static bool sumUnweightedGR(GenericList &processingData, std::string_view targetPrefix, std::string_view parentPrefix,
                                 const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
-    static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
+    static bool testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
+                                      double testThreshold);
     // Test calculated partial against supplied reference data
     static bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
                                      std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");

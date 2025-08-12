@@ -11,7 +11,7 @@
 #include "templates/optionalRef.h"
 
 // Forward Declarations
-class AtomTypeMix;
+class AtomType;
 class BraggModule;
 class Configuration;
 class Dissolve;

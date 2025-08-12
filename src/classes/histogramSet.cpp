@@ -13,16 +13,16 @@
  */
 
 // Initialise histograms
-void HistogramSet::initialise(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth)
+void HistogramSet::initialise(const std::vector<const AtomType *> &types, double rdfRange, double binWidth)
 {
-    atomTypeMix_ = atomTypeMix;
+    atomTypes_ = types;
 
     fullHistograms_.clear(half_);
     boundHistograms_.clear(half_);
     unboundHistograms_.clear(half_);
 
     dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypeMix_,
+        ParallelPolicies::seq, atomTypes_,
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
             DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
@@ -53,9 +53,6 @@ void HistogramSet::zeroBins()
         histo.zeroBins();
 }
 
-// Return atom types list
-const AtomTypeMix &HistogramSet::atomTypeMix() const { return atomTypeMix_; }
-
 // Set new fingerprint
 void HistogramSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
 
@@ -79,7 +76,7 @@ DoubleKeyedMap<Histogram1D> &HistogramSet::unboundHistograms() { return unboundH
 void HistogramSet::formPartials(PartialSet &partials, double boxVolume)
 {
     dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypeMix_,
+        ParallelPolicies::seq, atomTypes_,
         [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
         {
             DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());

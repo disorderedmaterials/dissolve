@@ -89,7 +89,8 @@ class GRNode : public Node
     // Calculate smoothed/broadened partial g(r) from supplied partials
     bool calculateUnweightedGR();
     // Test supplied PartialSets against each other
-    bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
+    bool testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
+                               double testThreshold);
     // Test calculated partial against supplied reference data
     bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
                               std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");

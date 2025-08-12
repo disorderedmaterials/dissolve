@@ -54,7 +54,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
 
     // Make weightedGR Partial set
     PartialSet representativeGR;
-    representativeGR.initialise(unweightedSQ.atomTypeMix(), false);
+    representativeGR.initialise(unweightedSQ);
 
     // Get effective atomic density of underlying g(r)
     const auto rho = grModule->effectiveDensity();
@@ -63,7 +63,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
     auto [weightedTR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedTR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedTR.initialise(unweightedGR.atomTypeMix(), false);
+        weightedTR.initialise(unweightedGR);
 
     // Get Q-range and window function to use for transformation of reference F(Q) to G(r)
     auto refftQMin = refQMin_.value_or(0.0);
@@ -136,26 +136,31 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
     auto [representativeTR, rTRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("RepresentativeTR", name_, GenericItem::InRestartFileFlag);
     if (rTRstatus == GenericItem::ItemStatus::Created)
-        representativeTR.initialise(representativeGR.atomTypeMix(), false);
+        representativeTR.initialise(representativeGR);
+
+    auto typeFractions = representativeGR.atomTypeFractions();
 
     dissolve::for_each_pair(
-        ParallelPolicies::par, representativeGR.atomTypeMix(),
-        [&weights, &rho, &representativeGR, &representativeTR](const auto typeI, const auto &atd1, const auto typeJ,
-                                                               const auto &atd2)
+        ParallelPolicies::par, typeFractions,
+        [&weights, &rho, &representativeGR, &representativeTR](const auto indexI, const auto &popI, const auto indexJ,
+                                                               const auto &popJ)
         {
-            auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
-            double intraWeight = weights.intramolecularWeight(typeI, typeJ);
-            auto cj = weights.atomTypes()[typeJ].fraction();
+            auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+            double intraWeight = weights.intramolecularWeight(indexI, indexJ);
+            auto cj = weights.atomTypes()[indexJ].fraction();
+
             auto factor = 4.0 * M_PI * rho.value() * cj;
             representativeTR.boundPartials().get(key).copyArrays(representativeGR.boundPartials().get(key));
             representativeTR.unboundPartials().get(key).copyArrays(representativeGR.unboundPartials().get(key));
             representativeTR.partials().get(key).copyArrays(representativeGR.partials().get(key));
             representativeTR.boundPartials().get(key).copyArrays(representativeGR.boundPartials().get(key));
+
             for (auto &&[x, y] :
                  zip(representativeTR.boundPartials().get(key).xAxis(), representativeTR.boundPartials().get(key).values()))
             {
                 y *= x * factor;
             }
+
             // Unbound partial (multiplied by the full weight)
             representativeTR.unboundPartials().get(key).copyArrays(representativeGR.unboundPartials().get(key));
             for (auto &&[x, y] :
@@ -163,6 +168,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
             {
                 y *= x * factor;
             }
+
             // Full partial, summing bound and unbound terms
             representativeTR.partials().get(key).copyArrays(representativeGR.partials().get(key));
             for (auto &&[x, y] :
@@ -175,21 +181,21 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
 
     // Calculate weightedTR
     dissolve::for_each_pair(
-        ParallelPolicies::par, unweightedGR.atomTypeMix(),
-        [&weights, &rho, &unweightedGR, &weightedTR](const auto typeI, const auto &atd1, const auto typeJ, const auto &atd2)
+        ParallelPolicies::par, typeFractions,
+        [&weights, &rho, &unweightedGR, &weightedTR](const auto indexI, const auto &popI, const auto indexJ, const auto &popJ)
         {
-            auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
-            double intraWeight = weights.intramolecularWeight(typeI, typeJ);
-            auto cj = weights.atomTypes()[typeJ].fraction();
+            auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+            double intraWeight = weights.intramolecularWeight(indexI, indexJ);
+            auto cj = weights.atomTypes()[indexJ].fraction();
             auto factor = 4.0 * M_PI * rho.value() * cj;
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedTR.boundPartials().get(key).copyArrays(unweightedGR.boundPartials().get(key));
-
             for (auto &&[x, y] : zip(weightedTR.boundPartials().get(key).xAxis(), weightedTR.boundPartials().get(key).values()))
             {
                 y *= x * factor;
             }
+
             // Unbound partial (multiplied by the full weight)
             weightedTR.unboundPartials().get(key).copyArrays(unweightedGR.unboundPartials().get(key));
             for (auto &&[x, y] :
@@ -197,9 +203,9 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
             {
                 y *= x * factor;
             }
+
             // Full partial, summing bound and unbound terms
             weightedTR.partials().get(key).copyArrays(unweightedGR.partials().get(key));
-
             for (auto &&[x, y] : zip(weightedTR.partials().get(key).xAxis(), weightedTR.partials().get(key).values()))
             {
                 y *= x * factor;

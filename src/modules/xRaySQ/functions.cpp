@@ -11,11 +11,12 @@
 bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
                                        StructureFactors::NormalisationType normalisation)
 {
-    dissolve::for_each_pair(ParallelPolicies::seq, unweightedgr.atomTypeMix(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedgr.atomTypeFractions(),
+                            [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
                             {
-                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
-                                auto weight = weights.weight(typeI, typeJ, 0.0);
+                                auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+
+                                auto weight = weights.weight(indexI, indexJ, 0.0);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedgr.boundPartials().get(key).copyArrays(unweightedgr.boundPartials().get(key));
@@ -53,12 +54,13 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
 bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
                                        StructureFactors::NormalisationType normalisation)
 {
-    dissolve::for_each_pair(ParallelPolicies::seq, unweightedsq.atomTypeMix(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedsq.atomTypeFractions(),
+                            [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
                             {
-                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+
                                 // Weight bound and unbound S(Q) and sum into full partial
-                                auto qWeights = weights.weight(typeI, typeJ, unweightedsq.boundPartials().get(key).xAxis());
+                                auto qWeights = weights.weight(indexI, indexJ, unweightedsq.boundPartials().get(key).xAxis());
 
                                 // Bound (intramolecular) and unbound partials
                                 weightedsq.boundPartials().get(key).copyArrays(unweightedsq.boundPartials().get(key));

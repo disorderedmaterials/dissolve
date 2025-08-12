@@ -340,7 +340,7 @@ Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const KeyedVector<const AtomType *, double> &typePopulations, Array2D<Data1D> &estimatedSQ)
+void ScatteringMatrix::initialise(const std::vector<const AtomType *> &types, Array2D<Data1D> &estimatedSQ)
 {
     // Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
     A_.clear();
@@ -352,9 +352,7 @@ void ScatteringMatrix::initialise(const KeyedVector<const AtomType *, double> &t
     qMatrices_.clear();
 
     // Copy atom types and construct pairs
-    atomTypes_.resize(typePopulations.size());
-    std::transform(typePopulations.begin(), typePopulations.end(), atomTypes_.begin(),
-                   [](const auto &pop) { return pop.first; });
+    atomTypes_ = types;
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
                             [this](int i, auto &at1, int j, auto &at2) { typePairs_.emplace_back(at1, at2); });
 

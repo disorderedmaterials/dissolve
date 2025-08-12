@@ -20,8 +20,8 @@ class HistogramSet
      * Data
      */
     private:
-    // AtomTypeMix used to generate matrices
-    AtomTypeMix atomTypeMix_;
+    // AtomTypes used to generate matrices
+    std::vector<const AtomType *> atomTypes_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Histograms used for calculating full atom-atom partials in r
@@ -35,13 +35,11 @@ class HistogramSet
 
     public:
     // Set up histograms
-    void initialise(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth);
+    void initialise(const std::vector<const AtomType *> &types, double rdfRange, double binWidth);
     // Clear all histogram data
     void clear();
     // Zero histogram bins
     void zeroBins();
-    // Return atom types mis
-    const AtomTypeMix &atomTypeMix() const;
     // Set new fingerprint
     void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of partials

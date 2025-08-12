@@ -194,7 +194,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     auto [weightedSQ, wSQstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", name_, GenericItem::InRestartFileFlag);
     if (wSQstatus == GenericItem::ItemStatus::Created)
-        weightedSQ.initialise(unweightedSQ.atomTypeMix());
+        weightedSQ.initialise(unweightedSQ);
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
@@ -220,7 +220,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.initialise(unweightedGR.atomTypeMix());
+        weightedGR.initialise(unweightedGR);
 
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);

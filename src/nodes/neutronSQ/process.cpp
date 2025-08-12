@@ -148,8 +148,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     // Set up the weighted SQ storage if needed
     if (!weightedSQ_)
     {
-        weightedSQ_.emplace(realSpeciesPopulations);
-        weightedSQ_->initialise(unweightedSQ_->atomTypeMix());
+        weightedSQ_.emplace();
+        weightedSQ_->initialise(*unweightedSQ_);
     }
 
     // Calculate weighted S(Q)
@@ -174,8 +174,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     // Set up weighted GR storage if we need it
     if (!weightedGR_)
     {
-        weightedGR_.emplace(realSpeciesPopulations);
-        weightedGR_->initialise(unweightedGR_->atomTypeMix());
+        weightedGR_.emplace();
+        weightedGR_->initialise(*unweightedGR_);
     }
 
     // Calculate weighted g(r)

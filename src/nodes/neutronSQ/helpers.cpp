@@ -8,12 +8,13 @@
 // Calculate weighted g(r)
 bool NeutronSQNode::calculateWeightedGR()
 {
-    dissolve::for_each_pair(ParallelPolicies::seq, unweightedGR_->atomTypeMix(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedGR_->atomTypeFractions(),
+                            [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
                             {
-                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
-                                double weight = weights_.weight(typeI, typeJ);
-                                double intraWeight = weights_.intramolecularWeight(typeI, typeJ);
+                                auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+
+                                auto weight = weights_.weight(indexI, indexJ);
+                                auto intraWeight = weights_.intramolecularWeight(indexI, indexJ);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedGR_->boundPartials().get(key).copyArrays(unweightedGR_->boundPartials().get(key));
@@ -49,13 +50,14 @@ bool NeutronSQNode::calculateWeightedGR()
 // Calculate weighted S(Q)
 bool NeutronSQNode::calculateWeightedSQ()
 {
-    dissolve::for_each_pair(ParallelPolicies::seq, unweightedSQ_->atomTypeMix(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+    dissolve::for_each_pair(ParallelPolicies::seq, unweightedSQ_->atomTypeFractions(),
+                            [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
                             {
-                                auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+
                                 // Weight bound and unbound S(Q) and sum into full partial
-                                double weight = weights_.weight(typeI, typeJ);
-                                double boundWeight = weights_.intramolecularWeight(typeI, typeJ);
+                                auto weight = weights_.weight(indexI, indexJ);
+                                auto boundWeight = weights_.intramolecularWeight(indexI, indexJ);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedSQ_->boundPartials().get(key).copyArrays(unweightedSQ_->boundPartials().get(key));
@@ -88,7 +90,7 @@ bool NeutronSQNode::calculateWeightedSQ()
 }
 
 // Calculate neutron weights matrix
-void NeutronSQNode::calculateWeights(const std::map<const Species *, double> &realSpeciesPopulations)
+void NeutronSQNode::calculateWeights(const KeyedVector<const Species *, double> &realSpeciesPopulations)
 {
     // Create a set of named Isotopologues to use
     IsotopologueSet topes;

@@ -213,7 +213,7 @@ void NeutronWeights::calculateWeightingMatrices()
 }
 
 // Create from species populations and isotopologues
-void NeutronWeights::create(const std::map<const Species *, double> &populations, const IsotopologueSet &isotopologues,
+void NeutronWeights::create(const KeyedVector<const Species *, double> &populations, const IsotopologueSet &isotopologues,
                             const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     clear();

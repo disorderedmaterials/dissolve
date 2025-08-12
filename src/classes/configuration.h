@@ -103,6 +103,8 @@ class Configuration : public Serialisable<const CoreData &>
     KeyedVector<const AtomType *, int> atomTypePopulations() const;
     // Return atom type index map
     std::map<const AtomType *, int> atomTypeIndexMap() const;
+    // Return used atom type vector
+    std::vector<const AtomType *> atomTypeVector() const;
     // Return the total charge of the Configuration
     double totalCharge(bool ppIncludeCoulomb) const;
     // Return the total atomic mass present in the Configuration
