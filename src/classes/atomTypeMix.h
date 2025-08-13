@@ -53,12 +53,8 @@ class AtomTypeMix
     std::vector<AtomTypeData>::const_iterator begin() const;
     // Return ending iterator
     std::vector<AtomTypeData>::const_iterator end() const;
-    // Return index of AtomType
-    std::optional<int> indexOf(const AtomType *atomType) const;
     // Return indices of AtomType pair
     std::optional<std::pair<int, int>> indexOf(const AtomType *at1, const AtomType *at2) const;
-    // Return index of named AtomType
-    std::optional<int> indexOf(std::string_view name) const;
     // Return total population of all types
     double totalPopulation() const;
     // Return nth referenced AtomType

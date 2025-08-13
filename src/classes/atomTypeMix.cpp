@@ -114,27 +114,6 @@ std::vector<AtomTypeData>::const_iterator AtomTypeMix::begin() const { return ty
 // Return ending iterator
 std::vector<AtomTypeData>::const_iterator AtomTypeMix::end() const { return types_.end(); }
 
-// Return index of AtomType
-std::optional<int> AtomTypeMix::indexOf(const AtomType *atomType) const
-{
-    auto it = std::find_if(types_.begin(), types_.end(), [atomType](const auto &atd) { return atd.atomType() == atomType; });
-    if (it == types_.end())
-        return {};
-    else
-        return it - types_.begin();
-}
-
-// Return index of names AtomType
-std::optional<int> AtomTypeMix::indexOf(std::string_view name) const
-{
-    auto it = std::find_if(types_.begin(), types_.end(),
-                           [name](const auto &atd) { return DissolveSys::sameString(atd.atomType()->name(), name); });
-    if (it == types_.end())
-        return {};
-    else
-        return it - types_.begin();
-}
-
 // Return indices of AtomType pair
 std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const AtomType *at1, const AtomType *at2) const
 {
