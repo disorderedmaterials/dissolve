@@ -39,8 +39,6 @@ class AtomTypeData
     void add(Sears91::Isotope tope, double nAdd);
     // Add/set full isotope data
     void setIsotope(Sears91::Isotope tope, double pop, double fraction);
-    // Zero populations
-    void zeroPopulations();
     // Return referenced AtomType
     const AtomType *atomType() const;
     // Set exchangeable flag

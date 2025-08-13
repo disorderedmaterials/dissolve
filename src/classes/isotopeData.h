@@ -31,8 +31,6 @@ class IsotopeData
     void add(double nAdd);
     // Finalise, calculating local fractional population (e.g. within an AtomTypeData)
     void finalise(double totalAtoms);
-    // Zero population and fraction
-    void zeroPopulation();
     // Return referenced Isotope
     Sears91::Isotope isotope() const;
     // Return total population

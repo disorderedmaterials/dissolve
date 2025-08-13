@@ -54,18 +54,6 @@ void AtomTypeData::setIsotope(Sears91::Isotope tope, double pop, double fraction
     population_ += pop;
 }
 
-// Zero populations
-void AtomTypeData::zeroPopulations()
-{
-    // Zero individual isotope counts
-    for (auto &topeData : isotopes_)
-        topeData.zeroPopulation();
-
-    // Zero totals
-    population_ = 0.0;
-    fraction_ = 0.0;
-}
-
 // Return reference AtomType
 const AtomType *AtomTypeData::atomType() const { return atomType_; }
 

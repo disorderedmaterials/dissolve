@@ -30,13 +30,6 @@ void IsotopeData::add(double nAdd) { population_ += nAdd; }
 // Finalise, calculating local fractional population (e.g. within an IsotopeData)
 void IsotopeData::finalise(double totalAtoms) { fraction_ = population_ / totalAtoms; }
 
-// Zero populations
-void IsotopeData::zeroPopulation()
-{
-    population_ = 0.0;
-    fraction_ = 0.0;
-}
-
 // Return reference Isotope
 Sears91::Isotope IsotopeData::isotope() const { return isotope_; }
 
