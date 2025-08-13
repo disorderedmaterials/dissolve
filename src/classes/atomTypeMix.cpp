@@ -99,14 +99,6 @@ bool AtomTypeMix::contains(const AtomType *atomType) const
            types_.end();
 }
 
-// Check for presence of AtomType/Isotope pair
-bool AtomTypeMix::contains(const AtomType *atomType, Sears91::Isotope tope) const
-{
-    return std::find_if(types_.begin(), types_.end(),
-                        [&atomType, tope](const auto &typeData)
-                        { return typeData.atomType() == atomType && typeData.hasIsotope(tope); }) != types_.end();
-}
-
 // Return number of AtomType/Isotopes
 int AtomTypeMix::nItems() const { return types_.size(); }
 

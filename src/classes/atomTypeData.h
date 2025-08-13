@@ -37,8 +37,6 @@ class AtomTypeData
     void add(double nAdd);
     // Add to population of Isotope
     void add(Sears91::Isotope tope, double nAdd);
-    // Add/set full isotope data
-    void setIsotope(Sears91::Isotope tope, double pop, double fraction);
     // Return referenced AtomType
     const AtomType *atomType() const;
     // Set exchangeable flag
@@ -49,8 +47,6 @@ class AtomTypeData
     void finalise(double nWorldAtoms);
     // Return the number of defined Isotopes
     int nIsotopes() const;
-    // Return if specified Isotope is already in the list
-    bool hasIsotope(Sears91::Isotope tope) const;
     // Return IsotopeData vector
     const std::vector<IsotopeData> &isotopeData() const;
     // Return total population over all isotopes

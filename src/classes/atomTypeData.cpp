@@ -39,21 +39,6 @@ void AtomTypeData::add(Sears91::Isotope tope, double nAdd)
     population_ += nAdd;
 }
 
-// Add/set full isotope data
-// ONLY USED IN DESERIALISE
-void AtomTypeData::setIsotope(Sears91::Isotope tope, double pop, double fraction)
-{
-    if (std::find_if(isotopes_.begin(), isotopes_.end(), [tope](const auto &topeData) { return topeData.isotope() == tope; }) !=
-        isotopes_.end())
-        Messenger::exception(
-            "Tried to set IsotopeData for isotope A = {} in AtomTypeData for AtomType '{}', but existing data is present.\n",
-            Sears91::A(tope), atomTypeName());
-
-    isotopes_.emplace_back(tope, pop, fraction);
-
-    population_ += pop;
-}
-
 // Return reference AtomType
 const AtomType *AtomTypeData::atomType() const { return atomType_; }
 
@@ -81,13 +66,6 @@ void AtomTypeData::finalise(double totalAtoms)
 
 // Return the number of defined Isotopes
 int AtomTypeData::nIsotopes() const { return isotopes_.size(); }
-
-// Return if specified Isotope is already in the list
-bool AtomTypeData::hasIsotope(Sears91::Isotope tope) const
-{
-    return std::find_if(isotopes_.begin(), isotopes_.end(),
-                        [tope](const auto &topeData) { return topeData.isotope() == tope; }) != isotopes_.end();
-}
 
 // Return IsotopeData vector
 const std::vector<IsotopeData> &AtomTypeData::isotopeData() const { return isotopes_; };

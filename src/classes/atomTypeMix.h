@@ -43,8 +43,6 @@ class AtomTypeMix
     void finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Check for presence of AtomType
     bool contains(const AtomType *atomType) const;
-    // Check for presence of AtomType/Isotope pair
-    bool contains(const AtomType *atomType, Sears91::Isotope tope) const;
     // Return number of AtomType/Isotopes
     int nItems() const;
     // Return size of the mix (equivalent to nItems(), added for standard container "compliance")
