@@ -41,11 +41,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     // Get the real species populations from the input unweightedSQ
     auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
 
-    // Calculate and store weights_
-    /*
-    auto& weights_ = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name(),
-        GenericItem::InRestartFileFlag);
-    */
+    // Calculate weights
     calculateWeights(realSpeciesPopulations);
     message("Isotopologue and isotope composition:\n\n");
     weights_.print();

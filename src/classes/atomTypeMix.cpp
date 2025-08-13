@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <utility>
 
-
 void AtomTypeMix::operator=(const AtomTypeMix &source) { types_ = source.types_; }
 
 AtomTypeData &AtomTypeMix::operator[](int n) { return types_[n]; }
@@ -224,65 +223,4 @@ void AtomTypeMix::print() const
 
         Messenger::print("  -----------------------------------------------------------------\n");
     }
-}
-
-/*
- * Serialisation
- */
-
-// Read data through specified LineParser
-bool AtomTypeMix::deserialise(LineParser &parser, const CoreData &coreData)
-{
-    types_.clear();
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    auto nItems = parser.argi(0);
-    for (auto n = 0; n < nItems; ++n)
-    {
-        // Line Contains: AtomType name, population, fraction, boundCoherent, and nIsotopes
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        auto atomType = coreData.findAtomType(parser.argsv(0));
-        if (!atomType)
-            return Messenger::error("Could not find atom type {}.", parser.argsv(0));
-        auto population = parser.argd(1);
-        auto fraction = parser.argd(2);
-        auto boundCoherent = parser.argd(3);
-        auto nIsotopes = parser.argi(4);
-
-        // Create AtomTypeData
-        auto &atd = types_.emplace_back(atomType.get(), population, fraction, boundCoherent);
-
-        // For each of the nIsotopes, read (and check) A, population, and fraction
-        for (auto i = 0; i < nIsotopes; ++i)
-        {
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            auto isotope = Sears91::isotope(atomType->Z(), parser.argi(0));
-            atd.setIsotope(isotope, parser.argd(1), parser.argd(2));
-        }
-    }
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool AtomTypeMix::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("{}  # nItems\n", types_.size()))
-        return false;
-    for (auto &atd : types_)
-    {
-        // Line Contains: AtomType name, population, fraction, boundCoherent, and nIsotopes
-        if (!parser.writeLineF("{} {} {} {} {}\n", atd.atomTypeName(), atd.population(), atd.fraction(), atd.boundCoherent(),
-                               atd.isotopeData().size()))
-            return false;
-        // For each isotope write A, population, and fraction
-        for (const auto &topeData : atd.isotopeData())
-            if (!parser.writeLineF("{} {} {}\n", Sears91::A(topeData.isotope()), topeData.population(), topeData.fraction()))
-                return false;
-    }
-
-    return true;
 }

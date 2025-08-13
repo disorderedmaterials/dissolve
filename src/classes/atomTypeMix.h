@@ -69,13 +69,4 @@ class AtomTypeMix
     OptionalReferenceWrapper<const AtomTypeData> atomTypeData(const AtomType *atomType) const;
     // Print AtomType populations
     void print() const;
-
-    /*
-     * Serialisation
-     */
-    public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
 };

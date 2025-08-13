@@ -174,7 +174,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             }
             return true;
         });
-    registerDeserialiser<AtomTypeMix>(simpleDeserialiseCore<AtomTypeMix>);
     registerDeserialiser<Data1D>(simpleDeserialise<Data1D>);
     registerDeserialiser<Data2D>(simpleDeserialise<Data2D>);
     registerDeserialiser<Data3D>(simpleDeserialise<Data3D>);
@@ -182,7 +181,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<Histogram2D>(simpleDeserialise<Histogram2D>);
     registerDeserialiser<Histogram3D>(simpleDeserialise<Histogram3D>);
     registerDeserialiser<IntegerHistogram1D>(simpleDeserialise<IntegerHistogram1D>);
-    registerDeserialiser<NeutronWeights>(simpleDeserialiseCore<NeutronWeights>);
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
     registerDeserialiser<PotentialSet>(simpleDeserialiseCore<PotentialSet>);
@@ -207,7 +205,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             v = parser.arg3d(0);
             return true;
         });
-    registerDeserialiser<XRayWeights>(simpleDeserialiseCore<XRayWeights>);
 
     // Containers of Custom Classes
     registerDeserialiser<std::vector<BraggReflection>>(vectorDeserialise<BraggReflection>);

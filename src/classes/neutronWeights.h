@@ -90,13 +90,4 @@ class NeutronWeights
     double boundCoherentAverageOfSquares() const;
     // Return whether the structure is valid (i.e. has been finalised)
     bool isValid() const;
-
-    /*
-     * Serialisation
-     */
-    public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
 };

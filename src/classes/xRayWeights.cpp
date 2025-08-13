@@ -258,38 +258,3 @@ std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector
 
 // Return whether the structure is valid (i.e. has been finalised)
 bool XRayWeights::isValid() const { return valid_; }
-
-/*
- * Serialisation
- */
-
-// Read data through specified LineParser
-bool XRayWeights::deserialise(LineParser &parser, const CoreData &coreData)
-{
-    clear();
-
-    // Read form factor dataset to use
-    if (parser.getArgsDelim() != LineParser::Success)
-        return false;
-    formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argsv(0));
-
-    // Read AtomTypeMix
-    if (!atomTypeMix_.deserialise(parser, coreData))
-        return false;
-
-    return finalise(formFactors_);
-}
-
-// Write data through specified LineParser
-bool XRayWeights::serialise(LineParser &parser) const
-{
-    // Write x-ray form factor dataset
-    if (!parser.writeLineF("{}\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_)))
-        return false;
-
-    // Write AtomTypeMix
-    if (!atomTypeMix_.serialise(parser))
-        return false;
-
-    return true;
-}
