@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <utility>
 
-AtomTypeMix::AtomTypeMix(const AtomTypeMix &source) { (*this) = source; }
 
 void AtomTypeMix::operator=(const AtomTypeMix &source) { types_ = source.types_; }
 
@@ -25,13 +24,6 @@ const AtomTypeData &AtomTypeMix::operator[](int n) const { return types_[n]; }
 
 // Clear all data
 void AtomTypeMix::clear() { types_.clear(); }
-
-// Zero populations of all types in the list
-void AtomTypeMix::zero()
-{
-    for (auto &atd : types_)
-        atd.zeroPopulations();
-}
 
 // Add the specified AtomType to the list, returning data object and its index in the vector
 std::pair<AtomTypeData &, int> AtomTypeMix::add(const AtomType *atomType, double population)
@@ -49,23 +41,6 @@ std::pair<AtomTypeData &, int> AtomTypeMix::add(const AtomType *atomType, double
 
     auto &newAtomTypeData = types_.emplace_back(atomType, population);
     return {newAtomTypeData, types_.size() - 1};
-}
-
-// Add the AtomTypes in the supplied list into this one, increasing populations etc.
-void AtomTypeMix::add(const AtomTypeMix &source)
-{
-    // Loop over AtomTypes in the source list
-    for (auto &otherType : source)
-    {
-        auto &atd = std::get<0>(add(otherType.atomType()));
-
-        // If no Isotope data are present, add the population now. Otherwise, add it via the isotopes...
-        if (otherType.nIsotopes() == 0)
-            atd.add(otherType.population());
-        else
-            for (auto &topeData : otherType.isotopeData())
-                atd.add(topeData.isotope(), topeData.population());
-    }
 }
 
 // Add/increase this AtomType/Isotope pair

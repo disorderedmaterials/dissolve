@@ -19,7 +19,6 @@ class AtomTypeMix
     public:
     AtomTypeMix() = default;
     ~AtomTypeMix() = default;
-    AtomTypeMix(const AtomTypeMix &source);
     void operator=(const AtomTypeMix &source);
     AtomTypeData &operator[](int n);
     const AtomTypeData &operator[](int n) const;
@@ -34,12 +33,8 @@ class AtomTypeMix
     public:
     // Clear all data
     void clear();
-    // Zero populations of all types
-    void zero();
     // Add the specified AtomType to the list, returning data object and its index in the vector
     std::pair<AtomTypeData &, int> add(const AtomType *atomType, double popAdd = 0);
-    // Add the AtomTypes in the supplied object into this one, increasing populations etc.
-    void add(const AtomTypeMix &source);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType
     void addIsotope(const AtomType *atomType, Sears91::Isotope tope, double popAdd = 0);
     // Finalise, calculating fractional populations etc.

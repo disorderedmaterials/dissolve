@@ -40,6 +40,7 @@ void AtomTypeData::add(Sears91::Isotope tope, double nAdd)
 }
 
 // Add/set full isotope data
+// ONLY USED IN DESERIALISE
 void AtomTypeData::setIsotope(Sears91::Isotope tope, double pop, double fraction)
 {
     if (std::find_if(isotopes_.begin(), isotopes_.end(), [tope](const auto &topeData) { return topeData.isotope() == tope; }) !=
