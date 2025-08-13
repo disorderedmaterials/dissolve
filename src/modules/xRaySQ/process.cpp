@@ -193,7 +193,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Construct weights matrix
-    auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_, GenericItem::InRestartFileFlag);
+    auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_);
     calculateWeights(grModule, weights, formFactors_);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
