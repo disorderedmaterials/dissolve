@@ -247,6 +247,29 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange,
     return true;
 }
 
+// Calculate RDF from raw histogram
+void GRModule::calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+                            double multiplier)
+{
+    auto nBins = histogram.nBins();
+    auto delta = histogram.binWidth();
+    const auto &bins = histogram.bins();
+
+    gr.clear();
+
+    double shellVolume, factor, r = 0.5 * delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
+    for (auto n = 0; n < nBins; ++n)
+    {
+        shellVolume = (4.0 / 3.0) * M_PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
+        factor = nCentres * (shellVolume * numberDensity);
+
+        gr.addPoint(r, bins[n] * (multiplier / factor));
+
+        r += delta;
+        lowerShellLimit += delta;
+    }
+}
+
 /*
  * Public Functions
  */
@@ -421,8 +444,22 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
     if (success.has_value() && !success.value())
         return false;
 
-    // Transform histogram data into partials and store
-    histograms_->formPartials(originalgr, box->volume());
+    // Transform histogram data into radial distribution function
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, cfg->atomTypePopulations(),
+        [&](int indexI, auto &popI, int indexJ, auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+
+            // Calculate RDFs from histogram data
+            calculateRDF(originalgr.partials().get(key), histograms_->fullHistograms().get(key), box->volume(), popI.second,
+                         popJ.second, indexI == indexJ ? 2.0 : 1.0);
+            calculateRDF(originalgr.boundPartials().get(key), histograms_->boundHistograms().get(key), box->volume(),
+                         popI.second, popJ.second, indexI == indexJ ? 2.0 : 1.0);
+            calculateRDF(originalgr.unboundPartials().get(key), histograms_->unboundHistograms().get(key), box->volume(),
+                         popI.second, popJ.second, indexI == indexJ ? 2.0 : 1.0);
+        },
+        true);
 
     // Sum total functions
     originalgr.formTotals(true);

@@ -76,6 +76,9 @@ class GRModule : public Module
     // Calculate partial g(r) utilising Cell neighbour lists
     bool calculateGRCells(Configuration *cfg, const double binWidth,
                           const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
+    // Calculate RDF from raw histogram
+    void calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+                      double multiplier);
 
     public:
     // Calculate and return effective density based on target Configurations

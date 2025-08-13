@@ -242,6 +242,29 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
     return true;
 }
 
+// Calculate RDF from raw histogram
+void GRNode::calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+                          double multiplier)
+{
+    auto nBins = histogram.nBins();
+    auto delta = histogram.binWidth();
+    const auto &bins = histogram.bins();
+
+    gr.clear();
+
+    double shellVolume, factor, r = 0.5 * delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
+    for (auto n = 0; n < nBins; ++n)
+    {
+        shellVolume = (4.0 / 3.0) * M_PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
+        factor = nCentres * (shellVolume * numberDensity);
+
+        gr.addPoint(r, bins[n] * (multiplier / factor));
+
+        r += delta;
+        lowerShellLimit += delta;
+    }
+}
+
 /*
  * Public Functions
  */
@@ -355,8 +378,22 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
     if (success.has_value() && !success.value())
         return false;
 
-    // Transform histogram data into radial distribution functions
-    histograms_->formPartials(*rawGR_, box->volume());
+    // Transform histogram data into radial distribution function
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, targetConfiguration_->atomTypePopulations(),
+        [&](int indexI, auto &popI, int indexJ, auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+
+            // Calculate RDFs from histogram data
+            calculateRDF(rawGR_->partials().get(key), histograms_->fullHistograms().get(key), box->volume(), popI.second,
+                         popJ.second, indexI == indexJ ? 2.0 : 1.0);
+            calculateRDF(rawGR_->boundPartials().get(key), histograms_->boundHistograms().get(key), box->volume(), popI.second,
+                         popJ.second, indexI == indexJ ? 2.0 : 1.0);
+            calculateRDF(rawGR_->unboundPartials().get(key), histograms_->unboundHistograms().get(key), box->volume(),
+                         popI.second, popJ.second, indexI == indexJ ? 2.0 : 1.0);
+        },
+        true);
 
     // Sum total functions
     rawGR_->formTotals(true);

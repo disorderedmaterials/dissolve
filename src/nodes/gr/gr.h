@@ -82,6 +82,9 @@ class GRNode : public Node
     bool calculateGRSimple(const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
     // Calculate partial g(r) utilising Cell neighbour lists
     bool calculateGRCells(double grRange, const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
+    // Calculate RDF from raw histogram
+    void calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+                      double multiplier);
 
     public:
     // Calculate raw partials

@@ -8,7 +8,7 @@
 #include <vector>
 
 // Keyed Vector
-template <typename KeyClass, typename ValueClass> class KeyedVector
+template <class KeyClass, class ValueClass> class KeyedVector
 {
     public:
     using KeyValuePair = std::pair<KeyClass, ValueClass>;

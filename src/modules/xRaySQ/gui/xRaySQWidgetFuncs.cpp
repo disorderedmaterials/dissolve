@@ -56,29 +56,29 @@ void XRaySQModuleWidget::createPartialSetRenderables(std::string_view targetPref
     if (!ui_.FilterEdit->text().isEmpty())
         filterText = ui_.FilterEdit->text().toStdString();
 
-    PairIterator pairs(ps.atomTypeMix().nItems());
-    for (auto [first, second] : pairs)
-    {
-        auto &at1 = ps.atomTypeMix()[first];
-        auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+    auto typeFractions = ps.atomTypeFractions();
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, auto &popI, int indexJ, auto popJ)
+        {
+            const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
 
-        // Filtering - does this 'id' match our filter?
-        if (filterText && id.find(filterText.value()) == std::string::npos)
-            continue;
+            // Filtering - does this 'id' match our filter?
+            if (filterText && id.find(filterText.value()) == std::string::npos)
+                return;
 
-        // Full partial
-        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                   std::format("{} (Full)", id), "Full");
+            // Full partial
+            graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                       std::format("{} (Full)", id), "Full");
 
-        // Bound partial
-        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                   std::format("{} (Bound)", id), "Bound");
+            // Bound partial
+            graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                       std::format("{} (Bound)", id), "Bound");
 
-        // Unbound partial
-        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                   std::format("{} (Unbound)", id), "Unbound");
-    }
+            // Unbound partial
+            graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                       std::format("{} (Unbound)", id), "Unbound");
+        });
 }
 
 // Update controls within widget

@@ -50,14 +50,4 @@ class HistogramSet
     DoubleKeyedMap<Histogram1D> &boundHistograms();
     // Return unbound histograms
     DoubleKeyedMap<Histogram1D> &unboundHistograms();
-
-    /*
-     * Manipulation
-     */
-    public:
-    // Form partials from stored Histogram data
-    void formPartials(PartialSet &partials, double boxVolume);
-    // Calculate RDF from supplied Histogram and normalisation data
-    static void calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
-                             int nSurrounding, double multiplier);
 };

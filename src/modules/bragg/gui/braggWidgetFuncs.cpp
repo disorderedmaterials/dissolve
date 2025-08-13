@@ -64,7 +64,7 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
         {
             if (reflectionAtomTypesData_)
             {
-                dissolve::for_each_pair(ParallelPolicies::seq, reflectionAtomTypesData_->get(),
+                dissolve::for_each_pair(ParallelPolicies::seq, *reflectionAtomTypesData_,
                                         [&](int i, auto &popI, int j, auto &popJ)
                                         {
                                             const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
@@ -102,11 +102,11 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
             // Retrieve the atom types list so we know which reflections correspond to which pairs
             if (reflectionAtomTypesData_)
             {
-                const auto &atl = reflectionAtomTypesData_->get();
+                const auto typeVector = *reflectionAtomTypesData_;
                 std::vector<std::string> columnHeaders;
-                columnHeaders.reserve(atl.size() * (atl.size() + 1) / 2);
+                columnHeaders.reserve(typeVector.size() * (typeVector.size() + 1) / 2);
                 dissolve::for_each_pair(
-                    ParallelPolicies::seq, reflectionAtomTypesData_->get(),
+                    ParallelPolicies::seq, typeVector,
                     [&](int i, auto &popI, int j, auto &popJ)
                     { columnHeaders.emplace_back(std::format("{}-{}", popI.first->name(), popJ.first->name())); });
 

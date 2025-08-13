@@ -12,9 +12,16 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-// Initialise data maps
-void PartialSet::createMaps()
+// Initialise
+void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half)
 {
+    // Take integer species populations and convert to real
+    realSpeciesPopulations_.clear();
+    for (const auto &[species, population] : speciesPopulations)
+        realSpeciesPopulations_[species] = double(population);
+
+    half_ = half;
+
     partials_.clear(half_);
     boundPartials_.clear(half_);
     unboundPartials_.clear(half_);
@@ -22,7 +29,7 @@ void PartialSet::createMaps()
     // Create data for partials and set tags
     dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypeFractions(),
-        [&](int n, const auto &popI, int m, const auto &popJ)
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
         {
             DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
             partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()));
@@ -40,26 +47,35 @@ void PartialSet::createMaps()
     unboundTotal_.clear();
 }
 
-// Initialise
-void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half)
-{
-    // Take integer species populations and convert to real
-    realSpeciesPopulations_.clear();
-    for (const auto &[species, population] : speciesPopulations)
-        realSpeciesPopulations_[species] = double(population);
-
-    half_ = half;
-
-    createMaps();
-}
-
 // Initialise based on supplied PartialSet
 void PartialSet::initialise(const PartialSet &partialSet)
 {
     realSpeciesPopulations_ = partialSet.realSpeciesPopulations_;
     half_ = partialSet.half_;
 
-    createMaps();
+    // Template data from source PartialSet and set tags
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypeFractions(),
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+
+            partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()));
+            partials_.get(key).initialise(partialSet.partials_.get(key));
+            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
+            boundPartials_.get(key).initialise(partialSet.boundPartials_.get(key));
+            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
+            unboundPartials_.get(key).initialise(partialSet.unboundPartials_.get(key));
+        },
+        half_);
+
+    // Set up arrays for totals
+    total_.setTag("Total");
+    boundTotal_.setTag("BoundTotal");
+    unboundTotal_.setTag("UnboundTotal");
+    total_.initialise(partialSet.total_);
+    boundTotal_.initialise(partialSet.boundTotal_);
+    unboundTotal_.initialise(partialSet.unboundTotal_);
 }
 
 // Reset partial arrays

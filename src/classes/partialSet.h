@@ -35,14 +35,10 @@ class PartialSet
     // Effective density
     double rho_;
 
-    private:
-    // Initialise data maps
-    void createMaps();
-
     public:
     // Initialise from supplied species populations
     void initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half = true);
-    // Initialise based on supplied PartialSet
+    // Initialise based on supplied PartialSet, templating all data
     void initialise(const PartialSet &partialSet);
     // Reset partial arrays
     void reset();
