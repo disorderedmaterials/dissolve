@@ -61,8 +61,6 @@ class GRNode : public Node
     std::optional<Number> nSmooths_;
     // Calculation method for partials
     PartialsMethod partialsMethod_{PartialsMethod::AutoMethod};
-    // Summed atom types
-    AtomTypeMix combinedAtomTypes_;
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
     // Whether to save partials and total functions to disk
