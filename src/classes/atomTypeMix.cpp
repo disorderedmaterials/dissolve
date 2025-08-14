@@ -22,19 +22,12 @@ void AtomTypeMix::add(const AtomType *atomType, Sears91::Isotope isotope, double
     isotopeMix.add(isotope, population);
 }
 
-// Finalise list, calculating fractional populations etc.
-void AtomTypeMix::finalise()
+// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
+void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     auto total = totalPopulation();
     for (auto &isotopeMix : std::views::values(types_))
         isotopeMix.finalise(total);
-}
-
-// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
-{
-    // Perform basic tasks
-    finalise();
 
     // Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
     double totalFraction = 0.0, boundCoherent = 0.0;

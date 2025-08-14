@@ -18,7 +18,7 @@ TEST(AtomTypeMixTest, Basic)
     mix_.add(molecules_.atN().get(), Sears91::N_Natural, 1);
     mix_.add(molecules_.atOW().get(), Sears91::O_Natural, 2);
     mix_.add(molecules_.atHW().get(), Sears91::H_Natural, 3);
-    mix_.finalise();
+    mix_.finalise({});
 
     // Check basic data
     EXPECT_EQ(mix_.mix().size(), 3);
