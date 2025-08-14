@@ -6,7 +6,7 @@
 #include "classes/atomTypeData.h"
 #include "templates/keyedVector.h"
 #include "templates/optionalRef.h"
-#include <tuple>
+#include <set>
 #include <vector>
 
 // Forward Declarations
@@ -21,8 +21,10 @@ class AtomTypeMix
     ~AtomTypeMix() = default;
 
     private:
-    // Isotope mix data
+    // Isotope data per atom type
     KeyedVector<const AtomType *, AtomTypeData> mix_;
+    // Exchangeable atom types
+    std::set<const AtomType *> exchangeables_;
     // Total population added to mix
     double totalPopulation_{0.0};
 
@@ -38,6 +40,8 @@ class AtomTypeMix
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Return types/topes map
     const KeyedVector<const AtomType *, AtomTypeData> &mix() const;
+    // Return whether specified atom type is exchangeable
+    bool isExchangeable(const AtomType *atomType) const;
     // Return indices of AtomType pair
     std::optional<std::pair<int, int>> indexOf(const AtomType *at1, const AtomType *at2) const;
     // Print AtomType populations

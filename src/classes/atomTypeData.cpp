@@ -25,12 +25,6 @@ void AtomTypeData::add(Sears91::Isotope isotope, double population)
     population_ += population;
 }
 
-// Set exchangeable flag
-void AtomTypeData::setAsExchangeable() { exchangeable_ = true; }
-
-// Return whether the associated AtomType is exchangeable
-bool AtomTypeData::exchangeable() const { return exchangeable_; }
-
 // Finalise, calculating fractional populations etc.
 void AtomTypeData::finalise(double totalAtoms)
 {

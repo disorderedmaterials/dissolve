@@ -22,6 +22,10 @@ void AtomTypeMix::add(const AtomType *atomType, Sears91::Isotope isotope, double
 // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
 void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
+    // Set exchangeable flags
+    for (auto &at : exchangeableTypes)
+        exchangeables_.insert(at.get());
+
     for (auto &isotopeMix : std::views::values(mix_))
         isotopeMix.finalise(totalPopulation_);
 
@@ -30,8 +34,7 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
     for (auto &[atomType, isotopeMix] : mix_)
     {
         // If this type is not exchangeable, move on
-        if (std::find_if(exchangeableTypes.begin(), exchangeableTypes.end(),
-                         [atomType](const auto &exchType) { return atomType == exchType.get(); }) == exchangeableTypes.end())
+        if (!exchangeables_.contains(atomType))
             continue;
 
         // Sum total atomic fraction and weighted bound coherent scattering length
@@ -44,13 +47,11 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
     for (auto &[atomType, isotopeMix] : mix_)
     {
         // If this type is not exchangaeble, move on
-        if (std::find_if(exchangeableTypes.begin(), exchangeableTypes.end(),
-                         [atomType](const auto &exchType) { return atomType == exchType.get(); }) == exchangeableTypes.end())
+        if (!exchangeables_.contains(atomType))
             continue;
 
         // Set the bound coherent scattering length of this component to the average of all exchangable components
         isotopeMix.setBoundCoherent(boundCoherent);
-        isotopeMix.setAsExchangeable();
     }
 }
 
@@ -60,6 +61,7 @@ void AtomTypeMix::create(const std::vector<Isotopologues> &isotopologues,
 {
     mix_.clear();
     totalPopulation_ = 0.0;
+    exchangeables_.clear();
 
     // Loop over Isotopologues and add to the mix
     for (auto &topes : isotopologues)
@@ -85,6 +87,9 @@ void AtomTypeMix::create(const std::vector<Isotopologues> &isotopologues,
 
 // Return types/topes map
 const KeyedVector<const AtomType *, AtomTypeData> &AtomTypeMix::mix() const { return mix_; }
+
+// Return whether specified atom type is exchangeable
+bool AtomTypeMix::isExchangeable(const AtomType *atomType) const { return exchangeables_.contains(atomType); }
 
 // Return indices of AtomType pair
 std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const AtomType *at1, const AtomType *at2) const
@@ -119,7 +124,7 @@ void AtomTypeMix::print() const
     Messenger::print("  -----------------------------------------------------------------\n");
     for (auto &[atomType, isotopeMix] : mix_)
     {
-        char exch = isotopeMix.exchangeable() ? 'E' : ' ';
+        char exch = exchangeables_.contains(atomType) ? 'E' : ' ';
 
         // If there are isotopes defined, print them
         if (!isotopeMix.isotopes().empty())

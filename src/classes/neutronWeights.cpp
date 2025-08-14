@@ -157,15 +157,13 @@ void NeutronWeights::calculateWeightingMatrices()
 
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
         const auto *sp = topes.species();
-        const auto &atomTypePopulations = sp->atomTypePopulations();
 
         // Loop over Isotopologues defined for this mixture
         for (auto &[iso, weight] : topes.mix())
         {
             // Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the
             // fractional Isotopologue weight in the mix.
-
-            dissolve::for_each_pair(ParallelPolicies::seq, atomTypePopulations,
+            dissolve::for_each_pair(ParallelPolicies::seq, sp->atomTypePopulations(),
                                     [&, iso, weight](int spTypeI, const auto &atPop1, int spTypeJ, const auto &atPop2)
                                     {
                                         // First, check that both of atom types used in the species are present in the weights
@@ -180,10 +178,10 @@ void NeutronWeights::calculateWeightingMatrices()
 
                                         // If an AtomType is exchangeable, add the averaged scattering length from the local
                                         // AtomTypesList instead of its actual isotopic length.
-                                        bi = localI->exchangeable()
+                                        bi = atomTypes_.isExchangeable(atPop1.first)
                                                  ? localI->boundCoherent()
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
-                                        bj = localJ->exchangeable()
+                                        bj = atomTypes_.isExchangeable(atPop2.first)
                                                  ? localJ->boundCoherent()
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 

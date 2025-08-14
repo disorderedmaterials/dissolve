@@ -16,8 +16,6 @@ class AtomTypeData
      * Properties
      */
     private:
-    // Whether the AtomType has been marked as exchangeable
-    bool exchangeable_{false};
     // Isotope population
     std::map<Sears91::Isotope, double> isotopes_;
     // Total population
@@ -32,10 +30,6 @@ class AtomTypeData
     void add(double nAdd);
     // Add to population of Isotope
     void add(Sears91::Isotope isotope, double population);
-    // Set exchangeable flag
-    void setAsExchangeable();
-    // Return whether the associated AtomType is exchangeable
-    bool exchangeable() const;
     // Finalise, calculating fractional populations etc.
     void finalise(double nWorldAtoms);
     // Return isotopes
