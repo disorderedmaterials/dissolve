@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/isotopeData.h"
-#include <memory>
+#include "data/isotopes.h"
+#include <map>
 
 // Forward Declarations
 class AtomType;
@@ -13,7 +13,7 @@ class AtomType;
 class AtomTypeData
 {
     public:
-    AtomTypeData(const AtomType *atomType, double population = 0, double fraction = 0, double boundCoherent = 0, int nIso = 0);
+    AtomTypeData(const AtomType *atomType, double population = 0, double fraction = 0, double boundCoherent = 0);
 
     /*
      * Properties
@@ -23,8 +23,8 @@ class AtomTypeData
     const AtomType *atomType_;
     // Whether the AtomType has been marked as exchangeable
     bool exchangeable_{false};
-    // Isotopes information (if any)
-    std::vector<IsotopeData> isotopes_;
+    // Isotope population
+    std::map<Sears91::Isotope, double> isotopes_;
     // Total population
     double population_{0.0};
     // World fractional population over all Isotopes
@@ -36,7 +36,7 @@ class AtomTypeData
     // Add to population
     void add(double nAdd);
     // Add to population of Isotope
-    void add(Sears91::Isotope tope, double nAdd);
+    void add(Sears91::Isotope isotope, double population);
     // Return referenced AtomType
     const AtomType *atomType() const;
     // Set exchangeable flag
@@ -45,10 +45,8 @@ class AtomTypeData
     bool exchangeable() const;
     // Finalise, calculating fractional populations etc.
     void finalise(double nWorldAtoms);
-    // Return the number of defined Isotopes
-    int nIsotopes() const;
-    // Return IsotopeData vector
-    const std::vector<IsotopeData> &isotopeData() const;
+    // Return isotopes
+    const std::map<Sears91::Isotope, double> &isotopes() const;
     // Return total population over all isotopes
     int population() const;
     // Return total fractional population including all isotopes

@@ -8,13 +8,11 @@
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/atomTypeMix.h"
-#include "classes/isotopeData.h"
 #include "data/isotopes.h"
 
-AtomTypeData::AtomTypeData(const AtomType *atomType, double population, double fraction, double boundCoherent, int nIso)
+AtomTypeData::AtomTypeData(const AtomType *atomType, double population, double fraction, double boundCoherent)
     : atomType_(atomType), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
-    isotopes_.resize(nIso, IsotopeData());
 }
 
 /*
@@ -25,18 +23,15 @@ AtomTypeData::AtomTypeData(const AtomType *atomType, double population, double f
 void AtomTypeData::add(double nAdd) { population_ += nAdd; }
 
 // Add to population of Isotope
-void AtomTypeData::add(Sears91::Isotope tope, double nAdd)
+void AtomTypeData::add(Sears91::Isotope isotope, double population)
 {
-    // Has this isotope already been added to the list?
-    auto it =
-        std::find_if(isotopes_.begin(), isotopes_.end(), [tope](const auto &topeData) { return topeData.isotope() == tope; });
-    if (it == isotopes_.end())
-        isotopes_.emplace_back(tope, nAdd);
+    if (isotopes_.contains(isotope))
+        isotopes_[isotope] += population;
     else
-        it->add(nAdd);
+        isotopes_[isotope] = population;
 
     // Increase total population
-    population_ += nAdd;
+    population_ += population;
 }
 
 // Return reference AtomType
@@ -54,21 +49,14 @@ void AtomTypeData::finalise(double totalAtoms)
     // Calculate fractional world population
     fraction_ = population_ / totalAtoms;
 
-    // Calculate isotope fractional populations (of AtomType)
-    for (auto &topeData : isotopes_)
-        topeData.finalise(population_);
-
     // Determine bound coherent scattering for AtomType, based on Isotope populations
     boundCoherent_ = 0.0;
-    for (auto &topeData : isotopes_)
-        boundCoherent_ += topeData.fraction() * Sears91::boundCoherent(topeData.isotope());
+    for (auto &[isotope, isotopePopulation] : isotopes_)
+        boundCoherent_ += (isotopePopulation / population_) * Sears91::boundCoherent(isotope);
 }
 
-// Return the number of defined Isotopes
-int AtomTypeData::nIsotopes() const { return isotopes_.size(); }
-
-// Return IsotopeData vector
-const std::vector<IsotopeData> &AtomTypeData::isotopeData() const { return isotopes_; };
+// Return isotopes map
+const std::map<Sears91::Isotope, double> &AtomTypeData::isotopes() const { return isotopes_; };
 
 // Return total population over all isotopes
 int AtomTypeData::population() const { return population_; }

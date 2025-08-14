@@ -176,16 +176,15 @@ void AtomTypeMix::print() const
         char exch = atd.exchangeable() ? 'E' : ' ';
 
         // If there are isotopes defined, print them
-        if (!atd.isotopeData().empty())
+        if (!atd.isotopes().empty())
         {
             Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
                              Elements::symbol(atd.atomType()->Z()), atd.population(), atd.fraction(), atd.boundCoherent());
 
-            for (auto &topeData : atd.isotopeData())
+            for (auto &[isotope, isotopePopulation] : atd.isotopes())
             {
-                Messenger::print("                   {:<3d}   {:<10.6e}  {:10.6f} (of type)  {:6.3f}\n",
-                                 Sears91::A(topeData.isotope()), topeData.population(), topeData.fraction(),
-                                 Sears91::boundCoherent(topeData.isotope()));
+                Messenger::print("                   {:<3d}   {:<10.6e}  {:10.6f} (of type)  {:6.3f}\n", Sears91::A(isotope),
+                                 isotopePopulation, isotopePopulation / atd.population(), Sears91::boundCoherent(isotope));
             }
         }
         else

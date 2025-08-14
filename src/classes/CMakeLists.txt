@@ -34,7 +34,6 @@ add_library(
   empiricalFormula.cpp
   fullPairIterator.cpp
   histogramSet.cpp
-  isotopeData.cpp
   isotopologue.cpp
   isotopologues.cpp
   isotopologueSet.cpp
@@ -98,7 +97,6 @@ add_library(
   empiricalFormula.h
   histogramSet.h
   interactionPotential.h
-  isotopeData.h
   isotopologue.h
   isotopologues.h
   isotopologueSet.h
