@@ -115,14 +115,13 @@ void NeutronWeights::calculateWeightingMatrices()
     intramolecularWeights_.initialise(nTypes, nTypes, true);
     boundCoherentAverageOfSquares_ = 0.0;
     boundCoherentSquareOfAverage_ = 0.0;
-
     double ci, cj, bi, bj;
 
     // Determine atomic concentration products, bound coherent products, and full scattering weights
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.mix(),
                             [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
-                                ci = typeMixI.second.fraction();
+                                ci = atomTypes_.fraction(typeMixI.first);
                                 bi = typeMixI.second.boundCoherent() * 0.1;
 
                                 // Update average scattering values
@@ -132,7 +131,7 @@ void NeutronWeights::calculateWeightingMatrices()
                                     boundCoherentAverageOfSquares_ += ci * bi * bi;
                                 }
 
-                                cj = typeMixJ.second.fraction();
+                                cj = atomTypes_.fraction(typeMixJ.first);
                                 bj = typeMixJ.second.boundCoherent() * 0.1;
 
                                 concentrationProducts_[{indexI, indexJ}] = ci * cj;
@@ -173,16 +172,16 @@ void NeutronWeights::calculateWeightingMatrices()
                                             return;
                                         auto &[typeI, typeJ] = *optPairIndex;
 
-                                        auto localI = atomTypes_.mix().get(atPop1.first);
-                                        auto localJ = atomTypes_.mix().get(atPop2.first);
+                                        auto localI = atomTypes_.mix().value(atPop1.first);
+                                        auto localJ = atomTypes_.mix().value(atPop2.first);
 
                                         // If an AtomType is exchangeable, add the averaged scattering length from the local
                                         // AtomTypesList instead of its actual isotopic length.
                                         bi = atomTypes_.isExchangeable(atPop1.first)
-                                                 ? localI->boundCoherent()
+                                                 ? localI.boundCoherent()
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
                                         bj = atomTypes_.isExchangeable(atPop2.first)
-                                                 ? localJ->boundCoherent()
+                                                 ? localJ.boundCoherent()
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 
                                         // Convert from fm to barns
@@ -204,8 +203,8 @@ void NeutronWeights::calculateWeightingMatrices()
                                 if (!globalFlag[{indexI, indexJ}])
                                     return;
 
-                                ci = typeMixI.second.fraction();
-                                cj = typeMixJ.second.fraction();
+                                ci = atomTypes_.fraction(typeMixI.first);
+                                cj = atomTypes_.fraction(typeMixJ.first);
 
                                 intramolecularWeights_[{indexI, indexJ}] /= intraNorm[{indexI, indexJ}];
                                 intramolecularWeights_[{indexI, indexJ}] *= ci * cj * (indexI == indexJ ? 1 : 2);
@@ -238,8 +237,7 @@ void NeutronWeights::create(const KeyedVector<const Species *, double> &populati
 // Create AtomType list and matrices based on stored Isotopologues information
 void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
-    // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
-    // populations
+    // Create the isotope mix from defined isotopologues
     atomTypes_.create(isotopologueMixtures_, exchangeableTypes);
 
     calculateWeightingMatrices();

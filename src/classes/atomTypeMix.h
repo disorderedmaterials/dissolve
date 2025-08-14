@@ -29,8 +29,6 @@ class AtomTypeMix
     double totalPopulation_{0.0};
 
     private:
-    // Add/increase population of specified Isotope for AtomType
-    void add(const AtomType *atomType, Sears91::Isotope isotope, double population);
     // Finalise, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
     void finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
 
@@ -40,6 +38,8 @@ class AtomTypeMix
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Return types/topes map
     const KeyedVector<const AtomType *, AtomTypeData> &mix() const;
+    // Calculate and return fraction of atom type in whole mix
+    double fraction(const AtomType *atomType) const;
     // Return whether specified atom type is exchangeable
     bool isExchangeable(const AtomType *atomType) const;
     // Return indices of AtomType pair

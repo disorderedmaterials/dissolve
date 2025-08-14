@@ -55,11 +55,7 @@ void Isotopologue::setAtomTypeIsotope(const AtomType *atomType, Sears91::Isotope
 // Return Isotope for specified AtomType
 Sears91::Isotope Isotopologue::atomTypeIsotope(const AtomType *atomType) const
 {
-    auto optIsotope = isotopes_.get(atomType);
-    if (optIsotope)
-        return *optIsotope;
-    else
-        return Sears91::naturalIsotope(atomType->Z());
+    return isotopes_.contains(atomType) ? isotopes_.value(atomType) : Sears91::naturalIsotope(atomType->Z());
 }
 
 // Return AtomType/Isotope pairs list

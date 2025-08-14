@@ -4,15 +4,6 @@
 #include "classes/atomTypeMix.h"
 #include "data/isotopes.h"
 
-AtomTypeData::AtomTypeData(double population, double fraction, double boundCoherent)
-    : population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
-{
-}
-
-/*
- * Properties
- */
-
 // Add to population of Isotope
 void AtomTypeData::add(Sears91::Isotope isotope, double population)
 {
@@ -28,9 +19,6 @@ void AtomTypeData::add(Sears91::Isotope isotope, double population)
 // Finalise, calculating fractional populations etc.
 void AtomTypeData::finalise(double totalAtoms)
 {
-    // Calculate fractional world population
-    fraction_ = population_ / totalAtoms;
-
     // Determine bound coherent scattering for AtomType, based on Isotope populations
     boundCoherent_ = 0.0;
     for (auto &[isotope, isotopePopulation] : isotopes_)
@@ -41,10 +29,7 @@ void AtomTypeData::finalise(double totalAtoms)
 const std::map<Sears91::Isotope, double> &AtomTypeData::isotopes() const { return isotopes_; };
 
 // Return total population over all isotopes
-int AtomTypeData::population() const { return population_; }
-
-// Return total fractional population including all isotopes
-double AtomTypeData::fraction() const { return fraction_; }
+double AtomTypeData::population() const { return population_; }
 
 // Set calculated bond coherent scattering over all isotopes
 void AtomTypeData::setBoundCoherent(double d) { boundCoherent_ = d; }

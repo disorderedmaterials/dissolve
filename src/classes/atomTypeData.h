@@ -10,7 +10,7 @@
 class AtomTypeData
 {
     public:
-    AtomTypeData(double population = 0, double fraction = 0, double boundCoherent = 0);
+    AtomTypeData() = default;
 
     /*
      * Properties
@@ -20,8 +20,6 @@ class AtomTypeData
     std::map<Sears91::Isotope, double> isotopes_;
     // Total population
     double population_{0.0};
-    // World fractional population over all Isotopes
-    double fraction_{0.0};
     // Calculated bound coherent scattering over all Isotopes
     double boundCoherent_{0.0};
 
@@ -35,9 +33,7 @@ class AtomTypeData
     // Return isotopes
     const std::map<Sears91::Isotope, double> &isotopes() const;
     // Return total population over all isotopes
-    int population() const;
-    // Return total fractional population including all isotopes
-    double fraction() const;
+    double population() const;
     // Set calculated bond coherent scattering over all isotopes
     void setBoundCoherent(double d);
     // Return calculated bound coherent scattering over all Isotopes

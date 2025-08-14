@@ -147,7 +147,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
         {
             auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
             double intraWeight = weights.intramolecularWeight(indexI, indexJ);
-            auto cj = weights.atomTypes().mix().get(popJ.first)->fraction();
+            auto cj = weights.atomTypes().fraction(popJ.first);
 
             auto factor = 4.0 * M_PI * rho.value() * cj;
             representativeTR.boundPartials().get(key).copyArrays(representativeGR.boundPartials().get(key));
@@ -186,7 +186,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
         {
             auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
             double intraWeight = weights.intramolecularWeight(indexI, indexJ);
-            auto cj = weights.atomTypes().mix().get(popJ.first)->fraction();
+            auto cj = weights.atomTypes().fraction(popJ.first);
             auto factor = 4.0 * M_PI * rho.value() * cj;
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
