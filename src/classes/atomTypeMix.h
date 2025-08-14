@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/atomTypeData.h"
+#include "templates/keyedVector.h"
 #include "templates/optionalRef.h"
 #include <tuple>
 #include <vector>
@@ -19,48 +20,29 @@ class AtomTypeMix
     public:
     AtomTypeMix() = default;
     ~AtomTypeMix() = default;
-    void operator=(const AtomTypeMix &source);
-    AtomTypeData &operator[](int n);
-    const AtomTypeData &operator[](int n) const;
 
     /*
      * Types
      */
     private:
     // Vector of AtomTypeData
-    std::vector<AtomTypeData> types_;
+    KeyedVector<const AtomType *, AtomTypeData> types_;
 
     public:
     // Clear all data
     void clear();
-    // Add the specified AtomType to the list, returning data object and its index in the vector
-    std::pair<AtomTypeData &, int> add(const AtomType *atomType, double popAdd = 0);
-    // Add/increase this AtomType/Isotope pair, returning the index of the AtomType
-    void addIsotope(const AtomType *atomType, Sears91::Isotope tope, double popAdd = 0);
+    // Add/increase population of specified Isotope for AtomType
+    void add(const AtomType *atomType, Sears91::Isotope isotope, double population);
     // Finalise, calculating fractional populations etc.
     void finalise();
     // Finalise, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
     void finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
-    // Check for presence of AtomType
-    bool contains(const AtomType *atomType) const;
-    // Return number of AtomType/Isotopes
-    int nItems() const;
-    // Return size of the mix (equivalent to nItems(), added for standard container "compliance")
-    int size() const;
-    // Return first item in list
-    const AtomTypeData &first() const;
-    // Return opening iterator
-    std::vector<AtomTypeData>::const_iterator begin() const;
-    // Return ending iterator
-    std::vector<AtomTypeData>::const_iterator end() const;
+    // Return types/topes map
+    const KeyedVector<const AtomType *, AtomTypeData> &mix() const;
     // Return indices of AtomType pair
     std::optional<std::pair<int, int>> indexOf(const AtomType *at1, const AtomType *at2) const;
     // Return total population of all types
     double totalPopulation() const;
-    // Return nth referenced AtomType
-    const AtomType *atomType(int n) const;
-    // Return AtomTypeData for specified AtomType
-    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(const AtomType *atomType) const;
     // Print AtomType populations
     void print() const;
 };

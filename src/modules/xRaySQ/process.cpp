@@ -50,7 +50,8 @@ bool XRaySQModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> a
         {
             // We need the x-ray weights in order to do the normalisation
             XRayWeights weights;
-            calculateWeights(grModule, weights, formFactors_);
+            if (!weights.setUp(grModule->speciesPopulations(), formFactors_))
+                return Messenger::error("[SETUP {}] Couldn't determine weights matrix.\n", name_);
             auto bBarSquareOfAverage = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
             auto bBarAverageOfSquares = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
             std::vector<double> factors;
@@ -194,7 +195,12 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
 
     // Construct weights matrix
     auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_);
-    calculateWeights(grModule, weights, formFactors_);
+    if (!weights.setUp(grModule->speciesPopulations(), formFactors_))
+    {
+        Messenger::error("Failed to set up weights matrix.\n");
+        return ExecutionResult::Failed;
+    }
+
     Messenger::print("Weights matrix:\n\n");
     weights.print();
 
@@ -212,7 +218,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
         return ExecutionResult::Failed;
     if (saveFormFactors_)
     {
-        // TODO This will be cleaned up once XRaWeights moves to DoubleKeyedMap.
+        // TODO This will be cleaned up once XRayWeights moves to DoubleKeyedMap.
         KeyedVector<const AtomType *, int> typeVector;
         for (auto &[species, _] : unweightedSQ.realSpeciesPopulations())
             for (auto &[atomType, _] : species->atomTypePopulations())

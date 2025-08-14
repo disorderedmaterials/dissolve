@@ -109,35 +109,36 @@ void NeutronWeights::calculateWeightingMatrices()
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
-    concentrationProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    boundCoherentProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    weights_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    intramolecularWeights_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    auto nTypes = atomTypes_.mix().size();
+    concentrationProducts_.initialise(nTypes, nTypes, true);
+    boundCoherentProducts_.initialise(nTypes, nTypes, true);
+    weights_.initialise(nTypes, nTypes, true);
+    intramolecularWeights_.initialise(nTypes, nTypes, true);
     boundCoherentAverageOfSquares_ = 0.0;
     boundCoherentSquareOfAverage_ = 0.0;
 
     double ci, cj, bi, bj;
 
     // Determine atomic concentration products, bound coherent products, and full scattering weights
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.mix(),
+                            [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
-                                ci = atd1.fraction();
-                                bi = atd1.boundCoherent() * 0.1;
+                                ci = typeMixI.second.fraction();
+                                bi = typeMixI.second.boundCoherent() * 0.1;
 
                                 // Update average scattering values
-                                if (typeI == typeJ)
+                                if (indexI == indexJ)
                                 {
                                     boundCoherentSquareOfAverage_ += ci * bi;
                                     boundCoherentAverageOfSquares_ += ci * bi * bi;
                                 }
 
-                                cj = atd2.fraction();
-                                bj = atd2.boundCoherent() * 0.1;
+                                cj = typeMixJ.second.fraction();
+                                bj = typeMixJ.second.boundCoherent() * 0.1;
 
-                                concentrationProducts_[{typeI, typeJ}] = ci * cj;
-                                boundCoherentProducts_[{typeI, typeJ}] = bi * bj;
-                                weights_[{typeI, typeJ}] = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
+                                concentrationProducts_[{indexI, indexJ}] = ci * cj;
+                                boundCoherentProducts_[{indexI, indexJ}] = bi * bj;
+                                weights_[{indexI, indexJ}] = ci * cj * bi * bj * (indexI == indexJ ? 1 : 2);
                             });
 
     // Finalise <b>**2
@@ -146,8 +147,8 @@ void NeutronWeights::calculateWeightingMatrices()
     // Determine bound (intramolecular) scattering weights
     // Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
     intramolecularWeights_ = 0.0;
-    Array2D<double> intraNorm(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    Array2D<char> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    Array2D<double> intraNorm(nTypes, nTypes, true);
+    Array2D<char> globalFlag(nTypes, nTypes, true);
     intraNorm = 0.0;
     globalFlag = false;
     for (auto &topes : isotopologueMixtures_)
@@ -175,15 +176,17 @@ void NeutronWeights::calculateWeightingMatrices()
                                             return;
                                         auto &[typeI, typeJ] = *optPairIndex;
 
-                                        auto &localI = atomTypes_[typeI];
-                                        auto &localJ = atomTypes_[typeJ];
+                                        auto localI = atomTypes_.mix().get(atPop1.first);
+                                        auto localJ = atomTypes_.mix().get(atPop2.first);
 
                                         // If an AtomType is exchangeable, add the averaged scattering length from the local
                                         // AtomTypesList instead of its actual isotopic length.
-                                        bi = localI.exchangeable() ? bi = localI.boundCoherent()
-                                                                   : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
-                                        bj = localJ.exchangeable() ? localJ.boundCoherent()
-                                                                   : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
+                                        bi = localI->exchangeable()
+                                                 ? bi = localI->boundCoherent()
+                                                 : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
+                                        bj = localJ->exchangeable()
+                                                 ? localJ->boundCoherent()
+                                                 : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 
                                         // Convert from fm to barns
                                         bi *= 0.1;
@@ -197,18 +200,18 @@ void NeutronWeights::calculateWeightingMatrices()
     }
 
     // Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.mix(),
+                            [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
                                 // Skip this pair if there are no such intramolecular interactions
-                                if (!globalFlag[{typeI, typeJ}])
+                                if (!globalFlag[{indexI, indexJ}])
                                     return;
 
-                                ci = atd1.fraction();
-                                cj = atd2.fraction();
+                                ci = typeMixI.second.fraction();
+                                cj = typeMixJ.second.fraction();
 
-                                intramolecularWeights_[{typeI, typeJ}] /= intraNorm[{typeI, typeJ}];
-                                intramolecularWeights_[{typeI, typeJ}] *= ci * cj * (typeI == typeJ ? 1 : 2);
+                                intramolecularWeights_[{indexI, indexJ}] /= intraNorm[{indexI, indexJ}];
+                                intramolecularWeights_[{indexI, indexJ}] *= ci * cj * (indexI == indexJ ? 1 : 2);
                             });
 }
 
@@ -252,8 +255,8 @@ void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<A
             // Isotopologue
             for (const auto &i : topes.species()->atoms())
                 if (i.isPresence(SpeciesAtom::Presence::Physical))
-                    atomTypes_.addIsotope(i.atomType().get(), iso->atomTypeIsotope(i.atomType().get()),
-                                          weight * topes.speciesPopulation());
+                    atomTypes_.add(i.atomType().get(), iso->atomTypeIsotope(i.atomType().get()),
+                                   weight * topes.speciesPopulation());
         }
     }
     atomTypes_.finalise(exchangeableTypes);
@@ -267,7 +270,7 @@ void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<A
 const AtomTypeMix &NeutronWeights::atomTypes() const { return atomTypes_; }
 
 // Return number of used AtomTypes
-int NeutronWeights::nUsedTypes() const { return atomTypes_.nItems(); }
+int NeutronWeights::nUsedTypes() const { return atomTypes_.mix().size(); }
 
 // Return concentration product for types i and j
 double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_[{i, j}]; }

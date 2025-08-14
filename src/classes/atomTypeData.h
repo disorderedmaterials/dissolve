@@ -6,21 +6,16 @@
 #include "data/isotopes.h"
 #include <map>
 
-// Forward Declarations
-class AtomType;
-
 // AtomTypeData Definition
 class AtomTypeData
 {
     public:
-    AtomTypeData(const AtomType *atomType, double population = 0, double fraction = 0, double boundCoherent = 0);
+    AtomTypeData(double population = 0, double fraction = 0, double boundCoherent = 0);
 
     /*
      * Properties
      */
     private:
-    // Referenced AtomType
-    const AtomType *atomType_;
     // Whether the AtomType has been marked as exchangeable
     bool exchangeable_{false};
     // Isotope population
@@ -37,8 +32,6 @@ class AtomTypeData
     void add(double nAdd);
     // Add to population of Isotope
     void add(Sears91::Isotope isotope, double population);
-    // Return referenced AtomType
-    const AtomType *atomType() const;
     // Set exchangeable flag
     void setAsExchangeable();
     // Return whether the associated AtomType is exchangeable

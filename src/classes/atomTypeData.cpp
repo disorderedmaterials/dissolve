@@ -1,26 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include <utility>
-
-#include "base/lineParser.h"
-#include "base/messenger.h"
-#include "base/sysFunc.h"
-#include "classes/atomType.h"
 #include "classes/atomTypeMix.h"
 #include "data/isotopes.h"
 
-AtomTypeData::AtomTypeData(const AtomType *atomType, double population, double fraction, double boundCoherent)
-    : atomType_(atomType), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
+AtomTypeData::AtomTypeData(double population, double fraction, double boundCoherent)
+    : population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
 }
 
 /*
  * Properties
  */
-
-// Add to population
-void AtomTypeData::add(double nAdd) { population_ += nAdd; }
 
 // Add to population of Isotope
 void AtomTypeData::add(Sears91::Isotope isotope, double population)
@@ -33,9 +24,6 @@ void AtomTypeData::add(Sears91::Isotope isotope, double population)
     // Increase total population
     population_ += population;
 }
-
-// Return reference AtomType
-const AtomType *AtomTypeData::atomType() const { return atomType_; }
 
 // Set exchangeable flag
 void AtomTypeData::setAsExchangeable() { exchangeable_ = true; }
@@ -69,6 +57,3 @@ void AtomTypeData::setBoundCoherent(double d) { boundCoherent_ = d; }
 
 // Calculated bound coherent scattering over all Isotopes
 double AtomTypeData::boundCoherent() const { return boundCoherent_; }
-
-// Return referenced AtomType name
-std::string_view AtomTypeData::atomTypeName() const { return atomType_->name(); }

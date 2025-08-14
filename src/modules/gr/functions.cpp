@@ -574,16 +574,16 @@ bool GRModule::testReferencePartials(const std::vector<const AtomType *> &types,
 {
     for_each_pair_early(
         types,
-        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
+        [&](int n, const auto *typeI, int m, const auto *typeJ) -> EarlyReturn<bool>
         {
-            DoubleKeyedMapKey key{typeI.atomTypeName(), typeJ.atomTypeName()};
+            DoubleKeyedMapKey key{typeI->name(), typeJ->name()};
 
             // Full partial
             auto errorReport = Error::percent(setA.partials().get(key), setB.partials().get(key));
             Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference full partial '{}-{}' has {} error of {:7.3f}{} with calculated data and is "
                              "{} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                             typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
                              errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
                              errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
             if (errorReport.error > testThreshold)
@@ -594,7 +594,7 @@ bool GRModule::testReferencePartials(const std::vector<const AtomType *> &types,
             Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference bound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
                              "is {} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                             typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
                              errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
                              errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
             if (errorReport.error > testThreshold)
@@ -605,7 +605,7 @@ bool GRModule::testReferencePartials(const std::vector<const AtomType *> &types,
             Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference unbound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
                              "is {} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                             typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
                              errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
                              errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
             if (errorReport.error > testThreshold)

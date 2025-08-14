@@ -15,56 +15,22 @@ TEST(AtomTypeMixTest, Basic)
     AtomTypeMix mix_;
 
     // Add atom types to our mix
-    mix_.add(molecules_.atN().get(), 1);
-    mix_.add(molecules_.atOW().get(), 2);
-    mix_.add(molecules_.atHW().get(), 3);
+    mix_.add(molecules_.atN().get(), Sears91::N_Natural, 1);
+    mix_.add(molecules_.atOW().get(), Sears91::O_Natural, 2);
+    mix_.add(molecules_.atHW().get(), Sears91::H_Natural, 3);
     mix_.finalise();
 
     // Check basic data
-    EXPECT_EQ(mix_.nItems(), 3);
-    EXPECT_TRUE(mix_.contains(molecules_.atN().get()));
-    EXPECT_FALSE(mix_.contains(molecules_.atH1().get()));
-
-    // Retrieve atom type data
-    auto optAtdN = mix_.atomTypeData(molecules_.atN().get());
-    EXPECT_TRUE(optAtdN);
-    auto optAtdHW = mix_.atomTypeData(molecules_.atHW().get());
-    EXPECT_TRUE(optAtdHW);
-    auto optAtdOW = mix_.atomTypeData(molecules_.atOW().get());
-    EXPECT_TRUE(optAtdOW);
-    auto optAtdH1 = mix_.atomTypeData(molecules_.atH1().get());
-    EXPECT_FALSE(optAtdH1);
+    EXPECT_EQ(mix_.mix().size(), 3);
+    EXPECT_TRUE(mix_.mix().contains(molecules_.atN().get()));
+    EXPECT_TRUE(mix_.mix().contains(molecules_.atHW().get()));
+    EXPECT_TRUE(mix_.mix().contains(molecules_.atOW().get()));
+    EXPECT_FALSE(mix_.mix().contains(molecules_.atH1().get()));
 
     // Check detailed data
-    EXPECT_TRUE(optAtdN->get().atomType() == molecules_.atN().get());
-    EXPECT_EQ(optAtdN->get().atomTypeName(), molecules_.atN()->name());
-    EXPECT_DOUBLE_EQ(optAtdN->get().fraction(), 1.0 / 6.0);
-    EXPECT_DOUBLE_EQ(optAtdOW->get().fraction(), 1.0 / 3.0);
-    EXPECT_DOUBLE_EQ(optAtdHW->get().fraction(), 1.0 / 2.0);
-}
-
-TEST(AtomTypeMixTest, Indexing)
-{
-    SmallMolecules molecules_;
-    AtomTypeMix mix_;
-
-    // Add atom types to our mix
-    std::vector<std::pair<AtomTypeData, int>> orderedData;
-    orderedData.emplace_back(mix_.add(molecules_.atN().get(), 1));
-    orderedData.emplace_back(mix_.add(molecules_.atOW().get(), 2));
-    orderedData.emplace_back(mix_.add(molecules_.atHW().get(), 3));
-    orderedData.emplace_back(mix_.add(molecules_.atH1().get(), 3));
-    mix_.finalise();
-
-    EXPECT_EQ(orderedData.size(), mix_.nItems());
-
-    // Check indexed ordering
-    auto index = 0;
-    for (const auto &[atomTypeData, atomTypeDataIndex] : orderedData)
-    {
-        EXPECT_EQ(atomTypeDataIndex, index);
-        ++index;
-    }
+    EXPECT_DOUBLE_EQ(mix_.mix().get(molecules_.atN().get())->fraction(), 1.0 / 6.0);
+    EXPECT_DOUBLE_EQ(mix_.mix().get(molecules_.atOW().get())->fraction(), 1.0 / 3.0);
+    EXPECT_DOUBLE_EQ(mix_.mix().get(molecules_.atHW().get())->fraction(), 1.0 / 2.0);
 }
 
 } // namespace UnitTest
