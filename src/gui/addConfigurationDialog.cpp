@@ -185,12 +185,15 @@ void AddConfigurationDialog::finalise()
         frameworkNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::Set);
         frameworkNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
         frameworkNode->keywords().set("Rotate", false);
-
-        // Add a GeneralRegion node
-        regionNode = generator.createRootNode<GeneralRegionGeneratorNode>({});
-        if (!regionNode)
-            Messenger::exception("Failed to create root node");
-        regionNode->keywords().set("Tolerance", 5.0);
+        
+        if (!mixSpecies_.empty())
+        {
+            // Add a GeneralRegion node
+            regionNode = generator.createRootNode<GeneralRegionGeneratorNode>({});
+            if (!regionNode)
+                Messenger::exception("Failed to create root node");
+            regionNode->keywords().set("Tolerance", 5.0);
+        }
     }
     else
     {
