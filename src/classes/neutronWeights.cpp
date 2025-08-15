@@ -122,7 +122,7 @@ void NeutronWeights::calculateWeightingMatrices()
                             [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
                                 ci = atomTypes_.fraction(typeMixI.first);
-                                bi = typeMixI.second.boundCoherent() * 0.1;
+                                bi = atomTypes_.boundCoherent(typeMixI.first) * 0.1;
 
                                 // Update average scattering values
                                 if (indexI == indexJ)
@@ -132,7 +132,7 @@ void NeutronWeights::calculateWeightingMatrices()
                                 }
 
                                 cj = atomTypes_.fraction(typeMixJ.first);
-                                bj = typeMixJ.second.boundCoherent() * 0.1;
+                                bj = atomTypes_.boundCoherent(typeMixJ.first) * 0.1;
 
                                 concentrationProducts_[{indexI, indexJ}] = ci * cj;
                                 boundCoherentProducts_[{indexI, indexJ}] = bi * bj;
@@ -163,25 +163,20 @@ void NeutronWeights::calculateWeightingMatrices()
             // Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the
             // fractional Isotopologue weight in the mix.
             dissolve::for_each_pair(ParallelPolicies::seq, sp->atomTypePopulations(),
-                                    [&, iso, weight](int spTypeI, const auto &atPop1, int spTypeJ, const auto &atPop2)
+                                    [&, iso, weight](int indexI, const auto &atPop1, int indexJ, const auto &atPop2)
                                     {
-                                        // First, check that both of atom types used in the species are present in the weights
-                                        // atomTypes_. They may legitimately not be if, for example, they are phantom atoms.
+                                        // Find the atom types in our local mix
                                         auto optPairIndex = atomTypes_.indexOf(atPop1.first, atPop2.first);
                                         if (!optPairIndex)
                                             return;
                                         auto &[typeI, typeJ] = *optPairIndex;
 
-                                        auto localI = atomTypes_.mix().value(atPop1.first);
-                                        auto localJ = atomTypes_.mix().value(atPop2.first);
-
-                                        // If an AtomType is exchangeable, add the averaged scattering length from the local
-                                        // AtomTypesList instead of its actual isotopic length.
+                                        // If an AtomType is exchangeable we use its exchanged bound coherent scattering length
                                         bi = atomTypes_.isExchangeable(atPop1.first)
-                                                 ? localI.boundCoherent()
+                                                 ? atomTypes_.boundCoherent(atPop1.first)
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
                                         bj = atomTypes_.isExchangeable(atPop2.first)
-                                                 ? localJ.boundCoherent()
+                                                 ? atomTypes_.boundCoherent(atPop2.first)
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 
                                         // Convert from fm to barns

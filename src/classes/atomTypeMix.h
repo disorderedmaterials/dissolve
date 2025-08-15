@@ -22,13 +22,15 @@ class AtomTypeMix
 
     private:
     // Isotope data per atom type
-    KeyedVector<const AtomType *, AtomTypeData> mix_;
+    KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> mix_;
     // Exchangeable atom types
     std::set<const AtomType *> exchangeables_;
-    // Total population added to mix
+    // Total atom population in mix
     double totalPopulation_{0.0};
 
     private:
+    // Calculate and return the isolated bound coherent scattering (unexchanged) for the specified atom type
+    double isolatedBoundCoherent(const AtomType *atomType) const;
     // Finalise, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
     void finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
 
@@ -37,11 +39,13 @@ class AtomTypeMix
     void create(const std::vector<Isotopologues> &isotopologues,
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Return types/topes map
-    const KeyedVector<const AtomType *, AtomTypeData> &mix() const;
+    const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &mix() const;
     // Calculate and return full population of atom type in whole mix
     double population(const AtomType *atomType) const;
     // Calculate and return fractional population of atom type in whole mix
     double fraction(const AtomType *atomType) const;
+    // Calculate and return bound coherent scattering, accounting for isotope mix and exchangeability
+    double boundCoherent(const AtomType *atomType) const;
     // Return whether specified atom type is exchangeable
     bool isExchangeable(const AtomType *atomType) const;
     // Return indices of AtomType pair
