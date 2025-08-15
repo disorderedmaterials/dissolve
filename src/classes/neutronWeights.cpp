@@ -206,29 +206,6 @@ void NeutronWeights::calculateWeightingMatrices()
                             });
 }
 
-// Create from species populations and isotopologues
-void NeutronWeights::create(const KeyedVector<const Species *, double> &populations, const IsotopologueSet &isotopologues,
-                            const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
-{
-    clear();
-
-    for (auto &[sp, pop] : populations)
-    {
-        // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-        auto isoRef = isotopologues.getIsotopologues(sp);
-        if (isoRef)
-        {
-            const Isotopologues &topes = *isoRef;
-            for (const auto &[iso, weight] : topes.mix())
-                addIsotopologue(sp, pop, iso, weight);
-        }
-        else
-            addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
-    }
-
-    createFromIsotopologues(exchangeableTypes);
-}
-
 // Create AtomType list and matrices based on stored Isotopologues information
 void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
@@ -242,9 +219,6 @@ void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<A
 
 // Return isotope mix
 const IsotopeMix &NeutronWeights::isotopeMix() const { return isotopeMix_; }
-
-// Return number of used AtomTypes
-int NeutronWeights::nUsedTypes() const { return isotopeMix_.mix().size(); }
 
 // Return concentration product for types i and j
 double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_[{i, j}]; }
