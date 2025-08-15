@@ -89,7 +89,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
         dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     auto &unweightedsq = uSQObject.first;
     if (uSQObject.second == GenericItem::ItemStatus::Created)
-        unweightedsq.initialise(unweightedgr.atomTypeMix());
+        unweightedsq.initialise(unweightedgr);
 
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
@@ -125,44 +125,32 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
         Messenger::print("Found reflections data for module '{}' (nReflections = {}, Q(last) = {} "
                          "Angstroms**-1).\n",
                          sourceBragg_->name(), nReflections, braggQMax);
-        const auto &braggAtomTypes =
-            dissolve.processingModuleData().value<AtomTypeMix>("SummedAtomTypes", sourceBragg_->name());
+
         const auto &v0 = dissolve.processingModuleData().value<double>("V0", sourceBragg_->name());
 
         // Prepare a temporary object for the Bragg partials
+        auto typeFractions = unweightedsq.atomTypeFractions();
         Array2D<Data1D> braggPartials;
-        braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+        braggPartials.initialise(typeFractions.size(), typeFractions.size(), true);
         for (auto &partial : braggPartials)
             partial.initialise(unweightedsq.partials().begin()->second);
 
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
-        auto success = for_each_pair_early(
-            unweightedsq.atomTypeMix(),
-            [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool>
-            {
-                // Locate the corresponding Bragg intensities for this atom type pair
-                auto optPairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
-                if (!optPairIndex)
-                {
-                    Messenger::error(
-                        "SQ data has a partial between {} and {}, but no such intensities exist in the reflection data.\n",
-                        at1.atomTypeName(), at2.atomTypeName());
-                    return false;
-                }
+        auto success = for_each_pair_early(typeFractions,
+                                           [&](auto indexI, auto &popI, int indexJ, auto &popJ) -> EarlyReturn<bool>
+                                           {
+                                               // Grab relevant partial and loop over reflections
+                                               auto &partial = braggPartials[{indexI, indexJ}];
+                                               for (const auto &reflxn : braggReflections)
+                                               {
+                                                   const auto intensity = reflxn.intensity(indexI, indexJ);
+                                                   for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
+                                                       by += braggQBroadening_.y(q - reflxn.q(), q) * intensity *
+                                                             braggQBroadening_.normalisation(q) / (reflxn.q() * q);
+                                               }
 
-                // Grab relevant partial and oop over reflections
-                auto &partial = braggPartials[*optPairIndex];
-                auto &[typeI, typeJ] = *optPairIndex;
-                for (const auto &reflxn : braggReflections)
-                {
-                    const auto intensity = reflxn.intensity(typeI, typeJ);
-                    for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
-                        by += braggQBroadening_.y(q - reflxn.q(), q) * intensity * braggQBroadening_.normalisation(q) /
-                              (reflxn.q() * q);
-                }
-
-                return EarlyReturn<bool>::Continue;
-            });
+                                               return EarlyReturn<bool>::Continue;
+                                           });
         if (success && !success.value())
             return ExecutionResult::Failed;
 
@@ -172,28 +160,29 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve)
                            [v0](auto &val) { return val * 2.0 * pow(M_PI, 2) / v0; });
 
         // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
-        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix(),
-                                [&braggPartials](auto i, auto &atd1, auto j, auto &atd2)
+        dissolve::for_each_pair(ParallelPolicies::par, typeFractions,
+                                [&braggPartials](auto indexI, auto &popI, int indexJ, auto &popJ)
                                 {
                                     // Subtract self-scattering level if types are equivalent
-                                    if (i == j)
-                                        braggPartials[{i, j}] -= atd1.fraction();
+                                    if (indexI == indexJ)
+                                        braggPartials[{indexI, indexJ}] -= popI.second;
 
                                     // Remove atomic fraction normalisation
-                                    braggPartials[{i, j}] /= atd1.fraction() * atd2.fraction();
+                                    braggPartials[{indexI, indexJ}] /= popI.second * popJ.second;
                                 });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
-        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix(),
-                                [&](auto i, auto &atd1, auto j, auto &atd2)
+        dissolve::for_each_pair(ParallelPolicies::par, typeFractions,
+                                [&](auto indexI, auto &popI, int indexJ, auto &popJ)
                                 {
                                     // Note: Intramolecular broadening will not be applied to bound terms within the
                                     // calculated Bragg scattering
-                                    auto key = DoubleKeyedMapKey{atd1.atomTypeName(), atd2.atomTypeName()};
+                                    auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+
                                     auto &bound = unweightedsq.boundPartials().get(key);
                                     auto &unbound = unweightedsq.unboundPartials().get(key);
                                     auto &partial = unweightedsq.partials().get(key);
-                                    auto &bragg = braggPartials[{i, j}];
+                                    auto &bragg = braggPartials[{indexI, indexJ}];
 
                                     for (auto n = 0; n < bound.nValues(); ++n)
                                     {

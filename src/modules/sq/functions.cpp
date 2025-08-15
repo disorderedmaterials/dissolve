@@ -12,19 +12,11 @@
 
 #include <ranges>
 
-/*
- * Public Functions
- */
-
 // Generate S(Q) from supplied g(r)
 bool SQModule::calculateUnweightedSQ(const PartialSet &unweightedgr, PartialSet &unweightedsq, double qMin, double qDelta,
                                      double qMax, double rho, const WindowFunction &windowFunction,
                                      Function1DWrapper broadening)
 {
-    // Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
-    if (unweightedgr.nAtomTypes() != unweightedsq.nAtomTypes())
-        return Messenger::error("SQModule::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
-
     // Subtract 1.0 from the full and unbound partials so as to give (g(r)-1) and FT into S(Q)
     // Don't subtract 1.0 from the bound partials
     Timer timer;

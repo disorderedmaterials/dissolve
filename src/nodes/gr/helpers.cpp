@@ -39,11 +39,11 @@ bool GRNode::calculateGRTestSerial(const Array2D<typename std::map<std::string, 
 // Calculate partial g(r) with optimised double-loop
 bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
-    // Variables
-    int n, m, nTypes, typeI, typeJ, i, j, nPoints;
+    auto typePopulations = targetConfiguration_->atomTypePopulations();
+    int n, m, typeI, typeJ, i, j, nPoints;
 
     // Construct local arrays of atom type positions
-    nTypes = rawGR_->nAtomTypes();
+    auto nTypes = typePopulations.size();
     message("Constructing local partial working arrays for {} types.\n", nTypes);
     const auto *box = targetConfiguration_->box();
     std::vector<Vector3 *> r(nTypes);
@@ -52,9 +52,9 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
     int *bins;
 
     n = 0;
-    for (auto &atd : targetConfiguration_->atomTypePopulations())
+    for (auto &[_, population] : typePopulations)
     {
-        maxr[n] = atd.population();
+        maxr[n] = population;
         nr[n] = 0;
         r[n] = new Vector3[maxr[n]];
         binss[n] = new int[maxr[n]];
@@ -155,10 +155,13 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
         [&]()
         {
             Array2D<Histogram1D> histograms;
-            histograms.initialise(rawGR_->nAtomTypes(), rawGR_->nAtomTypes(), true);
-            for (auto i = 0; i < rawGR_->nAtomTypes(); ++i)
-                for (auto j = i; j < rawGR_->nAtomTypes(); ++j)
+            histograms.initialise(fullLUT.nRows(), fullLUT.nColumns(), true);
+            for (auto i = 0; i < fullLUT.nRows(); ++i)
+                for (auto j = i; j < fullLUT.nColumns(); ++j)
+                {
                     histograms[{i, j}] = fullLUT[{i, j}]->second;
+                    histograms[{i, j}].zeroBins();
+                }
             return histograms;
         });
 
@@ -207,8 +210,8 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
                        dissolve::counting_iterator<int>(comb.getNumCombinations()), unaryOp);
     auto histograms = combinableHistograms.finalize();
     // Copy the final calculated full histograms to the HistogramSet
-    for (auto k = 0; k < histograms_->atomTypeMix().nItems(); ++k)
-        for (auto j = 0; j < histograms_->atomTypeMix().nItems(); ++j)
+    for (auto k = 0; k < fullLUT.nRows(); ++k)
+        for (auto j = 0; j < fullLUT.nColumns(); ++j)
             fullLUT[{k, j}]->second = histograms[{k, j}];
 
     // Atoms within the same cell
@@ -239,6 +242,29 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
     return true;
 }
 
+// Calculate RDF from raw histogram
+void GRNode::calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+                          double multiplier)
+{
+    auto nBins = histogram.nBins();
+    auto delta = histogram.binWidth();
+    const auto &bins = histogram.bins();
+
+    gr.clear();
+
+    double shellVolume, factor, r = 0.5 * delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
+    for (auto n = 0; n < nBins; ++n)
+    {
+        shellVolume = (4.0 / 3.0) * M_PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
+        factor = nCentres * (shellVolume * numberDensity);
+
+        gr.addPoint(r, bins[n] * (multiplier / factor));
+
+        r += delta;
+        lowerShellLimit += delta;
+    }
+}
+
 /*
  * Public Functions
  */
@@ -263,10 +289,13 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      * Make sure histograms are set up, and reset any existing data
      */
 
+    // Get local atom type vector from the Configuration
+    auto typeVector = targetConfiguration_->atomTypeVector();
+
     if (!histograms_)
     {
         histograms_.emplace();
-        histograms_->initialise(targetConfiguration_->atomTypePopulations(), grRange, binWidth_.asDouble());
+        histograms_->initialise(typeVector, grRange, binWidth_.asDouble());
     }
     histograms_->zeroBins();
 
@@ -276,12 +305,11 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
 
     // Make sure type indexing is up-to-date and generate LUTs for all histogram types
     targetConfiguration_->updateTypeIndexing();
-    auto fullLUT = histograms_->fullHistograms().lookUpTable(targetConfiguration_->atomTypePopulations(),
-                                                             [](const auto &atd) { return atd.atomTypeName(); });
-    auto boundLUT = histograms_->boundHistograms().lookUpTable(targetConfiguration_->atomTypePopulations(),
-                                                               [](const auto &atd) { return atd.atomTypeName(); });
-    auto unboundLUT = histograms_->unboundHistograms().lookUpTable(targetConfiguration_->atomTypePopulations(),
-                                                                   [](const auto &atd) { return atd.atomTypeName(); });
+    auto fullLUT = histograms_->fullHistograms().lookUpTable(typeVector, [](const auto &atomType) { return atomType->name(); });
+    auto boundLUT =
+        histograms_->boundHistograms().lookUpTable(typeVector, [](const auto &atomType) { return atomType->name(); });
+    auto unboundLUT =
+        histograms_->unboundHistograms().lookUpTable(typeVector, [](const auto &atomType) { return atomType->name(); });
 
     Timer timer;
     if (partialsMethod_ == PartialsMethod::TestMethod)
@@ -338,7 +366,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      */
 
     timer.start();
-    auto success = for_each_pair_early(rawGR_->nAtomTypes(),
+    auto success = for_each_pair_early(typeVector.size(),
                                        [&](auto typeI, auto typeJ) -> EarlyReturn<bool>
                                        {
                                            // Create unbound histogram from total and bound data
@@ -350,8 +378,22 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
     if (success.has_value() && !success.value())
         return false;
 
-    // Transform histogram data into radial distribution functions
-    histograms_->formPartials(*rawGR_, box->volume());
+    // Transform histogram data into radial distribution function
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, targetConfiguration_->atomTypePopulations(),
+        [&](int indexI, auto &popI, int indexJ, auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+
+            // Calculate RDFs from histogram data
+            calculateRDF(rawGR_->partials().get(key), histograms_->fullHistograms().get(key), box->volume(), popI.second,
+                         popJ.second, indexI == indexJ ? 2.0 : 1.0);
+            calculateRDF(rawGR_->boundPartials().get(key), histograms_->boundHistograms().get(key), box->volume(), popI.second,
+                         popJ.second, indexI == indexJ ? 2.0 : 1.0);
+            calculateRDF(rawGR_->unboundPartials().get(key), histograms_->unboundHistograms().get(key), box->volume(),
+                         popI.second, popJ.second, indexI == indexJ ? 2.0 : 1.0);
+        },
+        true);
 
     // Sum total functions
     rawGR_->formTotals(true);
@@ -402,52 +444,49 @@ bool GRNode::calculateUnweightedGR()
 }
 
 // Test supplied PartialSets against each other
-bool GRNode::testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold)
+bool GRNode::testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
+                                   double testThreshold)
 {
-    // Get a copy of the AtomTypeList to work from
-    auto atomTypes = setA.atomTypeMix();
+    for_each_pair_early(types,
+                        [&](int n, const auto *typeI, int m, const auto *typeJ) -> EarlyReturn<bool>
+                        {
+                            DoubleKeyedMapKey key{typeI->name(), typeJ->name()};
 
-    for_each_pair_early(
-        atomTypes,
-        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
-        {
-            DoubleKeyedMapKey key{typeI.atomTypeName(), typeJ.atomTypeName()};
+                            // Full partial
+                            auto errorReport = Error::percent(setA.partials().get(key), setB.partials().get(key));
+                            message("{}", Error::errorReportString(errorReport));
+                            message("Test reference full partial '{}-{}' has {} error of {:7.3f}{} with calculated data and is "
+                                    "{} (threshold is {:6.3f}%)\n\n",
+                                    typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
+                                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                            if (errorReport.error > testThreshold)
+                                return false;
 
-            // Full partial
-            auto errorReport = Error::percent(setA.partials().get(key), setB.partials().get(key));
-            message("{}", Error::errorReportString(errorReport));
-            message("Test reference full partial '{}-{}' has {} error of {:7.3f}{} with calculated data and is "
-                    "{} (threshold is {:6.3f}%)\n\n",
-                    typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
-                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-            if (errorReport.error > testThreshold)
-                return false;
+                            // Bound partial
+                            errorReport = Error::percent(setA.boundPartials().get(key), setB.boundPartials().get(key));
+                            message("{}", Error::errorReportString(errorReport));
+                            message("Test reference bound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
+                                    "is {} (threshold is {:6.3f}%)\n\n",
+                                    typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
+                                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                            if (errorReport.error > testThreshold)
+                                return false;
 
-            // Bound partial
-            errorReport = Error::percent(setA.boundPartials().get(key), setB.boundPartials().get(key));
-            message("{}", Error::errorReportString(errorReport));
-            message("Test reference bound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
-                    "is {} (threshold is {:6.3f}%)\n\n",
-                    typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
-                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-            if (errorReport.error > testThreshold)
-                return false;
+                            // Unbound reference
+                            errorReport = Error::percent(setA.unboundPartials().get(key), setB.unboundPartials().get(key));
+                            message("{}", Error::errorReportString(errorReport));
+                            message("Test reference unbound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
+                                    "is {} (threshold is {:6.3f}%)\n\n",
+                                    typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
+                                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                            if (errorReport.error > testThreshold)
+                                return false;
 
-            // Unbound reference
-            errorReport = Error::percent(setA.unboundPartials().get(key), setB.unboundPartials().get(key));
-            message("{}", Error::errorReportString(errorReport));
-            message("Test reference unbound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
-                    "is {} (threshold is {:6.3f}%)\n\n",
-                    typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
-                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-            if (errorReport.error > testThreshold)
-                return false;
-
-            return EarlyReturn<bool>::Continue;
-        });
+                            return EarlyReturn<bool>::Continue;
+                        });
 
     // Total reference data supplied?
     auto errorReport = Error::percent(setA.total(), setB.total());
@@ -481,17 +520,7 @@ bool GRNode::testReferencePartial(const PartialSet &partials, double testThresho
     }
     else
     {
-        // Get indices of AtomTypes
-        auto indexI = partials.atomTypeMix().indexOf(typeIorTotal);
-        auto indexJ = partials.atomTypeMix().indexOf(typeJ);
-        if (!indexI || !indexJ)
-        {
-            error("Unrecognised test data name '{}'.\n", testData.tag());
-            return false;
-        }
-
-        // AtomTypes are valid, so check the 'target'
-        DoubleKeyedMapKey key{partials.atomTypeMix()[*indexI].atomTypeName(), partials.atomTypeMix()[*indexJ].atomTypeName()};
+        DoubleKeyedMapKey key{typeIorTotal, typeJ};
         Error::ErrorReport errorReport;
         if (DissolveSys::sameString(target, "bound"))
         {

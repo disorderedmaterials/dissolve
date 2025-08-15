@@ -70,8 +70,8 @@ NodeConstants::ProcessResult GRNode::process()
     // Create original GR storage if we need it
     if (!rawGR_)
     {
-        rawGR_.emplace(realSpeciesPopulations);
-        rawGR_->initialise(targetConfiguration_->atomTypePopulations());
+        rawGR_.emplace();
+        rawGR_->initialise(targetConfiguration_->speciesPopulations());
         unweightedGR_->setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
     }
 

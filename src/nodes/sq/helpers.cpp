@@ -18,13 +18,6 @@
 // Generate S(Q) from supplied g(r)
 bool SQNode::calculateUnweightedSQ()
 {
-    // Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
-    if (unweightedGR_->nAtomTypes() != unweightedSQ_->nAtomTypes())
-    {
-        error("SQNode::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
-        return false;
-    }
-
     auto rho = unweightedGR_->effectiveDensity();
     auto qMin = qMin_.asDouble(), qDelta = qDelta_.asDouble(), qMax = qMax_.asDouble();
 

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
+#include "classes/isotopeMix.h"
 #include "classes/isotopologues.h"
 #include "templates/array2D.h"
 #include <vector>
@@ -41,8 +41,8 @@ class NeutronWeights
      * Data
      */
     private:
-    // Type mix derived from Species referenced in isotopologueMixtures_
-    AtomTypeMix atomTypes_;
+    // Isotope mix derived from Species referenced in isotopologueMixtures_
+    IsotopeMix isotopeMix_;
     // Concentration product matrix (ci * cj)
     Array2D<double> concentrationProducts_;
     // Bound coherent product matrix (bi * bj)
@@ -64,12 +64,12 @@ class NeutronWeights
 
     public:
     // Create from species populations and isotopologues
-    void create(const std::map<const Species *, double> &populations, const IsotopologueSet &isotopologues,
+    void create(const KeyedVector<const Species *, double> &populations, const IsotopologueSet &isotopologues,
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Create AtomType list and matrices based on stored Isotopologues information
     void createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
-    // Return AtomTypeMix
-    const AtomTypeMix &atomTypes() const;
+    // Return isotope mix
+    const IsotopeMix &isotopeMix() const;
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Return concentration product for types i and j
@@ -90,13 +90,4 @@ class NeutronWeights
     double boundCoherentAverageOfSquares() const;
     // Return whether the structure is valid (i.e. has been finalised)
     bool isValid() const;
-
-    /*
-     * Serialisation
-     */
-    public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
 };

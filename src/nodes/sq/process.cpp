@@ -54,9 +54,6 @@ NodeConstants::ProcessResult SQNode::process()
     message("SQ: Save data is {}.\n", DissolveSys::onOff(save_));
     message("\n");
 
-    // Get the real species populations from the input unweightedSQ
-    auto &realSpeciesPopulations = unweightedGR_->realSpeciesPopulations();
-
     /*
      * Transform target UnweightedGR into the UnweightedSQ.
      */
@@ -64,8 +61,8 @@ NodeConstants::ProcessResult SQNode::process()
     // Set up unweighted SQ storage if we need to
     if (!unweightedSQ_)
     {
-        unweightedSQ_.emplace(realSpeciesPopulations);
-        unweightedSQ_->initialise(unweightedGR_->atomTypeMix());
+        unweightedSQ_.emplace();
+        unweightedSQ_->initialise(*unweightedGR_);
     }
 
     /*

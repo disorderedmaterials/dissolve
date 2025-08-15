@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
 #include "classes/partialSet.h"
 #include "math/histogram1D.h"
 #include "templates/array2D.h"
@@ -20,8 +19,8 @@ class HistogramSet
      * Data
      */
     private:
-    // AtomTypeMix used to generate matrices
-    AtomTypeMix atomTypeMix_;
+    // AtomTypes used to generate matrices
+    std::vector<const AtomType *> atomTypes_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Histograms used for calculating full atom-atom partials in r
@@ -35,13 +34,11 @@ class HistogramSet
 
     public:
     // Set up histograms
-    void initialise(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth);
+    void initialise(const std::vector<const AtomType *> &types, double rdfRange, double binWidth);
     // Clear all histogram data
     void clear();
     // Zero histogram bins
     void zeroBins();
-    // Return atom types mis
-    const AtomTypeMix &atomTypeMix() const;
     // Set new fingerprint
     void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of partials
@@ -52,14 +49,4 @@ class HistogramSet
     DoubleKeyedMap<Histogram1D> &boundHistograms();
     // Return unbound histograms
     DoubleKeyedMap<Histogram1D> &unboundHistograms();
-
-    /*
-     * Manipulation
-     */
-    public:
-    // Form partials from stored Histogram data
-    void formPartials(PartialSet &partials, double boxVolume);
-    // Calculate RDF from supplied Histogram and normalisation data
-    static void calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
-                             int nSurrounding, double multiplier);
 };

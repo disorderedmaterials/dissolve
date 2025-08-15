@@ -76,6 +76,9 @@ class GRModule : public Module
     // Calculate partial g(r) utilising Cell neighbour lists
     bool calculateGRCells(Configuration *cfg, const double binWidth,
                           const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
+    // Calculate RDF from raw histogram
+    void calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+                      double multiplier);
 
     public:
     // Calculate and return effective density based on target Configurations
@@ -92,7 +95,8 @@ class GRModule : public Module
     static bool sumUnweightedGR(GenericList &processingData, std::string_view targetPrefix, std::string_view parentPrefix,
                                 const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
-    static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
+    static bool testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
+                                      double testThreshold);
     // Test calculated partial against supplied reference data
     static bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
                                      std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");

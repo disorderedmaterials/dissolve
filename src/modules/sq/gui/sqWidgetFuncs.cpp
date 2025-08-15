@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "classes/isotopeData.h"
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
@@ -57,29 +56,29 @@ void SQModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
     if (!ui_.FilterEdit->text().isEmpty())
         filterText = ui_.FilterEdit->text().toStdString();
 
-    PairIterator pairs(ps.atomTypeMix().nItems());
-    for (auto [first, second] : pairs)
-    {
-        auto &at1 = ps.atomTypeMix()[first];
-        auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+    auto typeFractions = ps.atomTypeFractions();
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, auto &popI, int indexJ, auto popJ)
+        {
+            const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
 
-        // Filtering - does this 'id' match our filter?
-        if (filterText && id.find(filterText.value()) == std::string::npos)
-            continue;
+            // Filtering - does this 'id' match our filter?
+            if (filterText && id.find(filterText.value()) == std::string::npos)
+                return;
 
-        // Full partial
-        sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                     std::format("{} (Full)", id), "Full");
+            // Full partial
+            sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                         std::format("{} (Full)", id), "Full");
 
-        // Bound partial
-        sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                     std::format("{} (Bound)", id), "Bound");
+            // Bound partial
+            sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                         std::format("{} (Bound)", id), "Bound");
 
-        // Unbound partial
-        sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                     std::format("{} (Unbound)", id), "Unbound");
-    }
+            // Unbound partial
+            sqGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                         std::format("{} (Unbound)", id), "Unbound");
+        });
 }
 
 // Update controls within widget

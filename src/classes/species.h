@@ -111,7 +111,7 @@ class Species : public Serialisable<const CoreData &>
     // Return total atomic mass of Species
     double mass() const;
     // Calculate and return atom type populations
-    KeyedVector<const AtomType *, double> atomTypePopulations() const;
+    KeyedVector<const AtomType *, int> atomTypePopulations() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters
