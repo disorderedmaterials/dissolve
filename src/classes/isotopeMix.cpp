@@ -23,40 +23,6 @@ double IsotopeMix::isolatedBoundCoherent(const AtomType *atomType) const
                            [](const auto acc, const auto &isotope) { return acc + isotope.second; });
 }
 
-// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-void IsotopeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
-{
-    // Set exchangeable flags
-    for (auto &at : exchangeableTypes)
-        exchangeables_.insert(at.get());
-    //
-    //    // Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
-    //    auto totalFraction = 0.0, boundCoherent = 0.0;
-    //    for (auto &[atomType, isotopeMix] : mix_)
-    //    {
-    //        // If this type is not exchangeable, move on
-    //        if (!exchangeables_.contains(atomType))
-    //            continue;
-    //
-    //        // Sum total atomic fraction and weighted bound coherent scattering length
-    //        auto frac = fraction(atomType);
-    //        totalFraction += frac;
-    //        boundCoherent += frac * isotopeMix.boundCoherent();
-    //    }
-    //    boundCoherent /= totalFraction;
-    //
-    //    // Now go back through the list and set the new scattering length for exchangeable components
-    //    for (auto &[atomType, isotopeMix] : mix_)
-    //    {
-    //        // If this type is not exchangaeble, move on
-    //        if (!exchangeables_.contains(atomType))
-    //            continue;
-    //
-    //        // Set the bound coherent scattering length of this component to the average of all exchangeable components
-    //        isotopeMix.setBoundCoherent(boundCoherent);
-    //    }
-}
-
 /*
  * Public Functions
  */
@@ -111,7 +77,9 @@ void IsotopeMix::create(const std::vector<Isotopologues> &isotopologues,
         }
     }
 
-    finalise(exchangeableTypes);
+    // Set exchangeables
+    for (auto &at : exchangeableTypes)
+        exchangeables_.insert(at.get());
 }
 
 // Calculate and return bound coherent scattering, accounting for isotope mix and exchangeability

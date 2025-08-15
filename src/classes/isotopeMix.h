@@ -30,14 +30,12 @@ class IsotopeMix
     private:
     // Calculate and return the isolated bound coherent scattering (unexchanged) for the specified atom type
     double isolatedBoundCoherent(const AtomType *atomType) const;
-    // Finalise, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-    void finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
 
     public:
     // Create mix from Isotopologues
     void create(const std::vector<Isotopologues> &isotopologues,
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
-    // Return types/topes map
+    // Return types/topes mix
     const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &mix() const;
     // Calculate and return full population of atom type in whole mix
     double population(const AtomType *atomType) const;
