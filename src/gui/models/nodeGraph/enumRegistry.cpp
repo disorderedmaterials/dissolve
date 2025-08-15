@@ -6,6 +6,7 @@
 #include "gui/models/nodeGraph/enumOptionsModel.h"
 #include "math/averaging.h"
 #include "math/windowFunction.h"
+#include "math/averaging.h"
 #include "nodes/gr/gr.h"
 #include "nodes/md/md.h"
 
