@@ -5,7 +5,7 @@
 
 #include "classes/isotopeMix.h"
 #include "classes/isotopologues.h"
-#include "templates/array2D.h"
+#include "templates/doubleKeyedMap.h"
 #include <vector>
 
 // Forward Declarations
@@ -44,13 +44,13 @@ class NeutronWeights
     // Isotope mix derived from Species referenced in isotopologueMixtures_
     IsotopeMix isotopeMix_;
     // Concentration product matrix (ci * cj)
-    Array2D<double> concentrationProducts_;
+    DoubleKeyedMap<double> concentrationProducts_;
     // Bound coherent product matrix (bi * bj)
-    Array2D<double> boundCoherentProducts_;
+    DoubleKeyedMap<double> boundCoherentProducts_;
     // Full scattering weights
-    Array2D<double> weights_;
+    DoubleKeyedMap<double> weights_;
     // Intramolecular scattering weights
-    Array2D<double> intramolecularWeights_;
+    DoubleKeyedMap<double> intramolecularWeights_;
     // Bound coherent average squared scattering (<b>**2)
     double boundCoherentSquareOfAverage_;
     // Bound coherent squared average scattering (<b**2>)
@@ -67,18 +67,14 @@ class NeutronWeights
     void createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Return isotope mix
     const IsotopeMix &isotopeMix() const;
-    // Return concentration product for types i and j
-    double concentrationProduct(int i, int j) const;
-    // Return bound coherent scattering product for types i and j
-    double boundCoherentProduct(int i, int j) const;
-    // Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
-    double weight(int i, int j) const;
-    // Return full intramolecular weighting for types i and j
-    double intramolecularWeight(int i, int j) const;
-    // Return full scattering weights matrix
-    const Array2D<double> &weights() const;
-    // Return full intramolecular scattering weights matrix
-    const Array2D<double> &intramolecularWeights() const;
+    // Return full scattering weights
+    const DoubleKeyedMap<double> &weights() const;
+    // Return concentration products
+    const DoubleKeyedMap<double> &concentrationProducts() const;
+    // Return bound coherent scattering products
+    const DoubleKeyedMap<double> &boundCoherentProducts() const;
+    // Return full intramolecular scattering weights
+    const DoubleKeyedMap<double> &intramolecularWeights() const;
     // Return bound coherent average squared scattering (<b>**2)
     double boundCoherentSquareOfAverage() const;
     // Return bound coherent squared average scattering (<b**2>)
