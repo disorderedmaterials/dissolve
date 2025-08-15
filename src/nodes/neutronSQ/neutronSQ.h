@@ -83,7 +83,7 @@ class NeutronSQNode : public Node
     // Calculate weighted S(Q)
     bool calculateWeightedSQ();
     // Calculate neutron weights matrix
-    void calculateWeights(const std::map<const Species *, double> &realSpeciesPopulations);
+    void calculateWeights(const KeyedVector<const Species *, double> &realSpeciesPopulations);
 
     /*
      * Processing

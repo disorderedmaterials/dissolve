@@ -31,18 +31,9 @@ Module::ExecutionResult BraggModule::process(Dissolve &dissolve)
                      multiplicity_.z);
     Messenger::print("\n");
 
-    // Realise an AtomTypeMix containing the sum of atom types over all target configurations (currently only one)
-    auto &combinedAtomTypes =
-        dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", name_, GenericItem::InRestartFileFlag);
-    combinedAtomTypes.clear();
-    combinedAtomTypes.add(targetConfiguration_->atomTypePopulations());
-
     // Store unit cell information
     auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", name_, GenericItem::InRestartFileFlag);
     unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
-
-    // Finalise combined AtomTypes matrix
-    combinedAtomTypes.finalise();
 
     // Calculate Bragg vectors and intensities for the current Configuration
     bool alreadyUpToDate;
@@ -87,15 +78,15 @@ Module::ExecutionResult BraggModule::process(Dissolve &dissolve)
         braggParser.closeFiles();
 
         // Save intensity data
-        auto &types = targetConfiguration_->atomTypePopulations();
+        auto types = targetConfiguration_->atomTypePopulations();
         auto success = for_each_pair_early(
             types,
-            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool>
+            [&](int i, const auto &popI, int j, const auto &popJ) -> EarlyReturn<bool>
             {
                 LineParser intensityParser;
-                if (!intensityParser.openOutput(std::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
+                if (!intensityParser.openOutput(std::format("{}-{}-{}.txt", name_, popI.first->name(), popJ.first->name())))
                     return false;
-                intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
+                intensityParser.writeLineF("#     Q      Intensity({},{})\n", popI.first->name(), popJ.first->name());
                 for (const auto &reflxn : braggReflections)
                     if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", reflxn.q(), reflxn.intensity(i, j)))
                         return false;

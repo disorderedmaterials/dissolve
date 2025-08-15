@@ -63,7 +63,7 @@ void Configuration::scaleBox(Vector3 scaleFactors)
     box_->scale(scaleFactors);
     cells_.scale(scaleFactors);
 
-    ++contentsVersion_;
+    ++version_;
 }
 
 // Set requested size factor for Box

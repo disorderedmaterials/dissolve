@@ -119,7 +119,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     // Increase contents version in Configuration
     if (nAccepted > 0)
-        targetConfiguration_->incrementContentsVersion();
+        targetConfiguration_->notifyAtomicPositionsChanged();
 
     return NodeConstants::ProcessResult::Success;
 }

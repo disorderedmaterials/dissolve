@@ -44,8 +44,11 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
 
     // Check / update summed atom types data
     if (!reflectionAtomTypesData_)
-        reflectionAtomTypesData_ =
-            dissolve_.processingModuleData().valueIf<const AtomTypeMix>("SummedAtomTypes", module_->name());
+    {
+        auto *targetConfiguration = module_->keywords().getConfiguration("Configuration");
+        if (targetConfiguration)
+            reflectionAtomTypesData_ = targetConfiguration->atomTypePopulations();
+    }
 
     // Need to recreate renderables if requested as the updateType
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
@@ -61,16 +64,15 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
         {
             if (reflectionAtomTypesData_)
             {
-                PairIterator pairs(reflectionAtomTypesData_->get().nItems());
-                for (auto [first, second] : pairs)
-                {
-                    const AtomTypeData &at1 = reflectionAtomTypesData_->get()[first];
-                    const AtomTypeData &at2 = reflectionAtomTypesData_->get()[second];
-                    const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+                dissolve::for_each_pair(ParallelPolicies::seq, *reflectionAtomTypesData_,
+                                        [&](int i, auto &popI, int j, auto &popJ)
+                                        {
+                                            const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
 
-                    graph_->createRenderable<RenderableData1D>(std::format("{}//OriginalBragg//{}", module_->name(), id),
-                                                               std::format("{}", id), "Full");
-                };
+                                            graph_->createRenderable<RenderableData1D>(
+                                                std::format("{}//OriginalBragg//{}", module_->name(), id),
+                                                std::format("{}", id), "Full");
+                                        });
             }
         }
     }
@@ -100,11 +102,14 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
             // Retrieve the atom types list so we know which reflections correspond to which pairs
             if (reflectionAtomTypesData_)
             {
-                const auto &atl = reflectionAtomTypesData_->get();
+                const auto typeVector = *reflectionAtomTypesData_;
                 std::vector<std::string> columnHeaders;
-                columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
-                for (auto [first, second] : PairIterator(atl.nItems()))
-                    columnHeaders.emplace_back(std::format("{}-{}", atl[first].atomTypeName(), atl[second].atomTypeName()));
+                columnHeaders.reserve(typeVector.size() * (typeVector.size() + 1) / 2);
+                dissolve::for_each_pair(
+                    ParallelPolicies::seq, typeVector,
+                    [&](int i, auto &popI, int j, auto &popJ)
+                    { columnHeaders.emplace_back(std::format("{}-{}", popI.first->name(), popJ.first->name())); });
+
                 braggModel_.setIntensityHeaders(columnHeaders);
             }
             else

@@ -270,12 +270,13 @@ double Species::mass() const
 }
 
 // Calculate and return atom type populations
-KeyedVector<const AtomType *, double> Species::atomTypePopulations() const
+KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
 {
-    KeyedVector<const AtomType *, double> result;
+    KeyedVector<const AtomType *, int> result;
     for (const auto &i : atoms_)
-        if (i.atomType())
-            result.add(i.atomType().get(), 1);
+        if (i.atomType() && i.isPresence((SpeciesAtom::Presence::Physical)))
+            result[i.atomType().get()] += 1;
+
     return result;
 }
 

@@ -64,23 +64,24 @@ void AccumulateModuleWidget::createPartialSetRenderables(std::string_view target
     for (auto &&[full, bound, unbound] : zip(ps.partials(), ps.boundPartials(), ps.unboundPartials()))
     {
         // Get atom type pair id from the full partial tag
-        auto id = DissolveSys::beforeChar(full.tag(), '/');
+        auto id = DissolveSys::beforeChar(full.second.tag(), '/');
 
         // Filtering - does this 'id' match our filter?
         if (filterText && id.find(filterText.value()) == std::string::npos)
             continue;
 
         // Full partial
-        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, full.tag()),
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, full.second.tag()),
                                                    std::format("{} (Full)", id), "Full");
 
         // Bound partial
-        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, bound.tag()),
+        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, bound.second.tag()),
                                                    std::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}", module_->name(), targetPrefix, unbound.tag()),
-                                                   std::format("{} (Unbound)", id), "Unbound");
+        graph_->createRenderable<RenderableData1D>(
+            std::format("{}//{}//{}", module_->name(), targetPrefix, unbound.second.tag()), std::format("{} (Unbound)", id),
+            "Unbound");
     }
 }
 
