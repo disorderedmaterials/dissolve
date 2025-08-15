@@ -3,9 +3,8 @@
 
 #pragma once
 
-#include "classes/atomTypeData.h"
+#include "data/isotopes.h"
 #include "templates/keyedVector.h"
-#include "templates/optionalRef.h"
 #include <set>
 #include <vector>
 

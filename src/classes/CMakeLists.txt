@@ -4,7 +4,6 @@ add_library(
   array3DIterator.cpp
   atom.cpp
   atomType.cpp
-  atomTypeData.cpp
   atomTypeMix.cpp
   bondFunctions.cpp
   box.cpp
@@ -79,7 +78,6 @@ add_library(
   angleFunctions.h
   array3DIterator.h
   atom.h
-  atomTypeData.h
   atomType.h
   atomTypeMix.h
   bondFunctions.h

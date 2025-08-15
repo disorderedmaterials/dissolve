@@ -3,13 +3,10 @@
 
 #include "items/deserialisers.h"
 #include "base/lineParser.h"
-#include "classes/atomTypeData.h"
 #include "classes/braggReflection.h"
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
 #include "classes/potentialSet.h"
-#include "classes/xRayWeights.h"
 #include "items/legacy.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
