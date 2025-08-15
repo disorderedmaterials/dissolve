@@ -90,11 +90,11 @@ template <class KeyClass, class ValueClass> class KeyedVector
         return (it == data_.end()) ? data_.emplace_back(key, 0).second : it->second;
     }
     // Get keyed value
-    const std::optional<ValueClass> get(KeyClass key) const
+    const ValueClass &value(KeyClass key) const
     {
         auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
         if (it == data_.end())
-            return {};
+            throw(std::runtime_error(std::format("Key not found in KeyedVector.\n")));
 
         return it->second;
     }

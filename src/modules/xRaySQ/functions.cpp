@@ -93,17 +93,3 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
 
     return true;
 }
-
-// Calculate xray weights for relevant Configuration targets
-void XRaySQModule::calculateWeights(const GRModule *rdfModule, XRayWeights &weights,
-                                    XRayFormFactors::XRayFormFactorData formFactors) const
-{
-    // Clear weights and get species populations from GRModule
-    weights.clear();
-    auto populations = rdfModule->speciesPopulations();
-
-    for (auto speciesPop : populations)
-        weights.addSpecies(speciesPop.first, speciesPop.second);
-
-    weights.finalise(formFactors);
-}

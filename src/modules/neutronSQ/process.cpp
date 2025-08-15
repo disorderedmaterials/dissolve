@@ -183,9 +183,8 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     }
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
-    // Calculate and store weights
-    auto &weights =
-        dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name_, GenericItem::InRestartFileFlag);
+    // Calculate weights
+    auto &weights = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name_);
     calculateWeights(rdfModule, weights);
     Messenger::print("Isotopologue and isotope composition:\n\n");
     weights.print();

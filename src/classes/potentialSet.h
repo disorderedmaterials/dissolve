@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
 #include "classes/neutronWeights.h"
 #include "math/data1D.h"
 #include "math/histogram1D.h"

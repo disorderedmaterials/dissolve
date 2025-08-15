@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "classes/isotopeData.h"
 #include "gui/dataViewer.h"
 #include "gui/helpers/comboBoxController.h"
 #include "gui/render/renderableData1D.h"

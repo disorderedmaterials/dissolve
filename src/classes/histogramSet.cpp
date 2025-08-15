@@ -23,9 +23,9 @@ void HistogramSet::initialise(const std::vector<const AtomType *> &types, double
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypes_,
-        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+        [&](int indexI, const auto *atomTypeI, int indexJ, const auto *atomTypeJ)
         {
-            DoubleKeyedMapKey key(at1.atomTypeName(), at2.atomTypeName());
+            DoubleKeyedMapKey key(atomTypeI->name(), atomTypeJ->name());
 
             fullHistograms_.get(key).initialise(0.0, rdfRange, binWidth);
             boundHistograms_.get(key).initialise(0.0, rdfRange, binWidth);
