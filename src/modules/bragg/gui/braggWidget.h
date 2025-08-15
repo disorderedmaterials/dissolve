@@ -8,10 +8,11 @@
 #include "gui/models/braggReflectionModel.h"
 #include "modules/bragg/gui/ui_braggWidget.h"
 #include "modules/widget.h"
+#include "templates/keyedVector.h"
 #include "templates/optionalRef.h"
 
 // Forward Declarations
-class AtomTypeMix;
+class AtomType;
 class BraggModule;
 class Configuration;
 class Dissolve;
@@ -46,7 +47,7 @@ class BraggModuleWidget : public ModuleWidget
     // Reflection data to display
     OptionalReferenceWrapper<const std::vector<BraggReflection>> reflectionData_;
     // Reflection atom types data
-    OptionalReferenceWrapper<const AtomTypeMix> reflectionAtomTypesData_;
+    std::optional<KeyedVector<const AtomType *, int>> reflectionAtomTypesData_;
     // Last version of reflection data displayed
     int reflectionDataDisplayVersion_;
 

@@ -222,7 +222,7 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve)
 
     // Increase contents version in Configuration
     if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0))
-        targetConfiguration_->incrementContentsVersion();
+        targetConfiguration_->notifyAtomicPositionsChanged();
 
     return ExecutionResult::Success;
 }

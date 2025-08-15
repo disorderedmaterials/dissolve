@@ -3,75 +3,60 @@
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
 #include "classes/neutronWeights.h"
 #include "math/data1D.h"
-#include "templates/array2D.h"
-
-// Forward Declarations
-class Configuration;
-class Interpolator;
+#include "templates/doubleKeyedMap.h"
 
 // Set of Partials
 class PartialSet
 {
     public:
     PartialSet() = default;
-    PartialSet(const std::map<const Species *, double> &realSpeciesPopulations);
-    ~PartialSet();
+    ~PartialSet() = default;
 
     /*
      * Partials Data
      */
     private:
-    // AtomTypeMix used to generate matrices
-    AtomTypeMix atomTypeMix_;
+    // Species populations
+    KeyedVector<const Species *, double> realSpeciesPopulations_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Pair matrix, containing full atom-atom partial
-    Array2D<Data1D> partials_;
+    DoubleKeyedMap<Data1D> partials_;
     // Unbound matrix, containing atom-atom partial of unbound pairs
-    Array2D<Data1D> unboundPartials_;
+    DoubleKeyedMap<Data1D> unboundPartials_;
     // Bound matrix, containing atom-atom partial of bound pairs
-    Array2D<Data1D> boundPartials_;
-    // Bound flag matrix, specifying if bound partials are empty
-    Array2D<char> emptyBoundPartials_;
+    DoubleKeyedMap<Data1D> boundPartials_;
     // Total functions
     Data1D boundTotal_, unboundTotal_, total_;
     // Check for full or half matrix
     bool half_{true};
     // Effective density
     double rho_;
-    // Species populations
-    std::map<const Species *, double> realSpeciesPopulations_;
 
     public:
-    // Initialise
-    void initialise(const AtomTypeMix &atomTypMix, bool half = true);
+    // Initialise from supplied species populations
+    void initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half = true);
+    // Initialise based on supplied PartialSet, templating all data
+    void initialise(const PartialSet &partialSet);
     // Reset partial arrays
     void reset();
-    // Return number of AtomTypes used to generate matrices
-    int nAtomTypes() const;
-    // Return atom types mis
-    const AtomTypeMix &atomTypeMix() const;
+    // Return fractional atom type populations
+    KeyedVector<const AtomType *, double> atomTypeFractions() const;
     // Set new fingerprint
     void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of partials
     std::string_view fingerprint() const;
-    // Return full atom-atom partial specified
-    Data1D &partial(int i, int j);
-    const Data1D &partial(int i, int j) const;
-    // Return atom-atom partial for unbound pairs
-    Data1D &unboundPartial(int i, int j);
-    const Data1D &unboundPartial(int i, int j) const;
-    // Return atom-atom partial for bound pairs
-    Data1D &boundPartial(int i, int j);
-    const Data1D &boundPartial(int i, int j) const;
-    // Return empty bound partial flag
-    char &emptyBoundPartial(int i, int j);
-    const char &emptyBoundPartial(int i, int j) const;
-    // Return whether specified bound partial is empty
-    bool isBoundPartialEmpty(int i, int j) const;
+    // Return full atom-atom partials
+    DoubleKeyedMap<Data1D> &partials();
+    const DoubleKeyedMap<Data1D> &partials() const;
+    // Return bound atom-atom partials
+    DoubleKeyedMap<Data1D> &boundPartials();
+    const DoubleKeyedMap<Data1D> &boundPartials() const;
+    // Return unbound atom-atom partials
+    DoubleKeyedMap<Data1D> &unboundPartials();
+    const DoubleKeyedMap<Data1D> &unboundPartials() const;
     // Sum partials into totals
     void formTotals(bool applyConcentrationWeights);
     // Sum partials into totals for TR
@@ -89,7 +74,7 @@ class PartialSet
     Data1D &unboundTotal();
     const Data1D &unboundTotal() const;
     // Return real species populations
-    const std::map<const Species *, double> &realSpeciesPopulations() const;
+    const KeyedVector<const Species *, double> &realSpeciesPopulations() const;
     // Save all partials and total
     bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
 
@@ -102,7 +87,7 @@ class PartialSet
 
     public:
     // Add in partials from source PartialSet to our own, with specified weighting
-    bool addPartials(PartialSet &source, double weighting);
+    void addPartials(PartialSet &source, double weighting);
 
     /*
      * Operators

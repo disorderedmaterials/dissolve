@@ -23,7 +23,7 @@ class Atom
     // Coordinates
     Vector3 r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
-    int localTypeIndex_{-1};
+    int configurationTypeIndex_{-1};
     // Assigned master AtomType index (for pair potential indexing)
     int masterTypeIndex_{-1};
 
@@ -40,10 +40,10 @@ class Atom
     double y() const;
     // Return z-coordinate
     double z() const;
-    // Set local AtomType index
-    void setLocalTypeIndex(int id);
-    // Return local AtomType index
-    int localTypeIndex() const;
+    // Set AtomType index in parent Configuration
+    void setConfigurationTypeIndex(int id);
+    // Return AtomType index in parent Configuration
+    int configurationTypeIndex() const;
     // Set master AtomType index
     void setMasterTypeIndex(int id);
     // Return master AtomType index

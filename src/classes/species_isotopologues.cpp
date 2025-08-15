@@ -5,15 +5,10 @@
 #include "classes/species.h"
 
 // Update current Isotopologues
-void Species::updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes)
+void Species::updateIsotopologues()
 {
     for (auto &iso : isotopologues_)
-    {
-        if (atomTypes)
-            iso->checkAtomTypes(*atomTypes);
-
         iso->update();
-    }
 }
 
 // Update and return natural isotopologue

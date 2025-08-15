@@ -24,7 +24,7 @@ TEST_F(GRModuleTest, Methods)
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Cells method
-    systemTest.coreData().configurations().front()->incrementContentsVersion();
+    systemTest.coreData().configurations().front()->notifyAtomicPositionsChanged();
     grModule->keywords().setEnumeration("Method", GRModule::PartialsMethod::CellsMethod);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 }
