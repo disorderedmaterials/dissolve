@@ -13,8 +13,8 @@ bool NeutronSQNode::calculateWeightedGR()
                             {
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
 
-                                auto weight = weights_.weight(indexI, indexJ);
-                                auto intraWeight = weights_.intramolecularWeight(indexI, indexJ);
+                                auto weight = weights_.weights().get(key);
+                                auto intraWeight = weights_.intramolecularWeights().get(key);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedGR_->boundPartials().get(key).copyArrays(unweightedGR_->boundPartials().get(key));
@@ -56,8 +56,8 @@ bool NeutronSQNode::calculateWeightedSQ()
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
 
                                 // Weight bound and unbound S(Q) and sum into full partial
-                                auto weight = weights_.weight(indexI, indexJ);
-                                auto boundWeight = weights_.intramolecularWeight(indexI, indexJ);
+                                auto weight = weights_.weights().get(key);
+                                auto boundWeight = weights_.intramolecularWeights().get(key);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedSQ_->boundPartials().get(key).copyArrays(unweightedSQ_->boundPartials().get(key));

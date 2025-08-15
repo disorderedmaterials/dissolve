@@ -16,8 +16,8 @@ bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Partia
                             {
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
 
-                                double weight = weights.weight(indexI, indexJ);
-                                double intraWeight = weights.intramolecularWeight(indexI, indexJ);
+                                auto weight = weights.weights().get(key);
+                                auto intraWeight = weights.intramolecularWeights().get(key);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedgr.boundPartials().get(key).copyArrays(unweightedgr.boundPartials().get(key));
@@ -58,18 +58,16 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
                             [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
                             {
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
-
-                                // Weight bound and unbound S(Q) and sum into full partial
-                                double weight = weights.weight(indexI, indexJ);
-                                double boundWeight = weights.intramolecularWeight(indexI, indexJ);
+                                std::cout << std::format(" calculateWeightedSQ -> {} {}\n", popI.first->name(),
+                                                         popJ.first->name());
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedsq.boundPartials().get(key).copyArrays(unweightedsq.boundPartials().get(key));
-                                weightedsq.boundPartials().get(key) *= boundWeight;
+                                weightedsq.boundPartials().get(key) *= weights.intramolecularWeights().get(key);
 
                                 // Unbound partial (multiplied by the full weight)
                                 weightedsq.unboundPartials().get(key).copyArrays(unweightedsq.unboundPartials().get(key));
-                                weightedsq.unboundPartials().get(key) *= weight;
+                                weightedsq.unboundPartials().get(key) *= weights.weights().get(key);
 
                                 // Full partial (sum of bound and unbound terms)
                                 weightedsq.partials().get(key).copyArrays(weightedsq.unboundPartials().get(key));

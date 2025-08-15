@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include "base/sysFunc.h"
 #include "templates/algorithms.h"
+#include "templates/array2D.h"
 #include <format>
 #include <map>
 
@@ -62,7 +64,11 @@ template <typename ValueClass> class DoubleKeyedMap
     // Return whether the mirrored key pairs A-B and B-A are equivalent
     bool mirroredAreEquivalent() const { return mirroredAreEquivalent_; }
     // Set / overwrite key
-    void set(std::string_view A, std::string_view B, ValueClass value)
+    void set(const std::pair<std::string_view, std::string_view> &pair, const ValueClass &value)
+    {
+        set(pair.first, pair.second, value);
+    }
+    void set(std::string_view A, std::string_view B, const ValueClass &value)
     {
         auto it = find(A, B);
         if (it != data_.end())
@@ -78,8 +84,34 @@ template <typename ValueClass> class DoubleKeyedMap
             data_.erase(it);
     }
     // Return whether the specified key exists
+    bool contains(const std::pair<std::string_view, std::string_view> &pair) const { return contains(pair.first, pair.second); }
     bool contains(std::string_view A, std::string_view B) const { return find(A, B) != data_.end(); }
     // Get keyed value
+    ValueClass &operator[](const std::string_view key) { return get(key); }
+    const ValueClass &operator[](const std::string_view key) const { return get(key); }
+    ValueClass &operator[](const std::pair<std::string_view, std::string_view> &pair) { return get(pair.first, pair.second); }
+    const ValueClass &operator[](const std::pair<std::string_view, std::string_view> &pair) const
+    {
+        return get(pair.first, pair.second);
+    }
+    ValueClass &get(const std::string_view key)
+    {
+        // Need to split key back into its constituent parts and find()
+        auto keys = DissolveSys::splitString(key, separator_);
+        if (keys.size() != 2)
+            throw(std::runtime_error(std::format("Invalid key '{}' given to DoubleKeyedMap::at()\n", key)));
+
+        return get(keys[0], keys[1]);
+    }
+    const ValueClass &get(const std::string_view key) const
+    {
+        // Need to split key back into its constituent parts and find()
+        auto keys = DissolveSys::splitString(key, separator_);
+        if (keys.size() != 2)
+            throw(std::runtime_error(std::format("Invalid key '{}' given to DoubleKeyedMap::at()\n", key)));
+
+        return get(keys[0], keys[1]);
+    }
     ValueClass &get(const std::pair<std::string_view, std::string_view> &pair) { return get(pair.first, pair.second); }
     const ValueClass &get(const std::pair<std::string_view, std::string_view> &pair) const
     {
@@ -105,8 +137,6 @@ template <typename ValueClass> class DoubleKeyedMap
         else
             return it->second;
     }
-    ValueClass &get(const std::string key) { return data_[key]; }
-    const ValueClass &at(const std::string key) const { return data_.at(key); }
     // Iterators
     std::map<std::string, ValueClass>::iterator begin() { return data_.begin(); }
     std::map<std::string, ValueClass>::const_iterator begin() const { return data_.begin(); }
