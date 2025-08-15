@@ -12,7 +12,7 @@ namespace UnitTest
 TEST(AtomTypeMixTest, Basic)
 {
     SmallMolecules molecules_;
-    AtomTypeMix mix_;
+    IsotopeMix mix_;
 
     //    // Add atom types to our mix
     //    mix_.add(molecules_.atN().get(), Sears91::N_Natural, 1);

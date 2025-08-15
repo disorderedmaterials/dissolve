@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
 #include "data/formFactors.h"
 #include "templates/array2D.h"
+#include "templates/keyedVector.h"
 #include <functional>
 #include <vector>
 
 // Forward Declarations
+class AtomType;
 class Species;
-class SpeciesInfo;
 
 // XRay Weights Container
 class XRayWeights

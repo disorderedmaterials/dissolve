@@ -12,12 +12,12 @@
 class AtomType;
 class Isotopologues;
 
-// AtomTypeMix
-class AtomTypeMix
+// IsotopeMix
+class IsotopeMix
 {
     public:
-    AtomTypeMix() = default;
-    ~AtomTypeMix() = default;
+    IsotopeMix() = default;
+    ~IsotopeMix() = default;
 
     private:
     // Isotope data per atom type

@@ -23,7 +23,7 @@ NeutronWeights::NeutronWeights(const NeutronWeights &source) { (*this) = source;
 void NeutronWeights::operator=(const NeutronWeights &source)
 {
     isotopologueMixtures_ = source.isotopologueMixtures_;
-    atomTypes_ = source.atomTypes_;
+    isotopeMix_ = source.isotopeMix_;
     boundCoherentProducts_ = source.boundCoherentProducts_;
     concentrationProducts_ = source.concentrationProducts_;
     weights_ = source.weights_;
@@ -93,7 +93,7 @@ void NeutronWeights::print() const
 
     // Print atomtypes table
     Messenger::print("\n");
-    atomTypes_.print();
+    isotopeMix_.print();
 
     Messenger::print("\nCalculated average scattering lengths: <b>**2 = {:.5f}, <b**2> = {:.5f}\n",
                      boundCoherentSquareOfAverage_, boundCoherentAverageOfSquares_);
@@ -108,7 +108,7 @@ void NeutronWeights::calculateWeightingMatrices()
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
-    auto nTypes = atomTypes_.mix().size();
+    auto nTypes = isotopeMix_.mix().size();
     concentrationProducts_.initialise(nTypes, nTypes, true);
     boundCoherentProducts_.initialise(nTypes, nTypes, true);
     weights_.initialise(nTypes, nTypes, true);
@@ -118,11 +118,11 @@ void NeutronWeights::calculateWeightingMatrices()
     double ci, cj, bi, bj;
 
     // Determine atomic concentration products, bound coherent products, and full scattering weights
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.mix(),
+    dissolve::for_each_pair(ParallelPolicies::seq, isotopeMix_.mix(),
                             [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
-                                ci = atomTypes_.fraction(typeMixI.first);
-                                bi = atomTypes_.boundCoherent(typeMixI.first) * 0.1;
+                                ci = isotopeMix_.fraction(typeMixI.first);
+                                bi = isotopeMix_.boundCoherent(typeMixI.first) * 0.1;
 
                                 // Update average scattering values
                                 if (indexI == indexJ)
@@ -131,8 +131,8 @@ void NeutronWeights::calculateWeightingMatrices()
                                     boundCoherentAverageOfSquares_ += ci * bi * bi;
                                 }
 
-                                cj = atomTypes_.fraction(typeMixJ.first);
-                                bj = atomTypes_.boundCoherent(typeMixJ.first) * 0.1;
+                                cj = isotopeMix_.fraction(typeMixJ.first);
+                                bj = isotopeMix_.boundCoherent(typeMixJ.first) * 0.1;
 
                                 concentrationProducts_[{indexI, indexJ}] = ci * cj;
                                 boundCoherentProducts_[{indexI, indexJ}] = bi * bj;
@@ -166,17 +166,17 @@ void NeutronWeights::calculateWeightingMatrices()
                                     [&, iso, weight](int indexI, const auto &atPop1, int indexJ, const auto &atPop2)
                                     {
                                         // Find the atom types in our local mix
-                                        auto optPairIndex = atomTypes_.indexOf(atPop1.first, atPop2.first);
+                                        auto optPairIndex = isotopeMix_.indexOf(atPop1.first, atPop2.first);
                                         if (!optPairIndex)
                                             return;
                                         auto &[typeI, typeJ] = *optPairIndex;
 
                                         // If an AtomType is exchangeable we use its exchanged bound coherent scattering length
-                                        bi = atomTypes_.isExchangeable(atPop1.first)
-                                                 ? atomTypes_.boundCoherent(atPop1.first)
+                                        bi = isotopeMix_.isExchangeable(atPop1.first)
+                                                 ? isotopeMix_.boundCoherent(atPop1.first)
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
-                                        bj = atomTypes_.isExchangeable(atPop2.first)
-                                                 ? atomTypes_.boundCoherent(atPop2.first)
+                                        bj = isotopeMix_.isExchangeable(atPop2.first)
+                                                 ? isotopeMix_.boundCoherent(atPop2.first)
                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 
                                         // Convert from fm to barns
@@ -191,15 +191,15 @@ void NeutronWeights::calculateWeightingMatrices()
     }
 
     // Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_.mix(),
+    dissolve::for_each_pair(ParallelPolicies::seq, isotopeMix_.mix(),
                             [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
                                 // Skip this pair if there are no such intramolecular interactions
                                 if (!globalFlag[{indexI, indexJ}])
                                     return;
 
-                                ci = atomTypes_.fraction(typeMixI.first);
-                                cj = atomTypes_.fraction(typeMixJ.first);
+                                ci = isotopeMix_.fraction(typeMixI.first);
+                                cj = isotopeMix_.fraction(typeMixJ.first);
 
                                 intramolecularWeights_[{indexI, indexJ}] /= intraNorm[{indexI, indexJ}];
                                 intramolecularWeights_[{indexI, indexJ}] *= ci * cj * (indexI == indexJ ? 1 : 2);
@@ -233,18 +233,18 @@ void NeutronWeights::create(const KeyedVector<const Species *, double> &populati
 void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     // Create the isotope mix from defined isotopologues
-    atomTypes_.create(isotopologueMixtures_, exchangeableTypes);
+    isotopeMix_.create(isotopologueMixtures_, exchangeableTypes);
 
     calculateWeightingMatrices();
 
     valid_ = true;
 }
 
-// Return AtomTypeMix
-const AtomTypeMix &NeutronWeights::atomTypes() const { return atomTypes_; }
+// Return isotope mix
+const IsotopeMix &NeutronWeights::isotopeMix() const { return isotopeMix_; }
 
 // Return number of used AtomTypes
-int NeutronWeights::nUsedTypes() const { return atomTypes_.mix().size(); }
+int NeutronWeights::nUsedTypes() const { return isotopeMix_.mix().size(); }
 
 // Return concentration product for types i and j
 double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_[{i, j}]; }

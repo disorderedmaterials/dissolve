@@ -375,7 +375,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
     const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    auto success = for_each_pair_early(dataWeights.atomTypes().mix(),
+    auto success = for_each_pair_early(dataWeights.isotopeMix().mix(),
                                        [&](int indexI, auto &typeMixI, int indexJ, auto &typeMixJ) -> EarlyReturn<bool>
                                        {
                                            auto colIndex = columnIndex(typeMixI.first, typeMixJ.first);

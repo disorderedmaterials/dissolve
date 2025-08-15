@@ -1,21 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "classes/atomTypeMix.h"
-#include "base/lineParser.h"
-#include "base/sysFunc.h"
+#include "classes/isotopeMix.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
+#include "classes/isotopologues.h"
+#include "classes/species.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
-#include <utility>
 
 /*
  * Private Functions
  */
 
 // Calculate and return the isolated bound coherent scattering (unexchanged) for the specified atom type
-double AtomTypeMix::isolatedBoundCoherent(const AtomType *atomType) const
+double IsotopeMix::isolatedBoundCoherent(const AtomType *atomType) const
 {
     const auto &isotopes = mix_.value(atomType);
     return std::accumulate(isotopes.begin(), isotopes.end(), 0.0,
@@ -26,7 +24,7 @@ double AtomTypeMix::isolatedBoundCoherent(const AtomType *atomType) const
 }
 
 // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
-void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+void IsotopeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     // Set exchangeable flags
     for (auto &at : exchangeableTypes)
@@ -64,7 +62,7 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
  */
 
 // Calculate and return full population of atom type in whole mix
-double AtomTypeMix::population(const AtomType *atomType) const
+double IsotopeMix::population(const AtomType *atomType) const
 {
     if (mix_.contains(atomType))
     {
@@ -77,11 +75,11 @@ double AtomTypeMix::population(const AtomType *atomType) const
 }
 
 // Calculate and return fractional population of atom type in whole mix
-double AtomTypeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
+double IsotopeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
 
 // Create mix from Isotopologues
-void AtomTypeMix::create(const std::vector<Isotopologues> &isotopologues,
-                         const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+void IsotopeMix::create(const std::vector<Isotopologues> &isotopologues,
+                        const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     mix_.clear();
     totalPopulation_ = 0.0;
@@ -117,7 +115,7 @@ void AtomTypeMix::create(const std::vector<Isotopologues> &isotopologues,
 }
 
 // Calculate and return bound coherent scattering, accounting for isotope mix and exchangeability
-double AtomTypeMix::boundCoherent(const AtomType *atomType) const
+double IsotopeMix::boundCoherent(const AtomType *atomType) const
 {
     // If this atom type is exchangeable we need to take the averaged scattering of all exchangeable components
     if (exchangeables_.contains(atomType))
@@ -138,13 +136,13 @@ double AtomTypeMix::boundCoherent(const AtomType *atomType) const
 }
 
 // Return whether specified atom type is exchangeable
-bool AtomTypeMix::isExchangeable(const AtomType *atomType) const { return exchangeables_.contains(atomType); }
+bool IsotopeMix::isExchangeable(const AtomType *atomType) const { return exchangeables_.contains(atomType); }
 
 // Return types/topes map
-const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &AtomTypeMix::mix() const { return mix_; }
+const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &IsotopeMix::mix() const { return mix_; }
 
 // Return indices of AtomType pair
-std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const AtomType *at1, const AtomType *at2) const
+std::optional<std::pair<int, int>> IsotopeMix::indexOf(const AtomType *at1, const AtomType *at2) const
 {
     auto count = 0, index = -1;
     for (auto &atomType : std::views::keys(mix_))
@@ -170,7 +168,7 @@ std::optional<std::pair<int, int>> AtomTypeMix::indexOf(const AtomType *at1, con
 }
 
 // Print AtomType populations
-void AtomTypeMix::print() const
+void IsotopeMix::print() const
 {
     Messenger::print("  AtomType  El  Isotope  Population      Fraction           bc (fm)\n");
     Messenger::print("  -----------------------------------------------------------------\n");

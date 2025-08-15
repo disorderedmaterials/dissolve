@@ -6,7 +6,6 @@
 #include "base/serialiser.h"
 #include "base/version.h"
 #include "classes/atom.h"
-#include "classes/atomTypeMix.h"
 #include "classes/box.h"
 #include "classes/cellArray.h"
 #include "classes/molecule.h"

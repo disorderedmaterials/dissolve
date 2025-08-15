@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
 #include "classes/partialSet.h"
 #include "math/histogram1D.h"
 #include "templates/array2D.h"
