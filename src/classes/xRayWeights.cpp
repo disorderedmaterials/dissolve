@@ -75,15 +75,6 @@ XRayFormFactors::XRayFormFactorData XRayWeights::formFactors() const { return fo
 // Return atom type fractions
 const KeyedVector<const AtomType *, double> &XRayWeights::typeFractions() const { return typeFractions_; }
 
-// Return concentration product for type i
-double XRayWeights::concentration(int typeIndexI) const { return concentrations_[typeIndexI]; }
-
-// Return concentration product for types i and j
-double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
-{
-    return concentrationProducts_[{typeIndexI, typeIndexJ}];
-}
-
 // Return pre-factor for types i and j
 double XRayWeights::preFactor(int typeIndexI, int typeIndexJ) const { return preFactors_[{typeIndexI, typeIndexJ}]; }
 

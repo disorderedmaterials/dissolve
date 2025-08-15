@@ -42,10 +42,6 @@ class XRayWeights
     XRayFormFactors::XRayFormFactorData formFactors() const;
     // Return atom type fractions
     const KeyedVector<const AtomType *, double> &typeFractions() const;
-    // Return concentration product for type i
-    double concentration(int typeIndexI) const;
-    // Return concentration product for types i and j
-    double concentrationProduct(int typeIndexI, int typeIndexJ) const;
     // Return pre-factor for types i and j
     double preFactor(int typeIndexI, int typeIndexJ) const;
     // Return form factor product for types i and j at specified Q value
