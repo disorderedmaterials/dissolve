@@ -18,13 +18,6 @@
 // Generate S(Q) from supplied g(r)
 bool SQNode::calculateUnweightedSQ()
 {
-    // Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
-    if (unweightedGR_->nAtomTypes() != unweightedSQ_->nAtomTypes())
-    {
-        error("SQNode::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
-        return false;
-    }
-
     auto rho = unweightedGR_->effectiveDensity();
     auto qMin = qMin_.asDouble(), qDelta = qDelta_.asDouble(), qMax = qMax_.asDouble();
 
@@ -32,26 +25,35 @@ bool SQNode::calculateUnweightedSQ()
     // Don't subtract 1.0 from the bound partials
     Timer timer;
     timer.start();
-    dissolve::for_each_pair(ParallelPolicies::par, unweightedGR_->nAtomTypes(),
-                            [&](int n, int m)
-                            {
-                                // Total partial
-                                unweightedSQ_->partial(n, m).copyArrays(unweightedGR_->partial(n, m));
-                                unweightedSQ_->partial(n, m) -= 1.0;
-                                Fourier::sineFT(unweightedSQ_->partial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax,
-                                                windowFunction_, qBroadening_);
 
-                                // Bound partial
-                                unweightedSQ_->boundPartial(n, m).copyArrays(unweightedGR_->boundPartial(n, m));
-                                Fourier::sineFT(unweightedSQ_->boundPartial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax,
-                                                windowFunction_, qBroadening_);
+    // Full partials
+    dissolve::for_each(ParallelPolicies::par, unweightedGR_->partials().begin(), unweightedGR_->partials().end(),
+                       [&](const auto &pair)
+                       {
+                           auto &sq = unweightedSQ_->partials().map()[pair.first];
+                           sq.copyArrays(pair.second);
+                           sq -= 1.0;
+                           Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction_, qBroadening_);
+                       });
 
-                                // Unbound partial
-                                unweightedSQ_->unboundPartial(n, m).copyArrays(unweightedGR_->unboundPartial(n, m));
-                                unweightedSQ_->unboundPartial(n, m) -= 1.0;
-                                Fourier::sineFT(unweightedSQ_->unboundPartial(n, m), 4.0 * M_PI * rho, qMin, qDelta, qMax,
-                                                windowFunction_, qBroadening_);
-                            });
+    // Bound partials
+    dissolve::for_each(ParallelPolicies::par, unweightedGR_->boundPartials().begin(), unweightedGR_->boundPartials().end(),
+                       [&](const auto &pair)
+                       {
+                           auto &sq = unweightedSQ_->boundPartials().map()[pair.first];
+                           sq.copyArrays(pair.second);
+                           Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction_, qBroadening_);
+                       });
+
+    // Unbound partials
+    dissolve::for_each(ParallelPolicies::par, unweightedGR_->unboundPartials().begin(), unweightedGR_->unboundPartials().end(),
+                       [&](const auto &pair)
+                       {
+                           auto &sq = unweightedSQ_->unboundPartials().map()[pair.first];
+                           sq.copyArrays(pair.second);
+                           sq -= 1.0;
+                           Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction_, qBroadening_);
+                       });
 
     // Sum into total
     unweightedSQ_->formTotals(true);

@@ -54,7 +54,7 @@ TEST_F(ExportTrajectoryTest, XYZ)
     result >> name >> at >> version;
     EXPECT_EQ(name, cfg->name());
     EXPECT_EQ(at, "@");
-    EXPECT_EQ(version, cfg->contentsVersion());
+    EXPECT_EQ(version, cfg->version());
 
     // Line by line analysis
     std::string elem;
@@ -89,7 +89,7 @@ TEST_F(ExportTrajectoryTest, XYZExport)
     result >> name >> at >> version;
     EXPECT_EQ(name, cfg->name());
     EXPECT_EQ(at, "@");
-    EXPECT_EQ(version, cfg->contentsVersion());
+    EXPECT_EQ(version, cfg->version());
 
     // Line by line analysis
     auto humanIndex = 0;

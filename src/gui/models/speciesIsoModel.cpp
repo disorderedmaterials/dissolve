@@ -50,7 +50,7 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
         }
     }
 
-    auto [atomType, isotope] = species_.isotopologue(index.parent().row())->isotopes()[index.row()];
+    auto [atomType, isotope] = species_.isotopologue(index.parent().row())->isotopes().pair(index.row());
     switch (role)
     {
         case Qt::DisplayRole:
@@ -145,7 +145,7 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
         return false;
 
     auto *isotopologue = species_.isotopologue(index.parent().row());
-    auto [atomType, isotope] = isotopologue->isotopes()[index.row()];
+    auto [atomType, isotope] = isotopologue->isotopes().pair(index.row());
     auto newIso = value.value<Sears91::Isotope>();
 
     // Check that requested isotope is compatible with the atomtype's element

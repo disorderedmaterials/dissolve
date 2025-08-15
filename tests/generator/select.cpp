@@ -140,7 +140,7 @@ TEST_F(SelectGeneratorNodeTest, Ranges)
         EXPECT_EQ(selectAr->nSitesInStack(), 1);
         EXPECT_EQ(selectN->nSitesInStack(), rangeInt * 2 * 2);
 
-        configuration_->incrementContentsVersion();
+        configuration_->notifyAtomicPositionsChanged();
     }
 }
 
@@ -175,7 +175,7 @@ TEST_F(SelectGeneratorNodeTest, Indices)
             EXPECT_EQ(std::get<2>(sites[vectorIndex++]), (siteIndex % N) + 1);
         }
 
-        configuration_->incrementContentsVersion();
+        configuration_->notifyAtomicPositionsChanged();
     }
 }
 
@@ -193,7 +193,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions1)
     EXPECT_EQ(selectN2->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
     EXPECT_DOUBLE_EQ(selectN2->nAvailableSitesAverage(), double(nType_));
-    configuration_->incrementContentsVersion();
+    configuration_->notifyAtomicPositionsChanged();
 
     // Exclude same site
     selectN2->keywords().set("ExcludeSameSite", ConstNodeVector<SelectGeneratorNode>{selectN1});
@@ -202,7 +202,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions1)
     EXPECT_EQ(selectN2->nSitesInStack(), nType_ - 1);
     EXPECT_DOUBLE_EQ(selectN1->nAvailableSitesAverage(), double(nType_));
     EXPECT_DOUBLE_EQ(selectN2->nAvailableSitesAverage(), double(nType_ - 1));
-    configuration_->incrementContentsVersion();
+    configuration_->notifyAtomicPositionsChanged();
 
     // Exclude same molecule as well (no effect)
     selectN2->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectN1});
@@ -226,7 +226,7 @@ TEST_F(SelectGeneratorNodeTest, Exclusions2)
     EXPECT_EQ(selectO->nSitesInStack(), nType_);
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
     EXPECT_DOUBLE_EQ(selectO->nAvailableSitesAverage(), double(nType_));
-    configuration_->incrementContentsVersion();
+    configuration_->notifyAtomicPositionsChanged();
 
     // Exclude same molecule
     selectO->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectGeneratorNode>{selectN});

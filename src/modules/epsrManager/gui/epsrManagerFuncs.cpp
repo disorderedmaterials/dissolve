@@ -58,7 +58,7 @@ void EPSRManagerModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
                                     {
                                         const std::string id = std::format("{}-{}", at1->name(), at2->name());
 
-                                        auto pp = dissolve_.pairPotential(at1, at2);
+                                        auto pp = dissolve_.pairPotential(at1.get(), at2.get());
                                         if (pp)
                                             graph_->createRenderable<RenderableData1D>(
                                                 std::format("Dissolve//Potential_{}_Additional", id), id, "Phi");

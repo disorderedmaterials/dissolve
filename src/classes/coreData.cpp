@@ -85,17 +85,17 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
 // Remove any atom types that are unused across all species
 int CoreData::removeUnusedAtomTypes()
 {
-    // Create an AtomTypeMix over all species
-    AtomTypeMix mix;
+    // Create an atom type set over all species
+    KeyedVector<const AtomType *, int> speciesAtomTypes;
     for (auto &sp : species_)
-        mix.add(sp->atomTypes());
+        speciesAtomTypes.merge(sp->atomTypePopulations());
 
     auto oldSize = atomTypes_.size();
 
     atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
                                     [&](const auto &at)
                                     {
-                                        if (mix.contains(at))
+                                        if (speciesAtomTypes.contains(at.get()))
                                             return false;
                                         else
                                         {
@@ -755,7 +755,7 @@ void CoreData::removeReferencesTo(Species *data)
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
     for (auto &cfg : configurations_)
-        if (cfg->containsSpecies(data))
+        if (cfg->speciesPopulations().contains(data))
             cfg->empty();
 }
 void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(this, data); }

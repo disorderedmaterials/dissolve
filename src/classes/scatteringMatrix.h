@@ -30,9 +30,9 @@ class ScatteringMatrix
      */
     private:
     // Source AtomTypes involved
-    std::vector<std::shared_ptr<AtomType>> atomTypes_;
+    std::vector<const AtomType *> atomTypes_;
     // Reference pairs of AtomTypes
-    std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>>> typePairs_;
+    std::vector<std::pair<const AtomType *, const AtomType *>> typePairs_;
     // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
     Array2D<double> A_;
     // Reference data (B) (n * 1)
@@ -52,15 +52,15 @@ class ScatteringMatrix
     // Return number of AtomTypes involved
     int nAtomTypes() const;
     // Return atom types
-    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
+    const std::vector<const AtomType *> &atomTypes() const;
     // Return atom type at index specified
-    std::shared_ptr<AtomType> atomType(int index) const;
+    const AtomType *atomType(int index) const;
     // Return index of atom type in our local vector
-    int indexOf(const std::shared_ptr<AtomType> &typeI) const;
+    int indexOf(const AtomType *typeI) const;
     // Return index pair of atom types in our local vector
-    std::tuple<int, int> pairIndexOf(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
+    std::pair<int, int> pairIndexOf(const AtomType *typeI, const AtomType *typeJ) const;
     // Return column of specified AtomType pair
-    int columnIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
+    int columnIndex(const AtomType *typeI, const AtomType *typeJ) const;
     // Generate matrices
     void generateMatrices();
     // Return the precalculated Q = 0.0 scattering matrix inverse
@@ -83,7 +83,7 @@ class ScatteringMatrix
      */
     public:
     // Initialise from supplied list of AtomTypes
-    void initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &estimatedSQ);
+    void initialise(const std::vector<const AtomType *> &types, Array2D<Data1D> &estimatedSQ);
     // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
     bool addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor = 1.0);
     // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
@@ -91,8 +91,8 @@ class ScatteringMatrix
     // Update reference data)
     bool updateReferenceData(const Data1D &weightedData, double factor = 1.0);
     // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-    bool addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
-                                 const std::shared_ptr<AtomType> &at2, double dataWeight, double factor = 1.0);
+    bool addPartialReferenceData(Data1D &weightedData, const AtomType *at1, const AtomType *at2, double dataWeight,
+                                 double factor = 1.0);
     // Return number of currently-defined reference data sets (== matrix rows)
     int nReferenceData() const;
 };

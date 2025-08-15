@@ -28,7 +28,7 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
     // Export number of atoms and title
     if (!parser.writeLineF("{}\n", cfg->nAtoms()))
         return false;
-    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->version()))
         return false;
 
     // Export Atoms
@@ -44,7 +44,7 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg)
 {
     // Export title
-    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->version()))
         return false;
 
     // Export keytrj and imcon

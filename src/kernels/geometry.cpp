@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "kernels/geometry.h"
+#include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/molecule.h"
 #include "classes/species.h"

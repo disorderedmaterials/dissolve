@@ -6,7 +6,6 @@
 #include "base/serialiser.h"
 #include "base/version.h"
 #include "classes/atom.h"
-#include "classes/atomTypeMix.h"
 #include "classes/box.h"
 #include "classes/cellArray.h"
 #include "classes/molecule.h"
@@ -80,31 +79,31 @@ class Configuration : public Serialisable<const CoreData &>
      */
     private:
     // Species populations present in the Configuration
-    std::map<const Species *, int> speciesPopulations_;
-    // AtomType populations in the configuration
-    AtomTypeMix atomTypePopulations_;
-    // Contents version, incremented whenever Configuration content or Atom positions change
-    VersionCounter contentsVersion_;
+    KeyedVector<const Species *, int> speciesPopulations_;
     // Molecule vector
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
     std::vector<Atom> atoms_;
+    // Configuration version, incremented whenever atom positions or atomic composition changes
+    VersionCounter version_;
+    // Flag stating whether local Atom type indices are up-to-date
+    bool typeIndicesValid_{false};
+
+    private:
+    // Add new Atom to Configuration
+    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
 
     public:
-    // Empty contents of Configuration, leaving core definitions intact
+    // Empty contents of Configuration
     void empty();
-    // Return specified used type
-    std::shared_ptr<AtomType> atomTypes(int index);
-    // Return atom type populations for this Configuration
-    const AtomTypeMix &atomTypePopulations() const;
-    // Adjust population of specified Species in the Configuration
-    void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
-    const std::map<const Species *, int> &speciesPopulations() const;
-    // Return population of specified species within the Configuration
-    int speciesPopulation(const Species *sp) const;
-    // Return if the specified Species is present in the Configuration
-    bool containsSpecies(const Species *sp);
+    const KeyedVector<const Species *, int> &speciesPopulations() const;
+    // Return atom type populations for this Configuration
+    KeyedVector<const AtomType *, int> atomTypePopulations() const;
+    // Return atom type index map
+    std::map<const AtomType *, int> atomTypeIndexMap() const;
+    // Return used atom type vector
+    std::vector<const AtomType *> atomTypeVector() const;
     // Return the total charge of the Configuration
     double totalCharge(bool ppIncludeCoulomb) const;
     // Return the total atomic mass present in the Configuration
@@ -113,10 +112,10 @@ class Configuration : public Serialisable<const CoreData &>
     std::optional<double> atomicDensity() const;
     // Return the chemical density (g/cm3) of the Configuration
     std::optional<double> chemicalDensity() const;
-    // Return version of current contents
-    int contentsVersion() const;
-    // Increment version of current contents
-    void incrementContentsVersion();
+    // Return version (atomic positions and composition)
+    int version() const;
+    // Flag that one or more atomic positions have changed
+    void notifyAtomicPositionsChanged();
     // Add Molecule to Configuration based on the supplied Species
     std::shared_ptr<Molecule>
     addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates = std::nullopt);
@@ -133,8 +132,6 @@ class Configuration : public Serialisable<const CoreData &>
     const std::vector<std::shared_ptr<Molecule>> &molecules() const;
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
-    // Add new Atom to Configuration
-    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
     // Return the number of atoms in the configuration (or only those with the specified presence)
     int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
     // Return Atom array
@@ -145,8 +142,9 @@ class Configuration : public Serialisable<const CoreData &>
     // Unfold molecule coordinates
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
-    void funky(std::vector<bool> &flags, std::vector<std::shared_ptr<Atom>> &atoms, int i);
     void scaleContents(Vector3 scaleFactors);
+    // Update type indices per Atom
+    void updateTypeIndexing();
 
     /*
      * Periodic Box and Cells
