@@ -88,7 +88,7 @@ Module::ExecutionResult GRModule::process(Dissolve &dissolve)
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr;
             calculateGR(dissolve.processingModuleData(), cfg, GRModule::TestMethod, rdfRange, binWidth_, alreadyUpToDate);
-            if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
+            if (!testReferencePartials(cfg->atomTypeVector(), referencePartials, originalgr, 1.0e-6))
                 return ExecutionResult::Failed;
         }
 

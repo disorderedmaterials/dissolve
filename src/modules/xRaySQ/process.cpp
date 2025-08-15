@@ -50,7 +50,8 @@ bool XRaySQModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> a
         {
             // We need the x-ray weights in order to do the normalisation
             XRayWeights weights;
-            calculateWeights(grModule, weights, formFactors_);
+            if (!weights.setUp(grModule->speciesPopulations(), formFactors_))
+                return Messenger::error("[SETUP {}] Couldn't determine weights matrix.\n", name_);
             auto bBarSquareOfAverage = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
             auto bBarAverageOfSquares = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
             std::vector<double> factors;
@@ -193,8 +194,13 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Construct weights matrix
-    auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_, GenericItem::InRestartFileFlag);
-    calculateWeights(grModule, weights, formFactors_);
+    auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_);
+    if (!weights.setUp(grModule->speciesPopulations(), formFactors_))
+    {
+        Messenger::error("Failed to set up weights matrix.\n");
+        return ExecutionResult::Failed;
+    }
+
     Messenger::print("Weights matrix:\n\n");
     weights.print();
 
@@ -202,7 +208,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     auto [weightedSQ, wSQtatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", name_, GenericItem::InRestartFileFlag);
     if (wSQtatus == GenericItem::ItemStatus::Created)
-        weightedSQ.initialise(unweightedSQ.atomTypeMix());
+        weightedSQ.initialise(unweightedSQ);
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
@@ -212,23 +218,31 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
         return ExecutionResult::Failed;
     if (saveFormFactors_)
     {
-        auto result = for_each_pair_early(unweightedSQ.atomTypeMix(),
-                                          [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool>
+        // TODO This will be cleaned up once XRayWeights moves to DoubleKeyedMap.
+        KeyedVector<const AtomType *, int> typeVector;
+        for (auto &[species, _] : unweightedSQ.realSpeciesPopulations())
+            for (auto &[atomType, _] : species->atomTypePopulations())
+                typeVector[atomType] = 1;
+
+        auto result = for_each_pair_early(typeVector,
+                                          [&](int indexI, auto &popI, int indexJ, auto &popJ) -> EarlyReturn<bool>
                                           {
-                                              if (i == j)
+                                              DoubleKeyedMapKey key{popI.first->name(), popJ.first->name()};
+
+                                              if (indexI == indexJ)
                                               {
-                                                  Data1D atomicData = unweightedSQ.partial(i, i);
-                                                  atomicData.values() = weights.formFactor(i, atomicData.xAxis());
+                                                  Data1D atomicData = unweightedSQ.partials().get(key);
+                                                  atomicData.values() = weights.formFactor(indexI, atomicData.xAxis());
                                                   Data1DExportFileFormat exportFormat(
-                                                      std::format("{}-{}.form", name(), at1.atomTypeName()));
+                                                      std::format("{}-{}.form", name(), popI.first->name()));
                                                   if (!exportFormat.exportData(atomicData))
                                                       return false;
                                               }
 
-                                              Data1D ffData = unweightedSQ.partial(i, j);
-                                              ffData.values() = weights.weight(i, j, ffData.xAxis());
+                                              Data1D ffData = unweightedSQ.partials().get(key);
+                                              ffData.values() = weights.weight(indexI, indexJ, ffData.xAxis());
                                               Data1DExportFileFormat exportFormat(
-                                                  std::format("{}-{}-{}.form", name(), at1.atomTypeName(), at2.atomTypeName()));
+                                                  std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name()));
                                               if (!exportFormat.exportData(ffData))
                                                   return false;
 
@@ -258,7 +272,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     auto [weightedGR, wGRstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.initialise(unweightedSQ.atomTypeMix());
+        weightedGR.initialise(unweightedSQ);
 
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);

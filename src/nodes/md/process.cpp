@@ -353,7 +353,7 @@ NodeConstants::ProcessResult MDNode::process()
 
     // Increment configuration changeCount
     if (step > 1)
-        targetConfiguration_->incrementContentsVersion();
+        targetConfiguration_->notifyAtomicPositionsChanged();
 
     /*
      * Calculation End

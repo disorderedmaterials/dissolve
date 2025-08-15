@@ -26,7 +26,7 @@ template <SpeciesType speciesType, SpeciesPopulation population> static void BM_
     module.keywords().set("ExcludeSameSiteAC", false);
     for (auto _ : state)
     {
-        problemDef.configuration()->incrementContentsVersion();
+        problemDef.configuration()->notifyAtomicPositionsChanged();
         module.executeProcessing(problemDef.dissolve());
     }
 }

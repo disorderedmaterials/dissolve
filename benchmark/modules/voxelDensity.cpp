@@ -18,7 +18,7 @@ static void BM_Module_VoxelDensity(benchmark::State &state)
     module.keywords().setEnumeration("TargetProperty", property);
     for (auto _ : state)
     {
-        problemDef.configuration()->incrementContentsVersion();
+        problemDef.configuration()->notifyAtomicPositionsChanged();
         module.executeProcessing(problemDef.dissolve());
     }
 }

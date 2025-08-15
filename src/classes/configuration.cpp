@@ -27,7 +27,7 @@ void Configuration::clear()
 
     // Reset box / Cells
     requestedCellDivisionLength_ = 7.0;
-    contentsVersion_.zero();
+    version_.zero();
 
     // Reset definition
     temperature_ = 300.0;
@@ -66,13 +66,10 @@ bool Configuration::generate(const GeneratorContext &generatorContext)
     // Make sure all objects know about each other
     updateObjectRelationships();
 
-    // Finalise atom type populations
-    atomTypePopulations_.finalise();
-
     // Link targeted potentials to atoms
     linkTargetedPotentials();
 
-    ++contentsVersion_;
+    ++version_;
 
     // Sanity check the contents - if we have zero atoms then there's a problem!
     if (nAtoms() == 0)

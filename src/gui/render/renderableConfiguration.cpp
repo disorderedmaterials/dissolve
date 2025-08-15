@@ -39,7 +39,7 @@ RenderableConfiguration::~RenderableConfiguration() {}
  */
 
 // Return version of data
-int RenderableConfiguration::dataVersion() { return (source_ ? source_->contentsVersion() : -99); }
+int RenderableConfiguration::dataVersion() { return (source_ ? source_->version() : -99); }
 
 /*
  * Transform / Limits

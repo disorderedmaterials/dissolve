@@ -3,7 +3,6 @@
 
 #include "classes/isotopologues.h"
 #include "base/lineParser.h"
-#include "base/sysFunc.h"
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include <numeric>
@@ -30,76 +29,22 @@ const Species *Isotopologues::species() const { return species_; }
 // Return associated Species population
 double Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 
-// Add specific Isotopologue to list
-void Isotopologues::add(const Isotopologue *iso, double relativeWeight)
-{
-    // Search current list to see if the specified Isotopologue already exists
-    auto it = std::find_if(mix_.begin(), mix_.end(), [iso](auto &isoWeight) { return isoWeight.isotopologue() == iso; });
-    if (it != mix_.end())
-        it->addWeight(relativeWeight);
-    else
-        mix_.emplace_back(iso, relativeWeight);
-}
-
-// Set Isotopologue component in list
-void Isotopologues::set(const Isotopologue *iso, double relativeWeight)
-{
-    assert(iso);
-
-    // Find the specified Isotopologue
-    auto it = std::find_if(mix_.begin(), mix_.end(), [iso](auto &isoWeight) { return isoWeight.isotopologue() == iso; });
-
-    if (it == mix_.end())
-        Messenger::exception(
-            "Warning: Isotopologues does not contain the Isotopologue '{}', so its relative weight can't be set.\n",
-            iso->name());
-
-    it->setWeight(relativeWeight);
-}
-
-// Remove references to the specified Isotopologue
-void Isotopologues::remove(const Isotopologue *iso)
-{
-    mix_.erase(
-        std::remove_if(mix_.begin(), mix_.end(), [iso](const auto &isoWeight) { return isoWeight.isotopologue() == iso; }),
-        mix_.end());
-}
-
-// Remove the specified IsotopologueWeight
-void Isotopologues::remove(IsotopologueWeight *isoWeight)
-{
-    mix_.erase(std::remove_if(mix_.begin(), mix_.end(), [isoWeight](const auto &data) { return isoWeight == &data; }),
-               mix_.end());
-}
-
-// Return whether the mix contains the specified Isotopologue
-bool Isotopologues::contains(const Isotopologue *iso) const
-{
-    return std::any_of(mix_.cbegin(), mix_.cend(),
-                       [iso](const IsotopologueWeight &isoWeight) { return isoWeight.isotopologue() == iso; });
-}
-
 // Return Isotopologue/weight mix
-std::vector<IsotopologueWeight> &Isotopologues::mix() { return mix_; }
+KeyedVector<const Isotopologue *, double> &Isotopologues::mix() { return mix_; }
 
-const std::vector<IsotopologueWeight> &Isotopologues::mix() const { return mix_; }
-
-// Return number of Isotopologues in list
-int Isotopologues::nIsotopologues() const { return mix_.size(); }
+const KeyedVector<const Isotopologue *, double> &Isotopologues::mix() const { return mix_; }
 
 // Return summed weight over all isotopologues
 double Isotopologues::summedWeight() const
 {
-    return std::accumulate(mix_.begin(), mix_.end(), 0.0, [](const auto acc, const auto &iso) { return acc + iso.weight(); });
+    return std::accumulate(mix_.begin(), mix_.end(), 0.0, [](const auto acc, const auto &iso) { return acc + iso.second; });
 }
 
-// Normalise total relative population to 1.0
-void Isotopologues::normalise()
+// Return the normalised populations
+KeyedVector<const Isotopologue *, double> Isotopologues::normalised() const
 {
     auto sum = summedWeight();
-
-    for (auto &isoWeight : mix_)
-        isoWeight.setWeight(isoWeight.weight() / sum);
+    return mix_.operated([sum](const auto &value) { return value / sum; });
 }
 
 /*
@@ -135,7 +80,7 @@ bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
             return false;
         }
 
-        add(iso, parser.argd(1));
+        mix_.set(iso, parser.argd(1));
     }
 
     return true;
@@ -149,8 +94,8 @@ bool Isotopologues::serialise(LineParser &parser) const
         return false;
 
     // Write Isotopologues
-    for (const auto &isoWeight : mix_)
-        if (!parser.writeLineF("{}  {}\n", isoWeight.isotopologue()->name(), isoWeight.weight()))
+    for (const auto &[iso, weight] : mix_)
+        if (!parser.writeLineF("{}  {}\n", iso->name(), weight))
             return false;
 
     return true;
@@ -162,8 +107,8 @@ SerialisedValue Isotopologues::serialise() const
     SerialisedValue result = {{"name", species_->name()}, {"population", speciesPopulation_}};
 
     SerialisedValue mix;
-    for (const auto &isoWeight : mix_)
-        mix[std::string(isoWeight.isotopologue()->name())] = isoWeight.weight();
+    for (const auto &[iso, weight] : mix_)
+        mix[std::string(iso->name())] = weight;
 
     result["mix"] = mix;
 
@@ -183,6 +128,6 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
                             auto iso = species_->findIsotopologue(name);
                             if (!iso)
                                 throw toml::type_error(std::format("Cannot find iso {}", name), location);
-                            add(iso, item.as_floating());
+                            mix_.set(iso, item.as_floating());
                         });
 }

@@ -350,7 +350,7 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
 
     // Increment configuration changeCount
     if (step > 1)
-        targetConfiguration_->incrementContentsVersion();
+        targetConfiguration_->notifyAtomicPositionsChanged();
 
     /*
      * Calculation End

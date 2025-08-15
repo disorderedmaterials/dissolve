@@ -3,7 +3,6 @@
 
 #include "gui/keywordWidgets/atomTypeVector.h"
 #include "classes/atomType.h"
-#include "classes/atomTypeMix.h"
 #include "classes/coreData.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "templates/algorithms.h"

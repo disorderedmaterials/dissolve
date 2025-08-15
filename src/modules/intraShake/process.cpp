@@ -315,7 +315,7 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve)
 
     // Increase contents version in Configuration
     if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0))
-        targetConfiguration_->incrementContentsVersion();
+        targetConfiguration_->notifyAtomicPositionsChanged();
 
     return ExecutionResult::Success;
 }

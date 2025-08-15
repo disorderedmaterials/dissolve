@@ -20,11 +20,11 @@ void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
     auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
                            [iso](auto &data) { return data.species() == iso->parent(); });
     if (it != isotopologues_.end())
-        it->add(iso, relativeWeight);
+        it->mix().add(iso, relativeWeight);
     else
     {
         isotopologues_.emplace_back(iso->parent(), 0);
-        isotopologues_.back().add(iso, relativeWeight);
+        isotopologues_.back().mix().add(iso, relativeWeight);
     }
 }
 
@@ -45,27 +45,10 @@ void IsotopologueSet::remove(const Isotopologue *iso)
 
     if (it != isotopologues_.end())
     {
-        it->remove(iso);
+        it->mix().erase(iso);
 
         // Check for Isotopologues now being empty
-        if (it->nIsotopologues() == 0)
-            isotopologues_.erase(it);
-    }
-}
-
-// Remove the specified IsotopologueWeight
-void IsotopologueSet::remove(IsotopologueWeight *isoWeight)
-{
-    // Get Isotopologues related to the IsotopologueWeight's Species pointer
-    auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
-                           [isoWeight](auto &data) { return data.species() == isoWeight->isotopologue()->parent(); });
-
-    if (it != isotopologues_.end())
-    {
-        it->remove(isoWeight);
-
-        // Check for Isotopologues now being empty
-        if (it->nIsotopologues() == 0)
+        if (it->mix().size() == 0)
             isotopologues_.erase(it);
     }
 }

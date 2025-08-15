@@ -105,7 +105,7 @@ void IsotopologueSetKeywordWidget::currentItemChanged()
         const auto *topes =
             setModel_.data(index.parent().isValid() ? index.parent() : index, Qt::UserRole).value<const Isotopologues *>();
         assert(topes);
-        ui_.AddIsotopologueButton->setEnabled(topes->nIsotopologues() < topes->species()->nIsotopologues() + 1);
+        ui_.AddIsotopologueButton->setEnabled(topes->mix().size() < topes->species()->nIsotopologues() + 1);
     }
 }
 
@@ -127,21 +127,21 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
     auto nNatural = 0;
     for (const auto &topes : keyword_->data().isotopologues())
         // Check if this is a completely "natural" specification
-        if (std::count_if(topes.mix().begin(), topes.mix().end(), [&topes](const auto &part)
-                          { return part.isotopologue() == topes.species()->naturalIsotopologue(); }) == topes.nIsotopologues())
+        if (std::count_if(topes.mix().begin(), topes.mix().end(), [&topes](const auto &isoWeight)
+                          { return isoWeight.first == topes.species()->naturalIsotopologue(); }) == topes.mix().size())
         {
             text += std::format("{}{}[Natural]", text.empty() ? "" : ", ", topes.species()->name());
             ++nNatural;
         }
         else
         {
-            if (topes.nIsotopologues() == 1)
+            if (topes.mix().size() == 1)
                 text += std::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
-                                    topes.mix().front().isotopologue()->name());
+                                    topes.mix().begin()->first->name());
             else
                 text += std::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
-                                    joinStrings(topes.mix(), ", ", [](const auto &part)
-                                                { return std::format("{}={}", part.isotopologue()->name(), part.weight()); }));
+                                    joinStrings(topes.mix(), ", ", [](const auto &isoWeight)
+                                                { return std::format("{}={}", isoWeight.first->name(), isoWeight.second); }));
         }
 
     setSummaryText(nNatural == keyword_->data().nSpecies() ? QString("<Default to Natural>") : QString::fromStdString(text));

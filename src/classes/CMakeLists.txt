@@ -4,8 +4,6 @@ add_library(
   array3DIterator.cpp
   atom.cpp
   atomType.cpp
-  atomTypeData.cpp
-  atomTypeMix.cpp
   bondFunctions.cpp
   box.cpp
   boxCubic.cpp
@@ -34,11 +32,10 @@ add_library(
   empiricalFormula.cpp
   fullPairIterator.cpp
   histogramSet.cpp
-  isotopeData.cpp
+  isotopeMix.cpp
   isotopologue.cpp
   isotopologues.cpp
   isotopologueSet.cpp
-  isotopologueWeight.cpp
   kVector.cpp
   localMolecule.cpp
   molecule.cpp
@@ -81,9 +78,7 @@ add_library(
   angleFunctions.h
   array3DIterator.h
   atom.h
-  atomTypeData.h
   atomType.h
-  atomTypeMix.h
   bondFunctions.h
   box.h
   braggReflection.h
@@ -99,11 +94,10 @@ add_library(
   empiricalFormula.h
   histogramSet.h
   interactionPotential.h
-  isotopeData.h
+  isotopeMix.h
   isotopologue.h
   isotopologues.h
   isotopologueSet.h
-  isotopologueWeight.h
   kVector.h
   localMolecule.h
   molecule.h

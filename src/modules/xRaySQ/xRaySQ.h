@@ -70,9 +70,6 @@ class XRaySQModule : public Module
     // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
                              StructureFactors::NormalisationType normalisation);
-    // Calculate xray weights for relevant Configuration targets
-    void calculateWeights(const GRModule *rdfModule, XRayWeights &weights,
-                          XRayFormFactors::XRayFormFactorData formFactors) const;
 
     /*
      * Processing

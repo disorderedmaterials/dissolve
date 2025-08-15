@@ -234,7 +234,7 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
     {
         // Targets are the same - are _all_ versions different?
         if (std::any_of(currentTargets.begin(), currentTargets.end(), [&](const auto *currentTarget)
-                        { return lastProcessedConfigurations_[currentTarget] == currentTarget->contentsVersion(); }))
+                        { return lastProcessedConfigurations_[currentTarget] == currentTarget->version(); }))
         {
             Messenger::warn("One or more target configurations have not changed since module '{}' was last run, so it "
                             "will not run in the current iteration.\n",
@@ -296,7 +296,7 @@ Module::ExecutionResult Module::executeProcessing(Dissolve &dissolve)
     // Update last processed configuration data
     auto &&[currentTargets, expectedTargetCount] = getCurrentTargetConfigurations();
     for (auto *currentTarget : currentTargets)
-        lastProcessedConfigurations_[currentTarget] = currentTarget->contentsVersion();
+        lastProcessedConfigurations_[currentTarget] = currentTarget->version();
 
     return result;
 }

@@ -38,7 +38,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(Dissolve &dissolve)
         return ExecutionResult::Failed;
     }
 
-    targetConfiguration_->incrementContentsVersion();
+    targetConfiguration_->notifyAtomicPositionsChanged();
 
     // Set the trajectory file position in the restart file
     dissolve.processingModuleData().realise<std::streampos>(streamPosName, name(), GenericItem::InRestartFileFlag) =

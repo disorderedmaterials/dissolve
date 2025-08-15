@@ -145,7 +145,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
 
     // Increase contents version in Configuration
     if (nAccepted > 0)
-        targetConfiguration_->incrementContentsVersion();
+        targetConfiguration_->notifyAtomicPositionsChanged();
 
     return ExecutionResult::Success;
 }

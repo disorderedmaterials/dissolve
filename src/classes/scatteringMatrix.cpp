@@ -25,13 +25,13 @@ bool ScatteringMatrix::qDependentWeighting() const
 int ScatteringMatrix::nAtomTypes() const { return atomTypes_.size(); }
 
 // Return atom types
-const std::vector<std::shared_ptr<AtomType>> &ScatteringMatrix::atomTypes() const { return atomTypes_; }
+const std::vector<const AtomType *> &ScatteringMatrix::atomTypes() const { return atomTypes_; }
 
 // Return atom type at index specified
-std::shared_ptr<AtomType> ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
+const AtomType *ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
 
 // Return index of atom type in our local vector
-int ScatteringMatrix::indexOf(const std::shared_ptr<AtomType> &typeI) const
+int ScatteringMatrix::indexOf(const AtomType *typeI) const
 {
     auto it = std::find(atomTypes_.begin(), atomTypes_.end(), typeI);
     assert(it != atomTypes_.end());
@@ -39,14 +39,13 @@ int ScatteringMatrix::indexOf(const std::shared_ptr<AtomType> &typeI) const
 }
 
 // Return index pair of atom types in our local vector
-std::tuple<int, int> ScatteringMatrix::pairIndexOf(const std::shared_ptr<AtomType> &typeI,
-                                                   const std::shared_ptr<AtomType> &typeJ) const
+std::pair<int, int> ScatteringMatrix::pairIndexOf(const AtomType *typeI, const AtomType *typeJ) const
 {
     return {indexOf(typeI), indexOf(typeJ)};
 }
 
 // Return column index of specified AtomType pair
-int ScatteringMatrix::columnIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
+int ScatteringMatrix::columnIndex(const AtomType *typeI, const AtomType *typeJ) const
 {
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -341,7 +340,7 @@ Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &estimatedSQ)
+void ScatteringMatrix::initialise(const std::vector<const AtomType *> &types, Array2D<Data1D> &estimatedSQ)
 {
     // Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
     A_.clear();
@@ -353,8 +352,7 @@ void ScatteringMatrix::initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &e
     qMatrices_.clear();
 
     // Copy atom types and construct pairs
-    atomTypes_.resize(typeMix.nItems());
-    std::transform(typeMix.begin(), typeMix.end(), atomTypes_.begin(), [](const auto &atd) { return atd.atomType(); });
+    atomTypes_ = types;
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
                             [this](int i, auto &at1, int j, auto &at2) { typePairs_.emplace_back(at1, at2); });
 
@@ -377,22 +375,23 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
     const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    const auto nUsedTypes = dataWeights.nUsedTypes();
-    const auto &usedTypes = dataWeights.atomTypes();
-    for (auto n = 0; n < nUsedTypes; ++n)
-    {
-        for (auto m = n; m < nUsedTypes; ++m)
-        {
-            auto colIndex = columnIndex(usedTypes.atomType(n), usedTypes.atomType(m));
-            if (colIndex == -1)
-                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
-                                        "('{}' and/or '{}').\n",
-                                        usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
+    auto success = for_each_pair_early(dataWeights.isotopeMix().mix(),
+                                       [&](int indexI, auto &typeMixI, int indexJ, auto &typeMixJ) -> EarlyReturn<bool>
+                                       {
+                                           auto colIndex = columnIndex(typeMixI.first, typeMixJ.first);
+                                           if (colIndex == -1)
+                                               return Messenger::error(
+                                                   "Weights associated to reference data contain one or more unknown AtomTypes "
+                                                   "('{}' and/or '{}').\n",
+                                                   typeMixI.first->name(), typeMixJ.first->name());
 
-            // Now have the local column index of the AtomType pair in our matrix A_...
-            A_[{rowIndex, colIndex}] = dataWeights.weight(n, m) * factor;
-        }
-    }
+                                           // Now have the local column index of the AtomType pair in our matrix A_...
+                                           A_[{rowIndex, colIndex}] = dataWeights.weight(indexI, indexJ) * factor;
+
+                                           return EarlyReturn<bool>::Continue;
+                                       });
+    if (!success.value_or(true))
+        return false;
 
     // Add reference data and apply the associated factor
     data_.emplace_back(weightedData) *= factor;
@@ -406,32 +405,30 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
 // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
 bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor)
 {
-    // Make sure that the scattering weights are valid
-    if (!dataWeights.isValid())
-        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.tag());
-
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
     const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    const auto nUsedTypes = dataWeights.nUsedTypes();
-    const auto &usedTypes = dataWeights.atomTypeMix();
-    for (int n = 0; n < nUsedTypes; ++n)
-    {
-        for (int m = n; m < nUsedTypes; ++m)
-        {
-            auto colIndex = columnIndex(usedTypes.atomType(n), usedTypes.atomType(m));
-            if (colIndex == -1)
-                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
-                                        "('{}' and/or '{}').\n",
-                                        usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
+    auto success = for_each_pair_early(dataWeights.typeFractions(),
+                                       [&](int indexI, auto &fracI, int indexJ, auto &fracJ) -> EarlyReturn<bool>
+                                       {
+                                           auto colIndex = columnIndex(fracI.first, fracJ.first);
+                                           if (colIndex == -1)
+                                               return Messenger::error(
+                                                   "Weights associated to reference data contain one or more unknown AtomTypes "
+                                                   "('{}' and/or '{}').\n",
+                                                   fracI.first->name(), fracJ.first->name());
 
-            // Now have the local column index of the AtomType pair in our matrix A_.
-            // Since this is X-ray data, we will just store the product of the concentration weights and the factor
-            A_[{rowIndex, colIndex}] = dataWeights.preFactor(n, m) * factor;
-        }
-    }
+                                           // Now have the local column index of the AtomType pair in our matrix A_.
+                                           // Since this is X-ray data, we will just store the product of the concentration
+                                           // weights and the factor
+                                           A_[{rowIndex, colIndex}] = dataWeights.preFactor(indexI, indexJ) * factor;
+
+                                           return EarlyReturn<bool>::Continue;
+                                       });
+    if (!success.value_or(true))
+        return false;
 
     // Add reference data and apply the associated factor
     data_.emplace_back(weightedData) *= factor;
@@ -456,8 +453,8 @@ bool ScatteringMatrix::updateReferenceData(const Data1D &weightedData, double fa
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
-                                               const std::shared_ptr<AtomType> &at2, double dataWeight, double factor)
+bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const AtomType *at1, const AtomType *at2,
+                                               double dataWeight, double factor)
 {
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());

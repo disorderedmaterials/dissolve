@@ -156,9 +156,6 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
         atom(n).setCoordinates(parser.arg3d(1));
     }
 
-    // Finalise used AtomType list
-    atomTypePopulations_.finalise();
-
     // Scale box and cells according to the applied size factor
     auto appliedSF = appliedSizeFactor_.value_or(defaultSizeFactor_);
     scaleBox({appliedSF, appliedSF, appliedSF});

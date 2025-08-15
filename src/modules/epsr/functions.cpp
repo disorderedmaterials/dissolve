@@ -226,7 +226,7 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
     }
 }
 
-std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> EPSRModule::empiricalPotentials()
+std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> EPSRModule::empiricalPotentials()
 {
     return empiricalPotentials_;
 }

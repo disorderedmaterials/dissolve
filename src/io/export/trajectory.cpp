@@ -26,7 +26,7 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
     // Write number of atoms and title
     if (!parser.writeLineF("{}\n", cfg->nAtoms()))
         return false;
-    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->version()))
         return false;
 
     // Write Atoms

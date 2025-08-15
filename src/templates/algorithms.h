@@ -206,6 +206,25 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
     dissolve::for_each(begin, end, unaryOp);
 }
 
+// Base for_each, no parallel policy
+template <class Range, class UnaryOp> void for_each(Range range, UnaryOp unaryOp) { std::ranges::for_each(range, unaryOp); }
+// Only enabled if parallelpolicies are fully defined i.e. we have compiled with multithreading enabled
+template <typename ParallelPolicy, class Range, class UnaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+void for_each(ParallelPolicy policy, Range range, UnaryOp unaryOp)
+{
+    std::for_each(policy, range, unaryOp);
+}
+
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to
+// set a parallel policy
+template <typename ParallelPolicy, class Range, class UnaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+void for_each(ParallelPolicy, Range range, UnaryOp unaryOp)
+{
+    dissolve::for_each(range, unaryOp);
+}
+
 // Perform an operation on every pair of elements in a contained, or the half-matrix only ([i,j] == [j,i])
 template <typename ParallelPolicy, std::ranges::range Range, class Lam>
 void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool half = true)

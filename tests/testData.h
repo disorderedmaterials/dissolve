@@ -692,7 +692,7 @@ class SmallMolecules
         n2_.atom(1).setAtomType(atN_);
         n2_.addBond(0, 1);
         n2A15_ = n2_.addIsotopologue("N15");
-        n2A15_->setAtomTypeIsotope(atN_, Sears91::N_15);
+        n2A15_->setAtomTypeIsotope(atN_.get(), Sears91::N_15);
 
         // Set up H2 species
         h2_.addAtom(Elements::H, {});
@@ -701,7 +701,7 @@ class SmallMolecules
         h2_.atom(1).setAtomType(atH1_);
         h2_.addBond(0, 1);
         d2_ = h2_.addIsotopologue("D2");
-        d2_->setAtomTypeIsotope(atH1_, Sears91::H_2);
+        d2_->setAtomTypeIsotope(atH1_.get(), Sears91::H_2);
 
         // Set up H2O species
         h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
@@ -714,7 +714,7 @@ class SmallMolecules
         h2o_.addBond(1, 2);
         h2o_.addAngle(0, 1, 2);
         d2o_ = h2o_.addIsotopologue("D2O");
-        d2o_->setAtomTypeIsotope(atHW_, Sears91::H_2);
+        d2o_->setAtomTypeIsotope(atHW_.get(), Sears91::H_2);
     }
 
     private:

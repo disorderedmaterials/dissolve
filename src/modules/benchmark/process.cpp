@@ -47,7 +47,7 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve)
         {
             GRModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
-            targetConfiguration_->incrementContentsVersion();
+            targetConfiguration_->notifyAtomicPositionsChanged();
 
             // Run the Module calculation
             bool upToDate;
@@ -72,7 +72,7 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve)
         {
             GRModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
-            targetConfiguration_->incrementContentsVersion();
+            targetConfiguration_->notifyAtomicPositionsChanged();
 
             // Run the Module calculation
             bool upToDate;

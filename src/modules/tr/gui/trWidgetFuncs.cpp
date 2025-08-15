@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/isotopeData.h"
 #include "gui/dataViewer.h"
 #include "gui/helpers/comboBoxController.h"
 #include "gui/render/renderableData1D.h"
@@ -59,12 +58,12 @@ void TRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
     if (!ui_.FilterEdit->text().isEmpty())
         filterText = ui_.FilterEdit->text().toStdString();
 
-    // Set up array matrices for partials
+    auto typeFractions = ps.atomTypeFractions();
     dissolve::for_each_pair(
-        ParallelPolicies::seq, ps.atomTypeMix(),
-        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, auto &popI, int indexJ, auto popJ)
         {
-            const std::string id = std::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+            const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
 
             // Filtering - does this 'id' match our filter?
             if (filterText && id.find(filterText.value()) == std::string::npos)

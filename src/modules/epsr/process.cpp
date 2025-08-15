@@ -77,7 +77,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> act
     {
         auto &estimatedSQ =
             dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-        scatteringMatrix_.initialise(targetConfiguration_->atomTypePopulations(), estimatedSQ);
+        scatteringMatrix_.initialise(targetConfiguration_->atomTypeVector(), estimatedSQ);
     }
 
     // If a pcof file was provided, read in the parameters from it here
@@ -513,7 +513,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                 {
                                     auto pairIndex = scatteringMatrix_.pairIndexOf(at1, at2);
 
-                                    const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
+                                    const auto &partialIJ = unweightedSQ.unboundPartials().get(at1->name(), at2->name());
                                     Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[pairIndex],
                                                                   1.0 / targets_.size());
                                 });
