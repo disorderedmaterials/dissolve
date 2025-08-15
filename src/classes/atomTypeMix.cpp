@@ -18,7 +18,7 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
         exchangeables_.insert(at.get());
 
     for (auto &isotopeMix : std::views::values(mix_))
-        isotopeMix.finalise(totalPopulation_);
+        isotopeMix.finalise();
 
     // Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
     auto totalFraction = 0.0, boundCoherent = 0.0;
@@ -47,19 +47,21 @@ void AtomTypeMix::finalise(const std::vector<std::shared_ptr<AtomType>> &exchang
     }
 }
 
-// Calculate and return fraction of atomtype in whole mix
-double AtomTypeMix::fraction(const AtomType *atomType) const
+// Calculate and return full population of atom type in whole mix
+double AtomTypeMix::population(const AtomType *atomType) const
 {
     if (mix_.contains(atomType))
     {
         auto &topes = mix_.value(atomType).isotopes();
         return std::accumulate(topes.begin(), topes.end(), 0.0,
-                               [](auto acc, const auto &isotope) { return acc + isotope.second; }) /
-               totalPopulation_;
+                               [](auto acc, const auto &isotope) { return acc + isotope.second; });
     }
 
     return 0.0;
 }
+
+// Calculate and return fractional population of atomtype in whole mix
+double AtomTypeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
 
 // Create mix from Isotopologues
 void AtomTypeMix::create(const std::vector<Isotopologues> &isotopologues,
@@ -136,19 +138,18 @@ void AtomTypeMix::print() const
         if (!isotopeMix.isotopes().empty())
         {
             Messenger::print("{} {:<8}  {:<3}    -     {:<10.1f}    {:10.6f} (of world) {:6.3f}\n", exch, atomType->name(),
-                             Elements::symbol(atomType->Z()), isotopeMix.population(), fraction(atomType),
+                             Elements::symbol(atomType->Z()), population(atomType), fraction(atomType),
                              isotopeMix.boundCoherent());
 
             for (auto &[isotope, isotopePopulation] : isotopeMix.isotopes())
             {
                 Messenger::print("                   {:<3d}   {:<10.6e}  {:10.6f} (of type)  {:6.3f}\n", Sears91::A(isotope),
-                                 isotopePopulation, isotopePopulation / isotopeMix.population(),
-                                 Sears91::boundCoherent(isotope));
+                                 isotopePopulation, isotopePopulation / population(atomType), Sears91::boundCoherent(isotope));
             }
         }
         else
             Messenger::print("{} {:<8}  {:<3}          {:<10.1f}  {:8.6f}     --- N/A ---\n", exch, atomType->name(),
-                             Elements::symbol(atomType->Z()), isotopeMix.population(), fraction(atomType));
+                             Elements::symbol(atomType->Z()), population(atomType), fraction(atomType));
 
         Messenger::print("  -----------------------------------------------------------------\n");
     }

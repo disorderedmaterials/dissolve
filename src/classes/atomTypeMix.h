@@ -38,7 +38,9 @@ class AtomTypeMix
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Return types/topes map
     const KeyedVector<const AtomType *, AtomTypeData> &mix() const;
-    // Calculate and return fraction of atom type in whole mix
+    // Calculate and return full population of atom type in whole mix
+    double population(const AtomType *atomType) const;
+    // Calculate and return fractional population of atom type in whole mix
     double fraction(const AtomType *atomType) const;
     // Return whether specified atom type is exchangeable
     bool isExchangeable(const AtomType *atomType) const;

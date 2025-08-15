@@ -18,8 +18,6 @@ class AtomTypeData
     private:
     // Isotope population
     std::map<Sears91::Isotope, double> isotopes_;
-    // Total population
-    double population_{0.0};
     // Calculated bound coherent scattering over all Isotopes
     double boundCoherent_{0.0};
 
@@ -29,11 +27,9 @@ class AtomTypeData
     // Add to population of Isotope
     void add(Sears91::Isotope isotope, double population);
     // Finalise, calculating fractional populations etc.
-    void finalise(double nWorldAtoms);
+    void finalise();
     // Return isotopes
     const std::map<Sears91::Isotope, double> &isotopes() const;
-    // Return total population over all isotopes
-    double population() const;
     // Set calculated bond coherent scattering over all isotopes
     void setBoundCoherent(double d);
     // Return calculated bound coherent scattering over all Isotopes
