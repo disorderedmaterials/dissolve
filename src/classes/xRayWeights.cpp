@@ -13,12 +13,10 @@ bool XRayWeights::setUp(const std::vector<std::pair<const Species *, double>> &s
                         XRayFormFactors::XRayFormFactorData formFactors)
 {
     typeFractions_.clear();
-    concentrations_.clear();
     concentrationProducts_.clear();
     preFactors_.clear();
 
     // Calculate fractional type weights
-    typeFractions_.clear();
     auto sum = 0.0;
     for (auto &[species, speciesPopulation] : speciesPopulations)
         for (const auto &[atomType, atomTypePopulation] : species->atomTypePopulations())
@@ -32,59 +30,53 @@ bool XRayWeights::setUp(const std::vector<std::pair<const Species *, double>> &s
         value /= sum;
 
     // Retrieve form factor data for the current atom types
-    formFactors_ = formFactors;
     formFactorData_.clear();
 
     for (auto &[atomType, fraction] : typeFractions_)
     {
         // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
-        auto data = XRayFormFactors::formFactorData(formFactors_, atomType->Z());
+        auto data = XRayFormFactors::formFactorData(formFactors, atomType->Z());
         if (!data)
             return Messenger::error("No form factor data present for element {} (formal charge {}) in x-ray data set '{}'.\n",
                                     Elements::symbol(atomType->Z()), 0,
-                                    XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
+                                    XRayFormFactors::xRayFormFactorData().keyword(formFactors));
 
-        formFactorData_.push_back(*data);
+        formFactorData_.emplace(atomType, *data);
     }
 
     // Set up weights matrices
     auto nTypes = typeFractions_.size();
-    concentrations_.clear();
-    concentrations_.resize(nTypes);
-    concentrationProducts_.initialise(nTypes, nTypes, true);
-    preFactors_.initialise(nTypes, nTypes, true);
+    concentrationProducts_.clear(true);
+    preFactors_.clear(true);
 
     // Determine atomic concentration products and full pre-factor
     dissolve::for_each_pair(ParallelPolicies::seq, typeFractions_,
                             [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
                             {
+                                DoubleKeyedMapKey key{popI.first->name(), popJ.first->name()};
                                 auto ci = popI.second;
                                 auto cj = popJ.second;
 
-                                concentrations_.at(indexI) = ci;
-                                concentrationProducts_[{indexI, indexJ}] = ci * cj;
-                                preFactors_[{indexI, indexJ}] = ci * cj * (indexI == indexJ ? 1 : 2);
+                                concentrationProducts_.set(key, ci * cj);
+                                preFactors_.set(key, ci * cj * (indexI == indexJ ? 1 : 2));
                             });
 
     return true;
 }
 
-// Return X-Ray form factors being used
-XRayFormFactors::XRayFormFactorData XRayWeights::formFactors() const { return formFactors_; }
-
 // Return atom type fractions
 const KeyedVector<const AtomType *, double> &XRayWeights::typeFractions() const { return typeFractions_; }
 
 // Return pre-factor for types i and j
-double XRayWeights::preFactor(int typeIndexI, int typeIndexJ) const { return preFactors_[{typeIndexI, typeIndexJ}]; }
+const DoubleKeyedMap<double> &XRayWeights::preFactors() const { return preFactors_; }
 
 // Return form factor for type i over supplied Q values
-std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<double> &Q) const
+std::vector<double> XRayWeights::formFactor(const AtomType *i, const std::vector<double> &Q) const
 {
     // Initialise results array
     std::vector<double> fiq(Q.size());
 
-    auto &fi = formFactorData_[typeIndexI].get();
+    auto &fi = formFactorData_.at(i).get();
 
     for (auto n = 0; n < Q.size(); ++n)
         fiq[n] = fi.magnitude(Q[n]);
@@ -93,26 +85,26 @@ std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<do
 }
 
 // Return form factor product for types i and j at specified Q value
-double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const
+double XRayWeights::formFactorProduct(const AtomType *i, const AtomType *j, double Q) const
 {
-    return formFactorData_[typeIndexI].get().magnitude(Q) * formFactorData_[typeIndexJ].get().magnitude(Q);
+    return formFactorData_.at(i).get().magnitude(Q) * formFactorData_.at(j).get().magnitude(Q);
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const
+double XRayWeights::weight(const AtomType *i, const AtomType *j, double Q) const
 {
-    return preFactors_[{typeIndexI, typeIndexJ}] * formFactorProduct(typeIndexI, typeIndexJ, Q);
+    return preFactors_[{i->name(), j->name()}] * formFactorProduct(i, j, Q);
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const std::vector<double> &Q) const
+std::vector<double> XRayWeights::weight(const AtomType *i, const AtomType *j, const std::vector<double> &Q) const
 {
     // Initialise results array
     std::vector<double> fijq(Q.size());
 
-    auto &fi = formFactorData_[typeIndexI].get();
-    auto &fj = formFactorData_[typeIndexJ].get();
-    auto preFactor = preFactors_[{typeIndexI, typeIndexJ}];
+    auto &fi = formFactorData_.at(i).get();
+    auto &fj = formFactorData_.at(j).get();
+    auto preFactor = preFactors_.get(i->name(), j->name());
 
     std::transform(Q.begin(), Q.end(), fijq.begin(),
                    [preFactor, &fi, &fj](auto q) { return fi.magnitude(q) * fj.magnitude(q) * preFactor; });
@@ -123,8 +115,9 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
 double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 {
-    auto result = std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0.0,
-                                     std::plus<>(), [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+    auto result = std::accumulate(typeFractions_.begin(), typeFractions_.end(), 0.0,
+                                  [&, Q](auto acc, const auto &typePop)
+                                  { return acc + typePop.second * formFactorData_.at(typePop.first).get().magnitude(Q); });
     return result * result;
 }
 
@@ -134,13 +127,12 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
     // Initialise results array
     std::vector<double> bbar(Q.size(), 0.0);
 
-    for (auto typeI = 0; typeI < typeFractions_.size(); ++typeI)
+    for (auto &[atomType, fraction] : typeFractions_)
     {
-        const double ci = concentrations_[typeI];
-        auto &fi = formFactorData_[typeI].get();
+        auto &fi = formFactorData_.at(atomType).get();
 
         std::transform(Q.begin(), Q.end(), bbar.begin(), bbar.begin(),
-                       [ci, &fi](auto q, auto b) { return b + ci * fi.magnitude(q); });
+                       [fraction, &fi](auto q, auto b) { return b + fraction * fi.magnitude(q); });
     }
 
     // Square the averages
@@ -152,8 +144,12 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
 double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 {
-    return std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0.0, std::plus<>(),
-                              [Q](auto con, auto form) { return con * form.get().magnitude(Q) * form.get().magnitude(Q); });
+    return std::accumulate(typeFractions_.begin(), typeFractions_.end(), 0.0,
+                           [&, Q](auto acc, const auto &typePop)
+                           {
+                               auto mag = formFactorData_.at(typePop.first).get().magnitude(Q);
+                               return acc + typePop.second * mag * mag;
+                           });
 }
 
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
@@ -162,13 +158,12 @@ std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector
     // Initialise results array
     std::vector<double> bbar(Q.size(), 0.0);
 
-    for (auto typeI = 0; typeI < typeFractions_.size(); ++typeI)
+    for (auto &[atomType, fraction] : typeFractions_)
     {
-        const double ci = concentrations_[typeI];
-        auto &fi = formFactorData_[typeI].get();
+        auto &fi = formFactorData_.at(atomType).get();
 
         std::transform(Q.begin(), Q.end(), bbar.begin(), bbar.begin(),
-                       [&](auto q, auto b) { return b + ci * fi.magnitude(q) * fi.magnitude(q); });
+                       [&](auto q, auto b) { return b + fraction * fi.magnitude(q) * fi.magnitude(q); });
     }
 
     return bbar;
