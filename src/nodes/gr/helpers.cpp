@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
 #include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
@@ -13,6 +14,7 @@
 #include "nodes/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
+#include <math.h>
 #include <tuple>
 
 /*
