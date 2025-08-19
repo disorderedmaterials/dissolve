@@ -33,4 +33,4 @@ bool InputsNode::shouldSerialise() const { return false; }
 SerialisedValue InputsNode::serialise() const { return {}; }
 
 // Read values from a serialisable value
-void InputsNode::deserialise(const SerialisedValue &node){};
+void InputsNode::deserialise(const SerialisedValue &node) {};

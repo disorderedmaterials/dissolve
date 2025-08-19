@@ -41,7 +41,7 @@ template <typename Key, typename Value> class OrderedMap
 
     public:
     // Constructors
-    OrderedMap(){};
+    OrderedMap() {};
     // Constructor from an iterator off a std::map or std::unorderedmap
     template <typename Iter> OrderedMap(Iter begin, Iter end)
     {

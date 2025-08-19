@@ -226,8 +226,8 @@ SerialisedValue Species::serialise() const
 // Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    Serialisable::toVector(
-        node, "atoms", [this, &coreData](const SerialisedValue &atom) { atoms_.emplace_back().deserialise(atom, coreData); });
+    Serialisable::toVector(node, "atoms", [this, &coreData](const SerialisedValue &atom)
+                           { atoms_.emplace_back().deserialise(atom, coreData); });
     if (node.contains("forcefield"))
         forcefield_ = ForcefieldLibrary::forcefield(toml::find<std::string>(node, "forcefield"));
 
@@ -273,7 +273,6 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                             isotopologues_.back()->deserialise(iso, coreData);
                         });
 
-    Serialisable::toMap(node, "sites",
-                        [this, &coreData](const std::string &name, const SerialisedValue &site)
+    Serialisable::toMap(node, "sites", [this, &coreData](const std::string &name, const SerialisedValue &site)
                         { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site, coreData); });
 }

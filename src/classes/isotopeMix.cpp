@@ -16,8 +16,7 @@
 double IsotopeMix::isolatedBoundCoherent(const AtomType *atomType) const
 {
     const auto &isotopes = mix_.value(atomType);
-    return std::accumulate(isotopes.begin(), isotopes.end(), 0.0,
-                           [](const auto acc, const auto &isotope)
+    return std::accumulate(isotopes.begin(), isotopes.end(), 0.0, [](const auto acc, const auto &isotope)
                            { return acc + isotope.second * Sears91::boundCoherent(isotope.first); }) /
            std::accumulate(isotopes.begin(), isotopes.end(), 0.0,
                            [](const auto acc, const auto &isotope) { return acc + isotope.second; });

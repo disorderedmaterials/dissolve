@@ -1,7 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    outdated.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
   };
@@ -39,24 +39,24 @@
           pugixml
           (toml pkgs)
         ];
-      gui_libs = system: pkgs:
-        with pkgs; [
-          glib
-          freetype
-          ftgl
-          libGL.dev
-          libglvnd
-          libglvnd.dev
-          qt6.qt3d
-          qt6.qtbase
-          qt6.qtbase.dev
-          qt6.qtquick3d
-          qt6.qtsvg
-          qt6.qtshadertools
-          qt6.qttools
-          qt6.qtdeclarative
-          qt6.qtdeclarative.dev
-          qt6.wrapQtAppsHook
+      gui_libs = system: pkgs: qt:
+        [
+          pkgs.glib
+          pkgs.freetype
+          pkgs.ftgl
+          pkgs.libGL.dev
+          pkgs.libglvnd
+          pkgs.libglvnd.dev
+          qt.qt3d
+          qt.qtbase
+          qt.qtbase.dev
+          qt.qtquick3d
+          qt.qtsvg
+          qt.qtshadertools
+          qt.qttools
+          qt.qtdeclarative
+          qt.qtdeclarative.dev
+          qt.wrapQtAppsHook
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
@@ -64,7 +64,9 @@
 
       let
         pkgs = import nixpkgs { inherit system; };
+        old = import outdated { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
+        qt = old.qt6;
         dissolve = { gui ? false, threading ? true, checks ? true
           , benchmarks ? false }:
           pkgs.stdenv.mkDerivation ({
@@ -75,7 +77,7 @@
               name = "dissolve-src";
             };
             buildInputs = base_libs pkgs
-              ++ pkgs.lib.optionals gui (gui_libs system pkgs)
+              ++ pkgs.lib.optionals gui (gui_libs system pkgs qt)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
                 pkgs.tbb_2021_11
@@ -139,9 +141,9 @@
 
         devShells.default = pkgs.mkShell {
           name = "dissolve-shell";
-          buildInputs = base_libs pkgs ++ gui_libs system pkgs
+          buildInputs = base_libs pkgs ++ gui_libs system pkgs qt
             ++ check_libs pkgs ++ (with pkgs; [
-              clang-tools
+              llvmPackages_20.clang-tools
 
               (onedpl pkgs)
 
@@ -156,7 +158,7 @@
               gdb
               gtk3
               nixGL.nixGLIntel
-              qt6.qttools
+              qt.qttools
               tbb_2021_11
               valgrind
               weggli
@@ -165,33 +167,33 @@
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
             export LIBGL_DRIVERS_PATH=${
               pkgs.lib.makeSearchPathOutput "lib" "lib/dri"
-              [ pkgs.mesa.drivers ]
+              [ pkgs.mesa ]
             }
             export LIBVA_DRIVERS_PATH=${
               pkgs.lib.makeSearchPathOutput "out" "lib/dri"
-              [ pkgs.mesa.drivers ]
+              [ pkgs.mesa ]
             }
-            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
+            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json
             export LD_LIBRARY_PATH=${
-              pkgs.lib.makeLibraryPath [ pkgs.mesa.drivers ]
+              pkgs.lib.makeLibraryPath [ pkgs.mesa ]
             }:${
               pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [ pkgs.libvdpau ]
             }:${
               pkgs.lib.makeLibraryPath [ pkgs.libglvnd ]
             }"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-            # export QT_PLUGIN_PATH="${pkgs.qt6.qt3d}/lib/qt-6/plugins:${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
-            export QT_PLUGIN_PATH="${pkgs.qt6.qtquick3d}/lib/qt-6/plugins:${pkgs.qt6.qt3d}/lib/qt-6/plugins:${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            # export QT_PLUGIN_PATH="${qt.qt3d}/lib/qt-6/plugins:${qt.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            export QT_PLUGIN_PATH="${qt.qtquick3d}/lib/qt-6/plugins:${qt.qt3d}/lib/qt-6/plugins:${qt.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
           '';
 
           CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
           CMAKE_C_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
-          Qt6Quick3D_DIR = "${pkgs.qt6.qtquick3d}/lib/";
+          Qt6Quick3D_DIR = "${qt.qtquick3d}/lib/";
           QML_IMPORT_PATH =
-            "${pkgs.qt6.qtquick3d}/lib/qt-6/qml:${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
+            "${qt.qtquick3d}/lib/qt-6/qml:${qt.qtdeclarative}/lib/qt-6/qml/";
           QML2_IMPORT_PATH =
-            "$\${pkgs.qt6.qtquick3d}/lib/qt-6/qml:{pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
+            "$\${qt.qtquick3d}/lib/qt-6/qml:{qt.qtdeclarative}/lib/qt-6/qml/";
         };
 
         apps = {

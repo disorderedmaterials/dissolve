@@ -12,7 +12,7 @@
 class ModuleKeywordBase : public KeywordBase
 {
     public:
-    explicit ModuleKeywordBase(ModuleTypes::ModuleType moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType){};
+    explicit ModuleKeywordBase(ModuleTypes::ModuleType moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType) {};
     ~ModuleKeywordBase() override = default;
 
     /*
