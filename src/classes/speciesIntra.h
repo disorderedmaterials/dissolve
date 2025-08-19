@@ -19,7 +19,7 @@ class Species;
 template <class Intra, class Functions> class SpeciesIntra : public Serialisable<>
 {
     public:
-    explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form){};
+    explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form) {};
     virtual ~SpeciesIntra() = default;
     SpeciesIntra(const SpeciesIntra &source) : interactionPotential_(source.interactionPotential_.form()) { (*this) = source; }
     SpeciesIntra(SpeciesIntra &&source) = delete;

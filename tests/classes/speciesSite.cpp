@@ -12,7 +12,7 @@ namespace UnitTest
 class SpeciesSiteTest : public ::testing::Test
 {
     public:
-    SpeciesSiteTest(){};
+    SpeciesSiteTest() {};
 
     void testVector(const Vector3 &u, const Vector3 &v)
     {

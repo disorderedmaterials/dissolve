@@ -127,8 +127,7 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
     auto nNatural = 0;
     for (const auto &topes : keyword_->data().isotopologues())
         // Check if this is a completely "natural" specification
-        if (std::count_if(topes.mix().begin(), topes.mix().end(),
-                          [&topes](const auto &isoWeight)
+        if (std::count_if(topes.mix().begin(), topes.mix().end(), [&topes](const auto &isoWeight)
                           { return isoWeight.first == topes.species()->naturalIsotopologue(); }) == topes.mix().size())
         {
             text += std::format("{}{}[Natural]", text.empty() ? "" : ", ", topes.species()->name());
@@ -141,8 +140,7 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
                                     topes.mix().begin()->first->name());
             else
                 text += std::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
-                                    joinStrings(topes.mix(), ", ",
-                                                [](const auto &isoWeight)
+                                    joinStrings(topes.mix(), ", ", [](const auto &isoWeight)
                                                 { return std::format("{}={}", isoWeight.first->name(), isoWeight.second); }));
         }
 

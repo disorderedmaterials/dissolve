@@ -142,8 +142,8 @@ void SpeciesTab::updateControls()
     ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
 
-    ui_.EmpiricalFormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
-        species_->atoms(), [](const auto &i) { return i.Z(); }, true)));
+    ui_.EmpiricalFormulaLabel->setText(
+        QString::fromStdString(EmpiricalFormula::formula(species_->atoms(), [](const auto &i) { return i.Z(); }, true)));
 
     // Charges
     updateTotalCharges();

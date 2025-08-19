@@ -50,7 +50,7 @@ class EnergyResult
 {
     public:
     EnergyResult(PairPotentialEnergyValue pp = {}, double geom = 0.0, double ext = 0.0)
-        : total_(pp.total() + geom + ext), geometry_(geom), extended_(ext), pairPotential_(pp){};
+        : total_(pp.total() + geom + ext), geometry_(geom), extended_(ext), pairPotential_(pp) {};
 
     private:
     // Components

@@ -197,8 +197,7 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     PairPotential::setShortRangeTruncationScheme(PairPotential::shortRangeTruncationSchemes().deserialise(
         toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted")));
 
-    toMap(node, "atomTypes",
-          [this](const std::string &name, const auto &data)
+    toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
           { coreData().atomTypes().emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
 
     useCombinationRules_ = toml::find_or<bool>(node, "useCombinationRules", true);
@@ -234,8 +233,7 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
                            [this](const auto node) { coreData_.addPairPotentialOverride()->deserialise(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
-    toMap(node, "species",
-          [this](const std::string &name, const SerialisedValue &data)
+    toMap(node, "species", [this](const std::string &name, const SerialisedValue &data)
           { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
 
     toMap(node, "configurations",

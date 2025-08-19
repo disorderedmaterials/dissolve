@@ -48,4 +48,4 @@ bool OutputsNode::shouldSerialise() const { return false; }
 SerialisedValue OutputsNode::serialise() const { return {}; }
 
 // Read values from a serialisable value
-void OutputsNode::deserialise(const SerialisedValue &node){};
+void OutputsNode::deserialise(const SerialisedValue &node) {};

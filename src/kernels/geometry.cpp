@@ -333,8 +333,7 @@ double GeometryKernel::totalGeometryEnergy(const Atom &i) const
 
     // Add energy from SpeciesAngle terms
     intraEnergy += std::accumulate(
-        spAtom->angles().begin(), spAtom->angles().end(), 0.0,
-        [this, &mol](const auto acc, const SpeciesAngle &angle)
+        spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const SpeciesAngle &angle)
         { return acc + angleEnergy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
 
     // Add energy from SpeciesTorsion terms

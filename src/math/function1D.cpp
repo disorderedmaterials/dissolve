@@ -373,7 +373,8 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          */
         functions[Functions1D::Form::ShiftedCoulomb] =
             Function1DDefinition({"q1", "q2", "range"},
-                                 [](double x, double omega, const std::vector<double> &params) {
+                                 [](double x, double omega, const std::vector<double> &params)
+                                 {
                                      return PairPotential::CoulConvert * params[0] * params[1] *
                                             (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]);
                                  });

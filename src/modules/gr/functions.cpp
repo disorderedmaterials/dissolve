@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <ranges>
 
 #include "classes/atom.h"
@@ -539,8 +541,7 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, std::string_view tar
     }
 
     // Calculate overall density of combined system
-    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0,
-                                  [totalWeight](double acc, auto pair)
+    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0, [totalWeight](double acc, auto pair)
                                   { return acc + pair.second / totalWeight / pair.first->atomicDensity().value(); });
     rho0 = 1.0 / rho0;
 

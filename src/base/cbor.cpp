@@ -41,8 +41,7 @@ void bs_advance(ByteSource &bs, size_t step)
 uint8_t bs_peek(ByteSource &bs)
 {
     return std::visit(overloaded{[](std::ranges::subrange<std::vector<uint8_t>::iterator> &source) -> uint8_t
-                                 { return *source.begin(); },
-                                 [](std::ifstream &source) -> uint8_t { return source.peek(); }},
+                                 { return *source.begin(); }, [](std::ifstream &source) -> uint8_t { return source.peek(); }},
                       bs);
 };
 

@@ -86,27 +86,25 @@ void Species::removeAtoms(std::vector<int> indices)
     impropers_.clear();
 
     // Detach & remove any bond terms that involve any of the supplied atom
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(),
-                             [&indices](auto &bond)
-                             {
-                                 if (std::find_if(indices.begin(), indices.end(),
-                                                  [&bond](const auto i) {
-                                                      return (bond.i()->index() == i || bond.j()->index() == i);
-                                                  }) != indices.end())
-                                 {
-                                     bond.detach();
-                                     return true;
-                                 }
-                                 else
-                                     return false;
-                             });
+    auto it =
+        std::remove_if(bonds_.begin(), bonds_.end(),
+                       [&indices](auto &bond)
+                       {
+                           if (std::find_if(indices.begin(), indices.end(), [&bond](const auto i)
+                                            { return (bond.i()->index() == i || bond.j()->index() == i); }) != indices.end())
+                           {
+                               bond.detach();
+                               return true;
+                           }
+                           else
+                               return false;
+                       });
     if (it != bonds_.end())
         bonds_.erase(it, bonds_.end());
 
     // Now remove the atoms
-    auto atomIt =
-        std::remove_if(atoms_.begin(), atoms_.end(),
-                       [&](const auto &i) { return std::find(indices.begin(), indices.end(), i.index()) != indices.end(); });
+    auto atomIt = std::remove_if(atoms_.begin(), atoms_.end(), [&](const auto &i)
+                                 { return std::find(indices.begin(), indices.end(), i.index()) != indices.end(); });
     atoms_.erase(atomIt, atoms_.end());
     renumberAtoms();
 
@@ -264,8 +262,7 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 // Return total atomic mass of Species
 double Species::mass() const
 {
-    return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
-                           [](const auto acc, const auto &i)
+    return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
                            { return acc + (i.isPresence(SpeciesAtom::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
 
@@ -297,8 +294,8 @@ int Species::simplifyAtomTypes()
     for (auto it = std::next(atoms_.begin()); it != atoms_.end(); ++it)
     {
         // Search all used atom types looking for a match, up to the current one
-        auto matchingIt = std::find_if(
-            atoms_.begin(), it, [&](auto &i) { return i.atomType() && i.atomType()->sameParametersAs(it->atomType().get()); });
+        auto matchingIt = std::find_if(atoms_.begin(), it, [&](auto &i)
+                                       { return i.atomType() && i.atomType()->sameParametersAs(it->atomType().get()); });
         if (matchingIt == it)
             continue;
 
@@ -325,8 +322,7 @@ void Species::setAtomCharge(SpeciesAtom *i, double q)
 double Species::totalCharge(bool useAtomTypes) const
 {
     if (useAtomTypes)
-        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
-                               [](const auto acc, const auto &i)
+        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
                                { return acc + (i.atomType() ? i.atomType()->charge() : 0.0); });
     else
         return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,

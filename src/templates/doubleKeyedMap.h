@@ -130,11 +130,8 @@ template <typename ValueClass> class DoubleKeyedMap
         auto nElements = keyedObjects.size();
         result.initialise(nElements, nElements, mirroredAreEquivalent_);
         dissolve::for_each_pair(
-            ParallelPolicies::seq, keyedObjects,
-            [&](int i, const auto &itemI, int j, const auto &itemJ) {
-                result[{i, j}] = find(keyGetter(itemI), keyGetter(itemJ));
-            },
-            mirroredAreEquivalent_);
+            ParallelPolicies::seq, keyedObjects, [&](int i, const auto &itemI, int j, const auto &itemJ)
+            { result[{i, j}] = find(keyGetter(itemI), keyGetter(itemJ)); }, mirroredAreEquivalent_);
         return result;
     }
 };

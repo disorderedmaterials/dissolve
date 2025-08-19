@@ -77,14 +77,12 @@ void PairPotentialOverride::deserialise(const SerialisedValue &node)
     matchI_ = toml::find<std::string>(node, "matchI");
     matchJ_ = toml::find<std::string>(node, "matchJ");
 
-    Serialisable::optionalOn(node, "type",
-                             [this](const auto node)
+    Serialisable::optionalOn(node, "type", [this](const auto node)
                              { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
 
-    Serialisable::optionalOn(node, "form",
-                             [this](const auto node) {
-                                 interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string())));
-                             });
+    Serialisable::optionalOn(
+        node, "form", [this](const auto node)
+        { interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string()))); });
 
     Serialisable::optionalOn(node, "parameters",
                              [this](const auto node)

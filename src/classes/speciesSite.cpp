@@ -392,8 +392,7 @@ bool SpeciesSite::generateInstances()
 
                     // Check if the fragment we have found is unique.
                     std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-                    if (std::find_if(instances_.begin(), instances_.end(),
-                                     [&](const auto &instance)
+                    if (std::find_if(instances_.begin(), instances_.end(), [&](const auto &instance)
                                      { return matchedAtomIndices == instance.allIndices(); }) != instances_.end())
                         continue;
 
@@ -448,8 +447,7 @@ const std::vector<SpeciesSiteInstance> &SpeciesSite::instances() const { return 
 Vector3 SpeciesSite::centreOfGeometry(const std::vector<int> &indices) const
 {
     const auto ref = parent_->atom(indices.front()).r();
-    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
-                           [&ref, this](const auto &acc, const auto idx)
+    return std::accumulate(std::next(indices.begin()), indices.end(), ref, [&ref, this](const auto &acc, const auto idx)
                            { return acc + parent_->box()->minimumImage(parent_->atom(idx).r(), ref); }) /
            indices.size();
 }
