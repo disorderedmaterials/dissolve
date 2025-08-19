@@ -172,7 +172,8 @@ Module::ExecutionResult AngleModule::process(Dissolve &dissolve)
     DataOperator2D normaliserDAngleAB(normalisedDAngleAB);
     // Normalise by value / sin(y) / sin(yDelta)
     normaliserDAngleAB.operate(
-        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value) {
+        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+        {
             return (symmetric_ ? value : value * 2.0) / sin(DissolveMath::toRadians(y)) / sin(DissolveMath::toRadians(yDelta));
         });
     // Normalise by A site population
@@ -190,7 +191,8 @@ Module::ExecutionResult AngleModule::process(Dissolve &dissolve)
     DataOperator2D normaliserDAngleBC(normalisedDAngleBC);
     // Normalise by value / sin(y) / sin(yDelta)
     normaliserDAngleBC.operate(
-        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value) {
+        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+        {
             return (symmetric_ ? value : value * 2.0) / sin(DissolveMath::toRadians(y)) / sin(DissolveMath::toRadians(yDelta));
         });
     // Normalise by A site population

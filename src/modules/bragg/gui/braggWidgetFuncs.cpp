@@ -106,8 +106,7 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
                 std::vector<std::string> columnHeaders;
                 columnHeaders.reserve(typeVector.size() * (typeVector.size() + 1) / 2);
                 dissolve::for_each_pair(
-                    ParallelPolicies::seq, typeVector,
-                    [&](int i, auto &popI, int j, auto &popJ)
+                    ParallelPolicies::seq, typeVector, [&](int i, auto &popI, int j, auto &popJ)
                     { columnHeaders.emplace_back(std::format("{}-{}", popI.first->name(), popJ.first->name())); });
 
                 braggModel_.setIntensityHeaders(columnHeaders);

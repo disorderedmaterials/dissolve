@@ -43,19 +43,19 @@ NodeConstants::ProcessResult GRNode::process()
     // Check range
     auto grRange = targetConfiguration_->box()->inscribedSphereRadius();
     if (!requestedRange_)
-        message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", targetConfiguration_->niceName(), grRange);
+        message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", targetConfiguration_->name(), grRange);
     else
     {
         if (requestedRange_.value_or(Number(0.0)) > grRange)
         {
             error("Specified RDF range of {} Angstroms is out of range for Configuration "
                   "'{}' (max = {} Angstroms).\n",
-                  requestedRange_.value().asDouble(), targetConfiguration_->niceName(), grRange);
+                  requestedRange_.value().asDouble(), targetConfiguration_->name(), grRange);
             return NodeConstants::ProcessResult::Failed;
         }
 
         grRange = requestedRange_.value().asDouble();
-        message("Cutoff for Configuration '{}' is {} Angstroms.\n", targetConfiguration_->niceName(), grRange);
+        message("Cutoff for Configuration '{}' is {} Angstroms.\n", targetConfiguration_->name(), grRange);
     }
 
     // 'Snap' grRange to nearest bin width...

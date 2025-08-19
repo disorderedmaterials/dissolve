@@ -191,20 +191,17 @@ double EnergyModule::intraMolecularEnergy(const Species *sp)
                               { return acc + b.energy(box->minimumDistance(b.j()->r(), b.i()->r())); });
 
     // Loop over angles
-    energy += std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0,
-                              [box](const auto acc, const auto &a)
+    energy += std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0, [box](const auto acc, const auto &a)
                               { return acc + a.energy(box->angleInRadians(a.i()->r(), a.j()->r(), a.k()->r())); });
 
     // Loop over torsions
-    energy += std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0,
-                              [box](const auto acc, const auto &t) {
-                                  return acc + t.energy(box->torsionInRadians(t.i()->r(), t.j()->r(), t.k()->r(), t.l()->r()));
-                              });
+    energy +=
+        std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0, [box](const auto acc, const auto &t)
+                        { return acc + t.energy(box->torsionInRadians(t.i()->r(), t.j()->r(), t.k()->r(), t.l()->r())); });
 
     // Loop over impropers
     energy += std::accumulate(
-        sp->impropers().begin(), sp->impropers().end(), 0.0,
-        [box](const auto acc, const auto &imp)
+        sp->impropers().begin(), sp->impropers().end(), 0.0, [box](const auto acc, const auto &imp)
         { return acc + imp.energy(box->torsionInRadians(imp.i()->r(), imp.j()->r(), imp.k()->r(), imp.l()->r())); });
 
     return energy;

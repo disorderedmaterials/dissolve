@@ -58,14 +58,14 @@
           pugixml
           (toml pkgs)
         ];
-      gui_libs =
-        system: pkgs: qt: with pkgs; [
-          glib
-          freetype
-          ftgl
-          libGL.dev
-          libglvnd
-          libglvnd.dev
+      gui_libs = system: pkgs: qt:
+        [
+          pkgs.glib
+          pkgs.freetype
+          pkgs.ftgl
+          pkgs.libGL.dev
+          pkgs.libglvnd
+          pkgs.libglvnd.dev
           qt.qt3d
           qt.qtbase
           qt.qtbase.dev
@@ -85,8 +85,9 @@
 
       let
         pkgs = import nixpkgs { inherit system; };
+        old = import outdated { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
-        qt = (import outdated { inherit system; }).qt6;
+        qt = old.qt6;
         dissolve = { gui ? false, threading ? true, checks ? true
           , benchmarks ? false }:
           pkgs.stdenv.mkDerivation ({
@@ -181,9 +182,9 @@
             ++ gui_libs system pkgs qt
             ++ check_libs pkgs
             ++ (with pkgs; [
-              clang-tools
+                llvmPackages_20.clang-tools
 
-              (onedpl pkgs)
+                (onedpl pkgs)
 
               ccache
               ccls
@@ -203,10 +204,10 @@
             ]);
           shellHook = ''
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
-            export LIBGL_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "lib" "lib/dri" [ pkgs.mesa.drivers ]}
-            export LIBVA_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "out" "lib/dri" [ pkgs.mesa.drivers ]}
-            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
-            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.mesa.drivers ]}:${
+            export LIBGL_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "lib" "lib/dri" [ pkgs.mesa ]}
+            export LIBVA_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "out" "lib/dri" [ pkgs.mesa ]}
+            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json
+            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.mesa ]}:${
               pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [ pkgs.libvdpau ]
             }:${pkgs.lib.makeLibraryPath [ pkgs.libglvnd ]}"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
             # export QT_PLUGIN_PATH="${qt.qt3d}/lib/qt-6/plugins:${qt.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
