@@ -3,6 +3,8 @@
 
 #include <ranges>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"

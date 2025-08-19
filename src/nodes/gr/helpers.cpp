@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
