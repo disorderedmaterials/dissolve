@@ -2,6 +2,9 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/dissolve.h"
+#include "kernels/producer.h"
+#include "kernels/externalPotentials.h"
+#include "kernels/energy.h"
 
 DissolveGraph::DissolveGraph(Dissolve &dissolve) : Graph(nullptr), dissolve_(dissolve) {}
 
@@ -25,12 +28,23 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  * Functions
  */
 
-PotentialMap &DissolveGraph::potentialMap(const Configuration *configuration)
+std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &dissolve,
+                                                                      const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                                                                      Configuration *cfg, std::optional<double> energyCutoff)
 {
-    auto it = potentialMapCache_.find(configuration);
+	// Update atom type indexing
+	cfg->updateTypeIndexing();
 
-    if (it == potentialMapCache_.end())
-        it = potentialMapCache_.insert({configuration, std::make_unique<PotentialMap>()}).first;
+	// Generate configuration potential map
+    PotentialMap potentialMap;
+    potentialMap.initialise(atomTypes, dissolve.pairPotentials(), dissolve.pairPotentialRange());
 
-    return *(it->second);
+	// Regenerate cells
+    cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
+
+	// Produce energy kernel
+	if (!cfg->globalPotentials().empty() || !cfg->targetedPotentials().empty())
+        return std::make_unique<EnergyKernel>(cfg, potentialMap, energyCutoff);
+    else
+        return std::make_unique<EnergyKernel>(cfg, potentialMap, energyCutoff);
 }

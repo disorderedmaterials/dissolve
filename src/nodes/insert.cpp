@@ -7,13 +7,14 @@
 #include "classes/species.h"
 #include "dissolve.h"
 #include "math/mathFunc.h"
+#include "kernels/producer.h"
+#include "kernels/externalPotentials.h"
 
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<Configuration *>("Configuration", "Target configuration to insert into", configuration_);
     addOutput<Configuration *>("Configuration", "Modified configuration", configuration_);
     addInput<const Species *>("Species", "Species to add - all resulting molecules will have identical geometry", species_);
-    addInput<const std::vector<std::shared_ptr<AtomType>> *>("AtomTypes", "AtomTypes owned by the node", atomTypes_);
     addInput<const MoleculeSet *>("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
 
     addInput<Number>("Population", "Population of the target to add", population_);
@@ -199,7 +200,17 @@ NodeConstants::ProcessResult InsertNode::process()
         }
     }
 
-    configuration_->updateCells(dissolve().potentialMap().range());
+    // Prepare for energy calculation, generate kernel
+    std::vector<std::shared_ptr<AtomType>> atomTypes;
+    auto atomTypePop = species_->atomTypePopulations();
+    atomTypes.reserve(atomTypePop.size());
+    for (const auto at : atomTypePop)
+        atomTypes.push_back(std::make_shared<AtomType>(at.first));
+
+    auto kernel = DissolveGraph::prepareEnergyCalculation(dissolve(), atomTypes, configuration_);
+    auto potentialMap = kernel.get()->potentialMap();
+
+    configuration_->updateCells(potentialMap.range());
 
     Messenger::print("[InsertRandom] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n",
                      configuration_->atomicDensity().value_or(0.0), configuration_->chemicalDensity().value_or(0.0));

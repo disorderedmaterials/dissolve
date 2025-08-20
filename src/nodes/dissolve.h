@@ -7,6 +7,8 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 
+class EnergyKernel;
+
 // Main Dissolve Node
 class DissolveGraph : public Graph
 {
@@ -31,8 +33,6 @@ class DissolveGraph : public Graph
     private:
     // Dissolve reference
     Dissolve &dissolve_;
-    // Potential map cache
-    inline static std::map<const Configuration *, std::unique_ptr<PotentialMap>> potentialMapCache_;
 
     public:
     // Return dissolve
@@ -42,6 +42,5 @@ class DissolveGraph : public Graph
      * Functions
      */
     public:
-    // Return potential map based on configuration atom types
-    static PotentialMap &potentialMap(const Configuration *configuration);
+    static std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes, Configuration *cfg, std::optional<double> energyCutoff = {});
 };
