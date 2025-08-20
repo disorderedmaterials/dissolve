@@ -3,8 +3,6 @@
 
 #include "nodes/dissolve.h"
 #include "kernels/producer.h"
-#include "kernels/externalPotentials.h"
-#include "kernels/energy.h"
 
 DissolveGraph::DissolveGraph(Dissolve &dissolve) : Graph(nullptr), dissolve_(dissolve) {}
 
@@ -42,9 +40,5 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &
 	// Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
 
-	// Produce energy kernel
-	if (!cfg->globalPotentials().empty() || !cfg->targetedPotentials().empty())
-        return std::make_unique<EnergyKernel>(cfg, potentialMap, energyCutoff);
-    else
-        return std::make_unique<EnergyKernel>(cfg, potentialMap, energyCutoff);
+    return KernelProducer::energyKernel(cfg, potentialMap);
 }

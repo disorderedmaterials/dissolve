@@ -8,6 +8,7 @@
 #include "nodes/graph.h"
 
 class EnergyKernel;
+class PotentialMap;
 
 // Main Dissolve Node
 class DissolveGraph : public Graph

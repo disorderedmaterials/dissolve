@@ -12,7 +12,6 @@ AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph, Elements::Element Z) : 
     species_.addAtom(Z, {}, 0.0, at);
 
     addPointerOutput<const Species>("Species", "Atomic species", species_);
-    addPointerOutput<const std::vector<std::shared_ptr<AtomType>>>("AtomTypes", "AtomTypes owned by the node", atomTypes_);
 }
 
 std::string_view AtomicSpeciesNode::type() const { return "AtomicSpecies"; }

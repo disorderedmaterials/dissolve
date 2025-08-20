@@ -53,6 +53,7 @@ void Configuration::empty()
 }
 
 // Return atom types belonging to configuration
+/*
 const std::vector<std::shared_ptr<AtomType>> Configuration::atomTypes()
 {
     auto pop = atomTypePopulations();
@@ -64,6 +65,7 @@ const std::vector<std::shared_ptr<AtomType>> Configuration::atomTypes()
 
     return atomTypes;
 }
+*/
 
 // Return Species populations within the Configuration
 const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
