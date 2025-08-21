@@ -274,7 +274,7 @@ Write-Host "Unpacking freetype... " @info_colors
 tar -zxvf $freetypeOutput -C $dependencies
 
 Remove-Item -Path $freetypeOutput -Force
-Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo
+Move-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -Destination (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
 
 Write-Host "Building freetype (from location: $freetypeBuildDir)... " @info_colors
 Set-Location -Path $freetypeBuildDir
