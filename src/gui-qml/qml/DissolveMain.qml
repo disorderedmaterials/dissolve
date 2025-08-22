@@ -250,6 +250,9 @@ ApplicationWindow {
                     GraphDelegate {
                         rootModel: graphModel
 
+                        onDescended: function (idx) {
+                            graphModel.descend(idx);
+                        }
                         onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
                             graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
                         }
