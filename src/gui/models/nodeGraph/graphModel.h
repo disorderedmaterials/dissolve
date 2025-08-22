@@ -31,14 +31,14 @@ class GraphModel : public QObject
     GraphModel();
 
     public:
-    // Access the acutal nodes in the model
+    // Access the actual nodes in the model
     Graph *graph();
 
     void setGraph(Graph *graph);
 
     // The model for the edges in the graph
     GraphEdgeModel *edges();
-    // The modelfor the nodes in the graph
+    // The model for the nodes in the graph
     QAbstractListModel *nodes();
     // The total number of nodes in the graph
     int count();
@@ -50,7 +50,7 @@ class GraphModel : public QObject
     GraphNodeModel nodes_;
     // The abstract data model for the edges between nodes
     GraphEdgeModel edges_;
-    // The graph being modeled
+    // The graph being modelled
     Graph *graph_;
     // Graph nodes wrapped in the wrappers
     std::vector<NodeWrapper> wrapped_;
