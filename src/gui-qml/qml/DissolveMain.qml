@@ -223,6 +223,9 @@ ApplicationWindow {
                     Label {
                         text: "Edges: " + graphModel.edgeCount
                     }
+                    Label {
+                        text: "Location: " + graphModel.location
+                    }
                 }
             }
             GraphView {

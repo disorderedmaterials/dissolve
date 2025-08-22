@@ -23,6 +23,7 @@ class GraphModel : public QObject
     Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
+    Q_PROPERTY(QString location READ location NOTIFY graphChanged);
 
     friend GraphNodeModel;
     friend GraphEdgeModel;
@@ -44,6 +45,8 @@ class GraphModel : public QObject
     int count();
     // The total number of edges in the graph
     int nEdges();
+    // The path to the current graph
+    QString location() const;
 
     protected:
     // The abstract data model for the nodes

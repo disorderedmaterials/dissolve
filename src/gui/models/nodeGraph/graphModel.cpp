@@ -43,6 +43,12 @@ QAbstractListModel *GraphModel::nodes() { return &nodes_; }
 
 int GraphModel::count() { return nodes_.rowCount(); }
 
+QString GraphModel::location() const {
+  if (!graph_)
+    return "";
+  return QString::fromStdString(graph_->location());
+};
+
 // Provide relative coordinates for an input on a node
 void GraphModel::addInput(int nodeIndex, QString paramName, double x, double y)
 {
