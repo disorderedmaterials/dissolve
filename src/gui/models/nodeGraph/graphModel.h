@@ -23,7 +23,8 @@ class GraphModel : public QObject
     Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
-    Q_PROPERTY(QString location READ location NOTIFY graphChanged);
+    Q_PROPERTY(QString location READ location);
+    Q_PROPERTY(bool atRoot READ atRoot);
 
     friend GraphNodeModel;
     friend GraphEdgeModel;
@@ -47,6 +48,8 @@ class GraphModel : public QObject
     int nEdges();
     // The path to the current graph
     QString location() const;
+    // Whether the current graph has a parent
+    bool atRoot() const;
 
     protected:
     // The abstract data model for the nodes
@@ -88,4 +91,7 @@ class GraphModel : public QObject
 
     // Add a new node at a specific position
     void emplace_back(int x, int y, QVariant type, QVariant name);
+
+    // Switch to parent graph
+    void upLevel();
 };

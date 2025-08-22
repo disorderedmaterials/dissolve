@@ -223,6 +223,13 @@ ApplicationWindow {
                     Label {
                         text: "Edges: " + graphModel.edgeCount
                     }
+                    ToolButton {
+                        enabled: !graphModel.atRoot
+                        icon.color: graphModel.atRoot ? "grey" : "transparent"
+                        icon.source: "qrc:/IconsModule/arrowUp.svg"
+
+                        onClicked: graphModel.upLevel()
+                    }
                     Label {
                         text: "Location: " + graphModel.location
                     }
