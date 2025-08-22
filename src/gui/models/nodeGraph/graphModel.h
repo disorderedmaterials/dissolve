@@ -23,8 +23,8 @@ class GraphModel : public QObject
     Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
-    Q_PROPERTY(QString location READ location);
-    Q_PROPERTY(bool atRoot READ atRoot);
+    Q_PROPERTY(QString location READ location NOTIFY graphChanged);
+    Q_PROPERTY(bool atRoot READ atRoot NOTIFY graphChanged);
 
     friend GraphNodeModel;
     friend GraphEdgeModel;
@@ -94,4 +94,6 @@ class GraphModel : public QObject
 
     // Switch to parent graph
     void upLevel();
+    // Move into an inner graph
+    void descend(int index);
 };

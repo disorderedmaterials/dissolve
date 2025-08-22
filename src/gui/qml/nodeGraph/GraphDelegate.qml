@@ -12,6 +12,7 @@ NodeBox {
     property variant rootModel
     property double startX: x + width
     signal edgeCreated(srcNode: string, srcOutput: string, tgtNode: string, tgtInput: string)
+    signal descended(idx: int)
 
     image: icon
     nodeType: name
@@ -166,6 +167,15 @@ NodeBox {
             color: palette.active.mid
             height: options.rowCount() > 0 ? 2 : 0
             width: parent.width
+        }
+        Button {
+            Layout.fillWidth: true
+            text: "Inner Graph"
+            visible: inner_graph
+
+            onClicked: {
+                descended(index);
+            }
         }
         GridLayout {
             columns: 3

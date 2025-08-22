@@ -43,14 +43,18 @@ QAbstractListModel *GraphModel::nodes() { return &nodes_; }
 
 int GraphModel::count() { return nodes_.rowCount(); }
 
-QString GraphModel::location() const {
-  if (!graph_)
-    return "";
-  return QString::fromStdString(graph_->location());
+QString GraphModel::location() const
+{
+    if (!graph_)
+        return "";
+    return QString::fromStdString(graph_->location());
 };
 
-bool GraphModel::atRoot() const {
-  return !graph_;
+bool GraphModel::atRoot() const
+{
+    if (!graph_)
+        return true;
+    return !graph_->parentGraph();
 }
 
 // Provide relative coordinates for an input on a node
@@ -71,12 +75,22 @@ void GraphModel::addOutput(int nodeIndex, QString paramName, double x, double y)
     node.outputPos.insert({paramName.toStdString(), {x, y}});
 }
 
-
 // Switch to parent graph
-void GraphModel::upLevel() {
-  if (!graph_);
-    return;
+void GraphModel::upLevel()
+{
+    if (!graph_)
+        return;
     setGraph(graph_->parentGraph());
+}
+
+// Move into an inner graph
+void GraphModel::descend(int index)
+{
+    auto &node = wrapped_[index];
+    if (node.hasInner())
+    {
+        setGraph(static_cast<Graph *>(&node.rawValue()));
+    }
 }
 
 void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
