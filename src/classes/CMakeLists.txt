@@ -59,6 +59,7 @@ add_library(
   speciesAngle.cpp
   speciesAtom.cpp
   speciesBond.cpp
+  speciesParticle.cpp
   species.cpp
   species_atomic.cpp
   species_ff.cpp
@@ -121,6 +122,7 @@ add_library(
   speciesAngle.h
   speciesAtom.h
   speciesBond.h
+  speciesParticle.h
   speciesImproper.h
   speciesIntra.h
   speciesRing.h

@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/speciesParticle.h"
 #include "data/elements.h"
 #include "math/vector3.h"
 #include "templates/optionalRef.h"
@@ -14,14 +15,13 @@
 
 // Forward Declarations
 class AtomType;
-class CoreData;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Serialisable<CoreData &>
+class SpeciesAtom : public SpeciesParticle 
 {
     public:
     SpeciesAtom() = default;
@@ -50,16 +50,10 @@ class SpeciesAtom : public Serialisable<CoreData &>
     private:
     // Atomic element
     Elements::Element Z_{Elements::Unknown};
-    // Coordinates
-    Vector3 r_{0.0, 0.0, 0.0};
     // Charge (if contained in file)
     double charge_{0.0};
     // Assigned AtomType
     std::shared_ptr<AtomType> atomType_{nullptr};
-    // Index in Species
-    int index_{-1};
-    // Whether the atom is currently selected
-    bool selected_{false};
     // Presence of atom
     Presence presence_{Presence::Physical};
 
@@ -73,8 +67,6 @@ class SpeciesAtom : public Serialisable<CoreData &>
     Elements::Element Z() const;
     // Return whether the atom is of the presence specified
     bool isPresence(SpeciesAtom::Presence presence) const;
-    // Return coordinates (read-only)
-    const Vector3 &r() const;
     // Set charge of Atom
     void setCharge(double charge);
     // Return charge of Atom
@@ -83,16 +75,6 @@ class SpeciesAtom : public Serialisable<CoreData &>
     void setAtomType(const std::shared_ptr<AtomType> &at);
     // Return AtomType of Atom
     std::shared_ptr<AtomType> atomType() const;
-    // Set index (0->[N-1])
-    void setIndex(int id);
-    // Return index (0->[N-1])
-    int index() const;
-    // Return 'user' index (1->N)
-    int userIndex() const;
-    // Set whether the atom is currently selected
-    void setSelected(bool selected);
-    // Return whether the atom is currently selected
-    bool isSelected() const;
     // Return presence of atom
     Presence presence() const;
 
@@ -168,19 +150,6 @@ class SpeciesAtom : public Serialisable<CoreData &>
     void setScaledInteractions();
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
     ScaledInteractionDefinition scaling(const SpeciesAtom *j) const;
-
-    /*
-     * Coordinate Manipulation
-     */
-    public:
-    // Set coordinate
-    void setCoordinate(int index, double value);
-    // Set coordinates
-    void setCoordinates(double x, double y, double z);
-    // Set coordinates (from Vec3)
-    void setCoordinates(const Vector3 &newr);
-    // Translate coordinates
-    void translateCoordinates(const Vector3 &delta);
 
     /*
      * Atom Environment Helpers
