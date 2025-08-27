@@ -39,7 +39,6 @@
             - CMakeUserPresets.json
 #>
 
-
 param (
     [string]$qtVersion,
     [string]$systemQt,

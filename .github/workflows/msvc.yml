@@ -60,14 +60,14 @@ jobs:
         PythonPath: ${{ steps.setup-python.outputs.python-path }}
       run: | 
         Write-Output $env:PythonPath
-        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -pythonPath $env:PythonPath -setSystemEnvVars -generator "Ninja"
+        ./develop.ps1 -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -pythonPath $env:PythonPath -setSystemEnvVars -generator "Ninja"
         
     - name: 'Configure and build with CMake'
       shell: bash
       run: |
         git submodule update --init --recursive
         export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ inputs.qtVersion }}\msvc2019_64\bin;$PATH"
-        cmake --preset GUI-Release-MSVC
+        cmake --preset GUI-Debug-MSVC
         cmake --build build
         cmake --build build --target modules_broadening
 
