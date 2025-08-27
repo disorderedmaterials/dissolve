@@ -69,4 +69,5 @@ jobs:
         export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ inputs.qtVersion }}\msvc2019_64\bin;$PATH"
         cmake --preset GUI-Release-MSVC
         cmake --build build
+        cmake --build build --target modules_broadening
 
