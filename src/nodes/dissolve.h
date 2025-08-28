@@ -43,5 +43,5 @@ class DissolveGraph : public Graph
      * Functions
      */
     public:
-    static std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes, Configuration *cfg, std::optional<double> energyCutoff = {});
+    std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Dissolve &dissolve, const std::vector<std::shared_ptr<AtomType>> &atomTypes, Configuration *cfg, std::optional<double> energyCutoff = {});
 };
