@@ -416,7 +416,7 @@ bool GRNode::calculateUnweightedGR()
 
     // Remove bound partial from full partial
     for (auto &[key, fullPartial] : unweightedGR_->partials())
-        fullPartial -= rawGR_->boundPartials().at(key);
+        fullPartial -= rawGR_->boundPartials().get(key);
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
     for (auto &boundPartial : std::views::values(unweightedGR_->boundPartials()))
@@ -424,7 +424,7 @@ bool GRNode::calculateUnweightedGR()
 
     // Add broadened bound partials back in to full partials
     for (auto &[key, fullPartial] : unweightedGR_->partials())
-        fullPartial += unweightedGR_->boundPartials().at(key);
+        fullPartial += unweightedGR_->boundPartials().get(key);
 
     // Apply smoothing if requested
     auto smoothing = nSmooths_.value_or(0).asInteger();

@@ -60,7 +60,7 @@ class PartialSet
     // Sum partials into totals
     void formTotals(bool applyConcentrationWeights);
     // Sum partials into totals for TR
-    void formTRTotals(NeutronWeights weights);
+    void formTRTotals(const NeutronWeights &weights);
     // Return total function
     Data1D &total();
     const Data1D &total() const;
