@@ -122,16 +122,7 @@ Array2D<double> ScatteringMatrix::matrix(double q) const
         auto col = 0;
         for (auto [i, j] : typePairs_)
         {
-            auto ffi = XRayFormFactors::formFactorData(weights.formFactors(), i->Z());
-            if (!ffi)
-                Messenger::exception("No form factor data available for element {} in dataset {}.", Elements::name(i->Z()),
-                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()));
-            auto ffj = XRayFormFactors::formFactorData(weights.formFactors(), j->Z());
-            if (!ffj)
-                Messenger::exception("No form factor data available for element {} in dataset {}.", Elements::name(j->Z()),
-                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()));
-
-            m[{row, col}] *= ffi->get().magnitude(q) * ffj->get().magnitude(q) / normFactor;
+            m[{row, col}] *= weights.formFactorProduct(i, j, q) / normFactor;
 
             ++col;
         }
@@ -410,23 +401,23 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
     const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    auto success = for_each_pair_early(dataWeights.typeFractions(),
-                                       [&](int indexI, auto &fracI, int indexJ, auto &fracJ) -> EarlyReturn<bool>
-                                       {
-                                           auto colIndex = columnIndex(fracI.first, fracJ.first);
-                                           if (colIndex == -1)
-                                               return Messenger::error(
-                                                   "Weights associated to reference data contain one or more unknown AtomTypes "
-                                                   "('{}' and/or '{}').\n",
-                                                   fracI.first->name(), fracJ.first->name());
+    auto success = for_each_pair_early(
+        dataWeights.typeFractions(),
+        [&](int indexI, auto &fracI, int indexJ, auto &fracJ) -> EarlyReturn<bool>
+        {
+            auto colIndex = columnIndex(fracI.first, fracJ.first);
+            if (colIndex == -1)
+                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
+                                        "('{}' and/or '{}').\n",
+                                        fracI.first->name(), fracJ.first->name());
 
-                                           // Now have the local column index of the AtomType pair in our matrix A_.
-                                           // Since this is X-ray data, we will just store the product of the concentration
-                                           // weights and the factor
-                                           A_[{rowIndex, colIndex}] = dataWeights.preFactor(indexI, indexJ) * factor;
+            // Now have the local column index of the AtomType pair in our matrix A_.
+            // Since this is X-ray data, we will just store the product of the concentration
+            // weights and the factor
+            A_[{rowIndex, colIndex}] = dataWeights.preFactors().get({fracI.first->name(), fracJ.first->name()}) * factor;
 
-                                           return EarlyReturn<bool>::Continue;
-                                       });
+            return EarlyReturn<bool>::Continue;
+        });
     if (!success.value_or(true))
         return false;
 
