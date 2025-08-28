@@ -194,7 +194,7 @@ bool SpeciesAtom::isGeometry(SpeciesAtom::AtomGeometry geom) const { return geom
 SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
 {
     double angle, largest;
-    SpeciesAtom *h, *j;
+    SpeciesParticle *h, *j;
     const auto &bonds = i->bonds();
 
     // Work based on the number of bound atoms
@@ -211,8 +211,8 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
             return AtomGeometry::Octahedral;
             // For the remaining types, take averages of bond angles about the atom
         case (2):
-            h = dynamic_cast<SpeciesAtom*>(bonds[0].get().partner(i));
-            j = dynamic_cast<SpeciesAtom*>(bonds[1].get().partner(i));
+            h = bonds[0].get().partner(i);
+            j = bonds[1].get().partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > 150.0)
                 return AtomGeometry::Linear;
@@ -220,15 +220,15 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
                 return AtomGeometry::Tetrahedral;
             break;
         case (3):
-            h = dynamic_cast<SpeciesAtom*>(bonds[0].get().partner(i));
-            j = dynamic_cast<SpeciesAtom*>(bonds[1].get().partner(i));
+            h = bonds[0].get().partner(i);
+            j = bonds[1].get().partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             largest = angle;
-            j = dynamic_cast<SpeciesAtom*>(bonds[2].get().partner(i));
+            j = bonds[2].get().partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
-            h = dynamic_cast<SpeciesAtom*>(bonds[1].get().partner(i));
+            h = bonds[1].get().partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
@@ -245,10 +245,10 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
             angle = 0.0;
             for (auto n = 0; n < i->nBonds(); ++n)
             {
-                h = dynamic_cast<SpeciesAtom*>(bonds[n].get().partner(i));
+                h = bonds[n].get().partner(i);
                 for (auto m = n + 1; m < i->nBonds(); ++m)
                 {
-                    j = dynamic_cast<SpeciesAtom*>(bonds[m].get().partner(i));
+                    j = bonds[m].get().partner(i);
                     angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
                 }
             }
