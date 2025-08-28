@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#pragma once 
+#pragma once
 
 #include "base/serialiser.h"
 #include "math/vector3.h"
 #include "templates/optionalRef.h"
 
-// Forward Declarations 
-class CoreData; 
+// Forward Declarations
+class CoreData;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
 class SpeciesTorsion;
 
-class SpeciesParticle : public Serialisable<CoreData&>
+class SpeciesParticle : public Serialisable<CoreData &>
 {
     public:
     SpeciesParticle() = default;
     ~SpeciesParticle() = default;
-    SpeciesParticle(SpeciesParticle&) = delete;
+    SpeciesParticle(SpeciesParticle &) = delete;
     SpeciesParticle(SpeciesParticle &&source) noexcept;
     SpeciesParticle &operator=(const SpeciesParticle &) = delete;
     SpeciesParticle &operator=(SpeciesParticle &&source) noexcept;
@@ -54,7 +54,7 @@ class SpeciesParticle : public Serialisable<CoreData&>
     void translateCoordinates(const Vector3 &delta);
 
     /*
-     * SpeciesIntra 
+     * SpeciesIntra
      */
     // Add bond reference
     void addBond(SpeciesBond &b);
@@ -100,12 +100,12 @@ class SpeciesParticle : public Serialisable<CoreData&>
     const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
 
     protected:
-    // Index in Species 
+    // Index in Species
     int index_{-1};
-    // Whether the SpeciesParticle is currently selected 
-    bool selected_{false};    
+    // Whether the SpeciesParticle is currently selected
+    bool selected_{false};
 
-    // TODO: Make these private 
+    // TODO: Make these private
     // Vector of bonds which this atom participates in
     std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
     // Vector of angles which this atom participates in
@@ -116,8 +116,6 @@ class SpeciesParticle : public Serialisable<CoreData&>
     std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
 
     private:
-    // Coordinates 
-    Vector3 r_ { 0.0, 0.0, 0.0 };
-
-    
+    // Coordinates
+    Vector3 r_{0.0, 0.0, 0.0};
 };

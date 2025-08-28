@@ -21,7 +21,7 @@ SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
 // Move all data from source to this
 void SpeciesAtom::move(SpeciesAtom &source)
 {
-    // Move atom specific data 
+    // Move atom specific data
     Z_ = source.Z_;
     charge_ = source.charge_;
     atomType_ = source.atomType_;
@@ -32,7 +32,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
     source.charge_ = 0.0;
     source.atomType_ = nullptr;
 
-    // Call parent class move 
+    // Call parent class move
     SpeciesParticle::move(source);
 }
 
@@ -111,7 +111,8 @@ void SpeciesAtom::setScaledInteractions()
 
     // Bonds
     for (const auto &b : bonds_)
-        addInteractionFunction(dynamic_cast<SpeciesAtom*>(b.get().partner(this)), SpeciesAtom::ScaledInteraction::Excluded, 0.0, 0.0);
+        addInteractionFunction(dynamic_cast<SpeciesAtom *>(b.get().partner(this)), SpeciesAtom::ScaledInteraction::Excluded,
+                               0.0, 0.0);
 
     // Angles
     for (const auto &aRef : angles_)
@@ -119,11 +120,11 @@ void SpeciesAtom::setScaledInteractions()
         auto &a = aRef.get();
 
         if (a.i() != this)
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(a.i()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(a.i()), ScaledInteraction::Excluded, 0.0, 0.0);
         if (a.j() != this)
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(a.j()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(a.j()), ScaledInteraction::Excluded, 0.0, 0.0);
         if (a.k() != this)
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(a.k()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(a.k()), ScaledInteraction::Excluded, 0.0, 0.0);
     }
 
     // Torsions
@@ -133,24 +134,26 @@ void SpeciesAtom::setScaledInteractions()
 
         if (t.i() == this)
         {
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.l()), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.l()), ScaledInteraction::Scaled, t.electrostatic14Scaling(),
+                                   t.vanDerWaals14Scaling());
         }
         else if (t.l() == this)
         {
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.i()), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.i()), ScaledInteraction::Scaled, t.electrostatic14Scaling(),
+                                   t.vanDerWaals14Scaling());
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
         }
         else
         {
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.i()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.l()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.i()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.l()), ScaledInteraction::Excluded, 0.0, 0.0);
             if (t.j() != this)
-                addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
+                addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
             if (t.k() != this)
-                addInteractionFunction(dynamic_cast<SpeciesAtom*>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
+                addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
         }
     }
 }
@@ -283,7 +286,7 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
     const auto &bonds = i->bonds();
     for (const SpeciesBond &bond : bonds)
     {
-        auto Z = dynamic_cast<SpeciesAtom*>(bond.partner(i))->Z();
+        auto Z = dynamic_cast<SpeciesAtom *>(bond.partner(i))->Z();
         switch (Z)
         {
             // Group 1A - Alkali earth metals (includes Hydrogen)

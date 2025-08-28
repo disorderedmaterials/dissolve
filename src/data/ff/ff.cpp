@@ -352,8 +352,8 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, C
 bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const
 {
     // Default implementation - search term lists in the forcefield
-    auto *i = dynamic_cast<SpeciesAtom*>(bond.i());
-    auto *j = dynamic_cast<SpeciesAtom*>(bond.j());
+    auto *i = dynamic_cast<SpeciesAtom *>(bond.i());
+    auto *j = dynamic_cast<SpeciesAtom *>(bond.j());
 
     auto atomTypes = getAtomTypes({i, j}, determineTypes);
     if (atomTypes.size() != 2)
@@ -374,9 +374,9 @@ bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bo
 bool Forcefield::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const
 {
     // Default implementation - search term lists in the forcefield
-    auto *i = dynamic_cast<SpeciesAtom*>(angle.i());
-    auto *j = dynamic_cast<SpeciesAtom*>(angle.j());
-    auto *k = dynamic_cast<SpeciesAtom*>(angle.k());
+    auto *i = dynamic_cast<SpeciesAtom *>(angle.i());
+    auto *j = dynamic_cast<SpeciesAtom *>(angle.j());
+    auto *k = dynamic_cast<SpeciesAtom *>(angle.k());
 
     auto atomTypes = getAtomTypes({i, j, k}, determineTypes);
     if (atomTypes.size() != 3)
@@ -398,10 +398,10 @@ bool Forcefield::assignAngleTermParameters(const Species *parent, SpeciesAngle &
 bool Forcefield::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const
 {
     // Default implementation - search term lists in the forcefield
-    SpeciesAtom *i = dynamic_cast<SpeciesAtom*>(torsion.i());
-    SpeciesAtom *j = dynamic_cast<SpeciesAtom*>(torsion.j());
-    SpeciesAtom *k = dynamic_cast<SpeciesAtom*>(torsion.k());
-    SpeciesAtom *l = dynamic_cast<SpeciesAtom*>(torsion.l());
+    SpeciesAtom *i = dynamic_cast<SpeciesAtom *>(torsion.i());
+    SpeciesAtom *j = dynamic_cast<SpeciesAtom *>(torsion.j());
+    SpeciesAtom *k = dynamic_cast<SpeciesAtom *>(torsion.k());
+    SpeciesAtom *l = dynamic_cast<SpeciesAtom *>(torsion.l());
 
     auto atomTypes = getAtomTypes({i, j, k, l}, determineTypes);
     if (atomTypes.size() != 4)
@@ -517,12 +517,9 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                             continue;
 
                         // Try to assign / generate an improper term (which may legitimately not exist)
-                        if (!assignImproperTermParameters(improperTerm, 
-                            dynamic_cast<SpeciesAtom *>(&i), 
-                            dynamic_cast<SpeciesAtom*>(j), 
-                            dynamic_cast<SpeciesAtom*>(k), 
-                            dynamic_cast<SpeciesAtom*>(l), 
-                            determineTypes))
+                        if (!assignImproperTermParameters(improperTerm, dynamic_cast<SpeciesAtom *>(&i),
+                                                          dynamic_cast<SpeciesAtom *>(j), dynamic_cast<SpeciesAtom *>(k),
+                                                          dynamic_cast<SpeciesAtom *>(l), determineTypes))
                             return false;
 
                         if (improperTerm.form() == TorsionFunctions::Form::None)

@@ -16,9 +16,8 @@
 // Forward Declarations
 class AtomType;
 
-
 // SpeciesAtom Definition
-class SpeciesAtom : public SpeciesParticle 
+class SpeciesAtom : public SpeciesParticle
 {
     public:
     SpeciesAtom() = default;

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "classes/coreData.h"
 #include "classes/speciesParticle.h"
+#include "classes/coreData.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
-#include "classes/speciesTorsion.h"
 #include "classes/speciesImproper.h"
+#include "classes/speciesTorsion.h"
 
 SpeciesParticle::SpeciesParticle(SpeciesParticle &&source) noexcept { move(source); }
 
@@ -37,7 +37,7 @@ void SpeciesParticle::move(SpeciesParticle &source)
     for (auto &improper : impropers_)
         improper.get().switchAtom(&source, this);
 
-    // Tidy old data 
+    // Tidy old data
     source.setCoordinates({});
     source.selected_ = false;
     source.index_ = -1;
@@ -121,8 +121,8 @@ OptionalReferenceWrapper<SpeciesBond> SpeciesParticle::getBond(const SpeciesPart
     return *result;
 }
 
-/* 
- * Angle Information  
+/*
+ * Angle Information
  */
 
 // Add specified SpeciesAngle to Atom
@@ -144,7 +144,7 @@ SpeciesAngle &SpeciesParticle::angle(int index) { return angles_.at(index); }
 const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesParticle::angles() const { return angles_; }
 
 /*
- * Torsion Information  
+ * Torsion Information
  */
 
 // Add specified SpeciesTorsion to Atom
@@ -166,7 +166,7 @@ SpeciesTorsion &SpeciesParticle::torsion(int index) { return torsions_.at(index)
 // Return array of Torsions in which the Atom is involved
 const std::vector<std::reference_wrapper<SpeciesTorsion>> &SpeciesParticle::torsions() const { return torsions_; }
 
-/* 
+/*
  * Improper Information
  */
 
