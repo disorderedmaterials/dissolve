@@ -26,8 +26,7 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  * Functions
  */
 
-std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &dissolve,
-                                                                      Configuration *cfg, std::optional<double> energyCutoff)
+std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &dissolve, Configuration *cfg, std::optional<double> energyCutoff)
 {
 	// Update atom type indexing
 	cfg->updateTypeIndexing();
@@ -41,5 +40,5 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &
 	// Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
 
-    return KernelProducer::energyKernel(cfg, potentialMap);
+    return KernelProducer::energyKernel(cfg, potentialMap, energyCutoff);
 }
