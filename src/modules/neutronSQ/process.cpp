@@ -195,11 +195,8 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     if (wSQstatus == GenericItem::ItemStatus::Created)
         weightedSQ.initialise(unweightedSQ);
 
-    printf("HERE3\n");
-
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
-    printf("HERE4\n");
 
     // Save data if requested
     if (saveSQ_ && !weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))
