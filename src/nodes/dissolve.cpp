@@ -27,7 +27,6 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  */
 
 std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &dissolve,
-                                                                      const std::vector<std::shared_ptr<AtomType>> &atomTypes,
                                                                       Configuration *cfg, std::optional<double> energyCutoff)
 {
 	// Update atom type indexing
@@ -35,6 +34,8 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &
 
 	// Generate configuration potential map
     PotentialMap potentialMap;
+    auto atomTypeKeys = std::views::keys(cfg->atomTypeIndexMap());
+    std::vector<const AtomType *> atomTypes{atomTypeKeys.begin(), atomTypeKeys.end()};
     potentialMap.initialise(atomTypes, dissolve.pairPotentials(), dissolve.pairPotentialRange());
 
 	// Regenerate cells
