@@ -110,12 +110,12 @@ void SpeciesAtom::setScaledInteractions()
      */
 
     // Bonds
-    for (const auto &b : bonds_)
+    for (const auto &b : bonds())
         addInteractionFunction(dynamic_cast<SpeciesAtom *>(b.get().partner(this)), SpeciesAtom::ScaledInteraction::Excluded,
                                0.0, 0.0);
 
     // Angles
-    for (const auto &aRef : angles_)
+    for (const auto &aRef : angles())
     {
         auto &a = aRef.get();
 
@@ -128,7 +128,7 @@ void SpeciesAtom::setScaledInteractions()
     }
 
     // Torsions
-    for (const auto &tRef : torsions_)
+    for (const auto &tRef : torsions())
     {
         auto &t = tRef.get();
 
@@ -342,7 +342,7 @@ SerialisedValue SpeciesAtom::serialise() const
 }
 void SpeciesAtom::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    index_ = toml::find<int>(node, "index") - 1;
+    setIndex(toml::find<int>(node, "index") - 1);
 
     set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "charge", 0));
 

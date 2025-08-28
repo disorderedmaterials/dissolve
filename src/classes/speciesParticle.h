@@ -99,13 +99,22 @@ class SpeciesParticle : public Serialisable<CoreData &>
     // Return array of Impropers in which the Atom is involved
     const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
 
-    protected:
+    private:
+    /*
+     * Basic Properties
+     */
+
     // Index in Species
     int index_{-1};
     // Whether the SpeciesParticle is currently selected
     bool selected_{false};
+    // Coordinates
+    Vector3 r_{0.0, 0.0, 0.0};
 
-    // TODO: Make these private
+    /*
+     * Species interaction references
+     */
+
     // Vector of bonds which this atom participates in
     std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
     // Vector of angles which this atom participates in
@@ -114,8 +123,4 @@ class SpeciesParticle : public Serialisable<CoreData &>
     std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
     // Vector of torsions which this atom participates in
     std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
-
-    private:
-    // Coordinates
-    Vector3 r_{0.0, 0.0, 0.0};
 };
