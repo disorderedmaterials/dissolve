@@ -375,21 +375,21 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
     const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    auto success = for_each_pair_early(dataWeights.isotopeMix().mix(),
-                                       [&](int indexI, auto &typeMixI, int indexJ, auto &typeMixJ) -> EarlyReturn<bool>
-                                       {
-                                           auto colIndex = columnIndex(typeMixI.first, typeMixJ.first);
-                                           if (colIndex == -1)
-                                               return Messenger::error(
-                                                   "Weights associated to reference data contain one or more unknown AtomTypes "
-                                                   "('{}' and/or '{}').\n",
-                                                   typeMixI.first->name(), typeMixJ.first->name());
+    auto success = for_each_pair_early(
+        dataWeights.isotopeMix().mix(),
+        [&](int indexI, auto &typeMixI, int indexJ, auto &typeMixJ) -> EarlyReturn<bool>
+        {
+            auto colIndex = columnIndex(typeMixI.first, typeMixJ.first);
+            if (colIndex == -1)
+                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
+                                        "('{}' and/or '{}').\n",
+                                        typeMixI.first->name(), typeMixJ.first->name());
 
-                                           // Now have the local column index of the AtomType pair in our matrix A_...
-                                           A_[{rowIndex, colIndex}] = dataWeights.weight(indexI, indexJ) * factor;
+            // Now have the local column index of the AtomType pair in our matrix A_...
+            A_[{rowIndex, colIndex}] = dataWeights.weights().get({typeMixI.first->name(), typeMixJ.first->name()}) * factor;
 
-                                           return EarlyReturn<bool>::Continue;
-                                       });
+            return EarlyReturn<bool>::Continue;
+        });
     if (!success.value_or(true))
         return false;
 

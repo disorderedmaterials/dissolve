@@ -485,7 +485,7 @@ bool GRModule::calculateUnweightedGR(Configuration *cfg, const PartialSet &origi
 
     // Remove bound partial from full partial
     for (auto &[key, fullPartial] : unweightedgr.partials())
-        fullPartial -= originalgr.boundPartials().at(key);
+        fullPartial -= originalgr.boundPartials().get(key);
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
     for (auto &boundPartial : std::views::values(unweightedgr.boundPartials()))
@@ -493,7 +493,7 @@ bool GRModule::calculateUnweightedGR(Configuration *cfg, const PartialSet &origi
 
     // Add broadened bound partials back in to full partials
     for (auto &[key, fullPartial] : unweightedgr.partials())
-        fullPartial += unweightedgr.boundPartials().at(key);
+        fullPartial += unweightedgr.boundPartials().get(key);
 
     // Apply smoothing if requested
     if (smoothing > 0)

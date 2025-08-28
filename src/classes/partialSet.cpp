@@ -172,7 +172,7 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
 }
 
 // Sum partials into total for TR
-void PartialSet::formTRTotals(NeutronWeights weights)
+void PartialSet::formTRTotals(const NeutronWeights &weights)
 {
     auto typeFractions = atomTypeFractions();
 
@@ -191,7 +191,7 @@ void PartialSet::formTRTotals(NeutronWeights weights)
             DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
 
             // Set weighting factor if requested
-            auto factor = popI.second * weights.boundCoherentProduct(indexI, indexJ);
+            auto factor = popI.second * weights.boundCoherentProducts().get(key);
 
             // Sum bound term
             std::transform(boundTotal_.values().begin(), boundTotal_.values().end(), boundPartials_.get(key).values().begin(),

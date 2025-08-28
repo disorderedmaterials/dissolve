@@ -146,7 +146,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
                                                                const auto &popJ)
         {
             auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
-            double intraWeight = weights.intramolecularWeight(indexI, indexJ);
+            double intraWeight = weights.intramolecularWeights().get(key);
             auto cj = weights.isotopeMix().fraction(popJ.first);
 
             auto factor = 4.0 * M_PI * rho.value() * cj;
@@ -185,7 +185,7 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
         [&weights, &rho, &unweightedGR, &weightedTR](const auto indexI, const auto &popI, const auto indexJ, const auto &popJ)
         {
             auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
-            double intraWeight = weights.intramolecularWeight(indexI, indexJ);
+            double intraWeight = weights.intramolecularWeights().get(key);
             auto cj = weights.isotopeMix().fraction(popJ.first);
             auto factor = 4.0 * M_PI * rho.value() * cj;
 
