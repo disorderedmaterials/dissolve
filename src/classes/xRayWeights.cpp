@@ -148,7 +148,7 @@ double XRayWeights::boundCoherentAverageOfSquares(double Q) const
                            [&, Q](auto acc, const auto &typePop)
                            {
                                auto mag = formFactorData_.at(typePop.first).get().magnitude(Q);
-                               return acc + typePop.second * mag * mag;
+                               return acc + typePop.second * pow(mag, 2);
                            });
 }
 
