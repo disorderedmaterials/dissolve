@@ -115,8 +115,7 @@ std::vector<double> XRayWeights::weight(const AtomType *i, const AtomType *j, co
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
 double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 {
-    auto result = std::accumulate(typeFractions_.begin(), typeFractions_.end(), 0.0,
-                                  [&, Q](auto acc, const auto &typePop)
+    auto result = std::accumulate(typeFractions_.begin(), typeFractions_.end(), 0.0, [&, Q](auto acc, const auto &typePop)
                                   { return acc + typePop.second * formFactorData_.at(typePop.first).get().magnitude(Q); });
     return result * result;
 }
