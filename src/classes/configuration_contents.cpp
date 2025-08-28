@@ -52,21 +52,6 @@ void Configuration::empty()
     typeIndicesValid_ = false;
 }
 
-// Return atom types belonging to configuration
-/*
-const std::vector<std::shared_ptr<AtomType>> Configuration::atomTypes()
-{
-    auto pop = atomTypePopulations();
-    std::vector<std::shared_ptr<AtomType>> atomTypes;
-    atomTypes.resize(pop.nItems());
-
-    for (int i = 0; i < pop.nItems(); i++)
-        atomTypes[i] = pop.atomType(i);
-
-    return atomTypes;
-}
-*/
-
 // Return Species populations within the Configuration
 const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
