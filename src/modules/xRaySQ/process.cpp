@@ -232,7 +232,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
                                               if (indexI == indexJ)
                                               {
                                                   Data1D atomicData = unweightedSQ.partials().get(key);
-                                                  atomicData.values() = weights.formFactor(indexI, atomicData.xAxis());
+                                                  atomicData.values() = weights.formFactor(popI.first, atomicData.xAxis());
                                                   Data1DExportFileFormat exportFormat(
                                                       std::format("{}-{}.form", name(), popI.first->name()));
                                                   if (!exportFormat.exportData(atomicData))
@@ -240,7 +240,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
                                               }
 
                                               Data1D ffData = unweightedSQ.partials().get(key);
-                                              ffData.values() = weights.weight(indexI, indexJ, ffData.xAxis());
+                                              ffData.values() = weights.weight(popI.first, popJ.first, ffData.xAxis());
                                               Data1DExportFileFormat exportFormat(
                                                   std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name()));
                                               if (!exportFormat.exportData(ffData))

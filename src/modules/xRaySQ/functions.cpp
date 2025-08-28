@@ -16,7 +16,7 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
                             {
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
 
-                                auto weight = weights.weight(indexI, indexJ, 0.0);
+                                auto weight = weights.weight(popI.first, popJ.first, 0.0);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedgr.boundPartials().get(key).copyArrays(unweightedgr.boundPartials().get(key));
@@ -60,7 +60,8 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
 
                                 // Weight bound and unbound S(Q) and sum into full partial
-                                auto qWeights = weights.weight(indexI, indexJ, unweightedsq.boundPartials().get(key).xAxis());
+                                auto qWeights =
+                                    weights.weight(popI.first, popJ.first, unweightedsq.boundPartials().get(key).xAxis());
 
                                 // Bound (intramolecular) and unbound partials
                                 weightedsq.boundPartials().get(key).copyArrays(unweightedsq.boundPartials().get(key));
