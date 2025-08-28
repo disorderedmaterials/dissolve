@@ -26,7 +26,15 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  * Functions
  */
 
-std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &dissolve, Configuration *cfg, std::optional<double> energyCutoff)
+// Return maximum distance for tabulated PairPotentials
+double Dissolve::pairPotentialRange() const { return pairPotentialRange_; }
+
+// Return first PairPotential in list
+const std::vector<PairPotential::Definition> &Dissolve::pairPotentials() const { return pairPotentials_; }
+std::vector<PairPotential::Definition> &Dissolve::pairPotentials() { return pairPotentials_; }
+
+// Return energy kernel containing potential map
+std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff)
 {
 	// Update atom type indexing
 	cfg->updateTypeIndexing();
@@ -35,7 +43,7 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Dissolve &
     PotentialMap potentialMap;
     auto atomTypeKeys = std::views::keys(cfg->atomTypeIndexMap());
     std::vector<const AtomType *> atomTypes{atomTypeKeys.begin(), atomTypeKeys.end()};
-    potentialMap.initialise(atomTypes, dissolve.pairPotentials(), dissolve.pairPotentialRange());
+    potentialMap.initialise(atomTypes, pairPotentials(), pairPotentialRange());
 
 	// Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());

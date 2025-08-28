@@ -43,5 +43,11 @@ class DissolveGraph : public Graph
      * Functions
      */
     public:
-    std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Dissolve &dissolve, Configuration *cfg, std::optional<double> energyCutoff = {});
+    // Return maximum distance for tabulated PairPotentials
+    double pairPotentialRange() const;
+    // Return first PairPotential in list
+    const std::vector<PairPotential::Definition> &pairPotentials() const;
+    std::vector<PairPotential::Definition> &pairPotentials();
+    // Return energy kernel containing potential map
+    std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff = {});
 };
