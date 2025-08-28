@@ -108,11 +108,10 @@ void NeutronWeights::calculateWeightingMatrices()
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
-    auto nTypes = isotopeMix_.mix().size();
-    concentrationProducts_.initialise(nTypes, nTypes, true);
-    boundCoherentProducts_.initialise(nTypes, nTypes, true);
-    weights_.initialise(nTypes, nTypes, true);
-    intramolecularWeights_.initialise(nTypes, nTypes, true);
+    concentrationProducts_.clear(true);
+    boundCoherentProducts_.clear(true);
+    weights_.clear(true);
+    intramolecularWeights_.clear(true);
     boundCoherentAverageOfSquares_ = 0.0;
     boundCoherentSquareOfAverage_ = 0.0;
     double ci, cj, bi, bj;
@@ -121,6 +120,8 @@ void NeutronWeights::calculateWeightingMatrices()
     dissolve::for_each_pair(ParallelPolicies::seq, isotopeMix_.mix(),
                             [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
+                                DoubleKeyedMapKey key{typeMixI.first->name(), typeMixJ.first->name()};
+
                                 ci = isotopeMix_.fraction(typeMixI.first);
                                 bi = isotopeMix_.boundCoherent(typeMixI.first) * 0.1;
 
@@ -134,9 +135,9 @@ void NeutronWeights::calculateWeightingMatrices()
                                 cj = isotopeMix_.fraction(typeMixJ.first);
                                 bj = isotopeMix_.boundCoherent(typeMixJ.first) * 0.1;
 
-                                concentrationProducts_[{indexI, indexJ}] = ci * cj;
-                                boundCoherentProducts_[{indexI, indexJ}] = bi * bj;
-                                weights_[{indexI, indexJ}] = ci * cj * bi * bj * (indexI == indexJ ? 1 : 2);
+                                concentrationProducts_.set(key, ci * cj);
+                                boundCoherentProducts_.set(key, bi * bj);
+                                weights_.set(key, ci * cj * bi * bj * (indexI == indexJ ? 1 : 2));
                             });
 
     // Finalise <b>**2
@@ -144,11 +145,8 @@ void NeutronWeights::calculateWeightingMatrices()
 
     // Determine bound (intramolecular) scattering weights
     // Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
-    intramolecularWeights_ = 0.0;
-    Array2D<double> intraNorm(nTypes, nTypes, true);
-    Array2D<char> globalFlag(nTypes, nTypes, true);
-    intraNorm = 0.0;
-    globalFlag = false;
+    DoubleKeyedMap<double> intraNorm(true);
+    DoubleKeyedMap<bool> globalFlag(true);
     for (auto &topes : isotopologueMixtures_)
     {
         // Get weighting for associated Species population
@@ -165,6 +163,8 @@ void NeutronWeights::calculateWeightingMatrices()
             dissolve::for_each_pair(ParallelPolicies::seq, sp->atomTypePopulations(),
                                     [&, iso, weight](int indexI, const auto &atPop1, int indexJ, const auto &atPop2)
                                     {
+                                        DoubleKeyedMapKey key{atPop1.first->name(), atPop2.first->name()};
+
                                         // Find the atom types in our local mix
                                         auto optPairIndex = isotopeMix_.indexOf(atPop1.first, atPop2.first);
                                         if (!optPairIndex)
@@ -183,50 +183,32 @@ void NeutronWeights::calculateWeightingMatrices()
                                         bi *= 0.1;
                                         bj *= 0.1;
 
-                                        intramolecularWeights_[{typeI, typeJ}] += weight * bi * bj;
-                                        intraNorm[{typeI, typeJ}] += weight;
-                                        globalFlag[{typeI, typeJ}] = true;
+                                        intramolecularWeights_[key] += weight * bi * bj;
+                                        intraNorm[key] += weight;
+                                        globalFlag[key] = true;
                                     });
         }
     }
 
-    // Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
+    // Normalise the intramolecular weights, and multiply by atomic concentrations and Kronecker delta
     dissolve::for_each_pair(ParallelPolicies::seq, isotopeMix_.mix(),
                             [&](int indexI, const auto &typeMixI, int indexJ, const auto &typeMixJ)
                             {
-                                // Skip this pair if there are no such intramolecular interactions
-                                if (!globalFlag[{indexI, indexJ}])
+                                DoubleKeyedMapKey key{typeMixI.first->name(), typeMixJ.first->name()};
+
+                                // Zero this term if there are no intramolecular interactions
+                                if (!globalFlag.contains(key))
+                                {
+                                    intramolecularWeights_[key] = 0.0;
                                     return;
+                                }
 
                                 ci = isotopeMix_.fraction(typeMixI.first);
                                 cj = isotopeMix_.fraction(typeMixJ.first);
 
-                                intramolecularWeights_[{indexI, indexJ}] /= intraNorm[{indexI, indexJ}];
-                                intramolecularWeights_[{indexI, indexJ}] *= ci * cj * (indexI == indexJ ? 1 : 2);
+                                intramolecularWeights_[key] /= intraNorm[key];
+                                intramolecularWeights_[key] *= ci * cj * (indexI == indexJ ? 1 : 2);
                             });
-}
-
-// Create from species populations and isotopologues
-void NeutronWeights::create(const KeyedVector<const Species *, double> &populations, const IsotopologueSet &isotopologues,
-                            const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
-{
-    clear();
-
-    for (auto &[sp, pop] : populations)
-    {
-        // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-        auto isoRef = isotopologues.getIsotopologues(sp);
-        if (isoRef)
-        {
-            const Isotopologues &topes = *isoRef;
-            for (const auto &[iso, weight] : topes.mix())
-                addIsotopologue(sp, pop, iso, weight);
-        }
-        else
-            addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
-    }
-
-    createFromIsotopologues(exchangeableTypes);
 }
 
 // Create AtomType list and matrices based on stored Isotopologues information
@@ -243,26 +225,17 @@ void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<A
 // Return isotope mix
 const IsotopeMix &NeutronWeights::isotopeMix() const { return isotopeMix_; }
 
-// Return number of used AtomTypes
-int NeutronWeights::nUsedTypes() const { return isotopeMix_.mix().size(); }
+// Return full scattering weights
+const DoubleKeyedMap<double> &NeutronWeights::weights() const { return weights_; }
 
-// Return concentration product for types i and j
-double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_[{i, j}]; }
+// Return concentration products
+const DoubleKeyedMap<double> &NeutronWeights::concentrationProducts() const { return concentrationProducts_; }
 
-// Return bound coherent scattering product for types i
-double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_[{i, j}]; }
+// Return bound coherent scattering products
+const DoubleKeyedMap<double> &NeutronWeights::boundCoherentProducts() const { return boundCoherentProducts_; }
 
-// Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
-double NeutronWeights::weight(int i, int j) const { return weights_[{i, j}]; }
-
-// Return full intramolecular weighting for types i and j
-double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_[{i, j}]; }
-
-// Return full weights matrix
-const Array2D<double> &NeutronWeights::weights() const { return weights_; }
-
-// Return full intramolecular scattering weights matrix
-const Array2D<double> &NeutronWeights::intramolecularWeights() const { return intramolecularWeights_; }
+// Return full intramolecular scattering weights
+const DoubleKeyedMap<double> &NeutronWeights::intramolecularWeights() const { return intramolecularWeights_; }
 
 // Return bound coherent average squared scattering (<b>**2)
 double NeutronWeights::boundCoherentSquareOfAverage() const { return boundCoherentSquareOfAverage_; }

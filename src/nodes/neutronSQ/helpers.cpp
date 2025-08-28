@@ -13,8 +13,8 @@ bool NeutronSQNode::calculateWeightedGR()
                             {
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
 
-                                auto weight = weights_.weight(indexI, indexJ);
-                                auto intraWeight = weights_.intramolecularWeight(indexI, indexJ);
+                                auto weight = weights_.weights().get(key);
+                                auto intraWeight = weights_.intramolecularWeights().get(key);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedGR_->boundPartials().get(key).copyArrays(unweightedGR_->boundPartials().get(key));
@@ -56,8 +56,8 @@ bool NeutronSQNode::calculateWeightedSQ()
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
 
                                 // Weight bound and unbound S(Q) and sum into full partial
-                                auto weight = weights_.weight(indexI, indexJ);
-                                auto boundWeight = weights_.intramolecularWeight(indexI, indexJ);
+                                auto weight = weights_.weights().get(key);
+                                auto boundWeight = weights_.intramolecularWeights().get(key);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedSQ_->boundPartials().get(key).copyArrays(unweightedSQ_->boundPartials().get(key));
@@ -92,8 +92,9 @@ bool NeutronSQNode::calculateWeightedSQ()
 // Calculate neutron weights matrix
 void NeutronSQNode::calculateWeights(const KeyedVector<const Species *, double> &realSpeciesPopulations)
 {
-    // Create a set of named Isotopologues to use
-    IsotopologueSet topes;
+    weights_.clear();
+
+    // Add simple isotopologues
     for (const auto &[species, _] : realSpeciesPopulations)
     {
         for (const auto &isotopologue : species->isotopologues())
@@ -101,11 +102,9 @@ void NeutronSQNode::calculateWeights(const KeyedVector<const Species *, double> 
             auto iso = isotopologue.get();
             auto it = namedWeights_.find(iso->name());
             if (it != namedWeights_.end())
-                topes.add(iso, it->second);
+                weights_.addIsotopologue(species, 1.0, iso, it->second);
         }
     }
 
-    weights_.clear();
-
-    weights_.create(realSpeciesPopulations, topes, exchangeable_);
+    weights_.createFromIsotopologues(exchangeable_);
 }
