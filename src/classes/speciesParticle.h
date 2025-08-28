@@ -24,8 +24,10 @@ class SpeciesParticle : public Serialisable<CoreData&>
     SpeciesParticle &operator=(const SpeciesParticle &) = delete;
     SpeciesParticle &operator=(SpeciesParticle &&source) noexcept;
 
+    protected:
     void move(SpeciesParticle &);
 
+    public:
     // Set index (0->[N-1])
     void setIndex(int id);
     // Return index (0->[N-1])

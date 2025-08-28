@@ -19,7 +19,32 @@ SpeciesParticle &SpeciesParticle::operator=(SpeciesParticle &&source) noexcept
 void SpeciesParticle::move(SpeciesParticle &source)
 {
     setCoordinates(source.r());
+    selected_ = source.selected_;
+    index_ = source.index_;
+
+    bonds_ = std::move(source.bonds_);
+    angles_ = std::move(source.angles_);
+    torsions_ = std::move(source.torsions_);
+    impropers_ = std::move(source.impropers_);
+
+    // Rewrite pointers in intramolecular terms
+    for (auto &bond : bonds_)
+        bond.get().switchAtom(&source, this);
+    for (auto &angle : angles_)
+        angle.get().switchAtom(&source, this);
+    for (auto &torsion : torsions_)
+        torsion.get().switchAtom(&source, this);
+    for (auto &improper : impropers_)
+        improper.get().switchAtom(&source, this);
+
+    // Tidy old data 
     source.setCoordinates({});
+    source.selected_ = false;
+    source.index_ = -1;
+    source.bonds_.clear();
+    source.angles_.clear();
+    source.torsions_.clear();
+    source.impropers_.clear();
 }
 
 // Set index (0->[N-1])
