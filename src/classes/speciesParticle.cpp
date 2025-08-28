@@ -3,6 +3,10 @@
 
 #include "classes/coreData.h"
 #include "classes/speciesParticle.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesTorsion.h"
+#include "classes/speciesImproper.h"
 
 SpeciesParticle::SpeciesParticle(SpeciesParticle &&source) noexcept { move(source); }
 
@@ -56,3 +60,106 @@ void SpeciesParticle::setCoordinates(const Vector3 &newr) { r_ = newr; }
 
 // Translate coordinates of atom
 void SpeciesParticle::translateCoordinates(const Vector3 &delta) { r_ += delta; }
+
+/*
+ * Bond Information
+ */
+
+// Add Bond reference
+void SpeciesParticle::addBond(SpeciesBond &bond)
+{
+    if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b) { return &b == &bond; }) == bonds_.end())
+        bonds_.emplace_back(bond);
+}
+
+// Remove Bond reference
+void SpeciesParticle::removeBond(SpeciesBond &b)
+{
+    bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond) { return &b == &bond; }));
+}
+
+// Return number of Bond references
+int SpeciesParticle::nBonds() const { return bonds_.size(); }
+
+// Return specified bond
+SpeciesBond &SpeciesParticle::bond(int index) { return bonds_.at(index); }
+
+// Return bonds list
+const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesParticle::bonds() const { return bonds_; }
+
+// Return whether Bond to specified Atom exists
+OptionalReferenceWrapper<SpeciesBond> SpeciesParticle::getBond(const SpeciesParticle *partner)
+{
+    auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner; });
+    if (result == bonds_.end())
+        return std::nullopt;
+    return *result;
+}
+
+/* 
+ * Angle Information  
+ */
+
+// Add specified SpeciesAngle to Atom
+void SpeciesParticle::addAngle(SpeciesAngle &angle) { angles_.emplace_back(angle); }
+
+// Remove angle reference
+void SpeciesParticle::removeAngle(SpeciesAngle &angle)
+{
+    angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle &a) { return &a == &angle; }));
+}
+
+// Return the number of Angles in which the Atom is involved
+int SpeciesParticle::nAngles() const { return angles_.size(); }
+
+// Return specified angle
+SpeciesAngle &SpeciesParticle::angle(int index) { return angles_.at(index); }
+
+// Return array of Angles in which the Atom is involved
+const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesParticle::angles() const { return angles_; }
+
+/*
+ * Torsion Information  
+ */
+
+// Add specified SpeciesTorsion to Atom
+void SpeciesParticle::addTorsion(SpeciesTorsion &torsion) { torsions_.emplace_back(torsion); }
+
+// Remove torsion reference
+void SpeciesParticle::removeTorsion(SpeciesTorsion &torsion)
+{
+    torsions_.erase(
+        find_if(torsions_.begin(), torsions_.end(), [&torsion](const SpeciesTorsion &t) { return &t == &torsion; }));
+}
+
+// Return the number of Torsions in which the Atom is involved
+int SpeciesParticle::nTorsions() const { return torsions_.size(); }
+
+// Return specified torsion
+SpeciesTorsion &SpeciesParticle::torsion(int index) { return torsions_.at(index); }
+
+// Return array of Torsions in which the Atom is involved
+const std::vector<std::reference_wrapper<SpeciesTorsion>> &SpeciesParticle::torsions() const { return torsions_; }
+
+/* 
+ * Improper Information
+ */
+
+// Add specified SpeciesImproper to Atom
+void SpeciesParticle::addImproper(SpeciesImproper &improper) { impropers_.emplace_back(improper); }
+
+// Remove improper reference
+void SpeciesParticle::removeImproper(SpeciesImproper &improper)
+{
+    impropers_.erase(
+        find_if(impropers_.begin(), impropers_.end(), [&improper](const SpeciesImproper &i) { return &i == &improper; }));
+}
+
+// Return the number of Impropers in which the Atom is involved
+int SpeciesParticle::nImpropers() const { return impropers_.size(); }
+
+// Return specified improper
+SpeciesImproper &SpeciesParticle::improper(int index) { return impropers_.at(index); }
+
+// Return array of Impropers in which the Atom is involved
+const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesParticle::impropers() const { return impropers_; }

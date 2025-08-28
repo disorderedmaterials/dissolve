@@ -4,13 +4,14 @@
 #include "classes/speciesBond.h"
 #include "base/sysFunc.h"
 #include "classes/coreData.h"
-#include "classes/speciesAtom.h"
+//#include "classes/speciesAtom.h"
+#include "classes/speciesParticle.h"
 #include "data/atomicMasses.h"
 #include <map>
 
 SpeciesBond::SpeciesBond() : SpeciesIntra(BondFunctions::Form::None) {}
 
-SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(BondFunctions::Form::None) { assign(i, j); }
+SpeciesBond::SpeciesBond(SpeciesParticle *i, SpeciesParticle *j) : SpeciesIntra(BondFunctions::Form::None) { assign(i, j); }
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 
@@ -66,11 +67,11 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
 }
 
 /*
- * SpeciesAtom Information
+ * SpeciesParticle Information
  */
 
-// Rewrite SpeciesAtom pointer
-void SpeciesBond::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
+// Rewrite SpeciesParticle pointer
+void SpeciesBond::switchAtom(const SpeciesParticle *oldPtr, SpeciesParticle *newPtr)
 {
     assert(i_ == oldPtr || j_ == oldPtr);
 
@@ -81,7 +82,7 @@ void SpeciesBond::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
 }
 
 // Assign the two atoms in the bond
-void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
+void SpeciesBond::assign(SpeciesParticle *i, SpeciesParticle *j)
 {
     i_ = i;
     j_ = j;
@@ -92,33 +93,33 @@ void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
     j_->addBond(*this);
 }
 
-// Return first SpeciesAtom involved in interaction
-SpeciesAtom *SpeciesBond::i() const { return i_; }
+// Return first SpeciesParticle involved in interaction
+SpeciesParticle *SpeciesBond::i() const { return i_; }
 
-// Return second SpeciesAtom involved in SpeciesBond
-SpeciesAtom *SpeciesBond::j() const { return j_; }
+// Return second SpeciesParticle involved in SpeciesBond
+SpeciesParticle *SpeciesBond::j() const { return j_; }
 
 // Return vector of involved atoms
-std::vector<const SpeciesAtom *> SpeciesBond::atoms() const { return {i_, j_}; }
+std::vector<const SpeciesParticle *> SpeciesBond::atoms() const { return {i_, j_}; }
 
-// Return the 'other' SpeciesAtom in the SpeciesBond
-SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ ? j_ : i_); }
+// Return the 'other' SpeciesParticle in the SpeciesBond
+SpeciesParticle *SpeciesBond::partner(const SpeciesParticle *i) const { return (i == i_ ? j_ : i_); }
 
-// Return index (in parent Species) of first SpeciesAtom
+// Return index (in parent Species) of first SpeciesParticle
 int SpeciesBond::indexI() const
 {
     assert(i_);
     return i_->index();
 }
 
-// Return index (in parent Species) of second SpeciesAtom
+// Return index (in parent Species) of second SpeciesParticle
 int SpeciesBond::indexJ() const
 {
     assert(j_);
     return j_->index();
 }
 
-// Return index (in parent Species) of nth SpeciesAtom in interaction
+// Return index (in parent Species) of nth SpeciesParticle in interaction
 int SpeciesBond::index(int n) const
 {
     if (n == 0)
@@ -126,12 +127,12 @@ int SpeciesBond::index(int n) const
     else if (n == 1)
         return indexJ();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n", n);
+    Messenger::error("SpeciesParticle index {} is out of range in SpeciesBond::index(int). Returning 0...\n", n);
     return 0;
 }
 
-// Return whether SpeciesAtoms in Angle match those specified
-bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
+// Return whether SpeciesParticles in Angle match those specified
+bool SpeciesBond::matches(const SpeciesParticle *i, const SpeciesParticle *j) const
 {
     return (i_ == i && j_ == j) || (i_ == j && j_ == i);
 }
@@ -223,8 +224,8 @@ double SpeciesBond::energy(double distance) const
          *           sqrt( (mi + mj) / (mi * mj) )
          */
         auto delta = distance - params[1];
-        auto massI = AtomicMass::mass(i_->Z());
-        auto massJ = AtomicMass::mass(j_->Z());
+        auto massI = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(i_)->Z());
+        auto massJ = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(j_)->Z());
         return params[0] * delta * delta / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
     else if (bondForm == BondFunctions::Form::Morse)
@@ -282,8 +283,8 @@ double SpeciesBond::force(double distance) const
          * 0 : general force constant C / 2.0
          * 1 : equilibrium distance
          */
-        auto massI = AtomicMass::mass(i_->Z());
-        auto massJ = AtomicMass::mass(j_->Z());
+        auto massI = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(i_)->Z());
+        auto massJ = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(j_)->Z());
         return -2.0 * params[0] * (distance - params[1]) / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
     else if (bondForm == BondFunctions::Form::Morse)

@@ -108,7 +108,7 @@ bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, Speci
     // as harmonic angles and we have a mix of ~180 and ~90 angles.
 
     // Is this an O-Cu-O angle?
-    if (angle.i()->Z() == Elements::O && angle.j()->Z() == Elements::Cu && angle.k()->Z() == Elements::O)
+    if (dynamic_cast<SpeciesAtom*>(angle.i())->Z() == Elements::O && dynamic_cast<SpeciesAtom*>(angle.j())->Z() == Elements::Cu && dynamic_cast<SpeciesAtom*>(angle.k())->Z() == Elements::O)
     {
         // Determine the geometry
         auto theta = parent->box()->angleInDegrees(angle.i()->r(), angle.j()->r(), angle.k()->r());

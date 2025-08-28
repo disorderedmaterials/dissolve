@@ -174,8 +174,8 @@ void Species::updateIntramolecularTerms()
     for (auto &jk : bonds_)
     {
         // Get atoms 'j' and 'k'
-        j = jk.i();
-        k = jk.j();
+        j = dynamic_cast<SpeciesAtom*>(jk.i());
+        k = dynamic_cast<SpeciesAtom*>(jk.j());
 
         // Swap j and k over if j is terminal and has only a single bond (i.e. jk)
         if (j->nBonds() == 1)
@@ -189,7 +189,7 @@ void Species::updateIntramolecularTerms()
                 continue;
 
             // Get atom 'i'
-            i = ij.partner(j);
+            i = dynamic_cast<SpeciesAtom*>(ij.partner(j));
 
             // Attempt to add angle term 'ijk' if 'i' > 'k'
             if (!hasAngle(i, j, k))
@@ -203,7 +203,7 @@ void Species::updateIntramolecularTerms()
                     continue;
 
                 // Get atom 'l'
-                l = kl.partner(k);
+                l = dynamic_cast<SpeciesAtom*>(kl.partner(k));
 
                 // Attempt to add angle term 'jkl'
                 if (!hasAngle(j, k, l))
@@ -224,7 +224,8 @@ void Species::updateIntramolecularTerms()
                                  {
                                      return ((!atomsContains(angle.i())) || (!atomsContains(angle.j())) ||
                                              (!atomsContains(angle.k()))) ||
-                                            ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
+                                            ((!hasBond(dynamic_cast<SpeciesAtom*>(angle.i()), dynamic_cast<SpeciesAtom*>(angle.j()))) || 
+                                                (!hasBond(dynamic_cast<SpeciesAtom*>(angle.j()), dynamic_cast<SpeciesAtom*>(angle.k()))));
                                  }),
                   angles_.end());
 
@@ -234,8 +235,9 @@ void Species::updateIntramolecularTerms()
                                    {
                                        return ((!atomsContains(torsion.i())) || (!atomsContains(torsion.j())) ||
                                                (!atomsContains(torsion.k())) || (!atomsContains(torsion.l()))) ||
-                                              ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
-                                               (!hasBond(torsion.k(), torsion.l())));
+                                              ((!hasBond(dynamic_cast<SpeciesAtom*>(torsion.i()), dynamic_cast<SpeciesAtom*>(torsion.j()))) || 
+                                                  (!hasBond(dynamic_cast<SpeciesAtom*>(torsion.j()), dynamic_cast<SpeciesAtom*>(torsion.k()))) ||
+                                               (!hasBond(dynamic_cast<SpeciesAtom*>(torsion.k()), dynamic_cast<SpeciesAtom*>(torsion.l()))));
                                    }),
                     torsions_.end());
 
@@ -245,9 +247,9 @@ void Species::updateIntramolecularTerms()
                                     {
                                         return ((!atomsContains(improper.i())) || (!atomsContains(improper.j())) ||
                                                 (!atomsContains(improper.k())) || (!atomsContains(improper.l()))) ||
-                                               ((!hasBond(improper.i(), improper.j())) ||
-                                                (!hasBond(improper.j(), improper.k())) ||
-                                                (!hasBond(improper.k(), improper.l())));
+                                               ((!hasBond(dynamic_cast<SpeciesAtom*>(improper.i()), dynamic_cast<SpeciesAtom*>(improper.j()))) ||
+                                                (!hasBond(dynamic_cast<SpeciesAtom*>(improper.j()), dynamic_cast<SpeciesAtom*>(improper.k()))) ||
+                                                (!hasBond(dynamic_cast<SpeciesAtom*>(improper.k()), dynamic_cast<SpeciesAtom*>(improper.l()))));
                                     }),
                      impropers_.end());
 
@@ -667,7 +669,7 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
             continue;
 
         // Construct a name for the master term based on the atom types
-        std::vector<std::string_view> names = {bond.i()->atomType()->name(), bond.j()->atomType()->name()};
+        std::vector<std::string_view> names = {dynamic_cast<SpeciesAtom*>(bond.i())->atomType()->name(), dynamic_cast<SpeciesAtom*>(bond.j())->atomType()->name()};
         std::sort(names.begin(), names.end());
         generateMasterTerm<MasterBond>(
             bond, joinStrings(names, "-"), [&coreData](std::string_view name) { return coreData.getMasterBond(name); },
@@ -682,18 +684,18 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
             continue;
 
         // Construct a name for the master term based on the atom types
-        if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
+        if (dynamic_cast<SpeciesAtom*>(angle.i())->atomType()->name() < dynamic_cast<SpeciesAtom*>(angle.k())->atomType()->name())
             generateMasterTerm<MasterAngle>(
                 angle,
-                std::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
-                            angle.k()->atomType()->name()),
+                std::format("{}-{}-{}", dynamic_cast<SpeciesAtom*>(angle.i())->atomType()->name(), dynamic_cast<SpeciesAtom*>(angle.j())->atomType()->name(),
+                            dynamic_cast<SpeciesAtom*>(angle.k())->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
                 [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
         else
             generateMasterTerm<MasterAngle>(
                 angle,
-                std::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
-                            angle.i()->atomType()->name()),
+                std::format("{}-{}-{}", dynamic_cast<SpeciesAtom*>(angle.k())->atomType()->name(), dynamic_cast<SpeciesAtom*>(angle.j())->atomType()->name(),
+                            dynamic_cast<SpeciesAtom*>(angle.i())->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
                 [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
     }
@@ -706,18 +708,18 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
             continue;
 
         // Construct a name for the master term based on the atom types
-        if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
+        if (dynamic_cast<SpeciesAtom*>(torsion.i())->atomType()->name() < dynamic_cast<SpeciesAtom*>(torsion.l())->atomType()->name())
             generateMasterTerm<MasterTorsion>(
                 torsion,
-                std::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
-                            torsion.k()->atomType()->name(), torsion.l()->atomType()->name()),
+                std::format("{}-{}-{}-{}", dynamic_cast<SpeciesAtom*>(torsion.i())->atomType()->name(), dynamic_cast<SpeciesAtom*>(torsion.j())->atomType()->name(),
+                            dynamic_cast<SpeciesAtom*>(torsion.k())->atomType()->name(), dynamic_cast<SpeciesAtom*>(torsion.l())->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
                 [&coreData](auto name) -> MasterTorsion & { return coreData.addMasterTorsion(name); });
         else
             generateMasterTerm<MasterTorsion>(
                 torsion,
-                std::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
-                            torsion.j()->atomType()->name(), torsion.i()->atomType()->name()),
+                std::format("{}-{}-{}-{}", dynamic_cast<SpeciesAtom*>(torsion.l())->atomType()->name(), dynamic_cast<SpeciesAtom*>(torsion.k())->atomType()->name(),
+                            dynamic_cast<SpeciesAtom*>(torsion.j())->atomType()->name(), dynamic_cast<SpeciesAtom*>(torsion.i())->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
                 [&coreData](auto name) -> MasterTorsion & { return coreData.addMasterTorsion(name); });
     }
@@ -730,11 +732,11 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
             continue;
 
         // Construct a name for the master term based on the atom types
-        std::vector<std::string_view> jkl = {improper.j()->atomType()->name(), improper.k()->atomType()->name(),
-                                             improper.l()->atomType()->name()};
+        std::vector<std::string_view> jkl = {dynamic_cast<SpeciesAtom*>(improper.j())->atomType()->name(), dynamic_cast<SpeciesAtom*>(improper.k())->atomType()->name(),
+                                             dynamic_cast<SpeciesAtom*>(improper.l())->atomType()->name()};
         std::sort(jkl.begin(), jkl.end());
         generateMasterTerm<MasterImproper>(
-            improper, std::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")),
+            improper, std::format("{}-{}", dynamic_cast<SpeciesAtom*>(improper.i())->atomType()->name(), joinStrings(jkl, "-")),
             [&coreData](std::string_view name) { return coreData.getMasterImproper(name); },
             [&coreData](auto name) -> MasterImproper & { return coreData.addMasterImproper(name); });
     }

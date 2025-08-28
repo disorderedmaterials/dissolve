@@ -113,7 +113,7 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
     auto nH = 0;
     for (auto &b : i->bonds())
     {
-        auto j = b.get().partner(i);
+        auto j = dynamic_cast<SpeciesAtom*>(b.get().partner(i));
 
         // Check for H
         if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && j->Z() == Elements::H)

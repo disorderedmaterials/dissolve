@@ -3,13 +3,13 @@
 
 #include "classes/speciesAngle.h"
 #include "classes/coreData.h"
-#include "classes/speciesAtom.h"
+#include "classes/speciesParticle.h"
 #include "math/mathFunc.h"
 #include <map>
 
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(AngleFunctions::Form::None) {}
 
-SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(AngleFunctions::Form::None)
+SpeciesAngle::SpeciesAngle(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k) : SpeciesIntra(AngleFunctions::Form::None)
 {
     assign(i, j, k);
 }
@@ -70,8 +70,8 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source) noexcept
  * Atom Information
  */
 
-// Rewrite SpeciesAtom pointer
-void SpeciesAngle::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
+// Rewrite SpeciesParticle pointer
+void SpeciesAngle::switchAtom(const SpeciesParticle *oldPtr, SpeciesParticle *newPtr)
 {
     assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr);
 
@@ -84,7 +84,7 @@ void SpeciesAngle::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
 }
 
 // Assign the three atoms in the angle
-void SpeciesAngle::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
+void SpeciesAngle::assign(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k)
 {
     i_ = i;
     j_ = j;
@@ -96,40 +96,40 @@ void SpeciesAngle::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
     k_->addAngle(*this);
 }
 
-// Return first SpeciesAtom
-SpeciesAtom *SpeciesAngle::i() const { return i_; }
+// Return first SpeciesParticle
+SpeciesParticle *SpeciesAngle::i() const { return i_; }
 
-// Return second (central) SpeciesAtom
-SpeciesAtom *SpeciesAngle::j() const { return j_; }
+// Return second (central) SpeciesParticle
+SpeciesParticle *SpeciesAngle::j() const { return j_; }
 
-// Return third SpeciesAtom
-SpeciesAtom *SpeciesAngle::k() const { return k_; }
+// Return third SpeciesParticle
+SpeciesParticle *SpeciesAngle::k() const { return k_; }
 
 // Return vector of involved atoms
-std::vector<const SpeciesAtom *> SpeciesAngle::atoms() const { return {i_, j_, k_}; }
+std::vector<const SpeciesParticle *> SpeciesAngle::atoms() const { return {i_, j_, k_}; }
 
-// Return index (in parent Species) of first SpeciesAtom
+// Return index (in parent Species) of first SpeciesParticle
 int SpeciesAngle::indexI() const
 {
     assert(i_);
     return i_->index();
 }
 
-// Return index (in parent Species) of second (central) SpeciesAtom
+// Return index (in parent Species) of second (central) SpeciesParticle
 int SpeciesAngle::indexJ() const
 {
     assert(j_);
     return j_->index();
 }
 
-// Return index (in parent Species) of third SpeciesAtom
+// Return index (in parent Species) of third SpeciesParticle
 int SpeciesAngle::indexK() const
 {
     assert(k_);
     return k_->index();
 }
 
-// Return index (in parent Species) of nth SpeciesAtom in interaction
+// Return index (in parent Species) of nth SpeciesParticle in interaction
 int SpeciesAngle::index(int n) const
 {
     if (n == 0)
@@ -139,12 +139,12 @@ int SpeciesAngle::index(int n) const
     else if (n == 2)
         return indexK();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n", n);
+    Messenger::error("SpeciesParticle index {} is out of range in SpeciesAngle::index(int). Returning 0...\n", n);
     return 0;
 }
 
 // Return whether Atoms in Angle match those specified
-bool SpeciesAngle::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const
+bool SpeciesAngle::matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k) const
 {
     return (j_ == j) && ((i_ == i && k_ == k) || (i_ == k && k_ == i));
 }

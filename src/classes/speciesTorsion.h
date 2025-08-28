@@ -11,7 +11,7 @@
 #include <vector>
 
 // Forward Declarations
-class SpeciesAtom;
+class SpeciesParticle;
 class Species;
 class CoreData;
 
@@ -20,7 +20,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
-    SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesTorsion(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k, SpeciesParticle *l);
     ~SpeciesTorsion() override;
     SpeciesTorsion(SpeciesTorsion &source);
     SpeciesTorsion(SpeciesTorsion &&source) noexcept;
@@ -31,14 +31,14 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
      * Atom Information
      */
     private:
-    // First SpeciesAtom in interaction
-    SpeciesAtom *i_{nullptr};
-    // Second SpeciesAtom in interaction
-    SpeciesAtom *j_{nullptr};
-    // Third SpeciesAtom in interaction
-    SpeciesAtom *k_{nullptr};
-    // Fourth SpeciesAtom in interaction
-    SpeciesAtom *l_{nullptr};
+    // First SpeciesParticle in interaction
+    SpeciesParticle *i_{nullptr};
+    // Second SpeciesParticle in interaction
+    SpeciesParticle *j_{nullptr};
+    // Third SpeciesParticle in interaction
+    SpeciesParticle *k_{nullptr};
+    // Fourth SpeciesParticle in interaction
+    SpeciesParticle *l_{nullptr};
 
     private:
     // Detach from current atoms
@@ -46,31 +46,31 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 
     public:
     // Set Atoms involved in Torsion
-    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Rewrite SpeciesAtom pointer
-    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
-    // Return first SpeciesAtom
-    SpeciesAtom *i() const;
-    // Return second SpeciesAtom
-    SpeciesAtom *j() const;
-    // Return third SpeciesAtom
-    SpeciesAtom *k() const;
-    // Return fourth SpeciesAtom
-    SpeciesAtom *l() const;
+    void assign(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k, SpeciesParticle *l);
+    // Rewrite SpeciesParticle pointer
+    void switchAtom(const SpeciesParticle *oldPtr, SpeciesParticle *newPtr);
+    // Return first SpeciesParticle
+    SpeciesParticle *i() const;
+    // Return second SpeciesParticle
+    SpeciesParticle *j() const;
+    // Return third SpeciesParticle
+    SpeciesParticle *k() const;
+    // Return fourth SpeciesParticle
+    SpeciesParticle *l() const;
     // Return vector of involved atoms
-    std::vector<const SpeciesAtom *> atoms() const override;
-    // Return index (in parent Species) of first SpeciesAtom
+    std::vector<const SpeciesParticle *> atoms() const override;
+    // Return index (in parent Species) of first SpeciesParticle
     int indexI() const;
-    // Return index (in parent Species) of second SpeciesAtom
+    // Return index (in parent Species) of second SpeciesParticle
     int indexJ() const;
-    // Return index (in parent Species) of third SpeciesAtom
+    // Return index (in parent Species) of third SpeciesParticle
     int indexK() const;
-    // Return index (in parent Species) of fourth SpeciesAtom
+    // Return index (in parent Species) of fourth SpeciesParticle
     int indexL() const;
-    // Return index (in parent Species) of nth SpeciesAtom in interaction
+    // Return index (in parent Species) of nth SpeciesParticle in interaction
     int index(int n) const;
-    // Return whether SpeciesAtoms match those specified
-    bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const;
+    // Return whether SpeciesParticles match those specified
+    bool matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k, const SpeciesParticle *l) const;
     // Return whether all atoms in the interaction are currently selected
     bool isSelected() const;
 

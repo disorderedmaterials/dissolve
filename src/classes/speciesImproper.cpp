@@ -3,12 +3,12 @@
 
 #include "classes/speciesImproper.h"
 #include "classes/coreData.h"
-#include "classes/speciesAtom.h"
+#include "classes/speciesParticle.h"
 #include "classes/speciesTorsion.h"
 
 SpeciesImproper::SpeciesImproper() : SpeciesIntra(TorsionFunctions::Form::None) {}
 
-SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+SpeciesImproper::SpeciesImproper(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k, SpeciesParticle *l)
     : SpeciesIntra(TorsionFunctions::Form::None)
 {
     assign(i, j, k, l);
@@ -68,8 +68,8 @@ SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source) noexcept
  * Atom Information
  */
 
-// Rewrite SpeciesAtom pointer
-void SpeciesImproper::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
+// Rewrite SpeciesParticle pointer
+void SpeciesImproper::switchAtom(const SpeciesParticle *oldPtr, SpeciesParticle *newPtr)
 {
     assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr || l_ == oldPtr);
 
@@ -84,7 +84,7 @@ void SpeciesImproper::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
 }
 
 // Set Atoms involved in Improper
-void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+void SpeciesImproper::assign(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k, SpeciesParticle *l)
 {
     i_ = i;
     j_ = j;
@@ -115,56 +115,56 @@ void SpeciesImproper::detach()
     l_ = nullptr;
 }
 
-// Return first SpeciesAtom
-SpeciesAtom *SpeciesImproper::i() const { return i_; }
+// Return first SpeciesParticle
+SpeciesParticle *SpeciesImproper::i() const { return i_; }
 
-// Return second SpeciesAtom
-SpeciesAtom *SpeciesImproper::j() const { return j_; }
+// Return second SpeciesParticle
+SpeciesParticle *SpeciesImproper::j() const { return j_; }
 
-// Return third SpeciesAtom
-SpeciesAtom *SpeciesImproper::k() const { return k_; }
+// Return third SpeciesParticle
+SpeciesParticle *SpeciesImproper::k() const { return k_; }
 
-// Return fourth SpeciesAtom
-SpeciesAtom *SpeciesImproper::l() const { return l_; }
+// Return fourth SpeciesParticle
+SpeciesParticle *SpeciesImproper::l() const { return l_; }
 
 // Return vector of involved atoms
-std::vector<const SpeciesAtom *> SpeciesImproper::atoms() const { return {i_, j_, k_, l_}; }
+std::vector<const SpeciesParticle *> SpeciesImproper::atoms() const { return {i_, j_, k_, l_}; }
 
-// Return whether the improper uses the specified SpeciesAtom
-bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
+// Return whether the improper uses the specified SpeciesParticle
+bool SpeciesImproper::uses(SpeciesParticle *spAtom) const
 {
     return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom));
 }
 
-// Return index (in parent Species) of first SpeciesAtom
+// Return index (in parent Species) of first SpeciesParticle
 int SpeciesImproper::indexI() const
 {
     assert(i_);
     return i_->index();
 }
 
-// Return index (in parent Species) of second (central) SpeciesAtom
+// Return index (in parent Species) of second (central) SpeciesParticle
 int SpeciesImproper::indexJ() const
 {
     assert(j_);
     return j_->index();
 }
 
-// Return index (in parent Species) of third SpeciesAtom
+// Return index (in parent Species) of third SpeciesParticle
 int SpeciesImproper::indexK() const
 {
     assert(k_);
     return k_->index();
 }
 
-// Return index (in parent Species) of fourth SpeciesAtom
+// Return index (in parent Species) of fourth SpeciesParticle
 int SpeciesImproper::indexL() const
 {
     assert(l_);
     return l_->index();
 }
 
-// Return index (in parent Species) of nth SpeciesAtom in interaction
+// Return index (in parent Species) of nth SpeciesParticle in interaction
 int SpeciesImproper::index(int n) const
 {
     if (n == 0)
@@ -176,12 +176,12 @@ int SpeciesImproper::index(int n) const
     else if (n == 3)
         return indexL();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesImproper::index(int). Returning 0...\n", n);
+    Messenger::error("SpeciesParticle index {} is out of range in SpeciesImproper::index(int). Returning 0...\n", n);
     return 0;
 }
 
 // Return whether Atoms in Improper match those specified
-bool SpeciesImproper::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const
+bool SpeciesImproper::matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k, const SpeciesParticle *l) const
 {
     if (i_ != i)
         return false;

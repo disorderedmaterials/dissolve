@@ -11,7 +11,7 @@
 #include <vector>
 
 // Forward Declarations
-class SpeciesAtom;
+class SpeciesParticle;
 class Species;
 class CoreData;
 
@@ -20,7 +20,7 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
-    SpeciesBond(SpeciesAtom *i, SpeciesAtom *j);
+    SpeciesBond(SpeciesParticle *i, SpeciesParticle *j);
     ~SpeciesBond() override = default;
     SpeciesBond(SpeciesBond &source);
     SpeciesBond(SpeciesBond &&source) noexcept;
@@ -28,37 +28,37 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     SpeciesBond &operator=(SpeciesBond &&source) noexcept;
 
     /*
-     * SpeciesAtom Information
+     * SpeciesParticle Information
      */
     private:
-    // First SpeciesAtom in interaction
-    SpeciesAtom *i_{nullptr};
-    // Second SpeciesAtom in interaction
-    SpeciesAtom *j_{nullptr};
+    // First SpeciesParticle in interaction
+    SpeciesParticle *i_{nullptr};
+    // Second SpeciesParticle in interaction
+    SpeciesParticle *j_{nullptr};
 
     public:
     // Assign the two atoms in the bond
-    void assign(SpeciesAtom *i, SpeciesAtom *j);
+    void assign(SpeciesParticle *i, SpeciesParticle *j);
     // Set scaled intramolecular interactions on the involved atoms
     void addScaledInteractions();
-    // Rewrite SpeciesAtom pointer
-    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
-    // Return first SpeciesAtom
-    SpeciesAtom *i() const;
-    // Return second SpeciesAtom
-    SpeciesAtom *j() const;
+    // Rewrite SpeciesParticle pointer
+    void switchAtom(const SpeciesParticle *oldPtr, SpeciesParticle *newPtr);
+    // Return first SpeciesParticle
+    SpeciesParticle *i() const;
+    // Return second SpeciesParticle
+    SpeciesParticle *j() const;
     // Return vector of involved atoms
-    std::vector<const SpeciesAtom *> atoms() const override;
-    // Return the 'other' SpeciesAtom
-    SpeciesAtom *partner(const SpeciesAtom *i) const;
-    // Return index (in parent Species) of first SpeciesAtom
+    std::vector<const SpeciesParticle *> atoms() const override;
+    // Return the 'other' SpeciesParticle
+    SpeciesParticle *partner(const SpeciesParticle *i) const;
+    // Return index (in parent Species) of first SpeciesParticle
     int indexI() const;
-    // Return index (in parent Species) of second SpeciesAtom
+    // Return index (in parent Species) of second SpeciesParticle
     int indexJ() const;
-    // Return index (in parent Species) of nth SpeciesAtom
+    // Return index (in parent Species) of nth SpeciesParticle
     int index(int n) const;
-    // Return whether SpeciesAtoms match those specified
-    bool matches(const SpeciesAtom *i, const SpeciesAtom *j) const;
+    // Return whether SpeciesParticles match those specified
+    bool matches(const SpeciesParticle *i, const SpeciesParticle *j) const;
     // Return whether all atoms in the interaction are currently selected
     bool isSelected() const;
     // Detach from current atoms

@@ -12,7 +12,7 @@
 #include <vector>
 
 // Forward Declarations
-class SpeciesAtom;
+class SpeciesParticle;
 class Species;
 
 // Base class for intramolecular interactions within Species
@@ -36,11 +36,11 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
 
     /*
-     * SpeciesAtom Information
+     * SpeciesParticle Information
      */
     public:
     // Return vector of involved atoms
-    virtual std::vector<const SpeciesAtom *> atoms() const = 0;
+    virtual std::vector<const SpeciesParticle *> atoms() const = 0;
 
     /*
      * Interaction Parameters

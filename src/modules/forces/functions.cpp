@@ -68,11 +68,11 @@ void ForcesModule::totalForces(const Species *sp, const PotentialMap &potentialM
         assert(sp->nAtoms() == r->get().size());
 
     // Set position retrieval function
-    std::function<Vector3(int, const SpeciesAtom *)> rFunction;
+    std::function<Vector3(int, const SpeciesParticle *)> rFunction;
     if (r)
-        rFunction = [&r, sp](int id, const SpeciesAtom *i) { return r->get()[id]; };
+        rFunction = [&r, sp](int id, const SpeciesParticle *i) { return r->get()[id]; };
     else
-        rFunction = [sp](int id, const SpeciesAtom *i) { return i->r(); };
+        rFunction = [sp](int id, const SpeciesParticle *i) { return i->r(); };
 
     // Zero force arrays
     std::fill(fUnbound.begin(), fUnbound.end(), Vector3());

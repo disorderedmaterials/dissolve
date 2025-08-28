@@ -122,7 +122,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath)
     std::map<const SpeciesAtom *, std::pair<int, NETAMatchedGroup>> neighbours;
     for (const SpeciesBond &bond : i->bonds())
     {
-        const auto *partner = bond.partner(i);
+        const auto *partner = dynamic_cast<SpeciesAtom*>(bond.partner(i));
 
         // Search for this atom in the current match path
         if (!matchPath.contains(partner) || (allowRootMatch_ && matchPath.isRoot(partner)))

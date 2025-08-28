@@ -3,13 +3,13 @@
 
 #include "classes/speciesTorsion.h"
 #include "classes/coreData.h"
-#include "classes/speciesAtom.h"
+#include "classes/speciesParticle.h"
 #include "math/mathFunc.h"
 #include <map>
 
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(TorsionFunctions::Form::None) {}
 
-SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+SpeciesTorsion::SpeciesTorsion(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k, SpeciesParticle *l)
     : SpeciesIntra(TorsionFunctions::Form::None)
 {
     assign(i, j, k, l);
@@ -70,8 +70,8 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source) noexcept
  * Atom Information
  */
 
-// Rewrite SpeciesAtom pointer
-void SpeciesTorsion::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
+// Rewrite SpeciesParticle pointer
+void SpeciesTorsion::switchAtom(const SpeciesParticle *oldPtr, SpeciesParticle *newPtr)
 {
     assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr || l_ == oldPtr);
 
@@ -86,7 +86,7 @@ void SpeciesTorsion::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
 }
 
 // Set Atoms involved in Torsion
-void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+void SpeciesTorsion::assign(SpeciesParticle *i, SpeciesParticle *j, SpeciesParticle *k, SpeciesParticle *l)
 {
     i_ = i;
     j_ = j;
@@ -116,50 +116,50 @@ void SpeciesTorsion::detach()
     l_ = nullptr;
 }
 
-// Return first SpeciesAtom
-SpeciesAtom *SpeciesTorsion::i() const { return i_; }
+// Return first SpeciesParticle
+SpeciesParticle *SpeciesTorsion::i() const { return i_; }
 
-// Return second SpeciesAtom
-SpeciesAtom *SpeciesTorsion::j() const { return j_; }
+// Return second SpeciesParticle
+SpeciesParticle *SpeciesTorsion::j() const { return j_; }
 
-// Return third SpeciesAtom
-SpeciesAtom *SpeciesTorsion::k() const { return k_; }
+// Return third SpeciesParticle
+SpeciesParticle *SpeciesTorsion::k() const { return k_; }
 
-// Return fourth SpeciesAtom
-SpeciesAtom *SpeciesTorsion::l() const { return l_; }
+// Return fourth SpeciesParticle
+SpeciesParticle *SpeciesTorsion::l() const { return l_; }
 
 // Return vector of involved atoms
-std::vector<const SpeciesAtom *> SpeciesTorsion::atoms() const { return {i_, j_, k_, l_}; }
+std::vector<const SpeciesParticle *> SpeciesTorsion::atoms() const { return {i_, j_, k_, l_}; }
 
-// Return index (in parent Species) of first SpeciesAtom
+// Return index (in parent Species) of first SpeciesParticle
 int SpeciesTorsion::indexI() const
 {
     assert(i_);
     return i_->index();
 }
 
-// Return index (in parent Species) of second (central) SpeciesAtom
+// Return index (in parent Species) of second (central) SpeciesParticle
 int SpeciesTorsion::indexJ() const
 {
     assert(j_);
     return j_->index();
 }
 
-// Return index (in parent Species) of third SpeciesAtom
+// Return index (in parent Species) of third SpeciesParticle
 int SpeciesTorsion::indexK() const
 {
     assert(k_);
     return k_->index();
 }
 
-// Return index (in parent Species) of fourth SpeciesAtom
+// Return index (in parent Species) of fourth SpeciesParticle
 int SpeciesTorsion::indexL() const
 {
     assert(l_);
     return l_->index();
 }
 
-// Return index (in parent Species) of nth SpeciesAtom in interaction
+// Return index (in parent Species) of nth SpeciesParticle in interaction
 int SpeciesTorsion::index(int n) const
 {
     if (n == 0)
@@ -171,12 +171,12 @@ int SpeciesTorsion::index(int n) const
     else if (n == 3)
         return indexL();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesTorsion::index(int). Returning 0...\n", n);
+    Messenger::error("SpeciesParticle index {} is out of range in SpeciesTorsion::index(int). Returning 0...\n", n);
     return 0;
 }
 
 // Return whether Atoms in Torsion match those specified
-bool SpeciesTorsion::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const
+bool SpeciesTorsion::matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k, const SpeciesParticle *l) const
 {
     return (i_ == i && j_ == j && k_ == k && l_ == l) || (i_ == l && j_ == k && k_ == j && l_ == i);
 }

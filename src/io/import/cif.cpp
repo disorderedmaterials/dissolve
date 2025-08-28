@@ -1244,14 +1244,14 @@ CIFHandler::matchAtom(const SpeciesAtom *referenceAtom, const SpeciesAtom *insta
     for (const auto &referenceBond : referenceAtom->bonds())
     {
         // Get the reference bond partner
-        auto *referenceBondPartner = referenceBond.get().partner(referenceAtom);
+        auto *referenceBondPartner = dynamic_cast<SpeciesAtom*>(referenceBond.get().partner(referenceAtom));
 
         // Try to find a match over bonds on the instance atom
         std::map<const SpeciesAtom *, const SpeciesAtom *> bondResult;
         for (const auto &instanceBond : instanceAtom->bonds())
         {
             // Get the instance bond partner
-            auto *instanceBondPartner = instanceBond.get().partner(instanceAtom);
+            auto *instanceBondPartner = dynamic_cast<SpeciesAtom*>(instanceBond.get().partner(instanceAtom));
 
             // Recurse
             bondResult = matchAtom(referenceBondPartner, instanceBondPartner, refNETA, newMap);

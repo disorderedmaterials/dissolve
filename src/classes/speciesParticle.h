@@ -5,9 +5,14 @@
 
 #include "base/serialiser.h"
 #include "math/vector3.h"
+#include "templates/optionalRef.h"
 
 // Forward Declarations 
 class CoreData; 
+class SpeciesAngle;
+class SpeciesBond;
+class SpeciesImproper;
+class SpeciesTorsion;
 
 class SpeciesParticle : public Serialisable<CoreData&>
 {
@@ -46,13 +51,71 @@ class SpeciesParticle : public Serialisable<CoreData&>
     // Translate coordinates
     void translateCoordinates(const Vector3 &delta);
 
+    /*
+     * SpeciesIntra 
+     */
+    // Add bond reference
+    void addBond(SpeciesBond &b);
+    // Remove bond reference
+    void removeBond(SpeciesBond &b);
+    // Return number of bonds
+    int nBonds() const;
+    // Return specified bond
+    SpeciesBond &bond(int index);
+    // Return bonds list
+    const std::vector<std::reference_wrapper<SpeciesBond>> &bonds() const;
+    // Return whether bond to specified atom exists
+    OptionalReferenceWrapper<SpeciesBond> getBond(const SpeciesParticle *j);
+    // Add specified Angle to Atom
+    void addAngle(SpeciesAngle &angle);
+    // Remove angle reference
+    void removeAngle(SpeciesAngle &a);
+    // Return the number of SpeciesAngles in which the Atom is involved
+    int nAngles() const;
+    // Return specified angle
+    SpeciesAngle &angle(int index);
+    // Return array of Angles in which the Atom is involved
+    const std::vector<std::reference_wrapper<SpeciesAngle>> &angles() const;
+    // Add specified SpeciesTorsion to Atom
+    void addTorsion(SpeciesTorsion &torsion);
+    // Remove torsion reference
+    void removeTorsion(SpeciesTorsion &t);
+    // Return the number of SpeciesTorsions in which the Atom is involved
+    int nTorsions() const;
+    // Return specified torsion
+    SpeciesTorsion &torsion(int index);
+    // Return array of Torsions in which the Atom is involved
+    const std::vector<std::reference_wrapper<SpeciesTorsion>> &torsions() const;
+    // Add specified SpeciesImproper to Atom
+    void addImproper(SpeciesImproper &improper);
+    // Remove improper reference
+    void removeImproper(SpeciesImproper &t);
+    // Return the number of SpeciesImpropers in which the Atom is involved
+    int nImpropers() const;
+    // Return specified improper
+    SpeciesImproper &improper(int index);
+    // Return array of Impropers in which the Atom is involved
+    const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
+
     protected:
     // Index in Species 
     int index_{-1};
     // Whether the SpeciesParticle is currently selected 
-    bool selected_{false};      
+    bool selected_{false};    
+
+    // TODO: Make these private 
+    // Vector of bonds which this atom participates in
+    std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
+    // Vector of angles which this atom participates in
+    std::vector<std::reference_wrapper<SpeciesAngle>> angles_;
+    // Vector of torsions which this atom participates in
+    std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
+    // Vector of torsions which this atom participates in
+    std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
 
     private:
     // Coordinates 
     Vector3 r_ { 0.0, 0.0, 0.0 };
+
+    
 };
