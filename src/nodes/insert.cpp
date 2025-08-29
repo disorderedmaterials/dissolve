@@ -200,17 +200,6 @@ NodeConstants::ProcessResult InsertNode::process()
         }
     }
 
-    // Prepare for energy calculation, generate kernel
-    std::vector<std::shared_ptr<AtomType>> atomTypes;
-    auto atomTypePop = species_->atomTypePopulations();
-    atomTypes.reserve(atomTypePop.size());
-    for (const auto &at : atomTypePop)
-        atomTypes.push_back(std::make_shared<AtomType>(at.first->Z(), at.first->name()));
-
-    auto kernel = DissolveGraph::prepareEnergyCalculation(dissolve(), {}, configuration_);
-
-    configuration_->updateCells(kernel.get()->potentialMap().range());
-
     Messenger::print("[InsertRandom] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n",
                      configuration_->atomicDensity().value_or(0.0), configuration_->chemicalDensity().value_or(0.0));
 
