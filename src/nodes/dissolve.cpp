@@ -27,10 +27,9 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  */
 
 // Return maximum distance for tabulated PairPotentials
-double Dissolve::pairPotentialRange() const { return pairPotentialRange_; }
+double Dissolve::pairPotentialRange() { return pairPotentialRange_; }
 
 // Return first PairPotential in list
-const std::vector<PairPotential::Definition> &Dissolve::pairPotentials() const { return pairPotentials_; }
 std::vector<PairPotential::Definition> &Dissolve::pairPotentials() { return pairPotentials_; }
 
 // Return energy kernel containing potential map

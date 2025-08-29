@@ -44,9 +44,8 @@ class DissolveGraph : public Graph
      */
     public:
     // Return maximum distance for tabulated PairPotentials
-    double pairPotentialRange() const;
+    double pairPotentialRange();
     // Return first PairPotential in list
-    const std::vector<PairPotential::Definition> &pairPotentials() const;
     std::vector<PairPotential::Definition> &pairPotentials();
     // Return energy kernel containing potential map
     std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff = {});
