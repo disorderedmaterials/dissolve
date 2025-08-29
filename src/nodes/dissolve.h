@@ -6,6 +6,7 @@
 #include "main/dissolve.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "templates/doubleKeyedMap.h"
 
 class EnergyKernel;
 class PotentialMap;
@@ -34,6 +35,10 @@ class DissolveGraph : public Graph
     private:
     // Dissolve reference
     Dissolve &dissolve_;
+    // Pair potential store
+    DoubleKeyedMap<PairPotential::Definition> pairPotentialStore_{true};
+    // Pair potential range
+    double pairPotentialRange_{0.0};
 
     public:
     // Return dissolve
@@ -46,7 +51,9 @@ class DissolveGraph : public Graph
     // Return maximum distance for tabulated PairPotentials
     double pairPotentialRange();
     // Return first PairPotential in list
-    std::vector<PairPotential::Definition> &pairPotentials();
+    const std::vector<PairPotential::Definition> &pairPotentials();
     // Return energy kernel containing potential map
     std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff = {});
+    // Update pair potential store
+    void updatePairPotentials(const AtomType &i, const AtomType &j);
 };

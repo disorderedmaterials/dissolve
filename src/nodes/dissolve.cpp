@@ -27,10 +27,14 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
  */
 
 // Return maximum distance for tabulated PairPotentials
-double Dissolve::pairPotentialRange() { return pairPotentialRange_; }
+double DissolveGraph::pairPotentialRange() { return pairPotentialRange_; }
 
 // Return first PairPotential in list
-std::vector<PairPotential::Definition> &Dissolve::pairPotentials() { return pairPotentials_; }
+const std::vector<PairPotential::Definition> &DissolveGraph::pairPotentials()
+{
+    auto values = std::views::values(pairPotentialStore_.map());
+    return {values.begin(), values.end()};
+}
 
 // Return energy kernel containing potential map
 std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff)
@@ -48,4 +52,16 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
 
     return KernelProducer::energyKernel(cfg, potentialMap, energyCutoff);
+}
+
+// Update pair potential store
+void DissolveGraph::updatePairPotentials(const AtomType &i, const AtomType &j)
+{
+    auto nameI = i.name(), nameJ = j.name();
+    if (pairPotentialStore_.contains(nameI, nameJ))
+        return;
+
+    pairPotentialStore_.set(
+        nameI, nameJ,
+        {std::make_shared<AtomType>(i), std::make_shared<AtomType>(j), std::make_unique<PairPotential>(nameI, nameJ)});
 }
