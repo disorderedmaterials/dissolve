@@ -31,6 +31,11 @@ runs:
   # Setup / Install Dependencies
   #
 
+  - name: Choose XCode version
+    shell: bash
+    run: |
+      sudo xcode-select -s /Applications/Xcode_16.2.app
+
   - name: Manage Homebrew Dependencies
     shell: bash
     run: |
