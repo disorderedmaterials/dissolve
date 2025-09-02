@@ -223,6 +223,16 @@ ApplicationWindow {
                     Label {
                         text: "Edges: " + graphModel.edgeCount
                     }
+                    ToolButton {
+                        enabled: !graphModel.atRoot
+                        icon.color: graphModel.atRoot ? "grey" : "transparent"
+                        icon.source: "qrc:/IconsModule/arrowUp.svg"
+
+                        onClicked: graphModel.upLevel()
+                    }
+                    Label {
+                        text: "Location: " + graphModel.location
+                    }
                 }
             }
             GraphView {
@@ -240,6 +250,9 @@ ApplicationWindow {
                     GraphDelegate {
                         rootModel: graphModel
 
+                        onDescended: function (idx) {
+                            graphModel.descend(idx);
+                        }
                         onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
                             graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
                         }

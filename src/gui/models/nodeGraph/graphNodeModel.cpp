@@ -18,6 +18,7 @@ enum Role
     INPUTS,
     OUTPUTS,
     OPTIONS,
+    INNER_GRAPH,
 };
 
 GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
@@ -54,6 +55,7 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + (int)INPUTS] = "inputs";
     roles[Qt::UserRole + (int)OUTPUTS] = "outputs";
     roles[Qt::UserRole + (int)OPTIONS] = "options";
+    roles[Qt::UserRole + (int)INNER_GRAPH] = "inner_graph";
     return roles;
 }
 
@@ -79,6 +81,8 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(item.outputs.get());
         case OPTIONS:
             return QVariant::fromValue(item.options.get());
+        case INNER_GRAPH:
+            return item.hasInner();
     }
     return {};
 }

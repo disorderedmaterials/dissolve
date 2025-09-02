@@ -31,6 +31,9 @@ class NodeWrapper
     Node &rawValue() { return *value_; }
     const Node &rawValue() const { return *value_; }
 
+    // Does this node contain other nodes?
+    bool hasInner() { return dynamic_cast<Graph *>(value_) != nullptr; }
+
     private:
     // The actual value of the node
     Node *value_;

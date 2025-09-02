@@ -237,6 +237,14 @@ Graph::Nodes &Graph::nodes() { return nodes_; }
 // Return edges on the graph
 Graph::Edges &Graph::edges() { return edges_; }
 
+// Return a path to this graph from the root
+std::string Graph::location() const
+{
+    if (!parentGraph_)
+        return std::string("/") + std::string(name());
+    return parentGraph_->location() + "/" + std::string(name());
+}
+
 /*
  * I/O
  */
