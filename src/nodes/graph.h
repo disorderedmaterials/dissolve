@@ -100,6 +100,8 @@ class Graph : public Node
     Nodes &nodes();
     // Return container of edges between nodes
     Edges &edges();
+    // Return a path to this graph from the root
+    std::string location() const;
 
     /*
      * I/O
