@@ -32,7 +32,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("\n");
 
     // Prepare for energy calculation, generate kernel
-    auto dissolveNode = parentGraph()->node("Dissolve");
+    auto dissolveNode = dissolveGraph();
     auto kernel = static_cast<DissolveGraph*>(dissolveNode)->prepareEnergyCalculation(targetConfiguration_);
 
     targetConfiguration_->updateCells(kernel.get()->potentialMap().range());

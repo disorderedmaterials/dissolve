@@ -259,6 +259,8 @@ class Node : public Serialisable<>
     Graph *parentGraph() const;
     // Return the Dissolve reference
     virtual Dissolve &dissolve() const;
+    // Return the DissolveGraph reference
+    virtual Node *dissolveGraph() const;
 
     /*
      * Data
