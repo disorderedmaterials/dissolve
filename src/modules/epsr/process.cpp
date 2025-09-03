@@ -72,14 +72,6 @@ bool EPSRModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> act
         rho = targetConfiguration_->atomicDensity();
     }
 
-    // Realise storage for generated S(Q), and initialise a scattering matrix, but only if we have a valid configuration
-    if (targetConfiguration_)
-    {
-        auto &estimatedSQ =
-            dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-        scatteringMatrix_.initialise(targetConfiguration_->atomTypeVector(), estimatedSQ);
-    }
-
     // If a pcof file was provided, read in the parameters from it here
     if (!pCofFilename_.empty())
     {
@@ -120,6 +112,9 @@ bool EPSRModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> act
 
     // Try to calculate the deltaSQ array
     updateDeltaSQ(dissolve.processingModuleData());
+
+    // Clear any existing scattering matrix
+    scatteringMatrix_ = std::nullopt;
 
     return true;
 }
@@ -208,7 +203,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
      */
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
-    const auto &atomTypes = scatteringMatrix_.atomTypes();
+    const auto atomTypes = targetConfiguration_->atomTypeVector();
     const auto nAtomTypes = atomTypes.size();
 
     Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
@@ -220,20 +215,29 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     dissolve::for_each_pair(ParallelPolicies::par, atomTypes, [&](int i, auto at1, int j, auto at2)
                             { calculatedUnweightedSQ[{i, j}].setTag(std::format("{}-{}", at1->name(), at2->name())); });
 
-    // Is our scattering matrix fully set-up and just requiring updated data?
-    auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;
-
     // Get summed weights over all datasets
     const auto totalDataSetWeight =
         std::accumulate(targetWeights_.begin(), targetWeights_.end(), 0.0,
                         [](const auto acc, const auto &targetWeight) { return acc + targetWeight.second; }) +
         (targets_.size() - targetWeights_.size());
 
+    // Realise storage for generated S(Q) and initialise a scattering matrix
+    auto &&[estimatedSQ, estimatedSQStatus] =
+        dissolve.processingModuleData().realiseIf<DoubleKeyedMap<Data1D>>("EstimatedSQ", name_);
+    if (estimatedSQStatus == GenericItem::ItemStatus::Created)
+    {
+        // Create partials array
+        estimatedSQ.clear(true);
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, atomTypes, [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
+            { estimatedSQ.get(typeI->name(), typeJ->name()).setTag(std::format("{}-{}", typeI->name(), typeJ->name())); });
+    }
+    if (!scatteringMatrix_)
+        scatteringMatrix_.emplace(atomTypes);
+
     // Loop over target data
     auto rFacTot = 0.0;
     std::vector<double> rangedRFacTots(ranges_.size());
-
-    // Loop over target data
     for (auto *module : targets_)
     {
         /*
@@ -443,12 +447,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
-                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
-            {
-                Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
-                return ExecutionResult::Failed;
-            }
+            scatteringMatrix_->setRow({"Neutron", module->name()}, refMinusIntra, weights, dataSetWeight);
         }
         else if (module->type() == ModuleTypes::XRaySQ)
         {
@@ -476,12 +475,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                refMinusIntra.values().begin(), std::divides<>());
             }
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
-                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
-            {
-                Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
-                return ExecutionResult::Failed;
-            }
+            scatteringMatrix_->setRow({"XRay", module->name()}, refMinusIntra, weights, dataSetWeight);
         }
         else
         {
@@ -495,8 +489,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
          */
 
         // Add the unweighted from this target to our combined, unweighted S(Q) data
-        auto &types = scatteringMatrix_.atomTypes();
-        dissolve::for_each_pair(ParallelPolicies::seq, types,
+        dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                                 [&](int i, const auto &at1, int j, const auto &at2)
                                 {
                                     auto pairIndex = scatteringMatrix_.pairIndexOf(at1, at2);
@@ -546,32 +539,20 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
      */
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
-    auto success = for_each_pair_early(
-        atomTypes,
-        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-        {
-            // Copy and rename the data for clarity
-            auto data = calculatedUnweightedSQ[{i, j}];
-            data.setTag(std::format("Simulated {}-{}", at1->name(), at2->name()));
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
+                            [&](int i, auto &at1, int j, auto &at2)
+                            {
+                                // Copy and rename the data for clarity
+                                auto data = calculatedUnweightedSQ[{i, j}];
+                                data.setTag(std::format("Simulated {}-{}", at1->name(), at2->name()));
 
-            // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
-                                      : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
-            {
-                Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n", at1->name(), at2->name());
-                return false;
-            }
+                                scatteringMatrix_->setRow({at1->name(), at2->name()}, data, at1, at2, 1.0 - feedback_);
+                            });
 
-            return EarlyReturn<bool>::Continue;
-        });
-    if (!success.value_or(true))
-        return ExecutionResult::Failed;
+    // Make sure inverse matrices are up-to-date
+    scatteringMatrix_->generateMatrices();
 
-    // If the scattering matrix was not set-up, need to generate the necessary inverse matrix or matrices here
-    if (!scatteringMatrixSetUp)
-        scatteringMatrix_.generateMatrices();
-
-    scatteringMatrix_.print();
+    scatteringMatrix_->print();
 
     if (Messenger::isVerbose())
     {
@@ -586,17 +567,16 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
      * Generate S(Q) from completed scattering matrix
      */
 
-    auto &estimatedSQ = moduleData.realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
     scatteringMatrix_.generatePartials(estimatedSQ);
     updateDeltaSQ(moduleData, calculatedUnweightedSQ, estimatedSQ);
 
     // Save data?
     if (saveEstimatedPartials_)
     {
-        for (auto &sq : estimatedSQ)
+        for (auto &[key, data] : estimatedSQ)
         {
-            Data1DExportFileFormat exportFormat(std::format("{}-EstSQ-{}.txt", name_, sq.tag()));
-            if (!exportFormat.exportData(sq))
+            Data1DExportFileFormat exportFormat(std::format("{}-EstSQ-{}.txt", name_, data.tag()));
+            if (!exportFormat.exportData(data))
                 return ExecutionResult::Failed;
         }
     }
@@ -636,7 +616,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
             ParallelPolicies::seq, atomTypes,
             [&](int i, auto at1, int j, auto at2)
             {
-                auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.columnIndex(at1, at2), dataIndex}];
+                auto weight = scatteringMatrix_->qZeroMatrixInverse()[{scatteringMatrix_->columnIndex(at1, at2), dataIndex}];
 
                 /*
                  * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear

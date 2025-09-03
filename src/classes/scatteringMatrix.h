@@ -16,9 +16,20 @@
 // Forward Declarations
 class AtomType;
 
+struct ScatteringMatrixRow
+{
+    Data1D data;
+    std::vector<double> coefficients;
+    std::optional<XRayWeights> xRayWeights;
+    StructureFactors::NormalisationType xRayNormalisation;
+};
+
 // Scattering Matrix Container
 class ScatteringMatrix
 {
+    public:
+    ScatteringMatrix(const std::vector<const AtomType *> &atomTypes);
+
     /*
      * Data
      *
@@ -33,16 +44,14 @@ class ScatteringMatrix
     std::vector<const AtomType *> atomTypes_;
     // Reference pairs of AtomTypes
     std::vector<std::pair<const AtomType *, const AtomType *>> typePairs_;
-    // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
-    Array2D<double> A_;
-    // Reference data (B) (n * 1)
-    std::vector<Data1D> data_;
-    // X-ray specification for reference data (if relevant)
-    std::vector<std::tuple<bool, std::optional<XRayWeights>, StructureFactors::NormalisationType>> xRayData_;
+    // Scattering matrix rows
+    DoubleKeyedMap<ScatteringMatrixRow> rows_;
     // Scattering matrix and inverse at Q = 0
     Array2D<double> qZeroMatrix_, qZeroInverse_;
     // Scattering matrix / inverse pairs at specific Q values
     std::vector<std::tuple<double, Array2D<double>, Array2D<double>>> qMatrices_;
+    // Whether the matrices up-to-date
+    bool matricesValid_{false};
 
     private:
     // Return whether Q-dependent weighting is required
@@ -82,17 +91,10 @@ class ScatteringMatrix
      * Construction
      */
     public:
-    // Initialise from supplied list of AtomTypes
-    void initialise(const std::vector<const AtomType *> &types, Array2D<Data1D> &estimatedSQ);
-    // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
-    bool addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor = 1.0);
-    // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
-    bool addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor = 1.0);
-    // Update reference data)
-    bool updateReferenceData(const Data1D &weightedData, double factor = 1.0);
-    // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-    bool addPartialReferenceData(Data1D &weightedData, const AtomType *at1, const AtomType *at2, double dataWeight,
-                                 double factor = 1.0);
-    // Return number of currently-defined reference data sets (== matrix rows)
-    int nReferenceData() const;
+    // Set data and coefficients for the supplied row (from NeutronWeights)
+    void setRow(DoubleKeyedMapKey key, const Data1D &data, const NeutronWeights &weights, double factor);
+    // Set data and coefficients for the supplied row (from XRayWeights)
+    void setRow(DoubleKeyedMapKey key, const Data1D &data, const XRayWeights &weights, double factor);
+    // Set data and coefficients for the supplied row (single coefficient)
+    void setRow(DoubleKeyedMapKey key, const Data1D &data, const AtomType *i, const AtomType *j, double factor);
 };

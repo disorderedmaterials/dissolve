@@ -45,7 +45,7 @@ class EPSRModule : public Module
     // Confidence factor
     double feedback_{0.9};
     // Scattering matrix
-    ScatteringMatrix scatteringMatrix_;
+    std::optional<ScatteringMatrix> scatteringMatrix_;
     // EPSR 'inpa' file from which to read deltaFQ fit coefficients from
     std::string inpaFilename_;
     // Maximum Q value over which to generate potentials from total scattering data
