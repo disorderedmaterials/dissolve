@@ -22,19 +22,15 @@ std::string_view DissolveGraph::summary() const { return "Parent node of all sim
 // Return dissolve
 Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
 
+// Return pair potential store
+const DoubleKeyedMap<PairPotential*> &DissolveGraph::pairPotentialStore() { return pairPotentialStore_; }
+
 /*
  * Functions
  */
 
 // Return maximum distance for tabulated PairPotentials
-double DissolveGraph::pairPotentialRange() { return pairPotentialRange_; }
-
-// Return first PairPotential in list
-const std::vector<PairPotential::Definition> &DissolveGraph::pairPotentials()
-{
-    auto values = std::views::values(pairPotentialStore_.map());
-    return {values.begin(), values.end()};
-}
+const double DissolveGraph::pairPotentialRange() const { return pairPotentialRange_; }
 
 // Return energy kernel containing potential map
 std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff)
@@ -44,9 +40,7 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
 
 	// Generate configuration potential map
     PotentialMap potentialMap;
-    auto atomTypeKeys = std::views::keys(cfg->atomTypeIndexMap());
-    std::vector<const AtomType *> atomTypes{atomTypeKeys.begin(), atomTypeKeys.end()};
-    potentialMap.initialise(atomTypes, pairPotentials(), pairPotentialRange());
+    potentialMap.initialise(cfg->atomTypeVector(), pairPotentialStore(), pairPotentialRange());
 
 	// Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
@@ -61,7 +55,9 @@ void DissolveGraph::updatePairPotentials(const AtomType &i, const AtomType &j)
     if (pairPotentialStore_.contains(nameI, nameJ))
         return;
 
+    auto interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
     pairPotentialStore_.set(
         nameI, nameJ,
-        {std::make_shared<AtomType>(i), std::make_shared<AtomType>(j), std::make_unique<PairPotential>(nameI, nameJ)});
+        interactionPotential.has_value() ? new PairPotential(nameI, nameJ, *interactionPotential) : new PairPotential(nameI, nameJ)
+    );
 }

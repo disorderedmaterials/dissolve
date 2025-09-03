@@ -5,6 +5,7 @@
 
 #include "classes/pairPotential.h"
 #include "templates/array2D.h"
+#include "templates/doubleKeyedMap.h"
 
 // Forward Declarations
 class Atom;
@@ -37,6 +38,8 @@ class PotentialMap
                     const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
     bool initialise(const std::vector<const AtomType *> &atomTypes,
                     const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
+    bool initialise(const std::vector<const AtomType *> &atomTypes,
+                    const DoubleKeyedMap<PairPotential*> &pairPotentials, double pairPotentialRange);
     // Return PairPotential range
     double range() const;
 

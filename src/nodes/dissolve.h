@@ -36,22 +36,22 @@ class DissolveGraph : public Graph
     // Dissolve reference
     Dissolve &dissolve_;
     // Pair potential store
-    DoubleKeyedMap<PairPotential::Definition> pairPotentialStore_{true};
+    DoubleKeyedMap<PairPotential*> pairPotentialStore_{true};
     // Pair potential range
     double pairPotentialRange_{0.0};
 
     public:
     // Return dissolve
-    Dissolve &dissolve() const override;
+    Dissolve &dissolve() const;
+    // Return pair potential store
+    const DoubleKeyedMap<PairPotential*> &pairPotentialStore();
 
     /*
      * Functions
      */
     public:
     // Return maximum distance for tabulated PairPotentials
-    double pairPotentialRange();
-    // Return first PairPotential in list
-    const std::vector<PairPotential::Definition> &pairPotentials();
+    const double pairPotentialRange() const;
     // Return energy kernel containing potential map
     std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff = {});
     // Update pair potential store
