@@ -55,8 +55,7 @@ function(dissolve_add_test)
     # Register the test
   if(MSVC_DEV)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
-    set_tests_properties(${TEST_NAME}
-        PROPERTIES WORKING_DIRECTORY ${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY})
+    set_tests_properties(${TEST_NAME} PROPERTIES WORKING_DIRECTORY ${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY})
   else(MSVC_DEV)
     gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY ${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY})
   endif(MSVC_DEV)
