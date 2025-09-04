@@ -54,6 +54,8 @@ class DissolveGraph : public Graph
     const double pairPotentialRange() const;
     // Return energy kernel containing potential map
     std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff = {});
+
+    private:
     // Update pair potential store
     void updatePairPotentials(const AtomType &i, const AtomType &j);
 };
