@@ -70,6 +70,7 @@ class GraphArgonTest : public ::testing::Test
 
             ASSERT_TRUE(root_.addEdge({"Insert", "Configuration", "AtomicMC", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"AtomicMC", "Configuration", "MD", "Configuration"}));
+            ASSERT_TRUE(root_.addEdge({"Ar", "Species", "MD", "RestrictToSpecies"}));
             ASSERT_TRUE(root_.addEdge({"MD", "Configuration", "Energy", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"Energy", "Configuration", "GR", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
