@@ -32,8 +32,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("\n");
 
     // Prepare for energy calculation, generate kernel
-    auto dissolveNode = dissolveGraph();
-    auto kernel = static_cast<DissolveGraph*>(dissolveNode)->prepareEnergyCalculation(targetConfiguration_);
+    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
 
     auto nAttempts = 0, nAccepted = 0;
     bool accept;

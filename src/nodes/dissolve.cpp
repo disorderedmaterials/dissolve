@@ -23,7 +23,7 @@ std::string_view DissolveGraph::summary() const { return "Parent node of all sim
 Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
 
 // Return the DissolveGraph reference
-Node* DissolveGraph::dissolveGraph() { return this; }
+DissolveGraph* DissolveGraph::dissolveGraph() { return this; }
 
 // Return pair potential store
 const DoubleKeyedMap<std::shared_ptr<PairPotential>> &DissolveGraph::pairPotentialStore() { return pairPotentialStore_; }

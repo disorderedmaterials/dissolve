@@ -44,7 +44,7 @@ class DissolveGraph : public Graph
     // Return dissolve
     Dissolve &dissolve() const;
     // Return the DissolveGraph reference
-    Node *dissolveGraph() override;
+    DissolveGraph *dissolveGraph() override;
     // Return pair potential store
     const DoubleKeyedMap<std::shared_ptr<PairPotential>> &pairPotentialStore();
 
