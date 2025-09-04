@@ -17,8 +17,7 @@ class PotentialMap
 {
     public:
     PotentialMap() = default;
-    PotentialMap(const std::vector<const AtomType *> &atomTypes,
-                 const DoubleKeyedMap<PairPotential> &pairPotentials,
+    PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<std::shared_ptr<PairPotential>> &pairPotentials,
                     double pairPotentialRange);
     ~PotentialMap() = default;
     // Clear all data
