@@ -181,8 +181,6 @@ runs:
     shell: bash
     run: |
       conan profile detect
-      conan profile show
-      # -cc settings.compiler="Visual Studio" -cc settings.compiler.version=17 -cc core.download:download_cache="${GITHUB_WORKSPACE}/.conancache"
 
 
   - name: Build
