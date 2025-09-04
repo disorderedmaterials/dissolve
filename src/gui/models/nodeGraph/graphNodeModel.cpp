@@ -68,9 +68,9 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
         case NAME:
             return QString::fromStdString(std::string(item.rawValue().name()));
         case POSX:
-            return item.posx;
+            return item.rawValue().x;
         case POSY:
-            return item.posy;
+            return item.rawValue().y;
         case TYPE:
             return QString::fromStdString(std::string(item.rawValue().type()));
         case ICON:
@@ -96,11 +96,11 @@ bool GraphNodeModel::setData(const QModelIndex &index, const QVariant &value, in
             item.rawValue().setName(value.toString().toStdString());
             return true;
         case POSX:
-            item.posx = value.toInt();
+            item.rawValue().x = value.toInt();
             Q_EMIT updatePosition(index.row());
             return true;
         case POSY:
-            item.posy = value.toInt();
+            item.rawValue().y = value.toInt();
             Q_EMIT updatePosition(index.row());
             return true;
     }

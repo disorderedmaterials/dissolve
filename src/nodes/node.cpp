@@ -319,6 +319,8 @@ SerialisedValue Node::serialise() const
     SerialisedValue result, inputs, outputs, options;
     result["name"] = name();
     result["type"] = type();
+    result["x"] = x;
+    result["y"] = y;
 
     fromMap(inputs_, "inputs", result, [](const auto k, const auto v) { return !v->isDefault(); });
     fromMap(options_, "options", result, [](const auto k, const auto v) { return !v->isDefault(); });
@@ -328,6 +330,8 @@ SerialisedValue Node::serialise() const
 // Read values from a serialisable value
 void Node::deserialise(const SerialisedValue &node)
 {
+    x = toml::find<int>(node, "x");
+    y = toml::find<int>(node, "y");
     toMap(node, "inputs",
           [this](const auto &k, const auto &v)
           {

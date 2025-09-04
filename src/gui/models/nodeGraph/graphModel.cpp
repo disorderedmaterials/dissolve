@@ -24,11 +24,7 @@ void GraphModel::setGraph(Graph *graph)
     wrapped_.clear();
     int idx = 0;
     for (auto &[name, node] : graph->nodes())
-    {
         auto &item = wrapped_.emplace_back(*node);
-        item.posx = (idx++) * 20 + 10;
-        item.posy = (idx++) * 20 + 10;
-    }
     nodes_.endResetModel();
 
     for (auto &edge : graph->edges())
@@ -100,9 +96,9 @@ void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
             "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
     auto node = graph_->createNode(type.toString().toStdString(), type.toString().toStdString());
+    node->x = x;
+    node->y = y;
     auto &item = wrapped_.emplace_back(*node);
-    item.posx = x;
-    item.posy = y;
     item.rawValue().setName(name.toString().toStdString());
     nodes_.endInsertRows();
     graphChanged();

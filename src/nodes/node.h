@@ -32,6 +32,8 @@ class Node : public Serialisable<>
     Graph *parentGraph_;
 
     public:
+    // Position when presented graphically
+    int x, y;
     // Set node name
     void setName(std::string_view newName);
     // Return node name
