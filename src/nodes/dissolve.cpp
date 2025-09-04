@@ -43,6 +43,10 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
 	// Update atom type indexing
 	cfg->updateTypeIndexing();
 
+    // Update pair potentials
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
+                            [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotentials(*atI, *atJ); });
+
 	// Generate configuration potential map
     PotentialMap potentialMap(atomTypes, pairPotentialStore(), pairPotentialRange());
 
