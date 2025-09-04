@@ -557,8 +557,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
      * Generate S(Q) from completed scattering matrix
      */
 
-    auto &estimatedSQ=
-        dissolve.processingModuleData().realise<DoubleKeyedMap<Data1D>>("EstimatedSQ", name_);
+    auto &estimatedSQ = dissolve.processingModuleData().realise<DoubleKeyedMap<Data1D>>("EstimatedSQ", name_);
     estimatedSQ = scatteringMatrix_->generateEstimatedPartials();
     updateDeltaSQ(moduleData, calculatedUnweightedSQ, estimatedSQ);
 
@@ -574,22 +573,26 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     }
 
     /*
-     * Calculate g(r) from estimatedSQ
+     * Calculate estimated g(r) from estimated S(Q)
      */
-    auto &estimatedGR = moduleData.realise<Array2D<Data1D>>("EstimatedGR", name_, GenericItem::InRestartFileFlag);
-    estimatedGR.initialise(nAtomTypes, nAtomTypes, true);
+
+    DoubleKeyedMap<Data1D> estimatedGR;
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
-                            [&](int i, auto at1, int j, auto at2)
+                            [&](int indexI, auto atI, int indexJ, auto atJ)
                             {
-                                auto &expGR = estimatedGR[{i, j}];
-                                expGR.setTag(std::format("{}-{}", at1->name(), at2->name()));
+                                DoubleKeyedMapKey key(atI->name(), atJ->name());
+
+                                // Set tag
+                                estimatedGR.get(key).setTag(std::format("{}-{}", atI->name(), atJ->name()));
 
                                 // Copy experimental S(Q) and FT it
-                                expGR = estimatedSQ[{i, j}];
-                                Fourier::sineFT(expGR, 1.0 / (2 * M_PI * M_PI * rho), 0.0, 0.05, 30.0,
+                                estimatedGR[key] = estimatedSQ.get(key);
+                                Fourier::sineFT(estimatedGR[key], 1.0 / (2 * M_PI * M_PI * rho), 0.0, 0.05, 30.0,
                                                 WindowFunction(WindowFunction::Form::Lorch0));
-                                expGR += 1.0;
+                                estimatedGR[key] += 1.0;
                             });
+
+    moduleData.realise<DoubleKeyedMap<Data1D>>("EstimatedGR", name_) = estimatedGR;
 
     /*
      * Calculate contribution to potential coefficients.

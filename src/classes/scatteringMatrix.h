@@ -16,6 +16,7 @@
 // Forward Declarations
 class AtomType;
 
+// Scattering Matrix Row
 struct ScatteringMatrixRow
 {
     Data1D data;

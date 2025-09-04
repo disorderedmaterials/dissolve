@@ -115,6 +115,8 @@ void ScatteringMatrix::generateMatrices()
                 Messenger::exception("Failed to invert the scattering matrix at Q = {}.\n", q);
         }
     }
+
+    matricesValid_ = true;
 }
 
 // Return the precalculated Q = 0.0 scattering matrix inverse
@@ -142,11 +144,8 @@ Array2D<double> ScatteringMatrix::matrix(double q) const
 
             // Loop over columns and get weights for columns according to the elements of the atom type pairs
             std::vector<double> weights;
-            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
-                        [&](int i, auto &atI, int j, auto &atJ)
-                                    {
-                                        weights.push_back(xRayWeights.formFactorProduct(atI, atJ, q) / normFactor);
-});
+            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_, [&](int i, auto &atI, int j, auto &atJ)
+                                    { weights.push_back(xRayWeights.formFactorProduct(atI, atJ, q) / normFactor); });
 
             // Apply the weights
             for (auto col = 0; col < weights.size(); ++col)
@@ -283,7 +282,7 @@ void ScatteringMatrix::printInverse(double q) const
 DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
 {
     // Check that we have the correct number of reference data to be able to invert the matrix
-    if (rows_.size() <  (atomTypes_.size() * (atomTypes_.size() + 1)) / 2 )
+    if (rows_.size() < (atomTypes_.size() * (atomTypes_.size() + 1)) / 2)
         return Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data ({}) "
                                 "compared to rows in the matrix ({}).\n",
                                 rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2);
@@ -305,54 +304,42 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
 
     DoubleKeyedMap<Data1D> estimatedPartials;
 
-    // Template the estimatedSQ from the first data item
-    for (auto &estSQ : estimatedSQ)
-        estSQ.initialise(data_[0]);
+    // Template the estimated partials from the first data item
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
+                            [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
+                            {
+                                estimatedPartials[{typeI->name(), typeJ->name()}].setTag(
+                                    std::format("{}-{}", typeI->name(), typeJ->name()));
+                                estimatedPartials[{typeI->name(), typeJ->name()}].initialise(rows_.begin()->second.data);
+                            });
 
-    if (qDependentWeighting())
+    auto qDependentWeights = qDependentWeighting();
+
+    // Loop over reference data
+    auto dataIndex = 0;
+    for (const auto &[rowKey, rowData] : rows_)
     {
-        // Generate interpolations for each dataset
-        std::vector<Interpolator> interpolations;
-        interpolations.reserve(data_.size());
-        for (const auto &ref : data_)
-            interpolations.emplace_back(Interpolator(ref));
+        // Generate interpolation for this dataset (row).
+        Interpolator I(rowData.data);
 
-        // Q-dependent terms in the scattering matrix, so need to invert once at each distinct Q value
-        const auto &x = estimatedSQ[0].xAxis();
-        for (auto n = 0; n < x.size(); ++n)
-        {
-            const auto q = x[n];
+        // Loop over columns (atom-atom partials)
+        auto partialIndex = 0;
+        dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
+                                [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
+                                {
+                                    // Get estimated partial
+                                    auto &partial = estimatedPartials.get(typeI->name(), typeJ->name());
 
-            // Grab the pre-calculated scattering matrix
-            auto &inverseA = std::get<2>(qMatrices_[n]);
-
-            // Sum in contributions from each dataset at this Q value, provided it is within the range of the dataset
-            for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
-            {
-                for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
-                {
-                    if ((q < data_[refDataIndex].xAxis().front()) || (q > data_[refDataIndex].xAxis().back()))
-                        continue;
-                    estimatedSQ[partialIndex].value(n) +=
-                        interpolations[refDataIndex].y(q) * inverseA[{partialIndex, refDataIndex}];
-                }
-            }
-        }
-    }
-    else
-    {
-        // Loop over reference data
-        auto dataIndex = 0;
-        for (const auto &[rowKey, rowData] : rows_)
-        {
-            // Generate interpolation for this dataset (row).
-            Interpolator I(rowData.data);
-
-            auto partialIndex = 0;
-            dissolve::for_each_pair(
-                ParallelPolicies::seq, atomTypes_, [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
-                { Interpolator::addInterpolated(I, estimatedPartials.get(typeI->name(), typeJ->name()), qZeroInverse_[{partialIndex++, dataIndex}]); });
-        }
+                                    // Loop over Q points
+                                    const auto &qAxis = partial.xAxis();
+                                    for (auto qIndex = 0; qIndex < qAxis.size(); ++qIndex)
+                                    {
+                                        partial.value(qIndex) +=
+                                            I.y(qAxis[qIndex]) *
+                                            (qDependentWeights ? std::get<2>(qMatrices_[qIndex])[{partialIndex, dataIndex}]
+                                                                 : qZeroInverse_[{partialIndex, dataIndex}]);
+                                    }
+                                });
     }
 
     return estimatedPartials;

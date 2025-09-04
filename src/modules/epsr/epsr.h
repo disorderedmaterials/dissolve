@@ -101,7 +101,7 @@ class EPSRModule : public Module
 
     public:
     // Return current scattering matrix
-    const ScatteringMatrix &scatteringMatrix() const;
+    const std::optional<ScatteringMatrix> &scatteringMatrix() const;
     // Set whether to apply this module's generated potentials to the global pair potentials
     void setApplyPotentials(bool b);
 
