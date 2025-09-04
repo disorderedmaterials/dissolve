@@ -10,7 +10,7 @@
 #include "classes/species.h"
 
 PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes,
-                              const DoubleKeyedMap<PairPotential *> &pairPotentials, double pairPotentialRange)
+                           const DoubleKeyedMap<PairPotential> &pairPotentials, double pairPotentialRange)
 {
     // Create PairPotential matrix
     nTypes_ = atomTypes.size();
@@ -27,14 +27,14 @@ PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes,
             {
                 Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n", atI->name(), i,
                                  j);
-                potentialMatrix_[{i, j}] = pp;
+                potentialMatrix_[{i, j}] = &pp;
             }
             else
             {
                 Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n",
                                  atI->name(), atJ->name(), i, j, j, i);
-                potentialMatrix_[{i, j}] = pp;
-                potentialMatrix_[{j, i}] = pp;
+                potentialMatrix_[{i, j}] = &pp;
+                potentialMatrix_[{j, i}] = &pp;
             }
         });
 
