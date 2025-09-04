@@ -35,8 +35,6 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     auto dissolveNode = dissolveGraph();
     auto kernel = static_cast<DissolveGraph*>(dissolveNode)->prepareEnergyCalculation(targetConfiguration_);
 
-    targetConfiguration_->updateCells(kernel.get()->potentialMap().range());
-
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
     double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;

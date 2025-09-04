@@ -44,7 +44,11 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
 	// Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
 
-    return KernelProducer::energyKernel(cfg, potentialMap, energyCutoff);
+    auto kernel = KernelProducer::energyKernel(cfg, potentialMap, energyCutoff);
+
+    cfg->updateCells(kernel.get()->potentialMap().range());
+
+    return kernel;
 }
 
 // Update pair potential store
