@@ -35,11 +35,13 @@ const double DissolveGraph::pairPotentialRange() const { return pairPotentialRan
 // Return energy kernel containing potential map
 std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff)
 {
+    auto atomTypes = cfg->atomTypeVector();
+
 	// Update atom type indexing
 	cfg->updateTypeIndexing();
 
 	// Generate configuration potential map
-    PotentialMap potentialMap(cfg->atomTypeVector(), pairPotentialStore(), pairPotentialRange());
+    PotentialMap potentialMap(atomTypes, pairPotentialStore(), pairPotentialRange());
 
 	// Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
