@@ -221,17 +221,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                         [](const auto acc, const auto &targetWeight) { return acc + targetWeight.second; }) +
         (targets_.size() - targetWeights_.size());
 
-    // Realise storage for generated S(Q) and initialise a scattering matrix
-    auto &&[estimatedSQ, estimatedSQStatus] =
-        dissolve.processingModuleData().realiseIf<DoubleKeyedMap<Data1D>>("EstimatedSQ", name_);
-    if (estimatedSQStatus == GenericItem::ItemStatus::Created)
-    {
-        // Create partials array
-        estimatedSQ.clear(true);
-        dissolve::for_each_pair(
-            ParallelPolicies::seq, atomTypes, [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
-            { estimatedSQ.get(typeI->name(), typeJ->name()).setTag(std::format("{}-{}", typeI->name(), typeJ->name())); });
-    }
+    // Initialise a scattering matrix if we haven't already
     if (!scatteringMatrix_)
         scatteringMatrix_.emplace(atomTypes);
 
@@ -492,7 +482,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
         dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                                 [&](int i, const auto &at1, int j, const auto &at2)
                                 {
-                                    auto pairIndex = scatteringMatrix_.pairIndexOf(at1, at2);
+                                    auto pairIndex = scatteringMatrix_->pairIndexOf(at1, at2);
 
                                     const auto &partialIJ = unweightedSQ.unboundPartials().get(at1->name(), at2->name());
                                     Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[pairIndex],
@@ -540,13 +530,13 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
-                            [&](int i, auto &at1, int j, auto &at2)
+                            [&](int i, auto &atI, int j, auto &atJ)
                             {
                                 // Copy and rename the data for clarity
                                 auto data = calculatedUnweightedSQ[{i, j}];
-                                data.setTag(std::format("Simulated {}-{}", at1->name(), at2->name()));
+                                data.setTag(std::format("Simulated {}-{}", atI->name(), atJ->name()));
 
-                                scatteringMatrix_->setRow({at1->name(), at2->name()}, data, at1, at2, 1.0 - feedback_);
+                                scatteringMatrix_->setRow({atI->name(), atJ->name()}, data, atI, atJ, 1.0 - feedback_);
                             });
 
     // Make sure inverse matrices are up-to-date
@@ -557,17 +547,19 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     if (Messenger::isVerbose())
     {
         Messenger::print("\nScattering Matrix Inverse (Q = 0.0):\n");
-        scatteringMatrix_.printInverse();
+        scatteringMatrix_->printInverse();
 
         Messenger::print("\nIdentity (Ainv * A):\n");
-        scatteringMatrix_.matrixProduct().print();
+        scatteringMatrix_->matrixProduct().print();
     }
 
     /*
      * Generate S(Q) from completed scattering matrix
      */
 
-    scatteringMatrix_.generatePartials(estimatedSQ);
+    auto &estimatedSQ=
+        dissolve.processingModuleData().realise<DoubleKeyedMap<Data1D>>("EstimatedSQ", name_);
+    estimatedSQ = scatteringMatrix_->generateEstimatedPartials();
     updateDeltaSQ(moduleData, calculatedUnweightedSQ, estimatedSQ);
 
     // Save data?

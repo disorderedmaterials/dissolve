@@ -25,7 +25,22 @@ ScatteringMatrix::ScatteringMatrix(const std::vector<const AtomType *> &atomType
 // Return whether Q-dependent weighting is required
 bool ScatteringMatrix::qDependentWeighting() const
 {
-    return std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
+    return std::find_if(rows_.begin(), rows_.end(), [](auto &row) { return row.second.xRayWeights; }) != rows_.end();
+}
+
+// Create and return the full coefficients matrix
+Array2D<double> ScatteringMatrix::A() const
+{
+    Array2D<double> result(rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2, false);
+    auto row = 0;
+    for (const auto &[rowKey, rowData] : rows_)
+    {
+        for (auto col = 0; col < rowData.coefficients.size(); ++col)
+            result[{row, col}] = rowData.coefficients[col];
+        ++row;
+    }
+
+    return result;
 }
 
 // Return number of atom types involved
@@ -108,34 +123,37 @@ const Array2D<double> &ScatteringMatrix::qZeroMatrixInverse() const { return qZe
 // Calculate and return the scattering matrix at the specified Q value
 Array2D<double> ScatteringMatrix::matrix(double q) const
 {
-    // Take a copy of A to begin with
-    auto m = A_;
+    // Start with the plain scattering matrix coefficients
+    auto m = A();
 
-    // Go over rows of the matrix (corresponding to the reference data) and check if any need to be xray-weighted
-    for (auto row = 0; row < m.nRows(); ++row)
+    // Check rows to see if any are xray-weighted
+    auto row = 0;
+    for (const auto &[rowKey, rowData] : rows_)
     {
-        // If this is not xray data we can move on to the next
-        if (!std::get<0>(xRayData_[row]))
-            continue;
-
-        // Grab the weights and normalisation to apply to the matrix elements
-        auto optWeights = std::get<1>(xRayData_[row]);
-        auto &weights = (*optWeights);
-        auto normType = std::get<2>(xRayData_[row]);
-        auto normFactor = 1.0;
-        if (normType == StructureFactors::AverageOfSquaresNormalisation)
-            normFactor = weights.boundCoherentAverageOfSquares(q);
-        else if (normType == StructureFactors::SquareOfAverageNormalisation)
-            normFactor = weights.boundCoherentSquareOfAverage(q);
-
-        // Loop over columns (partials) and weight according to the elements of the atom types
-        auto col = 0;
-        for (auto [i, j] : typePairs_)
+        if (rowData.xRayWeights)
         {
-            m[{row, col}] *= weights.formFactorProduct(i, j, q) / normFactor;
+            // Grab the weights and normalisation to apply to the matrix elements
+            auto &xRayWeights = *rowData.xRayWeights;
+            auto normFactor = 1.0;
+            if (rowData.xRayNormalisation == StructureFactors::AverageOfSquaresNormalisation)
+                normFactor = xRayWeights.boundCoherentAverageOfSquares(q);
+            else if (rowData.xRayNormalisation == StructureFactors::SquareOfAverageNormalisation)
+                normFactor = xRayWeights.boundCoherentSquareOfAverage(q);
 
-            ++col;
+            // Loop over columns and get weights for columns according to the elements of the atom type pairs
+            std::vector<double> weights;
+            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
+                        [&](int i, auto &atI, int j, auto &atJ)
+                                    {
+                                        weights.push_back(xRayWeights.formFactorProduct(atI, atJ, q) / normFactor);
+});
+
+            // Apply the weights
+            for (auto col = 0; col < weights.size(); ++col)
+                m[{row, col}] *= weights[col];
         }
+
+        ++row;
     }
 
     return m;
@@ -178,8 +196,9 @@ void ScatteringMatrix::print(double q) const
     }
     Messenger::print("{}", line);
 
-    // Loop over reference data
-    for (auto row = 0; row < data_.size(); ++row)
+    // Loop over rows
+    auto row = 0;
+    for (const auto &[rowKey, rowData] : rows_)
     {
         line.clear();
         for (auto n = 0; n < m.nColumns(); ++n)
@@ -193,7 +212,7 @@ void ScatteringMatrix::print(double q) const
                 break;
             }
         }
-        Messenger::print("{}  {}\n", line, data_.at(row).tag());
+        Messenger::print("{}  {}\n", line, rowKey);
 
         // Limit to sensible number of rows
         if (row >= std::max(nColsWritten, 10))
@@ -231,7 +250,8 @@ void ScatteringMatrix::printInverse(double q) const
     Messenger::print(line);
 
     // Loop over inverse matrix columns, rather than rows, to match the AtomType headers
-    for (auto col = 0; col < inverseA.nColumns(); ++col)
+    auto col = 0;
+    for (const auto &[rowKey, rowData] : rows_)
     {
         line.clear();
         for (auto row = 0; row < inverseA.nRows(); ++row)
@@ -245,7 +265,7 @@ void ScatteringMatrix::printInverse(double q) const
                 break;
             }
         }
-        Messenger::print("{}  {}\n", line, data_.at(col).tag());
+        Messenger::print("{}  {}\n", line, rowKey);
 
         // Limit to sensible number of rows
         if (col >= std::max(nColsWritten, 10))
@@ -259,14 +279,14 @@ void ScatteringMatrix::printInverse(double q) const
     }
 }
 
-// Generate partials from reference data using the inverse coefficients matrix
-bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
+// Generate estimated partials from reference data using the inverse coefficients matrix
+DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
 {
     // Check that we have the correct number of reference data to be able to invert the matrix
-    if (data_.size() < A_.nColumns())
+    if (rows_.size() <  (atomTypes_.size() * (atomTypes_.size() + 1)) / 2 )
         return Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data ({}) "
                                 "compared to rows in the matrix ({}).\n",
-                                data_.size(), A_.nColumns());
+                                rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2);
 
     /*
      * Currently our scattering matrix / data look as follows:
@@ -282,6 +302,8 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
      *
      * Take the matrix inverse and multiply it by the known data to generate the estimated partials.
      */
+
+    DoubleKeyedMap<Data1D> estimatedPartials;
 
     // Template the estimatedSQ from the first data item
     for (auto &estSQ : estimatedSQ)
@@ -319,18 +341,21 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     }
     else
     {
-        // Generate new partials (nPartials = nColumns)
-        for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
+        // Loop over reference data
+        auto dataIndex = 0;
+        for (const auto &[rowKey, rowData] : rows_)
         {
             // Generate interpolation for this dataset (row).
-            Interpolator I(data_[refDataIndex]);
+            Interpolator I(rowData.data);
 
-            for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
-                Interpolator::addInterpolated(I, estimatedSQ[partialIndex], qZeroInverse_[{partialIndex, refDataIndex}]);
+            auto partialIndex = 0;
+            dissolve::for_each_pair(
+                ParallelPolicies::seq, atomTypes_, [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
+                { Interpolator::addInterpolated(I, estimatedPartials.get(typeI->name(), typeJ->name()), qZeroInverse_[{partialIndex++, dataIndex}]); });
         }
     }
 
-    return true;
+    return estimatedPartials;
 }
 
 // Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
@@ -380,6 +405,3 @@ void ScatteringMatrix::setRow(DoubleKeyedMapKey key, const Data1D &data, const A
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_, [&](int indexI, auto &atI, int indexJ, auto &atJ)
                             { row.coefficients.push_back((atI == i && atJ == j) || (atI == j && atJ == i) ? factor : 0.0); });
 }
-
-// Return number of currently-defined reference data sets (== matrix rows)
-int ScatteringMatrix::nReferenceData() const { return A_.nRows(); }

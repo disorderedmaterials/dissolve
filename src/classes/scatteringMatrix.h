@@ -56,6 +56,8 @@ class ScatteringMatrix
     private:
     // Return whether Q-dependent weighting is required
     bool qDependentWeighting() const;
+    // Create and return the full coefficients matrix
+    Array2D<double> A() const;
 
     public:
     // Return number of AtomTypes involved
@@ -82,8 +84,8 @@ class ScatteringMatrix
     void print(double q = 0.0) const;
     // Print the inverse matrix at the specified Q value
     void printInverse(double q = 0.0) const;
-    // Generate partials from reference data using inverse matrix
-    bool generatePartials(Array2D<Data1D> &estimatedSQ);
+    // Generate estimated partials from reference data using the inverse coefficients matrix
+    DoubleKeyedMap<Data1D> generateEstimatedPartials() const;
     // Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
     Array2D<double> matrixProduct(double q = 0.0) const;
 
