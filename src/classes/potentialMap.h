@@ -17,6 +17,8 @@ class PotentialMap
 {
     public:
     PotentialMap() = default;
+    PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential *> &pairPotentials,
+                    double pairPotentialRange);
     ~PotentialMap() = default;
     // Clear all data
     void clear();
@@ -38,8 +40,6 @@ class PotentialMap
                     const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
     bool initialise(const std::vector<const AtomType *> &atomTypes,
                     const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
-    bool initialise(const std::vector<const AtomType *> &atomTypes,
-                    const DoubleKeyedMap<PairPotential*> &pairPotentials, double pairPotentialRange);
     // Return PairPotential range
     double range() const;
 

@@ -39,8 +39,7 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
 	cfg->updateTypeIndexing();
 
 	// Generate configuration potential map
-    PotentialMap potentialMap;
-    potentialMap.initialise(cfg->atomTypeVector(), pairPotentialStore(), pairPotentialRange());
+    PotentialMap potentialMap(cfg->atomTypeVector(), pairPotentialStore(), pairPotentialRange());
 
 	// Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
