@@ -36,15 +36,17 @@ class DissolveGraph : public Graph
     // Dissolve reference
     Dissolve &dissolve_;
     // Pair potential store
-    DoubleKeyedMap<PairPotential*> pairPotentialStore_{true};
+    DoubleKeyedMap<PairPotential> pairPotentialStore_{true};
     // Pair potential range
     double pairPotentialRange_{0.0};
 
     public:
     // Return dissolve
     Dissolve &dissolve() const;
+    // Return the DissolveGraph reference
+    Node *dissolveGraph() override;
     // Return pair potential store
-    const DoubleKeyedMap<PairPotential*> &pairPotentialStore();
+    const DoubleKeyedMap<PairPotential> &pairPotentialStore();
 
     /*
      * Functions

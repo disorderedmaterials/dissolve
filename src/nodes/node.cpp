@@ -303,7 +303,7 @@ Graph *Node::parentGraph() const { return parentGraph_; }
 Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }
 
 // Return the DissolveGraph reference
-Node *Node::dissolveGraph() const { return parentGraph_->node("Dissolve"); }
+Node *Node::dissolveGraph() { return parentGraph_->node("Dissolve"); }
 
 /*
  * Data
