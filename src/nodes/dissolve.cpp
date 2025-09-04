@@ -61,8 +61,9 @@ void DissolveGraph::updatePairPotentials(const AtomType &i, const AtomType &j)
         return;
 
     auto interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
-    pairPotentialStore_.set(
-        nameI, nameJ,
-        interactionPotential.has_value() ? new PairPotential(nameI, nameJ, *interactionPotential) : new PairPotential(nameI, nameJ)
-    );
+
+    if (interactionPotential.has_value())
+        pairPotentialStore_.set(nameI, nameJ, new PairPotential(nameI, nameJ, *interactionPotential));
+    else
+        pairPotentialStore_.set(nameI, nameJ, new PairPotential(nameI, nameJ));
 }
