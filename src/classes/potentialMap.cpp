@@ -9,22 +9,17 @@
 #include "classes/pairPotential.h"
 #include "classes/species.h"
 
-PotentialMap::PotentialMap(const std::vector<const AtomType *> &masterAtomTypes,
+PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes,
                               const DoubleKeyedMap<PairPotential *> &pairPotentials, double pairPotentialRange)
 {
     // Create PairPotential matrix
-    nTypes_ = masterAtomTypes.size();
+    nTypes_ = atomTypes.size();
     potentialMatrix_.initialise(nTypes_, nTypes_);
 
     dissolve::for_each_pair(
-        ParallelPolicies::seq, masterAtomTypes,
+        ParallelPolicies::seq, atomTypes,
         [&](int i, const auto &atI, int j, const auto &atJ)
         {
-            if (i == -1)
-                return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", atI->name());
-            if (j == -1)
-                return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", atJ->name());
-
             auto pp = pairPotentials.get({atI->name(), atJ->name()});
 
             // Store PairPotential pointer
