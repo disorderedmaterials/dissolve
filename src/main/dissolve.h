@@ -194,6 +194,8 @@ class Dissolve : public Serialisable<>
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
+    // Save TOML file
+    bool saveToml(std::string_view filename) const;
     // Express pair potentials as a serialisable value
     SerialisedValue serialisePairPotentials() const;
     // Express as a serialisable value

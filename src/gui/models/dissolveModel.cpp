@@ -133,6 +133,8 @@ void DissolveModel::loadInput(QUrl filename)
     configurationModel_.reset();
 }
 
+bool DissolveModel::saveAs(QUrl filename) { return dissolve_->saveToml(filename.toLocalFile().toStdString()); }
+
 Graph *DissolveModel::graph()
 {
     if (!dissolve_)

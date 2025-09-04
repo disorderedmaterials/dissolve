@@ -70,6 +70,10 @@ class DissolveModel : public QObject
     // ModuleLayers model has been replaced
     void moduleLayersChanged();
 
+    public Q_SLOTS:
+    // Export to a file
+    bool saveAs(QUrl filename);
+
     public:
     DissolveModel() = default;
     ~DissolveModel() = default;
