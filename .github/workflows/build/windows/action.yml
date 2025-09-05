@@ -22,7 +22,7 @@ inputs:
     required: true
   msvcVersion:
     type: string
-    default: '14.44'
+    default: '19.44'
     required: true
 
 runs:
