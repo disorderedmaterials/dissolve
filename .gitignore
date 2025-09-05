@@ -12,6 +12,7 @@ config.log
 config.status
 libtool
 stamp-h1
+/cmake/Modules/conan_provider.cmake
 
 # Build objects
 *.a

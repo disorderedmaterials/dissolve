@@ -252,7 +252,7 @@ template <class A> class Array2D
     {
         assert(nColumns_ == B.nColumns_ && nRows_ == B.nRows_);
 
-        std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
+        std::transform(array_.begin(), array_.end(), B.array_.begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
     }
     Array2D<A> operator+(const Array2D<A> &other) const
     {
