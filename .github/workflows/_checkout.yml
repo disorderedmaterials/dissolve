@@ -24,7 +24,7 @@ on:
         default: "1.2.5"
       conanfile:
         type: string
-        default: cmake/Modules/conan-dissolve.cmake
+        default: conanfile.txt
       publishType:
         default: 'none'
         type: string
