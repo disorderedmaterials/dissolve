@@ -480,7 +480,6 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
         }
     }
 
-    // FIXME: clusterConfig_.incrementContentsVersion();
     clusterConfig_.updateObjectRelationships();
 }
 
