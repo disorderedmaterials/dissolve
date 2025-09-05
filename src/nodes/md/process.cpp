@@ -3,6 +3,7 @@
 
 #include "math/mathFunc.h"
 #include "nodes/md/md.h"
+#include "nodes/dissolve.h"
 
 // Run main processing
 NodeConstants::ProcessResult MDNode::process()
@@ -46,6 +47,8 @@ NodeConstants::ProcessResult MDNode::process()
         Messenger::print("MD: Calculation will be restricted to species: {}\n",
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     Messenger::print("\n");
+
+    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
 
     /*
     if (onlyWhenEnergyStable_)
@@ -200,13 +203,15 @@ NodeConstants::ProcessResult MDNode::process()
         std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
+        auto potentialMap = kernel->potentialMap();
+
         if (targetMolecules.empty())
-            ForcesModule::totalForces(targetConfiguration_, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, potentialMap,
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
                                       fUnbound, fBound);
         else
-            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, potentialMap,
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
                                       fUnbound, fBound);

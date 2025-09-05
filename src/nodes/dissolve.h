@@ -38,7 +38,7 @@ class DissolveGraph : public Graph
     // Pair potential store
     DoubleKeyedMap<std::shared_ptr<PairPotential>> pairPotentialStore_{true};
     // Pair potential range
-    double pairPotentialRange_{0.0};
+    double pairPotentialRange_{12};
 
     public:
     // Return dissolve
