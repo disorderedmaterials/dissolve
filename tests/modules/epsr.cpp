@@ -221,7 +221,7 @@ TEST_F(EPSRModuleTest, ScatteringMatrix)
     equalWeights.setRow(5, {1.0 - feedback, 0.0, 0.0});
     equalWeights.setRow(6, {0.0, 1.0 - feedback, 0.0});
     equalWeights.setRow(7, {0.0, 0.0, 1.0 - feedback});
-    testMatrices(equalWeights, W.matrix(), 1.0e-6);
+    testMatrices(equalWeights, W->A(), 1.0e-6);
 }
 
 TEST_F(EPSRModuleTest, DataWeighting)
@@ -247,7 +247,7 @@ TEST_F(EPSRModuleTest, DataWeighting)
     unequalWeights.setRow(5, {1.0 - feedback, 0.0, 0.0});
     unequalWeights.setRow(6, {0.0, 1.0 - feedback, 0.0});
     unequalWeights.setRow(7, {0.0, 0.0, 1.0 - feedback});
-    testMatrices(unequalWeights, W.matrix(), 1.0e-6);
+    testMatrices(unequalWeights, W->A(), 1.0e-6);
 }
 
 } // namespace UnitTest

@@ -57,8 +57,6 @@ class ScatteringMatrix
     private:
     // Return whether Q-dependent weighting is required
     bool qDependentWeighting() const;
-    // Create and return the full coefficients matrix
-    Array2D<double> A() const;
 
     public:
     // Return number of AtomTypes involved
@@ -73,6 +71,8 @@ class ScatteringMatrix
     std::pair<int, int> pairIndexOf(const AtomType *typeI, const AtomType *typeJ) const;
     // Return column of specified AtomType pair
     int columnIndex(const AtomType *typeI, const AtomType *typeJ) const;
+    // Create and return the full coefficients matrix
+    Array2D<double> A() const;
     // Generate matrices
     void generateMatrices();
     // Return the precalculated Q = 0.0 scattering matrix inverse

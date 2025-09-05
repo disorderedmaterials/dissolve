@@ -28,21 +28,6 @@ bool ScatteringMatrix::qDependentWeighting() const
     return std::find_if(rows_.begin(), rows_.end(), [](auto &row) { return row.second.xRayWeights; }) != rows_.end();
 }
 
-// Create and return the full coefficients matrix
-Array2D<double> ScatteringMatrix::A() const
-{
-    Array2D<double> result(rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2, false);
-    auto row = 0;
-    for (const auto &[rowKey, rowData] : rows_)
-    {
-        for (auto col = 0; col < rowData.coefficients.size(); ++col)
-            result[{row, col}] = rowData.coefficients[col];
-        ++row;
-    }
-
-    return result;
-}
-
 // Return number of atom types involved
 int ScatteringMatrix::nAtomTypes() const { return atomTypes_.size(); }
 
@@ -80,6 +65,21 @@ int ScatteringMatrix::columnIndex(const AtomType *typeI, const AtomType *typeJ) 
     }
 
     return -1;
+}
+
+// Create and return the full coefficients matrix
+Array2D<double> ScatteringMatrix::A() const
+{
+    Array2D<double> result(rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2, false);
+    auto row = 0;
+    for (const auto &[rowKey, rowData] : rows_)
+    {
+        for (auto col = 0; col < rowData.coefficients.size(); ++col)
+            result[{row, col}] = rowData.coefficients[col];
+        ++row;
+    }
+
+    return result;
 }
 
 // Generate matrices

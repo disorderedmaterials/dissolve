@@ -67,7 +67,8 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
     {
         ui_.PlotWidget->clearRenderableData();
 
-        const auto &atomTypes = module_->scatteringMatrix().atomTypes();
+        const auto &atomTypes =
+            module_->scatteringMatrix() ? module_->scatteringMatrix()->atomTypes() : std::vector<const AtomType *>();
         const auto nAtomTypes = atomTypes.size();
         auto epsrModuleTargets = module_->keywords().getVectorModule("Target");
 
