@@ -22,7 +22,6 @@ inputs:
     required: true
   msvcVersion:
     type: string
-    default: '14.44'
     required: true
 
 runs:
@@ -64,7 +63,7 @@ runs:
 
   - name: Install Python Dependencies
     shell: bash
-    run: pip3 install aqtinstall conan
+    run: pip3 install aqtinstall conan==1.*
 
   #
   # Install Qt
@@ -173,8 +172,9 @@ runs:
     if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      conan profile detect
-
+      conan profile new default --detect --force
+      conan profile update settings.compiler="Visual Studio" default
+      conan profile update settings.compiler.version=17 default
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -190,6 +190,9 @@ runs:
       INCLUDE="${RUNNER_TEMP}\ftgl-latest\src;$INCLUDE"
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
+
+      # Set conan cache location
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Build
       conan install . --deployer=direct_deploy --build=missing -s compiler.cppstd=17
