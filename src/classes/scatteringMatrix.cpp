@@ -337,7 +337,7 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
                                         partial.value(qIndex) +=
                                             I.y(qAxis[qIndex]) *
                                             (qDependentWeights ? std::get<2>(qMatrices_[qIndex])[{partialIndex, dataIndex}]
-                                                                 : qZeroInverse_[{partialIndex, dataIndex}]);
+                                                               : qZeroInverse_[{partialIndex, dataIndex}]);
                                     }
                                 });
     }

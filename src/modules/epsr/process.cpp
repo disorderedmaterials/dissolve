@@ -210,10 +210,11 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     fluctuationCoefficients = 0.0;
 
     // Create storage for our summed UnweightedSQ
-    auto &calculatedUnweightedSQ = moduleData.realise<Array2D<Data1D>>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
-    calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
-    dissolve::for_each_pair(ParallelPolicies::par, atomTypes, [&](int i, auto at1, int j, auto at2)
-                            { calculatedUnweightedSQ[{i, j}].setTag(std::format("{}-{}", at1->name(), at2->name())); });
+    auto &calculatedUnweightedSQ = moduleData.realise<DoubleKeyedMap<Data1D>>("UnweightedSQ", name_);
+    calculatedUnweightedSQ.clear(true);
+    dissolve::for_each_pair(
+        ParallelPolicies::par, atomTypes, [&](int indexI, auto atI, int indexJ, auto atJ)
+        { calculatedUnweightedSQ[{atI->name(), atJ->name()}].setTag(std::format("{}-{}", atI->name(), atJ->name())); });
 
     // Get summed weights over all datasets
     const auto totalDataSetWeight =
@@ -482,10 +483,8 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
         dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                                 [&](int i, const auto &at1, int j, const auto &at2)
                                 {
-                                    auto pairIndex = scatteringMatrix_->pairIndexOf(at1, at2);
-
                                     const auto &partialIJ = unweightedSQ.unboundPartials().get(at1->name(), at2->name());
-                                    Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[pairIndex],
+                                    Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[{at1->name(), at2->name()}],
                                                                   1.0 / targets_.size());
                                 });
 
@@ -533,7 +532,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                             [&](int i, auto &atI, int j, auto &atJ)
                             {
                                 // Copy and rename the data for clarity
-                                auto data = calculatedUnweightedSQ[{i, j}];
+                                auto data = calculatedUnweightedSQ[{atI->name(), atJ->name()}];
                                 data.setTag(std::format("Simulated {}-{}", atI->name(), atJ->name()));
 
                                 scatteringMatrix_->setRow({atI->name(), atJ->name()}, data, atI, atJ, 1.0 - feedback_);

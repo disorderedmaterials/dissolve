@@ -115,8 +115,8 @@ class EPSRModule : public Module
     private:
     // Create / update delta S(Q) information
     void updateDeltaSQ(GenericList &processingData,
-                       OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ = std::nullopt,
-                       OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ = std::nullopt);
+                       OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optCalculatedSQ = std::nullopt,
+                       OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optEstimatedSQ = std::nullopt);
 
     public:
     // Create / retrieve arrays for storage of empirical potential coefficients
