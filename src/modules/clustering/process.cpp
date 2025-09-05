@@ -195,7 +195,7 @@ Module::ExecutionResult ClusteringModule::process(Dissolve &dissolve)
                 {
                     // Get the relevant vectors
                     auto oHVec = box->minimumVector(site->origin(), site->molecule()->atom(h)->r());
-                    auto angle = 0; // FIXME: box->angleInDegrees(oOVec / oOVec.magnitude(), oHVec / oHVec.magnitude());
+                    auto angle = DissolveMath::toDegrees(acos((oOVec / oOVec.magnitude()).dp(oHVec / oHVec.magnitude())));
 
                     // Make sure we have the smallest angle possible
                     if (360.0 - angle < angle)
