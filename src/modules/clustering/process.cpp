@@ -7,6 +7,7 @@
 #include "data/elements.h"
 #include "generator/box.h"
 #include "generator/copy.h"
+#include "math/mathFunc.h"
 #include "math/regression.h"
 #include "modules/clustering/clustering.h"
 

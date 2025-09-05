@@ -4,6 +4,7 @@
 #include "gui/createGrapheneSpeciesDialog.h"
 #include "classes/empiricalFormula.h"
 #include "gui/helpers/comboPopulator.h"
+#include "math/mathFunc.h"
 #include <numeric>
 
 // Useful constants
