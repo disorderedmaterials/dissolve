@@ -7,10 +7,11 @@
 #include "data/elements.h"
 #include "generator/box.h"
 #include "generator/copy.h"
+#include "math/mathFunc.h"
 #include "math/regression.h"
 #include "modules/clustering/clustering.h"
 
-bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool ClusteringModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Check user definitions
     if (!(a_ && b_ && (cutoff_ > 0)))
@@ -85,9 +86,9 @@ bool ClusteringModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Ke
     return true;
 }
 
-Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult ClusteringModule::process(Dissolve &dissolve)
 {
-    auto &moduleData = moduleContext.dissolve().processingModuleData();
+    auto &moduleData = dissolve.processingModuleData();
 
     // Produce NeighbourMap - combining map A and B from two filters. base/filter vecs required for site selector
     neighbourMap_.clear();
@@ -195,7 +196,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
                 {
                     // Get the relevant vectors
                     auto oHVec = box->minimumVector(site->origin(), site->molecule()->atom(h)->r());
-                    auto angle = box->angleInDegrees(oOVec / oOVec.magnitude(), oHVec / oHVec.magnitude());
+                    auto angle = DissolveMath::toDegrees(acos((oOVec / oOVec.magnitude()).dp(oHVec / oHVec.magnitude())));
 
                     // Make sure we have the smallest angle possible
                     if (360.0 - angle < angle)
@@ -263,9 +264,9 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     histSizeData.zeroBins();
 
     // Figure out how many molecules of interest are in the configuration
-    auto interestingMols = a_->parent() == b_->parent() ? targetConfiguration_->speciesPopulation(a_->parent())
-                                                        : targetConfiguration_->speciesPopulation(a_->parent()) +
-                                                              targetConfiguration_->speciesPopulation(b_->parent());
+    auto interestingMols = a_->parent() == b_->parent() ? targetConfiguration_->speciesPopulations().value(a_->parent())
+                                                        : targetConfiguration_->speciesPopulations().value(a_->parent()) +
+                                                              targetConfiguration_->speciesPopulations().value(b_->parent());
 
     // Find the number of molecules not in clusters
     auto totalMolsClustered = 0;
@@ -321,7 +322,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
             continue;
 
         // CoM mass weighted calc from reference site (first member of cluster in clusterMap)
-        Vec3<double> massWeightedTotalVec{0, 0, 0};
+        Vector3 massWeightedTotalVec{0, 0, 0};
         const auto refMol{clusterVec[0]};
         std::vector<int> refIdxs(refMol->nAtoms());
         std::iota(refIdxs.begin(), refIdxs.end(), 0);
@@ -366,7 +367,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     {
         LineParser parser;
         parser.appendOutput(std::format("{}.{}.sizedist.txt", targetConfiguration_->niceName(), name()));
-        parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+        parser.writeLineF("\n# Iteration: {}\n", dissolve.iteration());
         parser.writeLineF("# Cluster size : number of clusters\n");
         for (const auto &[clusterSize, mems] : sizeDistribution_)
             parser.writeLineF("{} {}\n", clusterSize, mems.size());
@@ -375,7 +376,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     {
         LineParser parser;
         parser.appendOutput(std::format("{}.{}.massdist.txt", targetConfiguration_->niceName(), name()));
-        parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+        parser.writeLineF("\n# Iteration: {}\n", dissolve.iteration());
         parser.writeLineF("# Cluster mass : number of clusters\n");
         for (const auto &[clusterMass, mems] : massDistribution_)
             parser.writeLineF("{:.3f} {}\n", clusterMass, mems.size());
@@ -384,7 +385,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     {
         LineParser parser;
         parser.appendOutput(std::format("{}.{}.massRg.txt", targetConfiguration_->niceName(), name()));
-        parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+        parser.writeLineF("\n# Iteration: {}\n", dissolve.iteration());
         parser.writeLineF("# Fractal dimension:\n{}\n", fractalDimension_);
         parser.writeLineF("# Cluster mass : radius of gyration\n");
         for (const auto &[clusterID, radius] : radiusOfGyration_)
@@ -401,7 +402,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
                                                 base->name() == partner->name() ? base->parent()->name() : base->name(),
                                                 base->name() == partner->name() ? partner->parent()->name() : partner->name()));
 
-                parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
+                parser.writeLineF("\n# Iteration: {}\n", dissolve.iteration());
                 parser.writeLineF("{:.3f}\n", cn);
             }
     }
@@ -432,7 +433,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
 
     // Can only get molecule transfer working with a generator...
     clusterConfig_.generator().createRootNode<CopyGeneratorNode>("clusters", targetConfiguration_);
-    clusterConfig_.generate({dissolve.worldPool(), dissolve});
+    clusterConfig_.generate(dissolve);
     clusterConfig_.removeMolecules(clusterConfig_.molecules());
 
     // Display all clusters
@@ -480,7 +481,6 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
         }
     }
 
-    clusterConfig_.incrementContentsVersion();
     clusterConfig_.updateObjectRelationships();
 }
 
