@@ -15,7 +15,7 @@ class Vec3DoubleKeyword : public KeywordBase
     public:
     explicit Vec3DoubleVectorKeyword(std::vector<Vec3<double>> &data, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
     explicit Vec3DoubleVectorKeyword(std::vector<Vec3<double>> &data,
-+                                    std::optional<std::vector<Vec3<double>>> minValue = std::nullopt,
+                                     std::optional<std::vector<Vec3<double>>> minValue = std::nullopt,
                                      std::optional<std::vector<Vec3<double>>> maxValue = std::nullopt,
                                      Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 
