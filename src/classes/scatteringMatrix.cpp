@@ -322,6 +322,8 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
     {
         // Generate interpolation for this dataset (row).
         Interpolator I(rowData.data);
+        auto dataQMin = rowData.data.xAxis().front();
+        auto dataQMax = rowData.data.xAxis().back();
 
         // Loop over columns (atom-atom partials)
         auto partialIndex = 0;
@@ -335,12 +337,21 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
                                     const auto &qAxis = partial.xAxis();
                                     for (auto qIndex = 0; qIndex < qAxis.size(); ++qIndex)
                                     {
+                                        auto q = qAxis[qIndex];
+                                        if (q < dataQMin)
+                                            continue;
+                                        if (q > dataQMax)
+                                            break;
                                         partial.value(qIndex) +=
-                                            I.y(qAxis[qIndex]) *
+                                            I.y(q) *
                                             (qDependentWeights ? std::get<2>(qMatrices_[qIndex])[{partialIndex, dataIndex}]
                                                                : qZeroInverse_[{partialIndex, dataIndex}]);
                                     }
+
+                                    ++partialIndex;
                                 });
+
+        ++dataIndex;
     }
 
     return estimatedPartials;
