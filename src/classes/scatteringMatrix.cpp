@@ -14,7 +14,7 @@
 ScatteringMatrix::ScatteringMatrix(const std::vector<const AtomType *> &atomTypes)
 {
     atomTypes_ = atomTypes;
-    rows_.clear(true);
+    rows_.clear();
     matricesValid_ = false;
 }
 
@@ -26,6 +26,21 @@ ScatteringMatrix::ScatteringMatrix(const std::vector<const AtomType *> &atomType
 bool ScatteringMatrix::qDependentWeighting() const
 {
     return std::find_if(rows_.begin(), rows_.end(), [](auto &row) { return row.second.xRayWeights; }) != rows_.end();
+}
+
+// Create and return the full coefficients matrix
+Array2D<double> ScatteringMatrix::A() const
+{
+    Array2D<double> result(rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2, false);
+    auto row = 0;
+    for (const auto &[rowKey, rowData] : rows_)
+    {
+        for (auto col = 0; col < rowData.coefficients.size(); ++col)
+            result[{row, col}] = rowData.coefficients[col];
+        ++row;
+    }
+
+    return result;
 }
 
 // Return number of atom types involved
@@ -65,21 +80,6 @@ int ScatteringMatrix::columnIndex(const AtomType *typeI, const AtomType *typeJ) 
     }
 
     return -1;
-}
-
-// Create and return the full coefficients matrix
-Array2D<double> ScatteringMatrix::A() const
-{
-    Array2D<double> result(rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2, false);
-    auto row = 0;
-    for (const auto &[rowKey, rowData] : rows_)
-    {
-        for (auto col = 0; col < rowData.coefficients.size(); ++col)
-            result[{row, col}] = rowData.coefficients[col];
-        ++row;
-    }
-
-    return result;
 }
 
 // Generate matrices
@@ -354,7 +354,7 @@ Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse
  */
 
 // Set data and coefficients for the supplied row (from NeutronWeights)
-void ScatteringMatrix::setRow(DoubleKeyedMapKey key, const Data1D &data, const NeutronWeights &weights, double factor)
+void ScatteringMatrix::setRow(const std::string &key, const Data1D &data, const NeutronWeights &weights, double factor)
 {
     auto &row = rows_[key];
 
@@ -366,7 +366,7 @@ void ScatteringMatrix::setRow(DoubleKeyedMapKey key, const Data1D &data, const N
 }
 
 // Set data and coefficients for the supplied row (from XRayWeights)
-void ScatteringMatrix::setRow(DoubleKeyedMapKey key, const Data1D &data, const XRayWeights &weights, double factor)
+void ScatteringMatrix::setRow(const std::string &key, const Data1D &data, const XRayWeights &weights, double factor)
 {
     auto &row = rows_[key];
 
@@ -382,7 +382,7 @@ void ScatteringMatrix::setRow(DoubleKeyedMapKey key, const Data1D &data, const X
 }
 
 // Set data and coefficients for the supplied row (single coefficient)
-void ScatteringMatrix::setRow(DoubleKeyedMapKey key, const Data1D &data, const AtomType *i, const AtomType *j, double factor)
+void ScatteringMatrix::setRow(const std::string &key, const Data1D &data, const AtomType *i, const AtomType *j, double factor)
 {
     auto &row = rows_[key];
 

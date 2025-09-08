@@ -46,7 +46,7 @@ class ScatteringMatrix
     // Reference pairs of AtomTypes
     std::vector<std::pair<const AtomType *, const AtomType *>> typePairs_;
     // Scattering matrix rows
-    DoubleKeyedMap<ScatteringMatrixRow> rows_;
+    KeyedVector<std::string, ScatteringMatrixRow> rows_;
     // Scattering matrix and inverse at Q = 0
     Array2D<double> qZeroMatrix_, qZeroInverse_;
     // Scattering matrix / inverse pairs at specific Q values
@@ -57,6 +57,8 @@ class ScatteringMatrix
     private:
     // Return whether Q-dependent weighting is required
     bool qDependentWeighting() const;
+    // Create and return the full coefficients matrix
+    Array2D<double> A() const;
 
     public:
     // Return number of AtomTypes involved
@@ -71,8 +73,6 @@ class ScatteringMatrix
     std::pair<int, int> pairIndexOf(const AtomType *typeI, const AtomType *typeJ) const;
     // Return column of specified AtomType pair
     int columnIndex(const AtomType *typeI, const AtomType *typeJ) const;
-    // Create and return the full coefficients matrix
-    Array2D<double> A() const;
     // Generate matrices
     void generateMatrices();
     // Return the precalculated Q = 0.0 scattering matrix inverse
@@ -95,9 +95,9 @@ class ScatteringMatrix
      */
     public:
     // Set data and coefficients for the supplied row (from NeutronWeights)
-    void setRow(DoubleKeyedMapKey key, const Data1D &data, const NeutronWeights &weights, double factor);
+    void setRow(const std::string &key, const Data1D &data, const NeutronWeights &weights, double factor);
     // Set data and coefficients for the supplied row (from XRayWeights)
-    void setRow(DoubleKeyedMapKey key, const Data1D &data, const XRayWeights &weights, double factor);
+    void setRow(const std::string &key, const Data1D &data, const XRayWeights &weights, double factor);
     // Set data and coefficients for the supplied row (single coefficient)
-    void setRow(DoubleKeyedMapKey key, const Data1D &data, const AtomType *i, const AtomType *j, double factor);
+    void setRow(const std::string &key, const Data1D &data, const AtomType *i, const AtomType *j, double factor);
 };

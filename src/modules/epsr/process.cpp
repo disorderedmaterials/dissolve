@@ -438,7 +438,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            scatteringMatrix_->setRow({"Neutron", module->name()}, refMinusIntra, weights, dataSetWeight);
+            scatteringMatrix_->setRow(std::format("Neutron//{}", module->name()), refMinusIntra, weights, dataSetWeight);
         }
         else if (module->type() == ModuleTypes::XRaySQ)
         {
@@ -466,7 +466,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                refMinusIntra.values().begin(), std::divides<>());
             }
 
-            scatteringMatrix_->setRow({"XRay", module->name()}, refMinusIntra, weights, dataSetWeight);
+            scatteringMatrix_->setRow(std::format("XRay//{}", module->name()), refMinusIntra, weights, dataSetWeight);
         }
         else
         {
@@ -535,7 +535,8 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                 auto data = calculatedUnweightedSQ[{atI->name(), atJ->name()}];
                                 data.setTag(std::format("Simulated {}-{}", atI->name(), atJ->name()));
 
-                                scatteringMatrix_->setRow({atI->name(), atJ->name()}, data, atI, atJ, 1.0 - feedback_);
+                                scatteringMatrix_->setRow(std::format("{}-{}", atI->name(), atJ->name()), data, atI, atJ,
+                                                          1.0 - feedback_);
                             });
 
     // Make sure inverse matrices are up-to-date
