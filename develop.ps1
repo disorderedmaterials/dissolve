@@ -191,7 +191,7 @@ Write-Host "Activating Python virtual environment... " @info_colors
 
 Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
-& $python -m pip install aqtinstall conan==1.*
+& $python -m pip install aqtinstall conan
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
@@ -420,9 +420,7 @@ try {
     $conan = "$scripts/conan.exe"
 }
 
-& $conan profile new default --detect
-& $conan profile update settings.compiler="Visual Studio" default
-& $conan profile update settings.compiler.version=17 default
+& $conan profile detect
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
