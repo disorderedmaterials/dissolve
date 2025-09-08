@@ -49,8 +49,8 @@ class ScatteringMatrix
     Array2D<double> qZeroMatrix_, qZeroInverse_;
     // Scattering matrix / inverse pairs at specific Q values
     std::vector<std::tuple<double, Array2D<double>, Array2D<double>>> qMatrices_;
-    // Whether the matrices up-to-date
-    bool matricesValid_{false};
+    // Q values to use when generating matrices and data
+    std::vector<double> qValues_;
 
     private:
     // Return whether Q-dependent weighting is required
@@ -66,7 +66,7 @@ class ScatteringMatrix
     // Return atom type at index specified
     const AtomType *atomType(int index) const;
     // Generate matrices
-    void generateMatrices();
+    void generateMatrices(const std::vector<double> &qValues);
     // Return the precalculated Q = 0.0 scattering matrix inverse
     const Array2D<double> &qZeroMatrixInverse() const;
     // Calculate and return the scattering matrix at the specified Q value

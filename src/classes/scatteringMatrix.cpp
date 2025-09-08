@@ -11,12 +11,7 @@
 #include <algorithm>
 #include <utility>
 
-ScatteringMatrix::ScatteringMatrix(const std::vector<const AtomType *> &atomTypes)
-{
-    atomTypes_ = atomTypes;
-    rows_.clear();
-    matricesValid_ = false;
-}
+ScatteringMatrix::ScatteringMatrix(const std::vector<const AtomType *> &atomTypes) : atomTypes_(atomTypes) { rows_.clear(); }
 
 /*
  * Data
@@ -53,10 +48,13 @@ const std::vector<const AtomType *> &ScatteringMatrix::atomTypes() const { retur
 const AtomType *ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
 
 // Generate matrices
-void ScatteringMatrix::generateMatrices()
+void ScatteringMatrix::generateMatrices(const std::vector<double> &qValues)
 {
-    if (matricesValid_)
+    // If the supplied and current qValue vectors are identical, nothing to do...
+    if (qValues_ == qValues)
         return;
+
+    qValues_ = qValues;
 
     // We always generate the matrices for Q = 0
     Messenger::printVerbose("Generating Q = 0.0 matrix and inverse.\n");
@@ -69,11 +67,9 @@ void ScatteringMatrix::generateMatrices()
     qMatrices_.clear();
     if (qDependentWeighting())
     {
-        // Use the first reference data as the Q-axis template (as is done elsewhere)
         assert(!rows_.empty());
-        auto &qs = rows_.begin()->second.data.xAxis();
-        qMatrices_.reserve(qs.size());
-        for (auto q : qs)
+        qMatrices_.reserve(qValues_.size());
+        for (auto q : qValues_)
         {
             Messenger::printVerbose("Generating Q = {} matrix and inverse.\n", q);
 
@@ -85,8 +81,6 @@ void ScatteringMatrix::generateMatrices()
                 Messenger::exception("Failed to invert the scattering matrix at Q = {}.\n", q);
         }
     }
-
-    matricesValid_ = true;
 }
 
 // Return the precalculated Q = 0.0 scattering matrix inverse
@@ -278,14 +272,17 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
      */
 
     DoubleKeyedMap<Data1D> estimatedPartials;
+    Data1D emptyData;
+    emptyData.initialise(qValues_.size());
+    emptyData.xAxis() = qValues_;
 
     // Template the estimated partials from the first data item
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
                             [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
                             {
+                                estimatedPartials[{typeI->name(), typeJ->name()}] = emptyData;
                                 estimatedPartials[{typeI->name(), typeJ->name()}].setTag(
                                     std::format("{}-{}", typeI->name(), typeJ->name()));
-                                estimatedPartials[{typeI->name(), typeJ->name()}].initialise(rows_.begin()->second.data);
                             });
 
     auto qDependentWeights = qDependentWeighting();

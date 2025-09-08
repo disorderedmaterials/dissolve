@@ -539,9 +539,8 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                                           1.0 - feedback_);
                             });
 
-    // Make sure inverse matrices are up-to-date
-    scatteringMatrix_->generateMatrices();
-
+    // Make sure inverse matrices are up-to-date, taking representative Q values from the calculated unweighted S(Q)
+    scatteringMatrix_->generateMatrices(calculatedUnweightedSQ.begin()->second.xAxis());
     scatteringMatrix_->print();
 
     if (Messenger::isVerbose())
