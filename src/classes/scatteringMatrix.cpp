@@ -9,7 +9,6 @@
 #include "math/svd.h"
 #include "templates/algorithms.h"
 #include <algorithm>
-#include <utility>
 
 ScatteringMatrix::ScatteringMatrix(const std::vector<const AtomType *> &atomTypes) : atomTypes_(atomTypes) { rows_.clear(); }
 
@@ -65,19 +64,17 @@ void ScatteringMatrix::generateMatrices(const std::vector<double> &qValues)
 
     // Generate Q-dependent matrices if we need them
     qMatrices_.clear();
+    qInverses_.clear();
     if (qDependentWeighting())
     {
         assert(!rows_.empty());
         qMatrices_.reserve(qValues_.size());
+        qInverses_.reserve(qValues_.size());
         for (auto q : qValues_)
         {
             Messenger::printVerbose("Generating Q = {} matrix and inverse.\n", q);
 
-            auto &&[qValue, mat, inv] = qMatrices_.emplace_back();
-            qValue = q;
-            mat = matrix(q);
-            inv = mat;
-            if (!SVD::pseudoinverse(inv))
+            if (!SVD::pseudoinverse(qInverses_.emplace_back(qMatrices_.emplace_back(matrix(q)))))
                 Messenger::exception("Failed to invert the scattering matrix at Q = {}.\n", q);
         }
     }
@@ -314,9 +311,8 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
                                         if (q > dataQMax)
                                             break;
                                         partial.value(qIndex) +=
-                                            I.y(q) * (qDependentWeights
-                                                          ? std::get<2>(qMatrices_[qIndex])[{partialIndex, dataIndex}]
-                                                          : qZeroInverse_[{partialIndex, dataIndex}]);
+                                            I.y(q) * (qDependentWeights ? qInverses_[qIndex][{partialIndex, dataIndex}]
+                                                                        : qZeroInverse_[{partialIndex, dataIndex}]);
                                     }
 
                                     ++partialIndex;

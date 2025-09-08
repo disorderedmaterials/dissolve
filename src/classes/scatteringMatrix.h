@@ -47,10 +47,10 @@ class ScatteringMatrix
     KeyedVector<std::string, ScatteringMatrixRow> rows_;
     // Scattering matrix and inverse at Q = 0
     Array2D<double> qZeroMatrix_, qZeroInverse_;
-    // Scattering matrix / inverse pairs at specific Q values
-    std::vector<std::tuple<double, Array2D<double>, Array2D<double>>> qMatrices_;
     // Q values to use when generating matrices and data
     std::vector<double> qValues_;
+    // Scattering matrix / inverse at specific Q values
+    std::vector<Array2D<double>> qMatrices_, qInverses_;
 
     private:
     // Return whether Q-dependent weighting is required
