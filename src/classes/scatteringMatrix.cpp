@@ -212,6 +212,7 @@ void ScatteringMatrix::print(double q) const
             }
         }
         Messenger::print("{}  {}\n", line, rowKey);
+        ++row;
 
         // Limit to sensible number of rows
         if (row >= std::max(nColsWritten, 10))
