@@ -607,34 +607,37 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
             moduleData.value<std::vector<double>>(std::format("FitCoefficients_{}", module->name()), name_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
-        dissolve::for_each_pair(
-            ParallelPolicies::seq, atomTypes,
-            [&](int i, auto at1, int j, auto at2)
-            {
-                auto weight = scatteringMatrix_->qZeroMatrixInverse()[{scatteringMatrix_->columnIndex(at1, at2), dataIndex}];
+        auto columnIndex = 0;
+        dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
+                                [&](int i, auto typeI, int j, auto typeJ)
+                                {
+                                    auto weight = scatteringMatrix_->qZeroMatrixInverse()[{columnIndex, dataIndex}];
 
-                /*
-                 * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
-                 * combination with the following weighting factors (see circa line 3378 in
-                 * epsr_standalone_rev1.f):
-                 *
-                 * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
-                 * disable potential generation)
-                 * 2. A flag controlling whether specific potentials are refined (efacp)
-                 * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
-                 * multiplied by the feedback factor.
-                 */
+                                    /*
+                                     * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
+                                     * combination with the following weighting factors (see circa line 3378 in
+                                     * epsr_standalone_rev1.f):
+                                     *
+                                     * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
+                                     * disable potential generation)
+                                     * 2. A flag controlling whether specific potentials are refined (efacp)
+                                     * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
+                                     * multiplied by the feedback factor.
+                                     */
 
-                // In the original EPSR the off-diagonal elements in the inverse matrix have also been
-                // halved so as not to double-count the i != j terms
-                if (i != j)
-                    weight *= 0.5;
+                                    // In the original EPSR the off-diagonal elements in the inverse matrix have also been
+                                    // halved so as not to double-count the i != j terms
+                                    if (i != j)
+                                        weight *= 0.5;
 
-                // Store fluctuation coefficients ready for addition to potential coefficients later on.
-                auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
-                std::transform(fitCoefficients.begin(), fitCoefficients.end(), begin, begin,
-                               [weight, this](auto coeff, auto result) { return result + weight * feedback_ * coeff; });
-            });
+                                    // Store fluctuation coefficients ready for addition to potential coefficients later on.
+                                    auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
+                                    std::transform(fitCoefficients.begin(), fitCoefficients.end(), begin, begin,
+                                                   [weight, this](auto coeff, auto result)
+                                                   { return result + weight * feedback_ * coeff; });
+
+                                    ++columnIndex;
+                                });
 
         // Increase dataIndex
         ++dataIndex;

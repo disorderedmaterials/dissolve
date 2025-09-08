@@ -52,36 +52,6 @@ const std::vector<const AtomType *> &ScatteringMatrix::atomTypes() const { retur
 // Return atom type at index specified
 const AtomType *ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
 
-// Return index of atom type in our local vector
-int ScatteringMatrix::indexOf(const AtomType *typeI) const
-{
-    auto it = std::find(atomTypes_.begin(), atomTypes_.end(), typeI);
-    assert(it != atomTypes_.end());
-    return it - atomTypes_.begin();
-}
-
-// Return index pair of atom types in our local vector
-std::pair<int, int> ScatteringMatrix::pairIndexOf(const AtomType *typeI, const AtomType *typeJ) const
-{
-    return {indexOf(typeI), indexOf(typeJ)};
-}
-
-// Return column index of specified AtomType pair
-int ScatteringMatrix::columnIndex(const AtomType *typeI, const AtomType *typeJ) const
-{
-    auto index = 0;
-    for (auto [i, j] : typePairs_)
-    {
-        if ((i == typeI) && (j == typeJ))
-            return index;
-        if ((i == typeJ) && (j == typeI))
-            return index;
-        ++index;
-    }
-
-    return -1;
-}
-
 // Generate matrices
 void ScatteringMatrix::generateMatrices()
 {
@@ -179,20 +149,22 @@ void ScatteringMatrix::print(double q) const
     // Write header
     std::string text, line;
     auto nColsWritten = 0;
-    for (auto [i, j] : typePairs_)
-    {
-        text = std::format("{}-{}", i->name(), j->name());
-        line += std::format("{:^10} ", text);
+    for_each_pair_early(atomTypes_,
+                        [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ) -> EarlyReturn<bool>
+                        {
+                            text = std::format("{}-{}", typeI->name(), typeJ->name());
+                            line += std::format("{:^10} ", text);
 
-        // Limit output to sensible length
-        if (line.length() >= 80)
-        {
-            line += " ...";
-            break;
-        }
+                            // Limit output to sensible length
+                            if (line.length() >= 80)
+                            {
+                                line += " ...";
+                                return false;
+                            }
 
-        ++nColsWritten;
-    }
+                            ++nColsWritten;
+                            return EarlyReturn<bool>::Continue;
+                        });
     Messenger::print("{}", line);
 
     // Loop over rows
@@ -234,19 +206,21 @@ void ScatteringMatrix::printInverse(double q) const
     // Write header
     std::string line;
     auto nColsWritten = 0;
-    for (auto [i, j] : typePairs_)
-    {
-        line += std::format("{:10} ", std::format("{}-{}", i->name(), j->name()));
+    for_each_pair_early(atomTypes_,
+                        [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ) -> EarlyReturn<bool>
+                        {
+                            line += std::format("{:10} ", std::format("{}-{}", typeI->name(), typeJ->name()));
 
-        // Limit output to sensible length
-        if (line.length() >= 80)
-        {
-            line += " ...";
-            break;
-        }
+                            // Limit output to sensible length
+                            if (line.length() >= 80)
+                            {
+                                line += " ...";
+                                return false;
+                            }
 
-        ++nColsWritten;
-    }
+                            ++nColsWritten;
+                            return EarlyReturn<bool>::Continue;
+                        });
     Messenger::print(line);
 
     // Loop over inverse matrix columns, rather than rows, to match the AtomType headers
@@ -343,9 +317,9 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
                                         if (q > dataQMax)
                                             break;
                                         partial.value(qIndex) +=
-                                            I.y(q) *
-                                            (qDependentWeights ? std::get<2>(qMatrices_[qIndex])[{partialIndex, dataIndex}]
-                                                               : qZeroInverse_[{partialIndex, dataIndex}]);
+                                            I.y(q) * (qDependentWeights
+                                                          ? std::get<2>(qMatrices_[qIndex])[{partialIndex, dataIndex}]
+                                                          : qZeroInverse_[{partialIndex, dataIndex}]);
                                     }
 
                                     ++partialIndex;

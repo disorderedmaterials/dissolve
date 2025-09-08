@@ -43,8 +43,6 @@ class ScatteringMatrix
     private:
     // Source AtomTypes involved
     std::vector<const AtomType *> atomTypes_;
-    // Reference pairs of AtomTypes
-    std::vector<std::pair<const AtomType *, const AtomType *>> typePairs_;
     // Scattering matrix rows
     KeyedVector<std::string, ScatteringMatrixRow> rows_;
     // Scattering matrix and inverse at Q = 0
@@ -67,12 +65,6 @@ class ScatteringMatrix
     const std::vector<const AtomType *> &atomTypes() const;
     // Return atom type at index specified
     const AtomType *atomType(int index) const;
-    // Return index of atom type in our local vector
-    int indexOf(const AtomType *typeI) const;
-    // Return index pair of atom types in our local vector
-    std::pair<int, int> pairIndexOf(const AtomType *typeI, const AtomType *typeJ) const;
-    // Return column of specified AtomType pair
-    int columnIndex(const AtomType *typeI, const AtomType *typeJ) const;
     // Generate matrices
     void generateMatrices();
     // Return the precalculated Q = 0.0 scattering matrix inverse
