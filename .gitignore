@@ -70,3 +70,7 @@ tests/data/*restart.txt
 
 # CMake
 CMakeUserPresets.json
+
+# External dependencies
+dependencies
+conan
