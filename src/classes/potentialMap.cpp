@@ -153,9 +153,12 @@ double PotentialMap::energy(const Atom &i, const Atom &j, double r) const
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     auto *pp = potentialMatrix_[{i.masterTypeIndex(), j.masterTypeIndex()}];
-    return pp->energy(r) + (PairPotential::includeCoulombPotential()
+    auto energy = pp->energy(r);
+    auto coulombEnergy = (PairPotential::includeCoulombPotential()
                                 ? 0
                                 : pp->analyticCoulombEnergy(i.speciesAtom()->charge() * j.speciesAtom()->charge(), r));
+
+    return energy + coulombEnergy;
 }
 
 // Return energy between Atoms at distance specified, scaling electrostatic and short-range components
