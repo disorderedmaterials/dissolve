@@ -25,7 +25,7 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData,
 
     const auto &calculatedSQ = optCalculatedSQ->get();
     const auto &estimatedSQ = optEstimatedSQ->get();
-    assert(calculatedSQ.nRows() == estimatedSQ.nRows() && calculatedSQ.nColumns() == estimatedSQ.nColumns());
+    assert(calculatedSQ.size() == estimatedSQ.size());
 
     // Realise the DeltaSQ array
     auto deltaSQ = processingData.realise<DoubleKeyedMap<Data1D>>("DeltaSQ", name_, GenericItem::ItemFlag::NoFlags);

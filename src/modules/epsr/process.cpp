@@ -295,12 +295,13 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                 y = 0.0;
 
         // Calculate r-factor over fit range and store
-        auto tempRefData = originalReferenceData;
-        Filters::trim(tempRefData, qMin_, qMax_);
-        const auto rFactorReport = Error::rFactor(tempRefData, weightedSQ.total());
+        auto trimmedReferenceData = originalReferenceData;
+        Filters::trim(trimmedReferenceData, qMin_, qMax_);
+        const auto rFactorReport = Error::rFactor(trimmedReferenceData, weightedSQ.total());
         rFacTot += rFactorReport.error;
         errors.addPoint(dissolve.iteration(), rFactorReport.error);
         Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactorReport.error);
+
         // Calculate r-factor over specified ranges_
         for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
         {
@@ -310,7 +311,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                 "between {:.5f} and {:.5f}",
                                 range.minimum(), range.maximum(), module->name(), rFactorReport.firstX, rFactorReport.lastX);
             }
-            const auto rangedRFactorError = Error::rFactor(tempRefData, weightedSQ.total(), range).error;
+            const auto rangedRFactorError = Error::rFactor(trimmedReferenceData, weightedSQ.total(), range).error;
             rangeTot += rangedRFactorError;
             Messenger::print("Current R-Factor for reference data '{}' over range {:.5f} to {:.5f} is {:.5f}.\n",
                              module->name(), range.minimum(), range.maximum(), rangedRFactorError);
@@ -427,7 +428,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
             const auto &weights = moduleData.value<NeutronWeights>("FullWeights", module->name());
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
-            auto refMinusIntra = originalReferenceData;
+            auto refMinusIntra = trimmedReferenceData;
             Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
@@ -438,7 +439,13 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            scatteringMatrix_->setRow(std::format("Neutron//{}", module->name()), refMinusIntra, weights, dataSetWeight);
+            // Set the zero limit on the data (equivalent to EPSR's szeros == 0.0)
+            Data1D zeroed;
+            zeroed.addPoint(0.0, refMinusIntra.values().front());
+            for (auto &&[x, y] : zip(refMinusIntra.xAxis(), refMinusIntra.values()))
+                zeroed.addPoint(x, y);
+
+            scatteringMatrix_->setRow(std::format("Neutron//{}", module->name()), zeroed, weights, dataSetWeight);
         }
         else if (module->type() == ModuleTypes::XRaySQ)
         {
@@ -447,7 +454,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
             // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency
             // in terms of magnitude with any neutron data. If the calculated data have not been normalised, or were
             // normalised to something else, we correct it before adding.
-            auto refMinusIntra = originalReferenceData;
+            auto refMinusIntra = trimmedReferenceData;
             Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
             auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
@@ -466,7 +473,13 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
                                refMinusIntra.values().begin(), std::divides<>());
             }
 
-            scatteringMatrix_->setRow(std::format("XRay//{}", module->name()), refMinusIntra, weights, dataSetWeight);
+            // Set the zero limit on the data (equivalent to EPSR's szeros == 0.0)
+            Data1D zeroed;
+            zeroed.addPoint(0.0, refMinusIntra.values().front());
+            for (auto &&[x, y] : zip(refMinusIntra.xAxis(), refMinusIntra.values()))
+                zeroed.addPoint(x, y);
+
+            scatteringMatrix_->setRow(std::format("XRay//{}", module->name()), zeroed, weights, dataSetWeight);
         }
         else
         {

@@ -64,13 +64,13 @@ TEST_F(EPSRModuleTest, Water3NInpA)
     // Estimated Partials
     EXPECT_TRUE(systemTest.checkData1D(
         "EPSR01//EstimatedSQ//OW-OW",
-        {"epsr25/water1000-neutron-xray/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 0.24));
+        {"epsr25/water1000-neutron/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
         "EPSR01//EstimatedSQ//OW-HW",
-        {"epsr25/water1000-neutron-xray/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 8.0e-3));
+        {"epsr25/water1000-neutron/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
         "EPSR01//EstimatedSQ//HW-HW",
-        {"epsr25/water1000-neutron-xray/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.4e-2));
+        {"epsr25/water1000-neutron/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.0e-4));
 
     // DeltaFQ Fits
     EXPECT_TRUE(systemTest.checkData1D(

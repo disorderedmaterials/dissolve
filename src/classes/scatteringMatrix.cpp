@@ -67,7 +67,6 @@ void ScatteringMatrix::generateMatrices(const std::vector<double> &qValues)
     qInverses_.clear();
     if (qDependentWeighting())
     {
-        assert(!rows_.empty());
         qMatrices_.reserve(qValues_.size());
         qInverses_.reserve(qValues_.size());
         for (auto q : qValues_)
@@ -273,7 +272,7 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
     emptyData.initialise(qValues_.size());
     emptyData.xAxis() = qValues_;
 
-    // Template the estimated partials from the first data item
+    // Template the estimated partials
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes_,
                             [&](int indexI, const auto &typeI, int indexJ, const auto &typeJ)
                             {
@@ -288,8 +287,9 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
     auto dataIndex = 0;
     for (const auto &[rowKey, rowData] : rows_)
     {
-        // Generate interpolation for this dataset (row).
-        Interpolator I(rowData.data);
+        // Generate interpolation for this dataset (row) - has to be Linear since (experimental) datasets are likely to have
+        // been extrapolated to zero, and trying to spline over it will create artifacts.
+        Interpolator I(rowData.data, Interpolator::InterpolationScheme::LinearInterpolation);
         auto dataQMin = rowData.data.xAxis().front();
         auto dataQMax = rowData.data.xAxis().back();
 
@@ -302,10 +302,9 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
                                     auto &partial = estimatedPartials.get(typeI->name(), typeJ->name());
 
                                     // Loop over Q points
-                                    const auto &qAxis = partial.xAxis();
-                                    for (auto qIndex = 0; qIndex < qAxis.size(); ++qIndex)
+                                    for (auto qIndex = 0; qIndex < qValues_.size(); ++qIndex)
                                     {
-                                        auto q = qAxis[qIndex];
+                                        auto q = qValues_[qIndex];
                                         if (q < dataQMin)
                                             continue;
                                         if (q > dataQMax)
