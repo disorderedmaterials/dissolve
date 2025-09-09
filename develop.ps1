@@ -19,7 +19,7 @@
     .PARAMETER systemQt
         Path to existing installation of Qt6.
     .PARAMETER conanVersion
-        Conan version.
+        Conan version. Defaults to conan2.
     .PARAMETER pythonPath
         Path to a Python executable.
     .PARAMETER forcePythonVersion
