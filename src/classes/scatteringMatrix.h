@@ -59,12 +59,8 @@ class ScatteringMatrix
     Array2D<double> A() const;
 
     public:
-    // Return number of AtomTypes involved
-    int nAtomTypes() const;
     // Return atom types
     const std::vector<const AtomType *> &atomTypes() const;
-    // Return atom type at index specified
-    const AtomType *atomType(int index) const;
     // Generate matrices
     void generateMatrices(const std::vector<double> &qValues);
     // Return the precalculated Q = 0.0 scattering matrix inverse

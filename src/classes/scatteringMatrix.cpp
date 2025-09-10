@@ -37,14 +37,8 @@ Array2D<double> ScatteringMatrix::A() const
     return result;
 }
 
-// Return number of atom types involved
-int ScatteringMatrix::nAtomTypes() const { return atomTypes_.size(); }
-
 // Return atom types
 const std::vector<const AtomType *> &ScatteringMatrix::atomTypes() const { return atomTypes_; }
-
-// Return atom type at index specified
-const AtomType *ScatteringMatrix::atomType(int index) const { return atomTypes_[index]; }
 
 // Generate matrices
 void ScatteringMatrix::generateMatrices(const std::vector<double> &qValues)
