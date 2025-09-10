@@ -18,6 +18,8 @@
         Qt version to install. Defaults to existing system Qt6 installation if none specified.
     .PARAMETER systemQt
         Path to existing installation of Qt6.
+    .PARAMETER conanVersion
+        Conan version. Defaults to conan2.
     .PARAMETER pythonPath
         Path to a Python executable.
     .PARAMETER forcePythonVersion
@@ -35,6 +37,7 @@
             - Dissolve installation folders ("/out", "/build")
             - dependencies folder
             - CMakeUserPresets.json
+            - Conan packages
 #>
 
 param (
@@ -43,6 +46,7 @@ param (
     [string]$pythonPath,
     [string]$forcePythonVersion,
     [string]$msvcVersion,
+    [int]$conanVersion = "2",
     [string]$generator = "Visual Studio 17 2022",
     [string]$antlrVersion = "4.13.1",
     [switch]$release = $false,
@@ -123,7 +127,7 @@ Find-And-Remove -relativePath "build"
 Find-And-Remove -relativePath "dependencies"
 Find-And-Remove -relativePath "CMakeUserPresets.json"
 Find-And-Remove -relativePath "msvc-env"
-Find-And-Remove -relativePath "cmake/Modules/conan_provider.cmake"
+Find-And-Remove -relativePath "conan"
 
 #Install key dependencies with Chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
@@ -209,7 +213,7 @@ Write-Host "Activating Python virtual environment... " @info_colors
 
 Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
-& $python -m pip install aqtinstall conan
+& $python -m pip install aqtinstall conan==$conanVersion.*
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
@@ -404,8 +408,13 @@ Set-Location -Path $projectDir
 
 New-Item -ItemType Directory -Path "conan" -ErrorAction SilentlyContinue
 
-$env:CONAN_HOME = Join-Path -Path (Get-Location) -ChildPath "conan"
-$conanProfiles = Join-Path -Path $env:CONAN_HOME -ChildPath "profiles"
+$conanHome = Join-Path -Path (Get-Location) -ChildPath 'conan'
+
+Write-Host "Setting up Conan profile... " @info_colors
+
+try {
+    $foundConanVersion = conan --version
+    Write-Output "Found conan version $foundConanVersion..."
 
 New-Item -ItemType Directory -Force -Path $conanProfiles | Out-Null
 $profileContent = @"
@@ -422,7 +431,10 @@ os=Windows
 Dissolve/*:msvc_dev=True
 "@
 
-Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
+     $conan = "$scripts/conan.exe"
+ }
+ 
+& $conan profile detect
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
@@ -439,6 +451,14 @@ $cacheVariables = @{
     MSVC_DEV = "ON"
     CMAKE_PREFIX_PATH = Normalise-Path -path "$qt6CMakeDir"
     CMAKE_MODULE_PATH = "`$penv{CONAN_HOME}"
+}
+
+# If conan2, add conan toolchain file as variable
+if ($conanVersion -eq 2)
+{
+    $cacheVariables = $cacheVariables + @{
+        CMAKE_MODULE_PATH = "`$penv{CONAN_HOME}"
+    }
 }
 
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
@@ -482,9 +502,34 @@ $presets = @(
     }
 )
 
-$environment = @{
-    PATH = "$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
-    CONAN_HOME = Normalise-Path -path $env:CONAN_HOME
+# Set environment variables
+if (-not $setSystemEnvVars)
+{
+    if ([string]::IsNullOrEmpty($scripts))
+    {
+        $scripts = ''
+    }
+    else
+    {
+        $scripts = "$scripts;"
+    }
+
+    $environment = @{
+        PATH = "$scripts$qt6BinDir;$pythonEnvPath;`$penv{PATH}"
+    }
+
+    # If conan2, add CONAN_HOME to environment
+    if ($conanVersion -eq 2)
+    {
+        $environment = $environment + @{
+            CONAN_HOME = $conanHome
+        }
+    }
+}
+else
+{
+    Write-Host "Setting CONAN_HOME environment variable... " @info_colors
+    [System.Environment]::SetEnvironmentVariable("CONAN_HOME", "$conanHome", [System.EnvironmentVariableTarget]::Machine)
 }
 
 foreach ($preset in $presets) {
