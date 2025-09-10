@@ -405,7 +405,25 @@ Set-Location -Path $projectDir
 
 New-Item -ItemType Directory -Path "conan" -ErrorAction SilentlyContinue
 
-$conanHome = Join-Path -Path (Get-Location) -ChildPath 'conan'
+if ($conanVersion -eq 2)
+{
+    $env:CONAN_HOME = Join-Path -Path (Get-Location) -ChildPath "conan"
+    $conanProfiles = Join-Path -Path $env:CONAN_HOME -ChildPath "profiles"
+
+    New-Item -ItemType Directory -Force -Path $conanProfiles | Out-Null
+    $profileContent = @"
+[settings]
+arch=x86_64
+build_type=$build
+compiler=msvc
+compiler.cppstd=14
+compiler.runtime=dynamic
+compiler.version=194
+os=Windows
+"@
+
+    Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
+}
 
 Write-Host "Setting up Conan profile... " @info_colors
 
@@ -428,7 +446,16 @@ try {
     $conan = "$scripts/conan.exe"
 }
 
-& $conan profile detect
+if ($conanVersion -eq 2)
+{
+    & $conan profile detect
+}
+else
+{
+    & $conan profile new default --detect
+    & $conan profile update settings.compiler="Visual Studio" default
+    & $conan profile update settings.compiler.version=17 default
+}
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
@@ -517,14 +544,14 @@ if (-not $setSystemEnvVars)
     if ($conanVersion -eq 2)
     {
         $environment = $environment + @{
-            CONAN_HOME = $conanHome
+            CONAN_HOME = $env:CONAN_HOME
         }
     }
 }
 else
 {
     Write-Host "Setting CONAN_HOME environment variable... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("CONAN_HOME", "$conanHome", [System.EnvironmentVariableTarget]::Machine)
+    [System.Environment]::SetEnvironmentVariable("CONAN_HOME", "$env:CONAN_HOME", [System.EnvironmentVariableTarget]::Machine)
 }
 
 foreach ($preset in $presets) {
