@@ -65,14 +65,13 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(GenericList &mod
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averagedRho, std::optional<int> ncoeffp, double rminpt,
-                                             double rmaxpt, double sigma1, double sigma2)
+bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, const std::vector<const AtomType *> &atomTypes,
+                                             double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
+                                             double sigma1, double sigma2)
 {
-    const auto &atomTypes = scatteringMatrix_->atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // Get coefficients array
-    Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve.processingModuleData(), nAtomTypes, ncoeffp);
+    Array2D<std::vector<double>> &coefficients =
+        potentialCoefficients(dissolve.processingModuleData(), atomTypes.size(), ncoeffp);
 
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                             [&](int i, auto at1, int j, auto at2)
@@ -126,11 +125,8 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
 }
 
 // Generate and return single empirical potential function
-Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
+Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int nAtomTypes, int i, int j, int n)
 {
-    const auto &atomTypes = scatteringMatrix_->atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // EPSR constants
     const auto mcoeff = 200;
 
@@ -169,7 +165,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
 }
 
 // Calculate absolute energy of empirical potentials
-double EPSRModule::absEnergyEP(GenericList &moduleData)
+double EPSRModule::absEnergyEP(GenericList &moduleData, const std::vector<const AtomType *> &atomTypes)
 {
     /*
      * Routine from EPSR25.
@@ -177,11 +173,8 @@ double EPSRModule::absEnergyEP(GenericList &moduleData)
      * Return the largest range we find.
      */
 
-    const auto &atomTypes = scatteringMatrix_->atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // Get coefficients array
-    auto &coefficients = potentialCoefficients(moduleData, nAtomTypes);
+    auto &coefficients = potentialCoefficients(moduleData, atomTypes.size());
     if (coefficients.empty())
         return 0.0;
 
@@ -203,7 +196,7 @@ double EPSRModule::absEnergyEP(GenericList &moduleData)
         Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", atomTypes[i]->name(), atomTypes[j]->name(), range);
     };
 
-    PairIterator pairs(nAtomTypes);
+    PairIterator pairs(atomTypes.size());
     dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), unaryOp);
 
     return absEnergyEP;

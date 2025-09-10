@@ -37,9 +37,6 @@ Array2D<double> ScatteringMatrix::A() const
     return result;
 }
 
-// Return atom types
-const std::vector<const AtomType *> &ScatteringMatrix::atomTypes() const { return atomTypes_; }
-
 // Generate matrices
 void ScatteringMatrix::generateMatrices(const std::vector<double> &qValues)
 {

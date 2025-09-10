@@ -94,24 +94,8 @@ template <typename ValueClass> class DoubleKeyedMap
     {
         return get(pair.first, pair.second);
     }
-    ValueClass &get(const std::string_view key)
-    {
-        // Need to split key back into its constituent parts and find()
-        auto keys = DissolveSys::splitString(key, separator_);
-        if (keys.size() != 2)
-            throw(std::runtime_error(std::format("Invalid key '{}' given to DoubleKeyedMap::at()\n", key)));
-
-        return get(keys[0], keys[1]);
-    }
-    const ValueClass &get(const std::string_view key) const
-    {
-        // Need to split key back into its constituent parts and find()
-        auto keys = DissolveSys::splitString(key, separator_);
-        if (keys.size() != 2)
-            throw(std::runtime_error(std::format("Invalid key '{}' given to DoubleKeyedMap::at()\n", key)));
-
-        return get(keys[0], keys[1]);
-    }
+    ValueClass &get(const std::string_view key) { return get(keyPair(key)); }
+    const ValueClass &get(const std::string_view key) const { return get(keyPair(key)); }
     ValueClass &get(const std::pair<std::string_view, std::string_view> &pair) { return get(pair.first, pair.second); }
     const ValueClass &get(const std::pair<std::string_view, std::string_view> &pair) const
     {
@@ -147,6 +131,14 @@ template <typename ValueClass> class DoubleKeyedMap
     const std::map<std::string, ValueClass> &map() const { return data_; }
     // Return number of data in map
     int size() const { return data_.size(); }
+    // Return key parts from supplied string
+    std::pair<std::string, std::string> keyPair(std::string_view key) const
+    {
+        auto keys = DissolveSys::splitString(key, separator_);
+        if (keys.size() != 2)
+            throw(std::runtime_error(std::format("DoubleKeyedMap - can't split supplied key '{}' into a key pair.\n", key)));
+        return {std::string(keys[0]), std::string(keys[1])};
+    }
 
     /*
      * Look-Up Table
