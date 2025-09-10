@@ -476,17 +476,13 @@ $cacheVariables = @{
 # If conan2, add conan toolchain file as variable
 if ($conanVersion -eq 2)
 {
-    $cacheVariables = $cacheVariables + @{
-        CMAKE_MODULE_PATH = "`$penv{CONAN_HOME}"
-    }
+    $cacheVariables["CMAKE_MODULE_PATH"] = "`$penv{CONAN_HOME}"
 }
 
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
 if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022"))
 {
-    $cacheVariables = $cacheVariables + @{
-        CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
-    }
+    $cacheVariables["CMAKE_GENERATOR_TOOLSET"] = "version=$msvcVersion"
 }
 
 # For MSVC version != v143 latest, and Ninja generator specified, set toolset at preset level
@@ -543,9 +539,7 @@ if (-not $setSystemEnvVars)
     # If conan2, add CONAN_HOME to environment
     if ($conanVersion -eq 2)
     {
-        $environment = $environment + @{
-            CONAN_HOME = $env:CONAN_HOME
-        }
+        $environment["CONAN_HOME"] = $env:CONAN_HOME
     }
 }
 else
@@ -555,11 +549,6 @@ else
 }
 
 foreach ($preset in $presets) {
-    # Set CMake cache variables
-    $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
-        CONFIG = "$($preset.name)-x64"
-    })
-
     # Set environment variables
     if (-not $setSystemEnvVars)
     {
