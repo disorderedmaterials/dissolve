@@ -279,7 +279,24 @@ Write-Host "Unpacking freetype... " @info_colors
 tar -zxvf $freetypeOutput -C $dependencies
 
 Remove-Item -Path $freetypeOutput -Force
-Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo
+try
+{
+    Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo -ErrorAction Stop
+}
+catch
+{
+    # Move freetype if error on rename
+    $fromFreetype = "freetype-$freetypeVersion"
+    $moveFreetype = (JoinPath -Path $dependencies -ChildPath $freetypeRepo)
+    if (-not (TestPath $moveFreetype))
+    {
+        New-Item -Path $moveFreetype -ItemType Directory | Out-Null
+    }
+
+    Get-ChildItem -Path $fromFreetype -Force | Move-Item -Destination $moveFreetype -Force
+    Remove-Item -Path $fromFreetype -Force
+}
+
 
 Write-Host "Building freetype (from location: $freetypeBuildDir)... " @info_colors
 Set-Location -Path $freetypeBuildDir
@@ -549,16 +566,19 @@ else
 }
 
 foreach ($preset in $presets) {
+    # Set CMake cache variables
+    $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value $cacheVariables
+
     # Set environment variables
     if (-not $setSystemEnvVars)
     {
-        $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
+        $preset | Add-Member -MemberType NoteProperty -Name environment -Value $environment
     }
 
     # Set toolset
     if ($toolset)
     {
-        $preset | Add-Member -MemberType NoteProperty -Name toolset -Value ($toolset)
+        $preset | Add-Member -MemberType NoteProperty -Name toolset -Value $toolset
     }
 
     $cmakeUserPresets.configurePresets += $preset
