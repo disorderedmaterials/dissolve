@@ -463,11 +463,7 @@ try {
     $conan = "$scripts/conan.exe"
 }
 
-if ($conanVersion -eq 2)
-{
-    & $conan profile detect
-}
-else
+if  (-not ($conanVersion -eq 2))
 {
     & $conan profile new default --detect
     & $conan profile update settings.compiler="Visual Studio" default
