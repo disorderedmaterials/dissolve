@@ -73,4 +73,7 @@ void DissolveGraph::updatePairPotentials(const AtomType &i, const AtomType &j)
         pairPotentialStore_.set(nameI, nameJ, std::make_shared<PairPotential>(nameI, nameJ, *interactionPotential));
     else
         pairPotentialStore_.set(nameI, nameJ, std::make_shared<PairPotential>(nameI, nameJ));
+
+    auto pot = pairPotentialStore_.get({nameI, nameJ});
+    pot->tabulate(pairPotentialRange_, pairPotentialDelta_, i->charge() * j->charge());
 }
