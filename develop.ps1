@@ -279,7 +279,24 @@ Write-Host "Unpacking freetype... " @info_colors
 tar -zxvf $freetypeOutput -C $dependencies
 
 Remove-Item -Path $freetypeOutput -Force
-Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo
+try
+{
+    Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo -ErrorAction Stop
+}
+catch
+{
+    # Move freetype if error on rename
+    $fromFreetype = "freetype-$freetypeVersion"
+    $moveFreetype = (JoinPath -Path $dependencies -ChildPath $freetypeRepo)
+    if (-not (TestPath $moveFreetype))
+    {
+        New-Item -Path $moveFreetype -ItemType Directory | Out-Null
+    }
+
+    Get-ChildItem -Path $fromFreetype -Force | Move-Item -Destination $moveFreetype -Force
+    Remove-Item -Path $fromFreetype -Force
+}
+
 
 Write-Host "Building freetype (from location: $freetypeBuildDir)... " @info_colors
 Set-Location -Path $freetypeBuildDir
@@ -405,7 +422,25 @@ Set-Location -Path $projectDir
 
 New-Item -ItemType Directory -Path "conan" -ErrorAction SilentlyContinue
 
-$conanHome = Join-Path -Path (Get-Location) -ChildPath 'conan'
+if ($conanVersion -eq 2)
+{
+    $env:CONAN_HOME = Join-Path -Path (Get-Location) -ChildPath "conan"
+    $conanProfiles = Join-Path -Path $env:CONAN_HOME -ChildPath "profiles"
+
+    New-Item -ItemType Directory -Force -Path $conanProfiles | Out-Null
+    $profileContent = @"
+[settings]
+arch=x86_64
+build_type=$build
+compiler=msvc
+compiler.cppstd=14
+compiler.runtime=dynamic
+compiler.version=194
+os=Windows
+"@
+
+    Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
+}
 
 Write-Host "Setting up Conan profile... " @info_colors
 
@@ -428,7 +463,12 @@ try {
     $conan = "$scripts/conan.exe"
 }
 
-& $conan profile detect
+if  (-not ($conanVersion -eq 2))
+{
+    & $conan profile new default --detect
+    & $conan profile update settings.compiler="Visual Studio" default
+    & $conan profile update settings.compiler.version=17 default
+}
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
@@ -449,17 +489,13 @@ $cacheVariables = @{
 # If conan2, add conan toolchain file as variable
 if ($conanVersion -eq 2)
 {
-    $cacheVariables = $cacheVariables + @{
-        CMAKE_MODULE_PATH = "`$penv{CONAN_HOME}"
-    }
+    $cacheVariables["CMAKE_MODULE_PATH"] = "`$penv{CONAN_HOME}"
 }
 
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
 if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022"))
 {
-    $cacheVariables = $cacheVariables + @{
-        CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
-    }
+    $cacheVariables["CMAKE_GENERATOR_TOOLSET"] = "version=$msvcVersion"
 }
 
 # For MSVC version != v143 latest, and Ninja generator specified, set toolset at preset level
@@ -516,33 +552,29 @@ if (-not $setSystemEnvVars)
     # If conan2, add CONAN_HOME to environment
     if ($conanVersion -eq 2)
     {
-        $environment = $environment + @{
-            CONAN_HOME = $conanHome
-        }
+        $environment["CONAN_HOME"] = $env:CONAN_HOME
     }
 }
 else
 {
     Write-Host "Setting CONAN_HOME environment variable... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("CONAN_HOME", "$conanHome", [System.EnvironmentVariableTarget]::Machine)
+    [System.Environment]::SetEnvironmentVariable("CONAN_HOME", "$env:CONAN_HOME", [System.EnvironmentVariableTarget]::Machine)
 }
 
 foreach ($preset in $presets) {
     # Set CMake cache variables
-    $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
-        CONFIG = "$($preset.name)-x64"
-    })
+    $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value $cacheVariables
 
     # Set environment variables
     if (-not $setSystemEnvVars)
     {
-        $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
+        $preset | Add-Member -MemberType NoteProperty -Name environment -Value $environment
     }
 
     # Set toolset
     if ($toolset)
     {
-        $preset | Add-Member -MemberType NoteProperty -Name toolset -Value ($toolset)
+        $preset | Add-Member -MemberType NoteProperty -Name toolset -Value $toolset
     }
 
     $cmakeUserPresets.configurePresets += $preset
