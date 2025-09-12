@@ -67,6 +67,10 @@ NodeConstants::ProcessResult GRNode::process()
     for (auto &[sp, iPop] : targetConfiguration_->speciesPopulations())
         realSpeciesPopulations[sp] = iPop;
 
+    // Create unweighted GR storage if we need it
+    if (!unweightedGR_)
+        unweightedGR_.emplace();
+
     // Create original GR storage if we need it
     if (!rawGR_)
     {
@@ -95,10 +99,6 @@ NodeConstants::ProcessResult GRNode::process()
             return ExecutionResult::Failed;
     }
     */
-
-    // Create unweighted GR storage if we need it
-    if (!unweightedGR_)
-        unweightedGR_.emplace();
 
     // Form unweighted g(r) from original g(r), applying any requested smoothing and/or intramolecular broadening
     calculateUnweightedGR();
