@@ -38,6 +38,12 @@
             endif()
         endif()
 
+        # Find Conan2 packages
+        if(EXISTS "${PROJECT_SOURCE_DIR}/conan" AND IS_DIRECTORY "${PROJECT_SOURCE_DIR}/conan")
+            file(GLOB_RECURSE CONAN2_DLL "${PROJECT_SOURCE_DIR}/conan/*.dll")
+            list(APPEND ALL_INSTALL_FILES ${CONAN2_DLL})
+        endif()
+
         # Install all dependencies
         foreach(DEPENDENCY IN LISTS ALL_INSTALL_FILES)
             file(COPY ${DEPENDENCY} DESTINATION "${INSTALLATION_DIR}")
