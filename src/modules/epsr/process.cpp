@@ -443,8 +443,14 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
-                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
+            // Set the zero limit on the data (equivalent to EPSR's szeros == 0.0)
+            Data1D zeroed;
+            zeroed.addPoint(0.0, refMinusIntra.values().front());
+            for (auto &&[x, y] : zip(refMinusIntra.xAxis(), refMinusIntra.values()))
+                zeroed.addPoint(x, y);
+
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(zeroed, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(zeroed, weights, dataSetWeight))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
                 return ExecutionResult::Failed;
@@ -476,8 +482,14 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                                refMinusIntra.values().begin(), std::divides<>());
             }
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
-                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
+            // Set the zero limit on the data (equivalent to EPSR's szeros == 0.0)
+            Data1D zeroed;
+            zeroed.addPoint(0.0, refMinusIntra.values().front());
+            for (auto &&[x, y] : zip(refMinusIntra.xAxis(), refMinusIntra.values()))
+                zeroed.addPoint(x, y);
+
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(zeroed, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(zeroed, weights, dataSetWeight))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
                 return ExecutionResult::Failed;
