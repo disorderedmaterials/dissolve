@@ -570,3 +570,34 @@ bool PartialSet::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue PartialSet::serialise() const
+{
+    SerialisedValue result;
+    result["realSpeciesPopulations"] =
+        Serialisable::fromVectorToTable(realSpeciesPopulations_, [](const Species *sp) { return sp->name(); });
+    return result;
+}
+
+// Read values from a serialisable value
+void PartialSet::deserialise(SerialisedValue node)
+{
+    std::map<std::string, double> unconverted;
+    Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
+                        { unconverted[name] = population.as_floating(); });
+
+    // TODO - Search through Graph (from Node owning this data) to convert Species names back to pointers
+    realSpeciesPopulations_.clear();
+    for (auto &[speciesName, population] : unconverted)
+    {
+        Species *sp = nullptr; // ownerNode->findSpecies(speciesName);
+        if (sp)
+            realSpeciesPopulations_[sp] = population;
+        else
+            throw(toml::type_error("Non-existent species referenced in PartialSet.", node.location()));
+    }
+
+    // Rest of PartialSet data....
+    // TODO
+}
