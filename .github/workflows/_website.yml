@@ -53,7 +53,7 @@ jobs:
       shell: bash
       run: |
         # Set version and tip visibility in docs index
-        sed -i 's/RELEASETYPE version MAJOR.MINOR/Release v${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md
+        sed -i 's/DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION/Release v${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md web/examples/_index.md
         sed -i "/RELEASE TIP/d" web/docs/_index.md
         head -n 10 web/docs/_index.md
   
@@ -62,7 +62,7 @@ jobs:
       shell: bash
       run: |
         # Set version and tip visibility in docs index
-        sed -i 's/RELEASETYPE version MAJOR.MINOR/Development version ${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md
+        sed -i 's/DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION/Development version ${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md web/examples/_index.md
         sed -i "/DEVELOPMENT TIP/d" web/docs/_index.md
         head -n 10 web/docs/_index.md
   
@@ -79,7 +79,7 @@ jobs:
       shell: bash
       run: |
         # Set version and tip visibility in docs index
-        sed -i 's/RELEASETYPE version MAJOR.MINOR/Legacy version ${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md
+        sed -i 's/DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION/Legacy version ${{ inputs.displayMajorVersion }}.${{ inputs.displayMinorVersion }}/g' web/docs/_index.md web/examples/_index.md
         sed -i "/LEGACY TIP/d" web/docs/_index.md
         head -n 10 web/docs/_index.md
   

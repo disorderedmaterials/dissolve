@@ -1,4 +1,4 @@
-# Input file written by Dissolve v0.7.0 at 11:22:52 on 17-12-2020.
+# Input file written by Dissolve v1.8.0 at 10:04:33 on 10-07-2025.
 
 #==============================================================================#
 #                                   Species                                    #
@@ -6,6 +6,7 @@
 
 Species 'Ar'
   # Atoms
+  NAtoms  1
   Atom    1  Ar   0.000000e+00  0.000000e+00  0.000000e+00  'Ar'  0.000000e+00
 
   # Isotopologues
@@ -18,10 +19,12 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  Ar  Ar  0.000000e+00  LJGeometric  9.786380e-01  3.401000e+00
-  Range  10.0
+  Parameters  Ar  Ar  0.000000e+00  LJGeometric  epsilon=0.978638 sigma=3.401
+  Range  10
   Delta  0.005
+  ManualChargeSource  True
   IncludeCoulomb  False
+  ForceChargeSource  True
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
 EndPairPotentials
@@ -32,28 +35,31 @@ EndPairPotentials
 
 Configuration  'Bulk'
 
-  # Modules
+  # Generator
   Generator
-    Temperature
-      Temperature  85.0
+    Temperature  'Temperature01'
+      Temperature  '85'
     EndTemperature
-    Parameters
-      Parameter  rho  2.130000e-02
+    Parameters  'Parameters01'
+      Parameter  rho  0.0213
     EndParameters
-    Box
-      Lengths  1.000000e+00  1.000000e+00  1.000000e+00
-      Angles  9.000000e+01  9.000000e+01  9.000000e+01
+    Box  'Box01'
+      Lengths  1  1  1
+      Angles  90  90  90
       NonPeriodic  False
     EndBox
-    Add
+    Add  'Add01'
       Species  'Ar'
-      Population  '1000'
-      BoxAction  AddVolume
-      Density  'rho'  atoms/A3
       Rotate  True
+      Population  '1000'
+      Density  'rho'  atoms/A3
       Positioning  Random
+      BoxAction  AddVolume
     EndAdd
   EndGenerator
+
+  Temperature  300
+
 EndConfiguration
 
 #==============================================================================#
@@ -71,6 +77,7 @@ Layer  'Evolve (Atomic)'
   Module  MD  'MD01'
     Frequency  5
     Configuration  'Bulk'
+    Timestep  Auto
   EndModule
 
   Module  Energy  'Energy01'
@@ -85,21 +92,29 @@ Layer  'GR / Neutron S(Q)'
   Module  GR  'GR01'
     Frequency  1
     Configurations  'Bulk'
+    AveragingScheme  Linear
+    IntraBroadening  'Gaussian'  0.18
+    Method  Auto
   EndModule
 
   Module  SQ  'SQ01'
     Frequency  1
     SourceGR  'GR01'
-    WindowFunction  'None'
+    QBroadening  'None'  
+    WindowFunction  None
+    BraggQBroadening  'GaussianC2'  0  0.02
+    AveragingScheme  Linear
   EndModule
 
   Module  NeutronSQ  'NeutronSQ01'
     Frequency  1
     SourceSQs  'SQ01'
-    Isotopologue  'Ar'  'Ar36'  1.0
+    Isotopologue  'Ar'  'Ar36'  1
+    NormaliseTo  None
     Reference  xy  'data/yarnell.sq'
-      RemoveAverage   9.00000e+00
+      RemoveAverage  9
     EndReference
     ReferenceNormalisedTo  SquareOfAverage
+    ReferenceWindowFunction  Lorch0
   EndModule
 EndLayer
