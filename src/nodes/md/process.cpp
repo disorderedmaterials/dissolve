@@ -25,28 +25,28 @@ NodeConstants::ProcessResult MDNode::process()
     const auto kb = 0.8314462;
 
     // Print argument/parameter summary
-    Messenger::print("MD: Number of steps = {}\n", nSteps);
-    Messenger::print("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
+    message("MD: Number of steps = {}\n", nSteps);
+    message("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
     if (onlyWhenEnergyStable_)
-        Messenger::print("MD: Only perform MD if target Configuration energies are stable.\n");
+        message("MD: Only perform MD if target Configuration energies are stable.\n");
     if (trajectoryFrequency > 0)
-        Messenger::print("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency);
+        message("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency);
     else
-        Messenger::print("MD: Trajectory file off.\n");
+        message("MD: Trajectory file off.\n");
     if (capForces_)
-        Messenger::print("MD: Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
+        message("MD: Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
     if (energyFrequency > 0)
-        Messenger::print("MD: Energy will be calculated every {} step(s).\n", energyFrequency);
+        message("MD: Energy will be calculated every {} step(s).\n", energyFrequency);
     else
-        Messenger::print("MD: Energy will be not be calculated.\n");
+        message("MD: Energy will be not be calculated.\n");
     if (outputFrequency > 0)
-        Messenger::print("MD: Summary will be written every {} step(s).\n", outputFrequency);
+        message("MD: Summary will be written every {} step(s).\n", outputFrequency);
     else
-        Messenger::print("MD: Summary will not be written.\n");
+        message("MD: Summary will not be written.\n");
     if (!restrictToSpecies_.empty())
-        Messenger::print("MD: Calculation will be restricted to species: {}\n",
+        message("MD: Calculation will be restricted to species: {}\n",
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
-    Messenger::print("\n");
+    message("\n");
 
     auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
 
