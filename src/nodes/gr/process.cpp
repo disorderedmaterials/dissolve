@@ -69,14 +69,18 @@ NodeConstants::ProcessResult GRNode::process()
 
     // Create unweighted GR storage if we need it
     if (!unweightedGR_)
+    {
         unweightedGR_.emplace();
+        unweightedGR_->initialise(targetConfiguration_->speciesPopulations());
+        unweightedGR_->setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
+    }
+        
 
     // Create original GR storage if we need it
     if (!rawGR_)
     {
         rawGR_.emplace();
         rawGR_->initialise(targetConfiguration_->speciesPopulations());
-        unweightedGR_->setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
     }
 
     // Calculate unweighted partials for this Configuration
