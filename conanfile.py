@@ -8,8 +8,8 @@ class DissolveRecipe(ConanFile):
     generators = "CMakeToolchain", "CMakeDeps"
 
     def configure(self):
-        self.options["puxixml"].header_only=False
-        self.options["antlr4-cppruntime"].shared=True
+        self.options["puxixml"].header_only = False
+        self.options["antlr4-cppruntime"].shared = True
 
     def requirements(self):
         self.requires("cli11/1.9.1")
@@ -29,3 +29,19 @@ class DissolveRecipe(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+
+    def package(self):
+        copy(
+            self,
+            pattern="*.dll",
+            src=self.build_folder,
+            dst=os.path.join(self.package_folder, "bin"),
+            keep_path=False,
+        )
+        copy(
+            self,
+            pattern="*.dylib",
+            src=self.build_folder,
+            dst=os.path.join(self.package_folder, "lib"),
+            keep_path=False,
+        )
