@@ -17,12 +17,6 @@ runs:
   # Setup / Install Dependencies
   #
 
-  - name: Retrieve Qt Cache
-    uses: actions/cache@v4
-    with:
-      key: windows-qt-${{ inputs.qtVersion }}
-      path: ${{ runner.temp }}\qt
-
   - name: Retrieve FTGL Cache
     uses: actions/cache@v4
     with:
@@ -38,6 +32,12 @@ runs:
       path: |
         ${{ runner.temp }}\freetype-latest
         ${{ runner.temp }}\freetype-install
+
+  - name: Retrieve Qt Artifacts
+    uses: actions/download-artifact@v4
+    with:
+      name: windows-qt
+      path: ${{ runner.temp }}\qt
 
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v4

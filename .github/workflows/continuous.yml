@@ -19,7 +19,6 @@ jobs:
     if: github.event.repository.fork == false
     uses: "./.github/workflows/_checkout.yml"
     with:
-      bump: true
       publishType: 'continuous'
 
   QC:
@@ -35,6 +34,9 @@ jobs:
       benchmark: true
       publishBenchmarks: true
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
+      osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
+      osxRunner: ${{ needs.Checkout.outputs.osxRunner }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       conanHash: ${{ needs.Checkout.outputs.conanHash }}

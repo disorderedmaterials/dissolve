@@ -17,6 +17,7 @@ enum ModuleType
     Bragg,
     Checks,
     CheckSpecies,
+    Clustering,
     Compare,
     DAngle,
     DataTest,

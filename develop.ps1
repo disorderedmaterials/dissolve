@@ -3,26 +3,53 @@
         Script to install dependencies for Dissolve development environment in Visual Studio.
     .DESCRIPTION
         Installs the following dependencies for Dissolve (separate and prior to Conan-managed packages):
+            - Python 3.12 (unless stated otherwise)
+            - CMake 3.x
+            - ninja
+            - pkgconfiglite
             - Qt6 <VERSION>
             - Freetype
             - FTGL
             - Antlr4 (Java backend)
-            - Java JDK
+            - Java JDK (latest)
         
         These packages are installed into a folder called 'dependencies'.
     .PARAMETER qtVersion
         Qt version to install. Defaults to existing system Qt6 installation if none specified.
+    .PARAMETER systemQt
+        Path to existing installation of Qt6.
+    .PARAMETER pythonPath
+        Path to a Python executable.
+    .PARAMETER forcePythonVersion
+        Force installation of a given Python version.
     .PARAMETER antlrVersion
         ANTLR version to install. Defaults to ANTLR 4.13.1.
+    .PARAMETER msvcVersion
+        Version of MSVC to use.
+    .PARAMETER generator
+        Generator to use (options are "Visual Studio 17 2022", "Ninja").
+    .PARAMETER setSystemEnvVars
+        Flag - set environment variables and PATH for dependencies at the system level, otherwise set in CMake presets "environment" property.
     .PARAMETER release
         Flag - install packages for release, otherwise debug.
-
+    .PARAMETER clean
+        Flag - remove existing setup folders and files before running script. Invoking this flag deletes the following:
+            - Dissolve installation folders ("/out", "/build")
+            - dependencies folder
+            - CMakeUserPresets.json
 #>
 
 param (
     [string]$qtVersion,
-    [string]$antlrVersion = "4.13.1", 
-    [switch]$release = $false
+    [string]$systemQt,
+    [string]$pythonPath,
+    [string]$forcePythonVersion,
+    [string]$msvcVersion,
+    [string]$generator = "Visual Studio 17 2022",
+    [string]$antlrVersion = "4.13.1",
+    [switch]$setSystemEnvVars = $false,
+    [switch]$release = $false,
+    [switch]$clean = $false
 )
 
 $build = "Debug"
@@ -49,6 +76,37 @@ $threading = [bool]::Parse('True')
 $dependencies = "dependencies"
 New-Item -ItemType Directory -Path $dependencies -ErrorAction SilentlyContinue
 
+function Find-And-Remove {
+    <#
+        .SYNOPSIS
+            Remove Dissolve environment object, and recursively remove contents, if found in Dissolve project directory.
+        .DESCRIPTION
+            Deletes  specified folder and contents, or file, if it exists. Path is relative to the Dissolve project directory.
+        .PARAMETER relativePath
+            Relative path to object for deletion.
+    #>
+    param (
+        [string]$relativePath = ""
+    )
+
+    if (Test-Path -Path $relativePath)
+    {
+        Write-Host "Existing instance of object $relativePath found, cleaning up... " @info_colors
+        Remove-Item $relativePath -Recurse -Force
+    }
+    else
+    {
+        Write-Host "Existing instance of object $relativePath NOT found, could not clean up." @warn_colors
+    }
+}
+
+# Clean existing environment
+Find-And-Remove -relativePath "out"
+Find-And-Remove -relativePath "build"
+Find-And-Remove -relativePath "dependencies"
+Find-And-Remove -relativePath "CMakeUserPresets.json"
+Find-And-Remove -relativePath "msvc-env"
+
 #Install key dependencies with Chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
 iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -56,7 +114,15 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 
 Write-Host "Installing key dependencies with Chocolatey... " @info_colors
-choco install -y ninja pkgconfiglite cmake
+choco install -y ninja pkgconfiglite
+choco install -y cmake --version=3.30.1 --force
+
+# Ensure CMake version is 3.30.1
+$cmakeVersion = "$(cmake --version)"
+if (-not ($cmakeVersion -like "*3.30.1*"))
+{
+    choco install -y cmake.install --version=3.30.1 --force --installargs "ADD_CMAKE_TO_PATH=User"
+}
 
 # Find git, install if not found
 try {
@@ -68,28 +134,46 @@ try {
 }
 
 # Find python, install if not found
-try {
-    & "python" --version
-    Write-Output "Found system Python..." @info_colors
-    $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
-    $versionParts = $pythonVersion -split " "
-    if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
-        Write-Output "System Python is version $(python --version) and it is recommended to be == 3.12 - installing with Chocolatey..." @info_colors
-        choco install -y python --version=3.12.0
+if (-not [string]::IsNullOrEmpty($pythonPath))
+{
+    Write-Output "Using Python with path $pythonPath..." @info_colors
+    $python = $pythonPath
+}
+else
+{
+    if (-not [string]::IsNullOrEmpty($forcePythonVersion))
+    {
+        Write-Output "Installing requested Python version $forcePythonVersion..." @info_colors
+        choco install -y python --version=$forcePythonVersion --force
     }
-} catch {
-    Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
-    choco install -y python --version=3.12.0
+    else
+    {
+        try {
+            & "python" --version
+            Write-Output "Found system Python..." @info_colors
+            $pythonVersion = $(python -c "import sys; v = sys.version_info; print(v.major == 3, v.minor == 12)")
+            $versionParts = $pythonVersion -split " "
+            if (-not ($versionParts[0] -eq "True" -and $versionParts[1] -eq "True")) {
+                Write-Output "System Python is version $(python --version) and it is recommended to be version == 3.12 - installing with Chocolatey..." @info_colors
+                choco install -y python --version=3.12.0
+            }
+        } catch {
+            Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
+            choco install -y python --version=3.12.0
+        }
+    }
+
+    $python = "python"
 }
 
 refreshenv
 
 # Setup Python packages
-Write-Host "Creating a local Python virtual environment... " @info_colors
-python -m venv msvc-env
+Write-Host "Creating a local Python virtual environment with $(& $python --version)... " @info_colors
+& $python -m venv msvc-env
 
 Write-Host "Checking Python compiler type... " @info_colors
-if ($(python -c "import sys; print(sys.version)") -match "MSC v\.\d+") 
+if ($(& $python -c "import sys; print(sys.version)") -match "MSC v\.\d+")
 { 
     Write-Host " ...Python compiler type evaluated to MSC" @info_colors
     $pythonEnvSourceDir = "Scripts"
@@ -106,48 +190,69 @@ Write-Host "Activating Python virtual environment... " @info_colors
 & $activate
 
 Write-Host "Installing Python packages... " @info_colors
-python -m pip install --upgrade pip
-python -m pip install aqtinstall conan==1.*
+& $python -m pip install --upgrade pip
+& $python -m pip install aqtinstall conan==1.*
 
-$systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+$pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
-[Environment]::SetEnvironmentVariable("PATH", "$(Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir");$systemPath", [EnvironmentVariableTarget]::Machine)
-Write-Host "Python packages directory path added to system PATH." @info_colors
+if ($setSystemEnvVars)
+{
+    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
+    [Environment]::SetEnvironmentVariable("PATH", "$pythonEnvPath;$systemPath", [EnvironmentVariableTarget]::Machine)
+    Write-Host "Python packages directory path added to system PATH." @info_colors
+}
+
+# Install Qt6, or find existing system Qt6 installation
 $qt6CMakeDir = ""
 
 if (-not [string]::IsNullOrEmpty($qtVersion))
 {
-    # Install Qt6
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
-    Write-Host "Installing Qt6... " @info_colors
-    aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
+    Write-Host "Installing Qt6 using aqt with $(& $python --version)... " @info_colors
+    & $python -m aqt install-qt --outputdir $qtInstallationDir windows desktop $qtVersion win64_msvc2019_64 -m all
 
     # Export Qt6_DIR to system environment variables
     $qt6Dir = Join-Path -Path "$projectDir\$dependencies" -ChildPath "qt\$qtVersion\msvc2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     $qt6CMakeDir = Join-Path -Path $qt6Dir -ChildPath "lib\cmake"
     
-    Write-Host "Locating system PATH... " @info_colors
-    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+    if ($setSystemEnvVars)
+    {
+        Write-Host "Locating system PATH... " @info_colors
+        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-    Write-Host "Adding Qt6 directory to system PATH... " @info_colors
-    if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
-        [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
-        Write-Host "Qt6 binary directory path added to system PATH." @info_colors
-    } else {
-        Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
+        Write-Host "Adding Qt6 directory to system PATH... " @info_colors
+        if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
+            [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
+            Write-Host "Qt6 binary directory path added to system PATH." @info_colors
+        } else {
+            Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
+        }
     }
 } else {
+    # We attempt to use an existing installation of Qt
     Write-Host "Attempting to use existing system installation of Qt6... " @info_colors
-    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-    if ($systemPath -notmatch [regex]::Escape($qtVersion)) {
-        Write-Host "Found Qt6 version that is NOT ${qtVersion} in system PATH. It is strongly recommended to use Qt ${qtVersion}" @info_colors
+    if (-not [string]::IsNullOrEmpty($systemQt))
+    {
+        $qt6Version = Get-ChildItem -Path $systemQt -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+$'} | Select-Object -First 1
+        $qt6ToolChain = Get-ChildItem -Path (Join-Path -Path $systemQt -ChildPath $qt6Version) -Directory | Where-Object { $_.Name -match '^msvc\d{4}_x64$'} | Select-Object -ExpandProperty Name
+        $qt6BinDir = "$systemQt\$($qt6Version.Name)\$qt6ToolChain\bin"
+        $qt6CMakeDir = "$systemQt\$($qt6Version.Name)\$qt6ToolChain\lib\cmake"
+
+        if (-not (Test-Path -Path $qt6CMakeDir -PathType Container))
+        {
+            Write-Host "Attempted to find the directory $qt6CMakeDir. Could NOT find a valid Qt6 installation." @warn_colors
+        }
     }
-} 
+    else
+    {
+        Write-Host "Could NOT find a Qt6 installation. No path to Qt6 was supplied." @warn_colors
+    }
+}
 
 # Build/retrieve Freetype
 $freetypeVersion = "2.12.1"
@@ -185,7 +290,7 @@ $freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freet
 
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
-if ($lib -notlike "*$freetypeInstall*") {
+if (($setSystemEnvVars) -and ($lib -notlike "*$freetypeInstall*")) {
     Write-Host "Setting LIB environment variable with Freetype library... " @info_colors
     [System.Environment]::SetEnvironmentVariable("LIB", "$freetypeLibPath;$freetypeBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
 }
@@ -195,7 +300,7 @@ $freetype2IncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
-if ($include -notlike "*$freetypeRepo*") {
+if (($setSystemEnvVars) -and ($include -notlike "*$freetypeRepo*")) {
     Write-Host "Setting INCLUDE environment variable with Freetype includes... " @info_colors
     [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$freetype2IncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
 }
@@ -294,9 +399,30 @@ Move-Item -Path $antlrOutput -Destination $antlrExePath
 Set-Location -Path $projectDir
 
 Write-Host "Setting up Conan profile... " @info_colors
-conan profile new default --detect
-conan profile update settings.compiler="Visual Studio" default
-conan profile update settings.compiler.version=17 default
+
+try {
+    # TODO: Find Conan v1, not just any old Conan
+    $conanVersion = conan --version
+    Write-Output "Found conan version $conanVersion..."
+
+    $conan = "conan"
+} catch {
+    Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
+    $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+
+    if ($setSystemEnvVars)
+    {
+        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
+        [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
+        Write-Host "Python scripts path at location $scripts added to system PATH." @info_colors
+    }
+
+    $conan = "$scripts/conan.exe"
+}
+
+& $conan profile new default --detect
+& $conan profile update settings.compiler="Visual Studio" default
+& $conan profile update settings.compiler.version=17 default
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
@@ -314,6 +440,23 @@ $cacheVariables = @{
     CMAKE_PREFIX_PATH = "$qt6CMakeDir"
 }
 
+# For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
+if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022"))
+{
+    $cacheVariables = $cacheVariables + @{
+        CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
+    }
+}
+
+# For MSVC version != v143 latest, and Ninja generator specified, set toolset at preset level
+if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Ninja"))
+{
+    $toolset = @{
+        value = "version=$msvcVersion"
+        strategy = "external"
+    }
+}
+
 $cmakeUserPresets = [PSCustomObject]@{
     version = 3
     cmakeMinimumRequired = @{
@@ -328,20 +471,53 @@ $presets = @(
         name = "CLI-$build-MSVC"
         displayName = "CLI $build Build"
         description = "The preset for a CLI $build build on MSVC"
+        generator = $generator
         inherits = @("CLI-$build")
     },
     [PSCustomObject]@{
         name = "GUI-$build-MSVC"
         displayName = "GUI $build Build"
         description = "The preset for a GUI $build build on MSVC"
+        generator = $generator
         inherits = @("GUI-$build")
     }
 )
 
+# Set environment variables
+if (-not $setSystemEnvVars)
+{
+    if ([string]::IsNullOrEmpty($scripts))
+    {
+        $scripts = ''
+    }
+    else
+    {
+        $scripts = "$scripts;"
+    }
+
+    $environment = @{
+        PATH = "$scripts$qt6BinDir;$pythonEnvPath;`$penv{PATH}"
+    }
+}
+
 foreach ($preset in $presets) {
+    # Set CMake cache variables
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
         CONFIG = "$($preset.name)-x64"
     })
+
+    # Set environment variables
+    if (-not $setSystemEnvVars)
+    {
+        $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
+    }
+
+    # Set toolset
+    if ($toolset)
+    {
+        $preset | Add-Member -MemberType NoteProperty -Name toolset -Value ($toolset)
+    }
+
     $cmakeUserPresets.configurePresets += $preset
 }
 

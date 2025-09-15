@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/atomType.h"
+#include "classes/pairPotentialOverride.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
@@ -191,6 +192,13 @@ class Forcefield
     void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const;
     // Assign intramolecular parameters to the supplied Species
     bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
+
+    /*
+     * Pair Potential Overrides
+     */
+    public:
+    // Return available pair potential overrides
+    virtual std::vector<PairPotentialOverride> pairPotentialOverrides();
 };
 
 template <class T, typename... Args>

@@ -69,6 +69,8 @@ jobs:
         set -ex
         cd ./examples
         ./package-examples -v ${{ inputs.currentVersion }}
+        mv Dissolve*ExampleData.tar.gz ${{ github.workspace }}/packages
+        mv Dissolve*ExampleData.zip ${{ github.workspace }}/packages
 
     - name: 'Publish on GitHub'
       if: inputs.publishType == 'release' || inputs.publishType == 'continuous'

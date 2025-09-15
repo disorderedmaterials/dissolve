@@ -38,6 +38,7 @@ jobs:
           cacheOnly: true
           currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
           qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+          msvcVersion: ${{ needs.Checkout.output.msvcVersion }}
           antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
           conanHash: ${{ needs.Checkout.outputs.conanHash }}
 

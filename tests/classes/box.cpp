@@ -6,7 +6,6 @@
 
 namespace UnitTest
 {
-
 Vec3<double> manualMim(Box &box, const Vec3<double> r1, const Vec3<double> r2)
 {
     auto mim = box.inverseAxes() * (r1 - r2);
@@ -59,7 +58,7 @@ void scaleBox(Box &box, double requestedVolume, Vec3<bool> scalableAxes, bool un
     EXPECT_NEAR(angles.z, box.axisAngle(2), 1.0e-8);
 }
 
-void testBox(Box &box)
+void testBasicOperations(Box &box)
 {
     // Determine central coordinate from full axes matrix
     auto centroid = box.axes() * Vec3<double>(0.5, 0.5, 0.5);
@@ -96,12 +95,15 @@ void testBox(Box &box)
         EXPECT_NEAR(p.y, 0.5, 1.0e-8);
         EXPECT_NEAR(p.z, 0.5, 1.0e-8);
     }
+}
 
+void testScaling(Box &box)
+{
     // Scaling
     auto factor = 1.8371286;
     // -- Uniform scaling
     scaleBox(box, box.volume() * factor, {true, true, true}, true);
-    // -- Non-uniform, single axes
+    // -- Non-uniform, single axis
     scaleBox(box, box.volume() * factor, {true, false, false});
     scaleBox(box, box.volume() * factor, {false, true, false});
     scaleBox(box, box.volume() * factor, {false, false, true});
@@ -111,44 +113,86 @@ void testBox(Box &box)
     scaleBox(box, box.volume() * factor, {true, false, true});
 }
 
+void testPBC(const Box &box, const Vec3<double> origin, int nPoints = 100)
+{
+    // Create a number of points on a sphere about the specified origin, on a radius corresponding to the max mim
+    std::vector<Vec3<double>> points;
+    points.reserve(nPoints);
+    const auto r = box.inscribedSphereRadius();
+    for (auto n = 0; n < nPoints; ++n)
+    {
+        auto theta = DissolveMath::random() * M_PI;
+        auto phi = DissolveMath::random() * 2.0 * M_PI;
+        points.emplace_back(Vec3<double>(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) + origin);
+    }
+
+    // Test point distances from origin
+    for (const auto &p : points)
+        EXPECT_NEAR(r, box.minimumDistance(origin, p), 1.0e-6);
+}
+
 TEST(BoxTest, Cubic)
 {
     auto box = CubicBox(10.0);
-    testBox(box);
+    testBasicOperations(box);
+    testPBC(box, {1.0, 2.4, 5.2131});
+    testScaling(box);
 }
 
 TEST(BoxTest, Orthorhombic)
 {
     auto box1 = OrthorhombicBox({10.0, 20.0, 30.0});
-    testBox(box1);
+    testBasicOperations(box1);
+    testPBC(box1, {9.4, 13.0491, 1.325});
+    testScaling(box1);
     auto box2 = OrthorhombicBox({15.0, 2.0, 88.0});
-    testBox(box2);
+    testBasicOperations(box2);
+    testPBC(box2, {9.4, 13.0491, 1.325});
+    testScaling(box2);
 }
 
 TEST(BoxTest, Monoclinic)
 {
     auto box1 = MonoclinicAlphaBox({30.0, 30.0, 30.0}, 66.0);
-    testBox(box1);
+    testBasicOperations(box1);
+    testPBC(box1, {3.4, 4.902, 15.875});
+    testScaling(box1);
     auto box2 = MonoclinicAlphaBox({10.0, 20.0, 30.0}, 120.0);
-    testBox(box2);
+    testBasicOperations(box2);
+    testPBC(box2, {3.4, 4.902, 15.875});
+    testScaling(box2);
     auto box3 = MonoclinicBetaBox({30.0, 30.0, 30.0}, 66.0);
-    testBox(box3);
+    testBasicOperations(box3);
+    testPBC(box3, {3.4, 4.902, 15.875});
+    testScaling(box3);
     auto box4 = MonoclinicBetaBox({10.0, 20.0, 30.0}, 120.0);
-    testBox(box4);
+    testBasicOperations(box4);
+    testPBC(box4, {3.4, 4.902, 15.875});
+    testScaling(box4);
     auto box5 = MonoclinicGammaBox({30.0, 30.0, 30.0}, 66.0);
-    testBox(box5);
+    testBasicOperations(box5);
+    testPBC(box5, {3.4, 4.902, 15.875});
+    testScaling(box5);
     auto box6 = MonoclinicGammaBox({10.0, 20.0, 30.0}, 120.0);
-    testBox(box6);
+    testBasicOperations(box6);
+    testPBC(box6, {3.4, 4.902, 15.875});
+    testScaling(box6);
 }
 
 TEST(BoxTest, Triclinic)
 {
     auto box1 = TriclinicBox({30.0, 30.0, 30.0}, {66.0, 33.0, 77.0});
-    testBox(box1);
+    testBasicOperations(box1);
+    testPBC(box1, {14.8, 8.77, 0.01});
+    testScaling(box1);
     auto box2 = TriclinicBox({10.0, 20.0, 30.0}, {85.0, 80.0, 90.0});
-    testBox(box2);
+    testBasicOperations(box2);
+    testPBC(box2, {14.8, 8.77, 0.01});
+    testScaling(box2);
     auto box3 = TriclinicBox({27.0, 25.5, 31.2311}, {89.0, 120.0, 70.0});
-    testBox(box3);
+    testBasicOperations(box3);
+    testPBC(box3, {14.8, 8.77, 0.01});
+    testScaling(box3);
 }
 
 } // namespace UnitTest

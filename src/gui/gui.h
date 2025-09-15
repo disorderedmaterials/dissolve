@@ -166,6 +166,7 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesCreateAtomicAction_triggered(bool checked);
     void on_SpeciesCreateDrawAction_triggered(bool checked);
     void on_SpeciesCreateFromExistingAction_triggered(bool checked);
+    void on_SpeciesCreateGrapheneAction_triggered(bool checked);
     void on_SpeciesImportFromDissolveAction_triggered(bool checked);
     void on_SpeciesImportFromXYZAction_triggered(bool checked);
     void on_SpeciesImportLigParGenAction_triggered(bool checked);

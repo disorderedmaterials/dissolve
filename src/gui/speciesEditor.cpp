@@ -5,6 +5,7 @@
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
 #include "data/ff/library.h"
+#include "gui/speciesCellDialog.h"
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include "modules/geomOpt/geomOpt.h"
@@ -187,8 +188,7 @@ void SpeciesEditor::on_ToolsCalculateBondingButton_clicked(bool checked)
     if (!sp)
         return;
 
-    // Calculate missing bonds
-    sp->addMissingBonds();
+    sp->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
 
     // Signal that the data shown has been modified
     speciesViewer()->postRedisplay();
@@ -258,4 +258,37 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     speciesViewer()->view().showAllData();
     speciesViewer()->postRedisplay();
     speciesViewer()->notifyDataModified();
+}
+
+void SpeciesEditor::on_ToolsAddCellButton_clicked(bool checked)
+{
+    SpeciesCellDialog dialog(this, speciesViewer()->species());
+
+    if (dialog.createUnitCell())
+    {
+        speciesViewer()->species()->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
+        speciesViewer()->view().showAllData();
+        speciesViewer()->postRedisplay();
+        speciesViewer()->notifyDataModified();
+    }
+}
+
+void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
+{
+    speciesViewer()->species()->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
+    speciesViewer()->species()->removeBox();
+    speciesViewer()->view().showAllData();
+    speciesViewer()->postRedisplay();
+    speciesViewer()->notifyDataModified();
+}
+
+void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value)
+{
+    // Get displayed Species
+    auto *sp = speciesViewer()->species();
+    if (!sp)
+        return;
+
+    sp->recalculateIntermolecularTerms(value);
+    speciesViewer()->postRedisplay();
 }

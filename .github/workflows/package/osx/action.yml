@@ -13,11 +13,19 @@ runs:
   using: "composite"
   steps:
 
-  - name: Retrieve Qt Cache
-    uses: actions/cache@v4
+  - name: Download Qt Artifact
+    uses: actions/download-artifact@v4
     with:
-      key: osx-qt-${{ inputs.qtVersion }}
+      name: osx-${{ runner.arch }}-qt
       path: ${{ runner.temp }}/qt
+
+  - name: Prepare Qt
+    shell: bash
+    run: |
+      set -ex
+      ls -R  ${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
+      chmod -R u+x ${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/bin/*
+      chmod -R u+x ${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/libexec/*
 
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v4
@@ -25,15 +33,13 @@ runs:
       name: osx-${{ runner.arch }}-build-artifacts
       path: ${{ github.workspace }}/build
 
-  - name: Install Python Dependencies
-    shell: bash
-    run: |
-      pip3 install dmgbuild biplist --break-system-packages
-
-  - name: Install Custom Dependencies
+  - name: Install Dependencies
     shell: bash
     run: |
       set -ex
+      brew update-reset
+      brew install gsl
+      pip3 install dmgbuild biplist --break-system-packages
       wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/prep-dmg
       chmod u+x ./prep-dmg
 
@@ -43,9 +49,6 @@ runs:
       set -ex
       Qt6_ROOT=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
-
-      # Add rpath to packaged Frameworks
-      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
       # Set variables
       appName=Dissolve-GUI-${{ runner.arch }}
@@ -58,6 +61,7 @@ runs:
       # Copy dependencies into Frameworks folder in app bundle
       cp -v ./build/antlr4-cppruntime/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
       cp -v ./build/onetbb/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/gsl/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
 
   - name: Create Disk Image
     shell: bash

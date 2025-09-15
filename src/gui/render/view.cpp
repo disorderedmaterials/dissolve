@@ -1081,11 +1081,11 @@ Vec3<double> View::positiveDataMaxima()
         else
         {
             v = rend->positiveLimitsMax();
-            if (v.x < maxima.x)
+            if (v.x > maxima.x)
                 maxima.x = v.x;
-            if (v.y < maxima.y)
+            if (v.y > maxima.y)
                 maxima.y = v.y;
-            if (v.z < maxima.z)
+            if (v.z > maxima.z)
                 maxima.z = v.z;
         }
         ++nCounted;

@@ -48,7 +48,7 @@ TEST(CellsTest, Basic)
     water->setName("Water");
     water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0);
     water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0);
-    water->addAtom(Elements::H, {-cos(109.5), sin(109.5), 0.0}, 0.0);
+    water->addAtom(Elements::H, {-cos(109.5 / DEGRAD), sin(109.5 / DEGRAD), 0.0}, 0.0);
     water->atom(0).setAtomType(hType);
     water->atom(1).setAtomType(oType);
     water->atom(2).setAtomType(hType);

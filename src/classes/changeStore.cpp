@@ -89,7 +89,6 @@ void ChangeStore::storeAndReset()
         if (item->hasMoved())
         {
             changes_.push_back(*item);
-            targetAtoms_.erase(item);
         }
     }
 

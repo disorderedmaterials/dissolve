@@ -139,7 +139,7 @@
      <x>0</x>
      <y>0</y>
      <width>819</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -235,6 +235,8 @@
      <addaction name="SpeciesCreateAtomicAction"/>
      <addaction name="SpeciesCreateDrawAction"/>
      <addaction name="SpeciesCreateFromExistingAction"/>
+     <addaction name="separator"/>
+     <addaction name="SpeciesCreateGrapheneAction"/>
     </widget>
     <widget class="QMenu" name="SpeciesImportMenu">
      <property name="font">
@@ -849,6 +851,11 @@
   <action name="ConfigurationCreateEmptyAction">
    <property name="text">
     <string>Create Empty</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateGrapheneAction">
+   <property name="text">
+    <string>&amp;Sheet / Nanotube...</string>
    </property>
   </action>
  </widget>

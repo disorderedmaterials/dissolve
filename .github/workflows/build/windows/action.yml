@@ -53,27 +53,24 @@ runs:
       $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
       $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
 
+  - name: Setup cmake
+    uses: jwlawson/actions-setup-cmake@v2
+    with:
+      cmake-version: '3.x'
+
   - name: Install Chocolatey Dependencies
     shell: bash
-    run: choco install -y ninja wget
+    run: choco install -y wget
 
   - name: Install Python Dependencies
     shell: bash
     run: pip3 install aqtinstall conan
 
   #
-  # Retrieve Qt cache (or install it)
+  # Install Qt
   #
 
-  - name: Retrieve Qt Cache
-    id: cache-qt
-    uses: actions/cache@v4
-    with:
-      key: windows-qt-${{ inputs.qtVersion }}
-      path: ${{ runner.temp }}\qt
-
   - name: Install Qt
-    # if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
       aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ inputs.qtVersion }} win64_msvc2019_64 -m all
@@ -213,4 +210,13 @@ runs:
       name: windows-build-artifacts
       path: |
         ${{ github.workspace }}\build
+      retention-days: 1
+
+  - name: Upload Qt Artifacts
+    if: ${{ inputs.cacheOnly == 'false' }}
+    uses: actions/upload-artifact@v4
+    with:
+      name: windows-qt
+      path: |
+        ${{ runner.temp }}\qt
       retention-days: 1

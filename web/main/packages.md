@@ -22,7 +22,7 @@ linkTitle = "Packages"
 
 {{< /blocks/section >}}
 
-{{< blocks/section color="primary" >}}
+{{< blocks/section color="primary" type="row" >}}
 
 {{% blocks/feature icon="fab fa-linux" title="Linux" %}}
 {{< releaselink target="GUI" urlSuffix="" textSuffix="Binary" >}}

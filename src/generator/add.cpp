@@ -53,8 +53,8 @@ bool AddGeneratorNode::prepare(const GeneratorContext &generatorContext)
     if (species_ && coordinateSets_)
         return Messenger::error("Specify either target Species or target coordinate sets, but not both.\n");
 
-    // Check if the Species itself is valid
-    if (!species_->checkSetUp())
+    // Check if the Species itself is valid (but only if one was specified rather than a coordinate set)
+    if (species_ && !species_->checkSetUp())
         return false;
 
     // Check for a periodic species in the case of boxAction_ == Set

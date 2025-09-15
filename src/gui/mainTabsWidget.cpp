@@ -140,9 +140,6 @@ MainTab *MainTabsWidget::findTab(const QWidget *page)
 // Remove all tabs, including permanent tabs
 void MainTabsWidget::clearTabs()
 {
-    // Empty our list of close button references
-    closeButtons_.clear();
-
     // Removal of the tab and widget will be handled by the class destructors
     processingLayerTabs_.clear();
     configurationTabs_.clear();
@@ -198,7 +195,6 @@ void MainTabsWidget::reconcileTabs()
             auto spTab = speciesTabs_.emplace_back(new SpeciesTab(dissolveWindow_, dissolve, this, tabTitle, sp.get()));
             allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), spTab.data());
             insertTab(baseIndex + currentTabIndex, spTab.data(), tabTitle);
-            addTabCloseButton(spTab->page());
             setTabIcon(spTab->page(), QIcon(":/general/icons/species.svg"));
         }
 
@@ -231,7 +227,6 @@ void MainTabsWidget::reconcileTabs()
                 configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow_, dissolve, this, tabTitle, cfg.get()));
             allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), cfgTab.data());
             insertTab(baseIndex + currentTabIndex, cfgTab.data(), tabTitle);
-            addTabCloseButton(cfgTab->page());
             setTabIcon(cfgTab->page(), QIcon(":/general/icons/configuration.svg"));
         }
 
@@ -270,7 +265,6 @@ void MainTabsWidget::reconcileTabs()
                 processingLayerTabs_.emplace_back(new LayerTab(dissolveWindow_, dissolve, this, tabTitle, layer.get()));
             allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
-            addTabCloseButton(layerTab->page());
             setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
                        layer->isEnabled() ? QIcon(":/general/icons/layer.svg") : QIcon(":/general/icons/layer_disabled.svg"));
         }
@@ -402,10 +396,6 @@ void MainTabsWidget::preventEditing()
     for (auto tab : allTabs_)
         tab->preventEditing();
 
-    // Disable tab close buttons
-    for (auto &[button, page] : closeButtons_)
-        button->setDisabled(true);
-
     editingEnabled_ = false;
 }
 
@@ -414,10 +404,6 @@ void MainTabsWidget::allowEditing()
 {
     for (auto tab : allTabs_)
         tab->allowEditing();
-
-    // Enable tab close buttons
-    for (auto &[button, page] : closeButtons_)
-        button->setEnabled(true);
 
     editingEnabled_ = true;
 }
@@ -436,26 +422,6 @@ void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)
 
     // Set the style via the tab bar
     mainTabsBar_->setTabIcon(tabIndex, icon);
-}
-
-// Add close button to specified tab
-QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
-{
-    // Find the tab containing the specified page
-    auto tabIndex = indexOf(pageWidget);
-    if (tabIndex == -1)
-        return nullptr;
-
-    // Create a suitable tool button for the tab
-    auto *closeButton = new QToolButton;
-    closeButton->setIcon(QIcon(":/general/icons/cross.svg"));
-    closeButton->setIconSize(QSize(10, 10));
-    closeButton->setAutoRaise(true);
-    mainTabsBar_->setTabButton(tabIndex, QTabBar::RightSide, closeButton);
-    connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(tabCloseButtonClicked(bool)));
-    closeButtons_.emplace_back(closeButton, pageWidget);
-
-    return closeButton;
 }
 
 /*
@@ -560,35 +526,6 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
 
     if (updateRequired)
         Q_EMIT(dataModified());
-}
-
-// Tab close button clicked
-void MainTabsWidget::tabCloseButtonClicked(bool checked)
-{
-    if (!editingEnabled_)
-        return;
-
-    // Find the close button that sent the signal in our buttons reflist
-    auto *toolButton = dynamic_cast<QToolButton *>(sender());
-    if (!toolButton)
-        return;
-
-    auto it = std::find_if(closeButtons_.begin(), closeButtons_.end(),
-                           [toolButton](auto &term) { return std::get<QToolButton *>(term) == toolButton; });
-    if (it == closeButtons_.end())
-        return;
-
-    // Find the tab containing the page widget
-    auto [button, page] = *it;
-    auto *tab = findTab(page);
-    if (!tab || !tab->canClose())
-        return;
-
-    // Remove the button item
-    closeButtons_.erase(it);
-
-    // Tell the main GUI to do the clean-up
-    Q_EMIT(tabClosed(page));
 }
 
 // Tab double-clicked

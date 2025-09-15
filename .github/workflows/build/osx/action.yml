@@ -4,6 +4,8 @@ description: Build on OSX
 inputs:
   threading:
     default: true
+  osxTargetDeploymentVersion:
+    default: 13.3
   freeTypeArchive:
     default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
   ftglRepo:
@@ -35,6 +37,7 @@ runs:
       set -ex
       brew update-reset
       brew install gsl
+      brew uninstall --ignore-dependencies freetype
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
@@ -48,15 +51,7 @@ runs:
     run: |
       pip3 install aqtinstall conan --break-system-packages
 
-  - name: Retrieve Qt Cache
-    id: cache-qt
-    uses: actions/cache@v4
-    with:
-      key: osx-qt-${{ inputs.qtVersion }}
-      path: ${{ runner.temp }}/qt
-
   - name: Install Qt
-    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
@@ -93,7 +88,7 @@ runs:
     run: |
       set -ex
       mkdir freetype-build && cd freetype-build
-      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF
+      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF  -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --target install --config Release
 
   #
@@ -127,7 +122,7 @@ runs:
       INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
       export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
-      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:path=../ftgl-install -DBUILD_SHARED_LIBS:bool=OFF
+      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:path=../ftgl-install -DBUILD_SHARED_LIBS:bool=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --target install --config Release
 
   #
@@ -155,6 +150,7 @@ runs:
       Qt6_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
       export FTGL_DIR="${RUNNER_TEMP}/ftgl-install"
+      export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"
@@ -173,12 +169,16 @@ runs:
       conan config home -cc core.download:download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Set minimum deployment target version
-      export MACOSX_DEPLOYMENT_TARGET=13.3
+      export MACOSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
 
       # Build
       mkdir build && cd build
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../ -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --config Release
+
+      # Copy over gsl libs so we can ship them with the bundle. Our exe is only linked to two of the four libs present, and this breaks the binary if we don't include them all in the package.
+      mkdir gsl
+      cp -v $(brew --prefix gsl)/lib/*.dylib ./gsl
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -187,4 +187,13 @@ runs:
       name: osx-${{ runner.arch }}-build-artifacts
       path: |
         ${{ github.workspace }}/build
+      retention-days: 1
+
+  - name: Upload Qt Artifacts
+    if: ${{ inputs.cacheOnly == 'false' }}
+    uses: actions/upload-artifact@v4
+    with:
+      name: osx-${{ runner.arch }}-qt
+      path: |
+        ${{ runner.temp }}/qt
       retention-days: 1

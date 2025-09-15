@@ -1,9 +1,18 @@
 name: Checkout
-description: Checks out the source and packages the source as an artifact for use by other workflow steps. Reversioning of the source to a git-cliff bumped version is performed if the "bump" flag is set. Tags are created / moved according to the value of 'publishType'.
+description: Checks out the source and packages the source as an artifact for use by other workflow steps. Reversioning of the source to a git-cliff bumped version is performed if the publishing type is "continuous". Tags are created / moved according to the value of 'publishType'.
 
 on:
   workflow_call:
     inputs:
+      msvcVersion:
+        type: string
+        default: 14.41.17.11
+      osxRunner:
+        type: string
+        default: macos-15
+      osxTargetDeploymentVersion:
+        type: string
+        default: 13.3
       qtVersion:
         type: string
         default: 6.4.2
@@ -22,9 +31,6 @@ on:
       checkoutRef:
         default: ''
         type: string
-      bump:
-        default: false
-        type: boolean
     outputs:
       currentVersion:
         description: "Full version (MAJOR.MINOR.PATCH) determined from source, and after any reversioning"
@@ -59,6 +65,15 @@ on:
       conanHash:
         description: "Hash of the current conanfile"
         value: ${{ jobs.Checkout.outputs.conanHash }}
+      msvcVersion:
+        description: "Version of MSVC required by the project"
+        value: ${{ jobs.Checkout.outputs.msvcVersion }}
+      osxRunner:
+        description: "Runner target for OSX"
+        value: ${{ jobs.Checkout.outputs.osxRunner }}
+      osxTargetDeploymentVersion:
+        description: "Minimum version of OSX to target for deployment"
+        value: ${{ jobs.Checkout.outputs.osxTargetDeploymentVersion }}
 
 jobs:
 
@@ -70,6 +85,9 @@ jobs:
       currentVersionMinor: ${{ steps.authVersion.outputs.currentVersionMinor }}
       currentVersionPatch: ${{ steps.authVersion.outputs.currentVersionPatch }}
       currentShortHash: ${{ steps.authVersion.outputs.currentShortHash }}
+      msvcVersion: ${{ steps.versions.outputs.msvcVersion }}
+      osxRunner: ${{ steps.versions.outputs.osxRunner }}
+      osxTargetDeploymentVersion: ${{ steps.versions.outputs.osxTargetDeploymentVersion }}
       qtVersion: ${{ steps.versions.outputs.qtVersion }}
       antlrVersion: ${{ steps.versions.outputs.antlrVersion }}
       hugoVersion: ${{ steps.versions.outputs.hugoVersion }}
@@ -101,6 +119,10 @@ jobs:
           ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -n -e 's%^.*antlr4-cppruntime/%%p')
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
 
+          echo "msvcVersion=${{ inputs.msvcVersion }}" >> $GITHUB_OUTPUT
+          echo "osxRunner=${{ inputs.osxRunner }}" >> $GITHUB_OUTPUT
+          echo "osxTargetDeploymentVersion=${{ inputs.osxTargetDeploymentVersion }}" >> $GITHUB_OUTPUT
+
       - name: Get Hashes
         id: hashes
         shell: bash
@@ -131,10 +153,10 @@ jobs:
         shell: bash
         run: |
           set -ex
-          ./changeversion -l > ChangeLog.md
+          ./changeversion -l | tee ChangeLog.md
 
       - name: Bump Version
-        if: inputs.bump == true
+        if: inputs.publishType == 'continuous'
         shell: bash
         run: |
           set -ex
@@ -203,8 +225,8 @@ jobs:
            then
              echo "Release branch ${BRANCH} already exists."
            else
-             git config user.name "${{ env.USER }}"
-             git config user.email "${{ env.EMAIL }}"
+             git config user.name "${{ github.actor }}"
+             git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
              git checkout -b ${BRANCH}
 
              git push --set-upstream origin ${BRANCH}

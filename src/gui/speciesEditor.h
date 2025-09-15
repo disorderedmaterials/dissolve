@@ -79,4 +79,7 @@ class SpeciesEditor : public QWidget
     // Tools
     void on_ToolsCalculateBondingButton_clicked(bool checked);
     void on_ToolsMinimiseButton_clicked(bool checked);
+    void on_ToolsAddCellButton_clicked(bool checked);
+    void on_ToolsRemoveCellButton_clicked(bool checked);
+    void on_ToolsBondToleranceSpin_valueChanged(double value);
 };

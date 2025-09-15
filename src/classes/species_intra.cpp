@@ -154,6 +154,17 @@ void Species::removeHigherOrderIntramolecularTerms()
     ++version_;
 }
 
+// Clear and recalculate all bonds on the species
+void Species::recalculateIntermolecularTerms(double tolerance)
+{
+    // Need to detach().
+    while (bonds_.size())
+        removeBond(bonds_[0].i(), bonds_[0].j());
+
+    addMissingBonds(tolerance);
+    updateIntramolecularTerms();
+}
+
 // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
 void Species::updateIntramolecularTerms()
 {

@@ -8,6 +8,7 @@ on:
 
 jobs:
 
+  # Note: github.event.pull_request.merged is a true bool, so do not quote the value to test.
   Checkout:
     if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, '[Release]')
     uses: "./.github/workflows/_checkout.yml"
@@ -21,6 +22,9 @@ jobs:
     uses: "./.github/workflows/_build_and_package.yml"
     with:
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
+      osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
+      osxRunner: ${{ needs.Checkout.outputs.osxRunner }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       conanHash: ${{ needs.Checkout.outputs.conanHash }}
@@ -44,6 +48,6 @@ jobs:
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       releaseTag: ${{ needs.Checkout.outputs.currentVersion }}
       releaseName: "Release ${{ needs.Checkout.outputs.currentVersion }}"
-      releaseBody: ${{ github.event.pull_request.body }}
+      releaseBodyFile: ChangeLog.md
       apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
     secrets: inherit

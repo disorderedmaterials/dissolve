@@ -17,7 +17,7 @@ TEST(Array3DIteratorTest, ForEach)
     Array3D<std::pair<Vec3<int>, bool>> arr;
     arr.initialise(sizeX, sizeY, sizeZ);
 
-    Array3DIterator it(sizeX, sizeY, sizeZ);
+    Array3DIterator it(sizeX, sizeY, sizeZ, 0);
 
     dissolve::for_each_triplet(ParallelPolicies::par, it.begin(), it.end(),
                                [&](auto triplet, auto x1, auto y1, auto z1) {
@@ -42,7 +42,7 @@ TEST(Array3DIteratorTest, Iterator)
     Array3D<std::pair<Vec3<int>, bool>> arr;
     arr.initialise(sizeX, sizeY, sizeZ);
 
-    Array3DIterator it(sizeX, sizeY, sizeZ);
+    Array3DIterator it(sizeX, sizeY, sizeZ, 0);
 
     for (auto i = it.begin(), end = it.end(); i != end; ++i)
     {

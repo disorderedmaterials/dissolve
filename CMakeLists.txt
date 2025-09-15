@@ -27,7 +27,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "6")
+set(VERSION_MINOR "8")
 set(VERSION_PATCH "0")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -198,8 +198,6 @@ endif(UNIX)
 
 # -- OSX
 if(APPLE)
-  set(CMAKE_OSX_DEPLOYMENT_TARGET 13.3)
-
   list(APPEND CMAKE_BUILD_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
