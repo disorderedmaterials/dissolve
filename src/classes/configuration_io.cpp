@@ -127,7 +127,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
 
-        auto sp = coreData.findSpecies(parser.argsv(1));
+        auto sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(1)));
         if (!sp)
             return Messenger::error("Unrecognised Species '{}' found in Configuration '{}' in restart file.\n", parser.argsv(1),
                                     name());
@@ -223,8 +223,8 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
             }
             else if (coreData.findAtomType(parser.args(n)))
                 pot->addTargetAtomType(coreData.findAtomType(parser.args(n)));
-            else if (coreData.findSpecies(parser.args(n)))
-                pot->addTargetSpecies(coreData.findSpecies(parser.args(n)));
+            else if (coreData.findSpecies(DissolveSys::niceName(parser.args(n))))
+                pot->addTargetSpecies(coreData.findSpecies(DissolveSys::niceName(parser.args(n))));
             else
                 Messenger::exception("Unrecognised target '{}' for potential.\n", parser.args(n));
         }

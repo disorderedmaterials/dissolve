@@ -23,7 +23,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(ModuleContext &moduleCon
     }
 
     // Does a seek position exist in the processing module info?
-    std::string streamPosName = std::format("TrajectoryPosition_{}", targetConfiguration_->niceName());
+    std::string streamPosName = std::format("TrajectoryPosition_{}", targetConfiguration_->name());
     if (moduleContext.dissolve().processingModuleData().contains(streamPosName, name()))
     {
         // Retrieve the streampos and go to it in the file

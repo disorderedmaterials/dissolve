@@ -54,7 +54,7 @@ void Species::copyBasic(const Species *source, bool copyAtomTypes)
  */
 
 // Set name of the Species
-void Species::setName(std::string_view name) { name_ = name; }
+void Species::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return the name of the Species
 std::string_view Species::name() const { return name_; }

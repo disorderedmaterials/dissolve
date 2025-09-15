@@ -58,8 +58,8 @@ void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 
         sizeDist_->createRenderable<RenderableData1D>(
             std::format("{}//SizeData", module_->name()),
-            std::format("SizeData//{}", module_->keywords().getConfiguration("Configuration")->niceName()),
-            module_->keywords().getConfiguration("Configuration")->niceName());
+            std::format("SizeData//{}", module_->keywords().getConfiguration("Configuration")->name()),
+            module_->keywords().getConfiguration("Configuration")->name());
 
         sizeDist_->view().showAllData();
     }

@@ -40,12 +40,13 @@ bool SpeciesSiteVectorKeyword::deserialise(LineParser &parser, int startArg, con
     for (int n = startArg; n < parser.nArgs() - 1; n += 2)
     {
         // Find target Species (first argument)
-        Species *sp = coreData.findSpecies(parser.argsv(n));
+        Species *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(n)));
         if (!sp)
-            return Messenger::error("Error adding SpeciesSite - no Species named '{}' exists.\n", parser.argsv(n));
+            return Messenger::error("Error adding SpeciesSite - no Species named '{}' exists.\n",
+                                    DissolveSys::niceName(parser.argsv(n)));
 
         // Find specified Site (second argument) in the Species
-        auto speciesSite = sp->findSite(parser.argsv(n + 1));
+        auto speciesSite = sp->findSite(DissolveSys::niceName(parser.argsv(n + 1)));
         if (!speciesSite)
             return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                     parser.argsv(n + 1), sp->name());

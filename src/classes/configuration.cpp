@@ -40,19 +40,10 @@ void Configuration::clear()
  */
 
 // Set name of the Configuration
-void Configuration::setName(std::string_view name)
-{
-    name_ = name;
-
-    // Generate a nice name (i.e. no spaces, slashes etc.)
-    niceName_ = DissolveSys::niceName(name_);
-}
+void Configuration::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return name of the Configuration
 std::string_view Configuration::name() const { return name_; }
-
-// Return nice name of the Configuration
-std::string_view Configuration::niceName() const { return niceName_; }
 
 // Return the current generator
 Generator &Configuration::generator() { return generator_; }
@@ -64,10 +55,10 @@ bool Configuration::generate(const GeneratorContext &generatorContext)
     empty();
 
     // Generate the contents
-    Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
+    Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", name_);
     auto result = generator_.execute({generatorContext, this});
     if (!result)
-        return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
+        return Messenger::error("Failed to generate Configuration '{}'.\n", name_);
     Messenger::print("\n");
 
     // Set-up Cells for the Box

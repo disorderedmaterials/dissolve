@@ -110,14 +110,14 @@ void GRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         }
         else if (ui_.ConfigurationPartialsButton->isChecked())
         {
-            auto targetPrefix = std::format("{}//UnweightedGR", (*optConfig)->niceName());
+            auto targetPrefix = std::format("{}//UnweightedGR", (*optConfig)->name());
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>(targetPrefix, module_->name());
             createPartialSetRenderables(targetPrefix);
         }
         else
             for (auto *cfg : cfgs)
                 rdfGraph_->createRenderable<RenderableData1D>(
-                    std::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->niceName()), cfg->niceName(), "Total");
+                    std::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->name()), cfg->name(), "Total");
     }
 
     // Validate renderables if they need it

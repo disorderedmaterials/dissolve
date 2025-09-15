@@ -39,7 +39,7 @@ void MoleculeTorsionModuleWidget::updateControls(const Flags<ModuleWidget::Updat
         if (cfg)
             histogramGraph_
                 ->createRenderable<RenderableData1D>(std::format("{}//NormalisedHistogram", module_->name()),
-                                                     std::format("RDF//{}", cfg->niceName()), cfg->niceName())
+                                                     std::format("RDF//{}", cfg->name()), cfg->name())
                 ->setColour(StockColours::BlueStockColour);
     }
 

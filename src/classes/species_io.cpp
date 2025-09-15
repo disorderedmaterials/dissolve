@@ -459,7 +459,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::SpeciesKeyword::Site):
                 // First argument is the name of the site to create - make sure it doesn't exist already
-                site = findSite(parser.argsv(1));
+                site = findSite(DissolveSys::niceName(parser.argsv(1)));
                 if (site)
                 {
                     Messenger::error("The site '{}' already exists on Species '{}', and cannot be redefined.\n",

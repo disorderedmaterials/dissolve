@@ -49,8 +49,6 @@ class Configuration : public Serialisable<const CoreData &>
     private:
     // Name of the Configuration
     std::string name_;
-    // Nice name (generated from name_) used for output files
-    std::string niceName_;
     // Generator for the Configuration
     Generator generator_;
     // Temperature of this configuration (K)
@@ -62,8 +60,6 @@ class Configuration : public Serialisable<const CoreData &>
     void setName(std::string_view name);
     // Return name of the Configuration
     std::string_view name() const;
-    // Return nice name of the Configuration
-    std::string_view niceName() const;
     // Return the generator for the Configuration
     Generator &generator();
     // Create the Configuration according to its generator

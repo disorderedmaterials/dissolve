@@ -624,7 +624,7 @@ Configuration *CoreData::findConfiguration(std::string_view name) const
 Configuration *CoreData::findConfigurationByNiceName(std::string_view name) const
 {
     auto it = std::find_if(configurations().begin(), configurations().end(),
-                           [&name](const auto &cfg) { return DissolveSys::sameString(name, cfg->niceName()); });
+                           [&name](const auto &cfg) { return DissolveSys::sameString(name, cfg->name()); });
     if (it == configurations().end())
         return nullptr;
     return it->get();

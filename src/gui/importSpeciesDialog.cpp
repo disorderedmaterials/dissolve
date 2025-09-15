@@ -342,7 +342,7 @@ void ImportSpeciesDialog::on_SpeciesNameEdit_textChanged(const QString text)
     if (text.isEmpty())
         readyForImport = false;
     else
-        readyForImport = dissolve_.coreData().findSpecies(qPrintable(text)) == nullptr;
+        readyForImport = dissolve_.coreData().findSpecies(DissolveSys::niceName(qPrintable(text))) == nullptr;
 
     ui_.SpeciesNameIndicator->setOK(readyForImport);
 

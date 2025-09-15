@@ -365,7 +365,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     if (saveSizeDist_)
     {
         LineParser parser;
-        parser.appendOutput(std::format("{}.{}.sizedist.txt", targetConfiguration_->niceName(), name()));
+        parser.appendOutput(std::format("{}.{}.sizedist.txt", targetConfiguration_->name(), name()));
         parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
         parser.writeLineF("# Cluster size : number of clusters\n");
         for (const auto &[clusterSize, mems] : sizeDistribution_)
@@ -374,7 +374,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     if (saveMassDist_)
     {
         LineParser parser;
-        parser.appendOutput(std::format("{}.{}.massdist.txt", targetConfiguration_->niceName(), name()));
+        parser.appendOutput(std::format("{}.{}.massdist.txt", targetConfiguration_->name(), name()));
         parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
         parser.writeLineF("# Cluster mass : number of clusters\n");
         for (const auto &[clusterMass, mems] : massDistribution_)
@@ -383,7 +383,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
     if (saveRgMass_)
     {
         LineParser parser;
-        parser.appendOutput(std::format("{}.{}.massRg.txt", targetConfiguration_->niceName(), name()));
+        parser.appendOutput(std::format("{}.{}.massRg.txt", targetConfiguration_->name(), name()));
         parser.writeLineF("\n# Iteration: {}\n", moduleContext.dissolve().iteration());
         parser.writeLineF("# Fractal dimension:\n{}\n", fractalDimension_);
         parser.writeLineF("# Cluster mass : radius of gyration\n");
@@ -397,7 +397,7 @@ Module::ExecutionResult ClusteringModule::process(ModuleContext &moduleContext)
         for (const auto &[base, map] : clusterSpeciesCoordNo_)
             for (const auto &[partner, cn] : map)
             {
-                parser.appendOutput(std::format("{}.{}.{}{}.CN.txt", targetConfiguration_->niceName(), name(),
+                parser.appendOutput(std::format("{}.{}.{}{}.CN.txt", targetConfiguration_->name(), name(),
                                                 base->name() == partner->name() ? base->parent()->name() : base->name(),
                                                 base->name() == partner->name() ? partner->parent()->name() : partner->name()));
 

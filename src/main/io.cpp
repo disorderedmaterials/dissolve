@@ -80,7 +80,7 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::SpeciesBlockKeyword):
                 // Check to see if a Species with this name already exists...
-                if (coreData_.findSpecies(parser.argsv(1)))
+                if (coreData_.findSpecies(DissolveSys::niceName(parser.argsv(1))))
                     return Messenger::error("Redefinition of species '{}'.\n", parser.argsv(1));
 
                 sp = coreData_.addSpecies();

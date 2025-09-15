@@ -52,19 +52,19 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
         // Check RDF range
         double rdfRange = cfg->box()->inscribedSphereRadius();
         if (!requestedRange_)
-            Messenger::print("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->niceName(), rdfRange);
+            Messenger::print("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->name(), rdfRange);
         else
         {
             if (requestedRange_.value_or(0.0) > rdfRange)
             {
                 Messenger::error("Specified RDF range of {} Angstroms is out of range for Configuration "
                                  "'{}' (max = {} Angstroms).\n",
-                                 requestedRange_.value(), cfg->niceName(), rdfRange);
+                                 requestedRange_.value(), cfg->name(), rdfRange);
                 return ExecutionResult::Failed;
             }
 
             rdfRange = requestedRange_.value();
-            Messenger::print("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->niceName(), rdfRange);
+            Messenger::print("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->name(), rdfRange);
         }
 
         // 'Snap' rdfRange_ to nearest bin width...
@@ -76,7 +76,7 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
         calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), cfg, partialsMethod_,
                     rdfRange, binWidth_, alreadyUpToDate);
         auto &originalgr = moduleContext.dissolve().processingModuleData().retrieve<PartialSet>(
-            std::format("{}//OriginalGR", cfg->niceName()), name_);
+            std::format("{}//OriginalGR", cfg->name()), name_);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
@@ -85,7 +85,7 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
             std::string currentFingerprint{originalgr.fingerprint()};
 
             Averaging::average<PartialSet>(moduleContext.dissolve().processingModuleData(),
-                                           std::format("{}//OriginalGR", cfg->niceName()), name_, averagingLength_.value(),
+                                           std::format("{}//OriginalGR", cfg->name()), name_, averagingLength_.value(),
                                            averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
@@ -105,7 +105,7 @@ Module::ExecutionResult GRModule::process(ModuleContext &moduleContext)
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
         auto &unweightedgr = moduleContext.dissolve().processingModuleData().realise<PartialSet>(
-            std::format("{}//UnweightedGR", cfg->niceName()), name_, GenericItem::InRestartFileFlag);
+            std::format("{}//UnweightedGR", cfg->name()), name_, GenericItem::InRestartFileFlag);
         calculateUnweightedGR(moduleContext.processPool(), cfg, originalgr, unweightedgr, intraBroadening_,
                               nSmooths_.value_or(0));
 

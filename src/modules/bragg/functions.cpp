@@ -28,7 +28,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
         return true;
 
     // Realise the arrays from the Configuration
-    auto &braggKVectors = moduleData.realise<std::vector<KVector>>("KVectors", cfg->niceName());
+    auto &braggKVectors = moduleData.realise<std::vector<KVector>>("KVectors", cfg->name());
     auto &braggReflections =
         moduleData.realise<std::vector<BraggReflection>>("Reflections", name(), GenericItem::InRestartFileFlag);
     auto &braggAtomVectorXCos = moduleData.realise<Array2D<double>>("AtomVectorXCos", name());

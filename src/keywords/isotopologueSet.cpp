@@ -30,10 +30,10 @@ std::optional<int> IsotopologueSetKeyword::maxArguments() const { return 3; }
 bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Species (first argument)
-    Species *sp = coreData.findSpecies(parser.argsv(startArg));
+    Species *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(startArg)));
     if (!sp)
         return Messenger::error("Error defining Isotopologue reference - no Species named '{}' exists.\n",
-                                parser.argsv(startArg + 1));
+                                DissolveSys::niceName(parser.argsv(startArg)));
 
     // Finally, locate isotopologue definition for species (second argument)
     const Isotopologue *iso = sp->findIsotopologue(parser.argsv(startArg + 1));

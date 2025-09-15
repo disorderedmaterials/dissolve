@@ -58,7 +58,7 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
         // Clear any existing renderables
         energyGraph_->clearRenderables();
 
-        auto prefix = std::format("{}//{}", module_->name(), cfg->niceName());
+        auto prefix = std::format("{}//{}", module_->name(), cfg->name());
         energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Total", prefix), "Total", "Totals");
         energyGraph_->createRenderable<RenderableData1D>(std::format("{}//PairPotential", prefix), "PairPotential", "Totals")
             ->setColour(StockColours::RedStockColour);
@@ -87,13 +87,13 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
     QPalette labelPalette = ui_.StableLabel->palette();
     if (cfg)
     {
-        if (dissolve_.processingModuleData().contains("EnergyGradient", cfg->niceName()))
+        if (dissolve_.processingModuleData().contains("EnergyGradient", cfg->name()))
             ui_.GradientValueLabel->setText(
-                QString::number(dissolve_.processingModuleData().value<double>("EnergyGradient", cfg->niceName())));
+                QString::number(dissolve_.processingModuleData().value<double>("EnergyGradient", cfg->name())));
         else
             ui_.GradientValueLabel->setText("N/A");
 
-        if (dissolve_.processingModuleData().valueOr<bool>("EnergyStable", cfg->niceName(), false))
+        if (dissolve_.processingModuleData().valueOr<bool>("EnergyStable", cfg->name(), false))
         {
             labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
             ui_.StableLabel->setText("Yes");

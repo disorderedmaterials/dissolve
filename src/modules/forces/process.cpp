@@ -39,7 +39,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
     // Realise the force vector
     auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>(
-        std::format("{}//Forces", targetConfiguration_->niceName()), name());
+        std::format("{}//Forces", targetConfiguration_->name()), name());
     f.resize(targetConfiguration_->nAtoms());
 
     // Calculate forces

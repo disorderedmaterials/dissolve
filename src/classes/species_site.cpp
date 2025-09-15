@@ -36,7 +36,7 @@ std::vector<std::unique_ptr<SpeciesSite>> &Species::sites() { return sites_; }
 // Generate unique site name with base name provided
 std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *exclude) const
 {
-    std::string_view baseName = base.empty() ? "NewSite" : base;
+    auto baseName = DissolveSys::niceName(base.empty() ? "NewSite" : base);
     std::string uniqueName{baseName};
 
     // Find all existing names which are the same as 'existingName' up to the first '_', and get the highest appended number
