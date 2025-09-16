@@ -159,7 +159,7 @@ Vector3i CellArray::wrappedGridRef(const Vector3i &gridRef) const
 // Construct cell neighbour pairs
 void CellArray::createCellNeighbourPairs()
 {
-    auto nPairs = cells_.size() * ((cells_.size() + 1) / 2);
+    auto nPairs = DissolveMath::triangularIncDiagonals(cells_.size());
     neighbourPairs_.clear();
     neighbourPairs_.reserve(nPairs);
     for (auto &cell : cells_)

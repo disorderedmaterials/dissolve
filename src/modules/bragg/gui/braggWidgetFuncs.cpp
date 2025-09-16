@@ -5,6 +5,7 @@
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/braggWidget.h"
 #include "templates/algorithms.h"
@@ -104,7 +105,7 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
             {
                 const auto typeVector = *reflectionAtomTypesData_;
                 std::vector<std::string> columnHeaders;
-                columnHeaders.reserve(typeVector.size() * (typeVector.size() + 1) / 2);
+                columnHeaders.reserve(DissolveMath::triangularIncDiagonals(typeVector.size()));
                 dissolve::for_each_pair(
                     ParallelPolicies::seq, typeVector, [&](int i, auto &popI, int j, auto &popJ)
                     { columnHeaders.emplace_back(std::format("{}-{}", popI.first->name(), popJ.first->name())); });

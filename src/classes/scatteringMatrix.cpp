@@ -6,6 +6,7 @@
 #include "classes/neutronWeights.h"
 #include "classes/xRayWeights.h"
 #include "math/interpolator.h"
+#include "math/mathFunc.h"
 #include "math/svd.h"
 #include "templates/algorithms.h"
 #include <algorithm>
@@ -25,7 +26,7 @@ bool ScatteringMatrix::qDependentWeighting() const
 // Create and return the full coefficients matrix
 Array2D<double> ScatteringMatrix::A() const
 {
-    Array2D<double> result(rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2, false);
+    Array2D<double> result(rows_.size(), DissolveMath::triangularIncDiagonals(atomTypes_.size()), false);
     auto row = 0;
     for (const auto &[rowKey, rowData] : rows_)
     {
@@ -238,10 +239,10 @@ void ScatteringMatrix::printInverse(double q) const
 DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
 {
     // Check that we have the correct number of reference data to be able to invert the matrix
-    if (rows_.size() < (atomTypes_.size() * (atomTypes_.size() + 1)) / 2)
+    if (rows_.size() < DissolveMath::triangularIncDiagonals(atomTypes_.size()))
         return Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data ({}) "
                                 "compared to rows in the matrix ({}).\n",
-                                rows_.size(), (atomTypes_.size() * (atomTypes_.size() + 1)) / 2);
+                                rows_.size(), DissolveMath::triangularIncDiagonals(atomTypes_.size()));
 
     /*
      * Currently our scattering matrix / data look as follows:
