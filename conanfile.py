@@ -11,8 +11,13 @@ class DissolveRecipe(ConanFile):
         self.options["puxixml"].header_only = False
         self.options["antlr4-cppruntime"].shared = True
 
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
+
     def requirements(self):
-        self.requires("cli11/1.9.1")
+        self.requires("cli11/2.5.0")
         self.requires("pugixml/1.15")
         self.requires("onetbb/2021.10.0")
         self.requires("onedpl/2022.3.0")
@@ -41,6 +46,13 @@ class DissolveRecipe(ConanFile):
         copy(
             self,
             pattern="*.dylib",
+            src=self.build_folder,
+            dst=os.path.join(self.package_folder, "lib"),
+            keep_path=False,
+        )
+        copy(
+            self,
+            pattern="*.so",
             src=self.build_folder,
             dst=os.path.join(self.package_folder, "lib"),
             keep_path=False,

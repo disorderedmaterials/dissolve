@@ -138,6 +138,12 @@ runs:
         ~/.conan
         ~/.conancache
 
+  - name: Setup Conan Profile
+    if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
+    shell: bash
+    run: |
+      conan profile detect
+
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
@@ -173,6 +179,7 @@ runs:
 
       # Build
       mkdir build && cd build
+      conan install .. --deployer=runtime_deploy --build="*"
       cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../ -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --config Release
 

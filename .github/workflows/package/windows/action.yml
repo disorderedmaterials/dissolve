@@ -74,6 +74,7 @@ runs:
       exe=`ls *.exe`
       exeBase=`basename -s .exe $exe`
       echo "Executable installer is $exe, basename is $exeBase"
+      ls
       
       # Create Zip from Exe
       innoextract.exe $exe -d $exeBase
