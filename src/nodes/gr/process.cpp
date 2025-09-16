@@ -67,29 +67,13 @@ NodeConstants::ProcessResult GRNode::process()
     for (auto &[sp, iPop] : targetConfiguration_->speciesPopulations())
         realSpeciesPopulations[sp] = iPop;
 
-    // Create unweighted GR storage if we need it
-    if (!unweightedGR_)
-    {
-        unweightedGR_.emplace();
-        unweightedGR_->initialise(targetConfiguration_->speciesPopulations());
-        unweightedGR_->setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
-    }
-        
-
-    // Create original GR storage if we need it
-    if (!rawGR_)
-    {
-        rawGR_.emplace();
-        rawGR_->initialise(targetConfiguration_->speciesPopulations());
-    }
-
     // Calculate unweighted partials for this Configuration
     bool alreadyUpToDate;
     calculateRawGR(grRange, alreadyUpToDate);
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
-        (*rawGR_) = rawGRHistory_.average(*rawGR_, averagingLength_.value().asInteger());
+        rawGR() = rawGRHistory_.average(rawGR(), averagingLength_.value().asInteger());
 
     /*
     // Perform internal test of original g(r)?

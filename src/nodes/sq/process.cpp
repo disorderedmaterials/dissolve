@@ -58,13 +58,6 @@ NodeConstants::ProcessResult SQNode::process()
      * Transform target UnweightedGR into the UnweightedSQ.
      */
 
-    // Set up unweighted SQ storage if we need to
-    if (!unweightedSQ_)
-    {
-        unweightedSQ_.emplace();
-        unweightedSQ_->initialise(*unweightedGR_);
-    }
-
     /*
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(unweightedSQ_.fingerprint(), std::format("{}/{}", -1), -1))

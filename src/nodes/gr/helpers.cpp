@@ -277,7 +277,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(rawGR_->fingerprint(), std::format("{}", targetConfiguration_->version())) &&
+    if (DissolveSys::sameString(rawGR().fingerprint(), std::format("{}", targetConfiguration_->version())) &&
         (partialsMethod_ != PartialsMethod::TestMethod))
     {
         message("Partial g(r) are up-to-date for Configuration '{}'.\n", targetConfiguration_->name());
@@ -388,17 +388,17 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
             DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
 
             // Calculate RDFs from histogram data
-            calculateRDF(rawGR_->partials().get(key), histograms_->fullHistograms().get(key), box->volume(), popI.second,
+            calculateRDF(rawGR().partials().get(key), histograms_->fullHistograms().get(key), box->volume(), popI.second,
                          popJ.second, indexI == indexJ ? 2.0 : 1.0);
-            calculateRDF(rawGR_->boundPartials().get(key), histograms_->boundHistograms().get(key), box->volume(), popI.second,
+            calculateRDF(rawGR().boundPartials().get(key), histograms_->boundHistograms().get(key), box->volume(), popI.second,
                          popJ.second, indexI == indexJ ? 2.0 : 1.0);
-            calculateRDF(rawGR_->unboundPartials().get(key), histograms_->unboundHistograms().get(key), box->volume(),
+            calculateRDF(rawGR().unboundPartials().get(key), histograms_->unboundHistograms().get(key), box->volume(),
                          popI.second, popJ.second, indexI == indexJ ? 2.0 : 1.0);
         },
         true);
 
     // Sum total functions
-    rawGR_->formTotals(true);
+    rawGR().formTotals(true);
     timer.stop();
     message("Finished summation and normalisation of partial g(r) data ({}).\n", timer.totalTimeString());
 
@@ -412,35 +412,35 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool GRNode::calculateUnweightedGR()
 {
-    *unweightedGR_ = *rawGR_;
+    unweightedGR() = rawGR();
 
     // Remove bound partial from full partial
-    for (auto &[key, fullPartial] : unweightedGR_->partials())
-        fullPartial -= rawGR_->boundPartials().get(key);
+    for (auto &[key, fullPartial] : unweightedGR().partials())
+        fullPartial -= rawGR().boundPartials().get(key);
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
-    for (auto &boundPartial : std::views::values(unweightedGR_->boundPartials()))
+    for (auto &boundPartial : std::views::values(unweightedGR().boundPartials()))
         Filters::convolve(boundPartial, intraBroadening_, true, true);
 
     // Add broadened bound partials back in to full partials
-    for (auto &[key, fullPartial] : unweightedGR_->partials())
-        fullPartial += unweightedGR_->boundPartials().get(key);
+    for (auto &[key, fullPartial] : unweightedGR().partials())
+        fullPartial += unweightedGR().boundPartials().get(key);
 
     // Apply smoothing if requested
     auto smoothing = nSmooths_.value_or(0).asInteger();
     if (smoothing > 0)
     {
         // Iterate over keys / full partials
-        for (auto &[key, fullPartial] : unweightedGR_->partials())
+        for (auto &[key, fullPartial] : unweightedGR().partials())
         {
             Filters::movingAverage(fullPartial, smoothing);
-            Filters::movingAverage(unweightedGR_->boundPartials().get(key), smoothing);
-            Filters::movingAverage(unweightedGR_->unboundPartials().get(key), smoothing);
+            Filters::movingAverage(unweightedGR().boundPartials().get(key), smoothing);
+            Filters::movingAverage(unweightedGR().unboundPartials().get(key), smoothing);
         }
     }
 
     // Calculate total
-    unweightedGR_->formTotals(true);
+    unweightedGR().formTotals(true);
 
     return true;
 }
@@ -556,4 +556,29 @@ bool GRNode::testReferencePartial(const PartialSet &partials, double testThresho
     }
 
     return testResult;
+}
+
+PartialSet &GRNode::unweightedGR()
+{
+    // Create unweighted GR storage if we need it
+    if (!unweightedGR_)
+    {
+        unweightedGR_.emplace();
+        unweightedGR_.value().initialise(targetConfiguration_->speciesPopulations());
+        unweightedGR_.value().setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
+    }
+
+    return *unweightedGR_;
+}
+
+PartialSet &GRNode::rawGR()
+{
+    // Create original GR storage if we need it
+    if (!rawGR_)
+    {
+        rawGR_.emplace();
+        rawGR_.value().initialise(targetConfiguration_->speciesPopulations());
+    }
+
+    return *rawGR_;
 }

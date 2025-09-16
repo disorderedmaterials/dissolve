@@ -50,7 +50,7 @@ class NeutronSQNode : public Node
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
-    Data1DImportFileFormat referenceFQ_{"", Data1DImportFileFormat::Data1DImportFormat::GudrunMint};
+    Data1DImportFileFormat referenceFQ_{"Argon", Data1DImportFileFormat::Data1DImportFormat::GudrunMint};
     // Minimum Q value to use when Fourier-transforming the data
     std::optional<double> referenceFTQMin_{0.3};
     // Maximum Q value to use when Fourier-transforming the data
@@ -84,6 +84,12 @@ class NeutronSQNode : public Node
     bool calculateWeightedSQ();
     // Calculate neutron weights matrix
     void calculateWeights(const KeyedVector<const Species *, double> &realSpeciesPopulations);
+
+    private:
+    // Return value of weighted SQ, emplacing if optional not initialised
+    PartialSet &weightedSQ();
+    // Return value of weighted GR, emplacing if optional not initialised
+    PartialSet &weightedGR();
 
     /*
      * Processing
