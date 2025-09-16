@@ -8,6 +8,7 @@
 #include "keywords/optionalDouble.h"
 #include "math/data1D.h"
 #include "math/filters.h"
+#include <filesystem>
 
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format,
                                                int xColumn, int yColumn, int errorColumn)
@@ -64,8 +65,11 @@ bool Data1DImportFileFormat::importData(Data1D &data)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser;
-    if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename_);
+    auto cwd = std::filesystem::current_path();
+    auto path = cwd.parent_path().parent_path() / filename_;
+    auto filename = path.string();
+    if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
+        return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename);
 
     // Import the data
     auto result = importData(parser, data);
@@ -74,7 +78,7 @@ bool Data1DImportFileFormat::importData(Data1D &data)
 
     // Validity check on number of points in loaded file
     if (result && data.nValues() == 0)
-        return Messenger::error("File '{}' contains no data.\n", filename_);
+        return Messenger::error("File '{}' contains no data.\n", filename);
 
     return result;
 }
