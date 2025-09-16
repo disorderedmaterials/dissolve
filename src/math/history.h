@@ -6,6 +6,8 @@
 #include "base/serialiser.h"
 #include <memory>
 #include <vector>
+#include <functional>
+#include <optional>
 
 // Data History
 template <class T> class History
@@ -16,7 +18,7 @@ template <class T> class History
 
     public:
     // Update history with supplied data and return current average
-    template <typename T> T average(const T &currentData, int averagingLength)
+    template <typename T> T average(const T &currentData, int averagingLength, std::optional<std::function<T()>> initialiser = {})
     {
         // Push the current data onto the history stack
         history_.emplace_back(std::make_unique<T>(currentData));
@@ -28,8 +30,8 @@ template <class T> class History
         // Perform averaging of the datasets that we have
         T averaged = [&]()
         {
-            if constexpr (std::is_copy_constructible<T>::value)
-                return T(currentData);
+            if (initialiser.has_value())
+                return (*initialiser)();
             else
                 return T();
         }();
