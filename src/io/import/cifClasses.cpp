@@ -11,7 +11,7 @@
  */
 
 CIFSymmetryAtom::CIFSymmetryAtom(std::string_view label, Elements::Element Z, Vec3<double> rFrac, double occ)
-    : label_{label}, Z_(Z), rFrac_(rFrac), occupancy_(occ){};
+    : label_{label}, Z_(Z), rFrac_(rFrac), occupancy_(occ) {};
 
 // Return label (from _atom_site_label)
 std::string_view CIFSymmetryAtom::label() const { return label_; }
@@ -30,7 +30,7 @@ double CIFSymmetryAtom::occupancy() const { return occupancy_; }
  */
 
 CIFBondingPair::CIFBondingPair(std::string_view labelI, std::string_view labelJ, double r)
-    : labelI_{labelI}, labelJ_{labelJ}, r_(r){};
+    : labelI_{labelI}, labelJ_{labelJ}, r_(r) {};
 
 // Return labels of involved atom i (from _geom_bond_atom_site_label_1)
 std::string_view CIFBondingPair::labelI() const { return labelI_; }

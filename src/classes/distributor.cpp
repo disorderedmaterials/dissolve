@@ -177,8 +177,7 @@ bool Distributor::canHardLock(int cellIndex) const
     auto *cell = cellArray_.cell(cellIndex);
 
     // For the specified Cell to be hard lockable its neighbours must not be HardLocked
-    if (std::find_if(cellArray_.neighbours(*cell).begin(), cellArray_.neighbours(*cell).end(),
-                     [&](const auto &nbr)
+    if (std::find_if(cellArray_.neighbours(*cell).begin(), cellArray_.neighbours(*cell).end(), [&](const auto &nbr)
                      { return cellLocks_[nbr.cell.index()] == HardLocked; }) != cellArray_.neighbours(*cell).end())
         return false;
 

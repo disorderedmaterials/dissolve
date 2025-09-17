@@ -20,7 +20,7 @@ class ModifyChargesModelTest : public ::testing::Test
     ModifyChargesModelTest() = default;
 
     protected:
-    void SetUp() override{};
+    void SetUp() override {};
 };
 
 TEST_F(ModifyChargesModelTest, Scale)

@@ -44,9 +44,8 @@ bool WeightedModuleVectorKeyword::deserialise(LineParser &parser, int startArg, 
     auto weight = parser.hasArg(startArg + 1) ? parser.argd(startArg + 1) : 1.0;
 
     // Check the module's type if we can
-    if (!moduleTypes_.empty() &&
-        std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
-                     [module](const auto &type) { return type == module->type(); }) == moduleTypes_.cend())
+    if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &type)
+                                              { return type == module->type(); }) == moduleTypes_.cend())
         return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                 module->name(), ModuleTypes::moduleType(module->type()), name(),
                                 joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); }));
@@ -85,10 +84,8 @@ void WeightedModuleVectorKeyword::removeReferencesTo(Module *module)
 // Express as a serialisable value
 SerialisedValue WeightedModuleVectorKeyword::serialise() const
 {
-    return fromVector(data_,
-                      [](const auto &item) -> SerialisedValue {
-                          return {{"target", item.first->name()}, {"weight", item.second}};
-                      });
+    return fromVector(data_, [](const auto &item) -> SerialisedValue
+                      { return {{"target", item.first->name()}, {"weight", item.second}}; });
 }
 
 // Read values from a serialisable value
@@ -103,9 +100,8 @@ void WeightedModuleVectorKeyword::deserialise(const SerialisedValue &node, const
                      throw toml::type_error(std::format("No Module named '{}' exists.\n", moduleName), item.location());
 
                  // Check the module's type if we can
-                 if (!moduleTypes_.empty() &&
-                     std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
-                                  [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
+                 if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s)
+                                                           { return s == module->type(); }) == moduleTypes_.cend())
                      throw toml::type_error(
                          std::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                      moduleName, ModuleTypes::moduleType(module->type()), name(),

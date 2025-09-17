@@ -234,8 +234,7 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
     else if (!executeIfTargetsUnchanged_)
     {
         // Targets are the same - are _all_ versions different?
-        if (std::any_of(currentTargets.begin(), currentTargets.end(),
-                        [&](const auto *currentTarget)
+        if (std::any_of(currentTargets.begin(), currentTargets.end(), [&](const auto *currentTarget)
                         { return lastProcessedConfigurations_[currentTarget] == currentTarget->contentsVersion(); }))
         {
             Messenger::warn("One or more target configurations have not changed since module '{}' was last run, so it "

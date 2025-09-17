@@ -24,8 +24,8 @@ template <> struct SerialisableContext<NodeValue>
 template <class T> class Vec3 : public Serialisable<typename SerialisableContext<T>::type>
 {
     public:
-    Vec3() : x(T()), y(T()), z(T()){};
-    Vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz){};
+    Vec3() : x(T()), y(T()), z(T()) {};
+    Vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz) {};
     // Components of vector
     T x, y, z;
 

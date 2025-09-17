@@ -5,7 +5,7 @@
 #include "classes/speciesAtom.h"
 #include "data/elements.h"
 
-SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> &atoms) : atoms_(atoms){};
+SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> &atoms) : atoms_(atoms) {};
 
 bool SpeciesRing::operator==(const SpeciesRing &other) const
 {

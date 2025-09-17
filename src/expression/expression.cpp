@@ -33,8 +33,7 @@ void Expression::operator=(const Expression &source)
 // Add local variable
 std::shared_ptr<ExpressionVariable> Expression::addLocalVariable(std::string_view name)
 {
-    if (std::find_if(localVariables_.begin(), localVariables_.end(),
-                     [name](const auto &var)
+    if (std::find_if(localVariables_.begin(), localVariables_.end(), [name](const auto &var)
                      { return DissolveSys::sameString(name, var->baseName()); }) != localVariables_.end())
         Messenger::exception("Tried to create local variable '{}' in Expression, but it already exists.\n", name);
 

@@ -63,8 +63,7 @@ bool Configuration::containsSpecies(const Species *sp)
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
 {
-    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0,
-                           [&](const auto &acc, auto &spPop)
+    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0, [&](const auto &acc, auto &spPop)
                            { return acc + spPop.first->totalCharge(ppIncludeCoulomb) * spPop.second; });
 }
 
