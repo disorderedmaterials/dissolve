@@ -11,6 +11,10 @@ AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph, Elements::Element Z) : 
     at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.3 sigma=2.0");
     species_.addAtom(Z, {}, 0.0, at);
 
+    // Set isotopologue
+    auto iso = species_.addIsotopologue("Ar36");
+    iso->setAtomTypeIsotope(at.get(), Sears91::Ar_36);
+
     addPointerOutput<const Species>("Species", "Atomic species", species_);
 }
 
