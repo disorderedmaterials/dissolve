@@ -73,7 +73,7 @@ NodeConstants::ProcessResult GRNode::process()
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
-        rawGR() = rawGRHistory_.average<PartialSet>(rawGR(), averagingLength_.value().asInteger(), [&]()
+        rawGR() = rawGRHistory_.average(rawGR(), averagingLength_.value().asInteger(), [&]()
             {
                 PartialSet p;
                 p.initialise(targetConfiguration_->speciesPopulations());

@@ -18,7 +18,7 @@ template <class T> class History
 
     public:
     // Update history with supplied data and return current average
-    template <typename T> T average(const T &currentData, int averagingLength, std::optional<std::function<T()>> initialiser = {})
+    T average(const T &currentData, int averagingLength, std::optional<std::function<T()>> initialiser = {})
     {
         // Push the current data onto the history stack
         history_.emplace_back(std::make_unique<T>(currentData));
