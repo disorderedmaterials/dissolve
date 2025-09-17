@@ -68,13 +68,16 @@ runs:
       export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\install\bin"
       export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
       export DISSOLVE_VERSION="${{ inputs.currentVersion }}"
+      ls
+
+      find . -name "*.dll"
+      find .. -name "*.dll"
 
       # Run Inno Setup Compiler
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss
       exe=`ls *.exe`
       exeBase=`basename -s .exe $exe`
       echo "Executable installer is $exe, basename is $exeBase"
-      ls
       
       # Create Zip from Exe
       innoextract.exe $exe -d $exeBase

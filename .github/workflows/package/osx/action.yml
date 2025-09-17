@@ -58,6 +58,12 @@ runs:
       # Prepare the dmg file content
       ./prep-dmg -a Dissolve-GUI-${{ runner.arch }} -v ${{ inputs.currentVersion }} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -q src/gui/qml
 
+      ls
+
+      find . -name "*.dylib"
+
+      find .. -name "*.dylib"
+
       # Copy dependencies into Frameworks folder in app bundle
       cp -v ./*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
       # cp -v ./build/onetbb/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
