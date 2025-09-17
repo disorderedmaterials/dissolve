@@ -65,9 +65,8 @@ runs:
       find .. -name "*.dylib"
 
       # Copy dependencies into Frameworks folder in app bundle
-      cp -v ./*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
-      # cp -v ./build/onetbb/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
-      # cp -v ./build/gsl/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/direct_deploy/onetbb/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
+      cp -v ./build/gsl/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
 
   - name: Create Disk Image
     shell: bash
