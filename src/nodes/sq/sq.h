@@ -11,6 +11,7 @@
 #include "nodes/graph.h"
 #include "nodes/node.h"
 #include "nodes/parameter.h"
+#include "math/history.h"
 
 // Forward Declarations
 class BraggModule;
@@ -34,6 +35,8 @@ class SQNode : public Node
     PartialSet *unweightedGR_{nullptr};
     // Unweighted S(Q)
     std::optional<PartialSet> unweightedSQ_;
+    // Historical unweighted S(Q)
+    History<PartialSet> unweightedSQHistory_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_;
     // Weighting scheme to use when averaging partials
@@ -49,7 +52,7 @@ class SQNode : public Node
     // Minimum Q for calculated S(Q)
     Number qMin_{0.01};
     // Whether to save partials to disk after calculation
-    bool save_{false};
+    bool save_{true};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 
