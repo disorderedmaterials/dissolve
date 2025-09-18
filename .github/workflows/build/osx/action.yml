@@ -179,9 +179,6 @@ runs:
 
       # Build
       conan install . --deployer=direct_deploy --build=missing
-      ls
-      find .. -name direct_deploy
-      find .. -name "*.dylib" | grep .
       mkdir -p build && cd build
 
       cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../ -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}

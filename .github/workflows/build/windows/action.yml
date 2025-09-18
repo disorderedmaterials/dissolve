@@ -193,8 +193,6 @@ runs:
 
       # Build
       conan install . --deployer=direct_deploy --build=missing -s compiler.cppstd=17
-      find .. -name direct_deploy
-      find .. -name "*.dll" | grep .
       mkdir -p build && cd build
       TEMPD=$(mktemp -d)
       mkdir -p $TEMPD/bin
