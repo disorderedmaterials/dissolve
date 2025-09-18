@@ -39,6 +39,7 @@ changes
 dependencies
 msvc-env
 aqtinstall.log
+tests/nodes/output
 
 # Example files
 *.beat
