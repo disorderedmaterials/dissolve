@@ -61,6 +61,8 @@ int GraphEdgeModel::rowCount(const QModelIndex &parent) const
 {
     if (!graph_)
         return 0;
+    for (auto &edge : edges())
+        std::cout << edge->definition().asString() << std::endl;
     return edges().size();
 }
 
@@ -136,3 +138,10 @@ void GraphEdgeModel::updatePosition(const int idx)
 // The edges of the graph
 Graph::Edges &GraphEdgeModel::edges() { return graph_->edges(); }
 const Graph::Edges &GraphEdgeModel::edges() const { return graph_->edges(); }
+
+// Drop cache and pull all data from graph
+void GraphEdgeModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}

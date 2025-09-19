@@ -27,10 +27,8 @@ void GraphModel::setGraph(Graph *graph)
         auto &item = wrapped_.emplace_back(*node);
     nodes_.endResetModel();
 
-    for (auto &edge : graph->edges())
-        edges_.addEdge(*edge);
-
     nodes_.updateGraph();
+    edges_.reset();
     graphChanged();
 }
 
