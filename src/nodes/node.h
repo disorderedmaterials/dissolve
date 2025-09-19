@@ -33,7 +33,7 @@ class Node : public Serialisable<>
 
     public:
     // Position when presented graphically
-    int x, y;
+    int x = 0, y = 0;
     // Set node name
     void setName(std::string_view newName);
     // Return node name
