@@ -151,3 +151,5 @@ int GraphModel::indexByName(std::string_view name)
     // FIXME
     return 0;
 }
+
+void GraphModel::handleReset() { Q_EMIT(graphChanged()); }
