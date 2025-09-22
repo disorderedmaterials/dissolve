@@ -136,9 +136,9 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
                     // Draw bond halves
                     lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                                      ElementColours::colour(bond.i()->Z()).data());
+                                                      ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.i())->Z()).data());
                     lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                                      ElementColours::colour(bond.j()->Z()).data());
+                                                      ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.j())->Z()).data());
                 }
             }
         }

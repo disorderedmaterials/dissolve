@@ -78,9 +78,9 @@ void CopySpeciesTermsDialog::findTermsToCopy(std::vector<std::pair<Intra *, cons
                                    auto sameForwards = true, sameBackwards = true;
                                    for (const auto *i : sourceTerm.atoms())
                                    {
-                                       if (sameForwards && i->atomType() != js[n]->atomType())
+                                       if (sameForwards && dynamic_cast<SpeciesAtom*>(i)->atomType() != dynamic_cast<SpeciesAtom*>(js[n])->atomType())
                                            sameForwards = false;
-                                       if (sameBackwards && i->atomType() != js[js.size() - n - 1]->atomType())
+                                       if (sameBackwards && dynamic_cast<SpeciesAtom*>(i)->atomType() != dynamic_cast<SpeciesAtom*>(js[js.size() - n - 1])->atomType())
                                            sameBackwards = false;
                                        ++n;
                                    }
