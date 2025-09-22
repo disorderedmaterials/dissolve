@@ -230,6 +230,8 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
         Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
     const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
+    Serialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
+
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 
     Serialisable::toVector(node, "pairPotentialOverrides",
