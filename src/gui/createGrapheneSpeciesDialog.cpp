@@ -88,7 +88,7 @@ std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> CreateGrapheneSpeciesDialog:
         {
             auto *j = b.get().partner(&i);
             if ((i.r() - j->r()).magnitude() > localCutoff)
-                pbcJ.push_back(j);
+                pbcJ.push_back(dynamic_cast<SpeciesAtom*>(j));
         }
 
         if (pbcJ.size() == 2)
@@ -121,9 +121,9 @@ void CreateGrapheneSpeciesDialog::extendBranch(SpeciesAtom *i, const Box *box, V
     {
         auto j = b.get().partner(i);
         if ((i->r() - j->r()).magnitude() > localCutoff)
-            pbcJ.push_back(j);
+            pbcJ.push_back(dynamic_cast<SpeciesAtom*>(j));
         else if (std::find(branch.begin(), branch.end(), j) == branch.end())
-            localJ.push_back(j);
+            localJ.push_back(dynamic_cast<SpeciesAtom*>(j));
     }
 
     // If all atoms are local this is a completely internally-bound atom, and we are done here.
