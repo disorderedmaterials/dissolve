@@ -159,7 +159,7 @@ void Species::recalculateIntermolecularTerms(double tolerance)
 {
     // Need to detach().
     while (bonds_.size())
-        removeBond(bonds_[0].i(), bonds_[0].j());
+        removeBond(dynamic_cast<SpeciesAtom*>(bonds_[0].i()), dynamic_cast<SpeciesAtom*>(bonds_[0].j()));
 
     addMissingBonds(tolerance);
     updateIntramolecularTerms();

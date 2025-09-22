@@ -72,7 +72,7 @@ bool ClusteringModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSigna
                                 Messenger::error("Inaccessible bond partner found, skipping...");
                                 continue;
                             }
-                            if (atom->Z() == Elements::H)
+                            if (dynamic_cast<const SpeciesAtom*>(atom)->Z() == Elements::H)
                                 directionIndexes_[s].emplace(atom->index());
                         }
                 }
