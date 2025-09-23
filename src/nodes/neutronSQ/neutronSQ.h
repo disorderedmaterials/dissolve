@@ -50,7 +50,8 @@ class NeutronSQNode : public Node
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
-    Data1DImportFileFormat referenceFQ_{"examples/argon/data/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::GudrunMint};
+    Data1DImportFileFormat referenceFQ_{"examples/argon/data/yarnell.sq",
+                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint};
     // Minimum Q value to use when Fourier-transforming the data
     std::optional<double> referenceFTQMin_{0.3};
     // Maximum Q value to use when Fourier-transforming the data

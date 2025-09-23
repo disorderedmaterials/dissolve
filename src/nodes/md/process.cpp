@@ -2,8 +2,8 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/mathFunc.h"
-#include "nodes/md/md.h"
 #include "nodes/dissolve.h"
+#include "nodes/md/md.h"
 
 // Run main processing
 NodeConstants::ProcessResult MDNode::process()
@@ -45,7 +45,7 @@ NodeConstants::ProcessResult MDNode::process()
         message("MD: Summary will not be written.\n");
     if (!restrictToSpecies_.empty())
         message("MD: Calculation will be restricted to species: {}\n",
-                         joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
+                joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     message("\n");
 
     auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);

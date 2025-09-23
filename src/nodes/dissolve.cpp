@@ -23,7 +23,7 @@ std::string_view DissolveGraph::summary() const { return "Parent node of all sim
 Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
 
 // Return the DissolveGraph reference
-DissolveGraph* DissolveGraph::dissolveGraph() { return this; }
+DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
 
 // Return pair potential store
 const DoubleKeyedMap<std::shared_ptr<PairPotential>> &DissolveGraph::pairPotentialStore() { return pairPotentialStore_; }
@@ -40,17 +40,17 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
 {
     auto atomTypes = cfg->atomTypeVector();
 
-	// Update atom type indexing
-	cfg->updateTypeIndexing();
+    // Update atom type indexing
+    cfg->updateTypeIndexing();
 
     // Update pair potentials
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                             [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotentials(*atI, *atJ); });
 
-	// Generate configuration potential map
+    // Generate configuration potential map
     PotentialMap potentialMap(atomTypes, pairPotentialStore(), pairPotentialRange());
 
-	// Regenerate cells
+    // Regenerate cells
     cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
 
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap, energyCutoff);

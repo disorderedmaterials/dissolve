@@ -6,9 +6,9 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "dissolve.h"
-#include "math/mathFunc.h"
-#include "kernels/producer.h"
 #include "kernels/externalPotentials.h"
+#include "kernels/producer.h"
+#include "math/mathFunc.h"
 
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {

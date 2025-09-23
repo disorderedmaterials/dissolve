@@ -8,8 +8,8 @@
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "math/regression.h"
-#include "nodes/energy/energy.h"
 #include "nodes/dissolve.h"
+#include "nodes/energy/energy.h"
 
 // Run main processing
 NodeConstants::ProcessResult EnergyNode::process()
@@ -35,8 +35,8 @@ NodeConstants::ProcessResult EnergyNode::process()
     // Calculate intra-molecular (bound) energy
     Timer intraTimer;
     double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
-    auto boundEnergy = intraMolecularEnergy(targetConfiguration_, potentialMap, bondEnergy, angleEnergy,
-                                            torsionEnergy, improperEnergy);
+    auto boundEnergy =
+        intraMolecularEnergy(targetConfiguration_, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
     intraTimer.stop();
 
     message("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
