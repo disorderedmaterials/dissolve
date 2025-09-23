@@ -25,26 +25,26 @@ NodeConstants::ProcessResult MDNode::process()
     const auto kb = 0.8314462;
 
     // Print argument/parameter summary
-    message("MD: Number of steps = {}\n", nSteps);
-    message("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
+    message("Number of steps = {}\n", nSteps);
+    message("Timestep type is '{}'\n", timestepType().keyword(timestepType_));
     if (onlyWhenEnergyStable_)
-        message("MD: Only perform MD if target Configuration energies are stable.\n");
+        message("Only perform MD if target Configuration energies are stable.\n");
     if (trajectoryFrequency > 0)
-        message("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency);
+        message("Trajectory file will be appended every {} step(s).\n", trajectoryFrequency);
     else
-        message("MD: Trajectory file off.\n");
+        message("Trajectory file off.\n");
     if (capForces_)
-        message("MD: Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
+        message("Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
     if (energyFrequency > 0)
-        message("MD: Energy will be calculated every {} step(s).\n", energyFrequency);
+        message("Energy will be calculated every {} step(s).\n", energyFrequency);
     else
-        message("MD: Energy will be not be calculated.\n");
+        message("Energy will be not be calculated.\n");
     if (outputFrequency > 0)
-        message("MD: Summary will be written every {} step(s).\n", outputFrequency);
+        message("Summary will be written every {} step(s).\n", outputFrequency);
     else
-        message("MD: Summary will not be written.\n");
+        message("Summary will not be written.\n");
     if (!restrictToSpecies_.empty())
-        message("MD: Calculation will be restricted to species: {}\n",
+        message("Calculation will be restricted to species: {}\n",
                 joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     message("\n");
 
