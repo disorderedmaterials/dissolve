@@ -40,6 +40,8 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Data1D>("Data1D");
     registerProducer<Data2D>("Data2D");
     registerProducer<Data3D>("Data3D");
+    registerProducer<DoubleKeyedMap<double>>("DoubleKeyedMap<double>");
+    registerProducer<DoubleKeyedMap<Data1D>>("DoubleKeyedMap<Data1D>");
     registerProducer<Histogram1D>("Histogram1D");
     registerProducer<Histogram2D>("Histogram2D");
     registerProducer<Histogram3D>("Histogram3D");

@@ -25,6 +25,15 @@ template <> GenericItemSearcher<const Data1D>::GenericItemSearcher()
             auto it = std::find_if(array.begin(), array.end(), [dataName](const auto &data) { return dataName == data.tag(); });
             return it == array.end() ? OptionalReferenceWrapper<const Data1D>() : OptionalReferenceWrapper<const Data1D>(*it);
         });
+    registerSearcher<DoubleKeyedMap<Data1D>>(
+        [](const std::any &a, std::string_view dataName)
+        {
+            auto &map = std::any_cast<const DoubleKeyedMap<Data1D> &>(a);
+            auto it =
+                std::find_if(map.begin(), map.end(), [dataName](const auto &pair) { return dataName == pair.second.tag(); });
+            return it == map.end() ? OptionalReferenceWrapper<const Data1D>()
+                                   : OptionalReferenceWrapper<const Data1D>(it->second);
+        });
     registerSearcher<PartialSet>(
         [](const std::any &a, std::string_view dataName)
         {

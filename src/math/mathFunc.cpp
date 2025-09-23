@@ -86,4 +86,13 @@ int cp3(int i) { return (i % 3); }
 double toRadians(double degrees) { return degrees / DegreesPerRadian; }
 double toDegrees(double radians) { return radians * DegreesPerRadian; }
 
+/*
+ * Triangular Matrices
+ */
+
+// Return the number of elements in a triangular matrix, disregarding the diagonal terms
+int triangularOffDiagonals(int matrixSize) { return matrixSize * (matrixSize - 1) / 2; }
+// Return the number of elements in a triangular matrix, including the diagonal terms
+int triangularIncDiagonals(int matrixSize) { return matrixSize * (matrixSize + 1) / 2; }
+
 } // namespace DissolveMath

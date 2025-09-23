@@ -89,7 +89,7 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 }
 
 // Return current scattering matrix
-const ScatteringMatrix &EPSRModule::scatteringMatrix() const { return scatteringMatrix_; }
+const std::optional<ScatteringMatrix> &EPSRModule::scatteringMatrix() const { return scatteringMatrix_; }
 
 // Set whether to apply this module's generated potentials to the global pair potentials
 void EPSRModule::setApplyPotentials(bool b) { applyPotentials_ = b; }

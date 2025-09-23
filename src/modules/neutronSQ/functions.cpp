@@ -58,8 +58,6 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
                             [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
                             {
                                 auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
-                                std::cout << std::format(" calculateWeightedSQ -> {} {}\n", popI.first->name(),
-                                                         popJ.first->name());
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
                                 weightedsq.boundPartials().get(key).copyArrays(unweightedsq.boundPartials().get(key));
