@@ -86,6 +86,8 @@ jobs:
         nixHash: ${{ inputs.nixHash }}
         benchmark: ${{ inputs.benchmark }}
         publishBenchmarks: ${{ inputs.publishBenchmarks }}
+        msvcVersion: ${{ inputs.msvcVersion }}
+        osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
   Package:
     needs: Build

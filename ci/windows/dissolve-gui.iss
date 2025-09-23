@@ -56,11 +56,11 @@ Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
 ; Windows 10 - Now handled by windeployqt
 ; Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Conan Dependencies
-Source: "{#DeployDir}\onetbb\bin\tbb12.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\onetbb\bin\tbbbind_2_5.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbb12.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbbbind_2_5.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; IconFilename: "{app}\bin\Dissolve.ico"; Filename: "{app}\bin\{#MyAppExeName}"; WorkingDir: "{app}"

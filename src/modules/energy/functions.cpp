@@ -249,8 +249,7 @@ double EnergyModule::intraMolecularEnergy(const Species *sp)
     const Box *box = sp->box();
 
     // Loop over bonds
-    energy += std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0,
-                              [box](const auto acc, const auto &b)
+    energy += std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0, [box](const auto acc, const auto &b)
                               { return acc + b.energy(box->minimumDistance(b.j()->r(), b.i()->r())); });
 
     // Loop over angles

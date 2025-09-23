@@ -16,7 +16,7 @@ class AddForcefieldDialogModelTest : public ::testing::Test
     AddForcefieldDialogModelTest() = default;
 
     protected:
-    void SetUp() override{};
+    void SetUp() override {};
 };
 
 TEST_F(AddForcefieldDialogModelTest, benzene)

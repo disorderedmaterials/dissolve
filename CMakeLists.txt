@@ -1,5 +1,28 @@
-cmake_minimum_required(VERSION 3.15)
-project(Dissolve)
+cmake_minimum_required(VERSION 3.24)
+
+# Use Conan for dependency provision?
+option(CONAN "Use conan to find dependencies" ON)
+if(CONAN)
+  # Fetch and include conan_provider.cmake if it doesn't exist
+  if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/conan_provider.cmake")
+    message(STATUS "Downloading conan_provider.cmake from https://github.com/conan-io/cmake-conan")
+    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/refs/heads/develop2/conan_provider.cmake"
+         "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/conan_provider.cmake"
+    )
+  endif()
+
+  # Add local dirs to cmake Module search path
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+
+  list(APPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES "cmake/Modules/conan_provider.cmake")
+endif(CONAN)
+
+# Set up the project
+project(Dissolve LANGUAGES CXX C)
+
+# Add our custom module search path
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
@@ -20,31 +43,11 @@ cmake_policy(SET CMP0020 NEW)
 # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
 set(CMAKE_CXX_STANDARD 20)
 
-# Add our custom module search path
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
-
 # We are setting up a development environment in MSVC
 option(MSVC_DEV "Configuration is for a Visual Studio 2022 dev environment" OFF)
 
 # Install GSL (GNU Scientific Library) with Conan for Windows and Unix-like systems
 option(CONAN_GSL "Use conan to find GSL" ON)
-
-# Include Conan Packages
-option(CONAN "Use conan to find dependencies" ON)
-if(CONAN)
-  if(CONAN_GSL)
-    list(APPEND EXTRA_CONAN_REQUIRES gsl/2.7.1)
-  endif(CONAN_GSL)
-  # Add local dirs to cmake Module search path
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
-  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
-
-  if(BUILD_BENCHMARKS)
-    list(APPEND EXTRA_CONAN_REQUIRES benchmark/1.8.4)
-  endif(BUILD_BENCHMARKS)
-
-  include(conan-dissolve)
-endif(CONAN)
 
 # Find core dependencies
 set(CORE_LINK_LIBS "")
@@ -64,20 +67,25 @@ list(APPEND CORE_LINK_LIBS ${GSL_LIBS})
 set(antlr4-cppruntime_INCLUDE_DIRS "")
 set(antlr4-cppruntime_LIBS "")
 find_package(antlr4-runtime REQUIRED)
-if(NOT antlr4-cppruntime_INCLUDE_DIRS)
-  # nix
-  if(ANTLR4_INCLUDE_DIR)
-    set(antlr4-cppruntime_INCLUDE_DIRS ${ANTLR4_INCLUDE_DIR})
-    link_directories(${ANTLR4_LIB_DIR})
-    set(antlr4-cppruntime_LIBS "antlr4-runtime")
-  else(ANTLR4_INCLUDE_DIR)
-    message(ERROR "Failed to find Antlr4 cpp runtime.")
-  endif(ANTLR4_INCLUDE_DIR)
-endif(NOT antlr4-cppruntime_INCLUDE_DIRS)
-message(STATUS "Antlr4 cpp runtime includes: ${antlr4-cppruntime_INCLUDE_DIRS}")
-message(STATUS "Antlr4 cpp runtime libs: ${antlr4-cppruntime_LIBS}")
-include_directories(${antlr4-cppruntime_INCLUDE_DIRS})
-list(APPEND CORE_LINK_LIBS ${antlr4-cppruntime_LIBS})
+if(CONAN)
+  include_directories(${antlr4-runtime_INCLUDE_DIRS})
+  list(APPEND CORE_LINK_LIBS antlr4_shared)
+else(CONAN)
+  if(NOT antlr4-cppruntime_INCLUDE_DIRS)
+    # nix
+    if(ANTLR4_INCLUDE_DIR)
+      set(antlr4-cppruntime_INCLUDE_DIRS ${ANTLR4_INCLUDE_DIR})
+      link_directories(${ANTLR4_LIB_DIR})
+      set(antlr4-cppruntime_LIBS "antlr4-runtime")
+    else(ANTLR4_INCLUDE_DIR)
+      message(ERROR "Failed to find Antlr4 cpp runtime.")
+    endif(ANTLR4_INCLUDE_DIR)
+  endif(NOT antlr4-cppruntime_INCLUDE_DIRS)
+  message(STATUS "Antlr4 cpp runtime includes: ${antlr4-cppruntime_INCLUDE_DIRS}")
+  message(STATUS "Antlr4 cpp runtime libs: ${antlr4-cppruntime_LIBS}")
+  include_directories(${antlr4-cppruntime_INCLUDE_DIRS})
+  list(APPEND CORE_LINK_LIBS ${antlr4-cppruntime_LIBS})
+endif(CONAN)
 
 # Find Antlr4 Java Binary
 find_package(ANTLR REQUIRED)
@@ -97,11 +105,12 @@ if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
   find_package(TBB REQUIRED)
   include_directories(${TBB_INCLUDE_DIRS})
+  include_directories(${DPL_INCLUDE_DIRS})
   list(APPEND THREADING_LINK_LIBS "TBB::tbb")
   if(CONAN)
     find_package(ParallelSTL REQUIRED)
-    include_directories(${pstl_ParallelSTL_INCLUDE_DIRS})
-    list(APPEND THREADING_LINK_LIBS ${pstl_ParallelSTL_LINK_LIBS})
+    include_directories(${ParallelSTL_INCLUDE_DIRS})
+    list(APPEND THREADING_LINK_LIBS ${ParallelSTL_LINK_LIBS})
   endif(CONAN)
   message("Threading Link Libs: ${THREADING_LINK_LIBS}")
 endif(MULTI_THREADING)

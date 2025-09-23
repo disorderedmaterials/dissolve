@@ -218,10 +218,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     // Create storage for our summed UnweightedSQ
     auto &calculatedUnweightedSQ = moduleData.realise<Array2D<Data1D>>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
-    dissolve::for_each_pair(ParallelPolicies::par, atomTypes.begin(), atomTypes.end(),
-                            [&](int i, auto at1, int j, auto at2) {
-                                calculatedUnweightedSQ[{i, j}].setTag(std::format("{}-{}", at1->name(), at2->name()));
-                            });
+    dissolve::for_each_pair(ParallelPolicies::par, atomTypes.begin(), atomTypes.end(), [&](int i, auto at1, int j, auto at2)
+                            { calculatedUnweightedSQ[{i, j}].setTag(std::format("{}-{}", at1->name(), at2->name())); });
 
     // Is our scattering matrix fully set-up and just requiring updated data?
     auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;

@@ -9,7 +9,7 @@ namespace UnitTest
 {
 struct NameObject
 {
-    NameObject(std::string newName) : name(std::move(newName)){};
+    NameObject(std::string newName) : name(std::move(newName)) {};
     std::string name;
 };
 TEST(SysFunc, StringManipulation)

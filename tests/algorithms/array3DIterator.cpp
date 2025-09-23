@@ -20,9 +20,7 @@ TEST(Array3DIteratorTest, ForEach)
     Array3DIterator it(sizeX, sizeY, sizeZ, 0);
 
     dissolve::for_each_triplet(ParallelPolicies::par, it.begin(), it.end(),
-                               [&](auto triplet, auto x1, auto y1, auto z1) {
-                                   arr[triplet] = {Vec3<int>{x1, y1, z1}, true};
-                               });
+                               [&](auto triplet, auto x1, auto y1, auto z1) { arr[triplet] = {Vec3<int>{x1, y1, z1}, true}; });
     for (x = 0; x < sizeX; ++x)
         for (y = 0; y < sizeY; ++y)
             for (z = 0; z < sizeZ; ++z)

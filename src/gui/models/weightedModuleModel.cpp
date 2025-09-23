@@ -11,8 +11,7 @@ void WeightedModuleModel::setData(const std::vector<Module *> &modules)
     if (weightedItems_)
     {
         auto it = std::remove_if(
-            weightedItems_->get().begin(), weightedItems_->get().end(),
-            [&](const auto &item)
+            weightedItems_->get().begin(), weightedItems_->get().end(), [&](const auto &item)
             { return std::find(modules_->get().begin(), modules_->get().end(), item.first) == modules_->get().end(); });
         if (it != weightedItems_->get().end())
             weightedItems_->get().erase(it, weightedItems_->get().end());

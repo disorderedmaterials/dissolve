@@ -49,7 +49,7 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install aqtinstall conan==1.* --break-system-packages
+      pip3 install aqtinstall conan --break-system-packages
 
   - name: Install Qt
     shell: bash
@@ -138,6 +138,12 @@ runs:
         ~/.conan
         ~/.conancache
 
+  - name: Setup Conan Profile
+    if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
+    shell: bash
+    run: |
+      conan profile detect
+
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
@@ -166,18 +172,21 @@ runs:
       echo "Java Runtime Executable: ${JAVA_RUNTIME}"
 
       # Set conan cache location
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+      conan config home -cc core.download:download_cache="${GITHUB_WORKSPACE}/.conancache"
 
       # Set minimum deployment target version
       export MACOSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
 
       # Build
-      mkdir build && cd build
+      conan install . --deployer=direct_deploy --build=missing
+      mkdir -p build && cd build
+
       cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../ -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.targetDeploymentVersion }}
       cmake --build . --config Release
 
       # Copy over gsl libs so we can ship them with the bundle. Our exe is only linked to two of the four libs present, and this breaks the binary if we don't include them all in the package.
       mkdir gsl
+      mv ../direct_deploy ./
       cp -v $(brew --prefix gsl)/lib/*.dylib ./gsl
 
   - name: Upload Raw Build Artifacts

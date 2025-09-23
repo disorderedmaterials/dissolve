@@ -73,7 +73,7 @@ class KeywordBase : public Serialisable<CoreData const &>
     // Express as a serialisable value
     virtual SerialisedValue serialise() const override = 0;
     // Read values from a serialisable value
-    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
+    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override {};
 
     /*
      * Keyword Types

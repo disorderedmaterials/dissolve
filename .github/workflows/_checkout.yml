@@ -24,7 +24,7 @@ on:
         default: "1.2.5"
       conanfile:
         type: string
-        default: cmake/Modules/conan-dissolve.cmake
+        default: conanfile.py
       publishType:
         default: 'none'
         type: string
@@ -116,7 +116,7 @@ jobs:
           echo "hugoVersion=${{ inputs.hugoVersion }}" >> $GITHUB_OUTPUT
           echo "apptainerVersion=${{ inputs.apptainerVersion }}" >> $GITHUB_OUTPUT
 
-          ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -n -e 's%^.*antlr4-cppruntime/%%p')
+          ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -rn -e 's%^.*antlr4-cppruntime/(.+)"\)%\1%p')
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
 
           echo "msvcVersion=${{ inputs.msvcVersion }}" >> $GITHUB_OUTPUT

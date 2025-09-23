@@ -156,8 +156,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 add_library(models ${models_SRCS} ${models_MOC_SRCS} ${types_SRCS})
 
 target_include_directories(
-  models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
-                 ${FREETYPE_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS}
+  models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+                 ${Qt6Quick_INCLUDE_DIRS}
 )
 
 target_link_libraries(models PRIVATE Qt6::Core Qt6::Qml)

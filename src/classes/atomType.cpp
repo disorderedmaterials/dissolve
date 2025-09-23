@@ -91,8 +91,7 @@ void AtomType::deserialise(SerialisedValue node)
     Z_ = toml::find<Elements::Element>(node, "z");
     charge_ = toml::find_or<double>(node, "charge", 0.0);
     Serialisable::optionalOn(
-        node, "form",
-        [this](const auto node)
+        node, "form", [this](const auto node)
         { interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node.as_string()))); });
 
     Serialisable::optionalOn(node, "parameters",

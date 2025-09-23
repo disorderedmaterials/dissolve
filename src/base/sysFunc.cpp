@@ -227,8 +227,7 @@ std::string DissolveSys::niceName(std::string_view original)
 {
     std::string s{original};
 
-    std::replace_if(
-        s.begin(), s.end(), [](auto &c) { return " /\\#*$"sv.find(c) != std::string::npos; }, '_');
+    std::replace_if(s.begin(), s.end(), [](auto &c) { return " /\\#*$"sv.find(c) != std::string::npos; }, '_');
 
     return s;
 }
@@ -346,8 +345,7 @@ std::vector<std::string_view> DissolveSys::splitString(std::string_view str, std
 // Double any of the supplied characters in the string
 std::string DissolveSys::doubleChars(const std::string_view s, const std::string_view charsToDouble)
 {
-    std::string result(s.length() + std::count_if(s.begin(), s.end(),
-                                                  [charsToDouble](const char c)
+    std::string result(s.length() + std::count_if(s.begin(), s.end(), [charsToDouble](const char c)
                                                   { return charsToDouble.find(c) != std::string::npos; }),
                        ' ');
     auto pos = 0;
