@@ -18,7 +18,7 @@ template <class T> class History
 
     public:
     // Update history with supplied data and return current average
-    T average(const T &currentData, int averagingLength, std::optional<std::function<T()>> initialiser = {})
+    T average(const T &currentData, int averagingLength, std::function<T()> initialiser = {})
     {
         // Push the current data onto the history stack
         history_.emplace_back(std::make_unique<T>(currentData));
@@ -30,8 +30,8 @@ template <class T> class History
         // Perform averaging of the datasets that we have
         T averaged = [&]()
         {
-            if (initialiser.has_value())
-                return (*initialiser)();
+            if (initialiser)
+                return initialiser();
             else
                 return T();
         }();
