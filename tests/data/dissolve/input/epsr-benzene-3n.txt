@@ -183,6 +183,7 @@ Module  EPSR  'EPSR01'
   Target  'C6H6'
   Target  'C6D6'
   Target  '5050'
+  QMin 0.05
   Frequency  1
   EReq 3.0
   InpAFile  'epsr25/benzene200-neutron/benzene.EPSR.inpa'

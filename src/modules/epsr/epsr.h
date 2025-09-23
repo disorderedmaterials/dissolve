@@ -45,7 +45,7 @@ class EPSRModule : public Module
     // Confidence factor
     double feedback_{0.9};
     // Scattering matrix
-    ScatteringMatrix scatteringMatrix_;
+    std::optional<ScatteringMatrix> scatteringMatrix_;
     // EPSR 'inpa' file from which to read deltaFQ fit coefficients from
     std::string inpaFilename_;
     // Maximum Q value over which to generate potentials from total scattering data
@@ -101,7 +101,7 @@ class EPSRModule : public Module
 
     public:
     // Return current scattering matrix
-    const ScatteringMatrix &scatteringMatrix() const;
+    const std::optional<ScatteringMatrix> &scatteringMatrix() const;
     // Set whether to apply this module's generated potentials to the global pair potentials
     void setApplyPotentials(bool b);
 
@@ -115,20 +115,20 @@ class EPSRModule : public Module
     private:
     // Create / update delta S(Q) information
     void updateDeltaSQ(GenericList &processingData,
-                       OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ = std::nullopt,
-                       OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ = std::nullopt);
+                       OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optCalculatedSQ = std::nullopt,
+                       OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optEstimatedSQ = std::nullopt);
 
     public:
     // Create / retrieve arrays for storage of empirical potential coefficients
     Array2D<std::vector<double>> &potentialCoefficients(GenericList &moduleData, const int nAtomTypes,
                                                         std::optional<int> ncoeffp = std::nullopt);
     // Generate empirical potentials from current coefficients
-    bool generateEmpiricalPotentials(Dissolve &dissolve, double rho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
-                                     double sigma1, double sigma2);
+    bool generateEmpiricalPotentials(Dissolve &dissolve, const std::vector<const AtomType *> &atomTypes, double rho,
+                                     std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
     // Generate and return single empirical potential function
-    Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
+    Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int nAtomTypes, int i, int j, int n);
     // Calculate absolute energy of empirical potentials
-    double absEnergyEP(GenericList &moduleData);
+    double absEnergyEP(GenericList &moduleData, const std::vector<const AtomType *> &atomTypes);
     // Truncate the supplied data
     void truncate(Data1D &data, double rMin, double rMax);
     // Return vector of empirical potentials

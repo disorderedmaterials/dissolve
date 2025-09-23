@@ -9,34 +9,35 @@
 #include "templates/algorithms.h"
 
 // Create / update delta S(Q) information
-void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ,
-                               OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ)
+void EPSRModule::updateDeltaSQ(GenericList &processingData,
+                               OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optCalculatedSQ,
+                               OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optEstimatedSQ)
 {
     // Find the relevant data if we were not provided them
     if (!optCalculatedSQ)
-        optCalculatedSQ = processingData.valueIf<Array2D<Data1D>>("UnweightedSQ", name_);
+        optCalculatedSQ = processingData.valueIf<DoubleKeyedMap<Data1D>>("UnweightedSQ", name_);
     if (!optCalculatedSQ)
         return;
     if (!optEstimatedSQ)
-        optEstimatedSQ = processingData.valueIf<Array2D<Data1D>>("EstimatedSQ", name_);
+        optEstimatedSQ = processingData.valueIf<DoubleKeyedMap<Data1D>>("EstimatedSQ", name_);
     if (!optEstimatedSQ)
         return;
 
     const auto &calculatedSQ = optCalculatedSQ->get();
     const auto &estimatedSQ = optEstimatedSQ->get();
-    assert(calculatedSQ.nRows() == estimatedSQ.nRows() && calculatedSQ.nColumns() == estimatedSQ.nColumns());
+    assert(calculatedSQ.size() == estimatedSQ.size());
 
     // Realise the DeltaSQ array
-    auto [deltaSQ, status] = processingData.realiseIf<Array2D<Data1D>>("DeltaSQ", name_, GenericItem::ItemFlag::NoFlags);
-    if (status == GenericItem::ItemStatus::Created)
-        deltaSQ.initialise(calculatedSQ.nRows(), calculatedSQ.nRows(), true);
+    auto deltaSQ = processingData.realise<DoubleKeyedMap<Data1D>>("DeltaSQ", name_, GenericItem::ItemFlag::NoFlags);
+    deltaSQ.clear(true);
 
-    // Copy the tags from the calculated data (so we avoid requiring the source AtomTypeList) and create the data
-    for (auto &&[delta, calc, est] : zip(deltaSQ, calculatedSQ, estimatedSQ))
+    for (auto &[key, calcSQ] : calculatedSQ)
     {
-        delta.setTag(calc.tag());
-        delta = est;
-        Interpolator::addInterpolated(calc, delta, -1.0);
+        deltaSQ[key] = estimatedSQ[key];
+        Interpolator::addInterpolated(calcSQ, deltaSQ[key], -1.0);
+
+        // Copy the tag
+        deltaSQ[key].setTag(calcSQ.tag());
     }
 }
 
@@ -64,14 +65,13 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(GenericList &mod
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averagedRho, std::optional<int> ncoeffp, double rminpt,
-                                             double rmaxpt, double sigma1, double sigma2)
+bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, const std::vector<const AtomType *> &atomTypes,
+                                             double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
+                                             double sigma1, double sigma2)
 {
-    const auto &atomTypes = scatteringMatrix_.atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // Get coefficients array
-    Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve.processingModuleData(), nAtomTypes, ncoeffp);
+    Array2D<std::vector<double>> &coefficients =
+        potentialCoefficients(dissolve.processingModuleData(), atomTypes.size(), ncoeffp);
 
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                             [&](int i, auto at1, int j, auto at2)
@@ -125,11 +125,8 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averaged
 }
 
 // Generate and return single empirical potential function
-Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
+Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int nAtomTypes, int i, int j, int n)
 {
-    const auto &atomTypes = scatteringMatrix_.atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // EPSR constants
     const auto mcoeff = 200;
 
@@ -168,7 +165,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
 }
 
 // Calculate absolute energy of empirical potentials
-double EPSRModule::absEnergyEP(GenericList &moduleData)
+double EPSRModule::absEnergyEP(GenericList &moduleData, const std::vector<const AtomType *> &atomTypes)
 {
     /*
      * Routine from EPSR25.
@@ -176,11 +173,8 @@ double EPSRModule::absEnergyEP(GenericList &moduleData)
      * Return the largest range we find.
      */
 
-    const auto &atomTypes = scatteringMatrix_.atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // Get coefficients array
-    auto &coefficients = potentialCoefficients(moduleData, nAtomTypes);
+    auto &coefficients = potentialCoefficients(moduleData, atomTypes.size());
     if (coefficients.empty())
         return 0.0;
 
@@ -202,7 +196,7 @@ double EPSRModule::absEnergyEP(GenericList &moduleData)
         Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", atomTypes[i]->name(), atomTypes[j]->name(), range);
     };
 
-    PairIterator pairs(nAtomTypes);
+    PairIterator pairs(atomTypes.size());
     dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), unaryOp);
 
     return absEnergyEP;

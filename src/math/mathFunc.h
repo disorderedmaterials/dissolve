@@ -57,4 +57,13 @@ constexpr double Avogadro = 6.0221415E23;
 
 // Degrees per Radian
 constexpr double DegreesPerRadian = 180.0 / M_PI;
+
+/*
+ * Triangular Matrices
+ */
+
+// Return the number of elements in a triangular matrix, disregarding the diagonal terms
+int triangularOffDiagonals(int matrixSize);
+// Return the number of elements in a triangular matrix, including the diagonal terms
+int triangularIncDiagonals(int matrixSize);
 }; // namespace DissolveMath
