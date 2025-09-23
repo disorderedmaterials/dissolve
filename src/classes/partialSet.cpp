@@ -290,7 +290,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 
             parser.openOutput(fullPath, true);
             if (!parser.isFileGoodForWriting())
-                return Messenger::error("Couldn't open file '{}' for writing.\n", fullPath);
+                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
             auto &full = partials_.get(key);
             auto &bound = boundPartials_.get(key);
