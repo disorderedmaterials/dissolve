@@ -185,7 +185,7 @@ void AddConfigurationDialog::finalise()
         frameworkNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::Set);
         frameworkNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
         frameworkNode->keywords().set("Rotate", false);
-        
+
         if (!mixSpecies_.empty())
         {
             // Add a GeneralRegion node
