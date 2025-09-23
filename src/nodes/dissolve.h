@@ -8,6 +8,8 @@
 #include "nodes/graph.h"
 #include "templates/doubleKeyedMap.h"
 
+// Forward declarations
+
 class EnergyKernel;
 class PotentialMap;
 
