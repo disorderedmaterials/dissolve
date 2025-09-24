@@ -59,7 +59,7 @@ class SQNode : public Node
     /*
      * Functions
      */
-    public:
+    private:
     // Calculate unweighted S(Q) from unweighted g(r)
     bool calculateUnweightedSQ();
 
