@@ -181,7 +181,8 @@ int SpeciesImproper::index(int n) const
 }
 
 // Return whether Atoms in Improper match those specified
-bool SpeciesImproper::matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k, const SpeciesParticle *l) const
+bool SpeciesImproper::matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k,
+                              const SpeciesParticle *l) const
 {
     if (i_ != i)
         return false;

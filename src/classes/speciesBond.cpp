@@ -4,7 +4,7 @@
 #include "classes/speciesBond.h"
 #include "base/sysFunc.h"
 #include "classes/coreData.h"
-//#include "classes/speciesAtom.h"
+// #include "classes/speciesAtom.h"
 #include "classes/speciesParticle.h"
 #include "data/atomicMasses.h"
 #include <map>
@@ -224,8 +224,8 @@ double SpeciesBond::energy(double distance) const
          *           sqrt( (mi + mj) / (mi * mj) )
          */
         auto delta = distance - params[1];
-        auto massI = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(i_)->Z());
-        auto massJ = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(j_)->Z());
+        auto massI = AtomicMass::mass(dynamic_cast<SpeciesAtom *>(i_)->Z());
+        auto massJ = AtomicMass::mass(dynamic_cast<SpeciesAtom *>(j_)->Z());
         return params[0] * delta * delta / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
     else if (bondForm == BondFunctions::Form::Morse)
@@ -283,8 +283,8 @@ double SpeciesBond::force(double distance) const
          * 0 : general force constant C / 2.0
          * 1 : equilibrium distance
          */
-        auto massI = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(i_)->Z());
-        auto massJ = AtomicMass::mass(dynamic_cast<SpeciesAtom*>(j_)->Z());
+        auto massI = AtomicMass::mass(dynamic_cast<SpeciesAtom *>(i_)->Z());
+        auto massJ = AtomicMass::mass(dynamic_cast<SpeciesAtom *>(j_)->Z());
         return -2.0 * params[0] * (distance - params[1]) / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
     else if (bondForm == BondFunctions::Form::Morse)

@@ -168,9 +168,9 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
 
             // Draw bond halves
             lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.i())->Z()).data());
+                                        ElementColours::colour(dynamic_cast<SpeciesAtom *>(bond.i())->Z()).data());
             lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.j())->Z()).data());
+                                        ElementColours::colour(dynamic_cast<SpeciesAtom *>(bond.j())->Z()).data());
         }
     }
     else if (displayStyle_ == SpheresStyle)
@@ -201,11 +201,13 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
             if (periodic)
                 speciesAssembly_.createCylinderBond(
                     bondPrimitive_, bond.i()->r(), bond.j()->r(), source_->box()->minimumVector(bond.i()->r(), bond.j()->r()),
-                    ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.j())->Z()), ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.i())->Z()), true, spheresBondRadius_);
+                    ElementColours::colour(dynamic_cast<SpeciesAtom *>(bond.j())->Z()),
+                    ElementColours::colour(dynamic_cast<SpeciesAtom *>(bond.i())->Z()), true, spheresBondRadius_);
             else
                 speciesAssembly_.createCylinderBond(bondPrimitive_, bond.i()->r(), bond.j()->r(), bond.j()->r() - bond.i()->r(),
-                                                    ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.i())->Z()),
-                                                    ElementColours::colour(dynamic_cast<SpeciesAtom*>(bond.j())->Z()), false, spheresBondRadius_);
+                                                    ElementColours::colour(dynamic_cast<SpeciesAtom *>(bond.i())->Z()),
+                                                    ElementColours::colour(dynamic_cast<SpeciesAtom *>(bond.j())->Z()), false,
+                                                    spheresBondRadius_);
         }
     }
 

@@ -176,7 +176,8 @@ int SpeciesTorsion::index(int n) const
 }
 
 // Return whether Atoms in Torsion match those specified
-bool SpeciesTorsion::matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k, const SpeciesParticle *l) const
+bool SpeciesTorsion::matches(const SpeciesParticle *i, const SpeciesParticle *j, const SpeciesParticle *k,
+                             const SpeciesParticle *l) const
 {
     return (i_ == i && j_ == j && k_ == k && l_ == l) || (i_ == l && j_ == k && k_ == j && l_ == i);
 }
