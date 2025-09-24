@@ -30,7 +30,7 @@ bool SQNode::calculateUnweightedSQ()
     dissolve::for_each(ParallelPolicies::par, unweightedGR_->partials().begin(), unweightedGR_->partials().end(),
                        [&](const auto &pair)
                        {
-                           auto &sq = unweightedSQ().partials().map()[pair.first];
+                           auto &sq = unweightedSQ_->partials().map()[pair.first];
                            sq.copyArrays(pair.second);
                            sq -= 1.0;
                            Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction_, qBroadening_);
@@ -40,7 +40,7 @@ bool SQNode::calculateUnweightedSQ()
     dissolve::for_each(ParallelPolicies::par, unweightedGR_->boundPartials().begin(), unweightedGR_->boundPartials().end(),
                        [&](const auto &pair)
                        {
-                           auto &sq = unweightedSQ().boundPartials().map()[pair.first];
+                           auto &sq = unweightedSQ_->boundPartials().map()[pair.first];
                            sq.copyArrays(pair.second);
                            Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction_, qBroadening_);
                        });
@@ -49,31 +49,18 @@ bool SQNode::calculateUnweightedSQ()
     dissolve::for_each(ParallelPolicies::par, unweightedGR_->unboundPartials().begin(), unweightedGR_->unboundPartials().end(),
                        [&](const auto &pair)
                        {
-                           auto &sq = unweightedSQ().unboundPartials().map()[pair.first];
+                           auto &sq = unweightedSQ_->unboundPartials().map()[pair.first];
                            sq.copyArrays(pair.second);
                            sq -= 1.0;
                            Fourier::sineFT(sq, 4.0 * M_PI * rho, qMin, qDelta, qMax, windowFunction_, qBroadening_);
                        });
 
     // Sum into total
-    unweightedSQ().formTotals(true);
+    unweightedSQ_->formTotals(true);
 
     timer.stop();
     message("Finished Fourier transform and summation of partial g(r) into partial S(Q) ({} elapsed).\n",
             timer.totalTimeString());
 
     return true;
-}
-
-// Return value of unweighted SQ, emplacing if optional not initialised
-PartialSet &SQNode::unweightedSQ()
-{
-    // Set up unweighted SQ storage if we need to
-    if (!unweightedSQ_)
-    {
-        unweightedSQ_.emplace();
-        unweightedSQ_.value().initialise(*unweightedGR_);
-    }
-
-    return *unweightedSQ_;
 }

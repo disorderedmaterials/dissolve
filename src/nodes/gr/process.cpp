@@ -40,6 +40,21 @@ NodeConstants::ProcessResult GRNode::process()
         message("Degree of smoothing to apply to calculated partial g(r) is {}.\n", nSmooths_.value().asInteger());
     message("\n");
 
+    // Create unweighted GR storage if we need it
+    if (!unweightedGR_)
+    {
+        unweightedGR_.emplace();
+        unweightedGR_.value().initialise(targetConfiguration_->speciesPopulations());
+        unweightedGR_.value().setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
+    }
+
+    // Create original GR storage if we need it
+    if (!rawGR_)
+    {
+        rawGR_.emplace();
+        rawGR_.value().initialise(targetConfiguration_->speciesPopulations());
+    }
+
     // Check range
     auto grRange = targetConfiguration_->box()->inscribedSphereRadius();
     if (!requestedRange_)
@@ -73,7 +88,7 @@ NodeConstants::ProcessResult GRNode::process()
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
-        rawGR() = rawGRHistory_.average(rawGR(), averagingLength_.value().asInteger(),
+        (*rawGR_) = rawGRHistory_.average((*rawGR_), averagingLength_.value().asInteger(),
                                         [&]()
                                         {
                                             PartialSet p;

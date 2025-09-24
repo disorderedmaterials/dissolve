@@ -38,6 +38,20 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         message("NeutronSQ: Representative G(r) will be saved.\n");
     message("\n");
 
+    // Set up the weighted SQ storage if needed
+    if (!weightedSQ_)
+    {
+        weightedSQ_.emplace();
+        weightedSQ_.value().initialise(*unweightedSQ_);
+    }
+
+    // Set up weighted GR storage if we need it
+    if (!weightedGR_)
+    {
+        weightedGR_.emplace();
+        weightedGR_.value().initialise(*unweightedGR_);
+    }
+
     // Get the real species populations from the input unweightedSQ
     auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
 
@@ -145,7 +159,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     calculateWeightedSQ();
 
     // Save data if requested
-    if (saveSQ_ && !weightedSQ().save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))
+    if (saveSQ_ && !weightedSQ_->save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))
         return NodeConstants::ProcessResult::Failed;
 
     /*
@@ -164,7 +178,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     calculateWeightedGR();
 
     // Save data if requested
-    if (saveGR_ && !weightedGR().save(name(), "WeightedGR", "gr", "r, Angstroms"))
+    if (saveGR_ && !weightedGR_->save(name(), "WeightedGR", "gr", "r, Angstroms"))
         return NodeConstants::ProcessResult::Failed;
 
     // Calculate representative total g(r) from FT of calculated F(Q)
@@ -173,7 +187,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         GenericItem::InRestartFileFlag);
     */
     Data1D repGR;
-    repGR = weightedSQ().total();
+    repGR = weightedSQ_->total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
         ftQMax = referenceFTQMax_.value();
@@ -188,10 +202,10 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         ftQMax = referenceData.xAxis().back();
     }
     else
-        ftQMax = weightedSQ().total().xAxis().back();
+        ftQMax = weightedSQ_->total().xAxis().back();
     Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
-    auto rMin = weightedGR().total().xAxis().front();
-    auto rMax = weightedGR().total().xAxis().back();
+    auto rMin = weightedGR_->total().xAxis().front();
+    auto rMax = weightedGR_->total().xAxis().back();
     WindowFunction window(referenceWindowFunction_);
     Fourier::sineFT(repGR, 1.0 / (2.0 * M_PI * M_PI * unweightedGR_->effectiveDensity()), rMin, 0.05, rMax, window);
 

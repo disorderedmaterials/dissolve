@@ -54,6 +54,13 @@ NodeConstants::ProcessResult SQNode::process()
     message("SQ: Save data is {}.\n", DissolveSys::onOff(save_));
     message("\n");
 
+    // Set up unweighted SQ storage if we need to
+    if (!unweightedSQ_)
+    {
+        unweightedSQ_.emplace();
+        unweightedSQ_.value().initialise(*unweightedGR_);
+    }
+
     /*
      * Transform target UnweightedGR into the UnweightedSQ.
      */
@@ -64,7 +71,7 @@ NodeConstants::ProcessResult SQNode::process()
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if (averagingLength_)
-        unweightedSQ() = unweightedSQHistory_.average(unweightedSQ(), averagingLength_.value().asInteger(),
+        (*unweightedSQ_) = unweightedSQHistory_.average((*unweightedSQ_), averagingLength_.value().asInteger(),
                                                       [&]()
                                                       {
                                                           PartialSet p;
@@ -73,7 +80,7 @@ NodeConstants::ProcessResult SQNode::process()
                                                       });
 
     // Save data if requested
-    if (save_ && !unweightedSQ().save(name(), "UnweightedSQ", "sq", "Q, 1/Angstroms"))
+    if (save_ && !unweightedSQ_->save(name(), "UnweightedSQ", "sq", "Q, 1/Angstroms"))
         return NodeConstants::ProcessResult::Failed;
 
     return NodeConstants::ProcessResult::Success;

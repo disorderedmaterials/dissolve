@@ -63,10 +63,6 @@ class SQNode : public Node
     // Calculate unweighted S(Q) from unweighted g(r)
     bool calculateUnweightedSQ();
 
-    private:
-    // Return value of unweighted SQ, emplacing if optional not initialised
-    PartialSet &unweightedSQ();
-
     /*
      * Processing
      */

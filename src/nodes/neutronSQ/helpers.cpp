@@ -17,21 +17,21 @@ bool NeutronSQNode::calculateWeightedGR()
                                 auto intraWeight = weights_.intramolecularWeights().get(key);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
-                                weightedGR().boundPartials().get(key).copyArrays(unweightedGR_->boundPartials().get(key));
-                                weightedGR().boundPartials().get(key) *= intraWeight;
+                                weightedGR_->boundPartials().get(key).copyArrays(unweightedGR_->boundPartials().get(key));
+                                weightedGR_->boundPartials().get(key) *= intraWeight;
 
                                 // Unbound partial (multiplied by the full weight)
-                                weightedGR().unboundPartials().get(key).copyArrays(unweightedGR_->unboundPartials().get(key));
-                                weightedGR().unboundPartials().get(key) -= 1.0;
-                                weightedGR().unboundPartials().get(key) *= weight;
+                                weightedGR_->unboundPartials().get(key).copyArrays(unweightedGR_->unboundPartials().get(key));
+                                weightedGR_->unboundPartials().get(key) -= 1.0;
+                                weightedGR_->unboundPartials().get(key) *= weight;
 
                                 // Full partial, summing bound and unbound terms
-                                weightedGR().partials().get(key).copyArrays(weightedGR().unboundPartials().get(key));
-                                weightedGR().partials().get(key) += weightedGR().boundPartials().get(key);
+                                weightedGR_->partials().get(key).copyArrays(weightedGR_->unboundPartials().get(key));
+                                weightedGR_->partials().get(key) += weightedGR_->boundPartials().get(key);
                             });
 
     // Calculate and normalise total to form factor if requested
-    weightedGR().formTotals(false);
+    weightedGR_->formTotals(false);
 
     // Normalise to Q=0.0 form factor if requested
     if (normaliseTo_ != StructureFactors::NoNormalisation)
@@ -39,9 +39,9 @@ bool NeutronSQNode::calculateWeightedGR()
         auto norm = normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation ? weights_.boundCoherentAverageOfSquares()
                                                                                     : weights_.boundCoherentSquareOfAverage();
 
-        weightedGR().total() /= norm;
-        weightedGR().boundTotal() /= norm;
-        weightedGR().unboundTotal() /= norm;
+        weightedGR_->total() /= norm;
+        weightedGR_->boundTotal() /= norm;
+        weightedGR_->unboundTotal() /= norm;
     }
 
     return true;
@@ -60,20 +60,20 @@ bool NeutronSQNode::calculateWeightedSQ()
                                 auto boundWeight = weights_.intramolecularWeights().get(key);
 
                                 // Bound (intramolecular) partial (multiplied by the bound term weight)
-                                weightedSQ().boundPartials().get(key).copyArrays(unweightedSQ_->boundPartials().get(key));
-                                weightedSQ().boundPartials().get(key) *= boundWeight;
+                                weightedSQ_->boundPartials().get(key).copyArrays(unweightedSQ_->boundPartials().get(key));
+                                weightedSQ_->boundPartials().get(key) *= boundWeight;
 
                                 // Unbound partial (multiplied by the full weight)
-                                weightedSQ().unboundPartials().get(key).copyArrays(unweightedSQ_->unboundPartials().get(key));
-                                weightedSQ().unboundPartials().get(key) *= weight;
+                                weightedSQ_->unboundPartials().get(key).copyArrays(unweightedSQ_->unboundPartials().get(key));
+                                weightedSQ_->unboundPartials().get(key) *= weight;
 
                                 // Full partial (sum of bound and unbound terms)
-                                weightedSQ().partials().get(key).copyArrays(weightedSQ().unboundPartials().get(key));
-                                weightedSQ().partials().get(key) += weightedSQ().boundPartials().get(key);
+                                weightedSQ_->partials().get(key).copyArrays(weightedSQ_->unboundPartials().get(key));
+                                weightedSQ_->partials().get(key) += weightedSQ_->boundPartials().get(key);
                             });
 
     // Form total structure factor
-    auto w = weightedSQ();
+    auto w = (*weightedSQ_);
     w.formTotals(false);
 
     // Apply normalisation to all totals
@@ -82,9 +82,9 @@ bool NeutronSQNode::calculateWeightedSQ()
         auto norm = normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation ? weights_.boundCoherentAverageOfSquares()
                                                                                     : weights_.boundCoherentSquareOfAverage();
 
-        weightedSQ().total() /= norm;
-        weightedSQ().boundTotal() /= norm;
-        weightedSQ().unboundTotal() /= norm;
+        weightedSQ_->total() /= norm;
+        weightedSQ_->boundTotal() /= norm;
+        weightedSQ_->unboundTotal() /= norm;
     }
 
     return true;
@@ -108,30 +108,4 @@ void NeutronSQNode::calculateWeights(const KeyedVector<const Species *, double> 
     }
 
     weights_.createFromIsotopologues(exchangeable_);
-}
-
-// Return value of weighted SQ, emplacing if optional not initialised
-PartialSet &NeutronSQNode::weightedSQ()
-{
-    // Set up the weighted SQ storage if needed
-    if (!weightedSQ_)
-    {
-        weightedSQ_.emplace();
-        weightedSQ_.value().initialise(*unweightedSQ_);
-    }
-
-    return *weightedSQ_;
-}
-
-// Return value of weighted GR, emplacing if optional not initialised
-PartialSet &NeutronSQNode::weightedGR()
-{
-    // Set up weighted GR storage if we need it
-    if (!weightedGR_)
-    {
-        weightedGR_.emplace();
-        weightedGR_.value().initialise(*unweightedGR_);
-    }
-
-    return *weightedGR_;
 }

@@ -96,12 +96,6 @@ class GRNode : public Node
     bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
                               std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");
 
-    private:
-    // Return value of unweighted GR, emplacing if optional not initialised
-    PartialSet &unweightedGR();
-    // Return value of raw GR, emplacing if optional not initialised
-    PartialSet &rawGR();
-
     /*
      * Processing
      */
