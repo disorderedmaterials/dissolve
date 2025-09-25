@@ -82,10 +82,10 @@ class Forcefield
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
     // Determine and return atom type for specified SpeciesAtom from supplied Array of types
     static OptionalReferenceWrapper<const ForcefieldAtomType>
-    determineAtomType(const SpeciesAtom &i,
+    determineAtomType(const SpeciesParticle *i,
                       const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom &i) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesParticle *i) const;
 
     public:
     // Create NETA definitions for all atom types from stored defs

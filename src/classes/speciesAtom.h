@@ -54,6 +54,8 @@ class SpeciesAtom : public SpeciesParticle
     Presence presence_{Presence::Physical};
 
     public:
+    // Return the type of the particle
+    ParticleType type() const;
     // Set basic properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
     void set(Elements::Element Z, const Vector3 &r, double q = 0.0);

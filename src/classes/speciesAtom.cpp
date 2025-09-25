@@ -40,6 +40,9 @@ void SpeciesAtom::move(SpeciesAtom &source)
  * Properties
  */
 
+// Return the type of the particle
+SpeciesParticle::ParticleType SpeciesAtom::type() const { return ParticleType::Atom;  }
+
 // Set basic properties
 void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q) { set(Z, {rx, ry, rz}, q); }
 void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)

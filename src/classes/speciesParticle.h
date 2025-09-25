@@ -104,6 +104,14 @@ class SpeciesParticle : public Serialisable<CoreData &>
     /*
      * Basic Properties
      */
+    public:
+    // Particle type
+    enum class ParticleType
+    {
+        Atom,
+        Bead
+    };
+
     private:
     // Index in Species
     int index_{-1};
@@ -113,6 +121,8 @@ class SpeciesParticle : public Serialisable<CoreData &>
     Vector3 r_{0.0, 0.0, 0.0};
 
     public:
+    // Return the type of the particle
+    virtual ParticleType type() const = 0;
     // Return type name for particle
     virtual std::string_view typeName() const = 0;
 

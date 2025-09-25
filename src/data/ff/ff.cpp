@@ -77,10 +77,10 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
 OptionalReferenceWrapper<const ForcefieldAtomType>
-Forcefield::determineAtomType(const SpeciesAtom &i,
+Forcefield::determineAtomType(const SpeciesParticle *i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
-    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.userIndex(), Elements::symbol(i.Z()));
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i.Z()));
 
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
@@ -89,7 +89,7 @@ Forcefield::determineAtomType(const SpeciesAtom &i,
     {
         // Get the scoring for this type
         auto &type = typeRef.get();
-        auto score = type.neta().score(&i);
+        auto score = type.neta().score(i);
         Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
         if (score > bestScore)
         {
@@ -101,14 +101,14 @@ Forcefield::determineAtomType(const SpeciesAtom &i,
     if (bestScore == -1)
         Messenger::printVerbose("  -- no suitable type found.");
     else
-        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i.userIndex(),
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i->userIndex(),
                                 bestType->get().index(), bestType->get().name(), bestScore);
 
     return bestType;
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom &i) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesParticle *i) const
 {
     return determineAtomType(i, atomTypesByElementPrivate_);
 }
