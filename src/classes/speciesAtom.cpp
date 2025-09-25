@@ -97,8 +97,8 @@ void SpeciesAtom::setScaledInteractions()
 {
     scaledInteractions_.clear();
 
-    std::function<void(SpeciesAtom *, SpeciesAtom::ScaledInteraction, double, double)> addInteractionFunction =
-        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double srScale)
+    std::function<void(SpeciesParticle *, SpeciesAtom::ScaledInteraction, double, double)> addInteractionFunction =
+        [&](SpeciesParticle *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double srScale)
     {
         auto it =
             std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
@@ -123,11 +123,11 @@ void SpeciesAtom::setScaledInteractions()
         auto &a = aRef.get();
 
         if (a.i() != this)
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(a.i()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(a.i(), ScaledInteraction::Excluded, 0.0, 0.0);
         if (a.j() != this)
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(a.j()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(a.j(), ScaledInteraction::Excluded, 0.0, 0.0);
         if (a.k() != this)
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(a.k()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(a.k(), ScaledInteraction::Excluded, 0.0, 0.0);
     }
 
     // Torsions
@@ -137,26 +137,24 @@ void SpeciesAtom::setScaledInteractions()
 
         if (t.i() == this)
         {
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.l()), ScaledInteraction::Scaled, t.electrostatic14Scaling(),
-                                   t.vanDerWaals14Scaling());
+            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.l(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
         }
         else if (t.l() == this)
         {
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.i()), ScaledInteraction::Scaled, t.electrostatic14Scaling(),
-                                   t.vanDerWaals14Scaling());
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.i(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
+            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
         }
         else
         {
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.i()), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.l()), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.i(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.l(), ScaledInteraction::Excluded, 0.0, 0.0);
             if (t.j() != this)
-                addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.j()), ScaledInteraction::Excluded, 0.0, 0.0);
+                addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
             if (t.k() != this)
-                addInteractionFunction(dynamic_cast<SpeciesAtom *>(t.k()), ScaledInteraction::Excluded, 0.0, 0.0);
+                addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
         }
     }
 }

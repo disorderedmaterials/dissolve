@@ -91,7 +91,7 @@ class SpeciesAtom : public SpeciesParticle
 
     private:
     // Vector of Atoms with scaled or excluded interactions
-    std::vector<std::pair<const SpeciesAtom *, ScaledInteractionDefinition>> scaledInteractions_;
+    std::vector<std::pair<const SpeciesParticle *, ScaledInteractionDefinition>> scaledInteractions_;
 
     public:
     // Set all scaled intramolecular interactions
