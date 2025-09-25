@@ -65,11 +65,8 @@ bool Data1DImportFileFormat::importData(Data1D &data)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser;
-    auto cwd = std::filesystem::current_path();
-    auto path = cwd.parent_path().parent_path() / filename_;
-    auto filename = path.string();
-    if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename);
+    if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
+        return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename_);
 
     // Import the data
     auto result = importData(parser, data);
@@ -78,7 +75,7 @@ bool Data1DImportFileFormat::importData(Data1D &data)
 
     // Validity check on number of points in loaded file
     if (result && data.nValues() == 0)
-        return Messenger::error("File '{}' contains no data.\n", filename);
+        return Messenger::error("File '{}' contains no data.\n", filename_);
 
     return result;
 }
