@@ -112,7 +112,7 @@ bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
     // Read Species name
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
-    species_ = coreData.findSpecies(parser.argsv(0));
+    species_ = coreData.findSpecies(DissolveSys::niceName(parser.argsv(0)));
     if (species_ == nullptr)
     {
         Messenger::error("Failed to find Species '{}' while reading Isotopologues.\n", parser.argsv(0));
@@ -127,7 +127,7 @@ bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
             return false;
 
         // Search for the named Isotopologue in the Species
-        const Isotopologue *iso = species_->findIsotopologue(parser.argsv(0));
+        const Isotopologue *iso = species_->findIsotopologue(DissolveSys::niceName(parser.argsv(0)));
         if (!iso)
         {
             Messenger::error("Failed to find Isotopologue '{}' for Species '{}' while reading Isotopologues.\n",

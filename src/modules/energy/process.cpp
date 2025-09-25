@@ -17,7 +17,7 @@ bool EnergyModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::Keywor
     // For the Configuration target add a flag to its moduleData (which is *not* stored in the restart file) to specify that we
     // are targeting it
     if (targetConfiguration_)
-        moduleContext.dissolve().processingModuleData().realise<bool>("IsEnergyModuleTarget", targetConfiguration_->niceName(),
+        moduleContext.dissolve().processingModuleData().realise<bool>("IsEnergyModuleTarget", targetConfiguration_->name(),
                                                                       GenericItem::ProtectedFlag) = true;
 
     return true;
@@ -65,33 +65,33 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
 
     // Store current energies in the Configuration in case somebody else needs them
     auto &interData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//PairPotential", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//PairPotential", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     interData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total());
     auto &intraData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Bound", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Bound", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     intraData.addPoint(moduleContext.dissolve().iteration(), boundEnergy);
     auto &bondData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Bond", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     bondData.addPoint(moduleContext.dissolve().iteration(), bondEnergy);
     auto &angleData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Angle", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     angleData.addPoint(moduleContext.dissolve().iteration(), angleEnergy);
     auto &torsionData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Torsion", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Torsion", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     torsionData.addPoint(moduleContext.dissolve().iteration(), torsionEnergy);
     auto &improperData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Improper", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Improper", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     improperData.addPoint(moduleContext.dissolve().iteration(), improperEnergy);
     auto &cohesiveData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Cohesive", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Cohesive", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     cohesiveData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.interMolecular());
     auto &intraPPData = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//IntraPP", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//IntraPP", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     intraPPData.addPoint(moduleContext.dissolve().iteration(), ppEnergy.intraMolecular());
 
     // Append to arrays of total energies
     auto &totalEnergyArray = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-        std::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Total", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     totalEnergyArray.addPoint(moduleContext.dissolve().iteration(), ppEnergy.total() + boundEnergy);
 
     // Determine stability of energy
@@ -113,16 +113,16 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
     }
 
     // Set energy data under the configuration's prefix
-    moduleContext.dissolve().processingModuleData().realise<double>("EnergyGradient", targetConfiguration_->niceName(),
+    moduleContext.dissolve().processingModuleData().realise<double>("EnergyGradient", targetConfiguration_->name(),
                                                                     GenericItem::InRestartFileFlag) = grad;
-    moduleContext.dissolve().processingModuleData().realise<bool>("EnergyStable", targetConfiguration_->niceName(),
+    moduleContext.dissolve().processingModuleData().realise<bool>("EnergyStable", targetConfiguration_->name(),
                                                                   GenericItem::InRestartFileFlag) = stable;
 
     // If writing to a file, append it here
     if (save_)
     {
         LineParser parser;
-        std::string filename = std::format("{}.energy.txt", targetConfiguration_->niceName());
+        std::string filename = std::format("{}.energy.txt", targetConfiguration_->name());
 
         if (!DissolveSys::fileExists(filename))
         {

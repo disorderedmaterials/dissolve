@@ -58,7 +58,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
         }
         else if (stabilityResult == EnergyModule::EnergyUnstable)
         {
-            Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->niceName());
+            Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->name());
             return ExecutionResult::NotExecuted;
         }
     }
@@ -102,7 +102,7 @@ Module::ExecutionResult MDModule::process(ModuleContext &moduleContext)
 
     // Read in or assign random velocities
     auto [velocities, status] = moduleContext.dissolve().processingModuleData().realiseIf<std::vector<Vec3<double>>>(
-        std::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
+        std::format("{}//Velocities", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
          velocities.size() != targetConfiguration_->nAtoms()) &&
         !intramolecularForcesOnly_)

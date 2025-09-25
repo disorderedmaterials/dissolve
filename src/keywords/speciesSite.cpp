@@ -36,7 +36,7 @@ std::optional<int> SpeciesSiteKeyword::maxArguments() const { return 2; }
 bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Species (first argument)
-    Species *sp = coreData.findSpecies(parser.argsv(startArg));
+    Species *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(startArg)));
     if (!sp)
     {
         Messenger::error("Error setting SpeciesSite - no Species named '{}' exists.\n", parser.argsv(startArg));
@@ -44,7 +44,7 @@ bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const Cor
     }
 
     // Find specified Site (second argument) in the Species
-    data_ = sp->findSite(parser.argsv(startArg + 1));
+    data_ = sp->findSite(DissolveSys::niceName(parser.argsv(startArg + 1)));
     if (!data_)
         return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                 parser.argsv(startArg + 1), sp->name());

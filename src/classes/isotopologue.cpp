@@ -20,7 +20,7 @@ void Isotopologue::setParent(const Species *parent) { parent_ = parent; }
 const Species *Isotopologue::parent() const { return parent_; }
 
 // Set name of Isotopologue
-void Isotopologue::setName(std::string_view name) { name_ = name; }
+void Isotopologue::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return name of Isotopologue
 std::string_view Isotopologue::name() const { return name_; }

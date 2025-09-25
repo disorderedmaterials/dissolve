@@ -24,9 +24,10 @@ const Species *&SpeciesKeyword::data() const { return data_; }
 bool SpeciesKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Species (first argument)
-    data_ = coreData.findSpecies(parser.argsv(startArg));
+    data_ = coreData.findSpecies(DissolveSys::niceName(parser.argsv(startArg)));
     if (!data_)
-        return Messenger::error("Error setting Species - no Species named '{}' exists.\n", parser.argsv(startArg));
+        return Messenger::error("Error setting Species - no Species named '{}' exists.\n",
+                                DissolveSys::niceName(parser.argsv(startArg)));
 
     return true;
 }
@@ -57,5 +58,5 @@ SerialisedValue SpeciesKeyword::serialise() const { return data_->name(); }
 // Read values from a serialisable value
 void SpeciesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_ = coreData.findSpecies(std::string_view(std::string(node.as_string())));
+    data_ = coreData.findSpecies(DissolveSys::niceName(std::string(node.as_string())));
 }

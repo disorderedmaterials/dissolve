@@ -30,9 +30,10 @@ bool SpeciesVectorKeyword::deserialise(LineParser &parser, int startArg, const C
     // Each argument is the name of a Species
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
-        const auto *sp = coreData.findSpecies(parser.argsv(n));
+        const auto *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(n)));
         if (!sp)
-            return Messenger::error("Error reading keyword '{}' - no Species named '{}' exists.\n", name(), parser.argsv(n));
+            return Messenger::error("Error reading keyword '{}' - no Species named '{}' exists.\n", name(),
+                                    DissolveSys::niceName(parser.argsv(n)));
 
         data_.push_back(sp);
     }

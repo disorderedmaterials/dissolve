@@ -328,8 +328,8 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
                            bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
-    auto originalGRObject = processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->niceName()), name_,
-                                                                 GenericItem::InRestartFileFlag);
+    auto originalGRObject =
+        processingData.realiseIf<PartialSet>(std::format("{}//OriginalGR", cfg->name()), name_, GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)
         originalgr.setUp(cfg->atomTypePopulations(), rdfRange, rdfBinWidth);
@@ -579,9 +579,9 @@ bool GRModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &p
         double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
-        if (!processingData.contains(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))
+        if (!processingData.contains(std::format("{}//UnweightedGR", cfg->name()), targetPrefix))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->niceName()), targetPrefix);
+        auto cfgPartialGR = processingData.value<PartialSet>(std::format("{}//UnweightedGR", cfg->name()), targetPrefix);
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);

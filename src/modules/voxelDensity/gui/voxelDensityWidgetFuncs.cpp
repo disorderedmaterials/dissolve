@@ -59,7 +59,7 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             voxelDensityGraph_->createRenderable<RenderableData1D>(std::format("{}//Data1D", module_->name()),
-                                                                   std::format("Data1D//{}", cfg->niceName()), cfg->niceName());
+                                                                   std::format("Data1D//{}", cfg->name()), cfg->name());
     }
 
     voxelDensityGraph_->view().axes().setTitle(0, getData1DAxisLabel().value_or(""));

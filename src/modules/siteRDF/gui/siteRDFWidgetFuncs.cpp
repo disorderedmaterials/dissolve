@@ -67,7 +67,7 @@ void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> 
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//RDF", module_->name()),
-                                                          std::format("RDF//{}", cfg->niceName()), cfg->niceName());
+                                                          std::format("RDF//{}", cfg->name()), cfg->name());
     }
     if (runningCNGraph_->renderables().empty())
         runningCNGraph_->createRenderable<RenderableData1D>(std::format("{}//RunningCN", module_->name()), "Running CN");
