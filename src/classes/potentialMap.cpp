@@ -93,8 +93,8 @@ bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &mast
     return true;
 }
 
-bool PotentialMap::initialise(const std::vector<const AtomType*>& masterAtomTypes,
-    const std::vector<PairPotential::Definition>& pairPotentials, double pairPotentialRange)
+bool PotentialMap::initialise(const std::vector<const AtomType *> &masterAtomTypes,
+                              const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange)
 {
     // Clear old data first
     clear();
@@ -135,7 +135,6 @@ bool PotentialMap::initialise(const std::vector<const AtomType*>& masterAtomType
 
     return true;
 }
-
 
 // Return PairPotential range
 double PotentialMap::range() const { return range_; }

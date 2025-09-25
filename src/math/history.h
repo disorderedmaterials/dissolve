@@ -4,10 +4,10 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include <memory>
-#include <vector>
 #include <functional>
+#include <memory>
 #include <optional>
+#include <vector>
 
 // Data History
 template <class T> class History
