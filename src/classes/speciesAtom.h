@@ -71,6 +71,8 @@ class SpeciesAtom : public SpeciesParticle
     void setAtomType(const std::shared_ptr<AtomType> &at);
     // Return AtomType of Atom
     std::shared_ptr<AtomType> atomType() const;
+    // Return type name for particle
+    std::string_view typeName() const override;
     // Return presence of atom
     Presence presence() const;
 

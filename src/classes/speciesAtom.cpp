@@ -86,6 +86,9 @@ void SpeciesAtom::setAtomType(const std::shared_ptr<AtomType> &at)
 // Return SpeciesAtomType of SpeciesAtom
 std::shared_ptr<AtomType> SpeciesAtom::atomType() const { return atomType_; }
 
+// Return type name for particle
+std::string_view SpeciesAtom::typeName() const { return atomType_->name(); }
+
 // Return presence of atom
 SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
 

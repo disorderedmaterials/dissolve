@@ -42,6 +42,7 @@ class SpeciesParticle : public Serialisable<CoreData &>
     /*
      * Coordinate Manipulation
      */
+    public:
     // Return coordinates (read-only)
     const Vector3 &r() const;
     // Set coordinate
@@ -56,6 +57,7 @@ class SpeciesParticle : public Serialisable<CoreData &>
     /*
      * SpeciesIntra
      */
+    public:
     // Add bond reference
     void addBond(SpeciesBond &b);
     // Remove bond reference
@@ -99,11 +101,10 @@ class SpeciesParticle : public Serialisable<CoreData &>
     // Return array of Impropers in which the Atom is involved
     const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
 
-    private:
     /*
      * Basic Properties
      */
-
+    private:
     // Index in Species
     int index_{-1};
     // Whether the SpeciesParticle is currently selected
@@ -111,10 +112,14 @@ class SpeciesParticle : public Serialisable<CoreData &>
     // Coordinates
     Vector3 r_{0.0, 0.0, 0.0};
 
+    public:
+    // Return type name for particle
+    virtual std::string_view typeName() const = 0;
+
     /*
      * Species interaction references
      */
-
+    private:
     // Vector of bonds which this atom participates in
     std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
     // Vector of angles which this atom participates in
