@@ -28,13 +28,7 @@ template <class T> class History
             history_.erase(history_.begin());
 
         // Perform averaging of the datasets that we have
-        T averaged = [&]()
-        {
-            if (initialiser)
-                return initialiser();
-            else
-                return T();
-        }();
+        T averaged = initialiser ? initialiser() : T();
 
         auto weight = 1.0 / history_.size();
         for (auto &data : history_)
