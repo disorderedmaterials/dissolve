@@ -130,4 +130,6 @@ class EnergyKernel : public GeometryKernel
     EnergyResult totalEnergy(const Atom &i) const;
     // Return total energy of supplied molecule with the world
     EnergyResult totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags = {}) const;
+    // Return potential map
+    const PotentialMap &potentialMap() const;
 };

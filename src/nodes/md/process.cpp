@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/mathFunc.h"
+#include "nodes/dissolve.h"
 #include "nodes/md/md.h"
 
 // Run main processing
@@ -24,28 +25,30 @@ NodeConstants::ProcessResult MDNode::process()
     const auto kb = 0.8314462;
 
     // Print argument/parameter summary
-    Messenger::print("MD: Number of steps = {}\n", nSteps);
-    Messenger::print("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
+    message("Number of steps = {}\n", nSteps);
+    message("Timestep type is '{}'\n", timestepType().keyword(timestepType_));
     if (onlyWhenEnergyStable_)
-        Messenger::print("MD: Only perform MD if target Configuration energies are stable.\n");
+        message("Only perform MD if target Configuration energies are stable.\n");
     if (trajectoryFrequency > 0)
-        Messenger::print("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency);
+        message("Trajectory file will be appended every {} step(s).\n", trajectoryFrequency);
     else
-        Messenger::print("MD: Trajectory file off.\n");
+        message("Trajectory file off.\n");
     if (capForces_)
-        Messenger::print("MD: Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
+        message("Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
     if (energyFrequency > 0)
-        Messenger::print("MD: Energy will be calculated every {} step(s).\n", energyFrequency);
+        message("Energy will be calculated every {} step(s).\n", energyFrequency);
     else
-        Messenger::print("MD: Energy will be not be calculated.\n");
+        message("Energy will be not be calculated.\n");
     if (outputFrequency > 0)
-        Messenger::print("MD: Summary will be written every {} step(s).\n", outputFrequency);
+        message("Summary will be written every {} step(s).\n", outputFrequency);
     else
-        Messenger::print("MD: Summary will not be written.\n");
+        message("Summary will not be written.\n");
     if (!restrictToSpecies_.empty())
-        Messenger::print("MD: Calculation will be restricted to species: {}\n",
-                         joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
-    Messenger::print("\n");
+        message("Calculation will be restricted to species: {}\n",
+                joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
+    message("\n");
+
+    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
 
     /*
     if (onlyWhenEnergyStable_)
@@ -200,13 +203,15 @@ NodeConstants::ProcessResult MDNode::process()
         std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
+        auto potentialMap = kernel->potentialMap();
+
         if (targetMolecules.empty())
-            ForcesModule::totalForces(targetConfiguration_, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, potentialMap,
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
                                       fUnbound, fBound);
         else
-            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, potentialMap,
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
                                       fUnbound, fBound);

@@ -6,6 +6,12 @@
 #include "main/dissolve.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "templates/doubleKeyedMap.h"
+
+// Forward declarations
+
+class EnergyKernel;
+class PotentialMap;
 
 // Main Dissolve Node
 class DissolveGraph : public Graph
@@ -31,8 +37,31 @@ class DissolveGraph : public Graph
     private:
     // Dissolve reference
     Dissolve &dissolve_;
+    // Pair potential store
+    DoubleKeyedMap<std::shared_ptr<PairPotential>> pairPotentialStore_{true};
+    // Pair potential range
+    double pairPotentialRange_{12};
+    // Pair potential delta
+    double pairPotentialDelta_{0.005};
 
     public:
     // Return dissolve
-    Dissolve &dissolve() const override;
+    Dissolve &dissolve() const;
+    // Return the DissolveGraph reference
+    DissolveGraph *dissolveGraph() override;
+    // Return pair potential store
+    const DoubleKeyedMap<std::shared_ptr<PairPotential>> &pairPotentialStore();
+
+    /*
+     * Functions
+     */
+    public:
+    // Return maximum distance for tabulated PairPotentials
+    const double pairPotentialRange() const;
+    // Return energy kernel containing potential map
+    std::unique_ptr<EnergyKernel> prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff = {});
+
+    private:
+    // Update pair potential store
+    void updatePairPotentials(const AtomType &i, const AtomType &j);
 };

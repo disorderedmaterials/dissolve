@@ -11,6 +11,7 @@
 #include "items/serialisers.h"
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
+#include <filesystem>
 
 // Initialise
 void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half)
@@ -18,6 +19,41 @@ void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopu
     // Take integer species populations and convert to real
     realSpeciesPopulations_.clear();
     for (const auto &[species, population] : speciesPopulations)
+        realSpeciesPopulations_[species] = double(population);
+
+    half_ = half;
+
+    partials_.clear(half_);
+    boundPartials_.clear(half_);
+    unboundPartials_.clear(half_);
+
+    // Create data for partials and set tags
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypeFractions(),
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+            partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()));
+            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
+            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
+        },
+        half_);
+
+    // Set up arrays for totals
+    total_.setTag("Total");
+    boundTotal_.setTag("BoundTotal");
+    unboundTotal_.setTag("UnboundTotal");
+    total_.clear();
+    boundTotal_.clear();
+    unboundTotal_.clear();
+}
+
+// Initialise from supplied real species populations
+void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool half)
+{
+    // Take integer species populations and convert to real
+    realSpeciesPopulations_.clear();
+    for (const auto &[species, population] : realSpeciesPopulations)
         realSpeciesPopulations_[species] = double(population);
 
     half_ = half;
@@ -248,7 +284,11 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
             std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, popI.first->name(), popJ.first->name(), suffix)};
             Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-            parser.openOutput(filename, true);
+            auto cwd = std::filesystem::current_path();
+            auto path = cwd.parent_path().parent_path() / "tests" / "nodes" / "output" / filename;
+            auto fullPath = path.string();
+
+            parser.openOutput(fullPath, true);
             if (!parser.isFileGoodForWriting())
                 return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 

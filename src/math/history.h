@@ -4,7 +4,9 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 // Data History
@@ -16,7 +18,7 @@ template <class T> class History
 
     public:
     // Update history with supplied data and return current average
-    T average(const T &currentData, int averagingLength)
+    T average(const T &currentData, int averagingLength, std::function<T()> initialiser = {})
     {
         // Push the current data onto the history stack
         history_.emplace_back(std::make_unique<T>(currentData));
@@ -26,7 +28,8 @@ template <class T> class History
             history_.erase(history_.begin());
 
         // Perform averaging of the datasets that we have
-        T averaged;
+        T averaged = initialiser ? initialiser() : T();
+
         auto weight = 1.0 / history_.size();
         for (auto &data : history_)
             averaged += *data * weight;

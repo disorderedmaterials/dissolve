@@ -412,7 +412,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool GRNode::calculateUnweightedGR()
 {
-    *unweightedGR_ = *rawGR_;
+    (*unweightedGR_) = (*rawGR_);
 
     // Remove bound partial from full partial
     for (auto &[key, fullPartial] : unweightedGR_->partials())

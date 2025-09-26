@@ -20,8 +20,9 @@ SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
                                      averagingLength_);
     addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging partials",
                                           averagingScheme_);
-    addOptionalPointerOutput<PartialSet>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
 
+    addOptionalPointerOutput<PartialSet>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
+    addOutput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
     addOption<bool>("Save", "Whether to save partials to disk after calculation", save_);
 }
 

@@ -39,6 +39,23 @@ int Species::addAtom(Elements::Element Z, Vector3 r, double q, std::shared_ptr<A
     return i.index();
 }
 
+// Add new atom type to atom types
+const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z)
+{
+    auto newAtomType = std::make_shared<AtomType>();
+    atomTypes_.push_back(newAtomType);
+
+    // Create a suitable unique name
+    newAtomType->setName(DissolveSys::uniqueName(Elements::symbol(Z), atomTypes_,
+                                                 [&](const auto &at) { return newAtomType == at ? "" : at->name(); }));
+
+    // Set data
+    newAtomType->setZ(Z);
+    newAtomType->setIndex(atomTypes_.size() - 1);
+
+    return newAtomType;
+}
+
 // Remove the specified atom from the species
 void Species::removeAtom(int index)
 {

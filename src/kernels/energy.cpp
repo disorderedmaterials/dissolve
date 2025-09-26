@@ -368,3 +368,6 @@ EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculat
             flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol),
             flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
+
+// Return potential map
+const PotentialMap &EnergyKernel::potentialMap() const { return potentialMap_; }
