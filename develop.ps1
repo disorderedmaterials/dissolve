@@ -585,6 +585,3 @@ Write-Host "Outputting CMakeUserPresets Json for Dissolve MSVC configuration... 
 $cmakeUserPresetsJson = $cmakeUserPresets | ConvertTo-Json -Depth 10 -Compress
 
 Set-Content -Path "CMakeUserPresets.json" -Value $cmakeUserPresetsJson -Encoding UTF8
-
-
-
