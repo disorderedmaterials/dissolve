@@ -46,6 +46,8 @@ jobs:
         
     - name: 'Configure and build with CMake'
       shell: bash
+      env:
+        CONAN_HOME: "${{ github.workspace }}\\conan"
       run: |
         git submodule update --init --recursive
         export PATH="${{ github.workspace }}\msvc-env\Scripts;${{ github.workspace }}\dependencies\qt\${{ inputs.qtVersion }}\msvc2019_64\bin;$PATH"
