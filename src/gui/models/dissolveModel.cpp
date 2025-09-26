@@ -131,7 +131,10 @@ void DissolveModel::loadInput(QUrl filename)
 {
     dissolve_->loadInput(filename.toLocalFile().toStdString());
     configurationModel_.reset();
+    Q_EMIT(modelsUpdated());
 }
+
+bool DissolveModel::saveAs(QUrl filename) { return dissolve_->saveToml(filename.toLocalFile().toStdString()); }
 
 Graph *DissolveModel::graph()
 {

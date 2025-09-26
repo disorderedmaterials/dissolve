@@ -20,8 +20,6 @@ class NodeWrapper
     {
     }
 
-    // The X and Y coordinates of the node on the screen.
-    int posx, posy;
     // Parameter models for parameters of the node
     std::unique_ptr<ParameterModel> inputs, outputs, options;
     // Relative positions of parameters with respect to the node

@@ -42,6 +42,8 @@ ApplicationWindow {
             }
             MenuItem {
                 text: "Save As..."
+
+                onTriggered: saveDialog.open()
             }
             MenuItem {
                 text: "Load Restart Point..."
@@ -208,8 +210,19 @@ ApplicationWindow {
                     FileDialog {
                         id: openDialog
 
+                        fileMode: FileDialog.OpenFile
+
                         onAccepted: {
                             dissolve.file = selectedFile;
+                        }
+                    }
+                    FileDialog {
+                        id: saveDialog
+
+                        fileMode: FileDialog.SaveFile
+
+                        onAccepted: {
+                            dissolve.saveAs(selectedFile);
                         }
                     }
                     Button {

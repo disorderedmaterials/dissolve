@@ -34,7 +34,7 @@ class DissolveModel : public QObject
     // The ModuleLayers Model
     Q_PROPERTY(const ModuleLayersModel *moduleLayersModel READ moduleLayersModel NOTIFY moduleLayersChanged)
     // File to load
-    Q_PROPERTY(QUrl file READ fileName WRITE loadInput)
+    Q_PROPERTY(QUrl file READ fileName WRITE loadInput NOTIFY modelsUpdated)
     // The main graph
     Q_PROPERTY(Graph *graph READ graph NOTIFY modelsUpdated)
 
@@ -69,6 +69,10 @@ class DissolveModel : public QObject
     void configurationsChanged();
     // ModuleLayers model has been replaced
     void moduleLayersChanged();
+
+    public Q_SLOTS:
+    // Export to a file
+    bool saveAs(QUrl filename);
 
     public:
     DissolveModel() = default;
