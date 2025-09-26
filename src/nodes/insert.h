@@ -38,6 +38,8 @@ class InsertNode : public Node
     private:
     // Target configuration to insert into
     Configuration *configuration_{nullptr};
+    // AtomTypes owned by the node
+    const std::vector<std::shared_ptr<AtomType>> *atomTypes_{nullptr};
     // Species to be added (if no MoleculeSet is given)
     const Species *species_{nullptr};
     // MoleculeSet to be added (if no Species is given)

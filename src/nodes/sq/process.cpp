@@ -54,41 +54,34 @@ NodeConstants::ProcessResult SQNode::process()
     message("SQ: Save data is {}.\n", DissolveSys::onOff(save_));
     message("\n");
 
-    /*
-     * Transform target UnweightedGR into the UnweightedSQ.
-     */
-
     // Set up unweighted SQ storage if we need to
     if (!unweightedSQ_)
     {
         unweightedSQ_.emplace();
-        unweightedSQ_->initialise(*unweightedGR_);
+        unweightedSQ_.value().initialise(*unweightedGR_);
     }
 
     /*
-    // Is the PartialSet already up-to-date?
-    if (DissolveSys::sameString(unweightedSQ_.fingerprint(), std::format("{}/{}", -1), -1))
-    {
-        message("SQ: Unweighted partial S(Q) are up-to-date.\n");
-        return NodeConstants::ProcessResult::Failed;
-    }
-    */
+     * Transform target UnweightedGR into the UnweightedSQ.
+     */
 
     // Transform g(r) into S(Q)
     if (!calculateUnweightedSQ())
         return NodeConstants::ProcessResult::Failed;
 
-    /*
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if (averagingLength_)
-    {
-        // Store the current fingerprint, since we must ensure we retain it in the averaged data.
-        std::string currentFingerprint{unweightedSQ_.fingerprint()};
+        (*unweightedSQ_) = unweightedSQHistory_.average((*unweightedSQ_), averagingLength_.value().asInteger(),
+                                                        [&]()
+                                                        {
+                                                            PartialSet p;
+                                                            p.initialise(unweightedGR_->realSpeciesPopulations());
+                                                            return p;
+                                                        });
 
-        Averaging::average<PartialSet>(dissolve().processingModuleData(), "UnweightedSQ", name_, averagingLength_.value(),
-                                       averagingScheme_);
-    }
-    */
+    // Save data if requested
+    if (save_ && !unweightedSQ_->save(name(), "UnweightedSQ", "sq", "Q, 1/Angstroms"))
+        return NodeConstants::ProcessResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

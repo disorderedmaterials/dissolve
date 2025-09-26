@@ -38,6 +38,8 @@ class PartialSet
     public:
     // Initialise from supplied species populations
     void initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half = true);
+    // Initialise from supplied real species populations
+    void initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool half = true);
     // Initialise based on supplied PartialSet, templating all data
     void initialise(const PartialSet &partialSet);
     // Reset partial arrays

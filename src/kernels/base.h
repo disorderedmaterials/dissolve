@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/potentialMap.h"
 #include "math/vector3.h"
 #include "templates/optionalRef.h"
 #include <memory>
@@ -13,7 +14,6 @@ class Box;
 class CellArray;
 class Configuration;
 class Molecule;
-class PotentialMap;
 
 // Kernel Base
 class KernelBase
@@ -28,7 +28,7 @@ class KernelBase
 
     protected:
     // Potential map to use
-    const PotentialMap &potentialMap_;
+    const PotentialMap potentialMap_;
     // Squared cutoff distance to use in calculation
     double cutoffDistanceSquared_;
     // Periodic Box

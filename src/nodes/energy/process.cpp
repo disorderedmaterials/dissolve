@@ -8,6 +8,7 @@
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "math/regression.h"
+#include "nodes/dissolve.h"
 #include "nodes/energy/energy.h"
 
 // Run main processing
@@ -23,16 +24,19 @@ NodeConstants::ProcessResult EnergyNode::process()
      * This is a serial routine (subroutines called from within are parallel).
      */
 
+    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
+    auto potentialMap = kernel->potentialMap();
+
     // Calculate pair potential energy
     Timer interTimer;
-    auto ppEnergy = pairPotentialEnergy(targetConfiguration_, dissolve().potentialMap());
+    auto ppEnergy = pairPotentialEnergy(targetConfiguration_, potentialMap);
     interTimer.stop();
 
     // Calculate intra-molecular (bound) energy
     Timer intraTimer;
     double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
-    auto boundEnergy = intraMolecularEnergy(targetConfiguration_, dissolve().potentialMap(), bondEnergy, angleEnergy,
-                                            torsionEnergy, improperEnergy);
+    auto boundEnergy =
+        intraMolecularEnergy(targetConfiguration_, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
     intraTimer.stop();
 
     message("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),

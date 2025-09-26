@@ -6,6 +6,7 @@
 #include "classes/partialSet.h"
 #include "math/averaging.h"
 #include "math/function1D.h"
+#include "math/history.h"
 #include "math/windowFunction.h"
 #include "module/module.h"
 #include "nodes/graph.h"
@@ -34,6 +35,8 @@ class SQNode : public Node
     PartialSet *unweightedGR_{nullptr};
     // Unweighted S(Q)
     std::optional<PartialSet> unweightedSQ_;
+    // Historical unweighted S(Q)
+    History<PartialSet> unweightedSQHistory_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_;
     // Weighting scheme to use when averaging partials
@@ -56,7 +59,7 @@ class SQNode : public Node
     /*
      * Functions
      */
-    public:
+    private:
     // Calculate unweighted S(Q) from unweighted g(r)
     bool calculateUnweightedSQ();
 

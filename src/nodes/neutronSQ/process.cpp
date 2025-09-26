@@ -38,6 +38,20 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         message("NeutronSQ: Representative G(r) will be saved.\n");
     message("\n");
 
+    // Set up the weighted SQ storage if needed
+    if (!weightedSQ_)
+    {
+        weightedSQ_.emplace();
+        weightedSQ_.value().initialise(*unweightedSQ_);
+    }
+
+    // Set up weighted GR storage if we need it
+    if (!weightedGR_)
+    {
+        weightedGR_.emplace();
+        weightedGR_.value().initialise(*unweightedGR_);
+    }
+
     // Get the real species populations from the input unweightedSQ
     auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
 
@@ -141,13 +155,6 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
     */
 
-    // Set up the weighted SQ storage if needed
-    if (!weightedSQ_)
-    {
-        weightedSQ_.emplace();
-        weightedSQ_->initialise(*unweightedSQ_);
-    }
-
     // Calculate weighted S(Q)
     calculateWeightedSQ();
 
@@ -166,13 +173,6 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedGR.atomTypeMix());
     */
-
-    // Set up weighted GR storage if we need it
-    if (!weightedGR_)
-    {
-        weightedGR_.emplace();
-        weightedGR_->initialise(*unweightedGR_);
-    }
 
     // Calculate weighted g(r)
     calculateWeightedGR();

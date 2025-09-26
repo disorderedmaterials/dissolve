@@ -8,6 +8,7 @@
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
 #include "nodes/atomicMC/atomicMC.h"
+#include "nodes/dissolve.h"
 
 // Run main processing
 NodeConstants::ProcessResult AtomicMCNode::process()
@@ -30,8 +31,8 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("Target acceptance rate is {}.\n", targetAcceptanceRate);
     message("\n");
 
-    auto kernel =
-        KernelProducer::energyKernel(targetConfiguration_, dissolve().potentialMap(), dissolve().pairPotentialRange());
+    // Prepare for energy calculation, generate kernel
+    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
 
     auto nAttempts = 0, nAccepted = 0;
     bool accept;

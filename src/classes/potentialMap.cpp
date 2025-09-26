@@ -9,6 +9,39 @@
 #include "classes/pairPotential.h"
 #include "classes/species.h"
 
+PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes,
+                           const DoubleKeyedMap<std::shared_ptr<PairPotential>> &pairPotentials, double pairPotentialRange)
+{
+    // Create PairPotential matrix
+    nTypes_ = atomTypes.size();
+    potentialMatrix_.initialise(nTypes_, nTypes_);
+
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypes,
+        [&](int i, const auto &atI, int j, const auto &atJ)
+        {
+            auto pp = pairPotentials.get({atI->name(), atJ->name()}).get();
+
+            // Store PairPotential pointer
+            if (i == j)
+            {
+                Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n", atI->name(), i,
+                                 j);
+                potentialMatrix_[{i, j}] = pp;
+            }
+            else
+            {
+                Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n",
+                                 atI->name(), atJ->name(), i, j, j, i);
+                potentialMatrix_[{i, j}] = pp;
+                potentialMatrix_[{j, i}] = pp;
+            }
+        });
+
+    // Store potential range
+    range_ = pairPotentialRange;
+}
+
 // Clear all data
 void PotentialMap::clear() { potentialMatrix_.clear(); }
 
@@ -18,6 +51,49 @@ void PotentialMap::clear() { potentialMatrix_.clear(); }
 
 // Initialise maps
 bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
+                              const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange)
+{
+    // Clear old data first
+    clear();
+
+    // Create PairPotential matrix
+    nTypes_ = masterAtomTypes.size();
+    potentialMatrix_.initialise(nTypes_, nTypes_);
+
+    // Loop over defined PairPotentials
+    int indexI, indexJ;
+    for (auto &&[at1, at2, pp] : pairPotentials)
+    {
+        indexI = at1->index();
+        indexJ = at2->index();
+        if (indexI == -1)
+            return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", at1->name());
+        if (indexJ == -1)
+            return Messenger::error("Couldn't find AtomType '{}' in typeIndex.\n", at1->name());
+
+        // Store PairPotential pointer
+        if (indexI == indexJ)
+        {
+            Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n", at1->name(), indexI,
+                             indexJ);
+            potentialMatrix_[{indexI, indexI}] = pp.get();
+        }
+        else
+        {
+            Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n", at1->name(),
+                             at2->name(), indexI, indexJ, indexJ, indexI);
+            potentialMatrix_[{indexI, indexJ}] = pp.get();
+            potentialMatrix_[{indexJ, indexI}] = pp.get();
+        }
+    }
+
+    // Store potential range
+    range_ = pairPotentialRange;
+
+    return true;
+}
+
+bool PotentialMap::initialise(const std::vector<const AtomType *> &masterAtomTypes,
                               const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange)
 {
     // Clear old data first

@@ -8,6 +8,7 @@
 #include "keywords/optionalDouble.h"
 #include "math/data1D.h"
 #include "math/filters.h"
+#include <filesystem>
 
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format,
                                                int xColumn, int yColumn, int errorColumn)

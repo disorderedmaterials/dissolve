@@ -85,6 +85,12 @@ class NeutronSQNode : public Node
     // Calculate neutron weights matrix
     void calculateWeights(const KeyedVector<const Species *, double> &realSpeciesPopulations);
 
+    private:
+    // Return value of weighted SQ, emplacing if optional not initialised
+    PartialSet &weightedSQ();
+    // Return value of weighted GR, emplacing if optional not initialised
+    PartialSet &weightedGR();
+
     /*
      * Processing
      */

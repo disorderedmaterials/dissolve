@@ -59,6 +59,8 @@ class Species : public Serialisable<const CoreData &>
     std::vector<SpeciesAtom> atoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
+    // Atom types for the species
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
     private:
     // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
@@ -68,6 +70,8 @@ class Species : public Serialisable<const CoreData &>
     public:
     // Add a new atom to the Species, returning its index
     int addAtom(Elements::Element Z, Vector3 r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
+    // Add new atom type to atom types
+    const std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
     // Remove the specified atom from the species
     void removeAtom(int index);
     // Remove set of atom indices
