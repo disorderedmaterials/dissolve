@@ -26,6 +26,8 @@
         ANTLR version to install. Defaults to ANTLR 4.13.1.
     .PARAMETER msvcVersion
         Version of MSVC to use.
+    .PARAMETER conanVersion
+-        Conan version. Defaults to conan2.
     .PARAMETER generator
         Generator to use (options are "Visual Studio 17 2022", "Ninja").
     .PARAMETER setSystemEnvVars
@@ -37,6 +39,7 @@
             - Dissolve installation folders ("/out", "/build")
             - dependencies folder
             - CMakeUserPresets.json
+            - Conan packages
 #>
 
 param (
@@ -45,6 +48,7 @@ param (
     [string]$pythonPath,
     [string]$forcePythonVersion,
     [string]$msvcVersion,
+    [int]$conanVersion = "2",
     [string]$generator = "Visual Studio 17 2022",
     [string]$antlrVersion = "4.13.1",
     [switch]$setSystemEnvVars = $false,
@@ -106,6 +110,7 @@ Find-And-Remove -relativePath "build"
 Find-And-Remove -relativePath "dependencies"
 Find-And-Remove -relativePath "CMakeUserPresets.json"
 Find-And-Remove -relativePath "msvc-env"
+Find-And-Remove -relativePath "conan"
 
 #Install key dependencies with Chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
@@ -191,7 +196,7 @@ Write-Host "Activating Python virtual environment... " @info_colors
 
 Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
-& $python -m pip install aqtinstall conan
+& $python -m pip install aqtinstall conan==$conanVersion.*
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
@@ -282,7 +287,7 @@ catch
 {
     # Move freetype if error on rename
     $fromFreetype = "freetype-$freetypeVersion"
-    $moveFreetype = (JoinPath -Path $dependencies -ChildPath $freetypeRepo)
+    $moveFreetype = (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
     if (-not (TestPath $moveFreetype))
     {
         New-Item -Path $moveFreetype -ItemType Directory | Out-Null
@@ -461,7 +466,9 @@ try {
 
 if  (-not ($conanVersion -eq 2))
 {
-    & $conan profile detect
+    & $conan profile new default --detect
+    & $conan profile update settings.compiler="Visual Studio" default
+    & $conan profile update settings.compiler.version=17 default
 }
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
@@ -485,7 +492,7 @@ if ($conanVersion -eq 2)
 {
     $cacheVariables["CMAKE_MODULE_PATH"] = "`$penv{CONAN_HOME}"
 }
- 
+
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
 if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022"))
 {
