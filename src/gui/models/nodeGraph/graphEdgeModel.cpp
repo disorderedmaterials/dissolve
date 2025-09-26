@@ -61,6 +61,8 @@ int GraphEdgeModel::rowCount(const QModelIndex &parent) const
 {
     if (!graph_)
         return 0;
+    for (auto &edge : edges())
+        std::cout << edge->definition().asString() << std::endl;
     return edges().size();
 }
 
@@ -96,13 +98,13 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
         case Role::SOURCE_X:
-            return source->posx + (sourceOffset ? sourceOffset->x() : 0);
+            return source->rawValue().x + (sourceOffset ? sourceOffset->x() : 0);
         case Role::SOURCE_Y:
-            return source->posy + (sourceOffset ? sourceOffset->y() : 0);
+            return source->rawValue().y + (sourceOffset ? sourceOffset->y() : 0);
         case Role::TARGET_X:
-            return target->posx + (targetOffset ? targetOffset->x() : 0);
+            return target->rawValue().x + (targetOffset ? targetOffset->x() : 0);
         case Role::TARGET_Y:
-            return target->posy + (targetOffset ? targetOffset->y() : 0);
+            return target->rawValue().y + (targetOffset ? targetOffset->y() : 0);
         default:
             return {};
     }
@@ -136,3 +138,10 @@ void GraphEdgeModel::updatePosition(const int idx)
 // The edges of the graph
 Graph::Edges &GraphEdgeModel::edges() { return graph_->edges(); }
 const Graph::Edges &GraphEdgeModel::edges() const { return graph_->edges(); }
+
+// Drop cache and pull all data from graph
+void GraphEdgeModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}

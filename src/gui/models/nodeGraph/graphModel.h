@@ -18,7 +18,7 @@ class GraphEdgeModel;
 class GraphModel : public QObject
 {
     Q_OBJECT;
-    Q_PROPERTY(Graph *graph READ graph WRITE setGraph);
+    Q_PROPERTY(Graph *graph READ graph WRITE setGraph NOTIFY graphChanged);
     Q_PROPERTY(GraphEdgeModel *edges READ edges NOTIFY graphChanged);
     Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
@@ -75,6 +75,8 @@ class GraphModel : public QObject
     void graphChanged();
 
     public Q_SLOTS:
+    // Reset everything
+    void handleReset();
     // Remove a node
     void deleteNode(int index);
     // Select a specific output for connection

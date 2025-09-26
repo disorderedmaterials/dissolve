@@ -12,6 +12,7 @@
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
+#include "nodes/dissolve.h"
 #include <cstring>
 #include <fstream>
 #include <functional>
@@ -174,6 +175,8 @@ SerialisedValue Dissolve::serialise() const
 
     root["pairPotentials"] = serialisePairPotentials();
 
+    root["graph"] = graphNode_->serialise();
+
     Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
@@ -226,6 +229,8 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
     if (!hasVersion)
         Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
     const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
+
+    Serialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 
@@ -318,6 +323,16 @@ bool Dissolve::loadInput(std::string_view filename)
         Messenger::error("Could not load TOML file\n\n{}", e.what());
     }
     return false;
+}
+
+// Save TOML file
+bool Dissolve::saveToml(std::string_view filename) const
+{
+    std::ofstream outfile;
+    outfile.open(std::string(filename));
+    outfile << serialise() << std::endl;
+    outfile.close();
+    return true;
 }
 
 // Save input file

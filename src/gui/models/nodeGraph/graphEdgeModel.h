@@ -53,6 +53,8 @@ class GraphEdgeModel : public QAbstractListModel
     public Q_SLOTS:
     // Update all edges connected to the node at idx
     void updatePosition(const int idx);
+    // Drop cache and pull all data from graph
+    void reset();
 
     private:
     // The graph whose edges we model

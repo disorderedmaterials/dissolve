@@ -1,5 +1,8 @@
 name = "Root"
 type = "Dissolve"
+x = 0
+y = 0
+
 edges = [
   {sourceNode = "x", sourceOutput = "Result", targetNode = "z", targetInput = "A"},
   {sourceNode = "y", sourceOutput = "Result", targetNode = "z" ,targetInput = "B"}
@@ -10,14 +13,17 @@ edges = [
 [nodes.x]
 type = "Add"
 name = "x"
-inputs = {B = {data = 1}, A = {data = 0}}
+x = 300
+y = 400
 
 [nodes.y]
 type = "Add"
 name = "y"
-inputs = {B = {data = 0}, A = {data = 2}}
+x = 350
+y = 600
 
 [nodes.z]
 type = "Add"
 name = "z"
-inputs = {B = {data = 0}, A = {data = 0}}
+x = 750
+y = 500
