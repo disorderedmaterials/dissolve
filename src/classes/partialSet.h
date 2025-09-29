@@ -30,16 +30,16 @@ class PartialSet
     DoubleKeyedMap<Data1D> boundPartials_;
     // Total functions
     Data1D boundTotal_, unboundTotal_, total_;
-    // Check for full or half matrix
-    bool half_{true};
+    // Whether the partial set is a triangular matrix
+    bool triangular_{true};
     // Effective density
     double rho_;
 
     public:
     // Initialise from supplied species populations
-    void initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half = true);
+    void initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool triangular = true);
     // Initialise from supplied real species populations
-    void initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool half = true);
+    void initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool triangular = true);
     // Initialise based on supplied PartialSet, templating all data
     void initialise(const PartialSet &partialSet);
     // Reset partial arrays

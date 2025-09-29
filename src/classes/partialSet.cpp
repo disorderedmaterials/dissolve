@@ -14,18 +14,18 @@
 #include <filesystem>
 
 // Initialise
-void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool half)
+void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool triangular)
 {
     // Take integer species populations and convert to real
     realSpeciesPopulations_.clear();
     for (const auto &[species, population] : speciesPopulations)
         realSpeciesPopulations_[species] = double(population);
 
-    half_ = half;
+    triangular_ = triangular;
 
-    partials_.clear(half_);
-    boundPartials_.clear(half_);
-    unboundPartials_.clear(half_);
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
 
     // Create data for partials and set tags
     dissolve::for_each_pair(
@@ -37,7 +37,7 @@ void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopu
             boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
             unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
         },
-        half_);
+        triangular_);
 
     // Set up arrays for totals
     total_.setTag("Total");
@@ -49,18 +49,18 @@ void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopu
 }
 
 // Initialise from supplied real species populations
-void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool half)
+void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool triangular)
 {
     // Take integer species populations and convert to real
     realSpeciesPopulations_.clear();
     for (const auto &[species, population] : realSpeciesPopulations)
         realSpeciesPopulations_[species] = double(population);
 
-    half_ = half;
+    triangular_ = triangular;
 
-    partials_.clear(half_);
-    boundPartials_.clear(half_);
-    unboundPartials_.clear(half_);
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
 
     // Create data for partials and set tags
     dissolve::for_each_pair(
@@ -72,7 +72,7 @@ void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpec
             boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
             unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
         },
-        half_);
+        triangular_);
 
     // Set up arrays for totals
     total_.setTag("Total");
@@ -87,7 +87,7 @@ void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpec
 void PartialSet::initialise(const PartialSet &partialSet)
 {
     realSpeciesPopulations_ = partialSet.realSpeciesPopulations_;
-    half_ = partialSet.half_;
+    triangular_ = partialSet.triangular_;
 
     // Template data from source PartialSet and set tags
     dissolve::for_each_pair(
@@ -103,7 +103,7 @@ void PartialSet::initialise(const PartialSet &partialSet)
             unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
             unboundPartials_.get(key).initialise(partialSet.unboundPartials_.get(key));
         },
-        half_);
+        triangular_);
 
     // Set up arrays for totals
     total_.setTag("Total");
@@ -201,7 +201,7 @@ void PartialSet::formTotals(bool applyConcentrationWeights)
                            unboundPartials_.get(key).values().begin(), unboundTotal_.values().begin(),
                            [=](auto total, auto partial) { return total + partial * factor; });
         },
-        half_);
+        triangular_);
 
     total_ += boundTotal_;
     total_ += unboundTotal_;
@@ -238,7 +238,7 @@ void PartialSet::formTRTotals(const NeutronWeights &weights)
                            unboundPartials_.get(key).values().begin(), unboundTotal_.values().begin(),
                            [=](auto total, auto partial) { return total + partial * factor; });
         },
-        half_);
+        triangular_);
 
     total_ += boundTotal_;
     total_ += unboundTotal_;
@@ -304,7 +304,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 
             return EarlyReturn<bool>::Continue;
         },
-        half_);
+        triangular_);
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
     if (!Data1DExportFileFormat(std::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
@@ -465,7 +465,7 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     fingerprint_ = parser.argsv(0);
-    half_ = parser.hasArg(1) ? parser.argb(1) : true;
+    triangular_ = parser.hasArg(1) ? parser.argb(1) : true;
 
     // Read species populations
     realSpeciesPopulations_.clear();
@@ -482,9 +482,9 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     }
 
     // Clear partials
-    partials_.clear(half_);
-    boundPartials_.clear(half_);
-    unboundPartials_.clear(half_);
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
@@ -528,7 +528,7 @@ std::string writeDataPoint(int i, Data1D data)
 // Write data through specified LineParser
 bool PartialSet::serialise(LineParser &parser) const
 {
-    if (!parser.writeLineF("'{}'  {}\n", fingerprint_, half_))
+    if (!parser.writeLineF("'{}'  {}\n", fingerprint_, triangular_))
         return false;
 
     // Write out species populations first

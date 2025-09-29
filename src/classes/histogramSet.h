@@ -29,8 +29,8 @@ class HistogramSet
     DoubleKeyedMap<Histogram1D> boundHistograms_;
     // Histograms used for deriving unbound atom-atom partials in r
     DoubleKeyedMap<Histogram1D> unboundHistograms_;
-    // Check for full or half matrix
-    bool half_{true};
+    // Whether the histogram is a triangular matrix
+    bool triangular_{true};
 
     public:
     // Set up histograms
