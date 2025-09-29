@@ -509,7 +509,7 @@ $cacheVariables = @{
 # If conan2, add conan toolchain file as variable
 if ($conanVersion -eq 2)
 {
-    $cacheVariables["CMAKE_MODULE_PATH"] = Normalise-Path -path $env:CONAN_HOME
+    $cacheVariables["CMAKE_MODULE_PATH"] = "`$penv{CONAN_HOME}"
 }
 
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
