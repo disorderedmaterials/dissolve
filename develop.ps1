@@ -27,11 +27,9 @@
     .PARAMETER msvcVersion
         Version of MSVC to use.
     .PARAMETER conanVersion
--        Conan version. Defaults to conan2.
+        Conan version. Defaults to conan2.
     .PARAMETER generator
         Generator to use (options are "Visual Studio 17 2022", "Ninja").
-    .PARAMETER setSystemEnvVars
-        Flag - set environment variables and PATH for dependencies at the system level, otherwise set in CMake presets "environment" property.
     .PARAMETER release
         Flag - install packages for release, otherwise debug.
     .PARAMETER clean
@@ -39,7 +37,6 @@
             - Dissolve installation folders ("/out", "/build")
             - dependencies folder
             - CMakeUserPresets.json
-            - Conan packages
 #>
 
 param (
@@ -51,7 +48,6 @@ param (
     [int]$conanVersion = "2",
     [string]$generator = "Visual Studio 17 2022",
     [string]$antlrVersion = "4.13.1",
-    [switch]$setSystemEnvVars = $false,
     [switch]$release = $false,
     [switch]$clean = $false
 )
@@ -219,14 +215,6 @@ Write-Host "Installing Python packages... " @info_colors
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
-if ($setSystemEnvVars)
-{
-    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
-
-    [Environment]::SetEnvironmentVariable("PATH", "$pythonEnvPath;$systemPath", [EnvironmentVariableTarget]::Machine)
-    Write-Host "Python packages directory path added to system PATH." @info_colors
-}
-
 # Install Qt6, or find existing system Qt6 installation
 $qt6CMakeDir = ""
 
@@ -242,20 +230,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     $qt6Dir = Join-Path -Path "$projectDir\$dependencies" -ChildPath "qt\$qtVersion\msvc2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     $qt6CMakeDir = Join-Path -Path $qt6Dir -ChildPath "lib\cmake"
-    
-    if ($setSystemEnvVars)
-    {
-        Write-Host "Locating system PATH... " @info_colors
-        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-        Write-Host "Adding Qt6 directory to system PATH... " @info_colors
-        if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
-            [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
-            Write-Host "Qt6 binary directory path added to system PATH." @info_colors
-        } else {
-            Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
-        }
-    }
 } else {
     # We attempt to use an existing installation of Qt
     Write-Host "Attempting to use existing system installation of Qt6... " @info_colors
@@ -331,20 +306,10 @@ $freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freet
 
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
-if (($setSystemEnvVars) -and ($lib -notlike "*$freetypeInstall*")) {
-    Write-Host "Setting LIB environment variable with Freetype library... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("LIB", "$freetypeLibPath;$freetypeBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
-}
-
 $freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeRepo"
 $freetype2IncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeInstall\include\freetype2"
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
-
-if (($setSystemEnvVars) -and ($include -notlike "*$freetypeRepo*")) {
-    Write-Host "Setting INCLUDE environment variable with Freetype includes... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$freetype2IncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
-}
 
 # Build/retrieve FTGL
 Set-Location -Path $projectDir
@@ -473,13 +438,6 @@ try {
     Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
     $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
 
-    if ($setSystemEnvVars)
-    {
-        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
-        [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
-        Write-Host "Python scripts path at location $scripts added to system PATH." @info_colors
-    }
-
     $conan = "$scripts/conan.exe"
 }
 
@@ -553,28 +511,19 @@ $presets = @(
     }
 )
 
-# Set environment variables
-if (-not $setSystemEnvVars)
+if ([string]::IsNullOrEmpty($scripts))
 {
-    if ([string]::IsNullOrEmpty($scripts))
-    {
-        $scripts = ''
-    }
-
-    $environment = @{
-        PATH = "$(Normalise-Path -path $scripts);$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
-    }
-
-    # If conan2, add CONAN_HOME to environment
-    if ($conanVersion -eq 2)
-    {
-        $environment["CONAN_HOME"] = Normalise-Path -path $env:CONAN_HOME
-    }
+    $scripts = ''
 }
-else
+
+$environment = @{
+    PATH = "$(Normalise-Path -path $scripts);$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
+}
+
+# If conan2, add CONAN_HOME to environment
+if ($conanVersion -eq 2)
 {
-    Write-Host "Setting CONAN_HOME environment variable... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("CONAN_HOME", "$env:CONAN_HOME", [System.EnvironmentVariableTarget]::Machine)
+    $environment["CONAN_HOME"] = Normalise-Path -path $env:CONAN_HOME
 }
 
 foreach ($preset in $presets) {
@@ -582,10 +531,7 @@ foreach ($preset in $presets) {
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value $cacheVariables
 
     # Set environment variables
-    if (-not $setSystemEnvVars)
-    {
-        $preset | Add-Member -MemberType NoteProperty -Name environment -Value $environment
-    }
+    $preset | Add-Member -MemberType NoteProperty -Name environment -Value $environment
 
     # Set toolset
     if ($toolset)
