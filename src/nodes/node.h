@@ -285,13 +285,13 @@ class Node : public Serialisable<>
      * Data
      */
     private:
-    // Accumulated timing information (in seconds) for this Module
+    // Accumulated timing information (in seconds)
     SampledDouble timing_;
 
     public:
     // Clear any local data
     virtual void clearData();
-    // Return timing information (in seconds) for this Module
+    // Return timing information (in seconds)
     SampledDouble timing() const;
 
     /*

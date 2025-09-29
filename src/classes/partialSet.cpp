@@ -586,7 +586,7 @@ SerialisedValue PartialSet::serialise() const
 // Read values from a serialisable value
 void PartialSet::deserialise(SerialisedValue node)
 {
-    // Real species populations (resolvables)
+    // Real species populations (needs resolving)
     Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
                         { realSpeciesPopulations_[name] = population.as_floating(); });
 
