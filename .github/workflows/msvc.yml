@@ -48,8 +48,6 @@ jobs:
       shell: bash
       run: |
         git submodule update --init --recursive
-        export PATH="${{ github.workspace }}/msvc-env/Scripts;${{ github.workspace }}/dependencies/qt/${{ inputs.qtVersion }}/msvc2019_64/bin;$PATH"
-        export CONAN_HOME="${{ github.workspace }}/conan"
         cmake --preset GUI-Debug-MSVC
         cmake --build build
 

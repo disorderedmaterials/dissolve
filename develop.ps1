@@ -104,13 +104,32 @@ function Find-And-Remove {
     }
 }
 
+function Normalise-Path {
+    <#
+        .SYNOPSIS
+            Normalise path using spearator '\' to '/'.
+        .DESCRIPTION
+            Changes all occurences of Windows-specific path separator '\' to '/' for compatibility.
+        .PARAMETER path
+            Path to be normalised.
+
+        .OUTPUT
+            Normalised path.
+    #>
+
+    param(
+        [string]$path
+    )
+
+    return (Resolve-Path $path).Path -replace '\\','/'
+}
+
 # Clean existing environment
 Find-And-Remove -relativePath "out"
 Find-And-Remove -relativePath "build"
 Find-And-Remove -relativePath "dependencies"
 Find-And-Remove -relativePath "CMakeUserPresets.json"
 Find-And-Remove -relativePath "msvc-env"
-Find-And-Remove -relativePath "conan"
 
 #Install key dependencies with Chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
@@ -286,9 +305,9 @@ try
 catch
 {
     # Move freetype if error on rename
-    $fromFreetype = "freetype-$freetypeVersion"
+    $fromFreetype = (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion")
     $moveFreetype = (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
-    if (-not (TestPath $moveFreetype))
+    if (-not (Test-Path -Path $moveFreetype))
     {
         New-Item -Path $moveFreetype -ItemType Directory | Out-Null
     }
@@ -411,7 +430,7 @@ Remove-Item -Path $javaOutput -Force
 $jdkVersion = $(Get-ChildItem -Path "." -Directory | Where-Object { $_.Name -match "^jdk-\d+\.\d+\.\d+$" } | Select-Object -ExpandProperty Name).split("-")[1]
 
 $javaSDKPath = Join-Path -Path $projectDir -ChildPath "$dependencies\jdk-$jdkVersion"
-$javaExePath = Join-Path -Path $javaSDKPath -ChildPath "bin\java"
+$javaExePath = Join-Path -Path $javaSDKPath -ChildPath "bin\java.exe"
 
 $antlrExePath = "$(Join-Path -Path $projectDir -ChildPath "$dependencies")\$antlrOutput"
 New-Item -ItemType Directory -Path $antlrExePath -ErrorAction SilentlyContinue
@@ -476,15 +495,15 @@ $out = Join-Path -Path $projectDir -ChildPath "build"
 $cacheVariables = @{
     CMAKE_C_COMPILER = "cl"
     CMAKE_CXX_COMPILER = "cl"
-    FTGL_LIBRARY = "$ftglLibPath\ftgl$binSuffix.lib"
-    FTGL_INCLUDE_DIR = $ftglIncludePath
-    FREETYPE_LIBRARY = "$freetypeLibPath\freetype$binSuffix.lib"
-    FREETYPE_INCLUDE_DIRS = "$freetypeIncludePath;$freetype2IncludePath"
-    ANTLR_EXECUTABLE = $antlrExePath
-    Java_JAVA_EXECUTABLE = $javaExePath
+    FTGL_LIBRARY = Normalise-Path -path "$ftglLibPath\ftgl$binSuffix.lib"
+    FTGL_INCLUDE_DIR = Normalise-Path -path $ftglIncludePath
+    FREETYPE_LIBRARY = Normalise-Path -path "$freetypeLibPath\freetype$binSuffix.lib"
+    FREETYPE_INCLUDE_DIRS = "$(Normalise-Path -path $freetypeIncludePath);$(Normalise-Path -path $freetype2IncludePath)"
+    ANTLR_EXECUTABLE = Normalise-Path -path $antlrExePath
+    Java_JAVA_EXECUTABLE = Normalise-Path -path $javaExePath
     MULTI_THREADING = $threading
     MSVC_DEV = "ON"
-    CMAKE_PREFIX_PATH = "$qt6CMakeDir"
+    CMAKE_PREFIX_PATH = Normalise-Path -path "$qt6CMakeDir"
 }
 
 # If conan2, add conan toolchain file as variable
@@ -541,19 +560,15 @@ if (-not $setSystemEnvVars)
     {
         $scripts = ''
     }
-    else
-    {
-        $scripts = "$scripts;"
-    }
 
     $environment = @{
-        PATH = "$scripts$qt6BinDir;$pythonEnvPath;`$penv{PATH}"
+        PATH = "$(Normalise-Path -path $scripts);$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
     }
 
     # If conan2, add CONAN_HOME to environment
     if ($conanVersion -eq 2)
     {
-        $environment["CONAN_HOME"] = $env:CONAN_HOME
+        $environment["CONAN_HOME"] = Normalise-Path -path $env:CONAN_HOME
     }
 }
 else
@@ -584,4 +599,8 @@ foreach ($preset in $presets) {
 Write-Host "Outputting CMakeUserPresets Json for Dissolve MSVC configuration... " @info_colors
 $cmakeUserPresetsJson = $cmakeUserPresets | ConvertTo-Json -Depth 10 -Compress
 
-Set-Content -Path "CMakeUserPresets.json" -Value $cmakeUserPresetsJson -Encoding UTF8
+[System.IO.File]::WriteAllText(
+    (Join-Path $projectDir "CMakeUserPresets.json"),
+    $cmakeUserPresetsJson,
+    (New-Object System.Text.UTF8Encoding($false))  # $false = no BOM
+)
