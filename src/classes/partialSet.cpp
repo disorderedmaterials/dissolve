@@ -593,3 +593,16 @@ void PartialSet::deserialise(SerialisedValue node)
     // Rest of PartialSet data....
     // TODO
 }
+
+// Resolve internal resolvable name references with supplied data
+void PartialSet::resolve(const std::map<std::string, const Species *> &speciesInScope)
+{
+    for (auto &[resolvableSpecies, y] : realSpeciesPopulations_)
+    {
+        if (speciesInScope.contains(std::string(resolvableSpecies.name())))
+            resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
+        else
+            throw(std::runtime_error(
+                std::format("Species '{}' is in PartialSet, but no such species is in scope.\n", resolvableSpecies.name())));
+    }
+}

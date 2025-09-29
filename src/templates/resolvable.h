@@ -3,7 +3,11 @@
 
 #pragma once
 
+#include <map>
 #include <string>
+
+// Forward Declarations
+class Species;
 
 // Resolvable
 template <class T> class Resolvable
@@ -30,4 +34,12 @@ template <class T> class Resolvable
     std::string_view name() const { return raw_ ? raw_->name() : name_; }
     // Resolve object
     void resolve(T raw) { raw_ = raw; }
+};
+
+// Resolvable Context
+class ResolvableContext
+{
+    public:
+    // Resolve internal resolvable name references with supplied data
+    virtual void resolve(const std::map<std::string, const Species *> &speciesInScope) = 0;
 };

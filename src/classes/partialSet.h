@@ -6,9 +6,10 @@
 #include "classes/neutronWeights.h"
 #include "math/data1D.h"
 #include "templates/doubleKeyedMap.h"
+#include "templates/resolvable.h"
 
 // Set of Partials
-class PartialSet : public Serialisable<>
+class PartialSet : public Serialisable<>, ResolvableContext
 {
     public:
     PartialSet() = default;
@@ -120,4 +121,6 @@ class PartialSet : public Serialisable<>
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(SerialisedValue node);
+    // Resolve internal resolvable name references with supplied data
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
 };

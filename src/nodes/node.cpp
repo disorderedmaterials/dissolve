@@ -370,9 +370,18 @@ SerialisedValue Node::serialiseData() const
 // Read persistent data from a serialisable value
 void Node::deserialiseData(const SerialisedValue &node)
 {
+    // Obtain resolvable data // TODO
+    std::vector<const Species *> reachableSpecies;
+
     timing_.deserialise(node.at("timing"));
 
     for (auto &[key, serialisable] : serialisables_)
         if (node.contains(key))
+        {
+            // Deserialise the data
             serialisable->deserialise(node.at(key));
+
+            // Resolve any objects
+            if (serialisable->resolve(reachableSpecies))
+        }
 }
