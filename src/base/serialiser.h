@@ -104,6 +104,15 @@ template <typename... Contexts> class Serialisable
             group[std::string(getName(key))] = value;
         return group;
     };
+    // A helper function to add elements of a ResolvableKeyedVector to a node
+    template <typename KeyClass, typename ValueClass>
+    static SerialisedValue fromVectorToTable(const ResolvableKeyedVector<KeyClass, ValueClass> &keyedVector)
+    {
+        SerialisedValue group;
+        for (const auto &[resolvable, value] : keyedVector)
+            group[std::string(resolvable.name())] = value;
+        return group;
+    };
     // A helper function to add elements of a vector to a node under the named heading
     template <typename T, typename Lambda>
     static void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node, Lambda getName)

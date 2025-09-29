@@ -19,7 +19,7 @@ class PartialSet : public Serialisable<>
      */
     private:
     // Species populations
-    KeyedVector<const Species *, double> realSpeciesPopulations_;
+    ResolvableKeyedVector<const Species *, double> realSpeciesPopulations_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Pair matrix, containing full atom-atom partial
@@ -44,6 +44,8 @@ class PartialSet : public Serialisable<>
     void initialise(const PartialSet &partialSet);
     // Reset partial arrays
     void reset();
+    // Return real species populations
+    const ResolvableKeyedVector<const Species *, double> &realSpeciesPopulations() const;
     // Return fractional atom type populations
     KeyedVector<const AtomType *, double> atomTypeFractions() const;
     // Set new fingerprint
@@ -75,8 +77,6 @@ class PartialSet : public Serialisable<>
     // Return total unbound function
     Data1D &unboundTotal();
     const Data1D &unboundTotal() const;
-    // Return real species populations
-    const KeyedVector<const Species *, double> &realSpeciesPopulations() const;
     // Save all partials and total
     bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
 
