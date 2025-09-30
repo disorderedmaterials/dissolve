@@ -371,17 +371,18 @@ SerialisedValue Node::serialiseData() const
 void Node::deserialiseData(const SerialisedValue &node)
 {
     // Obtain resolvable data // TODO
-    std::vector<const Species *> reachableSpecies;
+    std::map<std::string, const Species *> reachableSpecies;
 
     timing_.deserialise(node.at("timing"));
 
+    // Read in defined serialisables if they exist
     for (auto &[key, serialisable] : serialisables_)
         if (node.contains(key))
         {
             // Deserialise the data
             serialisable->deserialise(node.at(key));
 
-            // Resolve any objects
-            if (serialisable->resolve(reachableSpecies))
+            // Resolve any named data
+            serialisable->resolve(reachableSpecies);
         }
 }

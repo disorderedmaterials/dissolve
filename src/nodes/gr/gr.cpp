@@ -30,9 +30,6 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
 
     // Serialisables
     addSerialisable("unweightedGR", unweightedGR_);
-
-    // Resolvables
-    addResolvable(un)
 }
 
 // Return enum option info for NormalisationType

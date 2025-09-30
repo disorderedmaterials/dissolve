@@ -9,6 +9,8 @@
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include "nodes/serialisableData.h"
+#include "templates/algorithms.h"
+#include "templates/resolvable.h"
 #include <map>
 #include <string>
 #include <vector>

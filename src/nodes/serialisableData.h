@@ -30,6 +30,8 @@ class SerialisableData
     virtual SerialisedValue serialise() const { return {}; }
     // Read from a serialised value
     virtual void deserialise(const SerialisedValue &node) {};
+    // Resolve named data
+    virtual void resolve(const std::map<std::string, const Species *> &speciesInScope) {};
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
@@ -45,7 +47,13 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
                   targetData = typename DataClass::value_type();
                   data_->deserialise(value);
               }),
-          dataChecker_([&]() { return targetData.has_value(); })
+          dataChecker_([&]() { return targetData.has_value(); }),
+          dataResolver_(
+              [&](const std::map<std::string, const Species *> &reachableSpecies)
+              {
+                  if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type>)
+                      data_.value().resolve(reachableSpecies);
+              })
     {
     }
     SerialisableClass(std::string_view key, DataClass &value)
@@ -69,7 +77,12 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     SerialisableClass(std::string_view key, DataClass &value)
         requires(std::is_base_of_v<Serialisable<>, DataClass>)
-        : SerialisableData(key), data_(value)
+        : SerialisableData(key), data_(value), dataResolver_(
+                                                   [&](const std::map<std::string, const Species *> &reachableSpecies)
+                                                   {
+                                                       if constexpr (std::is_base_of_v<ResolvableContext, DataClass>)
+                                                           data_.resolve(reachableSpecies);
+                                                   })
     {
     }
     ~SerialisableClass() override = default;
@@ -89,6 +102,9 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Value checker for data, returning whether there is actually data to write
     using ValueChecker = std::function<bool()>;
     ValueChecker dataChecker_{[&]() { return true; }};
+    // Resolver function for data
+    using DataResolver = std::function<void(const std::map<std::string, const Species *> &)>;
+    DataResolver dataResolver_{[&]() { return; }};
 
     /*
      * Serialisation
@@ -100,4 +116,6 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     SerialisedValue serialise() const override { return dataSerialiser_(); };
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) override { dataDeserialiser_(node); }
+    // Resolve named data
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) { dataResolver_(speciesInScope); };
 };
