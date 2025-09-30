@@ -8,46 +8,47 @@ weight: 4
 
 Dissolve uses `CMake` in order to provide a consistent build system across Window, OSX, and Linux.
 
-## Prerequisites
+## General Requirements
 
 ### Build Toolchain
 
-Dissolve is completely written in C++ and uses some aspects of the C++17 standard and parallel STL, so a compiler that supports C++17 and PSTL is a must (for `gcc` this means version 9 or above, for example). The CMake build system is used throughout.
+Dissolve is completely written in C++ and uses some aspects of the C++20 standard and parallel STL, so a compiler that supports C++20 and PSTL is a must (for `gcc` this means version 9 or above, for example). The CMake build system is used throughout.
 
 You may also consider using the excellent [`Ninja`](https://ninja-build.org/) to speed up your build. If you choose to do so, add `-G Ninja` to the `cmake` commands detailed below, and run `ninja` instead of `make`.
 
-### Common External Libraries
+### External Dependencies
 
-Regardless of which version is being built, several external libraries are always required:
+Dissolve uses the [`Conan`](https://conan.io/) package manager to satisfy external dependencies as far as possible. The main exceptions to this are the `ANTLR4` Java binary which must be obtained manually and the `Qt6` libraries.
 
-- [`libfmt`](https://github.com/fmtlib/fmt) >= v7, to provide flexible and type-safe output formatting
-- [`CLI11`](https://github.com/CLIUtils/CLI11) >= v1.9.1, to provide coherent handling of command line arguments
-- [`ANTLR4`](https://www.antlr.org/) >= v4.13.1, required to implement various grammars (e.g. NETA)
-- [`Java`](https://www.java.com/) >= v11, required to build ANTLR4 grammars
+## Windows / MSVC
 
-Satisfying these dependencies is enough to build the serial version. For the parallel and GUI versions additional libraries are required, detailed in the following sections.
+For Windows users who have Visual Studio there is a PowerShell setup script `develop.ps1` which takes care of most of the tedious setup and prerequisite installation, creating a full Visual Studio environment for the build. This is the recommended way of getting up and running.
 
-Dissolve uses the [`Conan`](https://conan.io/) package manager to satisfy external dependencies as far as possible. `ANTLR4` is not available via Conan (yet) and so must either be installed from platform-specific repositories or built alongside Dissolve using the relevant configuration options. See the [compilation instructions]({{< ref "compilation#install-antlr4" >}}) for more information.
+## Linux / NixOS
 
-### MPI (for versions 0.5.X, 0.6.X, and 0.7.X)
+Dissolve provides a `nix` flake for building on Linux systems.
 
-Version 0.7.X of Dissolve uses MPI for parallelism, so a suitable MPI implementation providing `mpic++` is required - MPI-based parallelism is enabled by passing `-DPARALLEL:bool=true` to `cmake`. It is *not* recommended to build version 0.8 with MPI enabled, since MPI+threading is only experimental in this version.
+## Linux / Ubuntu 24
 
-### Multithreading (for version 0.8.X onwards)
+To install the necessary system tools and libs on Ubuntu 24, use the following commands:
 
-As of version 0.8 the default is for Dissolve to be built with multithreading enabled - this applies to both the command-line and GUI versions. If you really want a truly serial code, pass `-DMULTI_THREADING:bool=false` to `cmake`.
+```
+pipx install conan==1.*
+sudo apt install cmake ninja-build default-jre libftgl-dev qt6-base-dev qt6-declarative-dev qt6-quick3d-dev qt6-3d-dev libqt6svg6 libtbb12 qt6-shadertools-dev libxkbcommon-dev
+wget https://www.antlr.org/download/antlr-4.13.1-complete.jar -Oantlr-4.13.1-complete.jar
+```
 
-### GUI
+## General Compilation Notes
 
-The GUI requires several external graphical libraries and toolkits:
+### Initialise Submodules
 
-- Qt6 (Widgets, Core, OpenGL) v6.2 or higher (including development libraries/headers)
-- FTGL (including development libraries/headers)
-- Freetype2 (including development libraries/headers)
+From the top-level directory initialise internal submodules that Dissolve depends on with:
 
-To build the GUI, pass `-DGUI:bool=true` to `cmake`.
+```
+git submodule update --init --recursive
+```
 
-## Prepare the Build
+### Prepare the Build
 
 It is best to perform an out-of-tree build, so as a first step create a `build` directory in the root of the source distribution and descend in to it:
 
@@ -99,7 +100,7 @@ You also might have to specify the location of your Java installation if it can'
 -DJava_JAVA_EXECUTABLE:path=/here/is/my/java
 ```
 
-### Full Example
+### Full CMake Command
 
 An example`cmake` command using Ninja to build both the command-line and GUI codes, building ANTLR4 as an external project, and locating the ANTLR4 Java tool in the build directory, would look like this:
 
@@ -107,7 +108,7 @@ An example`cmake` command using Ninja to build both the command-line and GUI cod
 cmake ../ -G Ninja -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=./antlr-4.13.1-complete.jar -DJava_JAVA_EXECUTABLE:path=/here/is/my/java
 ```
 
-## Run the Build
+### Run the Build
 
 Once configured correctly and with no errors, the target binary can be built simply by running `make`:
 
