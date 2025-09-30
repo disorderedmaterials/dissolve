@@ -117,5 +117,5 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) override { dataDeserialiser_(node); }
     // Resolve named data
-    void resolve(const std::map<std::string, const Species *> &speciesInScope) { dataResolver_(speciesInScope); };
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) override { dataResolver_(speciesInScope); };
 };
