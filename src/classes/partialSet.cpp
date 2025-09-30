@@ -579,19 +579,34 @@ bool PartialSet::serialise(LineParser &parser) const
 SerialisedValue PartialSet::serialise() const
 {
     SerialisedValue result;
+
     result["realSpeciesPopulations"] = Serialisable::fromVectorToTable(realSpeciesPopulations_);
+
+    result["partials"] = partials_.serialise();
+    result["boundPartials"] = boundPartials_.serialise();
+    result["unboundPartials"] = unboundPartials_.serialise();
+
+    result["total"] = total_;
+    result["boundTotal"] = boundTotal_;
+    result["unboundTotal"] = unboundTotal_;
+
     return result;
 }
 
 // Read values from a serialisable value
 void PartialSet::deserialise(SerialisedValue node)
 {
-    // Real species populations (needs resolving)
+    // Real species populations
     Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
                         { realSpeciesPopulations_[name] = population.as_floating(); });
 
-    // Rest of PartialSet data....
-    // TODO
+    partials_.deserialise(node, "partials");
+    partials_.deserialise(node, "boundPartials");
+    partials_.deserialise(node, "unboundPartials");
+
+    total_.deserialise(node["total"]);
+    boundTotal_.deserialise(node["boundTotal"]);
+    unboundTotal_.deserialise(node["unboundTotal"]);
 }
 
 // Resolve internal resolvable name references with supplied data

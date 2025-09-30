@@ -219,9 +219,11 @@ template <typename... Contexts> class Serialisable
     // Act over each value in a node table, if the key exists
     template <typename Lambda> static void toMap(const SerialisedValue &node, std::string key, Lambda action)
     {
-        if (node.contains(key))
-            for (auto &[key, value] : toml::find<SerialisedValue::table_type>(node, key))
-                action(key, value);
+        if (!node.contains(key))
+            return;
+
+        for (auto &[subKey, value] : toml::find<SerialisedValue::table_type>(node, key))
+            action(subKey, value);
     }
 
     // Act over each value in a node array

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include "templates/array2D.h"
@@ -155,5 +156,26 @@ template <typename ValueClass> class DoubleKeyedMap
             ParallelPolicies::seq, keyedObjects, [&](int i, const auto &itemI, int j, const auto &itemJ)
             { result[{i, j}] = find(keyGetter(itemI), keyGetter(itemJ)); }, mirroredAreEquivalent_);
         return result;
+    }
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const
+    {
+        SerialisedValue group;
+        for (const auto &[key, value] : data_)
+            group[std::string(key)] = value;
+        return group;
+    };
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, std::string key)
+    {
+        data_.clear();
+
+        for (auto &[mapKey, value] : toml::find<SerialisedValue::table_type>(node, key))
+            data_[mapKey].deserialise(value);
     }
 };
