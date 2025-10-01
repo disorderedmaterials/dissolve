@@ -28,8 +28,6 @@
         Version of MSVC to use.
     .PARAMETER generator
         Generator to use (options are "Visual Studio 17 2022", "Ninja").
-    .PARAMETER setSystemEnvVars
-        Flag - set environment variables and PATH for dependencies at the system level, otherwise set in CMake presets "environment" property.
     .PARAMETER release
         Flag - install packages for release, otherwise debug.
     .PARAMETER clean
@@ -47,7 +45,6 @@ param (
     [string]$msvcVersion,
     [string]$generator = "Visual Studio 17 2022",
     [string]$antlrVersion = "4.13.1",
-    [switch]$setSystemEnvVars = $false,
     [switch]$release = $false,
     [switch]$clean = $false
 )
@@ -98,6 +95,26 @@ function Find-And-Remove {
     {
         Write-Host "Existing instance of object $relativePath NOT found, could not clean up." @warn_colors
     }
+}
+
+function Normalise-Path {
+    <#
+        .SYNOPSIS
+            Normalise path using spearator '\' to '/'.
+        .DESCRIPTION
+            Changes all occurences of Windows-specific path separator '\' to '/' for compatibility.
+        .PARAMETER path
+            Path to be normalised.
+
+        .OUTPUT
+            Normalised path.
+    #>
+
+    param(
+        [string]$path
+    )
+
+    return (Resolve-Path $path).Path -replace '\\','/'
 }
 
 # Clean existing environment
@@ -195,14 +212,6 @@ Write-Host "Installing Python packages... " @info_colors
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
-if ($setSystemEnvVars)
-{
-    $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
-
-    [Environment]::SetEnvironmentVariable("PATH", "$pythonEnvPath;$systemPath", [EnvironmentVariableTarget]::Machine)
-    Write-Host "Python packages directory path added to system PATH." @info_colors
-}
-
 # Install Qt6, or find existing system Qt6 installation
 $qt6CMakeDir = ""
 
@@ -218,20 +227,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     $qt6Dir = Join-Path -Path "$projectDir\$dependencies" -ChildPath "qt\$qtVersion\msvc2019_64"
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     $qt6CMakeDir = Join-Path -Path $qt6Dir -ChildPath "lib\cmake"
-    
-    if ($setSystemEnvVars)
-    {
-        Write-Host "Locating system PATH... " @info_colors
-        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
-        Write-Host "Adding Qt6 directory to system PATH... " @info_colors
-        if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
-            [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
-            Write-Host "Qt6 binary directory path added to system PATH." @info_colors
-        } else {
-            Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
-        }
-    }
 } else {
     # We attempt to use an existing installation of Qt
     Write-Host "Attempting to use existing system installation of Qt6... " @info_colors
@@ -281,9 +277,9 @@ try
 catch
 {
     # Move freetype if error on rename
-    $fromFreetype = "freetype-$freetypeVersion"
-    $moveFreetype = (JoinPath -Path $dependencies -ChildPath $freetypeRepo)
-    if (-not (TestPath $moveFreetype))
+    $fromFreetype = (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion")
+    $moveFreetype = (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
+    if (-not (Test-Path -Path $moveFreetype))
     {
         New-Item -Path $moveFreetype -ItemType Directory | Out-Null
     }
@@ -307,20 +303,10 @@ $freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freet
 
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
-if (($setSystemEnvVars) -and ($lib -notlike "*$freetypeInstall*")) {
-    Write-Host "Setting LIB environment variable with Freetype library... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("LIB", "$freetypeLibPath;$freetypeBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
-}
-
 $freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeRepo"
 $freetype2IncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeInstall\include\freetype2"
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
-
-if (($setSystemEnvVars) -and ($include -notlike "*$freetypeRepo*")) {
-    Write-Host "Setting INCLUDE environment variable with Freetype includes... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("INCLUDE", "$freetypeIncludePath;$freetype2IncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
-}
 
 # Build/retrieve FTGL
 Set-Location -Path $projectDir
@@ -406,7 +392,7 @@ Remove-Item -Path $javaOutput -Force
 $jdkVersion = $(Get-ChildItem -Path "." -Directory | Where-Object { $_.Name -match "^jdk-\d+\.\d+\.\d+$" } | Select-Object -ExpandProperty Name).split("-")[1]
 
 $javaSDKPath = Join-Path -Path $projectDir -ChildPath "$dependencies\jdk-$jdkVersion"
-$javaExePath = Join-Path -Path $javaSDKPath -ChildPath "bin\java"
+$javaExePath = Join-Path -Path $javaSDKPath -ChildPath "bin\java.exe"
 
 $antlrExePath = "$(Join-Path -Path $projectDir -ChildPath "$dependencies")\$antlrOutput"
 New-Item -ItemType Directory -Path $antlrExePath -ErrorAction SilentlyContinue
@@ -417,13 +403,11 @@ Set-Location -Path $projectDir
 
 New-Item -ItemType Directory -Path "conan" -ErrorAction SilentlyContinue
 
-if ($conanVersion -eq 2)
-{
-    $env:CONAN_HOME = Join-Path -Path (Get-Location) -ChildPath "conan"
-    $conanProfiles = Join-Path -Path $env:CONAN_HOME -ChildPath "profiles"
+$env:CONAN_HOME = Join-Path -Path (Get-Location) -ChildPath "conan"
+$conanProfiles = Join-Path -Path $env:CONAN_HOME -ChildPath "profiles"
 
-    New-Item -ItemType Directory -Force -Path $conanProfiles | Out-Null
-    $profileContent = @"
+New-Item -ItemType Directory -Force -Path $conanProfiles | Out-Null
+$profileContent = @"
 [settings]
 arch=x86_64
 build_type=$build
@@ -432,60 +416,30 @@ compiler.cppstd=14
 compiler.runtime=dynamic
 compiler.version=194
 os=Windows
+
+[options]
+Dissolve/*:msvc_dev=True
 "@
 
-    Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
-}
-
-Write-Host "Setting up Conan profile... " @info_colors
-
-try {
-    # TODO: Find Conan v1, not just any old Conan
-    $conanVersion = conan --version
-    Write-Output "Found conan version $conanVersion..."
-
-    $conan = "conan"
-} catch {
-    Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
-    $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
-
-    if ($setSystemEnvVars)
-    {
-        $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
-        [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
-        Write-Host "Python scripts path at location $scripts added to system PATH." @info_colors
-    }
-
-    $conan = "$scripts/conan.exe"
-}
-
-if  (-not ($conanVersion -eq 2))
-{
-    & $conan profile detect
-}
+Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
 $cacheVariables = @{
     CMAKE_C_COMPILER = "cl"
     CMAKE_CXX_COMPILER = "cl"
-    FTGL_LIBRARY = "$ftglLibPath\ftgl$binSuffix.lib"
-    FTGL_INCLUDE_DIR = $ftglIncludePath
-    FREETYPE_LIBRARY = "$freetypeLibPath\freetype$binSuffix.lib"
-    FREETYPE_INCLUDE_DIRS = "$freetypeIncludePath;$freetype2IncludePath"
-    ANTLR_EXECUTABLE = $antlrExePath
-    Java_JAVA_EXECUTABLE = $javaExePath
+    FTGL_LIBRARY = Normalise-Path -path "$ftglLibPath\ftgl$binSuffix.lib"
+    FTGL_INCLUDE_DIR = Normalise-Path -path $ftglIncludePath
+    FREETYPE_LIBRARY = Normalise-Path -path "$freetypeLibPath\freetype$binSuffix.lib"
+    FREETYPE_INCLUDE_DIRS = "$(Normalise-Path -path $freetypeIncludePath);$(Normalise-Path -path $freetype2IncludePath)"
+    ANTLR_EXECUTABLE = Normalise-Path -path $antlrExePath
+    Java_JAVA_EXECUTABLE = Normalise-Path -path $javaExePath
     MULTI_THREADING = $threading
     MSVC_DEV = "ON"
-    CMAKE_PREFIX_PATH = "$qt6CMakeDir"
+    CMAKE_PREFIX_PATH = Normalise-Path -path "$qt6CMakeDir"
+    CMAKE_MODULE_PATH = "`$penv{CONAN_HOME}"
 }
 
-# If conan2, add conan toolchain file as variable
-if ($conanVersion -eq 2)
-{
-    $cacheVariables["CMAKE_MODULE_PATH"] = "`$penv{CONAN_HOME}"
-}
- 
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
 if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022"))
 {
@@ -527,32 +481,9 @@ $presets = @(
     }
 )
 
-# Set environment variables
-if (-not $setSystemEnvVars)
-{
-    if ([string]::IsNullOrEmpty($scripts))
-    {
-        $scripts = ''
-    }
-    else
-    {
-        $scripts = "$scripts;"
-    }
-
-    $environment = @{
-        PATH = "$scripts$qt6BinDir;$pythonEnvPath;`$penv{PATH}"
-    }
-
-    # If conan2, add CONAN_HOME to environment
-    if ($conanVersion -eq 2)
-    {
-        $environment["CONAN_HOME"] = $env:CONAN_HOME
-    }
-}
-else
-{
-    Write-Host "Setting CONAN_HOME environment variable... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("CONAN_HOME", "$env:CONAN_HOME", [System.EnvironmentVariableTarget]::Machine)
+$environment = @{
+    PATH = "$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
+    CONAN_HOME = Normalise-Path -path $env:CONAN_HOME
 }
 
 foreach ($preset in $presets) {
@@ -560,10 +491,7 @@ foreach ($preset in $presets) {
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value $cacheVariables
 
     # Set environment variables
-    if (-not $setSystemEnvVars)
-    {
-        $preset | Add-Member -MemberType NoteProperty -Name environment -Value $environment
-    }
+    $preset | Add-Member -MemberType NoteProperty -Name environment -Value $environment
 
     # Set toolset
     if ($toolset)
@@ -577,7 +505,8 @@ foreach ($preset in $presets) {
 Write-Host "Outputting CMakeUserPresets Json for Dissolve MSVC configuration... " @info_colors
 $cmakeUserPresetsJson = $cmakeUserPresets | ConvertTo-Json -Depth 10 -Compress
 
-Set-Content -Path "CMakeUserPresets.json" -Value $cmakeUserPresetsJson -Encoding UTF8
-
-
-
+[System.IO.File]::WriteAllText(
+    (Join-Path $projectDir "CMakeUserPresets.json"),
+    $cmakeUserPresetsJson,
+    (New-Object System.Text.UTF8Encoding($false))  # $false = no BOM
+)

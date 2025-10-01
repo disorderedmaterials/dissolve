@@ -34,7 +34,6 @@ changes
 *.tokens
 .gdb_history
 *.DS_Store
-dependencies
 msvc-env
 aqtinstall.log
 
@@ -67,3 +66,7 @@ tests/data/dissolve/input/TestOutput_*
 
 # CMake
 CMakeUserPresets.json
+
+# External dependencies
+dependencies
+conan
