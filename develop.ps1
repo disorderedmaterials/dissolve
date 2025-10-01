@@ -482,7 +482,7 @@ $presets = @(
 )
 
 $environment = @{
-    PATH = "$(Normalise-Path -path $scripts);$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
+    PATH = "$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
     CONAN_HOME = Normalise-Path -path $env:CONAN_HOME
 }
 
