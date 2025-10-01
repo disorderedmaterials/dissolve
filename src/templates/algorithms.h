@@ -41,18 +41,18 @@ template <typename T>
 concept PairIndexLambda = requires(T lam, int x, int y) { lam(x, y); };
 
 // Perform an operation on every pair of elements in a container,
-// or the half-matrix only ([i,j] == [j,i])
+// or the triangular matrix only ([i,j] == [j,i])
 // Please note that this can *not* be transformed to use the
 // FullPairIterator, since it would prevent using `Break` to move to
 // the next loop iteration
 template <std::ranges::range Range, class Lam>
-auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> std::optional<bool>
+auto for_each_pair_early(Range range, Lam lambda, bool triangular = true) -> std::optional<bool>
 {
     int i = 0;
     for (auto elem1 = range.begin(); elem1 != range.end(); ++elem1, ++i)
     {
-        int j = half ? i : 0;
-        for (auto elem2 = half ? elem1 : range.begin(); elem2 != range.end(); ++elem2, ++j)
+        int j = triangular ? i : 0;
+        for (auto elem2 = triangular ? elem1 : range.begin(); elem2 != range.end(); ++elem2, ++j)
         {
             EarlyReturn<bool> result;
             if constexpr (PairIndexLambda<Lam>)
@@ -74,9 +74,9 @@ auto for_each_pair_early(Range range, Lam lambda, bool half = true) -> std::opti
 }
 
 // Overload to avoid using iota everywhere
-template <class Lam> auto for_each_pair_early(int count, Lam lambda, bool half = true) -> std::optional<bool>
+template <class Lam> auto for_each_pair_early(int count, Lam lambda, bool triangular = true) -> std::optional<bool>
 {
-    return for_each_pair_early(std::views::iota(0, count), lambda, half);
+    return for_each_pair_early(std::views::iota(0, count), lambda, triangular);
 }
 
 template <typename... Args> class ZipIterator
@@ -225,9 +225,9 @@ void for_each(ParallelPolicy, Range range, UnaryOp unaryOp)
     dissolve::for_each(range, unaryOp);
 }
 
-// Perform an operation on every pair of elements in a contained, or the half-matrix only ([i,j] == [j,i])
+// Perform an operation on every pair of elements in a container, or the triangular elements only ([i,j] == [j,i])
 template <typename ParallelPolicy, std::ranges::range Range, class Lam>
-void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool half = true)
+void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool triangular = true)
 {
     auto actions = [&lambda, &range](const auto pair)
     {
@@ -237,7 +237,7 @@ void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool half = t
         else
             lambda(i, range.begin()[i], j, range.begin()[j]);
     };
-    if (half)
+    if (triangular)
     {
         PairIterator start(range.end() - range.begin()),
             stop(range.end() - range.begin(), ((range.end() - range.begin()) * (range.end() - range.begin() + 1)) / 2);
@@ -252,9 +252,10 @@ void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool half = t
 }
 
 // Overload to avoid using iota everywhere
-template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int count, Lam lambda, bool half = true)
+template <typename ParallelPolicy, class Lam>
+void for_each_pair(ParallelPolicy policy, int count, Lam lambda, bool triangular = true)
 {
-    for_each_pair(policy, std::views::iota(0, count), lambda, half);
+    for_each_pair(policy, std::views::iota(0, count), lambda, triangular);
 }
 
 template <typename ParallelPolicy, class Iter, class Lam>
