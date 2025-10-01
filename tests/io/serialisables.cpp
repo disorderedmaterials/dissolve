@@ -23,7 +23,7 @@ template <class T> void roundTrip(T &a, T &b)
 TEST(SerialisableTest, Data1D)
 {
     Data1D a, b;
-    for (auto x = 0.0; x < M_PI*2.0; x += 0.1)
+    for (auto x = 0.0; x < M_PI * 2.0; x += 0.1)
         a.addPoint(x, sin(x));
 
     for (auto n = 0; n < 2; ++n)
@@ -46,7 +46,7 @@ TEST(SerialisableTest, Data1DErrors)
     Data1D a, b;
     a.initialise(1, true);
     b.initialise(1, true);
-    for (auto x = 0.0; x < M_PI*2.0; x += 0.1)
+    for (auto x = 0.0; x < M_PI * 2.0; x += 0.1)
         a.addPoint(x, sin(x), pow(x, 1.5));
 
     for (auto n = 0; n < 2; ++n)
@@ -76,7 +76,7 @@ TEST(SerialisableTest, Vector3Vector)
         EXPECT_EQ(a, b);
 
         // Test clearing
-        b = {{1.0, 1.0, 1.0},  {2.0, 2.0, 2.0}};
+        b = {{1.0, 1.0, 1.0}, {2.0, 2.0, 2.0}};
     }
 }
 
