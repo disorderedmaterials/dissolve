@@ -37,7 +37,6 @@ jobs:
     with:
       benchmark: true
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
-      msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
       osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
       osxRunner: ${{ needs.Checkout.outputs.osxRunner }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}

@@ -22,7 +22,6 @@ jobs:
     uses: "./.github/workflows/_build_and_package.yml"
     with:
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
-      msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
       osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
       osxRunner: ${{ needs.Checkout.outputs.osxRunner }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}

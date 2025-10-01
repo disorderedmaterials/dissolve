@@ -20,10 +20,6 @@ inputs:
   conanHash:
     type: string
     required: true
-  msvcVersion:
-    type: string
-    default: '19.44'
-    required: true
 
 runs:
   using: "composite"
@@ -36,22 +32,6 @@ runs:
   - uses: actions/setup-python@v5
     with:
       python-version: '3.11'
-
-  - name: Install Downgraded MSVC
-    shell: powershell
-    run: |
-      # For versions update see here: https://learn.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-build-tools?view=vs-2022
-      Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
-      $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
-      $componentsToInstall= @(
-      "Microsoft.VisualStudio.Component.VC.${{ inputs.msvcVersion }}.x86.x64"
-      "Microsoft.VisualStudio.Component.VC.${{ inputs.msvcVersion }}.ATL"
-      )
-      [string]$workloadArgs = $componentsToInstall | ForEach-Object {" --add " +  $_}
-      $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$workloadArgs, '--quiet', '--norestart', '--nocache')
-      # should be run twice
-      $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
-      $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
 
   - name: Setup cmake
     uses: jwlawson/actions-setup-cmake@v2
@@ -77,8 +57,6 @@ runs:
 
   - name: Setup MSVC Compiler
     uses: ilammy/msvc-dev-cmd@v1
-    with:
-      toolset: ${{ inputs.msvcVersion }}
 
   #
   # Build / Retrieve Freetype

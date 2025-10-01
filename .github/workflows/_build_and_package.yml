@@ -10,9 +10,6 @@ on:
       qtVersion:
         type: string
         required: true
-      msvcVersion:
-        type: string
-        required: true
       osxRunner:
         type: string
         default: 'UNKNOWN'
@@ -59,7 +56,6 @@ jobs:
         qtVersion: ${{ inputs.qtVersion }}
         antlrVersion: ${{ inputs.antlrVersion }}
         conanHash: ${{ inputs.conanHash }}
-        msvcVersion: ${{ inputs.msvcVersion }}
         osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
   BuildLinux:
@@ -86,6 +82,5 @@ jobs:
         nixHash: ${{ inputs.nixHash }}
         benchmark: ${{ inputs.benchmark }}
         publishBenchmarks: ${{ inputs.publishBenchmarks }}
-        msvcVersion: ${{ inputs.msvcVersion }}
         osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
