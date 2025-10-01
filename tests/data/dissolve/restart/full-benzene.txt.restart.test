@@ -314,9 +314,8 @@ Total
 15.3625  -0.0005516640910563431
 Processing  5050//WeightedGR  PartialSet  1  1
 ''  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -7763,9 +7762,8 @@ UnboundTotal
 15.437500000000153  0.002030555257981861
 Processing  5050//WeightedSQ  PartialSet  1  1
 ''  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -17444,9 +17442,8 @@ Total
 15.3625  0.0010855425193524806
 Processing  C6D6//WeightedGR  PartialSet  1  1
 ''  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -24893,9 +24890,8 @@ UnboundTotal
 15.437500000000153  0.004978991913687127
 Processing  C6D6//WeightedSQ  PartialSet  1  1
 ''  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -32425,9 +32421,8 @@ Total
 15.3625  -0.0008909480020028296
 Processing  C6H6//WeightedGR  PartialSet  1  1
 ''  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -39874,9 +39869,8 @@ UnboundTotal
 15.437500000000153  0.001737645425577972
 Processing  C6H6//WeightedSQ  PartialSet  1  1
 ''  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -54351,9 +54345,8 @@ Processing  Energy01//Bulk//Total  Data1D  1  1
 2  7129070291821.069
 Processing  GR01//Bulk//OriginalGR  PartialSet  5  1
 '7'  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -61800,9 +61793,8 @@ UnboundTotal
 15.437500000000153  0
 Processing  GR01//Bulk//OriginalGR//1  PartialSet  0  1
 '7'  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -69249,9 +69241,8 @@ UnboundTotal
 15.437500000000153  1.0038097831648425
 Processing  GR01//Bulk//OriginalGR//2  PartialSet  0  1
 '6'  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -76698,9 +76689,8 @@ UnboundTotal
 15.437500000000153  1.0186423808638168
 Processing  GR01//Bulk//UnweightedGR  PartialSet  1  1
 '7'  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -84147,9 +84137,8 @@ UnboundTotal
 15.437500000000153  1.0112260820143297
 Processing  GR01//UnweightedGR  PartialSet  1  1
 '7'  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full
@@ -91596,9 +91585,8 @@ UnboundTotal
 15.437500000000153  1.0112260820143297
 Processing  SQ01//UnweightedSQ  PartialSet  1  1
 '1/-1'  true
-2  # nItems
-CA 1200 0.5 0 0
-HA 1200 0.5 0 0
+1  # nItems
+Benzene  200
 3
 CA//CA
 CA-CA//Full

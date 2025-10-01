@@ -482,7 +482,10 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        realSpeciesPopulations_[coreData.findSpecies(parser.argsv(0))] = parser.argd(1);
+        auto *sp = coreData.findSpecies(parser.argsv(0));
+        if (!sp)
+            return Messenger::error("Species '{}' not found.\n", parser.argsv(0));
+        realSpeciesPopulations_[sp] = parser.argd(1);
     }
 
     // Clear partials
