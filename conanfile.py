@@ -4,9 +4,15 @@ from conan.tools.files import copy
 
 
 class DissolveRecipe(ConanFile):
+    name = "Dissolve"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeToolchain", "CMakeDeps"
-
+    options = {
+        "msvc_dev": [True, False],
+    }
+    default_options = {
+        "msvc_dev": False,
+    }
     def configure(self):
         self.options["puxixml"].header_only = False
         self.options["antlr4-cppruntime"].shared = True
@@ -25,7 +31,7 @@ class DissolveRecipe(ConanFile):
         self.requires("antlr4-cppruntime/4.13.1")
         self.requires("gsl/2.7.1")
 
-        if self.settings.os == "Linux":
+        if self.settings.os == "Linux" or (self.options.msvc_dev and self.settings.build_type == "Debug"):
             self.requires("gtest/1.17.0")
             self.requires("benchmark/1.8.4")
 

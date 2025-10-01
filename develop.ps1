@@ -421,6 +421,9 @@ compiler.cppstd=14
 compiler.runtime=dynamic
 compiler.version=194
 os=Windows
+
+[options]
+Dissolve/*msvc_dev=True
 "@
 
     Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
