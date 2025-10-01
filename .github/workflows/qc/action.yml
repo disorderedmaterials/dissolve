@@ -10,6 +10,9 @@ runs:
   using: "composite"
   steps:
 
+  - name: Free Up Space
+    uses: "./.github/workflows/linux-free-up-space"
+
   - name: Install nix
     uses: "./.github/workflows/get-nix"
     with:

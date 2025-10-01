@@ -23,14 +23,8 @@ runs:
   using: "composite"
   steps:
 
-  - name: Free Space
-    shell: bash
-    run: |
-      set -ex
-      df -mh .
-      sudo rm -rf /usr/share/dotnet
-      sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-      df -mh .
+  - name: Free Up Space
+    uses: "./.github/workflows/linux-free-up-space"
 
   - name: Install nix
     uses: "./.github/workflows/get-nix"
