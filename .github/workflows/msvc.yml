@@ -48,6 +48,6 @@ jobs:
       shell: bash
       run: |
         git submodule update --init --recursive
-        cmake --preset GUI-Release-MSVC
+        cmake --preset GUI-Debug-MSVC
         cmake --build build
 
