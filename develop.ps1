@@ -26,8 +26,6 @@
         ANTLR version to install. Defaults to ANTLR 4.13.1.
     .PARAMETER msvcVersion
         Version of MSVC to use.
-    .PARAMETER conanVersion
-        Conan version. Defaults to conan2.
     .PARAMETER generator
         Generator to use (options are "Visual Studio 17 2022", "Ninja").
     .PARAMETER release
@@ -45,7 +43,6 @@ param (
     [string]$pythonPath,
     [string]$forcePythonVersion,
     [string]$msvcVersion,
-    [int]$conanVersion = "2",
     [string]$generator = "Visual Studio 17 2022",
     [string]$antlrVersion = "4.13.1",
     [switch]$release = $false,
@@ -211,7 +208,7 @@ Write-Host "Activating Python virtual environment... " @info_colors
 
 Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
-& $python -m pip install aqtinstall conan==$conanVersion.*
+& $python -m pip install aqtinstall conan
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
@@ -406,13 +403,11 @@ Set-Location -Path $projectDir
 
 New-Item -ItemType Directory -Path "conan" -ErrorAction SilentlyContinue
 
-if ($conanVersion -eq 2)
-{
-    $env:CONAN_HOME = Join-Path -Path (Get-Location) -ChildPath "conan"
-    $conanProfiles = Join-Path -Path $env:CONAN_HOME -ChildPath "profiles"
+$env:CONAN_HOME = Join-Path -Path (Get-Location) -ChildPath "conan"
+$conanProfiles = Join-Path -Path $env:CONAN_HOME -ChildPath "profiles"
 
-    New-Item -ItemType Directory -Force -Path $conanProfiles | Out-Null
-    $profileContent = @"
+New-Item -ItemType Directory -Force -Path $conanProfiles | Out-Null
+$profileContent = @"
 [settings]
 arch=x86_64
 build_type=$build
@@ -426,30 +421,7 @@ os=Windows
 Dissolve/*:msvc_dev=True
 "@
 
-    Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
-}
-
-Write-Host "Setting up Conan profile... " @info_colors
-
-try {
-    # TODO: Find Conan v1, not just any old Conan
-    $conanVersion = conan --version
-    Write-Output "Found conan version $conanVersion..."
-
-    $conan = "conan"
-} catch {
-    Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
-    $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
-
-    $conan = "$scripts/conan.exe"
-}
-
-if  (-not ($conanVersion -eq 2))
-{
-    & $conan profile new default --detect
-    & $conan profile update settings.compiler="Visual Studio" default
-    & $conan profile update settings.compiler.version=17 default
-}
+Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
 
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
@@ -465,12 +437,7 @@ $cacheVariables = @{
     MULTI_THREADING = $threading
     MSVC_DEV = "ON"
     CMAKE_PREFIX_PATH = Normalise-Path -path "$qt6CMakeDir"
-}
-
-# If conan2, add conan toolchain file as variable
-if ($conanVersion -eq 2)
-{
-    $cacheVariables["CMAKE_MODULE_PATH"] = "`$penv{CONAN_HOME}"
+    CMAKE_MODULE_PATH = "`$penv{CONAN_HOME}"
 }
 
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
@@ -514,19 +481,9 @@ $presets = @(
     }
 )
 
-if ([string]::IsNullOrEmpty($scripts))
-{
-    $scripts = ''
-}
-
 $environment = @{
     PATH = "$(Normalise-Path -path $scripts);$(Normalise-Path -path $qt6BinDir);$(Normalise-Path -path $pythonEnvPath);`$penv{PATH}"
-}
-
-# If conan2, add CONAN_HOME to environment
-if ($conanVersion -eq 2)
-{
-    $environment["CONAN_HOME"] = Normalise-Path -path $env:CONAN_HOME
+    CONAN_HOME = Normalise-Path -path $env:CONAN_HOME
 }
 
 foreach ($preset in $presets) {
