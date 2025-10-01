@@ -4,9 +4,6 @@ description: Checks out the source and packages the source as an artifact for us
 on:
   workflow_call:
     inputs:
-      msvcVersion:
-        type: string
-        default: 14.44
       osxRunner:
         type: string
         default: macos-latest
@@ -65,9 +62,6 @@ on:
       conanHash:
         description: "Hash of the current conanfile"
         value: ${{ jobs.Checkout.outputs.conanHash }}
-      msvcVersion:
-        description: "Version of MSVC required by the project"
-        value: ${{ jobs.Checkout.outputs.msvcVersion }}
       osxRunner:
         description: "Runner target for OSX"
         value: ${{ jobs.Checkout.outputs.osxRunner }}
@@ -85,7 +79,6 @@ jobs:
       currentVersionMinor: ${{ steps.authVersion.outputs.currentVersionMinor }}
       currentVersionPatch: ${{ steps.authVersion.outputs.currentVersionPatch }}
       currentShortHash: ${{ steps.authVersion.outputs.currentShortHash }}
-      msvcVersion: ${{ steps.versions.outputs.msvcVersion }}
       osxRunner: ${{ steps.versions.outputs.osxRunner }}
       osxTargetDeploymentVersion: ${{ steps.versions.outputs.osxTargetDeploymentVersion }}
       qtVersion: ${{ steps.versions.outputs.qtVersion }}
@@ -119,7 +112,6 @@ jobs:
           ANTLR_VERSION=$(cat ${{ inputs.conanfile }}  | sed -rn -e 's%^.*antlr4-cppruntime/(.+)"\)%\1%p')
           echo "antlrVersion=${ANTLR_VERSION}" >> $GITHUB_OUTPUT
 
-          echo "msvcVersion=${{ inputs.msvcVersion }}" >> $GITHUB_OUTPUT
           echo "osxRunner=${{ inputs.osxRunner }}" >> $GITHUB_OUTPUT
           echo "osxTargetDeploymentVersion=${{ inputs.osxTargetDeploymentVersion }}" >> $GITHUB_OUTPUT
 

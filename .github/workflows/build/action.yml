@@ -10,9 +10,6 @@ inputs:
   currentVersion:
     type: string
     description: "Version used for labelling packages and other artifacts"
-  msvcVersion:
-    type: string
-    default: 'UNKNOWN'
   qtVersion:
     type: string
     default: 'UNKNOWN'
@@ -68,4 +65,3 @@ runs:
       conanHash: ${{ inputs.conanHash }}
       qtVersion: ${{ inputs.qtVersion }}
       antlrVersion: ${{ inputs.antlrVersion }}
-      msvcVersion: ${{ inputs.msvcVersion }}
