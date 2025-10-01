@@ -17,9 +17,9 @@ void HistogramSet::initialise(const std::vector<const AtomType *> &types, double
 {
     atomTypes_ = types;
 
-    fullHistograms_.clear(half_);
-    boundHistograms_.clear(half_);
-    unboundHistograms_.clear(half_);
+    fullHistograms_.clear(triangular_);
+    boundHistograms_.clear(triangular_);
+    unboundHistograms_.clear(triangular_);
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypes_,
@@ -31,7 +31,7 @@ void HistogramSet::initialise(const std::vector<const AtomType *> &types, double
             boundHistograms_.get(key).initialise(0.0, rdfRange, binWidth);
             unboundHistograms_.get(key).initialise(0.0, rdfRange, binWidth);
         },
-        half_);
+        triangular_);
 }
 
 // Clear all histogram data
