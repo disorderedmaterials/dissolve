@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "math/data1D.h"
+#include "math/sampledDouble.h"
 #include "math/vector3.h"
 #include "nodes/serialisableData.h"
 #include <gtest/gtest.h>

@@ -60,12 +60,9 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     message("Isotopologue and isotope composition:\n\n");
     weights_.print();
 
-    /*
-     * Load and set up reference data (if a file/format was given)
-     */
-    if (referenceData_.has_value())
+    // Set up reference data if supplied
+    if (referenceFQ_)
     {
-
         // Normalise reference data to be consistent with the calculated data
         if (referenceNormalisedTo_ != normaliseTo_)
         {
@@ -94,44 +91,35 @@ NodeConstants::ProcessResult NeutronSQNode::process()
                                          StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_));
             }
 
-            // Apply normalisation factors to the data
-            (*referenceData_) *= factor;
+            // Apply normalisation factor to the data
+            *referenceFQ_ *= factor;
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
         auto ftQMin = referenceFTQMin_.value_or(0.0);
-        auto ftQMax = referenceFTQMax_.value_or(referenceData_->xAxis().back() + 1.0);
+        auto ftQMax = referenceFTQMax_.value_or(referenceFQ_->xAxis().back() + 1.0);
         if (referenceWindowFunction_ == WindowFunction::Form::None)
             message("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).", name());
         else
             message("[SETUP {}] Window function to be applied in Fourier transform of reference data is {}.", name(),
                     WindowFunction::forms().keyword(referenceWindowFunction_));
 
-        // Store the reference data in processing
-        referenceData_->setTag(name());
-
-        Data1D storedData;
-        storedData = (*referenceData_);
-
-        // Calculate and store the FT of the reference data in processing
-        referenceData_->setTag(name());
-
-        Data1D storedDataFT;
-        storedDataFT = (*referenceData_);
-        Filters::trim(storedDataFT, ftQMin, ftQMax);
+        // Calculate FT of the reference data
+        referenceGR_ = *referenceFQ_;
+        Filters::trim(referenceGR_, ftQMin, ftQMax);
 
         auto rho = unweightedGR_->effectiveDensity();
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
+        Fourier::sineFT(referenceGR_, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
                         WindowFunction(referenceWindowFunction_));
 
         // Save data?
         if (saveReference_)
         {
             Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
-            if (!exportFormat.exportData(storedData))
+            if (!exportFormat.exportData(*referenceFQ_))
                 return NodeConstants::ProcessResult::Failed;
             Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
-            if (!exportFormatFT.exportData(storedDataFT))
+            if (!exportFormatFT.exportData(referenceGR_))
                 return NodeConstants::ProcessResult::Failed;
         }
     }
@@ -139,14 +127,6 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     /*
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
-
-    // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
-    /*
-    auto [weightedSQ, wSQstatus] = dissolve.processingModuleData().realiseIf<PartialSet>(
-        "WeightedSQ", name(), GenericItem::InRestartFileFlag);
-    if (wSQstatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
-    */
 
     // Calculate weighted S(Q)
     calculateWeightedSQ();
@@ -156,16 +136,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         return NodeConstants::ProcessResult::Failed;
 
     /*
-     * Transform UnweightedGR from into WeightedGR.
+     * Transform UnweightedGR into WeightedGR.
      */
-
-    // Create/retrieve PartialSet for summed weighted g(r)
-    /*
-    auto [weightedGR, wGRstatus] = dissolve.processingModuleData().realiseIf<PartialSet>(
-        "WeightedGR", name(), GenericItem::InRestartFileFlag);
-    if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.setUpPartials(unweightedGR.atomTypeMix());
-    */
 
     // Calculate weighted g(r)
     calculateWeightedGR();
@@ -175,37 +147,28 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         return NodeConstants::ProcessResult::Failed;
 
     // Calculate representative total g(r) from FT of calculated F(Q)
-    /*
-    auto& repGR = dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", name(),
-        GenericItem::InRestartFileFlag);
-    */
-    Data1D repGR;
-    repGR = weightedSQ_->total();
+    representativeGR_ = weightedSQ_->total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
         ftQMax = referenceFTQMax_.value();
-    else if (referenceData_.has_value())
+    else if (referenceFQ_)
     {
         // Take FT max Q limit from reference data
-        /*
-        auto& referenceData_ = dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(),
-            GenericItem::ProtectedFlag);
-        */
-        ftQMax = referenceData_->xAxis().back();
+        ftQMax = referenceFQ_->xAxis().back();
     }
     else
         ftQMax = weightedSQ_->total().xAxis().back();
-    Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
+    Filters::trim(representativeGR_, referenceFTQMin_.value_or(0.0), ftQMax);
     auto rMin = weightedGR_->total().xAxis().front();
     auto rMax = weightedGR_->total().xAxis().back();
     WindowFunction window(referenceWindowFunction_);
-    Fourier::sineFT(repGR, 1.0 / (2.0 * M_PI * M_PI * unweightedGR_->effectiveDensity()), rMin, 0.05, rMax, window);
+    Fourier::sineFT(representativeGR_, 1.0 / (2.0 * M_PI * M_PI * unweightedGR_->effectiveDensity()), rMin, 0.05, rMax, window);
 
     // Save data if requested
     if (saveRepresentativeGR_)
     {
         Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name()));
-        if (!exportFormat.exportData(repGR))
+        if (!exportFormat.exportData(representativeGR_))
             return NodeConstants::ProcessResult::Failed;
     }
 
