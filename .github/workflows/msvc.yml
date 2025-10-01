@@ -42,12 +42,12 @@ jobs:
         PythonPath: ${{ steps.setup-python.outputs.python-path }}
       run: | 
         Write-Output $env:PythonPath
-        ./develop.ps1 -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -pythonPath $env:PythonPath -generator "Ninja"
+        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -pythonPath $env:PythonPath -generator "Ninja"
         
     - name: 'Configure and build with CMake'
       shell: bash
       run: |
         git submodule update --init --recursive
-        cmake --preset GUI-Debug-MSVC
+        cmake --preset GUI-Release-MSVC
         cmake --build build
 
