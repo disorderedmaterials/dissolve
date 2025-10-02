@@ -35,15 +35,15 @@ class Data1DImportNode : public Node
     // Column index of data error values
     Number errorColumn_{0};
     // Remove average from X
-    std::optional<Number> removeAverageFromX_{0.0};
+    std::optional<Number> removeAverageFromX_;
     // Minimum X value
-    std::optional<Number> xMin_{0.0};
+    std::optional<Number> xMin_;
     // Maximum X value
-    std::optional<Number> xMax_{0.0};
-    // Index of Error column
+    std::optional<Number> xMax_;
+    // Number of points to remove from beginning of data
     Number nPointsToRemove_{0};
     // Imported data
-    Data1D data_{};
+    Data1D data_;
 
     /*
      * Processing
