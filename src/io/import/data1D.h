@@ -24,8 +24,9 @@ class Data1DImportFileFormat : public FileAndFormat
 
     Data1DImportFileFormat(std::string_view filename = "", Data1DImportFormat format = Data1DImportFormat::XY, int xColumn = 1,
                            int yColumn = 2, int errorColumn = 0);
-    Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format, std::optional<double> removeAverageFromX, std::optional<double> xMin, std::optional<double> xMax,
-                           int nPointsToRemove, int xColumn = 1, int yColumn = 2, int errorColumn = 0);
+    Data1DImportFileFormat(std::string_view filename, Data1DImportFormat format, int xColumn, int yColumn, int errorColumn,
+                           std::optional<double> removeAverageFromX, std::optional<double> xMin, std::optional<double> xMax,
+                           int nPointsToRemove);
     ~Data1DImportFileFormat() override = default;
     bool operator==(const Data1DImportFileFormat &other) const
     {

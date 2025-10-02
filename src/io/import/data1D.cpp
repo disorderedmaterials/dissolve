@@ -23,9 +23,9 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
 }
 
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format,
+                                               int xColumn, int yColumn, int errorColumn,
                                                std::optional<double> removeAverageFromX, std::optional<double> xMin,
-                                               std::optional<double> xMax, int nPointsToRemove, int xColumn,
-                                               int yColumn, int errorColumn)
+                                               std::optional<double> xMax, int nPointsToRemove)
     : FileAndFormat(formats_, filename, (int)format), xColumn_(xColumn), yColumn_(yColumn), errorColumn_(errorColumn),
       xMin_(xMin), xMax_(xMax), nPointsToRemove_(nPointsToRemove)
 {
