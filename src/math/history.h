@@ -6,7 +6,6 @@
 #include "base/serialiser.h"
 #include <functional>
 #include <memory>
-#include <optional>
 #include <vector>
 
 // Serialisable Data History
@@ -36,5 +35,21 @@ template <class T> class History : public Serialisable<>
             averaged += *data * weight;
 
         return averaged;
-    };
+    }
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const
+    {
+        return Serialisable::fromVector(history_, [&](const auto &itemPtr) { return itemPtr->serialise(); });
+    }
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override
+    {
+        history_.clear();
+        return Serialisable::toVector(node, [&](const auto &itemPtr) { return itemPtr->serialise(); });
+    }
 };
