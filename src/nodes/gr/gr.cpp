@@ -3,7 +3,14 @@
 
 #include "nodes/gr/gr.h"
 
-GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
+GRNode::GRNode(Graph *parentGraph)
+    : Node(parentGraph), rawGRHistory_(
+                             [&]()
+                             {
+                                 PartialSet p;
+                                 p.initialise(targetConfiguration_->speciesPopulations());
+                                 return p;
+                             })
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)

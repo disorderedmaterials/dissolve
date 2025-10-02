@@ -12,13 +12,19 @@
 // Requires that the template class T is itself a Serialisable
 template <class T> class History : public Serialisable<>
 {
+    public:
+    History() = default;
+    History(std::function<T()> initialiser = {}) : initialiser_(std::move(initialiser)) {}
+
     private:
     // Stored historical data
     std::vector<std::unique_ptr<T>> history_;
+    // Object initialisation function (if required)
+    std::function<T()> initialiser_{};
 
     public:
     // Update history with supplied data and return current average
-    T average(const T &currentData, int averagingLength, std::function<T()> initialiser = {})
+    T average(const T &currentData, int averagingLength)
     {
         // Push the current data onto the history stack
         history_.emplace_back(std::make_unique<T>(currentData));
@@ -28,7 +34,7 @@ template <class T> class History : public Serialisable<>
             history_.erase(history_.begin());
 
         // Perform averaging of the datasets that we have
-        T averaged = initialiser ? initialiser() : T();
+        T averaged = initialiser_ ? initialiser_() : T();
 
         auto weight = 1.0 / history_.size();
         for (auto &data : history_)
@@ -50,6 +56,12 @@ template <class T> class History : public Serialisable<>
     void deserialise(const SerialisedValue &node) override
     {
         history_.clear();
-        return Serialisable::toVector(node, [&](const auto &itemPtr) { return itemPtr->serialise(); });
+        return Serialisable::toVector(node,
+                                      [&](const auto &value)
+                                      {
+                                          auto &unique =
+                                              history_.emplace_back(std::make_unique<T>(initialiser_ ? initialiser_() : T()));
+                                          unique->deserialise(value);
+                                      });
     }
 };

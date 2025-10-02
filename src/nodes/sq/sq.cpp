@@ -3,7 +3,14 @@
 
 #include "nodes/sq/sq.h"
 
-SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
+SQNode::SQNode(Graph *parentGraph)
+    : Node(parentGraph), unweightedSQHistory_(
+                             [&]()
+                             {
+                                 PartialSet p;
+                                 p.initialise(*unweightedGR_);
+                                 return p;
+                             })
 {
     // Inputs
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_)
