@@ -263,6 +263,5 @@ void Histogram1D::deserialise(const SerialisedValue &node)
     nMissed_ = toml::find<long>(node, "nMissed");
 
     averages_ = toml::find<std::vector<SampledDouble>>(node, "averages");
-
     updateAccumulatedData();
 }

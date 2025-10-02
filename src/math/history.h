@@ -9,8 +9,9 @@
 #include <optional>
 #include <vector>
 
-// Data History
-template <class T> class History
+// Serialisable Data History
+// Requires that the template class T is itself a Serialisable
+template <class T> class History : public Serialisable<>
 {
     private:
     // Stored historical data
@@ -36,13 +37,4 @@ template <class T> class History
 
         return averaged;
     };
-    // Express data as a serialisable value
-    SerialisedValue serialise()
-        requires(std::is_base_of_v<Serialisable<>, T>)
-    {
-        SerialisedValue result;
-        result["size"] = history_.size();
-        Serialisable<>::fromVectorToTable(history_, "data", result);
-        return result;
-    }
 };

@@ -17,7 +17,7 @@
  * removing the critical dependence of an immutably ordered vector of AtomTypes.
  */
 using DoubleKeyedMapKey = std::pair<std::string_view, std::string_view>;
-template <typename ValueClass> class DoubleKeyedMap
+template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
 {
     public:
     DoubleKeyedMap(bool mirrored = false) : mirroredAreEquivalent_(mirrored) {}
@@ -163,19 +163,35 @@ template <typename ValueClass> class DoubleKeyedMap
      */
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const
+    SerialisedValue serialise() const override
     {
-        SerialisedValue group;
+        SerialisedValue result;
+        SerialisedValue map;
         for (const auto &[key, value] : data_)
-            group[std::string(key)] = value;
-        return group;
+        {
+            if constexpr (std::is_trivial_v<ValueClass>)
+                map[std::string(key)] = value;
+            else
+                map[std::string(key)] = value.serialise();
+        }
+        result["map"] = map;
+        return result;
     };
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, std::string key)
+    void deserialise(const SerialisedValue &node)
     {
         data_.clear();
 
-        for (auto &[mapKey, value] : toml::find<SerialisedValue::table_type>(node, key))
-            data_[mapKey].deserialise(value);
+        for (auto &[mapKey, value] : toml::find<SerialisedValue::table_type>(node, "map"))
+        {
+            if constexpr (std::is_same_v<ValueClass, double>)
+                data_[mapKey] = value.as_floating();
+            else if constexpr (std::is_same_v<ValueClass, int>)
+                data_[mapKey] = value.as_integer();
+            else if constexpr (std::is_same_v<ValueClass, bool>)
+                data_[mapKey] = value.as_boolean();
+            else
+                data_[mapKey].deserialise(value);
+        }
     }
 };

@@ -603,9 +603,9 @@ void PartialSet::deserialise(SerialisedValue node)
     Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
                         { realSpeciesPopulations_[name] = population.as_floating(); });
 
-    partials_.deserialise(node, "partials");
-    partials_.deserialise(node, "boundPartials");
-    partials_.deserialise(node, "unboundPartials");
+    partials_.deserialise(node["partials"]);
+    partials_.deserialise(node["boundPartials"]);
+    partials_.deserialise(node["unboundPartials"]);
 
     total_.deserialise(node["total"]);
     boundTotal_.deserialise(node["boundTotal"]);
