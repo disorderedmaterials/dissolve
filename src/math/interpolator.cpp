@@ -7,16 +7,15 @@
 #include "templates/algorithms.h"
 
 Interpolator::Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme)
-    : x_(x), y_(y)
+    : x_(x), y_(y), scheme_(scheme)
 {
-    interpolate(scheme);
+    interpolate();
 }
-Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x_(source.xAxis()), y_(source.values())
+Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme)
+    : x_(source.xAxis()), y_(source.values()), scheme_(scheme)
 {
-    interpolate(scheme);
+    interpolate();
 }
-
-Interpolator::~Interpolator() = default;
 
 /*
  * Interpolation
@@ -271,11 +270,9 @@ void Interpolator::interpolateLinear()
 // Prepare linear interpolation of data
 void Interpolator::interpolateThreePoint() { lastInterval_ = 0; }
 
-// Regenerate using specified scheme
-void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
+// Generate using current scheme
+void Interpolator::interpolate()
 {
-    scheme_ = scheme;
-
     // Do we have any data to work with?
     if (x_.size() < 2)
     {
@@ -301,19 +298,6 @@ void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
 // Return spline interpolated y value for supplied x
 double Interpolator::y(double x)
 {
-    // Do we need to (re)generate the interpolation?
-    if (lastInterval_ == -1)
-    {
-        // Do we know what the interpolation scheme is?
-        if (scheme_ != Interpolator::NoInterpolation)
-            interpolate(scheme_);
-        else
-        {
-            // No existing interpolation scheme, so use Spline by default
-            interpolate(Interpolator::SplineInterpolation);
-        }
-    }
-
     // Quick check of our interval - if the data is sequential increasing in x then we should be able to quickly determine it
     // and avoid the binary chop
     if (lastInterval_ != -1)

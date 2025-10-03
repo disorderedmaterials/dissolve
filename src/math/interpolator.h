@@ -14,7 +14,6 @@ class Interpolator
     // Interpolation Schemes
     enum InterpolationScheme
     {
-        NoInterpolation,
         SplineInterpolation,
         /* ConstrainedSplineInterpolation, */ // Removed for now as it produces spurious features in some fits.
         LinearInterpolation,
@@ -22,16 +21,16 @@ class Interpolator
     };
     Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme = SplineInterpolation);
     Interpolator(const Data1D &source, InterpolationScheme scheme = SplineInterpolation);
-    ~Interpolator();
+    ~Interpolator() = default;
 
     /*
      * Interpolation
      */
     private:
     // Target x array
-    const std::vector<double> &x_;
+    std::vector<double> x_;
     // Target y array
-    const std::vector<double> &y_;
+    std::vector<double> y_;
     // Interpolation scheme currently employed
     InterpolationScheme scheme_;
     // Interpolation parameters
@@ -48,10 +47,10 @@ class Interpolator
     void interpolateLinear();
     // Prepare three-point interpolation of data
     void interpolateThreePoint();
+    // Regenerate using specified scheme
+    void interpolate();
 
     public:
-    // Regenerate using specified scheme
-    void interpolate(InterpolationScheme scheme = SplineInterpolation);
     // Return interpolated y value for supplied x
     double y(double x);
     // Return interpolated y value for supplied x, specifying containing interval
