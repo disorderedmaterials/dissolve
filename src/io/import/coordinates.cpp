@@ -11,13 +11,26 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
                                                        CoordinateImportFileFormat::CoordinateImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "CoordinateImportFileFormat", {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
-                                       {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
-                                       {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
-                                       {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+    formats_ = CoordinateImportFileFormat::coordinateImportFileFormat();
 
     setUpKeywords();
+}
+
+// Return enum option info for AveragingScheme
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFileFormat()
+{
+    return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
+        "CoordinateImportFileFormat",
+        {{CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+}
+
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>
+getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat)
+{
+    return CoordinateImportFileFormat::coordinateImportFileFormat();
 }
 
 /*
