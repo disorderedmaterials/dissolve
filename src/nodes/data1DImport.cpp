@@ -18,7 +18,7 @@ Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
     addOption<Number>("ErrorColumn", "Column index of data error values", errorColumn_);
 
     // Outputs
-    addPointerOutput<Data1D>("Data", "Imported data", data_);
+    addOutput<std::optional<Data1D>>("Data", "Imported data", data_);
 }
 
 std::string_view Data1DImportNode::type() const { return "Data1DImport"; }
@@ -30,8 +30,8 @@ NodeConstants::ProcessResult Data1DImportNode::process()
     Data1DImportFileFormat dataImport(filePath_, format_, xColumn_.asInteger(), yColumn_.asInteger(), errorColumn_.asInteger(),
                                       removeAverageFromX_.value().asDouble(), xMin_.value().asDouble(),
                                       xMax_.value().asDouble(), nPointsToRemove_.asInteger());
-
-    if (dataImport.importData(data_))
+    data_.emplace();
+    if (dataImport.importData(*data_))
         return NodeConstants::ProcessResult::Success;
 
     return NodeConstants::ProcessResult::Failed;

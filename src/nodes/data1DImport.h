@@ -43,7 +43,7 @@ class Data1DImportNode : public Node
     // Number of points to remove from beginning of data
     Number nPointsToRemove_{0};
     // Imported data
-    Data1D data_;
+    std::optional<Data1D> data_;
 
     /*
      * Processing

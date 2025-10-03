@@ -63,7 +63,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceData_)
+    if (referenceData_.has_value())
     {
 
         // Normalise reference data to be consistent with the calculated data
@@ -184,7 +184,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
         ftQMax = referenceFTQMax_.value();
-    else if (referenceData_)
+    else if (referenceData_.has_value())
     {
         // Take FT max Q limit from reference data
         /*
