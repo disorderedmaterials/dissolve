@@ -298,7 +298,12 @@ void Interpolator::interpolate()
 // Return spline interpolated y value for supplied x
 double Interpolator::y(double x) const
 {
-    // Perform binary chop search if no valid interval was found
+    if (x < x_.front())
+        return y_.front();
+    if (x > x_.back())
+        return y_.back();
+
+    // Perform binary chop search to find interval
     auto lastInterval = 0;
     int i, right = h_.size() - 1;
     while ((right - lastInterval) > 1)
