@@ -18,7 +18,7 @@ Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
     addOption<Number>("ErrorColumn", "Column index of data error values", errorColumn_);
 
     // Outputs
-    addOutput<Data1D>("Data", "Imported data", data_);
+    addPointerOutput<Data1D>("Data", "Imported data", data_);
 }
 
 std::string_view Data1DImportNode::type() const { return "Data1DImport"; }

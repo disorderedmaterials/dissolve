@@ -41,5 +41,3 @@ std::string_view NeutronSQNode::type() const { return "NeutronSQ"; }
 
 std::string_view NeutronSQNode::summary() const { return "Calculate neutron-weighted S(Q) and G(r)"; }
 
-// Return file and format for reference total F(Q)
-const Data1DImportFileFormat &NeutronSQNode::referenceFQFileAndFormat() { return referenceFQ_; }

@@ -63,15 +63,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename())
+    if (referenceData_)
     {
-        // Load the data
-        Data1D referenceData;
-        if (!referenceFQ_.importData(referenceData))
-        {
-            error("[SETUP {}] Failed to load reference data '{}'.\n", name(), referenceFQ_.filename());
-            return NodeConstants::ProcessResult::Failed;
-        }
 
         // Normalise reference data to be consistent with the calculated data
         if (referenceNormalisedTo_ != normaliseTo_)
@@ -102,12 +95,12 @@ NodeConstants::ProcessResult NeutronSQNode::process()
             }
 
             // Apply normalisation factors to the data
-            referenceData *= factor;
+            (*referenceData_) *= factor;
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
         auto ftQMin = referenceFTQMin_.value_or(0.0);
-        auto ftQMax = referenceFTQMax_.value_or(referenceData.xAxis().back() + 1.0);
+        auto ftQMax = referenceFTQMax_.value_or(referenceData_->xAxis().back() + 1.0);
         if (referenceWindowFunction_ == WindowFunction::Form::None)
             message("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).", name());
         else
@@ -115,16 +108,16 @@ NodeConstants::ProcessResult NeutronSQNode::process()
                     WindowFunction::forms().keyword(referenceWindowFunction_));
 
         // Store the reference data in processing
-        referenceData.setTag(name());
+        referenceData_->setTag(name());
 
         Data1D storedData;
-        storedData = referenceData;
+        storedData = (*referenceData_);
 
         // Calculate and store the FT of the reference data in processing
-        referenceData.setTag(name());
+        referenceData_->setTag(name());
 
         Data1D storedDataFT;
-        storedDataFT = referenceData;
+        storedDataFT = (*referenceData_);
         Filters::trim(storedDataFT, ftQMin, ftQMax);
 
         auto rho = unweightedGR_->effectiveDensity();
@@ -191,15 +184,14 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
         ftQMax = referenceFTQMax_.value();
-    else if (referenceFQ_.hasFilename())
+    else if (referenceData_)
     {
         // Take FT max Q limit from reference data
         /*
-        auto& referenceData = dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(),
+        auto& referenceData_ = dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(),
             GenericItem::ProtectedFlag);
         */
-        Data1D referenceData;
-        ftQMax = referenceData.xAxis().back();
+        ftQMax = referenceData_->xAxis().back();
     }
     else
         ftQMax = weightedSQ_->total().xAxis().back();
