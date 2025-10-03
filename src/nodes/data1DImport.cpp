@@ -6,6 +6,7 @@
 
 Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Options
     addOption<std::string>("Filepath", "File path", filePath_);
     addOption<Data1DImportFileFormat::Data1DImportFormat>("ImportFormat", "Format of imported data", format_);
     addOption<std::optional<Number>>("RemoveAverageFromX", "Remove average from X values", removeAverageFromX_);
@@ -15,6 +16,8 @@ Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
     addOption<Number>("XColumn", "Column index of data X values", xColumn_);
     addOption<Number>("YColumn", "Column index of data Y values", yColumn_);
     addOption<Number>("ErrorColumn", "Column index of data error values", errorColumn_);
+
+    // Outputs
     addOutput<Data1D>("Data", "Imported data", data_);
 }
 

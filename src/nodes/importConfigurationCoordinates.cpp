@@ -6,9 +6,14 @@
 
 ImportConfigurationCoordinatesNode::ImportConfigurationCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Inputs
     addInput<Configuration *>("Configuration", "Configuration to which coordinates will be imported", configuration_);
+    
+    // Options
     addOption<std::string>("FilePath", "File path", filePath_);
     addOption<CoordinateImportFileFormat::CoordinateImportFormat>("FileFormat", "File format", format_);
+    
+    // Outputs
     addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
 }
 
