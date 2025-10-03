@@ -363,28 +363,20 @@ double Interpolator::y(double x, int interval) const
 // Return interpolated y values for supplied, sequentially increasing x values
 std::vector<double> Interpolator::y(const std::vector<double> &xs) const
 {
-    auto lastInterval = -1;
+    auto interval = 0;
     std::vector<double> ys;
     ys.reserve(xs.size());
 
     for (auto x : xs)
     {
-        // Update interval
-        if (lastInterval < x_.size())
-        {
-            if (x < x_.front())
-                lastInterval = -1;
-            else
-                while (x >= x_[++lastInterval])
-                    if (lastInterval >= x_.size())
-                        break;
-        }
-
-        // If we are beyond the last interval just push the final y value
-        if (lastInterval >= x_.size())
-            ys.push_back(y_.back());
+        if (x < x_.front())
+            ys.push_back(y_.front());
         else
-            ys.push_back(y(x, lastInterval));
+        {
+            while (interval < x_.size() && x_[interval + 1] < x)
+                ++interval;
+            ys.push_back(interval == x_.size() ? y_.back() : y(x, interval));
+        }
     }
 
     return ys;
