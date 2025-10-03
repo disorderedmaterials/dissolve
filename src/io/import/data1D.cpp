@@ -22,6 +22,19 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
     setUpKeywords();
 }
 
+Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format,
+                                               int xColumn, int yColumn, int errorColumn,
+                                               std::optional<double> removeAverageFromX, std::optional<double> xMin,
+                                               std::optional<double> xMax, int nPointsToRemove)
+    : FileAndFormat(formats_, filename, (int)format), xColumn_(xColumn), yColumn_(yColumn), errorColumn_(errorColumn),
+      xMin_(xMin), xMax_(xMax), nPointsToRemove_(nPointsToRemove)
+{
+    formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
+        "Data1DImportFileFormat", {{Data1DImportFormat::XY, "xy", "Simple XY data (x = bin centres)"},
+                                   {Data1DImportFormat::Histogram, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
+                                   {Data1DImportFormat::GudrunMint, "mint", "Gudrun output (mint01)"}});
+}
+
 // Return enum option info for Data1DImportFormat
 EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormat()
 {

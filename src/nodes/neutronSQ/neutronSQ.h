@@ -17,6 +17,7 @@
 
 // Forward Declarations
 class PartialSet;
+class Data1D;
 
 // Neutron SQ Node
 class NeutronSQNode : public Node
@@ -50,7 +51,7 @@ class NeutronSQNode : public Node
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
-    Data1DImportFileFormat referenceFQ_{"", Data1DImportFileFormat::Data1DImportFormat::GudrunMint};
+    std::optional<Data1D> referenceData_;
     // Minimum Q value to use when Fourier-transforming the data
     std::optional<double> referenceFTQMin_{0.3};
     // Maximum Q value to use when Fourier-transforming the data
@@ -69,10 +70,6 @@ class NeutronSQNode : public Node
     bool saveRepresentativeGR_{false};
     // Save weighted partial and total structure factors
     bool saveSQ_{false};
-
-    public:
-    // Return file and format for reference total F(Q)
-    const Data1DImportFileFormat &referenceFQFileAndFormat();
 
     /*
      * Functions

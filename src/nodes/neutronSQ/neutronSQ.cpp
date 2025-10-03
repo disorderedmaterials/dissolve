@@ -15,6 +15,7 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput<PartialSet *>("UnweightedSQ", "Unweighted partial S(Q)", unweightedSQ_);
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials g(r)", unweightedGR_);
+    addInput<std::optional<Data1D>>("ReferenceData", "Reference F(Q) data", referenceData_);
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(
@@ -40,6 +41,3 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 std::string_view NeutronSQNode::type() const { return "NeutronSQ"; }
 
 std::string_view NeutronSQNode::summary() const { return "Calculate neutron-weighted S(Q) and G(r)"; }
-
-// Return file and format for reference total F(Q)
-const Data1DImportFileFormat &NeutronSQNode::referenceFQFileAndFormat() { return referenceFQ_; }

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumOptions.h"
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
@@ -19,9 +20,13 @@ class CoordinateImportFileFormat : public FileAndFormat
         Moscito,
         XYZ
     };
+
     explicit CoordinateImportFileFormat(std::string_view filename = "",
                                         CoordinateImportFormat format = CoordinateImportFormat::XYZ);
     ~CoordinateImportFileFormat() override = default;
+
+    // Return enum options for CoordinateImportFileFormat
+    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFileFormat();
 
     /*
      * Keyword Options
@@ -67,3 +72,6 @@ class CoordinateImportFileFormat : public FileAndFormat
     // Import coordinates direct to configuration using supplied parser and current format
     bool importData(LineParser &parser, Configuration *cfg);
 };
+
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>
+    getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat);

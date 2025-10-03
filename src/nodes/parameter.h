@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "math/data1D.h"
 #include "math/function1D.h"
 #include "nodes/number.h"
 #include "templates/algorithms.h"
@@ -450,6 +451,13 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         {
             if (node.contains("data"))
                 data_ = toml::find<Number>(node, "data");
+            else
+                data_ = {};
+        }
+        else if constexpr (std::is_convertible<DataClass, std::optional<Data1D>>::value)
+        {
+            if (node.contains("data"))
+                data_ = toml::find<Data1D>(node, "data");
             else
                 data_ = {};
         }
