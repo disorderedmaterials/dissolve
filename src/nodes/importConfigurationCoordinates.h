@@ -28,7 +28,7 @@ class ImportConfigurationCoordinatesNode : public Node
     // File path
     std::string filePath_;
     // File format
-    CoordinateImportFileFormat::CoordinateImportFormat format_;
+    CoordinateImportFileFormat::CoordinateImportFormat format_{CoordinateImportFileFormat::CoordinateImportFormat::XYZ};
     // Configuration
     Configuration *configuration_;
 

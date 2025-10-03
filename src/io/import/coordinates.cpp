@@ -11,13 +11,25 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
                                                        CoordinateImportFileFormat::CoordinateImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
+    formats_ = coordinateImportFileFormat();
+
+    setUpKeywords();
+}
+
+// Return enum option info for AveragingScheme
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFileFormat()
+{
+    return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
         "CoordinateImportFileFormat", {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
                                        {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
                                        {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
                                        {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+}
 
-    setUpKeywords();
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>
+CoordinateImportFileFormat::getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat)
+{
+    return coordinateImportFileFormat();
 }
 
 /*
