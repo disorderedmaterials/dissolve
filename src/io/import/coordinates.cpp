@@ -11,13 +11,13 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
                                                        CoordinateImportFileFormat::CoordinateImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = coordinateImportFileFormat();
+    formats_ = CoordinateImportFileFormat::coordinateImportFileFormat();
 
     setUpKeywords();
 }
 
 // Return enum option info for AveragingScheme
-EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFileFormat()
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFileFormat()
 {
     return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
         "CoordinateImportFileFormat",
@@ -30,7 +30,7 @@ EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImport
 EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>
 getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat)
 {
-    return coordinateImportFileFormat();
+    return CoordinateImportFileFormat::coordinateImportFileFormat();
 }
 
 /*

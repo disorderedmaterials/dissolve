@@ -25,6 +25,9 @@ class CoordinateImportFileFormat : public FileAndFormat
                                         CoordinateImportFormat format = CoordinateImportFormat::XYZ);
     ~CoordinateImportFileFormat() override = default;
 
+    // Return enum options for CoordinateImportFileFormat
+    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFileFormat();
+
     /*
      * Keyword Options
      */
@@ -69,9 +72,6 @@ class CoordinateImportFileFormat : public FileAndFormat
     // Import coordinates direct to configuration using supplied parser and current format
     bool importData(LineParser &parser, Configuration *cfg);
 };
-
-// Return enum options for CoordinateImportFileFormat
-EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFileFormat();
 
 EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>
     getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat);
