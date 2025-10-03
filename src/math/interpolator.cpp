@@ -296,47 +296,25 @@ void Interpolator::interpolate()
 }
 
 // Return spline interpolated y value for supplied x
-double Interpolator::y(double x)
+double Interpolator::y(double x) const
 {
-    // Quick check of our interval - if the data is sequential increasing in x then we should be able to quickly determine it
-    // and avoid the binary chop
-    if (lastInterval_ != -1)
-    {
-        // If the x value exceeds the next interval boundary, try to increment it
-        if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
-        {
-            ++lastInterval_;
-
-            // If there are still intervals beyond this one, check the next limit
-            if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
-                lastInterval_ = -1;
-        }
-
-        // Double-check lower limit
-        if (lastInterval_ > 0 && (x < x_[lastInterval_]))
-            lastInterval_ = -1;
-    }
-
     // Perform binary chop search if no valid interval was found
-    if (lastInterval_ == -1)
+    auto lastInterval = 0;
+    int i, right = h_.size() - 1;
+    while ((right - lastInterval) > 1)
     {
-        lastInterval_ = 0;
-        int i, right = h_.size() - 1;
-        while ((right - lastInterval_) > 1)
-        {
-            i = (right + lastInterval_) / 2;
-            if (x_[i] > x)
-                right = i;
-            else
-                lastInterval_ = i;
-        }
+        i = (right + lastInterval) / 2;
+        if (x_[i] > x)
+            right = i;
+        else
+            lastInterval = i;
     }
 
-    return y(x, lastInterval_);
+    return y(x, lastInterval);
 }
 
 // Return spline interpolated y value for supplied x, specifying containing interval
-double Interpolator::y(double x, int interval)
+double Interpolator::y(double x, int interval) const
 {
     if (interval < 0)
         return y_.front();
@@ -380,6 +358,36 @@ double Interpolator::y(double x, int interval)
     }
 
     return 0.0;
+}
+
+// Return interpolated y values for supplied, sequentially increasing x values
+std::vector<double> Interpolator::y(const std::vector<double> &xs) const
+{
+    auto lastInterval = -1;
+    std::vector<double> ys;
+    ys.reserve(xs.size());
+
+    for (auto x : xs)
+    {
+        // Update interval
+        if (lastInterval < x_.size())
+        {
+            if (x < x_.front())
+                lastInterval = -1;
+            else
+                while (x >= x_[++lastInterval])
+                    if (lastInterval >= x_.size())
+                        break;
+        }
+
+        // If we are beyond the last interval just push the final y value
+        if (lastInterval >= x_.size())
+            ys.push_back(y_.back());
+        else
+            ys.push_back(y(x, lastInterval));
+    }
+
+    return ys;
 }
 
 /*
@@ -440,10 +448,11 @@ void Interpolator::addInterpolated(const Data1D &source, Data1D &dest, double fa
     {
         // Generate interpolation of source data
         Interpolator I(source);
+        auto interpolated = I.y(destX);
 
         // Explicit loop over values
-        for (auto &&[x, y] : zip(destX, destY))
-            y += I.y(x) * factor;
+        for (auto &&[iy, y] : zip(interpolated, destY))
+            y += iy * factor;
     }
 }
 

@@ -52,9 +52,11 @@ class Interpolator
 
     public:
     // Return interpolated y value for supplied x
-    double y(double x);
-    // Return interpolated y value for supplied x, specifying containing interval
-    double y(double x, int interval);
+    double y(double x) const;
+    // Return interpolated y value for supplied x from the specified interval
+    double y(double x, int interval) const;
+    // Return interpolated y values for supplied, sequentially increasing x values
+    std::vector<double> y(const std::vector<double> &xs) const;
 
     /*
      * Static Functions
