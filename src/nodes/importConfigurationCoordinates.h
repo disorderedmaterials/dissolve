@@ -3,10 +3,11 @@
 
 #pragma once
 
-#include "classes/configuration.h"
 #include "io/import/coordinates.h"
 #include "nodes/node.h"
 #include <memory>
+
+class Configuration;
 
 class ImportConfigurationCoordinatesNode : public Node
 {
