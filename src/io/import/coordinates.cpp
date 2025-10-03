@@ -17,17 +17,18 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
 }
 
 // Return enum option info for AveragingScheme
-EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFileFormat()
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFileFormat()
 {
     return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "CoordinateImportFileFormat", {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
-                                       {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
-                                       {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
-                                       {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+        "CoordinateImportFileFormat",
+        {{CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
 }
 
 EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>
-CoordinateImportFileFormat::getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat)
+getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat)
 {
     return coordinateImportFileFormat();
 }
