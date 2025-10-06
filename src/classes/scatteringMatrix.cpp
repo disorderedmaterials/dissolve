@@ -282,6 +282,7 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
         // Generate interpolation for this dataset (row) - has to be Linear since (experimental) datasets are likely to have
         // been extrapolated to zero, and trying to spline over it will create artifacts.
         Interpolator I(rowData.data, Interpolator::InterpolationScheme::LinearInterpolation);
+        const auto interpolated = I.y(qValues_);
         auto dataQMin = rowData.data.xAxis().front();
         auto dataQMax = rowData.data.xAxis().back();
 
@@ -302,7 +303,8 @@ DoubleKeyedMap<Data1D> ScatteringMatrix::generateEstimatedPartials() const
                                         if (q > dataQMax)
                                             break;
                                         partial.value(qIndex) +=
-                                            I.y(q) * (qDependentWeights ? qInverses_[qIndex][{partialIndex, dataIndex}]
+                                            interpolated[qIndex] * (qDependentWeights
+                                                                        ? qInverses_[qIndex][{partialIndex, dataIndex}]
                                                                         : qZeroInverse_[{partialIndex, dataIndex}]);
                                     }
 

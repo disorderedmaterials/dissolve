@@ -177,9 +177,9 @@ void PairPotential::updateTotals()
     }
 
     // Recalculate interpolations
-    totalShortRangePotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    coulombPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    totalPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    totalShortRangePotentialInterpolation_ = Interpolator(totalShortRangePotential_, Interpolator::ThreePointInterpolation);
+    coulombPotentialInterpolation_ = Interpolator(coulombPotential_, Interpolator::ThreePointInterpolation);
+    totalPotentialInterpolation_ = Interpolator(totalPotential_, Interpolator::ThreePointInterpolation);
 
     // Calculate derivatives
     totalShortRangeDerivative_ = Derivative::derivative(totalShortRangePotential_);
@@ -187,9 +187,9 @@ void PairPotential::updateTotals()
     totalDerivative_ = Derivative::derivative(totalPotential_);
 
     // Update interpolations for derivatives
-    totalShortRangeDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    coulombDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    totalDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    totalShortRangeDerivativeInterpolation_ = Interpolator(totalShortRangeDerivative_, Interpolator::ThreePointInterpolation);
+    coulombDerivativeInterpolation_ = Interpolator(coulombDerivative_, Interpolator::ThreePointInterpolation);
+    totalDerivativeInterpolation_ = Interpolator(totalDerivative_, Interpolator::ThreePointInterpolation);
 }
 
 // Generate energy and force tables

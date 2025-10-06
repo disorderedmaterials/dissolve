@@ -92,8 +92,9 @@ Module::ExecutionResult CompareModule::process(Dissolve &dissolve)
 
         // Generate interpolation of dataPair.second
         Interpolator interpolatedB(dataB);
+        auto interpolated = interpolatedB.y(dataA.xAxis());
 
-        for (auto &&[x, y] : zip(dataA.xAxis(), dataA.values()))
+        for (auto &&[x, y, iy] : zip(dataA.xAxis(), dataA.values(), interpolated))
         {
             // Is our x value above the minimum range of each dataset ?
             if (x < rangeMin)
@@ -104,7 +105,7 @@ Module::ExecutionResult CompareModule::process(Dissolve &dissolve)
                 break;
 
             // Add difference as a point to delta Data object
-            delta.addPoint(x, fabs(y - interpolatedB.y(x)));
+            delta.addPoint(x, fabs(y - iy));
         }
 
         ++index;
