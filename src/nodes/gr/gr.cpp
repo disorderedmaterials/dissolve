@@ -22,15 +22,6 @@ GRNode::GRNode(Graph *parentGraph) : Node(parentGraph)
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
     addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
-
-    // Flag serialisable data
-    SampledDouble x;
-    std::optional<SampledDouble> y;
-    double z;
-    std::make_shared<SerialisableClass<SampledDouble>>("dasds", x);
-    addSerialisable("testShit", x);
-    addSerialisable("testShit2", y);
-    addSerialisable("testShit3", z);
 }
 
 // Return enum option info for NormalisationType
