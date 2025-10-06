@@ -35,8 +35,6 @@ class Interpolator
     InterpolationScheme scheme_;
     // Interpolation parameters
     std::vector<double> a_, b_, c_, d_, h_;
-    // Interval of last returned interpolated point
-    int lastInterval_;
 
     private:
     // Prepare natural spline interpolation of data

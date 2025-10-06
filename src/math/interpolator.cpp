@@ -197,8 +197,6 @@ void Interpolator::interpolateSpline()
         c_[i] *= 0.5;
         a_[i] = y_[i];
     }
-
-    lastInterval_ = 0;
 }
 
 // Prepare constrained natural spline interpolation of data
@@ -251,8 +249,6 @@ void Interpolator::interpolateConstrainedSpline()
         a_[i - 1] = y_[i - 1] - b_[i - 1] * x_[i - 1] - c_[i - 1] * x_[i - 1] * x_[i - 1] -
                     d_[i - 1] * x_[i - 1] * x_[i - 1] * x_[i - 1];
     }
-
-    lastInterval_ = 0;
 }
 
 // Prepare linear interpolation of data
@@ -263,12 +259,7 @@ void Interpolator::interpolateLinear()
     a_.resize(y_.size() - 1);
     for (auto i = 0; i < y_.size() - 1; ++i)
         a_[i] = y_[i + 1] - y_[i];
-
-    lastInterval_ = 0;
 }
-
-// Prepare linear interpolation of data
-void Interpolator::interpolateThreePoint() { lastInterval_ = 0; }
 
 // Generate using current scheme
 void Interpolator::interpolate()
@@ -292,7 +283,9 @@ void Interpolator::interpolate()
     else if (scheme_ == Interpolator::LinearInterpolation)
         interpolateLinear();
     else if (scheme_ == Interpolator::ThreePointInterpolation)
-        interpolateThreePoint();
+    {
+        // No setup required
+    }
 }
 
 // Return spline interpolated y value for supplied x
