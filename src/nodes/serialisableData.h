@@ -29,7 +29,7 @@ class SerialisableData
     // Express as a serialised value
     virtual SerialisedValue serialise() const { return {}; }
     // Read from a serialised value
-    virtual void deserialise(const SerialisedValue &node){};
+    virtual void deserialise(const SerialisedValue &node) {};
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
