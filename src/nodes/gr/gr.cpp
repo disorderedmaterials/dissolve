@@ -36,6 +36,8 @@ GRNode::GRNode(Graph *parentGraph)
                                       partialsMethod_);
 
     // Serialisables
+    addSerialisable("rawGR", rawGR_);
+    addSerialisable("rawGRHistory", rawGRHistory_);
     addSerialisable("unweightedGR", unweightedGR_);
 }
 
