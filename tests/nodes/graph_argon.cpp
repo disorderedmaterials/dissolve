@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "io/import/coordinates.h"
+#include "io/import/data1D.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/atomicSpecies.h"
 #include "nodes/configuration.h"
+#include "nodes/data1DImport.h"
 #include "nodes/dissolve.h"
 #include "nodes/energy/energy.h"
 #include "nodes/gr/gr.h"
+#include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/md/md.h"
 #include "nodes/neutronSQ/neutronSQ.h"
@@ -43,14 +47,28 @@ class GraphArgonTest : public ::testing::Test
         arNode_ =
             dynamic_cast<AtomicSpeciesNode *>(root_.addNode(std::make_unique<AtomicSpeciesNode>(&root_, Elements::Ar), "Ar"));
         configurationNode_ = dynamic_cast<ConfigurationNode *>(root_.createNode("Configuration", "Bulk"));
+        importConfigCoordsNode_ =
+            dynamic_cast<ImportConfigurationCoordinatesNode *>(root_.createNode("ImportConfigurationCoordinates", "BulkXYZ"));
         insertNode_ = dynamic_cast<InsertNode *>(root_.createNode("Insert", "Insert"));
 
         ASSERT_TRUE(arNode_);
         ASSERT_TRUE(configurationNode_);
+        ASSERT_TRUE(importConfigCoordsNode_);
         ASSERT_TRUE(insertNode_);
 
         ASSERT_TRUE(root_.addEdge({"Ar", "Species", "Insert", "Species"}));
-        ASSERT_TRUE(root_.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
+
+        /*
+         * Set up configuration XYZ
+         */
+        ASSERT_TRUE(root_.addEdge({"Bulk", "Configuration", "BulkXYZ", "Configuration"}));
+
+        auto xyzFilePath = importConfigCoordsNode_->findOption("FilePath");
+        xyzFilePath->set<std::string>("dissolve2/argon/Ar_bulk_step1000.xyz");
+
+        auto xyzFormat = importConfigCoordsNode_->findOption("FileFormat");
+        xyzFormat->set<CoordinateImportFileFormat::CoordinateImportFormat>(
+            CoordinateImportFileFormat::CoordinateImportFormat::XYZ);
 
         if (advanced)
         {
@@ -60,6 +78,7 @@ class GraphArgonTest : public ::testing::Test
             grNode_ = dynamic_cast<GRNode *>(root_.createNode("GR", "GR"));
             sqNode_ = dynamic_cast<SQNode *>(root_.createNode("SQ", "SQ"));
             neutronSQNode_ = dynamic_cast<NeutronSQNode *>(root_.createNode("NeutronSQ", "NeutronSQ"));
+            data1DImportNode_ = dynamic_cast<Data1DImportNode *>(root_.createNode("Data1DImport", "ReferenceSQ"));
 
             ASSERT_TRUE(atomicMCNode_);
             ASSERT_TRUE(mdNode_);
@@ -67,6 +86,16 @@ class GraphArgonTest : public ::testing::Test
             ASSERT_TRUE(grNode_);
             ASSERT_TRUE(sqNode_);
             ASSERT_TRUE(neutronSQNode_);
+            ASSERT_TRUE(data1DImportNode_);
+
+            /*
+             * Set up reference SQ data
+             */
+            auto referenceSQFilePath = data1DImportNode_->findOption("Filepath");
+            referenceSQFilePath->set<std::string>("dissolve2/argon/yarnell.sq");
+
+            auto referenceSQFormat = data1DImportNode_->findOption("ImportFormat");
+            referenceSQFormat->set<Data1DImportFileFormat::Data1DImportFormat>(Data1DImportFileFormat::Data1DImportFormat::XY);
 
             ASSERT_TRUE(root_.addEdge({"Insert", "Configuration", "AtomicMC", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"AtomicMC", "Configuration", "MD", "Configuration"}));
@@ -85,6 +114,7 @@ class GraphArgonTest : public ::testing::Test
     DissolveGraph root_;
     AtomicSpeciesNode *arNode_{nullptr};
     ConfigurationNode *configurationNode_{nullptr};
+    ImportConfigurationCoordinatesNode *importConfigCoordsNode_{nullptr};
     InsertNode *insertNode_{nullptr};
     AtomicMCNode *atomicMCNode_{nullptr};
     MDNode *mdNode_{nullptr};
@@ -92,6 +122,7 @@ class GraphArgonTest : public ::testing::Test
     GRNode *grNode_{nullptr};
     SQNode *sqNode_{nullptr};
     NeutronSQNode *neutronSQNode_{nullptr};
+    Data1DImportNode *data1DImportNode_{nullptr};
 };
 
 TEST_F(GraphArgonTest, InitSimulation)
