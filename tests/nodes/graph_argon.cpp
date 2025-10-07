@@ -70,6 +70,8 @@ class GraphArgonTest : public ::testing::Test
         xyzFormat->set<CoordinateImportFileFormat::CoordinateImportFormat>(
             CoordinateImportFileFormat::CoordinateImportFormat::XYZ);
 
+        ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "Insert", "Configuration"}));
+
         if (advanced)
         {
             atomicMCNode_ = dynamic_cast<AtomicMCNode *>(root_.createNode("AtomicMC", "AtomicMC"));
@@ -97,11 +99,16 @@ class GraphArgonTest : public ::testing::Test
             auto referenceSQFormat = data1DImportNode_->findOption("ImportFormat");
             referenceSQFormat->set<Data1DImportFileFormat::Data1DImportFormat>(Data1DImportFileFormat::Data1DImportFormat::XY);
 
+            auto referenceSQRemoveAvgX = data1DImportNode_->findOption("RemoveAverageFromX");
+            referenceSQRemoveAvgX->set<std::optional<Number>>(9.0);
+
+            // Create nodes
             ASSERT_TRUE(root_.addEdge({"Insert", "Configuration", "AtomicMC", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"AtomicMC", "Configuration", "MD", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"MD", "Configuration", "Energy", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"Energy", "Configuration", "GR", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+            ASSERT_TRUE(root_.addEdge({"ReferenceSQ", "Data", "NeutronSQ", "ReferenceData"}));
             ASSERT_TRUE(root_.addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
             ASSERT_TRUE(root_.addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
         }
