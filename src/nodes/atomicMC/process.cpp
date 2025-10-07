@@ -124,16 +124,3 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     return NodeConstants::ProcessResult::Success;
 }
-
-/*
- * Serialisation
- */
-
-// Express persistent data within the supplied serialisable value
-void AtomicMCNode::serialisePersistentData(SerialisedValue &value) const { value["stepSize"] = stepSize_; }
-
-// Retrieve persistent data from the supplied serialisable value
-void AtomicMCNode::deserialisePersistentData(const SerialisedValue &value)
-{
-    stepSize_ = toml::find<double>(value, "stepSize");
-}
