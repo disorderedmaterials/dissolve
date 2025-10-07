@@ -361,10 +361,8 @@ SerialisedValue Node::serialiseData() const
     result["timing"] = timing_.serialise();
 
     for (auto &[key, serialisable] : serialisables_)
-    {
         if (serialisable->canSerialise())
             result[key] = serialisable->serialise();
-    }
 
     return result;
 }
@@ -375,8 +373,6 @@ void Node::deserialiseData(const SerialisedValue &node)
     timing_.deserialise(node.at("timing"));
 
     for (auto &[key, serialisable] : serialisables_)
-    {
         if (node.contains(key))
             serialisable->deserialise(node.at(key));
-    }
 }
