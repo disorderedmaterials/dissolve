@@ -278,6 +278,7 @@ class Node : public Serialisable<>
             return false;
 
         opt->set<T>(value);
+        return true;
     }
     // Get the incoming edges to this node
     EdgeMap &inputEdges();

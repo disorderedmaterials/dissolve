@@ -139,6 +139,20 @@ TEST_F(GraphArgonTest, AdvancedSimulation)
 {
     createGraph(true);
     ASSERT_EQ(neutronSQNode_->run(), NodeConstants::ProcessResult::Success);
+
+    /*
+     * Check total unweighted SQ
+     */
+    auto unweightedSQ = sqNode_->getOutputValue<std::optional<PartialSet>>("UnweightedSQ");
+    ASSERT_NO_THROW_VERBOSE(unweightedSQ.has_value());
+    ASSERT_TRUE(DissolveSystemTest::checkData1D(unweightedSQ->total(), "UnweightedSQ", {"dissolve2/argon/SQ01-UnweightedSQ-total.sq"}));
+
+    /*
+     * Check neutron weighted SQ
+     */
+    auto weightedSQ = neutronSQNode_->getOutputValue<std::optional<PartialSet>>("WeightedSQ");
+    ASSERT_NO_THROW_VERBOSE(weightedSQ.has_value());
+    ASSERT_TRUE(DissolveSystemTest::checkData1D(weightedSQ->total(), "WeightedSQ", {"dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq"}));
 }
 
 } // namespace UnitTest

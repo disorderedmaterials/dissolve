@@ -295,7 +295,7 @@ class DissolveSystemTest
         return checkDouble(quantity, A.value(), B, threshold);
     }
     // Test Data1D (by tag and external file data)
-    [[nodiscard]] bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
+    [[nodiscard]] static bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
                                    double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
         Data1D compare;
