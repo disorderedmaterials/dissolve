@@ -19,7 +19,6 @@ jobs:
   Checkout:
     uses: "./.github/workflows/_checkout.yml"
     with:
-      bump: true
       publishType: 'continuous'
 
   QC:
