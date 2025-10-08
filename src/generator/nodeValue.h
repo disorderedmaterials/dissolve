@@ -106,7 +106,7 @@ class Vector3NodeValue : public Serialisable<std::vector<std::shared_ptr<Express
     NodeValue x, y, z;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

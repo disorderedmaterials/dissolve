@@ -8,6 +8,7 @@
 #include "module/module.h"
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
+#include "nodes/serialisableData.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -268,18 +269,37 @@ class Node : public Serialisable<>
     /*
      * Data
      */
+    private:
+    // Accumulated timing information (in seconds) for this Module
+    SampledDouble timing_;
+
     public:
     // Clear any local data
     virtual void clearData();
+    // Return timing information (in seconds) for this Module
+    SampledDouble timing() const;
 
     /*
-     * I/O
+     * Serialisation
      */
+    protected:
+    // Persistent data serialisables
+    std::map<std::string, std::shared_ptr<SerialisableData>> serialisables_;
+
     public:
     // Is it appropriate to bother serialising this node?
     virtual bool shouldSerialise() const { return true; }
+    // Flag a persistent serialisable quantity
+    template <typename DataClass> void addSerialisable(std::string_view key, DataClass &data)
+    {
+        serialisables_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
+    }
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
+    // Express persistent data as a serialisable value
+    SerialisedValue serialiseData() const;
+    // Read persistent data from a serialisable value
+    void deserialiseData(const SerialisedValue &node);
 };

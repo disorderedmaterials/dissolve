@@ -71,7 +71,7 @@ class AtomType : public Serialisable<>
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

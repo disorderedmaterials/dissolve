@@ -155,3 +155,14 @@ bool SampledDouble::deserialise(LineParser &parser)
 
 // Write data through specified LineParser
 bool SampledDouble::serialise(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
+
+// Express as a serialisable value
+SerialisedValue SampledDouble::serialise() const { return {{"mean", mean_}, {"count", count_}, {"m2", m2_}}; }
+
+// Read values from a serialisable value
+void SampledDouble::deserialise(const SerialisedValue &value)
+{
+    mean_ = toml::find<double>(value, "mean");
+    count_ = toml::find<int>(value, "count");
+    m2_ = toml::find<double>(value, "m2");
+};

@@ -23,7 +23,7 @@ std::string_view InputsNode::summary() const { return "Maps graph inputs to loca
 NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::ProcessResult::Success; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Is it appropriate to bother serialising this node?

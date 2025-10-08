@@ -341,7 +341,7 @@ void Vector3i::swap(int a, int b)
 }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value

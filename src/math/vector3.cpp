@@ -491,7 +491,7 @@ double Vector3::angleInRadians(const Vector3 &to) const { return acos(normalised
 double Vector3::angleInDegrees(const Vector3 &to) const { return DissolveMath::toDegrees(angleInRadians(to)); }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value

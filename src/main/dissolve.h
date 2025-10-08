@@ -171,7 +171,7 @@ class Dissolve : public Serialisable<>
     void printTiming();
 
     /*
-     * I/O
+     * Serialisation
      */
     private:
     // Filename of current input file

@@ -45,7 +45,7 @@ InteractionPotential<Functions1D> &PairPotentialOverride::interactionPotential()
 const InteractionPotential<Functions1D> &PairPotentialOverride::interactionPotential() const { return interactionPotential_; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value

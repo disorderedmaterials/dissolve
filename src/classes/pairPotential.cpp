@@ -392,7 +392,7 @@ void PairPotential::setAdditionalPotential(Data1D &newUAdditional)
 }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value
