@@ -27,9 +27,12 @@ std::string_view Data1DImportNode::summary() const { return "Import 1D data."; }
 
 NodeConstants::ProcessResult Data1DImportNode::process()
 {
+    auto xMin = xMin_ ? std::make_optional<double>(xMin_->asDouble()) : std::nullopt;
+    auto xMax = xMax_ ? std::make_optional<double>(xMax_->asDouble()) : std::nullopt;
+    auto removeAverageFromX = removeAverageFromX_ ? std::make_optional<double>(removeAverageFromX_->asDouble()) : std::nullopt;
+
     Data1DImportFileFormat dataImport(filePath_, format_, xColumn_.asInteger(), yColumn_.asInteger(), errorColumn_.asInteger(),
-                                      removeAverageFromX_.value().asDouble(), xMin_.value().asDouble(),
-                                      xMax_.value().asDouble(), nPointsToRemove_.asInteger());
+                                      removeAverageFromX, xMin, xMax, nPointsToRemove_.asInteger());
     data_.emplace();
     if (dataImport.importData(*data_))
         return NodeConstants::ProcessResult::Success;
