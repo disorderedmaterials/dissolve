@@ -104,7 +104,7 @@ class Graph : public Node
     std::string location() const;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

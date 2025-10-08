@@ -29,7 +29,7 @@ class InputsNode : public Node
     NodeConstants::ProcessResult process() override;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Is it appropriate to bother serialising this node?

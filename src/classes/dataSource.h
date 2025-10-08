@@ -114,7 +114,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     const DataType &data() const { return data_; }
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData)

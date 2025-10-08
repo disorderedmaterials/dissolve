@@ -38,7 +38,7 @@ void OutputsNode::setUpdateRequired()
 }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Is it appropriate to bother serialising this node?

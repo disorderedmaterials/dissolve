@@ -152,7 +152,7 @@ class ParameterBase : public Serialisable<>
     virtual ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const = 0;
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialised value
@@ -399,7 +399,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     };
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialised value

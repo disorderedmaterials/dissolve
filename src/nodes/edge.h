@@ -75,7 +75,7 @@ class Edge : public Serialisable<>
     void forceNextPull();
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value

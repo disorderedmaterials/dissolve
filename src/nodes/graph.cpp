@@ -246,7 +246,7 @@ std::string Graph::location() const
 }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value
