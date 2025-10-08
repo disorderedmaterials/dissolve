@@ -62,14 +62,9 @@ class GraphArgonTest : public ::testing::Test
          * Set up configuration XYZ
          */
         ASSERT_TRUE(root_.addEdge({"Bulk", "Configuration", "BulkXYZ", "Configuration"}));
-
-        auto xyzFilePath = importConfigCoordsNode_->findOption("FilePath");
-        xyzFilePath->set<std::string>("dissolve2/argon/Ar_bulk_step1000.xyz");
-
-        auto xyzFormat = importConfigCoordsNode_->findOption("FileFormat");
-        xyzFormat->set<CoordinateImportFileFormat::CoordinateImportFormat>(
-            CoordinateImportFileFormat::CoordinateImportFormat::XYZ);
-
+        importConfigCoordsNode_->setOption<std::string>("FilePath", "dissolve2/argon/Ar_bulk_step1000.xyz");
+        importConfigCoordsNode_->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+            "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::XYZ);
         ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "Insert", "Configuration"}));
 
         if (advanced)
@@ -93,14 +88,10 @@ class GraphArgonTest : public ::testing::Test
             /*
              * Set up reference SQ data
              */
-            auto referenceSQFilePath = data1DImportNode_->findOption("Filepath");
-            referenceSQFilePath->set<std::string>("dissolve2/argon/yarnell.sq");
-
-            auto referenceSQFormat = data1DImportNode_->findOption("ImportFormat");
-            referenceSQFormat->set<Data1DImportFileFormat::Data1DImportFormat>(Data1DImportFileFormat::Data1DImportFormat::XY);
-
-            auto referenceSQRemoveAvgX = data1DImportNode_->findOption("RemoveAverageFromX");
-            referenceSQRemoveAvgX->set<std::optional<Number>>(9.0);
+            data1DImportNode_->setOption<std::string>("FilePath", "dissolve2/argon/yarnell.sq");
+            data1DImportNode_->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+                "ImportFormat", Data1DImportFileFormat::Data1DImportFormat::XY);
+            data1DImportNode_->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0);
 
             // Create nodes
             ASSERT_TRUE(root_.addEdge({"Insert", "Configuration", "AtomicMC", "Configuration"}));

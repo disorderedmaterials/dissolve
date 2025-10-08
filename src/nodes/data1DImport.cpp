@@ -7,7 +7,7 @@
 Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("Filepath", "File path", filePath_);
+    addOption<std::string>("FilePath", "File path", filePath_);
     addOption<Data1DImportFileFormat::Data1DImportFormat>("ImportFormat", "Format of imported data", format_);
     addOption<std::optional<Number>>("RemoveAverageFromX", "Remove average from X values", removeAverageFromX_);
     addOption<std::optional<Number>>("XMin", "Minimum X value", xMin_);
