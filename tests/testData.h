@@ -294,6 +294,21 @@ class DissolveSystemTest
 
         return checkDouble(quantity, A.value(), B, threshold);
     }
+    // Test Data1D (by tag and external file data)
+    [[nodiscard]] bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
+                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        Data1D compare;
+        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(compare))
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType, data, compare).error;
+        auto notOK = std::isnan(error) || error > tolerance;
+        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name,
+                         error, externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
+        return !notOK;
+    }
     // Test Data1D
     [[nodiscard]] static bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
                                           std::string_view nameB, double tolerance = 5.0e-3,
