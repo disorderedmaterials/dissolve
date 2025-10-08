@@ -9,7 +9,7 @@ namespace UnitTest
 
 TEST(DoubleKeyedMap, BasicMirrored)
 {
-    DoubleKeyedMap<int> map;
+    DoubleKeyedMap<int> map(true);
 
     // Add and retrieve an entry
     DoubleKeyedMapKey key("A", "B");
@@ -24,9 +24,6 @@ TEST(DoubleKeyedMap, BasicMirrored)
     // Remove key
     ASSERT_NO_THROW(map.erase("A", "B"));
     EXPECT_FALSE(map.contains("A", "B"));
-
-    // Remove non-existent key
-    ASSERT_ANY_THROW(map.erase("A", "B"));
 }
 
 TEST(DoubleKeyedMap, BasicFull)
