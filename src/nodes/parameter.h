@@ -397,10 +397,13 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 };
 
 // Primary type for a Parameter to a specific DataClass
-template <typename DataClass>
-class SerialisableParameter : public Parameter<DataClass>, public std::enable_shared_from_this<Parameter<DataClass>>
+template <typename DataClass> class SerialisableParameter : public Parameter<DataClass>
 {
-
+    public:
+    SerialisableParameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+        : Parameter<DataClass>(parent, name, description, value)
+    {
+    }
     // Helper templates for handling serialisation
 
     template <typename V> struct is_ptr_vector : std::false_type

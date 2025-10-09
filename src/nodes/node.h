@@ -161,8 +161,10 @@ class Node : public Serialisable<>
         if (findInput(optionName))
             Messenger::exception("Option '{}' already exists, and can't be added again.", optionName);
 
-        auto param = options_.emplace(std::make_pair(optionName, ParameterFactory::create(this, optionName, description, data)))
-                         .first->second;
+        auto param =
+            options_
+                .emplace(std::make_pair(optionName, ParameterFactory::createSerialisable(this, optionName, description, data)))
+                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
