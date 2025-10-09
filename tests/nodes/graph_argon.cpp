@@ -62,9 +62,9 @@ class GraphArgonTest : public ::testing::Test
          * Set up configuration XYZ
          */
         ASSERT_TRUE(root_.addEdge({"Bulk", "Configuration", "BulkXYZ", "Configuration"}));
-        importConfigCoordsNode_->setOption<std::string>("FilePath", "dissolve2/argon/Ar_bulk_step1000.xyz");
-        importConfigCoordsNode_->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-            "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::XYZ);
+        ASSERT_TRUE(importConfigCoordsNode_->setOption<std::string>("FilePath", "dissolve2/argon/Ar_bulk_step1000.xyz"));
+        ASSERT_TRUE(importConfigCoordsNode_->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+            "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
         ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "Insert", "Configuration"}));
 
         if (advanced)
@@ -88,10 +88,10 @@ class GraphArgonTest : public ::testing::Test
             /*
              * Set up reference SQ data
              */
-            data1DImportNode_->setOption<std::string>("FilePath", "dissolve2/argon/yarnell.sq");
-            data1DImportNode_->setOption<Data1DImportFileFormat::Data1DImportFormat>(
-                "ImportFormat", Data1DImportFileFormat::Data1DImportFormat::XY);
-            data1DImportNode_->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0);
+            ASSERT_TRUE(data1DImportNode_->setOption<std::string>("FilePath", "dissolve2/argon/yarnell.sq"));
+            ASSERT_TRUE(data1DImportNode_->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+                "ImportFormat", Data1DImportFileFormat::Data1DImportFormat::XY));
+            ASSERT_TRUE(data1DImportNode_->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
 
             // Create nodes
             ASSERT_TRUE(root_.addEdge({"Insert", "Configuration", "AtomicMC", "Configuration"}));
@@ -145,14 +145,16 @@ TEST_F(GraphArgonTest, AdvancedSimulation)
      */
     auto unweightedSQ = sqNode_->getOutputValue<std::optional<PartialSet>>("UnweightedSQ");
     ASSERT_NO_THROW_VERBOSE(unweightedSQ.has_value());
-    ASSERT_TRUE(DissolveSystemTest::checkData1D(unweightedSQ->total(), "UnweightedSQ", {"dissolve2/argon/SQ01-UnweightedSQ-total.sq"}));
+    ASSERT_TRUE(
+        DissolveSystemTest::checkData1D(unweightedSQ->total(), "UnweightedSQ", {"dissolve2/argon/SQ01-UnweightedSQ-total.sq"}));
 
     /*
      * Check neutron weighted SQ
      */
     auto weightedSQ = neutronSQNode_->getOutputValue<std::optional<PartialSet>>("WeightedSQ");
     ASSERT_NO_THROW_VERBOSE(weightedSQ.has_value());
-    ASSERT_TRUE(DissolveSystemTest::checkData1D(weightedSQ->total(), "WeightedSQ", {"dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq"}));
+    ASSERT_TRUE(DissolveSystemTest::checkData1D(weightedSQ->total(), "WeightedSQ",
+                                                {"dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq"}));
 }
 
 } // namespace UnitTest
