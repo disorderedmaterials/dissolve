@@ -5,8 +5,8 @@
 
 AddNode::AddNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<Number>("A", "First operand to the addition", a_);
-    addInput<Number>("B", "Second operand to the addition", b_);
+    addSerialisableInput<Number>("A", "First operand to the addition", a_);
+    addSerialisableInput<Number>("B", "Second operand to the addition", b_);
     addOutput<Number>("Result", "The sum of the operands", result_);
 }
 

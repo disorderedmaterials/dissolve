@@ -2,8 +2,8 @@
 
 DotProductNode::DotProductNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<Vector3>("U", "Vector dot product factor", u_);
-    addInput<Vector3>("V", "Vector dot product factor", v_);
+    addSerialisableInput<Vector3>("U", "Vector dot product factor", u_);
+    addSerialisableInput<Vector3>("V", "Vector dot product factor", v_);
     addOutput<Number>("Result", "The inner product of the vectors", dotProduct_);
 }
 

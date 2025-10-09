@@ -180,6 +180,19 @@ class Node : public Serialisable<>
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
+    // Add serialisable input parameter
+    template <class T>
+    std::shared_ptr<ParameterBase> addSerialisableInput(std::string_view inputName, std::string_view description, T &data)
+    {
+        if (findInput(inputName))
+            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
+
+        auto param =
+            inputs_.emplace(std::make_pair(inputName, ParameterFactory::createSerialisable(this, inputName, description, data)))
+                .first->second;
+        param->setFlags(ParameterBase::ParameterFlags::Input);
+        return param;
+    }
     // Add output parameter
     template <class T>
     std::shared_ptr<ParameterBase> addOutput(std::string_view outputName, std::string_view description, T &data)
