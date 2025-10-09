@@ -2,8 +2,8 @@
 
 MultiplyNode::MultiplyNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<Number>("A", "First factor to the multiplication", a_);
-    addInput<Number>("B", "Second factor to the multiplication", b_);
+    addSerialisableInput<Number>("A", "First factor to the multiplication", a_);
+    addSerialisableInput<Number>("B", "Second factor to the multiplication", b_);
     addOutput<Number>("Result", "The product of the two factors", result_);
 }
 
