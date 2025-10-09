@@ -54,6 +54,10 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
         else
             return data_.find(key(A, B));
     }
+    std::map<std::string, ValueClass>::const_iterator find(const std::pair<std::string_view, std::string_view> &pair) const
+    {
+        return find(pair.first, pair.second);
+    }
 
     public:
     // Clear data
@@ -84,9 +88,18 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
         if (it != data_.end())
             data_.erase(it);
     }
+    // Return key parts from supplied string
+    std::pair<std::string, std::string> keyPair(std::string_view key) const
+    {
+        auto keys = DissolveSys::splitString(key, separator_);
+        if (keys.size() != 2)
+            throw(std::runtime_error(std::format("DoubleKeyedMap - can't split supplied key '{}' into a key pair.\n", key)));
+        return {std::string(keys[0]), std::string(keys[1])};
+    }
     // Return whether the specified key exists
     bool contains(const std::pair<std::string_view, std::string_view> &pair) const { return contains(pair.first, pair.second); }
     bool contains(std::string_view A, std::string_view B) const { return find(A, B) != data_.end(); }
+    bool contains(std::string_view key) const { return find(keyPair(key)) != data_.end(); }
     // Get keyed value
     ValueClass &operator[](const std::string_view key) { return get(key); }
     const ValueClass &operator[](const std::string_view key) const { return get(key); }
@@ -132,14 +145,6 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
     const std::map<std::string, ValueClass> &map() const { return data_; }
     // Return number of data in map
     int size() const { return data_.size(); }
-    // Return key parts from supplied string
-    std::pair<std::string, std::string> keyPair(std::string_view key) const
-    {
-        auto keys = DissolveSys::splitString(key, separator_);
-        if (keys.size() != 2)
-            throw(std::runtime_error(std::format("DoubleKeyedMap - can't split supplied key '{}' into a key pair.\n", key)));
-        return {std::string(keys[0]), std::string(keys[1])};
-    }
 
     /*
      * Look-Up Table
