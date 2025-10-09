@@ -161,8 +161,10 @@ class Node : public Serialisable<>
         if (findInput(optionName))
             Messenger::exception("Option '{}' already exists, and can't be added again.", optionName);
 
-        auto param = options_.emplace(std::make_pair(optionName, ParameterFactory::create(this, optionName, description, data)))
-                         .first->second;
+        auto param =
+            options_
+                .emplace(std::make_pair(optionName, ParameterFactory::createSerialisable(this, optionName, description, data)))
+                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }
@@ -175,6 +177,19 @@ class Node : public Serialisable<>
 
         auto param = inputs_.emplace(std::make_pair(inputName, ParameterFactory::create(this, inputName, description, data)))
                          .first->second;
+        param->setFlags(ParameterBase::ParameterFlags::Input);
+        return param;
+    }
+    // Add serialisable input parameter
+    template <class T>
+    std::shared_ptr<ParameterBase> addSerialisableInput(std::string_view inputName, std::string_view description, T &data)
+    {
+        if (findInput(inputName))
+            Messenger::exception("Input parameter '{}' already exists, and can't be added again.", inputName);
+
+        auto param =
+            inputs_.emplace(std::make_pair(inputName, ParameterFactory::createSerialisable(this, inputName, description, data)))
+                .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Input);
         return param;
     }

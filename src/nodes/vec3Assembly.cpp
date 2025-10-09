@@ -2,9 +2,9 @@
 
 Vec3AssemblyNode::Vec3AssemblyNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<double>("X", "The x value of the assembled vector", x_);
-    addInput<double>("Y", "The y value of the assembled vector", y_);
-    addInput<double>("Z", "The z value of the assembled vector", z_);
+    addSerialisableInput<double>("X", "The x value of the assembled vector", x_);
+    addSerialisableInput<double>("Y", "The y value of the assembled vector", y_);
+    addSerialisableInput<double>("Z", "The z value of the assembled vector", z_);
     addOutput<Vector3>("V", "The assembled vector", outputVector_);
 }
 

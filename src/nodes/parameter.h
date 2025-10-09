@@ -21,6 +21,7 @@
 class Node;
 class ParameterBase;
 template <typename T> class Parameter;
+template <typename T> class SerialisableParameter;
 
 // Parameter Proxy
 template <class T> class ParameterProxy
@@ -179,6 +180,12 @@ std::shared_ptr<ParameterBase> createPointer(Node *parent, std::string_view name
                                              std::optional<DataClass> &fromOptional)
 {
     return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromOptional);
+}
+template <typename DataClass>
+std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view name, std::string_view description,
+                                                  DataClass &value)
+{
+    return std::make_shared<SerialisableParameter<DataClass>>(parent, name, description, value);
 }
 }; // namespace ParameterFactory
 
@@ -387,7 +394,16 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
         return {inputParameter, outputParameter};
     }
+};
 
+// Primary type for a Parameter to a specific DataClass
+template <typename DataClass> class SerialisableParameter : public Parameter<DataClass>
+{
+    public:
+    SerialisableParameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+        : Parameter<DataClass>(parent, name, description, value)
+    {
+    }
     // Helper templates for handling serialisation
 
     template <typename V> struct is_ptr_vector : std::false_type
@@ -409,20 +425,20 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
         // Serialise non-pointer values
         if constexpr (HasEnumOptions<DataClass>)
-            result["data"] = getEnumOptions(data_).serialise(data_);
+            result["data"] = getEnumOptions(Parameter<DataClass>::data_).serialise(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, Number>::value)
-            result["data"] = data_;
+            result["data"] = Parameter<DataClass>::data_;
         else if constexpr (std::is_convertible<DataClass, std::string>::value)
-            result["data"] = data_;
+            result["data"] = Parameter<DataClass>::data_;
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
-            if (data_)
-                result["data"] = *data_;
+            if (Parameter<DataClass>::data_)
+                result["data"] = *Parameter<DataClass>::data_;
         }
         else if constexpr (serialisablePointer<DataClass>)
-            result["data"] = data_->serialise();
+            result["data"] = Parameter<DataClass>::data_->serialise();
         else
-            result["data"] = data_;
+            result["data"] = Parameter<DataClass>::data_;
 
         return result;
     };
@@ -431,39 +447,39 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     {
         if constexpr (std::is_pointer<DataClass>::value)
         {
-            data_ = nullptr;
+            Parameter<DataClass>::data_ = nullptr;
         }
         else if constexpr (is_ptr_vector<DataClass>::value)
-            data_.clear();
+            Parameter<DataClass>::data_.clear();
         else if constexpr (HasEnumOptions<DataClass>)
         {
             DataClass proxy; // Fake T value to get the correct overload
-            data_ = getEnumOptions(proxy).deserialise(node);
+            Parameter<DataClass>::data_ = getEnumOptions(proxy).deserialise(node);
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
         {
             if (node.contains("data"))
-                data_ = toml::find<double>(node, "data");
+                Parameter<DataClass>::data_ = toml::find<double>(node, "data");
             else
-                data_ = {};
+                Parameter<DataClass>::data_ = {};
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (node.contains("data"))
-                data_ = toml::find<Number>(node, "data");
+                Parameter<DataClass>::data_ = toml::find<Number>(node, "data");
             else
-                data_ = {};
+                Parameter<DataClass>::data_ = {};
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<Data1D>>::value)
         {
             if (node.contains("data"))
-                data_ = toml::find<Data1D>(node, "data");
+                Parameter<DataClass>::data_ = toml::find<Data1D>(node, "data");
             else
-                data_ = {};
+                Parameter<DataClass>::data_ = {};
         }
         else
         {
-            data_ = toml::find<DataClass>(node, "data");
+            Parameter<DataClass>::data_ = toml::find<DataClass>(node, "data");
         }
     }
 };
