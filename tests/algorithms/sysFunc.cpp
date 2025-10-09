@@ -142,6 +142,36 @@ TEST(SysFunc, StringSplitSimple)
     EXPECT_TRUE(expected == v);
 }
 
+TEST(SysFunc, StringSplitMultiple)
+{
+    const std::vector<std::string_view> abcd = {"A", "B", "C", "D"};
+
+    // -- Two character delimiter
+    auto split = DissolveSys::splitString("A//B//C//D", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Trailing two character delimiter
+    split = DissolveSys::splitString("A//B//C//D//", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Leading two character delimiter
+    split = DissolveSys::splitString("//A//B//C//D", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Leading and trailing two character delimiter
+    split = DissolveSys::splitString("//A//B//C//D//", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Larger delimiter
+    split = DissolveSys::splitString("AanklesBanklesCanklesDankles", "ankles");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+}
+
 TEST(SysFunc, StringStripping)
 {
     // String strip
