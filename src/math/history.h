@@ -9,11 +9,10 @@
 #include <vector>
 
 // Serialisable Data History
-// Requires that the template class T is itself a Serialisable
+// Requires that the template class T is itself a Serialisable and implements the += and * operators
 template <class T> class History : public Serialisable<>
 {
     public:
-    History() = default;
     History(std::function<T()> initialiser = {}) : initialiser_(std::move(initialiser)) {}
 
     private:
@@ -23,16 +22,21 @@ template <class T> class History : public Serialisable<>
     std::function<T()> initialiser_{};
 
     public:
-    // Update history with supplied data and return current average
-    T average(const T &currentData, int averagingLength)
+    // Push data into the history and return current average
+    T push(const T &data, int averagingLength)
     {
         // Push the current data onto the history stack
-        history_.emplace_back(std::make_unique<T>(currentData));
+        history_.emplace_back(std::make_unique<T>(data));
 
         // Prune old data to get to the averagingLength
         while (history_.size() > averagingLength)
             history_.erase(history_.begin());
 
+        return average();
+    }
+    // Return the current average value
+    T average() const
+    {
         // Perform averaging of the datasets that we have
         T averaged = initialiser_ ? initialiser_() : T();
 
