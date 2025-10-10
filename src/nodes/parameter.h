@@ -274,17 +274,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     using DataGetter = std::function<DataClass()>;
     DataGetter dataGetter_{[&]() { return data_; }};
     // Setter for target data, defaulting to simple 1-to-1 copy as long as equality fails
-    using DataSetter = std::function<bool(const DataClass &value)>;
-    DataSetter dataSetter_{[&](const DataClass &value)
-                           {
-                               if (data_ != value)
-                               {
-                                   data_ = value;
-                                   return true;
-                               }
-                               else
-                                   return false;
-                           }};
+    using DataSetter = std::function<void(const DataClass &value)>;
+    DataSetter dataSetter_{[&](const DataClass &value) { data_ = value; }};
     // Initial value
     const DataClass default_;
     // Parameter proxy data (if a ParameterLink)
@@ -311,8 +302,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             return true;
         return false;
     }
-    // Return whether the contained data represents the default value
-    bool isDefault() const override { return data_ == default_; }
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override
     {
@@ -373,8 +362,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Set the parameter value
     void setData(const DataClass &value)
     {
-        if (dataSetter_(value))
-            updateAfterSet();
+        dataSetter_(value);
+        updateAfterSet();
     }
     // Return the parameter value
     virtual DataClass getData() { return dataGetter_(); }
@@ -418,6 +407,8 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
      * Serialisation
      */
     public:
+    // Return whether the contained data represents the default value
+    bool isDefault() const override { return Parameter<DataClass>::data_ == Parameter<DataClass>::default_; }
     // Express as a serialised value
     SerialisedValue serialise() const override
     {
@@ -481,45 +472,5 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         {
             Parameter<DataClass>::data_ = toml::find<DataClass>(node, "data");
         }
-    }
-};
-
-// Template specialisation for non-defaulted type Function1DWrapper
-template <>
-class Parameter<Function1DWrapper> : public ParameterBase, public std::enable_shared_from_this<Parameter<Function1DWrapper>>
-{
-    public:
-    Parameter(Node *parent, std::string_view name, std::string_view description, Function1DWrapper &value)
-        : ParameterBase(parent, name, description, std::type_index(typeid(Function1DWrapper))), data_(value), default_(value)
-    {
-    }
-
-    /*
-     * Definition
-     */
-    public:
-    // Return the number of allowed input edges
-    AllowedEdgeCount nAllowedInputEdges() const override { return AllowedEdgeCount::Zero; }
-
-    /*
-     * Data
-     */
-    protected:
-    // Reference to target data
-    Function1DWrapper &data_;
-    // Initial value
-    const Function1DWrapper default_;
-
-    public:
-    // Assign the value of another parameter to this one
-    bool assign(ParameterBase *other) override { return false; }
-    // Return whether this parameter accepts the output type of the other
-    bool acceptsOutput(ParameterBase *other) const override { return false; }
-    // Return whether the contained data represents the default value
-    bool isDefault() const override { return false; }
-    // Create a parameter link (input - data proxy - output) for the derived class type
-    ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const override
-    {
-        throw(std::runtime_error("Can't create a ParameterLink for a Function1DWrapper.\n"));
     }
 };

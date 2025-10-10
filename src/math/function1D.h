@@ -36,6 +36,15 @@ class Function1DDefinition
     Function1DDefinition() = default;
     Function1DDefinition(const std::vector<std::string> &parameterNames, Function1DXOmega valueFunction);
 
+    bool operator==(const Function1DDefinition &other)
+    {
+        return parameterNames_ == other.parameterNames_ && properties_ == other.properties_;
+    }
+    bool operator!=(const Function1DDefinition &other)
+    {
+        return parameterNames_ != other.parameterNames_ || properties_ != other.properties_;
+    }
+
     private:
     // Names of parameters defining the function
     std::vector<std::string> parameterNames_;
@@ -115,6 +124,15 @@ class Function1DWrapper : public Serialisable<>
 {
     public:
     Function1DWrapper(Functions1D::Form form = Functions1D::Form::None, const std::vector<double> &params = {});
+
+    bool operator==(const Function1DWrapper &other)
+    {
+        return form_ == other.form_ && parameters_ == other.parameters_ && internalParameters_ == other.internalParameters_;
+    }
+    bool operator!=(const Function1DWrapper &other)
+    {
+        return form_ != other.form_ || parameters_ != other.parameters_ || internalParameters_ != other.internalParameters_;
+    }
 
     /*
      * Function
