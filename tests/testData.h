@@ -296,7 +296,8 @@ class DissolveSystemTest
     }
     // Test Data1D (by tag and external file data)
     [[nodiscard]] static bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
-                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+                                          double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
         Data1D compare;
         if (!externalFileFormat.fileExists() || !externalFileFormat.importData(compare))
