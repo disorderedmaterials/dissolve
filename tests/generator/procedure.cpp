@@ -8,6 +8,7 @@
 #include "generator/parameters.h"
 #include "generator/select.h"
 #include "keywords/node.h"
+#include "keywords/vec3DoubleVector.h"
 #include <gtest/gtest.h>
 #include <string>
 
@@ -112,7 +113,7 @@ TEST(GeneratorTest, ArrayNode)
     Generator generator;
 
     // Create ArrayNode
-    auto arrayNode = generator.createRootNode<ArrayNode>("Array");
+    auto arrayNode = generator.createRootNode<ArrayNode>("Array", GeneratorNode::NodeType::Array);
 
     // Add sites to ArrayNode
     arrayNode->addSite(Site(Vector3D(0.0, 0.0, 0.0)));

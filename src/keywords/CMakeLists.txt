@@ -74,6 +74,7 @@ add_library(
   store.h
   rangeVector.h
   vec3Double.h
+  vec3DoubleVector.h
   vec3Integer.h
   vec3Labels.h
   vec3NodeValue.h
