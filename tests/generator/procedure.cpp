@@ -2,7 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "generator/add.h"
-#include "generator/arrayNode.h" 
+#include "generator/arrayNode.h"
 #include "generator/box.h"
 #include "generator/generator.h"
 #include "generator/parameters.h"
