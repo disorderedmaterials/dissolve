@@ -40,6 +40,7 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
                     saveRepresentativeGR_);
     addOption<bool>("SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
     addOptionalPointerOutput<PartialSet>("WeightedSQ", "Weighted partials for target configuration", weightedSQ_);
+    addOptionalPointerOutput<PartialSet>("WeightedGR", "Weighted partials for target configuration", weightedGR_);
 
     // Serialisables
     addSerialisable("weightedGR", weightedGR_);

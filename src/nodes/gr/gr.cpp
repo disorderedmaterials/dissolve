@@ -34,6 +34,8 @@ GRNode::GRNode(Graph *parentGraph)
         internalTest_);
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
+    addOptionalPointerOutput<PartialSet>("RawGR", "Origin (unbroadened) partials for the target configuration", rawGR_);
+    addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Serialisables
     addSerialisable("rawGR", rawGR_);
