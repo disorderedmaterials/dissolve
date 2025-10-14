@@ -41,6 +41,7 @@ TEST_F(PhantomAtomsTest, Basic)
     procedure.createRootNode<AddGeneratorNode>("ArtAr", artAr, nMolecules);
 
     // Set up the prior configuration
+    dissolve.updatePairPotentials();
     cfg->generate({dissolve});
 
     // Basic species checks
