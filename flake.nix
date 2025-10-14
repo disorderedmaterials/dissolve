@@ -1,5 +1,6 @@
 {
   inputs = {
+    self.submodules = true;
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     outdated.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixGL-src.url = "github:guibou/nixGL";
