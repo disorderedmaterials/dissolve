@@ -321,24 +321,27 @@ std::string DissolveSys::replace(const std::string_view source, const std::strin
 std::vector<std::string_view> DissolveSys::splitString(std::string_view str, std::string_view delim)
 {
     std::vector<std::string_view> parts;
-    auto index = 0;
+    size_t index = 0;
     while (true)
     {
         // Search for the next occurrence of the delimiter
         auto found = str.find(delim, index);
         if (found == std::string::npos)
         {
+            // No more delimiters, so add on any remaining characters as the final part
             if (index < str.size())
                 parts.emplace_back(str.substr(index));
             break;
         }
 
-        // Consume consecutive delimiters
-        if ((found - index) >= delim.size())
+        // Store the current string fragment from index->found if we didn't find a delimiter at the starting index
+        if (found != index)
             parts.emplace_back(str.substr(index, found - index));
 
+        // Move to character after current delimiter
         index = found + delim.size();
     }
+
     return parts;
 }
 
