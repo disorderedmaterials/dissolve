@@ -606,8 +606,8 @@ void PartialSet::deserialise(SerialisedValue node)
                         { realSpeciesPopulations_[name] = population.as_floating(); });
 
     partials_.deserialise(node["partials"]);
-    partials_.deserialise(node["boundPartials"]);
-    partials_.deserialise(node["unboundPartials"]);
+    boundPartials_.deserialise(node["boundPartials"]);
+    unboundPartials_.deserialise(node["unboundPartials"]);
 
     total_.deserialise(node["total"]);
     boundTotal_.deserialise(node["boundTotal"]);
