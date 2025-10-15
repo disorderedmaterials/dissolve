@@ -17,8 +17,8 @@ class PotentialMap
 {
     public:
     PotentialMap() = default;
-    PotentialMap(const std::vector<const AtomType *> &atomTypes,
-                 const DoubleKeyedMap<std::shared_ptr<PairPotential>> &pairPotentials, double pairPotentialRange);
+    PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials,
+                 double pairPotentialRange);
     ~PotentialMap() = default;
     // Clear all data
     void clear();
@@ -30,7 +30,7 @@ class PotentialMap
     // Number of unique types forming the matrix
     int nTypes_;
     // PairPotential matrix
-    Array2D<PairPotential *> potentialMatrix_;
+    Array2D<const PairPotential *> potentialMatrix_;
     // PairPotential range
     double range_;
 
