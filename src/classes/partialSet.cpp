@@ -392,7 +392,9 @@ void PartialSet::operator+=(const PartialSet &source)
         unboundPartials_.map()[key] += partial;
 
     // Add total function
-    Interpolator::addInterpolated(source.total(), total_);
+    Interpolator::addInterpolated(source.total_, total_);
+    Interpolator::addInterpolated(source.boundTotal_, boundTotal_);
+    Interpolator::addInterpolated(source.unboundTotal_, unboundTotal_);
 }
 
 void PartialSet::operator-=(const double delta) { adjust(-delta); }
