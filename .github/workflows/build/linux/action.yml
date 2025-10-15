@@ -72,33 +72,33 @@ runs:
       mkdir packages-binary
       cp -v binary packages-binary/${{ inputs.target }}-${{ inputs.currentVersion }}
 
-  - name: Run benchmarks
-    if: inputs.benchmark == 'true'
-    shell: bash
-    run: |
-      set -ex
-      export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
+  # - name: Run benchmarks
+  #   if: inputs.benchmark == 'true'
+  #   shell: bash
+  #   run: |
+  #     set -ex
+  #     export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
 
-      nix build -L .#benchmarks
-      rm result
-      nix run -L .#benchmarks > all_benchmark_results.json
+  #     nix build -L .#benchmarks
+  #     rm result
+  #     nix run -L .#benchmarks > all_benchmark_results.json
 
-      cat all_benchmark_results.json
+  #     cat all_benchmark_results.json
 
       # Must reset to HEAD here otherwise the benchmark publishing step will (rightly) fail
-      git reset HEAD --hard
+      # git reset HEAD --hard
 
-  - name: Store benchmark result
-    uses: benchmark-action/github-action-benchmark@v1
-    if: inputs.publishBenchmarks == 'true' && inputs.benchmark == 'true'
-    with:
-      tool: 'googlecpp'
-      output-file-path: all_benchmark_results.json
-      github-token: ${{ github.token }}
-      auto-push: true
-      comment-on-alert: true
-      alert-threshold: '200%'
-      alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
+  # - name: Store benchmark result
+  #   uses: benchmark-action/github-action-benchmark@v1
+  #   if: inputs.publishBenchmarks == 'true' && inputs.benchmark == 'true'
+  #   with:
+  #     tool: 'googlecpp'
+  #     output-file-path: all_benchmark_results.json
+  #     github-token: ${{ github.token }}
+  #     auto-push: true
+  #     comment-on-alert: true
+  #     alert-threshold: '200%'
+  #     alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
 
   - name: Tidy nix Store
     if: inputs.cacheOnly == 'true'
