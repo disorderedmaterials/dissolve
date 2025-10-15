@@ -83,6 +83,7 @@ template <class T> void tomlRoundTrip(T &a, T &b)
     SerialisedValue serialised;
     auto s = std::make_shared<SerialisableClass<T>>("data", a);
     ASSERT_NO_THROW(serialised = s->serialise());
+
     auto d = std::make_shared<SerialisableClass<T>>("data", b);
     ASSERT_NO_THROW(d->deserialise(serialised));
 }

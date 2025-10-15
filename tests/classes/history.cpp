@@ -99,9 +99,10 @@ TEST(History, CustomClassWithInitialiser)
 
     PartialSet p;
     p.initialise(pop);
+    p.partials().get("Ar//Ar") = dcos + dsin;
     p.boundPartials().get("Ar//Ar") = dcos;
-    p.boundTotal() = dcos;
     p.unboundPartials().get("Ar//Ar") = dsin;
+    p.boundTotal() = dcos;
     p.unboundTotal() = dsin;
     p.total() = dcos * 2.0;
 
@@ -109,6 +110,8 @@ TEST(History, CustomClassWithInitialiser)
     for (auto n = 0; n < 3; ++n)
     {
         auto avg = a.push(p, avgLength);
+        EXPECT_TRUE(
+            DissolveSystemTest::checkData1D(p.partials().get("Ar//Ar"), "Partial", avg.partials().get("Ar//Ar"), "Averaged"));
         EXPECT_TRUE(DissolveSystemTest::checkData1D(p.boundPartials().get("Ar//Ar"), "BoundPartial",
                                                     avg.boundPartials().get("Ar//Ar"), "Averaged"));
         EXPECT_TRUE(DissolveSystemTest::checkData1D(p.boundTotal(), "BoundTotal", avg.boundTotal(), "Averaged"));
@@ -125,6 +128,8 @@ TEST(History, CustomClassWithInitialiser)
     for (auto n = 1; n <= 3; ++n)
     {
         auto avg = a.push(p, avgLength);
+        EXPECT_TRUE(
+            DissolveSystemTest::checkData1D(p.partials().get("Ar//Ar"), "Partial", avg.partials().get("Ar//Ar"), "Averaged"));
         EXPECT_TRUE(DissolveSystemTest::checkData1D((dcos * (avgLength - n) - dsin * n) / avgLength, "BoundPartial",
                                                     avg.boundPartials().get("Ar//Ar"), "Averaged"));
         EXPECT_TRUE(DissolveSystemTest::checkData1D((dsin * (avgLength - n) - dcos * n) / avgLength, "UnboundPartial",
