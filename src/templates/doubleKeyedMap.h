@@ -171,15 +171,7 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
     SerialisedValue serialise() const override
     {
         SerialisedValue result;
-        SerialisedValue map;
-        for (const auto &[key, value] : data_)
-        {
-            if constexpr (std::is_trivial_v<ValueClass>)
-                map[std::string(key)] = value;
-            else
-                map[std::string(key)] = value.serialise();
-        }
-        result["map"] = map;
+        Serialisable::fromMap(data_, "map", result);
         return result;
     };
     // Read values from a serialisable value
