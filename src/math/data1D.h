@@ -96,12 +96,18 @@ class Data1D : public Data1DBase, public Serialisable<>
     public:
     bool operator==(const Data1D &other) const;
     void operator=(const Data1D &source);
+    Data1D operator+(const Data1D &source) const;
     void operator+=(const Data1D &source);
+    Data1D operator+(const double delta) const;
     void operator+=(const double delta);
+    Data1D operator-(const Data1D &source) const;
     void operator-=(const Data1D &source);
+    Data1D operator-(const double delta) const;
     void operator-=(const double delta);
+    Data1D operator*(const double factor) const;
     void operator*=(const double factor);
     void operator*=(const std::vector<double> &factors);
+    Data1D operator/(const double factor) const;
     void operator/=(const double factor);
 
     /*
