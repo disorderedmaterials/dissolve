@@ -16,6 +16,8 @@
 #include "modules/benchmark/gui/benchmarkWidget.h"
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/braggWidget.h"
+#include "modules/cgNeutronSQ/cgNeutronSQ.h"
+#include "modules/cgNeutronSQ/gui/cgNeutronSQWidget.h"
 #include "modules/clustering/clustering.h"
 #include "modules/clustering/gui/clusteringWidget.h"
 #include "modules/compare/compare.h"
@@ -75,6 +77,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<AxisAngleModule, AxisAngleModuleWidget>();
     registerProducer<BenchmarkModule, BenchmarkModuleWidget>();
     registerProducer<BraggModule, BraggModuleWidget>();
+    registerProducer<CGNeutronSQModule, CGNeutronSQModuleWidget>();
     registerProducer<CompareModule, CompareModuleWidget>();
     registerProducer<ClusteringModule, ClusteringModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
