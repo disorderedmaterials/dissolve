@@ -168,7 +168,6 @@ template <typename... Contexts> class Serialisable
         std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
         return result;
     }
-
     // A helper function to add the elements of a map to a node under a name
     template <typename K, typename V> static void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node)
     {
@@ -176,6 +175,8 @@ template <typename... Contexts> class Serialisable
         for (auto &[key, value] : map)
             if constexpr (serialisablePointer<V>)
                 result[std::string(key)] = value->serialise();
+            else if constexpr (std::is_base_of_v<Serialisable, V>)
+                result[std::string(key)] = value.serialise();
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value
@@ -184,7 +185,6 @@ template <typename... Contexts> class Serialisable
         if (!map.empty())
             node[name] = result;
     }
-
     // A helper function to add the elements of a map to a node under a name
     // Only add values that pass the test lambda
     template <typename K, typename V, typename Lambda>
