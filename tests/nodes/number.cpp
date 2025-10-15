@@ -195,12 +195,14 @@ TEST(NumberTest, BoundedAddition)
 
 TEST(NumberTest, AdditionAssignment)
 {
-    // Addition of anything to an integer maintains the integer type
+    // Addition of two integers always results in an integer
     Number a(1);
     EXPECT_TRUE((a += 2).isInteger());
     EXPECT_EQ(a.asInteger(), 3);
-    EXPECT_TRUE((a += 2.0).isInteger());
-    EXPECT_DOUBLE_EQ(a.asInteger(), 5);
+
+    // Addition of a double to an integer results in a double
+    EXPECT_TRUE((a += 2.0).isDouble());
+    EXPECT_DOUBLE_EQ(a.asDouble(), 5.0);
 
     // Addition to a double always results in a double
     a = 1.0;
@@ -259,12 +261,14 @@ TEST(NumberTest, BoundedSubtraction)
 
 TEST(NumberTest, SubtractionAssignment)
 {
-    // Subtraction of anything from an integer maintains the integer type
+    // Subtraction of an integer from an integer maintains the integer type
     Number a(1);
     EXPECT_TRUE((a -= 2).isInteger());
     EXPECT_EQ(a.asInteger(), -1);
-    EXPECT_TRUE((a -= 2.0).isInteger());
-    EXPECT_DOUBLE_EQ(a.asInteger(), -3);
+
+    // Subtraction of a double from an integer results in a double
+    EXPECT_TRUE((a -= 2.0).isDouble());
+    EXPECT_DOUBLE_EQ(a.asDouble(), -3.0);
 
     // Subtraction from a double always results in a double
     a = 1.0;
@@ -337,12 +341,14 @@ TEST(NumberTest, BoundedMultiply)
 
 TEST(NumberTest, MultiplyAssignment)
 {
-    // Multiplication of anything with an integer maintains the integer type
+    // Multiplication of integer with an integer maintains the integer type
     Number a(1);
     EXPECT_TRUE((a *= 2).isInteger());
     EXPECT_EQ(a.asInteger(), 2);
-    EXPECT_TRUE((a *= 2.0).isInteger());
-    EXPECT_DOUBLE_EQ(a.asInteger(), 4);
+
+    // Multiplying an integer with a double results in a double
+    EXPECT_TRUE((a *= 2.0).isDouble());
+    EXPECT_DOUBLE_EQ(a.asDouble(), 4.0);
 
     // Multiplication of a double always results in a double
     a = 1.0;
@@ -410,12 +416,14 @@ TEST(NumberTest, BoundedDivision)
 
 TEST(NumberTest, DivisionAssignment)
 {
-    // Division of an integer by anything maintains the integer type
+    // Division of an integer by an integer maintains the integer type
     Number a(2);
     EXPECT_TRUE((a /= 2).isInteger());
     EXPECT_EQ(a.asInteger(), 1);
-    EXPECT_TRUE((a /= 2.0).isInteger());
-    EXPECT_DOUBLE_EQ(a.asInteger(), 0);
+
+    // Dividing an integer by a double results in a double
+    EXPECT_TRUE((a /= 2.0).isDouble());
+    EXPECT_DOUBLE_EQ(a.asDouble(), 0.5);
 
     // Division of a double always results in a double
     a = 2.0;
