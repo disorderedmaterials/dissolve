@@ -131,8 +131,13 @@ TEST(History, CustomClassWithInitialiser)
                                                     avg.unboundPartials().get("Ar//Ar"), "Averaged"));
     }
 
-    // tomlRoundTrip(a, b);
-    // EXPECT_TRUE(DissolveSystemTest::checkData1D(a.average(), "A", b.average(), "B"));
+    tomlRoundTrip(a, b);
+    auto avgA = a.average();
+    auto avgB = b.average();
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(avgA.boundPartials().get("Ar//Ar"), "BoundPartialA",
+                                                avgB.boundPartials().get("Ar//Ar"), "BoundPartialB"));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(avgA.unboundPartials().get("Ar//Ar"), "UnboundPartialA",
+                                                avgB.unboundPartials().get("Ar//Ar"), "UnboundPartialB"));
 }
 
 } // namespace UnitTest
