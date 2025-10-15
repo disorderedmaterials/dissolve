@@ -142,8 +142,8 @@ class PairPotential : Serialisable<>
     // Return spacing between points
     double delta() const;
     // Return potential at specified r
-    double energy(double r);
-    double energy(double r, double elecScale, double srScale);
+    double energy(double r) const;
+    double energy(double r, double elecScale, double srScale) const;
     // Return analytic potential at specified r, including Coulomb term from local charge product
     double analyticEnergy(double r, double elecScale, double srScale) const;
     // Return analytic potential at specified r, including Coulomb term from supplied charge product
@@ -154,8 +154,8 @@ class PairPotential : Serialisable<>
     analyticCoulombEnergy(double qiqj, double r,
                           PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme()) const;
     // Return derivative of potential at specified r
-    double force(double r);
-    double force(double r, double elecScale, double srScale);
+    double force(double r) const;
+    double force(double r, double elecScale, double srScale) const;
     // Return analytic force at specified r, including Coulomb term from local charge product
     double analyticForce(double r, double elecScale, double srScale) const;
     // Return analytic force at specified r, including Coulomb term from supplied charge product

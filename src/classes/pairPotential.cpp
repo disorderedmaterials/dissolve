@@ -255,13 +255,13 @@ double PairPotential::range() const { return range_; }
 double PairPotential::delta() const { return delta_; }
 
 // Return potential at specified r
-double PairPotential::energy(double r)
+double PairPotential::energy(double r) const
 {
     assert(r >= 0);
 
     return totalPotentialInterpolation_.y(r, r * rDelta_);
 }
-double PairPotential::energy(double r, double elecScale, double srScale)
+double PairPotential::energy(double r, double elecScale, double srScale) const
 {
     assert(r >= 0);
 
@@ -302,13 +302,13 @@ double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential
 }
 
 // Return derivative at specified r
-double PairPotential::force(double r)
+double PairPotential::force(double r) const
 {
     assert(r >= 0);
 
     return -totalDerivativeInterpolation_.y(r, r * rDelta_);
 }
-double PairPotential::force(double r, double elecScale, double srScale)
+double PairPotential::force(double r, double elecScale, double srScale) const
 {
     assert(r >= 0);
 
