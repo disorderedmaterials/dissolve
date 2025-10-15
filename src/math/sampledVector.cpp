@@ -207,3 +207,18 @@ bool SampledVector::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue SampledVector::serialise() const
+{
+    return {{"count", count_}, {"mean", mean_}, {"stDev", stDev_}, {"m2", m2_}};
+}
+
+// Read values from a serialisable value
+void SampledVector::deserialise(const SerialisedValue &node)
+{
+    count_ = toml::find<int>(node, "count");
+    mean_ = toml::find<std::vector<double>>(node, "mean");
+    stDev_ = toml::find<std::vector<double>>(node, "stDev");
+    m2_ = toml::find<std::vector<double>>(node, "m2");
+}
