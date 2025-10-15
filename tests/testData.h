@@ -80,13 +80,11 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
 // Serialise A and deserialise into B
 template <class T> void tomlRoundTrip(T &a, T &b)
 {
-    // Serialise
+    SerialisedValue serialised;
     auto s = std::make_shared<SerialisableClass<T>>("data", a);
-    auto serialised = s->serialise();
-
-    // Deserialise
+    ASSERT_NO_THROW(serialised = s->serialise());
     auto d = std::make_shared<SerialisableClass<T>>("data", b);
-    d->deserialise(serialised);
+    ASSERT_NO_THROW(d->deserialise(serialised));
 }
 
 /*
