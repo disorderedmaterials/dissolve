@@ -284,6 +284,13 @@ void Data1D::operator=(const Data1D &source)
     ++version_;
 }
 
+Data1D Data1D::operator+(const Data1D &source) const
+{
+    auto result = *this;
+    result += source;
+    return result;
+}
+
 void Data1D::operator+=(const Data1D &source)
 {
     // If no data is present, simply copy the other arrays
@@ -303,11 +310,25 @@ void Data1D::operator+=(const Data1D &source)
     std::transform(source.values().begin(), source.values().end(), values_.begin(), values_.begin(), std::plus<>());
 }
 
+Data1D Data1D::operator+(const double delta) const
+{
+    auto result = *this;
+    result += delta;
+    return result;
+}
+
 void Data1D::operator+=(const double delta)
 {
     std::transform(values_.begin(), values_.end(), values_.begin(), [delta](auto value) { return value + delta; });
 
     ++version_;
+}
+
+Data1D Data1D::operator-(const Data1D &source) const
+{
+    auto result = *this;
+    result -= source;
+    return result;
 }
 
 void Data1D::operator-=(const Data1D &source)
@@ -329,11 +350,25 @@ void Data1D::operator-=(const Data1D &source)
     ++version_;
 }
 
+Data1D Data1D::operator-(const double delta) const
+{
+    auto result = *this;
+    result -= delta;
+    return result;
+}
+
 void Data1D::operator-=(const double delta)
 {
     std::transform(values_.begin(), values_.end(), values_.begin(), [delta](auto value) { return value - delta; });
 
     ++version_;
+}
+
+Data1D Data1D::operator*(const double factor) const
+{
+    auto result = *this;
+    result *= factor;
+    return result;
 }
 
 void Data1D::operator*=(const double factor)
@@ -351,6 +386,13 @@ void Data1D::operator*=(const std::vector<double> &factors)
     assert(x_.size() == factors.size());
 
     std::transform(values_.begin(), values_.end(), factors.begin(), values_.begin(), std::multiplies<>());
+}
+
+Data1D Data1D::operator/(const double factor) const
+{
+    auto result = *this;
+    result /= factor;
+    return result;
 }
 
 void Data1D::operator/=(const double factor)
