@@ -23,8 +23,7 @@ Number Number::operator+(const Number &other) const
 
 Number &Number::operator+=(const Number &other)
 {
-    std::visit([](auto &a, auto b) { a += b; }, value_, other.value_);
-    set(value_);
+    set(std::visit([](auto &a, auto b) -> Number { return a + b; }, value_, other.value_));
     return *this;
 }
 
@@ -35,8 +34,7 @@ Number Number::operator-(const Number &other) const
 
 Number &Number::operator-=(const Number &other)
 {
-    std::visit([](auto &a, auto b) { a -= b; }, value_, other.value_);
-    set(value_);
+    set(std::visit([](auto &a, auto b) -> Number { return a - b; }, value_, other.value_));
     return *this;
 }
 
@@ -47,8 +45,7 @@ Number Number::operator*(const Number &other) const
 
 Number &Number::operator*=(const Number &other)
 {
-    std::visit([](auto &a, auto b) { a *= b; }, value_, other.value_);
-    set(value_);
+    set(std::visit([](auto &a, auto b) -> Number { return a * b; }, value_, other.value_));
     return *this;
 }
 
@@ -59,8 +56,7 @@ Number Number::operator/(const Number &other) const
 
 Number &Number::operator/=(const Number &other)
 {
-    std::visit([](auto &a, auto b) { a /= b; }, value_, other.value_);
-    set(value_);
+    set(std::visit([](auto &a, auto b) -> Number { return a / b; }, value_, other.value_));
     return *this;
 }
 
