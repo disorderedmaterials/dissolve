@@ -263,14 +263,16 @@ NodeConstants::ProcessResult MDNode::process()
         std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
+        auto potentialMap = kernel->potentialMap();
+
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
-            ForcesModule::totalForces(targetConfiguration_, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, potentialMap,
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
                                       fUnbound, fBound);
         else
-            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve().potentialMap(),
+            ForcesModule::totalForces(targetConfiguration_, targetMolecules, potentialMap,
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
                                       fUnbound, fBound);
@@ -312,8 +314,8 @@ NodeConstants::ProcessResult MDNode::process()
             // Include total energy term?
             if (energyFrequency > 0 && (step % energyFrequency == 0))
             {
-                pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, dissolve().potentialMap());
-                peBound = EnergyModule::intraMolecularEnergy(targetConfiguration_, dissolve().potentialMap());
+                pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, potentialMap);
+                peBound = EnergyModule::intraMolecularEnergy(targetConfiguration_, potentialMap);
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
                                  tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
             }

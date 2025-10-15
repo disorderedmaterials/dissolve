@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "base/units.h"
 #include "io/import/coordinates.h"
 #include "io/import/data1D.h"
 #include "nodes/atomicMC/atomicMC.h"
@@ -61,11 +62,22 @@ class GraphArgonTest : public ::testing::Test
         /*
          * Set up configuration XYZ
          */
-        ASSERT_TRUE(root_.addEdge({"Bulk", "Configuration", "BulkXYZ", "Configuration"}));
+        ASSERT_TRUE(root_.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
         ASSERT_TRUE(importConfigCoordsNode_->setOption<std::string>("FilePath", "dissolve2/argon/Ar_bulk_step1000.xyz"));
         ASSERT_TRUE(importConfigCoordsNode_->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
             "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
-        ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "Insert", "Configuration"}));
+        ASSERT_TRUE(root_.addEdge({"Insert", "Configuration", "BulkXYZ", "Configuration"}));
+
+        /*
+         * Set Insert node options
+         */
+        auto population = insertNode_->findInput("Population");
+        population->set<Number>(1000);
+
+        auto density = insertNode_->findInput("Density");
+        density->set<Number>(0.0213);
+
+        ASSERT_TRUE(insertNode_->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
 
         if (advanced)
         {
@@ -94,7 +106,7 @@ class GraphArgonTest : public ::testing::Test
             ASSERT_TRUE(data1DImportNode_->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
 
             // Create nodes
-            ASSERT_TRUE(root_.addEdge({"Insert", "Configuration", "AtomicMC", "Configuration"}));
+            ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "AtomicMC", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"AtomicMC", "Configuration", "MD", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"MD", "Configuration", "Energy", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"Energy", "Configuration", "GR", "Configuration"}));
@@ -143,7 +155,7 @@ TEST_F(GraphArgonTest, AdvancedSimulation)
     /*
      * Check total unweighted SQ
      */
-    auto unweightedSQ = sqNode_->getOutputValue<PartialSet*>("UnweightedSQ");
+    auto unweightedSQ = sqNode_->getOutputValue<PartialSet *>("UnweightedSQ");
     ASSERT_NO_THROW_VERBOSE(unweightedSQ);
     ASSERT_TRUE(
         DissolveSystemTest::checkData1D(unweightedSQ->total(), "UnweightedSQ", {"dissolve2/argon/SQ01-UnweightedSQ-total.sq"}));
@@ -151,7 +163,7 @@ TEST_F(GraphArgonTest, AdvancedSimulation)
     /*
      * Check neutron weighted SQ
      */
-    auto weightedSQ = neutronSQNode_->getOutputValue<PartialSet*>("WeightedSQ");
+    auto weightedSQ = neutronSQNode_->getOutputValue<PartialSet *>("WeightedSQ");
     ASSERT_NO_THROW_VERBOSE(weightedSQ);
     ASSERT_TRUE(DissolveSystemTest::checkData1D(weightedSQ->total(), "WeightedSQ",
                                                 {"dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq"}));
