@@ -9,8 +9,8 @@
 #include "classes/pairPotential.h"
 #include "classes/species.h"
 
-PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes,
-                           const DoubleKeyedMap<std::shared_ptr<PairPotential>> &pairPotentials, double pairPotentialRange)
+PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials,
+                           double pairPotentialRange)
 {
     // Create PairPotential matrix
     nTypes_ = atomTypes.size();
@@ -20,21 +20,18 @@ PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes,
         ParallelPolicies::seq, atomTypes,
         [&](int i, const auto &atI, int j, const auto &atJ)
         {
-            auto pp = pairPotentials.get({atI->name(), atJ->name()}).get();
-
             // Store PairPotential pointer
             if (i == j)
             {
                 Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n", atI->name(), i,
                                  j);
-                potentialMatrix_[{i, j}] = pp;
+                potentialMatrix_[{i, j}] = &pairPotentials.get({atI->name(), atJ->name()});
             }
             else
             {
                 Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n",
                                  atI->name(), atJ->name(), i, j, j, i);
-                potentialMatrix_[{i, j}] = pp;
-                potentialMatrix_[{j, i}] = pp;
+                potentialMatrix_[{i, j}] = &pairPotentials.get({atI->name(), atJ->name()});
             }
         });
 

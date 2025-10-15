@@ -26,7 +26,7 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
 DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
 
 // Return pair potential store
-const DoubleKeyedMap<std::shared_ptr<PairPotential>> &DissolveGraph::pairPotentialStore() { return pairPotentialStore_; }
+const DoubleKeyedMap<PairPotential> &DissolveGraph::pairPotentialStore() { return pairPotentialStore_; }
 
 /*
  * Functions
@@ -70,10 +70,10 @@ void DissolveGraph::updatePairPotentials(const AtomType &i, const AtomType &j)
     auto interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
 
     if (interactionPotential.has_value())
-        pairPotentialStore_.set(nameI, nameJ, std::make_shared<PairPotential>(nameI, nameJ, *interactionPotential));
+        pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
     else
-        pairPotentialStore_.set(nameI, nameJ, std::make_shared<PairPotential>(nameI, nameJ));
+        pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ});
 
-    auto pot = pairPotentialStore_.get({nameI, nameJ});
-    pot->tabulate(pairPotentialRange_, pairPotentialDelta_, i.charge() * j.charge());
+    auto &pot = pairPotentialStore_.get({nameI, nameJ});
+    pot.tabulate(pairPotentialRange_, pairPotentialDelta_, i.charge() * j.charge());
 }
