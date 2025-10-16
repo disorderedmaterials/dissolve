@@ -5,6 +5,7 @@
 
 #include <toml11/toml.hpp>
 
+#include "templates/keyedVector.h"
 #include "templates/orderedMap.h"
 #include <map>
 #include <vector>
@@ -92,6 +93,15 @@ template <typename... Contexts> class Serialisable
         SerialisedValue group;
         for (const auto &value : vector)
             group[getName(value)] = value->serialise();
+        return group;
+    };
+    // A helper function to add elements of a KeyedVector to a node
+    template <typename KeyClass, typename ValueClass, typename Lambda>
+    static SerialisedValue fromVectorToTable(const KeyedVector<KeyClass, ValueClass> &keyedVector, Lambda getName)
+    {
+        SerialisedValue group;
+        for (const auto &[key, value] : keyedVector)
+            group[std::string(getName(key))] = value;
         return group;
     };
     // A helper function to add elements of a vector to a node under the named heading
