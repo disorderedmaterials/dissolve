@@ -6,6 +6,7 @@
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
   };
+
   outputs =
     {
       self,
@@ -80,6 +81,7 @@
         pkgs = import nixpkgs { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
         qt = (import outdated { inherit system; }).qt6;
+        fs = pkgs.lib.fileset;
         dissolve =
           {
             mpi ? false,
@@ -92,9 +94,19 @@
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
-            src = builtins.path {
-              path = ./.;
-              name = "dissolve-src";
+            src = fs.toSource {
+              root = ./.;
+              fileset = (
+                fs.unions [
+                  ./src
+                  ./cmake
+                  ./examples
+                  ./tests
+                  ./benchmark
+                  ./CMakeLists.txt
+                  ./QuickPlot
+                ]
+              );
             };
             buildInputs =
               base_libs pkgs

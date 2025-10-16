@@ -35,7 +35,7 @@ jobs:
     needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
     with:
-      benchmark: true
+      benchmark: false
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       msvcVersion: ${{ needs.Checkout.outputs.msvcVersion }}
       osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
