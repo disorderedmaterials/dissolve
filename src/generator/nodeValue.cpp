@@ -139,7 +139,7 @@ void NodeValue::serialise(std::string name, SerialisedValue &target) const
             target[name] = expression_.expressionString();
             return;
         default:
-            throw(std::runtime_error("Unhandled NodeValue type in serialise().\n"));
+          throw(std::runtime_error(std::format("Unhandled NodeValue type {} in serialise().\n", (int)type_)));
     }
 }
 
