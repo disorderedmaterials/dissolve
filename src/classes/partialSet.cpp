@@ -89,6 +89,7 @@ void PartialSet::initialise(const PartialSet &partialSet)
 {
     realSpeciesPopulations_ = partialSet.realSpeciesPopulations_;
     triangular_ = partialSet.triangular_;
+    rho_ = partialSet.rho_;
 
     // Template data from source PartialSet and set tags
     dissolve::for_each_pair(

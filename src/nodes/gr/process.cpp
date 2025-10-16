@@ -52,7 +52,7 @@ NodeConstants::ProcessResult GRNode::process()
     if (!rawGR_)
     {
         rawGR_.emplace();
-        rawGR_.value().initialise(targetConfiguration_->speciesPopulations());
+        rawGR_.value().initialise(unweightedGR_.value());
     }
 
     // Check range
@@ -78,9 +78,11 @@ NodeConstants::ProcessResult GRNode::process()
     message("Cutoff (snapped to bin width) is {} Angstroms.\n", grRange);
 
     // Convert configuration species populations into real species populations
+    /*
     std::map<const Species *, double> realSpeciesPopulations;
     for (auto &[sp, iPop] : targetConfiguration_->speciesPopulations())
         realSpeciesPopulations[sp] = iPop;
+    */
 
     // Calculate unweighted partials for this Configuration
     bool alreadyUpToDate;
