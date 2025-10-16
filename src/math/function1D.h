@@ -164,7 +164,7 @@ class Function1DWrapper : public Serialisable<>
      */
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string name, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };

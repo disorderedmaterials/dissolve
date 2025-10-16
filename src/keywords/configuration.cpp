@@ -52,12 +52,12 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
 }
 
 // Express as a serialisable value
-SerialisedValue ConfigurationKeyword::serialise() const
+void ConfigurationKeyword::serialise(std::string name, SerialisedValue &target) const
 {
     // isDefault is checked before serialisation of keywords
     // so we have checked for the null pointer
     assert(data_);
-    return data_->name();
+    target["name"] = data_->name();
 }
 
 // Read values from a serialisable value

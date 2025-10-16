@@ -509,12 +509,12 @@ bool GeneratorNodeSequence::QueryRange::empty() { return start_ == stop_; }
 void GeneratorNodeSequence::QueryRange::next() { start_++; }
 
 // Express as a serialisable value
-SerialisedValue GeneratorNodeSequence::serialise() const
+void GeneratorNodeSequence::serialise(std::string name, SerialisedValue &target) const
 {
-    return fromVector(sequence_,
+    target[name] = fromVector(sequence_,
                       [](const auto item)
                       {
-                          SerialisedValue node = item->serialise();
+                          SerialisedValue node = item->into_toml();
                           node["type"] = item->nodeTypes().serialise(item->type());
                           return node;
                       });

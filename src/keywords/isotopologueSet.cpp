@@ -71,7 +71,7 @@ void IsotopologueSetKeyword::removeReferencesTo(Species *sp) { data_.remove(sp);
 void IsotopologueSetKeyword::removeReferencesTo(Isotopologue *iso) { data_.remove(iso); }
 
 // Express as a serialisable value
-SerialisedValue IsotopologueSetKeyword::serialise() const { return data_; }
+void IsotopologueSetKeyword::serialise(std::string name, SerialisedValue &target) const { target[name] = data_; }
 
 // Read values from a serialisable value
 void IsotopologueSetKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

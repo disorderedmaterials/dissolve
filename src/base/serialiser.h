@@ -10,13 +10,13 @@
 #include <map>
 #include <vector>
 
+// The type we use for the nodes of our serialisation tree
+using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
+
 // We need a way at compile time to detect all the types of smart
 // pointers for things that can be serialised
 template <typename T>
-concept serialisablePointer = requires(T a) { a->serialise(); };
-
-// The type we use for the nodes of our serialisation tree
-using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
+concept serialisablePointer = requires(T a, std::string name, SerialisedValue target) { a->serialise(name, target); };
 
 // The associated context for type T This type does double duty.
 // First, since the struct has not actual members, it is a Unit type
@@ -38,7 +38,7 @@ template <typename... Contexts> class Serialisable
 {
     public:
     // Express as a serialisable value
-    virtual SerialisedValue serialise() const = 0;
+    virtual void serialise(std::string name, SerialisedValue &target) const = 0;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
@@ -60,7 +60,12 @@ template <typename... Contexts> class Serialisable
     // Wrapper for deserialise that toml11 will check for
     void from_toml(const toml::value &node) { deserialise(node); }
     // Wrapper for serialise that toml11 will check for
-    toml::value into_toml() const { return serialise(); }
+    toml::value into_toml() const
+    {
+        SerialisedValue result;
+        serialise("tag", result);
+        return result["tag"];
+    }
 
     // Perform an action on a child node in a table if the node exists.
     // This cuts out quite a bit of boilerplate.
@@ -92,7 +97,7 @@ template <typename... Contexts> class Serialisable
     {
         SerialisedValue group;
         for (const auto &value : vector)
-            group[getName(value)] = value->serialise();
+            value->serialise(getName(value), group);
         return group;
     };
     // A helper function to add elements of a KeyedVector to a node
@@ -140,7 +145,7 @@ template <typename... Contexts> class Serialisable
     template <typename T>
     static void fromVector(const std::vector<std::unique_ptr<T>> &vector, std::string name, SerialisedValue &node)
     {
-        fromVector(vector, name, node, [](const auto &item) { return item->serialise(); });
+        fromVector(vector, name, node, [](const auto &item) { return item->into_toml(); });
     }
     // A helper function to add the elements of a vector to a node under a name
     template <typename T>
@@ -151,7 +156,7 @@ template <typename... Contexts> class Serialisable
     // A helper function to add the elements of a vector to a node under a name
     template <typename T> static void fromVector(const std::vector<T> &vector, std::string name, SerialisedValue &node)
     {
-        fromVector(vector, name, node, [](const auto &item) { return item.serialise(); });
+        fromVector(vector, name, node, [](const auto &item) { return item.into_toml(); });
     }
     // A helper function to add the elements of a vector to a node under a name
     template <typename T, typename Lambda>
@@ -198,7 +203,9 @@ template <typename... Contexts> class Serialisable
                 continue;
             changed = true;
             if constexpr (serialisablePointer<V>)
-                result[std::string(key)] = value->serialise();
+                value->serialise(std::string(key), result);
+            else if constexpr (std::is_base_of_v<Serialisable, V>)
+                value.serialise(std::string(key), result);
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value

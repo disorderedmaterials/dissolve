@@ -345,13 +345,13 @@ void Vector3i::swap(int a, int b)
  */
 
 // Express as a serialisable value
-SerialisedValue Vector3i::serialise() const
+void Vector3i::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue::array_type result;
     result.push_back(x);
     result.push_back(y);
     result.push_back(z);
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value

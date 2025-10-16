@@ -578,7 +578,7 @@ double Function1DWrapper::normalisation(double omega) const
 }
 
 // Express as a serialisable value
-SerialisedValue Function1DWrapper::serialise() const
+void Function1DWrapper::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue result;
 
@@ -586,7 +586,7 @@ SerialisedValue Function1DWrapper::serialise() const
 
     Serialisable::fromVector(parameters_, "parameters", result, [](const auto &x) { return x; });
 
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value

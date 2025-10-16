@@ -81,12 +81,14 @@ bool ExpressionVariableVectorKeyword::serialise(LineParser &parser, std::string_
 bool ExpressionVariableVectorKeyword::isDefault() const { return data_.empty(); }
 
 // Express as a serialisable value
-SerialisedValue ExpressionVariableVectorKeyword::serialise() const
+void ExpressionVariableVectorKeyword::serialise(std::string name, SerialisedValue &target) const
 {
+    if (data_.empty())
+        return;
     SerialisedValue result;
     for (auto &i : data_)
         result[std::string(i->baseName())] = i->value();
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value

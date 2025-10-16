@@ -299,12 +299,8 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
     for (const auto &section : sections_)
         for (const auto &group : section.groups())
             for (const auto &[keyword, keywordType] : group.keywords())
-                if (!keyword->isDefault())
-                {
-                    auto value = keyword->serialise();
-                    if (keywordType != KeywordBase::KeywordType::Deprecated && !value.is_uninitialized())
-                        node[toml_format(keyword->name())] = value;
-                }
+                if (!keyword->isDefault() && keywordType != KeywordBase::KeywordType::Deprecated)
+                    keyword->serialise(toml_format(keyword->name()), node);
     return node;
 }
 

@@ -34,7 +34,7 @@ class ValueStore : public Serialisable<const CoreData &>
     // Return vector of all data
     const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileFormat>> &data() const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string name, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

@@ -93,7 +93,7 @@ class CoreData
         std::vector<std::shared_ptr<MasterImproper>> impropers;
 
         // Express as a serialisable value
-        SerialisedValue serialise() const override;
+        void serialise(std::string name, SerialisedValue &target) const override;
         // Read values from a serialisable value
         void deserialise(const SerialisedValue &node) override;
     };
@@ -102,7 +102,7 @@ class CoreData
 
     public:
     // Express Master terms as serialisable value
-    SerialisedValue serialiseMaster() const;
+    void serialiseMaster(std::string name, SerialisedValue &target) const;
     // Read Master values from serialisable value
     void deserialiseMaster(const SerialisedValue &node);
     // Add new master Bond parameters

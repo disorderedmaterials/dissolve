@@ -316,12 +316,13 @@ bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deseria
  */
 
 // Express as a serialisable value
-SerialisedValue Module::serialise() const
+void Module::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue result{{"type", ModuleTypes::moduleType(type_)}, {"frequency", frequency_}};
     if (!enabled_)
         result["disabled"] = true;
-    return keywords_.serialiseOnto(result);
+    keywords_.serialiseOnto(result);
+    target[name] = result;
 }
 
 // Read values from a serialisable value

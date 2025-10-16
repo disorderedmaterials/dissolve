@@ -255,12 +255,12 @@ bool GeneratorNode::serialise(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a serialisable value
-SerialisedValue GeneratorNode::serialise() const
+void GeneratorNode::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
     if (mustBeNamed())
         result["name"] = name_;
-    return keywords_.serialiseOnto(result);
+    target[name] = keywords_.serialiseOnto(result);
 }
 
 // Read values from a serialisable value

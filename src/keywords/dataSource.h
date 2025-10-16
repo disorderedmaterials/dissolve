@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "classes/dataSource.h"
 #include "io/import/data1D.h"
 #include "io/import/data2D.h"
@@ -162,21 +163,25 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         return true;
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string name, SerialisedValue &target) const override
     {
-        return fromVector(dataSources_,
-                          [](const auto &item) -> SerialisedValue
-                          {
-                              auto &[dataSourceA, dataSourceB] = item;
-                              if (dataSourceB->dataExists())
-                              {
-                                  return {{"dataSourceA", dataSourceA->serialise()}, {"dataSourceB", dataSourceB->serialise()}};
-                              }
-                              else
-                              {
-                                  return {{"dataSourceA", dataSourceA->serialise()}};
-                              }
-                          });
+        fromVector(dataSources_, name, target,
+                   [](const auto &item) -> SerialisedValue
+                   {
+                       auto &[dataSourceA, dataSourceB] = item;
+                       SerialisedValue result;
+                       if (dataSourceB->dataExists())
+                       {
+                           dataSourceA->serialise("dataSourceA", result);
+                           dataSourceB->serialise("dataSourceB", result);
+                           return result;
+                       }
+                       else
+                       {
+                           dataSourceA->serialise("dataSourceA", result);
+                           return result;
+                       }
+                   });
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override

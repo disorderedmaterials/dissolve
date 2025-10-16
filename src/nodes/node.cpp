@@ -320,15 +320,9 @@ SampledDouble Node::timing() const { return timing_; }
  */
 
 // Express as a serialisable value
-SerialisedValue Node::serialise() const
+void Node::serialise(std::string title, SerialisedValue &target) const
 {
-    SerialisedValue result, inputs, outputs, options;
-    result["name"] = name();
-    result["type"] = type();
-    result["x"] = x;
-    result["y"] = y;
-
-    return result;
+    target[title] = {{"name", name()}, {"type", type()}, {"x", x}, {"y", y}};
 }
 
 // Read values from a serialisable value
@@ -358,12 +352,11 @@ void Node::deserialise(const SerialisedValue &node)
 SerialisedValue Node::serialiseData() const
 {
     SerialisedValue result;
-    result["timing"] = timing_.serialise();
+    timing_.serialise("timing", result);
 
     for (auto &[key, serialisable] : serialisables_)
         if (serialisable->canSerialise())
-            result[key] = serialisable->serialise();
-
+            serialisable->serialise(key, result);
     return result;
 }
 

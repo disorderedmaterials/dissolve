@@ -91,7 +91,10 @@ bool OptionalIntegerKeyword::serialise(LineParser &parser, std::string_view keyw
 }
 
 // Express as a serialisable value
-SerialisedValue OptionalIntegerKeyword::serialise() const { return data_.value_or(minimumLimit_); }
+void OptionalIntegerKeyword::serialise(std::string name, SerialisedValue &target) const
+{
+    target[name] = data_.value_or(minimumLimit_);
+}
 
 // Read values from a serialisable value
 void OptionalIntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

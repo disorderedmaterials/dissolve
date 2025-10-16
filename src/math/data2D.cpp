@@ -421,12 +421,12 @@ bool Data2D::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-SerialisedValue Data2D::serialise() const
+void Data2D::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", y_}, {"values", values_.linearArray()}};
     if (hasError_)
         result["errors"] = errors_.linearArray();
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value

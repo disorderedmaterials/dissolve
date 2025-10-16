@@ -387,11 +387,11 @@ Vector3 Box::scaleFactors(double requestedVolume, const std::array<bool, 3> &sca
 }
 
 // Express as a serialisable value
-SerialisedValue Box::serialise() const
+void Box::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue box;
     box["lengths"] = {a_, b_, c_};
     box["angles"] = {alpha_, beta_, gamma_};
     box["nonPeriodic"] = {!std::get<0>(periodic_), !std::get<1>(periodic_), !std::get<2>(periodic_)};
-    return box;
+    target[name] = box;
 }

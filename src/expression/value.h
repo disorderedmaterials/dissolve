@@ -67,7 +67,7 @@ class ExpressionValue : public Serialisable<>
     // Return the supplied ExpressionValues both contain double types
     static bool bothDoubles(const ExpressionValue &a, const ExpressionValue &b);
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string name, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };

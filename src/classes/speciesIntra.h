@@ -211,7 +211,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string name, SerialisedValue &target) const override
     {
         SerialisedValue result;
 
@@ -233,6 +233,6 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             result["parameters"] = parametersNode;
         }
 
-        return result;
+        target[name] = result;
     }
 };

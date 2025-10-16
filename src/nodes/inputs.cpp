@@ -30,7 +30,7 @@ NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::Proce
 bool InputsNode::shouldSerialise() const { return false; }
 
 // Express as a serialisable value
-SerialisedValue InputsNode::serialise() const { return {}; }
+void InputsNode::serialise(std::string name, SerialisedValue &target) const { return; }
 
 // Read values from a serialisable value
 void InputsNode::deserialise(const SerialisedValue &node) {};

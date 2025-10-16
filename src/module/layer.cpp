@@ -189,7 +189,7 @@ std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
 }
 
 // Express as a serialisable value
-SerialisedValue ModuleLayer::serialise() const
+void ModuleLayer::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue result = {{"frequency", frequency_}};
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
@@ -199,7 +199,7 @@ SerialisedValue ModuleLayer::serialise() const
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
         result["requireSizeFactors"] = true;
     Serialisable::fromVectorToTable(modules_, "modules", result);
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value
@@ -212,6 +212,7 @@ void ModuleLayer::deserialise(const SerialisedValue &node, CoreData &coreData)
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
     if (toml::find_or<bool>(node, "requireSizeFactors", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
+
     Serialisable::toMap(node, "modules",
                         [&coreData, this](const std::string &name, const SerialisedValue &data)
                         {

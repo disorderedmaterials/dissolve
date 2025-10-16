@@ -125,16 +125,19 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
 }
 
 // Express as a serialisable value
-SerialisedValue NodeValue::serialise() const
+void NodeValue::serialise(std::string name, SerialisedValue &target) const
 {
     switch (type_)
     {
         case IntegerNodeValue:
-            return valueI_;
+            target[name] = valueI_;
+            return;
         case DoubleNodeValue:
-            return valueD_;
+            target[name] = valueD_;
+            return;
         case ExpressionNodeValue:
-            return expression_.expressionString();
+            target[name] = expression_.expressionString();
+            return;
         default:
             throw(std::runtime_error("Unhandled NodeValue type in serialise().\n"));
     }
@@ -228,13 +231,13 @@ std::string NodeValueProxy::asString(bool addQuotesIfRequired) const
 Vector3NodeValue::Vector3NodeValue(const NodeValue &xx, const NodeValue &yy, const NodeValue &zz) : x(xx), y(yy), z(zz) {}
 
 // Express as a serialisable value
-SerialisedValue Vector3NodeValue::serialise() const
+void Vector3NodeValue::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue::array_type result;
     result.push_back(x);
     result.push_back(y);
     result.push_back(z);
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value

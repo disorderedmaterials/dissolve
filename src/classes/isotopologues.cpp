@@ -102,7 +102,7 @@ bool Isotopologues::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-SerialisedValue Isotopologues::serialise() const
+void Isotopologues::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue result = {{"name", species_->name()}, {"population", speciesPopulation_}};
 
@@ -112,7 +112,7 @@ SerialisedValue Isotopologues::serialise() const
 
     result["mix"] = mix;
 
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value

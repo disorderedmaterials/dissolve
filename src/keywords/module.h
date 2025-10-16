@@ -99,11 +99,11 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string name, SerialisedValue &target) const override
     {
-        if (data_)
-            return data_->name();
-        return {};
+        if (!data_)
+          return;
+        target[name] = data_->name();
     }
 
     // Read values from a serialisable value

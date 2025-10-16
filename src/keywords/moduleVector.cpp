@@ -89,9 +89,9 @@ void ModuleVectorKeyword::removeReferencesTo(Module *module)
 }
 
 // Express as a serialisable value
-SerialisedValue ModuleVectorKeyword::serialise() const
+void ModuleVectorKeyword::serialise(std::string name, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto *item) { return item->name(); });
+    fromVector(data_, name, target, [](const auto *item) { return item->name(); });
 }
 
 // Read values from a serialisable value

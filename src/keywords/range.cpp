@@ -112,7 +112,7 @@ bool RangeKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 }
 
 // Express as a serialisable value
-SerialisedValue RangeKeyword::serialise() const { return data_; }
+void RangeKeyword::serialise(std::string name, SerialisedValue &target) const { target[name] = data_; }
 
 // Read values from a serialisable value
 void RangeKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }

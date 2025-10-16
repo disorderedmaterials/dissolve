@@ -56,4 +56,4 @@ bool ElementVectorKeyword::serialise(LineParser &parser, std::string_view keywor
 }
 
 // Express as a serialisable value
-SerialisedValue ElementVectorKeyword::serialise() const { throw std::runtime_error("Cannot serialise ElementVectorKeyword"); }
+void ElementVectorKeyword::serialise(std::string name, SerialisedValue &target) const { throw std::runtime_error("Cannot serialise ElementVectorKeyword"); }

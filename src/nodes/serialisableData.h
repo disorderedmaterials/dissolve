@@ -27,7 +27,7 @@ class SerialisableData
     // Return whether there is data to serialise
     virtual bool canSerialise() const { return false; }
     // Express as a serialised value
-    virtual SerialisedValue serialise() const { return {}; }
+    virtual void serialise(std::string name, SerialisedValue &target) const { return; }
     // Read from a serialised value
     virtual void deserialise(const SerialisedValue &node) {};
     // Resolve named data
@@ -166,7 +166,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Return whether there is data to serialise
     bool canSerialise() const override { return dataChecker_(); }
     // Express as a serialised value
-    SerialisedValue serialise() const override { return dataSerialiser_(); };
+    void serialise(std::string name, SerialisedValue &target) const override { target[name] = dataSerialiser_(); };
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) override { dataDeserialiser_(node); }
     // Resolve named data

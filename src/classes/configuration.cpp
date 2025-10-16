@@ -122,7 +122,7 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 double Configuration::temperature() const { return temperature_; }
 
 // Express as a serialisable value
-SerialisedValue Configuration::serialise() const
+void Configuration::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue configuration;
 
@@ -135,7 +135,7 @@ SerialisedValue Configuration::serialise() const
 
     configuration["generator"] = generator_;
 
-    return configuration;
+    target[name] = configuration;
 }
 
 // Read values from a serialisable value

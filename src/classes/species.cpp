@@ -206,8 +206,13 @@ void Species::print() const
 int Species::version() const { return version_; }
 
 // Express as a serialisable value
-SerialisedValue Species::serialise() const
+void Species::serialise(std::string name, SerialisedValue &target) const
 {
+    // Check for empty species
+    if (forcefield_ == nullptr && atoms_.empty() && bonds_.empty() && angles_.empty() && torsions_.empty() &&
+        impropers_.empty() && isotopologues_.empty() && sites_.empty())
+      return;
+
     SerialisedValue result;
     if (forcefield_ != nullptr)
         result["forcefield"] = forcefield_->name().data();
@@ -220,7 +225,8 @@ SerialisedValue Species::serialise() const
     Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
     Serialisable::fromVectorToTable<>(sites_, "sites", result);
 
-    return result;
+    target[name] = result;
+
 }
 
 // Read values from a serialisable value

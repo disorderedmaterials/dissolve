@@ -45,12 +45,14 @@ OptionalReferenceWrapper<const std::vector<double>> ValueStore::data(std::string
 const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileFormat>> &ValueStore::data() const { return data_; }
 
 // Express as a serialisable value
-SerialisedValue ValueStore::serialise() const
+void ValueStore::serialise(std::string name, SerialisedValue &target) const
 {
     SerialisedValue result = SerialisedValue::array_type{};
+    if (data_.empty())
+        return;
     for (auto &[tag, data, format] : data_)
         result.push_back({{"tag", tag}, {"values", data}, {"format", format}});
-    return result;
+    target[name] = result;
 }
 
 // Read values from a serialisable value

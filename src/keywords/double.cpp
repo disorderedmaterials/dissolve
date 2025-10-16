@@ -74,7 +74,7 @@ bool DoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, 
 }
 
 // Express as a serialisable value
-SerialisedValue DoubleKeyword::serialise() const { return data_; }
+void DoubleKeyword::serialise(std::string name, SerialisedValue &target) const { target[name] = data_; }
 
 // Read values from a serialisable value
 void DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = toml::get<double>(node); }

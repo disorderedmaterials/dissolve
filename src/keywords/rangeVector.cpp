@@ -63,9 +63,9 @@ bool RangeVectorKeyword::serialise(LineParser &parser, std::string_view keywordN
  */
 
 // Express as a serialisable value
-SerialisedValue RangeVectorKeyword::serialise() const
+void RangeVectorKeyword::serialise(std::string name, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto &item) -> SerialisedValue { return item.serialise(); });
+  fromVector(data_, name, target);
 }
 
 // Read values from a serialisable value
