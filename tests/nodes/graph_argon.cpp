@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "base/units.h"
+#include "data/structureFactors.h"
 #include "io/import/coordinates.h"
 #include "io/import/data1D.h"
 #include "nodes/atomicMC/atomicMC.h"
@@ -98,12 +99,23 @@ class GraphArgonTest : public ::testing::Test
             ASSERT_TRUE(data1DImportNode_);
 
             /*
+             * Set up GR options
+             */
+            ASSERT_TRUE(grNode_->setOption<Number>("BinWidth", 0.025));
+
+            /*
              * Set up reference SQ data
              */
             ASSERT_TRUE(data1DImportNode_->setOption<std::string>("FilePath", "dissolve2/argon/yarnell.sq"));
             ASSERT_TRUE(data1DImportNode_->setOption<Data1DImportFileFormat::Data1DImportFormat>(
                 "ImportFormat", Data1DImportFileFormat::Data1DImportFormat::XY));
             ASSERT_TRUE(data1DImportNode_->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
+
+            /*
+             * Set up neutron SQ options
+             */
+            ASSERT_TRUE(neutronSQNode_->setOption<StructureFactors::NormalisationType>(
+                "ReferenceNormalisedTo", StructureFactors::SquareOfAverageNormalisation));
 
             // Create nodes
             ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "AtomicMC", "Configuration"}));
