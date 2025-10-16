@@ -7,7 +7,7 @@
 #include "math/sampledDouble.h"
 
 // One-Dimensional Histogram
-class Histogram1D
+class Histogram1D : public Serialisable<>
 {
     public:
     Histogram1D();
@@ -93,4 +93,8 @@ class Histogram1D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

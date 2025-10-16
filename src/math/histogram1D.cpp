@@ -244,3 +244,25 @@ bool Histogram1D::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue Histogram1D::serialise() const
+{
+    return {{"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_},
+            {"nBinned", nBinned_}, {"nMissed", nMissed_}, {"averages", averages_}};
+}
+
+// Read values from a serialisable value
+void Histogram1D::deserialise(const SerialisedValue &node)
+{
+    clear();
+
+    initialise(toml::find<double>(node, "minimum"), toml::find<double>(node, "maximum"), toml::find<double>(node, "binWidth"));
+
+    nBinned_ = toml::find<long>(node, "nBinned");
+    nMissed_ = toml::find<long>(node, "nMissed");
+
+    averages_ = toml::find<std::vector<SampledDouble>>(node, "averages");
+
+    updateAccumulatedData();
+}

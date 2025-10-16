@@ -209,3 +209,20 @@ bool SampledData1D::serialise(LineParser &parser) const
 
 // Write value data only through specified LineParser
 bool SampledData1D::serialiseValues(LineParser &parser) const { return values_.serialise(parser); }
+
+// Express as a serialisable value
+SerialisedValue SampledData1D::serialise() const
+{
+    SerialisedValue result;
+    result["x"] = x_;
+    result["values"] = values_.serialise();
+
+    return result;
+}
+
+// Read values from a serialisable value
+void SampledData1D::deserialise(const SerialisedValue &node)
+{
+    x_ = toml::find<std::vector<double>>(node, "x");
+    values_.deserialise(node.at("values"));
+}

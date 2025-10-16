@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include <vector>
 
 // Forward Declarations
@@ -10,7 +11,7 @@ class CoreData;
 class LineParser;
 
 // Vector of double values with sampling
-class SampledVector
+class SampledVector : public Serialisable<>
 {
     public:
     SampledVector();
@@ -66,4 +67,8 @@ class SampledVector
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };
