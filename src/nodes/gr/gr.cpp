@@ -8,7 +8,7 @@ GRNode::GRNode(Graph *parentGraph)
                              [&]()
                              {
                                  PartialSet p;
-                                 p.initialise(targetConfiguration_->speciesPopulations());
+                                 p.initialise(unweightedGR_.value());
                                  return p;
                              })
 {
@@ -17,6 +17,7 @@ GRNode::GRNode(Graph *parentGraph)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
+    addOptionalPointerOutput<PartialSet>("RawGR", "Origin (unbroadened) partials for the target configuration", rawGR_);
     addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Options
@@ -34,8 +35,6 @@ GRNode::GRNode(Graph *parentGraph)
         internalTest_);
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
-    addOptionalPointerOutput<PartialSet>("RawGR", "Origin (unbroadened) partials for the target configuration", rawGR_);
-    addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Serialisables
     addSerialisable("rawGR", rawGR_);
