@@ -163,8 +163,9 @@ SerialisedValue Dissolve::serialisePairPotentials() const
 }
 
 // Express as a serialisable value
-void Dissolve::serialise(std::string name, SerialisedValue &root) const
+void Dissolve::serialise(std::string name, SerialisedValue &result) const
 {
+    SerialisedValue root;
     root["version"] = Version::semantic();
 
     coreData_.serialiseMaster("master", root);
@@ -180,6 +181,8 @@ void Dissolve::serialise(std::string name, SerialisedValue &root) const
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
+
+    result[name] = root;
 }
 
 // This method populates the object's members with values read from a 'pairPotentials' TOML node

@@ -252,11 +252,11 @@ std::string Graph::location() const
 // Express as a serialisable value
 void Graph::serialise(std::string name, SerialisedValue &target) const
 {
-    SerialisedValue result;
-    Node::serialise(name, result);
+    Node::serialise(name, target);
+    auto &result = target[name];
+
     fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
     fromVector(edges_, "edges", result);
-    target[name] = result;
 }
 
 // Read values from a serialisable value
