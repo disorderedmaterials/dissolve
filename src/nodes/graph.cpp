@@ -12,6 +12,7 @@ Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
     proxyInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
     proxyOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
+    feedbacks_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Feedbacks"));
 }
 
 /*

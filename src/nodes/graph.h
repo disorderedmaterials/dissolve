@@ -51,6 +51,9 @@ class Graph : public Node
     InputsNode *proxyInputs_{nullptr};
     OutputsNode *proxyOutputs_{nullptr};
 
+    protected:
+    OutputsNode *feedbacks_{nullptr};
+
     public:
     // Add supplied proxy input, setting ownership of the parameters appropriately
     bool addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output);

@@ -17,3 +17,10 @@ std::string_view LoopGraph::type() const { return "Loop"; }
 
 // Return short summary of the node's purpose
 std::string_view LoopGraph::summary() const { return "Loop the contained graph"; }
+
+// Add supplied proxy output, setting ownership of the parameters appropriately
+bool LoopGraph::addFeedback(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &source)
+{
+
+    return true;
+}

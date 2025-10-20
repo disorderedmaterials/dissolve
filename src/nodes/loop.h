@@ -26,6 +26,14 @@ class LoopGraph : public Graph
     std::string_view summary() const override;
 
     /*
+     * Feedback
+     *
+     */
+    public:
+    // Add supplied proxy output, setting ownership of the parameters appropriately
+    bool addFeedback(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &source);
+
+    /*
      * Data
      */
     private:
