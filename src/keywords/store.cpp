@@ -294,14 +294,13 @@ std::string toml_format(const std::string_view original)
 }
 
 // Apply the terms in the keyword store to a node
-SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
+void KeywordStore::serialiseOnto(SerialisedValue &node) const
 {
     for (const auto &section : sections_)
         for (const auto &group : section.groups())
             for (const auto &[keyword, keywordType] : group.keywords())
                 if (!keyword->isDefault() && keywordType != KeywordBase::KeywordType::Deprecated)
                     keyword->serialise(toml_format(keyword->name()), node);
-    return node;
 }
 
 // Pull keywords from entries in table

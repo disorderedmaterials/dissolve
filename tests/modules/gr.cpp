@@ -31,7 +31,8 @@ TEST_F(GRModuleTest, Methods)
 
 TEST_F(GRModuleTest, Water)
 {
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/correlations-water.txt"));
+    // ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/correlations-water.txt"));
+    systemTest.setUp("dissolve/input/correlations-water.txt");
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial g(r) (unbound terms)

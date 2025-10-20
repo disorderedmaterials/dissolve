@@ -213,12 +213,16 @@ void ModuleLayer::deserialise(const SerialisedValue &node, CoreData &coreData)
     if (toml::find_or<bool>(node, "requireSizeFactors", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
-    Serialisable::toMap(node, "modules",
-                        [&coreData, this](const std::string &name, const SerialisedValue &data)
-                        {
-                            auto *module = append(
-                                coreData, *ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
-                            module->setName(name);
-                            module->deserialise(data, coreData);
-                        });
+    const dissolve::OrderedMap<std::string, SerialisedValue> &mods = toml::find<SerialisedValue::table_type>(node, "modules");
+    // std::vector<std::string> moduleNames;
+    // std::transform(mods.begin(), mods.end(), std::back_inserter(moduleNames), [](const auto &kv) { return kv.first; });
+    // std::reverse(moduleNames.begin(), moduleNames.end());
+
+    for (const auto &[name, daya] : mods)
+    {
+        const auto &data = mods.at(name);
+        auto *module = append(coreData, *ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
+        module->setName(name);
+        module->deserialise(data, coreData);
+    };
 }

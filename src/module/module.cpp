@@ -322,6 +322,9 @@ void Module::serialise(std::string name, SerialisedValue &target) const
     if (!enabled_)
         result["disabled"] = true;
     keywords_.serialiseOnto(result);
+    std::cout << "=>=>=>" << std::endl;
+    std::cout << result << std::endl;
+    std::cout << "<=<=<=" << std::endl;
     target[name] = result;
 }
 

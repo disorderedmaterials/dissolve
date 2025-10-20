@@ -260,7 +260,8 @@ void GeneratorNode::serialise(std::string name, SerialisedValue &target) const
     SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
     if (mustBeNamed())
         result["name"] = name_;
-    target[name] = keywords_.serialiseOnto(result);
+    keywords_.serialiseOnto(result);
+    target[name] = result;
 }
 
 // Read values from a serialisable value

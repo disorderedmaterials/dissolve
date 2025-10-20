@@ -7,6 +7,7 @@
 
 #include "templates/keyedVector.h"
 #include "templates/orderedMap.h"
+#include <iostream>
 #include <map>
 #include <vector>
 
@@ -64,6 +65,9 @@ template <typename... Contexts> class Serialisable
     {
         SerialisedValue result;
         serialise("tag", result);
+        std::cout << ">>>>>>>>>>>>>>>>>>" << std::endl;
+        std::cout << result << std::endl;
+        std::cout << "<<<<<<<<<<<<<<<<<<" << std::endl;
         return result["tag"];
     }
 

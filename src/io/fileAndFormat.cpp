@@ -155,7 +155,7 @@ void FileAndFormat::serialise(std::string name, SerialisedValue &target) const
     SerialisedValue result = {{"filename", filename_},
                               {"format", formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"}};
     SerialisedValue keywords;
-    keywords = keywords_.serialiseOnto(keywords);
+    keywords_.serialiseOnto(keywords);
     if (!keywords.is_uninitialized())
         result["keywords"] = keywords;
     target[name] = result;
