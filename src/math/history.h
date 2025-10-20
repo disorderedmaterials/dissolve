@@ -52,9 +52,9 @@ template <class T> class History : public Serialisable<>
      */
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const
+    void serialise(std::string name, SerialisedValue &target) const override
     {
-        return Serialisable::fromVector(history_, [&](const auto &itemPtr) { return itemPtr->serialise(); });
+        target[name] = Serialisable::fromVector(history_, [&](const auto &itemPtr) { return itemPtr->into_toml(); });
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override

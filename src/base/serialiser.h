@@ -179,9 +179,9 @@ template <typename... Contexts> class Serialisable
         SerialisedValue result;
         for (auto &[key, value] : map)
             if constexpr (serialisablePointer<V>)
-                result[std::string(key)] = value->serialise();
+                value->serialise(std::string(key), result);
             else if constexpr (std::is_base_of_v<Serialisable, V>)
-                result[std::string(key)] = value.serialise();
+                value.serialise(std::string(key), result);
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value

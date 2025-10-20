@@ -209,9 +209,9 @@ bool SampledVector::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-SerialisedValue SampledVector::serialise() const
+void SampledVector::serialise(std::string name, SerialisedValue &target) const
 {
-    return {{"count", count_}, {"mean", mean_}, {"stDev", stDev_}, {"m2", m2_}};
+    target[name] = {{"count", count_}, {"mean", mean_}, {"stDev", stDev_}, {"m2", m2_}};
 }
 
 // Read values from a serialisable value
