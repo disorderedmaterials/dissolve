@@ -5,6 +5,8 @@
 
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/outputs.h"
+#include "nodes/inputs.h"
 #include "templates/doubleKeyedMap.h"
 
 // Loop Graph
@@ -29,9 +31,15 @@ class LoopGraph : public Graph
      * Feedback
      *
      */
+    private:
+    // LoopBacks
+    OutputsNode *loopBacks_{nullptr};
+    //
+    void setLoopBacks();
+
     public:
     // Add supplied proxy output, setting ownership of the parameters appropriately
-    bool addFeedback(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &source);
+    bool addLoopBack(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &source);
 
     /*
      * Data

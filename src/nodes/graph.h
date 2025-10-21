@@ -51,8 +51,9 @@ class Graph : public Node
     InputsNode *proxyInputs_{nullptr};
     OutputsNode *proxyOutputs_{nullptr};
 
-    protected:
-    OutputsNode *feedbacks_{nullptr};
+    public:
+    InputsNode &proxyInputs();
+    OutputsNode &proxyOutputs();
 
     public:
     // Add supplied proxy input, setting ownership of the parameters appropriately

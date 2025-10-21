@@ -12,7 +12,6 @@ Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
     proxyInputs_ = dynamic_cast<InputsNode *>(addNode(std::make_unique<InputsNode>(this), "Inputs"));
     proxyOutputs_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Outputs"));
-    feedbacks_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "Feedbacks"));
 }
 
 /*
@@ -84,6 +83,10 @@ void Graph::setUpdateRequired()
 /*
  * Inputs, Outputs, and Options
  */
+
+InputsNode &Graph::proxyInputs() { return *proxyInputs_; }
+
+OutputsNode &Graph::proxyOutputs() { return *proxyOutputs_; }
 
 // Add supplied proxy input, setting ownership of the parameters appropriately
 bool Graph::addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)

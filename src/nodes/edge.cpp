@@ -4,6 +4,7 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include "nodes/outputs.h"
+#include "nodes/loop.h"
 
 Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
     : sourceNode_(sourceNode), sourceOutput_(sourceOutput), targetNode_(targetNode), targetInput_(targetInput)
@@ -84,6 +85,13 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
     else if (dynamic_cast<OutputsNode *>(targetNode))
     {
+        auto outputs = dynamic_cast<OutputsNode *>(targetNode);
+        bool isLoop = dynamic_cast<LoopGraph *>(outputs->parentGraph());
+        if (isLoop)
+        {
+            return {};
+        }
+
         // The target node is the parent Graph's own Outputs node, so create a parameter link from the sourceOutput and from it
         // a mapped output
         auto link = sourceOutput->createParameterLink(definition.targetInput);
