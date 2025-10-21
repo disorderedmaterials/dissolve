@@ -37,9 +37,7 @@ void LoopGraph::releaseLoopBack(const std::string &name)
     auto inputs = loopBacks_->inputs();
     auto it = inputs.find(name);
     if (it != inputs.end())
-    {
         inputs.erase(it);
-    }
 }
 
 // Unlink edge, releasing the loop back if one accompanies it
@@ -74,8 +72,8 @@ NodeConstants::ProcessResult LoopGraph::process()
             if (it != destinations.end())
             {
                 auto targetParam = it->second;
-                auto override = param.get();
-                targetParam->assign(override);
+                auto overrideParam = param.get();
+                targetParam->assign(overrideParam);
             }
         }
     }
