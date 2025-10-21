@@ -22,6 +22,14 @@ std::string_view LoopGraph::type() const { return "Loop"; }
 // Return short summary of the node's purpose
 std::string_view LoopGraph::summary() const { return "Loop the contained graph"; }
 
+void LoopGraph::increment()
+{
+    loopCounter_++;
+}
+
+// Current loop iteration
+int LoopGraph::loopCount() { return loopCounter_; }
+
 // Set the loopbacks corresponding to the graph inputs
 void LoopGraph::setLoopBacks()
 {

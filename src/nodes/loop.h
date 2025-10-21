@@ -27,7 +27,7 @@ class LoopGraph : public Graph
     // Return short summary of the node's purpose
     std::string_view summary() const override;
     // Increment loop counter
-    void operator++() { loopCounter_++; }
+    void increment();
 
     /*
      * Feedback
@@ -36,7 +36,7 @@ class LoopGraph : public Graph
     private:
     // Number of loops (iterations) to perform
     int nLoops_{0};
-    // Current loop
+    // Current loop iteration
     int loopCounter_{0};
     // LoopBacks
     OutputsNode *loopBacks_{nullptr};
@@ -44,6 +44,8 @@ class LoopGraph : public Graph
     void releaseLoopBack(const std::string &name);
 
     public:
+    // Current loop iteration
+    int loopCount();
     // Unlink edge, releasing the loop back if one accompanies it
     void unlinkEdge(Edge *edge) override;
     // Reset the loop counter to zero

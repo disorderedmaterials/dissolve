@@ -37,7 +37,7 @@ class LoopGraphTest : public ::testing::Test
 
         // Create nodes
         i_ = dynamic_cast<NumberNode *>(root_.createNode("Number", "i"));
-        loop_ = dynamic_cast<LoopGraph *>(root_.createNode("Loop", "loop"));
+        loop_ = dynamic_cast<LoopGraph *>(root_.createNode("Loop", "Loop"));
         x_ = dynamic_cast<AddNode *>(loop_->createNode("Add", "x"));
         y_ = dynamic_cast<AddNode *>(root_.createNode("Add", "y"));
 
@@ -49,18 +49,18 @@ class LoopGraphTest : public ::testing::Test
         ASSERT_EQ(i_->name(), "i");
         ASSERT_EQ(x_->name(), "x");
         ASSERT_EQ(y_->name(), "y");
-        ASSERT_EQ(loop_->name(), "loop");
+        ASSERT_EQ(loop_->name(), "Loop");
 
         // Create edge connections
         // - Number 'i' is a dynamic input to the LoopGraph - we'll call the input "I"
-        EXPECT_TRUE(root_.addEdge({"i", "A", "loop", "I"}));
+        EXPECT_TRUE(root_.addEdge({"i", "A", "Loop", "I"}));
         // - Add 'x' takes the LoopGraph input "I" as its parameter "A"
         EXPECT_TRUE(loop_->addEdge({"Inputs", "I", "x", "A"}));
         // - Result from Add 'x' goes to graph output (which we will call "C") as well as loopback to "I"
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "Outputs", "C"}));
-        EXPECT_TRUE(loop_->addEdge({"x", "Result", "Loopback", "I"}));
+        EXPECT_TRUE(loop_->addEdge({"x", "Result", "LoopBacks", "I"}));
         // - The output "C" of the loop graph then goes to input "A" of Add 'y'
-        EXPECT_TRUE(root_.addEdge({"loop", "C", "y", "A"}));
+        EXPECT_TRUE(root_.addEdge({"Loop", "C", "y", "A"}));
         /*
          * TODO There is an obvious, smaller unit test to write here which tests the validity of trying to make a loopback
          * connection to a named Input which doesn't exist.
@@ -76,6 +76,39 @@ class LoopGraphTest : public ::testing::Test
     AddNode *x_{nullptr}, *y_{nullptr};
     LoopGraph *loop_{nullptr};
 };
+
+TEST_F(LoopGraphTest, Feedback)
+{
+    createGraph();
+
+    auto xB = x_->findInput("B");
+    EXPECT_TRUE(xB);
+    xB->set<Number>(1);
+
+    auto yB = y_->findInput("B");
+    EXPECT_TRUE(yB);
+    yB->set<Number>(0);
+
+    // Process with no loopback (0th iteration)
+    auto iA = i_->findOption("A");
+    EXPECT_TRUE(iA);
+    iA->set<Number>(1);
+
+    ASSERT_EQ(loop_->loopCount(), 0);
+
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+
+    // We expect (yA = 1) + (xB = 1) = 1 + 1 = 2
+    auto yResult = y_->findOutput("Result")->get<Number>();
+    ASSERT_EQ(yResult.asInteger(), 2);
+
+    // Process with loopback (1st iteration)
+    loop_->increment();
+    ASSERT_EQ(loop_->loopCount(), 1);
+
+    // We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
+    //EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+}
 
 TEST_F(LoopGraphTest, BasicLoop)
 {
