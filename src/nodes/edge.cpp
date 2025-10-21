@@ -86,11 +86,9 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     else if (dynamic_cast<OutputsNode *>(targetNode))
     {
         auto outputs = dynamic_cast<OutputsNode *>(targetNode);
-        bool isLoop = dynamic_cast<LoopGraph *>(outputs->parentGraph());
-        if (isLoop)
-        {
-            return {};
-        }
+        auto loop = dynamic_cast<LoopGraph *>(outputs->parentGraph());
+        if (loop)
+            loop->setLoopBacks();
 
         // The target node is the parent Graph's own Outputs node, so create a parameter link from the sourceOutput and from it
         // a mapped output

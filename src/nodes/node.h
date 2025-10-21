@@ -155,7 +155,7 @@ class Node : public Serialisable<>
     // Link edge, returning whether we accept it
     bool linkEdge(Edge *edge);
     // Unlink edge
-    void unlinkEdge(Edge *edge);
+    virtual void unlinkEdge(Edge *edge);
     // Add input parameter
     template <class T>
     std::shared_ptr<ParameterBase> addOption(std::string_view optionName, std::string_view description, T &data)

@@ -5,8 +5,8 @@
 
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
+    proxyInputs().addOption("NLoops", "Number of loops (iterations) to perform", nLoops_);
     loopBacks_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "LoopBacks"));
-    setLoopBacks();
 }
 
 /*
@@ -28,12 +28,59 @@ void LoopGraph::setLoopBacks()
     auto &sources = proxyInputs().inputs();
 
     for (const auto& [name, param] : sources)
-        loopBacks_->inputs().emplace(name, param);
+        loopBacks_->inputs().insert_or_assign(name, param);
 }
 
-// Add supplied proxy output, setting ownership of the parameters appropriately
-bool LoopGraph::addLoopBack(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &source)
+// Release loopback by name
+void LoopGraph::releaseLoopBack(const std::string &name)
 {
+    auto inputs = loopBacks_->inputs();
+    auto it = inputs.find(name);
+    if (it != inputs.end())
+    {
+        inputs.erase(it);
+    }
+}
 
-    return true;
+// Unlink edge, releasing the loop back if one accompanies it
+void LoopGraph::unlinkEdge(Edge* edge)
+{
+    Node::unlinkEdge(edge);
+    std::string release(edge->targetInput().name());
+    releaseLoopBack(release);
+}
+
+// Reset
+void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
+
+/*
+ * Processing & Validity
+ */
+
+// Perform processing
+NodeConstants::ProcessResult LoopGraph::process()
+{
+    if (loopCounter_ > 0)
+    {
+        auto &sources = loopBacks_->inputs();
+        auto &destinations = proxyInputs().outputs();
+
+        if (sources.size() == 0 || destinations.size() == 0)
+            return NodeConstants::ProcessResult::Unchanged;
+
+        for (const auto& [name, param] : sources)
+        {
+            auto it = destinations.find(name);
+            if (it != destinations.end())
+            {
+                auto targetParam = it->second;
+                auto override = param.get();
+                targetParam->assign(override);
+            }
+        }
+    }
+    else
+        return NodeConstants::ProcessResult::Unchanged;
+
+    return NodeConstants::ProcessResult::Success;
 }

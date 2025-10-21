@@ -32,20 +32,30 @@ class LoopGraph : public Graph
      *
      */
     private:
+    // Number of loops (iterations) to perform
+    int nLoops_{0};
+    // Current loop
+    int loopCounter_{nLoops_};
     // LoopBacks
     OutputsNode *loopBacks_{nullptr};
+    // Release a loopback by name
+    void releaseLoopBack(const std::string &name);
+
+    public:
+    // Unlink edge, releasing the loop back if one accompanies it
+    void unlinkEdge(Edge *edge) override;
+    // Reset
+    void resetLoopCounter();
     //
     void setLoopBacks();
 
-    public:
-    // Add supplied proxy output, setting ownership of the parameters appropriately
-    bool addLoopBack(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &source);
-
     /*
-     * Data
+     * Processing & Validity
      */
-    private:
-    public:
+    protected:
+    // Perform processing
+    NodeConstants::ProcessResult process() override;
+
     /*
      * Functions
      */
