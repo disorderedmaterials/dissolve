@@ -83,13 +83,15 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         }
         targetInput = link.inputParameter;
     }
-    else if (dynamic_cast<OutputsNode *>(targetNode))
+    else if (dynamic_cast<InputsNode *>(sourceNode))
     {
-        auto outputs = dynamic_cast<OutputsNode *>(targetNode);
-        auto loop = dynamic_cast<LoopGraph *>(outputs->parentGraph());
+        auto source = dynamic_cast<InputsNode *>(sourceNode);
+        auto loop = dynamic_cast<LoopGraph *>(source->parentGraph());
         if (loop)
             loop->setLoopBacks();
-
+    }
+    else if (dynamic_cast<OutputsNode *>(targetNode))
+    {
         // The target node is the parent Graph's own Outputs node, so create a parameter link from the sourceOutput and from it
         // a mapped output
         auto link = sourceOutput->createParameterLink(definition.targetInput);

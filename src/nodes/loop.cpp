@@ -66,30 +66,36 @@ void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    if (loopCounter_ > 0)
+    auto graphResult = Graph::process();
+    
+    if (graphResult != NodeConstants::ProcessResult::Failed)
     {
-        auto &sources = loopBacks_->inputs();
-        auto &destinations = proxyInputs().outputs();
-
-        if (sources.size() == 0 || destinations.size() == 0)
-            return NodeConstants::ProcessResult::Unchanged;
-
-        for (const auto &[name, param] : sources)
+        if (loopCounter_ > 0)
         {
-            auto it = destinations.find(name);
-            if (it != destinations.end())
-            {
-                auto targetParam = it->second;
-                auto overrideParam = param.get();
-                auto assigned = targetParam->assign(overrideParam);
+            auto &sources = loopBacks_->inputs();
+            auto &destinations = proxyInputs().outputs();
 
-                if (!assigned)
-                    return NodeConstants::ProcessResult::Failed;
+            if (sources.size() == 0 || destinations.size() == 0)
+                return NodeConstants::ProcessResult::Unchanged;
+
+            for (const auto &[name, param] : sources)
+            {
+                auto it = destinations.find(name);
+                if (it != destinations.end())
+                {
+                    auto targetParam = it->second;
+                    auto overrideParam = param.get();
+                    auto assigned = targetParam->assign(overrideParam);
+
+                    if (!assigned)
+                        return NodeConstants::ProcessResult::Failed;
+                }
             }
         }
-    }
-    else
-        return NodeConstants::ProcessResult::Unchanged;
+        else
+            return NodeConstants::ProcessResult::Unchanged;
 
-    return NodeConstants::ProcessResult::Success;
+        return NodeConstants::ProcessResult::Success;
+    }
+    return graphResult;
 }
