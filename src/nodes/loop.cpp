@@ -9,9 +9,6 @@ LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph) {}
  * Definitions (Virtuals)
  */
 
-// Return node name
-std::string_view LoopGraph::name() const { return "Loop"; }
-
 // Return type of the node
 std::string_view LoopGraph::type() const { return "Loop"; }
 
