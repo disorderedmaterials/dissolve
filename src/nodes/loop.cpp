@@ -25,6 +25,7 @@ std::string_view LoopGraph::summary() const { return "Loop the contained graph";
 void LoopGraph::increment()
 {
     loopCounter_++;
+    setUpdateRequired();
 }
 
 // Current loop iteration
@@ -72,6 +73,11 @@ NodeConstants::ProcessResult LoopGraph::process()
     {
         if (loopCounter_ > 0)
         {
+            // Pull outputs first
+            auto looped = loopBacks_->run();
+            if (looped == NodeConstants::ProcessResult::Failed)
+                return looped;
+
             auto &sources = loopBacks_->inputs();
             auto &destinations = proxyInputs().outputs();
 

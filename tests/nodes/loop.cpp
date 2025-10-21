@@ -89,7 +89,9 @@ TEST_F(LoopGraphTest, Feedback)
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    // Process with no loopback (0th iteration)
+    /*
+     * Process with no loopback (0th iteration)
+     */
     auto iA = i_->findOption("A");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
@@ -99,15 +101,17 @@ TEST_F(LoopGraphTest, Feedback)
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
 
     // We expect (yA = 1) + (xB = 1) = 1 + 1 = 2
-    auto yResult = y_->findOutput("Result")->get<Number>();
-    ASSERT_EQ(yResult.asInteger(), 2);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 2);
 
-    // Process with loopback (1st iteration)
+    /*
+     * Process with loopback (1st iteration)
+     */
     loop_->increment();
     ASSERT_EQ(loop_->loopCount(), 1);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
 
     // We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
-    //EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 3);
 }
 
 TEST_F(LoopGraphTest, BasicLoop)
