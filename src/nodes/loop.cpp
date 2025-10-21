@@ -25,7 +25,7 @@ std::string_view LoopGraph::summary() const { return "Loop the contained graph";
 //
 void LoopGraph::setLoopBacks()
 {
-    auto &sources = proxyInputs().inputs();
+    auto &sources = proxyInputs().outputs();
 
     for (const auto& [name, param] : sources)
         loopBacks_->inputs().insert_or_assign(name, param);
