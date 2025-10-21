@@ -22,12 +22,12 @@ std::string_view LoopGraph::type() const { return "Loop"; }
 // Return short summary of the node's purpose
 std::string_view LoopGraph::summary() const { return "Loop the contained graph"; }
 
-//
+// Set the loopbacks corresponding to the graph inputs
 void LoopGraph::setLoopBacks()
 {
     auto &sources = proxyInputs().outputs();
 
-    for (const auto& [name, param] : sources)
+    for (const auto &[name, param] : sources)
         loopBacks_->inputs().insert_or_assign(name, param);
 }
 
@@ -41,14 +41,14 @@ void LoopGraph::releaseLoopBack(const std::string &name)
 }
 
 // Unlink edge, releasing the loop back if one accompanies it
-void LoopGraph::unlinkEdge(Edge* edge)
+void LoopGraph::unlinkEdge(Edge *edge)
 {
     Node::unlinkEdge(edge);
     std::string release(edge->targetInput().name());
     releaseLoopBack(release);
 }
 
-// Reset
+// Reset the loop counter to zero
 void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
 
 /*
@@ -66,7 +66,7 @@ NodeConstants::ProcessResult LoopGraph::process()
         if (sources.size() == 0 || destinations.size() == 0)
             return NodeConstants::ProcessResult::Unchanged;
 
-        for (const auto& [name, param] : sources)
+        for (const auto &[name, param] : sources)
         {
             auto it = destinations.find(name);
             if (it != destinations.end())

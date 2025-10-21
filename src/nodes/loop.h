@@ -5,8 +5,8 @@
 
 #include "nodes/edge.h"
 #include "nodes/graph.h"
-#include "nodes/outputs.h"
 #include "nodes/inputs.h"
+#include "nodes/outputs.h"
 #include "templates/doubleKeyedMap.h"
 
 // Loop Graph
@@ -26,6 +26,8 @@ class LoopGraph : public Graph
     std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
+    // Increment loop counter
+    void operator++() { loopCounter_++; }
 
     /*
      * Feedback
@@ -44,9 +46,9 @@ class LoopGraph : public Graph
     public:
     // Unlink edge, releasing the loop back if one accompanies it
     void unlinkEdge(Edge *edge) override;
-    // Reset
+    // Reset the loop counter to zero
     void resetLoopCounter();
-    //
+    // Set the loopbacks corresponding to the graph inputs
     void setLoopBacks();
 
     /*
