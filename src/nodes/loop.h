@@ -35,7 +35,7 @@ class LoopGraph : public Graph
     // Number of loops (iterations) to perform
     int nLoops_{0};
     // Current loop
-    int loopCounter_{nLoops_};
+    int loopCounter_{0};
     // LoopBacks
     OutputsNode *loopBacks_{nullptr};
     // Release a loopback by name
