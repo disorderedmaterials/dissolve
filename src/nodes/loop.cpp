@@ -73,7 +73,10 @@ NodeConstants::ProcessResult LoopGraph::process()
             {
                 auto targetParam = it->second;
                 auto overrideParam = param.get();
-                targetParam->assign(overrideParam);
+                auto assigned = targetParam->assign(overrideParam);
+
+                if (!assigned)
+                    return NodeConstants::ProcessResult::Failed;
             }
         }
     }
