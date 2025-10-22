@@ -87,7 +87,7 @@ void Graph::setUpdateRequired()
 bool Graph::addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {
     // We (the Graph) own the input and the proxyInputs_ owns the output
-    return ownParameter(input) && proxyInputs_->ownParameter(output, true);
+    return ownParameter(input) && proxyInputs_->addProxy(output);
 }
 
 // Add supplied proxy output, setting ownership of the parameters appropriately

@@ -24,12 +24,9 @@ class LoopGraph : public Graph
     std::string_view summary() const override;
 
     /*
-     * Data
-     */
-    private:
-    public:
-    /*
-     * Functions
+     * Processing & Validity
      */
     public:
+    // Perform processing
+    NodeConstants::ProcessResult process();
 };

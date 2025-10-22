@@ -28,6 +28,17 @@ class InputsNode : public Node
     // Perform processing
     NodeConstants::ProcessResult process() override;
 
+    public:
+    // Run the node, retrieving dependent inputs as necessary
+    NodeConstants::ProcessResult run() override;
+
+    /*
+     * Inputs, Outputs, and Options
+     */
+    public:
+    // Add a proxy output, creating a loopback input for it at the same time
+    bool addProxy(std::shared_ptr<ParameterBase> &output);
+
     /*
      * Serialisation
      */

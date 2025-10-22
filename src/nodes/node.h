@@ -126,7 +126,7 @@ class Node : public Serialisable<>
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
     // Run the node, retrieving dependent inputs as necessary
-    NodeConstants::ProcessResult run();
+    virtual NodeConstants::ProcessResult run();
 
     /*
      * Inputs, Outputs, and Options

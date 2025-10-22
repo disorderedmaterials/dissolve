@@ -22,7 +22,7 @@ class LoopGraphTest : public ::testing::Test
         /*
          *    Number (i)                      LoopGraph
          *    ------------------              ----------------------------------           Add (y)
-         *    |          Number-o--+          |                                |-OUT-\     ------------------
+         *    |               A-o--+          |                                |-OUT-\     ------------------
          *    -----------------/    \    +-IN-|     Add (x)                +--o-->>>--o---o-A         result-o
          *                           \   -    |     ------------------    /    |-----/    o-B (0)           |
          *                            +-o-->>>-o---o-A         result-o--+     |           -----------------/
@@ -58,7 +58,7 @@ class LoopGraphTest : public ::testing::Test
         EXPECT_TRUE(loop_->addEdge({"Inputs", "I", "x", "A"}));
         // - Result from Add 'x' goes to graph output (which we will call "C") as well as loopback to "I"
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "Outputs", "C"}));
-        EXPECT_TRUE(loop_->addEdge({"x", "Result", "Loopback", "I"}));
+        EXPECT_TRUE(loop_->addEdge({"x", "Result", "Inputs", "I"}));
         // - The output "C" of the loop graph then goes to input "A" of Add 'y'
         EXPECT_TRUE(root_.addEdge({"loop", "C", "y", "A"}));
         /*
@@ -77,6 +77,22 @@ class LoopGraphTest : public ::testing::Test
     LoopGraph *loop_{nullptr};
 };
 
-TEST_F(LoopGraphTest, BasicLoop) { createGraph(); };
+TEST_F(LoopGraphTest, BasicLoop)
+{
+    createGraph();
+
+    // Set some numbers
+    x_->findInput("B")->set<Number>(1);
+    y_->findInput("B")->set<Number>(1);
+
+    // Run y - all nodes should update
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+    EXPECT_EQ(i_->versionIndex(), 0);
+    EXPECT_EQ(i_->getOutputValue<Number>("A").asInteger(), 0);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 1);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 2);
+};
 
 } // namespace UnitTest

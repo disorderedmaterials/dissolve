@@ -22,6 +22,31 @@ std::string_view InputsNode::summary() const { return "Maps graph inputs to loca
 // Perform processing
 NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::ProcessResult::Success; }
 
+// Run the node, retrieving dependent inputs as necessary
+NodeConstants::ProcessResult InputsNode::run()
+{
+    // TODO Something else happens here!
+    return NodeConstants::ProcessResult::Success;
+}
+
+/*
+ * Inputs, Outputs, and Options
+ */
+
+// Add a proxy output, creating a loopback input for it at the same time
+bool InputsNode::addProxy(std::shared_ptr<ParameterBase> &output)
+{
+    // Own the output end of the proxy connection
+    if (!ownParameter(output, true))
+        return false;
+
+    // Create a loopback input of the same name
+    auto param = inputs_.emplace(std::make_pair(output->name(), output)).first->second;
+    param->setFlags(ParameterBase::ParameterFlags::Input);
+
+    return true;
+}
+
 /*
  * Serialisation
  */
