@@ -67,12 +67,11 @@ const KeyedVector<const AtomType *, Sears91::Isotope> &Isotopologue::isotopes() 
  */
 
 // Express as a serialisable value
-SerialisedValue Isotopologue::serialise() const
+void Isotopologue::serialize(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue::table_type result;
+    auto &result = target[tag];
     for (auto &&[type, isotope] : isotopes_)
         result[type->name().data()] = Sears91::A(isotope);
-    return result;
 }
 
 void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)

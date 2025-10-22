@@ -69,7 +69,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Optional Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_optional<DataClass> && std::is_base_of_v<Serialisable<>, typename DataClass::value_type>)
-        : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return data_.value().serialise(); }),
+        : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return data_.value().into_toml(); }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {
@@ -148,7 +148,12 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     DataClass &data_;
     // Serialiser for target data
     using DataSerialiser = std::function<SerialisedValue()>;
-    DataSerialiser dataSerialiser_{[&]() { return data_.serialise(); }};
+    DataSerialiser dataSerialiser_{[&]()
+                                   {
+                                       SerialisedValue target;
+                                       data_.serialize("inner", target);
+                                       return target["inner"];
+                                   }};
     // Deserialiser for target data
     using DataDeserialiser = std::function<void(const SerialisedValue &value)>;
     DataDeserialiser dataDeserialiser_{[&](const SerialisedValue &value) { data_.deserialise(value); }};

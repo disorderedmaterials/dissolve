@@ -122,9 +122,9 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 double Configuration::temperature() const { return temperature_; }
 
 // Express as a serialisable value
-SerialisedValue Configuration::serialise() const
+void Configuration::serialize(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue configuration;
+    auto &configuration = target[tag];
 
     if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
         configuration["cellDivisionLength"] = requestedCellDivisionLength_;
@@ -133,9 +133,7 @@ SerialisedValue Configuration::serialise() const
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    configuration["generator"] = generator_;
-
-    return configuration;
+    generator_.serialize("generator", configuration);
 }
 
 // Read values from a serialisable value

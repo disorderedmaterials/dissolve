@@ -168,14 +168,11 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
                           [](const auto &item) -> SerialisedValue
                           {
                               auto &[dataSourceA, dataSourceB] = item;
+                              SerialisedValue result;
+                              dataSourceA->serialize("dataSourceA", result);
                               if (dataSourceB->dataExists())
-                              {
-                                  return {{"dataSourceA", dataSourceA->serialise()}, {"dataSourceB", dataSourceB->serialise()}};
-                              }
-                              else
-                              {
-                                  return {{"dataSourceA", dataSourceA->serialise()}};
-                              }
+                                  dataSourceB->serialize("dataSourceB", result);
+                              return result;
                           });
     }
     // Read values from a serialisable value

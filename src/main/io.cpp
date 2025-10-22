@@ -151,7 +151,9 @@ SerialisedValue Dissolve::serialisePairPotentials() const
                                  [](const auto &term)
                                  {
                                      const auto &[at1, at2, pot] = term;
-                                     auto value = pot->serialise();
+                                     SerialisedValue target;
+                                     pot->serialize("inner", target);
+                                     auto &value = target["inner"];
                                      value["atomTypeI"] = at1->name();
                                      value["atomTypeJ"] = at2->name();
                                      return value;
@@ -169,7 +171,7 @@ SerialisedValue Dissolve::serialise() const
 
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
-        root["master"] = coreData_.serialiseMaster();
+        coreData_.serialiseMaster("master", root);
 
     Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 

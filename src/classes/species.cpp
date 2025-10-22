@@ -206,9 +206,12 @@ void Species::print() const
 int Species::version() const { return version_; }
 
 // Express as a serialisable value
-SerialisedValue Species::serialise() const
+void Species::serialize(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result;
+    if (forcefield_ == nullptr && atoms_.empty() && bonds_.empty() && angles_.empty() && torsions_.empty() &&
+        isotopologues_.empty() && sites_.empty())
+        return;
+    auto &result = target[tag];
     if (forcefield_ != nullptr)
         result["forcefield"] = forcefield_->name().data();
 
@@ -219,8 +222,6 @@ SerialisedValue Species::serialise() const
     Serialisable::fromVector<>(impropers_, "impropers", result);
     Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
     Serialisable::fromVectorToTable<>(sites_, "sites", result);
-
-    return result;
 }
 
 // Read values from a serialisable value

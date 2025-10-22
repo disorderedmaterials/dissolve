@@ -38,14 +38,13 @@ template <typename... Contexts> class Serialisable
 {
     public:
     // Express as a serialisable value
-    virtual SerialisedValue serialise() const {
+    virtual SerialisedValue serialise() const
+    {
         SerialisedValue result;
         serialize("inner", result);
         return result["inner"];
     }
-    virtual void serialize(std::string tag, SerialisedValue &target) const {
-        target[tag] = serialise();
-    }
+    virtual void serialize(std::string tag, SerialisedValue &target) const { target[tag] = serialise(); }
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
@@ -99,7 +98,7 @@ template <typename... Contexts> class Serialisable
     {
         SerialisedValue group;
         for (const auto &value : vector)
-            group[getName(value)] = value->serialise();
+            value->serialize(getName(value), group);
         return group;
     };
     // A helper function to add elements of a KeyedVector to a node
@@ -183,7 +182,7 @@ template <typename... Contexts> class Serialisable
             if constexpr (serialisablePointer<V>)
                 result[std::string(key)] = value->serialise();
             else if constexpr (std::is_base_of_v<Serialisable, V>)
-                result[std::string(key)] = value.serialise();
+                value.serialize(key, result);
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value

@@ -293,17 +293,16 @@ double SpeciesAngle::force(double theta) const
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesAngle::serialise() const
+void SpeciesAngle::serialize(std::string tag, SerialisedValue &target) const
 {
-    auto angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();
+    SpeciesIntra<SpeciesAngle, AngleFunctions>::serialize(tag, target);
+    auto &angle = target[tag];
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();
     if (j_ != nullptr)
         angle["j"] = j_->userIndex();
     if (k_ != nullptr)
         angle["k"] = k_->userIndex();
-
-    return angle;
 }
 // This method populates the object's members with values read from an 'angle' TOML node
 void SpeciesAngle::deserialise(const SerialisedValue &node, CoreData &coreData)

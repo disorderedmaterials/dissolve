@@ -219,9 +219,12 @@ double SpeciesImproper::force(double phi) const
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesImproper::serialise() const
+void SpeciesImproper::serialize(std::string tag, SerialisedValue &target) const
 {
-    auto improper = SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise();
+    // if (i_ == nullptr && j_ == nullptr && k_ == nullptr && l_ == nullptr)
+    //     return;
+    SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialize(tag, target);
+    auto &improper = target.at(tag);
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -230,9 +233,8 @@ SerialisedValue SpeciesImproper::serialise() const
         improper["k"] = k_->userIndex();
     if (l_ != nullptr)
         improper["l"] = l_->userIndex();
-
-    return improper;
 }
+
 // This method populates the object's members with values read from an 'improper' TOML node
 void SpeciesImproper::deserialise(const SerialisedValue &node, CoreData &coreData)
 {

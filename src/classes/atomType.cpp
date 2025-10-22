@@ -64,9 +64,9 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
 }
 
 // Express as a serialisable value
-SerialisedValue AtomType::serialise() const
+void AtomType::serialize(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue atomType;
+    auto &atomType = target[tag];
 
     atomType["z"] = Z_;
     atomType["charge"] = charge_;
@@ -81,8 +81,6 @@ SerialisedValue AtomType::serialise() const
             atomTypeParameters[parameter] = value;
         atomType["parameters"] = atomTypeParameters;
     }
-
-    return atomType;
 }
 
 // Read values from a serialisable value
