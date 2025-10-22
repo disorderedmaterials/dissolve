@@ -10,13 +10,13 @@
 #include <map>
 #include <vector>
 
+// The type we use for the nodes of our serialisation tree
+using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
+
 // We need a way at compile time to detect all the types of smart
 // pointers for things that can be serialised
 template <typename T>
-concept serialisablePointer = requires(T a) { a->serialise(); };
-
-// The type we use for the nodes of our serialisation tree
-using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
+concept serialisablePointer = requires(T a, std::string tag, SerialisedValue target) { a->serialize(tag, target); };
 
 // The associated context for type T This type does double duty.
 // First, since the struct has not actual members, it is a Unit type
@@ -38,7 +38,14 @@ template <typename... Contexts> class Serialisable
 {
     public:
     // Express as a serialisable value
-    virtual SerialisedValue serialise() const = 0;
+    virtual SerialisedValue serialise() const {
+        SerialisedValue result;
+        serialize("inner", result);
+        return result["inner"];
+    }
+    virtual void serialize(std::string tag, SerialisedValue &target) const {
+        target[tag] = serialise();
+    }
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
