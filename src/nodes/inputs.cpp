@@ -32,7 +32,6 @@ NodeConstants::ProcessResult InputsNode::run()
     {
         auto source = loopGraph->loopBacks();
 
-        auto s = 0;
         for (const auto &[sourceName, sourceEdges] : source->inputEdges())
         {
             for (const auto &edge : sourceEdges)
