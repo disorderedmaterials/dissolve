@@ -44,6 +44,8 @@ class LoopGraph : public Graph
     void releaseLoopBack(const std::string &name);
 
     public:
+    //
+    OutputsNode *loopBacks();
     // Current loop iteration
     int loopCount();
     // Unlink edge, releasing the loop back if one accompanies it

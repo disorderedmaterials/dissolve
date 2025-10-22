@@ -28,6 +28,9 @@ void LoopGraph::increment()
     setUpdateRequired();
 }
 
+//
+OutputsNode* LoopGraph::loopBacks() { return loopBacks_; }
+
 // Current loop iteration
 int LoopGraph::loopCount() { return loopCounter_; }
 
@@ -67,41 +70,14 @@ void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    auto graphResult = Graph::process();
-    
-    if (graphResult != NodeConstants::ProcessResult::Failed)
+    if (loopCounter_ > 0)
     {
-        if (loopCounter_ > 0)
-        {
-            // Pull outputs first
-            auto looped = loopBacks_->run();
-            if (looped == NodeConstants::ProcessResult::Failed)
-                return looped;
-
-            auto &sources = loopBacks_->inputs();
-            auto &destinations = proxyInputs().outputs();
-
-            if (sources.size() == 0 || destinations.size() == 0)
-                return NodeConstants::ProcessResult::Unchanged;
-
-            for (const auto &[name, param] : sources)
-            {
-                auto it = destinations.find(name);
-                if (it != destinations.end())
-                {
-                    auto targetParam = it->second;
-                    auto overrideParam = param.get();
-                    auto assigned = targetParam->assign(overrideParam);
-
-                    if (!assigned)
-                        return NodeConstants::ProcessResult::Failed;
-                }
-            }
-        }
-        else
-            return NodeConstants::ProcessResult::Unchanged;
-
-        return NodeConstants::ProcessResult::Success;
+        auto looped = loopBacks_->run();
+        if (looped == NodeConstants::ProcessResult::Failed)
+            return looped;
     }
+
+    auto graphResult = Graph::process();
+
     return graphResult;
 }

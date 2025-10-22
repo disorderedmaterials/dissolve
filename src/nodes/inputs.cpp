@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/inputs.h"
+#include "nodes/loop.h"
 
 InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) {}
 
@@ -21,6 +22,32 @@ std::string_view InputsNode::summary() const { return "Maps graph inputs to loca
 
 // Perform processing
 NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::ProcessResult::Success; }
+
+// Run the node, retrieving dependent inputs as necessary
+NodeConstants::ProcessResult InputsNode::run()
+{
+    auto loopGraph = dynamic_cast<LoopGraph *>(parentGraph_);
+
+    if (loopGraph && loopGraph->loopCount() > 0)
+    {
+        auto source = loopGraph->loopBacks();
+
+        auto s = 0;
+        for (const auto &[sourceName, sourceEdges] : source->inputEdges())
+        {
+            for (const auto &edge : sourceEdges)
+            {
+                EdgeDefinition edgeDefinition{std::string(edge->sourceNode().name()), std::string(edge->sourceOutput().name()),
+                                              std::string(name()), std::string(sourceName)};
+
+                auto loopEdge = Edge::create(loopGraph, edgeDefinition);
+                loopEdge->pull();
+            }
+        }
+    }
+
+    return Node::run();
+}
 
 /*
  * Serialisation

@@ -21,7 +21,11 @@ std::string_view OutputsNode::summary() const { return "Maps local inputs to gra
  */
 
 // Perform processing
-NodeConstants::ProcessResult OutputsNode::process() { return NodeConstants::ProcessResult::Success; }
+NodeConstants::ProcessResult OutputsNode::process()
+{
+
+    return NodeConstants::ProcessResult::Success;
+}
 
 // Flag that the node data needs to be updated
 void OutputsNode::setUpdateRequired()

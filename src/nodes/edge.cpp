@@ -97,14 +97,23 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
     else
     {
-        if (dynamic_cast<InputsNode *>(sourceNode))
+        auto loop = dynamic_cast<LoopGraph *>(sourceNode->parentGraph());
+        auto inputs = dynamic_cast<InputsNode *>(sourceNode);
+        if (inputs)
         {
             auto source = dynamic_cast<InputsNode *>(sourceNode);
             auto loop = dynamic_cast<LoopGraph *>(source->parentGraph());
             if (loop)
                 loop->setLoopBacks();
         }
+
         targetInput = targetNode->findInput(definition.targetInput);
+
+        if (!inputs && (loop && loop->loopCount() > 0))
+        {
+            targetInput = targetNode->findOutput(definition.targetInput);
+            targetInput->setFlags(ParameterBase::ParameterFlags::LoopBack);
+        }
     }
 
 
@@ -115,7 +124,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Confirm that the destination input is actually an input
-    if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input))
+    if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input) && !targetInput->flags().isSet(ParameterBase::ParameterFlags::LoopBack))
     {
         Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
                          definition.targetInput);
