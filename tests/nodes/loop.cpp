@@ -23,14 +23,15 @@ class LoopGraphTest : public ::testing::Test
          *    Number (i)                      LoopGraph
          *    ------------------              ----------------------------------           Add (y)
          *    |               A-o--+          |                                |-OUT-\     ------------------
-         *    -----------------/    \    +-IN-|     Add (x)                +--o-->>>--o---o-A         result-o
+         *    -----------------/    \    +-IN-|     Add (x)                +--o---C---o---o-A         result-o
          *                           \   -    |     ------------------    /    |-----/    o-B (0)           |
          *                            +-o-->>>-o---o-A         result-o--+     |           -----------------/
-         *                               -    |    o-B (1)           |    \    |-LB--\
-         *                               -----|     -----------------/     \   |     |
-         *                                    |                             +-o-->IN |
-         *                                    |                                |-----/
-         *                                    ----------------------------------
+         *                               - |  |    o-B (1)           |    \    |-LB--\
+         *                               --+--|     -----------------/     \   |     |
+         *                                 |  |                             +-o-->IN----
+         *                                 |  |                                |-----/  \
+         *                                 \  ----------------------------------        |
+         *                                  \__________________________________________/
          */
         root_.x = 0;
         root_.y = 0;
@@ -86,6 +87,7 @@ TEST_F(LoopGraphTest, BasicLoop)
     y_->findInput("B")->set<Number>(1);
 
     // Run y - all nodes should update
+    printf("FIRST PULL\n");
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
@@ -93,6 +95,33 @@ TEST_F(LoopGraphTest, BasicLoop)
     EXPECT_EQ(i_->getOutputValue<Number>("A").asInteger(), 0);
     EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 1);
     EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 2);
+
+    // Change number input 'i' and run y - all nodes should update again
+    printf("SECOND PULL\n");
+    i_->findOption("A")->set<Number>(5);
+    EXPECT_EQ(i_->getOutputValue<Number>("A").asInteger(), 5);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(i_->versionIndex(), 1);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 6);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 7);
+
+    // Test pulling the loopback edges - no versions should change
+    printf("LOOPBACK PULL\n");
+    EXPECT_EQ(loop_->testLoopBack(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(i_->versionIndex(), 1);
+
+    // Run y again - x_ and y_ should update
+    printf("THIRD PULL\n");
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 2);
+    EXPECT_EQ(y_->versionIndex(), 2);
+    EXPECT_EQ(i_->versionIndex(), 1);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 7);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 8);
 };
 
 } // namespace UnitTest

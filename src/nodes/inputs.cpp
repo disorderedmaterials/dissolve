@@ -25,7 +25,14 @@ NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::Proce
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult InputsNode::run()
 {
-    // TODO Something else happens here!
+    // We have no processing to speak of, but need to update our version index and flag if we were invalidated (typically
+    // from an upstream node changing through a proxy edge)
+    if (!upToDate_ || versionIndex_ == NodeConstants::InvalidVersion)
+    {
+        ++versionIndex_;
+        upToDate_ = true;
+    }
+
     return NodeConstants::ProcessResult::Success;
 }
 

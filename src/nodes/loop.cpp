@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/loop.h"
+#include "nodes/inputs.h"
 #include "nodes/outputs.h"
 
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph) {}
@@ -56,4 +57,28 @@ NodeConstants::ProcessResult LoopGraph::process()
         }
 
     return outputsResult == terminalNodeResult ? outputsResult : NodeConstants::ProcessResult::Success;
+}
+
+NodeConstants::ProcessResult LoopGraph::testLoopBack()
+{
+    // For each defined InputsNode input, pull any edges...
+    // Pull all input edges. If any are out-of-date and get re-set this will automatically unset upToDate_
+    for (auto &[inputName, edges] : proxyInputs_->inputEdges())
+    {
+        for (const auto edge : edges)
+        {
+            std::cout << std::format("Pulling edge '{}'..\n", edge->definition().asString());
+            switch (edge->pull())
+            {
+                case (NodeConstants::ProcessResult::Failed):
+                case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                    return NodeConstants::ProcessResult::Failed;
+                case (NodeConstants::ProcessResult::Success):
+                case (NodeConstants::ProcessResult::Unchanged):
+                    break;
+            }
+        }
+    }
+
+    return NodeConstants::ProcessResult::Success;
 }

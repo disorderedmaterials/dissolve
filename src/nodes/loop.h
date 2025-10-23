@@ -24,9 +24,17 @@ class LoopGraph : public Graph
     std::string_view summary() const override;
 
     /*
+     * Data
+     */
+    public:
+    // Number of iterations to loop for
+    Number iterations_{1};
+
+    /*
      * Processing & Validity
      */
     public:
     // Perform processing
     NodeConstants::ProcessResult process();
+    NodeConstants::ProcessResult testLoopBack();
 };
