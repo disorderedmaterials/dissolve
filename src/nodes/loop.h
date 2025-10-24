@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "nodes/edge.h"
 #include "nodes/graph.h"
-#include "templates/doubleKeyedMap.h"
 
 // Loop Graph
 class LoopGraph : public Graph
@@ -26,6 +24,10 @@ class LoopGraph : public Graph
     /*
      * Data
      */
+    private:
+    // Whether changes to source parameters of loopback edges invalidates our status
+    bool loopbackInvalidates_{true};
+
     public:
     // Number of iterations to loop for
     Number iterations_{1};
@@ -36,5 +38,4 @@ class LoopGraph : public Graph
     public:
     // Perform processing
     NodeConstants::ProcessResult process();
-    NodeConstants::ProcessResult testLoopBack();
 };

@@ -84,10 +84,11 @@ TEST_F(LoopGraphTest, BasicLoop)
 
     const auto iterations = 10;
 
-    // Set some numbers
+    // Set some numbers, and set the loopback invalidates flag to false
     x_->findInput("B")->set<Number>(1);
     y_->findInput("B")->set<Number>(1);
     loop_->findOption("Iterations")->set<Number>(iterations);
+    loop_->findOption("LoopbackInvalidates")->set(false);
 
     // Run y - all nodes should update
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
@@ -108,7 +109,15 @@ TEST_F(LoopGraphTest, BasicLoop)
     EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
     EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
 
-    // Run y again - should be no change as no upstream data has changed
+    // Run y again - should be no change as no upstream data has changed, and loopback invalidation is off
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
+    EXPECT_EQ(x_->versionIndex(), 19);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(i_->versionIndex(), 1);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
+
+    // Turn on loopback invalidation and run y again - this time everything should update starting from the current values
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
     EXPECT_EQ(x_->versionIndex(), 19);
     EXPECT_EQ(y_->versionIndex(), 1);

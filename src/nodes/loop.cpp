@@ -3,10 +3,12 @@
 
 #include "nodes/loop.h"
 #include "nodes/inputs.h"
+#include "nodes/edge.h"
 
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
     addOption<Number>("Iterations", "Number of iterations to perform", iterations_);
+    addOption<bool>("LoopbackInvalidates", "Whether loopback edges cause iterations to be rerun on next call", loopbackInvalidates_);
 }
 
 /*
@@ -52,7 +54,16 @@ NodeConstants::ProcessResult LoopGraph::process()
             return NodeConstants::ProcessResult::Failed;
     }
 
+    // If allowing loopback data to invalidate our status, check any loopback edges for changed data
+    if (loopbackInvalidates_)
+    {
+        for (auto &[inputName, edges] : proxyInputs_->inputEdges())
+        {
+            for (const auto edge : edges)
+                if (edge->requiresPull())
+                    upToDate_ = false;
+        }
+    }
+
     return NodeConstants::ProcessResult::Success;
 }
-
-NodeConstants::ProcessResult LoopGraph::testLoopBack() { return NodeConstants::ProcessResult::Success; }
