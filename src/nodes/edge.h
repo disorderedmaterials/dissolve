@@ -69,6 +69,8 @@ class Edge : public Serialisable<>
     ParameterBase &targetInput() const;
     // Return definition for the edge
     EdgeDefinition definition() const;
+    // Return whether the edge links to updated data and requires a pull
+    bool requiresPull() const;
     // Pull the data from the source node to the target, returning a ProcessResult
     NodeConstants::ProcessResult pull();
     // Ensure next call to pull() will retrieve the data from the source node

@@ -193,6 +193,12 @@ void EdgeDefinition::deserialise(const SerialisedValue &node)
     targetInput = toml::find<std::string>(node, "targetInput");
 }
 
+// Return whether the edge links to updated data and requires a pull
+bool Edge::requiresPull() const
+{
+    return (!sourceNode_.isUpToDate()) || (sourceNodeVersionIndex_ != sourceNode_.versionIndex());
+}
+
 // Pull the data from the source node to the target, returning a ProcessResult
 NodeConstants::ProcessResult Edge::pull()
 {
@@ -201,7 +207,7 @@ NodeConstants::ProcessResult Edge::pull()
      * itself we need to pull from or run the source node to get the updated output. We can then store the source node's
      * current versionIndex ready for next time.
      */
-    if (!sourceNode_.isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
+    if (requiresPull())
     {
         auto result = sourceNode_.run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
