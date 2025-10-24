@@ -104,11 +104,15 @@ class Node : public Serialisable<>
     /*
      * Processing & Validity
      */
-    protected:
+    private:
     // Version index for the node, bumped whenever result outputs change
     int versionIndex_{NodeConstants::InvalidVersion};
     // Whether the node's data is up-to-date
     bool upToDate_{false};
+
+    protected:
+    // Whether to pull inputs in run()
+    bool pullInputsOnRun_{true};
 
     protected:
     // Perform processing
@@ -126,7 +130,7 @@ class Node : public Serialisable<>
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
     // Run the node, retrieving dependent inputs as necessary
-    virtual NodeConstants::ProcessResult run();
+    NodeConstants::ProcessResult run();
 
     /*
      * Inputs, Outputs, and Options

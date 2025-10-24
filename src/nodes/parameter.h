@@ -306,13 +306,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         // If the stored data types are the same then we can just do a straight assignment
         if (storedDataType_ == other->storedDataType())
         {
-            std::cout << std::format("Parameter::assign() from '{}' to '{}', type is {}\n", other->name(), name_,
-                                     storedDataType_.name());
-            if constexpr (std::is_same_v<DataClass, Number>)
-                std::cout << std::format("   --> current value is {}\n", data_.asInteger());
             setData(other->get<DataClass>());
-            if constexpr (std::is_same_v<DataClass, Number>)
-                std::cout << std::format("   --> new value assigned is {}\n", data_.asInteger());
         }
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {

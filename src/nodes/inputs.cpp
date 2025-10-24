@@ -3,7 +3,7 @@
 
 #include "nodes/inputs.h"
 
-InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) {}
+InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) { pullInputsOnRun_ = false; }
 
 /*
  * Definition (Virtuals)
@@ -21,20 +21,6 @@ std::string_view InputsNode::summary() const { return "Maps graph inputs to loca
 
 // Perform processing
 NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::ProcessResult::Success; }
-
-// Run the node, retrieving dependent inputs as necessary
-NodeConstants::ProcessResult InputsNode::run()
-{
-    // We have no processing to speak of, but need to update our version index and flag if we were invalidated (typically
-    // from an upstream node changing through a proxy edge)
-    if (!upToDate_ || versionIndex_ == NodeConstants::InvalidVersion)
-    {
-        ++versionIndex_;
-        upToDate_ = true;
-    }
-
-    return NodeConstants::ProcessResult::Success;
-}
 
 /*
  * Inputs, Outputs, and Options

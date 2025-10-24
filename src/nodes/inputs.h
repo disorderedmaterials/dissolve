@@ -28,10 +28,6 @@ class InputsNode : public Node
     // Perform processing
     NodeConstants::ProcessResult process() override;
 
-    public:
-    // Run the node, retrieving dependent inputs as necessary
-    NodeConstants::ProcessResult run() override;
-
     /*
      * Inputs, Outputs, and Options
      */

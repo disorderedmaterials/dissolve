@@ -217,11 +217,8 @@ NodeConstants::ProcessResult Edge::pull()
         // All succeeded, so update version index
         sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 
-        std::cout << std::format(" ... pulled edge '{}. as it was out-of-date.\n", definition().asString());
         return NodeConstants::ProcessResult::Success;
     }
-    else
-        std::cout << std::format(" ... edge '{}' is up-to-date.\n", definition().asString());
 
     return NodeConstants::ProcessResult::Unchanged;
 }

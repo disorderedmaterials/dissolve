@@ -82,46 +82,39 @@ TEST_F(LoopGraphTest, BasicLoop)
 {
     createGraph();
 
+    const auto iterations = 10;
+
     // Set some numbers
     x_->findInput("B")->set<Number>(1);
     y_->findInput("B")->set<Number>(1);
+    loop_->findOption("Iterations")->set<Number>(iterations);
 
     // Run y - all nodes should update
-    printf("FIRST PULL\n");
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(x_->versionIndex(), iterations - 1);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(i_->versionIndex(), 0);
     EXPECT_EQ(i_->getOutputValue<Number>("A").asInteger(), 0);
-    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 1);
-    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 2);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 1);
 
     // Change number input 'i' and run y - all nodes should update again
-    printf("SECOND PULL\n");
     i_->findOption("A")->set<Number>(5);
     EXPECT_EQ(i_->getOutputValue<Number>("A").asInteger(), 5);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(x_->versionIndex(), 19);
     EXPECT_EQ(y_->versionIndex(), 1);
     EXPECT_EQ(i_->versionIndex(), 1);
-    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 6);
-    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 7);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
 
-    // Test pulling the loopback edges - no versions should change
-    printf("LOOPBACK PULL\n");
-    EXPECT_EQ(loop_->testLoopBack(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(x_->versionIndex(), 1);
+    // Run y again - should be no change as no upstream data has changed
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
+    EXPECT_EQ(x_->versionIndex(), 19);
     EXPECT_EQ(y_->versionIndex(), 1);
     EXPECT_EQ(i_->versionIndex(), 1);
-
-    // Run y again - x_ and y_ should update
-    printf("THIRD PULL\n");
-    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(x_->versionIndex(), 2);
-    EXPECT_EQ(y_->versionIndex(), 2);
-    EXPECT_EQ(i_->versionIndex(), 1);
-    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), 7);
-    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 8);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
 };
 
 } // namespace UnitTest

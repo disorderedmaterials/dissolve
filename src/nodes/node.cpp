@@ -107,19 +107,22 @@ bool Node::inputsAreValid() const
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult Node::run()
 {
-    // Pull all input edges. If any are out-of-date and get re-set this will automatically unset upToDate_
-    for (auto &[inputName, edges] : inputEdges_)
+    if (pullInputsOnRun_)
     {
-        for (const auto edge : edges)
+        // Pull all input edges. If any are out-of-date and get re-set this will automatically unset upToDate_
+        for (auto &[inputName, edges] : inputEdges_)
         {
-            switch (edge->pull())
+            for (const auto edge : edges)
             {
-                case (NodeConstants::ProcessResult::Failed):
-                case (NodeConstants::ProcessResult::InputsNotSatisfied):
-                    return NodeConstants::ProcessResult::Failed;
-                case (NodeConstants::ProcessResult::Success):
-                case (NodeConstants::ProcessResult::Unchanged):
-                    break;
+                switch (edge->pull())
+                {
+                    case (NodeConstants::ProcessResult::Failed):
+                    case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                        return NodeConstants::ProcessResult::Failed;
+                    case (NodeConstants::ProcessResult::Success):
+                    case (NodeConstants::ProcessResult::Unchanged):
+                        break;
+                }
             }
         }
     }
