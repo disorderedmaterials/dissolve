@@ -107,6 +107,7 @@ bool Node::inputsAreValid() const
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult Node::run()
 {
+    GraphDebug::increaseIndent();
     if (pullInputsOnRun_)
     {
         // Pull all input edges. If any are out-of-date and get re-set this will automatically unset upToDate_
@@ -114,13 +115,19 @@ NodeConstants::ProcessResult Node::run()
         {
             for (const auto edge : edges)
             {
+                std::cout << std::format("{}Node[{}]::run() - pulling edge '{}'..\n", GraphDebug::indent(), name(),
+                                         edge->definition().asString());
+
                 switch (edge->pull())
                 {
                     case (NodeConstants::ProcessResult::Failed):
                     case (NodeConstants::ProcessResult::InputsNotSatisfied):
                         return NodeConstants::ProcessResult::Failed;
                     case (NodeConstants::ProcessResult::Success):
+                        std::cout << std::format("{}Node[{}]::run() - returned SUCCESS.\n", GraphDebug::indent(), name());
+                        break;
                     case (NodeConstants::ProcessResult::Unchanged):
+                        std::cout << std::format("{}Node[{}]::run() - returned UNCHANGED.\n", GraphDebug::indent(), name());
                         break;
                 }
             }
@@ -147,6 +154,7 @@ NodeConstants::ProcessResult Node::run()
         }
     }
 
+    GraphDebug::decreaseIndent();
     return result;
 }
 

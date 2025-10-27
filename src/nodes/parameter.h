@@ -7,15 +7,15 @@
 #include "base/serialiser.h"
 #include "math/data1D.h"
 #include "math/function1D.h"
+#include "nodes/debug.h"
 #include "nodes/number.h"
 #include "templates/algorithms.h"
 #include "templates/flags.h"
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
 #include <vector>
-
-#include <iostream>
 
 // Forward Declarations
 class Node;
