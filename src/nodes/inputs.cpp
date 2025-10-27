@@ -3,7 +3,7 @@
 
 #include "nodes/inputs.h"
 
-InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) { pullInputsOnRun_ = false; }
+InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) { propagateUpdateRequests_ = false; }
 
 /*
  * Definition (Virtuals)
@@ -21,6 +21,16 @@ std::string_view InputsNode::summary() const { return "Maps graph inputs to loca
 
 // Perform processing
 NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::ProcessResult::Success; }
+
+// Run the node
+NodeConstants::ProcessResult InputsNode::run()
+{
+    upToDate_ = true;
+    ++versionIndex_;
+
+    // We never pull inputs and processing is zero so just return Success
+    return NodeConstants::ProcessResult::Success;
+}
 
 /*
  * Inputs, Outputs, and Options

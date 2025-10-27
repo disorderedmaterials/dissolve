@@ -209,6 +209,11 @@ NodeConstants::ProcessResult Edge::pull()
      */
     if (requiresPull())
     {
+        std::cout << std::format("{}Edge::pull() - edge '{}' needs updated data (versionIndex = {}, sourceNodeVersionIndex = "
+                                 "{}, sourceNodeUpToData = {}).\n",
+                                 GraphDebug::indent(), definition().asString(), sourceNodeVersionIndex_,
+                                 sourceNode_.versionIndex(), sourceNode_.isUpToDate());
+
         auto result = sourceNode_.run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
         {
@@ -224,6 +229,13 @@ NodeConstants::ProcessResult Edge::pull()
         sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 
         return NodeConstants::ProcessResult::Success;
+    }
+    else
+    {
+        std::cout << std::format("{}Edge::pull() - edge '{}' is up-to-date (versionIndex = {}, sourceNodeVersionIndex = {}, "
+                                 "sourceNodeUpToData = {}).\n",
+                                 GraphDebug::indent(), definition().asString(), sourceNodeVersionIndex_,
+                                 sourceNode_.versionIndex(), sourceNode_.isUpToDate());
     }
 
     return NodeConstants::ProcessResult::Unchanged;

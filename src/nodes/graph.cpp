@@ -35,34 +35,34 @@ NodeConstants::ProcessResult Graph::process()
      * one of two ways. Either 1) We cycle over Edge connections to inputs on our Outputs node and pull() those in, or 2) we
      * look for any nodes that don't have any edge connections to their Outputs and try to run() them one at a time. The
      * latter case is important if a Graph has no defined Outputs, and so no external dependence on running the child nodes.
+     * This logic boils down to the same check - if a given node has no outputs (as is always the case for the OutputsNode)
+     * then we run() it.
      */
-
-    // Pull outputs first
-    auto outputsResult = proxyOutputs_->run();
-    if (outputsResult == NodeConstants::ProcessResult::Failed)
-        return outputsResult;
-
-    // Check each node for output edges - any that have zero output edges need to be run()
-    auto terminalNodeResult = NodeConstants::ProcessResult::Unchanged;
+    auto result = NodeConstants::ProcessResult::Unchanged;
     for (auto &&[nodeName, node] : nodes_)
-        if (!node->outputEdges().empty())
+    {
+        if (node->outputEdges().empty())
         {
+            std::cout << std::format("{}Graph::process() - Node '{}' has no output edges and will be run...\n",
+                                     GraphDebug::indent(), node->name());
             switch (node->run())
             {
                 case (NodeConstants::ProcessResult::Failed):
                     return NodeConstants::ProcessResult::Failed;
+                case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                    /* This should never happen? */
+                    return NodeConstants::ProcessResult::Failed;
+                    break;
                 case (NodeConstants::ProcessResult::Success):
-                    terminalNodeResult = NodeConstants::ProcessResult::Success;
+                    result = NodeConstants::ProcessResult::Success;
                     break;
                 case (NodeConstants::ProcessResult::Unchanged):
                     break;
-                case (NodeConstants::ProcessResult::InputsNotSatisfied):
-                    /* This should never happen? */
-                    break;
             }
         }
+    }
 
-    return outputsResult == terminalNodeResult ? outputsResult : NodeConstants::ProcessResult::Success;
+    return result;
 }
 
 // Flag that the node data needs to be updated

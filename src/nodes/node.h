@@ -109,12 +109,16 @@ class Node : public Serialisable<>
     int versionIndex_{NodeConstants::InvalidVersion};
     // Whether the node's data is up-to-date
     bool upToDate_{false};
-    // Whether to pull inputs in run()
-    bool pullInputsOnRun_{true};
+    // Whether to propagate update requests to connected nodes downstream (via outputs)
+    bool propagateUpdateRequests_{true};
 
     protected:
     // Perform processing
     virtual NodeConstants::ProcessResult process();
+    // Pull input edges
+    bool pullInputEdges();
+    // Run processing if required
+    NodeConstants::ProcessResult processIfRequired();
 
     public:
     // Return version index for the node, bumped whenever result outputs change
@@ -127,8 +131,8 @@ class Node : public Serialisable<>
     bool isUpToDate() const;
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
-    // Run the node, retrieving dependent inputs as necessary
-    NodeConstants::ProcessResult run();
+    // Run the node
+    virtual NodeConstants::ProcessResult run();
 
     /*
      * Inputs, Outputs, and Options

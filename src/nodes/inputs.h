@@ -27,6 +27,8 @@ class InputsNode : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
+    // Run the node
+    NodeConstants::ProcessResult run() override;
 
     /*
      * Inputs, Outputs, and Options
