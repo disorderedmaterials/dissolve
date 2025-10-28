@@ -88,7 +88,6 @@ TEST_F(LoopGraphTest, BasicLoop)
     x_->findInput("B")->set<Number>(1);
     y_->findInput("B")->set<Number>(1);
     loop_->findOption("Iterations")->set<Number>(iterations);
-    loop_->findOption("LoopbackInvalidates")->set(false);
 
     // Run y - all nodes should update
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);

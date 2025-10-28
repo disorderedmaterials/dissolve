@@ -8,8 +8,6 @@
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
     addOption<Number>("Iterations", "Number of iterations to perform", iterations_);
-    addOption<bool>("LoopbackInvalidates", "Whether loopback edges cause iterations to be rerun on next call",
-                    loopbackInvalidates_);
 }
 
 /*
@@ -20,7 +18,7 @@ LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 std::string_view LoopGraph::type() const { return "Loop"; }
 
 // Return short summary of the node's purpose
-std::string_view LoopGraph::summary() const { return "Loop the contained graph"; }
+std::string_view LoopGraph::summary() const { return "A graph which iterates"; }
 
 /*
  * Processing & Validity
@@ -29,8 +27,7 @@ std::string_view LoopGraph::summary() const { return "Loop the contained graph";
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    // Could we have a map of inputs to the graph and when they were updated, which we maintain between runs? We can then decide
-    // whether to use current parameter values or pull from loopback edges.
+    //
     for (auto n = 0; n < iterations_.asInteger(); ++n)
     {
         std::cout << std::format("\nLoopGraph::process() - iteration {}\n\n", n);
@@ -62,17 +59,6 @@ NodeConstants::ProcessResult LoopGraph::process()
         if (result == NodeConstants::ProcessResult::Failed || result == NodeConstants::ProcessResult::InputsNotSatisfied)
             return NodeConstants::ProcessResult::Failed;
     }
-
-    // // If allowing loopback data to invalidate our status, check any loopback edges for changed data
-    // if (loopbackInvalidates_)
-    // {
-    //     for (auto &[inputName, edges] : proxyInputs_->inputEdges())
-    //     {
-    //         for (const auto edge : edges)
-    //             if (edge->requiresPull())
-    //                 return NodeConstants::ProcessResult::SuccessAndNotUpdated;
-    //     }
-    // }
 
     return NodeConstants::ProcessResult::Success;
 }

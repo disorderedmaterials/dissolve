@@ -24,10 +24,6 @@ class LoopGraph : public Graph
     /*
      * Data
      */
-    private:
-    // Whether changes to source parameters of loopback edges invalidates our status
-    bool loopbackInvalidates_{true};
-
     public:
     // Number of iterations to loop for
     Number iterations_{1};
