@@ -5,6 +5,7 @@
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/inputs.h"
 #include <algorithm>
 
 /*
@@ -66,23 +67,24 @@ void Node::setUpdateRequired()
     upToDate_ = false;
 
     // Make sure all output edges propagate this information down
-    if (propagateUpdateRequests_)
-    {
-        for (auto &&[outputName, edges] : outputEdges())
-            for (auto edge : edges)
-            {
-                auto &input = edge->targetInput();
+    for (auto &&[outputName, edges] : outputEdges())
+        for (auto edge : edges)
+        {
+            // Never propagate through edges which are loopbacks (connected to InputsNode inputs)
+            if (dynamic_cast<InputsNode *>(&edge->targetNode()))
+                continue;
 
-                if (input.flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
-                    continue;
+            auto &input = edge->targetInput();
 
-                input.setParentUpdateRequired();
+            if (input.flags().isSet(ParameterBase::ParameterFlags::NoUpdate))
+                continue;
 
-                // If the target input is a vector, all edges to it must be marked for re-pull and its data cleared
-                if (input.isVector())
-                    input.invalidateVector();
-            }
-    }
+            input.setParentUpdateRequired();
+
+            // If the target input is a vector, all edges to it must be marked for re-pull and its data cleared
+            if (input.isVector())
+                input.invalidateVector();
+        }
 }
 
 // Return whether the node's data is up-to-date

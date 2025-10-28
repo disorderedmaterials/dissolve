@@ -109,21 +109,13 @@ TEST_F(LoopGraphTest, BasicLoop)
     EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
     EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
 
-    // // Run y again - should be no change as no upstream data has changed, and loopback invalidation is off
-    // EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
-    // EXPECT_EQ(x_->versionIndex(), 19);
-    // EXPECT_EQ(y_->versionIndex(), 1);
-    // EXPECT_EQ(i_->versionIndex(), 1);
-    // EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
-    // EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
-
-    // // Turn on loopback invalidation and run y again - this time everything should update starting from the current values
-    // EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
-    // EXPECT_EQ(x_->versionIndex(), 19);
-    // EXPECT_EQ(y_->versionIndex(), 1);
-    // EXPECT_EQ(i_->versionIndex(), 1);
-    // EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
-    // EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
+    // Run y again - should be no change as no upstream data has changed
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Unchanged);
+    EXPECT_EQ(x_->versionIndex(), 19);
+    EXPECT_EQ(y_->versionIndex(), 1);
+    EXPECT_EQ(i_->versionIndex(), 1);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
 };
 
 } // namespace UnitTest
