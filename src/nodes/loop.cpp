@@ -34,7 +34,7 @@ NodeConstants::ProcessResult LoopGraph::process()
 
     for (auto n = 0; n < iterations_.asInteger(); ++n)
     {
-        std::cout << std::format("\nLoopGraph::process() - iteration {}\n\n", n);
+        debug("{}LoopGraph({})::process() - iteration {}", GraphDebug::indent(), name(), n);
 
         // Pull edges connected to our InputsNode *if*
         if (n > 0)
@@ -43,8 +43,7 @@ NodeConstants::ProcessResult LoopGraph::process()
             {
                 for (const auto edge : edges)
                 {
-                    std::cout << std::format("{}LoopGraph::process() - Pulling edge {}...\n", GraphDebug::indent(),
-                                             edge->definition().asString());
+                    debug("{}LoopGraph::process() - Pulling edge {}...\n", GraphDebug::indent(), edge->definition().asString());
                     switch (edge->pull())
                     {
                         case (NodeConstants::ProcessResult::Failed):

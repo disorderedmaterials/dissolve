@@ -40,9 +40,6 @@ bool Node::hasMessages(MessageStatus status) const
     return std::any_of(messages_.cbegin(), messages_.cend(), [status](const auto &msg) { return msg.first == status; });
 }
 
-// Print latest message
-void Node::echo() { std::cout << messages_.back().second << std::endl; }
-
 /*
  * Processing & Validity
  */
@@ -120,8 +117,18 @@ bool Node::pullInputEdges()
     {
         for (const auto edge : edges)
         {
-            std::cout << std::format("{}Node[{}]::pullInputEdges() - pulling edge '{}'..\n", GraphDebug::indent(), name(),
-                                     edge->definition().asString());
+            if (edge->requiresPull())
+                debug(
+                    "{}Node[{}]::pullInputEdges() - edge '{}' needs updated data (versionIndex = {}, sourceNodeVersionIndex = "
+                    "{}, sourceNodeUpToData = {})",
+                    GraphDebug::indent(), name(), edge->definition().asString(), edge->sourceNodeVersionIndex(),
+                    edge->sourceNode().versionIndex(), edge->sourceNode().isUpToDate());
+            else
+            {
+                debug("{}Node[{}]::pullInputEdges() - edge '{}' is up-to-date and doesn't require pull", GraphDebug::indent(),
+                      name(), edge->definition().asString());
+                continue;
+            }
 
             switch (edge->pull())
             {
@@ -129,12 +136,10 @@ bool Node::pullInputEdges()
                 case (NodeConstants::ProcessResult::InputsNotSatisfied):
                     return false;
                 case (NodeConstants::ProcessResult::Success):
-                    std::cout << std::format("{}Node[{}]::pullInputEdges() - returned SUCCESS.\n", GraphDebug::indent(),
-                                             name());
+                    debug("{}Node[{}]::pullInputEdges() - returned SUCCESS", GraphDebug::indent(), name());
                     break;
                 case (NodeConstants::ProcessResult::Unchanged):
-                    std::cout << std::format("{}Node[{}]::pullInputEdges() - returned UNCHANGED.\n", GraphDebug::indent(),
-                                             name());
+                    debug("{}Node[{}]::pullInputEdges() - returned UNCHANGED", GraphDebug::indent(), name());
                     break;
             }
         }
@@ -146,10 +151,12 @@ bool Node::pullInputEdges()
 // Run processing if required
 NodeConstants::ProcessResult Node::processIfRequired()
 {
+    debug("{}Node[{}]::process() - START = upToDate = {}, versionIndex = {}", GraphDebug::indent(), name(), upToDate_,
+          versionIndex());
+
     // If input links have updated or we are currently flagged as invalid we must reprocess
     auto result = NodeConstants::ProcessResult::Unchanged;
-    std::cout << std::format("{}Node[{}]::process() - START = upToDate = {}, versionIndex = {}.\n", GraphDebug::indent(),
-                             name(), upToDate_, versionIndex());
+
     if (!upToDate_ || versionIndex_ == NodeConstants::InvalidVersion)
     {
         result = process();
@@ -168,8 +175,8 @@ NodeConstants::ProcessResult Node::processIfRequired()
         }
     }
 
-    std::cout << std::format("{}Node[{}]::process() - COMPLETED = upToDate = {}, versionIndex = {}.\n", GraphDebug::indent(),
-                             name(), upToDate_, versionIndex());
+    debug("{}Node[{}]::process() - COMPLETED = upToDate = {}, versionIndex = {}", GraphDebug::indent(), name(), upToDate_,
+          versionIndex());
 
     return result;
 }

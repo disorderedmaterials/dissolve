@@ -43,8 +43,7 @@ NodeConstants::ProcessResult Graph::process()
     {
         if (node->outputEdges().empty())
         {
-            std::cout << std::format("{}Graph::process() - Node '{}' has no output edges and will be run...\n",
-                                     GraphDebug::indent(), node->name());
+            debug("{}Graph::process() - Node '{}' has no output edges and will be run...", GraphDebug::indent(), node->name());
             switch (node->run())
             {
                 case (NodeConstants::ProcessResult::Failed):

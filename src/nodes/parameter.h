@@ -307,10 +307,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         if (storedDataType_ == other->storedDataType())
         {
             setData(other->get<DataClass>());
-
-            if constexpr (std::is_same_v<DataClass, Number>)
-                std::cout << std::format("{}  Parameter::assign() from '{}' to '{}', new value is {}\n", GraphDebug::indent(),
-                                         other->name(), name_, data_.asInteger());
         }
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {

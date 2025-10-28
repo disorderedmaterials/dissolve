@@ -50,50 +50,59 @@ class Node : public Serialisable<>
     /*
      * Node message
      */
-
+    public:
     // Enumeration for message status
     enum class MessageStatus
     {
         Info,
         Warn,
-        Error
+        Error,
+        Debug
     };
+    // Strings representing message status
+    const std::map<MessageStatus, std::string> messageStatusStrings = {{MessageStatus::Info, "INFO"},
+                                                                       {MessageStatus::Warn, "WARN"},
+                                                                       {MessageStatus::Error, "ERROR"},
+                                                                       {MessageStatus::Debug, "DEBUG"}};
 
+    private:
     using MessageStore = std::vector<std::pair<MessageStatus, std::string>>;
-    // Print latest message
-    static bool echo_;
-
-    protected:
     // Message store vector
     MessageStore messages_;
-    // Node message format
+    // Whether to echo messages as they come in
+    static bool echo_;
+    // Push message
+    void pushMessage(MessageStatus status, const std::string &message)
+    {
+        messages_.emplace_back(std::make_pair(status, message));
+
+        if (echo_)
+            std::cout << std::format("{} {}", messageStatusStrings.at(status), message) << std::endl;
+    }
+
+    protected:
+    // Push information message
     template <typename... Args> void message(std::format_string<Args...> format, Args... args)
     {
-        messages_.emplace_back(std::make_pair(MessageStatus::Info, std::format(format, std::forward<Args>(args)...)));
-
-        if (echo_)
-            echo();
+        pushMessage(MessageStatus::Info, std::format(format, std::forward<Args>(args)...));
     }
-    // Node warn format
+    // Push warning message
     template <typename... Args> void warn(std::format_string<Args...> format, Args... args)
     {
-        messages_.emplace_back(std::make_pair(MessageStatus::Warn, std::format(format, std::forward<Args>(args)...)));
-
-        if (echo_)
-            echo();
+        pushMessage(MessageStatus::Warn, std::format(format, std::forward<Args>(args)...));
     }
-    // Node error format
+    // Push error message
     template <typename... Args> NodeConstants::ProcessResult error(std::format_string<Args...> format, Args... args)
     {
-        messages_.emplace_back(std::make_pair(MessageStatus::Error, std::format(format, std::forward<Args>(args)...)));
-
-        if (echo_)
-            echo();
+        pushMessage(MessageStatus::Error, std::format(format, std::forward<Args>(args)...));
 
         return NodeConstants::ProcessResult::Failed;
     }
-    // Print latest message
-    void echo();
+    // Push debug message
+    template <typename... Args> void debug(std::format_string<Args...> format, Args... args)
+    {
+        pushMessage(MessageStatus::Debug, std::format(format, std::forward<Args>(args)...));
+    }
 
     public:
     // Message store vector

@@ -67,6 +67,8 @@ class Edge : public Serialisable<>
     Node &targetNode() const;
     // Return target input parameter
     ParameterBase &targetInput() const;
+    // Return version of the source node when this edge was last pulled by the target node.
+    int sourceNodeVersionIndex() const;
     // Return definition for the edge
     EdgeDefinition definition() const;
     // Return whether the edge links to updated data and requires a pull
