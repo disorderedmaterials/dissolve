@@ -26,7 +26,7 @@ namespace UnitTest
 class GraphArgonTest : public ::testing::Test
 {
     public:
-    GraphArgonTest() : dissolve_(coreData_), root_(dissolve_) { Node::echo_ = true; }
+    GraphArgonTest() : dissolve_(coreData_), root_(dissolve_) { Node::setEcho(); }
 
     // Create a graph for testing
     void createGraph(bool advanced = false)

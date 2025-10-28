@@ -29,7 +29,10 @@ std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeNa
  */
 
 // Print latest message
-bool Node::echo_ = false;
+bool Node::echo_ = true;
+
+// Set echo of output to stdout
+void Node::setEcho(bool on) { echo_ = on; }
 
 // Message store vector
 const Node::MessageStore &Node::messages() const { return messages_; }

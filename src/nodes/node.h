@@ -105,6 +105,8 @@ class Node : public Serialisable<>
     }
 
     public:
+    // Set echo of output to stdout
+    static void setEcho(bool on = true);
     // Message store vector
     const MessageStore &messages() const;
     // Returns true if message with given status exists
