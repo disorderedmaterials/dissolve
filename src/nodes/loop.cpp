@@ -27,7 +27,11 @@ std::string_view LoopGraph::summary() const { return "A graph which iterates"; }
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    //
+    // Before arriving here we will have pulled in any external input edges, and this is the data we should use on the
+    // first iteration of the loop. So, we only pull from inputs to our InputsNode (proxyInputs_) after the first
+    // iteration. Furthermore, we do this manually here rather than let InputsNode pull its own edges as otherwise we
+    // get into an infinite loop when the graph tries to run. In this sense the
+
     for (auto n = 0; n < iterations_.asInteger(); ++n)
     {
         std::cout << std::format("\nLoopGraph::process() - iteration {}\n\n", n);

@@ -25,19 +25,10 @@ NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::Proce
 // Run the node
 NodeConstants::ProcessResult InputsNode::run()
 {
-    // if (!pullInputEdges())
-    //     return NodeConstants::ProcessResult::Failed;
-
-    std::cout << std::format("{}InputsNode::run() - START upToDate = {}, versionIndex = {}.\n", GraphDebug::indent(), upToDate_,
-                             versionIndex());
-
+    // We never pull inputs and processing is zero so just update and return Success
     upToDate_ = true;
     ++versionIndex_;
 
-    std::cout << std::format("{}InputsNode::run() - END upToDate = {}, versionIndex = {}.\n", GraphDebug::indent(), upToDate_,
-                             versionIndex());
-
-    // We never pull inputs and processing is zero so just return Success
     return NodeConstants::ProcessResult::Success;
 }
 
