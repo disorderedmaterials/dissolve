@@ -228,6 +228,12 @@ NodeConstants::ProcessResult Edge::pull()
 
         return NodeConstants::ProcessResult::Success;
     }
+    else
+    {
+        // Copy the parameter data over
+        if (!targetInput_.assign(&sourceOutput_))
+            return NodeConstants::ProcessResult::Failed;
+    }
 
     return NodeConstants::ProcessResult::Unchanged;
 }

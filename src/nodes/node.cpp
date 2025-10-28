@@ -127,7 +127,6 @@ bool Node::pullInputEdges()
             {
                 debug("{}Node[{}]::pullInputEdges() - edge '{}' is up-to-date and doesn't require pull", GraphDebug::indent(),
                       name(), edge->definition().asString());
-                continue;
             }
 
             switch (edge->pull())

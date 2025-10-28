@@ -115,6 +115,15 @@ TEST_F(LoopGraphTest, BasicLoop)
     EXPECT_EQ(i_->versionIndex(), 1);
     EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations + 5);
     EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations + 5 + 1);
+
+    // Change the inner node x and run y again - this time we should update
+    x_->findInput("B")->set<Number>(2);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(x_->versionIndex(), 29);
+    EXPECT_EQ(y_->versionIndex(), 2);
+    EXPECT_EQ(i_->versionIndex(), 1);
+    EXPECT_EQ(x_->getOutputValue<Number>("Result").asInteger(), iterations * 2 + 5);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), iterations * 2 + 5 + 1);
 };
 
 } // namespace UnitTest
