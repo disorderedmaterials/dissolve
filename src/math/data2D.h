@@ -113,7 +113,7 @@ class Data2D : public Data2DBase, public Serialisable<>
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialize(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };
