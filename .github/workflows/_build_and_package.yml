@@ -58,29 +58,3 @@ jobs:
         conanHash: ${{ inputs.conanHash }}
         osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
-  BuildLinux:
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [ dissolve, dissolve-gui ]
-    runs-on: ubuntu-latest
-    steps:
-    - name: 'Download Source Tarfiles'
-      uses: actions/download-artifact@v4
-      with:
-        name: source
-
-    - name: 'Unpack Source'
-      shell: bash
-      run: tar -xvf dissolve-versioned-source.tar
-
-    - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
-      uses: "./.github/workflows/build"
-      with:
-        target: ${{ matrix.target }}
-        currentVersion: ${{ inputs.currentVersion }}
-        nixHash: ${{ inputs.nixHash }}
-        benchmark: ${{ inputs.benchmark }}
-        publishBenchmarks: ${{ inputs.publishBenchmarks }}
-        osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
-

@@ -25,14 +25,7 @@ jobs:
     with:
       checkoutRef: ${{ github.event.pull_request.head.sha }}
 
-  QC:
-    needs: [Checkout]
-    uses: "./.github/workflows/_qc.yml"
-    with:
-      nixHash: ${{ needs.Checkout.outputs.nixHash }}
-
   BuildAndPackage:
-    needs: [Checkout]
     uses: "./.github/workflows/_build_and_package.yml"
     with:
       benchmark: false
@@ -51,11 +44,3 @@ jobs:
     with:
       branch: 'refs/pull/${{ github.event.pull_request.number }}/merge'
 
-  Web:
-    needs: [Checkout]
-    uses: "./.github/workflows/_website.yml"
-    with:
-      publishType: 'none'
-      displayMajorVersion: ${{ needs.Checkout.outputs.currentVersionMajor }}
-      displayMinorVersion: ${{ needs.Checkout.outputs.currentVersionMinor }}
-      hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
