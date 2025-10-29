@@ -82,17 +82,11 @@ class GraphArgonTest : public ::testing::Test
 
         if (advanced)
         {
-            atomicMCNode_ = dynamic_cast<AtomicMCNode *>(root_.createNode("AtomicMC", "AtomicMC"));
-            mdNode_ = dynamic_cast<MDNode *>(root_.createNode("MD", "MD"));
-            energyNode_ = dynamic_cast<EnergyNode *>(root_.createNode("Energy", "Energy"));
             grNode_ = dynamic_cast<GRNode *>(root_.createNode("GR", "GR"));
             sqNode_ = dynamic_cast<SQNode *>(root_.createNode("SQ", "SQ"));
             neutronSQNode_ = dynamic_cast<NeutronSQNode *>(root_.createNode("NeutronSQ", "NeutronSQ"));
             data1DImportNode_ = dynamic_cast<Data1DImportNode *>(root_.createNode("Data1DImport", "ReferenceSQ"));
 
-            ASSERT_TRUE(atomicMCNode_);
-            ASSERT_TRUE(mdNode_);
-            ASSERT_TRUE(energyNode_);
             ASSERT_TRUE(grNode_);
             ASSERT_TRUE(sqNode_);
             ASSERT_TRUE(neutronSQNode_);
@@ -118,10 +112,7 @@ class GraphArgonTest : public ::testing::Test
                 "ReferenceNormalisedTo", StructureFactors::SquareOfAverageNormalisation));
 
             // Create nodes
-            ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "AtomicMC", "Configuration"}));
-            ASSERT_TRUE(root_.addEdge({"AtomicMC", "Configuration", "MD", "Configuration"}));
-            ASSERT_TRUE(root_.addEdge({"MD", "Configuration", "Energy", "Configuration"}));
-            ASSERT_TRUE(root_.addEdge({"Energy", "Configuration", "GR", "Configuration"}));
+            ASSERT_TRUE(root_.addEdge({"BulkXYZ", "Configuration", "GR", "Configuration"}));
             ASSERT_TRUE(root_.addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
             ASSERT_TRUE(root_.addEdge({"ReferenceSQ", "Data", "NeutronSQ", "ReferenceData"}));
             ASSERT_TRUE(root_.addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
