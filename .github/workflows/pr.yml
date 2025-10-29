@@ -26,6 +26,7 @@ jobs:
       checkoutRef: ${{ github.event.pull_request.head.sha }}
 
   BuildAndPackage:
+    needs: Checkout
     uses: "./.github/workflows/_build_and_package.yml"
     with:
       benchmark: false
