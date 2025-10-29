@@ -62,10 +62,6 @@ class LoopGraphTest : public ::testing::Test
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "Inputs", "I"}));
         // - The output "C" of the loop graph then goes to input "A" of Add 'y'
         EXPECT_TRUE(root_.addEdge({"loop", "C", "y", "A"}));
-        /*
-         * TODO There is an obvious, smaller unit test to write here which tests the validity of trying to make a loopback
-         * connection to a named Input which doesn't exist.
-         */
     }
 
     protected:
