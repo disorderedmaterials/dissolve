@@ -3,8 +3,8 @@
 
 #include "nodes/edge.h"
 #include "nodes/graph.h"
-#include "nodes/outputs.h"
 #include "nodes/loop.h"
+#include "nodes/outputs.h"
 
 Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
     : sourceNode_(sourceNode), sourceOutput_(sourceOutput), targetNode_(targetNode), targetInput_(targetInput)
@@ -115,7 +115,6 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         }
     }
 
-
     if (!targetInput)
     {
         Messenger::error("Target node '{}' has no input parameter '{}'.\n", definition.targetNode, definition.targetInput);
@@ -123,7 +122,8 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Confirm that the destination input is actually an input
-    if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input) && !targetInput->flags().isSet(ParameterBase::ParameterFlags::LoopBack))
+    if (!(targetInput->flags().isSet(ParameterBase::ParameterFlags::Input) ||
+          targetInput->flags().isSet(ParameterBase::ParameterFlags::LoopBack)))
     {
         Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
                          definition.targetInput);
