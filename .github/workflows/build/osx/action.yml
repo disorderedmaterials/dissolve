@@ -193,6 +193,15 @@ runs:
       mkdir gsl
       cp -v $(brew --prefix gsl)/lib/*.dylib ./gsl
 
+  - name: Test
+    if: ${{ inputs.cacheOnly == 'false' }}
+    shell: bash
+    run: |
+      set -ex
+      cd build
+
+      ctest
+
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v4
