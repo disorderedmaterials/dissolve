@@ -101,8 +101,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         auto inputs = dynamic_cast<InputsNode *>(sourceNode);
         if (inputs)
         {
-            auto source = dynamic_cast<InputsNode *>(sourceNode);
-            auto loop = dynamic_cast<LoopGraph *>(source->parentGraph());
+            auto loop = dynamic_cast<LoopGraph *>(inputs->parentGraph());
             if (loop)
                 loop->setLoopBacks();
         }

@@ -20,7 +20,4 @@ std::string_view NumberNode::type() const { return "Number"; }
 std::string_view NumberNode::summary() const { return "A number"; }
 
 // Perform processing
-NodeConstants::ProcessResult NumberNode::process()
-{
-    return NodeConstants::ProcessResult::Success;
-}
+NodeConstants::ProcessResult NumberNode::process() { return NodeConstants::ProcessResult::Success; }
