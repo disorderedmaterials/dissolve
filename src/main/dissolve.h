@@ -201,7 +201,7 @@ class Dissolve : public Serialisable<>
     // Express pair potentials as a serialisable value
     SerialisedValue serialisePairPotentials() const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialize(std::string tag, SerialisedValue &target) const override;
     // Load restart file
     bool loadRestart(std::string_view filename);
     // Save restart file
