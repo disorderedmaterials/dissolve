@@ -150,7 +150,7 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
 }
 
 // Express as a serialisable value
-SerialisedValue FileAndFormat::serialise() const
+void FileAndFormat::serialize(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"filename", filename_},
                               {"format", formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"}};
@@ -158,7 +158,7 @@ SerialisedValue FileAndFormat::serialise() const
     keywords = keywords_.serialiseOnto(keywords);
     if (!keywords.is_uninitialized())
         result["keywords"] = keywords;
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value
