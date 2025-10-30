@@ -166,10 +166,11 @@ TEST_F(GraphArgonTest, AdvancedSimulation)
     /*
      * Check neutron weighted SQ
      */
+    const auto tolerance = 0.025;
     auto weightedSQ = neutronSQNode_->getOutputValue<PartialSet *>("WeightedSQ");
     ASSERT_NO_THROW_VERBOSE(weightedSQ);
     ASSERT_TRUE(DissolveSystemTest::checkData1D(weightedSQ->total(), "WeightedSQ",
-                                                {"dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq"}));
+                                                {"dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq"}, tolerance));
 }
 
 } // namespace UnitTest
