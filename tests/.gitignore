@@ -2,9 +2,6 @@
 
 # Test outputs
 *.out
-**/*.rdf
-**/*.sq
-!data/dissolve2/argon/*.sq
 
 # Extraneous EPSR files
 dirlist.txt
