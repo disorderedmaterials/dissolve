@@ -100,8 +100,6 @@ class ParameterBase : public Serialisable<>
      * Data
      */
     public:
-    // Return whether the contained data represents the default value
-    virtual bool isDefault() const { return true; };
     // Return whether the contained data is an instance of std::vector
     virtual bool isVector() const { return false; }
     // Flag that an update is required in the parent node
@@ -407,8 +405,6 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
      * Serialisation
      */
     public:
-    // Return whether the contained data represents the default value
-    bool isDefault() const override { return Parameter<DataClass>::data_ == Parameter<DataClass>::default_; }
     // Express as a serialised value
     SerialisedValue serialise() const override
     {
