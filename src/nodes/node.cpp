@@ -320,15 +320,15 @@ SampledDouble Node::timing() const { return timing_; }
  */
 
 // Express as a serialisable value
-SerialisedValue Node::serialise() const
+void Node::serialize(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result, inputs, outputs, options;
+    SerialisedValue result;
     result["name"] = name();
     result["type"] = type();
     result["x"] = x;
     result["y"] = y;
 
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

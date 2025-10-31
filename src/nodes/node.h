@@ -312,7 +312,7 @@ class Node : public Serialisable<>
         serialisables_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialize(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
     // Express persistent data as a serialisable value

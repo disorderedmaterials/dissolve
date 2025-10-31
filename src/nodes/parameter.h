@@ -157,7 +157,7 @@ class ParameterBase : public Serialisable<>
      */
     public:
     // Express as a serialised value
-    virtual SerialisedValue serialise() const override { return {}; }
+    virtual void serialize(std::string tag, SerialisedValue &target) const override {}
     // Read from a serialised value
     virtual void deserialise(const SerialisedValue &node) override { return; }
 };

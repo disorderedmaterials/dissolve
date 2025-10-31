@@ -105,7 +105,7 @@ class ModuleLayer : public Serialisable<CoreData &>
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialize(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

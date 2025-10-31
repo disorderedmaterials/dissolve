@@ -23,7 +23,7 @@ class EdgeDefinition : public Serialisable<>
     // Return as a string
     std::string asString() const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialize(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };
@@ -79,7 +79,7 @@ class Edge : public Serialisable<>
      */
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialize(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };
