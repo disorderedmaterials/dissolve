@@ -71,13 +71,7 @@ NodeConstants::ProcessResult SQNode::process()
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if (averagingLength_)
-        (*unweightedSQ_) = unweightedSQHistory_.average((*unweightedSQ_), averagingLength_.value().asInteger(),
-                                                        [&]()
-                                                        {
-                                                            PartialSet p;
-                                                            p.initialise(unweightedGR_->realSpeciesPopulations());
-                                                            return p;
-                                                        });
+        (*unweightedSQ_) = unweightedSQHistory_.push(*unweightedSQ_, averagingLength_.value().asInteger());
 
     // Save data if requested
     if (save_ && !unweightedSQ_->save(name(), "UnweightedSQ", "sq", "Q, 1/Angstroms"))

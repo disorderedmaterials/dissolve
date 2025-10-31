@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include "templates/array2D.h"
@@ -16,7 +17,7 @@
  * removing the critical dependence of an immutably ordered vector of AtomTypes.
  */
 using DoubleKeyedMapKey = std::pair<std::string_view, std::string_view>;
-template <typename ValueClass> class DoubleKeyedMap
+template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
 {
     public:
     DoubleKeyedMap(bool mirrored = false) : mirroredAreEquivalent_(mirrored) {}
@@ -53,6 +54,10 @@ template <typename ValueClass> class DoubleKeyedMap
         else
             return data_.find(key(A, B));
     }
+    std::map<std::string, ValueClass>::const_iterator find(const std::pair<std::string_view, std::string_view> &pair) const
+    {
+        return find(pair.first, pair.second);
+    }
 
     public:
     // Clear data
@@ -83,9 +88,18 @@ template <typename ValueClass> class DoubleKeyedMap
         if (it != data_.end())
             data_.erase(it);
     }
+    // Return key parts from supplied string
+    std::pair<std::string, std::string> keyPair(std::string_view key) const
+    {
+        auto keys = DissolveSys::splitString(key, separator_);
+        if (keys.size() != 2)
+            throw(std::runtime_error(std::format("DoubleKeyedMap - can't split supplied key '{}' into a key pair.\n", key)));
+        return {std::string(keys[0]), std::string(keys[1])};
+    }
     // Return whether the specified key exists
     bool contains(const std::pair<std::string_view, std::string_view> &pair) const { return contains(pair.first, pair.second); }
     bool contains(std::string_view A, std::string_view B) const { return find(A, B) != data_.end(); }
+    bool contains(std::string_view key) const { return find(keyPair(key)) != data_.end(); }
     // Get keyed value
     ValueClass &operator[](const std::string_view key) { return get(key); }
     const ValueClass &operator[](const std::string_view key) const { return get(key); }
@@ -131,14 +145,6 @@ template <typename ValueClass> class DoubleKeyedMap
     const std::map<std::string, ValueClass> &map() const { return data_; }
     // Return number of data in map
     int size() const { return data_.size(); }
-    // Return key parts from supplied string
-    std::pair<std::string, std::string> keyPair(std::string_view key) const
-    {
-        auto keys = DissolveSys::splitString(key, separator_);
-        if (keys.size() != 2)
-            throw(std::runtime_error(std::format("DoubleKeyedMap - can't split supplied key '{}' into a key pair.\n", key)));
-        return {std::string(keys[0]), std::string(keys[1])};
-    }
 
     /*
      * Look-Up Table
@@ -155,5 +161,34 @@ template <typename ValueClass> class DoubleKeyedMap
             ParallelPolicies::seq, keyedObjects, [&](int i, const auto &itemI, int j, const auto &itemJ)
             { result[{i, j}] = find(keyGetter(itemI), keyGetter(itemJ)); }, mirroredAreEquivalent_);
         return result;
+    }
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override
+    {
+        SerialisedValue result;
+        Serialisable::fromMap(data_, "map", result);
+        return result;
+    };
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node)
+    {
+        data_.clear();
+
+        for (auto &[mapKey, value] : toml::find<SerialisedValue::table_type>(node, "map"))
+        {
+            if constexpr (std::is_same_v<ValueClass, double>)
+                data_[mapKey] = value.as_floating();
+            else if constexpr (std::is_same_v<ValueClass, int>)
+                data_[mapKey] = value.as_integer();
+            else if constexpr (std::is_same_v<ValueClass, bool>)
+                data_[mapKey] = value.as_boolean();
+            else
+                data_[mapKey].deserialise(value);
+        }
     }
 };

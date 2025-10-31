@@ -104,6 +104,15 @@ template <typename... Contexts> class Serialisable
             group[std::string(getName(key))] = value;
         return group;
     };
+    // A helper function to add elements of a ResolvableKeyedVector to a node
+    template <typename KeyClass, typename ValueClass>
+    static SerialisedValue fromVectorToTable(const ResolvableKeyedVector<KeyClass, ValueClass> &keyedVector)
+    {
+        SerialisedValue group;
+        for (const auto &[resolvable, value] : keyedVector)
+            group[std::string(resolvable.name())] = value;
+        return group;
+    };
     // A helper function to add elements of a vector to a node under the named heading
     template <typename T, typename Lambda>
     static void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node, Lambda getName)
@@ -159,7 +168,6 @@ template <typename... Contexts> class Serialisable
         std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
         return result;
     }
-
     // A helper function to add the elements of a map to a node under a name
     template <typename K, typename V> static void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node)
     {
@@ -167,6 +175,8 @@ template <typename... Contexts> class Serialisable
         for (auto &[key, value] : map)
             if constexpr (serialisablePointer<V>)
                 result[std::string(key)] = value->serialise();
+            else if constexpr (std::is_base_of_v<Serialisable, V>)
+                result[std::string(key)] = value.serialise();
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value
@@ -175,7 +185,6 @@ template <typename... Contexts> class Serialisable
         if (!map.empty())
             node[name] = result;
     }
-
     // A helper function to add the elements of a map to a node under a name
     // Only add values that pass the test lambda
     template <typename K, typename V, typename Lambda>
@@ -210,9 +219,11 @@ template <typename... Contexts> class Serialisable
     // Act over each value in a node table, if the key exists
     template <typename Lambda> static void toMap(const SerialisedValue &node, std::string key, Lambda action)
     {
-        if (node.contains(key))
-            for (auto &[key, value] : toml::find<SerialisedValue::table_type>(node, key))
-                action(key, value);
+        if (!node.contains(key))
+            return;
+
+        for (auto &[subKey, value] : toml::find<SerialisedValue::table_type>(node, key))
+            action(subKey, value);
     }
 
     // Act over each value in a node array
@@ -225,7 +236,9 @@ template <typename... Contexts> class Serialisable
     // Act over each value in a node table, if the key exists
     template <typename Lambda> static void toVector(const SerialisedValue &node, std::string key, Lambda action)
     {
-        if (node.contains(key))
-            toVector(node.at(key), action);
+        if (!node.contains(key))
+            return;
+
+        toVector(node.at(key), action);
     }
 };

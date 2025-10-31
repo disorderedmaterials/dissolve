@@ -9,6 +9,8 @@
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include "nodes/serialisableData.h"
+#include "templates/algorithms.h"
+#include "templates/resolvable.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -285,13 +287,13 @@ class Node : public Serialisable<>
      * Data
      */
     private:
-    // Accumulated timing information (in seconds) for this Module
+    // Accumulated timing information (in seconds)
     SampledDouble timing_;
 
     public:
     // Clear any local data
     virtual void clearData();
-    // Return timing information (in seconds) for this Module
+    // Return timing information (in seconds)
     SampledDouble timing() const;
 
     /*

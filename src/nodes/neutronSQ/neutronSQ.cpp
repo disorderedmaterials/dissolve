@@ -13,9 +13,12 @@
 
 NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Inputs
     addInput<PartialSet *>("UnweightedSQ", "Unweighted partial S(Q)", unweightedSQ_);
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials g(r)", unweightedGR_);
-    addInput<std::optional<Data1D>>("ReferenceData", "Reference F(Q) data", referenceData_);
+    addInput<std::optional<Data1D>>("ReferenceData", "Reference F(Q) data", referenceFQ_);
+
+    // Options
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(
@@ -36,6 +39,11 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addOption<bool>("SaveRepresentativeGR", "Save representative G(r), obtained from Fourier transform of the calculated F(Q)",
                     saveRepresentativeGR_);
     addOption<bool>("SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
+
+    // Serialisables
+    addSerialisable("weightedGR", weightedGR_);
+    addSerialisable("weightedSQ", weightedSQ_);
+    addSerialisable("representativeGR", representativeGR_);
 }
 
 std::string_view NeutronSQNode::type() const { return "NeutronSQ"; }

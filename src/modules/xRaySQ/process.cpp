@@ -220,8 +220,8 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     {
         // TODO This will be cleaned up once XRayWeights moves to DoubleKeyedMap.
         KeyedVector<const AtomType *, int> typeVector;
-        for (auto &[species, _] : unweightedSQ.realSpeciesPopulations())
-            for (auto &[atomType, _] : species->atomTypePopulations())
+        for (auto &[resolvableSpecies, _] : unweightedSQ.realSpeciesPopulations())
+            for (auto &[atomType, _] : resolvableSpecies.raw()->atomTypePopulations())
                 typeVector[atomType] = 1;
 
         auto result = for_each_pair_early(typeVector,
