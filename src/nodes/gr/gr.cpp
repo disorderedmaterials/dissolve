@@ -17,7 +17,7 @@ GRNode::GRNode(Graph *parentGraph)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
-    addOptionalPointerOutput<PartialSet>("RawGR", "Origin (unbroadened) partials for the target configuration", rawGR_);
+    addOptionalPointerOutput<PartialSet>("RawGR", "Original (unbroadened) partials for the target configuration", rawGR_);
     addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Options
