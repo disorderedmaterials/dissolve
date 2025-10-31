@@ -77,13 +77,6 @@ NodeConstants::ProcessResult GRNode::process()
     grRange = int(grRange / binWidth_.asDouble()) * binWidth_.asDouble();
     message("Cutoff (snapped to bin width) is {} Angstroms.\n", grRange);
 
-    // Convert configuration species populations into real species populations
-    /*
-    std::map<const Species *, double> realSpeciesPopulations;
-    for (auto &[sp, iPop] : targetConfiguration_->speciesPopulations())
-        realSpeciesPopulations[sp] = iPop;
-    */
-
     // Calculate unweighted partials for this Configuration
     bool alreadyUpToDate;
     calculateRawGR(grRange, alreadyUpToDate);
