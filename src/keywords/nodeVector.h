@@ -41,7 +41,7 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 
         return oldData.size() == nodes().size();
     }
-    SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise NodeVectorKeywordBase"); }
+    void serialize(std::string tag, SerialisedValue &target) const override { throw std::runtime_error("Cannot serialise NodeVectorKeywordBase"); }
 };
 
 // Keyword managing vector of GeneratorNode
@@ -150,9 +150,9 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialize(std::string tag, SerialisedValue &target) const override
     {
-        return fromVector(data_, [](const auto &item) { return item->name(); });
+        target[tag] = fromVector(data_, [](const auto &item) { return item->name(); });
     }
 
     // Read values from a serialisable value

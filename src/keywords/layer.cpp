@@ -51,9 +51,8 @@ void LayerKeyword::deserialise(const SerialisedValue &node, const CoreData &core
 }
 
 // Express as a serialisable value
-SerialisedValue LayerKeyword::serialise() const
+void LayerKeyword::serialize(std::string tag, SerialisedValue &target) const
 {
     if (data_)
-        return data_->name();
-    return {};
+        target[tag] = data_->name();
 }

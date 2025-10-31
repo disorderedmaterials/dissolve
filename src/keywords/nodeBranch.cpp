@@ -49,13 +49,11 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
 bool NodeBranchKeyword::isDefault() const { return data_.nNodes() == 0; }
 
 // Express as a serialisable value
-SerialisedValue NodeBranchKeyword::serialise() const
+void NodeBranchKeyword::serialize(std::string tag, SerialisedValue &target) const
 {
     if (isDefault())
-        return {};
-    SerialisedValue outer;
-    data_.serialize("inner", outer);
-    return outer["inner"];
+      return;
+    data_.serialize(tag, target);
 }
 
 // Read values from a serialisable value

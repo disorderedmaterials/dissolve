@@ -162,18 +162,18 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         return true;
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialize(std::string tag, SerialisedValue &target) const override
     {
-        return fromVector(dataSources_,
-                          [](const auto &item) -> SerialisedValue
-                          {
-                              auto &[dataSourceA, dataSourceB] = item;
-                              SerialisedValue result;
-                              dataSourceA->serialize("dataSourceA", result);
-                              if (dataSourceB->dataExists())
-                                  dataSourceB->serialize("dataSourceB", result);
-                              return result;
-                          });
+        target[tag] = fromVector(dataSources_,
+                                 [](const auto &item) -> SerialisedValue
+                                 {
+                                     auto &[dataSourceA, dataSourceB] = item;
+                                     SerialisedValue result;
+                                     dataSourceA->serialize("dataSourceA", result);
+                                     if (dataSourceB->dataExists())
+                                         dataSourceB->serialize("dataSourceB", result);
+                                     return result;
+                                 });
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override

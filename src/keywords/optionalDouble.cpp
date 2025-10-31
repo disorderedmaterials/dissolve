@@ -91,7 +91,7 @@ bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywo
 }
 
 // Express as a serialisable value
-SerialisedValue OptionalDoubleKeyword::serialise() const { return data_.value_or(minimumLimit_); }
+void OptionalDoubleKeyword::serialize(std::string tag, SerialisedValue &target) const { target[tag] = data_.value_or(minimumLimit_); }
 
 // Read values from a serialisable value
 void OptionalDoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
