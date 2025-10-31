@@ -49,12 +49,14 @@ void NodeRegistry::instantiateNodeProducers()
         {"Add", makeDerivedNode<AddNode>()},
         {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
         {"Configuration", makeDerivedNode<ConfigurationNode>()},
+        {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
         {"Derivative", makeDerivedNode<DerivativeNode>()},
         {"DotProduct", makeDerivedNode<DotProductNode>()},
         {"Energy", makeDerivedNode<EnergyNode>()},
         {"GR", makeDerivedNode<GRNode>()},
         {"Graph", makeDerivedNode<Graph>()},
         {"GR", makeDerivedNode<GRNode>()},
+        {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
         {"Insert", makeDerivedNode<InsertNode>()},
         {"Integrator", makeDerivedNode<Integrator1DNode>()},
         {"MD", makeDerivedNode<MDNode>()},
@@ -65,8 +67,6 @@ void NodeRegistry::instantiateNodeProducers()
         {"Subtract", makeDerivedNode<SubtractNode>()},
         {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
         {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
-        {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
-        {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
     };
 }
 
