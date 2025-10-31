@@ -53,7 +53,9 @@ SerialisedValue NodeBranchKeyword::serialise() const
 {
     if (isDefault())
         return {};
-    return data_.serialise();
+    SerialisedValue outer;
+    data_.serialize("inner", outer);
+    return outer["inner"];
 }
 
 // Read values from a serialisable value

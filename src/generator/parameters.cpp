@@ -33,12 +33,12 @@ bool ParametersGeneratorNode::execute(const GeneratorContext &generatorContext) 
  */
 
 // Express as a serialisable value
-SerialisedValue ParametersGeneratorNode::serialise() const
+void ParametersGeneratorNode::serialize(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result;
     for (auto &param : parameters_)
         result[std::string(param->baseName())] = param->value();
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

@@ -509,15 +509,17 @@ bool GeneratorNodeSequence::QueryRange::empty() { return start_ == stop_; }
 void GeneratorNodeSequence::QueryRange::next() { start_++; }
 
 // Express as a serialisable value
-SerialisedValue GeneratorNodeSequence::serialise() const
+void GeneratorNodeSequence::serialize(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(sequence_,
-                      [](const auto item)
-                      {
-                          SerialisedValue node = item->serialise();
-                          node["type"] = item->nodeTypes().serialise(item->type());
-                          return node;
-                      });
+    target[tag] = fromVector(sequence_,
+                             [](const auto item)
+                             {
+                                 SerialisedValue outer;
+                                 item->serialize("inner", outer);
+                                 auto &node = outer["inner"];
+                                 node["type"] = item->nodeTypes().serialise(item->type());
+                                 return node;
+                             });
 }
 
 // Read values from a serialisable value

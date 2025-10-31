@@ -54,7 +54,12 @@ bool GeneratorKeyword::serialise(LineParser &parser, std::string_view keywordNam
 }
 
 // Express as a serialisable value
-SerialisedValue GeneratorKeyword::serialise() const { return data_.serialise(); }
+SerialisedValue GeneratorKeyword::serialise() const
+{
+    SerialisedValue outer;
+    data_.serialize("inner", outer);
+    return outer["inner"];
+}
 
 // Read values from a serialisable value
 void GeneratorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node, coreData); }
