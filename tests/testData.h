@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#pragma once
+
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/elements.h"
@@ -14,6 +16,7 @@
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
+#include "nodes/serialisableData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -72,6 +75,17 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
     {
         EXPECT_EQ(toml, toml2) << location;
     }
+}
+
+// Serialise A and deserialise into B
+template <class T> void tomlRoundTrip(T &a, T &b)
+{
+    SerialisedValue serialised;
+    auto s = std::make_shared<SerialisableClass<T>>("data", a);
+    ASSERT_NO_THROW(serialised = s->serialise());
+
+    auto d = std::make_shared<SerialisableClass<T>>("data", b);
+    ASSERT_NO_THROW(d->deserialise(serialised));
 }
 
 /*

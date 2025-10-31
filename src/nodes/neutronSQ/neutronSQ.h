@@ -42,6 +42,8 @@ class NeutronSQNode : public Node
     std::optional<PartialSet> weightedSQ_;
     // Weighted g(r)
     std::optional<PartialSet> weightedGR_;
+    // Representative g(r) calculated from FT of total weighted F(Q)
+    Data1D representativeGR_;
     // Full weights
     NeutronWeights weights_;
     // Map of named isotopologue weights
@@ -50,8 +52,10 @@ class NeutronSQNode : public Node
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
-    // Reference F(Q) file and format
-    std::optional<Data1D> referenceData_;
+    // Reference F(Q) data
+    std::optional<Data1D> referenceFQ_;
+    // Reference G(r) data from FT of reference F(Q)
+    Data1D referenceGR_;
     // Minimum Q value to use when Fourier-transforming the data
     std::optional<double> referenceFTQMin_{0.3};
     // Maximum Q value to use when Fourier-transforming the data

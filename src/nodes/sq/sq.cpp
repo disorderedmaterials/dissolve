@@ -3,10 +3,20 @@
 
 #include "nodes/sq/sq.h"
 
-SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
+SQNode::SQNode(Graph *parentGraph)
+    : Node(parentGraph), unweightedSQHistory_(
+                             [&]()
+                             {
+                                 PartialSet p;
+                                 p.initialise(*unweightedGR_);
+                                 return p;
+                             })
 {
+    // Inputs
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+
+    // Options
     addOption<Number>("QMin", "Minimum Q for calculated S(Q)", qMin_);
     addOption<Number>("QMax", "Maximum Q for calculated S(Q)", qMax_);
     addOption<Number>("QDelta", "Step size in Q for S(Q) calculation", qDelta_);
@@ -24,6 +34,10 @@ SQNode::SQNode(Graph *parentGraph) : Node(parentGraph)
     addOptionalPointerOutput<PartialSet>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
     addOutput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
     addOption<bool>("Save", "Whether to save partials to disk after calculation", save_);
+
+    // Serialisables
+    addSerialisable("unweightedSQ", unweightedSQ_);
+    addSerialisable("unweightedSQ", unweightedSQHistory_);
 }
 
 std::string_view SQNode::type() const { return "SQ"; }

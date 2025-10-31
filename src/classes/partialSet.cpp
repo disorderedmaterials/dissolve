@@ -6,6 +6,7 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/species.h"
 #include "io/export/data1D.h"
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
@@ -131,14 +132,20 @@ void PartialSet::reset()
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
 }
 
+// Species populations
+const ResolvableKeyedVector<const Species *, double> &PartialSet::realSpeciesPopulations() const
+{
+    return realSpeciesPopulations_;
+}
+
 // Return fractional atom type populations
 KeyedVector<const AtomType *, double> PartialSet::atomTypeFractions() const
 {
     KeyedVector<const AtomType *, double> result;
     auto sum = 0.0;
-    for (const auto &[species, speciesPopulation] : realSpeciesPopulations_)
+    for (const auto &[resolvableSpecies, speciesPopulation] : realSpeciesPopulations_)
     {
-        for (const auto &[atomType, typePopulation] : species->atomTypePopulations())
+        for (const auto &[atomType, typePopulation] : resolvableSpecies.raw()->atomTypePopulations())
         {
             result[atomType] += typePopulation * speciesPopulation;
             sum += typePopulation * speciesPopulation;
@@ -259,9 +266,6 @@ double PartialSet::effectiveDensity() const { return rho_; }
 // Return total unbound function
 Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
-
-// Species populations
-const KeyedVector<const Species *, double> &PartialSet::realSpeciesPopulations() const { return realSpeciesPopulations_; }
 
 // Save all partials and total
 bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
@@ -388,7 +392,9 @@ void PartialSet::operator+=(const PartialSet &source)
         unboundPartials_.map()[key] += partial;
 
     // Add total function
-    Interpolator::addInterpolated(source.total(), total_);
+    Interpolator::addInterpolated(source.total_, total_);
+    Interpolator::addInterpolated(source.boundTotal_, boundTotal_);
+    Interpolator::addInterpolated(source.unboundTotal_, unboundTotal_);
 }
 
 void PartialSet::operator-=(const double delta) { adjust(-delta); }
@@ -478,7 +484,10 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        realSpeciesPopulations_[coreData.findSpecies(parser.argsv(0))] = parser.argd(1);
+        auto *sp = coreData.findSpecies(parser.argsv(0));
+        if (!sp)
+            return Messenger::error("Species '{}' not found.\n", parser.argsv(0));
+        realSpeciesPopulations_[sp] = parser.argd(1);
     }
 
     // Clear partials
@@ -534,8 +543,8 @@ bool PartialSet::serialise(LineParser &parser) const
     // Write out species populations first
     if (!parser.writeLineF("{}\n", realSpeciesPopulations_.size()))
         return false;
-    for (auto &[species, population] : realSpeciesPopulations_)
-        if (!parser.writeLineF("{} {}\n", species->name(), population))
+    for (auto &[resolvableSpecies, population] : realSpeciesPopulations_)
+        if (!parser.writeLineF("{} {}\n", resolvableSpecies.name(), population))
             return false;
 
     // Write number of keys to expect
@@ -569,4 +578,51 @@ bool PartialSet::serialise(LineParser &parser) const
         return false;
 
     return true;
+}
+
+// Express as a serialisable value
+SerialisedValue PartialSet::serialise() const
+{
+    SerialisedValue result;
+
+    result["realSpeciesPopulations"] = Serialisable::fromVectorToTable(realSpeciesPopulations_);
+
+    result["partials"] = partials_.serialise();
+    result["boundPartials"] = boundPartials_.serialise();
+    result["unboundPartials"] = unboundPartials_.serialise();
+
+    result["total"] = total_;
+    result["boundTotal"] = boundTotal_;
+    result["unboundTotal"] = unboundTotal_;
+
+    return result;
+}
+
+// Read values from a serialisable value
+void PartialSet::deserialise(SerialisedValue node)
+{
+    // Real species populations
+    Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
+                        { realSpeciesPopulations_[name] = population.as_floating(); });
+
+    partials_.deserialise(node["partials"]);
+    boundPartials_.deserialise(node["boundPartials"]);
+    unboundPartials_.deserialise(node["unboundPartials"]);
+
+    total_.deserialise(node["total"]);
+    boundTotal_.deserialise(node["boundTotal"]);
+    unboundTotal_.deserialise(node["unboundTotal"]);
+}
+
+// Resolve internal resolvable name references with supplied data
+void PartialSet::resolve(const std::map<std::string, const Species *> &speciesInScope)
+{
+    for (auto &[resolvableSpecies, y] : realSpeciesPopulations_)
+    {
+        if (speciesInScope.contains(std::string(resolvableSpecies.name())))
+            resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
+        else
+            throw(std::runtime_error(
+                std::format("Species '{}' is in PartialSet, but no such species is in scope.\n", resolvableSpecies.name())));
+    }
 }

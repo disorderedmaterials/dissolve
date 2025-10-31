@@ -4,6 +4,7 @@
 #pragma once
 
 #include "templates/optionalRef.h"
+#include "templates/resolvable.h"
 #include <functional>
 #include <vector>
 
@@ -13,9 +14,16 @@ template <class KeyClass, class ValueClass> class KeyedVector
     public:
     using KeyValuePair = std::pair<KeyClass, ValueClass>;
 
-    private:
+    protected:
     // Vector of data
     std::vector<KeyValuePair> data_;
+
+    protected:
+    // Return key from supplied KeyValuePair
+    KeyClass getKey(const KeyValuePair &pair) { return pair.first; }
+    KeyClass getKey(const KeyValuePair &pair) const { return pair.first; }
+    template <class T> KeyClass getKey(const std::pair<Resolvable<T>, ValueClass> &pair) { return pair.first.raw(); }
+    template <class T> KeyClass getKey(const std::pair<Resolvable<T>, ValueClass> &pair) const { return pair.first.raw(); }
 
     public:
     // Clear data
@@ -25,7 +33,7 @@ template <class KeyClass, class ValueClass> class KeyedVector
     // Add to existing key (or create new)
     void add(KeyClass key, ValueClass value)
     {
-        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        auto it = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; });
         if (it == data_.end())
             data_.emplace_back(key, value);
         else
@@ -40,29 +48,29 @@ template <class KeyClass, class ValueClass> class KeyedVector
     // Remove the specified key
     void erase(KeyClass key)
     {
-        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        auto it = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; });
         if (it != data_.end())
             data_.erase(it);
     }
     // Remove matching keys
     void erase(std::function<bool(const KeyClass &key)> lambda)
     {
-        data_.erase(std::remove_if(data_.begin(), data_.end(), [lambda](const auto &pair) { return lambda(pair.first); }),
+        data_.erase(std::remove_if(data_.begin(), data_.end(), [&](const auto &pair) { return lambda(getKey(pair)); }),
                     data_.end());
     }
     // Return whether the specified key exists
     bool contains(KeyClass key) const
     {
-        return std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; }) != data_.end();
+        return std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; }) != data_.end();
     }
     // Change key for another, overwriting the destination key if it already exists
     void changeKey(KeyClass fromKey, KeyClass toKey)
     {
-        auto fromIt = std::ranges::find_if(data_, [&fromKey](const auto &pair) { return pair.first == fromKey; });
+        auto fromIt = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == fromKey; });
         if (fromIt == data_.end())
             return;
 
-        auto toIt = std::ranges::find_if(data_, [&toKey](const auto &pair) { return pair.first == toKey; });
+        auto toIt = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == toKey; });
         if (toIt == data_.end())
         {
             // Just replace the existing key
@@ -80,19 +88,19 @@ template <class KeyClass, class ValueClass> class KeyedVector
         requires(std::is_default_constructible_v<ValueClass> &&
                  !(std::is_integral_v<ValueClass> || std::is_floating_point_v<ValueClass>))
     {
-        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        auto it = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; });
         return (it == data_.end()) ? data_.emplace_back(key, ValueClass()).second : it->second;
     }
     ValueClass &operator[](KeyClass key)
         requires(std::is_integral_v<ValueClass> || std::is_floating_point_v<ValueClass>)
     {
-        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        auto it = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; });
         return (it == data_.end()) ? data_.emplace_back(key, 0).second : it->second;
     }
     // Get keyed value
     const ValueClass &value(KeyClass key) const
     {
-        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        auto it = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; });
         if (it == data_.end())
             throw(std::runtime_error(std::format("Key not found in KeyedVector.\n")));
 
@@ -101,7 +109,7 @@ template <class KeyClass, class ValueClass> class KeyedVector
     // Get keyed value or return default if it doesn't exist
     ValueClass valueOr(KeyClass key, ValueClass defaultValue) const
     {
-        auto it = std::ranges::find_if(data_, [&key](const auto &pair) { return pair.first == key; });
+        auto it = std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; });
         if (it == data_.end())
             return defaultValue;
 
@@ -110,8 +118,8 @@ template <class KeyClass, class ValueClass> class KeyedVector
     // Indexed access
     KeyValuePair &pair(int index) { return data_[index]; }
     const KeyValuePair &pair(int index) const { return data_[index]; }
-    KeyClass &key(int index) { return data_[index].first; }
-    const KeyClass &key(int index) const { return data_[index].first; }
+    KeyClass key(int index) { return getKey(data_[index]); }
+    const KeyClass key(int index) const { return getKey(data_[index]); }
     ValueClass &value(int index) { return data_[index].second; }
     const ValueClass &value(int index) const { return data_[index].second; }
     // Iterators
@@ -130,6 +138,51 @@ template <class KeyClass, class ValueClass> class KeyedVector
         KeyedVector<KeyClass, ValueClass> result;
         for (auto &[key, value] : data_)
             result.set(key, lambda(value));
+        return result;
+    }
+};
+
+// Resolvable Keyed Vector
+template <class KeyClass, class ValueClass> class ResolvableKeyedVector : public KeyedVector<Resolvable<KeyClass>, ValueClass>
+{
+    public:
+    using KeyValuePair = std::pair<Resolvable<KeyClass>, ValueClass>;
+
+    public:
+    // Element access operator []
+    ValueClass &operator[](KeyClass key)
+    {
+        auto it = std::ranges::find_if(KeyedVector<Resolvable<KeyClass>, ValueClass>::data_,
+                                       [&](const auto &pair) { return pair.first.raw() == key; });
+        return (it == KeyedVector<Resolvable<KeyClass>, ValueClass>::data_.end())
+                   ? KeyedVector<Resolvable<KeyClass>, ValueClass>::data_.emplace_back(key, ValueClass()).second
+                   : it->second;
+    }
+    ValueClass &operator[](std::string_view resolvedName)
+    {
+        auto it = std::ranges::find_if(KeyedVector<Resolvable<KeyClass>, ValueClass>::data_,
+                                       [&resolvedName](const auto &pair) { return pair.first.name() == resolvedName; });
+        return (it == KeyedVector<Resolvable<KeyClass>, ValueClass>::data_.end())
+                   ? KeyedVector<Resolvable<KeyClass>, ValueClass>::data_
+                         .emplace_back(Resolvable<KeyClass>(resolvedName), ValueClass())
+                         .second
+                   : it->second;
+    }
+    // Resolve named item to have the supplied key
+    void resolve(std::string_view name, KeyClass key)
+    {
+        auto it = std::ranges::find_if(KeyedVector<Resolvable<KeyClass>, ValueClass>::data_,
+                                       [&name](const auto &pair) { return pair.first.name() == name; });
+        if (it == KeyedVector<Resolvable<KeyClass>, ValueClass>::data_.end())
+            throw(std::runtime_error(std::format("Named resolvable '{}' not found in KeyedVector.\n", name)));
+        it->first.resolve(key);
+    }
+    // Convert to standard KeyedVector
+    operator KeyedVector<KeyClass, ValueClass>() const
+    {
+        KeyedVector<KeyClass, ValueClass> result;
+        for (auto &[resolvable, value] : KeyedVector<Resolvable<KeyClass>, ValueClass>::data_)
+            result[resolvable.raw()] = value;
         return result;
     }
 };

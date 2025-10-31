@@ -30,12 +30,43 @@ class SerialisableData
     virtual SerialisedValue serialise() const { return {}; }
     // Read from a serialised value
     virtual void deserialise(const SerialisedValue &node) {};
+    // Resolve named data
+    virtual void resolve(const std::map<std::string, const Species *> &speciesInScope) {};
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
 template <typename DataClass> class SerialisableClass : public SerialisableData
 {
     public:
+    // Optional Vector of Serialisable
+    SerialisableClass(std::string_view key, DataClass &targetData)
+        requires(is_optional<DataClass> && is_instance_of_v<typename DataClass::value_type, std::vector> &&
+                 std::is_base_of_v<Serialisable<>, typename DataClass::value_type::value_type>)
+        : SerialisableData(key), data_(targetData),
+          dataSerialiser_(
+              [&]()
+              {
+                  return Serialisable<typename DataClass::value_type>::fromVector(data_.value(), [&](const auto &item)
+                                                                                  { return item.serialise(); });
+              }),
+          dataDeserialiser_(
+              [&](const SerialisedValue &value)
+              {
+                  targetData.emplace();
+                  Serialisable<typename DataClass::value_type>::toVector(value, [&](const auto &node)
+                                                                         { data_->emplace_back().deserialise(node); });
+              }),
+          dataChecker_([&]() { return targetData.has_value() && !targetData.value().empty(); }),
+          dataResolver_(
+              [&](const std::map<std::string, const Species *> &reachableSpecies)
+              {
+                  if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type::value_type>)
+                      for (auto &item : data_.value())
+                          item.resolve(reachableSpecies);
+              })
+    {
+    }
+    // Optional Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_optional<DataClass> && std::is_base_of_v<Serialisable<>, typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return data_.value().serialise(); }),
@@ -45,9 +76,38 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
                   targetData = typename DataClass::value_type();
                   data_->deserialise(value);
               }),
-          dataChecker_([&]() { return targetData.has_value(); })
+          dataChecker_([&]() { return targetData.has_value(); }),
+          dataResolver_(
+              [&](const std::map<std::string, const Species *> &reachableSpecies)
+              {
+                  if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type>)
+                      data_.value().resolve(reachableSpecies);
+              })
     {
     }
+    // Vector of Serialisable
+    SerialisableClass(std::string_view key, DataClass &targetData)
+        requires(is_instance_of_v<DataClass, std::vector> && std::is_base_of_v<Serialisable<>, typename DataClass::value_type>)
+        : SerialisableData(key), data_(targetData),
+          dataSerialiser_(
+              [&]() { return Serialisable<DataClass>::fromVector(data_, [&](const auto &item) { return item.serialise(); }); }),
+          dataDeserialiser_(
+              [&](const SerialisedValue &value)
+              {
+                  data_.clear();
+                  Serialisable<DataClass>::toVector(value, [&](const auto &node) { data_.emplace_back().deserialise(node); });
+              }),
+          dataChecker_([&]() { return !targetData.empty(); }),
+          dataResolver_(
+              [&](const std::map<std::string, const Species *> &reachableSpecies)
+              {
+                  if constexpr (std::is_base_of_v<ResolvableContext, typename DataClass::value_type>)
+                      for (auto &item : data_)
+                          item.resolve(reachableSpecies);
+              })
+    {
+    }
+    // Trivial Non-Serialisable Value
     SerialisableClass(std::string_view key, DataClass &value)
         requires(std::is_trivial_v<DataClass>)
         : SerialisableData(key), data_(value), dataSerialiser_(
@@ -67,9 +127,15 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               })
     {
     }
+    // Serialisable
     SerialisableClass(std::string_view key, DataClass &value)
         requires(std::is_base_of_v<Serialisable<>, DataClass>)
-        : SerialisableData(key), data_(value)
+        : SerialisableData(key), data_(value), dataResolver_(
+                                                   [&](const std::map<std::string, const Species *> &reachableSpecies)
+                                                   {
+                                                       if constexpr (std::is_base_of_v<ResolvableContext, DataClass>)
+                                                           data_.resolve(reachableSpecies);
+                                                   })
     {
     }
     ~SerialisableClass() override = default;
@@ -89,6 +155,9 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Value checker for data, returning whether there is actually data to write
     using ValueChecker = std::function<bool()>;
     ValueChecker dataChecker_{[&]() { return true; }};
+    // Resolver function for data
+    using DataResolver = std::function<void(const std::map<std::string, const Species *> &)>;
+    DataResolver dataResolver_{[&]() { return; }};
 
     /*
      * Serialisation
@@ -100,4 +169,6 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     SerialisedValue serialise() const override { return dataSerialiser_(); };
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) override { dataDeserialiser_(node); }
+    // Resolve named data
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) override { dataResolver_(speciesInScope); };
 };
