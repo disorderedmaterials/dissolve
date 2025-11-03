@@ -177,7 +177,7 @@ void Dissolve::serialize(std::string tag, SerialisedValue &target) const
 
     root["pairPotentials"] = serialisePairPotentials();
 
-    root["graph"] = graphNode_->serialise();
+    graphNode_->serialize("graph", root);
 
     Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
 
@@ -330,7 +330,7 @@ bool Dissolve::saveToml(std::string_view filename) const
 {
     std::ofstream outfile;
     outfile.open(std::string(filename));
-    outfile << serialise() << std::endl;
+    outfile << into_toml() << std::endl;
     outfile.close();
     return true;
 }

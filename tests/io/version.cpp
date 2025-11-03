@@ -35,7 +35,7 @@ TEST(VersionTest, VersionInfo)
     CoreData coreData;
     Dissolve dissolve(coreData);
     dissolve.loadInput("dissolve/input/rdfMethod.txt");
-    auto serialised = dissolve.serialise();
+    auto serialised = dissolve.into_toml();
 
     Version::DissolveVersion fileVersion(serialised["version"].as_string().str), actual(Version::semantic());
 
