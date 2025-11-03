@@ -66,7 +66,12 @@ template <typename... Contexts> class Serialisable
     // Wrapper for deserialise that toml11 will check for
     void from_toml(const toml::value &node) { deserialise(node); }
     // Wrapper for serialise that toml11 will check for
-    toml::value into_toml() const { return serialise(); }
+    toml::value into_toml() const
+    {
+        SerialisedValue result;
+        serialize("inner", result);
+        return result["inner"];
+    }
 
     // Perform an action on a child node in a table if the node exists.
     // This cuts out quite a bit of boilerplate.
