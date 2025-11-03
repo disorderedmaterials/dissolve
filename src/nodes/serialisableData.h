@@ -46,8 +46,13 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
           dataSerialiser_(
               [&]()
               {
-                  return Serialisable<typename DataClass::value_type>::fromVector(data_.value(), [&](const auto &item)
-                                                                                  { return item.serialise(); });
+                  return Serialisable<typename DataClass::value_type>::fromVector(data_.value(),
+                                                                                  [&](const auto &item)
+                                                                                  {
+                                                                                      SerialisedValue outer;
+                                                                                      item.serialize("inner", outer);
+                                                                                      return outer["inner"];
+                                                                                  });
               }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
@@ -90,7 +95,16 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
         requires(is_instance_of_v<DataClass, std::vector> && std::is_base_of_v<Serialisable<>, typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData),
           dataSerialiser_(
-              [&]() { return Serialisable<DataClass>::fromVector(data_, [&](const auto &item) { return item.serialise(); }); }),
+              [&]()
+              {
+                  return Serialisable<DataClass>::fromVector(data_,
+                                                             [&](const auto &item)
+                                                             {
+                                                                 SerialisedValue outer;
+                                                                 item.serialize("inner", outer);
+                                                                 return outer["inner"];
+                                                             });
+              }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {

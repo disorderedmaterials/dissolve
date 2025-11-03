@@ -66,7 +66,7 @@ template <typename... Contexts> class Serialisable
     // Wrapper for deserialise that toml11 will check for
     void from_toml(const toml::value &node) { deserialise(node); }
     // Wrapper for serialise that toml11 will check for
-    toml::value into_toml() const
+    SerialisedValue into_toml() const
     {
         SerialisedValue result;
         serialize("inner", result);
