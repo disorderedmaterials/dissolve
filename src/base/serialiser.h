@@ -38,13 +38,7 @@ template <typename... Contexts> class Serialisable
 {
     public:
     // Express as a serialisable value
-    virtual SerialisedValue serialise() const
-    {
-        SerialisedValue result;
-        serialize("inner", result);
-        return result["inner"];
-    }
-    virtual void serialize(std::string tag, SerialisedValue &target) const { target[tag] = serialise(); }
+    virtual void serialize(std::string tag, SerialisedValue &target) const = 0;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
@@ -151,7 +145,13 @@ template <typename... Contexts> class Serialisable
     template <typename T>
     static void fromVector(const std::vector<std::unique_ptr<T>> &vector, std::string name, SerialisedValue &node)
     {
-        fromVector(vector, name, node, [](const auto &item) { return item->serialise(); });
+        fromVector(vector, name, node,
+                   [](const auto &item)
+                   {
+                       SerialisedValue outer;
+                       item->serialize("inner", outer);
+                       return outer["inner"];
+                   });
     }
     // A helper function to add the elements of a vector to a node under a name
     template <typename T>
@@ -162,7 +162,13 @@ template <typename... Contexts> class Serialisable
     // A helper function to add the elements of a vector to a node under a name
     template <typename T> static void fromVector(const std::vector<T> &vector, std::string name, SerialisedValue &node)
     {
-        fromVector(vector, name, node, [](const auto &item) { return item.serialise(); });
+        fromVector(vector, name, node,
+                   [](const auto &item)
+                   {
+                       SerialisedValue outer;
+                       item.serialize("inner", outer);
+                       return outer["inner"];
+                   });
     }
     // A helper function to add the elements of a vector to a node under a name
     template <typename T, typename Lambda>
@@ -185,7 +191,7 @@ template <typename... Contexts> class Serialisable
         SerialisedValue result;
         for (auto &[key, value] : map)
             if constexpr (serialisablePointer<V>)
-                result[std::string(key)] = value->serialise();
+                value->serialise(std::string(key), result);
             else if constexpr (std::is_base_of_v<Serialisable, V>)
                 value.serialize(key, result);
             else
@@ -209,7 +215,7 @@ template <typename... Contexts> class Serialisable
                 continue;
             changed = true;
             if constexpr (serialisablePointer<V>)
-                result[std::string(key)] = value->serialise();
+                value->serialize(std::string(key), result);
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value
