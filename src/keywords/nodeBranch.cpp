@@ -52,7 +52,7 @@ bool NodeBranchKeyword::isDefault() const { return data_.nNodes() == 0; }
 void NodeBranchKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     if (isDefault())
-      return;
+        return;
     data_.serialise(tag, target);
 }
 

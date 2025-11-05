@@ -80,14 +80,8 @@ template <typename... Contexts> class Serialisable
     }
 
     // A helper function to add elements of a vector to a node under the named heading
-    template <typename T>
-    static void fromVectorToTable(const std::vector<std::shared_ptr<T>> &vector, std::string name, SerialisedValue &node)
-    {
-        fromVectorToTable(vector, name, node, [](const auto &item) { return item->name().data(); });
-    }
-    // A helper function to add elements of a vector to a node under the named heading
-    template <typename T>
-    static void fromVectorToTable(const std::vector<std::unique_ptr<T>> &vector, std::string name, SerialisedValue &node)
+    template <serialisablePointer T>
+    static void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node)
     {
         fromVectorToTable(vector, name, node, [](const auto &item) { return item->name().data(); });
     }
