@@ -125,7 +125,7 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
 }
 
 // Express as a serialisable value
-void NodeValue::serialize(std::string tag, SerialisedValue &target) const
+void NodeValue::serialise(std::string tag, SerialisedValue &target) const
 {
     switch (type_)
     {
@@ -231,7 +231,7 @@ std::string NodeValueProxy::asString(bool addQuotesIfRequired) const
 Vector3NodeValue::Vector3NodeValue(const NodeValue &xx, const NodeValue &yy, const NodeValue &zz) : x(xx), y(yy), z(zz) {}
 
 // Express as a serialisable value
-void Vector3NodeValue::serialize(std::string tag, SerialisedValue &target) const
+void Vector3NodeValue::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue::array_type result;
     result.push_back(x);

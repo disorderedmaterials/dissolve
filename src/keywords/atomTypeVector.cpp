@@ -74,7 +74,7 @@ void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
 }
 
 // Express as a serialisable value
-void AtomTypeVectorKeyword::serialize(std::string tag, SerialisedValue &target) const
+void AtomTypeVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = fromVector(data_, [](const auto &item) { return item->name(); });
 }

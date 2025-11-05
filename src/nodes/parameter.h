@@ -157,7 +157,7 @@ class ParameterBase : public Serialisable<>
      */
     public:
     // Express as a serialised value
-    virtual void serialize(std::string tag, SerialisedValue &target) const override {}
+    virtual void serialise(std::string tag, SerialisedValue &target) const override {}
     // Read from a serialised value
     virtual void deserialise(const SerialisedValue &node) override { return; }
 };
@@ -419,7 +419,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
      */
     public:
     // Express as a serialised value
-    void serialize(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         SerialisedValue result = {};
 
@@ -436,7 +436,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
                 result["data"] = *Parameter<DataClass>::data_;
         }
         else if constexpr (serialisablePointer<DataClass>)
-          Parameter<DataClass>::data_->serialize("data", result);
+            Parameter<DataClass>::data_->serialise("data", result);
         else
             result["data"] = Parameter<DataClass>::data_;
 

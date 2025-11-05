@@ -345,7 +345,7 @@ void Vector3i::swap(int a, int b)
  */
 
 // Express as a serialisable value
-void Vector3i::serialize(std::string tag, SerialisedValue &target) const
+void Vector3i::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue::array_type result;
     result.push_back(x);

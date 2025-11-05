@@ -162,16 +162,16 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         return true;
     }
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         target[tag] = fromVector(dataSources_,
                                  [](const auto &item) -> SerialisedValue
                                  {
                                      auto &[dataSourceA, dataSourceB] = item;
                                      SerialisedValue result;
-                                     dataSourceA->serialize("dataSourceA", result);
+                                     dataSourceA->serialise("dataSourceA", result);
                                      if (dataSourceB->dataExists())
-                                         dataSourceB->serialize("dataSourceB", result);
+                                         dataSourceB->serialise("dataSourceB", result);
                                      return result;
                                  });
     }

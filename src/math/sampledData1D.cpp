@@ -211,10 +211,10 @@ bool SampledData1D::serialise(LineParser &parser) const
 bool SampledData1D::serialiseValues(LineParser &parser) const { return values_.serialise(parser); }
 
 // Express as a serialisable value
-void SampledData1D::serialize(std::string tag, SerialisedValue &target) const
+void SampledData1D::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = {{"x", x_}};
-    values_.serialize("values", target[tag]);
+    values_.serialise("values", target[tag]);
 }
 
 // Read values from a serialisable value

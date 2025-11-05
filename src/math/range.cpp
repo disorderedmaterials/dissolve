@@ -49,7 +49,10 @@ bool Range::contains(double d) const { return isDefined() && (d >= minimum_) && 
 bool Range::isDefined() const { return (minimum_ && maximum_); }
 
 // Express as a serialisable value
-void Range::serialize(std::string tag, SerialisedValue &target) const { target[tag] = {{"min", minimum()}, {"max", maximum()}}; }
+void Range::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"min", minimum()}, {"max", maximum()}};
+}
 
 // Read values from a serialisable value
 void Range::deserialise(const SerialisedValue &node)

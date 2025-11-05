@@ -70,7 +70,7 @@ bool Generator::deserialise(LineParser &parser, const CoreData &coreData)
 bool Generator::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_.serialise(parser, prefix); }
 
 // Express as a serialisable value
-void Generator::serialize(std::string tag, SerialisedValue &target) const { rootSequence_.serialize(tag, target); }
+void Generator::serialise(std::string tag, SerialisedValue &target) const { rootSequence_.serialise(tag, target); }
 
 // Read values from a serialisable value
 void Generator::deserialise(const SerialisedValue &node, const CoreData &data) { rootSequence_.deserialise(node, data); }

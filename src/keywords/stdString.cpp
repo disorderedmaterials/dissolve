@@ -39,7 +39,7 @@ bool StringKeyword::serialise(LineParser &parser, std::string_view keywordName, 
 }
 
 // Express as a serialisable value
-void StringKeyword::serialize(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
+void StringKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void StringKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_string(); }

@@ -689,7 +689,7 @@ void CoreData::setInputFilename(std::string_view filename) { inputFilename_ = fi
 std::string_view CoreData::inputFilename() const { return inputFilename_; }
 
 // Express as a serialisable value
-void CoreData::Masters::serialize(std::string tag, SerialisedValue &target) const
+void CoreData::Masters::serialise(std::string tag, SerialisedValue &target) const
 {
     if (bonds.empty() && angles.empty() && torsions.empty() && impropers.empty())
         return;
@@ -715,7 +715,7 @@ void CoreData::Masters::deserialise(const SerialisedValue &node)
 }
 
 // Express Master terms as serialisable value
-void CoreData::serialiseMaster(std::string tag, SerialisedValue &target) const { masters_.serialize(tag, target); }
+void CoreData::serialiseMaster(std::string tag, SerialisedValue &target) const { masters_.serialise(tag, target); }
 
 // Read Master values from serialisable value
 void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deserialise(node); }

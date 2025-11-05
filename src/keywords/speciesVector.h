@@ -51,5 +51,5 @@ class SpeciesVectorKeyword : public KeywordBase
     // Has not changed from initial value
     bool isDefault() const override;
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
 };

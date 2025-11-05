@@ -16,7 +16,7 @@ using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::Orde
 // We need a way at compile time to detect all the types of smart
 // pointers for things that can be serialised
 template <typename T>
-concept serialisablePointer = requires(T a, std::string tag, SerialisedValue target) { a->serialize(tag, target); };
+concept serialisablePointer = requires(T a, std::string tag, SerialisedValue target) { a->serialise(tag, target); };
 
 // The associated context for type T This type does double duty.
 // First, since the struct has not actual members, it is a Unit type
@@ -38,7 +38,7 @@ template <typename... Contexts> class Serialisable
 {
     public:
     // Express as a serialisable value
-    virtual void serialize(std::string tag, SerialisedValue &target) const = 0;
+    virtual void serialise(std::string tag, SerialisedValue &target) const = 0;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
@@ -63,7 +63,7 @@ template <typename... Contexts> class Serialisable
     SerialisedValue into_toml() const
     {
         SerialisedValue result;
-        serialize("inner", result);
+        serialise("inner", result);
         return result["inner"];
     }
 
@@ -97,7 +97,7 @@ template <typename... Contexts> class Serialisable
     {
         SerialisedValue group;
         for (const auto &value : vector)
-            value->serialize(getName(value), group);
+            value->serialise(getName(value), group);
         return group;
     };
     // A helper function to add elements of a KeyedVector to a node
@@ -149,7 +149,7 @@ template <typename... Contexts> class Serialisable
                    [](const auto &item)
                    {
                        SerialisedValue outer;
-                       item->serialize("inner", outer);
+                       item->serialise("inner", outer);
                        return outer["inner"];
                    });
     }
@@ -166,7 +166,7 @@ template <typename... Contexts> class Serialisable
                    [](const auto &item)
                    {
                        SerialisedValue outer;
-                       item.serialize("inner", outer);
+                       item.serialise("inner", outer);
                        return outer["inner"];
                    });
     }
@@ -193,7 +193,7 @@ template <typename... Contexts> class Serialisable
             if constexpr (serialisablePointer<V>)
                 value->serialise(std::string(key), result);
             else if constexpr (std::is_base_of_v<Serialisable, V>)
-                value.serialize(key, result);
+                value.serialise(key, result);
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value
@@ -215,7 +215,7 @@ template <typename... Contexts> class Serialisable
                 continue;
             changed = true;
             if constexpr (serialisablePointer<V>)
-                value->serialize(std::string(key), result);
+                value->serialise(std::string(key), result);
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value

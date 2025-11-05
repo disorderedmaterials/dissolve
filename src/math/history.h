@@ -52,7 +52,7 @@ template <class T> class History : public Serialisable<>
      */
     public:
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         return Serialisable::fromVector(history_, tag, target, [&](const auto &itemPtr) { return itemPtr->into_toml(); });
     }

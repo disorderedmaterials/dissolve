@@ -387,7 +387,7 @@ Vector3 Box::scaleFactors(double requestedVolume, const std::array<bool, 3> &sca
 }
 
 // Express as a serialisable value
-void Box::serialize(std::string tag, SerialisedValue &target) const
+void Box::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &box = target[tag];
     box["lengths"] = {a_, b_, c_};

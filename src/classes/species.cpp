@@ -206,7 +206,7 @@ void Species::print() const
 int Species::version() const { return version_; }
 
 // Express as a serialisable value
-void Species::serialize(std::string tag, SerialisedValue &target) const
+void Species::serialise(std::string tag, SerialisedValue &target) const
 {
     if (forcefield_ == nullptr && atoms_.empty() && bonds_.empty() && angles_.empty() && torsions_.empty() &&
         isotopologues_.empty() && sites_.empty())

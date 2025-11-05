@@ -39,7 +39,7 @@ class OutputsNode : public Node
     // Is it appropriate to bother serialising this node?
     bool shouldSerialise() const override;
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };

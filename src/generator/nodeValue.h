@@ -71,7 +71,7 @@ class NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVari
      */
     public:
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params) override;
 };
@@ -110,7 +110,7 @@ class Vector3NodeValue : public Serialisable<std::vector<std::shared_ptr<Express
      */
     public:
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params) override;
 };

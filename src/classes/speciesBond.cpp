@@ -313,9 +313,9 @@ double SpeciesBond::force(double distance) const
 }
 
 // Express as a serialisable value
-void SpeciesBond::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 {
-    SpeciesIntra<SpeciesBond, BondFunctions>::serialize(tag, target);
+    SpeciesIntra<SpeciesBond, BondFunctions>::serialise(tag, target);
     auto &bond = target[tag];
     if (i_ != nullptr)
         bond["i"] = i_->userIndex();

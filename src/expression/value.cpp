@@ -134,7 +134,7 @@ bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValu
 }
 
 // Express as a serialisable value
-void ExpressionValue::serialize(std::string tag, SerialisedValue &target) const
+void ExpressionValue::serialise(std::string tag, SerialisedValue &target) const
 {
     if (type_ == ValueType::Integer)
         target[tag] = valueI_;

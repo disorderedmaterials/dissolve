@@ -161,7 +161,7 @@ std::string Number::asString(bool addQuotesIfRequired) const
 }
 
 // Express as a serialisable value
-void Number::serialize(std::string tag, SerialisedValue &target) const
+void Number::serialise(std::string tag, SerialisedValue &target) const
 {
     if (std::holds_alternative<int>(value_))
         target[tag] = std::get<int>(value_);

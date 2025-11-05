@@ -40,7 +40,7 @@ class Range : public Serialisable<>
     // Return whether or not the range has been fully defined
     bool isDefined() const;
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
     bool operator==(const Range &rhs) const;

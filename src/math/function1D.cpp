@@ -578,7 +578,7 @@ double Function1DWrapper::normalisation(double omega) const
 }
 
 // Express as a serialisable value
-void Function1DWrapper::serialize(std::string tag, SerialisedValue &target) const
+void Function1DWrapper::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &result = target[tag];
 

@@ -64,7 +64,7 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
 }
 
 // Express as a serialisable value
-void AtomType::serialize(std::string tag, SerialisedValue &target) const
+void AtomType::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &atomType = target[tag];
 

@@ -52,7 +52,7 @@ void SpeciesKeyword::removeReferencesTo(Species *sp)
 }
 
 // Express as a serialisable value
-void SpeciesKeyword::serialize(std::string tag, SerialisedValue &target) const { target[tag] = data_->name(); }
+void SpeciesKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_->name(); }
 
 // Read values from a serialisable value
 void SpeciesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

@@ -99,7 +99,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     }
 
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         if (data_)
             target[tag] = data_->name();

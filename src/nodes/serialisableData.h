@@ -50,7 +50,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
                                                                                   [&](const auto &item)
                                                                                   {
                                                                                       SerialisedValue outer;
-                                                                                      item.serialize("inner", outer);
+                                                                                      item.serialise("inner", outer);
                                                                                       return outer["inner"];
                                                                                   });
               }),
@@ -101,7 +101,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
                                                              [&](const auto &item)
                                                              {
                                                                  SerialisedValue outer;
-                                                                 item.serialize("inner", outer);
+                                                                 item.serialise("inner", outer);
                                                                  return outer["inner"];
                                                              });
               }),
@@ -165,7 +165,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     DataSerialiser dataSerialiser_{[&]()
                                    {
                                        SerialisedValue target;
-                                       data_.serialize("inner", target);
+                                       data_.serialise("inner", target);
                                        return target["inner"];
                                    }};
     // Deserialiser for target data

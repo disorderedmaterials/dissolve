@@ -396,7 +396,7 @@ void PairPotential::setAdditionalPotential(Data1D &newUAdditional)
  */
 
 // Express as a serialisable value
-void PairPotential::serialize(std::string tag, SerialisedValue &target) const
+void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &result = target[tag];
     result["nameI"] = nameI_;

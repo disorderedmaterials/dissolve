@@ -168,7 +168,7 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
      */
     public:
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         SerialisedValue result;
         Serialisable::fromMap(data_, "map", result);

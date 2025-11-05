@@ -33,7 +33,7 @@ bool ParametersGeneratorNode::execute(const GeneratorContext &generatorContext) 
  */
 
 // Express as a serialisable value
-void ParametersGeneratorNode::serialize(std::string tag, SerialisedValue &target) const
+void ParametersGeneratorNode::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result;
     for (auto &param : parameters_)

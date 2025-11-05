@@ -255,7 +255,7 @@ bool GeneratorNode::serialise(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a serialisable value
-void GeneratorNode::serialize(std::string tag, SerialisedValue &target) const
+void GeneratorNode::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
     if (mustBeNamed())

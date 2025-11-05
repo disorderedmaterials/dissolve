@@ -484,7 +484,7 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
 }
 
 // Express as a serialisable value
-void SpeciesAtom::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = {{"index", userIndex()}, {"z", Z_}, {"r", r_}, {"charge", charge_}, {"type", atomType_->name().data()}};
 }

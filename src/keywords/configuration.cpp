@@ -52,7 +52,7 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
 }
 
 // Express as a serialisable value
-void ConfigurationKeyword::serialize(std::string tag, SerialisedValue &target) const
+void ConfigurationKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     // isDefault is checked before serialisation of keywords
     // so we have checked for the null pointer

@@ -88,7 +88,7 @@ void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
 }
 
 // Express as a serialisable value
-void SpeciesSiteKeyword::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesSiteKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = {{"species", data_->parent()->name()}, {"site", data_->name()}};
 }

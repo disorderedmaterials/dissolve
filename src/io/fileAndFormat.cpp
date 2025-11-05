@@ -150,7 +150,7 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
 }
 
 // Express as a serialisable value
-void FileAndFormat::serialize(std::string tag, SerialisedValue &target) const
+void FileAndFormat::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"filename", filename_},
                               {"format", formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"}};

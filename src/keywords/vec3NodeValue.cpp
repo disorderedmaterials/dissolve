@@ -88,7 +88,7 @@ bool Vec3NodeValueKeyword::serialise(LineParser &parser, std::string_view keywor
 }
 
 // Express as a serialisable value
-void Vec3NodeValueKeyword::serialize(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
+void Vec3NodeValueKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

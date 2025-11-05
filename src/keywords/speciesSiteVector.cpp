@@ -96,7 +96,7 @@ void SpeciesSiteVectorKeyword::removeReferencesTo(SpeciesSite *spSite)
 }
 
 // Express as a serialisable value
-void SpeciesSiteVectorKeyword::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesSiteVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = fromVector(data_, [](const auto item) -> SerialisedValue
                              { return {{"site", item->name()}, {"species", item->parent()->name()}}; });

@@ -82,7 +82,7 @@ void WeightedModuleVectorKeyword::removeReferencesTo(Module *module)
 }
 
 // Express as a serialisable value
-void WeightedModuleVectorKeyword::serialize(std::string tag, SerialisedValue &target) const
+void WeightedModuleVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = fromVector(data_, [](const auto &item) -> SerialisedValue
                              { return {{"target", item.first->name()}, {"weight", item.second}}; });

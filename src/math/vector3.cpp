@@ -495,7 +495,7 @@ double Vector3::angleInDegrees(const Vector3 &to) const { return DissolveMath::t
  */
 
 // Express as a serialisable value
-void Vector3::serialize(std::string tag, SerialisedValue &target) const
+void Vector3::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue::array_type result;
     result.push_back(x);

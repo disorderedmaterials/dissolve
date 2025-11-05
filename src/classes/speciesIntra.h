@@ -211,7 +211,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     }
 
     // Express as a serialisable value
-    void serialize(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         auto &result = target[tag];
 

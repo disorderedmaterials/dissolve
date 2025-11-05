@@ -152,7 +152,7 @@ SerialisedValue Dissolve::serialisePairPotentials() const
                                  {
                                      const auto &[at1, at2, pot] = term;
                                      SerialisedValue target;
-                                     pot->serialize("inner", target);
+                                     pot->serialise("inner", target);
                                      auto &value = target["inner"];
                                      value["atomTypeI"] = at1->name();
                                      value["atomTypeJ"] = at2->name();
@@ -163,7 +163,7 @@ SerialisedValue Dissolve::serialisePairPotentials() const
 }
 
 // Express as a serialisable value
-void Dissolve::serialize(std::string tag, SerialisedValue &target) const
+void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &root = target[tag];
 
@@ -177,7 +177,7 @@ void Dissolve::serialize(std::string tag, SerialisedValue &target) const
 
     root["pairPotentials"] = serialisePairPotentials();
 
-    graphNode_->serialize("graph", root);
+    graphNode_->serialise("graph", root);
 
     Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
 

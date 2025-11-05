@@ -49,7 +49,7 @@ const InteractionPotential<Functions1D> &PairPotentialOverride::interactionPoten
  */
 
 // Express as a serialisable value
-void PairPotentialOverride::serialize(std::string tag, SerialisedValue &target) const
+void PairPotentialOverride::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &value = target[tag];
 

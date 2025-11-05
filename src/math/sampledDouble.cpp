@@ -157,7 +157,7 @@ bool SampledDouble::deserialise(LineParser &parser)
 bool SampledDouble::serialise(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
 
 // Express as a serialisable value
-void SampledDouble::serialize(std::string tag, SerialisedValue &target) const
+void SampledDouble::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = {{"mean", mean_}, {"count", count_}, {"m2", m2_}};
 }

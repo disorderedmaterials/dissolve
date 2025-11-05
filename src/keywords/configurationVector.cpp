@@ -69,7 +69,7 @@ void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
 }
 
 // Express as a serialisable value
-void ConfigurationVectorKeyword::serialize(std::string tag, SerialisedValue &target) const
+void ConfigurationVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = fromVector(data_, [](const auto &cfg) { return std::string(cfg->name()); });
 }

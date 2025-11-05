@@ -89,7 +89,7 @@ void ModuleVectorKeyword::removeReferencesTo(Module *module)
 }
 
 // Express as a serialisable value
-void ModuleVectorKeyword::serialize(std::string tag, SerialisedValue &target) const
+void ModuleVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = fromVector(data_, [](const auto *item) { return item->name(); });
 }

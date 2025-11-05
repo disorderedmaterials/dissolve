@@ -250,9 +250,9 @@ std::string Graph::location() const
  */
 
 // Express as a serialisable value
-void Graph::serialize(std::string tag, SerialisedValue &target) const
+void Graph::serialise(std::string tag, SerialisedValue &target) const
 {
-    Node::serialize(tag, target);
+    Node::serialise(tag, target);
     auto &result = target[tag];
     fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
     fromVector(edges_, "edges", result);

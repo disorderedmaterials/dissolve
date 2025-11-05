@@ -219,11 +219,11 @@ double SpeciesImproper::force(double phi) const
 }
 
 // Express as a serialisable value
-void SpeciesImproper::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
 {
     // if (i_ == nullptr && j_ == nullptr && k_ == nullptr && l_ == nullptr)
     //     return;
-    SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialize(tag, target);
+    SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise(tag, target);
     auto &improper = target.at(tag);
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();

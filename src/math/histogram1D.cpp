@@ -246,7 +246,7 @@ bool Histogram1D::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-void Histogram1D::serialize(std::string tag, SerialisedValue &target) const
+void Histogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = {{"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_},
                    {"nBinned", nBinned_}, {"nMissed", nMissed_}, {"averages", averages_}};

@@ -467,7 +467,7 @@ bool Data1D::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-void Data1D::serialize(std::string tag, SerialisedValue &target) const
+void Data1D::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", values_}};
     if (hasError_)

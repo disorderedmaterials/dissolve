@@ -59,7 +59,10 @@ const ExpressionValue &ExpressionVariable::value() const { return value_; }
 ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 
 // Express as a serialisable value
-void ExpressionVariable::serialize(std::string tag, SerialisedValue &target) const { target[tag] = {{"name", baseName_}, {"value", value_}}; }
+void ExpressionVariable::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"name", baseName_}, {"value", value_}};
+}
 
 // Read values from a serialisable value
 void ExpressionVariable::deserialise(const SerialisedValue &node)

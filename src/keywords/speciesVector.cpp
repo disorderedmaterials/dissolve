@@ -61,7 +61,7 @@ void SpeciesVectorKeyword::removeReferencesTo(Species *sp)
 }
 
 // Express as a serialisable value
-void SpeciesVectorKeyword::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = fromVector(data_, [](const auto *item) { return item->name(); });
 }

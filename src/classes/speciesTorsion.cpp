@@ -523,9 +523,9 @@ double SpeciesTorsion::force(double phi) const
 }
 
 // Express as a serialisable value
-void SpeciesTorsion::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
 {
-    SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialize(tag, target);
+    SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise(tag, target);
     auto &torsion = target[tag];
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();

@@ -53,7 +53,7 @@ bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, st
 }
 
 // Express as a serialisable value
-void BoolKeyword::serialize(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
+void BoolKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void BoolKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_boolean(); }

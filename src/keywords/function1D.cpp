@@ -62,7 +62,7 @@ bool Function1DKeyword::serialise(LineParser &parser, std::string_view keywordNa
 }
 
 // Express as a serialisable value
-void Function1DKeyword::serialize(std::string tag, SerialisedValue &target) const
+void Function1DKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     target[tag] = {{"type", Functions1D::forms().serialise(data_.form())}, {"parameters", data_.parameters()}};
 }

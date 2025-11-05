@@ -733,7 +733,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a serialisable value
-void SpeciesSite::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &site = target[tag];
     if (type_ != SiteType::Static)

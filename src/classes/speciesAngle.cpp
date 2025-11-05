@@ -293,9 +293,9 @@ double SpeciesAngle::force(double theta) const
 }
 
 // Express as a serialisable value
-void SpeciesAngle::serialize(std::string tag, SerialisedValue &target) const
+void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
 {
-    SpeciesIntra<SpeciesAngle, AngleFunctions>::serialize(tag, target);
+    SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise(tag, target);
     auto &angle = target[tag];
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();

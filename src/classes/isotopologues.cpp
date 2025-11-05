@@ -102,7 +102,7 @@ bool Isotopologues::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-void Isotopologues::serialize(std::string tag, SerialisedValue &target) const
+void Isotopologues::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"name", species_->name()}, {"population", speciesPopulation_}};
 
