@@ -30,19 +30,8 @@ NodeConstants::ProcessResult InputsNode::run()
 
     if (loopGraph && loopGraph->loopCount() > 0)
     {
-        auto source = loopGraph->loopBacks();
-
-        for (const auto &[sourceName, sourceEdges] : source->inputEdges())
-        {
-            for (const auto &edge : sourceEdges)
-            {
-                EdgeDefinition edgeDefinition{std::string(edge->sourceNode().name()), std::string(edge->sourceOutput().name()),
-                                              std::string(name()), std::string(sourceName)};
-
-                auto loopEdge = Edge::create(loopGraph, edgeDefinition);
-                loopEdge->pull();
-            }
-        }
+        for (const auto& edge : loopGraph->loopEdges())
+            static_cast<LoopEdge *>(edge.get())->pull();
     }
 
     return Node::run();

@@ -92,7 +92,7 @@ class Graph : public Node
     // Set name of specified child node
     void setNodeName(const Node *node, std::string_view nodeName);
     // Add edge between nodes
-    bool addEdge(const EdgeDefinition &definition);
+    virtual bool addEdge(const EdgeDefinition &definition);
     // Remove edge between nodes
     bool removeEdge(const EdgeDefinition &definition);
     bool removeEdge(Edge *edgeToRemove);

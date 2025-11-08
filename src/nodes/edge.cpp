@@ -3,7 +3,6 @@
 
 #include "nodes/edge.h"
 #include "nodes/graph.h"
-#include "nodes/loop.h"
 #include "nodes/outputs.h"
 
 Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
@@ -96,24 +95,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         targetInput = link.inputParameter;
     }
     else
-    {
-        auto loop = dynamic_cast<LoopGraph *>(sourceNode->parentGraph());
-        auto inputs = dynamic_cast<InputsNode *>(sourceNode);
-        if (inputs)
-        {
-            auto loop = dynamic_cast<LoopGraph *>(inputs->parentGraph());
-            if (loop)
-                loop->setLoopBacks();
-        }
-
         targetInput = targetNode->findInput(definition.targetInput);
-
-        if (!inputs && (loop && loop->loopCount() > 0))
-        {
-            targetInput = targetNode->findOutput(definition.targetInput);
-            targetInput->setFlags(ParameterBase::ParameterFlags::LoopBack);
-        }
-    }
 
     if (!targetInput)
     {
@@ -122,8 +104,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Confirm that the destination input is actually an input
-    if (!(targetInput->flags().isSet(ParameterBase::ParameterFlags::Input) ||
-          targetInput->flags().isSet(ParameterBase::ParameterFlags::LoopBack)))
+    if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input))
     {
         Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
                          definition.targetInput);
@@ -149,6 +130,10 @@ Node &Edge::sourceNode() const { return sourceNode_; }
 
 // Return source output parameter
 const ParameterBase &Edge::sourceOutput() const { return sourceOutput_; }
+
+// Version of the source node when this edge was last pulled by the target node.
+int Edge::sourceNodeVersionIndex() const { return sourceNodeVersionIndex_; }
+int &Edge::sourceNodeVersionIndex() { return sourceNodeVersionIndex_; }
 
 // Return target node
 Node &Edge::targetNode() const { return targetNode_; }
@@ -224,8 +209,7 @@ NodeConstants::ProcessResult Edge::pull()
     {
         auto result = NodeConstants::ProcessResult::Success;
 
-        if (!targetInput_.flags().isSet(ParameterBase::ParameterFlags::LoopBack))
-            result = sourceNode_.run();
+        result = sourceNode_.run();
 
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
         {
@@ -244,6 +228,43 @@ NodeConstants::ProcessResult Edge::pull()
     }
 
     return NodeConstants::ProcessResult::Unchanged;
+}
+
+// Pull the data from the source node to the target, returning a ProcessResult
+NodeConstants::ProcessResult LoopEdge::pull()
+{
+    /*
+     * If the versionIndex for the source node stored in the Edge is Invalid or different to that on the source node
+     * itself we need to pull from or run the source node to get the updated output. We can then store the source node's
+     * current versionIndex ready for next time.
+     */
+    if (!sourceNode().isUpToDate() || (sourceNodeVersionIndex() != sourceNode().versionIndex()))
+    {
+        auto result = NodeConstants::ProcessResult::Success;
+
+        if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
+        {
+            Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode().name());
+            return result;
+        }
+
+        // Copy the parameter data over
+        const ParameterBase *src = &sourceOutput();
+        if (!targetInput().assign(const_cast<ParameterBase *>(src)))
+            return NodeConstants::ProcessResult::Failed;
+
+        // All succeeded, so update version index
+        sourceNodeVersionIndex() = sourceNode().versionIndex();
+
+        return NodeConstants::ProcessResult::Success;
+    }
+
+    return NodeConstants::ProcessResult::Unchanged;
+}
+
+std::unique_ptr<LoopEdge> LoopEdge::makeLoopEdge(const Edge *edge)
+{
+    return std::make_unique<LoopEdge>(edge->sourceNode(), edge->sourceOutput(), edge->targetNode(), edge->targetInput());
 }
 
 // Ensure next call to pull() will retrieve the data from the source node

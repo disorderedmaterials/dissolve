@@ -28,8 +28,10 @@ void LoopGraph::increment()
     setUpdateRequired();
 }
 
-//
+// Loop backs
 OutputsNode* LoopGraph::loopBacks() { return loopBacks_; }
+
+Graph::Edges &LoopGraph::loopEdges() { return loopEdges_; }
 
 // Current loop iteration
 int LoopGraph::loopCount() { return loopCounter_; }
@@ -50,6 +52,27 @@ void LoopGraph::releaseLoopBack(const std::string &name)
     auto it = inputs.find(name);
     if (it != inputs.end())
         inputs.erase(it);
+}
+
+// Add edge between nodes
+bool LoopGraph::addEdge(const EdgeDefinition& definition)
+{
+    if (dynamic_cast<InputsNode *>(parentGraph()->node(definition.sourceNode)))
+        setLoopBacks();
+    else if (loopCounter_ > 0 && loopBacks_->findInput(definition.sourceOutput))
+    {
+        EdgeDefinition loopDefinition{definition.targetNode, definition.targetInput,
+                                      std::string(name()), definition.sourceOutput};
+        auto edge = Edge::create(this, loopDefinition);
+        if (!edge)
+            return false;
+
+        loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release()));
+
+        return true;
+    }
+
+    return Graph::addEdge(definition);
 }
 
 // Unlink edge, releasing the loop back if one accompanies it

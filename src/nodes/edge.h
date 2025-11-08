@@ -56,6 +56,11 @@ class Edge : public Serialisable<>
     // Version of the source node when this edge was last pulled by the target node.
     int sourceNodeVersionIndex_{NodeConstants::InvalidVersion};
 
+    protected:
+    // Version of the source node when this edge was last pulled by the target node.
+    int sourceNodeVersionIndex() const;
+    int &sourceNodeVersionIndex();
+
     public:
     // A factory method to create an Edge from the supplied definition, or nullptr if it cannot
     static std::unique_ptr<Edge> create(Graph *parent, const EdgeDefinition &definition);
@@ -82,4 +87,20 @@ class Edge : public Serialisable<>
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
+};
+
+
+class LoopEdge : public Edge
+{
+    public:
+    ~LoopEdge();
+
+    protected:
+    // The constructor is private because it can only be constructed by the factory method
+    LoopEdge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
+
+    public:
+    // Pull the data from the source node to the target, returning a ProcessResult
+    NodeConstants::ProcessResult pull();
+    static std::unique_ptr<LoopEdge> makeLoopEdge(const Edge *edge);
 };

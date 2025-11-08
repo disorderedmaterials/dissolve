@@ -16,6 +16,8 @@ class LoopGraph : public Graph
     LoopGraph(Graph *parentGraph);
     ~LoopGraph() = default;
 
+    using LoopEdges = std::vector<std::unique_ptr<LoopEdge>>;
+
     /*
      * Definition (Virtuals)
      */
@@ -38,14 +40,18 @@ class LoopGraph : public Graph
     int nLoops_{0};
     // Current loop iteration
     int loopCounter_{0};
-    // LoopBacks
+    // Loop backs
     OutputsNode *loopBacks_{nullptr};
+    // Loop edges
+    Edges loopEdges_;
     // Release a loopback by name
     void releaseLoopBack(const std::string &name);
 
     public:
-    //
+    // Loop backs
     OutputsNode *loopBacks();
+    // Loop edges
+    Edges &loopEdges();
     // Current loop iteration
     int loopCount();
     // Unlink edge, releasing the loop back if one accompanies it
@@ -54,6 +60,8 @@ class LoopGraph : public Graph
     void resetLoopCounter();
     // Set the loopbacks corresponding to the graph inputs
     void setLoopBacks();
+    // Add edge between nodes
+    bool addEdge(const EdgeDefinition &definition) override;
 
     /*
      * Processing & Validity
