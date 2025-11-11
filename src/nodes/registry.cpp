@@ -9,11 +9,13 @@
 #include "nodes/add.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
+#include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
 #include "nodes/energy/energy.h"
 #include "nodes/gr/gr.h"
+#include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/md/md.h"
@@ -43,25 +45,29 @@ void NodeRegistry::instantiateNodeProducers()
     if (!producers_.empty())
         return;
 
-    producers_ = {{"Add", makeDerivedNode<AddNode>()},
-                  {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
-                  {"Configuration", makeDerivedNode<ConfigurationNode>()},
-                  {"Derivative", makeDerivedNode<DerivativeNode>()},
-                  {"DotProduct", makeDerivedNode<DotProductNode>()},
-                  {"Energy", makeDerivedNode<EnergyNode>()},
-                  {"GR", makeDerivedNode<GRNode>()},
-                  {"Graph", makeDerivedNode<Graph>()},
-                  {"GR", makeDerivedNode<GRNode>()},
-                  {"Insert", makeDerivedNode<InsertNode>()},
-                  {"Integrator", makeDerivedNode<Integrator1DNode>()},
-                  {"MD", makeDerivedNode<MDNode>()},
-                  {"Multiply", makeDerivedNode<MultiplyNode>()},
-                  {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
-                  {"Number", makeDerivedNode<NumberNode>()},
-                  {"SQ", makeDerivedNode<SQNode>()},
-                  {"Subtract", makeDerivedNode<SubtractNode>()},
-                  {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
-                  {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()}};
+    producers_ = {
+        {"Add", makeDerivedNode<AddNode>()},
+        {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
+        {"Configuration", makeDerivedNode<ConfigurationNode>()},
+        {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
+        {"Derivative", makeDerivedNode<DerivativeNode>()},
+        {"DotProduct", makeDerivedNode<DotProductNode>()},
+        {"Energy", makeDerivedNode<EnergyNode>()},
+        {"GR", makeDerivedNode<GRNode>()},
+        {"Graph", makeDerivedNode<Graph>()},
+        {"GR", makeDerivedNode<GRNode>()},
+        {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
+        {"Insert", makeDerivedNode<InsertNode>()},
+        {"Integrator", makeDerivedNode<Integrator1DNode>()},
+        {"MD", makeDerivedNode<MDNode>()},
+        {"Multiply", makeDerivedNode<MultiplyNode>()},
+        {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
+        {"Number", makeDerivedNode<NumberNode>()},
+        {"SQ", makeDerivedNode<SQNode>()},
+        {"Subtract", makeDerivedNode<SubtractNode>()},
+        {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
+        {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
+    };
 }
 
 // Check whether the supplied node type is known

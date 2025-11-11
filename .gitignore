@@ -50,6 +50,7 @@ aqtinstall.log
 *.gr
 *.sq
 *.rewrite
+tests/data/*.xml
 tests/epsr/D2O-ReferenceData.q
 tests/epsr/D2O-ReferenceData.r
 tests/epsr/EPSR01-EstSQ-HW-HW.txt

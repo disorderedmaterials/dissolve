@@ -270,6 +270,16 @@ class Node : public Serialisable<>
     std::shared_ptr<ParameterBase> findOption(std::string_view name) const;
     // Return options
     NodeParameterMap &options();
+    // Set option value
+    template <class T> bool setOption(std::string_view name, const T &value)
+    {
+        auto opt = findOption(name);
+        if (!opt)
+            return false;
+
+        opt->set<T>(value);
+        return true;
+    }
     // Get the incoming edges to this node
     EdgeMap &inputEdges();
     // Get the outgoing edges from this node
