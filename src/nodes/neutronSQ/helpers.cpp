@@ -73,8 +73,7 @@ bool NeutronSQNode::calculateWeightedSQ()
                             });
 
     // Form total structure factor
-    auto w = (*weightedSQ_);
-    w.formTotals(false);
+    weightedSQ_->formTotals(false);
 
     // Apply normalisation to all totals
     if (normaliseTo_ != StructureFactors::NoNormalisation)

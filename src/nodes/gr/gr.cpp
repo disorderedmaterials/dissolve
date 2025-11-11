@@ -8,7 +8,7 @@ GRNode::GRNode(Graph *parentGraph)
                              [&]()
                              {
                                  PartialSet p;
-                                 p.initialise(targetConfiguration_->speciesPopulations());
+                                 p.initialise(unweightedGR_.value());
                                  return p;
                              })
 {
@@ -17,6 +17,7 @@ GRNode::GRNode(Graph *parentGraph)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
+    addOptionalPointerOutput<PartialSet>("RawGR", "Original (unbroadened) partials for the target configuration", rawGR_);
     addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Options

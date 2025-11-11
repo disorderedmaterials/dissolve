@@ -39,6 +39,10 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addOption<bool>("SaveRepresentativeGR", "Save representative G(r), obtained from Fourier transform of the calculated F(Q)",
                     saveRepresentativeGR_);
     addOption<bool>("SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
+    addOptionalPointerOutput<PartialSet>("WeightedSQ", "Weighted partial structure factors for target configuration",
+                                         weightedSQ_);
+    addOptionalPointerOutput<PartialSet>(
+        "WeightedGR", "Weighted partial radial distribution functions for target configuration", weightedGR_);
 
     // Serialisables
     addSerialisable("weightedGR", weightedGR_);
