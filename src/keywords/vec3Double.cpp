@@ -101,7 +101,7 @@ bool Vec3DoubleKeyword::serialise(LineParser &parser, std::string_view keywordNa
 bool Vec3DoubleKeyword::isDefault() const { return data_ == default_; }
 
 // Express as a serialisable value
-SerialisedValue Vec3DoubleKeyword::serialise() const { return data_.serialise(); }
+void Vec3DoubleKeyword::serialise(std::string tag, SerialisedValue &target) const { data_.serialise(tag, target); }
 
 // Read values from a serialisable value
 void Vec3DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }

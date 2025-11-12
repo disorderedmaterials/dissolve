@@ -207,6 +207,6 @@ class SpeciesSite : public Serialisable<CoreData &>
     // Write site definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

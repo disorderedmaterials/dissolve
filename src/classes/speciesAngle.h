@@ -78,7 +78,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     double force(double theta) const;
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };

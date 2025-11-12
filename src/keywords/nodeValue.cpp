@@ -54,7 +54,7 @@ bool NodeValueKeyword::serialise(LineParser &parser, std::string_view keywordNam
 }
 
 // Express as a serialisable value
-SerialisedValue NodeValueKeyword::serialise() const { return data_; }
+void NodeValueKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data)

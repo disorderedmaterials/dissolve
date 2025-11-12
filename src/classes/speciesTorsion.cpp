@@ -523,9 +523,10 @@ double SpeciesTorsion::force(double phi) const
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesTorsion::serialise() const
+void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
 {
-    auto torsion = SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise();
+    SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise(tag, target);
+    auto &torsion = target[tag];
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -537,8 +538,6 @@ SerialisedValue SpeciesTorsion::serialise() const
 
     torsion["q14"] = electrostatic14Scaling_;
     torsion["v14"] = vdw14Scaling_;
-
-    return torsion;
 }
 
 // This method populates the object's members with values read from a 'torsion' TOML node

@@ -71,14 +71,14 @@ TEST_F(GraphCoreTest, Serialisation)
     CoreData cd;
     Dissolve d(cd);
     DissolveGraph copy(d);
-    auto serialised = root_.serialise();
+    auto serialised = root_.into_toml();
 
     SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml");
     UnitTest::compareToml("", serialised, contents);
 
     std::cout << serialised << std::endl;
     copy.deserialise(serialised);
-    auto repeat = copy.serialise();
+    auto repeat = copy.into_toml();
 
     UnitTest::compareToml("", repeat, contents);
 };

@@ -61,7 +61,7 @@ bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywor
 }
 
 // Express as a serialisable value
-SerialisedValue FileAndFormatKeyword::serialise() const { return data_; }
+void FileAndFormatKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void FileAndFormatKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

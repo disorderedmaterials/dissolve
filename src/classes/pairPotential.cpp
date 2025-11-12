@@ -396,9 +396,9 @@ void PairPotential::setAdditionalPotential(Data1D &newUAdditional)
  */
 
 // Express as a serialisable value
-SerialisedValue PairPotential::serialise() const
+void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result;
+    auto &result = target[tag];
     result["nameI"] = nameI_;
     result["nameJ"] = nameJ_;
     result["form"] = Functions1D::forms().keyword(interactionPotential_.form());
@@ -412,7 +412,6 @@ SerialisedValue PairPotential::serialise() const
             potentialParameters[parameter] = value;
         result["parameters"] = potentialParameters;
     }
-    return result;
 }
 
 // Read values from a serialisable value

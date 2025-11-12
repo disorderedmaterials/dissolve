@@ -50,7 +50,7 @@ int main(int args, char **argv)
             result = dissolve.saveInput(options.writeInputFilename().value());
         else
         {
-            auto toml = dissolve.serialise();
+            auto toml = dissolve.into_toml();
             std::ofstream outfile(options.toTomlFile().value());
             outfile << toml;
             outfile.close();

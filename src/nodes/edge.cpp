@@ -174,14 +174,14 @@ std::string EdgeDefinition::asString() const
  */
 
 // Express as a serialisable value
-SerialisedValue EdgeDefinition::serialise() const
+void EdgeDefinition::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result;
     result["sourceNode"] = sourceNode;
     result["sourceOutput"] = sourceOutput;
     result["targetNode"] = targetNode;
     result["targetInput"] = targetInput;
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value
@@ -231,7 +231,7 @@ void Edge::forceNextPull() { sourceNodeVersionIndex_ = NodeConstants::InvalidVer
  */
 
 // Express as a serialisable value
-SerialisedValue Edge::serialise() const { return definition().serialise(); }
+void Edge::serialise(std::string tag, SerialisedValue &target) const { return definition().serialise(tag, target); }
 
 // Read values from a serialisable value. This is required for the
 // SerialisableValue type implementation, but we actually deserialise

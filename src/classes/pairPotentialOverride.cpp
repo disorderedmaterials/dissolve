@@ -49,9 +49,9 @@ const InteractionPotential<Functions1D> &PairPotentialOverride::interactionPoten
  */
 
 // Express as a serialisable value
-SerialisedValue PairPotentialOverride::serialise() const
+void PairPotentialOverride::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue value;
+    auto &value = target[tag];
 
     value["matchI"] = matchI_;
     value["matchJ"] = matchJ_;
@@ -67,8 +67,6 @@ SerialisedValue PairPotentialOverride::serialise() const
             interactionParameters[parameter] = value;
         value["parameters"] = interactionParameters;
     }
-
-    return value;
 }
 
 // Read values from a serialisable value

@@ -175,7 +175,7 @@ class Box : public Serialisable<>
      */
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
 };
 
 // Single Image Box Definition
