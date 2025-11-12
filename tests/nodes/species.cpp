@@ -25,43 +25,18 @@ TEST_F(SpeciesNodeTest, Creation)
 {
     auto s = dynamic_cast<SpeciesNode *>(root_.createNode("Species", "s"));
     ASSERT_EQ(s->name(), "s");
-    auto option = s->findOption("Definition");
+    auto option = s->findOption("Data");
     ASSERT_NE(option, nullptr);
-    option->set<std::string>(R"(
-name="Water"
-[[atoms]]
-index=1
-z="O"
-r=[ 0.156743, -0.152502, 0.317676 ]
-charge=-0.82
-[[atoms]]
-index=2
-z="H"
-r=[-0.257130, 0.637822, 0.198948]
-charge=0.41
-[[atoms]]
-index=3
-z="H"
-r=[0.100387, -0.485320, -0.516624]
-charge=0.41
-[[bonds]]
-i=1
-j=2
-form="Harmonic"
-parameters=[4431.53, 1.012]
-[[bonds]]
-i=1
-j=3
-form="Harmonic"
-parameters=[4431.53, 1.012]
-[[angles]]
-i=2
-j=1
-k=3
-form="Harmonic"
-parameters=[317.5656, 113.24]
-)");
-    ASSERT_EQ(s->run(), NodeConstants::ProcessResult::Success);
+
+    auto species = option->get<std::shared_ptr<Species>>();
+    species->addAtom(Elements::O, {0.156743, -0.152502, 0.317676}, -0.82);
+    species->addAtom(Elements::H, {-0.257130, 0.637822, 0.198948}, 0.41);
+    species->addAtom(Elements::H, {0.100387, -0.485320, -0.516624}, 0.41);
+    species->addBond(0, 1);
+    species->addBond(0, 2);
+    species->addAngle(1, 0, 2);
+
+    ASSERT_EQ(s->run(), NodeConstants::ProcessResult::Unchanged);
     auto result = s->findOutput("Species")->get<const Species *>();
 
     ASSERT_EQ(result->atoms().size(), 3);

@@ -24,10 +24,8 @@ class SpeciesNode : public Node
      * Data
      */
     private:
-    // TOML Definition
-    std::string definition_;
     // Species object
-    Species species_;
+    std::shared_ptr<Species> species_;
     // Atom Types owned by the node
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 

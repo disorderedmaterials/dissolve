@@ -464,6 +464,11 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
             else
                 Parameter<DataClass>::data_ = {};
         }
+        else if constexpr (serialisablePointer<DataClass>)
+        {
+            CoreData coreData; // Temporary patch until we fix up the deserialisation
+            Parameter<DataClass>::data_->deserialise(node.at("data"), coreData);
+        }
         else
         {
             Parameter<DataClass>::data_ = toml::find<DataClass>(node, "data");

@@ -10,20 +10,13 @@
 
 SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOption("Definition", "TOML that defines the species", definition_);
-    addPointerOutput<const Species>("Species", "Created species", species_);
+    species_ = std::make_shared<Species>();
+    addOption("Data", "The data for this species", species_);
+    addPointerOutput<const Species>("Species", "Created species", *species_);
 }
 
 std::string_view SpeciesNode::type() const { return "Species"; }
 
 std::string_view SpeciesNode::summary() const { return "Produce a species"; }
 
-NodeConstants::ProcessResult SpeciesNode::process()
-{
-    CoreData coreData;
-    std::istringstream stream(definition_);
-    SerialisedValue node = toml::parse(stream);
-    species_.deserialise(node, coreData);
-    atomTypes_ = coreData.atomTypes();
-    return NodeConstants::ProcessResult::Success;
-}
+NodeConstants::ProcessResult SpeciesNode::process() { return NodeConstants::ProcessResult::Unchanged; }
