@@ -6,12 +6,12 @@
 #include "classes/species.h"
 #include "nodes/node.h"
 
-// AtomicSpecies Node
-class AtomicSpeciesNode : public Node
+// Species Node
+class SpeciesNode : public Node
 {
     public:
-    AtomicSpeciesNode(Graph *parentGraph, Elements::Element Z);
-    ~AtomicSpeciesNode() override = default;
+    SpeciesNode(Graph *parentGraph);
+    ~SpeciesNode() override = default;
 
     /*
      * Definition
@@ -24,9 +24,11 @@ class AtomicSpeciesNode : public Node
      * Data
      */
     private:
+    // TOML Definition
+    std::string definition_;
     // Species object
     Species species_;
-    // AtomTypes owned by the node
+    // Atom Types owned by the node
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
     /*

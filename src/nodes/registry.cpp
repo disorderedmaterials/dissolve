@@ -22,6 +22,7 @@
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
+#include "nodes/species.h"
 #include "nodes/sq/sq.h"
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"
@@ -63,6 +64,7 @@ void NodeRegistry::instantiateNodeProducers()
         {"Multiply", makeDerivedNode<MultiplyNode>()},
         {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
         {"Number", makeDerivedNode<NumberNode>()},
+        {"Species", makeDerivedNode<SpeciesNode>()},
         {"SQ", makeDerivedNode<SQNode>()},
         {"Subtract", makeDerivedNode<SubtractNode>()},
         {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
