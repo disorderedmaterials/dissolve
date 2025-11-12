@@ -151,12 +151,12 @@ class DissolveSystemTest
                 if (!otherDissolve.prepare())
                     throw(std::runtime_error("Failed to prepare simulation.\n"));
 
-                toml = otherDissolve.serialise();
+                toml = otherDissolve.into_toml();
             }
 
             dissolve_.deserialise(toml);
             dissolve_.setInputFilename(std::string(inputFile));
-            auto repeat = dissolve_.serialise();
+            auto repeat = dissolve_.into_toml();
 
             // Run any other additional setup functions
             if (additionalSetUp_)

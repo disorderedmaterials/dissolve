@@ -313,15 +313,14 @@ double SpeciesBond::force(double distance) const
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesBond::serialise() const
+void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 {
-    auto bond = SpeciesIntra<SpeciesBond, BondFunctions>::serialise();
+    SpeciesIntra<SpeciesBond, BondFunctions>::serialise(tag, target);
+    auto &bond = target[tag];
     if (i_ != nullptr)
         bond["i"] = i_->userIndex();
     if (j_ != nullptr)
         bond["j"] = j_->userIndex();
-
-    return bond;
 }
 
 // This method populates the object's members with values read from a 'bond' TOML node

@@ -118,7 +118,7 @@ class PartialSet : public Serialisable<>, ResolvableContext
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(SerialisedValue node);
     // Resolve internal resolvable name references with supplied data

@@ -301,7 +301,9 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
             for (const auto &[keyword, keywordType] : group.keywords())
                 if (!keyword->isDefault())
                 {
-                    auto value = keyword->serialise();
+                    SerialisedValue outer;
+                    keyword->serialise("inner", outer);
+                    auto &value = outer["inner"];
                     if (keywordType != KeywordBase::KeywordType::Deprecated && !value.is_uninitialized())
                         node[toml_format(keyword->name())] = value;
                 }

@@ -467,12 +467,12 @@ bool Data1D::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-SerialisedValue Data1D::serialise() const
+void Data1D::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", values_}};
     if (hasError_)
         result["errors"] = errors_;
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

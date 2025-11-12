@@ -109,7 +109,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
     // Has not changed from initial value
     bool isDefault() const override { return data_ == nullptr; }
     // Express as a serialisable value
-    SerialisedValue serialise() const override { return data_->name(); }
+    void serialise(std::string tag, SerialisedValue &target) const override { target[tag] = data_->name(); }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {

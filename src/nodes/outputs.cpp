@@ -45,7 +45,7 @@ void OutputsNode::setUpdateRequired()
 bool OutputsNode::shouldSerialise() const { return false; }
 
 // Express as a serialisable value
-SerialisedValue OutputsNode::serialise() const { return {}; }
+void OutputsNode::serialise(std::string tag, SerialisedValue &target) const {}
 
 // Read values from a serialisable value
 void OutputsNode::deserialise(const SerialisedValue &node) {};

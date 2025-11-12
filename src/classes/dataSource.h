@@ -220,16 +220,16 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         return true;
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         if (dataSourceType_ == Internal)
         {
-            return {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)}, {"source", internalDataSource_}};
+            target[tag] = {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)}, {"source", internalDataSource_}};
         }
         else
         {
-            return {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)},
-                    {"source", externalDataSource_.serialise()}};
+            target[tag] = {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)}};
+            externalDataSource_.serialise("source", target[tag]);
         }
     }
 };

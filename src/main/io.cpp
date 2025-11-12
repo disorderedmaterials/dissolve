@@ -151,7 +151,9 @@ SerialisedValue Dissolve::serialisePairPotentials() const
                                  [](const auto &term)
                                  {
                                      const auto &[at1, at2, pot] = term;
-                                     auto value = pot->serialise();
+                                     SerialisedValue target;
+                                     pot->serialise("inner", target);
+                                     auto &value = target["inner"];
                                      value["atomTypeI"] = at1->name();
                                      value["atomTypeJ"] = at2->name();
                                      return value;
@@ -161,29 +163,27 @@ SerialisedValue Dissolve::serialisePairPotentials() const
 }
 
 // Express as a serialisable value
-SerialisedValue Dissolve::serialise() const
+void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue root;
+    auto &root = target[tag];
 
     root["version"] = Version::semantic();
 
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
-        root["master"] = coreData_.serialiseMaster();
+        coreData_.serialiseMaster("master", root);
 
     Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
     root["pairPotentials"] = serialisePairPotentials();
 
-    root["graph"] = graphNode_->serialise();
+    graphNode_->serialise("graph", root);
 
     Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
-
-    return root;
 }
 
 // This method populates the object's members with values read from a 'pairPotentials' TOML node
@@ -330,7 +330,7 @@ bool Dissolve::saveToml(std::string_view filename) const
 {
     std::ofstream outfile;
     outfile.open(std::string(filename));
-    outfile << serialise() << std::endl;
+    outfile << into_toml() << std::endl;
     outfile.close();
     return true;
 }

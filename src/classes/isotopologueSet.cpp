@@ -116,7 +116,7 @@ bool IsotopologueSet::write(LineParser &parser)
 }
 
 // Express as a serialisable value
-SerialisedValue IsotopologueSet::serialise() const { return isotopologues_; }
+void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const { target[tag] = isotopologues_; }
 
 // Read values from a serialisable value
 void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &coreData)

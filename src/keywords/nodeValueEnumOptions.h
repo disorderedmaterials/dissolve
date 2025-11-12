@@ -122,9 +122,12 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     }
 
     // Read values from a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
-        return {{"value", data_.first.serialise()}, {"option", optionData_.serialise(data_.second)}};
+        SerialisedValue result;
+        data_.first.serialise("value", result);
+        result["option"] = optionData_.serialise(data_.second);
+        target[tag] = result;
     }
 
     // Read values from a serialisable value

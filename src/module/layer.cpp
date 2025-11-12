@@ -189,7 +189,7 @@ std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
 }
 
 // Express as a serialisable value
-SerialisedValue ModuleLayer::serialise() const
+void ModuleLayer::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"frequency", frequency_}};
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
@@ -199,7 +199,7 @@ SerialisedValue ModuleLayer::serialise() const
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
         result["requireSizeFactors"] = true;
     Serialisable::fromVectorToTable(modules_, "modules", result);
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

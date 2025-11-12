@@ -733,9 +733,9 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesSite::serialise() const
+void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue site;
+    auto &site = target[tag];
     if (type_ != SiteType::Static)
         site["type"] = siteTypes().serialise(type_);
     if (originMassWeighted_)
@@ -757,7 +757,6 @@ SerialisedValue SpeciesSite::serialise() const
             Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
             break;
     }
-    return site;
 }
 
 void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)

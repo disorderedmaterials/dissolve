@@ -582,21 +582,19 @@ bool PartialSet::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-SerialisedValue PartialSet::serialise() const
+void PartialSet::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result;
+    auto &result = target[tag];
 
     result["realSpeciesPopulations"] = Serialisable::fromVectorToTable(realSpeciesPopulations_);
 
-    result["partials"] = partials_.serialise();
-    result["boundPartials"] = boundPartials_.serialise();
-    result["unboundPartials"] = unboundPartials_.serialise();
+    partials_.serialise("partials", result);
+    boundPartials_.serialise("boundPartials", result);
+    unboundPartials_.serialise("unboundPartials", result);
 
     result["total"] = total_;
     result["boundTotal"] = boundTotal_;
     result["unboundTotal"] = unboundTotal_;
-
-    return result;
 }
 
 // Read values from a serialisable value

@@ -91,7 +91,7 @@ class SampledData1D : public Data1DBase, public Serialisable<>
     // Write value data only through specified LineParser
     bool serialiseValues(LineParser &parser) const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
 };
