@@ -114,6 +114,11 @@ Pane {
 
                     onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Graph", "New Graph")
                 }
+                MenuItem {
+                    text: "Species"
+
+                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Species", "New Species")
+                }
             }
         }
     }

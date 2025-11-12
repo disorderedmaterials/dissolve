@@ -72,6 +72,13 @@ DelegateChooser {
         }
     }
     DelegateChoice {
+        roleValue: "species"
+
+        Button {
+            text: "It's a species"
+        }
+    }
+    DelegateChoice {
         roleValue: "enum"
 
         ComboBox {
