@@ -10,13 +10,13 @@
 #include "math/filters.h"
 #include "math/ft.h"
 #include "module/context.h"
-#include "modules/gr/gr.h"
 #include "modules/cgNeutronSQ/cgNeutronSQ.h"
+#include "modules/gr/gr.h"
 #include "modules/sq/sq.h"
 
 // Set target data
 void CGNeutronSQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
-                                 const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap)
+                                   const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap)
 {
     auto sqIt = moduleMap.find(ModuleTypes::SQ);
     if (sqIt != moduleMap.end())
@@ -207,7 +207,6 @@ Module::ExecutionResult CGNeutronSQModule::process(ModuleContext &moduleContext)
     calculateBeadFormFactor(unweightedSQ.boundPartial(0, 0).xAxis(), ff, weights);
     std::vector<Data1D> singleBead;
     calculateSingleBead(singleBead, ff, weights);
-
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, ff, singleBead, normaliseTo_);

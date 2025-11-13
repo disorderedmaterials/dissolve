@@ -67,15 +67,17 @@ class CGNeutronSQModule : public Module
     bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
                              StructureFactors::NormalisationType normalisation);
     // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
-    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights, 
+    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
                              const std::vector<Data1D> &ff, const std::vector<Data1D> &singleBead,
                              StructureFactors::NormalisationType normalisation);
     // Calculate neutron weights for relevant Configuration targets
     void calculateWeights(const GRModule *rdfModule, NeutronWeights &weights) const;
-    // 
-    bool calculateBeadFormFactor(const std::vector<double> &qvals, std::vector<Data1D> &ff, const NeutronWeights &weights) const;
-    //
-    bool calculateSingleBead(std::vector<Data1D> &singleBead, const std::vector<Data1D> &ff, const NeutronWeights &weights) const;
+    // Calculate the per bead form factor 
+    bool calculateBeadFormFactor(const std::vector<double> &qvals, std::vector<Data1D> &ff,
+                                 const NeutronWeights &weights) const;
+    // Calculate the single bead internal scattering term 
+    bool calculateSingleBead(std::vector<Data1D> &singleBead, const std::vector<Data1D> &ff,
+                             const NeutronWeights &weights) const;
 
     /*
      * Processing

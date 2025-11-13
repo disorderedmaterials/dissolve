@@ -6,12 +6,12 @@
 #include "classes/configuration.h"
 #include "classes/isotopologueSet.h"
 #include "classes/species.h"
-#include "modules/gr/gr.h"
 #include "modules/cgNeutronSQ/cgNeutronSQ.h"
+#include "modules/gr/gr.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
 bool CGNeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
-                                          StructureFactors::NormalisationType normalisation)
+                                            StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedgr.nAtomTypes(); ++typeI)
@@ -55,7 +55,7 @@ bool CGNeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Part
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
 bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
-                                            const std::vector<Data1D> &ff, const std::vector<Data1D> &singleBead, 
+                                            const std::vector<Data1D> &ff, const std::vector<Data1D> &singleBead,
                                             StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
@@ -87,7 +87,8 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
 
     // Form total structure factor
     weightedsq.formTotals(false);
-    for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI) {
+    for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
+    {
         weightedsq.total() += singleBead[typeI];
     }
 
@@ -129,12 +130,13 @@ void CGNeutronSQModule::calculateWeights(const GRModule *rdfModule, NeutronWeigh
     weights.createFromIsotopologues(exchangeable_);
 }
 
-//
-bool CGNeutronSQModule::calculateBeadFormFactor(const std::vector<double> &qvals, std::vector<Data1D> &ff, const  NeutronWeights &weights) const
+// Calculate the per bead form factor 
+bool CGNeutronSQModule::calculateBeadFormFactor(const std::vector<double> &qvals, std::vector<Data1D> &ff,
+                                                const NeutronWeights &weights) const
 {
     int typeI;
     int dens{0};
-    //std::array<double, 2> sigma{1.63, 1.57};
+    // std::array<double, 2> sigma{1.63, 1.57};
     std::array<double, 2> sigma{3.0376754356895721, 3.7573162947024161};
     double f;
     ff.clear();
@@ -167,9 +169,11 @@ bool CGNeutronSQModule::calculateBeadFormFactor(const std::vector<double> &qvals
     return true;
 }
 
-//
-bool CGNeutronSQModule::calculateSingleBead(std::vector<Data1D> &singleBead, const std::vector<Data1D> &ff, const NeutronWeights &weights) const { 
-    
+// Calculate the single bead internal scattering term 
+bool CGNeutronSQModule::calculateSingleBead(std::vector<Data1D> &singleBead, const std::vector<Data1D> &ff,
+                                            const NeutronWeights &weights) const
+{
+
     singleBead.clear();
     singleBead.reserve(weights.atomTypes().nItems());
     std::array<double, 2> b{0.6646, -0.3739};
@@ -191,12 +195,12 @@ bool CGNeutronSQModule::calculateSingleBead(std::vector<Data1D> &singleBead, con
                 innerSum += n[s][atmI] * n[s][atmJ] * b[atmI] * b[atmJ] * (atmI == atmJ ? 1 : 2);
             }
         }
-        innerSum -= ((n[s][0] * b[0] * b[0]) + (n[s][1] * b[1] * b[1])); 
+        innerSum -= ((n[s][0] * b[0] * b[0]) + (n[s][1] * b[1] * b[1]));
         innerSum *= 0.5; //  (*bead).fraction();
         singleBead[s].copyArrays(ff[s]);
         singleBead[s] *= ff[s].values();
-        singleBead[s] *= innerSum * (1/9.5);
+        singleBead[s] *= innerSum * (1 / 9.5);
     }
-    
-    return true; 
+
+    return true;
 }

@@ -6,8 +6,8 @@
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/cgNeutronSQ/gui/cgNeutronSQWidget.h"
 #include "modules/cgNeutronSQ/cgNeutronSQ.h"
+#include "modules/cgNeutronSQ/gui/cgNeutronSQWidget.h"
 #include "templates/algorithms.h"
 
 CGNeutronSQModuleWidget::CGNeutronSQModuleWidget(QWidget *parent, CGNeutronSQModule *module, Dissolve &dissolve)
