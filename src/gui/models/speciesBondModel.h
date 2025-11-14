@@ -7,9 +7,6 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
-// Forward Declarations
-class CoreData;
-
 class SpeciesBondModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -25,12 +22,12 @@ class SpeciesBondModel : public QAbstractTableModel
     };
 
     private:
-    std::vector<SpeciesBond> &bonds_;
-    const CoreData &coreData_;
+    std::vector<SpeciesBond> *bonds_;
 
     public:
-    SpeciesBondModel(std::vector<SpeciesBond> &bonds, const CoreData &coreData);
+    SpeciesBondModel();
     void reset();
+    void setBonds(std::vector<SpeciesBond> &bonds);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

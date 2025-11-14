@@ -4,21 +4,26 @@
 #pragma once
 
 #include "classes/species.h"
+#include "gui/models/speciesBondModel.h"
 #include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
+#include <qtmetamacros.h>
 #include <vector>
 
-class SpeciesModel : public QAbstractListModel
+class SpeciesModel : public QObject
 {
     Q_OBJECT
+    // The Species being modelled
+    Q_PROPERTY(std::shared_ptr<Species> species READ species WRITE setSpecies NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesBondModel *bonds READ bonds)
 
     private:
     // Source Species data
-    OptionalReferenceWrapper<const std::vector<std::unique_ptr<Species>>> species_;
-    // Vector containing checked items (if relevant)
-    OptionalReferenceWrapper<std::vector<const Species *>> checkedItems_;
+    std::shared_ptr<Species> species_;
+    // Bond Model
+    SpeciesBondModel bonds_;
     // Return object represented by specified model index
     const Species *rawData(const QModelIndex &index) const;
 
@@ -34,20 +39,19 @@ class SpeciesModel : public QAbstractListModel
     Q_ENUM(SpeciesUserRole);
 
     public:
+    SpeciesModel();
     // Set source Species data
-    void setData(const std::vector<std::unique_ptr<Species>> &species);
+    void setSpecies(std::shared_ptr<Species> species);
+    // Set source Species data
+    std::shared_ptr<Species> species();
+    // Bond information
+    SpeciesBondModel *bonds();
     // Set vector containing checked items
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
     // Refresh model data
     void reset();
 
-    /*
-     * QAbstractItemModel overrides
-     */
-    public:
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Q_SIGNALS:
+    // We've changed the underlying species
+    void speciesChanged();
 };

@@ -58,9 +58,6 @@ add_library(
   selectForcefieldWidget.cpp
   selectForcefieldWidget.h
   selectForcefieldWidget.ui
-  selectSpeciesWidget.cpp
-  selectSpeciesWidget.h
-  selectSpeciesWidget.ui
   # Dialogs
   addConfigurationDialog.cpp
   addConfigurationDialog.h
@@ -96,12 +93,6 @@ add_library(
   importLigParGenDialog.cpp
   importLigParGenDialog.h
   importLigParGenDialog.ui
-  importSpeciesDialog.cpp
-  importSpeciesDialog.h
-  importSpeciesDialog.ui
-  intramolecularTermsDialog.cpp
-  intramolecularTermsDialog.h
-  intramolecularTermsDialog.ui
   modifyChargesDialog.cpp
   modifyChargesDialog.h
   selectAtomTypeDialog.cpp
@@ -138,8 +129,6 @@ add_library(
   messagesTab.cpp
   messagesTab.h
   messagesTab.ui
-  overviewTab.cpp
-  overviewTab.h
   speciesTab.cpp
   speciesTab_geometry.cpp
   speciesTab_isotopologues.cpp

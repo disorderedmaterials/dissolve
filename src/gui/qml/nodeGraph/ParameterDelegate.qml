@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.qmlmodels
+import Dissolve
 
 DelegateChooser {
     id: root
@@ -74,8 +75,13 @@ DelegateChooser {
     DelegateChoice {
         roleValue: "species"
 
+
         Button {
-            text: "It's a species"
+            SpeciesModel {
+                id: sp
+                species: param
+            }
+            text: "It's a species: " + sp.bonds.rowCount()
         }
     }
     DelegateChoice {
