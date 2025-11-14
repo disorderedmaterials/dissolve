@@ -20,6 +20,14 @@ void SpeciesModel::setSpecies(std::shared_ptr<Species> species)
     Q_EMIT(speciesChanged());
 }
 
+QString SpeciesModel::name() { return QString::fromStdString(std::string(species_->name())); }
+
+void SpeciesModel::setName(QString name)
+{
+    species_->setName(name.toStdString());
+    Q_EMIT(nameChanged());
+}
+
 // Bond information
 SpeciesBondModel *SpeciesModel::bonds() { return &bonds_; }
 

@@ -268,6 +268,7 @@ if(GUI)
     ${SRCS}/gui/qml/nodeGraph/GraphDelegate.qml
     ${SRCS}/gui/qml/nodeGraph/ParameterDelegate.qml
     ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
+    ${SRCS}/gui/qml/nodeGraph/SpeciesDialog.qml
     RESOURCES
   )
 

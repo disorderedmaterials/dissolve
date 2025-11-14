@@ -18,6 +18,7 @@ class SpeciesModel : public QObject
     // The Species being modelled
     Q_PROPERTY(std::shared_ptr<Species> species READ species WRITE setSpecies NOTIFY speciesChanged)
     Q_PROPERTY(SpeciesBondModel *bonds READ bonds)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
     private:
     // Source Species data
@@ -44,6 +45,10 @@ class SpeciesModel : public QObject
     void setSpecies(std::shared_ptr<Species> species);
     // Set source Species data
     std::shared_ptr<Species> species();
+    // Species name
+    QString name();
+    // Species name
+    void setName(QString name);
     // Bond information
     SpeciesBondModel *bonds();
     // Set vector containing checked items
@@ -54,4 +59,6 @@ class SpeciesModel : public QObject
     Q_SIGNALS:
     // We've changed the underlying species
     void speciesChanged();
+    // The name has changed
+    void nameChanged();
 };

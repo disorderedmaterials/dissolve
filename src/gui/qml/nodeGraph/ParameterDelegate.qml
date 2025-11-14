@@ -75,13 +75,13 @@ DelegateChooser {
     DelegateChoice {
         roleValue: "species"
 
-
         Button {
-            SpeciesModel {
-                id: sp
+            SpeciesDialog {
+                id: speciesDialog
                 species: param
             }
-            text: "It's a species: " + sp.bonds.rowCount()
+            text: "Edit"
+            onClicked: speciesDialog.open()
         }
     }
     DelegateChoice {
