@@ -52,15 +52,6 @@ add_library(
   viewer_view.cpp
   viewer.h
   # Widgets and Wizards
-  moduleControlWidget.cpp
-  moduleControlWidget.h
-  moduleControlWidget.ui
-  nodeControlWidget.cpp
-  nodeControlWidget.h
-  nodeControlWidget.ui
-  generatorWidget.cpp
-  generatorWidget.h
-  generatorWidget.ui
   selectAtomTypeWidget.cpp
   selectAtomTypeWidget.h
   selectAtomTypeWidget.ui
@@ -132,9 +123,6 @@ add_library(
   speciesCellDialog.h
   speciesCellDialog.ui
   # Main Tabs
-  configurationTab.cpp
-  configurationTab.h
-  configurationTab.ui
   forcefieldTab.cpp
   forcefieldTab.h
   forcefieldTab.ui
@@ -190,8 +178,7 @@ target_include_directories(
 
 target_link_libraries(
   gui
-  PRIVATE keywordWidgets
-          delegates
+  PRIVATE delegates
           widgets
           models
           base
@@ -207,7 +194,6 @@ target_link_libraries(
 )
 
 # Subdirectories
-add_subdirectory(keywordWidgets)
 add_subdirectory(delegates)
 add_subdirectory(render)
 add_subdirectory(widgets)
