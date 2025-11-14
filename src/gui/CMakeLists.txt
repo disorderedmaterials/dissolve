@@ -129,12 +129,6 @@ add_library(
   messagesTab.cpp
   messagesTab.h
   messagesTab.ui
-  speciesTab.cpp
-  speciesTab_geometry.cpp
-  speciesTab_isotopologues.cpp
-  speciesTab_sites.cpp
-  speciesTab.h
-  speciesTab.ui
   # Main UI
   gui.cpp
   gui_simulation.cpp

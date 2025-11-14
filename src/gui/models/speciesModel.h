@@ -4,8 +4,8 @@
 #pragma once
 
 #include "classes/species.h"
+#include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesBondModel.h"
-#include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
@@ -17,12 +17,15 @@ class SpeciesModel : public QObject
     Q_OBJECT
     // The Species being modelled
     Q_PROPERTY(std::shared_ptr<Species> species READ species WRITE setSpecies NOTIFY speciesChanged)
-    Q_PROPERTY(SpeciesBondModel *bonds READ bonds)
+    Q_PROPERTY(SpeciesAtomModel *atoms READ atoms NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesBondModel *bonds READ bonds NOTIFY speciesChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
     private:
     // Source Species data
     std::shared_ptr<Species> species_;
+    // Atom Model
+    SpeciesAtomModel atoms_;
     // Bond Model
     SpeciesBondModel bonds_;
     // Return object represented by specified model index
@@ -49,6 +52,8 @@ class SpeciesModel : public QObject
     QString name();
     // Species name
     void setName(QString name);
+    // Atom information
+    SpeciesAtomModel *atoms();
     // Bond information
     SpeciesBondModel *bonds();
     // Set vector containing checked items

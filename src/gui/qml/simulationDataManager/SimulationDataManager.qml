@@ -59,6 +59,7 @@ Page {
             }
             TableView {
                 id: table
+                anchors.fill: parent
 
                 property variant colWidths: [300, 300, 50]
 
@@ -70,6 +71,7 @@ Page {
                 columnWidthProvider: function (column) {
                     return colWidths[column];
                 }
+
                 model: proxy
                 rowSpacing: 1
 

@@ -2,12 +2,10 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/speciesModel.h"
+#include "speciesAtomModel.h"
+#include <memory>
 
-SpeciesModel::SpeciesModel()
-{
-    species_ = std::make_shared<Species>();
-    bonds_.setBonds(species_->bonds());
-}
+SpeciesModel::SpeciesModel() { species_ = std::make_shared<Species>(); }
 
 // Access source Species data
 std::shared_ptr<Species> SpeciesModel::species() { return species_; }
@@ -17,6 +15,7 @@ void SpeciesModel::setSpecies(std::shared_ptr<Species> species)
 {
     species_ = species;
     bonds_.setBonds(species_->bonds());
+    atoms_.setSpecies(species_);
     Q_EMIT(speciesChanged());
 }
 
@@ -30,6 +29,9 @@ void SpeciesModel::setName(QString name)
 
 // Bond information
 SpeciesBondModel *SpeciesModel::bonds() { return &bonds_; }
+
+// Atom information
+SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
 
 // const Species *SpeciesModel::rawData(const QModelIndex &index) const
 // {
