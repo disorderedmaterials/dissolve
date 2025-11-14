@@ -16,13 +16,42 @@ Dialog {
         id: sp
         species: root.species
     }
-    GridLayout {
-        columns: 2
-        anchors.fill: parent
-        Text { text: "Name" }
-        TextField {
-            placeholderText: sp.name
-            onTextChanged: sp.name = text
+    ColumnLayout {
+        RowLayout {
+            Text {text: "Name"}
+            TextField {
+                placeholderText: sp.name
+                onTextChanged: sp.name = text
+            }
+        }
+        GroupBox {
+            id: atomBox
+            title: "Atoms"
+        }
+        GridLayout {
+            columns: 2
+            GroupBox {
+                title: "Bonds"
+                TableView {
+                    model: sp.bonds
+                    delegate: Rectangle {
+                        implicitWidth: 100
+                        implicitHeight: 50
+                        Text {
+                            text: display
+                        }
+                    }
+                }
+            }
+            GroupBox {
+                title: "Angles"
+            }
+            GroupBox {
+                title: "Torsions"
+            }
+            GroupBox {
+                title: "Impropers"
+            }
         }
     }
 }
