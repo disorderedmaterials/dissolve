@@ -117,6 +117,13 @@ void Data1D::addPoint(double x, double value)
 // Add new data point with error
 void Data1D::addPoint(double x, double value, double error)
 {
+    // If the arrays are all empty we can allow errors to be added if they weren't specified before.
+    if (x_.empty() && !hasError_)
+    {
+        errors_.clear();
+        hasError_ = true;
+    }
+
     assert(hasError_);
 
     x_.push_back(x);
