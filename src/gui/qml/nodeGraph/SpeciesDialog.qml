@@ -31,10 +31,10 @@ Dialog {
                 RowLayout {
                     Button {
                         text: "+"
-                        onClicked: sp.atoms.addAtom(elementField.text, xField.text, yField.text, zField.text, chargeField.text);
+                        onClicked: sp.atoms.addAtom(elementField.currentText, xField.text, yField.text, zField.text, chargeField.text);
                     }
                     Text { text: "Element" }
-                    TextField { id: elementField }
+                    ElementComboBox { id:elementField }
                     Text { text: "X" }
                     TextField { id: xField }
                     Text { text: "Y" }
@@ -56,8 +56,8 @@ Dialog {
 
                     delegate: Rectangle {
                         color: "white"
-                        implicitWidth: 100
-                        implicitHeight: 50
+                        implicitWidth: parent.parent.width / 6 - 1
+                        implicitHeight: 20
                         border.width: 1
                         Text {
                             text: display
