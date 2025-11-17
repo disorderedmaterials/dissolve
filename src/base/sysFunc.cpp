@@ -41,7 +41,8 @@ std::string_view DissolveSys::onOff(bool b) { return (b ? "On" : "Off"); }
 bool DissolveSys::wildCardMatch(std::string_view::const_iterator wild, std::string_view::const_iterator wildEnd,
                                 std::string_view::const_iterator s2, std::string_view::const_iterator s2End, bool caseSensitive)
 {
-    // If we reach the end of the wild string we have either gone too far (no match) or the match was a success (if s2 == s2End).
+    // If we reach the end of the wild string we have either gone too far (no match) or the match was a success (if s2 ==
+    // s2End).
     if (wild == wildEnd)
         return s2 == s2End;
 
