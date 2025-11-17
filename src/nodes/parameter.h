@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/coreData.h"
 #include "math/data1D.h"
 #include "math/function1D.h"
 #include "nodes/number.h"

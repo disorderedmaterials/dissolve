@@ -3,12 +3,14 @@
 
 #include "species.h"
 #include "nodes/constants.h"
+#include <memory>
 #include <toml11/toml.hpp>
 #include <toml11/toml/parser.hpp>
 
-SpeciesNode::SpeciesNode(Graph *parentGraph, std::unique_ptr<Species> &&species)
+SpeciesNode::SpeciesNode(Graph *parentGraph, std::shared_ptr<Species> &&species)
     : Node(parentGraph), species_(std::move(species))
 {
+    addOption<std::shared_ptr<Species>>("Species", "Created Species", species_);
     addPointerOutput<const Species>("Species", "Created species", *species_);
 }
 
