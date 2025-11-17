@@ -26,6 +26,7 @@ TEST(SysFunc, StringMatchingSimple)
     EXPECT_TRUE(DissolveSys::sameString("Hello", "Hello", true));
     EXPECT_TRUE(DissolveSys::sameString("Hello", "hello"));
     EXPECT_FALSE(DissolveSys::sameString("Hello", "hello", true));
+    EXPECT_FALSE(DissolveSys::sameString("Hello", "Hi"));
 }
 
 TEST(SysFunc, StringMatchingWildcard)
@@ -43,6 +44,7 @@ TEST(SysFunc, StringMatchingWildcard)
     EXPECT_TRUE(DissolveSys::sameWildString("abc*efg", "ABCDEFG"));
     EXPECT_FALSE(DissolveSys::sameWildString("abc*efg", "ABCDEFGH"));
     EXPECT_TRUE(DissolveSys::sameWildString("abc*efg?", "ABCDEFGH"));
+    EXPECT_FALSE(DissolveSys::sameWildString("abc*efg", "ABC"));
     EXPECT_FALSE(DissolveSys::sameWildString("A", ""));
     EXPECT_FALSE(DissolveSys::sameWildString("?", ""));
     EXPECT_TRUE(DissolveSys::sameWildString("*", ""));
