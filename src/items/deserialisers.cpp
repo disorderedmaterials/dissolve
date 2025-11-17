@@ -219,13 +219,15 @@ bool GenericItemDeserialiser::deserialiseObject(std::any &a, LineParser &parser,
 {
     // Find a suitable deserialiser and call it
     auto it = deserialisers_.find(a.type());
-    if (it == deserialisers_.end())
-        it = legacyDeserialisers_.find(a.type());
-    if (it == legacyDeserialisers_.end())
-        Messenger::exception("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
-                             a.type().name());
+    if (it != deserialisers_.end())
+        return (it->second)(a, parser, coreData);
 
-    return (it->second)(a, parser, coreData);
+    auto legacyIt = legacyDeserialisers_.find(a.type());
+    if (legacyIt != legacyDeserialisers_.end())
+        return (legacyIt->second)(a, parser, coreData);
+
+    Messenger::exception("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
+                             a.type().name());
 }
 
 /*
