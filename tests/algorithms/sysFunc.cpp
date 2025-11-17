@@ -43,6 +43,9 @@ TEST(SysFunc, StringMatchingWildcard)
     EXPECT_TRUE(DissolveSys::sameWildString("abc*efg", "ABCDEFG"));
     EXPECT_FALSE(DissolveSys::sameWildString("abc*efg", "ABCDEFGH"));
     EXPECT_TRUE(DissolveSys::sameWildString("abc*efg?", "ABCDEFGH"));
+    EXPECT_FALSE(DissolveSys::sameWildString("A", ""));
+    EXPECT_FALSE(DissolveSys::sameWildString("?", ""));
+    EXPECT_TRUE(DissolveSys::sameWildString("*", ""));
 }
 
 TEST(SysFunc, StringBeforeAfter)
