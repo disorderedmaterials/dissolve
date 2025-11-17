@@ -16,6 +16,12 @@ Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(fa
     naturalIsotopologue_.setParent(this);
 }
 
+Species::Species(Species &species)
+    : name_(species.name_), version_(species.version_), atomSelectionVersion_(species.atomSelectionVersion_),
+      atomTypes_(species.atomTypes_)
+{
+}
+
 // Clear Data
 void Species::clear()
 {

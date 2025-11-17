@@ -7,14 +7,14 @@ import Dissolve
 
 Dialog {
     id: root
-    required property variant species;
 
-    standardButtons: Dialog.Ok
+    standardButtons: Dialog.Ok | Dialog.Cancel
     title: "Define Species: " + sp.name
+
+    onAccepted: console.log("Accepted Species")
 
     SpeciesModel {
         id: sp
-        species: root.species
     }
     ColumnLayout {
         RowLayout {

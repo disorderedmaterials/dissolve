@@ -10,7 +10,7 @@
 class SpeciesNode : public Node
 {
     public:
-    SpeciesNode(Graph *parentGraph);
+    SpeciesNode(Graph *parentGraph, Species &&species);
     ~SpeciesNode() override = default;
 
     /*
@@ -25,7 +25,7 @@ class SpeciesNode : public Node
      */
     private:
     // Species object
-    std::shared_ptr<Species> species_;
+    Species species_;
     // Atom Types owned by the node
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 

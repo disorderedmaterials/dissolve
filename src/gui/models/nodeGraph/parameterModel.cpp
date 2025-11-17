@@ -46,8 +46,6 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return QString::fromStdString(it->second->get<std::string>());
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return QVariant::fromValue(it->second->getAsInt());
-            if (it->second->storedDataType() == typeid(std::shared_ptr<Species>))
-                return QVariant::fromValue(it->second->get<std::shared_ptr<Species>>());
             return QString::fromStdString("Unrepresentable");
         case TYPE:
             if (it->second->storedDataType() == typeid(Number))

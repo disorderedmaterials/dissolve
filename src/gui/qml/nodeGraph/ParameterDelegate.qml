@@ -73,18 +73,6 @@ DelegateChooser {
         }
     }
     DelegateChoice {
-        roleValue: "species"
-
-        Button {
-            SpeciesDialog {
-                id: speciesDialog
-                species: param
-            }
-            text: "Edit"
-            onClicked: speciesDialog.open()
-        }
-    }
-    DelegateChoice {
         roleValue: "enum"
 
         ComboBox {
