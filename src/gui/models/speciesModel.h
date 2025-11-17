@@ -16,14 +16,13 @@ class SpeciesModel : public QObject
 {
     Q_OBJECT
     // The Species being modelled
-    Q_PROPERTY(std::shared_ptr<Species> species READ species WRITE setSpecies NOTIFY speciesChanged)
     Q_PROPERTY(SpeciesAtomModel *atoms READ atoms NOTIFY speciesChanged)
     Q_PROPERTY(SpeciesBondModel *bonds READ bonds NOTIFY speciesChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
     private:
     // Source Species data
-    std::shared_ptr<Species> species_;
+    std::unique_ptr<Species> species_;
     // Atom Model
     SpeciesAtomModel atoms_;
     // Bond Model
@@ -44,10 +43,6 @@ class SpeciesModel : public QObject
 
     public:
     SpeciesModel();
-    // Set source Species data
-    void setSpecies(std::shared_ptr<Species> species);
-    // Set source Species data
-    std::shared_ptr<Species> species();
     // Species name
     QString name();
     // Species name
@@ -66,4 +61,7 @@ class SpeciesModel : public QObject
     void speciesChanged();
     // The name has changed
     void nameChanged();
+
+    public Q_SLOTS:
+    void create(QVariant graphModel);
 };

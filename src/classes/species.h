@@ -24,7 +24,6 @@ class Species : public Serialisable<const CoreData &>
 {
     public:
     Species(std::string name = "Unnamed");
-    Species(Species &species);
     ~Species() = default;
     // Clear Data
     void clear();

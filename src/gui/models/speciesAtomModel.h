@@ -13,7 +13,7 @@ class SpeciesAtomModel : public QAbstractTableModel
     Q_OBJECT
 
     private:
-    std::shared_ptr<Species> species_;
+    Species *species_;
 
     Q_SIGNALS:
     void atomTypeChanged();
@@ -24,7 +24,7 @@ class SpeciesAtomModel : public QAbstractTableModel
     public:
     SpeciesAtomModel();
 
-    void setSpecies(std::shared_ptr<Species> species);
+    void setSpecies(Species *species);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

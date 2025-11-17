@@ -6,9 +6,10 @@
 #include <toml11/toml.hpp>
 #include <toml11/toml/parser.hpp>
 
-SpeciesNode::SpeciesNode(Graph *parentGraph, Species &&species) : Node(parentGraph), species_(species)
+SpeciesNode::SpeciesNode(Graph *parentGraph, std::unique_ptr<Species> &&species)
+    : Node(parentGraph), species_(std::move(species))
 {
-    addPointerOutput<const Species>("Species", "Created species", species_);
+    addPointerOutput<const Species>("Species", "Created species", *species_);
 }
 
 std::string_view SpeciesNode::type() const { return "Species"; }

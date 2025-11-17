@@ -87,6 +87,15 @@ void GraphModel::descend(int index)
     }
 }
 
+void GraphModel::addNode(std::unique_ptr<Node> node, std::string_view name)
+{
+    nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
+    graph_->addNode(std::move(node), name);
+    wrapped_.emplace_back(*graph_->nodes()[std::string(name)]);
+    nodes_.endInsertRows();
+    graphChanged();
+}
+
 void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
 {
     if (!graph_)

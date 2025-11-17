@@ -50,6 +50,8 @@ class GraphModel : public QObject
     QString location() const;
     // Whether the current graph has a parent
     bool atRoot() const;
+    // Add a pre-created node
+    void addNode(std::unique_ptr<Node> node, std::string_view name);
 
     protected:
     // The abstract data model for the nodes
@@ -90,6 +92,7 @@ class GraphModel : public QObject
     void addInput(int nodeIndex, QString paramName, double x, double y);
     // Provide relative coordinates for an output on a node
     void addOutput(int nodeIndex, QString paramName, double x, double y);
+
 
     // Add a new node at a specific position
     void emplace_back(int x, int y, QVariant type, QVariant name);

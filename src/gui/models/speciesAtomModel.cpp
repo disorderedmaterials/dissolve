@@ -4,7 +4,7 @@
 
 SpeciesAtomModel::SpeciesAtomModel() {}
 
-void SpeciesAtomModel::setSpecies(std::shared_ptr<Species> species) { species_ = species; }
+void SpeciesAtomModel::setSpecies(Species *species) { species_ = species; }
 
 void SpeciesAtomModel::addAtom(QString element, double x, double y, double z, double charge)
 {

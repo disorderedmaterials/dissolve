@@ -8,14 +8,19 @@ import Dissolve
 Dialog {
     id: root
 
+    required property variant graphModel;
+
     standardButtons: Dialog.Ok | Dialog.Cancel
     title: "Define Species: " + sp.name
 
-    onAccepted: console.log("Accepted Species")
+    onAccepted: {
+        sp.create(graphModel);
+    }
 
     SpeciesModel {
         id: sp
     }
+
     ColumnLayout {
         RowLayout {
             Text {text: "Name"}

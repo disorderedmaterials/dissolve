@@ -2,21 +2,16 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "gui/models/speciesModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
+#include "nodes/species.h"
 #include "speciesAtomModel.h"
 #include <memory>
 
-SpeciesModel::SpeciesModel() { species_ = std::make_shared<Species>(); }
-
-// Access source Species data
-std::shared_ptr<Species> SpeciesModel::species() { return species_; }
-
-// Set source Species data
-void SpeciesModel::setSpecies(std::shared_ptr<Species> species)
+SpeciesModel::SpeciesModel()
 {
-    species_ = species;
+    species_ = std::make_unique<Species>();
+    atoms_.setSpecies(species_.get());
     bonds_.setBonds(species_->bonds());
-    atoms_.setSpecies(species_);
-    Q_EMIT(speciesChanged());
 }
 
 QString SpeciesModel::name() { return QString::fromStdString(std::string(species_->name())); }
@@ -32,6 +27,15 @@ SpeciesBondModel *SpeciesModel::bonds() { return &bonds_; }
 
 // Atom information
 SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
+
+void SpeciesModel::create(QVariant graphModel)
+{
+    auto model = graphModel.value<GraphModel *>();
+    model->addNode(std::move(std::make_unique<SpeciesNode>(model->graph(), std::move(species_))), species_->name());
+
+    // Create a new species for the next call
+    species_ = std::make_unique<Species>();
+}
 
 // const Species *SpeciesModel::rawData(const QModelIndex &index) const
 // {

@@ -119,6 +119,7 @@ Pane {
 
                     SpeciesDialog {
                       id: speciesDialog
+                      graphModel: graphRoot.rootModel
                     }
 
                     onClicked: speciesDialog.open()
