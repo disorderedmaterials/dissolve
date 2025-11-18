@@ -37,6 +37,13 @@ void SpeciesModel::create(QVariant graphModel)
     species_ = std::make_unique<Species>();
 }
 
+void SpeciesModel::addBond(int i, int j)
+{
+    bonds_.beginInsertRows({}, species_->nBonds(), species_->nBonds() + 1);
+    species_->addBond(i, j);
+    bonds_.endInsertRows();
+}
+
 // const Species *SpeciesModel::rawData(const QModelIndex &index) const
 // {
 //     assert(species_);

@@ -64,4 +64,5 @@ class SpeciesModel : public QObject
 
     public Q_SLOTS:
     void create(QVariant graphModel);
+    void addBond(int i, int j);
 };

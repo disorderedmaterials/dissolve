@@ -31,7 +31,7 @@ Dialog {
         }
         GroupBox {
             id: atomBox
-            title: "Atoms (" + sp.atoms.rowCount() + ")"
+            title: "Atoms"
             ColumnLayout {
                 RowLayout {
                     Button {
@@ -88,14 +88,41 @@ Dialog {
         GridLayout {
             columns: 2
             GroupBox {
-                title: "Bonds (" + sp.bonds.rowCount() + ")"
-                TableView {
-                    model: sp.atoms
-                    delegate: Rectangle {
-                        implicitWidth: 100
-                        implicitHeight: 50
-                        Text {
-                            text: display
+                title: "Bonds"
+                ColumnLayout {
+                    RowLayout {
+                        Button {
+                            text: "+"
+                            enabled: bondI.text != "" && bondJ.text!= "";
+                            onClicked: sp.addBond(bondI.currentText, bondJ.currentText);
+                        }
+                        Text { text: "I" }
+                        TextField {
+                            id: bondI
+                            validator: IntValidator {}
+                        }
+                        Text { text: "J" }
+                        TextField {
+                            id: bondJ
+                            validator: IntValidator {}
+                        }
+                    }
+                    TableView {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        implicitHeight: 400
+                        model: sp.bonds
+                        delegate: Rectangle {
+                            implicitWidth: 100
+                            implicitHeight: 50
+                            Text {
+                                text: display
+                                visible: currentColumn != 2
+                            }
+                            TextField {
+                                text: display
+                                visible: currentColumn == 2
+                            }
                         }
                     }
                 }
