@@ -36,18 +36,31 @@ Dialog {
                 RowLayout {
                     Button {
                         text: "+"
+                        enabled: xField.text != "" && yField.text!= "" && zField.text!= "" && chargeField.text != "";
                         onClicked: sp.atoms.addAtom(elementField.currentText, xField.text, yField.text, zField.text, chargeField.text);
                     }
                     Text { text: "Element" }
                     ElementComboBox { id:elementField }
                     Text { text: "X" }
-                    TextField { id: xField }
+                    TextField {
+                        id: xField
+                        validator: DoubleValidator {}
+                    }
                     Text { text: "Y" }
-                    TextField { id: yField }
+                    TextField {
+                        id: yField
+                        validator: DoubleValidator {}
+                    }
                     Text { text: "Z" }
-                    TextField { id: zField }
+                    TextField {
+                        id: zField
+                        validator: DoubleValidator {}
+                    }
                     Text { text: "Charge" }
-                    TextField { id: chargeField }
+                    TextField {
+                        id: chargeField
+                        validator: DoubleValidator {}
+                    }
                 }
                 TableView {
                     Layout.fillHeight: true
