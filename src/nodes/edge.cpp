@@ -131,10 +131,6 @@ Node &Edge::sourceNode() const { return sourceNode_; }
 // Return source output parameter
 const ParameterBase &Edge::sourceOutput() const { return sourceOutput_; }
 
-// Version of the source node when this edge was last pulled by the target node.
-int Edge::sourceNodeVersionIndex() const { return sourceNodeVersionIndex_; }
-int &Edge::sourceNodeVersionIndex() { return sourceNodeVersionIndex_; }
-
 // Return target node
 Node &Edge::targetNode() const { return targetNode_; }
 
@@ -238,23 +234,22 @@ NodeConstants::ProcessResult LoopEdge::pull()
      * itself we need to pull from or run the source node to get the updated output. We can then store the source node's
      * current versionIndex ready for next time.
      */
-    if (!sourceNode().isUpToDate() || (sourceNodeVersionIndex() != sourceNode().versionIndex()))
+    if (!sourceNode_.isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
     {
         auto result = NodeConstants::ProcessResult::Success;
 
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
         {
-            Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode().name());
+            Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_.name());
             return result;
         }
 
         // Copy the parameter data over
-        const ParameterBase *src = &sourceOutput();
-        if (!targetInput().assign(const_cast<ParameterBase *>(src)))
+        if (!targetInput_.assign(&sourceOutput_))
             return NodeConstants::ProcessResult::Failed;
 
         // All succeeded, so update version index
-        sourceNodeVersionIndex() = sourceNode().versionIndex();
+        sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 
         return NodeConstants::ProcessResult::Success;
     }
@@ -262,9 +257,16 @@ NodeConstants::ProcessResult LoopEdge::pull()
     return NodeConstants::ProcessResult::Unchanged;
 }
 
+// The constructor is private because it can only be constructed by the factory method
+LoopEdge::LoopEdge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
+    : Edge(sourceNode, sourceOutput, targetNode, targetInput)
+{
+}
+
 std::unique_ptr<LoopEdge> LoopEdge::makeLoopEdge(const Edge *edge)
 {
-    return std::make_unique<LoopEdge>(edge->sourceNode(), edge->sourceOutput(), edge->targetNode(), edge->targetInput());
+    return std::unique_ptr<LoopEdge>(
+        new LoopEdge(edge->sourceNode_, edge->sourceOutput_, edge->targetNode_, edge->targetInput_));
 }
 
 // Ensure next call to pull() will retrieve the data from the source node

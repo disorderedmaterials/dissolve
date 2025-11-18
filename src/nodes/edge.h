@@ -31,6 +31,8 @@ class EdgeDefinition : public Serialisable<>
 // Edge
 class Edge : public Serialisable<>
 {
+    friend class LoopEdge;
+
     public:
     ~Edge();
 
@@ -38,7 +40,7 @@ class Edge : public Serialisable<>
     // The constructor is private because it can only be constructed by the factory method
     Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
 
-    private:
+    protected:
     // Store references instead of pointers to the linked nodes and parameters for two reasons:
     // 1) Neither end of the link should EVER be null
     // 2) The link itself is immutable.  You can create links and
@@ -55,11 +57,6 @@ class Edge : public Serialisable<>
     ParameterBase &targetInput_;
     // Version of the source node when this edge was last pulled by the target node.
     int sourceNodeVersionIndex_{NodeConstants::InvalidVersion};
-
-    protected:
-    // Version of the source node when this edge was last pulled by the target node.
-    int sourceNodeVersionIndex() const;
-    int &sourceNodeVersionIndex();
 
     public:
     // A factory method to create an Edge from the supplied definition, or nullptr if it cannot
@@ -89,12 +86,8 @@ class Edge : public Serialisable<>
     void deserialise(const SerialisedValue &node) override;
 };
 
-
 class LoopEdge : public Edge
 {
-    public:
-    ~LoopEdge();
-
     protected:
     // The constructor is private because it can only be constructed by the factory method
     LoopEdge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
