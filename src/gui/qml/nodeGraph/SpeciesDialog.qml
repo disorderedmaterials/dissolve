@@ -65,7 +65,7 @@ Dialog {
                 TableView {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    implicitHeight: 400
+                    implicitHeight: 200
                     clip: true
                     columnSpacing: 1
                     rowSpacing: 1
@@ -94,7 +94,7 @@ Dialog {
                         Button {
                             text: "+"
                             enabled: bondI.text != "" && bondJ.text!= "";
-                            onClicked: sp.addBond(bondI.currentText, bondJ.currentText);
+                            onClicked: sp.addBond(bondI.text, bondJ.text);
                         }
                         Text { text: "I" }
                         TextField {
@@ -110,25 +110,56 @@ Dialog {
                     TableView {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        implicitHeight: 400
+                        implicitHeight: 200
+                        implicitWidth: bondI.width*4
                         model: sp.bonds
-                        delegate: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 50
-                            Text {
-                                text: display
-                                visible: currentColumn != 2
-                            }
-                            TextField {
-                                text: display
-                                visible: currentColumn == 2
-                            }
+                        delegate: TextField {
+                            text: display
+                            width: 10
+                            onTextChanged: edit = text
                         }
                     }
                 }
             }
             GroupBox {
                 title: "Angles"
+                ColumnLayout {
+                    RowLayout {
+                        Button {
+                            text: "+"
+                            enabled: angleI.text != "" && angleJ.text!= "";
+                            onClicked: sp.addAngle(angleI.text, angleJ.text, angleK);
+                        }
+                        Text { text: "I" }
+                        TextField {
+                            id: angleI
+                            validator: IntValidator {}
+                        }
+                        Text { text: "J" }
+                        TextField {
+                            id: angleJ
+                            validator: IntValidator {}
+                        }
+                        Text { text: "K" }
+                        TextField {
+                            id: angleK
+                            validator: IntValidator {}
+                        }
+                    }
+                    TableView {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        implicitHeight: 200
+                        implicitWidth: parent.parent.width/2
+                        model: sp.angles
+                        delegate: TextField {
+                            text: display
+                            color: "#00FFFF"
+                            width: 20
+                            onTextChanged: edit = text
+                        }
+                    }
+                }
             }
             GroupBox {
                 title: "Torsions"

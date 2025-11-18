@@ -40,7 +40,7 @@ void SpeciesModel::create(QVariant graphModel)
 void SpeciesModel::addBond(int i, int j)
 {
     bonds_.beginInsertRows({}, species_->nBonds(), species_->nBonds() + 1);
-    species_->addBond(i, j);
+    species_->addBond(i - 1, j - 1);
     bonds_.endInsertRows();
 }
 
