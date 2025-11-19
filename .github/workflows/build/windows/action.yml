@@ -184,6 +184,7 @@ runs:
     shell: bash
     run: |
       cd build
+      cmake --build . --config Release
       ctest
 
   - name: Upload Raw Build Artifacts
