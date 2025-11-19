@@ -66,6 +66,7 @@ Dialog {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     implicitHeight: 200
+                    implicitWidth: zField.width * sp.atoms.columnCount() 
                     clip: true
                     columnSpacing: 1
                     rowSpacing: 1
@@ -111,7 +112,7 @@ Dialog {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
-                        implicitWidth: bondI.width*4
+                        implicitWidth: bondI.width*sp.bonds.columnCount()
                         model: sp.bonds
                         delegate: TextField {
                             text: display
@@ -150,7 +151,7 @@ Dialog {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
-                        implicitWidth: parent.parent.width/2
+                        implicitWidth: angleI.width*sp.angles.columnCount()
                         model: sp.angles
                         delegate: TextField {
                             text: display
