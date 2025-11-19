@@ -102,6 +102,17 @@ class LoopEdge : public Edge
     ParameterBase &analogue();
 
     private:
-    // Return the analogue parameter, which the loop edge source corresponds to
+    /*
+     * The analogue parameter, which the loop edge source corresponds to.
+     *
+     * Since the LoopEdge and normal Edge are different types, we must identify
+     * the analogous Edge parameter corresponding the source of the feedback
+     * from the perspective of the "looping" node, for instance a mathematical entity that
+     * requires a recursively compounded value.
+     *
+     * This source output will be assigned to the analogue parameter, so that edges that pull from it
+     * recieve the feedback.
+     *
+     */
     ParameterBase *analogue_;
 };
