@@ -163,6 +163,47 @@ Dialog {
             }
             GroupBox {
                 title: "Torsions"
+                ColumnLayout {
+                    RowLayout {
+                        Text { text: "I" }
+                        TextField {
+                            id: torsionI
+                            validator: IntValidator {}
+                        }
+                        Text { text: "J" }
+                        TextField {
+                            id: torsionJ
+                            validator: IntValidator {}
+                        }
+                        Text { text: "K" }
+                        TextField {
+                            id: torsionK
+                            validator: IntValidator {}
+                        }
+                        Text { text: "L" }
+                        TextField {
+                            id: torsionL
+                            validator: IntValidator {}
+                        }
+                        Button {
+                            text: "+"
+                            enabled: torsionI.text != "" && torsionJ.text!= "" && torsionK.text != "" && torsionL.text != "";
+                            onClicked: sp.addTorsion(torsionI.text, torsionJ.text, torsionK.text, torsionL.text);
+                        }
+                    }
+                    TableView {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        implicitHeight: 200
+                        implicitWidth: torsionI.width*sp.torsions.columnCount()
+                        model: sp.torsions
+                        delegate: TextField {
+                            text: display
+                            width: 10
+                            onTextChanged: edit = text
+                        }
+                    }
+                }
             }
             GroupBox {
                 title: "Impropers"

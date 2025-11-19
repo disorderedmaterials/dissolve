@@ -13,6 +13,7 @@ SpeciesModel::SpeciesModel()
     atoms_.setSpecies(species_.get());
     bonds_.setBonds(species_->bonds());
     angles_.setAngles(species_->angles());
+    torsions_.setTorsions(species_->torsions());
 }
 
 QString SpeciesModel::name() { return QString::fromStdString(std::string(species_->name())); }
@@ -28,6 +29,9 @@ SpeciesBondModel *SpeciesModel::bonds() { return &bonds_; }
 
 // Angle information
 SpeciesAngleModel *SpeciesModel::angles() { return &angles_; }
+
+// Torsion information
+SpeciesTorsionModel *SpeciesModel::torsions() { return &torsions_; }
 
 // Atom information
 SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
@@ -50,12 +54,16 @@ void SpeciesModel::addBond(int i, int j)
 
 void SpeciesModel::addAngle(int i, int j, int k)
 {
-    std::cout << "Adding angle: " << i << "\t" << j << "\t" << k << std::endl;
     angles_.beginInsertRows({}, species_->nAngles(), species_->nAngles() + 1);
     species_->addAngle(i - 1, j - 1, k - 1);
     angles_.endInsertRows();
-    std::cout << "nAngles: " << species_->nAngles() << std::endl;
-    std::cout << "Rows: " << angles_.rowCount() << std::endl;
+}
+
+void SpeciesModel::addTorsion(int i, int j, int k, int l)
+{
+    torsions_.beginInsertRows({}, species_->nTorsions(), species_->nTorsions() + 1);
+    species_->addTorsion(i - 1, j - 1, k - 1, l - 1);
+    torsions_.endInsertRows();
 }
 
 // const Species *SpeciesModel::rawData(const QModelIndex &index) const
