@@ -203,10 +203,7 @@ NodeConstants::ProcessResult Edge::pull()
      */
     if (!sourceNode_.isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
     {
-        auto result = NodeConstants::ProcessResult::Success;
-
-        result = sourceNode_.run();
-
+        auto result = sourceNode_.run();
         if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
         {
             Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_.name());
