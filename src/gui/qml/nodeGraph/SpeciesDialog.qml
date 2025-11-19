@@ -34,11 +34,6 @@ Dialog {
             title: "Atoms"
             ColumnLayout {
                 RowLayout {
-                    Button {
-                        text: "+"
-                        enabled: xField.text != "" && yField.text!= "" && zField.text!= "" && chargeField.text != "";
-                        onClicked: sp.atoms.addAtom(elementField.currentText, xField.text, yField.text, zField.text, chargeField.text);
-                    }
                     Text { text: "Element" }
                     ElementComboBox { id:elementField }
                     Text { text: "X" }
@@ -60,6 +55,11 @@ Dialog {
                     TextField {
                         id: chargeField
                         validator: DoubleValidator {}
+                    }
+                    Button {
+                        text: "+"
+                        enabled: xField.text != "" && yField.text!= "" && zField.text!= "" && chargeField.text != "";
+                        onClicked: sp.atoms.addAtom(elementField.currentText, xField.text, yField.text, zField.text, chargeField.text);
                     }
                 }
                 TableView {
@@ -91,11 +91,6 @@ Dialog {
                 title: "Bonds"
                 ColumnLayout {
                     RowLayout {
-                        Button {
-                            text: "+"
-                            enabled: bondI.text != "" && bondJ.text!= "";
-                            onClicked: sp.addBond(bondI.text, bondJ.text);
-                        }
                         Text { text: "I" }
                         TextField {
                             id: bondI
@@ -105,6 +100,11 @@ Dialog {
                         TextField {
                             id: bondJ
                             validator: IntValidator {}
+                        }
+                        Button {
+                            text: "+"
+                            enabled: bondI.text != "" && bondJ.text!= "";
+                            onClicked: sp.addBond(bondI.text, bondJ.text);
                         }
                     }
                     TableView {
@@ -125,11 +125,6 @@ Dialog {
                 title: "Angles"
                 ColumnLayout {
                     RowLayout {
-                        Button {
-                            text: "+"
-                            enabled: angleI.text != "" && angleJ.text!= "";
-                            onClicked: sp.addAngle(angleI.text, angleJ.text, angleK);
-                        }
                         Text { text: "I" }
                         TextField {
                             id: angleI
@@ -144,6 +139,11 @@ Dialog {
                         TextField {
                             id: angleK
                             validator: IntValidator {}
+                        }
+                        Button {
+                            text: "+"
+                            enabled: angleI.text != "" && angleJ.text!= "";
+                            onClicked: sp.addAngle(angleI.text, angleJ.text, angleK);
                         }
                     }
                     TableView {
