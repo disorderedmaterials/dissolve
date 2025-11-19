@@ -5,7 +5,7 @@
 
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
-    proxyInputs().addOption("NLoops", "Number of loops (iterations) to perform", nLoops_);
+    proxyInputs().addOption<Number>("NLoops", "Number of loops (iterations) to perform", nLoops_);
     loopBacks_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "LoopBacks"));
 }
 
@@ -22,15 +22,16 @@ std::string_view LoopGraph::type() const { return "Loop"; }
 // Return short summary of the node's purpose
 std::string_view LoopGraph::summary() const { return "Loop the contained graph"; }
 
-void LoopGraph::increment()
-{
-    loopCounter_++;
-    setUpdateRequired();
-}
+// Increment the loop counter
+void LoopGraph::increment() { loopCounter_++; }
+
+// Number of loops (iterations) to perform
+const int LoopGraph::nLoops() const { return nLoops_.asInteger(); }
 
 // Loop backs
-OutputsNode* LoopGraph::loopBacks() { return loopBacks_; }
+OutputsNode *LoopGraph::loopBacks() { return loopBacks_; }
 
+// Loop edges
 Graph::Edges &LoopGraph::loopEdges() { return loopEdges_; }
 
 // Current loop iteration
@@ -55,19 +56,18 @@ void LoopGraph::releaseLoopBack(const std::string &name)
 }
 
 // Add edge between nodes
-bool LoopGraph::addEdge(const EdgeDefinition& definition)
+bool LoopGraph::addEdge(const EdgeDefinition &definition)
 {
     if (dynamic_cast<InputsNode *>(parentGraph()->node(definition.sourceNode)))
         setLoopBacks();
-    else if (loopCounter_ > 0 && loopBacks_->findInput(definition.sourceOutput))
+    else if (loopBacks_->findInput(definition.targetInput))
     {
-        EdgeDefinition loopDefinition{definition.targetNode, definition.targetInput,
-                                      std::string(name()), definition.sourceOutput};
-        auto edge = Edge::create(this, loopDefinition);
+        auto edge =
+            Edge::create(this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
         if (!edge)
             return false;
 
-        loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release()));
+        loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs()));
 
         return true;
     }
@@ -93,14 +93,25 @@ void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    if (loopCounter_ > 0)
+    auto graphStatus = NodeConstants::ProcessResult::Unchanged;
+
+    while (loopCounter_ <= nLoops_.asInteger())
     {
-        auto looped = loopBacks_->run();
-        if (looped == NodeConstants::ProcessResult::Failed)
-            return looped;
+        // Don't run loopbacks on 0th iteration
+        if (loopCounter_ >= 1)
+        {
+            auto looped = loopBacks_->run();
+            if (looped == NodeConstants::ProcessResult::Failed)
+                return looped;
+        }
+        proxyOutputs().setUpdateRequired();
+        graphStatus = Graph::process();
+
+        if (graphStatus == NodeConstants::ProcessResult::Failed)
+            return graphStatus;
+
+        increment();
     }
 
-    auto graphResult = Graph::process();
-
-    return graphResult;
+    return Graph::process();
 }

@@ -26,12 +26,19 @@ NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::Proce
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult InputsNode::run()
 {
+    auto status = NodeConstants::ProcessResult::Unchanged;
+
     auto loopGraph = dynamic_cast<LoopGraph *>(parentGraph_);
 
-    if (loopGraph && loopGraph->loopCount() > 0)
+    if (loopGraph && (loopGraph->loopCount() > 0 && loopGraph->loopCount() < loopGraph->nLoops() + 1))
     {
-        for (const auto& edge : loopGraph->loopEdges())
-            static_cast<LoopEdge *>(edge.get())->pull();
+        if (loopGraph->loopEdges().empty())
+            return status;
+
+        for (const auto &edge : loopGraph->loopEdges())
+            status = static_cast<LoopEdge *>(edge.get())->pull();
+
+        return status;
     }
 
     return Node::run();

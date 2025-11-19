@@ -245,7 +245,7 @@ NodeConstants::ProcessResult LoopEdge::pull()
         }
 
         // Copy the parameter data over
-        if (!targetInput_.assign(&sourceOutput_))
+        if (!analogue().assign(&targetInput_))
             return NodeConstants::ProcessResult::Failed;
 
         // All succeeded, so update version index
@@ -261,13 +261,18 @@ NodeConstants::ProcessResult LoopEdge::pull()
 LoopEdge::LoopEdge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
     : Edge(sourceNode, sourceOutput, targetNode, targetInput)
 {
+    auto analogousEdge = targetNode.outputEdges().find(targetInput.name())->second[0];
+    analogue_ = &analogousEdge->sourceOutput_;
 }
 
-std::unique_ptr<LoopEdge> LoopEdge::makeLoopEdge(const Edge *edge)
+// Make a loop edge from a given node output (LoopBack), which feeds back into the graph's inputs node
+std::unique_ptr<LoopEdge> LoopEdge::makeLoopEdge(const Edge *edge, Node &inputs)
 {
-    return std::unique_ptr<LoopEdge>(
-        new LoopEdge(edge->sourceNode_, edge->sourceOutput_, edge->targetNode_, edge->targetInput_));
+    return std::unique_ptr<LoopEdge>(new LoopEdge(edge->sourceNode_, edge->sourceOutput_, inputs, edge->targetInput_));
 }
+
+// Return the analogue parameter, which the loop edge source corresponds to
+ParameterBase &LoopEdge::analogue() { return *analogue_; }
 
 // Ensure next call to pull() will retrieve the data from the source node
 void Edge::forceNextPull() { sourceNodeVersionIndex_ = NodeConstants::InvalidVersion; }

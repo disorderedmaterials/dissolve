@@ -86,6 +86,7 @@ class Edge : public Serialisable<>
     void deserialise(const SerialisedValue &node) override;
 };
 
+// Loop edge
 class LoopEdge : public Edge
 {
     protected:
@@ -95,5 +96,12 @@ class LoopEdge : public Edge
     public:
     // Pull the data from the source node to the target, returning a ProcessResult
     NodeConstants::ProcessResult pull();
-    static std::unique_ptr<LoopEdge> makeLoopEdge(const Edge *edge);
+    // Make a loop edge from a given node output (LoopBack), which feeds back into the graph's inputs node
+    static std::unique_ptr<LoopEdge> makeLoopEdge(const Edge *edge, Node &inputs);
+    // Return the analogue parameter, which the loop edge source corresponds to
+    ParameterBase &analogue();
+
+    private:
+    // Return the analogue parameter, which the loop edge source corresponds to
+    ParameterBase *analogue_;
 };

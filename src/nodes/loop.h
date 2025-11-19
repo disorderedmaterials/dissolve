@@ -37,7 +37,7 @@ class LoopGraph : public Graph
      */
     private:
     // Number of loops (iterations) to perform
-    int nLoops_{0};
+    Number nLoops_{0};
     // Current loop iteration
     int loopCounter_{0};
     // Loop backs
@@ -48,6 +48,8 @@ class LoopGraph : public Graph
     void releaseLoopBack(const std::string &name);
 
     public:
+    // Number of loops (iterations) to perform
+    const int nLoops() const;
     // Loop backs
     OutputsNode *loopBacks();
     // Loop edges
