@@ -143,8 +143,8 @@ Dialog {
                         }
                         Button {
                             text: "+"
-                            enabled: angleI.text != "" && angleJ.text!= "";
-                            onClicked: sp.addAngle(angleI.text, angleJ.text, angleK);
+                            enabled: angleI.text != "" && angleJ.text!= "" && angleK.text != "";
+                            onClicked: sp.addAngle(angleI.text, angleJ.text, angleK.text);
                         }
                     }
                     TableView {
@@ -155,8 +155,7 @@ Dialog {
                         model: sp.angles
                         delegate: TextField {
                             text: display
-                            color: "#00FFFF"
-                            width: 20
+                            width: 10
                             onTextChanged: edit = text
                         }
                     }

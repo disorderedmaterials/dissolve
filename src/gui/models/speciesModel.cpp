@@ -12,6 +12,7 @@ SpeciesModel::SpeciesModel()
     species_ = std::make_unique<Species>();
     atoms_.setSpecies(species_.get());
     bonds_.setBonds(species_->bonds());
+    angles_.setAngles(species_->angles());
 }
 
 QString SpeciesModel::name() { return QString::fromStdString(std::string(species_->name())); }
@@ -24,6 +25,9 @@ void SpeciesModel::setName(QString name)
 
 // Bond information
 SpeciesBondModel *SpeciesModel::bonds() { return &bonds_; }
+
+// Angle information
+SpeciesAngleModel *SpeciesModel::angles() { return &angles_; }
 
 // Atom information
 SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
@@ -42,6 +46,16 @@ void SpeciesModel::addBond(int i, int j)
     bonds_.beginInsertRows({}, species_->nBonds(), species_->nBonds() + 1);
     species_->addBond(i - 1, j - 1);
     bonds_.endInsertRows();
+}
+
+void SpeciesModel::addAngle(int i, int j, int k)
+{
+    std::cout << "Adding angle: " << i << "\t" << j << "\t" << k << std::endl;
+    angles_.beginInsertRows({}, species_->nAngles(), species_->nAngles() + 1);
+    species_->addAngle(i - 1, j - 1, k - 1);
+    angles_.endInsertRows();
+    std::cout << "nAngles: " << species_->nAngles() << std::endl;
+    std::cout << "Rows: " << angles_.rowCount() << std::endl;
 }
 
 // const Species *SpeciesModel::rawData(const QModelIndex &index) const

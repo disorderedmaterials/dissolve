@@ -4,8 +4,11 @@
 #pragma once
 
 #include "classes/species.h"
+#include "gui/models/speciesAngleModel.h"
 #include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesBondModel.h"
+#include "gui/models/speciesImproperModel.h"
+#include "gui/models/speciesTorsionModel.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
@@ -18,6 +21,7 @@ class SpeciesModel : public QObject
     // The Species being modelled
     Q_PROPERTY(SpeciesAtomModel *atoms READ atoms NOTIFY speciesChanged)
     Q_PROPERTY(SpeciesBondModel *bonds READ bonds NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesAngleModel *angles READ angles NOTIFY speciesChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
     private:
@@ -27,6 +31,12 @@ class SpeciesModel : public QObject
     SpeciesAtomModel atoms_;
     // Bond Model
     SpeciesBondModel bonds_;
+    // Angle Model
+    SpeciesAngleModel angles_;
+    // // Torsion Model
+    // SpeciesTorsionModel torsions_;
+    // // Improper Model
+    // SpeciesImproperModel impropers_;
     // Return object represented by specified model index
     const Species *rawData(const QModelIndex &index) const;
 
@@ -51,6 +61,8 @@ class SpeciesModel : public QObject
     SpeciesAtomModel *atoms();
     // Bond information
     SpeciesBondModel *bonds();
+    // Angle information
+    SpeciesAngleModel *angles();
     // Set vector containing checked items
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
     // Refresh model data
@@ -65,4 +77,7 @@ class SpeciesModel : public QObject
     public Q_SLOTS:
     void create(QVariant graphModel);
     void addBond(int i, int j);
+    void addAngle(int i, int j, int k);
+    // void addTorsion(int i, int j, int k, int l);
+    // void addImproper(int i, int j, int k, int l);
 };

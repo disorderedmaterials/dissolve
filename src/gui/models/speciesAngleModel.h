@@ -26,11 +26,11 @@ class SpeciesAngleModel : public QAbstractTableModel
     };
 
     private:
-    std::vector<SpeciesAngle> &angles_;
-    const CoreData &coreData_;
+    std::vector<SpeciesAngle> *angles_;
 
     public:
-    SpeciesAngleModel(std::vector<SpeciesAngle> &angles, const CoreData &coreData);
+    SpeciesAngleModel();
+    void setAngles(std::vector<SpeciesAngle> &angles);
     void reset();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -38,4 +38,6 @@ class SpeciesAngleModel : public QAbstractTableModel
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+
+    friend class SpeciesModel;
 };
