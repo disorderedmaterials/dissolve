@@ -30,7 +30,12 @@ NodeConstants::ProcessResult InputsNode::run()
 
     auto loopGraph = dynamic_cast<LoopGraph *>(parentGraph_);
 
-    if (loopGraph && (loopGraph->loopCount() > 0 && loopGraph->loopCount() < loopGraph->nLoops() + 1))
+    /*
+     * Only pull loop edges when we are at loop 1 or above.
+     * During these iterations, this block overrides the base Node run method.
+     *
+     */
+    if (loopGraph && (loopGraph->loopCount() > 0 && loopGraph->loopCount() <= loopGraph->nLoops()))
     {
         if (loopGraph->loopEdges().empty())
             return status;
