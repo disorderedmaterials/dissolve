@@ -371,7 +371,7 @@ std::vector<double> Interpolator::y(const std::vector<double> &xs) const
             ys.push_back(y_.front());
         else
         {
-            while (interval < x_.size() && x_[interval + 1] < x)
+            while (interval < (x_.size() - 1) && x_[interval + 1] < x)
                 ++interval;
             ys.push_back(interval == x_.size() ? y_.back() : y(x, interval));
         }
