@@ -113,5 +113,7 @@ NodeConstants::ProcessResult LoopGraph::process()
         increment();
     }
 
+    resetLoopCounter();
+
     return Graph::process();
 }

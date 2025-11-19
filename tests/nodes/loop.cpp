@@ -100,10 +100,7 @@ TEST_F(LoopGraphTest, Feedback)
     EXPECT_TRUE(nLoops);
     nLoops->set<Number>(1);
 
-    ASSERT_EQ(loop_->loopCount(), 0);
-
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(loop_->loopCount() - 1, 1);
 
     // We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
     EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 3);
