@@ -73,15 +73,11 @@ Dialog {
 
                     model: sp.atoms
 
-                    delegate: Rectangle {
-                        color: "white"
+                    delegate: TextField {
+                        text: display
                         implicitWidth: parent.parent.width / 6 - 1
                         implicitHeight: 20
-                        border.width: 1
-                        Text {
-                            text: display
-                            anchors.centerIn: parent
-                        }
+                        onTextChanged: edit = text
                     }
                 }
             }

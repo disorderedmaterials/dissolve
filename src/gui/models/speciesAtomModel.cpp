@@ -1,6 +1,7 @@
 #include "gui/models/speciesAtomModel.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include <memory>
 
 SpeciesAtomModel::SpeciesAtomModel() {}
 
@@ -107,7 +108,20 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         case 0:
             return false;
         case 1:
-            return false;
+        {
+            auto population = species_->atomTypePopulations().vector();
+            auto name = value.toString().toStdString();
+            auto it = std::find_if(population.begin(), population.end(), [&name](auto &x) { return x.first->name() == name; });
+            if (it == population.end())
+            {
+                auto at = species_->addAtomType(item.Z());
+                at->setName(value.toString().toStdString());
+                item.setAtomType(at);
+            }
+            else
+                item.setAtomType(std::const_pointer_cast<AtomType>(it->first->shared_from_this()));
+        }
+        break;
             // FIXME: we don't have atom types yet
             // {
             //     auto atomType = coreData_.findAtomType(value.toString().toStdString());
