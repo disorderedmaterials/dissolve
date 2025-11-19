@@ -23,6 +23,7 @@ class SpeciesModel : public QObject
     Q_PROPERTY(SpeciesBondModel *bonds READ bonds NOTIFY speciesChanged)
     Q_PROPERTY(SpeciesAngleModel *angles READ angles NOTIFY speciesChanged)
     Q_PROPERTY(SpeciesTorsionModel *torsions READ torsions NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesImproperModel *impropers READ impropers NOTIFY speciesChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
     private:
@@ -36,8 +37,8 @@ class SpeciesModel : public QObject
     SpeciesAngleModel angles_;
     // Torsion Model
     SpeciesTorsionModel torsions_;
-    // // Improper Model
-    // SpeciesImproperModel impropers_;
+    // Improper Model
+    SpeciesImproperModel impropers_;
     // Return object represented by specified model index
     const Species *rawData(const QModelIndex &index) const;
 
@@ -66,6 +67,8 @@ class SpeciesModel : public QObject
     SpeciesAngleModel *angles();
     // Torsion information
     SpeciesTorsionModel *torsions();
+    // Improper information
+    SpeciesImproperModel *impropers();
     // Set vector containing checked items
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
     // Refresh model data
@@ -82,5 +85,5 @@ class SpeciesModel : public QObject
     void addBond(int i, int j);
     void addAngle(int i, int j, int k);
     void addTorsion(int i, int j, int k, int l);
-    // void addImproper(int i, int j, int k, int l);
+    void addImproper(int i, int j, int k, int l);
 };

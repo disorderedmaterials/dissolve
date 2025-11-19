@@ -34,8 +34,8 @@ class SpeciesTorsionModel : public QAbstractTableModel
 
     public:
     SpeciesTorsionModel();
-    void setTorsions(std::vector<SpeciesTorsion> &torsions);
     void reset();
+    void setTorsions(std::vector<SpeciesTorsion> &torsions);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

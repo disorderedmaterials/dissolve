@@ -205,8 +205,50 @@ Dialog {
                     }
                 }
             }
+
             GroupBox {
                 title: "Impropers"
+                ColumnLayout {
+                    RowLayout {
+                        Text { text: "I" }
+                        TextField {
+                            id: improperI
+                            validator: IntValidator {}
+                        }
+                        Text { text: "J" }
+                        TextField {
+                            id: improperJ
+                            validator: IntValidator {}
+                        }
+                        Text { text: "K" }
+                        TextField {
+                            id: improperK
+                            validator: IntValidator {}
+                        }
+                        Text { text: "L" }
+                        TextField {
+                            id: improperL
+                            validator: IntValidator {}
+                        }
+                        Button {
+                            text: "+"
+                            enabled: improperI.text != "" && improperJ.text!= "" && improperK.text != "" && improperL.text != "";
+                            onClicked: sp.addImproper(improperI.text, improperJ.text, improperK.text, improperL.text);
+                        }
+                    }
+                    TableView {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        implicitHeight: 200
+                        implicitWidth: improperI.width*sp.impropers.columnCount()
+                        model: sp.impropers
+                        delegate: TextField {
+                            text: display
+                            width: 10
+                            onTextChanged: edit = text
+                        }
+                    }
+                }
             }
         }
     }

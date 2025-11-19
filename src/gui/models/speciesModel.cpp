@@ -14,6 +14,7 @@ SpeciesModel::SpeciesModel()
     bonds_.setBonds(species_->bonds());
     angles_.setAngles(species_->angles());
     torsions_.setTorsions(species_->torsions());
+    impropers_.setImpropers(species_->impropers());
 }
 
 QString SpeciesModel::name() { return QString::fromStdString(std::string(species_->name())); }
@@ -32,6 +33,9 @@ SpeciesAngleModel *SpeciesModel::angles() { return &angles_; }
 
 // Torsion information
 SpeciesTorsionModel *SpeciesModel::torsions() { return &torsions_; }
+
+// Improper information
+SpeciesImproperModel *SpeciesModel::impropers() { return &impropers_; }
 
 // Atom information
 SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
@@ -64,6 +68,13 @@ void SpeciesModel::addTorsion(int i, int j, int k, int l)
     torsions_.beginInsertRows({}, species_->nTorsions(), species_->nTorsions() + 1);
     species_->addTorsion(i - 1, j - 1, k - 1, l - 1);
     torsions_.endInsertRows();
+}
+
+void SpeciesModel::addImproper(int i, int j, int k, int l)
+{
+    impropers_.beginInsertRows({}, species_->nImpropers(), species_->nImpropers() + 1);
+    species_->addImproper(i - 1, j - 1, k - 1, l - 1);
+    impropers_.endInsertRows();
 }
 
 // const Species *SpeciesModel::rawData(const QModelIndex &index) const
