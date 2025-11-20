@@ -93,7 +93,6 @@ class GraphModel : public QObject
     // Provide relative coordinates for an output on a node
     void addOutput(int nodeIndex, QString paramName, double x, double y);
 
-
     // Add a new node at a specific position
     void emplace_back(int x, int y, QVariant type, QVariant name);
 

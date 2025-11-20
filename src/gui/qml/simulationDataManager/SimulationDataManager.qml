@@ -59,19 +59,18 @@ Page {
             }
             TableView {
                 id: table
-                anchors.fill: parent
 
                 property variant colWidths: [300, 300, 50]
 
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                anchors.fill: parent
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
                 columnSpacing: 1
                 columnWidthProvider: function (column) {
                     return colWidths[column];
                 }
-
                 model: proxy
                 rowSpacing: 1
 

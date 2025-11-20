@@ -2,129 +2,368 @@ import QtQuick
 import QtQuick.Controls
 import Qt.labs.qmlmodels
 
-
 ComboBox {
     editable: true
+
     model: ListModel {
         id: model
-        ListElement { text: "H" }
-        ListElement { text: "He" }
-        ListElement { text: "Li" }
-        ListElement { text: "Be" }
-        ListElement { text: "B" }
-        ListElement { text: "C" }
-        ListElement { text: "N" }
-        ListElement { text: "O" }
-        ListElement { text: "F" }
-        ListElement { text: "Ne" }
-        ListElement { text: "Na" }
-        ListElement { text: "Mg" }
-        ListElement { text: "Al" }
-        ListElement { text: "Si" }
-        ListElement { text: "P" }
-        ListElement { text: "S" }
-        ListElement { text: "Cl" }
-        ListElement { text: "Ar" }
-        ListElement { text: "K" }
-        ListElement { text: "Ca" }
-        ListElement { text: "Sc" }
-        ListElement { text: "Ti" }
-        ListElement { text: "V" }
-        ListElement { text: "Cr" }
-        ListElement { text: "Mn" }
-        ListElement { text: "Fe" }
-        ListElement { text: "Co" }
-        ListElement { text: "Ni" }
-        ListElement { text: "Cu" }
-        ListElement { text: "Zn" }
-        ListElement { text: "Ga" }
-        ListElement { text: "Ge" }
-        ListElement { text: "As" }
-        ListElement { text: "Se" }
-        ListElement { text: "Br" }
-        ListElement { text: "Kr" }
-        ListElement { text: "Rb" }
-        ListElement { text: "Sr" }
-        ListElement { text: "Y" }
-        ListElement { text: "Zr" }
-        ListElement { text: "Nb" }
-        ListElement { text: "Mo" }
-        ListElement { text: "Tc" }
-        ListElement { text: "Ru" }
-        ListElement { text: "Rh" }
-        ListElement { text: "Pd" }
-        ListElement { text: "Ag" }
-        ListElement { text: "Cd" }
-        ListElement { text: "In" }
-        ListElement { text: "Sn" }
-        ListElement { text: "Sb" }
-        ListElement { text: "Te" }
-        ListElement { text: "I" }
-        ListElement { text: "Xe" }
-        ListElement { text: "Cs" }
-        ListElement { text: "Ba" }
-        ListElement { text: "La" }
-        ListElement { text: "Ce" }
-        ListElement { text: "Pr" }
-        ListElement { text: "Nd" }
-        ListElement { text: "Pm" }
-        ListElement { text: "Sm" }
-        ListElement { text: "Eu" }
-        ListElement { text: "Gd" }
-        ListElement { text: "Tb" }
-        ListElement { text: "Dy" }
-        ListElement { text: "Ho" }
-        ListElement { text: "Er" }
-        ListElement { text: "Tm" }
-        ListElement { text: "Yb" }
-        ListElement { text: "Lu" }
-        ListElement { text: "Hf" }
-        ListElement { text: "Ta" }
-        ListElement { text: "W" }
-        ListElement { text: "Re" }
-        ListElement { text: "Os" }
-        ListElement { text: "Ir" }
-        ListElement { text: "Pt" }
-        ListElement { text: "Au" }
-        ListElement { text: "Hg" }
-        ListElement { text: "Tl" }
-        ListElement { text: "Pb" }
-        ListElement { text: "Bi" }
-        ListElement { text: "Po" }
-        ListElement { text: "At" }
-        ListElement { text: "Rn" }
-        ListElement { text: "Fr" }
-        ListElement { text: "Ra" }
-        ListElement { text: "Ac" }
-        ListElement { text: "Th" }
-        ListElement { text: "Pa" }
-        ListElement { text: "U" }
-        ListElement { text: "Np" }
-        ListElement { text: "Pu" }
-        ListElement { text: "Am" }
-        ListElement { text: "Cm" }
-        ListElement { text: "Bk" }
-        ListElement { text: "Cf" }
-        ListElement { text: "Es" }
-        ListElement { text: "Fm" }
-        ListElement { text: "Md" }
-        ListElement { text: "No" }
-        ListElement { text: "Lr" }
-        ListElement { text: "Rf" }
-        ListElement { text: "Db" }
-        ListElement { text: "Sg" }
-        ListElement { text: "Bh" }
-        ListElement { text: "Hs" }
-        ListElement { text: "Mt" }
-        ListElement { text: "Ds" }
-        ListElement { text: "Rg" }
-        ListElement { text: "Cn" }
-        ListElement { text: "Nh" }
-        ListElement { text: "Fl" }
-        ListElement { text: "Mc" }
-        ListElement { text: "Lv" }
-        ListElement { text: "Ts" }
-        ListElement { text: "Og" }
-        ListElement { text: "Phantom" }
+
+        ListElement {
+            text: "H"
+        }
+        ListElement {
+            text: "He"
+        }
+        ListElement {
+            text: "Li"
+        }
+        ListElement {
+            text: "Be"
+        }
+        ListElement {
+            text: "B"
+        }
+        ListElement {
+            text: "C"
+        }
+        ListElement {
+            text: "N"
+        }
+        ListElement {
+            text: "O"
+        }
+        ListElement {
+            text: "F"
+        }
+        ListElement {
+            text: "Ne"
+        }
+        ListElement {
+            text: "Na"
+        }
+        ListElement {
+            text: "Mg"
+        }
+        ListElement {
+            text: "Al"
+        }
+        ListElement {
+            text: "Si"
+        }
+        ListElement {
+            text: "P"
+        }
+        ListElement {
+            text: "S"
+        }
+        ListElement {
+            text: "Cl"
+        }
+        ListElement {
+            text: "Ar"
+        }
+        ListElement {
+            text: "K"
+        }
+        ListElement {
+            text: "Ca"
+        }
+        ListElement {
+            text: "Sc"
+        }
+        ListElement {
+            text: "Ti"
+        }
+        ListElement {
+            text: "V"
+        }
+        ListElement {
+            text: "Cr"
+        }
+        ListElement {
+            text: "Mn"
+        }
+        ListElement {
+            text: "Fe"
+        }
+        ListElement {
+            text: "Co"
+        }
+        ListElement {
+            text: "Ni"
+        }
+        ListElement {
+            text: "Cu"
+        }
+        ListElement {
+            text: "Zn"
+        }
+        ListElement {
+            text: "Ga"
+        }
+        ListElement {
+            text: "Ge"
+        }
+        ListElement {
+            text: "As"
+        }
+        ListElement {
+            text: "Se"
+        }
+        ListElement {
+            text: "Br"
+        }
+        ListElement {
+            text: "Kr"
+        }
+        ListElement {
+            text: "Rb"
+        }
+        ListElement {
+            text: "Sr"
+        }
+        ListElement {
+            text: "Y"
+        }
+        ListElement {
+            text: "Zr"
+        }
+        ListElement {
+            text: "Nb"
+        }
+        ListElement {
+            text: "Mo"
+        }
+        ListElement {
+            text: "Tc"
+        }
+        ListElement {
+            text: "Ru"
+        }
+        ListElement {
+            text: "Rh"
+        }
+        ListElement {
+            text: "Pd"
+        }
+        ListElement {
+            text: "Ag"
+        }
+        ListElement {
+            text: "Cd"
+        }
+        ListElement {
+            text: "In"
+        }
+        ListElement {
+            text: "Sn"
+        }
+        ListElement {
+            text: "Sb"
+        }
+        ListElement {
+            text: "Te"
+        }
+        ListElement {
+            text: "I"
+        }
+        ListElement {
+            text: "Xe"
+        }
+        ListElement {
+            text: "Cs"
+        }
+        ListElement {
+            text: "Ba"
+        }
+        ListElement {
+            text: "La"
+        }
+        ListElement {
+            text: "Ce"
+        }
+        ListElement {
+            text: "Pr"
+        }
+        ListElement {
+            text: "Nd"
+        }
+        ListElement {
+            text: "Pm"
+        }
+        ListElement {
+            text: "Sm"
+        }
+        ListElement {
+            text: "Eu"
+        }
+        ListElement {
+            text: "Gd"
+        }
+        ListElement {
+            text: "Tb"
+        }
+        ListElement {
+            text: "Dy"
+        }
+        ListElement {
+            text: "Ho"
+        }
+        ListElement {
+            text: "Er"
+        }
+        ListElement {
+            text: "Tm"
+        }
+        ListElement {
+            text: "Yb"
+        }
+        ListElement {
+            text: "Lu"
+        }
+        ListElement {
+            text: "Hf"
+        }
+        ListElement {
+            text: "Ta"
+        }
+        ListElement {
+            text: "W"
+        }
+        ListElement {
+            text: "Re"
+        }
+        ListElement {
+            text: "Os"
+        }
+        ListElement {
+            text: "Ir"
+        }
+        ListElement {
+            text: "Pt"
+        }
+        ListElement {
+            text: "Au"
+        }
+        ListElement {
+            text: "Hg"
+        }
+        ListElement {
+            text: "Tl"
+        }
+        ListElement {
+            text: "Pb"
+        }
+        ListElement {
+            text: "Bi"
+        }
+        ListElement {
+            text: "Po"
+        }
+        ListElement {
+            text: "At"
+        }
+        ListElement {
+            text: "Rn"
+        }
+        ListElement {
+            text: "Fr"
+        }
+        ListElement {
+            text: "Ra"
+        }
+        ListElement {
+            text: "Ac"
+        }
+        ListElement {
+            text: "Th"
+        }
+        ListElement {
+            text: "Pa"
+        }
+        ListElement {
+            text: "U"
+        }
+        ListElement {
+            text: "Np"
+        }
+        ListElement {
+            text: "Pu"
+        }
+        ListElement {
+            text: "Am"
+        }
+        ListElement {
+            text: "Cm"
+        }
+        ListElement {
+            text: "Bk"
+        }
+        ListElement {
+            text: "Cf"
+        }
+        ListElement {
+            text: "Es"
+        }
+        ListElement {
+            text: "Fm"
+        }
+        ListElement {
+            text: "Md"
+        }
+        ListElement {
+            text: "No"
+        }
+        ListElement {
+            text: "Lr"
+        }
+        ListElement {
+            text: "Rf"
+        }
+        ListElement {
+            text: "Db"
+        }
+        ListElement {
+            text: "Sg"
+        }
+        ListElement {
+            text: "Bh"
+        }
+        ListElement {
+            text: "Hs"
+        }
+        ListElement {
+            text: "Mt"
+        }
+        ListElement {
+            text: "Ds"
+        }
+        ListElement {
+            text: "Rg"
+        }
+        ListElement {
+            text: "Cn"
+        }
+        ListElement {
+            text: "Nh"
+        }
+        ListElement {
+            text: "Fl"
+        }
+        ListElement {
+            text: "Mc"
+        }
+        ListElement {
+            text: "Lv"
+        }
+        ListElement {
+            text: "Ts"
+        }
+        ListElement {
+            text: "Og"
+        }
+        ListElement {
+            text: "Phantom"
+        }
     }
 }

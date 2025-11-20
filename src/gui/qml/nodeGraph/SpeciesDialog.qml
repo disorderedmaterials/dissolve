@@ -4,11 +4,10 @@ import QtQuick.Layouts
 import Qt.labs.qmlmodels
 import Dissolve
 
-
 Dialog {
     id: root
 
-    required property variant graphModel;
+    required property variant graphModel
 
     standardButtons: Dialog.Ok | Dialog.Cancel
     title: "Define Species: " + sp.name
@@ -19,64 +18,91 @@ Dialog {
 
     SpeciesModel {
         id: sp
-    }
 
+    }
     ColumnLayout {
         RowLayout {
-            Text {text: "Name"}
+            Text {
+                text: "Name"
+            }
             TextField {
                 placeholderText: sp.name
+
                 onTextChanged: sp.name = text
             }
         }
         GroupBox {
             id: atomBox
+
             title: "Atoms"
+
             ColumnLayout {
                 RowLayout {
-                    Text { text: "Element" }
-                    ElementComboBox { id:elementField }
-                    Text { text: "X" }
+                    Text {
+                        text: "Element"
+                    }
+                    ElementComboBox {
+                        id: elementField
+
+                    }
+                    Text {
+                        text: "X"
+                    }
                     TextField {
                         id: xField
-                        validator: DoubleValidator {}
+
+                        validator: DoubleValidator {
+                        }
                     }
-                    Text { text: "Y" }
+                    Text {
+                        text: "Y"
+                    }
                     TextField {
                         id: yField
-                        validator: DoubleValidator {}
+
+                        validator: DoubleValidator {
+                        }
                     }
-                    Text { text: "Z" }
+                    Text {
+                        text: "Z"
+                    }
                     TextField {
                         id: zField
-                        validator: DoubleValidator {}
+
+                        validator: DoubleValidator {
+                        }
                     }
-                    Text { text: "Charge" }
+                    Text {
+                        text: "Charge"
+                    }
                     TextField {
                         id: chargeField
-                        validator: DoubleValidator {}
+
+                        validator: DoubleValidator {
+                        }
                     }
                     Button {
+                        enabled: xField.text != "" && yField.text != "" && zField.text != "" && chargeField.text != ""
                         text: "+"
-                        enabled: xField.text != "" && yField.text!= "" && zField.text!= "" && chargeField.text != "";
-                        onClicked: sp.atoms.addAtom(elementField.currentText, xField.text, yField.text, zField.text, chargeField.text);
+
+                        onClicked: sp.atoms.addAtom(elementField.currentText, xField.text, yField.text, zField.text, chargeField.text)
                     }
                 }
                 TableView {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    implicitHeight: 200
-                    implicitWidth: zField.width * sp.atoms.columnCount() 
                     clip: true
                     columnSpacing: 1
+                    implicitHeight: 200
+                    implicitWidth: zField.width * sp.atoms.columnCount()
+                    model: sp.atoms
                     rowSpacing: 1
 
-                    model: sp.atoms
-
                     delegate: TextField {
-                        text: display
-                        implicitWidth: parent.parent.width / 6 - 1
                         implicitHeight: 20
+                        implicitWidth: parent.parent.width / 6 - 1
+                        text: display
+
                         onTextChanged: edit = text
                     }
                 }
@@ -84,35 +110,48 @@ Dialog {
         }
         GridLayout {
             columns: 2
+
             GroupBox {
                 title: "Bonds"
+
                 ColumnLayout {
                     RowLayout {
-                        Text { text: "I" }
+                        Text {
+                            text: "I"
+                        }
                         TextField {
                             id: bondI
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "J" }
+                        Text {
+                            text: "J"
+                        }
                         TextField {
                             id: bondJ
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
                         Button {
+                            enabled: bondI.text != "" && bondJ.text != ""
                             text: "+"
-                            enabled: bondI.text != "" && bondJ.text!= "";
-                            onClicked: sp.addBond(bondI.text, bondJ.text);
+
+                            onClicked: sp.addBond(bondI.text, bondJ.text)
                         }
                     }
                     TableView {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
-                        implicitWidth: bondI.width*sp.bonds.columnCount()
+                        implicitWidth: bondI.width * sp.bonds.columnCount()
                         model: sp.bonds
+
                         delegate: TextField {
                             text: display
                             width: 10
+
                             onTextChanged: edit = text
                         }
                     }
@@ -120,38 +159,54 @@ Dialog {
             }
             GroupBox {
                 title: "Angles"
+
                 ColumnLayout {
                     RowLayout {
-                        Text { text: "I" }
+                        Text {
+                            text: "I"
+                        }
                         TextField {
                             id: angleI
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "J" }
+                        Text {
+                            text: "J"
+                        }
                         TextField {
                             id: angleJ
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "K" }
+                        Text {
+                            text: "K"
+                        }
                         TextField {
                             id: angleK
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
                         Button {
+                            enabled: angleI.text != "" && angleJ.text != "" && angleK.text != ""
                             text: "+"
-                            enabled: angleI.text != "" && angleJ.text!= "" && angleK.text != "";
-                            onClicked: sp.addAngle(angleI.text, angleJ.text, angleK.text);
+
+                            onClicked: sp.addAngle(angleI.text, angleJ.text, angleK.text)
                         }
                     }
                     TableView {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
-                        implicitWidth: angleI.width*sp.angles.columnCount()
+                        implicitWidth: angleI.width * sp.angles.columnCount()
                         model: sp.angles
+
                         delegate: TextField {
                             text: display
                             width: 10
+
                             onTextChanged: edit = text
                         }
                     }
@@ -159,88 +214,127 @@ Dialog {
             }
             GroupBox {
                 title: "Torsions"
+
                 ColumnLayout {
                     RowLayout {
-                        Text { text: "I" }
+                        Text {
+                            text: "I"
+                        }
                         TextField {
                             id: torsionI
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "J" }
+                        Text {
+                            text: "J"
+                        }
                         TextField {
                             id: torsionJ
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "K" }
+                        Text {
+                            text: "K"
+                        }
                         TextField {
                             id: torsionK
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "L" }
+                        Text {
+                            text: "L"
+                        }
                         TextField {
                             id: torsionL
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
                         Button {
+                            enabled: torsionI.text != "" && torsionJ.text != "" && torsionK.text != "" && torsionL.text != ""
                             text: "+"
-                            enabled: torsionI.text != "" && torsionJ.text!= "" && torsionK.text != "" && torsionL.text != "";
-                            onClicked: sp.addTorsion(torsionI.text, torsionJ.text, torsionK.text, torsionL.text);
+
+                            onClicked: sp.addTorsion(torsionI.text, torsionJ.text, torsionK.text, torsionL.text)
                         }
                     }
                     TableView {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
-                        implicitWidth: torsionI.width*sp.torsions.columnCount()
+                        implicitWidth: torsionI.width * sp.torsions.columnCount()
                         model: sp.torsions
+
                         delegate: TextField {
                             text: display
                             width: 10
+
                             onTextChanged: edit = text
                         }
                     }
                 }
             }
-
             GroupBox {
                 title: "Impropers"
+
                 ColumnLayout {
                     RowLayout {
-                        Text { text: "I" }
+                        Text {
+                            text: "I"
+                        }
                         TextField {
                             id: improperI
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "J" }
+                        Text {
+                            text: "J"
+                        }
                         TextField {
                             id: improperJ
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "K" }
+                        Text {
+                            text: "K"
+                        }
                         TextField {
                             id: improperK
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
-                        Text { text: "L" }
+                        Text {
+                            text: "L"
+                        }
                         TextField {
                             id: improperL
-                            validator: IntValidator {}
+
+                            validator: IntValidator {
+                            }
                         }
                         Button {
+                            enabled: improperI.text != "" && improperJ.text != "" && improperK.text != "" && improperL.text != ""
                             text: "+"
-                            enabled: improperI.text != "" && improperJ.text!= "" && improperK.text != "" && improperL.text != "";
-                            onClicked: sp.addImproper(improperI.text, improperJ.text, improperK.text, improperL.text);
+
+                            onClicked: sp.addImproper(improperI.text, improperJ.text, improperK.text, improperL.text)
                         }
                     }
                     TableView {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
-                        implicitWidth: improperI.width*sp.impropers.columnCount()
+                        implicitWidth: improperI.width * sp.impropers.columnCount()
                         model: sp.impropers
+
                         delegate: TextField {
                             text: display
                             width: 10
+
                             onTextChanged: edit = text
                         }
                     }

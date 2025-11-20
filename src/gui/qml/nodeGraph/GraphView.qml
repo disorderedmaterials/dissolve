@@ -117,12 +117,13 @@ Pane {
                 MenuItem {
                     text: "Species"
 
-                    SpeciesDialog {
-                      id: speciesDialog
-                      graphModel: graphRoot.rootModel
-                    }
-
                     onClicked: speciesDialog.open()
+
+                    SpeciesDialog {
+                        id: speciesDialog
+
+                        graphModel: graphRoot.rootModel
+                    }
                 }
             }
         }
