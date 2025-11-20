@@ -93,10 +93,10 @@ void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    auto graphStatus = NodeConstants::ProcessResult::Unchanged;
-
     while (loopCounter_ <= nLoops_.asInteger())
     {
+        auto graphStatus = NodeConstants::ProcessResult::Unchanged;
+
         // Don't run loopbacks on 0th iteration
         if (loopCounter_ >= 1)
         {
