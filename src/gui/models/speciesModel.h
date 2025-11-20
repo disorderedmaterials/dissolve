@@ -81,6 +81,7 @@ class SpeciesModel : public QObject
     void nameChanged();
 
     public Q_SLOTS:
+    // Produce this species node on the given graph
     void create(QVariant graphModel);
     void addBond(int i, int j);
     void addAngle(int i, int j, int k);

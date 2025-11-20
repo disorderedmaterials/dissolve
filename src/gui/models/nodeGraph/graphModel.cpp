@@ -87,6 +87,7 @@ void GraphModel::descend(int index)
     }
 }
 
+// Add a pre-created node
 void GraphModel::addNode(std::unique_ptr<Node> node, std::string_view name)
 {
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);

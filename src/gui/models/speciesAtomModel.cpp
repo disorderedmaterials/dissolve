@@ -122,16 +122,6 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
                 item.setAtomType(std::const_pointer_cast<AtomType>(it->first->shared_from_this()));
         }
         break;
-            // FIXME: we don't have atom types yet
-            // {
-            //     auto atomType = coreData_.findAtomType(value.toString().toStdString());
-            //     if (!atomType)
-            //         return false;
-            //     item.setAtomType(atomType);
-            //     species_->updateIsotopologues();
-            //     Q_EMIT atomTypeChanged();
-            // }
-            // break;
         case 2:
         case 3:
         case 4:
