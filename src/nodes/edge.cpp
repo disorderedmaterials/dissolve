@@ -233,14 +233,6 @@ NodeConstants::ProcessResult LoopEdge::pull()
      */
     if (!sourceNode_.isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
     {
-        auto result = NodeConstants::ProcessResult::Success;
-
-        if (result != NodeConstants::ProcessResult::Success && result != NodeConstants::ProcessResult::Unchanged)
-        {
-            Messenger::error("Failed to pull updated value from node '{}'\n", sourceNode_.name());
-            return result;
-        }
-
         // Copy the parameter data over
         if (!analogue().assign(&targetInput_))
             return NodeConstants::ProcessResult::Failed;
