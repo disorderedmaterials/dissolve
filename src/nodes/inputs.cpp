@@ -26,8 +26,6 @@ NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::Proce
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult InputsNode::run()
 {
-    auto status = NodeConstants::ProcessResult::Unchanged;
-
     auto loopGraph = dynamic_cast<LoopGraph *>(parentGraph_);
 
     /*
@@ -37,6 +35,8 @@ NodeConstants::ProcessResult InputsNode::run()
      */
     if (loopGraph && (loopGraph->loopCount() > 0 && loopGraph->loopCount() <= loopGraph->nLoops()))
     {
+        auto status = NodeConstants::ProcessResult::Unchanged;
+
         if (loopGraph->loopEdges().empty())
             return status;
 
