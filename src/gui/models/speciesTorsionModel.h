@@ -15,6 +15,7 @@ class SpeciesTorsionModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    public:
     // Enumerated column-to-data relationships
     enum DataType
     {
