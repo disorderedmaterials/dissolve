@@ -96,7 +96,7 @@ TEST_F(LoopGraphTest, Feedback)
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->proxyInputs().findOption("NLoops");
+    auto nLoops = loop_->findOption("NLoops");
     EXPECT_TRUE(nLoops);
     nLoops->set<Number>(1);
 

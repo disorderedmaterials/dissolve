@@ -5,7 +5,7 @@
 
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
-    proxyInputs().addOption<Number>("NLoops", "Number of loops (iterations) to perform", nLoops_);
+    addOption<Number>("NLoops", "Number of loops (iterations) to perform", nLoops_);
     loopBacks_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "LoopBacks"));
 }
 
