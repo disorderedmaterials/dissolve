@@ -34,7 +34,7 @@
         });
       exe-name = mpi: gui: if mpi then "dissolve-mpi" else (if gui then "dissolve-gui" else "dissolve");
       cmake-bool = x: if x then "ON" else "OFF";
-      version = "1.8.0";
+      version = "1.9.0";
       base_libs =
         pkgs: with pkgs; [
           antlr4

@@ -27,7 +27,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "8")
+set(VERSION_MINOR "9")
 set(VERSION_PATCH "0")
 
 if(NOT CMAKE_BUILD_TYPE)
