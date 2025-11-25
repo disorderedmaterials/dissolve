@@ -117,7 +117,7 @@ TEST_F(LoopGraphTest, SimpleFeedback)
     auto res2 = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res2, 4);
 
-    // Three iterations: We expect (LB = 4) + (xB = 1) = 3 + 1 = 4
+    // Three iterations: We expect (LB = 4) + (xB = 1) = 4 + 1 = 4
     nLoops->set<Number>(3);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res3 = y_->getOutputValue<Number>("Result").asInteger();
