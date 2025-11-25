@@ -98,11 +98,15 @@ TEST_F(LoopGraphTest, Feedback)
 
     auto nLoops = loop_->findOption("NLoops");
     EXPECT_TRUE(nLoops);
-    nLoops->set<Number>(1);
 
+    // Zero iterations: We expect 1 + (xB = 1) = 1 + 1 = 2
+    nLoops->set<Number>(0);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 2);
 
-    // We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
+    // One iteration: We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
+    nLoops->set<Number>(1);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 3);
 }
 
