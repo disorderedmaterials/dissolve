@@ -77,7 +77,7 @@ class LoopGraphTest : public ::testing::Test
     LoopGraph *loop_{nullptr};
 };
 
-TEST_F(LoopGraphTest, Feedback)
+TEST_F(LoopGraphTest, SimpleFeedback)
 {
     createGraph();
 
@@ -102,12 +102,22 @@ TEST_F(LoopGraphTest, Feedback)
     // Zero iterations: We expect 1 + (xB = 1) = 1 + 1 = 2
     nLoops->set<Number>(0);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 2);
+    ASSERT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 2);
 
     // One iteration: We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
     nLoops->set<Number>(1);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 3);
+    ASSERT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 3);
+
+    // Two iterations: We expect (LB = 3) + (xB = 1) = 3 + 1 = 4
+    nLoops->set<Number>(2);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 4);
+
+    // Three iterations: We expect (LB = 4) + (xB = 1) = 3 + 1 = 4
+    nLoops->set<Number>(3);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(y_->getOutputValue<Number>("Result").asInteger(), 5);
 }
 
 TEST_F(LoopGraphTest, BasicLoop)
