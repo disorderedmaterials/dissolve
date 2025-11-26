@@ -237,6 +237,8 @@ NodeConstants::ProcessResult LoopEdge::pull()
         if (!analogue().assign(&targetInput_))
             return NodeConstants::ProcessResult::Failed;
 
+        sourceNode().setUpdateRequired();
+
         // All succeeded, so update version index
         sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 

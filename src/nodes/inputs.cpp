@@ -41,10 +41,7 @@ NodeConstants::ProcessResult InputsNode::run()
             return status;
 
         for (const auto &edge : loopGraph->loopEdges())
-        {
             status = static_cast<LoopEdge *>(edge.get())->pull();
-            edge->sourceNode().setUpdateRequired();
-        }
 
         return status;
     }
