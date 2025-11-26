@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/coreData.h"
 #include "math/data1D.h"
 #include "math/function1D.h"
 #include "nodes/number.h"
@@ -463,6 +464,11 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
                 Parameter<DataClass>::data_ = toml::find<Data1D>(node, "data");
             else
                 Parameter<DataClass>::data_ = {};
+        }
+        else if constexpr (serialisablePointer<DataClass>)
+        {
+            CoreData coreData; // Temporary patch until we fix up the deserialisation
+            Parameter<DataClass>::data_->deserialise(node.at("data"), coreData);
         }
         else
         {

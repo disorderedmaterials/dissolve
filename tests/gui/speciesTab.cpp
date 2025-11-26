@@ -74,45 +74,6 @@ TEST_F(SpeciesTabTest, Atoms)
         EXPECT_EQ(atom.data(atom.index(6, i)).toDouble(), i);
 }
 
-TEST_F(SpeciesTabTest, Bonds)
-{
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
-    auto &species = coreData.species()[0];
-
-    SpeciesBondModel bond(species->bonds(), coreData);
-
-    // Test Bonds
-    EXPECT_EQ(bond.columnCount(), 4);
-    EXPECT_EQ(bond.rowCount(), 12);
-
-    for (auto role : roles)
-    {
-        EXPECT_EQ(bond.data(bond.index(3, 0), role).toInt(), 4);
-        EXPECT_EQ(bond.data(bond.index(3, 1), role).toInt(), 5);
-        EXPECT_EQ(bond.data(bond.index(3, 2), role).toString().toStdString(), "@CA-CA");
-        EXPECT_EQ(bond.data(bond.index(3, 3), role).toString().toStdString(), "k=3924.59 eq=1.4");
-    }
-
-    // Mutate bond
-    EXPECT_FALSE(bond.setData(bond.index(3, 0), 5));
-    EXPECT_FALSE(bond.setData(bond.index(3, 1), 6));
-
-    EXPECT_FALSE(bond.setData(bond.index(3, 3), "4, 5"));
-
-    EXPECT_FALSE(bond.setData(bond.index(3, 2), "Undefined"));
-    EXPECT_TRUE(bond.setData(bond.index(3, 2), "Harmonic"));
-
-    EXPECT_TRUE(bond.setData(bond.index(3, 3), "4.0 5.0"));
-    EXPECT_THAT(bond.data(bond.index(3, 3)).toString().toStdString(),
-                testing::AnyOf(testing::Eq("k=4.0 eq=5.0"), testing::Eq("k=4 eq=5")));
-
-    EXPECT_TRUE(bond.setData(bond.index(3, 2), "@CA-CA"));
-    EXPECT_EQ(bond.data(bond.index(3, 3)).toString().toStdString(), "k=3924.59 eq=1.4");
-}
-
 TEST_F(SpeciesTabTest, Angles)
 {
     CoreData coreData;

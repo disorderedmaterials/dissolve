@@ -7,7 +7,6 @@
 #include "gui/models/configurationModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/moduleLayersModel.h"
-#include "gui/models/speciesModel.h"
 #include "main/dissolve.h"
 #include "nodes/graph.h"
 #include "templates/optionalRef.h"
@@ -27,8 +26,6 @@ class DissolveModel : public QObject
     Q_PROPERTY(const MasterTorsionModel *masterTorsionsModel READ masterTorsionsModel NOTIFY mastersChanged)
     // The Master Improper Model
     Q_PROPERTY(const MasterImproperModel *masterImpropersModel READ masterImpropersModel NOTIFY mastersChanged)
-    // The Species Model
-    Q_PROPERTY(const SpeciesModel *speciesModel READ speciesModel NOTIFY speciesChanged)
     // The Configuration Model
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
     // The ModuleLayers Model
@@ -43,7 +40,6 @@ class DissolveModel : public QObject
     AtomTypeModel atomTypes_;
     // Master terms model
     std::unique_ptr<MasterTermTreeModel> masters_ = nullptr;
-    SpeciesModel speciesModel_;
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
 
@@ -98,8 +94,6 @@ class DissolveModel : public QObject
     const MasterImproperModel *masterImpropersModel() const;
     // The number of master impropers
     int nMasterImpropers();
-    // The Species Model
-    SpeciesModel *speciesModel();
     // The Configurations Model
     ConfigurationModel *configurationsModel();
     // The ModuleLayers Model

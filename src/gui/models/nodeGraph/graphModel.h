@@ -50,6 +50,8 @@ class GraphModel : public QObject
     QString location() const;
     // Whether the current graph has a parent
     bool atRoot() const;
+    // Add a pre-created node
+    void addNode(std::unique_ptr<Node> node, std::string_view name);
 
     protected:
     // The abstract data model for the nodes

@@ -15,6 +15,7 @@ class SpeciesTorsionModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    public:
     // Enumerated column-to-data relationships
     enum DataType
     {
@@ -30,16 +31,18 @@ class SpeciesTorsionModel : public QAbstractTableModel
     };
 
     private:
-    std::vector<SpeciesTorsion> &torsions_;
-    const CoreData &coreData_;
+    std::vector<SpeciesTorsion> *torsions_;
 
     public:
-    SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, const CoreData &coreData);
+    SpeciesTorsionModel();
     void reset();
+    void setTorsions(std::vector<SpeciesTorsion> &torsions);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+
+    friend class SpeciesModel;
 };

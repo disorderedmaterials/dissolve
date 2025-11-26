@@ -328,6 +328,8 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
     result["x"] = x;
     result["y"] = y;
 
+    fromMap(options_, "options", result);
+
     target[tag] = result;
 }
 

@@ -2,121 +2,78 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
+#include "nodes/species.h"
+#include "speciesAtomModel.h"
+#include <memory>
 
-// Set source Species data
-void SpeciesModel::setData(const std::vector<std::unique_ptr<Species>> &species)
+SpeciesModel::SpeciesModel()
 {
-    beginResetModel();
-    species_ = species;
-    endResetModel();
+    species_ = std::make_unique<Species>();
+    atoms_.setSpecies(species_.get());
+    bonds_.setBonds(species_->bonds());
+    angles_.setAngles(species_->angles());
+    torsions_.setTorsions(species_->torsions());
+    impropers_.setImpropers(species_->impropers());
 }
 
-// Set vector containing checked items
-void SpeciesModel::setCheckStateData(std::vector<const Species *> &checkedItemsVector)
+QString SpeciesModel::name() { return QString::fromStdString(std::string(species_->name())); }
+
+void SpeciesModel::setName(QString name)
 {
-    beginResetModel();
-    checkedItems_ = checkedItemsVector;
-    endResetModel();
+    species_->setName(name.toStdString());
+    Q_EMIT(nameChanged());
 }
 
-const Species *SpeciesModel::rawData(const QModelIndex &index) const
+// Bond information
+SpeciesBondModel *SpeciesModel::bonds() { return &bonds_; }
+
+// Angle information
+SpeciesAngleModel *SpeciesModel::angles() { return &angles_; }
+
+// Torsion information
+SpeciesTorsionModel *SpeciesModel::torsions() { return &torsions_; }
+
+// Improper information
+SpeciesImproperModel *SpeciesModel::impropers() { return &impropers_; }
+
+// Atom information
+SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
+
+// Produce this species node on the given graph
+void SpeciesModel::create(QVariant graphModel)
 {
-    assert(species_);
-    return species_->get()[index.row()].get();
+    auto model = graphModel.value<GraphModel *>();
+    model->addNode(std::move(std::make_unique<SpeciesNode>(model->graph(), std::move(species_))), species_->name());
+
+    // Create a new species for the next call
+    species_ = std::make_unique<Species>();
 }
 
-// Refresh model data
-void SpeciesModel::reset()
+void SpeciesModel::addBond(int i, int j)
 {
-    beginResetModel();
-    endResetModel();
+    bonds_.beginInsertRows({}, species_->nBonds(), species_->nBonds() + 1);
+    species_->addBond(i - 1, j - 1);
+    bonds_.endInsertRows();
 }
 
-/*
- * QAbstractItemModel overrides
- */
-
-int SpeciesModel::rowCount(const QModelIndex &parent) const
+void SpeciesModel::addAngle(int i, int j, int k)
 {
-    Q_UNUSED(parent);
-    return species_ ? species_->get().size() : 0;
+    angles_.beginInsertRows({}, species_->nAngles(), species_->nAngles() + 1);
+    species_->addAngle(i - 1, j - 1, k - 1);
+    angles_.endInsertRows();
 }
 
-QVariant SpeciesModel::data(const QModelIndex &index, int role) const
+void SpeciesModel::addTorsion(int i, int j, int k, int l)
 {
-    if (!index.isValid())
-        return {};
-    switch (role)
-    {
-        case (Qt::DisplayRole):
-            return QString::fromStdString(std::string(rawData(index)->name()));
-        case (Qt::CheckStateRole):
-            if (checkedItems_)
-            {
-                return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
-                               checkedItems_->get().end()
-                           ? Qt::Unchecked
-                           : Qt::Checked;
-            }
-            else
-            {
-                return {};
-            }
-        case (static_cast<unsigned int>(SpeciesUserRole::RawData)):
-            return QVariant::fromValue(rawData(index));
-        case (static_cast<unsigned int>(SpeciesUserRole::BondsCount)):
-            return QVariant::fromValue(rawData(index)->nBonds());
-        case (static_cast<unsigned int>(SpeciesUserRole::AnglesCount)):
-            return QVariant::fromValue(rawData(index)->nAngles());
-        case (static_cast<unsigned int>(SpeciesUserRole::TorsionsCount)):
-            return QVariant::fromValue(rawData(index)->nTorsions());
-        case (static_cast<unsigned int>(SpeciesUserRole::ImpropersCount)):
-            return QVariant::fromValue(rawData(index)->nImpropers());
-        default:
-            return {};
-    }
+    torsions_.beginInsertRows({}, species_->nTorsions(), species_->nTorsions() + 1);
+    species_->addTorsion(i - 1, j - 1, k - 1, l - 1);
+    torsions_.endInsertRows();
 }
 
-bool SpeciesModel::setData(const QModelIndex &index, const QVariant &value, int role)
+void SpeciesModel::addImproper(int i, int j, int k, int l)
 {
-    if (role == Qt::CheckStateRole && checkedItems_)
-    {
-        auto &xitems = checkedItems_->get();
-        if (value.value<Qt::CheckState>() == Qt::Checked)
-        {
-            if (std::find(xitems.begin(), xitems.end(), rawData(index)) == xitems.end())
-                xitems.push_back(rawData(index));
-        }
-        else
-            xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
-
-        Q_EMIT dataChanged(index, index);
-
-        return true;
-    }
-
-    return false;
-}
-
-Qt::ItemFlags SpeciesModel::flags(const QModelIndex &index) const
-{
-    return checkedItems_ ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
-                         : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-}
-
-QVariant SpeciesModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole)
-        return {};
-
-    if (orientation == Qt::Horizontal)
-        switch (section)
-        {
-            case 0:
-                return "Name";
-            default:
-                return {};
-        }
-
-    return {};
+    impropers_.beginInsertRows({}, species_->nImpropers(), species_->nImpropers() + 1);
+    species_->addImproper(i - 1, j - 1, k - 1, l - 1);
+    impropers_.endInsertRows();
 }

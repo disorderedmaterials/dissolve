@@ -9,10 +9,11 @@
 #include "classes/shortRangeFunctions.h"
 #include "data/elements.h"
 #include <map>
+#include <memory>
 #include <vector>
 
 // AtomType Definition
-class AtomType : public Serialisable<>
+class AtomType : public Serialisable<>, public std::enable_shared_from_this<AtomType>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);

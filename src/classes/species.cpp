@@ -208,10 +208,8 @@ int Species::version() const { return version_; }
 // Express as a serialisable value
 void Species::serialise(std::string tag, SerialisedValue &target) const
 {
-    if (forcefield_ == nullptr && atoms_.empty() && bonds_.empty() && angles_.empty() && torsions_.empty() &&
-        isotopologues_.empty() && sites_.empty())
-        return;
     auto &result = target[tag];
+    result["name"] = name_;
     if (forcefield_ != nullptr)
         result["forcefield"] = forcefield_->name().data();
 
