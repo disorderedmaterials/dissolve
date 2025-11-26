@@ -104,7 +104,7 @@ NodeConstants::ProcessResult LoopGraph::process()
             if (looped == NodeConstants::ProcessResult::Failed)
                 return looped;
         }
-        proxyOutputs().setUpdateRequired();
+
         graphStatus = Graph::process();
 
         if (graphStatus == NodeConstants::ProcessResult::Failed)

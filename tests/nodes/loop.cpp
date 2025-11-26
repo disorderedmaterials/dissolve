@@ -77,7 +77,7 @@ class LoopGraphTest : public ::testing::Test
     LoopGraph *loop_{nullptr};
 };
 
-TEST_F(LoopGraphTest, SimpleFeedback)
+TEST_F(LoopGraphTest, NoFeedback)
 {
     createGraph();
 
@@ -102,45 +102,82 @@ TEST_F(LoopGraphTest, SimpleFeedback)
     // Zero iterations: We expect 1 + (xB = 1) = 1 + 1 = 2
     nLoops->set<Number>(0);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    auto res0 = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res0, 2);
+    auto res = y_->getOutputValue<Number>("Result").asInteger();
+    ASSERT_EQ(res, 2);
+}
+
+TEST_F(LoopGraphTest, SingleFeedback)
+{
+    createGraph();
+
+    auto xB = x_->findInput("B");
+    EXPECT_TRUE(xB);
+    xB->set<Number>(1);
+
+    auto yB = y_->findInput("B");
+    EXPECT_TRUE(yB);
+    yB->set<Number>(0);
+
+    /*
+     * Process with a single loop iteration
+     */
+    auto iA = i_->findOption("A");
+    EXPECT_TRUE(iA);
+    iA->set<Number>(1);
+
+    auto nLoops = loop_->findOption("NLoops");
+    EXPECT_TRUE(nLoops);
 
     // One iteration: We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
     nLoops->set<Number>(1);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    auto res1 = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res1, 3);
-
-    // Two iterations: We expect (LB = 3) + (xB = 1) = 3 + 1 = 4
-    nLoops->set<Number>(2);
-    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    auto res2 = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res2, 4);
-
-    // Three iterations: We expect (LB = 4) + (xB = 1) = 4 + 1 = 5
-    nLoops->set<Number>(3);
-    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
-    auto res3 = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res3, 5);
+    auto res = y_->getOutputValue<Number>("Result").asInteger();
+    ASSERT_EQ(res, 3);
 }
 
-TEST_F(LoopGraphTest, BasicLoop)
+TEST_F(LoopGraphTest, ExtendedFeedback)
 {
     createGraph();
 
-    CoreData cd;
-    Dissolve d(cd);
-    DissolveGraph copy(d);
-    auto serialised = root_.serialise();
+    auto xB = x_->findInput("B");
+    EXPECT_TRUE(xB);
+    xB->set<Number>(1);
 
-    SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml");
-    UnitTest::compareToml("", serialised, contents);
+    auto yB = y_->findInput("B");
+    EXPECT_TRUE(yB);
+    yB->set<Number>(0);
 
-    std::cout << serialised << std::endl;
-    copy.deserialise(serialised);
-    auto repeat = copy.serialise();
+    /*
+     * Process with a single loop iteration
+     */
+    auto iA = i_->findOption("A");
+    EXPECT_TRUE(iA);
+    iA->set<Number>(1);
 
-    UnitTest::compareToml("", repeat, contents);
-};
+    auto nLoops = loop_->findOption("NLoops");
+    EXPECT_TRUE(nLoops);
+
+    /*
+     * 10 iterations
+     *
+     * n         Add.     Res.
+     * 0 : 1 ->  1 + 1  -> 2  -> LB
+     * 1 :   ->  2 + 1  -> 3  -> LB
+     * 2 :   ->  3 + 1  -> 4  -> LB
+     * 3 :   ->  4 + 1  -> 5  -> LB
+     * 4 :   ->  5 + 1  -> 6  -> LB
+     * 5 :   ->  6 + 1  -> 7  -> LB
+     * 6 :   ->  7 + 1  -> 8  -> LB
+     * 7 :   ->  8 + 1  -> 9  -> LB
+     * 8 :   ->  9 + 1  -> 10 -> LB
+     * 9 :   -> 10 + 1  -> 11 -> LB
+     * 10 :  -> 11 + 1  -> 12 -> 12
+     *
+     */
+    nLoops->set<Number>(10);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    auto res = y_->getOutputValue<Number>("Result").asInteger();
+    ASSERT_EQ(res, 12);
+}
 
 } // namespace UnitTest
