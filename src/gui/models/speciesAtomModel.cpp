@@ -1,12 +1,27 @@
 #include "gui/models/speciesAtomModel.h"
-#include "classes/atomType.h"
+#include "classes/species.h"
+#include "data/elements.h"
+#include <memory>
 
-SpeciesAtomModel::SpeciesAtomModel(Species &species, const CoreData &coreData) : species_(species), coreData_(coreData) {}
+SpeciesAtomModel::SpeciesAtomModel() {}
+
+void SpeciesAtomModel::setSpecies(Species *species) { species_ = species; }
+
+void SpeciesAtomModel::addAtom(QString element, double x, double y, double z, double charge)
+{
+    auto Z = Elements::element(element.toStdString());
+    Vector3 r{x, y, z};
+    beginInsertRows({}, species_->atoms().size(), species_->atoms().size());
+    species_->addAtom(Z, r, charge);
+    endInsertRows();
+}
 
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return species_.atoms().size();
+    if (!species_)
+        return 0;
+    return species_->atoms().size();
 }
 
 int SpeciesAtomModel::columnCount(const QModelIndex &parent) const
@@ -20,7 +35,10 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
-    auto &item = species_.atom(index.row());
+    if (!species_)
+        return {};
+
+    auto &item = species_->atom(index.row());
 
     if (role == Qt::UserRole)
         return QVariant::fromValue(&item);
@@ -82,33 +100,39 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
 {
     if (role != Qt::EditRole)
         return false;
-    auto &item = species_.atom(index.row());
+    if (!species_)
+        return false;
+    auto &item = species_->atom(index.row());
     switch (index.column())
     {
         case 0:
             return false;
         case 1:
-            // TODO
+        {
+            auto population = species_->atomTypePopulations().vector();
+            auto name = value.toString().toStdString();
+            auto it = std::find_if(population.begin(), population.end(), [&name](auto &x) { return x.first->name() == name; });
+            if (it == population.end())
             {
-                auto atomType = coreData_.findAtomType(value.toString().toStdString());
-                if (!atomType)
-                    return false;
-                item.setAtomType(atomType);
-                species_.updateIsotopologues();
-                Q_EMIT atomTypeChanged();
+                auto at = species_->addAtomType(item.Z());
+                at->setName(value.toString().toStdString());
+                item.setAtomType(at);
             }
-            break;
+            else
+                item.setAtomType(std::const_pointer_cast<AtomType>(it->first->shared_from_this()));
+        }
+        break;
         case 2:
         case 3:
         case 4:
         {
             auto newR = item.r();
             newR.set(index.column() - 2, value.toDouble());
-            species_.setAtomCoordinates(&item, newR);
+            species_->setAtomCoordinates(&item, newR);
         }
         break;
         case 5:
-            species_.setAtomCharge(&item, value.toDouble());
+            species_->setAtomCharge(&item, value.toDouble());
             break;
     }
     Q_EMIT dataChanged(index, index);

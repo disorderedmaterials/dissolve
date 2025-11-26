@@ -22,6 +22,7 @@
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
+#include "nodes/species.h"
 #include "nodes/sq/sq.h"
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"

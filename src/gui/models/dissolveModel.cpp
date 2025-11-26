@@ -22,7 +22,6 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
     atomTypes_.setData(dissolve_->coreData().atomTypes());
     masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
-    speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
     moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), &dissolve_->coreData());
     Q_EMIT modelsUpdated();
@@ -39,7 +38,6 @@ void DissolveModel::update()
         masters_->torsionModel_.reset();
         masters_->improperModel_.reset();
     }
-    speciesModel_.reset();
     configurationModel_.reset();
     moduleLayersModel_.reset();
     Q_EMIT modelsUpdated();
@@ -114,9 +112,6 @@ int DissolveModel::nMasterImpropers()
         return 0;
     return masters_->improperModel_.rowCount();
 }
-
-// The Species Model
-SpeciesModel *DissolveModel::speciesModel() { return &speciesModel_; }
 
 // The Configuration Model
 ConfigurationModel *DissolveModel::configurationsModel() { return &configurationModel_; }

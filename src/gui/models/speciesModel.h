@@ -4,21 +4,42 @@
 #pragma once
 
 #include "classes/species.h"
-#include "templates/optionalRef.h"
+#include "gui/models/speciesAngleModel.h"
+#include "gui/models/speciesAtomModel.h"
+#include "gui/models/speciesBondModel.h"
+#include "gui/models/speciesImproperModel.h"
+#include "gui/models/speciesTorsionModel.h"
+#include "nodes/species.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
+#include <qtmetamacros.h>
 #include <vector>
 
-class SpeciesModel : public QAbstractListModel
+class SpeciesModel : public QObject
 {
     Q_OBJECT
+    // The Species being modelled
+    Q_PROPERTY(SpeciesAtomModel *atoms READ atoms NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesBondModel *bonds READ bonds NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesAngleModel *angles READ angles NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesTorsionModel *torsions READ torsions NOTIFY speciesChanged)
+    Q_PROPERTY(SpeciesImproperModel *impropers READ impropers NOTIFY speciesChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
     private:
     // Source Species data
-    OptionalReferenceWrapper<const std::vector<std::unique_ptr<Species>>> species_;
-    // Vector containing checked items (if relevant)
-    OptionalReferenceWrapper<std::vector<const Species *>> checkedItems_;
+    std::unique_ptr<Species> species_;
+    // Atom Model
+    SpeciesAtomModel atoms_;
+    // Bond Model
+    SpeciesBondModel bonds_;
+    // Angle Model
+    SpeciesAngleModel angles_;
+    // Torsion Model
+    SpeciesTorsionModel torsions_;
+    // Improper Model
+    SpeciesImproperModel impropers_;
     // Return object represented by specified model index
     const Species *rawData(const QModelIndex &index) const;
 
@@ -34,20 +55,37 @@ class SpeciesModel : public QAbstractListModel
     Q_ENUM(SpeciesUserRole);
 
     public:
-    // Set source Species data
-    void setData(const std::vector<std::unique_ptr<Species>> &species);
+    SpeciesModel();
+    // Species name
+    QString name();
+    // Species name
+    void setName(QString name);
+    // Atom information
+    SpeciesAtomModel *atoms();
+    // Bond information
+    SpeciesBondModel *bonds();
+    // Angle information
+    SpeciesAngleModel *angles();
+    // Torsion information
+    SpeciesTorsionModel *torsions();
+    // Improper information
+    SpeciesImproperModel *impropers();
     // Set vector containing checked items
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
     // Refresh model data
     void reset();
 
-    /*
-     * QAbstractItemModel overrides
-     */
-    public:
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    Q_SIGNALS:
+    // We've changed the underlying species
+    void speciesChanged();
+    // The name has changed
+    void nameChanged();
+
+    public Q_SLOTS:
+    // Produce this species node on the given graph
+    void create(QVariant graphModel);
+    void addBond(int i, int j);
+    void addAngle(int i, int j, int k);
+    void addTorsion(int i, int j, int k, int l);
+    void addImproper(int i, int j, int k, int l);
 };

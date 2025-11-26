@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "atomicSpecies.h"
-#include "dissolve.h"
 
 AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph, Elements::Element Z) : Node(parentGraph)
 {
