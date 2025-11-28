@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/loop.h"
+#include "nodes/loopGraph.h"
 #include "nodes/outputs.h"
 
 LoopBacksNode::LoopBacksNode(Graph *parentGraph) : Node(parentGraph) {}
