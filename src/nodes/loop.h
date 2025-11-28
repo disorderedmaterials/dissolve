@@ -6,6 +6,7 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include "nodes/inputs.h"
+#include "nodes/loopBack.h"
 #include "nodes/outputs.h"
 #include "templates/doubleKeyedMap.h"
 
@@ -41,7 +42,7 @@ class LoopGraph : public Graph
     // Current loop iteration
     int loopCounter_{0};
     // Loop backs
-    OutputsNode *loopBacks_{nullptr};
+    LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
     Edges loopEdges_;
     // Release a loopback by name
@@ -51,7 +52,7 @@ class LoopGraph : public Graph
     // Number of loops (iterations) to perform
     const int nLoops() const;
     // Loop backs
-    OutputsNode *loopBacks();
+    LoopBacksNode *loopBacks();
     // Loop edges
     Edges &loopEdges();
     // Current loop iteration
@@ -71,9 +72,4 @@ class LoopGraph : public Graph
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
-
-    /*
-     * Functions
-     */
-    public:
 };

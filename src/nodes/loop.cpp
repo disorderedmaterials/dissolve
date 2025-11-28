@@ -6,7 +6,7 @@
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
     addOption<Number>("NLoops", "Number of loops (iterations) to perform", nLoops_);
-    loopBacks_ = dynamic_cast<OutputsNode *>(addNode(std::make_unique<OutputsNode>(this), "LoopBacks"));
+    loopBacks_ = dynamic_cast<LoopBacksNode *>(addNode(std::make_unique<LoopBacksNode>(this), "LoopBacks"));
 }
 
 /*
@@ -29,7 +29,7 @@ void LoopGraph::increment() { loopCounter_++; }
 const int LoopGraph::nLoops() const { return nLoops_.asInteger(); }
 
 // Loop backs
-OutputsNode *LoopGraph::loopBacks() { return loopBacks_; }
+LoopBacksNode *LoopGraph::loopBacks() { return loopBacks_; }
 
 // Loop edges
 Graph::Edges &LoopGraph::loopEdges() { return loopEdges_; }
@@ -62,6 +62,7 @@ bool LoopGraph::addEdge(const EdgeDefinition &definition)
         setLoopBacks();
     else if (loopBacks_->findInput(definition.targetInput))
     {
+        proxyInputs().findOutput(definition.targetInput)->setFlags(ParameterBase::ParameterFlags::LoopBack);
         auto edge =
             Edge::create(this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
         if (!edge)

@@ -106,9 +106,12 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     // Confirm that the destination input is actually an input
     if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input))
     {
-        Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
-                         definition.targetInput);
-        return {};
+        if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::LoopBack))
+        {
+            Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
+                             definition.targetInput);
+            return {};
+        }
     }
 
     // Check that types are compatible
@@ -226,26 +229,16 @@ NodeConstants::ProcessResult Edge::pull()
 // Pull the data from the source node to the target, returning a ProcessResult
 NodeConstants::ProcessResult LoopEdge::pull()
 {
-    /*
-     * If the versionIndex for the source node stored in the Edge is Invalid or different to that on the source node
-     * itself we need to pull from or run the source node to get the updated output. We can then store the source node's
-     * current versionIndex ready for next time.
-     */
-    if (!sourceNode_.isUpToDate() || (sourceNodeVersionIndex_ != sourceNode_.versionIndex()))
-    {
-        // Copy the parameter data over
-        if (!analogue().assign(&targetInput_))
-            return NodeConstants::ProcessResult::Failed;
+    // Copy the parameter data over
+    if (!analogue().assign(&sourceOutput_))
+        return NodeConstants::ProcessResult::Failed;
 
-        sourceNode().setUpdateRequired();
+    sourceNode().setUpdateRequired();
 
-        // All succeeded, so update version index
-        sourceNodeVersionIndex_ = sourceNode_.versionIndex();
+    // All succeeded, so update version index
+    sourceNodeVersionIndex_ = sourceNode_.versionIndex();
 
-        return NodeConstants::ProcessResult::Success;
-    }
-
-    return NodeConstants::ProcessResult::Unchanged;
+    return NodeConstants::ProcessResult::Success;
 }
 
 // The constructor is private because it can only be constructed by the factory method

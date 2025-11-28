@@ -23,32 +23,6 @@ std::string_view InputsNode::summary() const { return "Maps graph inputs to loca
 // Perform processing
 NodeConstants::ProcessResult InputsNode::process() { return NodeConstants::ProcessResult::Success; }
 
-// Run the node, retrieving dependent inputs as necessary
-NodeConstants::ProcessResult InputsNode::run()
-{
-    auto loopGraph = dynamic_cast<LoopGraph *>(parentGraph_);
-
-    /*
-     * Only pull loop edges when we are at loop 1 or above.
-     * During these iterations, this block overrides the base Node run method.
-     *
-     */
-    if (loopGraph && (loopGraph->loopCount() > 0 && loopGraph->loopCount() <= loopGraph->nLoops()))
-    {
-        auto status = NodeConstants::ProcessResult::Unchanged;
-
-        if (loopGraph->loopEdges().empty())
-            return status;
-
-        for (const auto &edge : loopGraph->loopEdges())
-            status = static_cast<LoopEdge *>(edge.get())->pull();
-
-        return status;
-    }
-
-    return Node::run();
-}
-
 /*
  * Serialisation
  */

@@ -5,12 +5,12 @@
 
 #include "nodes/node.h"
 
-// Inputs Node
-class InputsNode : public Node
+// Outputs Node
+class LoopBacksNode : public Node
 {
     public:
-    InputsNode(Graph *parentGraph);
-    ~InputsNode() override = default;
+    LoopBacksNode(Graph *parentGraph);
+    ~LoopBacksNode() override = default;
 
     /*
      * Definition
@@ -28,6 +28,14 @@ class InputsNode : public Node
     // Perform processing
     NodeConstants::ProcessResult process() override;
 
+    public:
+    // Run the node, retrieving dependent inputs as necessary
+    NodeConstants::ProcessResult run() override;
+
+    public:
+    // Flag that the node data needs to be updated
+    void setUpdateRequired() override;
+
     /*
      * Serialisation
      */
@@ -35,7 +43,7 @@ class InputsNode : public Node
     // Is it appropriate to bother serialising this node?
     bool shouldSerialise() const override;
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };
