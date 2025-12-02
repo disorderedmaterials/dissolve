@@ -94,7 +94,7 @@ class Graph : public Node
     // Add edge between nodes
     virtual bool addEdge(const EdgeDefinition &definition);
     // Remove edge between nodes
-    bool removeEdge(const EdgeDefinition &definition);
+    virtual bool removeEdge(const EdgeDefinition &definition);
     bool removeEdge(Edge *edgeToRemove);
     // Find edge between nodes
     Edge *findEdge(const EdgeDefinition &definition) const;

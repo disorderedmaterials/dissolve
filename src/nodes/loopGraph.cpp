@@ -52,7 +52,11 @@ void LoopGraph::releaseLoopBack(const std::string &name)
     auto inputs = loopBacks_->inputs();
     auto it = inputs.find(name);
     if (it != inputs.end())
+    {
+        auto analogue = proxyInputs().findOutput(name).get();
+        analogue->removeFlag(ParameterBase::ParameterFlags::LoopBack);
         inputs.erase(it);
+    }
 }
 
 // Add edge between nodes
@@ -76,12 +80,46 @@ bool LoopGraph::addEdge(const EdgeDefinition &definition)
     return Graph::addEdge(definition);
 }
 
-// Unlink edge, releasing the loop back if one accompanies it
-void LoopGraph::unlinkEdge(Edge *edge)
+// Remove edge between nodes
+bool LoopGraph::removeEdge(const EdgeDefinition &definition)
 {
-    Node::unlinkEdge(edge);
-    std::string release(edge->targetInput().name());
-    releaseLoopBack(release);
+    if (!Graph::removeEdge(definition))
+    {
+        auto loopEdge = findLoopEdge(definition);
+        if (removeEdge(static_cast<LoopEdge *>(loopEdge)))
+            releaseLoopBack(definition.targetInput);
+        else
+            return false;
+    }
+    return true;
+}
+
+bool LoopGraph::removeEdge(LoopEdge *edgeToRemove)
+{
+    if (!edgeToRemove)
+        return Messenger::error("LoopEdge doesn't exist, so can't remove it.\n");
+
+    auto edgePtr = static_cast<Edge *>(edgeToRemove);
+    std::erase_if(loopEdges_, [edgePtr](const auto &edge) { return edge.get() == edgePtr; });
+
+    return true;
+}
+
+// Find edge between nodes
+LoopEdge *LoopGraph::findLoopEdge(const EdgeDefinition &definition) const
+{
+    auto it = std::find_if(loopEdges_.begin(), loopEdges_.end(),
+                           [definition](const auto &edge)
+                           {
+                               auto def = edge->definition();
+                               return def.sourceNode == definition.sourceNode && def.sourceOutput == definition.sourceOutput &&
+                                      def.targetInput == definition.targetInput;
+                           });
+
+    if (it != loopEdges_.end())
+        return static_cast<LoopEdge *>(it->get());
+
+    return {};
 }
 
 // Reset the loop counter to zero

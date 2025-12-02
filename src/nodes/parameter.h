@@ -93,6 +93,8 @@ class ParameterBase : public Serialisable<>
     Node *parent() const;
     // Set flag(s) for the parameter
     void setFlags(const Flags<ParameterBase::ParameterFlags> &flags);
+    // Remove flag for the parameter
+    void removeFlag(ParameterBase::ParameterFlags flag);
     // Return current flags
     const Flags<ParameterBase::ParameterFlags> &flags() const;
     // Return the number of allowed input edges

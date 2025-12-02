@@ -57,14 +57,17 @@ class LoopGraph : public Graph
     Edges &loopEdges();
     // Current loop iteration
     int loopCount();
-    // Unlink edge, releasing the loop back if one accompanies it
-    void unlinkEdge(Edge *edge) override;
     // Reset the loop counter to zero
     void resetLoopCounter();
     // Set the loopbacks corresponding to the graph inputs
     void setLoopBacks();
     // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition) override;
+    // Remove edge between nodes
+    bool removeEdge(const EdgeDefinition &definition) override;
+    bool removeEdge(LoopEdge *edgeToRemove);
+    // Find loop edge between nodes
+    LoopEdge *findLoopEdge(const EdgeDefinition &definition) const;
 
     /*
      * Processing & Validity
