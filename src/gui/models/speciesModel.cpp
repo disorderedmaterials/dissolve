@@ -7,21 +7,20 @@
 #include "speciesAtomModel.h"
 #include <memory>
 
-SpeciesModel::SpeciesModel()
-{
-    species_ = std::make_unique<Species>();
-    atoms_.setSpecies(species_.get());
-    bonds_.setBonds(species_->bonds());
-    angles_.setAngles(species_->angles());
-    torsions_.setTorsions(species_->torsions());
-    impropers_.setImpropers(species_->impropers());
-}
+SpeciesModel::SpeciesModel() : node_(nullptr) {}
 
-QString SpeciesModel::name() { return QString::fromStdString(std::string(species_->name())); }
+QString SpeciesModel::name()
+{
+    if (node_ == nullptr)
+        return "";
+    return QString::fromStdString(std::string(node_->species().name()));
+}
 
 void SpeciesModel::setName(QString name)
 {
-    species_->setName(name.toStdString());
+    if (node_ == nullptr)
+        return;
+    node_->species().setName(name.toStdString());
     Q_EMIT(nameChanged());
 }
 
@@ -40,40 +39,58 @@ SpeciesImproperModel *SpeciesModel::impropers() { return &impropers_; }
 // Atom information
 SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
 
-// Produce this species node on the given graph
-void SpeciesModel::create(QVariant graphModel)
-{
-    auto model = graphModel.value<GraphModel *>();
-    model->addNode(std::move(std::make_unique<SpeciesNode>(model->graph(), std::move(species_))), species_->name());
+GraphModel *SpeciesModel::graphModel() { return graphModel_; }
 
-    // Create a new species for the next call
-    species_ = std::make_unique<Species>();
+// Produce this species node on the given graph
+void SpeciesModel::assignModel(GraphModel *graphModel)
+{
+
+    graphModel_ = graphModel;
+    node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
+    auto &species = node_->species();
+    atoms_.setSpecies(&species);
+    bonds_.setBonds(species.bonds());
+    angles_.setAngles(species.angles());
+    torsions_.setTorsions(species.torsions());
+    impropers_.setImpropers(species.impropers());
+}
+
+// Finalise the node
+void SpeciesModel::create()
+{
+    // Need copy because we're going to move the unique_ptr
+    auto name = node_->species().name();
+    node_->setName(name);
+    graphModel_->addNode(std::unique_ptr<Node>(std::move(node_)), name);
+
+    // Create a new node for next call
+    node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
 }
 
 void SpeciesModel::addBond(int i, int j)
 {
-    bonds_.beginInsertRows({}, species_->nBonds(), species_->nBonds() + 1);
-    species_->addBond(i - 1, j - 1);
+    bonds_.beginInsertRows({}, node_->species().nBonds(), node_->species().nBonds() + 1);
+    node_->species().addBond(i - 1, j - 1);
     bonds_.endInsertRows();
 }
 
 void SpeciesModel::addAngle(int i, int j, int k)
 {
-    angles_.beginInsertRows({}, species_->nAngles(), species_->nAngles() + 1);
-    species_->addAngle(i - 1, j - 1, k - 1);
+    angles_.beginInsertRows({}, node_->species().nAngles(), node_->species().nAngles() + 1);
+    node_->species().addAngle(i - 1, j - 1, k - 1);
     angles_.endInsertRows();
 }
 
 void SpeciesModel::addTorsion(int i, int j, int k, int l)
 {
-    torsions_.beginInsertRows({}, species_->nTorsions(), species_->nTorsions() + 1);
-    species_->addTorsion(i - 1, j - 1, k - 1, l - 1);
+    torsions_.beginInsertRows({}, node_->species().nTorsions(), node_->species().nTorsions() + 1);
+    node_->species().addTorsion(i - 1, j - 1, k - 1, l - 1);
     torsions_.endInsertRows();
 }
 
 void SpeciesModel::addImproper(int i, int j, int k, int l)
 {
-    impropers_.beginInsertRows({}, species_->nImpropers(), species_->nImpropers() + 1);
-    species_->addImproper(i - 1, j - 1, k - 1, l - 1);
+    impropers_.beginInsertRows({}, node_->species().nImpropers(), node_->species().nImpropers() + 1);
+    node_->species().addImproper(i - 1, j - 1, k - 1, l - 1);
     impropers_.endInsertRows();
 }

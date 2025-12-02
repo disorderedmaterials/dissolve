@@ -271,22 +271,9 @@ void Graph::deserialise(const SerialisedValue &node)
           [this](const auto name, const auto &value)
           {
               std::string nodeType = toml::find<std::string>(value, "type");
-              if (nodeType == "Species")
-              {
-                  // Species cannot be default constructed and requires species handling.
-                  auto species = std::make_shared<Species>();
-                  CoreData coreData;
-                  species->deserialise(value.at("options").at("Species").at("data"), coreData);
-                  species->setName(name);
-                  std::unique_ptr<Node> spNode = std::make_unique<SpeciesNode>(this, std::move(species));
-                  addNode(std::move(spNode), name);
-              }
-              else
-              {
-                  auto child = createNode(nodeType, name);
+              auto child = createNode(nodeType, name);
 
-                  child->deserialise(value);
-              }
+              child->deserialise(value);
           });
     toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
 }
