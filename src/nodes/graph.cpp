@@ -136,6 +136,7 @@ Node *Graph::createNode(std::string_view nodeType, std::string_view nodeName)
 // Add node to graph
 Node *Graph::addNode(std::unique_ptr<Node> node, std::string_view newName)
 {
+    node->setParent(this);
     auto nodePtr = node.get();
 
     auto uniqueName = uniqueNodeName(node.get(), newName.empty() ? node->type() : newName);

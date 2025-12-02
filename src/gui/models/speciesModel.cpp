@@ -60,7 +60,7 @@ void SpeciesModel::create()
 {
     // Need copy because we're going to move the unique_ptr
     auto name = node_->species().name();
-    node_->setName(name);
+    // node_->setName(name);
     graphModel_->addNode(std::unique_ptr<Node>(std::move(node_)), name);
 
     // Create a new node for next call

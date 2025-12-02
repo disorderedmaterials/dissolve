@@ -6,11 +6,8 @@
 #include <toml11/toml.hpp>
 #include <toml11/toml/parser.hpp>
 
-SpeciesNode::SpeciesNode(Graph *parentGraph)
-    : Node(parentGraph)
+SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
-    auto ptr = &species_;
-    addOption<Species*>("Species", "Created Species", ptr);
     addPointerOutput<const Species>("Species", "Created species", species_);
 }
 
@@ -22,3 +19,13 @@ NodeConstants::ProcessResult SpeciesNode::process() { return NodeConstants::Proc
 
 Species &SpeciesNode::species() { return species_; }
 const Species &SpeciesNode::species() const { return species_; }
+
+// Serialise any hidden content
+void SpeciesNode::hidden_serialise(SerialisedValue &target) const { species_.serialise("species", target); }
+
+// Deserialise any hidden content
+void SpeciesNode::hidden_deserialise(const SerialisedValue &node)
+{
+    CoreData coreData;
+    species_.deserialise(node.at("species"), coreData);
+}

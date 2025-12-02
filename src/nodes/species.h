@@ -43,4 +43,9 @@ class SpeciesNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    // Serialise any hidden content
+    void hidden_serialise(SerialisedValue &target) const override;
+    // Deserialise any hidden content
+    void hidden_deserialise(const SerialisedValue &target) override;
 };

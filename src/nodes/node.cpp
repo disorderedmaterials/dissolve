@@ -299,6 +299,10 @@ void Node::markIncomingEdgesForPull(const ParameterBase *toParameter) const
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
 
+// Update the parent graph after a move
+// This is private so that only designated friend classes can do this.
+void Node::setParent(Graph *graph) { parentGraph_ = graph; }
+
 // Return the Dissolve reference
 Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }
 
@@ -330,6 +334,8 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 
     fromMap(options_, "options", result);
 
+    hidden_serialise(result);
+
     target[tag] = result;
 }
 
@@ -354,6 +360,7 @@ void Node::deserialise(const SerialisedValue &node)
               else
                   Messenger::exception("Node {} does not contain an option {}", name(), k);
           });
+    hidden_deserialise(node);
 }
 
 // Express persistent data as a serialisable value
