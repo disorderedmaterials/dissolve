@@ -89,9 +89,6 @@ TEST_F(LoopGraphTest, NoFeedback)
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    /*
-     * Process with a single loop iteration
-     */
     auto iA = i_->findOption("A");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
@@ -118,9 +115,6 @@ TEST_F(LoopGraphTest, SingleFeedback)
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    /*
-     * Process with a single loop iteration
-     */
     auto iA = i_->findOption("A");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
@@ -147,9 +141,6 @@ TEST_F(LoopGraphTest, ExtendedFeedback)
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    /*
-     * Process with a single loop iteration
-     */
     auto iA = i_->findOption("A");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
@@ -194,6 +185,46 @@ TEST_F(LoopGraphTest, ReleaseLoopBack)
     ASSERT_EQ(loop_->loopEdges().size(), 0);
     ASSERT_EQ(loop_->edges().size(), nEdges);
     ASSERT_FALSE(flagged->flags().isSet(ParameterBase::ParameterFlags::LoopBack));
+}
+
+TEST_F(LoopGraphTest, UpstreamChange)
+{
+    createGraph();
+
+    auto xB = x_->findInput("B");
+    EXPECT_TRUE(xB);
+    xB->set<Number>(1);
+
+    auto yB = y_->findInput("B");
+    EXPECT_TRUE(yB);
+    yB->set<Number>(0);
+
+    auto iA = i_->findOption("A");
+    EXPECT_TRUE(iA);
+    iA->set<Number>(1);
+
+    auto nLoops = loop_->findOption("NLoops");
+    EXPECT_TRUE(nLoops);
+
+    /*
+     * 100 iterations
+     *
+     */
+    nLoops->set<Number>(100);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    auto res = y_->getOutputValue<Number>("Result").asInteger();
+    ASSERT_EQ(res, 102);
+
+    /*
+     * Alter upstream number node and run for another 100 iterations
+     *
+     */
+    iA->set<Number>(2);
+
+    nLoops->set<Number>(100);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    auto res2 = y_->getOutputValue<Number>("Result").asInteger();
+    ASSERT_EQ(res2, 103);
 }
 
 } // namespace UnitTest
