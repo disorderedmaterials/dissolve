@@ -29,8 +29,6 @@ class LoopGraph : public Graph
     std::string_view type() const override;
     // Return short summary of the node's purpose
     std::string_view summary() const override;
-    // Increment loop counter
-    void increment();
 
     /*
      * Feedback
@@ -45,6 +43,14 @@ class LoopGraph : public Graph
     LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
     Edges loopEdges_;
+    // Increment loop counter
+    void increment();
+    // Current loop iteration
+    int loopCount();
+    // Reset the loop counter to zero
+    void resetLoopCounter();
+    // Set the loopbacks corresponding to the graph inputs
+    void setLoopBacks();
     // Release a loopback by name
     void releaseLoopBack(const std::string &name);
 
@@ -55,12 +61,6 @@ class LoopGraph : public Graph
     LoopBacksNode *loopBacks();
     // Loop edges
     Edges &loopEdges();
-    // Current loop iteration
-    int loopCount();
-    // Reset the loop counter to zero
-    void resetLoopCounter();
-    // Set the loopbacks corresponding to the graph inputs
-    void setLoopBacks();
     // Add edge between nodes
     bool addEdge(const EdgeDefinition &definition) override;
     // Remove edge between nodes

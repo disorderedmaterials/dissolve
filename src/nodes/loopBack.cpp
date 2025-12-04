@@ -11,10 +11,10 @@ LoopBacksNode::LoopBacksNode(Graph *parentGraph) : Node(parentGraph) {}
  */
 
 // Return type of the node
-std::string_view LoopBacksNode::type() const { return "Outputs"; }
+std::string_view LoopBacksNode::type() const { return "LoopBacks"; }
 
 // Return short summary of the node's purpose
-std::string_view LoopBacksNode::summary() const { return "Maps local inputs to graph outputs"; }
+std::string_view LoopBacksNode::summary() const { return "Maps feedback from internal node outputs to graph inputs"; }
 
 /*
  * Processing & Validity
@@ -34,8 +34,11 @@ NodeConstants::ProcessResult LoopBacksNode::run()
         return status;
 
     for (const auto &edge : loopGraph->loopEdges())
+    {
         status = static_cast<LoopEdge *>(edge.get())->pull();
-
+        if (status != NodeConstants::ProcessResult::Failed)
+            return status;
+    }
     return status;
 }
 

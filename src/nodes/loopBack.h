@@ -5,7 +5,7 @@
 
 #include "nodes/node.h"
 
-// Outputs Node
+// LoopBacks Node
 class LoopBacksNode : public Node
 {
     public:

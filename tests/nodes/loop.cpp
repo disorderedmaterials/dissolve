@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
-#include "nodes/loopGraph.h"
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
+#include "nodes/loopGraph.h"
 #include "nodes/numberNode.h"
 #include "nodes/registry.h"
 #include "tests/testData.h"
@@ -61,10 +61,6 @@ class LoopGraphTest : public ::testing::Test
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "LoopBacks", "I"}));
         // - The output "C" of the loop graph then goes to input "A" of Add 'y'
         EXPECT_TRUE(root_.addEdge({"Loop", "C", "y", "A"}));
-        /*
-         * TODO There is an obvious, smaller unit test to write here which tests the validity of trying to make a loopback
-         * connection to a named Input which doesn't exist.
-         */
     }
 
     protected:
