@@ -105,12 +105,12 @@ class Node : public Serialisable<>
      * Processing & Validity
      */
     private:
-    // Version index for the node, bumped whenever result outputs change
-    int versionIndex_{NodeConstants::InvalidVersion};
     // Whether the node's data is up-to-date
     bool upToDate_{false};
 
     protected:
+    // Version index for the node, bumped whenever result outputs change
+    int versionIndex_{NodeConstants::InvalidVersion};
     // Perform processing
     virtual NodeConstants::ProcessResult process();
 

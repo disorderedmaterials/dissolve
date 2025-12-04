@@ -97,6 +97,16 @@ TEST_F(LoopGraphTest, NoFeedback)
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 2);
+
+    // Check node versioning
+    EXPECT_EQ(i_->versionIndex(), 0);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 0);
+    EXPECT_EQ(x_->versionIndex(), 0);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 0);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Loopbacks node only runs on iteration > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
 }
 
 TEST_F(LoopGraphTest, SingleFeedback)
@@ -123,6 +133,16 @@ TEST_F(LoopGraphTest, SingleFeedback)
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 3);
+
+    // Check node versioning
+    EXPECT_EQ(i_->versionIndex(), 0);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 1);
+    EXPECT_EQ(x_->versionIndex(), 1);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 1);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Loopbacks node only runs on iteration > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 0);
 }
 
 TEST_F(LoopGraphTest, ExtendedFeedback)
@@ -165,6 +185,16 @@ TEST_F(LoopGraphTest, ExtendedFeedback)
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 12);
+
+    // Check node versioning
+    EXPECT_EQ(i_->versionIndex(), 0);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 10);
+    EXPECT_EQ(x_->versionIndex(), 10);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 10);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Loopbacks node only runs on iteration > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 9);
 }
 
 TEST_F(LoopGraphTest, ReleaseLoopBack)
@@ -211,6 +241,16 @@ TEST_F(LoopGraphTest, UpstreamChange)
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 102);
 
+    // Check node versioning
+    EXPECT_EQ(i_->versionIndex(), 0);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 100);
+    EXPECT_EQ(x_->versionIndex(), 100);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 100);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Loopbacks node only runs on iteration > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 99);
+
     /*
      * Alter upstream number node and run for another 100 iterations
      *
@@ -221,6 +261,16 @@ TEST_F(LoopGraphTest, UpstreamChange)
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res2 = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res2, 103);
+
+    // Check node versioning
+    EXPECT_EQ(i_->versionIndex(), 1);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 201);
+    EXPECT_EQ(x_->versionIndex(), 201);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 201);
+    EXPECT_EQ(y_->versionIndex(), 1);
+
+    // Loopbacks node only runs on iteration > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 199);
 }
 
 } // namespace UnitTest

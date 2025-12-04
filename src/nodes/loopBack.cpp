@@ -36,9 +36,13 @@ NodeConstants::ProcessResult LoopBacksNode::run()
     for (const auto &edge : loopGraph->loopEdges())
     {
         status = static_cast<LoopEdge *>(edge.get())->pull();
-        if (status != NodeConstants::ProcessResult::Failed)
+        if (status != NodeConstants::ProcessResult::Success)
             return status;
     }
+
+    if (status != NodeConstants::ProcessResult::Failed)
+        ++versionIndex_;
+
     return status;
 }
 
