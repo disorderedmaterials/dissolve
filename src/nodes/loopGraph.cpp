@@ -52,11 +52,7 @@ void LoopGraph::releaseLoopBack(const std::string &name)
     auto inputs = loopBacks_->inputs();
     auto it = inputs.find(name);
     if (it != inputs.end())
-    {
-        auto analogue = proxyInputs().findOutput(name).get();
-        analogue->removeFlag(ParameterBase::ParameterFlags::LoopBack);
         inputs.erase(it);
-    }
 }
 
 // Add edge between nodes
@@ -66,7 +62,6 @@ bool LoopGraph::addEdge(const EdgeDefinition &definition)
         setLoopBacks();
     else if (loopBacks_->findInput(definition.targetInput))
     {
-        proxyInputs().findOutput(definition.targetInput)->setFlags(ParameterBase::ParameterFlags::LoopBack);
         auto edge =
             Edge::create(this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
         if (!edge)

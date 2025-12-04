@@ -204,13 +204,11 @@ TEST_F(LoopGraphTest, ReleaseLoopBack)
     const auto nEdges = loop_->edges().size();
 
     auto flagged = loop_->proxyInputs().findOutput("I");
-    ASSERT_TRUE(flagged->flags().isSet(ParameterBase::ParameterFlags::LoopBack));
 
     loop_->removeEdge({"x", "Result", "LoopBacks", "I"});
 
     ASSERT_EQ(loop_->loopEdges().size(), 0);
     ASSERT_EQ(loop_->edges().size(), nEdges);
-    ASSERT_FALSE(flagged->flags().isSet(ParameterBase::ParameterFlags::LoopBack));
 }
 
 TEST_F(LoopGraphTest, UpstreamChange)
