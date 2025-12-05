@@ -44,7 +44,6 @@ GraphModel *SpeciesModel::graphModel() { return graphModel_; }
 // Produce this species node on the given graph
 void SpeciesModel::assignModel(GraphModel *graphModel)
 {
-
     graphModel_ = graphModel;
     node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
     auto &species = node_->species();
