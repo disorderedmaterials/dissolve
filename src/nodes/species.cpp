@@ -21,10 +21,10 @@ Species &SpeciesNode::species() { return species_; }
 const Species &SpeciesNode::species() const { return species_; }
 
 // Serialise any hidden content
-void SpeciesNode::hidden_serialise(SerialisedValue &target) const { species_.serialise("species", target); }
+void SpeciesNode::hiddenSerialise(SerialisedValue &target) const { species_.serialise("species", target); }
 
 // Deserialise any hidden content
-void SpeciesNode::hidden_deserialise(const SerialisedValue &node)
+void SpeciesNode::hiddenDeserialise(const SerialisedValue &node)
 {
     CoreData coreData;
     species_.deserialise(node.at("species"), coreData);

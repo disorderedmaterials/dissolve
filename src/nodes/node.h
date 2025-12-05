@@ -313,9 +313,9 @@ class Node : public Serialisable<>
     // Persistent data serialisables
     std::map<std::string, std::shared_ptr<SerialisableData>> serialisables_;
     // Serialise any hidden content
-    virtual void hidden_serialise(SerialisedValue &target) const {}
+    virtual void hiddenSerialise(SerialisedValue &target) const {}
     // Deserialise any hidden content
-    virtual void hidden_deserialise(const SerialisedValue &node) {}
+    virtual void hiddenDeserialise(const SerialisedValue &node) {}
 
     public:
     // Update the parent graph after a move
