@@ -24,6 +24,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::Checks, "Checks"},
                                                                  {ModuleTypes::CheckSpecies, "CheckSpecies"},
                                                                  {ModuleTypes::Clustering, "Clustering"},
+                                                                 {ModuleTypes::CGNeutronSQ, "CGNeutronSQ"},
                                                                  {ModuleTypes::Compare, "Compare"},
                                                                  {ModuleTypes::DAngle, "DAngle"},
                                                                  {ModuleTypes::DataTest, "DataTest"},

@@ -1,0 +1,1 @@
+dissolve_add_module(cgNeutronSQ.h cgNeutronSQ)

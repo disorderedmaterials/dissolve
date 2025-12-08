@@ -10,6 +10,7 @@
 #include "modules/benchmark/benchmark.h"
 #include "modules/bragg/bragg.h"
 #include "modules/clustering/clustering.h"
+#include "modules/cgNeutronSQ/cgNeutronSQ.h"
 #include "modules/compare/compare.h"
 #include "modules/dAngle/dAngle.h"
 #include "modules/energy/energy.h"
@@ -55,6 +56,8 @@ ModuleRegistry::ModuleRegistry()
                                       "Checks & Tests");
     registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
     registerProducer<ClusteringModule>(ModuleTypes::Clustering, "Analyse clustering between sites", "Analysis");
+    registerProducer<CGNeutronSQModule>(ModuleTypes::CGNeutronSQ, "Calculate CG neutron-weighted S(Q)",
+                                        "Correlation Functions");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
     registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
