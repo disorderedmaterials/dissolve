@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/inputs.h"
+#include "nodes/loopGraph.h"
 
 InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) {}
 

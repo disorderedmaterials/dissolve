@@ -52,6 +52,10 @@ class Graph : public Node
     OutputsNode *proxyOutputs_{nullptr};
 
     public:
+    InputsNode &proxyInputs();
+    OutputsNode &proxyOutputs();
+
+    public:
     // Add supplied proxy input, setting ownership of the parameters appropriately
     bool addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output);
     // Add supplied proxy output, setting ownership of the parameters appropriately
@@ -88,9 +92,9 @@ class Graph : public Node
     // Set name of specified child node
     void setNodeName(const Node *node, std::string_view nodeName);
     // Add edge between nodes
-    bool addEdge(const EdgeDefinition &definition);
+    virtual bool addEdge(const EdgeDefinition &definition);
     // Remove edge between nodes
-    bool removeEdge(const EdgeDefinition &definition);
+    virtual bool removeEdge(const EdgeDefinition &definition);
     bool removeEdge(Edge *edgeToRemove);
     // Find edge between nodes
     Edge *findEdge(const EdgeDefinition &definition) const;

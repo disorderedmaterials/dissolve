@@ -31,6 +31,9 @@ Node *ParameterBase::parent() const { return parent_; }
 // Set flag(s) for the parameter
 void ParameterBase::setFlags(const Flags<ParameterBase::ParameterFlags> &flags) { flags_ += flags; }
 
+// Remove flag for the parameter
+void ParameterBase::removeFlag(ParameterBase::ParameterFlags flag) { flags_ -= flag; }
+
 // Return current flags
 const Flags<ParameterBase::ParameterFlags> &ParameterBase::flags() const { return flags_; }
 

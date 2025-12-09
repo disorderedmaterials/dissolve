@@ -4,6 +4,7 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include "nodes/outputs.h"
+#include "nodes/loopBack.h"
 
 Edge::Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
     : sourceNode_(sourceNode), sourceOutput_(sourceOutput), targetNode_(targetNode), targetInput_(targetInput)
@@ -104,10 +105,10 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Confirm that the destination input is actually an input
-    if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input))
+    if (!targetInput->flags().isSet(ParameterBase::ParameterFlags::Input) && !dynamic_cast<LoopBacksNode *>(targetNode))
     {
         Messenger::error("Target node '{}' has parameter '{}' but it is not an input.\n", definition.targetNode,
-                         definition.targetInput);
+                            definition.targetInput);
         return {};
     }
 
@@ -222,6 +223,38 @@ NodeConstants::ProcessResult Edge::pull()
 
     return NodeConstants::ProcessResult::Unchanged;
 }
+
+// Pull the data from the source node to the target, returning a ProcessResult
+NodeConstants::ProcessResult LoopEdge::pull()
+{
+    // Copy the parameter data over
+    if (!analogue().assign(&sourceOutput_))
+        return NodeConstants::ProcessResult::Failed;
+
+    sourceNode().setUpdateRequired();
+
+    // All succeeded, so update version index
+    sourceNodeVersionIndex_ = sourceNode_.versionIndex();
+
+    return NodeConstants::ProcessResult::Success;
+}
+
+// The constructor is private because it can only be constructed by the factory method
+LoopEdge::LoopEdge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput)
+    : Edge(sourceNode, sourceOutput, targetNode, targetInput)
+{
+    auto analogousEdge = targetNode.outputEdges().find(targetInput.name())->second[0];
+    analogue_ = &analogousEdge->sourceOutput_;
+}
+
+// Make a loop edge from a given node output (LoopBack), which feeds back into the graph's inputs node
+std::unique_ptr<LoopEdge> LoopEdge::makeLoopEdge(const Edge *edge, Node &inputs)
+{
+    return std::unique_ptr<LoopEdge>(new LoopEdge(edge->sourceNode_, edge->sourceOutput_, inputs, edge->targetInput_));
+}
+
+// Return the analogue parameter, which the loop edge source corresponds to
+ParameterBase &LoopEdge::analogue() { return *analogue_; }
 
 // Ensure next call to pull() will retrieve the data from the source node
 void Edge::forceNextPull() { sourceNodeVersionIndex_ = NodeConstants::InvalidVersion; }
