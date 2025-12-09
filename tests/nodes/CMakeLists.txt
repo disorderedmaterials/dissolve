@@ -1,6 +1,7 @@
 dissolve_add_test(SRC flow.cpp)
 dissolve_add_test(SRC graph.cpp)
 dissolve_add_test(SRC graph_argon.cpp)
+dissolve_add_test(SRC loop.cpp)
 dissolve_add_test(SRC number.cpp)
 dissolve_add_test(SRC parameters.cpp)
 dissolve_add_test(SRC subGraph.cpp)

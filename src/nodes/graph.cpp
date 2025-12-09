@@ -84,6 +84,10 @@ void Graph::setUpdateRequired()
  * Inputs, Outputs, and Options
  */
 
+InputsNode &Graph::proxyInputs() { return *proxyInputs_; }
+
+OutputsNode &Graph::proxyOutputs() { return *proxyOutputs_; }
+
 // Add supplied proxy input, setting ownership of the parameters appropriately
 bool Graph::addProxyInput(std::shared_ptr<ParameterBase> &input, std::shared_ptr<ParameterBase> &output)
 {

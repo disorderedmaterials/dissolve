@@ -31,6 +31,8 @@ class EdgeDefinition : public Serialisable<>
 // Edge
 class Edge : public Serialisable<>
 {
+    friend class LoopEdge;
+
     public:
     ~Edge();
 
@@ -38,7 +40,7 @@ class Edge : public Serialisable<>
     // The constructor is private because it can only be constructed by the factory method
     Edge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
 
-    private:
+    protected:
     // Store references instead of pointers to the linked nodes and parameters for two reasons:
     // 1) Neither end of the link should EVER be null
     // 2) The link itself is immutable.  You can create links and
@@ -82,4 +84,35 @@ class Edge : public Serialisable<>
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
+};
+
+// Loop edge
+class LoopEdge : public Edge
+{
+    protected:
+    // The constructor is private because it can only be constructed by the factory method
+    LoopEdge(Node &sourceNode, ParameterBase &sourceOutput, Node &targetNode, ParameterBase &targetInput);
+
+    public:
+    // Pull the data from the source node to the target, returning a ProcessResult
+    NodeConstants::ProcessResult pull();
+    // Make a loop edge from a given node output (LoopBack), which feeds back into the graph's inputs node
+    static std::unique_ptr<LoopEdge> makeLoopEdge(const Edge *edge, Node &inputs);
+    // Return the analogue parameter, which the loop edge source corresponds to
+    ParameterBase &analogue();
+
+    private:
+    /*
+     * The analogue parameter, which the loop edge source corresponds to.
+     *
+     * Since the LoopEdge and normal Edge are different types, we must identify
+     * the analogous Edge parameter corresponding the source of the feedback
+     * from the perspective of the "looping" node, for instance a mathematical entity that
+     * requires a recursively compounded value.
+     *
+     * This source output will be assigned to the analogue parameter, so that edges that pull from it
+     * recieve the feedback.
+     *
+     */
+    ParameterBase *analogue_;
 };

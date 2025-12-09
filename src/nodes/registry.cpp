@@ -18,6 +18,7 @@
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
+#include "nodes/loopGraph.h"
 #include "nodes/md/md.h"
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
@@ -60,6 +61,7 @@ void NodeRegistry::instantiateNodeProducers()
         {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
         {"Insert", makeDerivedNode<InsertNode>()},
         {"Integrator", makeDerivedNode<Integrator1DNode>()},
+        {"Loop", makeDerivedNode<LoopGraph>()},
         {"MD", makeDerivedNode<MDNode>()},
         {"Multiply", makeDerivedNode<MultiplyNode>()},
         {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},

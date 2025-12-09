@@ -105,12 +105,12 @@ class Node : public Serialisable<>
      * Processing & Validity
      */
     private:
-    // Version index for the node, bumped whenever result outputs change
-    int versionIndex_{NodeConstants::InvalidVersion};
     // Whether the node's data is up-to-date
     bool upToDate_{false};
 
     protected:
+    // Version index for the node, bumped whenever result outputs change
+    int versionIndex_{NodeConstants::InvalidVersion};
     // Perform processing
     virtual NodeConstants::ProcessResult process();
 
@@ -126,7 +126,7 @@ class Node : public Serialisable<>
     // Check that all required inputs are present, and that all inputs are valid
     bool inputsAreValid() const;
     // Run the node, retrieving dependent inputs as necessary
-    NodeConstants::ProcessResult run();
+    virtual NodeConstants::ProcessResult run();
 
     /*
      * Inputs, Outputs, and Options
@@ -155,7 +155,7 @@ class Node : public Serialisable<>
     // Link edge, returning whether we accept it
     bool linkEdge(Edge *edge);
     // Unlink edge
-    void unlinkEdge(Edge *edge);
+    virtual void unlinkEdge(Edge *edge);
     // Add input parameter
     template <class T>
     std::shared_ptr<ParameterBase> addOption(std::string_view optionName, std::string_view description, T &data)
