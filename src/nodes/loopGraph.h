@@ -32,7 +32,6 @@ class LoopGraph : public Graph
 
     /*
      * Feedback
-     *
      */
     private:
     // Number of loops (iterations) to perform

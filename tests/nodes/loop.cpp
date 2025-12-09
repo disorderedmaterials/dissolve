@@ -234,20 +234,22 @@ TEST_F(LoopGraphTest, UpstreamChange)
      * 100 iterations
      *
      */
-    nLoops->set<Number>(100);
+    const int loopFor = 100;
+
+    nLoops->set<Number>(loopFor);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 102);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 0);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 100);
-    EXPECT_EQ(x_->versionIndex(), 100);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 100);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), loopFor);
+    EXPECT_EQ(x_->versionIndex(), loopFor);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), loopFor);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on iteration > 0
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 99);
+    // Loopbacks node only runs on 0 < iteration <= nLoops
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), loopFor - 1);
 
     /*
      * Alter upstream number node and run for another 100 iterations
@@ -255,20 +257,20 @@ TEST_F(LoopGraphTest, UpstreamChange)
      */
     iA->set<Number>(2);
 
-    nLoops->set<Number>(100);
+    nLoops->set<Number>(loopFor);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res2 = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res2, 103);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 1);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 201);
-    EXPECT_EQ(x_->versionIndex(), 201);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 201);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), (2 * loopFor) + 1);
+    EXPECT_EQ(x_->versionIndex(), (2 * loopFor) + 1);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), (2 * loopFor) + 1);
     EXPECT_EQ(y_->versionIndex(), 1);
 
-    // Loopbacks node only runs on iteration > 0
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 199);
+    // Loopbacks node only runs on 0 < iteration <= nLoops
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), (2 * loopFor) - 1);
 }
 
 } // namespace UnitTest
