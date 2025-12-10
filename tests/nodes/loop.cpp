@@ -124,7 +124,7 @@ TEST_F(IterableGraphTest, NoFeedback)
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     // Zero iterations: We expect 1 + (xB = 1) = 1 + 1 = 2
@@ -160,7 +160,7 @@ TEST_F(IterableGraphTest, SingleFeedback)
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     // One iteration: We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
@@ -196,7 +196,7 @@ TEST_F(IterableGraphTest, ExtendedFeedback)
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     /*
@@ -262,7 +262,7 @@ TEST_F(IterableGraphTest, UpstreamChange)
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     /*
