@@ -16,7 +16,9 @@
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
+#include "nodes/graph.h"
 #include "nodes/serialisableData.h"
+#include "nodes/species.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -701,6 +703,39 @@ const Species &benzeneSpecies()
         benzene_.addMissingBonds();
     }
     return benzene_;
+}
+
+// Return Node-Graph water test species
+Species *createWater(Graph *parentGraph)
+{
+    const auto name = "Water";
+
+    // Add water species node
+    auto speciesNode = std::make_unique<SpeciesNode>(parentGraph);
+    auto species = &(speciesNode.get()->species());
+    parentGraph->addNode(std::move(speciesNode), name);
+
+    // Set up water species and atom types
+    species->clear();
+    species->setName(name);
+
+    auto oW = std::make_shared<AtomType>(Elements::Element::O, "OW");
+    species->addAtom(Elements::Element::O, {}, -0.82, oW);
+    auto hW = std::make_shared<AtomType>(Elements::Element::H, "HW");
+    species->addAtom(Elements::Element::H, {1, 0, 0}, 0.41, hW);
+    species->addAtom(Elements::Element::H, {cos(DissolveMath::toRadians(113.24)), sin(DissolveMath::toRadians(113.24)), 0.0},
+                     0.41, hW);
+
+    assert(species->atom(0).Z() == Elements::Element::O);
+    assert(species->atom(1).Z() == Elements::Element::H);
+    assert(species->atom(2).Z() == Elements::Element::H);
+
+    // Apply intramolecular terms
+    species->addBond(0, 1).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
+    species->addBond(0, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
+    species->addAngle(1, 0, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24");
+
+    return species;
 }
 
 // Return small molecules data

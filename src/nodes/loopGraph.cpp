@@ -5,7 +5,7 @@
 
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
-    addOption<Number>("NLoops", "Number of loops (iterations) to perform", nLoops_);
+    addOption<Number>("N", "Number of loops (iterations) to perform", nLoops_);
     loopBacks_ = dynamic_cast<LoopBacksNode *>(addNode(std::make_unique<LoopBacksNode>(this), "LoopBacks"));
 }
 
@@ -149,5 +149,5 @@ NodeConstants::ProcessResult LoopGraph::process()
 
     resetLoopCounter();
 
-    return Graph::process();
+    return NodeConstants::ProcessResult::Success;
 }
