@@ -13,7 +13,13 @@ TEST(SpeciesModel, Basic)
 {
 
     // Stage 1: Simulate GUI interactions to create species
+    Graph graph(nullptr);
+    GraphModel graphModel;
+    graphModel.setGraph(&graph);
+
     SpeciesModel model;
+    model.assignModel(&graphModel);
+
     model.setName("Water");
     model.atoms()->addAtom("O", 0.156743, -0.152502, 0.317676, -0.82);
     model.atoms()->addAtom("H", -0.257130, 0.637822, 0.198948, 0.41);
@@ -34,11 +40,7 @@ TEST(SpeciesModel, Basic)
     EXPECT_TRUE(angles->setData(angles->index(0, SpeciesAngleModel::DataType::Form), "Harmonic"));
     EXPECT_TRUE(angles->setData(angles->index(0, SpeciesAngleModel::DataType::Parameters), "k=317.5656 eq=113.24"));
 
-    // Stage 2: Extract species from node
-    Graph graph(nullptr);
-    GraphModel graphModel;
-    graphModel.setGraph(&graph);
-    model.create(QVariant::fromValue(&graphModel));
+    model.create();
 
     ASSERT_EQ(graph.nodes().size(), 3);
 

@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/configuration.h"
-#include "nodes/dissolve.h"
 
 ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {

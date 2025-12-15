@@ -10,7 +10,7 @@
 class SpeciesNode : public Node
 {
     public:
-    SpeciesNode(Graph *parentGraph, std::shared_ptr<Species> &&species);
+    SpeciesNode(Graph *parentGraph);
     ~SpeciesNode() override = default;
 
     /*
@@ -25,9 +25,17 @@ class SpeciesNode : public Node
      */
     private:
     // Species object
-    std::shared_ptr<Species> species_;
+    Species species_;
     // Atom Types owned by the node
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
+
+    /*
+     * Accessors
+     */
+    public:
+    // Access the species information (Needed for SpeciesModel)
+    Species &species();
+    const Species &species() const;
 
     /*
      * Processing
@@ -35,4 +43,9 @@ class SpeciesNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    // Serialise any hidden content
+    void serialiseInternal(SerialisedValue &target) const override;
+    // Deserialise any hidden content
+    void deserialiseInternal(const SerialisedValue &target) override;
 };

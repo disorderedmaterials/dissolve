@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/species.h"
+#include "gui/models/nodeGraph/graphModel.h"
 #include "gui/models/speciesAngleModel.h"
 #include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesBondModel.h"
@@ -26,10 +26,13 @@ class SpeciesModel : public QObject
     Q_PROPERTY(SpeciesTorsionModel *torsions READ torsions NOTIFY speciesChanged)
     Q_PROPERTY(SpeciesImproperModel *impropers READ impropers NOTIFY speciesChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(GraphModel *graphModel READ graphModel WRITE assignModel NOTIFY speciesChanged);
 
     private:
     // Source Species data
-    std::unique_ptr<Species> species_;
+    std::unique_ptr<SpeciesNode> node_;
+    // Parent Graph
+    GraphModel *graphModel_;
     // Atom Model
     SpeciesAtomModel atoms_;
     // Bond Model
@@ -74,6 +77,9 @@ class SpeciesModel : public QObject
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
     // Refresh model data
     void reset();
+    GraphModel *graphModel();
+    // Set the graph onto which the species will be created
+    void assignModel(GraphModel *graphModel);
 
     Q_SIGNALS:
     // We've changed the underlying species
@@ -82,8 +88,8 @@ class SpeciesModel : public QObject
     void nameChanged();
 
     public Q_SLOTS:
-    // Produce this species node on the given graph
-    void create(QVariant graphModel);
+    // Finalise the node
+    void create();
     void addBond(int i, int j);
     void addAngle(int i, int j, int k);
     void addTorsion(int i, int j, int k, int l);
