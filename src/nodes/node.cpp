@@ -334,7 +334,7 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 
     fromMap(options_, "options", result);
 
-    hiddenSerialise(result);
+    serialiseInternal(result);
 
     target[tag] = result;
 }
@@ -360,7 +360,7 @@ void Node::deserialise(const SerialisedValue &node)
               else
                   Messenger::exception("Node {} does not contain an option {}", name(), k);
           });
-    hiddenDeserialise(node);
+    deserialiseInternal(node);
 }
 
 // Express persistent data as a serialisable value
