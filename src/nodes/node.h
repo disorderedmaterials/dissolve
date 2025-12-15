@@ -312,8 +312,14 @@ class Node : public Serialisable<>
     protected:
     // Persistent data serialisables
     std::map<std::string, std::shared_ptr<SerialisableData>> serialisables_;
+    // Serialise any hidden content
+    virtual void serialiseInternal(SerialisedValue &target) const {}
+    // Deserialise any hidden content
+    virtual void deserialiseInternal(const SerialisedValue &node) {}
 
     public:
+    // Update the parent graph after a move
+    void setParent(Graph *graph);
     // Is it appropriate to bother serialising this node?
     virtual bool shouldSerialise() const { return true; }
     // Flag a persistent serialisable quantity

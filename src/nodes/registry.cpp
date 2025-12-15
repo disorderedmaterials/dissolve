@@ -67,6 +67,7 @@ void NodeRegistry::instantiateNodeProducers()
         {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
         {"Number", makeDerivedNode<NumberNode>()},
         {"SQ", makeDerivedNode<SQNode>()},
+        {"Species", makeDerivedNode<SpeciesNode>()},
         {"Subtract", makeDerivedNode<SubtractNode>()},
         {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
         {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},

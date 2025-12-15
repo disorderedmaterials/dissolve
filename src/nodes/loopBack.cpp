@@ -64,11 +64,11 @@ void LoopBacksNode::setUpdateRequired()
  * Serialisation
  */
 
- // Is it appropriate to bother serialising this node?
+// Is it appropriate to bother serialising this node?
 bool LoopBacksNode::shouldSerialise() const { return false; }
 
 // Express as a serialisable value
-void LoopBacksNode::serialise(std::string tag, SerialisedValue& target) const {}
+void LoopBacksNode::serialise(std::string tag, SerialisedValue &target) const {}
 
 // Read values from a serialisable value
-void LoopBacksNode::deserialise(const SerialisedValue& node) {};
+void LoopBacksNode::deserialise(const SerialisedValue &node) {};
