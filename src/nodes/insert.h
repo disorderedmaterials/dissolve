@@ -76,6 +76,12 @@ class InsertNode : public Node
      * Processing
      */
     public:
+    // Perform action on node value change, for instance setting flag values on node members
+    void onValueSet() override;
+
+    public:
+    // Flag - true if a node specific member state invalidates the running of this node
+    bool memberInvalidatesRun() const override;
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

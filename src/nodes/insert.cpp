@@ -17,8 +17,8 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
     addInput<const Species *>("Species", "Species to add - all resulting molecules will have identical geometry", species_);
     addInput<const MoleculeSet *>("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
 
-    addInput<Number>("Population", "Population of the target to add", population_);
-    addInput<Number>("Density", "Density at which to add the target", density_);
+    addOption<Number>("Population", "Population of the target to add", population_);
+    addOption<Number>("Density", "Density at which to add the target", density_);
     addOption<Units::DensityUnits>("DensityUnits", "Units of target density", densityUnits_);
 
     addOption("BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_);
@@ -146,6 +146,16 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
 /*
  * Processing
  */
+
+// Perform action on node value change, for instance setting flag values on node members
+void InsertNode::onValueSet()
+{
+    if (configuration_)
+        configuration_->setRegenerateRequired(true);
+};
+
+// Flag - true if a node specific member state invalidates the running of this node
+bool InsertNode::memberInvalidatesRun() const { return !(configuration_->regenerateRequired()); }
 
 // Run main processing
 NodeConstants::ProcessResult InsertNode::process()

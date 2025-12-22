@@ -13,8 +13,10 @@ std::string_view ConfigurationNode::type() const { return "Configuration"; }
 
 std::string_view ConfigurationNode::summary() const { return "Produce an empty atomic configuration."; }
 
+void ConfigurationNode::onValueSet() { configuration_.setRegenerateRequired(false); }
+
 NodeConstants::ProcessResult ConfigurationNode::process()
 {
     configuration_.setTemperature(temperature_.asInteger());
-    return NodeConstants::ProcessResult::Unchanged;
+    return NodeConstants::ProcessResult::Success;
 }

@@ -73,6 +73,10 @@ class Configuration : public Serialisable<const CoreData &>
     void setTemperature(double t);
     // Return configuration temperature
     double temperature() const;
+    // Set flag - when regeneration is required, generator nodes should be re-run
+    void setRegenerateRequired(bool required);
+    // Flag - when regeneration is required, generator nodes should be re-run
+    bool regenerateRequired() const;
 
     /*
      * Content
@@ -88,6 +92,8 @@ class Configuration : public Serialisable<const CoreData &>
     VersionCounter version_;
     // Flag stating whether local Atom type indices are up-to-date
     bool typeIndicesValid_{false};
+    // Flag - when regeneration is required, generator nodes should be re-run
+    bool regenerateRequired_{true};
 
     private:
     // Add new Atom to Configuration

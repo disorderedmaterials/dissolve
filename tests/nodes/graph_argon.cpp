@@ -72,11 +72,9 @@ class GraphArgonTest : public ::testing::Test
         /*
          * Set Insert node options
          */
-        auto population = insertNode_->findInput("Population");
-        population->set<Number>(1000);
+        auto population = insertNode_->setOption<Number>("Population", 1000);
 
-        auto density = insertNode_->findInput("Density");
-        density->set<Number>(0.0213);
+        auto density = insertNode_->setOption<Number>("Density", 0.0213);
 
         ASSERT_TRUE(insertNode_->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
 
@@ -147,7 +145,7 @@ TEST_F(GraphArgonTest, InitSimulation)
 
     // Check Configuration contents
     ASSERT_TRUE(cfg);
-    EXPECT_EQ(cfg->nMolecules(), insertNode_->getInputValue<Number>("Population").asInteger());
+    EXPECT_EQ(cfg->nMolecules(), insertNode_->findOption("Population")->get<Number>().asInteger());
 };
 
 TEST_F(GraphArgonTest, AdvancedSimulation)

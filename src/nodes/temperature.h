@@ -5,38 +5,34 @@
 
 #include "classes/configuration.h"
 #include "nodes/node.h"
-#include <memory>
+#include "nodes/number.h"
 
-class ConfigurationNode : public Node
+// Temperature Node
+class TemperatureNode : public Node
 {
     public:
-    ConfigurationNode(Graph *parentGraph);
-    ~ConfigurationNode() override = default;
+    explicit TemperatureNode(Graph *parentGraph);
+    ~TemperatureNode() override = default;
+
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
 
     /*
      * Definition
      */
-    public:
-    std::string_view type() const override;
-    std::string_view summary() const override;
-
-    /*
-     * Data
-     */
     private:
-    // Configuration object
-    Configuration configuration_;
-    // Configuration temperature
+    // New configuration temperature value
     Number temperature_;
+    // Target configuration for which the temperature will be changed
+    Configuration *targetConfiguration_;
 
     /*
      * Processing
      */
     public:
-    // Perform action on node value change, for instance setting flag values on node members
-    void onValueSet() override;
-
-    private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

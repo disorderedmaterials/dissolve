@@ -119,6 +119,8 @@ class Node : public Serialisable<>
     int versionIndex() const;
     // Invalidate the current node, resetting versionIndex_
     void invalidate();
+    // Flag - true if a node specific member state invalidates the running of this node
+    virtual bool memberInvalidatesRun() const;
     // Flag that the node data needs to be updated
     virtual void setUpdateRequired();
     // Return whether the node's data is up-to-date
@@ -248,6 +250,9 @@ class Node : public Serialisable<>
             return false;
 
         i->set<T>(value);
+
+        onValueSet();
+
         return true;
     }
     // Return input parameters
@@ -287,8 +292,13 @@ class Node : public Serialisable<>
             return false;
 
         opt->set<T>(value);
+
+        onValueSet();
+
         return true;
     }
+    // Perform action on node value change, for instance setting flag values on node members
+    virtual void onValueSet() {};
     // Get the incoming edges to this node
     EdgeMap &inputEdges();
     // Get the outgoing edges from this node

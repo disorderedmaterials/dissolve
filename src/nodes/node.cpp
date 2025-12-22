@@ -56,6 +56,9 @@ void Node::invalidate()
     clearData();
 }
 
+// Flag - true if a node specific member state invalidates the running of this node
+bool Node::memberInvalidatesRun() const { return false; }
+
 // Flag that the node data needs to be updated
 void Node::setUpdateRequired()
 {
@@ -107,6 +110,9 @@ bool Node::inputsAreValid() const
 // Run the node, retrieving dependent inputs as necessary
 NodeConstants::ProcessResult Node::run()
 {
+    if (versionIndex_ != NodeConstants::InvalidVersion && memberInvalidatesRun())
+        return NodeConstants::ProcessResult::Unchanged;
+
     // Pull all input edges. If any are out-of-date and get re-set this will automatically unset upToDate_
     for (auto &[inputName, edges] : inputEdges_)
     {

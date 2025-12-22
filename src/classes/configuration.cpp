@@ -121,6 +121,12 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 // Return configuration temperature
 double Configuration::temperature() const { return temperature_; }
 
+// Set flag - when regeneration is required, generator nodes should be re-run
+void Configuration::setRegenerateRequired(bool required) { regenerateRequired_ = required; }
+
+// Flag - when regeneration is required, generator nodes should be re-run
+bool Configuration::regenerateRequired() const { return regenerateRequired_; }
+
 // Express as a serialisable value
 void Configuration::serialise(std::string tag, SerialisedValue &target) const
 {

@@ -47,8 +47,8 @@ TEST(AtomShakeTest, Water)
 
     auto insertNode = dynamic_cast<InsertNode *>(root.createNode("Insert", "Insert"));
     ASSERT_TRUE(insertNode);
-    ASSERT_TRUE(insertNode->setInput<Number>("Population", 1));
-    ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.1));
+    ASSERT_TRUE(insertNode->setOption<Number>("Population", 1));
+    ASSERT_TRUE(insertNode->setOption<Number>("Density", 0.1));
 
     // Set density units
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
