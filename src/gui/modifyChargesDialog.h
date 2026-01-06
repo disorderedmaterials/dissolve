@@ -1,5 +1,5 @@
 // spdx-license-identifier: gpl-3.0-or-later
-// copyright (c) 2024 team dissolve and contributors
+// copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
