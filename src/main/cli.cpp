@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/cli.h"
 #include "base/messenger.h"
@@ -14,7 +14,7 @@ CLIOptions::CLIOptions() {}
 int CLIOptions::parse(const int args, char **argv, bool isGUI)
 {
     // Create CLI object
-    CLI::App app{std::format("Dissolve-{} version {}, Copyright (C) 2025 Team Dissolve and contributors.\n", Version::appType(),
+    CLI::App app{std::format("Dissolve-{} version {}, Copyright (C) 2026 Team Dissolve and contributors.\n", Version::appType(),
                              Version::info())};
     // Add positionals
     auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile);
