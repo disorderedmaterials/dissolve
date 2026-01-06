@@ -43,6 +43,9 @@ void Configuration::createBoxAndCells(const Vector3 lengths, const Vector3 angle
 // Create Box definition from axes matrix, and initialise cell array
 void Configuration::createBoxAndCells(const Matrix3 axes, double pairPotentialRange)
 {
+    // Forcibly clear the cell array so we ensure that it is regenerated following the box change
+    cells_.clear();
+
     createBox(axes);
     cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
 }
