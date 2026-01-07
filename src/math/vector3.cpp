@@ -410,7 +410,7 @@ Vector3 Vector3::randomUnit()
 {
     auto y = 2.0 * (DissolveMath::random() - 0.5);
     auto r = sqrt(1 - y * y);
-    auto lambda = M_PI * (DissolveMath::random() - 0.5);
+    auto lambda = 2.0 * M_PI * (DissolveMath::random() - 0.5);
     return {r * sin(lambda), y, r * cos(lambda)};
 }
 

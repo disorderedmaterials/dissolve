@@ -68,10 +68,13 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                              (eCurrent.totalUnbound() + eCurrent.geometry() * termScale);
                 auto accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
 
-                // Increase attempt counters
                 if (accept)
                 {
+                    // Store incremental total energy and new reference energy
                     totalDelta += delta;
+                    eCurrent = eNew;
+
+                    // Increase attempt counter
                     ++nAccepted;
                 }
                 else
