@@ -190,11 +190,16 @@ bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
 // Generate Cells for Box
 bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRange)
 {
+    // We need to regenerate the cell array only if it is currently empty or the pair potential range has changed
+    if (!cells_.empty() && pairPotentialRangeCreatedAt_ && pairPotentialRangeCreatedAt_.value() == pairPotentialRange)
+        return true;
+
     clear();
 
     const auto minCellsPerSide = 3;
     const auto tolerance = 0.01;
 
+    pairPotentialRangeCreatedAt_ = pairPotentialRange;
     box_ = box;
 
     Messenger::print("Generating cells for box - minimum cells per side is {}, cell size is {}...\n", minCellsPerSide,
