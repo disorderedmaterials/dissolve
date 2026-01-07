@@ -720,8 +720,12 @@ Species *createWater(Graph *parentGraph)
     species->setName(name);
 
     auto oW = std::make_shared<AtomType>(Elements::Element::O, "OW");
+    oW->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.6503 sigma=3.165492");
+    oW->setCharge(-0.82);
     species->addAtom(Elements::Element::O, {}, -0.82, oW);
     auto hW = std::make_shared<AtomType>(Elements::Element::H, "HW");
+    hW->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+    hW->setCharge(0.41);
     species->addAtom(Elements::Element::H, {1, 0, 0}, 0.41, hW);
     species->addAtom(Elements::Element::H, {cos(DissolveMath::toRadians(113.24)), sin(DissolveMath::toRadians(113.24)), 0.0},
                      0.41, hW);
