@@ -35,9 +35,9 @@ class LoopGraph : public Graph
      */
     private:
     // Number of loops (iterations) to perform
-    Number nLoops_{0};
+    Number nIterations_{0};
     // Current loop iteration
-    int loopCounter_{0};
+    int i_{0};
     // Loop backs
     LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
@@ -47,7 +47,7 @@ class LoopGraph : public Graph
     // Current loop iteration
     int loopCount();
     // Reset the loop counter to zero
-    void resetLoopCounter();
+    void reset();
     // Set the loopbacks corresponding to the graph inputs
     void setLoopBacks();
     // Release a loopback by name

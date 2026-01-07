@@ -5,7 +5,7 @@
 
 LoopGraph::LoopGraph(Graph *parentGraph) : Graph(parentGraph)
 {
-    addOption<Number>("NLoops", "Number of loops (iterations) to perform", nLoops_);
+    addOption<Number>("NLoops", "Number of loops (iterations) to perform", nIterations_);
     loopBacks_ = dynamic_cast<LoopBacksNode *>(addNode(std::make_unique<LoopBacksNode>(this), "LoopBacks"));
 }
 
@@ -23,10 +23,10 @@ std::string_view LoopGraph::type() const { return "Loop"; }
 std::string_view LoopGraph::summary() const { return "Loop the contained graph"; }
 
 // Increment the loop counter
-void LoopGraph::increment() { loopCounter_++; }
+void LoopGraph::increment() { ++i_; }
 
 // Number of loops (iterations) to perform
-const int LoopGraph::nLoops() const { return nLoops_.asInteger(); }
+const int LoopGraph::nLoops() const { return nIterations_.asInteger(); }
 
 // Loop backs
 LoopBacksNode *LoopGraph::loopBacks() { return loopBacks_; }
@@ -35,7 +35,7 @@ LoopBacksNode *LoopGraph::loopBacks() { return loopBacks_; }
 Graph::Edges &LoopGraph::loopEdges() { return loopEdges_; }
 
 // Current loop iteration
-int LoopGraph::loopCount() { return loopCounter_; }
+int LoopGraph::loopCount() { return i_; }
 
 // Set the loopbacks corresponding to the graph inputs
 void LoopGraph::setLoopBacks()
@@ -118,7 +118,7 @@ LoopEdge *LoopGraph::findLoopEdge(const EdgeDefinition &definition) const
 }
 
 // Reset the loop counter to zero
-void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
+void LoopGraph::reset() { i_ = 0; }
 
 /*
  * Processing & Validity
@@ -127,27 +127,26 @@ void LoopGraph::resetLoopCounter() { loopCounter_ = 0; }
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    while (loopCounter_ <= nLoops_.asInteger())
-    {
-        auto graphStatus = NodeConstants::ProcessResult::Unchanged;
+    const auto maxIters = nIterations_.asInteger();
 
-        // Don't run loopbacks on 0th iteration
-        if (loopCounter_ >= 1)
+    // Max iterations equal to zero constitutes no run of the loop graph
+    while (maxIters > 0 && i_ <= maxIters)
+    {
+        // Current iteration i greater than one consitutes a feedback loop
+        if (i_ > 1)
         {
             auto looped = loopBacks_->run();
             if (looped == NodeConstants::ProcessResult::Failed)
                 return looped;
         }
 
-        graphStatus = Graph::process();
-
-        if (graphStatus == NodeConstants::ProcessResult::Failed)
-            return graphStatus;
+        if (Graph::process() == NodeConstants::ProcessResult::Failed)
+            return NodeConstants::ProcessResult::Failed;
 
         increment();
     }
 
-    resetLoopCounter();
+    reset();
 
-    return Graph::process();
+    return NodeConstants::ProcessResult::Success;
 }

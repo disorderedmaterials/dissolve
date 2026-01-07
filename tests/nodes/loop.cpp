@@ -73,6 +73,41 @@ class LoopGraphTest : public ::testing::Test
     LoopGraph *loop_{nullptr};
 };
 
+TEST_F(LoopGraphTest, NoRun)
+{
+    createGraph();
+
+    auto xB = x_->findInput("B");
+    EXPECT_TRUE(xB);
+    xB->set<Number>(1);
+
+    auto yB = y_->findInput("B");
+    EXPECT_TRUE(yB);
+    yB->set<Number>(0);
+
+    auto iA = i_->findOption("A");
+    EXPECT_TRUE(iA);
+    iA->set<Number>(1);
+
+    auto nLoops = loop_->findOption("NLoops");
+    EXPECT_TRUE(nLoops);
+
+    nLoops->set<Number>(0);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    auto res = y_->getOutputValue<Number>("Result").asInteger();
+    ASSERT_EQ(res, 0);
+
+    // Check node versioning
+    EXPECT_EQ(i_->versionIndex(), 0);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), -1);
+    EXPECT_EQ(x_->versionIndex(), -1);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), -1);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Loopbacks node only runs on iteration i > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
+}
+
 TEST_F(LoopGraphTest, NoFeedback)
 {
     createGraph();
@@ -93,7 +128,7 @@ TEST_F(LoopGraphTest, NoFeedback)
     EXPECT_TRUE(nLoops);
 
     // Zero iterations: We expect 1 + (xB = 1) = 1 + 1 = 2
-    nLoops->set<Number>(0);
+    nLoops->set<Number>(1);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 2);
@@ -105,7 +140,7 @@ TEST_F(LoopGraphTest, NoFeedback)
     EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on iteration > 0
+    // Loopbacks node only runs on iteration i > 0
     EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
 }
 
@@ -129,7 +164,7 @@ TEST_F(LoopGraphTest, SingleFeedback)
     EXPECT_TRUE(nLoops);
 
     // One iteration: We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
-    nLoops->set<Number>(1);
+    nLoops->set<Number>(2);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 3);
@@ -141,7 +176,7 @@ TEST_F(LoopGraphTest, SingleFeedback)
     EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 1);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on iteration > 0
+    // Loopbacks node only runs on iteration i > 0
     EXPECT_EQ(loop_->loopBacks()->versionIndex(), 0);
 }
 
@@ -167,34 +202,34 @@ TEST_F(LoopGraphTest, ExtendedFeedback)
     /*
      * 10 iterations
      *
-     * n         Add.     Res.
-     * 0 : 1 ->  1 + 1  -> 2  -> LB
-     * 1 :   ->  2 + 1  -> 3  -> LB
-     * 2 :   ->  3 + 1  -> 4  -> LB
-     * 3 :   ->  4 + 1  -> 5  -> LB
-     * 4 :   ->  5 + 1  -> 6  -> LB
-     * 5 :   ->  6 + 1  -> 7  -> LB
-     * 6 :   ->  7 + 1  -> 8  -> LB
-     * 7 :   ->  8 + 1  -> 9  -> LB
-     * 8 :   ->  9 + 1  -> 10 -> LB
-     * 9 :   -> 10 + 1  -> 11 -> LB
-     * 10 :  -> 11 + 1  -> 12 -> 12
+     * i         Add.     Res.
+     *
+     * 1 : 1 ->  1 + 1  -> 2  -> LB
+     * 2 :   ->  2 + 1  -> 3  -> LB
+     * 3 :   ->  3 + 1  -> 4  -> LB
+     * 4 :   ->  4 + 1  -> 5  -> LB
+     * 5 :   ->  5 + 1  -> 6  -> LB
+     * 6 :   ->  6 + 1  -> 7  -> LB
+     * 7 :   ->  7 + 1  -> 8  -> LB
+     * 8 :   ->  8 + 1  -> 9  -> LB
+     * 9 :   ->  9 + 1  -> 10 -> LB
+     * 10 :  -> 10 + 1  -> 11 -> LB
      *
      */
     nLoops->set<Number>(10);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res, 12);
+    ASSERT_EQ(res, 11);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 0);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 10);
-    EXPECT_EQ(x_->versionIndex(), 10);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 10);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 9);
+    EXPECT_EQ(x_->versionIndex(), 9);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 9);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on iteration > 0
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 9);
+    // Loopbacks node only runs on iteration i > 1
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 8);
 }
 
 TEST_F(LoopGraphTest, ReleaseLoopBack)
@@ -239,17 +274,18 @@ TEST_F(LoopGraphTest, UpstreamChange)
     nLoops->set<Number>(loopFor);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res, 102);
+    ASSERT_EQ(res, 101);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 0);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), loopFor);
-    EXPECT_EQ(x_->versionIndex(), loopFor);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), loopFor);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 99);
+    EXPECT_EQ(x_->versionIndex(), 99);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 99);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on 0 < iteration <= nLoops
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), loopFor - 1);
+    // Loopbacks node only runs on iteration 0 < i <= nLoops
+    // (in 100 runs, loop backs up version 99 times, starting from -1)
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 98);
 
     /*
      * Alter upstream number node and run for another 100 iterations
@@ -260,17 +296,18 @@ TEST_F(LoopGraphTest, UpstreamChange)
     nLoops->set<Number>(loopFor);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res2 = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res2, 103);
+    ASSERT_EQ(res2, 102);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 1);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), (2 * loopFor) + 1);
-    EXPECT_EQ(x_->versionIndex(), (2 * loopFor) + 1);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), (2 * loopFor) + 1);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 199);
+    EXPECT_EQ(x_->versionIndex(), 199);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 199);
     EXPECT_EQ(y_->versionIndex(), 1);
 
-    // Loopbacks node only runs on 0 < iteration <= nLoops
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), (2 * loopFor) - 1);
+    // Loopbacks node only runs on iteration 0 < i <= nLoops
+    // (after another 100 runs, loop backs up version a further 99 times, starting from 98)
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 197);
 }
 
 } // namespace UnitTest
