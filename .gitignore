@@ -32,6 +32,7 @@ build-*/
 *swp
 changes
 *.tokens
+.cache
 .gdb_history
 *.DS_Store
 msvc-env
