@@ -22,11 +22,8 @@ std::string_view LoopGraph::type() const { return "Loop"; }
 // Return short summary of the node's purpose
 std::string_view LoopGraph::summary() const { return "Loop the contained graph"; }
 
-// Increment the loop counter
-void LoopGraph::increment() { ++i_; }
-
 // Number of loops (iterations) to perform
-const int LoopGraph::nLoops() const { return nIterations_.asInteger(); }
+const int LoopGraph::nIterations() const { return nIterations_.asInteger(); }
 
 // Loop backs
 LoopBacksNode *LoopGraph::loopBacks() { return loopBacks_; }
@@ -35,7 +32,7 @@ LoopBacksNode *LoopGraph::loopBacks() { return loopBacks_; }
 Graph::Edges &LoopGraph::loopEdges() { return loopEdges_; }
 
 // Current loop iteration
-int LoopGraph::loopCount() { return i_; }
+int LoopGraph::currentIteration() { return i_; }
 
 // Set the loopbacks corresponding to the graph inputs
 void LoopGraph::setLoopBacks()
@@ -117,9 +114,6 @@ LoopEdge *LoopGraph::findLoopEdge(const EdgeDefinition &definition) const
     return {};
 }
 
-// Reset the loop counter to zero
-void LoopGraph::reset() { i_ = 0; }
-
 /*
  * Processing & Validity
  */
@@ -135,18 +129,17 @@ NodeConstants::ProcessResult LoopGraph::process()
         // Current iteration i greater than one consitutes a feedback loop
         if (i_ > 1)
         {
-            auto looped = loopBacks_->run();
-            if (looped == NodeConstants::ProcessResult::Failed)
-                return looped;
+            if (loopBacks_->run() == NodeConstants::ProcessResult::Failed)
+                return NodeConstants::ProcessResult::Failed;
         }
 
         if (Graph::process() == NodeConstants::ProcessResult::Failed)
             return NodeConstants::ProcessResult::Failed;
 
-        increment();
+        ++i_;
     }
 
-    reset();
+    i_ = 0;
 
     return NodeConstants::ProcessResult::Success;
 }
