@@ -113,7 +113,7 @@ class Vector3 : public Serialisable<>
     // Prints the contents of the vector
     void print() const;
     // Generate random unit vector
-    void randomUnit();
+    static Vector3 randomUnit();
     // Convert spherical who,phi,theta coordinates into cartesian x,y,z
     void toCartesian();
     // Convert cartesian x,y,z coordinates into spherical (rho,phi/zenith,theta/azimuthal)

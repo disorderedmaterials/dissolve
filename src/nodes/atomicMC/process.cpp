@@ -35,10 +35,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
 
     auto nAttempts = 0, nAccepted = 0;
-    bool accept;
-    double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
-    Vector3 rDelta;
-    EnergyResult er;
+    auto totalDelta = 0.0;
 
     Timer timer;
     // Loop over target Molecules
@@ -52,36 +49,32 @@ NodeConstants::ProcessResult AtomicMCNode::process()
         for (const auto &i : mol->atoms())
         {
             // Calculate reference energies for the Atom
-            er = kernel->totalEnergy(*i);
-            currentEnergy = er.totalUnbound();
-            currentIntraEnergy = er.geometry() * termScale;
+            auto eCurrent = kernel->totalEnergy(*i);
 
             // Loop over number of shakes per Atom
             for (auto n = 0; n < nShakesPerAtom; ++n)
             {
                 auto moveInitialPos = i->r();
 
-                // Create a random translation vector
-                rDelta.set(DissolveMath::randomPlusMinusOne() * stepSize, DissolveMath::randomPlusMinusOne() * stepSize,
-                           DissolveMath::randomPlusMinusOne() * stepSize);
-
-                // Translate Atom and update its Cell position
-                i->translateCoordinates(rDelta);
+                // Translate Atom randomly according to the stepsize and update its Cell position
+                i->translateCoordinates(Vector3::randomUnit() * stepSize);
                 targetConfiguration_->updateAtomLocation(i);
 
                 // Calculate new energy
-                er = kernel->totalEnergy(*i);
-                newEnergy = er.totalUnbound();
-                newIntraEnergy = er.geometry() * termScale;
+                auto eNew = kernel->totalEnergy(*i);
 
                 // Trial the transformed Atom position
-                delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
-                accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
+                auto delta = (eNew.totalUnbound() + eNew.geometry() * termScale) -
+                             (eCurrent.totalUnbound() + eCurrent.geometry() * termScale);
+                auto accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
 
-                // Increase attempt counters
                 if (accept)
                 {
+                    // Store incremental total energy and new reference energy
                     totalDelta += delta;
+                    eCurrent = eNew;
+
+                    // Increase attempt counter
                     ++nAccepted;
                 }
                 else
