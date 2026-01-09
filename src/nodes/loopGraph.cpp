@@ -121,25 +121,14 @@ LoopEdge *LoopGraph::findLoopEdge(const EdgeDefinition &definition) const
 // Perform processing
 NodeConstants::ProcessResult LoopGraph::process()
 {
-    const auto maxIters = nIterations_.asInteger();
+    const auto N = nIterations_.asInteger();
+    if (N < 1)
+        return NodeConstants::ProcessResult::Unchanged;
 
-    // Max iterations equal to zero constitutes no run of the loop graph
-    while (maxIters > 0 && i_ <= maxIters)
-    {
-        // Current iteration i greater than one consitutes a feedback loop
-        if (i_ > 1)
-        {
-            if (loopBacks_->run() == NodeConstants::ProcessResult::Failed)
-                return NodeConstants::ProcessResult::Failed;
-        }
-
-        if (Graph::process() == NodeConstants::ProcessResult::Failed)
+    for (i_ = 1; i_ <= N; ++i_)
+        if ((i_ > 1 && (loopBacks_->run() == NodeConstants::ProcessResult::Failed)) ||
+            (Graph::process() == NodeConstants::ProcessResult::Failed))
             return NodeConstants::ProcessResult::Failed;
-
-        ++i_;
-    }
-
-    i_ = 0;
 
     return NodeConstants::ProcessResult::Success;
 }

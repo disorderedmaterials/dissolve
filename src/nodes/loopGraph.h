@@ -37,19 +37,19 @@ class LoopGraph : public Graph
     // Number of loops (iterations) to perform
     Number nIterations_{0};
     // Current loop iteration
-    int i_{0};
+    int i_{1};
     // Loop backs
     LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
     Edges loopEdges_;
-    // Current loop iteration
-    int currentIteration();
     // Set the loopbacks corresponding to the graph inputs
     void setLoopBacks();
     // Release a loopback by name
     void releaseLoopBack(const std::string &name);
 
     public:
+    // Current loop iteration
+    int currentIteration();
     // Number of loops (iterations) to perform
     const int nIterations() const;
     // Loop backs
