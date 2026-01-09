@@ -3,6 +3,8 @@
     self.submodules = true;
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     outdated.url = "github:NixOS/nixpkgs/nixos-24.05";
+    bundlers.url = "github:nix-community/nix-bundle";
+    bundlers.inputs.nixpkgs.follows = "outdated";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
   };
@@ -167,6 +169,10 @@
           };
       in
       {
+        bundlers = {
+          default = bundlers.bundlers.${system}.nix-bundle;
+        };
+
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-gui = dissolve {
           gui = true;
