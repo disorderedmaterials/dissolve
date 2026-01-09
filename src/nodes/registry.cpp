@@ -61,7 +61,7 @@ void NodeRegistry::instantiateNodeProducers()
         {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
         {"Insert", makeDerivedNode<InsertNode>()},
         {"Integrator", makeDerivedNode<Integrator1DNode>()},
-        {"Loop", makeDerivedNode<LoopGraph>()},
+        {"Iterator", makeDerivedNode<IterableGraph>()},
         {"MD", makeDerivedNode<MDNode>()},
         {"Multiply", makeDerivedNode<MultiplyNode>()},
         {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},

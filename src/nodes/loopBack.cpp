@@ -28,7 +28,7 @@ NodeConstants::ProcessResult LoopBacksNode::run()
 {
     auto status = NodeConstants::ProcessResult::Unchanged;
 
-    auto loopGraph = static_cast<LoopGraph *>(parentGraph_);
+    auto loopGraph = static_cast<IterableGraph *>(parentGraph_);
 
     if (loopGraph->loopEdges().empty())
         return status;

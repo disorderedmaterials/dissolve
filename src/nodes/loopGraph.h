@@ -11,11 +11,11 @@
 #include "templates/doubleKeyedMap.h"
 
 // Loop Graph
-class LoopGraph : public Graph
+class IterableGraph : public Graph
 {
     public:
-    LoopGraph(Graph *parentGraph);
-    ~LoopGraph() = default;
+    IterableGraph(Graph *parentGraph);
+    ~IterableGraph() = default;
 
     using LoopEdges = std::vector<std::unique_ptr<LoopEdge>>;
 

@@ -11,16 +11,16 @@
 
 namespace UnitTest
 {
-class LoopGraphTest : public ::testing::Test
+class IterableGraphTest : public ::testing::Test
 {
     public:
-    LoopGraphTest() : dissolve_(coreData_), root_(dissolve_) {}
+    IterableGraphTest() : dissolve_(coreData_), root_(dissolve_) {}
 
     // Create a graph for testing
     void createGraph()
     {
         /*
-         *    Number (i)                      LoopGraph
+         *    Number (i)                      IterableGraph
          *    ------------------              ----------------------------------           Add (y)
          *    |          Number-o--+          |                                |-OUT-\     ------------------
          *    -----------------/    \    +-IN-|     Add (x)                +--o-->>>--o---o-A         result-o
@@ -37,7 +37,7 @@ class LoopGraphTest : public ::testing::Test
 
         // Create nodes
         i_ = dynamic_cast<NumberNode *>(root_.createNode("Number", "i"));
-        loop_ = dynamic_cast<LoopGraph *>(root_.createNode("Loop", "Loop"));
+        loop_ = dynamic_cast<IterableGraph *>(root_.createNode("Iterator", "Iterator"));
         x_ = dynamic_cast<AddNode *>(loop_->createNode("Add", "x"));
         y_ = dynamic_cast<AddNode *>(root_.createNode("Add", "y"));
 
@@ -49,18 +49,18 @@ class LoopGraphTest : public ::testing::Test
         ASSERT_EQ(i_->name(), "i");
         ASSERT_EQ(x_->name(), "x");
         ASSERT_EQ(y_->name(), "y");
-        ASSERT_EQ(loop_->name(), "Loop");
+        ASSERT_EQ(loop_->name(), "Iterator");
 
         // Create edge connections
-        // - Number 'i' is a dynamic input to the LoopGraph - we'll call the input "I"
-        EXPECT_TRUE(root_.addEdge({"i", "A", "Loop", "I"}));
-        // - Add 'x' takes the LoopGraph input "I" as its parameter "A"
+        // - Number 'i' is a dynamic input to the IterableGraph - we'll call the input "I"
+        EXPECT_TRUE(root_.addEdge({"i", "A", "Iterator", "I"}));
+        // - Add 'x' takes the IterableGraph input "I" as its parameter "A"
         EXPECT_TRUE(loop_->addEdge({"Inputs", "I", "x", "A"}));
         // - Result from Add 'x' goes to graph output (which we will call "C") as well as loopback to "I"
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "Outputs", "C"}));
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "LoopBacks", "I"}));
         // - The output "C" of the loop graph then goes to input "A" of Add 'y'
-        EXPECT_TRUE(root_.addEdge({"Loop", "C", "y", "A"}));
+        EXPECT_TRUE(root_.addEdge({"Iterator", "C", "y", "A"}));
     }
 
     protected:
@@ -70,10 +70,10 @@ class LoopGraphTest : public ::testing::Test
     DissolveGraph root_;
     NumberNode *i_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr};
-    LoopGraph *loop_{nullptr};
+    IterableGraph *loop_{nullptr};
 };
 
-TEST_F(LoopGraphTest, NoRun)
+TEST_F(IterableGraphTest, NoRun)
 {
     createGraph();
 
@@ -108,7 +108,7 @@ TEST_F(LoopGraphTest, NoRun)
     EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
 }
 
-TEST_F(LoopGraphTest, NoFeedback)
+TEST_F(IterableGraphTest, NoFeedback)
 {
     createGraph();
 
@@ -144,7 +144,7 @@ TEST_F(LoopGraphTest, NoFeedback)
     EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
 }
 
-TEST_F(LoopGraphTest, SingleFeedback)
+TEST_F(IterableGraphTest, SingleFeedback)
 {
     createGraph();
 
@@ -180,7 +180,7 @@ TEST_F(LoopGraphTest, SingleFeedback)
     EXPECT_EQ(loop_->loopBacks()->versionIndex(), 0);
 }
 
-TEST_F(LoopGraphTest, ExtendedFeedback)
+TEST_F(IterableGraphTest, ExtendedFeedback)
 {
     createGraph();
 
@@ -232,7 +232,7 @@ TEST_F(LoopGraphTest, ExtendedFeedback)
     EXPECT_EQ(loop_->loopBacks()->versionIndex(), 8);
 }
 
-TEST_F(LoopGraphTest, ReleaseLoopBack)
+TEST_F(IterableGraphTest, ReleaseLoopBack)
 {
     createGraph();
 
@@ -246,7 +246,7 @@ TEST_F(LoopGraphTest, ReleaseLoopBack)
     ASSERT_EQ(loop_->edges().size(), nEdges);
 }
 
-TEST_F(LoopGraphTest, UpstreamChange)
+TEST_F(IterableGraphTest, UpstreamChange)
 {
     createGraph();
 
