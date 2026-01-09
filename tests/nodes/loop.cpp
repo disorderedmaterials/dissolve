@@ -3,7 +3,7 @@
 
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
-#include "nodes/loopGraph.h"
+#include "nodes/iterableGraph.h"
 #include "nodes/numberNode.h"
 #include "nodes/registry.h"
 #include "tests/testData.h"
@@ -11,16 +11,16 @@
 
 namespace UnitTest
 {
-class LoopGraphTest : public ::testing::Test
+class IterableGraphTest : public ::testing::Test
 {
     public:
-    LoopGraphTest() : dissolve_(coreData_), root_(dissolve_) {}
+    IterableGraphTest() : dissolve_(coreData_), root_(dissolve_) {}
 
     // Create a graph for testing
     void createGraph()
     {
         /*
-         *    Number (i)                      LoopGraph
+         *    Number (i)                      IterableGraph
          *    ------------------              ----------------------------------           Add (y)
          *    |          Number-o--+          |                                |-OUT-\     ------------------
          *    -----------------/    \    +-IN-|     Add (x)                +--o-->>>--o---o-A         result-o
@@ -37,7 +37,7 @@ class LoopGraphTest : public ::testing::Test
 
         // Create nodes
         i_ = dynamic_cast<NumberNode *>(root_.createNode("Number", "i"));
-        loop_ = dynamic_cast<LoopGraph *>(root_.createNode("Loop", "Loop"));
+        loop_ = dynamic_cast<IterableGraph *>(root_.createNode("Iterator", "Iterator"));
         x_ = dynamic_cast<AddNode *>(loop_->createNode("Add", "x"));
         y_ = dynamic_cast<AddNode *>(root_.createNode("Add", "y"));
 
@@ -49,18 +49,18 @@ class LoopGraphTest : public ::testing::Test
         ASSERT_EQ(i_->name(), "i");
         ASSERT_EQ(x_->name(), "x");
         ASSERT_EQ(y_->name(), "y");
-        ASSERT_EQ(loop_->name(), "Loop");
+        ASSERT_EQ(loop_->name(), "Iterator");
 
         // Create edge connections
-        // - Number 'i' is a dynamic input to the LoopGraph - we'll call the input "I"
-        EXPECT_TRUE(root_.addEdge({"i", "A", "Loop", "I"}));
-        // - Add 'x' takes the LoopGraph input "I" as its parameter "A"
+        // - Number 'i' is a dynamic input to the IterableGraph - we'll call the input "I"
+        EXPECT_TRUE(root_.addEdge({"i", "A", "Iterator", "I"}));
+        // - Add 'x' takes the IterableGraph input "I" as its parameter "A"
         EXPECT_TRUE(loop_->addEdge({"Inputs", "I", "x", "A"}));
         // - Result from Add 'x' goes to graph output (which we will call "C") as well as loopback to "I"
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "Outputs", "C"}));
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "LoopBacks", "I"}));
         // - The output "C" of the loop graph then goes to input "A" of Add 'y'
-        EXPECT_TRUE(root_.addEdge({"Loop", "C", "y", "A"}));
+        EXPECT_TRUE(root_.addEdge({"Iterator", "C", "y", "A"}));
     }
 
     protected:
@@ -70,10 +70,45 @@ class LoopGraphTest : public ::testing::Test
     DissolveGraph root_;
     NumberNode *i_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr};
-    LoopGraph *loop_{nullptr};
+    IterableGraph *loop_{nullptr};
 };
 
-TEST_F(LoopGraphTest, NoFeedback)
+TEST_F(IterableGraphTest, NoRun)
+{
+    createGraph();
+
+    auto xB = x_->findInput("B");
+    EXPECT_TRUE(xB);
+    xB->set<Number>(1);
+
+    auto yB = y_->findInput("B");
+    EXPECT_TRUE(yB);
+    yB->set<Number>(0);
+
+    auto iA = i_->findOption("A");
+    EXPECT_TRUE(iA);
+    iA->set<Number>(1);
+
+    auto nLoops = loop_->findOption("NLoops");
+    EXPECT_TRUE(nLoops);
+
+    nLoops->set<Number>(0);
+    EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
+    auto res = y_->getOutputValue<Number>("Result").asInteger();
+    ASSERT_EQ(res, 0);
+
+    // Check node versioning
+    EXPECT_EQ(i_->versionIndex(), 0);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(x_->versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(y_->versionIndex(), 0);
+
+    // Loopbacks node only runs on iteration i > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), NodeConstants::InvalidVersion);
+}
+
+TEST_F(IterableGraphTest, NoFeedback)
 {
     createGraph();
 
@@ -93,7 +128,7 @@ TEST_F(LoopGraphTest, NoFeedback)
     EXPECT_TRUE(nLoops);
 
     // Zero iterations: We expect 1 + (xB = 1) = 1 + 1 = 2
-    nLoops->set<Number>(0);
+    nLoops->set<Number>(1);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 2);
@@ -105,11 +140,11 @@ TEST_F(LoopGraphTest, NoFeedback)
     EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on iteration > 0
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
+    // Loopbacks node only runs on iteration i > 0
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), NodeConstants::InvalidVersion);
 }
 
-TEST_F(LoopGraphTest, SingleFeedback)
+TEST_F(IterableGraphTest, SingleFeedback)
 {
     createGraph();
 
@@ -129,7 +164,7 @@ TEST_F(LoopGraphTest, SingleFeedback)
     EXPECT_TRUE(nLoops);
 
     // One iteration: We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
-    nLoops->set<Number>(1);
+    nLoops->set<Number>(2);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
     ASSERT_EQ(res, 3);
@@ -141,11 +176,11 @@ TEST_F(LoopGraphTest, SingleFeedback)
     EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 1);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on iteration > 0
+    // Loopbacks node only runs on iteration i > 0
     EXPECT_EQ(loop_->loopBacks()->versionIndex(), 0);
 }
 
-TEST_F(LoopGraphTest, ExtendedFeedback)
+TEST_F(IterableGraphTest, ExtendedFeedback)
 {
     createGraph();
 
@@ -167,37 +202,37 @@ TEST_F(LoopGraphTest, ExtendedFeedback)
     /*
      * 10 iterations
      *
-     * n         Add.     Res.
-     * 0 : 1 ->  1 + 1  -> 2  -> LB
-     * 1 :   ->  2 + 1  -> 3  -> LB
-     * 2 :   ->  3 + 1  -> 4  -> LB
-     * 3 :   ->  4 + 1  -> 5  -> LB
-     * 4 :   ->  5 + 1  -> 6  -> LB
-     * 5 :   ->  6 + 1  -> 7  -> LB
-     * 6 :   ->  7 + 1  -> 8  -> LB
-     * 7 :   ->  8 + 1  -> 9  -> LB
-     * 8 :   ->  9 + 1  -> 10 -> LB
-     * 9 :   -> 10 + 1  -> 11 -> LB
-     * 10 :  -> 11 + 1  -> 12 -> 12
+     * i         Add.     Res.
+     *
+     * 1 : 1 ->  1 + 1  -> 2  -> LB
+     * 2 :   ->  2 + 1  -> 3  -> LB
+     * 3 :   ->  3 + 1  -> 4  -> LB
+     * 4 :   ->  4 + 1  -> 5  -> LB
+     * 5 :   ->  5 + 1  -> 6  -> LB
+     * 6 :   ->  6 + 1  -> 7  -> LB
+     * 7 :   ->  7 + 1  -> 8  -> LB
+     * 8 :   ->  8 + 1  -> 9  -> LB
+     * 9 :   ->  9 + 1  -> 10 -> LB
+     * 10 :  -> 10 + 1  -> 11 -> LB
      *
      */
     nLoops->set<Number>(10);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res, 12);
+    ASSERT_EQ(res, 11);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 0);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 10);
-    EXPECT_EQ(x_->versionIndex(), 10);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 10);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 9);
+    EXPECT_EQ(x_->versionIndex(), 9);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 9);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on iteration > 0
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 9);
+    // Loopbacks node only runs on iteration i > 1
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 8);
 }
 
-TEST_F(LoopGraphTest, ReleaseLoopBack)
+TEST_F(IterableGraphTest, ReleaseLoopBack)
 {
     createGraph();
 
@@ -211,7 +246,7 @@ TEST_F(LoopGraphTest, ReleaseLoopBack)
     ASSERT_EQ(loop_->edges().size(), nEdges);
 }
 
-TEST_F(LoopGraphTest, UpstreamChange)
+TEST_F(IterableGraphTest, UpstreamChange)
 {
     createGraph();
 
@@ -239,17 +274,18 @@ TEST_F(LoopGraphTest, UpstreamChange)
     nLoops->set<Number>(loopFor);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res, 102);
+    ASSERT_EQ(res, 101);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 0);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), loopFor);
-    EXPECT_EQ(x_->versionIndex(), loopFor);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), loopFor);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 99);
+    EXPECT_EQ(x_->versionIndex(), 99);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 99);
     EXPECT_EQ(y_->versionIndex(), 0);
 
-    // Loopbacks node only runs on 0 < iteration <= nLoops
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), loopFor - 1);
+    // Loopbacks node only runs on iteration 0 < i <= nLoops
+    // (in 100 runs, loop backs up version 99 times, starting from -1)
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 98);
 
     /*
      * Alter upstream number node and run for another 100 iterations
@@ -260,17 +296,18 @@ TEST_F(LoopGraphTest, UpstreamChange)
     nLoops->set<Number>(loopFor);
     EXPECT_EQ(y_->run(), NodeConstants::ProcessResult::Success);
     auto res2 = y_->getOutputValue<Number>("Result").asInteger();
-    ASSERT_EQ(res2, 103);
+    ASSERT_EQ(res2, 102);
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 1);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), (2 * loopFor) + 1);
-    EXPECT_EQ(x_->versionIndex(), (2 * loopFor) + 1);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), (2 * loopFor) + 1);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), 199);
+    EXPECT_EQ(x_->versionIndex(), 199);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), 199);
     EXPECT_EQ(y_->versionIndex(), 1);
 
-    // Loopbacks node only runs on 0 < iteration <= nLoops
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), (2 * loopFor) - 1);
+    // Loopbacks node only runs on iteration 0 < i <= nLoops
+    // (after another 100 runs, loop backs up version a further 99 times, starting from 98)
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), 197);
 }
 
 } // namespace UnitTest

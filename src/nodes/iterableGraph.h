@@ -11,11 +11,11 @@
 #include "templates/doubleKeyedMap.h"
 
 // Loop Graph
-class LoopGraph : public Graph
+class IterableGraph : public Graph
 {
     public:
-    LoopGraph(Graph *parentGraph);
-    ~LoopGraph() = default;
+    IterableGraph(Graph *parentGraph);
+    ~IterableGraph() = default;
 
     using LoopEdges = std::vector<std::unique_ptr<LoopEdge>>;
 
@@ -35,27 +35,23 @@ class LoopGraph : public Graph
      */
     private:
     // Number of loops (iterations) to perform
-    Number nLoops_{0};
+    Number nIterations_{0};
     // Current loop iteration
-    int loopCounter_{0};
+    int i_{1};
     // Loop backs
     LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
     Edges loopEdges_;
-    // Increment loop counter
-    void increment();
-    // Current loop iteration
-    int loopCount();
-    // Reset the loop counter to zero
-    void resetLoopCounter();
     // Set the loopbacks corresponding to the graph inputs
     void setLoopBacks();
     // Release a loopback by name
     void releaseLoopBack(const std::string &name);
 
     public:
+    // Current loop iteration
+    int currentIteration();
     // Number of loops (iterations) to perform
-    const int nLoops() const;
+    const int nIterations() const;
     // Loop backs
     LoopBacksNode *loopBacks();
     // Loop edges
