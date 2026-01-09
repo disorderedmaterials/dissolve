@@ -99,13 +99,13 @@ TEST_F(IterableGraphTest, NoRun)
 
     // Check node versioning
     EXPECT_EQ(i_->versionIndex(), 0);
-    EXPECT_EQ(loop_->proxyInputs().versionIndex(), -1);
-    EXPECT_EQ(x_->versionIndex(), -1);
-    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), -1);
+    EXPECT_EQ(loop_->proxyInputs().versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(x_->versionIndex(), NodeConstants::InvalidVersion);
+    EXPECT_EQ(loop_->proxyOutputs().versionIndex(), NodeConstants::InvalidVersion);
     EXPECT_EQ(y_->versionIndex(), 0);
 
     // Loopbacks node only runs on iteration i > 0
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), NodeConstants::InvalidVersion);
 }
 
 TEST_F(IterableGraphTest, NoFeedback)
@@ -141,7 +141,7 @@ TEST_F(IterableGraphTest, NoFeedback)
     EXPECT_EQ(y_->versionIndex(), 0);
 
     // Loopbacks node only runs on iteration i > 0
-    EXPECT_EQ(loop_->loopBacks()->versionIndex(), -1);
+    EXPECT_EQ(loop_->loopBacks()->versionIndex(), NodeConstants::InvalidVersion);
 }
 
 TEST_F(IterableGraphTest, SingleFeedback)
