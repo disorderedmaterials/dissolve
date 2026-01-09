@@ -3,7 +3,7 @@
 
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
-#include "nodes/loopGraph.h"
+#include "nodes/iterableGraph.h"
 #include "nodes/numberNode.h"
 #include "nodes/registry.h"
 #include "tests/testData.h"
