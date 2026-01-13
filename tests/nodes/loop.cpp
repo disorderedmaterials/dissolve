@@ -89,7 +89,7 @@ TEST_F(IterableGraphTest, NoRun)
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     nLoops->set<Number>(0);

@@ -9,7 +9,7 @@
 #include "nodes/dissolve.h"
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
-#include "nodes/loopGraph.h"
+#include "nodes/iterableGraph.h"
 #include "nodes/species.h"
 #include "tests/testData.h"
 #include <array>
@@ -32,10 +32,10 @@ TEST(AtomShakeTest, Water)
 
     coreData.clear();
 
-    // Create loop graph containing an AtomicMCNode
-    auto loop = dynamic_cast<LoopGraph *>(root.createNode("Loop", "Loop"));
+    // Create iterable graph containing an AtomicMCNode
+    auto iterator = dynamic_cast<IterableGraph *>(root.createNode("Iterator", "Iterator"));
 
-    auto atomicMCNode = dynamic_cast<AtomicMCNode *>(loop->createNode("AtomicMC", "AtomicMC"));
+    auto atomicMCNode = dynamic_cast<AtomicMCNode *>(iterator->createNode("AtomicMC", "AtomicMC"));
     ASSERT_TRUE(atomicMCNode->setOption<Number>("ShakesPerAtom", 10));
 
     // Water species
@@ -57,21 +57,21 @@ TEST(AtomShakeTest, Water)
     EXPECT_TRUE(root.addEdge({"Water", "Species", "Insert", "Species"}));
     EXPECT_TRUE(root.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
     EXPECT_TRUE(root.addEdge({"Insert", "Configuration", "Loop", "Configuration"}));
-    EXPECT_TRUE(loop->addEdge({"Inputs", "Configuration", "AtomicMC", "Configuration"}));
+    EXPECT_TRUE(iterator->addEdge({"Inputs", "Configuration", "AtomicMC", "Configuration"}));
     // TODO: Output parameter name cannot be the same as loopback (although loopback param CAN match input).
     // May need to enforce this.
-    EXPECT_TRUE(loop->addEdge({"AtomicMC", "Configuration", "Outputs", "OutputConfiguration"}));
-    EXPECT_TRUE(loop->addEdge({"AtomicMC", "Configuration", "LoopBacks", "Configuration"}));
+    EXPECT_TRUE(iterator->addEdge({"AtomicMC", "Configuration", "Outputs", "OutputConfiguration"}));
+    EXPECT_TRUE(iterator->addEdge({"AtomicMC", "Configuration", "LoopBacks", "Configuration"}));
 
     // Run a single iteration at 300K
     ASSERT_TRUE(configurationNode->setOption<Number>("Temperature", 300.0));
-    ASSERT_TRUE(loop->setOption<Number>("N", 0));
-    ASSERT_TRUE(loop->run() == NodeConstants::ProcessResult::Success);
+    ASSERT_TRUE(iterator->setOption<Number>("N", 0));
+    ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 
     // Zero K optimization for 100 iterations
     ASSERT_TRUE(configurationNode->setOption<Number>("Temperature", 0.0));
-    ASSERT_TRUE(loop->setOption<Number>("N", 100));
-    ASSERT_TRUE(loop->run() == NodeConstants::ProcessResult::Success);
+    ASSERT_TRUE(iterator->setOption<Number>("N", 100));
+    ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 
     // Check the geometry of the molecule
     auto cfg = configurationNode->getOutputValue<Configuration *>("Configuration");
