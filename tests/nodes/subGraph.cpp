@@ -39,8 +39,8 @@ class SubGraphTest : public ::testing::Test
         x_ = dynamic_cast<AddNode *>(root_.createNode("Add", "x"));
         ASSERT_TRUE(x_);
         ASSERT_EQ(x_->name(), "x");
-        xA_ = x_->findInput("A");
-        xB_ = x_->findInput("B");
+        xA_ = x_->findInput("X");
+        xB_ = x_->findInput("Y");
         ASSERT_TRUE(xA_);
         ASSERT_TRUE(xB_);
         xA_->set(Number{1});
@@ -55,8 +55,8 @@ class SubGraphTest : public ::testing::Test
         y_ = dynamic_cast<AddNode *>(graphA_->createNode("Add", "y"));
         ASSERT_TRUE(y_);
         ASSERT_EQ(y_->name(), "y");
-        yA_ = y_->findInput("A");
-        yB_ = y_->findInput("B");
+        yA_ = y_->findInput("X");
+        yB_ = y_->findInput("Y");
         ASSERT_TRUE(yA_);
         ASSERT_TRUE(yB_);
         yA_->set(Number{3});
@@ -69,7 +69,7 @@ class SubGraphTest : public ::testing::Test
         w_ = dynamic_cast<AddNode *>(root_.createNode("Add", "w"));
         ASSERT_TRUE(w_);
         ASSERT_EQ(w_->name(), "w");
-        wB_ = w_->findInput("B");
+        wB_ = w_->findInput("Y");
         ASSERT_TRUE(wB_);
         wB_->set(Number{5});
     }
@@ -112,16 +112,16 @@ TEST_F(SubGraphTest, Connections)
     EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
 
     // Connect the mapped input on GraphA internally to it's "z" node
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "A"}));
+    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
 
     // Connect y result to z
-    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
 
     // Connect z result to graphA output, creating a mapped output
     EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
 
     // Connect GraphA mapped output "D" to node "w"
-    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
+    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
 }
 
 TEST_F(SubGraphTest, Flow)
@@ -132,16 +132,16 @@ TEST_F(SubGraphTest, Flow)
     EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
 
     // Connect the mapped input on GraphA internally to it's "z" node
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "A"}));
+    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
 
     // Connect y result to z
-    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
 
     // Connect z result to graphA output, creating a mapped output
     EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
 
     // Connect GraphA mapped output "D" to node "w"
-    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "A"}));
+    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
 
     // Run w - all nodes should update
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/atomicMC/atomicMC.h"
 #include "io/import/coordinates.h"
@@ -54,7 +54,7 @@ TEST(AtomShakeTest, Water)
     // Create number node to modify temperature
     auto temperatureValueNode = dynamic_cast<NumberNode *>(root.createNode("Number", "Temperature"));
     ASSERT_TRUE(temperatureValueNode);
-    ASSERT_TRUE(temperatureValueNode->setOption<Number>("A", 0));
+    ASSERT_TRUE(temperatureValueNode->setOption<Number>("X", 0));
 
     // Set density units
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
@@ -74,8 +74,8 @@ TEST(AtomShakeTest, Water)
     ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 
     // Zero K optimization for 100 iterations
-    EXPECT_TRUE(root.addEdge({"Temperature", "A", "Iterator", "A"}));
-    EXPECT_TRUE(iterator->addEdge({"Inputs", "A", "AtomicMC", "Temperature"}));
+    EXPECT_TRUE(root.addEdge({"Temperature", "X", "Iterator", "X"}));
+    EXPECT_TRUE(iterator->addEdge({"Inputs", "X", "AtomicMC", "Temperature"}));
     ASSERT_TRUE(iterator->setOption<Number>("N", 100));
     ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 

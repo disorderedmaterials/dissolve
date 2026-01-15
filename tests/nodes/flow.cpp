@@ -38,8 +38,8 @@ class GraphFlowTest : public ::testing::Test
         z_ = dynamic_cast<AddNode *>(graph_.createNode("Add", "z"));
 
         ASSERT_TRUE(x_);
-        xA_ = x_->findInput("A");
-        xB_ = x_->findInput("B");
+        xA_ = x_->findInput("X");
+        xB_ = x_->findInput("Y");
         xResult_ = x_->findOutput("Result");
         ASSERT_TRUE(xA_);
         ASSERT_TRUE(xB_);
@@ -48,8 +48,8 @@ class GraphFlowTest : public ::testing::Test
         xB_->set(Number{2});
 
         ASSERT_TRUE(y_);
-        yA_ = y_->findInput("A");
-        yB_ = y_->findInput("B");
+        yA_ = y_->findInput("X");
+        yB_ = y_->findInput("Y");
         yResult_ = y_->findOutput("Result");
         ASSERT_TRUE(yA_);
         ASSERT_TRUE(yB_);
@@ -58,8 +58,8 @@ class GraphFlowTest : public ::testing::Test
         yB_->set(Number{4});
 
         ASSERT_TRUE(z_);
-        zA_ = z_->findInput("A");
-        zB_ = z_->findInput("B");
+        zA_ = z_->findInput("X");
+        zB_ = z_->findInput("Y");
         zResult_ = z_->findOutput("Result");
         ASSERT_TRUE(zA_);
         ASSERT_TRUE(zB_);
@@ -67,8 +67,8 @@ class GraphFlowTest : public ::testing::Test
 
         if (includeEdges)
         {
-            EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
-            EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+            EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "X"}));
+            EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "Y"}));
         }
     }
 
@@ -121,8 +121,8 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(z_->versionIndex(), 0);
     EXPECT_TRUE(z_->isUpToDate());
 
-    // Add the edge between x's "Result" and z's "A" input
-    EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "A"}));
+    // Add the edge between x's "Result" and z's "X" input
+    EXPECT_TRUE(graph_.addEdge({"x", "Result", "z", "X"}));
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // If we now run z we should use x's output without changing x itself
@@ -131,8 +131,8 @@ TEST_F(GraphFlowTest, Basic)
     EXPECT_EQ(zResult_->get<Number>().asInteger(), 3);
     EXPECT_EQ(x_->versionIndex(), 0);
 
-    // Complete the graph and link y's "Result" output to z's "B" input
-    EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+    // Complete the graph and link y's "Result" output to z's "Y" input
+    EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "Y"}));
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // As before, if we now run z we should use x's and y's output without changing x or y
@@ -203,13 +203,13 @@ TEST_F(GraphFlowTest, RemoveEdges)
     EXPECT_EQ(y_->versionIndex(), 0);
 
     // Remove edge between x and z - this will invalidate z but not x
-    EXPECT_TRUE(graph_.removeEdge({"x", "Result", "z", "A"}));
+    EXPECT_TRUE(graph_.removeEdge({"x", "Result", "z", "X"}));
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
 
     // Now remove edge between y and z - this will invalidate z but not y
-    EXPECT_TRUE(graph_.removeEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graph_.removeEdge({"y", "Result", "z", "Y"}));
     EXPECT_EQ(x_->versionIndex(), 0);
     EXPECT_EQ(y_->versionIndex(), 0);
     EXPECT_EQ(z_->versionIndex(), NodeConstants::InvalidVersion);
@@ -219,10 +219,10 @@ TEST_F(GraphFlowTest, RemoveEdges)
 
     // Insert a new node after edge removal
     auto x2 = dynamic_cast<AddNode *>(graph_.createNode("Add", "x2"));
-    EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
-    EXPECT_TRUE(graph_.addEdge({"x", "Result", "x2", "A"}));
-    EXPECT_TRUE(graph_.addEdge({"x2", "Result", "z", "A"}));
-    auto x2a = x2->findInput("B");
+    EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "Y"}));
+    EXPECT_TRUE(graph_.addEdge({"x", "Result", "x2", "X"}));
+    EXPECT_TRUE(graph_.addEdge({"x2", "Result", "z", "X"}));
+    auto x2a = x2->findInput("Y");
     x2a->set(Number{20});
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->findOutput("Result")->get<Number>().asInteger(), 30);

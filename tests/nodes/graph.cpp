@@ -52,8 +52,8 @@ class GraphCoreTest : public ::testing::Test
         ASSERT_EQ(y_->name(), "y");
         ASSERT_EQ(z_->name(), "z");
 
-        EXPECT_TRUE(root_.addEdge({"x", "Result", "z", "A"}));
-        EXPECT_TRUE(root_.addEdge({"y", "Result", "z", "B"}));
+        EXPECT_TRUE(root_.addEdge({"x", "Result", "z", "X"}));
+        EXPECT_TRUE(root_.addEdge({"y", "Result", "z", "Y"}));
     }
 
     protected:
