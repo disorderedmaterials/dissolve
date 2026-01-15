@@ -26,11 +26,11 @@ class AddNode : public Node
      * Processing & Validity
      */
     private:
-    // Operand A
-    Number a_;
-    // Operand B
-    Number b_;
-    // Result (sum of A and B)
+    // Operand X
+    Number x_;
+    // Operand Y
+    Number y_;
+    // Result (sum of X and Y)
     Number result_;
 
     public:

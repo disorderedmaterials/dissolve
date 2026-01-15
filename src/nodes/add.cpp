@@ -5,8 +5,8 @@
 
 AddNode::AddNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addSerialisableInput<Number>("X", "First operand to the addition", a_);
-    addSerialisableInput<Number>("Y", "Second operand to the addition", b_);
+    addSerialisableInput<Number>("X", "First operand to the addition", x_);
+    addSerialisableInput<Number>("Y", "Second operand to the addition", y_);
     addOutput<Number>("Result", "The sum of the operands", result_);
 }
 
@@ -18,12 +18,12 @@ AddNode::AddNode(Graph *parentGraph) : Node(parentGraph)
 std::string_view AddNode::type() const { return "Add"; }
 
 // Return short summary of the node's purpose
-std::string_view AddNode::summary() const { return "Performs addition of operands A and B"; }
+std::string_view AddNode::summary() const { return "Performs addition of operands X and Y"; }
 
 // Perform processing
 NodeConstants::ProcessResult AddNode::process()
 {
-    result_ = a_ + b_;
+    result_ = x_ + y_;
 
     return NodeConstants::ProcessResult::Success;
 }

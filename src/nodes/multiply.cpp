@@ -2,8 +2,8 @@
 
 MultiplyNode::MultiplyNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addSerialisableInput<Number>("X", "First factor to the multiplication", a_);
-    addSerialisableInput<Number>("Y", "Second factor to the multiplication", b_);
+    addSerialisableInput<Number>("X", "First factor to the multiplication", x_);
+    addSerialisableInput<Number>("Y", "Second factor to the multiplication", y_);
     addOutput<Number>("Result", "The product of the two factors", result_);
 }
 
@@ -15,12 +15,12 @@ MultiplyNode::MultiplyNode(Graph *parentGraph) : Node(parentGraph)
 std::string_view MultiplyNode::type() const { return "Multiply"; }
 
 // Return short summary of the node's purpose
-std::string_view MultiplyNode::summary() const { return "Performs multiplication of factors A and B"; }
+std::string_view MultiplyNode::summary() const { return "Performs multiplication of factors X and Y"; }
 
 // Perform processing
 NodeConstants::ProcessResult MultiplyNode::process()
 {
-    result_ = a_ * b_;
+    result_ = x_ * y_;
 
     return NodeConstants::ProcessResult::Success;
 }

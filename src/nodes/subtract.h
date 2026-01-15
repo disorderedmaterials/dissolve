@@ -23,11 +23,11 @@ class SubtractNode : public Node
      * Definition
      */
     private:
-    // Factor A
-    Number a_;
-    // Factor B
-    Number b_;
-    // Product of A and B
+    // Factor X
+    Number x_;
+    // Factor Y
+    Number y_;
+    // Product of X and Y
     Number result_;
 
     /*
