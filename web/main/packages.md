@@ -32,8 +32,7 @@ linkTitle = "Packages"
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
-{{< releaselink target="GUI" urlSuffix="-X64.dmg" textSuffix="DMG (Intel)" >}}
-{{< releaselink target="GUI" urlSuffix="-ARM64.dmg" textSuffix="DMG (Silicon)" >}}
+{{< releaselink target="GUI" urlSuffix="-ARM64.dmg" textSuffix="DMG" >}}
 <a href='https://docs.projectdissolve.com/userguide/get/packages/#mac-osx'>OSX Installation</a>
 {{% /blocks/feature %}}
 

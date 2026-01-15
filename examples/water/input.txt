@@ -1,4 +1,4 @@
-# Input file written by Dissolve v1.8.0 at 10:05:11 on 10-07-2025.
+# Input file written by Dissolve v1.9.0 at 08:55:11 on 08-01-2026.
 
 #==============================================================================#
 #                                 Master Terms                                 #
@@ -241,7 +241,6 @@ EndLayer
 
 Layer  'Analyse AvgMol/SDF'
   Frequency  1
-  Disabled
 
   Module  AvgMol  'AvgMol01'
     Frequency  1
