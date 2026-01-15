@@ -22,7 +22,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     // Retrieve control parameters from Configuration
     const auto termScale = 1.0;
-    const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
+    const auto rRT = 1.0 / (.008314472 * temperature_.asDouble());
 
     // Print argument/parameter summary
     message("Performing {} shake(s) per Atom\n", nShakesPerAtom);

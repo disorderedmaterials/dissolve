@@ -5,7 +5,6 @@
 
 ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOption<Number>("Temperature", "Configuration temperature (K)", temperature_);
     addPointerOutput<Configuration>("Configuration", "Configuration object", configuration_);
 }
 
@@ -15,6 +14,5 @@ std::string_view ConfigurationNode::summary() const { return "Produce an empty a
 
 NodeConstants::ProcessResult ConfigurationNode::process()
 {
-    configuration_.setTemperature(temperature_.asInteger());
     return NodeConstants::ProcessResult::Unchanged;
 }

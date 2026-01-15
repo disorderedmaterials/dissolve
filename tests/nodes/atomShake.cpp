@@ -11,6 +11,7 @@
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/species.h"
+#include "nodes/numberNode.h"
 #include "tests/testData.h"
 #include <array>
 #include <gtest/gtest.h>
@@ -50,13 +51,18 @@ TEST(AtomShakeTest, Water)
     ASSERT_TRUE(insertNode->setInput<Number>("Population", 1));
     ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.1));
 
+    // Create number node to modify temperature
+    auto temperatureValueNode = dynamic_cast<NumberNode *>(root.createNode("Number", "Temperature"));
+    ASSERT_TRUE(temperatureValueNode);
+    ASSERT_TRUE(temperatureValueNode->setOption<Number>("A", 0));
+
     // Set density units
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
 
     // Set connections
     EXPECT_TRUE(root.addEdge({"Water", "Species", "Insert", "Species"}));
     EXPECT_TRUE(root.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-    EXPECT_TRUE(root.addEdge({"Insert", "Configuration", "Loop", "Configuration"}));
+    EXPECT_TRUE(root.addEdge({"Insert", "Configuration", "Iterator", "Configuration"}));
     EXPECT_TRUE(iterator->addEdge({"Inputs", "Configuration", "AtomicMC", "Configuration"}));
     // TODO: Output parameter name cannot be the same as loopback (although loopback param CAN match input).
     // May need to enforce this.
@@ -64,12 +70,12 @@ TEST(AtomShakeTest, Water)
     EXPECT_TRUE(iterator->addEdge({"AtomicMC", "Configuration", "LoopBacks", "Configuration"}));
 
     // Run a single iteration at 300K
-    ASSERT_TRUE(configurationNode->setOption<Number>("Temperature", 300.0));
-    ASSERT_TRUE(iterator->setOption<Number>("N", 0));
+    ASSERT_TRUE(iterator->setOption<Number>("N", 1));
     ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 
     // Zero K optimization for 100 iterations
-    ASSERT_TRUE(configurationNode->setOption<Number>("Temperature", 0.0));
+    EXPECT_TRUE(root.addEdge({"Temperature", "A", "Iterator", "A"}));
+    EXPECT_TRUE(iterator->addEdge({"Inputs", "A", "AtomicMC", "Temperature"}));
     ASSERT_TRUE(iterator->setOption<Number>("N", 100));
     ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 

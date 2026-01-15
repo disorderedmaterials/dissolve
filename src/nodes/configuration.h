@@ -26,8 +26,6 @@ class ConfigurationNode : public Node
     private:
     // Configuration object
     Configuration configuration_;
-    // Configuration temperature
-    Number temperature_;
 
     /*
      * Processing

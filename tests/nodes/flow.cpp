@@ -216,6 +216,16 @@ TEST_F(GraphFlowTest, RemoveEdges)
 
     // Try to remove a non-existent edge
     EXPECT_FALSE(graph_.removeEdge({"Q", "Result", "z", "C"}));
+
+    // Insert a new node after edge removal
+    auto x2 = dynamic_cast<AddNode *>(graph_.createNode("Add", "x2"));
+    EXPECT_TRUE(graph_.addEdge({"y", "Result", "z", "B"}));
+    EXPECT_TRUE(graph_.addEdge({"x", "Result", "x2", "A"}));
+    EXPECT_TRUE(graph_.addEdge({"x2", "Result", "z", "A"}));
+    auto x2a = x2->findInput("B");
+    x2a->set(Number{20});
+    EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(z_->findOutput("Result")->get<Number>().asInteger(), 30);
 }
 
 } // namespace UnitTest

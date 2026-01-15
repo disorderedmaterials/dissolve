@@ -26,6 +26,8 @@ class AtomicMCNode : public Node
     private:
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
+    // Temperature (K)
+    Number temperature_{0};
     // Interatomic cutoff distance to use for energy calculation
     std::optional<double> cutoffDistance_;
     // Number of shakes to attempt per atom
