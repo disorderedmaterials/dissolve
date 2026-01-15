@@ -123,6 +123,7 @@ Find-And-Remove -relativePath "build"
 Find-And-Remove -relativePath "dependencies"
 Find-And-Remove -relativePath "CMakeUserPresets.json"
 Find-And-Remove -relativePath "msvc-env"
+Find-And-Remove -relativePath "cmake/Modules/conan_provider.cmake"
 
 #Install key dependencies with Chocolatey
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
