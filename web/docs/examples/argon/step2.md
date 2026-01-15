@@ -31,7 +31,7 @@ We will let Dissolve apply intramolecular terms to the whole species (there aren
 
 {{< tip text="For more complicated (molecular) species the wizard also handles how _intra_-molecular terms are generated. You also may have to deal with potential naming conflicts with existing terms in the main simulation, which the _Add Forcefield Terms_ wizard will help you resolve." />}}
 
-If you now return to the {{< gui-tab type="ff" text="Forcefield" >}} tab you will see in the **Atom Types** section that we have an atom type for our argon atom which contains the necessary interaction parameters. The short range type (_SR Form_ in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising [geometric combination rules]({{< ref "short-range" >}}). Those parameters (`epsilon` and `sigma`) are shown in the _SR Parameters_ column and describe how our argon atoms will interact with each other in the simulation.
+If you now return to the {{< gui-tab type="ff" text="Forcefield" >}} tab you will see in the **Atom Types** section that we have an atom type for our argon atom which contains the necessary interaction parameters. The short range type (_SR Form_ in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising [geometric combination rules]({{< ref "short-range" >}}). Those parameters (`epsilon` and `sigma`) are shown in the _Parameters_ column and describe how our argon atoms will interact with each other in the simulation.
 
 {{< warn text="Atom types are strictly associated with a chemical element, and can only be applied to atoms of the same element." />}}
 
@@ -39,7 +39,7 @@ By default, Dissolve will generate all the necessary pair potentials for the cur
 
 The current Pair Potentials range is set too high for our box size. We must alter this value to be less than the radius of largest possible inscribed sphere for box:
 
-{{< action type="edit" >}}In the **Control** group change the _Range_ to `10.0`.{{< /action >}}
+{{< action type="edit" >}}In the **Range** group change the cutoff to `10.0` Angstroms.{{< /action >}}
 
 Before we move on we need to set an option related to the charges to use. Along with van der Waals parameters, atomic charges are the second important component in describing interactions between atoms. In Dissolve these charges can either be taken from the atom types and included in the tabulated pair potentials, or located on species atoms and calculated analytically. Dissolve automatically detects the most appropriate scheme but is wary of systems or species where there are too many atoms with zero charge, as is the case here. As such, we must force a choice:
 

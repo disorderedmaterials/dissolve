@@ -47,13 +47,13 @@ As the name implies, the {{< module "AvgMol" >}} module will provide us with the
 Let's proceed and set up the two modules in the layer. First, {{< module "AvgMol" >}}:
 
 {{< action type="mouse" >}}Select the {{< module "AvgMol" >}} module to display its {{<gui-button icon="options" text="Options">}}{{< /action >}}
-{{< action type="mouse" text="Find the **Control** settings group, and click the **Site** option." />}}
+{{< action type="mouse" text="Find the **Sites** settings group and click the button for the **Site** option." />}}
 {{< action type="edit">}}Set the {{<gui-button icon="species" text="Species">}} to **Water** and the {{<gui-button icon="site" text="Site">}} to **COM** for the average molecule calculation (it will be the only one available, since it is the only one which has a set of axes defined){{</action>}}
 
 And now {{< module "SDF" >}}:
 
 {{< action type="mouse" >}}Select the {{< module "SDF" >}} module to display its {{<gui-button icon="options" text="Options">}}{{< /action >}}
-{{< action type="check" text="In the **Control** settings group set the central **SiteA** to `COM`" />}}
+{{< action type="check" text="In the **Sites** settings group set the central **SiteA** to `COM`" />}}
 {{< action type="check" text="Set the surrounding **SiteB** to `O`" />}}
 
 * * *
