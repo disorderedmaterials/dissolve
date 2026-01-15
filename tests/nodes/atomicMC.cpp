@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Team Dissolve and contributors
 
+#include "nodes/atomicMC/atomicMC.h"
 #include "io/import/coordinates.h"
 #include "io/import/data1D.h"
-#include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
 #include "nodes/data1DImport.h"
 #include "nodes/dissolve.h"
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/species.h"
 #include "nodes/numberNode.h"
+#include "nodes/species.h"
 #include "tests/testData.h"
 #include <array>
 #include <gtest/gtest.h>

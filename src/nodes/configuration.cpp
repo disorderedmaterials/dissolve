@@ -12,7 +12,4 @@ std::string_view ConfigurationNode::type() const { return "Configuration"; }
 
 std::string_view ConfigurationNode::summary() const { return "Produce an empty atomic configuration."; }
 
-NodeConstants::ProcessResult ConfigurationNode::process()
-{
-    return NodeConstants::ProcessResult::Unchanged;
-}
+NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }
