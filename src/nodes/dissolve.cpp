@@ -51,7 +51,6 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
     PotentialMap potentialMap(atomTypes, pairPotentialStore(), pairPotentialRange());
 
     // Regenerate cells in the configuration if necessary
-    // TODO
     cfg->updateCells(potentialMap.range());
 
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
