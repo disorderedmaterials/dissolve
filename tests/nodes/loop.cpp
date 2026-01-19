@@ -53,14 +53,14 @@ class IterableGraphTest : public ::testing::Test
 
         // Create edge connections
         // - Number 'i' is a dynamic input to the IterableGraph - we'll call the input "I"
-        EXPECT_TRUE(root_.addEdge({"i", "A", "Iterator", "I"}));
-        // - Add 'x' takes the IterableGraph input "I" as its parameter "A"
-        EXPECT_TRUE(loop_->addEdge({"Inputs", "I", "x", "A"}));
+        EXPECT_TRUE(root_.addEdge({"i", "X", "Iterator", "I"}));
+        // - Add 'x' takes the IterableGraph input "I" as its parameter "X"
+        EXPECT_TRUE(loop_->addEdge({"Inputs", "I", "x", "X"}));
         // - Result from Add 'x' goes to graph output (which we will call "C") as well as loopback to "I"
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "Outputs", "C"}));
         EXPECT_TRUE(loop_->addEdge({"x", "Result", "LoopBacks", "I"}));
-        // - The output "C" of the loop graph then goes to input "A" of Add 'y'
-        EXPECT_TRUE(root_.addEdge({"Iterator", "C", "y", "A"}));
+        // - The output "C" of the loop graph then goes to input "X" of Add 'y'
+        EXPECT_TRUE(root_.addEdge({"Iterator", "C", "y", "X"}));
     }
 
     protected:
@@ -77,19 +77,19 @@ TEST_F(IterableGraphTest, NoRun)
 {
     createGraph();
 
-    auto xB = x_->findInput("B");
+    auto xB = x_->findInput("Y");
     EXPECT_TRUE(xB);
     xB->set<Number>(1);
 
-    auto yB = y_->findInput("B");
+    auto yB = y_->findInput("Y");
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    auto iA = i_->findOption("A");
+    auto iA = i_->findOption("X");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     nLoops->set<Number>(0);
@@ -112,19 +112,19 @@ TEST_F(IterableGraphTest, NoFeedback)
 {
     createGraph();
 
-    auto xB = x_->findInput("B");
+    auto xB = x_->findInput("Y");
     EXPECT_TRUE(xB);
     xB->set<Number>(1);
 
-    auto yB = y_->findInput("B");
+    auto yB = y_->findInput("Y");
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    auto iA = i_->findOption("A");
+    auto iA = i_->findOption("X");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     // Zero iterations: We expect 1 + (xB = 1) = 1 + 1 = 2
@@ -148,19 +148,19 @@ TEST_F(IterableGraphTest, SingleFeedback)
 {
     createGraph();
 
-    auto xB = x_->findInput("B");
+    auto xB = x_->findInput("Y");
     EXPECT_TRUE(xB);
     xB->set<Number>(1);
 
-    auto yB = y_->findInput("B");
+    auto yB = y_->findInput("Y");
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    auto iA = i_->findOption("A");
+    auto iA = i_->findOption("X");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     // One iteration: We expect (LB = 2) + (xB = 1) = 2 + 1 = 3
@@ -184,19 +184,19 @@ TEST_F(IterableGraphTest, ExtendedFeedback)
 {
     createGraph();
 
-    auto xB = x_->findInput("B");
+    auto xB = x_->findInput("Y");
     EXPECT_TRUE(xB);
     xB->set<Number>(1);
 
-    auto yB = y_->findInput("B");
+    auto yB = y_->findInput("Y");
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    auto iA = i_->findOption("A");
+    auto iA = i_->findOption("X");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     /*
@@ -250,19 +250,19 @@ TEST_F(IterableGraphTest, UpstreamChange)
 {
     createGraph();
 
-    auto xB = x_->findInput("B");
+    auto xB = x_->findInput("Y");
     EXPECT_TRUE(xB);
     xB->set<Number>(1);
 
-    auto yB = y_->findInput("B");
+    auto yB = y_->findInput("Y");
     EXPECT_TRUE(yB);
     yB->set<Number>(0);
 
-    auto iA = i_->findOption("A");
+    auto iA = i_->findOption("X");
     EXPECT_TRUE(iA);
     iA->set<Number>(1);
 
-    auto nLoops = loop_->findOption("NLoops");
+    auto nLoops = loop_->findOption("N");
     EXPECT_TRUE(nLoops);
 
     /*

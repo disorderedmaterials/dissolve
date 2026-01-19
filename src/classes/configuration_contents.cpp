@@ -27,8 +27,9 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     // Set the position
     newAtom.setCoordinates(r);
 
-    // Set master index for pair potential lookup
-    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
+    // Set configuration type index for pair potential lookup
+    // TODO This can be removed once the Dissolve1 unit tests have been ported over to Dissolve2
+    newAtom.setConfigurationTypeIndex(sourceAtom->atomType()->index());
 
     return newAtom;
 }

@@ -4,8 +4,8 @@ x = 0
 y = 0
 
 edges = [
-  {sourceNode = "x", sourceOutput = "Result", targetNode = "z", targetInput = "A"},
-  {sourceNode = "y", sourceOutput = "Result", targetNode = "z" ,targetInput = "B"}
+  {sourceNode = "x", sourceOutput = "Result", targetNode = "z", targetInput = "X"},
+  {sourceNode = "y", sourceOutput = "Result", targetNode = "z" ,targetInput = "Y"}
 ]
 
 [nodes]

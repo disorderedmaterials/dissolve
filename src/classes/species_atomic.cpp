@@ -349,12 +349,6 @@ double Species::totalCharge(bool useAtomTypes) const
 // Apply random noise to atoms
 void Species::randomiseCoordinates(double maxDisplacement)
 {
-    Vector3 deltaR;
-
     for (auto &i : atoms_)
-    {
-        deltaR.randomUnit();
-        deltaR *= maxDisplacement;
-        i.translateCoordinates(deltaR);
-    }
+        i.translateCoordinates(Vector3::randomUnit() * maxDisplacement);
 }
