@@ -66,7 +66,7 @@ TEST(ParametersTest, VectorParameter)
     // Create a Number node
     auto n1 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number1"));
     ASSERT_TRUE(n1);
-    auto number1 = n1->findOption("A");
+    auto number1 = n1->findOption("X");
     number1->set(Number{1.0});
 
     // Assign the number node to the vector
@@ -104,15 +104,15 @@ TEST(ParametersTest, VectorInputOutput)
     // Create three Number nodes as inputs for TestA's number vector
     auto *n1 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number1"));
     ASSERT_TRUE(n1);
-    auto number1 = n1->findOption("A");
+    auto number1 = n1->findOption("X");
     ASSERT_TRUE(number1);
     auto *n2 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number2"));
     ASSERT_TRUE(n2);
-    auto number2 = n2->findOption("A");
+    auto number2 = n2->findOption("X");
     ASSERT_TRUE(number2);
     auto *n3 = dynamic_cast<NumberNode *>(root_.addNode(std::make_unique<NumberNode>(&root_), "Number3"));
     ASSERT_TRUE(n3);
-    auto number3 = n3->findOption("A");
+    auto number3 = n3->findOption("X");
     ASSERT_TRUE(number3);
 
     // Set some numbers
@@ -121,9 +121,9 @@ TEST(ParametersTest, VectorInputOutput)
     number3->set(Number{8.0});
 
     // Link all three numbers in to the TestA vector
-    ASSERT_TRUE(root_.addEdge({"Number1", "A", "TestA", "NumberVector"}));
-    ASSERT_TRUE(root_.addEdge({"Number2", "A", "TestA", "NumberVector"}));
-    ASSERT_TRUE(root_.addEdge({"Number3", "A", "TestA", "NumberVector"}));
+    ASSERT_TRUE(root_.addEdge({"Number1", "X", "TestA", "NumberVector"}));
+    ASSERT_TRUE(root_.addEdge({"Number2", "X", "TestA", "NumberVector"}));
+    ASSERT_TRUE(root_.addEdge({"Number3", "X", "TestA", "NumberVector"}));
 
     // Run the TestB node to pull the number edge vector from TestA, using the numbers from the three number nodes
     EXPECT_TRUE(a->inputsAreValid());
@@ -157,7 +157,7 @@ TEST(ParametersTest, VectorInputOutput)
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
 
     // Remove a single edge - this should flag TestA and TestB as being out of date
-    EXPECT_TRUE(root_.removeEdge({"Number1", "A", "TestA", "NumberVector"}));
+    EXPECT_TRUE(root_.removeEdge({"Number1", "X", "TestA", "NumberVector"}));
     EXPECT_TRUE(a->inputsAreValid());
     EXPECT_TRUE(b->inputsAreValid());
     EXPECT_FALSE(a->isUpToDate());
@@ -172,8 +172,8 @@ TEST(ParametersTest, VectorInputOutput)
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
 
     // Remove both of the other edges
-    EXPECT_TRUE(root_.removeEdge({"Number3", "A", "TestA", "NumberVector"}));
-    EXPECT_TRUE(root_.removeEdge({"Number2", "A", "TestA", "NumberVector"}));
+    EXPECT_TRUE(root_.removeEdge({"Number3", "X", "TestA", "NumberVector"}));
+    EXPECT_TRUE(root_.removeEdge({"Number2", "X", "TestA", "NumberVector"}));
     EXPECT_TRUE(a->inputsAreValid());
     EXPECT_TRUE(b->inputsAreValid());
     EXPECT_FALSE(a->isUpToDate());

@@ -38,7 +38,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         for (auto &&[molAtom, spAtom] : zip(molecule_.localAtoms(), fourSixthsBenzene_.atoms()))
         {
             molAtom.setCoordinates(spAtom.r());
-            molAtom.setMasterTypeIndex(spAtom.atomType()->index());
+            molAtom.setConfigurationTypeIndex(spAtom.atomType()->index());
         }
 
         // Set up the function wrapper

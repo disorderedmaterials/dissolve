@@ -8,6 +8,8 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addInput<Number>("Temperature", "Temperature (K)", temperature_)
+        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Options
     addOption<Number>("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);

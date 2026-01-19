@@ -31,12 +31,6 @@ void Atom::setConfigurationTypeIndex(int id) { configurationTypeIndex_ = id; }
 // Return AtomType index in parent Configuration
 int Atom::configurationTypeIndex() const { return configurationTypeIndex_; }
 
-// Set master AtomType index
-void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }
-
-// Return master AtomType index
-int Atom::masterTypeIndex() const { return masterTypeIndex_; }
-
 // Return global index of the atom
 int Atom::globalIndex() const
 {

@@ -36,7 +36,7 @@ const DoubleKeyedMap<PairPotential> &DissolveGraph::pairPotentialStore() { retur
 const double DissolveGraph::pairPotentialRange() const { return pairPotentialRange_; }
 
 // Return energy kernel containing potential map
-std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configuration *cfg, std::optional<double> energyCutoff)
+std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configuration *cfg)
 {
     auto atomTypes = cfg->atomTypeVector();
 
@@ -50,12 +50,10 @@ std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configurat
     // Generate configuration potential map
     PotentialMap potentialMap(atomTypes, pairPotentialStore(), pairPotentialRange());
 
-    // Regenerate cells
-    cfg->cells().generate(cfg->box(), cfg->requestedCellDivisionLength(), potentialMap.range());
+    // Regenerate cells in the configuration if necessary
+    cfg->updateCells(potentialMap.range());
 
-    auto kernel = KernelProducer::energyKernel(cfg, potentialMap, energyCutoff);
-
-    cfg->updateCells(kernel.get()->potentialMap().range());
+    auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
     return kernel;
 }

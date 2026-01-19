@@ -5,7 +5,7 @@
 
 IterableGraph::IterableGraph(Graph *parentGraph) : Graph(parentGraph)
 {
-    addOption<Number>("NLoops", "Number of loops (iterations) to perform", nIterations_);
+    addOption<Number>("N", "Number of loops (iterations) to perform", nIterations_);
     loopBacks_ = dynamic_cast<LoopBacksNode *>(addNode(std::make_unique<LoopBacksNode>(this), "LoopBacks"));
 }
 

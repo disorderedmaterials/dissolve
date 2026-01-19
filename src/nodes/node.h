@@ -241,6 +241,15 @@ class Node : public Serialisable<>
     bool ownParameter(std::shared_ptr<ParameterBase> &parameter, bool isOutput = false);
     // Return named input parameter if it exists
     std::shared_ptr<ParameterBase> findInput(std::string_view inputName) const;
+    template <class T> bool setInput(std::string_view name, const T &value)
+    {
+        auto i = findInput(name);
+        if (!i)
+            return false;
+
+        i->set<T>(value);
+        return true;
+    }
     // Return input parameters
     NodeParameterMap &inputs();
     // Get input parameter value

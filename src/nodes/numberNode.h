@@ -24,7 +24,7 @@ class NumberNode : public Node
      */
     private:
     // The number
-    Number a_;
+    Number x_;
 
     /*
      * Processing

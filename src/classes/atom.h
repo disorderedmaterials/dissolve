@@ -24,8 +24,6 @@ class Atom
     Vector3 r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
     int configurationTypeIndex_{-1};
-    // Assigned master AtomType index (for pair potential indexing)
-    int masterTypeIndex_{-1};
 
     public:
     // Set coordinates
@@ -44,10 +42,6 @@ class Atom
     void setConfigurationTypeIndex(int id);
     // Return AtomType index in parent Configuration
     int configurationTypeIndex() const;
-    // Set master AtomType index
-    void setMasterTypeIndex(int id);
-    // Return master AtomType index
-    int masterTypeIndex() const;
     // Return global index of the atom
     int globalIndex() const;
 

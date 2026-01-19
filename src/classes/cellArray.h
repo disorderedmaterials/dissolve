@@ -70,6 +70,8 @@ class CellArray
     Matrix3 axes_;
     // Cell array (one-dimensional)
     std::vector<Cell> cells_;
+    // Pair potential range at which the array was last created
+    std::optional<double> pairPotentialRangeCreatedAt_;
     // Box associated with this cell division scheme
     const Box *box_{nullptr};
 

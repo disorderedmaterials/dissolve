@@ -405,14 +405,13 @@ void Vector3::orthogonalise(const Vector3 &reference1, const Vector3 &reference2
 // Prints the contents of the vector
 void Vector3::print() const { std::cout << std::format("{} {} {}", x, y, z) << std::endl; }
 
-// Generate random unit vector
-void Vector3::randomUnit()
+// Generate random unit vector (on a unit sphere)
+Vector3 Vector3::randomUnit()
 {
-    // Generates a random unit vector
-    x = DissolveMath::random() - 0.5;
-    y = DissolveMath::random() - 0.5;
-    z = DissolveMath::random() - 0.5;
-    normalise();
+    auto y = 2.0 * (DissolveMath::random() - 0.5);
+    auto r = sqrt(1 - y * y);
+    auto lambda = 2.0 * M_PI * (DissolveMath::random() - 0.5);
+    return {r * sin(lambda), y, r * cos(lambda)};
 }
 
 // Convert spherical who,phi,theta coordinates into cartesian x,y,z
