@@ -16,7 +16,7 @@ TEST(GraphArgonTest, InitSimulation)
     createArgonGraph(&data.graphRoot);
 
     // Get the Insert node and run the graph
-    auto insertNode = data.graphRoot.node("Insert");
+    auto insertNode = data.graphRoot.findNode("Insert");
     ASSERT_TRUE(insertNode);
     ASSERT_EQ(insertNode->run(), NodeConstants::ProcessResult::Success);
 

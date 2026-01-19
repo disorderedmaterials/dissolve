@@ -32,7 +32,7 @@ class EdgeConstructor : public Edge
 std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definition)
 {
     // Get source node and output
-    auto sourceNode = parent->node(definition.sourceNode);
+    auto sourceNode = parent->findNode(definition.sourceNode);
     if (!sourceNode)
     {
         Messenger::error("Source node '{}' does not exist in the graph.\n", definition.sourceNode);
@@ -54,7 +54,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Get target node and input
-    auto targetNode = parent->node(definition.targetNode);
+    auto targetNode = parent->findNode(definition.targetNode);
     if (!targetNode)
     {
         Messenger::error("Target node '{}' does not exist in the graph.\n", definition.targetNode);
