@@ -24,8 +24,8 @@ NodeConstants::ProcessResult EnergyNode::process()
      * This is a serial routine (subroutines called from within are parallel).
      */
 
-    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
-    auto potentialMap = kernel->potentialMap();
+    auto kernel = dissolveGraph()->createEnergyCalculation(targetConfiguration_);
+    auto &potentialMap = kernel->potentialMap();
 
     // Calculate pair potential energy
     Timer interTimer;

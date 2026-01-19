@@ -8,9 +8,9 @@
 #include "classes/cell.h"
 #include "main/dissolve.h"
 #include "math/combinations.h"
-#include "math/error.h"
 #include "math/filters.h"
 #include "module/group.h"
+#include "nodes/dissolve.h"
 #include "nodes/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
@@ -241,6 +241,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
                           }
                       });
     }
+
     return true;
 }
 
@@ -319,10 +320,19 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
     else if (partialsMethod_ == PartialsMethod::SimpleMethod)
         calculateGRSimple(fullLUT);
     else if (partialsMethod_ == PartialsMethod::CellsMethod)
+    {
+        dissolveGraph()->updateIndexingAndCells(targetConfiguration_);
         calculateGRCells(grRange, fullLUT);
+    }
     else if (partialsMethod_ == PartialsMethod::AutoMethod)
     {
-        targetConfiguration_->nAtoms() > 10000 ? calculateGRCells(grRange, fullLUT) : calculateGRSimple(fullLUT);
+        if (targetConfiguration_->nAtoms() > 10000)
+        {
+            dissolveGraph()->updateIndexingAndCells(targetConfiguration_);
+            calculateGRCells(grRange, fullLUT);
+        }
+        else
+            calculateGRSimple(fullLUT);
     }
     timer.stop();
     message("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());

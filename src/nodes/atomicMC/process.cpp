@@ -32,7 +32,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("\n");
 
     // Prepare for energy calculation, generate kernel
-    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
+    auto kernel = dissolveGraph()->createEnergyCalculation(targetConfiguration_);
 
     auto nAttempts = 0, nAccepted = 0;
     auto totalDelta = 0.0;
