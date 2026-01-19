@@ -2,7 +2,6 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/gr/gr.h"
-#include "math/error.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
