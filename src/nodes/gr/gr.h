@@ -53,8 +53,6 @@ class GRNode : public Node
     std::optional<Number> averagingLength_{5};
     // Bin width (spacing in r) to use
     Number binWidth_{0.001};
-    // Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop
-    bool internalTest_{false};
     // Type of broadening to apply to intramolecular g(r)
     Function1DWrapper intraBroadening_{Functions1D::Form::Gaussian, {0.18}};
     // Degree of smoothing to apply
@@ -92,9 +90,6 @@ class GRNode : public Node
     // Test supplied PartialSets against each other
     bool testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
                                double testThreshold);
-    // Test calculated partial against supplied reference data
-    bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
-                              std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");
 
     /*
      * Processing
