@@ -98,18 +98,35 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
 
         auto h2o = root->createNode("NeutronSQ", "H2O");
         ASSERT_TRUE(h2o);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2O", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2O", "UnweightedSQ"}));
 
         auto d2o = root->createNode("NeutronSQ", "D2O");
         ASSERT_TRUE(d2o);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "D2O", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "D2O", "UnweightedSQ"}));
 
         auto hdo = root->createNode("NeutronSQ", "HDO");
         ASSERT_TRUE(hdo);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "HDO", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HDO", "UnweightedSQ"}));
+    }
+
+    // Add in XRaySQ?
+    if (addXRaySQ)
+    {
+        // Create the SQ node if needed
+        if (!sqNode)
+        {
+            sqNode = root->createNode("SQ");
+            ASSERT_TRUE(sqNode);
+            ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+        }
+
+        auto h2ox = root->createNode("XRaySQ", "H2OX");
+        ASSERT_TRUE(h2ox);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2OX", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2OX", "UnweightedSQ"}));
     }
 }
 
