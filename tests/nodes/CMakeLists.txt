@@ -1,5 +1,6 @@
 dissolve_add_test(SRC atomicMC.cpp)
 dissolve_add_test(SRC flow.cpp)
+dissolve_add_test(SRC gr.cpp)
 dissolve_add_test(SRC graph.cpp)
 dissolve_add_test(SRC graph_argon.cpp)
 dissolve_add_test(SRC loop.cpp)
