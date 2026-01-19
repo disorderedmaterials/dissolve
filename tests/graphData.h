@@ -8,6 +8,7 @@
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/insert.h"
+#include "tests/speciesData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -55,6 +56,61 @@ inline void createArgonGraph(Graph *root, int population = 1000)
     ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
     ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.0213));
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+}
+
+// Create a water graph in the supplied root node
+inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initialCoordinates, bool addNeutronSQ = false,
+                                 bool addXRaySQ = false)
+{
+    // Create species and configuration
+    auto waterNode = createWater(root);
+    ASSERT_TRUE(waterNode);
+    auto configurationNode = root->createNode("Configuration", "Bulk");
+    ASSERT_TRUE(configurationNode);
+    auto insertNode = root->createNode("Insert");
+    ASSERT_TRUE(insertNode);
+    ASSERT_TRUE(root->addEdge({"Water", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
+    ASSERT_TRUE(insertNode->setInput<Number>("Population", 1000));
+
+    // Import reference coordinates
+    auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
+    ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
+    ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+        "FileFormat",
+        CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
+    ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+
+    // Add GR node and link to the import node
+    auto grNode = root->createNode("GR");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
+
+    Node *sqNode = nullptr;
+
+    // Add in NeutronSQ?
+    if (addNeutronSQ)
+    {
+        // Create the SQ node
+        sqNode = root->createNode("SQ");
+        ASSERT_TRUE(sqNode);
+        ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+
+        auto h2o = root->createNode("NeutronSQ", "H2O");
+        ASSERT_TRUE(h2o);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+
+        auto d2o = root->createNode("NeutronSQ", "D2O");
+        ASSERT_TRUE(d2o);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+
+        auto hdo = root->createNode("NeutronSQ", "HDO");
+        ASSERT_TRUE(hdo);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+    }
 }
 
 } // namespace UnitTest

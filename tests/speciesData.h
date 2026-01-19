@@ -42,6 +42,10 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     species->addBond(0, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
     species->addAngle(1, 0, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24");
 
+    // Create isotopologue
+    auto iso = species->addIsotopologue("D2O");
+    iso->setAtomTypeIsotope(hW.get(), Sears91::H_2);
+
     return speciesNode.get();
 }
 
