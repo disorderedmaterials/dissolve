@@ -23,7 +23,7 @@ class GraphTestData
 };
 
 // Create an Argon graph in the supplied root node
-inline void createArgonGraph(Graph *root)
+inline void createArgonGraph(Graph *root, int population = 1000)
 {
     /*
      *    Configuration (Bulk)
@@ -52,7 +52,7 @@ inline void createArgonGraph(Graph *root)
     ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
 
     // Set configuration contents
-    ASSERT_TRUE(insertNode->setInput<Number>("Population", 1000));
+    ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
     ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.0213));
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
 }
