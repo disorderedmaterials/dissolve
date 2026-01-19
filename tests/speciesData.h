@@ -13,7 +13,7 @@
 namespace UnitTest
 {
 // Create and return water test species in the specified graph
-inline Species *createWater(Graph *parentGraph)
+inline SpeciesNode *createWater(Graph *parentGraph)
 {
     const auto name = "Water";
 
@@ -42,7 +42,7 @@ inline Species *createWater(Graph *parentGraph)
     species->addBond(0, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
     species->addAngle(1, 0, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24");
 
-    return species;
+    return speciesNode.get();
 }
 
 } // namespace UnitTest
