@@ -87,9 +87,6 @@ class GRNode : public Node
     bool calculateRawGR(const double grRange, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     bool calculateUnweightedGR();
-    // Test supplied PartialSets against each other
-    bool testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
-                               double testThreshold);
 
     /*
      * Processing
