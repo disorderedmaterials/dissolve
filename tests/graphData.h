@@ -72,6 +72,8 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
     ASSERT_TRUE(root->addEdge({"Water", "Species", "Insert", "Species"}));
     ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
     ASSERT_TRUE(insertNode->setInput<Number>("Population", 1000));
+    ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.1));
+    ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
 
     // Import reference coordinates
     auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
