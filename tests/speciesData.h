@@ -18,19 +18,20 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     const auto name = "Water";
 
     // Add water species node
-    auto speciesNode = std::make_unique<SpeciesNode>(parentGraph);
-    auto species = &(speciesNode.get()->species());
-    parentGraph->addNode(std::move(speciesNode), name);
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodePtr = speciesNodeUniquePtr.get();
+    auto species = &(speciesNodePtr->species());
+    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
 
     // Set up water species and atom types
     species->clear();
     species->setName(name);
 
-    auto oW = std::make_shared<AtomType>(Elements::Element::O, "OW");
+    auto oW = species->addAtomType(Elements::Element::O, "OW");
     oW->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.6503 sigma=3.165492");
     oW->setCharge(-0.82);
     species->addAtom(Elements::Element::O, {}, -0.82, oW);
-    auto hW = std::make_shared<AtomType>(Elements::Element::H, "HW");
+    auto hW = species->addAtomType(Elements::Element::H, "HW");
     hW->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
     hW->setCharge(0.41);
     species->addAtom(Elements::Element::H, {1, 0, 0}, 0.41, hW);
@@ -46,7 +47,7 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     auto iso = species->addIsotopologue("D2O");
     iso->setAtomTypeIsotope(hW.get(), Sears91::H_2);
 
-    return speciesNode.get();
+    return speciesNodePtr;
 }
 
 } // namespace UnitTest
