@@ -293,11 +293,7 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
             std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, popI.first->name(), popJ.first->name(), suffix)};
             Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-            auto cwd = std::filesystem::current_path();
-            auto path = cwd.parent_path().parent_path() / "tests" / "nodes" / "output" / filename;
-            auto fullPath = path.string();
-
-            parser.openOutput(fullPath, true);
+            parser.openOutput(filename, true);
             if (!parser.isFileGoodForWriting())
                 return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
