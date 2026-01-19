@@ -91,6 +91,10 @@ void PartialSet::initialise(const PartialSet &partialSet)
     triangular_ = partialSet.triangular_;
     rho_ = partialSet.rho_;
 
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
+
     // Template data from source PartialSet and set tags
     dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypeFractions(),
