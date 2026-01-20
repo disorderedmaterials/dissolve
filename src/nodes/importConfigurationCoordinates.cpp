@@ -25,8 +25,5 @@ NodeConstants::ProcessResult ImportConfigurationCoordinatesNode::process()
 {
     CoordinateImportFileFormat fileSource(filePath_, format_);
 
-    if (fileSource.importData(configuration_))
-        return NodeConstants::ProcessResult::Success;
-
-    return NodeConstants::ProcessResult::Unchanged;
+    return fileSource.importData(configuration_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
 }
