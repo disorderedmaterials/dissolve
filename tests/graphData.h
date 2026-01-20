@@ -177,4 +177,75 @@ inline void createWaterMethanolGraph(Graph *root, bool addNeutronSQ = false)
     }
 }
 
+// Create a benzene graph in the supplied root node
+inline void createBenzeneGraph(Graph *root, bool addNeutronSQ = false, bool addXRaySQ = false)
+{
+    // Create species and configuration
+    auto benzeneNode = createBenzene(root);
+    ASSERT_TRUE(benzeneNode);
+    auto configurationNode = root->createNode("Configuration", "Bulk");
+    ASSERT_TRUE(configurationNode);
+    auto insertNode = root->createNode("Insert");
+    ASSERT_TRUE(insertNode);
+    ASSERT_TRUE(root->addEdge({"Benzene", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
+    ASSERT_TRUE(insertNode->setInput<Number>("Population", 200));
+    ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.876));
+
+    // Import reference coordinates
+    auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
+    ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", "epsr25/benzene200-neutron/boxbenz.ato"));
+    ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+        "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+
+    // Add GR node and link to the import node
+    auto grNode = root->createNode("GR");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
+
+    Node *sqNode = nullptr;
+
+    // Add in NeutronSQ?
+    if (addNeutronSQ)
+    {
+        // Create the SQ node
+        sqNode = root->createNode("SQ");
+        ASSERT_TRUE(sqNode);
+        ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+
+        auto H = root->createNode("NeutronSQ", "H");
+        ASSERT_TRUE(H);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H", "UnweightedSQ"}));
+
+        auto D = root->createNode("NeutronSQ", "D");
+        ASSERT_TRUE(D);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "D", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "D", "UnweightedSQ"}));
+
+        auto HD = root->createNode("NeutronSQ", "HD");
+        ASSERT_TRUE(HD);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "HD", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HD", "UnweightedSQ"}));
+    }
+
+    // Add in XRaySQ?
+    if (addXRaySQ)
+    {
+        // Create the SQ node if needed
+        if (!sqNode)
+        {
+            sqNode = root->createNode("SQ");
+            ASSERT_TRUE(sqNode);
+            ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+        }
+
+        auto X = root->createNode("XRaySQ", "X");
+        ASSERT_TRUE(X);
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "X", "UnweightedGR"}));
+        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "X", "UnweightedSQ"}));
+    }
+}
+
 } // namespace UnitTest

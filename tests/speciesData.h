@@ -17,16 +17,14 @@ inline SpeciesNode *createWater(Graph *parentGraph)
 {
     const auto name = "Water";
 
-    // Add water species node
+    // Add species node
     auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &(speciesNodePtr->species());
     parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
-
-    // Set up water species and atom types
-    species->clear();
     species->setName(name);
 
+    // Set up atom types
     auto oW = species->addAtomType(Elements::Element::O, "OW");
     oW->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.6503 sigma=3.165492");
     oW->setCharge(-0.82);
@@ -60,8 +58,6 @@ inline SpeciesNode *createMethanol(Graph *parentGraph)
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &(speciesNodePtr->species());
     parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
-
-    species->clear();
     species->setName(name);
 
     // Create atom types
@@ -116,4 +112,75 @@ inline SpeciesNode *createMethanol(Graph *parentGraph)
     return speciesNodePtr;
 }
 
+// Create and return benzene test species in the specified graph
+inline SpeciesNode *createBenzene(Graph *parentGraph)
+{
+    const auto name = "Benzene";
+
+    // Add species node
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodePtr = speciesNodeUniquePtr.get();
+    auto species = &(speciesNodePtr->species());
+    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
+    species->setName(name);
+
+    // Set up atom types
+    auto CA = species->addAtomType(Elements::Element::C, "CA");
+    CA->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.29288 sigma=3.55");
+    CA->setCharge(-0.115);
+    auto HA = species->addAtomType(Elements::Element::H, "HA");
+    HA->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.12552 sigma=2.42");
+    HA->setCharge(0.115);
+
+    // Add atoms
+    species->addAtom(Elements::Element::C, {-1.203775, 0.695, 0.0}, -0.115, CA);
+    species->addAtom(Elements::Element::H, {-2.069801, 1.195, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::C, {-0.000000, 1.390, 0.0}, -0.115, CA);
+    species->addAtom(Elements::Element::H, {-0.000000, 2.390, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::C, {1.203775, 0.695, 0.0}, -0.115, CA);
+    species->addAtom(Elements::Element::H, {2.069801, 1.195, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::C, {1.203775, -0.695, 0.0}, -0.115, CA);
+    species->addAtom(Elements::Element::H, {2.069801, -1.195, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::C, {-0.000000, -1.390, 0.0}, -0.115, CA);
+    species->addAtom(Elements::Element::H, {-0.000000, -2.390, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::C, {-1.203775, -0.695, 0.0}, -0.115, CA);
+    species->addAtom(Elements::Element::H, {-2.069801, -1.195, 0.0}, -0.115, HA);
+
+    // Add intramolecular terms
+    for (auto i = 0; i < 12; i += 2)
+    {
+        // C-H bond: (i , i+1)
+        species->addBond(i, i + 1).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.056 eq=1.08");
+        // C-C bond: (i, i+2)
+        species->addBond(i, (i + 2) % 12).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.592 eq=1.4");
+        // H-C-C angles: (i+1, i, i+2) and (i+1, i, i-2)
+        species->addAngle(i + 1, i, (i + 2) % 12)
+            .setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.88 eq=120.0");
+        species->addAngle(i + 1, i, DissolveMath::wrap(i - 2, 0, 11))
+            .setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.88 eq=120.0");
+        // C-C-C angle: (i-2, i, i+2)
+        species->addAngle(DissolveMath::wrap(i - 2, 0, 11), i, (i + 2) % 12)
+            .setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184 eq=120.0");
+        // H-C-C-H torsion: (i+1, i, i+2, i+3)
+        species->addTorsion(i + 1, i, DissolveMath::wrap(i + 2, 0, 11), DissolveMath::wrap(i + 3, 0, 11))
+            .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
+        // H-C-C-C torsion: (i+1, i, i+2, i+4)
+        species->addTorsion(i + 1, i, DissolveMath::wrap(i + 2, 0, 11), DissolveMath::wrap(i + 4, 0, 11))
+            .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
+        // C-C-C-C torsion: (i, i+2, i+4, i+6)
+        species
+            ->addTorsion(i, DissolveMath::wrap(i + 2, 0, 11), DissolveMath::wrap(i + 4, 0, 11),
+                         DissolveMath::wrap(i + 6, 0, 11))
+            .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
+    }
+    species->print();
+
+    // Create isotopologue
+    auto iso = species->addIsotopologue("C6D6");
+    iso->setAtomTypeIsotope(HA.get(), Sears91::H_2);
+
+    return speciesNodePtr;
+}
 } // namespace UnitTest

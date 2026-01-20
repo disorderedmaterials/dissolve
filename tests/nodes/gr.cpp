@@ -2,6 +2,7 @@
 // Copyright (c) 2025 Team Dissolve and contributors
 
 #include "nodes/gr/gr.h"
+#include "math/windowFunction.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -41,7 +42,7 @@ TEST(GRNodeTest, Methods)
     ASSERT_TRUE(DissolveSystemTest::checkPartialSet(rawGRBaseline, rawGRCells, 1.0e-8));
 }
 
-TEST(GRNodeTest, WaterCorrelationsVsEPSR)
+TEST(GRNodeTest, Water)
 {
     GraphTestData data;
     createWater1000Graph(&data.graphRoot, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
@@ -84,7 +85,7 @@ TEST(GRNodeTest, WaterCorrelationsVsEPSR)
         {"epsr25/water1000-neutron/water.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.5e-2));
 }
 
-TEST(GRNodeTest, WaterMethanolCorrelationsVsEPSR)
+TEST(GRNodeTest, WaterMethanol)
 {
     GraphTestData data;
     createWaterMethanolGraph(&data.graphRoot);
@@ -254,6 +255,47 @@ TEST(GRNodeTest, WaterMethanolCorrelationsVsEPSR)
         rawGR->boundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Bound Partial",
         {"epsr25/water300methanol600/watermeth.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 42}, 1.0e-5,
         Error::ErrorType::RMSEError));
+}
+
+TEST(GRNodeTest, Benzene)
+{
+    GraphTestData data;
+    createBenzeneGraph(&data.graphRoot);
+
+    // Set GR options
+    auto grNode = data.graphRoot.findNode("GR");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
+    ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
+
+    // Run the graph
+    ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(grNode->versionIndex(), 0);
+
+    // Get the raw GR
+    auto rawGR = grNode->getOutputValue<PartialSet *>("RawGR");
+
+    // Partial g(r) (unbound terms)
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        rawGR->unboundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Unbound Partial",
+        {"epsr25/benzene200-neutron/benzene.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 3.0e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        rawGR->unboundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Unbound Partial",
+        {"epsr25/benzene200-neutron/benzene.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        rawGR->unboundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Unbound Partial",
+        {"epsr25/benzene200-neutron/benzene.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 4.0e-2));
+
+    // Partial g(r) (intramolecular terms)
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        rawGR->boundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Bound Partial",
+        {"epsr25/benzene200-neutron/benzene.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 0.12));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        rawGR->boundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Bound Partial",
+        {"epsr25/benzene200-neutron/benzene.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 0.18));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        rawGR->boundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Bound Partial",
+        {"epsr25/benzene200-neutron/benzene.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 9.0e-2));
 }
 
 } // namespace UnitTest
