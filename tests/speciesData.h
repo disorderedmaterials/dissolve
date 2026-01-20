@@ -50,4 +50,70 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     return speciesNodePtr;
 }
 
+// Create and return methanol test species in the specified graph
+inline SpeciesNode *createMethanol(Graph *parentGraph)
+{
+    const auto name = "Methanol";
+
+    // Add methanol species node
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodePtr = speciesNodeUniquePtr.get();
+    auto species = &(speciesNodePtr->species());
+    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
+
+    species->clear();
+    species->setName(name);
+
+    // Create atom types
+    auto CT = species->addAtomType(Elements::Element::C, "CT");
+    CT->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.276 sigma=3.55");
+    CT->setCharge(-0.18);
+    auto HC = species->addAtomType(Elements::Element::H, "HC");
+    HC->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.126 sigma=2.5");
+    HC->setCharge(0.06);
+    auto OH = species->addAtomType(Elements::Element::O, "OH");
+    OH->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.711 sigma=3.12");
+    OH->setCharge(-0.68);
+    auto HO = species->addAtomType(Elements::Element::H, "HO");
+    HO->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.126 sigma=2.4");
+    HO->setCharge(0.68);
+
+    // Add atoms
+    species->addAtom(Elements::Element::C, {0.0, 0.0, 0.0}, -0.18, CT);
+    species->addAtom(Elements::Element::H, {1.1187, 0.0, 0.0}, 0.06, HC);
+    species->addAtom(Elements::Element::O, {-0.3683, 1.3617, 0.0}, -0.68, OH);
+    species->addAtom(Elements::Element::H, {-0.3834, -0.5181, -0.9144}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {-0.3834, -0.5177, 0.9146}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {-1.3318, 1.3955, -0.17}, 0.68, HO);
+
+    // Apply intramolecular terms
+    species->addBond(0, 1).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3000.0 eq=1.12");
+    species->addBond(0, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3000.0 eq=1.41");
+    species->addBond(0, 3).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3000.0 eq=1.12");
+    species->addBond(0, 4).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3000.0 eq=1.12");
+    species->addBond(2, 5).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3000.0 eq=0.964");
+    species->addAngle(1, 0, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
+    species->addAngle(1, 0, 3).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
+    species->addAngle(1, 0, 4).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
+    species->addAngle(2, 0, 3).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
+    species->addAngle(2, 0, 4).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
+    species->addAngle(3, 0, 4).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
+    species->addAngle(5, 2, 0).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
+
+    // Create isotopologues
+    auto D = species->addIsotopologue("Deuteriated");
+    D->setAtomTypeIsotope(HO.get(), Sears91::H_2);
+    D->setAtomTypeIsotope(HC.get(), Sears91::H_2);
+    auto MeD = species->addIsotopologue("MethylD-OH");
+    D->setAtomTypeIsotope(HC.get(), Sears91::H_2);
+    auto MeH = species->addIsotopologue("MethylH-OD");
+    D->setAtomTypeIsotope(HO.get(), Sears91::H_2);
+
+    return speciesNodePtr;
+}
+
 } // namespace UnitTest

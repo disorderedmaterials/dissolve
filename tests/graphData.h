@@ -132,4 +132,49 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
     }
 }
 
+// Create a water graph in the supplied root node
+inline void createWaterMethanolGraph(Graph *root, bool addNeutronSQ = false)
+{
+    // Create species and configuration
+    auto waterNode = createWater(root);
+    ASSERT_TRUE(waterNode);
+    auto methanolNode = createMethanol(root);
+    ASSERT_TRUE(methanolNode);
+
+    auto configurationNode = root->createNode("Configuration", "Bulk");
+    ASSERT_TRUE(configurationNode);
+    auto insertWaterNode = root->createNode("Insert", "InsertWater");
+    ASSERT_TRUE(insertWaterNode);
+    ASSERT_TRUE(root->addEdge({"Water", "Species", "InsertWater", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "InsertWater", "Configuration"}));
+    ASSERT_TRUE(insertWaterNode->setInput<Number>("Population", 300));
+    ASSERT_TRUE(insertWaterNode->setInput<Number>("Density", 0.1));
+    ASSERT_TRUE(insertWaterNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+    auto insertMethanolNode = root->createNode("Insert", "InsertMethanol");
+    ASSERT_TRUE(insertMethanolNode);
+    ASSERT_TRUE(root->addEdge({"Methanol", "Species", "InsertMethanol", "Species"}));
+    ASSERT_TRUE(root->addEdge({"InsertWater", "Configuration", "InsertMethanol", "Configuration"}));
+    ASSERT_TRUE(insertMethanolNode->setInput<Number>("Population", 600));
+    ASSERT_TRUE(insertMethanolNode->setInput<Number>("Density", 0.1));
+    ASSERT_TRUE(insertMethanolNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+
+    // Import reference coordinates
+    auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
+    ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", "epsr25/water300methanol600/watermeth.ato"));
+    ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+        "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    ASSERT_TRUE(root->addEdge({"InsertMethanol", "Configuration", "Import", "Configuration"}));
+
+    // Add GR node and link to the import node
+    auto grNode = root->createNode("GR");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
+
+    // NeutronSQ
+    if (addNeutronSQ)
+    {
+        // TODO
+    }
+}
+
 } // namespace UnitTest
