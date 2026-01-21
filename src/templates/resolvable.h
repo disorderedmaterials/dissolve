@@ -14,7 +14,7 @@ template <class T> class Resolvable
 {
     public:
     Resolvable() = default;
-    Resolvable(T raw)
+    explicit Resolvable(T raw)
         requires(std::is_pointer_v<T>)
         : raw_(raw), name_(raw->name())
     {
