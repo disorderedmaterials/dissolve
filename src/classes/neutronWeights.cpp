@@ -29,10 +29,10 @@ NeutronWeights::NeutronWeights(const std::vector<std::pair<const Species *, doub
         for (auto &[iso, isoFraction] : isotopologues.normalisedIsotopologues(species))
         {
             if (first)
-                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", species->name(), iso->name(),
+                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", species->name(), iso.name(),
                                  speciesPopulation, isoFraction);
             else
-                Messenger::print("                   {:<15}              {}\n", iso->name(), isoFraction);
+                Messenger::print("                   {:<15}              {}\n", iso.name(), isoFraction);
 
             first = false;
         }
@@ -127,10 +127,10 @@ void NeutronWeights::calculateWeightingMatrices(const std::vector<std::pair<cons
                                         // If an AtomType is exchangeable we use its exchanged bound coherent scattering length
                                         bi = isotopeMix_.isExchangeable(atPop1.first)
                                                  ? isotopeMix_.boundCoherent(atPop1.first)
-                                                 : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
+                                                 : Sears91::boundCoherent(iso.raw()->atomTypeIsotope(atPop1.first));
                                         bj = isotopeMix_.isExchangeable(atPop2.first)
                                                  ? isotopeMix_.boundCoherent(atPop2.first)
-                                                 : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
+                                                 : Sears91::boundCoherent(iso.raw()->atomTypeIsotope(atPop2.first));
 
                                         // Convert from fm to barns
                                         bi *= 0.1;

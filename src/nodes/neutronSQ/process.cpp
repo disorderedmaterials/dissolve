@@ -56,7 +56,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
 
     // Calculate weights
-    calculateWeights(realSpeciesPopulations);
+    weights_ = NeutronWeights(realSpeciesPopulations, isotopologues_, exchangeable_);
     message("Isotopologue and isotope composition:\n\n");
     weights_.print();
 

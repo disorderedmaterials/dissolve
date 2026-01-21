@@ -68,10 +68,10 @@ void IsotopeMix::create(const std::vector<std::pair<const Species *, double>> &s
                 auto population = atomTypePopulation * weight;
 
                 auto &isotopes = mix_[atomType];
-                if (isotopes.contains(iso->atomTypeIsotope(atomType)))
-                    isotopes[iso->atomTypeIsotope(atomType)] += population;
+                if (isotopes.contains(iso.raw()->atomTypeIsotope(atomType)))
+                    isotopes[iso.raw()->atomTypeIsotope(atomType)] += population;
                 else
-                    isotopes[iso->atomTypeIsotope(atomType)] = population;
+                    isotopes[iso.raw()->atomTypeIsotope(atomType)] = population;
 
                 totalPopulation_ += population;
             }

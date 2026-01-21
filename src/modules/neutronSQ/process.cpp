@@ -184,7 +184,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
 
     // Calculate weights
     auto &weights = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name_);
-    calculateWeights(rdfModule, weights);
+    weights = NeutronWeights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
     Messenger::print("Isotopologue and isotope composition:\n\n");
     weights.print();
 

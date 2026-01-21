@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/optionalRef.h"
 #include "templates/resolvable.h"
 #include <functional>
 #include <vector>
@@ -13,6 +12,13 @@ template <class KeyClass, class ValueClass> class KeyedVector
 {
     public:
     using KeyValuePair = std::pair<KeyClass, ValueClass>;
+    explicit operator std::map<KeyClass, ValueClass>() const
+    {
+        std::map<KeyClass, ValueClass> result;
+        for (const auto &[key, value] : data_)
+            result[key] = value;
+        return result;
+    }
 
     protected:
     // Vector of data
@@ -147,6 +153,13 @@ template <class KeyClass, class ValueClass> class ResolvableKeyedVector : public
 {
     public:
     using KeyValuePair = std::pair<Resolvable<KeyClass>, ValueClass>;
+    explicit operator std::map<KeyClass, ValueClass>() const
+    {
+        std::map<KeyClass, ValueClass> result;
+        for (const auto &[key, value] : KeyedVector<Resolvable<KeyClass>, ValueClass>::data_)
+            result[key.raw()] = value;
+        return result;
+    }
 
     public:
     // Element access operator []

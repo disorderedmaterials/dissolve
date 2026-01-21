@@ -85,7 +85,7 @@ void IsotopologueSetModel::removeIndex(const QModelIndex index)
     if (!index.parent().isValid())
     {
         // Root item (Isotopologues)
-        auto &[species, topes] = set.isotopologues().vector()[index.row()];
+        auto species = set.isotopologues().key(index.row());
         beginRemoveRows({}, index.row(), index.row());
         set.remove(species.raw());
         endRemoveRows();
@@ -93,10 +93,10 @@ void IsotopologueSetModel::removeIndex(const QModelIndex index)
     else
     {
         // Secondary item (IsotopologueWeight)
-        auto &topes = set.isotopologues()[index.parent().row()];
-        auto mixItem = topes.mix().key(index.row());
+        auto &topes = set.isotopologues().value(index.parent().row());
+        auto iso = topes.key(index.row()).raw();
         beginRemoveRows(index.parent(), index.row(), index.row());
-        topes.mix().erase(mixItem);
+        topes.erase(iso);
         endRemoveRows();
     }
 
@@ -114,7 +114,7 @@ int IsotopologueSetModel::rowCount(const QModelIndex &parent) const
 
     if (!parent.isValid())
         return set_->get().isotopologues().size();
-    return set_->get().isotopologues().vector()[parent.row()].second.size();
+    return set_->get().isotopologues().value(parent.row()).size();
 }
 
 int IsotopologueSetModel::columnCount(const QModelIndex &parent) const { return 3; }
@@ -142,26 +142,26 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
         if (index.row() > set.isotopologues().size())
             return {};
 
-        const auto &tope = set.isotopologues().vector()[index.row()];
+        const auto species = set.isotopologues().key(index.row());
 
         switch (role)
         {
             case Qt::DisplayRole:
             case Qt::EditRole:
                 if (index.column() == 0)
-                    return QString::fromStdString(std::string(tope.first.name()));
+                    return QString::fromStdString(std::string(species.name()));
                 else
                     return {};
             case Qt::UserRole:
-                return QVariant::fromValue(&tope);
+                return QVariant::fromValue(species);
             default:
                 return {};
         }
     }
 
     // Secondary item (Isotopologue/Weight)
-    const auto &tope = set.isotopologues().vector()[index.parent().row()];
-    const auto &[iso, weight] = tope.mix().pair(index.row());
+    const auto &topes = set.isotopologues().value(index.parent().row());
+    const auto &[iso, weight] = topes.vector()[index.row()];
     if (!index.parent().parent().isValid())
     {
         switch (role)
@@ -169,7 +169,7 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
             case Qt::DisplayRole:
             case Qt::EditRole:
                 if (index.column() == 1)
-                    return QString::fromStdString(std::string(iso->name()));
+                    return QString::fromStdString(std::string(iso.name()));
                 else if (index.column() == 2)
                     return weight;
                 break;
@@ -233,16 +233,16 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
     if (index.parent().row() > set.isotopologues().size())
         return false;
 
-    auto &tope = set.isotopologues()[index.parent().row()];
-    auto &[iso, weight] = tope.mix().pair(index.row());
+    auto &[species, topes] = set.isotopologues().vector()[index.parent().row()];
+    auto &[iso, weight] = topes.vector()[index.row()];
 
     if (index.column() == 1)
     {
         // Convert value to Isotopologue for species
-        const auto *namedIso = tope.species()->findIsotopologue(value.toString().toStdString());
-        if (!namedIso || namedIso == iso)
+        const auto *newIso = species.raw()->findIsotopologue(value.toString().toStdString());
+        if (!newIso || newIso == iso)
             return false;
-        tope.mix().changeKey(iso, namedIso);
+        topes.changeKey(iso.raw(), newIso);
         Q_EMIT(dataChanged(index, index));
         return true;
     }

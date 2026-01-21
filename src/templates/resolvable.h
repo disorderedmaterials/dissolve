@@ -20,6 +20,7 @@ template <class T> class Resolvable
     {
     }
     Resolvable(std::string_view name) : raw_(nullptr), name_(name) {}
+    bool operator==(const Resolvable<T> &other) { return raw_ == other.raw_; }
 
     private:
     // Object (if resolved)
@@ -39,6 +40,9 @@ template <class T> class Resolvable
 // Resolvable Context
 class ResolvableContext
 {
+    public:
+    virtual ~ResolvableContext() = default;
+
     public:
     // Resolve internal resolvable name references with supplied data
     virtual void resolve(const std::map<std::string, const Species *> &speciesInScope) = 0;
