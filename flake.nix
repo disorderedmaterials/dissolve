@@ -34,11 +34,7 @@
             ;
           tbb = pkgs.tbb_2021_11;
         });
-      exe-name = gui:
-        if gui then
-          "dissolve-gui"
-        else
-          "dissolve";
+      exe-name = gui: if gui then "dissolve-gui" else "dissolve";
       cmake-bool = x: if x then "ON" else "OFF";
       version = "1.9.0";
       base_libs =
@@ -58,25 +54,24 @@
           pugixml
           (toml pkgs)
         ];
-      gui_libs = system: pkgs: qt:
-        [
-          pkgs.glib
-          pkgs.freetype
-          pkgs.ftgl
-          pkgs.libGL.dev
-          pkgs.libglvnd
-          pkgs.libglvnd.dev
-          qt.qt3d
-          qt.qtbase
-          qt.qtbase.dev
-          qt.qtquick3d
-          qt.qtsvg
-          qt.qtshadertools
-          qt.qttools
-          qt.qtdeclarative
-          qt.qtdeclarative.dev
-          qt.wrapQtAppsHook
-        ];
+      gui_libs = system: pkgs: qt: [
+        pkgs.glib
+        pkgs.freetype
+        pkgs.ftgl
+        pkgs.libGL.dev
+        pkgs.libglvnd
+        pkgs.libglvnd.dev
+        qt.qt3d
+        qt.qtbase
+        qt.qtbase.dev
+        qt.qtquick3d
+        qt.qtsvg
+        qt.qtshadertools
+        qt.qttools
+        qt.qtdeclarative
+        qt.qtdeclarative.dev
+        qt.wrapQtAppsHook
+      ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
     in
@@ -88,8 +83,13 @@
         old = import outdated { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
         qt = old.qt6;
-        dissolve = { gui ? false, threading ? true, checks ? true
-          , benchmarks ? false }:
+        dissolve =
+          {
+            gui ? false,
+            threading ? true,
+            checks ? true,
+            benchmarks ? false,
+          }:
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name gui;
@@ -107,7 +107,8 @@
                 ]
               );
             };
-            buildInputs = base_libs pkgs
+            buildInputs =
+              base_libs pkgs
               ++ pkgs.lib.optionals gui (gui_libs system pkgs qt)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
@@ -141,20 +142,22 @@
               # license = licenses.unlicense;
               maintainers = [ maintainers.rprospero ];
             };
-          }) // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
-        mkSingularity = { gui ? false, threading ? true }:
+          })
+          // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
+        mkSingularity =
+          {
+            gui ? false,
+            threading ? true,
+          }:
           outdated.legacyPackages.${system}.singularity-tools.buildImage {
             name = "${exe-name gui}-${version}";
             diskSize = 1024 * 50;
             contents = [ (dissolve { inherit gui threading; }) ];
-            runScript = if gui then
-              "${nixGL.nixGLIntel}/bin/nixGLIntel ${
-                dissolve { inherit gui threading; }
-              }/bin/${exe-name gui} $@"
-            else
-              "${dissolve { inherit gui threading; }}/bin/${
-                exe-name gui
-              } $@";
+            runScript =
+              if gui then
+                "${nixGL.nixGLIntel}/bin/nixGLIntel ${dissolve { inherit gui threading; }}/bin/${exe-name gui} $@"
+              else
+                "${dissolve { inherit gui threading; }}/bin/${exe-name gui} $@";
           };
       in
       {
@@ -182,7 +185,7 @@
             ++ gui_libs system pkgs qt
             ++ check_libs pkgs
             ++ (with pkgs; [
-                llvmPackages_20.clang-tools
+              llvmPackages_20.clang-tools
 
                 (onedpl pkgs)
 
@@ -256,8 +259,12 @@
                   echo "Usage: nix run .#uploader HARBOR_USER HARBOR_SECRET IMAGE TAG" >&2
                   exit 1
                 fi
-                ${pkgs.singularity}/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
-                ${pkgs.singularity}/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
+                ${
+                  outdated.legacyPackages.${system}.singularity
+                }/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
+                ${
+                  outdated.legacyPackages.${system}.singularity
+                }/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
               ''
             );
           };
