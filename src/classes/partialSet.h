@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "templates/optionalRef.h"
 #include "classes/neutronWeights.h"
 #include "math/data1D.h"
 #include "templates/doubleKeyedMap.h"

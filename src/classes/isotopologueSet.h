@@ -13,7 +13,7 @@ class Isotopologue;
 class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species
-class IsotopologueSet : public Serialisable<const CoreData &>
+class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
 {
     public:
     IsotopologueSet() = default;
@@ -26,7 +26,7 @@ class IsotopologueSet : public Serialisable<const CoreData &>
      */
     private:
     // Isotopologue mixtures for individual Species
-    ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>> isotopologues_;
+    ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>> isotopologues_;
 
     public:
     // Clear all existing data
@@ -40,12 +40,12 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     // Return whether Isotopologues for the specified Species exists
     bool contains(const Species *sp) const;
     // Return Isotopologues with normalised populations for the specified Species
-    const KeyedVector<const Isotopologue *, double> normalisedIsotopologues(const Species *sp) const;
+    const ResolvableKeyedVector<const Isotopologue *, double> normalisedIsotopologues(const Species *sp) const;
     // Return number of species covered by set
     int nSpecies() const;
     // Return vector of all Isotopologues
-    ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>>  &isotopologues();
-    const ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>>  &isotopologues() const;
+    ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>>  &isotopologues();
+    const ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>>  &isotopologues() const;
 
     /*
      * Serialisation
@@ -59,4 +59,6 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    // Resolve internal resolvable name references with supplied data
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
 };

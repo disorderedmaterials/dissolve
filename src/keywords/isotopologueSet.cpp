@@ -53,7 +53,7 @@ bool IsotopologueSetKeyword::serialise(LineParser &parser, std::string_view keyw
     for (auto &[species, isotopologues] : data_.isotopologues())
         for (const auto &[iso, weight] : isotopologues)
         {
-            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, species.raw()->name(), iso->name(), weight))
+            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, species.name(), iso.raw()->name(), weight))
                 return false;
         }
 
