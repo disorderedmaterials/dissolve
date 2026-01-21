@@ -100,8 +100,8 @@ TEST(NeutronWeightsTest, Mix)
     std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
 
+    speciesPopulations[&molecules.N2()] = 1;
     speciesPopulations[&molecules.H2O()] = 1;
-    speciesPopulations[&molecules.N2()] = 2;
 
     isotopologues.add(molecules.H2O().naturalIsotopologue(), 1.0);
     isotopologues.add(molecules.N2().naturalIsotopologue(), 1.0);

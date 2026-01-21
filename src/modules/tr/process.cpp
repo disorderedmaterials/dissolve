@@ -39,15 +39,14 @@ Module::ExecutionResult TRModule::process(Dissolve &dissolve)
 
     // Get target gr module
     auto *grModule = sqModule->sourceGR();
-    if (!sqModule)
+    if (!grModule)
     {
         Messenger::error("A source GR module (in the target SQ module) must be set.\n");
         return ExecutionResult::Failed;
     }
 
     // Retrieve weights, GR and SQ
-    const auto &weights = moduleData.value<NeutronWeights>("FullWeights", sourceNeutronSQ_->name());
-    // Retrieve GR and SQ
+    const auto weights = sourceNeutronSQ_->weights();
     const auto unweightedGR = moduleData.value<PartialSet>("UnweightedGR", grModule->name());
     auto unweightedSQ = moduleData.value<PartialSet>("UnweightedSQ", sqModule->name());
     auto referenceSQ = moduleData.value<Data1D>("ReferenceData", sourceNeutronSQ_->name());

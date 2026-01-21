@@ -47,13 +47,20 @@ void IsotopologueSet::remove(const Isotopologue *iso)
 bool IsotopologueSet::contains(const Species *sp) const { return isotopologues_.contains(sp); }
 
 // Return Isotopologues with normalised populations for the specified Species
-const ResolvableKeyedVector<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(const Species *sp) const
+std::map<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(const Species *sp) const
 {
     if (isotopologues_.contains(sp))
-        return isotopologues_.value(sp);
+    {
+        auto normalised = isotopologues_.value(sp);
+        auto sum = std::accumulate(normalised.begin(), normalised.end(), 0.0,
+                                   [](const auto acc, const auto &isoWeight) { return acc + isoWeight.second; });
+        for (auto &weight : std::views::values(normalised))
+            weight /= sum;
+        return normalised;
+    }
 
-    ResolvableKeyedVector<const Isotopologue *, double> natural;
-    natural.add(sp->naturalIsotopologue(), 1.0);
+    std::map<const Isotopologue *, double> natural;
+    natural[sp->naturalIsotopologue()] = 1.0;
     return natural;
 }
 
