@@ -5,7 +5,6 @@
 
 #include "base/serialiser.h"
 #include "classes/coreData.h"
-#include "templates/optionalRef.h"
 
 // Forward Declarations
 class Species;

@@ -8,10 +8,9 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 #include "items/deserialisers.h"
-#include "items/serialisers.h"
 #include "templates/algorithms.h"
 
-NeutronWeights::NeutronWeights(const std::vector<std::pair<const Species *, double>> &speciesPopulations, const IsotopologueSet &isotopologues, const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues, const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
@@ -64,7 +63,7 @@ void NeutronWeights::operator=(const NeutronWeights &source)
  */
 
 // Calculate weighting matrices based on current AtomType / Isotope information
-void NeutronWeights::calculateWeightingMatrices(const std::vector<std::pair<const Species *, double>> &speciesPopulations, const IsotopologueSet &isotopologues)
+void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues)
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)

@@ -4,12 +4,8 @@
 #include "classes/potentialSet.h"
 #include "base/lineParser.h"
 #include "classes/atomType.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
-#include "io/export/data1D.h"
 #include "items/deserialisers.h"
-#include "items/serialisers.h"
-#include "templates/algorithms.h"
 
 PotentialSet::PotentialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 

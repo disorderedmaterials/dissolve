@@ -4,7 +4,6 @@
 #include "items/producers.h"
 #include "classes/braggReflection.h"
 #include "classes/kVector.h"
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
 #include "classes/potentialSet.h"

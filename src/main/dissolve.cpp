@@ -2,10 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "classes/atomType.h"
 #include "classes/kVector.h"
-#include "classes/neutronWeights.h"
-#include "classes/species.h"
 #include "nodes/dissolve.h"
 
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)

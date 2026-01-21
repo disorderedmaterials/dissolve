@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/neutronWeights.h"
+#include "classes/isotopologueSet.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,20 +11,21 @@ namespace UnitTest
 TEST(NeutronWeightsTest, Simple)
 {
     SmallMolecules molecules;
-    NeutronWeights nwts;
+    std::map< const Species *, double> speciesPopulations;
+    IsotopologueSet isotopologues;
 
     // Basic population of ten molecules with two atoms of the same type (N2)
-    nwts.addIsotopologue(&molecules.N2(), 10, molecules.N2().naturalIsotopologue(), 1.0);
-    nwts.createFromIsotopologues({});
-
+    speciesPopulations[&molecules.N2()] = 10;
+    isotopologues.add(molecules.N2().naturalIsotopologue(), 1.0);
+    NeutronWeights nwts(speciesPopulations, isotopologues);
     EXPECT_EQ(20, nwts.isotopeMix().population(molecules.atN().get()));
     EXPECT_NEAR(1.0, nwts.isotopeMix().fraction(molecules.atN().get()), 1.0e-6);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::N_Natural), 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
 
     // Adding more N2 natural isotopologue shouldn't make any difference - the species already exists, so just the
     // relative weight of the isotopologue will be updated, and this will be normalised back to 1.0.
-    nwts.addIsotopologue(&molecules.N2(), 10, molecules.N2().naturalIsotopologue(), 50.0);
-    nwts.createFromIsotopologues({});
+    isotopologues.add(molecules.N2().naturalIsotopologue(), 50.0);
+    nwts = NeutronWeights(speciesPopulations, isotopologues);
     EXPECT_EQ(20, nwts.isotopeMix().population(molecules.atN().get()));
     EXPECT_NEAR(1.0, nwts.isotopeMix().fraction(molecules.atN().get()), 1.0e-6);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::N_Natural), 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
@@ -32,10 +34,13 @@ TEST(NeutronWeightsTest, Simple)
 TEST(NeutronWeightsTest, Water)
 {
     SmallMolecules molecules;
-    NeutronWeights nwts;
+    std::map< const Species *, double> speciesPopulations;
+    IsotopologueSet isotopologues;
 
-    nwts.addIsotopologue(&molecules.H2O(), 1, molecules.H2O().naturalIsotopologue(), 1.0);
-    nwts.createFromIsotopologues({});
+    speciesPopulations[&molecules.H2O()] = 1;
+    isotopologues.add(molecules.H2O().naturalIsotopologue(), 1.0);
+
+    NeutronWeights nwts(speciesPopulations, isotopologues);
     EXPECT_EQ(1, nwts.isotopeMix().population(molecules.atOW().get()));
     EXPECT_EQ(2, nwts.isotopeMix().population(molecules.atHW().get()));
     EXPECT_NEAR(1.0 / 3.0, nwts.isotopeMix().fraction(molecules.atOW().get()), 1.0e-6);
@@ -49,10 +54,13 @@ TEST(NeutronWeightsTest, Water)
 TEST(NeutronWeightsTest, D2O)
 {
     SmallMolecules molecules;
-    NeutronWeights nwts;
+    std::map< const Species *, double> speciesPopulations;
+    IsotopologueSet isotopologues;
 
-    nwts.addIsotopologue(&molecules.H2O(), 1, molecules.D2O(), 1.0);
-    nwts.createFromIsotopologues({});
+    speciesPopulations[&molecules.H2O()] = 1;
+    isotopologues.add(molecules.D2O(), 1.0);
+
+    NeutronWeights nwts(speciesPopulations, isotopologues);
     EXPECT_EQ(1, nwts.isotopeMix().population(molecules.atOW().get()));
     EXPECT_EQ(2, nwts.isotopeMix().population(molecules.atHW().get()));
     EXPECT_NEAR(1.0 / 3.0, nwts.isotopeMix().fraction(molecules.atOW().get()), 1.0e-6);
@@ -65,32 +73,41 @@ TEST(NeutronWeightsTest, D2O)
 TEST(NeutronWeightsTest, NullWater)
 {
     SmallMolecules molecules;
-    NeutronWeights nwts;
+    std::map< const Species *, double> speciesPopulations;
+    IsotopologueSet isotopologues;
+
+    speciesPopulations[&molecules.H2O()] = 1000;
 
     auto ratio = fabs(Sears91::boundCoherent(Sears91::H_2) / Sears91::boundCoherent(Sears91::H_Natural));
-    nwts.addIsotopologue(&molecules.H2O(), 1000, molecules.H2O().naturalIsotopologue(), ratio);
-    nwts.addIsotopologue(&molecules.H2O(), 0, molecules.D2O(), 1.0);
-    nwts.createFromIsotopologues({});
+    isotopologues.add(molecules.H2O().naturalIsotopologue(), ratio);
+    isotopologues.add(molecules.D2O(), 1.0);
+
+    NeutronWeights nwts(speciesPopulations, isotopologues);
     EXPECT_EQ(1000, nwts.isotopeMix().population(molecules.atOW().get()));
     EXPECT_EQ(2000, nwts.isotopeMix().population(molecules.atHW().get()));
     EXPECT_NEAR(1.0 / 3.0, nwts.isotopeMix().fraction(molecules.atOW().get()), 1.0e-6);
     EXPECT_NEAR(2.0 / 3.0, nwts.isotopeMix().fraction(molecules.atHW().get()), 1.0e-6);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
 
-    // Making the H atomtype exchangeable should make no difference
-    nwts.createFromIsotopologues({molecules.atHW()});
+    // Making the H atomtype exchangeable should make no difference to <b>**2
+    nwts = NeutronWeights(speciesPopulations, isotopologues, {molecules.atHW()});
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
 }
 
 TEST(NeutronWeightsTest, Mix)
 {
     SmallMolecules molecules;
-    NeutronWeights nwts;
+    std::map< const Species *, double> speciesPopulations;
+    IsotopologueSet isotopologues;
 
-    nwts.addIsotopologue(&molecules.H2O(), 1, molecules.H2O().naturalIsotopologue(), 1.0);
-    nwts.addIsotopologue(&molecules.N2(), 1, molecules.N2().naturalIsotopologue(), 1.0);
-    nwts.addIsotopologue(&molecules.N2(), 1, molecules.N2A15(), 1.0);
-    nwts.createFromIsotopologues({});
+    speciesPopulations[&molecules.H2O()] = 1;
+    speciesPopulations[&molecules.N2()] = 2;
+
+    isotopologues.add(molecules.H2O().naturalIsotopologue(), 1.0);
+    isotopologues.add(molecules.N2().naturalIsotopologue(), 1.0);
+    isotopologues.add(molecules.N2A15(), 1.0);
+
+    NeutronWeights nwts(speciesPopulations, isotopologues);
     EXPECT_EQ(1, nwts.isotopeMix().population(molecules.atOW().get()));
     EXPECT_EQ(2, nwts.isotopeMix().population(molecules.atHW().get()));
     EXPECT_EQ(2, nwts.isotopeMix().population(molecules.atN().get()));

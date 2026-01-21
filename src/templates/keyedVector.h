@@ -12,7 +12,7 @@ template <class KeyClass, class ValueClass> class KeyedVector
 {
     public:
     using KeyValuePair = std::pair<KeyClass, ValueClass>;
-    explicit operator std::map<KeyClass, ValueClass>() const
+    operator std::map<KeyClass, ValueClass>() const
     {
         std::map<KeyClass, ValueClass> result;
         for (const auto &[key, value] : data_)
@@ -153,7 +153,7 @@ template <class KeyClass, class ValueClass> class ResolvableKeyedVector : public
 {
     public:
     using KeyValuePair = std::pair<Resolvable<KeyClass>, ValueClass>;
-    explicit operator std::map<KeyClass, ValueClass>() const
+    operator std::map<KeyClass, ValueClass>() const
     {
         std::map<KeyClass, ValueClass> result;
         for (const auto &[key, value] : KeyedVector<Resolvable<KeyClass>, ValueClass>::data_)
