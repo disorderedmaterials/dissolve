@@ -105,7 +105,7 @@ runs:
     run: |
       set -ex
 
-      nix bundle -L .#${{ inputs.target }} -o binary
+      nix bundle --bundler .#default -L .#${{ inputs.target }} -o binary
 
       # Assemble artifacts
       mkdir packages-binary
