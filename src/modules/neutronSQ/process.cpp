@@ -48,8 +48,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal
         if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the neutron weights in order to do the normalisation
-            NeutronWeights weights;
-            calculateWeights(rdfModule, weights);
+            NeutronWeights weights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
             auto factor = 1.0;
 
             // Set up the multiplication factors

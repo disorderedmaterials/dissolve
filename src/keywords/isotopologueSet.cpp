@@ -50,10 +50,10 @@ bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const
 // Serialise data to specified LineParser
 bool IsotopologueSetKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    for (auto topes : data_.isotopologues())
-        for (const auto &[iso, weight] : topes.mix())
+    for (auto &[species, isotopologues] : data_.isotopologues())
+        for (const auto &[iso, weight] : isotopologues)
         {
-            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, topes.species()->name(), iso->name(), weight))
+            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, species.raw()->name(), iso->name(), weight))
                 return false;
         }
 

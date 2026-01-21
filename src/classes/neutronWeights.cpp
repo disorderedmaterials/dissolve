@@ -11,83 +11,30 @@
 #include "items/serialisers.h"
 #include "templates/algorithms.h"
 
-NeutronWeights::NeutronWeights()
+NeutronWeights::NeutronWeights(const std::vector<std::pair<const Species *, double>> &speciesPopulations, const IsotopologueSet &isotopologues, const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
-    valid_ = false;
-}
 
-NeutronWeights::NeutronWeights(const NeutronWeights &source) { (*this) = source; }
+    // Create the isotope mix from defined isotopologues
+    isotopeMix_.create(speciesPopulations, isotopologues, exchangeableTypes);
 
-void NeutronWeights::operator=(const NeutronWeights &source)
-{
-    isotopologueMixtures_ = source.isotopologueMixtures_;
-    isotopeMix_ = source.isotopeMix_;
-    boundCoherentProducts_ = source.boundCoherentProducts_;
-    concentrationProducts_ = source.concentrationProducts_;
-    weights_ = source.weights_;
-    intramolecularWeights_ = source.intramolecularWeights_;
-    boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
-    boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
-    valid_ = source.valid_;
-}
+    calculateWeightingMatrices(speciesPopulations, isotopologues);
 
-/*
- * Construction
- */
-
-// Clear contents
-void NeutronWeights::clear()
-{
-    isotopologueMixtures_.clear();
-    concentrationProducts_.clear();
-    boundCoherentProducts_.clear();
-    weights_.clear();
-    intramolecularWeights_.clear();
-    boundCoherentSquareOfAverage_ = 0.0;
-    boundCoherentAverageOfSquares_ = 0.0;
-    valid_ = false;
-}
-
-// Add Isotopologue for Species
-void NeutronWeights::addIsotopologue(const Species *sp, double speciesPopulation, const Isotopologue *iso,
-                                     double isotopologueRelativePopulation)
-{
-    // Does an Isotopologues definition already exist for the supplied Species?
-    auto it = std::find_if(isotopologueMixtures_.begin(), isotopologueMixtures_.end(),
-                           [sp](auto &data) { return data.species() == sp; });
-
-    if (it == isotopologueMixtures_.end())
-    {
-        isotopologueMixtures_.emplace_back(sp, speciesPopulation);
-        isotopologueMixtures_.back().mix().add(iso, isotopologueRelativePopulation);
-    }
-    else
-        it->mix().add(iso, isotopologueRelativePopulation);
-}
-
-// Return whether an Isotopologues definition exists for the provided Species
-bool NeutronWeights::containsIsotopologues(const Species *sp) const
-{
-    return std::any_of(isotopologueMixtures_.cbegin(), isotopologueMixtures_.cend(),
-                       [sp](const Isotopologues &mix) { return mix.species() == sp; });
-}
-
-// Print atomtype / weights information
-void NeutronWeights::print() const
-{
     Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
     Messenger::print("  ------------------------------------------------------\n");
-    for (auto &topes : isotopologueMixtures_)
+    auto first = true;
+    for (auto &[species, speciesPopulation] : speciesPopulations)
     {
-        for (auto it = topes.mix().begin(); it != topes.mix().end(); ++it)
+        for (auto &[iso, isoFraction] : isotopologues.normalisedIsotopologues(species))
         {
-            if (it == topes.mix().begin())
-                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", topes.species()->name(), it->first->name(),
-                                 topes.speciesPopulation(), it->second);
+            if (first)
+                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", species->name(), iso->name(),
+                                 speciesPopulation, isoFraction);
             else
-                Messenger::print("                   {:<15}              {}\n", it->first->name(), it->second);
+                Messenger::print("                   {:<15}              {}\n", iso->name(), isoFraction);
+
+            first = false;
         }
     }
 
@@ -99,12 +46,25 @@ void NeutronWeights::print() const
                      boundCoherentSquareOfAverage_, boundCoherentAverageOfSquares_);
 }
 
+NeutronWeights::NeutronWeights(const NeutronWeights &source) { (*this) = source; }
+
+void NeutronWeights::operator=(const NeutronWeights &source)
+{
+    isotopeMix_ = source.isotopeMix_;
+    boundCoherentProducts_ = source.boundCoherentProducts_;
+    concentrationProducts_ = source.concentrationProducts_;
+    weights_ = source.weights_;
+    intramolecularWeights_ = source.intramolecularWeights_;
+    boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
+    boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
+}
+
 /*
  * Data
  */
 
 // Calculate weighting matrices based on current AtomType / Isotope information
-void NeutronWeights::calculateWeightingMatrices()
+void NeutronWeights::calculateWeightingMatrices(const std::vector<std::pair<const Species *, double>> &speciesPopulations, const IsotopologueSet &isotopologues)
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
@@ -147,21 +107,14 @@ void NeutronWeights::calculateWeightingMatrices()
     // Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
     DoubleKeyedMap<double> intraNorm(true);
     DoubleKeyedMap<bool> globalFlag(true);
-    for (auto &topes : isotopologueMixtures_)
+    for (auto &[species, speciesPopulation] : speciesPopulations)
     {
-        // Get weighting for associated Species population
-        auto speciesWeight = double(topes.speciesPopulation());
-
-        // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
-        const auto *sp = topes.species();
-
-        // Loop over Isotopologues defined for this mixture
-        for (auto &[iso, weight] : topes.mix())
+        for (auto &[iso, isoFraction] : isotopologues.normalisedIsotopologues(species))
         {
-            // Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the
+            // Sum the scattering lengths of each pair of AtomTypes, weighted by the species population and the
             // fractional Isotopologue weight in the mix.
-            dissolve::for_each_pair(ParallelPolicies::seq, sp->atomTypePopulations(),
-                                    [&, iso, weight](int indexI, const auto &atPop1, int indexJ, const auto &atPop2)
+            dissolve::for_each_pair(ParallelPolicies::seq, species->atomTypePopulations(),
+                                    [&, iso, isoFraction, speciesPopulation](int indexI, const auto &atPop1, int indexJ, const auto &atPop2)
                                     {
                                         DoubleKeyedMapKey key{atPop1.first->name(), atPop2.first->name()};
 
@@ -183,8 +136,8 @@ void NeutronWeights::calculateWeightingMatrices()
                                         bi *= 0.1;
                                         bj *= 0.1;
 
-                                        intramolecularWeights_[key] += weight * bi * bj;
-                                        intraNorm[key] += weight;
+                                        intramolecularWeights_[key] += speciesPopulation * isoFraction * bi * bj;
+                                        intraNorm[key] += speciesPopulation * isoFraction;
                                         globalFlag[key] = true;
                                     });
         }
@@ -211,17 +164,6 @@ void NeutronWeights::calculateWeightingMatrices()
                             });
 }
 
-// Create AtomType list and matrices based on stored Isotopologues information
-void NeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
-{
-    // Create the isotope mix from defined isotopologues
-    isotopeMix_.create(isotopologueMixtures_, exchangeableTypes);
-
-    calculateWeightingMatrices();
-
-    valid_ = true;
-}
-
 // Return isotope mix
 const IsotopeMix &NeutronWeights::isotopeMix() const { return isotopeMix_; }
 
@@ -242,6 +184,3 @@ double NeutronWeights::boundCoherentSquareOfAverage() const { return boundCohere
 
 // Return bound coherent squared average scattering (<b**2>)
 double NeutronWeights::boundCoherentAverageOfSquares() const { return boundCoherentAverageOfSquares_; }
-
-// Return whether the structure is valid (i.e. has been finalised)
-bool NeutronWeights::isValid() const { return valid_; }

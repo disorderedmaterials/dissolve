@@ -7,8 +7,8 @@
 #include "classes/species.h"
 #include <numeric>
 
-Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
-    : species_(species), speciesPopulation_(speciesPopulation)
+Isotopologues::Isotopologues(const Species *species)
+    : species_(species)
 {
 }
 
@@ -17,17 +17,14 @@ Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
  */
 
 // Set associated Species
-void Isotopologues::setSpecies(const Species *sp, double population)
+void Isotopologues::setSpecies(const Species *sp)
 {
     species_ = sp;
-    speciesPopulation_ = population;
 }
 
 // Return associated Species
 const Species *Isotopologues::species() const { return species_; }
 
-// Return associated Species population
-double Isotopologues::speciesPopulation() const { return speciesPopulation_; }
 
 // Return Isotopologue/weight mix
 KeyedVector<const Isotopologue *, double> &Isotopologues::mix() { return mix_; }
@@ -63,7 +60,7 @@ bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
         Messenger::error("Failed to find Species '{}' while reading Isotopologues.\n", parser.argsv(0));
         return false;
     }
-    speciesPopulation_ = parser.argi(1);
+    //speciesPopulation_ = parser.argi(1);
     auto nIso = parser.argi(2);
     mix_.clear();
     for (auto n = 0; n < nIso; ++n)
@@ -90,7 +87,7 @@ bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
 bool Isotopologues::serialise(LineParser &parser) const
 {
     // Write Species name, integer population, and number of isotopologues in the mix
-    if (!parser.writeLineF("'{}'  {}  {}\n", species_->name(), speciesPopulation_, mix_.size()))
+    if (!parser.writeLineF("'{}'  {}\n", species_->name(), mix_.size()))
         return false;
 
     // Write Isotopologues
@@ -104,7 +101,7 @@ bool Isotopologues::serialise(LineParser &parser) const
 // Express as a serialisable value
 void Isotopologues::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result = {{"name", species_->name()}, {"population", speciesPopulation_}};
+    SerialisedValue result = {{"name", species_->name()}};
 
     SerialisedValue mix;
     for (const auto &[iso, weight] : mix_)
@@ -119,7 +116,6 @@ void Isotopologues::serialise(std::string tag, SerialisedValue &target) const
 void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     species_ = coreData.findSpecies(toml::find<std::string>(node, "name"));
-    speciesPopulation_ = toml::find<double>(node, "population");
 
     auto location = node.location();
     Serialisable::toMap(node, "mix",

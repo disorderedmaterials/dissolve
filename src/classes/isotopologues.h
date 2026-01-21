@@ -17,7 +17,7 @@ class Species;
 class Isotopologues : public Serialisable<const CoreData &>
 {
     public:
-    Isotopologues(const Species *species = nullptr, int speciesPopulation = 0);
+    Isotopologues(const Species *species = nullptr);
     ~Isotopologues() = default;
 
     /*
@@ -26,18 +26,14 @@ class Isotopologues : public Serialisable<const CoreData &>
     private:
     // Associated Species
     const Species *species_;
-    // Population of associated Species
-    double speciesPopulation_;
     // Weighted Isotopologue mixture
     KeyedVector<const Isotopologue *, double> mix_;
 
     public:
     // Set associated Species and population
-    void setSpecies(const Species *sp, double population);
+    void setSpecies(const Species *sp);
     // Return associated Species
     const Species *species() const;
-    // Return associated Species population
-    double speciesPopulation() const;
     // Return Isotopologue/weight mix
     KeyedVector<const Isotopologue *, double> &mix();
     const KeyedVector<const Isotopologue *, double> &mix() const;

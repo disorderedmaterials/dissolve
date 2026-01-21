@@ -46,7 +46,6 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Histogram2D>("Histogram2D");
     registerProducer<Histogram3D>("Histogram3D");
     registerProducer<IntegerHistogram1D>("IntegerHistogram1D");
-    registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
     registerProducer<PartialSetAccumulator>("PartialSetAccumulator");
     registerProducer<PotentialSet>("PotentialSet");

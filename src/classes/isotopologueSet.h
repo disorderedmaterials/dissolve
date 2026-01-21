@@ -5,9 +5,7 @@
 
 #include "base/serialiser.h"
 #include "classes/coreData.h"
-#include "classes/isotopologues.h"
 #include "templates/optionalRef.h"
-#include <vector>
 
 // Forward Declarations
 class Species;
@@ -28,7 +26,7 @@ class IsotopologueSet : public Serialisable<const CoreData &>
      */
     private:
     // Isotopologue mixtures for individual Species
-    std::vector<Isotopologues> isotopologues_;
+    ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>> isotopologues_;
 
     public:
     // Clear all existing data
@@ -41,13 +39,13 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     void remove(const Isotopologue *iso);
     // Return whether Isotopologues for the specified Species exists
     bool contains(const Species *sp) const;
-    // Return Isotopologues for the specified Species
-    OptionalReferenceWrapper<const Isotopologues> getIsotopologues(const Species *sp) const;
+    // Return Isotopologues with normalised populations for the specified Species
+    const KeyedVector<const Isotopologue *, double> normalisedIsotopologues(const Species *sp) const;
     // Return number of species covered by set
     int nSpecies() const;
     // Return vector of all Isotopologues
-    std::vector<Isotopologues> &isotopologues();
-    const std::vector<Isotopologues> &isotopologues() const;
+    ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>>  &isotopologues();
+    const ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>>  &isotopologues() const;
 
     /*
      * Serialisation

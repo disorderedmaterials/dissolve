@@ -69,8 +69,6 @@ class NeutronSQModule : public Module
     // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
                              StructureFactors::NormalisationType normalisation);
-    // Calculate neutron weights for relevant Configuration targets
-    void calculateWeights(const GRModule *rdfModule, NeutronWeights &weights) const;
 
     /*
      * Processing
