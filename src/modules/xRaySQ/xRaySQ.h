@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/partialSet.h"
+#include "classes/xRayWeights.h"
 #include "data/formFactors.h"
 #include "data/structureFactors.h"
 #include "io/import/data1D.h"
@@ -14,7 +15,6 @@
 class PartialSet;
 class GRModule;
 class SQModule;
-class XRayWeights;
 
 // SQ Module
 class XRaySQModule : public Module
@@ -29,6 +29,8 @@ class XRaySQModule : public Module
     private:
     // Atomic form factors to use for weighting
     XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::WaasmaierKirfel1995};
+    // XRay weights
+    XRayWeights weights_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
@@ -64,6 +66,8 @@ class XRaySQModule : public Module
      * Functions
      */
     public:
+    // Return xRay weights
+    const XRayWeights &weights() const;
     // Calculate weighted g(r) from supplied unweighted g(r) and Weights
     bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
                              StructureFactors::NormalisationType normalisation);

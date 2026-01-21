@@ -3,12 +3,10 @@
 
 #include "classes/isotopeMix.h"
 #include "classes/atomType.h"
-#include "classes/isotopologues.h"
+#include "classes/isotopologueSet.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
-
-#include <isotopologueSet.h>
 
 /*
  * Private Functions
@@ -65,13 +63,13 @@ void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulati
             // Isotopologue
             for (const auto &[atomType, atomTypePopulation] : species->atomTypePopulations())
             {
-                auto population = atomTypePopulation * weight;
+                auto population = speciesPopulation * atomTypePopulation * weight;
 
                 auto &isotopes = mix_[atomType];
-                if (isotopes.contains(iso.raw()->atomTypeIsotope(atomType)))
-                    isotopes[iso.raw()->atomTypeIsotope(atomType)] += population;
+                if (isotopes.contains(iso->atomTypeIsotope(atomType)))
+                    isotopes[iso->atomTypeIsotope(atomType)] += population;
                 else
-                    isotopes[iso.raw()->atomTypeIsotope(atomType)] = population;
+                    isotopes[iso->atomTypeIsotope(atomType)] = population;
 
                 totalPopulation_ += population;
             }

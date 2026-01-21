@@ -7,6 +7,9 @@
 #include "modules/gr/gr.h"
 #include "modules/neutronSQ/neutronSQ.h"
 
+// Return neutron weights calculated from isotopologues and exchangeables
+const NeutronWeights &NeutronSQModule::weights() const { return weights_; }
+
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
 bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
                                           StructureFactors::NormalisationType normalisation)

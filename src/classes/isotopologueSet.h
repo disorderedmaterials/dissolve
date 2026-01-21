@@ -39,7 +39,7 @@ class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
     // Return whether Isotopologues for the specified Species exists
     bool contains(const Species *sp) const;
     // Return Isotopologues with normalised populations for the specified Species
-    const ResolvableKeyedVector<const Isotopologue *, double> normalisedIsotopologues(const Species *sp) const;
+    std::map<const Isotopologue *, double> normalisedIsotopologues(const Species *sp) const;
     // Return number of species covered by set
     int nSpecies() const;
     // Return vector of all Isotopologues

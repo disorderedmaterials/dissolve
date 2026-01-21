@@ -427,7 +427,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
         if (module->type() == ModuleTypes::NeutronSQ)
         {
-            const auto &weights = moduleData.value<NeutronWeights>("FullWeights", module->name());
+            const auto weights = dynamic_cast<NeutronSQModule *>(module)->weights();
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = trimmedReferenceData;

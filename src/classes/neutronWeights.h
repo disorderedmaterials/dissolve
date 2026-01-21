@@ -14,6 +14,7 @@ class IsotopologueSet;
 class NeutronWeights
 {
     public:
+    NeutronWeights() = default;
     NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues,
                    const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes = {});
     NeutronWeights(const NeutronWeights &source);

@@ -183,8 +183,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Calculate weights
-    auto &weights = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name_);
-    weights = NeutronWeights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
+    weights_ = NeutronWeights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     auto [weightedSQ, wSQstatus] =
@@ -193,7 +192,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
         weightedSQ.initialise(unweightedSQ);
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights_, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && !weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))
@@ -219,7 +218,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
         weightedGR.initialise(unweightedGR);
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
+    calculateWeightedGR(unweightedGR, weightedGR, weights_, normaliseTo_);
 
     // Save data if requested
     if (saveGR_ && !weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))
