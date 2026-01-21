@@ -14,7 +14,8 @@ class IsotopologueSet;
 class NeutronWeights
 {
     public:
-    NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues, const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes = {});
+    NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues,
+                   const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes = {});
     NeutronWeights(const NeutronWeights &source);
     void operator=(const NeutronWeights &source);
 
@@ -46,7 +47,8 @@ class NeutronWeights
 
     private:
     // Calculate weighting matrices based on current AtomType / Isotope information
-    void calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues);
+    void calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
+                                    const IsotopologueSet &isotopologues);
 
     public:
     // Return isotope mix

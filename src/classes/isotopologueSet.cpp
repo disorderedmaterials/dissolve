@@ -27,7 +27,7 @@ void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
 void IsotopologueSet::remove(const Species *sp)
 {
     if (!isotopologues_.contains(sp))
-    isotopologues_.erase(sp);
+        isotopologues_.erase(sp);
 }
 
 // Remove any occurrences of the specified Isotopologue
@@ -44,10 +44,7 @@ void IsotopologueSet::remove(const Isotopologue *iso)
 }
 
 // Return whether Isotopologues for the specified Species exists
-bool IsotopologueSet::contains(const Species *sp) const
-{
-    return isotopologues_.contains(sp);
-}
+bool IsotopologueSet::contains(const Species *sp) const { return isotopologues_.contains(sp); }
 
 // Return Isotopologues with normalised populations for the specified Species
 const ResolvableKeyedVector<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(const Species *sp) const
@@ -64,9 +61,16 @@ const ResolvableKeyedVector<const Isotopologue *, double> IsotopologueSet::norma
 int IsotopologueSet::nSpecies() const { return isotopologues_.size(); }
 
 // Return vector of all Isotopologues
-ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>>  &IsotopologueSet::isotopologues() { return isotopologues_; }
+ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &IsotopologueSet::isotopologues()
+{
+    return isotopologues_;
+}
 
-const ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>> &IsotopologueSet::isotopologues() const { return isotopologues_; }
+const ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &
+IsotopologueSet::isotopologues() const
+{
+    return isotopologues_;
+}
 
 /*
  * Serialisation
@@ -145,7 +149,8 @@ void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
         return;
 
     SerialisedValue value;
-    value["set"] = fromVectorToTable(isotopologues_, [](const auto &topes) { return fromVectorToTable(topes, [](const auto isoWeight) { return isoWeight; }); });
+    value["set"] = fromVectorToTable(isotopologues_, [](const auto &topes)
+                                     { return fromVectorToTable(topes, [](const auto isoWeight) { return isoWeight; }); });
     target[tag] = value;
 }
 
@@ -154,11 +159,13 @@ void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &c
 {
     clear();
 
-    toMap(node, "set", [&](const std::string &speciesName, const SerialisedValue &topes)
-    {
-        auto &set = isotopologues_[speciesName];
-        toMap(topes, [&](const std::string &isoName, const SerialisedValue &population) { set[isoName] = population.as_floating(); });
-    });
+    toMap(node, "set",
+          [&](const std::string &speciesName, const SerialisedValue &topes)
+          {
+              auto &set = isotopologues_[speciesName];
+              toMap(topes, [&](const std::string &isoName, const SerialisedValue &population)
+                    { set[isoName] = population.as_floating(); });
+          });
 }
 
 // Resolve internal resolvable name references with supplied data
@@ -169,8 +176,8 @@ void IsotopologueSet::resolve(const std::map<std::string, const Species *> &spec
         if (speciesInScope.contains(std::string(resolvableSpecies.name())))
             resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
         else
-            throw(std::runtime_error(
-                std::format("Species '{}' is used in IsotopologueSet, but no such species is in scope.\n", resolvableSpecies.name())));
+            throw(std::runtime_error(std::format("Species '{}' is used in IsotopologueSet, but no such species is in scope.\n",
+                                                 resolvableSpecies.name())));
 
         auto *sp = resolvableSpecies.raw();
         for (auto &resolvableIsotopologue : std::views::keys(topes))
@@ -179,8 +186,9 @@ void IsotopologueSet::resolve(const std::map<std::string, const Species *> &spec
             if (iso)
                 resolvableIsotopologue.resolve(iso);
             else
-                throw(std::runtime_error(
-      std::format("Isotopologue '{}' from species '{}' is used in IsotopologueSet, but no such isotopologue exists.\n", sp->name(), resolvableIsotopologue.name())));
+                throw(std::runtime_error(std::format(
+                    "Isotopologue '{}' from species '{}' is used in IsotopologueSet, but no such isotopologue exists.\n",
+                    sp->name(), resolvableIsotopologue.name())));
         }
     }
 }

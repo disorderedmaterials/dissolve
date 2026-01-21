@@ -11,7 +11,7 @@ namespace UnitTest
 TEST(NeutronWeightsTest, Simple)
 {
     SmallMolecules molecules;
-    std::map< const Species *, double> speciesPopulations;
+    std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
 
     // Basic population of ten molecules with two atoms of the same type (N2)
@@ -34,7 +34,7 @@ TEST(NeutronWeightsTest, Simple)
 TEST(NeutronWeightsTest, Water)
 {
     SmallMolecules molecules;
-    std::map< const Species *, double> speciesPopulations;
+    std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
 
     speciesPopulations[&molecules.H2O()] = 1;
@@ -54,7 +54,7 @@ TEST(NeutronWeightsTest, Water)
 TEST(NeutronWeightsTest, D2O)
 {
     SmallMolecules molecules;
-    std::map< const Species *, double> speciesPopulations;
+    std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
 
     speciesPopulations[&molecules.H2O()] = 1;
@@ -73,7 +73,7 @@ TEST(NeutronWeightsTest, D2O)
 TEST(NeutronWeightsTest, NullWater)
 {
     SmallMolecules molecules;
-    std::map< const Species *, double> speciesPopulations;
+    std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
 
     speciesPopulations[&molecules.H2O()] = 1000;
@@ -97,7 +97,7 @@ TEST(NeutronWeightsTest, NullWater)
 TEST(NeutronWeightsTest, Mix)
 {
     SmallMolecules molecules;
-    std::map< const Species *, double> speciesPopulations;
+    std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
 
     speciesPopulations[&molecules.H2O()] = 1;

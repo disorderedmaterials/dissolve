@@ -7,24 +7,17 @@
 #include "classes/species.h"
 #include <numeric>
 
-Isotopologues::Isotopologues(const Species *species)
-    : species_(species)
-{
-}
+Isotopologues::Isotopologues(const Species *species) : species_(species) {}
 
 /*
  * Isotopologue Mix
  */
 
 // Set associated Species
-void Isotopologues::setSpecies(const Species *sp)
-{
-    species_ = sp;
-}
+void Isotopologues::setSpecies(const Species *sp) { species_ = sp; }
 
 // Return associated Species
 const Species *Isotopologues::species() const { return species_; }
-
 
 // Return Isotopologue/weight mix
 KeyedVector<const Isotopologue *, double> &Isotopologues::mix() { return mix_; }
@@ -60,7 +53,7 @@ bool Isotopologues::deserialise(LineParser &parser, const CoreData &coreData)
         Messenger::error("Failed to find Species '{}' while reading Isotopologues.\n", parser.argsv(0));
         return false;
     }
-    //speciesPopulation_ = parser.argi(1);
+    // speciesPopulation_ = parser.argi(1);
     auto nIso = parser.argi(2);
     mix_.clear();
     for (auto n = 0; n < nIso; ++n)

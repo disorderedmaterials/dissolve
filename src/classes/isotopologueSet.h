@@ -25,7 +25,7 @@ class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
      */
     private:
     // Isotopologue mixtures for individual Species
-    ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>> isotopologues_;
+    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> isotopologues_;
 
     public:
     // Clear all existing data
@@ -43,8 +43,8 @@ class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
     // Return number of species covered by set
     int nSpecies() const;
     // Return vector of all Isotopologues
-    ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>>  &isotopologues();
-    const ResolvableKeyedVector<const Species*, ResolvableKeyedVector<const Isotopologue *, double>>  &isotopologues() const;
+    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &isotopologues();
+    const ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &isotopologues() const;
 
     /*
      * Serialisation
