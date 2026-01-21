@@ -88,27 +88,3 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
 
     return true;
 }
-
-// Calculate neutron weights for relevant Configuration targets
-void NeutronSQModule::calculateWeights(const GRModule *rdfModule, NeutronWeights &weights) const
-{
-    // Clear weights and get species populations from GRModule
-    weights.clear();
-    auto populations = rdfModule->speciesPopulations();
-
-    for (auto &[sp, pop] : populations)
-    {
-        // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-        auto isoRef = isotopologueSet_.getIsotopologues(sp);
-        if (isoRef)
-        {
-            const Isotopologues &topes = *isoRef;
-            for (const auto &[iso, weight] : topes.mix())
-                weights.addIsotopologue(sp, pop, iso, weight);
-        }
-        else
-            weights.addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
-    }
-
-    weights.createFromIsotopologues(exchangeable_);
-}

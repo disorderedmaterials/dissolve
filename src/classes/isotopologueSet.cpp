@@ -17,67 +17,56 @@ void IsotopologueSet::clear() { isotopologues_.clear(); }
 // Add Isotopologue with the specified relative weight
 void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
 {
-    auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
-                           [iso](auto &data) { return data.species() == iso->parent(); });
-    if (it != isotopologues_.end())
-        it->mix().add(iso, relativeWeight);
-    else
-    {
-        isotopologues_.emplace_back(iso->parent(), 0);
-        isotopologues_.back().mix().add(iso, relativeWeight);
-    }
+    if (!isotopologues_.contains(iso->parent()))
+        isotopologues_.set(iso->parent(), KeyedVector<const Isotopologue *, double>());
+
+    isotopologues_[iso->parent()].add(iso, relativeWeight);
 }
 
 // Remove specified Species from the list (if it exists)
 void IsotopologueSet::remove(const Species *sp)
 {
-    isotopologues_.erase(
-        std::remove_if(isotopologues_.begin(), isotopologues_.end(), [sp](const auto &data) { return data.species() == sp; }),
-        isotopologues_.end());
+    if (!isotopologues_.contains(sp))
+    isotopologues_.erase(sp);
 }
 
 // Remove any occurrences of the specified Isotopologue
 void IsotopologueSet::remove(const Isotopologue *iso)
 {
-    // Get parent Isotopologues from the contained Species pointer
-    auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
-                           [iso](auto &data) { return data.species() == iso->parent(); });
-
-    if (it != isotopologues_.end())
+    if (isotopologues_.contains(iso->parent()))
     {
-        it->mix().erase(iso);
+        isotopologues_[iso->parent()].erase(iso);
 
         // Check for Isotopologues now being empty
-        if (it->mix().size() == 0)
-            isotopologues_.erase(it);
+        if (isotopologues_[iso->parent()].size() == 0)
+            isotopologues_.erase(iso->parent());
     }
 }
 
 // Return whether Isotopologues for the specified Species exists
 bool IsotopologueSet::contains(const Species *sp) const
 {
-    return std::any_of(isotopologues_.cbegin(), isotopologues_.cend(),
-                       [sp](const Isotopologues &mix) { return mix.species() == sp; });
+    return isotopologues_.contains(sp);
 }
 
-// Return IsotopologueSet for the specified Species
-OptionalReferenceWrapper<const Isotopologues> IsotopologueSet::getIsotopologues(const Species *sp) const
+// Return Isotopologues with normalised populations for the specified Species
+const KeyedVector<const Isotopologue *, double> IsotopologueSet::normalisedIsotopologues(const Species *sp) const
 {
-    auto it =
-        std::find_if(isotopologues_.cbegin(), isotopologues_.cend(), [sp](const auto &data) { return data.species() == sp; });
-    if (it == isotopologues_.end())
-        return {};
+    if (isotopologues_.contains(sp))
+        return isotopologues_.value(sp);
 
-    return *it;
+    KeyedVector<const Isotopologue *, double> natural;
+    natural.add(sp->naturalIsotopologue(), 1.0);
+    return natural;
 }
 
 // Return number of species covered by set
 int IsotopologueSet::nSpecies() const { return isotopologues_.size(); }
 
 // Return vector of all Isotopologues
-std::vector<Isotopologues> &IsotopologueSet::isotopologues() { return isotopologues_; }
+ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>>  &IsotopologueSet::isotopologues() { return isotopologues_; }
 
-const std::vector<Isotopologues> &IsotopologueSet::isotopologues() const { return isotopologues_; }
+const ResolvableKeyedVector<const Species*, KeyedVector<const Isotopologue *, double>> &IsotopologueSet::isotopologues() const { return isotopologues_; }
 
 /*
  * Serialisation
@@ -91,10 +80,37 @@ bool IsotopologueSet::deserialise(LineParser &parser, const CoreData &coreData)
     const auto nSpecies = parser.argi(0);
     for (auto n = 0; n < nSpecies; ++n)
     {
-        // Add a new isotopologue set and read it
-        isotopologues_.emplace_back();
-        if (!isotopologues_.back().deserialise(parser, coreData))
+        // Read Species name
+        if (parser.getArgsDelim() != LineParser::Success)
             return false;
+        auto species = coreData.findSpecies(parser.argsv(0));
+        if (species == nullptr)
+        {
+            Messenger::error("Failed to find Species '{}' while reading IsotopologueSet.\n", parser.argsv(0));
+            return false;
+        }
+
+        // Read isotopologues
+        KeyedVector<const Isotopologue *, double> topes;
+        auto nIso = parser.argi(1);
+        for (auto n = 0; n < nIso; ++n)
+        {
+            if (parser.getArgsDelim() != LineParser::Success)
+                return false;
+
+            // Search for the named Isotopologue in the Species
+            const auto iso = species->findIsotopologue(parser.argsv(0));
+            if (!iso)
+            {
+                Messenger::error("Failed to find Isotopologue '{}' for Species '{}' while reading Isotopologues.\n",
+                                 parser.argsv(0), species->name());
+                return false;
+            }
+
+            topes.set(iso, parser.argd(1));
+        }
+
+        isotopologues_.set(species, topes);
     }
 
     return true;
@@ -108,18 +124,46 @@ bool IsotopologueSet::write(LineParser &parser)
         return false;
 
     // Write details for each set of Isotopologues
-    for (const auto &topes : isotopologues_)
-        if (!topes.serialise(parser))
+    for (const auto &[species, topes] : isotopologues_)
+    {
+        if (!parser.writeLineF("'{}'  {}\n", species.raw()->name(), topes.size()))
             return false;
+
+        // Write Isotopologues
+        for (const auto &[iso, weight] : topes)
+            if (!parser.writeLineF("{}  {}\n", iso->name(), weight))
+                return false;
+    }
 
     return true;
 }
 
 // Express as a serialisable value
-void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const { target[tag] = isotopologues_; }
+void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
+{
+    if (isotopologues_.size() == 0)
+        return;
+
+    SerialisedValue value;
+    // for (const auto &[species, topes] : isotopologues_)
+    // {
+    //     // SerialisedValue mix;
+    //     // for (const auto &[iso, weight] : topes)
+    //         // mix[std::string(iso->name())] = weight;
+    //
+    //     value[std::string(species.name())] = fromVectorToTable(topes, [](const auto &iso) { return iso->name(); });
+    // }
+
+    value["set"] = fromVectorToTable(isotopologues_, [](const auto &topes) { return fromVectorToTable(topes, [](const auto &iso) { return iso->name(); }); });
+    target[tag] = value;
+}
 
 // Read values from a serialisable value
 void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
+    clear();
+
+    toMap(node, "set", [&](const std::string &name, const SerialisedValue &topes)
+                    { isotopologues_[name] = toMap(topes, [](const std::string &name, const SerialisedValue &population) { }); });
     toVector(node, [this, &coreData](const auto &item) { isotopologues_.emplace_back().deserialise(item, coreData); });
 }
