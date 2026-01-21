@@ -621,7 +621,7 @@ void PartialSet::resolve(const std::map<std::string, const Species *> &speciesIn
         if (speciesInScope.contains(std::string(resolvableSpecies.name())))
             resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
         else
-            throw(std::runtime_error(
-                std::format("Species '{}' is used in PartialSet, but no such species is in scope.\n", resolvableSpecies.name())));
+            throw(std::runtime_error(std::format("Species '{}' is used in PartialSet, but no such species is in scope.\n",
+                                                 resolvableSpecies.name())));
     }
 }

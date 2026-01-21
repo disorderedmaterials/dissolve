@@ -10,7 +10,9 @@
 #include "items/deserialisers.h"
 #include "templates/algorithms.h"
 
-NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues, const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations,
+                               const IsotopologueSet &isotopologues,
+                               const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
@@ -28,8 +30,8 @@ NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesP
         for (auto &[iso, isoFraction] : isotopologues.normalisedIsotopologues(species))
         {
             if (first)
-                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", species->name(), iso.name(),
-                                 speciesPopulation, isoFraction);
+                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", species->name(), iso.name(), speciesPopulation,
+                                 isoFraction);
             else
                 Messenger::print("                   {:<15}              {}\n", iso.name(), isoFraction);
 
@@ -63,7 +65,8 @@ void NeutronWeights::operator=(const NeutronWeights &source)
  */
 
 // Calculate weighting matrices based on current AtomType / Isotope information
-void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues)
+void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
+                                                const IsotopologueSet &isotopologues)
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
@@ -112,33 +115,34 @@ void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, 
         {
             // Sum the scattering lengths of each pair of AtomTypes, weighted by the species population and the
             // fractional Isotopologue weight in the mix.
-            dissolve::for_each_pair(ParallelPolicies::seq, species->atomTypePopulations(),
-                                    [&, iso, isoFraction, speciesPopulation](int indexI, const auto &atPop1, int indexJ, const auto &atPop2)
-                                    {
-                                        DoubleKeyedMapKey key{atPop1.first->name(), atPop2.first->name()};
+            dissolve::for_each_pair(
+                ParallelPolicies::seq, species->atomTypePopulations(),
+                [&, iso, isoFraction, speciesPopulation](int indexI, const auto &atPop1, int indexJ, const auto &atPop2)
+                {
+                    DoubleKeyedMapKey key{atPop1.first->name(), atPop2.first->name()};
 
-                                        // Find the atom types in our local mix
-                                        auto optPairIndex = isotopeMix_.indexOf(atPop1.first, atPop2.first);
-                                        if (!optPairIndex)
-                                            return;
-                                        auto &[typeI, typeJ] = *optPairIndex;
+                    // Find the atom types in our local mix
+                    auto optPairIndex = isotopeMix_.indexOf(atPop1.first, atPop2.first);
+                    if (!optPairIndex)
+                        return;
+                    auto &[typeI, typeJ] = *optPairIndex;
 
-                                        // If an AtomType is exchangeable we use its exchanged bound coherent scattering length
-                                        bi = isotopeMix_.isExchangeable(atPop1.first)
-                                                 ? isotopeMix_.boundCoherent(atPop1.first)
-                                                 : Sears91::boundCoherent(iso.raw()->atomTypeIsotope(atPop1.first));
-                                        bj = isotopeMix_.isExchangeable(atPop2.first)
-                                                 ? isotopeMix_.boundCoherent(atPop2.first)
-                                                 : Sears91::boundCoherent(iso.raw()->atomTypeIsotope(atPop2.first));
+                    // If an AtomType is exchangeable we use its exchanged bound coherent scattering length
+                    bi = isotopeMix_.isExchangeable(atPop1.first)
+                             ? isotopeMix_.boundCoherent(atPop1.first)
+                             : Sears91::boundCoherent(iso.raw()->atomTypeIsotope(atPop1.first));
+                    bj = isotopeMix_.isExchangeable(atPop2.first)
+                             ? isotopeMix_.boundCoherent(atPop2.first)
+                             : Sears91::boundCoherent(iso.raw()->atomTypeIsotope(atPop2.first));
 
-                                        // Convert from fm to barns
-                                        bi *= 0.1;
-                                        bj *= 0.1;
+                    // Convert from fm to barns
+                    bi *= 0.1;
+                    bj *= 0.1;
 
-                                        intramolecularWeights_[key] += speciesPopulation * isoFraction * bi * bj;
-                                        intraNorm[key] += speciesPopulation * isoFraction;
-                                        globalFlag[key] = true;
-                                    });
+                    intramolecularWeights_[key] += speciesPopulation * isoFraction * bi * bj;
+                    intraNorm[key] += speciesPopulation * isoFraction;
+                    globalFlag[key] = true;
+                });
         }
     }
 
