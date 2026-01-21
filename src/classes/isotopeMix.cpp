@@ -45,7 +45,7 @@ double IsotopeMix::population(const AtomType *atomType) const
 double IsotopeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
 
 // Create mix from Isotopologues
-void IsotopeMix::create(const std::vector<std::pair<const Species *, double>> &speciesPopulations, const IsotopologueSet &isotopologues,
+void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
                         const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     mix_.clear();

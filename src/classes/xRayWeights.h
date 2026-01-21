@@ -33,7 +33,7 @@ class XRayWeights
 
     public:
     // Set-up from supplied species populations and form factors
-    bool setUp(const std::vector<std::pair<const Species *, double>> &speciesPopulations,
+    bool setUp(const std::map<const Species *, double> &speciesPopulations,
                XRayFormFactors::XRayFormFactorData formFactors);
     // Return atom type fractions
     const KeyedVector<const AtomType *, double> &typeFractions() const;

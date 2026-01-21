@@ -20,7 +20,8 @@ template <class T> class Resolvable
     {
     }
     Resolvable(std::string_view name) : raw_(nullptr), name_(name) {}
-    bool operator==(const Resolvable<T> &other) { return raw_ == other.raw_; }
+    bool operator==(Resolvable<T> &other) { return raw_ == other.raw_; }
+    bool operator==(T &other) { return raw_ == other; }
 
     private:
     // Object (if resolved)

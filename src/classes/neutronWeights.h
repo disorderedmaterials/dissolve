@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/isotopeMix.h"
-#include "classes/isotopologues.h"
 #include "templates/doubleKeyedMap.h"
 #include <vector>
 
@@ -15,7 +14,7 @@ class IsotopologueSet;
 class NeutronWeights
 {
     public:
-    NeutronWeights(const std::vector<std::pair<const Species *, double>> &speciesPopulations, const IsotopologueSet &speciesIsotopologues, const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
+    NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues, const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes = {});
     NeutronWeights(const NeutronWeights &source);
     void operator=(const NeutronWeights &source);
 
@@ -25,8 +24,6 @@ class NeutronWeights
     public:
     // Clear contents
     void clear();
-    // Print atomtype / weights information
-    void print() const;
 
     /*
      * Data
@@ -49,7 +46,7 @@ class NeutronWeights
 
     private:
     // Calculate weighting matrices based on current AtomType / Isotope information
-    void calculateWeightingMatrices(const std::vector<std::pair<const Species *, double>> &speciesPopulations, const IsotopologueSet &isotopologues);
+    void calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues);
 
     public:
     // Return isotope mix
