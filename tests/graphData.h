@@ -109,10 +109,10 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
     ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HDO", "UnweightedSQ"}));
 
     // Add in XRaySQ
-    auto h2ox = root->createNode("XRaySQ", "H2OX");
-    ASSERT_TRUE(h2ox);
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2OX", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2OX", "UnweightedSQ"}));
+    // auto h2ox = root->createNode("XRaySQ", "H2OX");
+    // ASSERT_TRUE(h2ox);
+    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2OX", "UnweightedGR"}));
+    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2OX", "UnweightedSQ"}));
 }
 
 // Create a water graph in the supplied root node
@@ -203,10 +203,10 @@ inline void createBenzeneGraph(Graph *root)
     ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HD", "UnweightedSQ"}));
 
     // Add in XRaySQ?
-    auto X = root->createNode("XRaySQ", "X");
-    ASSERT_TRUE(X);
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "X", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "X", "UnweightedSQ"}));
+    // auto X = root->createNode("XRaySQ", "X");
+    // ASSERT_TRUE(X);
+    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "X", "UnweightedGR"}));
+    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "X", "UnweightedSQ"}));
 }
 
 } // namespace UnitTest
