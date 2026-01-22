@@ -12,10 +12,8 @@ namespace UnitTest
 TEST(SQNodeTest, Water)
 {
     GraphTestData data;
-    createWater1000Graph(&data.graphRoot,
-                         CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                    CoordinateImportFileFormat::CoordinateImportFormat::EPSR),
-                         true);
+    createWater1000Graph(&data.graphRoot, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                                                     CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Set GR options
     auto grNode = data.graphRoot.findNode("GR");
@@ -64,15 +62,16 @@ TEST(SQNodeTest, WaterMethanol)
     GraphTestData data;
     createWaterMethanolGraph(&data.graphRoot);
 
-    // Set GR options
+    // Set GR and SQ options
     auto grNode = data.graphRoot.findNode("GR");
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
-
-    // Run the graph from the SQ node
     auto sqNode = data.graphRoot.findNode("SQ");
     ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
+
+    // Run the graph from the SQ node
     ASSERT_EQ(sqNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
     ASSERT_EQ(sqNode->versionIndex(), 0);
@@ -237,7 +236,7 @@ TEST(SQNodeTest, WaterMethanol)
 TEST(SQNodeTest, Benzene)
 {
     GraphTestData data;
-    createBenzeneGraph(&data.graphRoot, true);
+    createBenzeneGraph(&data.graphRoot);
 
     // Set GR options
     auto grNode = data.graphRoot.findNode("GR");
