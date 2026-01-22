@@ -50,10 +50,6 @@ class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
      * Serialisation
      */
     public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write data through specified LineParser
-    bool write(LineParser &parser);
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
