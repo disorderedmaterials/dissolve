@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <map>
 #include <functional>
+#include <map>
 #include <vector>
 
 // Keyed Vector

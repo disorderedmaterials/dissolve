@@ -63,10 +63,9 @@ template <class KeyClass, class ValueClass> class ResolvableKeyedVector
                     data_.end());
     }
     // Return whether the specified key exists
-    bool contains(KeyClass key) const requires(!std::is_pointer_v<Species>)
+    bool contains(KeyClass key) const
     {
-        printf("HERE IN THE NOT %p size = %d.\n", key, data_.size());
-        return std::ranges::find_if(data_, [&](const auto &pair) { printf("Testing %p == %p = %d\n", getKey(pair), key, getKey(pair) == key); return getKey(pair) == key; }) != data_.end();
+        return std::ranges::find_if(data_, [&](const auto &pair) { return getKey(pair) == key; }) != data_.end();
     }
     // Change key for another, overwriting the destination key if it already exists
     void changeKey(KeyClass fromKey, KeyClass toKey)
@@ -104,13 +103,8 @@ template <class KeyClass, class ValueClass> class ResolvableKeyedVector
     }
     ValueClass &operator[](std::string_view resolvedName)
     {
-        auto it = std::ranges::find_if(data_,
-                                       [&resolvedName](const auto &pair) { return pair.first.name() == resolvedName; });
-        return (it == data_.end())
-                   ? data_
-                         .emplace_back(Resolvable<KeyClass>(resolvedName), ValueClass())
-                         .second
-                   : it->second;
+        auto it = std::ranges::find_if(data_, [&resolvedName](const auto &pair) { return pair.first.name() == resolvedName; });
+        return (it == data_.end()) ? data_.emplace_back(Resolvable<KeyClass>(resolvedName), ValueClass()).second : it->second;
     }
     // Get keyed value
     const ValueClass &value(KeyClass key) const
