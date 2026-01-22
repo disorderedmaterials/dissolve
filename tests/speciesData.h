@@ -175,7 +175,6 @@ inline SpeciesNode *createBenzene(Graph *parentGraph)
                          DissolveMath::wrap(i + 6, 0, 11))
             .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
     }
-    species->print();
 
     // Create isotopologue
     auto iso = species->addIsotopologue("C6D6");
