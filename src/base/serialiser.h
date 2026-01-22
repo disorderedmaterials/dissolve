@@ -7,6 +7,7 @@
 
 #include "templates/keyedVector.h"
 #include "templates/orderedMap.h"
+#include "templates/resolvableKeyedVector.h"
 #include <map>
 #include <vector>
 

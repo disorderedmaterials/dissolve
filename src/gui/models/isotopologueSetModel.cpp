@@ -87,14 +87,14 @@ void IsotopologueSetModel::removeIndex(const QModelIndex index)
         // Root item (Isotopologues)
         auto species = set.isotopologues().key(index.row());
         beginRemoveRows({}, index.row(), index.row());
-        set.remove(species.raw());
+        set.remove(species);
         endRemoveRows();
     }
     else
     {
         // Secondary item (IsotopologueWeight)
         auto &topes = set.isotopologues().value(index.parent().row());
-        auto iso = topes.key(index.row()).raw();
+        auto iso = topes.key(index.row());
         beginRemoveRows(index.parent(), index.row(), index.row());
         topes.erase(iso);
         endRemoveRows();
@@ -149,7 +149,7 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
             case Qt::DisplayRole:
             case Qt::EditRole:
                 if (index.column() == 0)
-                    return QString::fromStdString(std::string(species.name()));
+                    return QString::fromStdString(std::string(species->name()));
                 else
                     return {};
             case Qt::UserRole:
@@ -240,7 +240,7 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
     {
         // Convert value to Isotopologue for species
         const auto *newIso = species.raw()->findIsotopologue(value.toString().toStdString());
-        if (!newIso || newIso == iso)
+        if (!newIso || newIso == iso.raw())
             return false;
         topes.changeKey(iso.raw(), newIso);
         Q_EMIT(dataChanged(index, index));
