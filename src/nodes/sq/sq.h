@@ -42,15 +42,15 @@ class SQNode : public Node
     // Weighting scheme to use when averaging partials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Broadening function to apply to Bragg S(Q)
-    Function1DWrapper braggQBroadening_{Functions1D::Form::GaussianC2, {0.0, 0.02}};
+    Function1DWrapper braggQBroadening_;
     // Broadening function to apply to S(Q)
-    Function1DWrapper qBroadening_;
+    Function1DWrapper qBroadening_{Functions1D::Form::GaussianC2, {0.0, 0.02}};
     // Step size in Q for S(Q) calculation
     Number qDelta_{0.05};
     // Maximum Q for calculated S(Q)
     Number qMax_{30.0};
     // Minimum Q for calculated S(Q)
-    Number qMin_{0.01};
+    Number qMin_{0.05};
     // Whether to save partials to disk after calculation
     bool save_{false};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
