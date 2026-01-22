@@ -26,30 +26,17 @@ class GraphTestData
 // Create an Argon graph in the supplied root node
 inline void createArgonGraph(Graph *root, int population = 1000)
 {
-    /*
-     *    Configuration (Bulk)
-     *    ------------------
-     *    -   Configuration-o ---+
-     *    -                |      \        Insert (Insert)
-     *    -----------------/       \       ------------------
-     *                              +---- o-Configuration   |
-     *    AtomicSpecies (Ar)      +------ o-Species         |
-     *    ------------------     /         -----------------/
-     *    -         Species-o --+
-     *    -                |
-     *    -----------------/
-     */
-
     // Create nodes
-    auto arNode = root->addNode(std::make_unique<AtomicSpeciesNode>(root, Elements::Ar), "Ar");
+    auto arNode = createArgon(root);
     ASSERT_TRUE(arNode);
+
     auto configurationNode = root->createNode("Configuration", "Bulk");
     ASSERT_TRUE(configurationNode);
     auto insertNode = root->createNode("Insert", "Insert");
     ASSERT_TRUE(insertNode);
 
     // Create edges
-    ASSERT_TRUE(root->addEdge({"Ar", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Argon", "Species", "Insert", "Species"}));
     ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
 
     // Set configuration contents

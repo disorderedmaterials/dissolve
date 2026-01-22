@@ -12,6 +12,30 @@
 
 namespace UnitTest
 {
+// Create and return argon test species in the specified graph
+inline SpeciesNode *createArgon(Graph *parentGraph)
+{
+    const auto name = "Argon";
+
+    // Add species node
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodePtr = speciesNodeUniquePtr.get();
+    auto species = &(speciesNodePtr->species());
+    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
+    species->setName(name);
+
+    // Set up atom types
+    auto Ar = species->addAtomType(Elements::Element::Ar, "Ar");
+    Ar->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.978638 sigma=3.401");
+    species->addAtom(Elements::Element::Ar, {}, 0.0, Ar);
+
+    // Create isotopologue
+    auto iso = species->addIsotopologue("Ar36");
+    iso->setAtomTypeIsotope(Ar.get(), Sears91::Ar_36);
+
+    return speciesNodePtr;
+}
+
 // Create and return water test species in the specified graph
 inline SpeciesNode *createWater(Graph *parentGraph)
 {

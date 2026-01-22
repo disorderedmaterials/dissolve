@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/units.h"
+#include "classes/isotopologueSet.h"
 #include "data/structureFactors.h"
 #include "io/import/data1D.h"
 #include "tests/graphData.h"
@@ -55,6 +56,11 @@ TEST(GraphArgonTest, AllCorrelations)
     ASSERT_TRUE(neutronSQNode);
     ASSERT_TRUE(neutronSQNode->setOption<StructureFactors::NormalisationType>("ReferenceNormalisedTo",
                                                                               StructureFactors::SquareOfAverageNormalisation));
+    IsotopologueSet isotopologues;
+    auto arNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Argon"));
+    ASSERT_TRUE(arNode);
+    isotopologues.add(arNode->species().findIsotopologue("Ar36"), 1.0);
+    ASSERT_TRUE(neutronSQNode->setOption<IsotopologueSet>("Isotopologues", isotopologues));
     ASSERT_TRUE(data.graphRoot.addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
     ASSERT_TRUE(data.graphRoot.addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
 
