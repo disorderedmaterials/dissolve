@@ -43,7 +43,7 @@ bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const
 
     // Add the isotopologue to the set
     data_.add(iso, parser.argd(startArg + 2));
-
+    data_.resolve({{std::string(sp->name()), sp}});
     return true;
 }
 
