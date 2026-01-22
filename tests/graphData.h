@@ -59,8 +59,7 @@ inline void createArgonGraph(Graph *root, int population = 1000)
 }
 
 // Create a water graph in the supplied root node
-inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initialCoordinates, bool addNeutronSQ = false,
-                                 bool addXRaySQ = false)
+inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initialCoordinates)
 {
     // Create species and configuration
     auto waterNode = createWater(root);
@@ -88,52 +87,36 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
 
-    Node *sqNode = nullptr;
+    // Create the SQ node
+    auto sqNode = root->createNode("SQ");
+    ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
-    // Add in NeutronSQ?
-    if (addNeutronSQ)
-    {
-        // Create the SQ node
-        sqNode = root->createNode("SQ");
-        ASSERT_TRUE(sqNode);
-        ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+    // Add in NeutronSQ
+    auto h2o = root->createNode("NeutronSQ", "H2O");
+    ASSERT_TRUE(h2o);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2O", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2O", "UnweightedSQ"}));
 
-        auto h2o = root->createNode("NeutronSQ", "H2O");
-        ASSERT_TRUE(h2o);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2O", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2O", "UnweightedSQ"}));
+    auto d2o = root->createNode("NeutronSQ", "D2O");
+    ASSERT_TRUE(d2o);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "D2O", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "D2O", "UnweightedSQ"}));
 
-        auto d2o = root->createNode("NeutronSQ", "D2O");
-        ASSERT_TRUE(d2o);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "D2O", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "D2O", "UnweightedSQ"}));
+    auto hdo = root->createNode("NeutronSQ", "HDO");
+    ASSERT_TRUE(hdo);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "HDO", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HDO", "UnweightedSQ"}));
 
-        auto hdo = root->createNode("NeutronSQ", "HDO");
-        ASSERT_TRUE(hdo);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "HDO", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HDO", "UnweightedSQ"}));
-    }
-
-    // Add in XRaySQ?
-    if (addXRaySQ)
-    {
-        // Create the SQ node if needed
-        if (!sqNode)
-        {
-            sqNode = root->createNode("SQ");
-            ASSERT_TRUE(sqNode);
-            ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
-        }
-
-        auto h2ox = root->createNode("XRaySQ", "H2OX");
-        ASSERT_TRUE(h2ox);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2OX", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2OX", "UnweightedSQ"}));
-    }
+    // Add in XRaySQ
+    auto h2ox = root->createNode("XRaySQ", "H2OX");
+    ASSERT_TRUE(h2ox);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2OX", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2OX", "UnweightedSQ"}));
 }
 
 // Create a water graph in the supplied root node
-inline void createWaterMethanolGraph(Graph *root, bool addNeutronSQ = false)
+inline void createWaterMethanolGraph(Graph *root)
 {
     // Create species and configuration
     auto waterNode = createWater(root);
@@ -169,16 +152,10 @@ inline void createWaterMethanolGraph(Graph *root, bool addNeutronSQ = false)
     auto grNode = root->createNode("GR");
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
-
-    // NeutronSQ
-    if (addNeutronSQ)
-    {
-        // TODO
-    }
 }
 
 // Create a benzene graph in the supplied root node
-inline void createBenzeneGraph(Graph *root, bool addNeutronSQ = false, bool addXRaySQ = false)
+inline void createBenzeneGraph(Graph *root)
 {
     // Create species and configuration
     auto benzeneNode = createBenzene(root);
@@ -204,48 +181,32 @@ inline void createBenzeneGraph(Graph *root, bool addNeutronSQ = false, bool addX
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
 
-    Node *sqNode = nullptr;
+    // Create the SQ node
+    auto sqNode = root->createNode("SQ");
+    ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
-    // Add in NeutronSQ?
-    if (addNeutronSQ)
-    {
-        // Create the SQ node
-        sqNode = root->createNode("SQ");
-        ASSERT_TRUE(sqNode);
-        ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+    // Add in NeutronSQ
+    auto H = root->createNode("NeutronSQ", "H");
+    ASSERT_TRUE(H);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H", "UnweightedSQ"}));
 
-        auto H = root->createNode("NeutronSQ", "H");
-        ASSERT_TRUE(H);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H", "UnweightedSQ"}));
+    auto D = root->createNode("NeutronSQ", "D");
+    ASSERT_TRUE(D);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "D", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "D", "UnweightedSQ"}));
 
-        auto D = root->createNode("NeutronSQ", "D");
-        ASSERT_TRUE(D);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "D", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "D", "UnweightedSQ"}));
-
-        auto HD = root->createNode("NeutronSQ", "HD");
-        ASSERT_TRUE(HD);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "HD", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HD", "UnweightedSQ"}));
-    }
+    auto HD = root->createNode("NeutronSQ", "HD");
+    ASSERT_TRUE(HD);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "HD", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HD", "UnweightedSQ"}));
 
     // Add in XRaySQ?
-    if (addXRaySQ)
-    {
-        // Create the SQ node if needed
-        if (!sqNode)
-        {
-            sqNode = root->createNode("SQ");
-            ASSERT_TRUE(sqNode);
-            ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
-        }
-
-        auto X = root->createNode("XRaySQ", "X");
-        ASSERT_TRUE(X);
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "X", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "X", "UnweightedSQ"}));
-    }
+    auto X = root->createNode("XRaySQ", "X");
+    ASSERT_TRUE(X);
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "X", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "X", "UnweightedSQ"}));
 }
 
 } // namespace UnitTest

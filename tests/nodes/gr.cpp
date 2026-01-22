@@ -54,7 +54,7 @@ TEST(GRNodeTest, Water)
     ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
-    // Run the graph
+    // Run the graph from the GR node
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
 
@@ -96,7 +96,7 @@ TEST(GRNodeTest, WaterMethanol)
     ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
-    // Run the graph
+    // Run the graph from the GR node
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
 
@@ -268,7 +268,7 @@ TEST(GRNodeTest, Benzene)
     ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
-    // Run the graph
+    // Run the graph from the GR node
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
 
