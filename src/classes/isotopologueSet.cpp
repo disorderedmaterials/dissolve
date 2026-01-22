@@ -120,12 +120,14 @@ void IsotopologueSet::resolve(const std::map<std::string, const Species *> &spec
 {
     for (auto &[resolvableSpecies, topes] : isotopologues_)
     {
+        // Find the named species
         if (speciesInScope.contains(std::string(resolvableSpecies.name())))
             resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
         else
             throw(std::runtime_error(std::format("Species '{}' is used in IsotopologueSet, but no such species is in scope.\n",
                                                  resolvableSpecies.name())));
 
+        // Resolve Isotopologues
         auto *sp = resolvableSpecies.raw();
         for (auto &resolvableIsotopologue : std::views::keys(topes))
         {
