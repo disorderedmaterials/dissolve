@@ -238,15 +238,16 @@ TEST(SQNodeTest, Benzene)
     GraphTestData data;
     createBenzeneGraph(&data.graphRoot);
 
-    // Set GR options
+    // Set GR and SQ options
     auto grNode = data.graphRoot.findNode("GR");
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
-
-    // Run the graph from the SQ node
     auto sqNode = data.graphRoot.findNode("SQ");
     ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
+
+    // Run the graph from the SQ node
     ASSERT_EQ(sqNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
     ASSERT_EQ(sqNode->versionIndex(), 0);
