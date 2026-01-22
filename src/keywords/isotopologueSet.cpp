@@ -43,7 +43,13 @@ bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const
 
     // Add the isotopologue to the set
     data_.add(iso, parser.argd(startArg + 2));
-    data_.resolve({{std::string(sp->name()), sp}});
+
+    // Resolve against the current set of species
+    std::map<std::string, const Species *> speciesMap;
+    for (const auto &sp : coreData.species())
+        speciesMap[std::string(sp.get()->name())] = sp.get();
+    data_.resolve(speciesMap);
+
     return true;
 }
 
