@@ -12,6 +12,8 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addInput<std::optional<Data1D>>("ReferenceData", "Reference F(Q) data", referenceFQ_);
 
     // Options
+
+    addOption<IsotopologueSet>("Isotopologues", "Isotopologues to use when calculating weights matrix", isotopologues_);
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(
