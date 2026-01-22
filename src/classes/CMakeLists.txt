@@ -34,7 +34,6 @@ add_library(
   histogramSet.cpp
   isotopeMix.cpp
   isotopologue.cpp
-  isotopologues.cpp
   isotopologueSet.cpp
   kVector.cpp
   localMolecule.cpp
@@ -96,7 +95,6 @@ add_library(
   interactionPotential.h
   isotopeMix.h
   isotopologue.h
-  isotopologues.h
   isotopologueSet.h
   kVector.h
   localMolecule.h
