@@ -50,25 +50,47 @@ inline void addNeutronSQ(Graph *root, std::string name, const IsotopologueSet &i
 }
 
 // Create an Argon graph in the supplied root node
-inline void createArgonGraph(Graph *root, int population = 1000)
+inline void createArgonGraph(Graph *root, int population = 1000,
+                             CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
 {
-    // Create nodes
+    // Create species
     auto arNode = createArgon(root);
     ASSERT_TRUE(arNode);
 
+    // Create configuration
     auto configurationNode = root->createNode("Configuration", "Bulk");
     ASSERT_TRUE(configurationNode);
     auto insertNode = root->createNode("Insert", "Insert");
     ASSERT_TRUE(insertNode);
-
-    // Create edges
-    ASSERT_TRUE(root->addEdge({"Argon", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-
-    // Set configuration contents
     ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
     ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.0213));
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+    ASSERT_TRUE(root->addEdge({"Argon", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
+
+    // Import reference coordinates?
+    if (initialCoordinates.hasFilename())
+    {
+        auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
+        ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
+        ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+            "FileFormat",
+            CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
+        ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+    }
+
+    // Add GR node and link in configuration / import node
+    auto grNode = root->createNode("GR", "GR");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(grNode->setOption("Averaging", std::optional<Number>()));
+    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
+    ASSERT_TRUE(
+        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GR", "Configuration"}));
+
+    // Create the SQ node
+    auto sqNode = root->createNode("SQ");
+    ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 }
 
 // Create a water graph in the supplied root node

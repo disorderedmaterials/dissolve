@@ -30,26 +30,9 @@ TEST(GraphArgonTest, InitSimulation)
 TEST(GraphArgonTest, AllCorrelations)
 {
     GraphTestData data;
-    createArgonGraph(&data.graphRoot);
-
-    // Add in imported coordinates
-    auto importConfigCoordsNode = data.graphRoot.createNode("ImportConfigurationCoordinates", "BulkXYZ");
-    ASSERT_TRUE(importConfigCoordsNode);
-    ASSERT_TRUE(importConfigCoordsNode->setOption<std::string>("FilePath", "dissolve2/argon/Ar_bulk_step1000.xyz"));
-    ASSERT_TRUE(importConfigCoordsNode->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
-    ASSERT_TRUE(data.graphRoot.addEdge({"Insert", "Configuration", "BulkXYZ", "Configuration"}));
-
-    // Add GR node and link in configuration
-    auto grNode = data.graphRoot.createNode("GR", "GR");
-    ASSERT_TRUE(grNode);
-    ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.025));
-    ASSERT_TRUE(data.graphRoot.addEdge({"BulkXYZ", "Configuration", "GR", "Configuration"}));
-
-    // Add SQ node and link in GR
-    auto sqNode = data.graphRoot.createNode("SQ", "SQ");
-    ASSERT_TRUE(sqNode);
-    ASSERT_TRUE(data.graphRoot.addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+    createArgonGraph(&data.graphRoot, 1000,
+                     CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
+                                                CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
 
     // Add NeutronSQ node and link in data
     auto neutronSQNode = data.graphRoot.createNode("NeutronSQ", "NeutronSQ");
@@ -80,6 +63,8 @@ TEST(GraphArgonTest, AllCorrelations)
     ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);
 
     // Check total unweighted SQ
+    auto sqNode = data.graphRoot.findNode("SQ");
+    ASSERT_TRUE(sqNode);
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     ASSERT_TRUE(unweightedSQ);
     ASSERT_TRUE(
