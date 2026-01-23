@@ -21,7 +21,7 @@ NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesP
 
     calculateWeightingMatrices(speciesPopulations, isotopologues);
 
-    Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
+    Messenger::print("  Species          nMols       Isotopologue     Weight\n");
     Messenger::print("  ------------------------------------------------------\n");
     for (auto &[species, speciesPopulation] : speciesPopulations)
     {
@@ -29,10 +29,10 @@ NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesP
         for (auto &[iso, isoFraction] : isotopologues.normalisedIsotopologues(species))
         {
             if (first)
-                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", species->name(), iso->name(), speciesPopulation,
+                Messenger::print("  {:<15}  {:<10g}  {:<15}  {}\n", species->name(), speciesPopulation, iso->name(),
                                  isoFraction);
             else
-                Messenger::print("                   {:<15}              {}\n", iso->name(), isoFraction);
+                Messenger::print("                            {:<15}  {}\n", iso->name(), isoFraction);
 
             first = false;
         }
