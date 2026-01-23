@@ -3,16 +3,13 @@
 
 #pragma once
 
+#include "classes/exchangeables.h"
 #include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
 #include "data/structureFactors.h"
-#include "io/import/data1D.h"
 #include "math/windowFunction.h"
-#include "module/module.h"
 #include "nodes/gr/gr.h"
-#include "nodes/graph.h"
 #include "nodes/node.h"
-#include "nodes/parameter.h"
 #include <optional>
 
 // Forward Declarations
@@ -47,7 +44,7 @@ class NeutronSQNode : public Node
     // Isotopologues to use for constructing weights matrix
     IsotopologueSet isotopologues_;
     // Exchangeable atom types
-    std::vector<std::shared_ptr<AtomType>> exchangeable_;
+    Exchangeables exchangeables_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) data

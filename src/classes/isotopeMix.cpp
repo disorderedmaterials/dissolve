@@ -44,7 +44,7 @@ double IsotopeMix::fraction(const AtomType *atomType) const { return population(
 
 // Create mix from Isotopologues
 void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
-                        const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+                        const Exchangeables &exchangeables)
 {
     mix_.clear();
     totalPopulation_ = 0.0;
@@ -72,13 +72,13 @@ void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulati
                     isotopes[iso->atomTypeIsotope(atomType)] = population;
 
                 totalPopulation_ += population;
+
+                // Update exchangeable atom types
+                if (exchangeables.contains(atomType->name()))
+                    exchangeables_.emplace(atomType);
             }
         }
     }
-
-    // Set exchangeables
-    for (auto &at : exchangeableTypes)
-        exchangeables_.insert(at.get());
 }
 
 // Calculate and return bound coherent scattering, accounting for isotope mix and exchangeability
