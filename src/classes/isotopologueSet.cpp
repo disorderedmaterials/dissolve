@@ -7,6 +7,12 @@
 #include "classes/species.h"
 #include <algorithm>
 
+IsotopologueSet::IsotopologueSet(const std::vector<std::pair<const Isotopologue *, double>> &topes)
+{
+    for (const auto &[iso, weight] : topes)
+        add(iso, weight);
+}
+
 /*
  * Data
  */
