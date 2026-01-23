@@ -129,9 +129,9 @@ inline SpeciesNode *createMethanol(Graph *parentGraph)
     D->setAtomTypeIsotope(HO.get(), Sears91::H_2);
     D->setAtomTypeIsotope(HC.get(), Sears91::H_2);
     auto MeD = species->addIsotopologue("MethylD-OH");
-    D->setAtomTypeIsotope(HC.get(), Sears91::H_2);
-    auto MeH = species->addIsotopologue("MethylH-OD");
-    D->setAtomTypeIsotope(HO.get(), Sears91::H_2);
+    MeD->setAtomTypeIsotope(HC.get(), Sears91::H_2);
+    auto MeH = species->addIsotopologue("OD-MethylH");
+    MeH->setAtomTypeIsotope(HO.get(), Sears91::H_2);
 
     return speciesNodePtr;
 }

@@ -156,13 +156,13 @@ inline void createWaterMethanolGraph(Graph *root)
     ASSERT_TRUE(h2o);
     auto d2o = waterNode->species().findIsotopologue("D2O");
     ASSERT_TRUE(d2o);
-    auto methylD_OH = waterNode->species().findIsotopologue("MethylD-OH");
+    auto methylD_OH = methanolNode->species().findIsotopologue("MethylD-OH");
     ASSERT_TRUE(methylD_OH);
-    auto OD_methylH = waterNode->species().findIsotopologue("OD-MethylH");
+    auto OD_methylH = methanolNode->species().findIsotopologue("OD-MethylH");
     ASSERT_TRUE(OD_methylH);
-    auto methanolH = waterNode->species().findIsotopologue("Natural");
+    auto methanolH = methanolNode->species().findIsotopologue("Natural");
     ASSERT_TRUE(methanolH);
-    auto methanolD = waterNode->species().findIsotopologue("Deuteriated");
+    auto methanolD = methanolNode->species().findIsotopologue("Deuteriated");
     ASSERT_TRUE(methanolD);
     std::vector<std::tuple<std::string, std::vector<std::pair<const Isotopologue *, double>>>> samples = {
         {"HHH", {{h2o, 1.0}, {methanolH, 1.0}}},  {"H5H", {{h2o, 1.0}, {methanolH, 0.5}, {OD_methylH, 0.5}}},
