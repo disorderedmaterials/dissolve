@@ -3,10 +3,9 @@
 
 #pragma once
 
+#include "classes/exchangeables.h"
 #include "data/isotopes.h"
 #include "templates/keyedVector.h"
-#include <set>
-#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -34,7 +33,7 @@ class IsotopeMix
     public:
     // Create mix from Isotopologues
     void create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
-                const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
+                const Exchangeables &exchangeables);
     // Return types/topes mix
     const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &mix() const;
     // Calculate and return full population of atom type in whole mix

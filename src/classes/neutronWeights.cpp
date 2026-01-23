@@ -11,14 +11,13 @@
 #include "templates/algorithms.h"
 
 NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations,
-                               const IsotopologueSet &isotopologues,
-                               const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+                               const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
 {
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
 
     // Create the isotope mix from defined isotopologues
-    isotopeMix_.create(speciesPopulations, isotopologues, exchangeableTypes);
+    isotopeMix_.create(speciesPopulations, isotopologues, exchangeables);
 
     calculateWeightingMatrices(speciesPopulations, isotopologues);
 

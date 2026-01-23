@@ -48,7 +48,10 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal
         if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the neutron weights in order to do the normalisation
-            NeutronWeights weights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
+            Exchangeables exchangeables;
+            for (const auto &atomType : exchangeable_)
+                exchangeables.add(atomType->name());
+            NeutronWeights weights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeables);
             auto factor = 1.0;
 
             // Set up the multiplication factors
@@ -183,7 +186,10 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Calculate weights
-    weights_ = NeutronWeights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
+    Exchangeables exchangeables;
+    for (const auto &atomType : exchangeable_)
+        exchangeables.add(atomType->name());
+    weights_ = NeutronWeights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeables);
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     auto [weightedSQ, wSQstatus] =
