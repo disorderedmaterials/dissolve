@@ -4,9 +4,9 @@
 #pragma once
 
 #include "classes/isotopologueSet.h"
+#include "data/structureFactors.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
-#include "nodes/atomicSpecies.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/insert.h"
@@ -91,6 +91,25 @@ inline void createArgonGraph(Graph *root, int population = 1000,
     auto sqNode = root->createNode("SQ");
     ASSERT_TRUE(sqNode);
     ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+
+    // Add NeutronSQ node and reference data
+    auto neutronSQNode = root->createNode("NeutronSQ", "NeutronSQ");
+    ASSERT_TRUE(neutronSQNode);
+    ASSERT_TRUE(neutronSQNode->setOption<StructureFactors::NormalisationType>("ReferenceNormalisedTo",
+                                                                              StructureFactors::SquareOfAverageNormalisation));
+    ASSERT_TRUE(neutronSQNode->setOption<IsotopologueSet>(
+        "Isotopologues", IsotopologueSet({{arNode->species().findIsotopologue("Ar36"), 1.0}})));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+
+    // Set reference F(Q) data
+    auto data1DImportNode = root->createNode("Data1DImport", "Yarnell");
+    ASSERT_TRUE(data1DImportNode);
+    ASSERT_TRUE(data1DImportNode->setOption<std::string>("FilePath", "dissolve2/argon/yarnell.sq"));
+    ASSERT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+        "ImportFormat", Data1DImportFileFormat::Data1DImportFormat::XY));
+    ASSERT_TRUE(data1DImportNode->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
+    ASSERT_TRUE(root->addEdge({"Yarnell", "Data", "NeutronSQ", "ReferenceData"}));
 }
 
 // Create a water graph in the supplied root node
