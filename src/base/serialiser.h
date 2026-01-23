@@ -188,6 +188,13 @@ template <typename... Contexts> class Serialisable
         std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
         return result;
     }
+    // A helper function to add the elements of a ranged object to a node under a name
+    template <typename Range, typename Lambda> static SerialisedValue fromRange(const Range &range, Lambda toSerial)
+    {
+        SerialisedValue result = SerialisedValue::array_type{};
+        std::transform(range.begin(), range.end(), std::back_inserter(result), toSerial);
+        return result;
+    }
     // A helper function to add the elements of a map to a node under a name
     template <typename K, typename V> static void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node)
     {
