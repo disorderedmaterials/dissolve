@@ -21,13 +21,6 @@ TEST(NeutronSQNodeTest, Water)
     ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
-    // Run the graph from the NeutronSQ node
-    auto neutronSQNode = data.graphRoot.findNode("SQ");
-    ASSERT_TRUE(neutronSQNode);
-    ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(neutronSQNode->versionIndex(), 0);
-
     // Run the graph from each NeutronSQ node
     auto H2O = data.graphRoot.findNode("H2O");
     ASSERT_TRUE(H2O);
@@ -55,6 +48,55 @@ TEST(NeutronSQNodeTest, Water)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         HDO->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
         {"epsr25/water1000-neutron/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-5));
+}
+
+TEST(NeutronSQNodeTest, WaterReferenceFT)
+{
+    GraphTestData data;
+    createWater1000Graph(&data.graphRoot, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                                                     CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+
+    // Set GR options
+    auto grNode = data.graphRoot.findNode("GR");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
+    ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
+
+    // Run the graph from each NeutronSQ and XRaySQ node
+    auto H2O = data.graphRoot.findNode("H2O");
+    ASSERT_TRUE(H2O);
+    ASSERT_EQ(H2O->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(grNode->versionIndex(), 0);
+    ASSERT_EQ(H2O->versionIndex(), 0);
+    auto D2O = data.graphRoot.findNode("D2O");
+    ASSERT_TRUE(D2O);
+    ASSERT_EQ(D2O->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(grNode->versionIndex(), 0);
+    ASSERT_EQ(D2O->versionIndex(), 0);
+    auto HDO = data.graphRoot.findNode("HDO");
+    ASSERT_TRUE(HDO);
+    ASSERT_EQ(HDO->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(grNode->versionIndex(), 0);
+    ASSERT_EQ(HDO->versionIndex(), 0);
+    // TODO
+    // auto H2Ox = data.graphRoot.findNode("H2Ox");
+    // ASSERT_TRUE(H2Ox);
+    // ASSERT_EQ(H2Ox->run(), NodeConstants::ProcessResult::Success);
+    // ASSERT_EQ(grNode->versionIndex(), 0);
+    // ASSERT_EQ(H2Ox->versionIndex(), 0);
+
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        D2O->getOutputValue<Data1D>("ReferenceGR"), "D2O Reference G(r)",
+        {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-5));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        H2O->getOutputValue<Data1D>("ReferenceGR"), "H2O Reference G(r)",
+        {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 5.0e-5));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        HDO->getOutputValue<Data1D>("ReferenceGR"), "HDO Reference G(r)",
+        {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 5.0e-5));
+    // EXPECT_TRUE(DissolveSystemTest::checkData1D(
+    // H2Ox->getOutputValue<Data1D>("ReferenceGR"), "H2Ox Reference G(r)",
+    //     {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 5.0e-5));
 }
 
 TEST(NeutronSQNodeTest, WaterMethanol)
@@ -118,28 +160,28 @@ TEST(NeutronSQNodeTest, WaterMethanol)
     //           Q HHH H5H DHH HDH HHD DDH HDD DDD
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HHH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        HHH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HHH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        H5H->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        H5H->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H5H Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        DHH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        DHH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DHH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HDH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        HDH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HHD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        HHD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HHD Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 10}, 5.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        DDH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        DDH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DDH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 12}, 8.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HDD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        HDD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDD Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 14}, 5.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        DDD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        DDD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DDD Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 16}, 5.0e-4));
 }
 
@@ -178,13 +220,13 @@ TEST(NeutronSQNodeTest, Benzene)
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     // Total F(Q)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        C6H6->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        C6H6->getOutputValue<PartialSet *>("WeightedSQ")->total(), "C6H6 Total F(Q)",
         {"epsr25/benzene200-neutron/benzene.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-3));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        C6D6->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        C6D6->getOutputValue<PartialSet *>("WeightedSQ")->total(), "C6D6 Total F(Q)",
         {"epsr25/benzene200-neutron/benzene.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-3));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        FiftyFifty->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
+        FiftyFifty->getOutputValue<PartialSet *>("WeightedSQ")->total(), "5050 Total F(Q)",
         {"epsr25/benzene200-neutron/benzene.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-3));
 }
 
