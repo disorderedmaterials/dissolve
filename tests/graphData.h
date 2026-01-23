@@ -27,11 +27,13 @@ class GraphTestData
 
 // Create a NeutronSQ node with optional reference data
 inline void addNeutronSQ(Graph *root, std::string name, const IsotopologueSet &isotopologues = {},
+                         const Exchangeables &exchangeables = {},
                          Data1DImportFileFormat referenceData = Data1DImportFileFormat(), std::string sqNodeName = "SQ")
 {
     auto neutronSQNode = root->createNode("NeutronSQ", name);
     ASSERT_TRUE(neutronSQNode);
     ASSERT_TRUE(neutronSQNode->setOption("Isotopologues", isotopologues));
+    ASSERT_TRUE(neutronSQNode->setOption("Exchangeables", exchangeables));
     ASSERT_TRUE(root->addEdge({sqNodeName, "UnweightedGR", name, "UnweightedGR"}));
     ASSERT_TRUE(root->addEdge({sqNodeName, "UnweightedSQ", name, "UnweightedSQ"}));
 
@@ -106,13 +108,14 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
     // Add in NeutronSQ
     auto isoD = waterNode->species().findIsotopologue("D2O");
     ASSERT_TRUE(isoD);
-    addNeutronSQ(root, "H2O", {},
+    addNeutronSQ(root, "H2O", {}, {},
                  Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
                                         Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    addNeutronSQ(root, "D2O", IsotopologueSet({{isoD, 1.0}}),
+    addNeutronSQ(root, "D2O", IsotopologueSet({{isoD, 1.0}}), {},
                  Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
                                         Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
     addNeutronSQ(root, "HDO", IsotopologueSet({{isoD, 1.0}, {waterNode->species().naturalIsotopologue(), 1.0}}),
+                 Exchangeables({"HW"}),
                  Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
                                         Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
 
@@ -185,7 +188,7 @@ inline void createWaterMethanolGraph(Graph *root)
         {"HHD", {{h2o, 1.0}, {methylD_OH, 1.0}}}, {"DDH", {{d2o, 1.0}, {OD_methylH, 1.0}}},
         {"HDD", {{h2o, 1.0}, {methanolD, 1.0}}},  {"DDD", {{d2o, 1.0}, {methanolD, 1.0}}}};
     for (const auto &[name, isotopologues] : samples)
-        addNeutronSQ(root, name, isotopologues);
+        addNeutronSQ(root, name, isotopologues, Exchangeables({"HW", "HO"}));
 }
 
 // Create a benzene graph in the supplied root node
