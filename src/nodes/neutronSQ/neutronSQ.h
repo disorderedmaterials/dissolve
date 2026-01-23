@@ -55,7 +55,7 @@ class NeutronSQNode : public Node
     // Reference G(r) data from FT of reference F(Q)
     Data1D referenceGR_;
     // Minimum Q value to use when Fourier-transforming the data
-    std::optional<double> referenceFTQMin_{0.3};
+    std::optional<double> referenceFTQMin_{0.5};
     // Maximum Q value to use when Fourier-transforming the data
     std::optional<double> referenceFTQMax_{30.0};
     // Spacing in r to use when generating the Fourier-transformed data
