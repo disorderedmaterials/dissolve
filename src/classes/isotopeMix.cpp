@@ -27,17 +27,7 @@ double IsotopeMix::isolatedBoundCoherent(const AtomType *atomType) const
  */
 
 // Calculate and return full population of atom type in whole mix
-double IsotopeMix::population(const AtomType *atomType) const
-{
-    if (mix_.contains(atomType))
-    {
-        const auto &topes = mix_.value(atomType);
-        return std::accumulate(topes.begin(), topes.end(), 0.0,
-                               [](auto acc, const auto &isotope) { return acc + isotope.second; });
-    }
-
-    return 0.0;
-}
+double IsotopeMix::population(const AtomType *atomType) const { return populations_.at(atomType); }
 
 // Calculate and return fractional population of atom type in whole mix
 double IsotopeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
@@ -47,10 +37,11 @@ void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulati
                         const Exchangeables &exchangeables)
 {
     mix_.clear();
+    populations_.clear();
+    boundCoherent_.clear();
     totalPopulation_ = 0.0;
-    exchangeables_.clear();
 
-    // Loop over species / populations
+    // Loop over species / populations to establish atom type populations
     for (auto &[species, speciesPopulation] : speciesPopulations)
     {
         // Get the normalised populations for this species
@@ -66,44 +57,35 @@ void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulati
                 auto population = speciesPopulation * atomTypePopulation * weight;
 
                 auto &isotopes = mix_[atomType];
-                if (isotopes.contains(iso->atomTypeIsotope(atomType)))
-                    isotopes[iso->atomTypeIsotope(atomType)] += population;
-                else
-                    isotopes[iso->atomTypeIsotope(atomType)] = population;
-
+                isotopes[iso->atomTypeIsotope(atomType)] += population;
+                populations_[atomType] += population;
                 totalPopulation_ += population;
-
-                // Update exchangeable atom types
-                if (exchangeables.contains(atomType->name()))
-                    exchangeables_.emplace(atomType);
             }
         }
     }
+
+    // Calculate total exchangeable atom scattering length
+    auto exchangeableBoundCoherent = 0.0;
+    auto exchangeableFraction = 0.0;
+    for (const auto &atomType : std::views::keys(mix_))
+    {
+        if (exchangeables.contains(atomType->name()))
+        {
+            auto frac = fraction(atomType);
+            exchangeableFraction += frac;
+            exchangeableBoundCoherent += frac * isolatedBoundCoherent(atomType);
+        }
+    }
+    exchangeableBoundCoherent /= exchangeableFraction;
+
+    // Calculate bound coherent scattering lengths per atom type
+    for (const auto &atomType : std::views::keys(mix_))
+        boundCoherent_[atomType] =
+            exchangeables.contains(atomType->name()) ? exchangeableBoundCoherent : isolatedBoundCoherent(atomType);
 }
 
 // Calculate and return bound coherent scattering, accounting for isotope mix and exchangeability
-double IsotopeMix::boundCoherent(const AtomType *atomType) const
-{
-    // If this atom type is exchangeable we need to take the averaged scattering of all exchangeable components
-    if (exchangeables_.contains(atomType))
-    {
-        auto totalFraction = 0.0, exchangeableBoundCoherent = 0.0;
-        // Sum fractions and bound coherent scattering lengths for all exchangeable atoms
-        for (auto &exchangeable : exchangeables_)
-        {
-            auto frac = fraction(atomType);
-            totalFraction += frac;
-            exchangeableBoundCoherent += frac * isolatedBoundCoherent(exchangeable);
-        }
-
-        return exchangeableBoundCoherent / totalFraction;
-    }
-    else
-        return isolatedBoundCoherent(atomType);
-}
-
-// Return whether specified atom type is exchangeable
-bool IsotopeMix::isExchangeable(const AtomType *atomType) const { return exchangeables_.contains(atomType); }
+double IsotopeMix::boundCoherent(const AtomType *atomType) const { return boundCoherent_.at(atomType); }
 
 // Return types/topes map
 const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &IsotopeMix::mix() const { return mix_; }
@@ -135,13 +117,13 @@ std::optional<std::pair<int, int>> IsotopeMix::indexOf(const AtomType *at1, cons
 }
 
 // Print AtomType populations
-void IsotopeMix::print() const
+void IsotopeMix::print(const Exchangeables &exchangeables) const
 {
     Messenger::print("  AtomType  El  Isotope  Population      Fraction           bc (fm)\n");
     Messenger::print("  -----------------------------------------------------------------\n");
     for (auto &[atomType, isotopeMix] : mix_)
     {
-        char exch = exchangeables_.contains(atomType) ? 'E' : ' ';
+        char exch = exchangeables.contains(atomType->name()) ? 'E' : ' ';
 
         // If there are isotopes defined, print them
         if (!isotopeMix.empty())
