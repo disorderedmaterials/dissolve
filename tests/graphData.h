@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/isotopologueSet.h"
+#include "io/import/data1D.h"
 #include "main/dissolve.h"
 #include "nodes/atomicSpecies.h"
 #include "nodes/configuration.h"
@@ -23,6 +24,28 @@ class GraphTestData
     Dissolve dissolve;
     DissolveGraph graphRoot;
 };
+
+// Create a NeutronSQ node with optional reference data
+inline void addNeutronSQ(Graph *root, std::string name, const IsotopologueSet &isotopologues = {},
+                         Data1DImportFileFormat referenceData = Data1DImportFileFormat(), std::string sqNodeName = "SQ")
+{
+    auto neutronSQNode = root->createNode("NeutronSQ", name);
+    ASSERT_TRUE(neutronSQNode);
+    ASSERT_TRUE(neutronSQNode->setOption("Isotopologues", isotopologues));
+    ASSERT_TRUE(root->addEdge({sqNodeName, "UnweightedGR", name, "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({sqNodeName, "UnweightedSQ", name, "UnweightedSQ"}));
+
+    // Set reference F(Q) data
+    if (referenceData.hasFilename())
+    {
+        auto data1DImportNode = root->createNode("Data1DImport", std::format("{}-Reference", name));
+        ASSERT_TRUE(data1DImportNode);
+        ASSERT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
+        ASSERT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+            "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
+        ASSERT_TRUE(root->addEdge({std::format("{}-Reference", name), "Data", name, "ReferenceData"}));
+    }
+}
 
 // Create an Argon graph in the supplied root node
 inline void createArgonGraph(Graph *root, int population = 1000)
@@ -81,25 +104,17 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
     ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
     // Add in NeutronSQ
-    auto h2o = root->createNode("NeutronSQ", "H2O");
-    ASSERT_TRUE(h2o);
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2O", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2O", "UnweightedSQ"}));
-
-    auto d2o = root->createNode("NeutronSQ", "D2O");
-    ASSERT_TRUE(d2o);
     auto isoD = waterNode->species().findIsotopologue("D2O");
     ASSERT_TRUE(isoD);
-    ASSERT_TRUE(d2o->setOption("Isotopologues", IsotopologueSet({{isoD, 1.0}})));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "D2O", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "D2O", "UnweightedSQ"}));
-
-    auto hdo = root->createNode("NeutronSQ", "HDO");
-    ASSERT_TRUE(hdo);
-    ASSERT_TRUE(
-        hdo->setOption("Isotopologues", IsotopologueSet({{isoD, 1.0}, {waterNode->species().naturalIsotopologue(), 1.0}})));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "HDO", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "HDO", "UnweightedSQ"}));
+    addNeutronSQ(root, "H2O", {},
+                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
+                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    addNeutronSQ(root, "D2O", IsotopologueSet({{isoD, 1.0}}),
+                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
+                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    addNeutronSQ(root, "HDO", IsotopologueSet({{isoD, 1.0}, {waterNode->species().naturalIsotopologue(), 1.0}}),
+                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
+                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
 
     // Add in XRaySQ
     // auto h2ox = root->createNode("XRaySQ", "H2OX");
@@ -170,13 +185,7 @@ inline void createWaterMethanolGraph(Graph *root)
         {"HHD", {{h2o, 1.0}, {methylD_OH, 1.0}}}, {"DDH", {{d2o, 1.0}, {OD_methylH, 1.0}}},
         {"HDD", {{h2o, 1.0}, {methanolD, 1.0}}},  {"DDD", {{d2o, 1.0}, {methanolD, 1.0}}}};
     for (const auto &[name, isotopologues] : samples)
-    {
-        auto neutronSQNode = root->createNode("NeutronSQ", name);
-        ASSERT_TRUE(neutronSQNode);
-        ASSERT_TRUE(neutronSQNode->setOption("Isotopologues", IsotopologueSet(isotopologues)));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", name, "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", name, "UnweightedSQ"}));
-    }
+        addNeutronSQ(root, name, isotopologues);
 }
 
 // Create a benzene graph in the supplied root node
@@ -212,25 +221,11 @@ inline void createBenzeneGraph(Graph *root)
     ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
     // Add in NeutronSQ
-    auto C6H6 = root->createNode("NeutronSQ", "C6H6");
-    ASSERT_TRUE(C6H6);
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "C6H6", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "C6H6", "UnweightedSQ"}));
-
-    auto C6D6 = root->createNode("NeutronSQ", "C6D6");
-    ASSERT_TRUE(C6D6);
     auto isoD = benzeneNode->species().findIsotopologue("C6D6");
     ASSERT_TRUE(isoD);
-    ASSERT_TRUE(C6D6->setOption("Isotopologues", IsotopologueSet({{isoD, 1.0}})));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "C6D6", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "C6D6", "UnweightedSQ"}));
-
-    auto HD = root->createNode("NeutronSQ", "5050");
-    ASSERT_TRUE(HD);
-    ASSERT_TRUE(
-        HD->setOption("Isotopologues", IsotopologueSet({{benzeneNode->species().naturalIsotopologue(), 1.0}, {isoD, 1.0}})));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "5050", "UnweightedGR"}));
-    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "5050", "UnweightedSQ"}));
+    addNeutronSQ(root, "C6H6");
+    addNeutronSQ(root, "C6D6", IsotopologueSet({{isoD, 1.0}}));
+    addNeutronSQ(root, "5050", IsotopologueSet({{benzeneNode->species().naturalIsotopologue(), 1.0}, {isoD, 1.0}}));
 
     // Add in XRaySQ?
     // auto X = root->createNode("XRaySQ", "X");
