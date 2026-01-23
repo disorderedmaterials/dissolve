@@ -49,7 +49,7 @@ class NeutronWeights
     private:
     // Calculate weighting matrices based on current AtomType / Isotope information
     void calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
-                                    const IsotopologueSet &isotopologues);
+                                    const IsotopologueSet &isotopologues, const Exchangeables &exchangeables);
 
     public:
     // Return isotope mix
