@@ -110,6 +110,19 @@ Pane {
                     onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Configuration", "New Node")
                 }
                 MenuItem {
+                    text: "Forcefield"
+
+                    onClicked: forcefieldDialog.open()
+
+                    ForcefieldDialog {
+                        id: forcefieldDialog
+
+                        posx: Math.round(ctxMenuCatcher.mouseX)
+                        posy: Math.round(ctxMenuCatcher.mouseY)
+                        graphModel: graphRoot.rootModel
+                    }
+                }
+                MenuItem {
                     text: "Graph"
 
                     onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Graph", "New Graph")

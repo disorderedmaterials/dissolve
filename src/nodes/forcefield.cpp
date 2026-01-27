@@ -8,7 +8,7 @@
 
 ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
 {
-  addOutput<std::shared_ptr<Forcefield>>("Forcefield", "Created species", ff_);
+  addOutput<std::shared_ptr<Forcefield>>("Forcefield", "Created forcefield", ff_);
 }
 
 std::string_view ForcefieldNode::type() const { return "Forcefield"; }
@@ -17,8 +17,8 @@ std::string_view ForcefieldNode::summary() const { return "Produce a forcefield"
 
 NodeConstants::ProcessResult ForcefieldNode::process() { return NodeConstants::ProcessResult::Unchanged; }
 
-Forcefield &ForcefieldNode::forcefield() { return *ff_; }
-const Forcefield &ForcefieldNode::forcefield() const { return *ff_; }
+std::shared_ptr<Forcefield> &ForcefieldNode::forcefield() { return ff_; }
+const std::shared_ptr<Forcefield> &ForcefieldNode::forcefield() const { return ff_; }
 
 // Serialise any hidden content
 void ForcefieldNode::serialiseInternal(SerialisedValue &target) const

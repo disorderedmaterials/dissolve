@@ -32,8 +32,8 @@ class ForcefieldNode : public Node
      */
     public:
     // Access the species information (Needed for ForcefieldModel)
-    Forcefield &forcefield();
-    const Forcefield &forcefield() const;
+    std::shared_ptr<Forcefield> &forcefield();
+    const std::shared_ptr<Forcefield> &forcefield() const;
 
     /*
      * Processing
