@@ -16,11 +16,11 @@
 // Forward Declarations
 class PartialSet;
 
-class SQNode : public Node
+class XRaySQNode : public Node
 {
     public:
-    SQNode(Graph *parentGraph);
-    ~SQNode() override = default;
+    XRaySQNode(Graph *parentGraph);
+    ~XRaySQNode() override = default;
 
     public:
     std::string_view type() const override;

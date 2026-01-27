@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
 #include "base/lineParser.h"
 #include "base/timer.h"
 #include "data/atomicMasses.h"
