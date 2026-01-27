@@ -17,6 +17,11 @@ EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
         "XRayFormFactors", {{XRayFormFactors::NoFormFactorData, "None"}, {XRayFormFactors::WaasmaierKirfel1995, "WK1995"}});
 }
 
+EnumOptions<XRayFormFactors::XRayFormFactorData> getEnumOptions(XRayFormFactors::XRayFormFactorData)
+{
+    return xRayFormFactorData();
+}
+
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
 OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Elements::Element Z, int formalCharge)
 {

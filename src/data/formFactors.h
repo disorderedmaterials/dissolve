@@ -22,6 +22,7 @@ enum XRayFormFactorData
 
 // Return EnumOptions for XRayFormFactorData
 EnumOptions<XRayFormFactorData> xRayFormFactorData();
+EnumOptions<XRayFormFactorData> getEnumOptions(XRayFormFactorData);
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
 OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Elements::Element Z,

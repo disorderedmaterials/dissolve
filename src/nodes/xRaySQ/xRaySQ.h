@@ -3,18 +3,22 @@
 
 #pragma once
 
+#include "classes/exchangeables.h"
+#include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
-#include "math/averaging.h"
-#include "math/function1D.h"
-#include "math/history.h"
+#include "data/structureFactors.h"
 #include "math/windowFunction.h"
-#include "module/module.h"
-#include "nodes/graph.h"
+#include "nodes/gr/gr.h"
 #include "nodes/node.h"
-#include "nodes/parameter.h"
+#include <optional>
+#include "classes/xRayWeights.h"
+#include "data/formFactors.h"
+#include "io/import/data1D.h"
+#include "math/windowFunction.h"
 
 // Forward Declarations
 class PartialSet;
+class XRayWeights;
 
 class XRaySQNode : public Node
 {
@@ -30,37 +34,67 @@ class XRaySQNode : public Node
      * Definition
      */
     private:
+    // Atomic form factors to use for weighting
+    XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::WaasmaierKirfel1995};
+    // XRay weights
+    XRayWeights weights_;
+    // Unweighted S(Q)
+    PartialSet *unweightedSQ_{nullptr};
     // Unweighted g(r)
     PartialSet *unweightedGR_{nullptr};
-    // Unweighted S(Q)
-    std::optional<PartialSet> unweightedSQ_;
-    // Historical unweighted S(Q)
-    History<PartialSet> unweightedSQHistory_;
-    // Number of historical partial sets to combine into final partials
-    std::optional<Number> averagingLength_;
-    // Weighting scheme to use when averaging partials
-    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
-    // Broadening function to apply to Bragg S(Q)
-    Function1DWrapper braggQBroadening_;
-    // Broadening function to apply to S(Q)
-    Function1DWrapper qBroadening_{Functions1D::Form::GaussianC2, {0.0, 0.02}};
-    // Step size in Q for S(Q) calculation
-    Number qDelta_{0.05};
-    // Maximum Q for calculated S(Q)
-    Number qMax_{30.0};
-    // Minimum Q for calculated S(Q)
-    Number qMin_{0.05};
-    // Whether to save partials to disk after calculation
-    bool save_{false};
-    // Window function to use when Fourier-transforming reference S(Q) to g(r))
-    WindowFunction::Form windowFunction_{WindowFunction::Form::None};
+    // Weighted S(Q)
+    std::optional<PartialSet> weightedSQ_;
+    // Weighted g(r)
+    std::optional<PartialSet> weightedGR_;
+    // Representative g(r) calculated from FT of total weighted F(Q)
+    Data1D representativeGR_;
+    // Isotopologues to use for constructing weights matrix
+    IsotopologueSet isotopologues_;
+    // Exchangeable atom types
+    Exchangeables exchangeables_;
+    // Normalisation to apply to calculated total F(Q)
+    StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
+    // Reference F(Q) data
+    std::optional<Data1D> referenceFQ_;
+    // Reference G(r) data from FT of reference F(Q)
+    Data1D referenceGR_;
+    // Minimum Q value to use when Fourier-transforming the data
+    std::optional<double> referenceFTQMin_{0.5};
+    // Maximum Q value to use when Fourier-transforming the data
+    std::optional<double> referenceFTQMax_{30.0};
+    // Spacing in r to use when generating the Fourier-transformed data
+    double referenceFTDeltaR_{0.05};
+    // Normalisation to remove from reference total F(Q)
+    StructureFactors::NormalisationType referenceNormalisedTo_{StructureFactors::NoNormalisation};
+    // Window function to use when Fourier transforming reference total F(Q) into g(r)
+    WindowFunction::Form referenceWindowFunction_{WindowFunction::Form::Lorch0};
+    // Whether to save combined form factor weightings for atomtype pairs
+    bool saveFormFactors_{false};
+    // Save weighted g(r) and G(r)
+    bool saveGR_{false};
+    // Save the reference data and its Fourier transform
+    bool saveReference_{false};
+    // Save representative G(r), obtained from Fourier transform of the calculated F(Q)
+    bool saveRepresentativeGR_{false};
+    // Save weighted partial and total structure factors
+    bool saveSQ_{false};
+
+    public:
+    // Return file and format for reference total F(Q)
+    const Data1DImportFileFormat &referenceFQFileAndFormat();
 
     /*
      * Functions
      */
-    private:
-    // Calculate unweighted S(Q) from unweighted g(r)
-    bool calculateUnweightedSQ();
+    public:
+    // Return xRay weights
+    const XRayWeights &weights() const;
+    // Calculate weighted g(r) from supplied unweighted g(r) and Weights
+    bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
+    // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
+    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
 
     /*
      * Processing
