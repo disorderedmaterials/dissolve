@@ -405,19 +405,6 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         Messenger::print("Error between delta F(Q) and fit function is {:.2f}%.\n", fitError);
 
         /*
-         * Calculate F(r)
-         */
-
-        // Retrieve the storage object
-        auto &simulatedFR =
-            moduleData.realise<Data1D>(std::format("SimulatedFR//{}", module->name()), name_, GenericItem::InRestartFileFlag);
-
-        // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
-        simulatedFR = weightedSQ.total();
-        Filters::trim(simulatedFR, originalReferenceData);
-        Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * rho), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Form::Lorch0));
-
-        /*
          * Add the Data to the Scattering Matrix
          */
 
@@ -550,8 +537,9 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         {
             if (moduleContext.processPool().isMaster())
             {
-                Data1DExportFileFormat exportFormat(std::format("{}-SimulatedFR.r", module->name()));
-                if (exportFormat.exportData(simulatedFR))
+                const auto representativeGR = moduleData.value<Data1D>("RepresentativeTotalGR", module->name());
+                Data1DExportFileFormat exportFormat(std::format("{}-RepresentativeTotalGR.r", module->name()));
+                if (exportFormat.exportData(representativeGR))
                     moduleContext.processPool().decideTrue();
                 else
                     return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
