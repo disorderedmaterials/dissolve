@@ -87,23 +87,3 @@ bool NeutronSQNode::calculateWeightedSQ(const NeutronWeights &weights)
 
     return true;
 }
-
-// // Calculate neutron weights matrix
-// void NeutronSQNode::calculateWeights(const KeyedVector<const Species *, double> &realSpeciesPopulations)
-// {
-//     weights_.clear();
-//
-//     // Add simple isotopologues
-//     for (const auto &[species, _] : realSpeciesPopulations)
-//     {
-//         for (const auto &isotopologue : species->isotopologues())
-//         {
-//             auto iso = isotopologue.get();
-//             auto it = namedWeights_.find(iso->name());
-//             if (it != namedWeights_.end())
-//                 weights_.addIsotopologue(species, 1.0, iso, it->second);
-//         }
-//     }
-//
-//     weights_.createFromIsotopologues(exchangeable_);
-// }
