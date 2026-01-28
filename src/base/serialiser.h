@@ -189,10 +189,11 @@ template <typename... Contexts> class Serialisable
         return result;
     }
     // A helper function to add the elements of a ranged object to a node under a name
-    template <std::ranges::input_range Range, typename Lambda> static SerialisedValue fromRange(const Range &range, Lambda toSerial)
+    template <std::ranges::input_range Range, typename Lambda>
+    static SerialisedValue fromRange(const Range &range, Lambda toSerial)
     {
         SerialisedValue result = SerialisedValue::array_type{};
-        std::ranges::copy(std::ranges::views::transform(range, toSerial), std::back_inserter(result));
+        std::ranges::transform(range, std::back_inserter(result), toSerial);
         return result;
     }
     // A helper function to add the elements of a map to a node under a name
