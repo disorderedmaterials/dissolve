@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "math/mathFunc.h"
-
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -194,15 +192,14 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Construct weights matrix
-    auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_);
-    if (!weights.setUp(grModule->speciesPopulations(), formFactors_))
+    if (!weights_.setUp(grModule->speciesPopulations(), formFactors_))
     {
         Messenger::error("Failed to set up weights matrix.\n");
         return ExecutionResult::Failed;
     }
 
     Messenger::print("Weights matrix:\n\n");
-    weights.print();
+    weights_.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
     auto [weightedSQ, wSQtatus] =
@@ -211,7 +208,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
         weightedSQ.initialise(unweightedSQ);
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights_, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && !weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))
@@ -232,7 +229,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
                                               if (indexI == indexJ)
                                               {
                                                   Data1D atomicData = unweightedSQ.partials().get(key);
-                                                  atomicData.values() = weights.formFactor(popI.first, atomicData.xAxis());
+                                                  atomicData.values() = weights_.formFactor(popI.first, atomicData.xAxis());
                                                   Data1DExportFileFormat exportFormat(
                                                       std::format("{}-{}.form", name(), popI.first->name()));
                                                   if (!exportFormat.exportData(atomicData))
@@ -240,7 +237,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
                                               }
 
                                               Data1D ffData = unweightedSQ.partials().get(key);
-                                              ffData.values() = weights.weight(popI.first, popJ.first, ffData.xAxis());
+                                              ffData.values() = weights_.weight(popI.first, popJ.first, ffData.xAxis());
                                               Data1DExportFileFormat exportFormat(
                                                   std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name()));
                                               if (!exportFormat.exportData(ffData))
@@ -275,7 +272,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
         weightedGR.initialise(unweightedSQ);
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
+    calculateWeightedGR(unweightedGR, weightedGR, weights_, normaliseTo_);
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =

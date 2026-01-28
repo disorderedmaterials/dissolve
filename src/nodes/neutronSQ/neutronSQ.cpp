@@ -2,13 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/neutronSQ/neutronSQ.h"
-#include "keywords/atomTypeVector.h"
-#include "keywords/bool.h"
-#include "keywords/double.h"
-#include "keywords/fileAndFormat.h"
-#include "keywords/isotopologueSet.h"
-#include "keywords/module.h"
-#include "keywords/optionalDouble.h"
 #include "nodes/sq/sq.h"
 
 NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
@@ -19,6 +12,8 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addInput<std::optional<Data1D>>("ReferenceData", "Reference F(Q) data", referenceFQ_);
 
     // Options
+
+    addOption<IsotopologueSet>("Isotopologues", "Isotopologues to use when calculating weights matrix", isotopologues_);
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(

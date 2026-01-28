@@ -4,7 +4,6 @@
 #include "items/producers.h"
 #include "classes/braggReflection.h"
 #include "classes/kVector.h"
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
 #include "classes/potentialSet.h"
@@ -46,7 +45,6 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Histogram2D>("Histogram2D");
     registerProducer<Histogram3D>("Histogram3D");
     registerProducer<IntegerHistogram1D>("IntegerHistogram1D");
-    registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
     registerProducer<PartialSetAccumulator>("PartialSetAccumulator");
     registerProducer<PotentialSet>("PotentialSet");

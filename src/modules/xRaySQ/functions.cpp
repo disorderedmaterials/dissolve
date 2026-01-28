@@ -7,6 +7,9 @@
 #include "modules/gr/gr.h"
 #include "modules/xRaySQ/xRaySQ.h"
 
+// Return xRay weights
+const XRayWeights &XRaySQModule::weights() const { return weights_; }
+
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
 bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
                                        StructureFactors::NormalisationType normalisation)

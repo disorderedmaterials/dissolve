@@ -6,6 +6,7 @@
 #include "classes/neutronWeights.h"
 #include "math/data1D.h"
 #include "templates/doubleKeyedMap.h"
+#include "templates/optionalRef.h"
 #include "templates/resolvable.h"
 
 // Set of Partials

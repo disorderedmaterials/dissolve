@@ -3,12 +3,11 @@
 
 #pragma once
 
-#include "classes/neutronWeights.h"
 #include "math/data1D.h"
-#include "math/histogram1D.h"
-#include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
-#include "templates/array2D.h"
+
+// Forward Declarations
+class AtomType;
 
 // Set of Potentials
 class PotentialSet

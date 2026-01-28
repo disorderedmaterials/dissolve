@@ -5,9 +5,6 @@
 
 #include "base/serialiser.h"
 #include "classes/coreData.h"
-#include "classes/isotopologues.h"
-#include "templates/optionalRef.h"
-#include <vector>
 
 // Forward Declarations
 class Species;
@@ -15,7 +12,7 @@ class Isotopologue;
 class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species
-class IsotopologueSet : public Serialisable<const CoreData &>
+class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
 {
     public:
     IsotopologueSet() = default;
@@ -28,7 +25,7 @@ class IsotopologueSet : public Serialisable<const CoreData &>
      */
     private:
     // Isotopologue mixtures for individual Species
-    std::vector<Isotopologues> isotopologues_;
+    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> isotopologues_;
 
     public:
     // Clear all existing data
@@ -41,24 +38,22 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     void remove(const Isotopologue *iso);
     // Return whether Isotopologues for the specified Species exists
     bool contains(const Species *sp) const;
-    // Return Isotopologues for the specified Species
-    OptionalReferenceWrapper<const Isotopologues> getIsotopologues(const Species *sp) const;
+    // Return Isotopologues with normalised populations for the specified Species
+    std::map<const Isotopologue *, double> normalisedIsotopologues(const Species *sp) const;
     // Return number of species covered by set
     int nSpecies() const;
     // Return vector of all Isotopologues
-    std::vector<Isotopologues> &isotopologues();
-    const std::vector<Isotopologues> &isotopologues() const;
+    ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &isotopologues();
+    const ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const Isotopologue *, double>> &isotopologues() const;
 
     /*
      * Serialisation
      */
     public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write data through specified LineParser
-    bool write(LineParser &parser);
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    // Resolve internal resolvable name references with supplied data
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
 };

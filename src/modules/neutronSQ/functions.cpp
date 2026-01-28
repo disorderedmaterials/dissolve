@@ -7,6 +7,9 @@
 #include "modules/gr/gr.h"
 #include "modules/neutronSQ/neutronSQ.h"
 
+// Return neutron weights calculated from isotopologues and exchangeables
+const NeutronWeights &NeutronSQModule::weights() const { return weights_; }
+
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
 bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
                                           StructureFactors::NormalisationType normalisation)
@@ -87,28 +90,4 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
     }
 
     return true;
-}
-
-// Calculate neutron weights for relevant Configuration targets
-void NeutronSQModule::calculateWeights(const GRModule *rdfModule, NeutronWeights &weights) const
-{
-    // Clear weights and get species populations from GRModule
-    weights.clear();
-    auto populations = rdfModule->speciesPopulations();
-
-    for (auto &[sp, pop] : populations)
-    {
-        // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-        auto isoRef = isotopologueSet_.getIsotopologues(sp);
-        if (isoRef)
-        {
-            const Isotopologues &topes = *isoRef;
-            for (const auto &[iso, weight] : topes.mix())
-                weights.addIsotopologue(sp, pop, iso, weight);
-        }
-        else
-            weights.addIsotopologue(sp, pop, sp->naturalIsotopologue(), 1.0);
-    }
-
-    weights.createFromIsotopologues(exchangeable_);
 }

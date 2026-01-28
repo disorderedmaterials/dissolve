@@ -48,8 +48,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal
         if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the neutron weights in order to do the normalisation
-            NeutronWeights weights;
-            calculateWeights(rdfModule, weights);
+            NeutronWeights weights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
             auto factor = 1.0;
 
             // Set up the multiplication factors
@@ -184,10 +183,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Calculate weights
-    auto &weights = dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name_);
-    calculateWeights(rdfModule, weights);
-    Messenger::print("Isotopologue and isotope composition:\n\n");
-    weights.print();
+    weights_ = NeutronWeights(rdfModule->speciesPopulations(), isotopologueSet_, exchangeable_);
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     auto [weightedSQ, wSQstatus] =
@@ -196,7 +192,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
         weightedSQ.initialise(unweightedSQ);
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights_, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && !weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))
@@ -222,7 +218,7 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve)
         weightedGR.initialise(unweightedGR);
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
+    calculateWeightedGR(unweightedGR, weightedGR, weights_, normaliseTo_);
 
     // Save data if requested
     if (saveGR_ && !weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))

@@ -10,7 +10,7 @@
 
 // Forward Declarations
 class AtomType;
-class Isotopologues;
+class IsotopologueSet;
 
 // IsotopeMix
 class IsotopeMix
@@ -33,7 +33,7 @@ class IsotopeMix
 
     public:
     // Create mix from Isotopologues
-    void create(const std::vector<Isotopologues> &isotopologues,
+    void create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
                 const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
     // Return types/topes mix
     const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &mix() const;

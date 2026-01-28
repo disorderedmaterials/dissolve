@@ -44,16 +44,22 @@ bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const
     // Add the isotopologue to the set
     data_.add(iso, parser.argd(startArg + 2));
 
+    // Resolve against the current set of species
+    std::map<std::string, const Species *> speciesMap;
+    for (const auto &sp : coreData.species())
+        speciesMap[std::string(sp.get()->name())] = sp.get();
+    data_.resolve(speciesMap);
+
     return true;
 }
 
 // Serialise data to specified LineParser
 bool IsotopologueSetKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    for (auto topes : data_.isotopologues())
-        for (const auto &[iso, weight] : topes.mix())
+    for (auto &[species, isotopologues] : data_.isotopologues())
+        for (const auto &[iso, weight] : isotopologues)
         {
-            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, topes.species()->name(), iso->name(), weight))
+            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, species.name(), iso.raw()->name(), weight))
                 return false;
         }
 
