@@ -240,45 +240,43 @@ Module::ExecutionResult NeutronSQModule::process(ModuleContext &moduleContext)
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR = moduleContext.dissolve().processingModuleData().realise<Data1D>("RepresentativeTotalGR", name_,
                                                                                   GenericItem::InRestartFileFlag);
-    repGR = weightedSQ.total();
-    auto ftQMax = 0.0;
-    if (referenceFTQMax_)
-        ftQMax = referenceFTQMax_.value();
-    else if (referenceFQ_.hasFilename())
+
+    // If there is no reference data then we don't calculate a representative g(r). Otherwise, trim it to its limits before FT.
+    if (referenceFQ_.hasFilename())
     {
-        // Take FT max Q limit from reference data
-        auto &referenceData = moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceData", name(),
-                                                                                              GenericItem::ProtectedFlag);
-        ftQMax = referenceData.xAxis().back();
+        auto &referenceData = moduleContext.dissolve().processingModuleData().value<Data1D>("ReferenceData", name());
+
+        repGR = weightedSQ.total();
+        Filters::trim(repGR, std::max(referenceFTQMin_.value_or(referenceData.xAxis().front()), referenceData.xAxis().front()),
+                      std::min(referenceFTQMax_.value_or(referenceData.xAxis().back()), referenceData.xAxis().back()));
+        auto rMin = weightedGR.total().xAxis().front();
+        auto rMax = weightedGR.total().xAxis().back();
+        auto rho = rdfModule->effectiveDensity();
+        if (!rho)
+        {
+            Messenger::error("No effective density available from GR module '{}'\n", rdfModule->name());
+            return ExecutionResult::Failed;
+        }
+
+        Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
+
+        // Save data if requested
+        if (saveRepresentativeGR_)
+        {
+            if (moduleContext.processPool().isMaster())
+            {
+                Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name_));
+                if (exportFormat.exportData(repGR))
+                    moduleContext.processPool().decideTrue();
+                else
+                    moduleContext.processPool().decideFalse();
+            }
+            else if (!moduleContext.processPool().decision())
+                return ExecutionResult::Failed;
+        }
     }
     else
-        ftQMax = weightedSQ.total().xAxis().back();
-    Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
-    auto rMin = weightedGR.total().xAxis().front();
-    auto rMax = weightedGR.total().xAxis().back();
-    auto rho = rdfModule->effectiveDensity();
-    if (!rho)
-    {
-        Messenger::error("No effective density available from RDF module '{}'\n", rdfModule->name());
-        return ExecutionResult::Failed;
-    }
-
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
-
-    // Save data if requested
-    if (saveRepresentativeGR_)
-    {
-        if (moduleContext.processPool().isMaster())
-        {
-            Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name_));
-            if (exportFormat.exportData(repGR))
-                moduleContext.processPool().decideTrue();
-            else
-                moduleContext.processPool().decideFalse();
-        }
-        else if (!moduleContext.processPool().decision())
-            return ExecutionResult::Failed;
-    }
+        repGR.clear();
 
     return ExecutionResult::Success;
 }
