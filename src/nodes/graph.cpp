@@ -224,7 +224,7 @@ Edge *Graph::findEdge(const EdgeDefinition &definition) const
 }
 
 // Return named node, if it exists
-Node *Graph::node(std::string_view nodeName)
+Node *Graph::findNode(std::string_view nodeName)
 {
     // Return ourself if this is our name
     if (name() == nodeName)

@@ -40,17 +40,15 @@ int Species::addAtom(Elements::Element Z, Vector3 r, double q, std::shared_ptr<A
 }
 
 // Add new atom type to atom types
-const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z)
+const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z, std::string_view name)
 {
-    auto newAtomType = std::make_shared<AtomType>();
-    atomTypes_.push_back(newAtomType);
-
     // Create a suitable unique name
-    newAtomType->setName(DissolveSys::uniqueName(Elements::symbol(Z), atomTypes_,
-                                                 [&](const auto &at) { return newAtomType == at ? "" : at->name(); }));
+    auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,
+                                              [&](const auto &at) { return at->name(); });
 
-    // Set data
-    newAtomType->setZ(Z);
+    // Create atom type and set data
+    auto newAtomType = std::make_shared<AtomType>(Z, uniqueName);
+    atomTypes_.push_back(newAtomType);
     newAtomType->setIndex(atomTypes_.size() - 1);
 
     return newAtomType;

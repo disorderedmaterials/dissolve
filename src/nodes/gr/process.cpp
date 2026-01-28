@@ -85,19 +85,6 @@ NodeConstants::ProcessResult GRNode::process()
     if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
         (*rawGR_) = rawGRHistory_.push((*rawGR_), averagingLength_.value().asInteger());
 
-    /*
-    // Perform internal test of original g(r)?
-    if (internalTest_)
-    {
-        // Copy the already-calculated g(r), then calculate a new set using the Test method
-        PartialSet referencePartials = originalgr;
-        calculateGR(dissolve.processingModuleData(), moduleContext.processPool(), cfg, GRModule::TestMethod,
-            grRange, binWidth_, alreadyUpToDate);
-        if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
-            return ExecutionResult::Failed;
-    }
-    */
-
     // Form unweighted g(r) from original g(r), applying any requested smoothing and/or intramolecular broadening
     calculateUnweightedGR();
 

@@ -78,6 +78,16 @@ double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i) { return (i % 3); }
 
+// Return the integer wrapped into the specified range
+int wrap(int i, int lower, int upper)
+{
+    const auto range = upper - lower + 1;
+
+    if (i < 0)
+        i += range * ((lower - i) / range + 1);
+    return lower + (i - lower) % range;
+}
+
 /*
  * Conversion
  */

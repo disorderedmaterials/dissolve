@@ -99,7 +99,7 @@ class Graph : public Node
     // Find edge between nodes
     Edge *findEdge(const EdgeDefinition &definition) const;
     // Return named node, if it exists
-    Node *node(std::string_view nodeName);
+    Node *findNode(std::string_view nodeName);
     // Return container of nodes
     Nodes &nodes();
     // Return container of edges between nodes
