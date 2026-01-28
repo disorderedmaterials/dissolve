@@ -139,6 +139,11 @@ inline void createWaterMethanolGraph(Graph *root)
     auto grNode = root->createNode("GR");
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
+
+    // Create the SQ node
+    auto sqNode = root->createNode("SQ");
+    ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 }
 
 // Create a benzene graph in the supplied root node
