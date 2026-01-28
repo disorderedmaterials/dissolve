@@ -306,9 +306,9 @@ std::optional<double> GRModule::effectiveDensity() const
 }
 
 // Calculate and return used species populations based on target Configurations
-std::vector<std::pair<const Species *, double>> GRModule::speciesPopulations() const
+const std::map<const Species *, double> GRModule::speciesPopulations() const
 {
-    std::vector<std::pair<const Species *, double>> populations;
+    std::map<const Species *, double> populations;
 
     for (auto *cfg : targetConfigurations_)
     {
@@ -320,9 +320,9 @@ std::vector<std::pair<const Species *, double>> GRModule::speciesPopulations() c
             auto it = std::find_if(populations.begin(), populations.end(),
                                    [&spPop](auto &data) { return data.first == spPop.first; });
             if (it != populations.end())
-                it->second += spPop.second * weight;
+                populations[spPop.first] += spPop.second * weight;
             else
-                populations.emplace_back(spPop.first, spPop.second * weight);
+                populations[spPop.first] = spPop.second * weight;
         }
     }
 

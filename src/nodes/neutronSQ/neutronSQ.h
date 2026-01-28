@@ -44,10 +44,8 @@ class NeutronSQNode : public Node
     std::optional<PartialSet> weightedGR_;
     // Representative g(r) calculated from FT of total weighted F(Q)
     Data1D representativeGR_;
-    // Full weights
-    NeutronWeights weights_;
-    // Map of named isotopologue weights
-    std::map<std::string_view, double> namedWeights_{{"Ar36", 36}};
+    // Isotopologues to use for constructing weights matrix
+    IsotopologueSet isotopologues_;
     // Exchangeable atom types
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Normalisation to apply to calculated total F(Q)
@@ -80,17 +78,9 @@ class NeutronSQNode : public Node
      */
     public:
     // Calculate weighted g(r)
-    bool calculateWeightedGR();
+    bool calculateWeightedGR(const NeutronWeights &weights);
     // Calculate weighted S(Q)
-    bool calculateWeightedSQ();
-    // Calculate neutron weights matrix
-    void calculateWeights(const KeyedVector<const Species *, double> &realSpeciesPopulations);
-
-    private:
-    // Return value of weighted SQ, emplacing if optional not initialised
-    PartialSet &weightedSQ();
-    // Return value of weighted GR, emplacing if optional not initialised
-    PartialSet &weightedGR();
+    bool calculateWeightedSQ(const NeutronWeights &weights);
 
     /*
      * Processing

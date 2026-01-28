@@ -52,13 +52,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         weightedGR_.value().initialise(*unweightedGR_);
     }
 
-    // Get the real species populations from the input unweightedSQ
-    auto &realSpeciesPopulations = unweightedSQ_->realSpeciesPopulations();
-
     // Calculate weights
-    calculateWeights(realSpeciesPopulations);
-    message("Isotopologue and isotope composition:\n\n");
-    weights_.print();
+    NeutronWeights weights(unweightedSQ_->realSpeciesPopulations(), isotopologues_, exchangeable_);
 
     // Set up reference data if supplied
     if (referenceFQ_)
@@ -73,18 +68,18 @@ NodeConstants::ProcessResult NeutronSQNode::process()
             {
                 case (StructureFactors::NoNormalisation):
                     factor = 1.0 / (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
-                                        ? weights_.boundCoherentSquareOfAverage()
-                                        : weights_.boundCoherentAverageOfSquares());
+                                        ? weights.boundCoherentSquareOfAverage()
+                                        : weights.boundCoherentAverageOfSquares());
                     break;
                 case (StructureFactors::SquareOfAverageNormalisation):
-                    factor = weights_.boundCoherentSquareOfAverage();
+                    factor = weights.boundCoherentSquareOfAverage();
                     if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
-                        factor /= weights_.boundCoherentAverageOfSquares();
+                        factor /= weights.boundCoherentAverageOfSquares();
                     break;
                 case (StructureFactors::AverageOfSquaresNormalisation):
-                    factor = weights_.boundCoherentAverageOfSquares();
+                    factor = weights.boundCoherentAverageOfSquares();
                     if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
-                        factor /= weights_.boundCoherentSquareOfAverage();
+                        factor /= weights.boundCoherentSquareOfAverage();
                     break;
                 default:
                     Messenger::exception("Unhandled StructureFactor::NormalisationType ({}).\n",
@@ -129,7 +124,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
      */
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ();
+    calculateWeightedSQ(weights);
 
     // Save data if requested
     if (saveSQ_ && !weightedSQ_->save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))
@@ -140,7 +135,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
      */
 
     // Calculate weighted g(r)
-    calculateWeightedGR();
+    calculateWeightedGR(weights);
 
     // Save data if requested
     if (saveGR_ && !weightedGR_->save(name(), "WeightedGR", "gr", "r, Angstroms"))

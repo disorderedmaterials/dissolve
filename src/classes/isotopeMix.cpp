@@ -3,7 +3,7 @@
 
 #include "classes/isotopeMix.h"
 #include "classes/atomType.h"
-#include "classes/isotopologues.h"
+#include "classes/isotopologueSet.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
@@ -43,27 +43,27 @@ double IsotopeMix::population(const AtomType *atomType) const
 double IsotopeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
 
 // Create mix from Isotopologues
-void IsotopeMix::create(const std::vector<Isotopologues> &isotopologues,
+void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
                         const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
 {
     mix_.clear();
     totalPopulation_ = 0.0;
     exchangeables_.clear();
 
-    // Loop over Isotopologues and add to the mix
-    for (auto &topos : isotopologues)
+    // Loop over species / populations
+    for (auto &[species, speciesPopulation] : speciesPopulations)
     {
-        // Get normalised Isotopologue populations and species atom type populations
-        auto normalised = topos.normalised();
+        // Get the normalised populations for this species
+        auto topes = isotopologues.normalisedIsotopologues(species);
 
         // Loop over the Isotopologues in the mixture
-        for (const auto &[iso, weight] : normalised)
+        for (const auto &[iso, weight] : topes)
         {
             // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
             // Isotopologue
-            for (const auto &[atomType, atomTypePopulation] : topos.species()->atomTypePopulations())
+            for (const auto &[atomType, atomTypePopulation] : species->atomTypePopulations())
             {
-                auto population = atomTypePopulation * weight * topos.speciesPopulation();
+                auto population = speciesPopulation * atomTypePopulation * weight;
 
                 auto &isotopes = mix_[atomType];
                 if (isotopes.contains(iso->atomTypeIsotope(atomType)))

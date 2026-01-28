@@ -9,8 +9,6 @@
 #include "data/structureFactors.h"
 #include "math/data1D.h"
 #include "templates/array2D.h"
-#include <memory>
-#include <tuple>
 #include <vector>
 
 // Forward Declarations

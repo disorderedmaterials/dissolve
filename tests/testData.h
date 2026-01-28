@@ -783,6 +783,7 @@ class SmallMolecules
         atH1_ = std::make_shared<AtomType>(Elements::H, "H1");
 
         // Set up N2 species
+        n2_.setName("N2");
         n2_.addAtom(Elements::N, {});
         n2_.addAtom(Elements::N, {1.2, 0.0, 0.0});
         n2_.atom(0).setAtomType(atN_);
@@ -792,6 +793,7 @@ class SmallMolecules
         n2A15_->setAtomTypeIsotope(atN_.get(), Sears91::N_15);
 
         // Set up H2 species
+        h2_.setName("H2");
         h2_.addAtom(Elements::H, {});
         h2_.addAtom(Elements::H, {0.7, 0.0, 0.0});
         h2_.atom(0).setAtomType(atH1_);
@@ -801,6 +803,7 @@ class SmallMolecules
         d2_->setAtomTypeIsotope(atH1_.get(), Sears91::H_2);
 
         // Set up H2O species
+        h2o_.setName("H2O");
         h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
         h2o_.addAtom(Elements::O, {});
         h2o_.addAtom(Elements::H, {cos(DissolveMath::toRadians(107.4)), sin(DissolveMath::toRadians(107.4)), 0.0});

@@ -9,7 +9,7 @@
 #include <numeric>
 
 // Set-up from supplied species populations and form factors
-bool XRayWeights::setUp(const std::vector<std::pair<const Species *, double>> &speciesPopulations,
+bool XRayWeights::setUp(const std::map<const Species *, double> &speciesPopulations,
                         XRayFormFactors::XRayFormFactorData formFactors)
 {
     typeFractions_.clear();

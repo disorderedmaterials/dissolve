@@ -6,6 +6,7 @@
 #include "base/serialiser.h"
 #include "classes/coreData.h"
 #include "module/module.h"
+#include "module/types.h"
 #include "templates/flags.h"
 #include <map>
 #include <memory>

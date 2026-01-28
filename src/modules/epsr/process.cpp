@@ -22,6 +22,7 @@
 #include "modules/gr/gr.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/sq/sq.h"
+#include "modules/xRaySQ/xRaySQ.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
 #include <functional>
@@ -427,7 +428,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
         if (module->type() == ModuleTypes::NeutronSQ)
         {
-            const auto &weights = moduleData.value<NeutronWeights>("FullWeights", module->name());
+            const auto weights = dynamic_cast<NeutronSQModule *>(module)->weights();
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = trimmedReferenceData;
@@ -451,7 +452,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
         }
         else if (module->type() == ModuleTypes::XRaySQ)
         {
-            auto &weights = moduleData.retrieve<XRayWeights>("FullWeights", module->name());
+            const auto weights = dynamic_cast<XRaySQModule *>(module)->weights();
 
             // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency
             // in terms of magnitude with any neutron data. If the calculated data have not been normalised, or were

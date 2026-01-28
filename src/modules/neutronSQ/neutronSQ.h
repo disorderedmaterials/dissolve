@@ -30,6 +30,8 @@ class NeutronSQModule : public Module
     std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Isotopologues to use in weighting
     IsotopologueSet isotopologueSet_;
+    // Neutron weights calculated from isotopologues and exchangeables
+    NeutronWeights weights_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
@@ -63,14 +65,14 @@ class NeutronSQModule : public Module
      * Functions
      */
     public:
+    // Return neutron weights calculated from isotopologues and exchangeables
+    const NeutronWeights &weights() const;
     // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
     bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
                              StructureFactors::NormalisationType normalisation);
     // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
                              StructureFactors::NormalisationType normalisation);
-    // Calculate neutron weights for relevant Configuration targets
-    void calculateWeights(const GRModule *rdfModule, NeutronWeights &weights) const;
 
     /*
      * Processing
