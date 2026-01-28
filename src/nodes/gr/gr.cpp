@@ -29,10 +29,6 @@ GRNode::GRNode(Graph *parentGraph)
     addOption<std::optional<Number>>("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)", nSmooths_);
     addOption<bool>("Save", "Whether to save partials and total functions to disk", save_);
     addOption<bool>("SaveRaw", "Whether to save raw simulation partial and total functions to disk", saveRaw_);
-    addOption<bool>(
-        "InternalTest",
-        "Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop",
-        internalTest_);
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
 

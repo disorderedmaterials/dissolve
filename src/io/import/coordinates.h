@@ -6,8 +6,6 @@
 #include "base/enumOptions.h"
 #include "io/fileAndFormat.h"
 
-// Forward Declarations
-
 // Coordinate Import Formats
 class CoordinateImportFileFormat : public FileAndFormat
 {

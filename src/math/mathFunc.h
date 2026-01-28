@@ -39,6 +39,8 @@ int sgn(double x);
 double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
+// Return the integer wrapped into the specified range
+int wrap(int i, int lower, int upper);
 
 /*
  * Conversion

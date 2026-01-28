@@ -48,7 +48,7 @@ NodeConstants::ProcessResult MDNode::process()
                 joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     message("\n");
 
-    auto kernel = dissolveGraph()->prepareEnergyCalculation(targetConfiguration_);
+    auto kernel = dissolveGraph()->createEnergyCalculation(targetConfiguration_);
 
     /*
     if (onlyWhenEnergyStable_)

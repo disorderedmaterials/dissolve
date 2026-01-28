@@ -8,9 +8,9 @@
 #include "classes/cell.h"
 #include "main/dissolve.h"
 #include "math/combinations.h"
-#include "math/error.h"
 #include "math/filters.h"
 #include "module/group.h"
+#include "nodes/dissolve.h"
 #include "nodes/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
@@ -241,6 +241,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
                           }
                       });
     }
+
     return true;
 }
 
@@ -319,10 +320,19 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
     else if (partialsMethod_ == PartialsMethod::SimpleMethod)
         calculateGRSimple(fullLUT);
     else if (partialsMethod_ == PartialsMethod::CellsMethod)
+    {
+        dissolveGraph()->updateIndexingAndCells(targetConfiguration_);
         calculateGRCells(grRange, fullLUT);
+    }
     else if (partialsMethod_ == PartialsMethod::AutoMethod)
     {
-        targetConfiguration_->nAtoms() > 10000 ? calculateGRCells(grRange, fullLUT) : calculateGRSimple(fullLUT);
+        if (targetConfiguration_->nAtoms() > 10000)
+        {
+            dissolveGraph()->updateIndexingAndCells(targetConfiguration_);
+            calculateGRCells(grRange, fullLUT);
+        }
+        else
+            calculateGRSimple(fullLUT);
     }
     timer.stop();
     message("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
@@ -443,117 +453,4 @@ bool GRNode::calculateUnweightedGR()
     unweightedGR_->formTotals(true);
 
     return true;
-}
-
-// Test supplied PartialSets against each other
-bool GRNode::testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
-                                   double testThreshold)
-{
-    for_each_pair_early(types,
-                        [&](int n, const auto *typeI, int m, const auto *typeJ) -> EarlyReturn<bool>
-                        {
-                            DoubleKeyedMapKey key{typeI->name(), typeJ->name()};
-
-                            // Full partial
-                            auto errorReport = Error::percent(setA.partials().get(key), setB.partials().get(key));
-                            message("{}", Error::errorReportString(errorReport));
-                            message("Test reference full partial '{}-{}' has {} error of {:7.3f}{} with calculated data and is "
-                                    "{} (threshold is {:6.3f}%)\n\n",
-                                    typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
-                                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-                            if (errorReport.error > testThreshold)
-                                return false;
-
-                            // Bound partial
-                            errorReport = Error::percent(setA.boundPartials().get(key), setB.boundPartials().get(key));
-                            message("{}", Error::errorReportString(errorReport));
-                            message("Test reference bound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
-                                    "is {} (threshold is {:6.3f}%)\n\n",
-                                    typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
-                                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-                            if (errorReport.error > testThreshold)
-                                return false;
-
-                            // Unbound reference
-                            errorReport = Error::percent(setA.unboundPartials().get(key), setB.unboundPartials().get(key));
-                            message("{}", Error::errorReportString(errorReport));
-                            message("Test reference unbound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
-                                    "is {} (threshold is {:6.3f}%)\n\n",
-                                    typeI->name(), typeJ->name(), Error::errorTypes().keyword(errorReport.errorType),
-                                    errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                    errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-                            if (errorReport.error > testThreshold)
-                                return false;
-
-                            return EarlyReturn<bool>::Continue;
-                        });
-
-    // Total reference data supplied?
-    auto errorReport = Error::percent(setA.total(), setB.total());
-    message("{}", Error::errorReportString(errorReport));
-    message("Test reference total has {} error of {:7.3f}{} with calculated data and is {} (threshold is {:6.3f}%)\n\n",
-            Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-            errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-            errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-    if (errorReport.error > testThreshold)
-        return false;
-
-    return true;
-}
-
-// Test calculated partial against supplied reference data
-bool GRNode::testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
-                                  std::string_view typeIorTotal, std::string_view typeJ, std::string_view target)
-{
-    // We either expect two AtomType names and a target next, or the target 'total'
-    auto testResult = false;
-    if (DissolveSys::sameString(typeIorTotal, "total") && typeJ.empty() && target.empty())
-    {
-        auto errorReport = Error::percent(partials.total(), testData);
-        message("{}", Error::errorReportString(errorReport));
-        testResult = (errorReport.error <= testThreshold);
-        message("Test reference data '{}' has {} error of {:7.3f}{} with calculated data and is {} (threshold is "
-                "{:6.3f}%)\n\n",
-                testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
-                testThreshold);
-    }
-    else
-    {
-        DoubleKeyedMapKey key{typeIorTotal, typeJ};
-        Error::ErrorReport errorReport;
-        if (DissolveSys::sameString(target, "bound"))
-        {
-            errorReport = Error::percent(partials.boundPartials().get(key), testData);
-            message("{}", Error::errorReportString(errorReport));
-        }
-
-        else if (DissolveSys::sameString(target, "unbound"))
-        {
-            errorReport = Error::percent(partials.unboundPartials().get(key), testData);
-            message("{}", Error::errorReportString(errorReport));
-        }
-        else if (DissolveSys::sameString(target, "full"))
-        {
-            errorReport = Error::percent(partials.partials().get(key), testData);
-            message("{}", Error::errorReportString(errorReport));
-        }
-
-        else
-        {
-            error("Unrecognised test data name '{}'.\n", testData.tag());
-            return false;
-        }
-
-        testResult = (errorReport.error <= testThreshold);
-        message("Test reference data '{}' has {} error of {:7.3f}{} with calculated data and is {} (threshold is "
-                "{:6.3f}%)\n\n",
-                testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
-                testThreshold);
-    }
-
-    return testResult;
 }

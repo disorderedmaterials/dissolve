@@ -55,7 +55,7 @@ void IterableGraph::releaseLoopBack(const std::string &name)
 // Add edge between nodes
 bool IterableGraph::addEdge(const EdgeDefinition &definition)
 {
-    if (dynamic_cast<InputsNode *>(parentGraph()->node(definition.sourceNode)))
+    if (dynamic_cast<InputsNode *>(parentGraph()->findNode(definition.sourceNode)))
         setLoopBacks();
     else if (loopBacks_->findInput(definition.targetInput))
     {

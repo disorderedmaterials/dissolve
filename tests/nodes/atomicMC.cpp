@@ -12,6 +12,7 @@
 #include "nodes/iterableGraph.h"
 #include "nodes/numberNode.h"
 #include "nodes/species.h"
+#include "tests/speciesData.h"
 #include "tests/testData.h"
 #include <array>
 #include <gtest/gtest.h>

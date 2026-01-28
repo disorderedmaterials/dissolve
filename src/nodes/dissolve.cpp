@@ -32,30 +32,32 @@ const DoubleKeyedMap<PairPotential> &DissolveGraph::pairPotentialStore() { retur
  * Functions
  */
 
-// Return maximum distance for tabulated PairPotentials
-const double DissolveGraph::pairPotentialRange() const { return pairPotentialRange_; }
+// Return range of tabulated pari potentials
+double DissolveGraph::pairPotentialRange() const { return pairPotentialRange_; }
 
-// Return energy kernel containing potential map
-std::unique_ptr<EnergyKernel> DissolveGraph::prepareEnergyCalculation(Configuration *cfg)
+// Ensure that the specified Configuration has updated type indexing, cells etc.
+void DissolveGraph::updateIndexingAndCells(Configuration *cfg) const
 {
-    auto atomTypes = cfg->atomTypeVector();
-
     // Update atom type indexing
     cfg->updateTypeIndexing();
+
+    // Regenerate cells in the configuration if necessary
+    cfg->updateCells(pairPotentialRange());
+}
+
+// Create an energy kernel suitable for the supplied Configuration
+std::unique_ptr<EnergyKernel> DissolveGraph::createEnergyCalculation(Configuration *cfg)
+{
+    // Update types and cells in Configuration
+    updateIndexingAndCells(cfg);
+    auto atomTypes = cfg->atomTypeVector();
 
     // Update pair potentials
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                             [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotentials(*atI, *atJ); });
 
-    // Generate configuration potential map
-    PotentialMap potentialMap(atomTypes, pairPotentialStore(), pairPotentialRange());
-
-    // Regenerate cells in the configuration if necessary
-    cfg->updateCells(potentialMap.range());
-
-    auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
-
-    return kernel;
+    // Generate and return kernel
+    return KernelProducer::energyKernel(cfg, PotentialMap(atomTypes, pairPotentialStore(), pairPotentialRange()));
 }
 
 // Update pair potential store
