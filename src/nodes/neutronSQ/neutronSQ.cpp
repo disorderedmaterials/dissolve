@@ -11,9 +11,17 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addInput<PartialSet *>("UnweightedGR", "Unweighted partials g(r)", unweightedGR_);
     addInput<std::optional<Data1D>>("ReferenceData", "Reference F(Q) data", referenceFQ_);
 
-    // Options
+    // Outputs
+    addOptionalPointerOutput<PartialSet>("WeightedSQ", "Weighted partial structure factors for target configuration",
+                                         weightedSQ_);
+    addOptionalPointerOutput<PartialSet>(
+        "WeightedGR", "Weighted partial radial distribution functions for target configuration", weightedGR_);
+    addOutput<Data1D>("ReferenceGR", "Fourier transform of reference data", referenceGR_);
 
+    // Options
     addOption<IsotopologueSet>("Isotopologues", "Isotopologues to use when calculating weights matrix", isotopologues_);
+    addOption<Exchangeables>("Exchangeables", "List of atom types that should be treated as fully exchangeable",
+                             exchangeables_);
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(
@@ -34,10 +42,6 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addOption<bool>("SaveRepresentativeGR", "Save representative G(r), obtained from Fourier transform of the calculated F(Q)",
                     saveRepresentativeGR_);
     addOption<bool>("SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
-    addOptionalPointerOutput<PartialSet>("WeightedSQ", "Weighted partial structure factors for target configuration",
-                                         weightedSQ_);
-    addOptionalPointerOutput<PartialSet>(
-        "WeightedGR", "Weighted partial radial distribution functions for target configuration", weightedGR_);
 
     // Serialisables
     addSerialisable("weightedGR", weightedGR_);

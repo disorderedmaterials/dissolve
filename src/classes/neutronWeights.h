@@ -3,9 +3,9 @@
 
 #pragma once
 
+#include "classes/exchangeables.h"
 #include "classes/isotopeMix.h"
 #include "templates/doubleKeyedMap.h"
-#include <vector>
 
 // Forward Declarations
 class IsotopologueSet;
@@ -16,7 +16,7 @@ class NeutronWeights
     public:
     NeutronWeights() = default;
     NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues,
-                   const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes = {});
+                   const Exchangeables &exchangeables = {});
     NeutronWeights(const NeutronWeights &source);
     void operator=(const NeutronWeights &source);
 
@@ -49,7 +49,7 @@ class NeutronWeights
     private:
     // Calculate weighting matrices based on current AtomType / Isotope information
     void calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
-                                    const IsotopologueSet &isotopologues);
+                                    const IsotopologueSet &isotopologues, const Exchangeables &exchangeables);
 
     public:
     // Return isotope mix

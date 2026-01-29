@@ -53,7 +53,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     }
 
     // Calculate weights
-    NeutronWeights weights(unweightedSQ_->realSpeciesPopulations(), isotopologues_, exchangeable_);
+    NeutronWeights weights(unweightedSQ_->realSpeciesPopulations(), isotopologues_, exchangeables_);
 
     // Set up reference data if supplied
     if (referenceFQ_)
