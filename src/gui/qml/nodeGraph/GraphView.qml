@@ -117,9 +117,9 @@ Pane {
                     ForcefieldDialog {
                         id: forcefieldDialog
 
+                        graphModel: graphRoot.rootModel
                         posx: Math.round(ctxMenuCatcher.mouseX)
                         posy: Math.round(ctxMenuCatcher.mouseY)
-                        graphModel: graphRoot.rootModel
                     }
                 }
                 MenuItem {

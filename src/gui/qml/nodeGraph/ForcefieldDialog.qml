@@ -7,9 +7,9 @@ import Dissolve
 Dialog {
     id: root
 
+    required property variant graphModel
     required property int posx
     required property int posy
-    required property variant graphModel
 
     standardButtons: Dialog.Ok | Dialog.Cancel
     title: "Define Forcefield: " + sp.name
@@ -21,14 +21,13 @@ Dialog {
     SimpleForcefieldModel {
         id: sp
 
-        name: options.currentValue
-
         graphModel: root.graphModel
+        name: options.currentValue
     }
     ComboBox {
         id: options
-        editable: true
 
-        model: sp.library 
+        editable: true
+        model: sp.library
     }
 }

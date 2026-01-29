@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "gui/models/simpleForcefieldModel.h"
 #include "gui/models/nodeGraph/graphModel.h"
+#include "gui/models/simpleForcefieldModel.h"
 #include "nodes/forcefield.h"
 #include <gtest/gtest.h>
 
@@ -24,7 +24,7 @@ TEST(ForcefieldModel, Basic)
     model.create(0, 0);
 
     ASSERT_EQ(graph.nodes().size(), 3);
-    auto node = dynamic_cast<ForcefieldNode*>(graph.node("Kulmala2010"));
+    auto node = dynamic_cast<ForcefieldNode *>(graph.node("Kulmala2010"));
     ASSERT_TRUE(node);
     EXPECT_EQ(node->forcefield().get(), ForcefieldLibrary::forcefield("Kulmala2010").get());
 }
