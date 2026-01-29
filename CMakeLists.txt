@@ -264,6 +264,7 @@ if(GUI)
     Dissolve
     QML_FILES
     ${SRCS}/gui-qml/qml/DissolveMain.qml
+    ${SRCS}/gui/qml/nodeGraph/ForcefieldDialog.qml
     ${SRCS}/gui/qml/nodeGraph/GraphView.qml
     ${SRCS}/gui/qml/nodeGraph/GraphDelegate.qml
     ${SRCS}/gui/qml/nodeGraph/ParameterDelegate.qml

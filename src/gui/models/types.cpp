@@ -10,6 +10,7 @@
 #include "gui/models/modifyChargesModel.h"
 #include "gui/models/moduleLayersModel.h"
 #include "gui/models/nodeGraph/graphModel.h"
+#include "gui/models/simpleForcefieldModel.h"
 #include "gui/models/sortFilterProxy.h"
 #include "gui/models/speciesModel.h"
 #include <QQmlEngine>
@@ -31,4 +32,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<ModifyChargesModel>(PROJECT, 1, 0, "ModifyChargesModel");
     qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
     qmlRegisterType<GraphModel>(PROJECT, 1, 0, "GraphModel");
+    qmlRegisterType<SimpleForcefieldModel>(PROJECT, 1, 0, "SimpleForcefieldModel");
 }
