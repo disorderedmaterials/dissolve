@@ -51,4 +51,4 @@ XRaySQNode::XRaySQNode(Graph *parentGraph) : Node(parentGraph)
 
 std::string_view XRaySQNode::type() const { return "XRaySQ"; }
 
-std::string_view XRaySQNode::summary() const { return "Unweighted structure factors."; }
+std::string_view XRaySQNode::summary() const { return "Calculate x-ray-weighted S(Q) and G(r)."; }
