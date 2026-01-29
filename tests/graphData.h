@@ -4,9 +4,9 @@
 #pragma once
 
 #include "classes/isotopologueSet.h"
+#include "data/structureFactors.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
-#include "nodes/atomicSpecies.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/insert.h"
@@ -50,25 +50,66 @@ inline void addNeutronSQ(Graph *root, std::string name, const IsotopologueSet &i
 }
 
 // Create an Argon graph in the supplied root node
-inline void createArgonGraph(Graph *root, int population = 1000)
+inline void createArgonGraph(Graph *root, int population = 1000,
+                             CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
 {
-    // Create nodes
+    // Create species
     auto arNode = createArgon(root);
     ASSERT_TRUE(arNode);
 
+    // Create configuration
     auto configurationNode = root->createNode("Configuration", "Bulk");
     ASSERT_TRUE(configurationNode);
     auto insertNode = root->createNode("Insert", "Insert");
     ASSERT_TRUE(insertNode);
-
-    // Create edges
-    ASSERT_TRUE(root->addEdge({"Argon", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-
-    // Set configuration contents
     ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
     ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.0213));
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+    ASSERT_TRUE(root->addEdge({"Argon", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
+
+    // Import reference coordinates?
+    if (initialCoordinates.hasFilename())
+    {
+        auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
+        ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
+        ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+            "FileFormat",
+            CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
+        ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+    }
+
+    // Add GR node and link in configuration / import node
+    auto grNode = root->createNode("GR", "GR");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(grNode->setOption("Averaging", std::optional<Number>()));
+    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
+    ASSERT_TRUE(
+        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GR", "Configuration"}));
+
+    // Create the SQ node
+    auto sqNode = root->createNode("SQ");
+    ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+
+    // Add NeutronSQ node and reference data
+    auto neutronSQNode = root->createNode("NeutronSQ", "NeutronSQ");
+    ASSERT_TRUE(neutronSQNode);
+    ASSERT_TRUE(neutronSQNode->setOption<StructureFactors::NormalisationType>("ReferenceNormalisedTo",
+                                                                              StructureFactors::SquareOfAverageNormalisation));
+    ASSERT_TRUE(neutronSQNode->setOption<IsotopologueSet>(
+        "Isotopologues", IsotopologueSet({{arNode->species().findIsotopologue("Ar36"), 1.0}})));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
+
+    // Set reference F(Q) data
+    auto data1DImportNode = root->createNode("Data1DImport", "Yarnell");
+    ASSERT_TRUE(data1DImportNode);
+    ASSERT_TRUE(data1DImportNode->setOption<std::string>("FilePath", "dissolve2/argon/yarnell.sq"));
+    ASSERT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+        "ImportFormat", Data1DImportFileFormat::Data1DImportFormat::XY));
+    ASSERT_TRUE(data1DImportNode->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
+    ASSERT_TRUE(root->addEdge({"Yarnell", "Data", "NeutronSQ", "ReferenceData"}));
 }
 
 // Create a water graph in the supplied root node
