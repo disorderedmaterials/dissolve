@@ -132,6 +132,9 @@ add_library(
   torsionFunctions.h
   valueStore.h
   xRayWeights.h
+
+  cgNeutronWeights.cpp 
+  cgNeutronWeights.h 
 )
 
 target_include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)

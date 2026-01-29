@@ -3,7 +3,7 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/neutronWeights.h"
+#include "classes/cgNeutronWeights.h"
 #include "classes/species.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
@@ -47,7 +47,7 @@ bool CGNeutronSQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::K
         if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the neutron weights in order to do the normalisation
-            NeutronWeights weights;
+            CGNeutronWeights weights;
             calculateWeights(rdfModule, weights);
             auto factor = 1.0;
 
@@ -191,8 +191,11 @@ Module::ExecutionResult CGNeutronSQModule::process(ModuleContext &moduleContext)
         moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Calculate and store weights
-    auto &weights = moduleContext.dissolve().processingModuleData().realise<NeutronWeights>("FullWeights", name_,
+    auto &weights_atm = moduleContext.dissolve().processingModuleData().realise<NeutronWeights>("FullWeights", name_,
                                                                                             GenericItem::InRestartFileFlag);
+                                                                                    //  CGNeutronWeights weights(weights_atm);
+    CGNeutronWeights weights;
+    weights.set_atom_types(weights_atm.atomTypes());
     calculateWeights(rdfModule, weights);
     Messenger::print("Isotopologue and isotope composition:\n\n");
     weights.print();
@@ -203,13 +206,11 @@ Module::ExecutionResult CGNeutronSQModule::process(ModuleContext &moduleContext)
     if (wSQstatus == GenericItem::ItemStatus::Created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
-    std::vector<Data1D> ff;
-    calculateBeadFormFactor(unweightedSQ.boundPartial(0, 0).xAxis(), ff, weights);
-    std::vector<Data1D> singleBead;
-    calculateSingleBead(singleBead, ff, weights);
+    weights.beadMap_.calculateFormFactors(unweightedSQ.boundPartial(0, 0).xAxis());
+    weights.beadMap_.calculateIntraBeadSQ();
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, ff, singleBead, normaliseTo_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(moduleContext.processPool(), weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
