@@ -14,12 +14,7 @@ TEST(GRNodeTest, Methods)
     GraphTestData data;
     createArgonGraph(&data.graphRoot, 5000);
 
-    // Add GR node and link in configuration
-    auto grNode = data.graphRoot.createNode("GR", "GR");
-    ASSERT_TRUE(grNode);
-    ASSERT_TRUE(grNode->setOption("Averaging", std::optional<Number>()));
-    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
-    ASSERT_TRUE(data.graphRoot.addEdge({"Insert", "Configuration", "GR", "Configuration"}));
+    auto grNode = data.graphRoot.findNode("GR");
 
     // Calculate baseline GR with the "Test" method, a simple, serial double-loop
     ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::TestMethod));

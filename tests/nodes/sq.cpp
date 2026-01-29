@@ -30,6 +30,7 @@ TEST(SQNodeTest, Water)
 
     // Get the SQ
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
+    ASSERT_TRUE(unweightedSQ);
 
     // Partial S(Q) (unbound terms)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
@@ -78,6 +79,7 @@ TEST(SQNodeTest, WaterMethanol)
 
     // Get the SQ
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
+    ASSERT_TRUE(unweightedSQ);
 
     /*
      * Partial Radial Distribution Functions
