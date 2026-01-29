@@ -3,10 +3,9 @@
 
 #pragma once
 
+#include "classes/exchangeables.h"
 #include "data/isotopes.h"
 #include "templates/keyedVector.h"
-#include <set>
-#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -23,7 +22,11 @@ class IsotopeMix
     // Isotope data per atom type
     KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> mix_;
     // Exchangeable atom types
-    std::set<const AtomType *> exchangeables_;
+
+    // Atom type populations
+    std::map<const AtomType *, double> populations_;
+    // Bound coherent scattering lengths per atom type, accounting for exchangeability
+    std::map<const AtomType *, double> boundCoherent_;
     // Total atom population in mix
     double totalPopulation_{0.0};
 
@@ -34,7 +37,7 @@ class IsotopeMix
     public:
     // Create mix from Isotopologues
     void create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
-                const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes);
+                const Exchangeables &exchangeables);
     // Return types/topes mix
     const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &mix() const;
     // Calculate and return full population of atom type in whole mix
@@ -43,10 +46,8 @@ class IsotopeMix
     double fraction(const AtomType *atomType) const;
     // Calculate and return bound coherent scattering, accounting for isotope mix and exchangeability
     double boundCoherent(const AtomType *atomType) const;
-    // Return whether specified atom type is exchangeable
-    bool isExchangeable(const AtomType *atomType) const;
     // Return indices of AtomType pair
     std::optional<std::pair<int, int>> indexOf(const AtomType *at1, const AtomType *at2) const;
     // Print AtomType populations
-    void print() const;
+    void print(const Exchangeables &exchangeables) const;
 };

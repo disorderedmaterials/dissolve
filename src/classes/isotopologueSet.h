@@ -16,6 +16,7 @@ class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
 {
     public:
     IsotopologueSet() = default;
+    IsotopologueSet(const std::vector<std::pair<const Isotopologue *, double>> &topes);
     ~IsotopologueSet() = default;
     // TODO: Improve equality operator
     bool operator==(const IsotopologueSet &other) { return this == &other; }

@@ -11,18 +11,17 @@
 #include "templates/algorithms.h"
 
 NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations,
-                               const IsotopologueSet &isotopologues,
-                               const std::vector<std::shared_ptr<AtomType>> &exchangeableTypes)
+                               const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
 {
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
 
     // Create the isotope mix from defined isotopologues
-    isotopeMix_.create(speciesPopulations, isotopologues, exchangeableTypes);
+    isotopeMix_.create(speciesPopulations, isotopologues, exchangeables);
 
-    calculateWeightingMatrices(speciesPopulations, isotopologues);
+    calculateWeightingMatrices(speciesPopulations, isotopologues, exchangeables);
 
-    Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
+    Messenger::print("  Species          nMols       Isotopologue     Weight\n");
     Messenger::print("  ------------------------------------------------------\n");
     for (auto &[species, speciesPopulation] : speciesPopulations)
     {
@@ -30,10 +29,10 @@ NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesP
         for (auto &[iso, isoFraction] : isotopologues.normalisedIsotopologues(species))
         {
             if (first)
-                Messenger::print("  {:<15}  {:<15}  {:<10g}  {}\n", species->name(), iso->name(), speciesPopulation,
+                Messenger::print("  {:<15}  {:<10g}  {:<15}  {}\n", species->name(), speciesPopulation, iso->name(),
                                  isoFraction);
             else
-                Messenger::print("                   {:<15}              {}\n", iso->name(), isoFraction);
+                Messenger::print("                            {:<15}  {}\n", iso->name(), isoFraction);
 
             first = false;
         }
@@ -41,7 +40,7 @@ NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesP
 
     // Print atomtypes table
     Messenger::print("\n");
-    isotopeMix_.print();
+    isotopeMix_.print(exchangeables);
 
     Messenger::print("\nCalculated average scattering lengths: <b>**2 = {:.5f}, <b**2> = {:.5f}\n",
                      boundCoherentSquareOfAverage_, boundCoherentAverageOfSquares_);
@@ -66,7 +65,7 @@ void NeutronWeights::operator=(const NeutronWeights &source)
 
 // Calculate weighting matrices based on current AtomType / Isotope information
 void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
-                                                const IsotopologueSet &isotopologues)
+                                                const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
@@ -121,17 +120,13 @@ void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, 
                 {
                     DoubleKeyedMapKey key{atPop1.first->name(), atPop2.first->name()};
 
-                    // Find the atom types in our local mix
-                    auto optPairIndex = isotopeMix_.indexOf(atPop1.first, atPop2.first);
-                    if (!optPairIndex)
-                        return;
-                    auto &[typeI, typeJ] = *optPairIndex;
-
                     // If an AtomType is exchangeable we use its exchanged bound coherent scattering length
-                    bi = isotopeMix_.isExchangeable(atPop1.first) ? isotopeMix_.boundCoherent(atPop1.first)
-                                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
-                    bj = isotopeMix_.isExchangeable(atPop2.first) ? isotopeMix_.boundCoherent(atPop2.first)
-                                                                  : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
+                    bi = exchangeables.contains(atPop1.first->name())
+                             ? isotopeMix_.boundCoherent(atPop1.first)
+                             : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
+                    bj = exchangeables.contains(atPop2.first->name())
+                             ? isotopeMix_.boundCoherent(atPop2.first)
+                             : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 
                     // Convert from fm to barns
                     bi *= 0.1;
