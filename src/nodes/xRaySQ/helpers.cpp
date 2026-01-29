@@ -4,8 +4,6 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/xRayWeights.h"
-#include "modules/gr/gr.h"
-#include "modules/xRaySQ/xRaySQ.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 
 // Return xRay weights

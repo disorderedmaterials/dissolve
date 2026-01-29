@@ -10,132 +10,11 @@
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
-#include "modules/gr/gr.h"
-#include "modules/sq/sq.h"
-#include "modules/xRaySQ/xRaySQ.h"
+#include "nodes/xRaySQ/xRaySQ.h"
 #include "templates/algorithms.h"
 
-// Set target data
-void XRaySQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
-                              const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap)
-{
-    auto sqIt = moduleMap.find(ModuleTypes::SQ);
-    if (sqIt != moduleMap.end())
-        sourceSQ_ = dynamic_cast<const SQModule *>(sqIt->second.front());
-}
-
-// Run set-up stage
-bool XRaySQModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
-{
-    /*
-     * Load and set up reference data (if a file/format was given)
-     */
-    if (referenceFQ_.hasFilename() && actionSignals.isSetOrNone(KeywordBase::ReloadExternalData))
-    {
-        // Load the data
-        Data1D referenceData;
-        if (!referenceFQ_.importData(referenceData))
-            return Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", name_, referenceFQ_.filename());
-
-        // Get dependent modules
-        if (!sourceSQ_)
-            return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", name_);
-        auto *grModule = sourceSQ_->sourceGR();
-        if (!grModule)
-            return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
-
-        // Normalise reference data to be consistent with the calculated data
-        if (referenceNormalisedTo_ != normaliseTo_)
-        {
-            // We need the x-ray weights in order to do the normalisation
-            XRayWeights weights;
-            if (!weights.setUp(grModule->speciesPopulations(), formFactors_))
-                return Messenger::error("[SETUP {}] Couldn't determine weights matrix.\n", name_);
-            auto bBarSquareOfAverage = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
-            auto bBarAverageOfSquares = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
-            std::vector<double> factors;
-
-            // Set up the multiplication factors
-            switch (referenceNormalisedTo_)
-            {
-                case (StructureFactors::NoNormalisation):
-                    factors = normaliseTo_ == StructureFactors::SquareOfAverageNormalisation ? bBarSquareOfAverage
-                                                                                             : bBarAverageOfSquares;
-                    std::transform(factors.begin(), factors.end(), factors.begin(),
-                                   [](const auto factor) { return 1.0 / factor; });
-                    break;
-                case (StructureFactors::SquareOfAverageNormalisation):
-                    factors = bBarSquareOfAverage;
-                    if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
-                        std::transform(factors.begin(), factors.end(), bBarAverageOfSquares.begin(), factors.begin(),
-                                       std::divides<>());
-                    break;
-                case (StructureFactors::AverageOfSquaresNormalisation):
-                    factors = bBarAverageOfSquares;
-                    if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
-                        std::transform(factors.begin(), factors.end(), bBarSquareOfAverage.begin(), factors.begin(),
-                                       std::divides<>());
-                    break;
-                default:
-                    Messenger::exception("Unhandled StructureFactor::NormalisationType ({}).\n",
-                                         StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_));
-            }
-
-            // Apply normalisation factors to the data
-            std::transform(referenceData.values().begin(), referenceData.values().end(), factors.begin(),
-                           referenceData.values().begin(), std::multiplies<>());
-        }
-
-        // Get Q-range and window function to use for transformation of F(Q) to G(r)
-        auto ftQMin = referenceFTQMin_.value_or(0.0);
-        auto ftQMax = referenceFTQMax_.value_or(referenceData.xAxis().back() + 1.0);
-        if (referenceWindowFunction_ == WindowFunction::Form::None)
-            Messenger::print("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).",
-                             name_);
-        else
-            Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of reference data is {}.", name_,
-                             WindowFunction::forms().keyword(referenceWindowFunction_));
-
-        // Store the reference data in processing
-        referenceData.setTag(name());
-        auto &storedData = dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
-        storedData = referenceData;
-
-        // Calculate and store the FT of the reference data in processing
-        referenceData.setTag(name());
-        auto &storedDataFT =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", name(), GenericItem::ProtectedFlag);
-        storedDataFT = referenceData;
-        Filters::trim(storedDataFT, ftQMin, ftQMax);
-        auto rho = grModule->effectiveDensity();
-        if (rho)
-            Messenger::print(
-                "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n",
-                name_, rho.value());
-        else
-            Messenger::warn("[SETUP {}] Effective atomic density used in Fourier transform of reference data not yet "
-                            "available, so a default of 0.1 atoms/Angstrom3 used.\n",
-                            name_);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * M_PI * M_PI * rho.value_or(0.1)), referenceFTDeltaR_, referenceFTDeltaR_,
-                        30.0, WindowFunction(referenceWindowFunction_));
-
-        // Save data?
-        if (saveReference_)
-        {
-            Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
-            if (!exportFormat.exportData(storedData))
-                return false;
-            Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
-            if (!exportFormatFT.exportData(storedDataFT))
-                return false;
-        }
-    }
-
-    return true;
-}
-
 // Run main processing
-Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
+NodeConstants::ProcessResult XRaySQNode::process()
 {
     /*
      * Calculate x-ray structure factors from existing g(r) data
@@ -144,20 +23,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    if (!sourceSQ_)
-    {
-        Messenger::error("A source SQ module must be provided.\n");
-        return ExecutionResult::Failed;
-    }
-    auto *grModule = sourceSQ_->sourceGR();
-    if (!grModule)
-    {
-        Messenger::error("A source GR module (in the SQ module) must be provided.\n");
-        return ExecutionResult::Failed;
-    }
-
     // Print argument/parameter summary
-    Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
     if (normaliseTo_ == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
@@ -184,41 +50,35 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
      * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
 
-    // Get unweighted S(Q) from the specified SQMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
+    // Set up the weighted SQ storage if needed
+    if (!weightedSQ_)
     {
-        Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
-        return ExecutionResult::Failed;
+        weightedSQ_.emplace();
+        weightedSQ_.value().initialise(*unweightedSQ_);
     }
-    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
+
+    // Set up weighted GR storage if we need it
+    if (!weightedGR_)
+    {
+        weightedGR_.emplace();
+        weightedGR_.value().initialise(*unweightedGR_);
+    }
 
     // Construct weights matrix
-    if (!weights_.setUp(grModule->speciesPopulations(), formFactors_))
-    {
-        Messenger::error("Failed to set up weights matrix.\n");
-        return ExecutionResult::Failed;
-    }
+    if (!weights_.setUp(unweightedSQ_->realSpeciesPopulations(), formFactors_))
+        return error("Failed to setup xRay weights.");
 
     Messenger::print("Weights matrix:\n\n");
     weights_.print();
 
-    // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-    auto [weightedSQ, wSQtatus] =
-        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", name_, GenericItem::InRestartFileFlag);
-    if (wSQtatus == GenericItem::ItemStatus::Created)
-        weightedSQ.initialise(unweightedSQ);
-
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights_, normaliseTo_);
+    calculateWeightedSQ(*unweightedSQ_, *weightedSQ_, weights_, normaliseTo_);
 
-    // Save data if requested
-    if (saveSQ_ && !weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))
-        return ExecutionResult::Failed;
     if (saveFormFactors_)
     {
         // TODO This will be cleaned up once XRayWeights moves to DoubleKeyedMap.
         KeyedVector<const AtomType *, int> typeVector;
-        for (auto &[resolvableSpecies, _] : unweightedSQ.realSpeciesPopulations())
+        for (auto &[resolvableSpecies, _] : unweightedSQ_->realSpeciesPopulations())
             for (auto &[atomType, _] : resolvableSpecies.raw()->atomTypePopulations())
                 typeVector[atomType] = 1;
 
@@ -229,7 +89,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
 
                                               if (indexI == indexJ)
                                               {
-                                                  Data1D atomicData = unweightedSQ.partials().get(key);
+                                                  Data1D atomicData = unweightedSQ_->partials().get(key);
                                                   atomicData.values() = weights_.formFactor(popI.first, atomicData.xAxis());
                                                   Data1DExportFileFormat exportFormat(
                                                       std::format("{}-{}.form", name(), popI.first->name()));
@@ -237,7 +97,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
                                                       return false;
                                               }
 
-                                              Data1D ffData = unweightedSQ.partials().get(key);
+                                              Data1D ffData = unweightedSQ_->partials().get(key);
                                               ffData.values() = weights_.weight(popI.first, popJ.first, ffData.xAxis());
                                               Data1DExportFileFormat exportFormat(
                                                   std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name()));
@@ -250,7 +110,7 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
         if (!result.value_or(true))
         {
             Messenger::error("Failed to save form factor data.");
-            return ExecutionResult::Failed;
+            return NodeConstants::ProcessResult::Failed;
         }
     }
 
@@ -258,57 +118,36 @@ Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve)
      * Transform UnweightedGR from underlying RDF data into WeightedGR.
      */
 
-    // Get summed unweighted g(r) from the specified RDFMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedGR", grModule->name()))
-    {
-        Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-        return ExecutionResult::Failed;
-    }
-    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", grModule->name());
-
-    // Create/retrieve PartialSet for summed weighted g(r)
-    auto [weightedGR, wGRstatus] =
-        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", name_, GenericItem::InRestartFileFlag);
-    if (wGRstatus == GenericItem::ItemStatus::Created)
-        weightedGR.initialise(unweightedSQ);
-
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights_, normaliseTo_);
+    calculateWeightedGR(*unweightedGR_, *weightedGR_, weights_, normaliseTo_);
 
     // Calculate representative total g(r) from FT of calculated F(Q)
-    auto &repGR =
-        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", name_, GenericItem::InRestartFileFlag);
-    repGR = weightedSQ.total();
+    representativeGR_ = weightedSQ_->total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
         ftQMax = referenceFTQMax_.value();
-    else if (referenceFQ_.hasFilename())
+    else if (referenceFQ_)
     {
         // Take FT max Q limit from reference data
-        auto &referenceData =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
-        ftQMax = referenceData.xAxis().back();
+        ftQMax = referenceFQ_->xAxis().back();
     }
     else
-        ftQMax = weightedSQ.total().xAxis().back();
-    Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
-    auto rMin = weightedGR.total().xAxis().front();
-    auto rMax = weightedGR.total().xAxis().back();
-    auto rho = grModule->effectiveDensity();
-    if (!rho)
-    {
-        Messenger::error("No effective density available from RDF module '{}'\n", grModule->name());
-        return ExecutionResult::Failed;
-    }
-    Fourier::sineFT(repGR, 1.0 / (2.0 * M_PI * M_PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
+        ftQMax = weightedSQ_->total().xAxis().back();
+
+    Filters::trim(representativeGR_, referenceFTQMin_.value_or(0.0), ftQMax);
+    auto rMin = weightedGR_->total().xAxis().front();
+    auto rMax = weightedGR_->total().xAxis().back();
+    auto rho = unweightedGR_->effectiveDensity();
+
+    Fourier::sineFT(representativeGR_, 1.0 / (2.0 * M_PI * M_PI * rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested
     if (saveRepresentativeGR_)
     {
-        Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name_));
-        if (!exportFormat.exportData(repGR))
-            return ExecutionResult::Failed;
+        Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name()));
+        if (!exportFormat.exportData(representativeGR_))
+            return NodeConstants::ProcessResult::Failed;
     }
 
-    return ExecutionResult::Success;
+    return NodeConstants::ProcessResult::Success;
 }
