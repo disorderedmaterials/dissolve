@@ -27,7 +27,5 @@ TEST(ForcefieldModel, Basic)
     auto node = dynamic_cast<ForcefieldNode*>(graph.node("Kulmala2010"));
     ASSERT_TRUE(node);
     EXPECT_EQ(node->forcefield().get(), ForcefieldLibrary::forcefield("Kulmala2010").get());
-    
-
 }
 } // namespace UnitTest
