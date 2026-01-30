@@ -16,7 +16,7 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
     setUpKeywords();
 }
 
-// Return enum option info for AveragingScheme
+// Return enum option info for CoordinateImportFileFormat
 EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFileFormat()
 {
     return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(

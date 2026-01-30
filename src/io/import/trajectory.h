@@ -24,6 +24,9 @@ class TrajectoryImportFileFormat : public FileAndFormat
                                         TrajectoryImportFormat format = TrajectoryImportFormat::XYZ);
     ~TrajectoryImportFileFormat() override = default;
 
+    // Return enum options for TrajectoryImportFileFormat
+    static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> trajectoryImportFileFormats();
+
     /*
      * Formats
      */
@@ -49,3 +52,6 @@ class TrajectoryImportFileFormat : public FileAndFormat
     // Import trajectory using supplied parser and current format
     bool importData(LineParser &parser, Configuration *cfg, std::optional<Matrix3> &unitCell);
 };
+
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>
+    getEnumOptions(TrajectoryImportFileFormat::TrajectoryImportFormat);

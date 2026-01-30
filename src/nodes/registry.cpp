@@ -2,10 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/registry.h"
-#include "base/enumOptions.h"
-#include "base/enumOptionsBase.h"
 #include "math/averaging.h"
-#include "math/windowFunction.h"
 #include "nodes/add.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/configuration.h"
@@ -17,6 +14,7 @@
 #include "nodes/forcefield.h"
 #include "nodes/gr/gr.h"
 #include "nodes/importConfigurationCoordinates.h"
+#include "nodes/importConfigurationTrajectory.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/iterableGraph.h"
@@ -61,6 +59,7 @@ void NodeRegistry::instantiateNodeProducers()
         {"Graph", makeDerivedNode<Graph>()},
         {"GR", makeDerivedNode<GRNode>()},
         {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
+        {"ImportConfigurationTrajectory", makeDerivedNode<ImportConfigurationTrajectoryNode>()},
         {"Insert", makeDerivedNode<InsertNode>()},
         {"Integrator", makeDerivedNode<Integrator1DNode>()},
         {"Iterator", makeDerivedNode<IterableGraph>()},

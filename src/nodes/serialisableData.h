@@ -176,7 +176,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     ValueChecker dataChecker_{[&]() { return true; }};
     // Resolver function for data
     using DataResolver = std::function<void(const std::map<std::string, const Species *> &)>;
-    DataResolver dataResolver_{[&]() { return; }};
+    DataResolver dataResolver_{[&](const std::map<std::string, const Species *> &reachableSpecies) {}};
 
     /*
      * Serialisation
