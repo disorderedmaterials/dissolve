@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "nodes/angle.h"
 #include "classes/speciesSites.h"
 #include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/angle.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -49,14 +49,16 @@ TEST(AngleNodeTest, Water)
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
-    // EXPECT_TRUE(DissolveSystemTest::checkData1D(
-    // angle->, "B-C RDF",
-    // {"dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", Data1DImportFileFormat::Data1DImportFormat::XY},
-    // 3.0e-3));
-    // EXPECT_TRUE(DissolveSystemTest::checkData1D("Angle(X-H...O)//Angle(ABC)",
-    // {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
-    // Data1DImportFileFormat::Data1DImportFormat::XY},
-    // 6.0e-5));
+
+    // ASSERT_EQ(angle->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        angle->rdfBC(), "B-C RDF",
+        {"dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", Data1DImportFileFormat::Data1DImportFormat::XY},
+        3.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(angle->angleABC(), "A-B-C angle",
+                                                {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
+                                                 Data1DImportFileFormat::Data1DImportFormat::XY},
+                                                6.0e-5));
 }
 
 } // namespace UnitTest
