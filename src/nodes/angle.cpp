@@ -241,3 +241,8 @@ NodeConstants::ProcessResult AngleNode::process()
 
     return NodeConstants::ProcessResult::Success;
 }
+
+// Temporary accessors to data for testing
+const Data1D &AngleNode::rdfBC() const { return rdfBC_; }
+
+const Data1D &AngleNode::angleABC() const { return angleABC_; }

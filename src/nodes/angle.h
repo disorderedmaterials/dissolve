@@ -79,4 +79,9 @@ class AngleNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Temporary accessors to data for testing
+    const Data1D &rdfBC() const;
+    const Data1D &angleABC() const;
 };
