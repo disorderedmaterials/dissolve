@@ -44,7 +44,7 @@ runs:
 
   - name: Install Python Dependencies
     shell: bash
-    run: pip3 install aqtinstall conan==1.*
+    run: pip3 install py7zr==1.1.0 aqtinstall conan
 
   #
   # Install Qt
