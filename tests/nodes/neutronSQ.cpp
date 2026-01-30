@@ -12,8 +12,9 @@ namespace UnitTest
 TEST(NeutronSQNodeTest, Water)
 {
     GraphTestData data;
-    createWater1000Graph(&data.graphRoot, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                                     CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    createWaterGraph(&data.graphRoot, 1000,
+                     CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                                CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Set GR options
     auto grNode = data.graphRoot.findNode("GR");
@@ -53,8 +54,9 @@ TEST(NeutronSQNodeTest, Water)
 TEST(NeutronSQNodeTest, WaterReferenceFT)
 {
     GraphTestData data;
-    createWater1000Graph(&data.graphRoot, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                                     CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    createWaterGraph(&data.graphRoot, 1000,
+                     CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                                CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Set GR options
     auto grNode = data.graphRoot.findNode("GR");
