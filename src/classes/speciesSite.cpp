@@ -82,6 +82,22 @@ bool SpeciesSite::hasAxes() const
  * Static Site Definition
  */
 
+// Set static atoms
+bool SpeciesSite::setStaticIndices(const std::vector<int> &originIndices, const std::vector<int> &xAxisIndices,
+                                   const std::vector<int> &yAxisIndices)
+{
+    for (auto o : originIndices)
+        if (!addStaticOriginAtom(o))
+            return false;
+    for (auto x : xAxisIndices)
+        if (!addStaticXAxisAtom(x))
+            return false;
+    for (auto y : yAxisIndices)
+        if (!addStaticYAxisAtom(y))
+            return false;
+    return true;
+}
+
 // Add origin atom
 bool SpeciesSite::addStaticOriginAtom(const SpeciesAtom *originAtom)
 {

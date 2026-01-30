@@ -94,6 +94,9 @@ class SpeciesSite : public Serialisable<CoreData &>
     std::vector<const SpeciesAtom *> staticYAxisAtoms_;
 
     public:
+    // Set static atoms
+    bool setStaticIndices(const std::vector<int> &originIndices, const std::vector<int> &xAxisIndices,
+                          const std::vector<int> &yAxisIndices);
     // Add origin atom
     bool addStaticOriginAtom(const SpeciesAtom *originAtom);
     // Add origin atom from index
