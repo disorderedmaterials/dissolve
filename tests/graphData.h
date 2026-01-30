@@ -5,6 +5,7 @@
 
 #include "classes/isotopologueSet.h"
 #include "data/structureFactors.h"
+#include "io/import/coordinates.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
 #include "nodes/configuration.h"

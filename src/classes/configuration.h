@@ -11,15 +11,8 @@
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
 #include "generator/generator.h"
-#include "io/import/coordinates.h"
-#include "items/list.h"
 #include "kernels/potentials/base.h"
-#include "math/data1D.h"
-#include "math/histogram1D.h"
-#include "math/interpolator.h"
-#include "math/vector3.h"
 #include "module/layer.h"
-#include <deque>
 #include <map>
 #include <memory>
 #include <vector>

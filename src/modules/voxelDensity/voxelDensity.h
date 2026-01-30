@@ -5,13 +5,10 @@
 
 #include "base/enumOptions.h"
 #include "classes/atom.h"
-#include "classes/box.h"
 #include "data/atomicMasses.h"
-#include "data/isotopes.h"
 #include "io/export/data1D.h"
 #include "module/module.h"
 #include "templates/array3D.h"
-#include <cmath>
 
 // Forward declarations
 class Configuration;

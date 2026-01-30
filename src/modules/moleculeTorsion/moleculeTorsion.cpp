@@ -5,13 +5,13 @@
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "classes/species.h"
-#include "io/export/data1D.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
 #include "keywords/integer.h"
 #include "keywords/species.h"
 #include "main/dissolve.h"
+#include "math/histogram1D.h"
 
 MoleculeTorsionModule::MoleculeTorsionModule() : Module(ModuleTypes::MoleculeTorsion)
 {
