@@ -70,6 +70,7 @@ add_library(
   speciesImproper.cpp
   speciesRing.cpp
   speciesSite.cpp
+  speciesSites.cpp
   speciesSiteInstance.cpp
   speciesTorsion.cpp
   torsionFunctions.cpp
@@ -125,6 +126,7 @@ add_library(
   speciesIntra.h
   speciesRing.h
   speciesSite.h
+  speciesSites.h
   speciesSiteInstance.h
   speciesTorsion.h
   torsionFunctions.h
