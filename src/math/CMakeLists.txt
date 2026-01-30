@@ -65,6 +65,8 @@ add_library(
   praxis.h
   range.cpp
   range.h
+  rangedVector3.cpp
+  rangedVector3.h
   regression.cpp
   regression.h
   sampledData1D.cpp
