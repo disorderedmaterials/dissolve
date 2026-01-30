@@ -11,10 +11,22 @@ TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename
                                                        TrajectoryImportFileFormat::TrajectoryImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
+    formats_ = trajectoryImportFileFormats();
+}
+
+// Return enum option info for TrajectoryImportFileFormat
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImportFileFormat::trajectoryImportFileFormats()
+{
+    return EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
         "TrajectoryImportFileFormat",
         {{TrajectoryImportFormat::DLPOLYFormatted, "hisf", "Formatted DL_POLY Trajectory (no header)"},
          {TrajectoryImportFormat::XYZ, "xyz", "XYZ Trajectory"}});
+}
+
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>
+getEnumOptions(TrajectoryImportFileFormat::TrajectoryImportFormat)
+{
+    return TrajectoryImportFileFormat::trajectoryImportFileFormats();
 }
 
 /*
