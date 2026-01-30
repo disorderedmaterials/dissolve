@@ -69,6 +69,16 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     auto iso = species->addIsotopologue("D2O");
     iso->setAtomTypeIsotope(hW.get(), Sears91::H_2);
 
+    // Create sites
+    species->addSite("Origin")->setStaticIndices({1}, {0, 2}, {2});
+    species->addSite("O")->setStaticIndices({1}, {}, {});
+    auto hSite = species->addSite("H");
+    hSite->setType(SpeciesSite::SiteType::Dynamic);
+    hSite->setDynamicElements({Elements::Element::H});
+    auto comSite = species->addSite("COM");
+    comSite->setStaticIndices({0, 1, 2}, {}, {});
+    comSite->setOriginMassWeighted(true);
+
     return speciesNodePtr;
 }
 
