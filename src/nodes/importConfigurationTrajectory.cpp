@@ -21,7 +21,10 @@ ImportConfigurationTrajectoryNode::ImportConfigurationTrajectoryNode(Graph *pare
 
 std::string_view ImportConfigurationTrajectoryNode::type() const { return "ImportTrajectory"; }
 
-std::string_view ImportConfigurationTrajectoryNode::summary() const { return "Import Trajectory from a file."; }
+std::string_view ImportConfigurationTrajectoryNode::summary() const
+{
+    return "Import configuration coordinates from sequential frames of a trajectory.";
+}
 
 NodeConstants::ProcessResult ImportConfigurationTrajectoryNode::process()
 {
