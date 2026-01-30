@@ -12,6 +12,7 @@ benchmark/1.8.4
 [options]
 pugixml/*:header_only=False
 antlr4-cppruntime/*:shared=True
+hwloc/*:shared=True
 
 [layout]
 cmake_layout
