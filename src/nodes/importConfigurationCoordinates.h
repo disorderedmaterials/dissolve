@@ -5,8 +5,8 @@
 
 #include "io/import/coordinates.h"
 #include "nodes/node.h"
-#include <memory>
 
+// Forward Declarations
 class Configuration;
 
 class ImportConfigurationCoordinatesNode : public Node
