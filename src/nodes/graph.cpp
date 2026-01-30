@@ -57,9 +57,6 @@ NodeConstants::ProcessResult Graph::process()
                     break;
                 case (NodeConstants::ProcessResult::Unchanged):
                     break;
-                case (NodeConstants::ProcessResult::InputsNotSatisfied):
-                    /* This should never happen? */
-                    break;
             }
         }
 

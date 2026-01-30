@@ -10,8 +10,7 @@ enum class ProcessResult
 {
     Failed,
     Unchanged,
-    Success,
-    InputsNotSatisfied
+    Success
 };
 // Invalid version index
 static constexpr int InvalidVersion = -1;
