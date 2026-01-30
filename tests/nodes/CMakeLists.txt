@@ -1,3 +1,4 @@
+dissolve_add_test(SRC angle.cpp)
 dissolve_add_test(SRC atomicMC.cpp)
 dissolve_add_test(SRC broadening.cpp)
 dissolve_add_test(SRC flow.cpp)
