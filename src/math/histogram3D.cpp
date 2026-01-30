@@ -13,6 +13,12 @@ Histogram3D::Histogram3D()
     clear();
 }
 
+Histogram3D::Histogram3D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange, const Vector3 &zMinMaxRange)
+{
+    initialise(xMinMaxRange.x, xMinMaxRange.y, xMinMaxRange.z, yMinMaxRange.x, yMinMaxRange.y, yMinMaxRange.z, zMinMaxRange.x,
+               zMinMaxRange.y, zMinMaxRange.z);
+}
+
 Histogram3D::Histogram3D(const Histogram3D &source) { (*this) = source; }
 
 // Clear Data

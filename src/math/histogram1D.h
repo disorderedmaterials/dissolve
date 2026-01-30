@@ -11,8 +11,9 @@ class Histogram1D : public Serialisable<>
 {
     public:
     Histogram1D();
-    ~Histogram1D() = default;
+    Histogram1D(const Vector3 &minMaxRange);
     Histogram1D(const Histogram1D &source);
+    ~Histogram1D() = default;
     // Clear data
     void clear();
 

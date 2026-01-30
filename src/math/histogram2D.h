@@ -12,8 +12,9 @@ class Histogram2D
 {
     public:
     Histogram2D();
-    ~Histogram2D() = default;
+    Histogram2D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange);
     Histogram2D(const Histogram2D &source);
+    ~Histogram2D() = default;
     // Clear data
     void clear();
 

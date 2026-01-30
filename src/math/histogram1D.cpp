@@ -14,6 +14,8 @@ Histogram1D::Histogram1D()
     clear();
 }
 
+Histogram1D::Histogram1D(const Vector3 &minMaxRange) { initialise(minMaxRange.x, minMaxRange.y, minMaxRange.z); }
+
 Histogram1D::Histogram1D(const Histogram1D &source) { (*this) = source; }
 
 // Clear Data
