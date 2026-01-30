@@ -53,6 +53,15 @@ std::optional<Vector3> RangedVector3::min() const { return min_; }
 // Return optional max
 std::optional<Vector3> RangedVector3::max() const { return max_; }
 
+// Return x component of vector
+double RangedVector3::x() const { return value_.x; }
+
+// Return y component of vector
+double RangedVector3::y() const { return value_.y; }
+
+// Return z component of vector
+double RangedVector3::z() const { return value_.z; }
+
 // Return current value
 Vector3 RangedVector3::value() const { return value_; }
 

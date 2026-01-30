@@ -45,6 +45,12 @@ class RangedVector3 : public Serialisable<>
     std::optional<Vector3> min() const;
     // Return optional max
     std::optional<Vector3> max() const;
+    // Return x component of vector
+    double x() const;
+    // Return y component of vector
+    double y() const;
+    // Return z component of vector
+    double z() const;
     // Return current value
     Vector3 value() const;
 
