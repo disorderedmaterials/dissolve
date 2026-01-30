@@ -6,8 +6,9 @@
 RangedVector3::RangedVector3(const Vector3 &value) : value_(value) {}
 
 RangedVector3::RangedVector3(const Vector3 &value, std::optional<Vector3> min, std::optional<Vector3> max)
-    : value_(value), min_(min), max_(max)
+    : min_(min), max_(max)
 {
+    set(value);
 }
 
 RangedVector3::operator Vector3() const { return value_; }
