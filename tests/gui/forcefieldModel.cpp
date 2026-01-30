@@ -24,7 +24,7 @@ TEST(ForcefieldModel, Basic)
     model.create(0, 0);
 
     ASSERT_EQ(graph.nodes().size(), 3);
-    auto node = dynamic_cast<ForcefieldNode *>(graph.node("Kulmala2010"));
+    auto node = dynamic_cast<ForcefieldNode *>(graph.findNode("Kulmala2010"));
     ASSERT_TRUE(node);
     EXPECT_EQ(node->forcefield().get(), ForcefieldLibrary::forcefield("Kulmala2010").get());
 }
