@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importConfigurationCoordinates.h"
-#include "nodes/dissolve.h"
 
 ImportConfigurationCoordinatesNode::ImportConfigurationCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
 {

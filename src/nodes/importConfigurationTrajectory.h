@@ -3,17 +3,17 @@
 
 #pragma once
 
-#include "io/import/coordinates.h"
+#include "io/import/trajectory.h"
 #include "nodes/node.h"
 
 // Forward Declarations
 class Configuration;
 
-class ImportConfigurationCoordinatesNode : public Node
+class ImportConfigurationTrajectoryNode : public Node
 {
     public:
-    ImportConfigurationCoordinatesNode(Graph *parentGraph);
-    ~ImportConfigurationCoordinatesNode() override = default;
+    ImportConfigurationTrajectoryNode(Graph *parentGraph);
+    ~ImportConfigurationTrajectoryNode() override = default;
 
     /*
      * Definition
@@ -29,8 +29,10 @@ class ImportConfigurationCoordinatesNode : public Node
     // File path
     std::string filePath_;
     // File format
-    CoordinateImportFileFormat::CoordinateImportFormat format_{CoordinateImportFileFormat::CoordinateImportFormat::XYZ};
-    // Configuration
+    TrajectoryImportFileFormat::TrajectoryImportFormat format_{TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ};
+    // Last read file position (as int)
+    int filePosition_;
+    // Target configuration
     Configuration *configuration_;
 
     /*
