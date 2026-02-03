@@ -82,6 +82,7 @@ TEST_F(IterableGraphTest, NoInternalConnections)
     auto i = dynamic_cast<NumberNode *>(root->createNode("Number", "i"));
     auto a = dynamic_cast<AddNode *>(loop->createNode("Add", "a"));
     auto b = dynamic_cast<AddNode *>(loop->createNode("Add", "b"));
+    auto c = dynamic_cast<AddNode *>(loop->createNode("Add", "c"));
     ASSERT_TRUE(loop->setOption<Number>("N", 1));
     EXPECT_TRUE(root->addEdge({"i", "X", "Iterator", "I"}));
 
@@ -93,11 +94,12 @@ TEST_F(IterableGraphTest, NoInternalConnections)
     i->setOption<Number>("X", 1);
     a->setInput<Number>("Y", 1);
     b->setInput<Number>("Y", 1);
+    c->setInput<Number>("Y", 1);
     EXPECT_TRUE(loop->addEdge({"Inputs", "I", "a", "X"}));
     EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
     auto res1 = a->getOutputValue<Number>("Result").asInteger();
     EXPECT_TRUE(a->versionIndex() == 0);
-    ASSERT_EQ(res1, 2); // Should be 2
+    ASSERT_EQ(res1, 2);
 
     /*
      * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3
@@ -109,6 +111,25 @@ TEST_F(IterableGraphTest, NoInternalConnections)
     EXPECT_TRUE(a->versionIndex() == 1);
     EXPECT_TRUE(b->versionIndex() == 0);
     ASSERT_EQ(res2, 3);
+
+    /*
+     * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3 -> itC, 3 + 1 = 4
+     */
+    EXPECT_TRUE(loop->addEdge({"b", "Result", "c", "X"}));
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    auto res3 = c->getOutputValue<Number>("Result").asInteger();
+    EXPECT_TRUE(a->versionIndex() == 2);
+    EXPECT_TRUE(b->versionIndex() == 1);
+    EXPECT_TRUE(c->versionIndex() == 0);
+    ASSERT_EQ(res3, 4);
+
+    // Run 100 times
+    ASSERT_TRUE(loop->setOption<Number>("N", 100));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(a->getOutputValue<Number>("Result").asInteger(), 2);
+    ASSERT_EQ(b->getOutputValue<Number>("Result").asInteger(), 3);
+    ASSERT_EQ(c->getOutputValue<Number>("Result").asInteger(), 4);
 }
 
 TEST_F(IterableGraphTest, NoRun)
