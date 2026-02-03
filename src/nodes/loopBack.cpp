@@ -46,6 +46,32 @@ NodeConstants::ProcessResult LoopBacksNode::run()
     return status;
 }
 
+// Get the outgoing edges from this node
+Node::EdgeMap &LoopBacksNode::outputEdges()
+{
+    auto loop = static_cast<IterableGraph *>(parentGraph_);
+
+    for (const auto &edge : loop->loopEdges())
+    {
+        auto output = edge->sourceOutput().name();
+        auto it = loopEdges_.find(output);
+
+        std::vector<Edge *> edges;
+        if (it != loopEdges_.end())
+            edges = it->second;
+
+        edges.push_back(edge.get());
+
+        loopEdges_.insert_or_assign(output, edges);
+    }
+
+    std::vector<Edge *> edges;
+    for (const auto &edge : loop->loopEdges())
+        edges.push_back(edge.get());
+
+    return loopEdges_;
+}
+
 // Flag that the node data needs to be updated
 void LoopBacksNode::setUpdateRequired()
 {
