@@ -73,6 +73,44 @@ class IterableGraphTest : public ::testing::Test
     IterableGraph *loop_{nullptr};
 };
 
+TEST_F(IterableGraphTest, NoInternalConnections)
+{
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+    auto root = std::make_unique<DissolveGraph>(dissolve);
+    auto loop = dynamic_cast<IterableGraph *>(root->createNode("Iterator", "Iterator"));
+    auto i = dynamic_cast<NumberNode *>(root->createNode("Number", "i"));
+    auto a = dynamic_cast<AddNode *>(loop->createNode("Add", "a"));
+    auto b = dynamic_cast<AddNode *>(loop->createNode("Add", "b"));
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_TRUE(root->addEdge({"i", "X", "Iterator", "I"}));
+
+    /*
+     * i, 1 -> itA, 1 + 1 = 2
+     */
+
+    // This should actually result in the sole internal node not being run
+    i->setOption<Number>("X", 1);
+    a->setInput<Number>("Y", 1);
+    b->setInput<Number>("Y", 1);
+    EXPECT_TRUE(loop->addEdge({"Inputs", "I", "a", "X"}));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    auto res1 = a->getOutputValue<Number>("Result").asInteger();
+    EXPECT_TRUE(a->versionIndex() == 0);
+    ASSERT_EQ(res1, 2); // Should be 2
+
+    /*
+     * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3
+     */
+    EXPECT_TRUE(loop->addEdge({"a", "Result", "b", "X"}));
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    auto res2 = b->getOutputValue<Number>("Result").asInteger();
+    EXPECT_TRUE(a->versionIndex() == 1);
+    EXPECT_TRUE(b->versionIndex() == 0);
+    ASSERT_EQ(res2, 3);
+}
+
 TEST_F(IterableGraphTest, NoRun)
 {
     createGraph();
