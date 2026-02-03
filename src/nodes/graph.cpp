@@ -46,7 +46,7 @@ NodeConstants::ProcessResult Graph::process()
     // Check each node for output edges - any that have zero output edges need to be run()
     auto terminalNodeResult = NodeConstants::ProcessResult::Unchanged;
     for (auto &&[nodeName, node] : nodes_)
-        if (!node->outputEdges().empty())
+        if (node->outputEdges().empty())
         {
             switch (node->run())
             {
