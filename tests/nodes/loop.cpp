@@ -73,7 +73,7 @@ class IterableGraphTest : public ::testing::Test
     IterableGraph *loop_{nullptr};
 };
 
-TEST_F(IterableGraphTest, NoInternalConnections)
+TEST_F(IterableGraphTest, BasicNonLoopingSeries)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
@@ -99,7 +99,11 @@ TEST_F(IterableGraphTest, NoInternalConnections)
     EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
     auto res1 = a->getOutputValue<Number>("Result").asInteger();
     EXPECT_TRUE(a->versionIndex() == 0);
+    EXPECT_TRUE(loop->versionIndex() == 0);
     ASSERT_EQ(res1, 2);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
 
     /*
      * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3
@@ -110,7 +114,11 @@ TEST_F(IterableGraphTest, NoInternalConnections)
     auto res2 = b->getOutputValue<Number>("Result").asInteger();
     EXPECT_TRUE(a->versionIndex() == 1);
     EXPECT_TRUE(b->versionIndex() == 0);
+    EXPECT_TRUE(loop->versionIndex() == 1);
     ASSERT_EQ(res2, 3);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
 
     /*
      * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3 -> itC, 3 + 1 = 4
@@ -122,7 +130,11 @@ TEST_F(IterableGraphTest, NoInternalConnections)
     EXPECT_TRUE(a->versionIndex() == 2);
     EXPECT_TRUE(b->versionIndex() == 1);
     EXPECT_TRUE(c->versionIndex() == 0);
+    EXPECT_TRUE(loop->versionIndex() == 2);
     ASSERT_EQ(res3, 4);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
 
     // Run 100 times
     ASSERT_TRUE(loop->setOption<Number>("N", 100));
@@ -130,6 +142,13 @@ TEST_F(IterableGraphTest, NoInternalConnections)
     ASSERT_EQ(a->getOutputValue<Number>("Result").asInteger(), 2);
     ASSERT_EQ(b->getOutputValue<Number>("Result").asInteger(), 3);
     ASSERT_EQ(c->getOutputValue<Number>("Result").asInteger(), 4);
+    EXPECT_TRUE(a->versionIndex() == 3);
+    EXPECT_TRUE(b->versionIndex() == 2);
+    EXPECT_TRUE(c->versionIndex() == 1);
+    EXPECT_TRUE(loop->versionIndex() == 3);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
 }
 
 TEST_F(IterableGraphTest, NoRun)
