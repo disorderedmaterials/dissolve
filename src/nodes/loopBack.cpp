@@ -65,10 +65,6 @@ Node::EdgeMap &LoopBacksNode::outputEdges()
         loopEdges_.insert_or_assign(output, edges);
     }
 
-    std::vector<Edge *> edges;
-    for (const auto &edge : loop->loopEdges())
-        edges.push_back(edge.get());
-
     return loopEdges_;
 }
 
