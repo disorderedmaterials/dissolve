@@ -64,14 +64,14 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
     auto &interData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//PairPotential", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
     interData.addPoint(dissolve.iteration(), ppEnergy.total());
-    auto &intraData = dissolve.processingModuleData().realise<Data1D>(
-        std::format("{}//Bound", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
+    auto &intraData = dissolve.processingModuleData().realise<Data1D>(std::format("{}//Bound", targetConfiguration_->name()),
+                                                                      name(), GenericItem::InRestartFileFlag);
     intraData.addPoint(dissolve.iteration(), boundEnergy);
     auto &bondData = dissolve.processingModuleData().realise<Data1D>(std::format("{}//Bond", targetConfiguration_->name()),
                                                                      name(), GenericItem::InRestartFileFlag);
     bondData.addPoint(dissolve.iteration(), bondEnergy);
-    auto &angleData = dissolve.processingModuleData().realise<Data1D>(
-        std::format("{}//Angle", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
+    auto &angleData = dissolve.processingModuleData().realise<Data1D>(std::format("{}//Angle", targetConfiguration_->name()),
+                                                                      name(), GenericItem::InRestartFileFlag);
     angleData.addPoint(dissolve.iteration(), angleEnergy);
     auto &torsionData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Torsion", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);

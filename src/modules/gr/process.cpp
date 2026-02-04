@@ -75,8 +75,8 @@ Module::ExecutionResult GRModule::process(Dissolve &dissolve)
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{originalgr.fingerprint()};
 
-            Averaging::average<PartialSet>(dissolve.processingModuleData(), std::format("{}//OriginalGR", cfg->name()),
-                                           name_, averagingLength_.value(), averagingScheme_);
+            Averaging::average<PartialSet>(dissolve.processingModuleData(), std::format("{}//OriginalGR", cfg->name()), name_,
+                                           averagingLength_.value(), averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);
@@ -93,8 +93,8 @@ Module::ExecutionResult GRModule::process(Dissolve &dissolve)
         }
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
-        auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
-            std::format("{}//UnweightedGR", cfg->name()), name_, GenericItem::InRestartFileFlag);
+        auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(std::format("{}//UnweightedGR", cfg->name()),
+                                                                                 name_, GenericItem::InRestartFileFlag);
         calculateUnweightedGR(cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_.value_or(0));
 
         // Save data if requested

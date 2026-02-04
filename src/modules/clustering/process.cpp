@@ -266,8 +266,8 @@ Module::ExecutionResult ClusteringModule::process(Dissolve &dissolve)
 
     // Figure out how many molecules of interest are in the configuration
     auto interestingMols = a_->parent() == b_->parent() ? targetConfiguration_->speciesPopulations().value(a_->parent())
-      : targetConfiguration_->speciesPopulations().value(a_->parent()) +
-      targetConfiguration_->speciesPopulations().value(b_->parent());
+                                                        : targetConfiguration_->speciesPopulations().value(a_->parent()) +
+                                                              targetConfiguration_->speciesPopulations().value(b_->parent());
 
     // Find the number of molecules not in clusters
     auto totalMolsClustered = 0;
