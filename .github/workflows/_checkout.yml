@@ -21,7 +21,7 @@ on:
         default: "1.2.5"
       conanfile:
         type: string
-        default: conanfile.txt
+        default: conanfile.py
       publishType:
         default: 'none'
         type: string
