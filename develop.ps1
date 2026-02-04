@@ -285,7 +285,7 @@ catch
     # Move freetype if error on rename
     $fromFreetype = "freetype-$freetypeVersion"
     $moveFreetype = (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
-    if (-not (TestPath $moveFreetype))
+    if (-not (Test-Path $moveFreetype))
     {
         New-Item -Path $moveFreetype -ItemType Directory | Out-Null
     }
