@@ -64,6 +64,12 @@ class IterableGraph : public Graph
     // Find loop edge between nodes
     LoopEdge *findLoopEdge(const EdgeDefinition &definition) const;
 
+    private:
+    // Add edge to node map
+    Edge *addOutputEdge(std::string_view nodeName, Edge *edge);
+    // Remove edge from node map
+    Edge *removeOutputEdge(std::string_view nodeName, Edge *edge);
+
     /*
      * Processing & Validity
      */
