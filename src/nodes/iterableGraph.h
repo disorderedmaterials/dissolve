@@ -66,9 +66,9 @@ class IterableGraph : public Graph
 
     private:
     // Add edge to node map
-    Edge *addOutputEdge(std::string_view nodeName, Edge *edge);
+    Edge *addOutputLoopEdge(std::string_view nodeName, Edge *edge);
     // Remove edge from node map
-    Edge *removeOutputEdge(std::string_view nodeName, Edge *edge);
+    Edge *removeOutputLoopEdge(std::string_view nodeName, Edge *edge);
 
     /*
      * Processing & Validity
