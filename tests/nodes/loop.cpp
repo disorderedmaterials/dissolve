@@ -121,7 +121,7 @@ TEST_F(IterableGraphTest, BasicNonLoopingSeries)
     EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
 
     /*
-     * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3 -> itC, 3 + 1 = 4
+     * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3 -> itC, 1 + 3 = 4
      */
     EXPECT_TRUE(loop->addEdge({"b", "Result", "c", "X"}));
     ASSERT_TRUE(loop->setOption<Number>("N", 1));
@@ -146,6 +146,27 @@ TEST_F(IterableGraphTest, BasicNonLoopingSeries)
     EXPECT_TRUE(b->versionIndex() == 2);
     EXPECT_TRUE(c->versionIndex() == 1);
     EXPECT_TRUE(loop->versionIndex() == 3);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
+
+    // Upstream node change
+    i->setOption<Number>("X", 2);
+
+    /*
+     * i, 2 -> itA, 1 + 2 = 3 -> itB, 1 + 3 = 4 -> itC, 1 + 4 = 5
+     */
+
+    // Run again
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(a->getOutputValue<Number>("Result").asInteger(), 3);
+    ASSERT_EQ(b->getOutputValue<Number>("Result").asInteger(), 4);
+    ASSERT_EQ(c->getOutputValue<Number>("Result").asInteger(), 5);
+    EXPECT_TRUE(a->versionIndex() == 4);
+    EXPECT_TRUE(b->versionIndex() == 3);
+    EXPECT_TRUE(c->versionIndex() == 2);
+    EXPECT_TRUE(loop->versionIndex() == 4);
 
     // No loopbacks occur
     EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
