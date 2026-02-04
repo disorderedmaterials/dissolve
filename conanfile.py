@@ -16,6 +16,7 @@ class DissolveRecipe(ConanFile):
     def configure(self):
         self.options["puxixml"].header_only = False
         self.options["antlr4-cppruntime"].shared = True
+        self.options["hwloc"].shared = True
 
     def build(self):
         cmake = CMake(self)

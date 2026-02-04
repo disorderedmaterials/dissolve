@@ -151,9 +151,7 @@ runs:
     if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      conan profile new default --detect --force
-      conan profile update settings.compiler="Visual Studio" default
-      conan profile update settings.compiler.version=17 default
+      conan profile detect
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -170,11 +168,7 @@ runs:
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
 
-      # Set conan cache location
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-
       # Build
-      conan install . --deployer=direct_deploy --build=missing -s compiler.cppstd=17
       mkdir -p build && cd build
       TEMPD=$(mktemp -d)
       mkdir -p $TEMPD/bin
@@ -184,7 +178,6 @@ runs:
       ninja install
       mkdir -p install
       cp -r $TEMPD/* install/
-      mv ../direct_deploy ./
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}

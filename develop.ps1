@@ -275,7 +275,7 @@ Write-Host "Unpacking freetype... " @info_colors
 tar -zxvf $freetypeOutput -C $dependencies
 
 Remove-Item -Path $freetypeOutput -Force
-Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo
+# Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo
 try
 {
     Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo -ErrorAction Stop
@@ -556,7 +556,6 @@ foreach ($preset in $presets) {
     if (-not $setSystemEnvVars)
     {
         $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
-        $preset | Add-Member -MemberType NoteProperty -Name environment -Value $environment
     }
 
     # Set toolset
