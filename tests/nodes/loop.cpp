@@ -73,6 +73,105 @@ class IterableGraphTest : public ::testing::Test
     IterableGraph *loop_{nullptr};
 };
 
+TEST_F(IterableGraphTest, BasicNonLoopingSeries)
+{
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+    auto root = std::make_unique<DissolveGraph>(dissolve);
+    auto loop = dynamic_cast<IterableGraph *>(root->createNode("Iterator", "Iterator"));
+    auto i = dynamic_cast<NumberNode *>(root->createNode("Number", "i"));
+    auto a = dynamic_cast<AddNode *>(loop->createNode("Add", "a"));
+    auto b = dynamic_cast<AddNode *>(loop->createNode("Add", "b"));
+    auto c = dynamic_cast<AddNode *>(loop->createNode("Add", "c"));
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_TRUE(root->addEdge({"i", "X", "Iterator", "I"}));
+
+    /*
+     * i, 1 -> itA, 1 + 1 = 2
+     */
+
+    // This should actually result in the sole internal node not being run
+    i->setOption<Number>("X", 1);
+    a->setInput<Number>("Y", 1);
+    b->setInput<Number>("Y", 1);
+    c->setInput<Number>("Y", 1);
+    EXPECT_TRUE(loop->addEdge({"Inputs", "I", "a", "X"}));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    auto res1 = a->getOutputValue<Number>("Result").asInteger();
+    EXPECT_TRUE(a->versionIndex() == 0);
+    EXPECT_TRUE(loop->versionIndex() == 0);
+    ASSERT_EQ(res1, 2);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
+
+    /*
+     * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3
+     */
+    EXPECT_TRUE(loop->addEdge({"a", "Result", "b", "X"}));
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    auto res2 = b->getOutputValue<Number>("Result").asInteger();
+    EXPECT_TRUE(a->versionIndex() == 1);
+    EXPECT_TRUE(b->versionIndex() == 0);
+    EXPECT_TRUE(loop->versionIndex() == 1);
+    ASSERT_EQ(res2, 3);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
+
+    /*
+     * i, 1 -> itA, 1 + 1 = 2 -> itB, 1 + 2 = 3 -> itC, 1 + 3 = 4
+     */
+    EXPECT_TRUE(loop->addEdge({"b", "Result", "c", "X"}));
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    auto res3 = c->getOutputValue<Number>("Result").asInteger();
+    EXPECT_TRUE(a->versionIndex() == 2);
+    EXPECT_TRUE(b->versionIndex() == 1);
+    EXPECT_TRUE(c->versionIndex() == 0);
+    EXPECT_TRUE(loop->versionIndex() == 2);
+    ASSERT_EQ(res3, 4);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
+
+    // Run 100 times
+    ASSERT_TRUE(loop->setOption<Number>("N", 100));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(a->getOutputValue<Number>("Result").asInteger(), 2);
+    ASSERT_EQ(b->getOutputValue<Number>("Result").asInteger(), 3);
+    ASSERT_EQ(c->getOutputValue<Number>("Result").asInteger(), 4);
+    EXPECT_TRUE(a->versionIndex() == 3);
+    EXPECT_TRUE(b->versionIndex() == 2);
+    EXPECT_TRUE(c->versionIndex() == 1);
+    EXPECT_TRUE(loop->versionIndex() == 3);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
+
+    // Upstream node change
+    i->setOption<Number>("X", 2);
+
+    /*
+     * i, 2 -> itA, 1 + 2 = 3 -> itB, 1 + 3 = 4 -> itC, 1 + 4 = 5
+     */
+
+    // Run again
+    ASSERT_TRUE(loop->setOption<Number>("N", 1));
+    EXPECT_EQ(loop->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(a->getOutputValue<Number>("Result").asInteger(), 3);
+    ASSERT_EQ(b->getOutputValue<Number>("Result").asInteger(), 4);
+    ASSERT_EQ(c->getOutputValue<Number>("Result").asInteger(), 5);
+    EXPECT_TRUE(a->versionIndex() == 4);
+    EXPECT_TRUE(b->versionIndex() == 3);
+    EXPECT_TRUE(c->versionIndex() == 2);
+    EXPECT_TRUE(loop->versionIndex() == 4);
+
+    // No loopbacks occur
+    EXPECT_TRUE(loop->loopBacks()->versionIndex() == -1);
+}
+
 TEST_F(IterableGraphTest, NoRun)
 {
     createGraph();

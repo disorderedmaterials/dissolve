@@ -32,6 +32,12 @@ class LoopBacksNode : public Node
     // Run the node, retrieving dependent inputs as necessary
     NodeConstants::ProcessResult run() override;
 
+    // Get the outgoing edges from this node
+    Node::EdgeMap &outputEdges() override;
+
+    private:
+    Node::EdgeMap loopEdges_;
+
     public:
     // Flag that the node data needs to be updated
     void setUpdateRequired() override;

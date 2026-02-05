@@ -46,6 +46,9 @@ NodeConstants::ProcessResult LoopBacksNode::run()
     return status;
 }
 
+// Get the outgoing edges from this node
+Node::EdgeMap &LoopBacksNode::outputEdges() { return loopEdges_; }
+
 // Flag that the node data needs to be updated
 void LoopBacksNode::setUpdateRequired()
 {

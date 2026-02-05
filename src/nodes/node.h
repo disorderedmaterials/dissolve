@@ -292,7 +292,7 @@ class Node : public Serialisable<>
     // Get the incoming edges to this node
     EdgeMap &inputEdges();
     // Get the outgoing edges from this node
-    EdgeMap &outputEdges();
+    virtual EdgeMap &outputEdges();
     // Mark incoming edges to the specified parameter as needing a re-pull
     void markIncomingEdgesForPull(const ParameterBase *toParameter) const;
     // Returns the node parent graph
