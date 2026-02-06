@@ -30,6 +30,7 @@ class DissolveRecipe(ConanFile):
         self.requires("toml11/3.7.0")
         self.requires("antlr4-cppruntime/4.13.1")
         self.requires("gsl/2.7.1")
+        self.requires("hwloc/2.12.2")
 
         if self.settings.os == "Linux" or (self.options.msvc_dev and self.settings.build_type == "Debug"):
             self.requires("gtest/1.17.0")

@@ -420,6 +420,7 @@ os=Windows
 
 [options]
 Dissolve/*:msvc_dev=True
+hwloc/*:shared=True
 "@
 
 Set-Content -Path (Join-Path -Path $conanProfiles -ChildPath "default") -Value $profileContent -Encoding UTF8
