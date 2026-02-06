@@ -89,13 +89,11 @@ function Find-And-Remove {
         [string]$relativePath = ""
     )
 
-    if (Test-Path -Path $relativePath)
-    {
+    if (Test-Path -Path $relativePath) {
         Write-Host "Existing instance of object $relativePath found, cleaning up... " @info_colors
         Remove-Item $relativePath -Recurse -Force
     }
-    else
-    {
+    else {
         Write-Host "Existing instance of object $relativePath NOT found, could not clean up." @warn_colors
     }
 }
@@ -119,8 +117,7 @@ choco install -y cmake --version=3.30.1 --force
 
 # Ensure CMake version is 3.30.1
 $cmakeVersion = "$(cmake --version)"
-if (-not ($cmakeVersion -like "*3.30.1*"))
-{
+if (-not ($cmakeVersion -like "*3.30.1*")) {
     choco install -y cmake.install --version=3.30.1 --force --installargs "ADD_CMAKE_TO_PATH=User"
 }
 
@@ -128,26 +125,23 @@ if (-not ($cmakeVersion -like "*3.30.1*"))
 try {
     & "git" --version
     Write-Output "Found system Git..."
-} catch {
+}
+catch {
     Write-Output "Could not find system Git - installing with Chocolatey..."
     choco install -y git
 }
 
 # Find python, install if not found
-if (-not [string]::IsNullOrEmpty($pythonPath))
-{
+if (-not [string]::IsNullOrEmpty($pythonPath)) {
     Write-Output "Using Python with path $pythonPath..." @info_colors
     $python = $pythonPath
 }
-else
-{
-    if (-not [string]::IsNullOrEmpty($forcePythonVersion))
-    {
+else {
+    if (-not [string]::IsNullOrEmpty($forcePythonVersion)) {
         Write-Output "Installing requested Python version $forcePythonVersion..." @info_colors
         choco install -y python --version=$forcePythonVersion --force
     }
-    else
-    {
+    else {
         try {
             & "python" --version
             Write-Output "Found system Python..." @info_colors
@@ -157,7 +151,8 @@ else
                 Write-Output "System Python is version $(python --version) and it is recommended to be version == 3.12 - installing with Chocolatey..." @info_colors
                 choco install -y python --version=3.12.0
             }
-        } catch {
+        }
+        catch {
             Write-Output "Could not find system Python - installing with Chocolatey..." @info_colors
             choco install -y python --version=3.12.0
         }
@@ -173,13 +168,11 @@ Write-Host "Creating a local Python virtual environment with $(& $python --versi
 & $python -m venv msvc-env
 
 Write-Host "Checking Python compiler type... " @info_colors
-if ($(& $python -c "import sys; print(sys.version)") -match "MSC v\.\d+")
-{ 
+if ($(& $python -c "import sys; print(sys.version)") -match "MSC v\.\d+") { 
     Write-Host " ...Python compiler type evaluated to MSC" @info_colors
     $pythonEnvSourceDir = "Scripts"
 }
-else 
-{ 
+else { 
     Write-Host " ...Python compiler type is not MSC" @info_colors
     $pythonEnvSourceDir = "bin"
 }
@@ -191,12 +184,11 @@ Write-Host "Activating Python virtual environment... " @info_colors
 
 Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
-& $python -m pip install aqtinstall conan==1.*
+& $python -m pip install py7zr==1.1.0 aqtinstall conan==$conanVersion.*
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
-if ($setSystemEnvVars)
-{
+if ($setSystemEnvVars) {
     $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
     [Environment]::SetEnvironmentVariable("PATH", "$pythonEnvPath;$systemPath", [EnvironmentVariableTarget]::Machine)
@@ -206,8 +198,7 @@ if ($setSystemEnvVars)
 # Install Qt6, or find existing system Qt6 installation
 $qt6CMakeDir = ""
 
-if (-not [string]::IsNullOrEmpty($qtVersion))
-{
+if (-not [string]::IsNullOrEmpty($qtVersion)) {
     $qtInstallationDir = Join-Path -Path $dependencies -ChildPath "qt"
     New-Item -ItemType Directory -Path $qtInstallationDir -ErrorAction SilentlyContinue
 
@@ -219,8 +210,7 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     $qt6BinDir = Join-Path -Path $qt6Dir -ChildPath "bin"
     $qt6CMakeDir = Join-Path -Path $qt6Dir -ChildPath "lib\cmake"
     
-    if ($setSystemEnvVars)
-    {
+    if ($setSystemEnvVars) {
         Write-Host "Locating system PATH... " @info_colors
         $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
 
@@ -228,28 +218,27 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
         if ($systemPath -notmatch [regex]::Escape($qt6BinDir)) {
             [Environment]::SetEnvironmentVariable("PATH", "$qt6BinDir;$systemPath", [EnvironmentVariableTarget]::Machine)
             Write-Host "Qt6 binary directory path added to system PATH." @info_colors
-        } else {
+        }
+        else {
             Write-Host "Did not write to PATH: Qt6 binary directory path already exists in system PATH." @info_colors
         }
     }
-} else {
+}
+else {
     # We attempt to use an existing installation of Qt
     Write-Host "Attempting to use existing system installation of Qt6... " @info_colors
 
-    if (-not [string]::IsNullOrEmpty($systemQt))
-    {
-        $qt6Version = Get-ChildItem -Path $systemQt -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+$'} | Select-Object -First 1
-        $qt6ToolChain = Get-ChildItem -Path (Join-Path -Path $systemQt -ChildPath $qt6Version) -Directory | Where-Object { $_.Name -match '^msvc\d{4}_x64$'} | Select-Object -ExpandProperty Name
+    if (-not [string]::IsNullOrEmpty($systemQt)) {
+        $qt6Version = Get-ChildItem -Path $systemQt -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+$' } | Select-Object -First 1
+        $qt6ToolChain = Get-ChildItem -Path (Join-Path -Path $systemQt -ChildPath $qt6Version) -Directory | Where-Object { $_.Name -match '^msvc\d{4}_x64$' } | Select-Object -ExpandProperty Name
         $qt6BinDir = "$systemQt\$($qt6Version.Name)\$qt6ToolChain\bin"
         $qt6CMakeDir = "$systemQt\$($qt6Version.Name)\$qt6ToolChain\lib\cmake"
 
-        if (-not (Test-Path -Path $qt6CMakeDir -PathType Container))
-        {
+        if (-not (Test-Path -Path $qt6CMakeDir -PathType Container)) {
             Write-Host "Attempted to find the directory $qt6CMakeDir. Could NOT find a valid Qt6 installation." @warn_colors
         }
     }
-    else
-    {
+    else {
         Write-Host "Could NOT find a Qt6 installation. No path to Qt6 was supplied." @warn_colors
     }
 }
@@ -285,8 +274,8 @@ cmake --build . --target install --config $build
 $freetypeLib = "$freetypeInstall\lib"
 $freetypeBin = "$freetypeInstall\bin"
 
-$freetypeLibPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeLib"
-$freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeBin"
+$freetypeLibPath = Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeLib"
+$freetypeBinPath = Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeBin"
 
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
@@ -295,8 +284,8 @@ if (($setSystemEnvVars) -and ($lib -notlike "*$freetypeInstall*")) {
     [System.Environment]::SetEnvironmentVariable("LIB", "$freetypeLibPath;$freetypeBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
 }
 
-$freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeRepo"
-$freetype2IncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeInstall\include\freetype2"
+$freetypeIncludePath = Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeRepo"
+$freetype2IncludePath = Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeInstall\include\freetype2"
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
@@ -345,8 +334,8 @@ cmake --build . --target install --config $build
 $ftglLib = "$ftglInstall\lib"
 $ftglBin = "$ftglInstall\bin"
 
-$ftglLibPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglLib"
-$ftglBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglBin"
+$ftglLibPath = Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglLib"
+$ftglBinPath = Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglBin"
 
 $lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
 
@@ -356,7 +345,7 @@ if ($lib -notlike "*$ftglInstall*") {
 }
 
 $ftglInclude = "$ftglRepo\src"
-$ftglIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglInclude"
+$ftglIncludePath = Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglInclude"
 
 $include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
 
@@ -406,12 +395,12 @@ try {
     Write-Output "Found conan version $conanVersion..."
 
     $conan = "conan"
-} catch {
+}
+catch {
     Write-Output "Could not find conan, adding Python scripts to path..." @info_colors
     $scripts = & $python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
 
-    if ($setSystemEnvVars)
-    {
+    if ($setSystemEnvVars) {
         $systemPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::Machine)
         [Environment]::SetEnvironmentVariable("PATH", "$scripts;$systemPath", [EnvironmentVariableTarget]::Machine)
         Write-Host "Python scripts path at location $scripts added to system PATH." @info_colors
@@ -427,71 +416,66 @@ try {
 # Generate Cmake user presets JSON for MSVC Cmake configurations
 $out = Join-Path -Path $projectDir -ChildPath "build"
 $cacheVariables = @{
-    CMAKE_C_COMPILER = "cl"
-    CMAKE_CXX_COMPILER = "cl"
-    FTGL_LIBRARY = "$ftglLibPath\ftgl$binSuffix.lib"
-    FTGL_INCLUDE_DIR = $ftglIncludePath
-    FREETYPE_LIBRARY = "$freetypeLibPath\freetype$binSuffix.lib"
+    CMAKE_C_COMPILER      = "cl"
+    CMAKE_CXX_COMPILER    = "cl"
+    FTGL_LIBRARY          = "$ftglLibPath\ftgl$binSuffix.lib"
+    FTGL_INCLUDE_DIR      = $ftglIncludePath
+    FREETYPE_LIBRARY      = "$freetypeLibPath\freetype$binSuffix.lib"
     FREETYPE_INCLUDE_DIRS = "$freetypeIncludePath;$freetype2IncludePath"
-    ANTLR_EXECUTABLE = $antlrExePath
-    Java_JAVA_EXECUTABLE = $javaExePath
-    MULTI_THREADING = $threading
-    MSVC_DEV = "ON"
-    CMAKE_PREFIX_PATH = "$qt6CMakeDir"
+    ANTLR_EXECUTABLE      = $antlrExePath
+    Java_JAVA_EXECUTABLE  = $javaExePath
+    MULTI_THREADING       = $threading
+    MSVC_DEV              = "ON"
+    CMAKE_PREFIX_PATH     = "$qt6CMakeDir"
 }
 
 # For MSVC version != v143 latest, and Visual Studio generator specified, set toolset with cache variable
-if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022"))
-{
+if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Visual Studio 17 2022")) {
     $cacheVariables = $cacheVariables + @{
         CMAKE_GENERATOR_TOOLSET = "version=$msvcVersion"
     }
 }
 
 # For MSVC version != v143 latest, and Ninja generator specified, set toolset at preset level
-if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Ninja"))
-{
+if ((-not [string]::IsNullOrEmpty($msvcVersion)) -and ($generator -eq "Ninja")) {
     $toolset = @{
-        value = "version=$msvcVersion"
+        value    = "version=$msvcVersion"
         strategy = "external"
     }
 }
 
 $cmakeUserPresets = [PSCustomObject]@{
-    version = 3
+    version              = 3
     cmakeMinimumRequired = @{
         major = 3
         minor = 21
     }
-    configurePresets = @()
+    configurePresets     = @()
 }
 
 $presets = @(
     [PSCustomObject]@{
-        name = "CLI-$build-MSVC"
+        name        = "CLI-$build-MSVC"
         displayName = "CLI $build Build"
         description = "The preset for a CLI $build build on MSVC"
-        generator = $generator
-        inherits = @("CLI-$build")
+        generator   = $generator
+        inherits    = @("CLI-$build")
     },
     [PSCustomObject]@{
-        name = "GUI-$build-MSVC"
+        name        = "GUI-$build-MSVC"
         displayName = "GUI $build Build"
         description = "The preset for a GUI $build build on MSVC"
-        generator = $generator
-        inherits = @("GUI-$build")
+        generator   = $generator
+        inherits    = @("GUI-$build")
     }
 )
 
 # Set environment variables
-if (-not $setSystemEnvVars)
-{
-    if ([string]::IsNullOrEmpty($scripts))
-    {
+if (-not $setSystemEnvVars) {
+    if ([string]::IsNullOrEmpty($scripts)) {
         $scripts = ''
     }
-    else
-    {
+    else {
         $scripts = "$scripts;"
     }
 
@@ -503,18 +487,16 @@ if (-not $setSystemEnvVars)
 foreach ($preset in $presets) {
     # Set CMake cache variables
     $preset | Add-Member -MemberType NoteProperty -Name cacheVariables -Value ($cacheVariables + @{
-        CONFIG = "$($preset.name)-x64"
-    })
+            CONFIG = "$($preset.name)-x64"
+        })
 
     # Set environment variables
-    if (-not $setSystemEnvVars)
-    {
+    if (-not $setSystemEnvVars) {
         $preset | Add-Member -MemberType NoteProperty -Name environment -Value ($environment)
     }
 
     # Set toolset
-    if ($toolset)
-    {
+    if ($toolset) {
         $preset | Add-Member -MemberType NoteProperty -Name toolset -Value ($toolset)
     }
 
