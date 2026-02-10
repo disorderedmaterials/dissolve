@@ -9,6 +9,12 @@ if(CONAN)
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/refs/heads/develop2/conan_provider.cmake"
          "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/conan_provider.cmake"
     )
+  else()
+    if(MSVC_DEV)
+        message("Conan provider .cmake file already exists.
+For MSVC developers, an existing conan_provider.cmake may interfere with CMake configuration for the project, when conan has not already successfully installed packages.
+Try deleting this file and reconfiguring if problems are encountered.")
+    endif(MSVC_DEV)
   endif()
 
   # Add local dirs to cmake Module search path
