@@ -12,7 +12,7 @@ AngleNode::AngleNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Target configuration for the calculation", configuration_)
-        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+        ->setFlags({ParameterBase::Required});
 
     // Outputs
     addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
