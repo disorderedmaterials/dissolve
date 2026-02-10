@@ -89,7 +89,7 @@ NodeConstants::ProcessResult AngleNode::process()
     dAngleHistogramBC_->zeroBins();
     dDAngleHistogramABC_->zeroBins();
 
-    auto nAAvailable = a.sites().size(), nACumulative = a.sites().size();
+    auto nACumulative = a.sites().size();
     auto nASelections = 1;
     auto nBAvailable = 0l, nBCumulative = 0l, nBSelections = 0l;
     auto nCAvailable = 0l, nCCumulative = 0l, nCSelections = 0l;
