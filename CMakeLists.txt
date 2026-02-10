@@ -11,9 +11,11 @@ if(CONAN)
     )
   else()
     if(MSVC_DEV)
-        message("Conan provider .cmake file already exists.
+        message(
+          "Conan provider .cmake file already exists.
 For MSVC developers, an existing conan_provider.cmake may interfere with CMake configuration for the project, when conan has not already successfully installed packages.
-Try deleting this file and reconfiguring if problems are encountered.")
+Try deleting this file and reconfiguring if problems are encountered."
+      )
     endif(MSVC_DEV)
   endif()
 
