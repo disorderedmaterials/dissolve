@@ -113,16 +113,16 @@ TEST_F(EPSRModuleTest, Water3NX)
 
     // Test total neutron-weighted F(r)
     EXPECT_TRUE(systemTest.checkData1D(
-        "EPSR01//SimulatedFR//D2O",
-        {"epsr25/water1000-neutron-xray/water.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
+        "D2O//RepresentativeTotalGR",
+        {"epsr25/water1000-neutron-xray/water.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 4.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
-        "EPSR01//SimulatedFR//H2O",
-        {"epsr25/water1000-neutron-xray/water.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 8.0e-3));
+        "H2O//RepresentativeTotalGR",
+        {"epsr25/water1000-neutron-xray/water.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 3.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
-        "EPSR01//SimulatedFR//HDO",
-        {"epsr25/water1000-neutron-xray/water.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-2));
+        "HDO//RepresentativeTotalGR",
+        {"epsr25/water1000-neutron-xray/water.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
-        "EPSR01//SimulatedFR//H2Ox",
+        "H2Ox//RepresentativeTotalGR",
         {"epsr25/water1000-neutron-xray/water.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 2.0e-2));
 
     // Estimated Partials
@@ -144,13 +144,13 @@ TEST_F(EPSRModuleTest, Benzene)
 
     // Test total neutron-weighted F(r)
     EXPECT_TRUE(systemTest.checkData1D(
-        "EPSR01//SimulatedFR//C6H6",
+        "C6H6//RepresentativeTotalGR",
         {"epsr25/benzene200-neutron/benzene.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.5e-3));
     EXPECT_TRUE(systemTest.checkData1D(
-        "EPSR01//SimulatedFR//C6D6",
+        "C6D6//RepresentativeTotalGR",
         {"epsr25/benzene200-neutron/benzene.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 1.7e-2));
     EXPECT_TRUE(systemTest.checkData1D(
-        "EPSR01//SimulatedFR//5050",
+        "5050//RepresentativeTotalGR",
         {"epsr25/benzene200-neutron/benzene.EPSR.x01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.1e-2));
 
     // Test partial S(Q) derived from experiment via matrix inversion
