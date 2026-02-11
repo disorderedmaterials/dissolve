@@ -23,8 +23,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
 
     // Set up species
     auto *benzene = coreData.copySpecies(&benzeneSpecies());
-    benzene->setForcefield(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"));
-    benzene->applyForcefieldTerms(coreData);
+    benzene->applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"), coreData);
 
     // Set up site
     auto site = SpeciesSite(benzene, "COG", SpeciesSite::SiteType::Fragment);

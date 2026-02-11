@@ -1,28 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "data/ff/library.h"
+#include "io/import/species.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
-#include <vector>
 
 namespace UnitTest
 {
-class SPCFwForcefieldTest : public ::testing::Test
+TEST(SPCFwForcefieldTest, Water)
 {
-    protected:
+    Species species("Water");
+    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
+    SpeciesImportFileFormat importer("xyz/water.xyz");
+    ASSERT_TRUE(importer.importData(&species));
+    species.recalculateIntermolecularTerms(1.2);
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("SPC/Fw"), removeMeCoreData_));
 
-    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-spcfw.txt")); }
-};
+    ASSERT_EQ(species.nBonds(), 2);
+    ASSERT_EQ(species.nAngles(), 1);
+    ASSERT_EQ(species.nTorsions(), 0);
+    ASSERT_EQ(species.nImpropers(), 0);
 
-TEST_F(SPCFwForcefieldTest, Water)
-{
-    auto *sp = systemTest.coreData().findSpecies("Water");
-    ASSERT_TRUE(sp);
-    systemTest.checkSpeciesAtomType(sp, 0, "OW");
-    systemTest.checkSpeciesAtomType(sp, 1, "HW");
-    systemTest.checkSpeciesAtomType(sp, 2, "HW");
-    systemTest.checkSpeciesIntramolecular(sp, {0, 1}, {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"});
-    systemTest.checkSpeciesIntramolecular(sp, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"});
+    systemTest.checkSpeciesAtomType(&species, 0, "OW");
+    systemTest.checkSpeciesAtomType(&species, 1, "HW");
+    systemTest.checkSpeciesAtomType(&species, 2, "HW");
+    systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"});
+    systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"});
 }
 }; // namespace UnitTest

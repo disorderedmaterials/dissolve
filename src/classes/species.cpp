@@ -7,7 +7,7 @@
 #include "data/ff/library.h"
 #include "data/isotopes.h"
 
-Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false), forcefield_(nullptr)
+Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false)
 {
     box_ = std::make_unique<SingleImageBox>();
 
@@ -205,13 +205,54 @@ void Species::print() const
 // Return version
 int Species::version() const { return version_; }
 
+/*
+ * Forcefield
+ */
+
+// Apply terms from specified Forcefield
+bool Species::applyForcefieldTerms(std::shared_ptr<Forcefield> ff, CoreData &coreData)
+{
+    if (!ff)
+        return Messenger::error("No forcefield supplied!\n");
+
+    // Assign atom types to the species
+    if (!ff->assignAtomTypes(this, coreData, Forcefield::TypeAll, false).empty())
+        return false;
+
+    // Assign intramolecular terms
+    if (!ff->assignIntramolecular(this))
+        return false;
+
+    return true;
+}
+
+// Clear forcefield terms
+void Species::clearForcefieldTerms(bool nullifyAtomTypes)
+{
+    if (nullifyAtomTypes)
+        clearAtomTypes();
+
+    for (auto &b : bonds_)
+        b.setInteractionFormAndParameters(BondFunctions::Form::None, std::vector<double>());
+
+    for (auto &a : angles_)
+        a.setInteractionFormAndParameters(AngleFunctions::Form::None, std::vector<double>());
+
+    for (auto &t : torsions_)
+        t.setInteractionFormAndParameters(TorsionFunctions::Form::None, std::vector<double>());
+
+    impropers_.clear();
+}
+
+/*
+ * Serialisation
+ */
+
 // Express as a serialisable value
 void Species::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &result = target[tag];
     result["name"] = name_;
-    if (forcefield_ != nullptr)
-        result["forcefield"] = forcefield_->name().data();
 
     Serialisable::fromVector<>(atoms_, "atoms", result);
     Serialisable::fromVector<>(bonds_, "bonds", result);
@@ -227,8 +268,6 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     Serialisable::toVector(node, "atoms", [this, &coreData](const SerialisedValue &atom)
                            { atoms_.emplace_back().deserialise(atom, coreData); });
-    if (node.contains("forcefield"))
-        forcefield_ = ForcefieldLibrary::forcefield(toml::find<std::string>(node, "forcefield"));
 
     Serialisable::toVector(
         node, "bonds",

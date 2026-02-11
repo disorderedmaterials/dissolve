@@ -290,24 +290,12 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     for (auto &i : atoms_)
                         setAtomCoordinates(&i, box_->fold(i.r()));
                 }
-                // Apply Forcefield?
-                if (forcefield_ && !applyForcefieldTerms(coreData))
-                {
-                    errorsEncountered = true;
-                    break;
-                }
                 updateIsotopologues();
                 Messenger::print("Found end of Species '{}'.\n", name());
                 blockDone = true;
                 break;
             case (Species::SpeciesKeyword::Forcefield):
-                forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1));
-                if (!forcefield_)
-                {
-                    Messenger::error("No forcefield named '{}' exists.\n", parser.argsv(1));
-                    errorsEncountered = true;
-                    break;
-                }
+                Messenger::warn("The 'Forcefield' keyword has been removed.\n");
                 break;
             case (Species::SpeciesKeyword::Improper):
                 // Create a new improper definition
@@ -732,16 +720,6 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         if (!parser.writeLineF("{}{}  {}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::BoxLengths),
                                box_->axisLengths().x, box_->axisLengths().y, box_->axisLengths().z))
-            return false;
-    }
-
-    // Forcefield
-    if (forcefield_)
-    {
-        if (!parser.writeLineF("\n{}# Forcefield\n", newPrefix))
-            return false;
-        if (!parser.writeLineF("{}{}  '{}'\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Forcefield),
-                               forcefield_->name()))
             return false;
     }
 

@@ -1,60 +1,75 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "data/ff/library.h"
+#include "io/import/species.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
-#include <vector>
 
 namespace UnitTest
 {
-class OPLSAA2005AromaticsForcefieldTest : public ::testing::Test
+TEST(OPLSAA2005AromaticsForcefieldTest, Benzene)
 {
-    protected:
+    Species species("Benzene");
+    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
+    SpeciesImportFileFormat importer("xyz/benzene.xyz");
+    ASSERT_TRUE(importer.importData(&species));
+    species.recalculateIntermolecularTerms();
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"), removeMeCoreData_));
 
-    void SetUp() override { ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/ff-oplsaa2005-aromatics.txt")); }
-};
+    ASSERT_EQ(species.nBonds(), 12);
+    ASSERT_EQ(species.nAngles(), 18);
+    ASSERT_EQ(species.nTorsions(), 24);
+    ASSERT_EQ(species.nImpropers(), 6);
 
-TEST_F(OPLSAA2005AromaticsForcefieldTest, Benzene)
-{
-    auto *sp = systemTest.coreData().findSpecies("Benzene");
-    ASSERT_TRUE(sp);
-    systemTest.checkSpeciesAtomType(sp, 0, "CA");
-    systemTest.checkSpeciesAtomType(sp, 1, "HA");
-    systemTest.checkSpeciesIntramolecular(sp, {0, 1}, {BondFunctions::Form::Harmonic, "k=3071.06 eq=1.08"});
-    systemTest.checkSpeciesIntramolecular(sp, {0, 2}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
-    systemTest.checkSpeciesIntramolecular(sp, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=292.88 eq=120"});
-    systemTest.checkSpeciesIntramolecular(sp, {0, 2, 4}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
-    systemTest.checkSpeciesIntramolecular(sp, {1, 0, 2, 3}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
-    systemTest.checkSpeciesIntramolecular(sp, {1, 0, 2, 4}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
-    systemTest.checkSpeciesIntramolecular(sp, {10, 0, 2, 4}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
+    systemTest.checkSpeciesAtomType(&species, 0, "CA");
+    systemTest.checkSpeciesAtomType(&species, 1, "HA");
+    systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=3071.06 eq=1.08"});
+    systemTest.checkSpeciesIntramolecular(&species, {0, 2}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
+    systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=292.88 eq=120"});
+    systemTest.checkSpeciesIntramolecular(&species, {0, 2, 4}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
+    systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2, 3}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
+    systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2, 4}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
+    systemTest.checkSpeciesIntramolecular(&species, {10, 0, 2, 4}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
 }
 
-TEST_F(OPLSAA2005AromaticsForcefieldTest, Naphthalene)
+TEST(OPLSAA2005AromaticsForcefieldTest, Naphthalene)
 {
-    auto *sp = systemTest.coreData().findSpecies("Naphthalene");
-    ASSERT_TRUE(sp);
-    systemTest.checkSpeciesAtomType(sp, 0, "CA");
-    systemTest.checkSpeciesAtomType(sp, 1, "CA");
-    systemTest.checkSpeciesAtomType(sp, 2, "CNap");
-    systemTest.checkSpeciesAtomType(sp, 3, "CA");
-    systemTest.checkSpeciesAtomType(sp, 4, "CA");
-    systemTest.checkSpeciesAtomType(sp, 5, "CA");
-    systemTest.checkSpeciesAtomType(sp, 6, "CA");
-    systemTest.checkSpeciesAtomType(sp, 7, "CNap");
-    systemTest.checkSpeciesAtomType(sp, 8, "CA");
-    systemTest.checkSpeciesAtomType(sp, 9, "CA");
-    systemTest.checkSpeciesAtomType(sp, 10, "HA");
-    systemTest.checkSpeciesAtomType(sp, 11, "HA");
-    systemTest.checkSpeciesAtomType(sp, 12, "HA");
-    systemTest.checkSpeciesAtomType(sp, 13, "HA");
-    systemTest.checkSpeciesAtomType(sp, 14, "HA");
-    systemTest.checkSpeciesAtomType(sp, 15, "HA");
-    systemTest.checkSpeciesAtomType(sp, 16, "HA");
-    systemTest.checkSpeciesAtomType(sp, 17, "HA");
-    systemTest.checkSpeciesIntramolecular(sp, {2, 7}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
-    systemTest.checkSpeciesIntramolecular(sp, {1, 2, 7}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
-    systemTest.checkSpeciesIntramolecular(sp, {1, 2, 3}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
-    systemTest.checkSpeciesIntramolecular(sp, {8, 0, 1, 2}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
+    Species species("Naphthalene");
+    CoreData removeMeCoreData_;
+    DissolveSystemTest systemTest;
+    SpeciesImportFileFormat importer("xyz/naphthalene.xyz");
+    ASSERT_TRUE(importer.importData(&species));
+    species.recalculateIntermolecularTerms();
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"), removeMeCoreData_));
+
+    ASSERT_EQ(species.nBonds(), 19);
+    ASSERT_EQ(species.nAngles(), 30);
+    ASSERT_EQ(species.nTorsions(), 44);
+    ASSERT_EQ(species.nImpropers(), 10);
+
+    systemTest.checkSpeciesAtomType(&species, 0, "CA");
+    systemTest.checkSpeciesAtomType(&species, 1, "CA");
+    systemTest.checkSpeciesAtomType(&species, 2, "CNap");
+    systemTest.checkSpeciesAtomType(&species, 3, "CA");
+    systemTest.checkSpeciesAtomType(&species, 4, "CA");
+    systemTest.checkSpeciesAtomType(&species, 5, "CA");
+    systemTest.checkSpeciesAtomType(&species, 6, "CA");
+    systemTest.checkSpeciesAtomType(&species, 7, "CNap");
+    systemTest.checkSpeciesAtomType(&species, 8, "CA");
+    systemTest.checkSpeciesAtomType(&species, 9, "CA");
+    systemTest.checkSpeciesAtomType(&species, 10, "HA");
+    systemTest.checkSpeciesAtomType(&species, 11, "HA");
+    systemTest.checkSpeciesAtomType(&species, 12, "HA");
+    systemTest.checkSpeciesAtomType(&species, 13, "HA");
+    systemTest.checkSpeciesAtomType(&species, 14, "HA");
+    systemTest.checkSpeciesAtomType(&species, 15, "HA");
+    systemTest.checkSpeciesAtomType(&species, 16, "HA");
+    systemTest.checkSpeciesAtomType(&species, 17, "HA");
+    systemTest.checkSpeciesIntramolecular(&species, {2, 7}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
+    systemTest.checkSpeciesIntramolecular(&species, {1, 2, 7}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
+    systemTest.checkSpeciesIntramolecular(&species, {1, 2, 3}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
+    systemTest.checkSpeciesIntramolecular(&species, {8, 0, 1, 2}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
 }
 }; // namespace UnitTest
