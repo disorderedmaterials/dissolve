@@ -209,7 +209,7 @@ Write-Host "Activating Python virtual environment... " @info_colors
 
 Write-Host "Installing Python packages... " @info_colors
 & $python -m pip install --upgrade pip
-& $python -m pip install py7zr==1.1.0 aqtinstall conan
+& $python -m pip install py7zr==1.1.0 aqtinstall conan cmake-format
 
 $pythonEnvPath = Join-Path -Path $projectDir -ChildPath "msvc-env\$pythonEnvSourceDir"
 
