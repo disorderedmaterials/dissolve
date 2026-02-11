@@ -174,10 +174,9 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 graph_->createRenderable<RenderableData1D>(std::format("{}//ReferenceDataFT", targetModule->name()),
                                                            std::format("{} (Exp)", targetModule->name()), "Exp");
 
-                // Simulated F(r) (from FT of the calculated F(Q))
-                graph_->createRenderable<RenderableData1D>(
-                    std::format("{}//SimulatedFR//{}", module_->name(), targetModule->name()),
-                    std::format("{} (Calc)", targetModule->name()), "Calc");
+                // Representative F(r) (from FT of the calculated F(Q))
+                graph_->createRenderable<RenderableData1D>(std::format("{}//RepresentativeTotalGR", targetModule->name()),
+                                                           std::format("{} (Calc)", targetModule->name()), "Calc");
             }
         }
         else if (ui_.PotentialsButton->isChecked())
