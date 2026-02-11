@@ -89,7 +89,20 @@ Dialog {
                         onClicked: sp.atoms.addAtom(elementField.currentText, xField.text, yField.text, zField.text, chargeField.text)
                     }
                 }
+                HorizontalHeaderView {
+                    id: atomTableHeader
+
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: contentHeight
+                    Layout.preferredWidth: contentWidth
+                    clip: true
+                    enabled: !sp.atoms
+                    model: getHeaderStringArray(sp.atoms)
+                    syncView: atomTable
+                }
                 TableView {
+                    id: atomTable
+
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     clip: true
@@ -142,7 +155,20 @@ Dialog {
                             onClicked: sp.addBond(bondI.text, bondJ.text)
                         }
                     }
+                    HorizontalHeaderView {
+                        id: bondTableHeader
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: contentHeight
+                        Layout.preferredWidth: contentWidth
+                        clip: true
+                        enabled: !sp.bonds
+                        model: getHeaderStringArray(sp.bonds)
+                        syncView: bondTable
+                    }
                     TableView {
+                        id: bondTable
+
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
@@ -197,7 +223,20 @@ Dialog {
                             onClicked: sp.addAngle(angleI.text, angleJ.text, angleK.text)
                         }
                     }
+                    HorizontalHeaderView {
+                        id: angleTableHeader
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: contentHeight
+                        Layout.preferredWidth: contentWidth
+                        clip: true
+                        enabled: !sp.angles
+                        model: getHeaderStringArray(sp.angles)
+                        syncView: angleTable
+                    }
                     TableView {
+                        id: angleTable
+
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
@@ -261,7 +300,20 @@ Dialog {
                             onClicked: sp.addTorsion(torsionI.text, torsionJ.text, torsionK.text, torsionL.text)
                         }
                     }
+                    HorizontalHeaderView {
+                        id: torsionTableHeader
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: contentHeight
+                        Layout.preferredWidth: contentWidth
+                        clip: true
+                        enabled: !sp.torsions
+                        model: getHeaderStringArray(sp.torsions)
+                        syncView: torsionTable
+                    }
                     TableView {
+                        id: torsionTable
+
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
@@ -325,7 +377,20 @@ Dialog {
                             onClicked: sp.addImproper(improperI.text, improperJ.text, improperK.text, improperL.text)
                         }
                     }
+                    HorizontalHeaderView {
+                        id: improperTableHeader
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: contentHeight
+                        Layout.preferredWidth: contentWidth
+                        clip: true
+                        enabled: !sp.impropers
+                        model: getHeaderStringArray(sp.impropers)
+                        syncView: improperTable
+                    }
                     TableView {
+                        id: improperTable
+
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         implicitHeight: 200
