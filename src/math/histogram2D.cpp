@@ -13,6 +13,11 @@ Histogram2D::Histogram2D()
     clear();
 }
 
+Histogram2D::Histogram2D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange)
+{
+    initialise(xMinMaxRange.x, xMinMaxRange.y, xMinMaxRange.z, yMinMaxRange.x, yMinMaxRange.y, yMinMaxRange.z);
+}
+
 Histogram2D::Histogram2D(const Histogram2D &source) { (*this) = source; }
 
 // Clear Data

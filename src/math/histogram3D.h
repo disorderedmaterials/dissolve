@@ -12,8 +12,9 @@ class Histogram3D
 {
     public:
     Histogram3D();
-    ~Histogram3D() = default;
+    Histogram3D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange, const Vector3 &zMinMaxRange);
     Histogram3D(const Histogram3D &source);
+    ~Histogram3D() = default;
     // Clear data
     void clear();
 
