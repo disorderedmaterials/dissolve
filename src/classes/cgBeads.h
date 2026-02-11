@@ -1,7 +1,7 @@
 
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors#pragma once 
-#pragma one 
+#pragma once 
 
 #include <vector>
 
@@ -109,6 +109,16 @@ class CGBead
     {
         return atomTypes_;
     }
+
+    const std::size_t nAtoms() const 
+    { 
+        std::size_t natoms = 0;
+        for (const auto atm : atomTypes_)
+        {
+            natoms += atm.population();
+        } 
+        return natoms;
+    }
     
     const Data1D &formFactor() const 
     {
@@ -214,16 +224,6 @@ class CGBeadMap
                 bead.deuterate(isoFraction);
             }
         }
-
-        // Calculate the average number of atoms per bead 
-        for (CGBead &bead : beads_) 
-        {
-            for (const AtomTypeData &atm : bead.atomTypes()) 
-            {
-                averageNumberOfAtoms_ += atm.population();
-            }
-        }
-        averageNumberOfAtoms_ /= nBeads();
     }
 
     const std::size_t nBeads() const { return beads_.size(); }
@@ -252,11 +252,6 @@ class CGBeadMap
         );
     }
 
-    double average_number_atoms_per_bead()
-    {
-        return averageNumberOfAtoms_;
-    }
-
     void deuterate(const double fraction)
     {
         dissolve::for_each(
@@ -280,6 +275,5 @@ class CGBeadMap
     }
 
     private:
-    double averageNumberOfAtoms_ = 0.0;
     std::vector<CGBead> beads_;
 };

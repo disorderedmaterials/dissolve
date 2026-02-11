@@ -57,6 +57,13 @@ bool CGNeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Part
 bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, CGNeutronWeights &weights,
                                             StructureFactors::NormalisationType normalisation)
 {
+    // Calculate average number of atoms per bead 
+    double av_noa_bead = 0.0;
+    for (int i = 0; i < weights.atomTypes().nItems(); i++)
+    {
+        av_noa_bead += weights.atomTypes()[i].fraction() * weights.beadMap_[i].nAtoms();
+    }
+
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
     {
@@ -69,8 +76,8 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
             std::cout << "Weights (" << typeI << ", " << typeJ << ") --> ";
             std::cout << "Bound: " << boundWeight << "    UnBound: " << weight << std::endl;
 
-            weight /= weights.beadMap_.average_number_atoms_per_bead();
-            boundWeight /= weights.beadMap_.average_number_atoms_per_bead();
+            weight /= av_noa_bead;
+            boundWeight /= av_noa_bead;
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedsq.boundPartial(typeI, typeJ).copyArrays(unweightedsq.boundPartial(typeI, typeJ));
@@ -87,19 +94,6 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
             // Full partial (sum of bound and unbound terms)
             weightedsq.partial(typeI, typeJ).copyArrays(weightedsq.unboundPartial(typeI, typeJ));
             weightedsq.partial(typeI, typeJ) += weightedsq.boundPartial(typeI, typeJ);
-
-            // std::cout << "Un-Weighted Partial (bound): ";
-            // std::cout << std::accumulate(
-            //     unweightedsq.boundPartial(typeI, typeJ).values().begin(),
-            //     unweightedsq.boundPartial(typeI, typeJ).values().end(), 
-            //     0.0 
-            // ) << std::endl;
-            // std::cout << "Un-Weighted Partial (unbound): ";
-            // std::cout << std::accumulate(
-            //     unweightedsq.unboundPartial(typeI, typeJ).values().begin(),
-            //     unweightedsq.unboundPartial(typeI, typeJ).values().end(), 
-            //     0.0 
-            // ) << std::endl;
         }
     }
 
@@ -109,6 +103,8 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
     {
         weightedsq.total() += weights.beadMap_[typeI].intraBeadSQ();
     }
+    std::cout << "Total Weighted SQ: ";
+    std::cout << std::accumulate(weightedsq.total().values().begin(), weightedsq.total().values().end(), 0.0) << std::endl;
 
     // Apply normalisation to all totals
     if (normalisation != StructureFactors::NoNormalisation)
@@ -120,25 +116,6 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
         weightedsq.boundTotal() /= norm;
         weightedsq.unboundTotal() /= norm;
     }
-
-    // std::cout << "\nweighted SQ - total: ";
-    // std::cout << std::accumulate(
-    //     weightedsq.total().values().begin(),
-    //     weightedsq.total().values().end(), 
-    //     0.0 
-    // ) << std::endl;
-    // std::cout << "weighted SQ - bound: ";
-    // std::cout << std::accumulate(
-    //     weightedsq.boundTotal().values().begin(),
-    //     weightedsq.boundTotal().values().end(), 
-    //     0.0 
-    // ) << std::endl;
-    // std::cout << "weighted SQ - unbound: ";
-    // std::cout << std::accumulate(
-    //     weightedsq.unboundTotal().values().begin(),
-    //     weightedsq.unboundTotal().values().end(), 
-    //     0.0 
-    // ) << std::endl;
 
     return true;
 }
