@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(PCL2019AnionsForcefieldTest, beti)
+TEST(PCL2019AnionsAssignmentTest, beti)
 {
     Species species("Hydronium");
     CoreData removeMeCoreData_;
@@ -47,7 +47,7 @@ TEST(PCL2019AnionsForcefieldTest, beti)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, BF4)
+TEST(PCL2019AnionsAssignmentTest, BF4)
 {
     Species species("BF4");
     CoreData removeMeCoreData_;
@@ -70,7 +70,7 @@ TEST(PCL2019AnionsForcefieldTest, BF4)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, c1SO3)
+TEST(PCL2019AnionsAssignmentTest, c1SO3)
 {
     Species species("C1SO3");
     CoreData removeMeCoreData_;
@@ -96,7 +96,7 @@ TEST(PCL2019AnionsForcefieldTest, c1SO3)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, c1SO4)
+TEST(PCL2019AnionsAssignmentTest, c1SO4)
 {
     Species species("C1SO4");
     CoreData removeMeCoreData_;
@@ -123,7 +123,7 @@ TEST(PCL2019AnionsForcefieldTest, c1SO4)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, c2SO3)
+TEST(PCL2019AnionsAssignmentTest, c2SO3)
 {
     Species species("C2SO3");
     CoreData removeMeCoreData_;
@@ -152,7 +152,7 @@ TEST(PCL2019AnionsForcefieldTest, c2SO3)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, c2SO4)
+TEST(PCL2019AnionsAssignmentTest, c2SO4)
 {
     Species species("C2SO4");
     CoreData removeMeCoreData_;
@@ -182,7 +182,7 @@ TEST(PCL2019AnionsForcefieldTest, c2SO4)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, c4fc1fsi)
+TEST(PCL2019AnionsAssignmentTest, c4fc1fsi)
 {
     Species species("C4FC1FSI");
     CoreData removeMeCoreData_;
@@ -224,7 +224,7 @@ TEST(PCL2019AnionsForcefieldTest, c4fc1fsi)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, CCN3)
+TEST(PCL2019AnionsAssignmentTest, CCN3)
 {
     Species species("CCN3");
     CoreData removeMeCoreData_;
@@ -247,7 +247,7 @@ TEST(PCL2019AnionsForcefieldTest, CCN3)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, dca)
+TEST(PCL2019AnionsAssignmentTest, dca)
 {
     Species species("DCA");
     CoreData removeMeCoreData_;
@@ -270,7 +270,7 @@ TEST(PCL2019AnionsForcefieldTest, dca)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, fsi)
+TEST(PCL2019AnionsAssignmentTest, fsi)
 {
     Species species("FSI");
     CoreData removeMeCoreData_;
@@ -297,7 +297,7 @@ TEST(PCL2019AnionsForcefieldTest, fsi)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, ntf2)
+TEST(PCL2019AnionsAssignmentTest, ntf2)
 {
     Species species("NTf2");
     CoreData removeMeCoreData_;
@@ -330,7 +330,7 @@ TEST(PCL2019AnionsForcefieldTest, ntf2)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, oac)
+TEST(PCL2019AnionsAssignmentTest, oac)
 {
     Species species("OAc");
     CoreData removeMeCoreData_;
@@ -355,7 +355,7 @@ TEST(PCL2019AnionsForcefieldTest, oac)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, otf)
+TEST(PCL2019AnionsAssignmentTest, otf)
 {
     Species species("OTf");
     CoreData removeMeCoreData_;
@@ -381,7 +381,7 @@ TEST(PCL2019AnionsForcefieldTest, otf)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, PF6)
+TEST(PCL2019AnionsAssignmentTest, PF6)
 {
     Species species("PF6");
     CoreData removeMeCoreData_;
@@ -406,7 +406,7 @@ TEST(PCL2019AnionsForcefieldTest, PF6)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, SCN)
+TEST(PCL2019AnionsAssignmentTest, SCN)
 {
     Species species("SCN");
     CoreData removeMeCoreData_;
@@ -427,7 +427,7 @@ TEST(PCL2019AnionsForcefieldTest, SCN)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, tfa)
+TEST(PCL2019AnionsAssignmentTest, tfa)
 {
     Species species("TFA");
     CoreData removeMeCoreData_;
@@ -452,7 +452,7 @@ TEST(PCL2019AnionsForcefieldTest, tfa)
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
 }
 
-TEST(PCL2019AnionsForcefieldTest, tso)
+TEST(PCL2019AnionsAssignmentTest, tso)
 {
     Species species("TSO");
     CoreData removeMeCoreData_;

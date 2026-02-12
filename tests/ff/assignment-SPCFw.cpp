@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(SPCFwForcefieldTest, Water)
+TEST(SPCFwAssignmentTest, Water)
 {
     Species species("Water");
     CoreData removeMeCoreData_;

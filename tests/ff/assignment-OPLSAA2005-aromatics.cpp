@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(OPLSAA2005AromaticsForcefieldTest, Benzene)
+TEST(OPLSAA2005AromaticsAssignmentTest, Benzene)
 {
     Species species("Benzene");
     CoreData removeMeCoreData_;
@@ -34,7 +34,7 @@ TEST(OPLSAA2005AromaticsForcefieldTest, Benzene)
     systemTest.checkSpeciesIntramolecular(&species, {10, 0, 2, 4}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
 }
 
-TEST(OPLSAA2005AromaticsForcefieldTest, Naphthalene)
+TEST(OPLSAA2005AromaticsAssignmentTest, Naphthalene)
 {
     Species species("Naphthalene");
     CoreData removeMeCoreData_;

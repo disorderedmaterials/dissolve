@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(Kulmala2010ForcefieldTest, Hydronium)
+TEST(Kulmala2010AssignmentTest, Hydronium)
 {
     Species species("Hydronium");
     CoreData removeMeCoreData_;
@@ -31,7 +31,7 @@ TEST(Kulmala2010ForcefieldTest, Hydronium)
     systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=451.4 eq=113.1"});
 }
 
-TEST(Kulmala2010ForcefieldTest, Ammonia)
+TEST(Kulmala2010AssignmentTest, Ammonia)
 {
     Species species("Ammonia");
     CoreData removeMeCoreData_;
@@ -54,7 +54,7 @@ TEST(Kulmala2010ForcefieldTest, Ammonia)
     systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=334.01 eq=107.18"});
 }
 
-TEST(Kulmala2010ForcefieldTest, Ammonium)
+TEST(Kulmala2010AssignmentTest, Ammonium)
 {
     Species species("Ammonium");
     CoreData removeMeCoreData_;
@@ -77,7 +77,7 @@ TEST(Kulmala2010ForcefieldTest, Ammonium)
     systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=518.26 eq=109.47"});
 }
 
-TEST(Kulmala2010ForcefieldTest, Dimethylammonium)
+TEST(Kulmala2010AssignmentTest, Dimethylammonium)
 {
     Species species("Dimethylammonium");
     CoreData removeMeCoreData_;
@@ -114,7 +114,7 @@ TEST(Kulmala2010ForcefieldTest, Dimethylammonium)
     systemTest.checkSpeciesIntramolecular(&species, {3, 0, 4, 5}, {TorsionFunctions::Form::Cos3, "0  0  3.3765"});
 }
 
-TEST(Kulmala2010ForcefieldTest, H2SO4)
+TEST(Kulmala2010AssignmentTest, H2SO4)
 {
     Species species("H2SO4");
     CoreData removeMeCoreData_;
@@ -144,7 +144,7 @@ TEST(Kulmala2010ForcefieldTest, H2SO4)
     systemTest.checkSpeciesIntramolecular(&species, {6, 3, 0, 2}, {TorsionFunctions::Form::Cos3, "0  0  0"});
 }
 
-TEST(Kulmala2010ForcefieldTest, HSO4Minus)
+TEST(Kulmala2010AssignmentTest, HSO4Minus)
 {
     Species species("HSO4-");
     CoreData removeMeCoreData_;

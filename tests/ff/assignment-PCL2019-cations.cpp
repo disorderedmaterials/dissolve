@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(PCL2019CationsForcefieldTest, benzc1im)
+TEST(PCL2019CationsAssignmentTest, benzc1im)
 {
     Species species("benzc1im");
     CoreData removeMeCoreData_;
@@ -52,7 +52,7 @@ TEST(PCL2019CationsForcefieldTest, benzc1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c12c1im)
+TEST(PCL2019CationsAssignmentTest, c12c1im)
 {
     Species species("c12c1im");
     CoreData removeMeCoreData_;
@@ -119,7 +119,7 @@ TEST(PCL2019CationsForcefieldTest, c12c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c1c1im)
+TEST(PCL2019CationsAssignmentTest, c1c1im)
 {
     Species species("c1c1im");
     CoreData removeMeCoreData_;
@@ -153,7 +153,7 @@ TEST(PCL2019CationsForcefieldTest, c1c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c1c1pyrr)
+TEST(PCL2019CationsAssignmentTest, c1c1pyrr)
 {
     Species species("c1c1pyrr");
     CoreData removeMeCoreData_;
@@ -192,7 +192,7 @@ TEST(PCL2019CationsForcefieldTest, c1c1pyrr)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c2c1c1im)
+TEST(PCL2019CationsAssignmentTest, c2c1c1im)
 {
     Species species("c2c1c1im");
     CoreData removeMeCoreData_;
@@ -232,7 +232,7 @@ TEST(PCL2019CationsForcefieldTest, c2c1c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c2c1im)
+TEST(PCL2019CationsAssignmentTest, c2c1im)
 {
     Species species("c2c1im");
     CoreData removeMeCoreData_;
@@ -269,7 +269,7 @@ TEST(PCL2019CationsForcefieldTest, c2c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c2im)
+TEST(PCL2019CationsAssignmentTest, c2im)
 {
     Species species("c2im");
     CoreData removeMeCoreData_;
@@ -303,7 +303,7 @@ TEST(PCL2019CationsForcefieldTest, c2im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c2OHc1im)
+TEST(PCL2019CationsAssignmentTest, c2OHc1im)
 {
     Species species("c2OHc1im");
     CoreData removeMeCoreData_;
@@ -341,7 +341,7 @@ TEST(PCL2019CationsForcefieldTest, c2OHc1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c2py)
+TEST(PCL2019CationsAssignmentTest, c2py)
 {
     Species species("c2py");
     CoreData removeMeCoreData_;
@@ -377,7 +377,7 @@ TEST(PCL2019CationsForcefieldTest, c2py)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c3c1im)
+TEST(PCL2019CationsAssignmentTest, c3c1im)
 {
     Species species("c3c1im");
     CoreData removeMeCoreData_;
@@ -417,7 +417,7 @@ TEST(PCL2019CationsForcefieldTest, c3c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c3c1pyrr)
+TEST(PCL2019CationsAssignmentTest, c3c1pyrr)
 {
     Species species("c3c1pyrr");
     CoreData removeMeCoreData_;
@@ -462,7 +462,7 @@ TEST(PCL2019CationsForcefieldTest, c3c1pyrr)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c4c1c1im)
+TEST(PCL2019CationsAssignmentTest, c4c1c1im)
 {
     Species species("c4c1c1im");
     CoreData removeMeCoreData_;
@@ -508,7 +508,7 @@ TEST(PCL2019CationsForcefieldTest, c4c1c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c4c1im)
+TEST(PCL2019CationsAssignmentTest, c4c1im)
 {
     Species species("c4c1im");
     CoreData removeMeCoreData_;
@@ -551,7 +551,7 @@ TEST(PCL2019CationsForcefieldTest, c4c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c4c1pyrr)
+TEST(PCL2019CationsAssignmentTest, c4c1pyrr)
 {
     Species species("c4c1pyrr");
     CoreData removeMeCoreData_;
@@ -599,7 +599,7 @@ TEST(PCL2019CationsForcefieldTest, c4c1pyrr)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c4c4im)
+TEST(PCL2019CationsAssignmentTest, c4c4im)
 {
     Species species("c4c4im");
     CoreData removeMeCoreData_;
@@ -651,7 +651,7 @@ TEST(PCL2019CationsForcefieldTest, c4c4im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c4pyri)
+TEST(PCL2019CationsAssignmentTest, c4pyri)
 {
     Species species("c4pyri");
     CoreData removeMeCoreData_;
@@ -693,7 +693,7 @@ TEST(PCL2019CationsForcefieldTest, c4pyri)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c6c1im)
+TEST(PCL2019CationsAssignmentTest, c6c1im)
 {
     Species species("c6c1im");
     CoreData removeMeCoreData_;
@@ -742,7 +742,7 @@ TEST(PCL2019CationsForcefieldTest, c6c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c8c1im)
+TEST(PCL2019CationsAssignmentTest, c8c1im)
 {
     Species species("c8c1im");
     CoreData removeMeCoreData_;
@@ -797,7 +797,7 @@ TEST(PCL2019CationsForcefieldTest, c8c1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c8fc1im)
+TEST(PCL2019CationsAssignmentTest, c8fc1im)
 {
     Species species("c8fc1im");
     CoreData removeMeCoreData_;
@@ -852,7 +852,7 @@ TEST(PCL2019CationsForcefieldTest, c8fc1im)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, c8isoqui)
+TEST(PCL2019CationsAssignmentTest, c8isoqui)
 {
     Species species("c8isoqui");
     CoreData removeMeCoreData_;
@@ -912,7 +912,7 @@ TEST(PCL2019CationsForcefieldTest, c8isoqui)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, cholinium)
+TEST(PCL2019CationsAssignmentTest, cholinium)
 {
     Species species("cholinium");
     CoreData removeMeCoreData_;
@@ -951,7 +951,7 @@ TEST(PCL2019CationsForcefieldTest, cholinium)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, gua)
+TEST(PCL2019CationsAssignmentTest, gua)
 {
     Species species("Gua");
     CoreData removeMeCoreData_;
@@ -979,7 +979,7 @@ TEST(PCL2019CationsForcefieldTest, gua)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, N1110)
+TEST(PCL2019CationsAssignmentTest, N1110)
 {
     Species species("N1110");
     CoreData removeMeCoreData_;
@@ -1011,7 +1011,7 @@ TEST(PCL2019CationsForcefieldTest, N1110)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, N1111)
+TEST(PCL2019CationsAssignmentTest, N1111)
 {
     Species species("N1111");
     CoreData removeMeCoreData_;
@@ -1046,7 +1046,7 @@ TEST(PCL2019CationsForcefieldTest, N1111)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, N2220)
+TEST(PCL2019CationsAssignmentTest, N2220)
 {
     Species species("N2220");
     CoreData removeMeCoreData_;
@@ -1087,7 +1087,7 @@ TEST(PCL2019CationsForcefieldTest, N2220)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, N2222)
+TEST(PCL2019CationsAssignmentTest, N2222)
 {
     Species species("N2222");
     CoreData removeMeCoreData_;
@@ -1134,7 +1134,7 @@ TEST(PCL2019CationsForcefieldTest, N2222)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, N4444)
+TEST(PCL2019CationsAssignmentTest, N4444)
 {
     Species species("N4444");
     CoreData removeMeCoreData_;
@@ -1205,7 +1205,7 @@ TEST(PCL2019CationsForcefieldTest, N4444)
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
-TEST(PCL2019CationsForcefieldTest, P66614)
+TEST(PCL2019CationsAssignmentTest, P66614)
 {
     Species species("P66614");
     CoreData removeMeCoreData_;

@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(OPLSAA2005AlcoholsForcefieldTest, Methanol)
+TEST(OPLSAA2005AlcoholsAssignmentTest, Methanol)
 {
     Species species("Methanol");
     CoreData removeMeCoreData_;

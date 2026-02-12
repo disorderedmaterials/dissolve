@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(UFFNMethylFormamideForcefieldTest, NMethylFormamide)
+TEST(UFFNMethylFormamideAssignmentTest, NMethylFormamide)
 {
     Species species("NMethylFormamide");
     CoreData removeMeCoreData_;

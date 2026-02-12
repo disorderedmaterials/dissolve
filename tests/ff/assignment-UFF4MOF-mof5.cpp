@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(UFF4MOFMOF5ForcefieldTest, MOF5)
+TEST(UFF4MOFMOF5AssignmentTest, MOF5)
 {
     Species species("MOF5");
     CoreData removeMeCoreData_;

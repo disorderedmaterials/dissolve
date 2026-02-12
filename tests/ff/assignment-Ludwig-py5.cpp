@@ -9,7 +9,7 @@
 
 namespace UnitTest
 {
-TEST(LudwigPy5ForcefieldTest, Py5)
+TEST(LudwigPy5AssignmentTest, Py5)
 {
     Species species("Py5");
     CoreData removeMeCoreData_;
