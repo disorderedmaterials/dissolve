@@ -57,12 +57,6 @@ bool CGNeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Part
 bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, CGNeutronWeights &weights,
                                             StructureFactors::NormalisationType normalisation)
 {
-    // Calculate average number of atoms per bead 
-    double av_noa_bead = 0.0;
-    for (int i = 0; i < weights.atomTypes().nItems(); i++)
-    {
-        av_noa_bead += weights.atomTypes()[i].fraction() * weights.beadMap_[i].nAtoms();
-    }
 
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
@@ -76,8 +70,8 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
             std::cout << "Weights (" << typeI << ", " << typeJ << ") --> ";
             std::cout << "Bound: " << boundWeight << "    UnBound: " << weight << std::endl;
 
-            weight /= av_noa_bead;
-            boundWeight /= av_noa_bead;
+            weight /= weights.beadMap_.average_natoms_per_bead();
+            boundWeight /= weights.beadMap_.average_natoms_per_bead();
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedsq.boundPartial(typeI, typeJ).copyArrays(unweightedsq.boundPartial(typeI, typeJ));

@@ -207,7 +207,7 @@ Module::ExecutionResult CGNeutronSQModule::process(ModuleContext &moduleContext)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     weights.beadMap_.calculateFormFactors(unweightedSQ.boundPartial(0, 0).xAxis());
-    weights.beadMap_.calculateIntraBeadSQ();
+    weights.calculateSelfScatteringTerms();
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);

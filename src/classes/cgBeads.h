@@ -4,6 +4,7 @@
 #pragma once 
 
 #include <vector>
+#include <numeric>
 
 #include "classes/atomType.h"
 #include "classes/atomTypeMix.h"
@@ -82,7 +83,7 @@ class CGBead
 
     int nqvalues() const { return formFactor_.nValues(); }
 
-    void calculateIntraBeadScattering(const double c)
+    void calculateSelfScattrering(const double c, const double av_noa_bead)
     {
         double innerSum = 0.0;
         for (auto atmI = atomTypes_.begin(); atmI != atomTypes_.end(); ++atmI)
@@ -97,7 +98,7 @@ class CGBead
         innerSum *= c;
         intraBeadSQ_.copyArrays(formFactor_);
         intraBeadSQ_ *= formFactor_.values();
-        intraBeadSQ_ *= innerSum * (1.0 / 9.5);
+        intraBeadSQ_ *= innerSum * (1.0 / av_noa_bead);
         
         std::cout << "Single Bead Scattering for " << label_ << ": ";
         std::cout << std::accumulate(
@@ -228,6 +229,8 @@ class CGBeadMap
 
     const std::size_t nBeads() const { return beads_.size(); }
 
+    const double average_natoms_per_bead() const { return av_noa_bead_; }
+
     const CGBead &operator[](const int i) const { return beads_[i]; };
 
     void calculateFormFactors(const std::vector<double> &qvals)
@@ -240,16 +243,15 @@ class CGBeadMap
         );
     }
 
-    void calculateIntraBeadSQ()
+    void calculateSelfInteractionTerms(const std::vector<double>& fractions)
     {
-        dissolve::for_each(
-            ParallelPolicies::par,
-            beads_.begin(), 
-            beads_.end(), 
-            [](CGBead &b){ b.calculateIntraBeadScattering(0.5); }
-            // TODO :: get this to read in the actual concentrations for each bead 
-            //      :: does this vary for isotope mixtures?? (exchangeable atoms)
-        );
+        av_noa_bead_ = 0.0;
+        std::vector<int> indices(fractions.size());
+        std::iota(indices.begin(), indices.end(), 0);
+        dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
+                           [&](const int &i) { av_noa_bead_ += fractions[i] * beads_[i].nAtoms(); });
+        dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
+                           [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_); });
     }
 
     void deuterate(const double fraction)
@@ -276,4 +278,5 @@ class CGBeadMap
 
     private:
     std::vector<CGBead> beads_;
+    double av_noa_bead_ = 0.0;
 };

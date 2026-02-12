@@ -405,3 +405,12 @@ void CGNeutronWeights::set_atom_types(const AtomTypeMix& atomTypes)
 {
     atomTypes_ = atomTypes;
 }
+
+void CGNeutronWeights::calculateSelfScatteringTerms() {
+    std::vector<double> fractions(atomTypes_.nItems());
+    for (int i = 0; i < atomTypes_.nItems(); ++i)
+    {
+        fractions.at(i) = atomTypes_[i].fraction();
+    }
+    beadMap_.calculateSelfInteractionTerms(fractions);
+}
