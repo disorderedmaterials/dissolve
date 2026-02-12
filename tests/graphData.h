@@ -49,6 +49,27 @@ inline void addNeutronSQ(Graph *root, std::string name, const IsotopologueSet &i
     }
 }
 
+// Create an XRaySQ node with optional reference data
+inline void addXRaySQ(Graph *root, std::string name, Data1DImportFileFormat referenceData = Data1DImportFileFormat(),
+                      std::string sqNodeName = "SQ")
+{
+    auto xRaySQNode = root->createNode("XRaySQ", name);
+    ASSERT_TRUE(xRaySQNode);
+    ASSERT_TRUE(root->addEdge({sqNodeName, "UnweightedGR", name, "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({sqNodeName, "UnweightedSQ", name, "UnweightedSQ"}));
+
+    // Set reference F(Q) data
+    if (referenceData.hasFilename())
+    {
+        auto data1DImportNode = root->createNode("Data1DImport", std::format("{}-Reference", name));
+        ASSERT_TRUE(data1DImportNode);
+        ASSERT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
+        ASSERT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+            "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
+        ASSERT_TRUE(root->addEdge({std::format("{}-Reference", name), "Data", name, "ReferenceData"}));
+    }
+}
+
 // Create an Argon graph in the supplied root node
 inline void createArgonGraph(Graph *root, int population = 1000,
                              CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
@@ -161,10 +182,9 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
                                         Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
 
     // Add in XRaySQ
-    // auto h2ox = root->createNode("XRaySQ", "H2OX");
-    // ASSERT_TRUE(h2ox);
-    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "H2OX", "UnweightedGR"}));
-    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "H2OX", "UnweightedSQ"}));
+    addXRaySQ(
+        root, "H2Ox",
+        Data1DImportFileFormat("epsr25/water1000-neutron-xray/PCCPfofq.txt", Data1DImportFileFormat::Data1DImportFormat::XY));
 }
 
 // Create a water graph in the supplied root node

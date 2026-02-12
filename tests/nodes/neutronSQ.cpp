@@ -78,12 +78,6 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
     ASSERT_EQ(HDO->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
     ASSERT_EQ(HDO->versionIndex(), 0);
-    // TODO
-    // auto H2Ox = data.graphRoot.findNode("H2Ox");
-    // ASSERT_TRUE(H2Ox);
-    // ASSERT_EQ(H2Ox->run(), NodeConstants::ProcessResult::Success);
-    // ASSERT_EQ(grNode->versionIndex(), 0);
-    // ASSERT_EQ(H2Ox->versionIndex(), 0);
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         D2O->getOutputValue<Data1D>("ReferenceGR"), "D2O Reference G(r)",
@@ -94,9 +88,6 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         HDO->getOutputValue<Data1D>("ReferenceGR"), "HDO Reference G(r)",
         {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 5.0e-5));
-    // EXPECT_TRUE(DissolveSystemTest::checkData1D(
-    // H2Ox->getOutputValue<Data1D>("ReferenceGR"), "H2Ox Reference G(r)",
-    //     {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 5.0e-5));
 }
 
 TEST(NeutronSQNodeTest, WaterMethanol)
