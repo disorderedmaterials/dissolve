@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "items/list.h"
 #include "items/deserialisers.h"
@@ -97,9 +97,8 @@ void GenericList::renamePrefix(std::string_view oldPrefix, std::string_view newP
     auto delimitedPrefix = std::format("{}//", oldPrefix);
     do
     {
-        auto it =
-            std::find_if(items_.begin(), items_.end(),
-                         [delimitedPrefix](const auto &item) { return DissolveSys::startsWith(item.first, delimitedPrefix); });
+        auto it = std::find_if(items_.begin(), items_.end(), [delimitedPrefix](const auto &item)
+                               { return DissolveSys::startsWith(item.first, delimitedPrefix); });
         if (it == items_.end())
             break;
 

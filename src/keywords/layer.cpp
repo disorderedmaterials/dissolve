@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/layer.h"
 #include "base/lineParser.h"
@@ -51,9 +51,8 @@ void LayerKeyword::deserialise(const SerialisedValue &node, const CoreData &core
 }
 
 // Express as a serialisable value
-SerialisedValue LayerKeyword::serialise() const
+void LayerKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     if (data_)
-        return data_->name();
-    return {};
+        target[tag] = data_->name();
 }

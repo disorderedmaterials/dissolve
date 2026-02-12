@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/version.h"
 #include <format>
 #include <iostream>
 #include <string>
 
-#define DISSOLVEVERSION "1.8.0"
+#define DISSOLVEVERSION "1.9.0"
 #define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
 
@@ -42,11 +42,7 @@ std::string_view repoUrl() { return DISSOLVEREPO; }
 std::string_view appType()
 {
 #ifdef MULTITHREADING
-#ifdef PARALLEL
-    return "MPI/Threads";
-#else
     return "Multithreaded";
-#endif
 #else
     return "Serial";
 #endif

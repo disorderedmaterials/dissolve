@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/error.h"
 #include "base/enumOptions.h"
@@ -96,6 +96,7 @@ ErrorReport rmse(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Rang
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+    auto interpolatedBY = interpolatedB.y(A.xAxis());
 
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
@@ -106,7 +107,7 @@ ErrorReport rmse(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Rang
     double delta;
     auto nPointsConsidered = 0;
 
-    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
+    for (auto &&[x, y, by] : zip(A.xAxis(), A.values(), interpolatedBY))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < rangeMin)
@@ -121,7 +122,7 @@ ErrorReport rmse(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Rang
             firstX = x;
 
         // Sum squared error
-        delta = y - interpolatedB.y(x);
+        delta = y - by;
         rmse += delta * delta;
         lastX = x;
         ++nPointsConsidered;
@@ -138,6 +139,7 @@ ErrorReport mape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Rang
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+    auto interpolatedBY = interpolatedB.y(A.xAxis());
 
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
@@ -145,7 +147,7 @@ ErrorReport mape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Rang
 
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
+    for (auto &&[x, y, by] : zip(A.xAxis(), A.values(), interpolatedBY))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < rangeMin)
@@ -164,7 +166,7 @@ ErrorReport mape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Rang
             continue;
 
         // Accumulate sum
-        sum += fabs((y - interpolatedB.y(x)) / y);
+        sum += fabs((y - by) / y);
 
         lastX = x;
         ++nPointsConsidered;
@@ -180,6 +182,7 @@ ErrorReport maape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Ran
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+    auto interpolatedBY = interpolatedB.y(A.xAxis());
 
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
@@ -187,7 +190,7 @@ ErrorReport maape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Ran
 
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
+    for (auto &&[x, y, by] : zip(A.xAxis(), A.values(), interpolatedBY))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < rangeMin)
@@ -202,7 +205,7 @@ ErrorReport maape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Ran
             firstX = x;
 
         // Accumulate sum
-        sum += atan(fabs((y - interpolatedB.y(x)) / y));
+        sum += atan(fabs((y - by) / y));
 
         lastX = x;
         ++nPointsConsidered;
@@ -218,6 +221,7 @@ ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<R
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+    auto interpolatedBY = interpolatedB.y(A.xAxis());
 
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
@@ -226,7 +230,7 @@ ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<R
     // Calculate summed absolute error and absolute y value deviations from average
     auto sume = 0.0, sumy = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
+    for (auto &&[x, y, by] : zip(A.xAxis(), A.values(), interpolatedBY))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < rangeMin)
@@ -241,7 +245,7 @@ ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<R
             firstX = x;
 
         // Get y reference value
-        sume += fabs(y - interpolatedB.y(x));
+        sume += fabs(y - by);
         sumy += fabs(y);
 
         lastX = x;
@@ -265,6 +269,7 @@ ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+    auto interpolatedBY = interpolatedB.y(A.xAxis());
 
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
@@ -273,7 +278,7 @@ ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range
     // Calculate summed absolute error and absolute y value deviations from average
     auto sume = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
+    for (auto &&[x, y, by] : zip(A.xAxis(), A.values(), interpolatedBY))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < rangeMin)
@@ -288,7 +293,7 @@ ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range
             firstX = x;
 
         // Get y reference value
-        sume += fabs(y - interpolatedB.y(x));
+        sume += fabs(y - by);
 
         lastX = x;
         ++nPointsConsidered;
@@ -305,6 +310,7 @@ ErrorReport rFactor(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<R
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+    auto interpolatedBY = interpolatedB.y(A.xAxis());
 
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
@@ -317,7 +323,7 @@ ErrorReport rFactor(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<R
     // Accumulate sum-of-squares error at x values of A
     auto rfac = 0.0, delta = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(aX, aY))
+    for (auto &&[x, y, by] : zip(A.xAxis(), A.values(), interpolatedBY))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < rangeMin)
@@ -332,7 +338,7 @@ ErrorReport rFactor(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<R
             firstX = x;
 
         // Sum squared error
-        delta = y - interpolatedB.y(x);
+        delta = y - by;
         rfac += delta * delta;
         lastX = x;
         ++nPointsConsidered;
@@ -349,6 +355,7 @@ ErrorReport euclidean(const Data1D &A, const Data1D &B, OptionalReferenceWrapper
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+    auto interpolatedBY = interpolatedB.y(A.xAxis());
 
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
@@ -357,7 +364,7 @@ ErrorReport euclidean(const Data1D &A, const Data1D &B, OptionalReferenceWrapper
     auto y2 = 0.0, sos = 0.0, delta = 0.0;
     auto firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
+    for (auto &&[x, y, by] : zip(A.xAxis(), A.values(), interpolatedBY))
     {
         // Is our x value lower than the lowest x value of the reference data?
         if (x < rangeMin)
@@ -371,7 +378,7 @@ ErrorReport euclidean(const Data1D &A, const Data1D &B, OptionalReferenceWrapper
         if (nPointsConsidered == 0)
             firstX = x;
 
-        delta = y - interpolatedB.y(x);
+        delta = y - by;
         sos += delta * delta;
         y2 += y * y;
 

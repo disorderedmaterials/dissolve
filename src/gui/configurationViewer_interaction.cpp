@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "gui/configurationViewer.h"
@@ -16,7 +16,7 @@ const Atom *ConfigurationViewer::atomAt(int x, int y)
         return nullptr;
 
     double lengthScale;
-    Vec3<double> rScreen;
+    Vector3 rScreen;
 
     // Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
     // provided

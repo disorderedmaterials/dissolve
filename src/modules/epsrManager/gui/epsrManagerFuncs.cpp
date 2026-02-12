@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
@@ -53,12 +53,12 @@ void EPSRManagerModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
         if (ui_.PotentialsButton->isChecked())
         {
             // Add on additional potentials
-            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                                     [&](int typeI, const auto &at1, int typeJ, const auto &at2)
                                     {
                                         const std::string id = std::format("{}-{}", at1->name(), at2->name());
 
-                                        auto pp = dissolve_.pairPotential(at1, at2);
+                                        auto pp = dissolve_.pairPotential(at1.get(), at2.get());
                                         if (pp)
                                             graph_->createRenderable<RenderableData1D>(
                                                 std::format("Dissolve//Potential_{}_Additional", id), id, "Phi");

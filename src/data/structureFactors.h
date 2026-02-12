@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -17,4 +17,5 @@ enum NormalisationType
 };
 // Return enum option info for NormalisationType
 EnumOptions<NormalisationType> normalisationTypes();
+EnumOptions<NormalisationType> getEnumOptions(NormalisationType);
 } // namespace StructureFactors

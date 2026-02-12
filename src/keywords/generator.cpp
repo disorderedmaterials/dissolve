@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/generator.h"
 #include "base/lineParser.h"
@@ -54,7 +54,7 @@ bool GeneratorKeyword::serialise(LineParser &parser, std::string_view keywordNam
 }
 
 // Express as a serialisable value
-SerialisedValue GeneratorKeyword::serialise() const { return data_.serialise(); }
+void GeneratorKeyword::serialise(std::string tag, SerialisedValue &target) const { data_.serialise(tag, target); }
 
 // Read values from a serialisable value
 void GeneratorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node, coreData); }

@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairPotential.h"
-#include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "math/constants.h"
 #include "math/derivative.h"
-#include <cmath>
 
 // Static members
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
@@ -180,9 +177,9 @@ void PairPotential::updateTotals()
     }
 
     // Recalculate interpolations
-    totalShortRangePotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    coulombPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    totalPotentialInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    totalShortRangePotentialInterpolation_ = Interpolator(totalShortRangePotential_, Interpolator::ThreePointInterpolation);
+    coulombPotentialInterpolation_ = Interpolator(coulombPotential_, Interpolator::ThreePointInterpolation);
+    totalPotentialInterpolation_ = Interpolator(totalPotential_, Interpolator::ThreePointInterpolation);
 
     // Calculate derivatives
     totalShortRangeDerivative_ = Derivative::derivative(totalShortRangePotential_);
@@ -190,9 +187,9 @@ void PairPotential::updateTotals()
     totalDerivative_ = Derivative::derivative(totalPotential_);
 
     // Update interpolations for derivatives
-    totalShortRangeDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    coulombDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
-    totalDerivativeInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
+    totalShortRangeDerivativeInterpolation_ = Interpolator(totalShortRangeDerivative_, Interpolator::ThreePointInterpolation);
+    coulombDerivativeInterpolation_ = Interpolator(coulombDerivative_, Interpolator::ThreePointInterpolation);
+    totalDerivativeInterpolation_ = Interpolator(totalDerivative_, Interpolator::ThreePointInterpolation);
 }
 
 // Generate energy and force tables
@@ -258,13 +255,13 @@ double PairPotential::range() const { return range_; }
 double PairPotential::delta() const { return delta_; }
 
 // Return potential at specified r
-double PairPotential::energy(double r)
+double PairPotential::energy(double r) const
 {
     assert(r >= 0);
 
     return totalPotentialInterpolation_.y(r, r * rDelta_);
 }
-double PairPotential::energy(double r, double elecScale, double srScale)
+double PairPotential::energy(double r, double elecScale, double srScale) const
 {
     assert(r >= 0);
 
@@ -297,21 +294,21 @@ double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential
 {
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)
-        return COULCONVERT * qiqj / r;
+        return CoulConvert * qiqj / r;
     else if (truncation == PairPotential::ShiftedCoulombTruncation)
-        return COULCONVERT * qiqj * (1.0 / r + r / (range_ * range_) - 2.0 / range_);
+        return CoulConvert * qiqj * (1.0 / r + r / (range_ * range_) - 2.0 / range_);
 
     return 0.0;
 }
 
 // Return derivative at specified r
-double PairPotential::force(double r)
+double PairPotential::force(double r) const
 {
     assert(r >= 0);
 
     return -totalDerivativeInterpolation_.y(r, r * rDelta_);
 }
-double PairPotential::force(double r, double elecScale, double srScale)
+double PairPotential::force(double r, double elecScale, double srScale) const
 {
     assert(r >= 0);
 
@@ -356,9 +353,9 @@ double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential:
 
     // Calculate based on truncation scheme
     if (truncation == PairPotential::NoCoulombTruncation)
-        return COULCONVERT * qiqj / (r * r);
+        return CoulConvert * qiqj / (r * r);
     else if (truncation == PairPotential::ShiftedCoulombTruncation)
-        return COULCONVERT * qiqj * (1.0 / (r * r) - 1.0 / (range_ * range_));
+        return CoulConvert * qiqj * (1.0 / (r * r) - 1.0 / (range_ * range_));
 
     return 0.0;
 }
@@ -395,13 +392,13 @@ void PairPotential::setAdditionalPotential(Data1D &newUAdditional)
 }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value
-SerialisedValue PairPotential::serialise() const
+void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result;
+    auto &result = target[tag];
     result["nameI"] = nameI_;
     result["nameJ"] = nameJ_;
     result["form"] = Functions1D::forms().keyword(interactionPotential_.form());
@@ -415,7 +412,6 @@ SerialisedValue PairPotential::serialise() const
             potentialParameters[parameter] = value;
         result["parameters"] = potentialParameters;
     }
-    return result;
 }
 
 // Read values from a serialisable value

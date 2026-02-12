@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -12,8 +12,9 @@ class Histogram2D
 {
     public:
     Histogram2D();
-    ~Histogram2D() = default;
+    Histogram2D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange);
     Histogram2D(const Histogram2D &source);
+    ~Histogram2D() = default;
     // Clear data
     void clear();
 
@@ -104,11 +105,4 @@ class Histogram2D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Sum histogram data onto all processes
-    bool allSum(ProcessPool &procPool);
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderable.h"
 #include "base/lineParser.h"
@@ -132,7 +132,7 @@ void Renderable::invalidateAll()
 }
 
 // Return coordinate minima of all data (after value transform if enabled)
-Vec3<double> Renderable::limitsMin()
+Vector3 Renderable::limitsMin()
 {
     // Make sure transformed values are up to date
     transformValues();
@@ -141,7 +141,7 @@ Vec3<double> Renderable::limitsMin()
 }
 
 // Return coordinate maxima of all data (after value transform if enabled)
-Vec3<double> Renderable::limitsMax()
+Vector3 Renderable::limitsMax()
 {
     // Make sure transformed values are up to date
     transformValues();
@@ -150,7 +150,7 @@ Vec3<double> Renderable::limitsMax()
 }
 
 // Return positive coordinate minima of all data (after value transform if enabled)
-Vec3<double> Renderable::positiveLimitsMin()
+Vector3 Renderable::positiveLimitsMin()
 {
     // Make sure transformed values are up to date
     transformValues();
@@ -159,7 +159,7 @@ Vec3<double> Renderable::positiveLimitsMin()
 }
 
 // Return positive coordinate maxima of all data (after value transform if enabled)
-Vec3<double> Renderable::positiveLimitsMax()
+Vector3 Renderable::positiveLimitsMax()
 {
     // Make sure transformed values are up to date
     transformValues();

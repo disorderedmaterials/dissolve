@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/range.h"
 #include "base/lineParser.h"
@@ -112,7 +112,7 @@ bool RangeKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 }
 
 // Express as a serialisable value
-SerialisedValue RangeKeyword::serialise() const { return data_; }
+void RangeKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void RangeKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }

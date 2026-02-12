@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/trajectory.h"
 #include "base/lineParser.h"
@@ -11,10 +11,22 @@ TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename
                                                        TrajectoryImportFileFormat::TrajectoryImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
+    formats_ = trajectoryImportFileFormats();
+}
+
+// Return enum option info for TrajectoryImportFileFormat
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImportFileFormat::trajectoryImportFileFormats()
+{
+    return EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
         "TrajectoryImportFileFormat",
         {{TrajectoryImportFormat::DLPOLYFormatted, "hisf", "Formatted DL_POLY Trajectory (no header)"},
          {TrajectoryImportFormat::XYZ, "xyz", "XYZ Trajectory"}});
+}
+
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>
+getEnumOptions(TrajectoryImportFileFormat::TrajectoryImportFormat)
+{
+    return TrajectoryImportFileFormat::trajectoryImportFileFormats();
 }
 
 /*
@@ -29,7 +41,7 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
         return Messenger::error("No format set for TrajectoryImportFileFormat so can't import.\n");
 
     // Import the data
-    std::vector<Vec3<double>> r;
+    std::vector<Vector3> r;
     auto result = false;
     switch (formats_.enumerationByIndex(*formatIndex_))
     {

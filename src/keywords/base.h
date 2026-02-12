@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -71,9 +71,9 @@ class KeywordBase : public Serialisable<CoreData const &>
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
     // Express as a serialisable value
-    virtual SerialisedValue serialise() const override = 0;
+    virtual void serialise(std::string tag, SerialisedValue &target) const override = 0;
     // Read values from a serialisable value
-    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
+    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override {};
 
     /*
      * Keyword Types

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/sequence.h"
 #include "base/lineParser.h"
@@ -509,15 +509,17 @@ bool GeneratorNodeSequence::QueryRange::empty() { return start_ == stop_; }
 void GeneratorNodeSequence::QueryRange::next() { start_++; }
 
 // Express as a serialisable value
-SerialisedValue GeneratorNodeSequence::serialise() const
+void GeneratorNodeSequence::serialise(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(sequence_,
-                      [](const auto item)
-                      {
-                          SerialisedValue node = item->serialise();
-                          node["type"] = item->nodeTypes().serialise(item->type());
-                          return node;
-                      });
+    target[tag] = fromVector(sequence_,
+                             [](const auto item)
+                             {
+                                 SerialisedValue outer;
+                                 item->serialise("inner", outer);
+                                 auto &node = outer["inner"];
+                                 node["type"] = item->nodeTypes().serialise(item->type());
+                                 return node;
+                             });
 }
 
 // Read values from a serialisable value

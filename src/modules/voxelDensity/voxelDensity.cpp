@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/voxelDensity/voxelDensity.h"
 #include "keywords/bool.h"
@@ -16,8 +16,8 @@ VoxelDensityModule::VoxelDensityModule() : Module(ModuleTypes::VoxelDensity)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Ranges");
-    keywords_.add<Vec3DoubleKeyword>("BinRange", "Range (min, max, delta) of voxel axis", binRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("BinRange", "Range (min, max, delta) of voxel axis", binRange_, Vector3(0.0, 0.0, 1.0e-5),
+                                     std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 
     keywords_.setOrganisation("Options", "Analysis", "Set the voxel density and property for analysis");
     keywords_.add<DoubleKeyword>("VoxelSideLength", "Side length of a single analysis voxel (angstroms)", idealVoxelSideLength_,

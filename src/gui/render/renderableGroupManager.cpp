@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableGroupManager.h"
 #include "base/sysFunc.h"
 #include "gui/render/renderable.h"
+#include <iostream>
 
 RenderableGroupManager::RenderableGroupManager()
 {

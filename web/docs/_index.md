@@ -1,11 +1,11 @@
 ---
-title: "Documentation for RELEASETYPE version MAJOR.MINOR"
-linkTitle: "Documentation (RELEASETYPE version MAJOR.MINOR)"
+title: "Documentation for DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION"
+linkTitle: "Documentation (DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION)"
 cascade:
   - type: "docs"
 ---
 
-Here you can find the user guide and examples for the RELEASETYPE version MAJOR.MINOR of Dissolve.
+Here you can find the user guide and examples for the DISSOLVERELEASETYPE version DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION of Dissolve.
 
 {{< tip text="Documentation for the current release version is [available here](/)" />}} <!-- RELEASE TIP -->
 {{< tip text="Updated documentation for the current development version is [available here](/dev)" />}} <!-- DEVELOPMENT TIP -->
@@ -13,12 +13,13 @@ Here you can find the user guide and examples for the RELEASETYPE version MAJOR.
 
 ## Copyright / Contributors
 
-&copy; 2025 Team Dissolve and contributors
+&copy; 2026 Team Dissolve and contributors
 - Dr T. Youngs
 - Dr A. Washington (January 2020 - present)
 - R. Buchanan (September 2023 - present)
 - D. Nixon (January 2020 - present)
 - D. Bradley (January 2023 - present)
+- A. Boswell (January 2025 - July 2025)
 - J. Swift (June 2023 - September 2024)
 - N. Spitz (July 2023 - July 2024)
 - V. Ionica (February 2022 - May 2022)

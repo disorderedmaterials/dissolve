@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/potentials/regional.h"
 #include "classes/atom.h"
@@ -38,7 +38,7 @@ RegionalPotentialVoxelKernel::RegionalPotentialVoxelKernel(std::string_view expr
 }
 
 // Set voxel position variables
-void RegionalPotentialVoxelKernel::setVoxelPosition(const Box *box, Vec3<double> r) const
+void RegionalPotentialVoxelKernel::setVoxelPosition(const Box *box, Vector3 r) const
 {
     x_->setValue(r.x);
     y_->setValue(r.y);
@@ -59,8 +59,7 @@ double RegionalPotentialVoxelKernel::functionValue() const
 }
 
 // Calculate and store energy and force for the specified voxel centre
-void RegionalPotentialVoxelKernel::energyAndForce(const Box *box, const Vec3<double> &r, double &energy,
-                                                  Vec3<double> &force) const
+void RegionalPotentialVoxelKernel::energyAndForce(const Box *box, const Vector3 &r, double &energy, Vector3 &force) const
 {
     // Energy at the centre of the voxel
     setVoxelPosition(box, r);
@@ -104,7 +103,7 @@ bool RegionalPotential::setUp(const Box *box, double voxelSize,
                               const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator)
 {
     // Set fractional voxel sizes
-    Vec3<int> nVoxels;
+    Vector3i nVoxels;
     for (auto n = 0; n < 3; ++n)
         nVoxels.set(n, std::max(int(box->axisLength(n) / voxelSize), 1));
     voxelSizeFrac_.set(1.0 / nVoxels.x, 1.0 / nVoxels.y, 1.0 / nVoxels.z);
@@ -141,4 +140,4 @@ std::tuple<int, int, int> RegionalPotential::voxelIndices(const Atom &i, const B
 double RegionalPotential::energy(const Atom &i, const Box *box) const { return energyVoxels_[voxelIndices(i, box)]; }
 
 // Calculate force on specified atom, summing in to supplied vector
-void RegionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const { f = forceVoxels_[voxelIndices(i, box)]; }
+void RegionalPotential::force(const Atom &i, const Box *box, Vector3 &f) const { f = forceVoxels_[voxelIndices(i, box)]; }

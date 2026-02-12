@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "classes/atomType.h"
 #include "classes/kVector.h"
-#include "classes/neutronWeights.h"
-#include "classes/species.h"
+#include "nodes/dissolve.h"
 
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
     // Set core simulation variables
     restartFileFrequency_ = 10;
 
-    setUpWorldPool();
+    graphNode_ = std::make_unique<DissolveGraph>(*this);
 
     // Clear everything
     clear();
@@ -23,6 +21,8 @@ Dissolve::~Dissolve() { clear(); }
 /*
  * Core
  */
+
+DissolveGraph *Dissolve::graph() { return graphNode_.get(); }
 
 // Return reference to CoreData
 CoreData &Dissolve::coreData() { return coreData_; }
@@ -52,6 +52,9 @@ void Dissolve::clear()
     processingModuleData_.clearAll();
     iteration_ = 0;
     nIterationsPerformed_ = 0;
+
+    // Graph
+    graphNode_ = std::make_unique<DissolveGraph>(*this);
 
     // I/O
     setInputFilename("");

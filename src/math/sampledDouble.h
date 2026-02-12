@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
+
+#include "base/serialiser.h"
 
 // Forward Declarations
 class CoreData;
@@ -9,7 +11,7 @@ class LineParser;
 class ProcessPool;
 
 // Double value with sampling
-class SampledDouble
+class SampledDouble : public Serialisable<>
 {
     public:
     SampledDouble();
@@ -63,11 +65,8 @@ class SampledDouble
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Sum data over all processes within the pool
-    bool allSum(ProcessPool &procPool);
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

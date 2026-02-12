@@ -1,122 +1,95 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
+#include "nodes/species.h"
+#include "speciesAtomModel.h"
+#include <memory>
 
-// Set source Species data
-void SpeciesModel::setData(const std::vector<std::unique_ptr<Species>> &species)
+SpeciesModel::SpeciesModel() : node_(nullptr) {}
+
+QString SpeciesModel::name()
 {
-    beginResetModel();
-    species_ = species;
-    endResetModel();
+    if (node_ == nullptr)
+        return "";
+    return QString::fromStdString(std::string(node_->species().name()));
 }
 
-// Set vector containing checked items
-void SpeciesModel::setCheckStateData(std::vector<const Species *> &checkedItemsVector)
+void SpeciesModel::setName(QString name)
 {
-    beginResetModel();
-    checkedItems_ = checkedItemsVector;
-    endResetModel();
+    if (node_ == nullptr)
+        return;
+    node_->species().setName(name.toStdString());
+    Q_EMIT(nameChanged());
 }
 
-const Species *SpeciesModel::rawData(const QModelIndex &index) const
+// Bond information
+SpeciesBondModel *SpeciesModel::bonds() { return &bonds_; }
+
+// Angle information
+SpeciesAngleModel *SpeciesModel::angles() { return &angles_; }
+
+// Torsion information
+SpeciesTorsionModel *SpeciesModel::torsions() { return &torsions_; }
+
+// Improper information
+SpeciesImproperModel *SpeciesModel::impropers() { return &impropers_; }
+
+// Atom information
+SpeciesAtomModel *SpeciesModel::atoms() { return &atoms_; }
+
+GraphModel *SpeciesModel::graphModel() { return graphModel_; }
+
+// Produce this species node on the given graph
+void SpeciesModel::assignModel(GraphModel *graphModel)
 {
-    assert(species_);
-    return species_->get()[index.row()].get();
+    graphModel_ = graphModel;
+    node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
+    auto &species = node_->species();
+    atoms_.setSpecies(&species);
+    bonds_.setBonds(species.bonds());
+    angles_.setAngles(species.angles());
+    torsions_.setTorsions(species.torsions());
+    impropers_.setImpropers(species.impropers());
 }
 
-// Refresh model data
-void SpeciesModel::reset()
+// Finalise the node
+void SpeciesModel::create()
 {
-    beginResetModel();
-    endResetModel();
+    // Need copy because we're going to move the unique_ptr
+    auto name = node_->species().name();
+    // node_->setName(name);
+    graphModel_->addNode(std::unique_ptr<Node>(std::move(node_)), name);
+
+    // Create a new node for next call
+    node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
 }
 
-/*
- * QAbstractItemModel overrides
- */
-
-int SpeciesModel::rowCount(const QModelIndex &parent) const
+void SpeciesModel::addBond(int i, int j)
 {
-    Q_UNUSED(parent);
-    return species_ ? species_->get().size() : 0;
+    bonds_.beginInsertRows({}, node_->species().nBonds(), node_->species().nBonds() + 1);
+    node_->species().addBond(i - 1, j - 1);
+    bonds_.endInsertRows();
 }
 
-QVariant SpeciesModel::data(const QModelIndex &index, int role) const
+void SpeciesModel::addAngle(int i, int j, int k)
 {
-    if (!index.isValid())
-        return {};
-    switch (role)
-    {
-        case (Qt::DisplayRole):
-            return QString::fromStdString(std::string(rawData(index)->name()));
-        case (Qt::CheckStateRole):
-            if (checkedItems_)
-            {
-                return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
-                               checkedItems_->get().end()
-                           ? Qt::Unchecked
-                           : Qt::Checked;
-            }
-            else
-            {
-                return {};
-            }
-        case (static_cast<unsigned int>(SpeciesUserRole::RawData)):
-            return QVariant::fromValue(rawData(index));
-        case (static_cast<unsigned int>(SpeciesUserRole::BondsCount)):
-            return QVariant::fromValue(rawData(index)->nBonds());
-        case (static_cast<unsigned int>(SpeciesUserRole::AnglesCount)):
-            return QVariant::fromValue(rawData(index)->nAngles());
-        case (static_cast<unsigned int>(SpeciesUserRole::TorsionsCount)):
-            return QVariant::fromValue(rawData(index)->nTorsions());
-        case (static_cast<unsigned int>(SpeciesUserRole::ImpropersCount)):
-            return QVariant::fromValue(rawData(index)->nImpropers());
-        default:
-            return {};
-    }
+    angles_.beginInsertRows({}, node_->species().nAngles(), node_->species().nAngles() + 1);
+    node_->species().addAngle(i - 1, j - 1, k - 1);
+    angles_.endInsertRows();
 }
 
-bool SpeciesModel::setData(const QModelIndex &index, const QVariant &value, int role)
+void SpeciesModel::addTorsion(int i, int j, int k, int l)
 {
-    if (role == Qt::CheckStateRole && checkedItems_)
-    {
-        auto &xitems = checkedItems_->get();
-        if (value.value<Qt::CheckState>() == Qt::Checked)
-        {
-            if (std::find(xitems.begin(), xitems.end(), rawData(index)) == xitems.end())
-                xitems.push_back(rawData(index));
-        }
-        else
-            xitems.erase(std::remove(xitems.begin(), xitems.end(), rawData(index)), xitems.end());
-
-        Q_EMIT dataChanged(index, index);
-
-        return true;
-    }
-
-    return false;
+    torsions_.beginInsertRows({}, node_->species().nTorsions(), node_->species().nTorsions() + 1);
+    node_->species().addTorsion(i - 1, j - 1, k - 1, l - 1);
+    torsions_.endInsertRows();
 }
 
-Qt::ItemFlags SpeciesModel::flags(const QModelIndex &index) const
+void SpeciesModel::addImproper(int i, int j, int k, int l)
 {
-    return checkedItems_ ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
-                         : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-}
-
-QVariant SpeciesModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole)
-        return {};
-
-    if (orientation == Qt::Horizontal)
-        switch (section)
-        {
-            case 0:
-                return "Name";
-            default:
-                return {};
-        }
-
-    return {};
+    impropers_.beginInsertRows({}, node_->species().nImpropers(), node_->species().nImpropers() + 1);
+    node_->species().addImproper(i - 1, j - 1, k - 1, l - 1);
+    impropers_.endInsertRows();
 }

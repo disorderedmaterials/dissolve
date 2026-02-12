@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/isotopologue.h"
 #include "classes/atomType.h"
@@ -20,7 +20,7 @@ void Isotopologue::setParent(const Species *parent) { parent_ = parent; }
 const Species *Isotopologue::parent() const { return parent_; }
 
 // Set name of Isotopologue
-void Isotopologue::setName(std::string_view name) { name_ = name; }
+void Isotopologue::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return name of Isotopologue
 std::string_view Isotopologue::name() const { return name_; }
@@ -33,64 +33,45 @@ std::string_view Isotopologue::name() const { return name_; }
 void Isotopologue::update()
 {
     // Prune any types in our list that are not used in the parent species
-    const auto &atomTypes = parent_->atomTypes();
-    isotopes_.erase(std::remove_if(isotopes_.begin(), isotopes_.end(),
-                                   [&atomTypes](auto value) { return !atomTypes.contains(std::get<0>(value)); }),
-                    isotopes_.end());
+    const auto &atomTypes = parent_->atomTypePopulations();
+    isotopes_.erase([&atomTypes](auto value) { return !atomTypes.contains(value); });
 
     // Add in any used atom types that are not currently in the list
-    for (const auto &atd : atomTypes)
+    for (const auto &[atomType, pop] : atomTypes)
     {
-        auto it = std::find_if(isotopes_.begin(), isotopes_.end(),
-                               [&atd](auto value) { return std::get<0>(value) == atd.atomType(); });
-        if (it == isotopes_.end())
-            isotopes_.emplace_back(atd.atomType(), Sears91::naturalIsotope(atd.atomType()->Z()));
+        if (!isotopes_.contains(atomType))
+            isotopes_.set(atomType, Sears91::naturalIsotope(atomType->Z()));
     }
 }
 
-// Validate current AtomType/Isotopes against available AtomTypes
-void Isotopologue::checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
-{
-    for (const auto &at : atomTypes)
-        isotopes_.erase(
-            std::remove_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; }),
-            isotopes_.end());
-}
-
 // Set Isotope associated to AtomType
-void Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Sears91::Isotope isotope)
+void Isotopologue::setAtomTypeIsotope(const AtomType *atomType, Sears91::Isotope isotope)
 {
-    assert(at);
+    assert(atomType);
 
-    // Find the requested AtomType in the list
-    auto it = std::find_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; });
-    if (it == isotopes_.end())
-        isotopes_.emplace_back(at, isotope);
-    else
-        std::get<1>(*it) = isotope;
+    isotopes_.set(atomType, isotope);
 }
 
 // Return Isotope for specified AtomType
-Sears91::Isotope Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
+Sears91::Isotope Isotopologue::atomTypeIsotope(const AtomType *atomType) const
 {
-    auto it = std::find_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; });
-    if (it == isotopes_.end())
-        return Sears91::naturalIsotope(at->Z());
-
-    return std::get<1>(*it);
+    return isotopes_.contains(atomType) ? isotopes_.value(atomType) : Sears91::naturalIsotope(atomType->Z());
 }
 
 // Return AtomType/Isotope pairs list
-std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isotopologue::isotopes() { return isotopes_; }
-const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isotopologue::isotopes() const { return isotopes_; }
+KeyedVector<const AtomType *, Sears91::Isotope> &Isotopologue::isotopes() { return isotopes_; }
+const KeyedVector<const AtomType *, Sears91::Isotope> &Isotopologue::isotopes() const { return isotopes_; }
+
+/*
+ * Serialisation
+ */
 
 // Express as a serialisable value
-SerialisedValue Isotopologue::serialise() const
+void Isotopologue::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue::table_type result;
+    auto &result = target[tag];
     for (auto &&[type, isotope] : isotopes_)
         result[type->name().data()] = Sears91::A(isotope);
-    return result;
 }
 
 void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)
@@ -100,6 +81,6 @@ void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &core
         if (value.is_string())
             continue;
         auto at = coreData.findAtomType(name);
-        setAtomTypeIsotope(at, Sears91::isotope(at->Z(), value.as_integer()));
+        setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), value.as_integer()));
     }
 }

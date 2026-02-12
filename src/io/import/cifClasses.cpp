@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/cifClasses.h"
 #include "classes/empiricalFormula.h"
@@ -10,8 +10,8 @@
  * CIF Symmetry-Unique Atom
  */
 
-CIFSymmetryAtom::CIFSymmetryAtom(std::string_view label, Elements::Element Z, Vec3<double> rFrac, double occ)
-    : label_{label}, Z_(Z), rFrac_(rFrac), occupancy_(occ){};
+CIFSymmetryAtom::CIFSymmetryAtom(std::string_view label, Elements::Element Z, Vector3 rFrac, double occ)
+    : label_{label}, Z_(Z), rFrac_(rFrac), occupancy_(occ) {};
 
 // Return label (from _atom_site_label)
 std::string_view CIFSymmetryAtom::label() const { return label_; }
@@ -20,7 +20,7 @@ std::string_view CIFSymmetryAtom::label() const { return label_; }
 Elements::Element CIFSymmetryAtom::Z() const { return Z_; }
 
 // Return fractional coordinate of atom (from _atom_site_fract_[xyz])
-Vec3<double> CIFSymmetryAtom::rFrac() const { return rFrac_; }
+Vector3 CIFSymmetryAtom::rFrac() const { return rFrac_; }
 
 // Return site occupancy (from _atom_site_occupancy)
 double CIFSymmetryAtom::occupancy() const { return occupancy_; }
@@ -30,7 +30,7 @@ double CIFSymmetryAtom::occupancy() const { return occupancy_; }
  */
 
 CIFBondingPair::CIFBondingPair(std::string_view labelI, std::string_view labelJ, double r)
-    : labelI_{labelI}, labelJ_{labelJ}, r_(r){};
+    : labelI_{labelI}, labelJ_{labelJ}, r_(r) {};
 
 // Return labels of involved atom i (from _geom_bond_atom_site_label_1)
 std::string_view CIFBondingPair::labelI() const { return labelI_; }
@@ -112,13 +112,13 @@ void CIFMolecularSpecies::appendInstances(const std::vector<LocalMolecule> &newI
 }
 
 // Return coordinates for all instances as a vector of vectors
-std::vector<std::vector<Vec3<double>>> CIFMolecularSpecies::allInstanceCoordinates() const
+std::vector<std::vector<Vector3>> CIFMolecularSpecies::allInstanceCoordinates() const
 {
-    std::vector<std::vector<Vec3<double>>> coordinates;
+    std::vector<std::vector<Vector3>> coordinates;
 
     for (auto &instance : instances_)
     {
-        std::vector<Vec3<double>> instanceCoords;
+        std::vector<Vector3> instanceCoords;
         instanceCoords.reserve(species_->nAtoms());
         for (auto &atom : instance.localAtoms())
             instanceCoords.emplace_back(atom.r());

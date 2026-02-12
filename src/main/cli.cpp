@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/cli.h"
 #include "base/messenger.h"
@@ -11,10 +11,10 @@
 CLIOptions::CLIOptions() {}
 
 // Parse CLI options
-int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
+int CLIOptions::parse(const int args, char **argv, bool isGUI)
 {
     // Create CLI object
-    CLI::App app{std::format("Dissolve-{} version {}, Copyright (C) 2025 Team Dissolve and contributors.\n", Version::appType(),
+    CLI::App app{std::format("Dissolve-{} version {}, Copyright (C) 2026 Team Dissolve and contributors.\n", Version::appType(),
                              Version::info())};
     // Add positionals
     auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile);
@@ -56,17 +56,6 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     if (!isGUI)
         inputFileOption->required();
 
-    // Add parallel-specific options
-    if (isParallel)
-    {
-        app.add_flag_callback(
-               "-a,--all", []() { Messenger::setMasterOnly(false); }, "Write output from all processes, not just master")
-            ->group("Parallel Code Options");
-        app.add_option("--redirect", redirectionBasename_,
-                       "Redirect output from individual processes to files based on the supplied name")
-            ->group("Parallel Code Options");
-    }
-
     // Tweak formatting
     app.get_formatter()->label("TEXT", "<filename>");
     app.get_formatter()->label("INT", "<n>");
@@ -91,9 +80,6 @@ int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }
 
 // Return seed for random number generator
 std::optional<int> CLIOptions::randomSeed() const { return randomSeed_; }
-
-// Return redirection basename (for per-process output)
-std::optional<std::string> CLIOptions::redirectionBasename() const { return redirectionBasename_; }
 
 // Return restart file to load, overriding default
 std::optional<std::string> CLIOptions::restartFilename() const { return restartFilename_; }

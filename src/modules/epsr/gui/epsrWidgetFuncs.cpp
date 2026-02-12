@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "gui/dataViewer.h"
@@ -67,8 +67,6 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
     {
         ui_.PlotWidget->clearRenderableData();
 
-        const auto &atomTypes = module_->scatteringMatrix().atomTypes();
-        const auto nAtomTypes = atomTypes.size();
         auto epsrModuleTargets = module_->keywords().getVectorModule("Target");
 
         // Set the relevant graph targets
@@ -107,25 +105,30 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         }
         else if (ui_.EstimatedSQButton->isChecked())
         {
-            // Add experimentally-determined partial S(Q)
-            dissolve::for_each_pair(
-                ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+            auto optEstimatedSQ =
+                dissolve_.processingModuleData().valueIf<DoubleKeyedMap<Data1D>>("EstimatedSQ", module_->name());
+            if (optEstimatedSQ)
+            {
+                auto &estimatedSQ = optEstimatedSQ->get();
+                for (auto &[key, value] : estimatedSQ)
                 {
-                    const std::string id = std::format("{}-{}", at1->name(), at2->name());
+                    // Get constituent key pair and reformat to get the tag
+                    auto keyPair = estimatedSQ.keyPair(key);
+                    const auto keyString = std::format("{}-{}", keyPair.first, keyPair.second);
 
                     // Unweighted estimated partial
-                    graph_->createRenderable<RenderableData1D>(std::format("{}//EstimatedSQ//{}", module_->name(), id),
-                                                               std::format("{} (Estimated)", id), "Estimated");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//EstimatedSQ//{}", module_->name(), keyString),
+                                                               std::format("{} (Estimated)", keyString), "Estimated");
 
                     // Calculated / summed partial
-                    graph_->createRenderable<RenderableData1D>(std::format("{}//UnweightedSQ//{}", module_->name(), id),
-                                                               std::format("{} (Calc)", id), "Calc");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//UnweightedSQ//{}", module_->name(), keyString),
+                                                               std::format("{} (Calc)", keyString), "Calc");
 
                     // Deltas
-                    graph_->createRenderable<RenderableData1D>(std::format("{}//DeltaSQ//{}", module_->name(), id),
-                                                               std::format("{} (Delta)", id), "Delta");
-                });
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//DeltaSQ//{}", module_->name(), keyString),
+                                                               std::format("{} (Delta)", keyString), "Delta");
+                }
+            }
         }
         else if (ui_.EstimatedGRButton->isChecked())
         {
@@ -151,20 +154,27 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             }
 
             // Add experimentally-determined partial g(r)
-            dissolve::for_each_pair(
-                ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+            auto optEstimatedGR =
+                dissolve_.processingModuleData().valueIf<DoubleKeyedMap<Data1D>>("EstimatedGR", module_->name());
+            if (optEstimatedGR)
+            {
+                auto &estimatedGR = optEstimatedGR->get();
+                for (auto &[key, value] : estimatedGR)
                 {
-                    const std::string id = std::format("{}-{}", at1->name(), at2->name());
+                    // Get constituent key pair and reformat to get the tag
+                    auto keyPair = estimatedGR.keyPair(key);
+                    const auto keyString = std::format("{}-{}", keyPair.first, keyPair.second);
 
                     // Experimentally-determined unweighted partial
-                    graph_->createRenderable<RenderableData1D>(std::format("{}//EstimatedGR//{}", module_->name(), id),
-                                                               std::format("{} (Estimated)", id), "Estimated");
+                    graph_->createRenderable<RenderableData1D>(std::format("{}//EstimatedGR//{}", module_->name(), keyString),
+                                                               std::format("{} (Estimated)", keyString), "Estimated");
 
                     // Calculated / summed partials, taken from the RDF module referenced by the first module target
-                    graph_->createRenderable<RenderableData1D>(std::format("{}//UnweightedGR//{}//Full", rdfModuleName, id),
-                                                               std::format("{} (Calc)", id), "Calc");
-                });
+                    graph_->createRenderable<RenderableData1D>(
+                        std::format("{}//UnweightedGR//{}//Full", rdfModuleName, keyString),
+                        std::format("{} (Calc)", keyString), "Calc");
+                }
+            }
         }
         else if (ui_.TotalGRButton->isChecked())
         {
@@ -182,17 +192,21 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         }
         else if (ui_.PotentialsButton->isChecked())
         {
-            // Add on additional potentials
-            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                                    [&](int typeI, const auto &at1, int typeJ, const auto &at2)
-                                    {
-                                        const std::string id = std::format("{}-{}", at1->name(), at2->name());
-
-                                        auto pp = dissolve_.pairPotential(at1, at2);
-                                        if (pp)
-                                            graph_->createRenderable<RenderableData1D>(
-                                                std::format("Dissolve//Potential_{}_Additional", id), id, "Phi");
-                                    });
+            // Add on additional potentials - use the EstimatedSQ data as the key reference
+            auto optEstimatedSQ =
+                dissolve_.processingModuleData().valueIf<DoubleKeyedMap<Data1D>>("EstimatedSQ", module_->name());
+            if (optEstimatedSQ)
+            {
+                auto &estimatedSQ = optEstimatedSQ->get();
+                for (auto &[key, value] : estimatedSQ)
+                {
+                    // Get constituent key pair and reformat to get the tag
+                    auto keyPair = estimatedSQ.keyPair(key);
+                    const auto keyString = std::format("{}-{}", keyPair.first, keyPair.second);
+                    graph_->createRenderable<RenderableData1D>(std::format("Dissolve//Potential_{}_Additional", keyString),
+                                                               keyString, "Phi");
+                }
+            }
         }
         else if (ui_.RFactorButton->isChecked())
         {

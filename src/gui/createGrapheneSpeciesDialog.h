@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -48,7 +48,7 @@ class CreateGrapheneSpeciesDialog : public QDialog
     // Representative unit length
     double a0_{0.0};
     // Principal vectors
-    Vec3<double> va1_, va2_;
+    Vector3 va1_, va2_;
     // Angle between principal vector va1 and the sheet vector
     double alpha_{0.0};
     // Radius of resulting tube
@@ -68,7 +68,7 @@ class CreateGrapheneSpeciesDialog : public QDialog
     // Get vector of atom keys from atom/neighbour map, sorted by position along y
     std::vector<SpeciesAtom *> getSortedByY(const std::map<SpeciesAtom *, std::vector<SpeciesAtom *>> &atoms) const;
     // Recursive branch function
-    void extendBranch(SpeciesAtom *i, const Box *box, Vec3<double> &vFrac, std::vector<SpeciesAtom *> &branch,
+    void extendBranch(SpeciesAtom *i, const Box *box, Vector3 &vFrac, std::vector<SpeciesAtom *> &branch,
                       double localCutoff) const;
     // Regenerate species
     void regenerate();

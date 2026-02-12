@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/types.h"
 #include "gui/models/addForcefieldDialogModel.h"
@@ -7,9 +7,10 @@
 #include "gui/models/configurationModel.h"
 #include "gui/models/dataManagerSimulationModel.h"
 #include "gui/models/dissolveModel.h"
-#include "gui/models/masterTermTreeModel.h"
 #include "gui/models/modifyChargesModel.h"
 #include "gui/models/moduleLayersModel.h"
+#include "gui/models/nodeGraph/graphModel.h"
+#include "gui/models/simpleForcefieldModel.h"
 #include "gui/models/sortFilterProxy.h"
 #include "gui/models/speciesModel.h"
 #include <QQmlEngine>
@@ -30,4 +31,6 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<MasterTorsionModel>(PROJECT, 1, 0, "MasterTorsionModel");
     qmlRegisterType<ModifyChargesModel>(PROJECT, 1, 0, "ModifyChargesModel");
     qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
+    qmlRegisterType<GraphModel>(PROJECT, 1, 0, "GraphModel");
+    qmlRegisterType<SimpleForcefieldModel>(PROJECT, 1, 0, "SimpleForcefieldModel");
 }

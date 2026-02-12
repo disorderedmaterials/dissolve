@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -36,7 +37,7 @@ class CellsPBCTest : public ::testing::Test
     Species *argon_;
 
     protected:
-    Configuration *createConfiguration(const Vec3<double> &lengths, const Vec3<double> &angles, const Vec3<double> &origin,
+    Configuration *createConfiguration(const Vector3 &lengths, const Vector3 &angles, const Vector3 &origin,
                                        int nMolecules = 1000)
     {
         // Setup Configuration
@@ -54,7 +55,7 @@ class CellsPBCTest : public ::testing::Test
             auto theta = DissolveMath::random() * M_PI;
             auto phi = DissolveMath::random() * 2.0 * M_PI;
             auto mol = cfg->addMolecule(argon_);
-            mol->atom(0)->setCoordinates(Vec3<double>(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) +
+            mol->atom(0)->setCoordinates(Vector3(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) +
                                          origin);
         }
 
@@ -93,7 +94,7 @@ class CellsPBCTest : public ::testing::Test
         {
             const auto &nbrs = cellArray.neighbours(*cellArray.cell(n));
 
-            dissolve::for_each_pair(ParallelPolicies::seq, nbrs.begin(), nbrs.end(),
+            dissolve::for_each_pair(ParallelPolicies::seq, nbrs,
                                     [&](auto i, auto &nbri, auto j, auto &nbrj)
                                     {
                                         if (i != j)

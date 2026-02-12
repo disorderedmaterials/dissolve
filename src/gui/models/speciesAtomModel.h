@@ -1,26 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "classes/speciesAtom.h"
-#include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
+
+class Species;
 
 class SpeciesAtomModel : public QAbstractTableModel
 {
     Q_OBJECT
 
     private:
-    Species &species_;
-    const CoreData &coreData_;
+    Species *species_;
 
     Q_SIGNALS:
     void atomTypeChanged();
 
+    public Q_SLOTS:
+    void addAtom(QString element, double x, double y, double z, double charge);
+
     public:
-    SpeciesAtomModel(Species &species, const CoreData &coreData);
+    SpeciesAtomModel();
+
+    void setSpecies(Species *species);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

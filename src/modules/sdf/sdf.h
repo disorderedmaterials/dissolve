@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -24,11 +24,11 @@ class SDFModule : public Module
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range along X axis
-    Vec3<double> rangeX_{-10.0, 10.0, 0.5};
+    Vector3 rangeX_{-10.0, 10.0, 0.5};
     // Range along Y axis
-    Vec3<double> rangeY_{-10.0, 10.0, 0.5};
+    Vector3 rangeY_{-10.0, 10.0, 0.5};
     // Range along Z axis
-    Vec3<double> rangeZ_{-10.0, 10.0, 0.5};
+    Vector3 rangeZ_{-10.0, 10.0, 0.5};
     // Export file and format for SDF
     Data3DExportFileFormat sdfFileAndFormat_;
 
@@ -37,5 +37,5 @@ class SDFModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

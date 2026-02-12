@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/mathFunc.h"
-#include "math/constants.h"
 #include "math/pcg.h"
 #include <cmath>
-#include <cstdlib>
 #include <random>
 
 namespace DissolveMath
@@ -79,5 +77,32 @@ double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a);
 
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i) { return (i % 3); }
+
+// Return the integer wrapped into the specified range
+int wrap(int i, int lower, int upper)
+{
+    const auto range = upper - lower + 1;
+
+    if (i < 0)
+        i += range * ((lower - i) / range + 1);
+    return lower + (i - lower) % range;
+}
+
+/*
+ * Conversion
+ */
+
+// Convert degrees <--> radians
+double toRadians(double degrees) { return degrees / DegreesPerRadian; }
+double toDegrees(double radians) { return radians * DegreesPerRadian; }
+
+/*
+ * Triangular Matrices
+ */
+
+// Return the number of elements in a triangular matrix, disregarding the diagonal terms
+int triangularOffDiagonals(int matrixSize) { return matrixSize * (matrixSize - 1) / 2; }
+// Return the number of elements in a triangular matrix, including the diagonal terms
+int triangularIncDiagonals(int matrixSize) { return matrixSize * (matrixSize + 1) / 2; }
 
 } // namespace DissolveMath

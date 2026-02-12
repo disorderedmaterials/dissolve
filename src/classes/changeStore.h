@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -20,7 +20,7 @@ class Timer;
 class ChangeStore
 {
     public:
-    ChangeStore(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer = {});
+    ChangeStore();
     ~ChangeStore() = default;
 
     /*
@@ -62,17 +62,6 @@ class ChangeStore
     void revert(int id);
     // Save Atom changes for broadcast, and reset arrays for new data
     void storeAndReset();
-
-    /*
-     * Parallel Comms
-     */
-    private:
-    // ProcessPool over which this ChangeStore should broadcast
-    const ProcessPool &processPool_;
-    // Optional timer for capturing communication times
-    OptionalReferenceWrapper<Timer> commsTimer_;
-
-    public:
-    // Distribute and apply change data to all processes
-    bool distributeAndApply(Configuration *cfg);
+    // Apply change data
+    bool apply(Configuration *cfg);
 };

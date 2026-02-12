@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/braggReflection.h"
 #include "base/lineParser.h"
@@ -89,7 +89,7 @@ int BraggReflection::nKVectors() const { return nKVectors_; }
 void BraggReflection::setHKL(int h, int k, int l) { hkl_.set(h, k, l); }
 
 // Return Miller indices of reflection
-const Vec3<int> &BraggReflection::hkl() const { return hkl_; }
+const Vector3i &BraggReflection::hkl() const { return hkl_; }
 
 /*
  * Serialisation

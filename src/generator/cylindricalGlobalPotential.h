@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -20,10 +20,10 @@ class CylindricalGlobalPotentialGeneratorNode : public GeneratorNode
     // Potential form
     InteractionPotential<Functions1D> potential_;
     // Origin coordinates
-    Vec3<NodeValue> origin_;
+    Vector3NodeValue origin_;
     bool originIsFractional_{false};
     // Cylindrical vector
-    Vec3<NodeValue> vector_{0.0, 0.0, 1.0};
+    Vector3NodeValue vector_{0.0, 0.0, 1.0};
 
     /*
      * Execute

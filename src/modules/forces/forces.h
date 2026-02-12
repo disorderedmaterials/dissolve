@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -40,11 +40,11 @@ class ForcesModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 
     public:
     // Run set-up stage
-    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 
     /*
      * Functions
@@ -59,17 +59,14 @@ class ForcesModule : public Module
         IntraMolecularGeometry
     };
     // Calculate total forces within the specified Configuration
-    static void totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                            ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
-                            std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<Timer> commsTimer = {});
+    static void totalForces(Configuration *cfg, const PotentialMap &potentialMap, ForceCalculationType calculationType,
+                            std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound);
     // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
-    static void totalForces(const ProcessPool &procPool, Configuration *cfg,
-                            const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
-                            ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
-                            std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<Timer> commsTimer = {});
+    static void totalForces(Configuration *cfg, const std::vector<const Molecule *> &targetMolecules,
+                            const PotentialMap &potentialMap, ForceCalculationType calculationType,
+                            std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound);
     // Calculate total forces within the specified Species
-    static void totalForces(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap,
-                            ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
-                            std::vector<Vec3<double>> &fBound,
-                            OptionalReferenceWrapper<const std::vector<Vec3<double>>> r = {});
+    static void totalForces(const Species *sp, const PotentialMap &potentialMap, ForceCalculationType calculationType,
+                            std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
+                            OptionalReferenceWrapper<const std::vector<Vector3>> r = {});
 };

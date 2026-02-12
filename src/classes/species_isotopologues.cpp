@@ -1,19 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/species.h"
 
 // Update current Isotopologues
-void Species::updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes)
+void Species::updateIsotopologues()
 {
     for (auto &iso : isotopologues_)
-    {
-        if (atomTypes)
-            iso->checkAtomTypes(*atomTypes);
-
         iso->update();
-    }
 }
 
 // Update and return natural isotopologue

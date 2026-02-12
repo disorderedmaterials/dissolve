@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -71,7 +71,7 @@ class NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVari
      */
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params) override;
 };
@@ -94,4 +94,23 @@ class NodeValueProxy : public NodeValue
     public:
     // Return value represented as a string
     std::string asString(bool addQuotesIfRequired = false) const override;
+};
+
+// Node Value Vector
+class Vector3NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVariable>>>
+{
+    public:
+    Vector3NodeValue() = default;
+    Vector3NodeValue(const NodeValue &xx, const NodeValue &yy, const NodeValue &zz);
+    // Components
+    NodeValue x, y, z;
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params) override;
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/histogram2D.h"
 #include "base/lineParser.h"
@@ -11,6 +11,11 @@ Histogram2D::Histogram2D()
     accumulatedData_.addErrors();
 
     clear();
+}
+
+Histogram2D::Histogram2D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange)
+{
+    initialise(xMinMaxRange.x, xMinMaxRange.y, xMinMaxRange.z, yMinMaxRange.x, yMinMaxRange.y, yMinMaxRange.z);
 }
 
 Histogram2D::Histogram2D(const Histogram2D &source) { (*this) = source; }
@@ -236,21 +241,6 @@ bool Histogram2D::serialise(LineParser &parser) const
             if (!averages_[{x, y}].serialise(parser))
                 return false;
     }
-
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Sum histogram data onto all processes
-bool Histogram2D::allSum(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.allSum(bins_.linearArray().data(), bins_.linearArray().size()))
-        return false;
-#endif
 
     return true;
 }

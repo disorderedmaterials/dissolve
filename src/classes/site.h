@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -19,9 +19,9 @@ class Site
 {
     public:
     Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
-         std::shared_ptr<const Molecule> molecule = {}, const Vec3<double> &origin = {});
+         std::shared_ptr<const Molecule> molecule = {}, const Vector3 &origin = {});
     Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
-         std::shared_ptr<const Molecule> molecule = {}, const Matrix3 &axes = {}, const Vec3<double> &origin = {});
+         std::shared_ptr<const Molecule> molecule = {}, const Matrix3 &axes = {}, const Vector3 &origin = {});
     Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
          const SpeciesSiteInstance &instance, const Box *box);
     ~Site() = default;
@@ -40,7 +40,7 @@ class Site
     // Molecule to which site is related (if relevant)
     std::shared_ptr<const Molecule> molecule_;
     // Site origin
-    Vec3<double> origin_;
+    Vector3 origin_;
     // Local axes
     Matrix3 axes_;
     // Whether local axes have been set / defined
@@ -63,7 +63,7 @@ class Site
     // Return the unique site index in the parent
     std::optional<int> uniqueSiteIndex() const;
     // Return site origin
-    const Vec3<double> &origin() const;
+    const Vector3 &origin() const;
     // Return Molecule to which site is related (if relevant)
     std::shared_ptr<const Molecule> molecule() const;
     // Return whether local axes are present

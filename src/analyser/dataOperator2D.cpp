@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "analyser/dataOperator2D.h"
 #include "math/data2D.h"
 #include "math/integrator.h"
+#include "math/mathFunc.h"
 
 DataOperator2D::DataOperator2D(Data2D &targetData) : DataOperatorBase<Data2D, OperateFunction2D>(targetData) {}
 
@@ -61,7 +62,7 @@ void DataOperator2D::normaliseBySphericalShell()
             auto r2Cubed = pow(rightBin, 3);
 
             // Calculate divisor for normalisation
-            auto divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
+            auto divisor = (4.0 / 3.0) * M_PI * (r2Cubed - r1Cubed);
 
             // Peform normalisation step
             values[{n, m}] /= divisor;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/generalRegion.h"
 #include "classes/configuration.h"
@@ -12,7 +12,7 @@
 GeneralRegionVoxelKernel::GeneralRegionVoxelKernel(double toleranceSquared) : toleranceSquared_(toleranceSquared) {}
 
 // Return whether voxel centred at supplied real coordinates is valid
-bool GeneralRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+bool GeneralRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vector3 &r) const
 {
     // If any atom in the Configuration is less than some tolerance value to this coordinate, invalidate the voxel
     return !std::any_of(cfg->atoms().begin(), cfg->atoms().end(),

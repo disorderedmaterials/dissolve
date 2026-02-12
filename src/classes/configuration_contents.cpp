@@ -1,84 +1,113 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
+#include "math/mathFunc.h"
 #include <memory>
 #include <numeric>
+
+/*
+ * Private Functions
+ */
+
+// Add new Atom to Configuration, with Molecule parent specified
+Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r)
+{
+    // Create new Atom object and set its source pointer
+    auto &newAtom = atoms_.emplace_back();
+    newAtom.setSpeciesAtom(sourceAtom);
+
+    // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
+    molecule->addAtom(&newAtom);
+
+    // Set the position
+    newAtom.setCoordinates(r);
+
+    // Set configuration type index for pair potential lookup
+    // TODO This can be removed once the Dissolve1 unit tests have been ported over to Dissolve2
+    newAtom.setConfigurationTypeIndex(sourceAtom->atomType()->index());
+
+    return newAtom;
+}
+
+/*
+ * Public Functions
+ */
 
 // Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
 {
     molecules_.clear();
     atoms_.clear();
-    atomTypePopulations_.clear();
     appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();
     globalPotentials_.clear();
     targetedPotentials_.clear();
     cells_.clear();
 
-    ++contentsVersion_;
-}
-
-// Return atom type populations for this Configuration
-const AtomTypeMix &Configuration::atomTypePopulations() const { return atomTypePopulations_; }
-
-// Adjust population of specified Species in the Configuration
-void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
-{
-    auto it = std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
-                           [sp](const auto &data) { return data.first == sp; });
-    if (it == speciesPopulations_.end())
-    {
-        if (delta < 0)
-            Messenger::exception("Can't decrease population of Species '{}' as it is not in the list.\n", sp->name());
-        speciesPopulations_.emplace_back(sp, delta);
-    }
-    else
-        it->second += delta;
+    ++version_;
+    typeIndicesValid_ = false;
 }
 
 // Return Species populations within the Configuration
-const std::vector<std::pair<const Species *, int>> &Configuration::speciesPopulations() const { return speciesPopulations_; }
+const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
-// Return population of specified species within the Configuration
-int Configuration::speciesPopulation(const Species *sp) const
+// Return atom type populations for this Configuration
+KeyedVector<const AtomType *, int> Configuration::atomTypePopulations() const
 {
-    auto it = std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
-                           [sp](const auto &spInfo) { return spInfo.first == sp; });
-    return it == speciesPopulations_.end() ? 0 : it->second;
+    KeyedVector<const AtomType *, int> populations;
+    for (const auto &[sp, speciesPopulation] : speciesPopulations_)
+    {
+        for (const auto &[atomType, atomPopulation] : sp->atomTypePopulations())
+            populations[atomType] += speciesPopulation * atomPopulation;
+    }
+    return populations;
 }
 
-// Return if the specified Species is present in the Configuration
-bool Configuration::containsSpecies(const Species *sp)
+// Return atom type index map
+std::map<const AtomType *, int> Configuration::atomTypeIndexMap() const
 {
-    return std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
-                        [sp](const auto &data) { return data.first == sp; }) != speciesPopulations_.end();
+    auto populations = atomTypePopulations();
+
+    std::map<const AtomType *, int> typeMap;
+    for (auto n = 0; n < populations.size(); ++n)
+        typeMap[populations.key(n)] = n;
+
+    return typeMap;
+}
+
+// Return used atom type vector
+std::vector<const AtomType *> Configuration::atomTypeVector() const
+{
+    auto populations = atomTypePopulations();
+    std::vector<const AtomType *> result(populations.size());
+    std::transform(populations.vector().begin(), populations.vector().end(), result.begin(),
+                   [](const auto &pop) { return pop.first; });
+    return result;
 }
 
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
 {
-    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0,
-                           [&](const auto &acc, auto &spPop)
+    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0, [&](const auto &acc, auto &spPop)
                            { return acc + spPop.first->totalCharge(ppIncludeCoulomb) * spPop.second; });
 }
 
 // Return the total atomic mass present in the Configuration
 double Configuration::atomicMass() const
 {
-    double mass = 0.0;
+    auto mass = 0.0;
 
     // Get total molar mass in configuration
-    for (const auto &spPop : speciesPopulations_)
-        mass += spPop.first->mass() * spPop.second;
+    for (const auto &[sp, population] : speciesPopulations_)
+        mass += sp->mass() * population;
 
     // Convert to absolute mass
-    return mass / AVOGADRO;
+    return mass / DissolveMath::Avogadro;
 }
 
 // Return the atomic density of the Configuration
@@ -99,15 +128,15 @@ std::optional<double> Configuration::chemicalDensity() const
     return atomicMass() / (box_->volume() / 1.0E24);
 }
 
-// Return version of current contents
-int Configuration::contentsVersion() const { return contentsVersion_; }
+// Return version (atomic positions and composition)
+int Configuration::version() const { return version_; }
 
 // Increment version of current contents
-void Configuration::incrementContentsVersion() { ++contentsVersion_; }
+void Configuration::notifyAtomicPositionsChanged() { ++version_; }
 
 // Add Molecule to Configuration based on the supplied Species
-std::shared_ptr<Molecule>
-Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
+std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
+                                                     OptionalReferenceWrapper<const std::vector<Vector3>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
     auto newMolecule = std::make_shared<Molecule>();
@@ -116,7 +145,7 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     newMolecule->setSpecies(sp);
 
     // Update the relevant Species population
-    adjustSpeciesPopulation(sp, 1);
+    ++speciesPopulations_[sp];
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
     auto previousNAtoms = atoms_.size();
@@ -134,24 +163,28 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
 
     newMolecule->updateAtoms(atoms_, previousNAtoms);
 
+    typeIndicesValid_ = false;
+
     return newMolecule;
 }
 
 // Copy molecule
-std::shared_ptr<Molecule> Configuration::copyMolecule(const std::shared_ptr<Molecule> &sourceMolecule)
+std::shared_ptr<Molecule> Configuration::copyMolecule(const Molecule &sourceMolecule)
 {
-    std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+    auto newMolecule = std::make_shared<Molecule>();
     newMolecule->setArrayIndex(molecules_.size());
     molecules_.push_back(newMolecule);
-    auto *sp = sourceMolecule->species();
+    auto *sp = sourceMolecule.species();
     newMolecule->setSpecies(sp);
 
     // Update the relevant Species population
-    adjustSpeciesPopulation(sp, 1);
+    ++speciesPopulations_[sp];
 
     // Copy the source molecule's coordinates
-    for (const auto *atom : sourceMolecule->atoms())
+    for (const auto *atom : sourceMolecule.atoms())
         addAtom(atom->speciesAtom(), newMolecule, atom->r());
+
+    typeIndicesValid_ = false;
 
     return newMolecule;
 }
@@ -167,7 +200,7 @@ void Configuration::removeMolecules(const Species *sp)
                                             auto offset = mol->globalAtomOffset();
                                             for (auto i = 0; i < mol->nAtoms(); ++i)
                                                 atoms_[offset + i].setMolecule(nullptr);
-                                            adjustSpeciesPopulation(mol->species(), -1);
+                                            --speciesPopulations_[mol->species()];
                                             return true;
                                         }
                                         else
@@ -177,6 +210,8 @@ void Configuration::removeMolecules(const Species *sp)
 
     // Now remove any atoms which have no molecule parent
     atoms_.erase(std::remove_if(atoms_.begin(), atoms_.end(), [](const auto &atom) { return !atom.molecule(); }), atoms_.end());
+
+    typeIndicesValid_ = false;
 
     updateObjectRelationships();
 }
@@ -192,7 +227,7 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                             auto offset = mol->globalAtomOffset();
                                             for (auto i = 0; i < mol->nAtoms(); ++i)
                                                 atoms_[offset + i].setMolecule(nullptr);
-                                            adjustSpeciesPopulation(mol->species(), -1);
+                                            --speciesPopulations_[mol->species()];
                                             return true;
                                         }
                                         else
@@ -202,6 +237,8 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
 
     // Now remove any atoms which have no molecule parent
     atoms_.erase(std::remove_if(atoms_.begin(), atoms_.end(), [](const auto &atom) { return !atom.molecule(); }), atoms_.end());
+
+    typeIndicesValid_ = false;
 
     updateObjectRelationships();
 }
@@ -215,34 +252,6 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 
 // Return nth Molecule
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
-
-// Add new Atom to Configuration, with Molecule parent specified
-Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vec3<double> r)
-{
-    // Create new Atom object and set its source pointer
-    auto &newAtom = atoms_.emplace_back();
-    newAtom.setSpeciesAtom(sourceAtom);
-
-    // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
-    molecule->addAtom(&newAtom);
-
-    // Set the position
-    newAtom.setCoordinates(r);
-
-    // Update atom type population and set local type index
-    if (sourceAtom->isPresence(SpeciesAtom::Presence::Physical))
-    {
-        auto &&[atd, atdIndex] = atomTypePopulations_.add(sourceAtom->atomType(), 1);
-        newAtom.setLocalTypeIndex(atdIndex);
-    }
-    else
-        newAtom.setLocalTypeIndex(AtomType::Ignore);
-
-    // Set master index for pair potential lookup
-    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
-
-    return newAtom;
-}
 
 // Return the number of atoms in the configuration (or only those with the specified presence)
 int Configuration::nAtoms(SpeciesAtom::Presence withPresence) const
@@ -274,13 +283,13 @@ void Configuration::unFoldMolecules()
 }
 
 // Scale contents of the box by the specified factors along each axis
-void Configuration::scaleContents(Vec3<double> scaleFactors)
+void Configuration::scaleContents(Vector3 scaleFactors)
 {
     // Un-fold all molecules so we can determine true centres of geometry
     unFoldMolecules();
 
     // For each molecule, set its new centre of geometry
-    Vec3<double> oldCog, newCog, r;
+    Vector3 oldCog, newCog, r;
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position
@@ -312,5 +321,37 @@ void Configuration::scaleContents(Vec3<double> scaleFactors)
         }
     }
 
-    ++contentsVersion_;
+    ++version_;
+}
+
+// Energy stable flag
+void Configuration::setEnergyStable(bool stable) { energyIsStable_ = stable; }
+
+bool Configuration::energyIsStable() const { return energyIsStable_; }
+
+// Energy gradient
+void Configuration::setEnergyGradient(double grad) { energyGradient_ = grad; }
+
+double Configuration::getEnergyGradient() const { return energyGradient_; }
+
+// Update type indices per Atom
+void Configuration::updateTypeIndexing()
+{
+    // Are we currently up-to-date
+    if (typeIndicesValid_)
+        return;
+
+    // Get the atom type index map
+    auto typeMap = atomTypeIndexMap();
+
+    // Loop over atoms
+    for (auto &atom : atoms_)
+    {
+        if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical))
+            atom.setConfigurationTypeIndex(typeMap[atom.speciesAtom()->atomType().get()]);
+        else
+            atom.setConfigurationTypeIndex(AtomType::Ignore);
+    }
+
+    typeIndicesValid_ = true;
 }

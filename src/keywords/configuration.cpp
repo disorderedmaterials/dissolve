@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/configuration.h"
 #include "base/lineParser.h"
@@ -52,12 +52,12 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
 }
 
 // Express as a serialisable value
-SerialisedValue ConfigurationKeyword::serialise() const
+void ConfigurationKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     // isDefault is checked before serialisation of keywords
     // so we have checked for the null pointer
     assert(data_);
-    return data_->name();
+    target[tag] = data_->name();
 }
 
 // Read values from a serialisable value

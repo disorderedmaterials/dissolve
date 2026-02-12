@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -111,7 +111,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     // Has not changed from initial value
     bool isDefault() const override { return data_ == default_; }
     // Express as a serialisable value
-    SerialisedValue serialise() const override { return optionData_.keyword(data_); }
+    void serialise(std::string tag, SerialisedValue &target) const override { target[tag] = optionData_.keyword(data_); }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override { data_ = optionData_.deserialise(node); }
 };

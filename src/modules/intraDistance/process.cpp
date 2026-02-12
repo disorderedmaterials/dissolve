@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
@@ -7,13 +7,12 @@
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
-#include "module/context.h"
 #include "modules/intraDistance/intraDistance.h"
 
 // Run main processing
-Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult IntraDistanceModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -52,8 +51,7 @@ Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContex
     histogramNormaliser.normaliseSumTo();
 
     // Save Distance(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dataNormalisedHisto, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

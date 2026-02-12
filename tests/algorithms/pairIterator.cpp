@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairIterator.h"
 #include "classes/fullPairIterator.h"
@@ -32,11 +32,7 @@ void for_each_test(bool unordered)
 
     int sum = 0;
     dissolve::for_each_pair(
-        ParallelPolicies::seq, 0, size,
-        [&sum, &store](const auto i, const auto j) {
-            sum += store[{i, j}];
-        },
-        unordered);
+        ParallelPolicies::seq, size, [&sum, &store](const auto i, const auto j) { sum += store[{i, j}]; }, unordered);
 
     EXPECT_EQ(total, sum);
 }

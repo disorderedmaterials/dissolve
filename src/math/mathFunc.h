@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-// Forward Declarations
-template <class A> class Array2D;
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-// Mathematical functions
 namespace DissolveMath
 {
 /*
@@ -40,5 +39,33 @@ int sgn(double x);
 double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
+// Return the integer wrapped into the specified range
+int wrap(int i, int lower, int upper);
 
+/*
+ * Conversion
+ */
+
+// Convert degrees <--> radians
+double toRadians(double degrees);
+double toDegrees(double radians);
+
+/*
+ * Constants
+ */
+
+// Avogadro's Number
+constexpr double Avogadro = 6.0221415E23;
+
+// Degrees per Radian
+constexpr double DegreesPerRadian = 180.0 / M_PI;
+
+/*
+ * Triangular Matrices
+ */
+
+// Return the number of elements in a triangular matrix, disregarding the diagonal terms
+int triangularOffDiagonals(int matrixSize);
+// Return the number of elements in a triangular matrix, including the diagonal terms
+int triangularIncDiagonals(int matrixSize);
 }; // namespace DissolveMath

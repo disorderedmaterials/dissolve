@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/importCoordinates.h"
 #include "classes/configuration.h"
@@ -35,5 +35,5 @@ bool ImportCoordinatesGeneratorNode::prepare(const GeneratorContext &generatorCo
 // Execute node
 bool ImportCoordinatesGeneratorNode::execute(const GeneratorContext &generatorContext)
 {
-    return fileSource_.importData(generatorContext.configuration(), &generatorContext.processPool());
+    return fileSource_.importData(generatorContext.configuration());
 }

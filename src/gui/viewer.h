@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -260,11 +260,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
      */
     protected:
     // Canvas coordinates of mouse down
-    Vec3<int> rMouseDown_;
+    Vector3i rMouseDown_;
     // Mouse release timer for detection of context menu requests
     QTimer mouseReleaseTimer_;
     // Canvas coordinates of mouse cursor
-    Vec3<int> rMouseLast_;
+    Vector3i rMouseLast_;
     // Current state of mouse buttons
     Qt::MouseButtons buttonState_;
     // Modifier state on mouse down
@@ -307,9 +307,9 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
      */
     private:
     // Clicked coordinates (in Axes frame) in 2D view
-    Vec3<double> clicked2DAxesCoordinates_;
+    Vector3 clicked2DAxesCoordinates_;
     // Current coordinates (in Axes frame) under mouse in 2D view
-    Vec3<double> current2DAxesCoordinates_;
+    Vector3 current2DAxesCoordinates_;
     // Whether the viewer is currently being interacted with
     bool interacting_;
 
@@ -327,11 +327,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return text describing current interaction mode
     virtual const QString interactionModeText() const;
     // Return clicked coordinates (in Axes frame) in 2D view
-    Vec3<double> clicked2DAxesCoordinates() const;
+    Vector3 clicked2DAxesCoordinates() const;
     // Return current coordinates (in Axes frame) under mouse in 2D view
-    Vec3<double> current2DAxesCoordinates() const;
+    Vector3 current2DAxesCoordinates() const;
     // Calculate 2D Axes coordinate from screen coordinates
-    Vec3<double> screenTo2DAxes(int mouseX, int mouseY);
+    Vector3 screenTo2DAxes(int mouseX, int mouseY);
 
     Q_SIGNALS:
     // Notification that interaction mode has changed

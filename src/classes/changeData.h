@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "templates/vector3.h"
+#include "math/vector3.h"
 
 // Forward Declarations
 class Atom;
@@ -25,7 +25,7 @@ class ChangeData
     // Flag indicating whether Atom has moved
     bool moved_{false};
     // Stored coordinates of Atom
-    Vec3<double> r_;
+    Vector3 r_;
     // Stored Cell of Atom
     Cell *cell_{nullptr};
 
@@ -43,5 +43,5 @@ class ChangeData
     // Return whether Atom has moved
     bool hasMoved();
     // Return position vector
-    Vec3<double> r() const;
+    Vector3 r() const;
 };

@@ -15,7 +15,7 @@ We'll go through the steps of importing a crystal structure from a Crystallograp
 
 ## Preparation
 
-Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
+Download the example data archive from the [GitHub releases page](https://github.com/disorderedmaterials/dissolve/releases) and unpack it if you haven't done so already. Alternatively, download the data files listed below and save them to a location of your choice.
 
 - CIF file: [7108574.cif](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/cu-btc/7108574.cif)
 - Neutron Data (Empty MOF): [Empty-CuBTC.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/cu-btc/data/Empty-CuBTC.mint01)

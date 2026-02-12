@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/TextPrimitiveVisitor.h"
 #include "gui/render/TextPrimitiveErrorListeners.h"
@@ -51,7 +51,7 @@ std::vector<TextFragment> TextPrimitiveVisitor::create(TextPrimitiveParser::Prim
 void TextPrimitiveVisitor::addText(std::string_view text, const TextFormat format)
 {
     // Add new fragment using supplied format settings
-    fragments_.emplace_back(text, format.scale(), Vec3<double>(horizontalPosition_, format.y(), 0.0), format.isItalic(),
+    fragments_.emplace_back(text, format.scale(), Vector3(horizontalPosition_, format.y(), 0.0), format.isItalic(),
                             format.isBold());
 
     // Update horizontal position
@@ -120,7 +120,7 @@ antlrcpp::Any TextPrimitiveVisitor::visitSymbol(TextPrimitiveParser::SymbolConte
 
 /*
     // Set fragment info
-    Vec3<double> translation(horizontalPosition_, format->y(), 0.0);
+    Vector3 translation(horizontalPosition_, format->y(), 0.0);
     QString textToAdd;
     if (!format->symbol())
         textToAdd = text;
@@ -133,7 +133,7 @@ antlrcpp::Any TextPrimitiveVisitor::visitSymbol(TextPrimitiveParser::SymbolConte
         else
             textToAdd = "<?>";
     }
-    fragments_.emplace_back(ctx->getText(), format->scale(), Vec3<double>(horizontalPosition_, format->y(), 0.0),
+    fragments_.emplace_back(ctx->getText(), format->scale(), Vector3(horizontalPosition_, format->y(), 0.0),
    format->italic(), format->bold());
 
     // We have just added some text, so update the horizontal position
@@ -159,7 +159,7 @@ bool TextPrimitiveVisitor::addFragment(QString text)
     TextFormat *format = formatStack_.last();
 
     // Set fragment info
-    Vec3<double> translation(horizontalPosition_, format->y(), 0.0);
+    Vector3 translation(horizontalPosition_, format->y(), 0.0);
     QString textToAdd;
     if (!format->symbol())
         textToAdd = text;

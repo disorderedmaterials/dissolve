@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/stdString.h"
 #include "base/lineParser.h"
@@ -39,7 +39,7 @@ bool StringKeyword::serialise(LineParser &parser, std::string_view keywordName, 
 }
 
 // Express as a serialisable value
-SerialisedValue StringKeyword::serialise() const { return data_; }
+void StringKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void StringKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_string(); }

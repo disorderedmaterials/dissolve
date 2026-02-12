@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/atomTypeMix.h"
 #include "classes/box.h"
-#include "classes/cellArray.h"
 #include "classes/isotopologue.h"
 #include "classes/speciesAngle.h"
 #include "classes/speciesAtom.h"
@@ -14,11 +12,8 @@
 #include "classes/speciesImproper.h"
 #include "classes/speciesSite.h"
 #include "classes/speciesTorsion.h"
-#include "io/import/coordinates.h"
-#include <list>
-#include <map>
+#include "templates/keyedVector.h"
 #include <memory>
-#include <variant>
 #include <vector>
 
 // Forward Declarations
@@ -64,6 +59,8 @@ class Species : public Serialisable<const CoreData &>
     std::vector<SpeciesAtom> atoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
+    // Atom types for the species
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
     private:
     // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
@@ -72,7 +69,9 @@ class Species : public Serialisable<const CoreData &>
 
     public:
     // Add a new atom to the Species, returning its index
-    int addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
+    int addAtom(Elements::Element Z, Vector3 r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
+    // Add new atom type to atom types
+    const std::shared_ptr<AtomType> addAtomType(Elements::Element Z, std::string_view name = "");
     // Remove the specified atom from the species
     void removeAtom(int index);
     // Remove set of atom indices
@@ -88,7 +87,7 @@ class Species : public Serialisable<const CoreData &>
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
     // Set coordinates of specified atom
-    void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
+    void setAtomCoordinates(SpeciesAtom *i, Vector3 r);
     // Set coordinates of specified atom (by index and individual coordinates)
     void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
@@ -115,8 +114,8 @@ class Species : public Serialisable<const CoreData &>
     int atomSelectionVersion() const;
     // Return total atomic mass of Species
     double mass() const;
-    // Calculate and return atom types used in the Species
-    AtomTypeMix atomTypes() const;
+    // Calculate and return atom type populations
+    KeyedVector<const AtomType *, int> atomTypePopulations() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters
@@ -254,7 +253,7 @@ class Species : public Serialisable<const CoreData &>
     // Remove Box definition and revert to single image
     void removeBox();
     // Create Box definition with specified lengths and angles
-    void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+    void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
 
     /*
      * Source Forcefield (if any)
@@ -284,7 +283,7 @@ class Species : public Serialisable<const CoreData &>
 
     public:
     // Update current Isotopologues
-    void updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes = std::nullopt);
+    void updateIsotopologues();
     // Return natural (empty) Isotopologue
     const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species
@@ -305,7 +304,7 @@ class Species : public Serialisable<const CoreData &>
     int indexOfIsotopologue(const Isotopologue *iso) const;
 
     /*
-     * Site
+     * Sites
      */
     private:
     // Defined sites
@@ -332,9 +331,9 @@ class Species : public Serialisable<const CoreData &>
      */
     public:
     // Calculate and return centre of geometry
-    Vec3<double> centreOfGeometry(const Box *box) const;
+    Vector3 centreOfGeometry(const Box *box) const;
     // Set centre of geometry
-    void setCentre(const Box *box, const Vec3<double> newCentre);
+    void setCentre(const Box *box, const Vector3 newCentre);
     // Centre coordinates at origin
     void centreAtOrigin();
 
@@ -373,7 +372,7 @@ class Species : public Serialisable<const CoreData &>
     bool write(LineParser &parser, std::string_view prefix);
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };

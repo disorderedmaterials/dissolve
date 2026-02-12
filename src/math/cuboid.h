@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -16,20 +16,20 @@ class Cuboid
      */
     private:
     // Minimum and maximum coordinates for cuboid
-    Vec3<double> minima_, maxima_;
+    Vector3 minima_, maxima_;
     // Whether minima and maxima have ever been set
     bool minimaSet_, maximaSet_;
 
     public:
     // Update extreme coordinates with supplied vector
-    void updateExtremes(Vec3<double> v);
+    void updateExtremes(Vector3 v);
 
     /*
      * Functions
      */
     public:
     // Return minima for cuboid
-    Vec3<double> minima() const;
+    Vector3 minima() const;
     // Return maxima for cuboid
-    Vec3<double> maxima() const;
+    Vector3 maxima() const;
 };

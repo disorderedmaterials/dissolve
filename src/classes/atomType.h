@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -9,10 +9,11 @@
 #include "classes/shortRangeFunctions.h"
 #include "data/elements.h"
 #include <map>
+#include <memory>
 #include <vector>
 
 // AtomType Definition
-class AtomType : public Serialisable<>
+class AtomType : public Serialisable<>, public std::enable_shared_from_this<AtomType>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
@@ -71,11 +72,11 @@ class AtomType : public Serialisable<>
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(SerialisedValue node);
 };

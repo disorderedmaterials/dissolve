@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
+#include "base/timer.h"
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/braggReflection.h"
@@ -17,18 +18,17 @@
  */
 
 // Calculate unweighted Bragg scattering for specified Configuration
-bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
-                                      const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity,
-                                      bool &alreadyUpToDate)
+bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cfg, const double qMin, const double qDelta,
+                                      const double qMax, Vector3i multiplicity, bool &alreadyUpToDate)
 {
     // Check to see if the arrays are up-to-date
     auto braggDataVersion = moduleData.valueOr<int>("Version", name_, -1);
-    alreadyUpToDate = braggDataVersion == cfg->contentsVersion();
+    alreadyUpToDate = braggDataVersion == cfg->version();
     if (alreadyUpToDate)
         return true;
 
     // Realise the arrays from the Configuration
-    auto &braggKVectors = moduleData.realise<std::vector<KVector>>("KVectors", cfg->niceName());
+    auto &braggKVectors = moduleData.realise<std::vector<KVector>>("KVectors", cfg->name());
     auto &braggReflections =
         moduleData.realise<std::vector<BraggReflection>>("Reflections", name(), GenericItem::InRestartFileFlag);
     auto &braggAtomVectorXCos = moduleData.realise<Array2D<double>>("AtomVectorXCos", name());
@@ -37,11 +37,11 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     auto &braggAtomVectorXSin = moduleData.realise<Array2D<double>>("AtomVectorXSin", name());
     auto &braggAtomVectorYSin = moduleData.realise<Array2D<double>>("AtomVectorYSin", name());
     auto &braggAtomVectorZSin = moduleData.realise<Array2D<double>>("AtomVectorZSin", name());
-    auto &braggMaximumHKL = moduleData.realise<Vec3<int>>("MaximumHKL", name());
+    auto &braggMaximumHKL = moduleData.realise<Vector3i>("MaximumHKL", name());
 
     // Grab some useful values
     const auto *box = cfg->box();
-    auto nTypes = cfg->atomTypePopulations().nItems();
+    auto nTypes = cfg->atomTypePopulations().size();
     auto nAtoms = cfg->nAtoms(SpeciesAtom::Presence::Physical);
     auto &atoms = cfg->atoms();
 
@@ -103,7 +103,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
             reflxn.initialise(q, -1, nTypes);
             q += qDelta;
         }
-        Vec3<double> kVec, v;
+        Vector3 kVec, v;
         for (h = 0; h <= braggMaximumHKL.x; ++h)
         {
             kVec.x = h;
@@ -176,7 +176,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     timer.stop();
     timer.zero();
     timer.start();
-    Vec3<double> v, rI;
+    Vector3 v, rI;
     for (n = 0; n < nAtoms; ++n)
     {
         // Skip unphysical atoms
@@ -255,7 +255,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
             continue;
 
         // Grab localTypeIndex and array pointers for this atom
-        localTypeIndex = atoms[n].localTypeIndex();
+        localTypeIndex = atoms[n].configurationTypeIndex();
 
         cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
         cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);
@@ -301,21 +301,21 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     std::for_each(braggReflections.begin(), braggReflections.end(), [divisor](auto &reflxn) { reflxn *= divisor; });
 
     // Store the new version of the data
-    moduleData.realise<int>("Version", name_) = cfg->contentsVersion();
+    moduleData.realise<int>("Version", name_) = cfg->version();
 
     return true;
 }
 
 // Form partial and total reflection functions from calculated reflection data
-bool BraggModule::formReflectionFunctions(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
-                                          const double qMin, const double qDelta, const double qMax)
+bool BraggModule::formReflectionFunctions(GenericList &moduleData, Configuration *cfg, const double qMin, const double qDelta,
+                                          const double qMax)
 {
     // Retrieve BraggReflection data from the Configuration's module data
     const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", name());
     const auto nReflections = braggReflections.size();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
-    const auto nTypes = cfg->atomTypePopulations().nItems();
+    const auto nTypes = cfg->atomTypePopulations().size();
     auto braggPartialsObject = moduleData.realiseIf<Array2D<Data1D>>("OriginalBragg", name(), GenericItem::InRestartFileFlag);
     auto &braggPartials = braggPartialsObject.first;
     if (braggPartialsObject.second == GenericItem::ItemStatus::Created)
@@ -346,13 +346,13 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
     int bin;
-    auto &types = cfg->atomTypePopulations();
-    dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
-                            [&](int typeI, auto &atd1, int typeJ, auto &atd2)
+    auto types = cfg->atomTypePopulations();
+    dissolve::for_each_pair(ParallelPolicies::seq, types,
+                            [&](int typeI, auto &popI, int typeJ, auto &popJ)
                             {
                                 // Retrieve partial container and make sure its tag is set
                                 auto &partial = braggPartials[{typeI, typeJ}];
-                                partial.setTag(std::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));
+                                partial.setTag(std::format("{}-{}", popI.first->name(), popJ.first->name()));
 
                                 // Loop over defined Bragg reflections
                                 for (auto n = 0; n < nReflections; ++n)
@@ -375,14 +375,13 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
 }
 
 // Re-bin reflection data into supplied arrays
-bool BraggModule::reBinReflections(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
-                                   Array2D<Data1D> &braggPartials)
+bool BraggModule::reBinReflections(GenericList &moduleData, Configuration *cfg, Array2D<Data1D> &braggPartials)
 {
     // Retrieve BraggReflection data
     const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", name());
     const auto nReflections = braggReflections.size();
 
-    const auto nTypes = cfg->atomTypePopulations().nItems();
+    const auto nTypes = cfg->atomTypePopulations().size();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
@@ -406,7 +405,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, const ProcessPool &p
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        auto &types = cfg->atomTypePopulations();
+        auto types = cfg->atomTypePopulations();
         int typeI = 0;
         for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {

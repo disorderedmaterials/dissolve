@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -7,12 +7,13 @@
 #include "math/sampledDouble.h"
 
 // One-Dimensional Histogram
-class Histogram1D
+class Histogram1D : public Serialisable<>
 {
     public:
     Histogram1D();
-    ~Histogram1D() = default;
+    Histogram1D(const Vector3 &minMaxRange);
     Histogram1D(const Histogram1D &source);
+    ~Histogram1D() = default;
     // Clear data
     void clear();
 
@@ -93,11 +94,8 @@ class Histogram1D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Sum histogram data onto all processes
-    bool allSum(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer = {});
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

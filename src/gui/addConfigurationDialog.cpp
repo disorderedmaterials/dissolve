@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/addConfigurationDialog.h"
 #include "base/units.h"
@@ -11,6 +11,7 @@
 #include "generator/parameters.h"
 #include "generator/temperature.h"
 #include "gui/helpers/comboPopulator.h"
+#include "math/mathFunc.h"
 #include <QInputDialog>
 #include <QMessageBox>
 
@@ -83,9 +84,8 @@ bool AddConfigurationDialog::progressionAllowed(int index) const
     {
         // Must have at least one species, and not more than one periodic species
         auto selection = ui_.TargetSpeciesWidget->selection();
-        if (selection.size() == 0 ||
-            std::count_if(selection.begin(), selection.end(),
-                          [](const auto *sp) { return sp->box()->type() != Box::BoxType::NonPeriodic; }) > 1)
+        if (selection.size() == 0 || std::count_if(selection.begin(), selection.end(), [](const auto *sp)
+                                                   { return sp->box()->type() != Box::BoxType::NonPeriodic; }) > 1)
             return false;
     }
     else if (index == AddConfigurationDialog::BoxGeometryPage)
@@ -186,20 +186,23 @@ void AddConfigurationDialog::finalise()
         frameworkNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
         frameworkNode->keywords().set("Rotate", false);
 
-        // Add a GeneralRegion node
-        regionNode = generator.createRootNode<GeneralRegionGeneratorNode>({});
-        if (!regionNode)
-            Messenger::exception("Failed to create root node");
-        regionNode->keywords().set("Tolerance", 5.0);
+        if (!mixSpecies_.empty())
+        {
+            // Add a GeneralRegion node
+            regionNode = generator.createRootNode<GeneralRegionGeneratorNode>({});
+            if (!regionNode)
+                Messenger::exception("Failed to create root node");
+            regionNode->keywords().set("Tolerance", 5.0);
+        }
     }
     else
     {
         // No framework - add on a Box spec
         auto boxNode = generator.createRootNode<BoxGeneratorNode>({});
         boxNode->keywords().set("Lengths",
-                                Vec3<NodeValue>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()));
+                                Vector3NodeValue(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()));
         boxNode->keywords().set(
-            "Angles", Vec3<NodeValue>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
+            "Angles", Vector3NodeValue(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
     }
 
     // Create parameters node
@@ -259,8 +262,8 @@ void AddConfigurationDialog::on_TargetSpeciesWidget_speciesSelectionChanged(bool
 // Update detected box type from current values
 void AddConfigurationDialog::updateBoxType()
 {
-    auto boxType = Box::type(Vec3<double>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
-                             Vec3<double>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
+    auto boxType = Box::type(Vector3(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
+                             Vector3(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
 
     if (boxType)
         ui_.DetectedBoxTypeLabel->setText(QString::fromStdString(Box::boxTypes().keyword(*boxType)));
@@ -284,7 +287,6 @@ void AddConfigurationDialog::updateResultingBoxInfo()
     auto nAtoms = frameworkSpecies_ ? frameworkSpecies_->nAtoms() : 0;
     auto nMolecules = frameworkSpecies_ ? 1 : 0;
     auto mass = frameworkSpecies_ ? frameworkSpecies_->mass() : 0.0;
-    Vec3<bool> scalableAxes(true, true, true);
     auto rho = ui_.SpeciesDensitySpin->value();
     auto mult = ui_.SpeciesMultiplierSpin->value();
     auto rhoUnits = ui_.SpeciesDensityUnitsCombo->currentIndex() == Units::DensityUnits::AtomsPerAngstromUnits
@@ -292,8 +294,8 @@ void AddConfigurationDialog::updateResultingBoxInfo()
                         : Units::DensityUnits::GramsPerCentimetreCubedUnits;
 
     // Create a temporary box
-    auto box = Box::generate(Vec3<double>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
-                             Vec3<double>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
+    auto box = Box::generate(Vector3(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()),
+                             Vector3(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
 
     for (auto &spInfo : mixSpecies_)
     {
@@ -313,13 +315,13 @@ void AddConfigurationDialog::updateResultingBoxInfo()
             if (rhoUnits == Units::AtomsPerAngstromUnits)
                 requiredVolume = nAtomsToAdd / rho;
             else
-                requiredVolume = ((spInfo.species()->mass() * population) / AVOGADRO) / (rho / 1.0E24);
+                requiredVolume = ((spInfo.species()->mass() * population) / DissolveMath::Avogadro) / (rho / 1.0E24);
 
             // If the current box has no atoms in it, absorb the current volume rather than adding to it
             if (nAtoms > 0)
                 requiredVolume += currentVolume;
 
-            box->scale(box->scaleFactors(requiredVolume, scalableAxes));
+            box->scale(box->scaleFactors(requiredVolume, {true, true, true}));
         }
 
         // Increase counters
@@ -342,7 +344,7 @@ void AddConfigurationDialog::updateResultingBoxInfo()
     if (ui_.BoxGeometryFixedSizeRadio->isChecked())
         ui_.SpeciesDensitySpin->setValue(ui_.SpeciesDensityUnitsCombo->currentIndex() == Units::AtomsPerAngstromUnits
                                              ? nAtoms / box->volume()
-                                             : (mass / AVOGADRO) / (box->volume() / 1.0E24));
+                                             : (mass / DissolveMath::Avogadro) / (box->volume() / 1.0E24));
 
     addSpeciesInfoModel_.reset();
 }

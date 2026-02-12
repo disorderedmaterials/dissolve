@@ -39,7 +39,7 @@ We'll need to set up both of these modules to calculate exactly what we need.  F
 {{< action type="check" text="Select the `COM` site for **SiteB** as well" />}}
 {{< action type="check" text="Ensure that the **ExcludeSameMolecule** option is enabled" />}}
 
-Since we are calculating the RDF of a site around itself, the **ExcludeSameMolecule** option prevents consideration of the same site with itself (which would give a distance of zero and result in a large undesirable spike at the beginning of the RDF). The distance range over which to calculate the RDF can be set in the **Control** settings group, but the defaults (0 - 10 &#8491; with a step size of 0.05 &#8491;) are fine for what we need.
+Since we are calculating the RDF of a site around itself, the **ExcludeSameMolecule** option prevents consideration of the same site with itself (which would give a distance of zero and result in a large undesirable spike at the beginning of the RDF). The distance range over which to calculate the RDF can be set in the **Ranges** settings group, but the defaults (0 - 10 &#8491; with a step size of 0.05 &#8491;) are fine for what we need.
 
 For the coordination number calculation:
 

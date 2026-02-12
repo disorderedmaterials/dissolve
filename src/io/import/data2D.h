@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/enumOptions.h"
 #include "io/fileAndFormat.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 
 // Forward Declarations
 class Data2D;
-class ProcessPool;
 class Vec3DoubleKeyword;
 
 // Data2D Import Formats
@@ -29,9 +28,9 @@ class Data2DImportFileFormat : public FileAndFormat
      */
     private:
     // Min, max, and delta to assume for x axis
-    Vec3<double> xAxis_{0.0, 10.0, 0.1};
+    Vector3 xAxis_{0.0, 10.0, 0.1};
     // Min, max, and delta to assume for y axis
-    Vec3<double> yAxis_{0.0, 10.0, 0.1};
+    Vector3 yAxis_{0.0, 10.0, 0.1};
 
     private:
     // Set up keywords for the format
@@ -60,7 +59,7 @@ class Data2DImportFileFormat : public FileAndFormat
 
     public:
     // Import Data2D using current filename and format
-    bool importData(Data2D &data, const ProcessPool *procPool = nullptr);
+    bool importData(Data2D &data);
     // Import Data2D using supplied parser and current format
     bool importData(LineParser &parser, Data2D &data);
 };

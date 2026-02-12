@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableConfiguration.h"
 #include "base/lineParser.h"
@@ -39,7 +39,7 @@ RenderableConfiguration::~RenderableConfiguration() {}
  */
 
 // Return version of data
-int RenderableConfiguration::dataVersion() { return (source_ ? source_->contentsVersion() : -99); }
+int RenderableConfiguration::dataVersion() { return (source_ ? source_->version() : -99); }
 
 /*
  * Transform / Limits
@@ -59,7 +59,7 @@ void RenderableConfiguration::transformValues()
     limitsMin_.zero();
 
     // Transform extreme upper right corner from unit to real space to get maxima
-    limitsMax_ = source_->box()->getReal(Vec3<double>(1.0, 1.0, 1.0));
+    limitsMax_ = source_->box()->getReal(Vector3(1.0, 1.0, 1.0));
 
     positiveLimitsMin_ = limitsMin_;
     positiveLimitsMax_ = limitsMax_;
@@ -77,7 +77,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 {
     Matrix4 A;
     const std::array<float, 4> colourBlack = {0.0, 0.0, 0.0, 1.0};
-    Vec3<double> ri, rj;
+    Vector3 ri, rj;
 
     // Check data source
     if (!source_)

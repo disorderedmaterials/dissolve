@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/messenger.h"
 #include "classes/array3DIterator.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <cassert>
 #include <numeric>
 #include <vector>

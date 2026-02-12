@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/importSpeciesDialog.h"
 #include "classes/atomType.h"
@@ -342,7 +342,7 @@ void ImportSpeciesDialog::on_SpeciesNameEdit_textChanged(const QString text)
     if (text.isEmpty())
         readyForImport = false;
     else
-        readyForImport = dissolve_.coreData().findSpecies(qPrintable(text)) == nullptr;
+        readyForImport = dissolve_.coreData().findSpecies(DissolveSys::niceName(qPrintable(text))) == nullptr;
 
     ui_.SpeciesNameIndicator->setOK(readyForImport);
 

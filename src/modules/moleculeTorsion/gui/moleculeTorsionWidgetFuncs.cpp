@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
@@ -39,7 +39,7 @@ void MoleculeTorsionModuleWidget::updateControls(const Flags<ModuleWidget::Updat
         if (cfg)
             histogramGraph_
                 ->createRenderable<RenderableData1D>(std::format("{}//NormalisedHistogram", module_->name()),
-                                                     std::format("RDF//{}", cfg->niceName()), cfg->niceName())
+                                                     std::format("RDF//{}", cfg->name()), cfg->name())
                 ->setColour(StockColours::BlueStockColour);
     }
 

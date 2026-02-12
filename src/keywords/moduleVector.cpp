@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/moduleVector.h"
 #include "base/lineParser.h"
@@ -52,9 +52,8 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
             return Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
 
         // Check the module's type if we can
-        if (!moduleTypes_.empty() &&
-            std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
-                         [module](const auto &type) { return type == module->type(); }) == moduleTypes_.cend())
+        if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &type)
+                                                  { return type == module->type(); }) == moduleTypes_.cend())
             return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                     parser.argsv(n), ModuleTypes::moduleType(module->type()), name(),
                                     joinStrings(moduleTypes_, ", ", [](auto m) { return ModuleTypes::moduleType(m); }));
@@ -90,9 +89,9 @@ void ModuleVectorKeyword::removeReferencesTo(Module *module)
 }
 
 // Express as a serialisable value
-SerialisedValue ModuleVectorKeyword::serialise() const
+void ModuleVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto *item) { return item->name(); });
+    target[tag] = fromVector(data_, [](const auto *item) { return item->name(); });
 }
 
 // Read values from a serialisable value
@@ -107,9 +106,8 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
                      throw toml::type_error(std::format("No Module named '{}' exists.\n", title), item.location());
 
                  // Check the module's type if we can
-                 if (!moduleTypes_.empty() &&
-                     std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
-                                  [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
+                 if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s)
+                                                           { return s == module->type(); }) == moduleTypes_.cend())
                      throw toml::type_error(
                          std::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                      title, ModuleTypes::moduleType(module->type()), name(),

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -69,9 +69,9 @@ class Renderable
     // Equation transformer for values
     Transformer valuesTransform_;
     // Coordinate limits of all data (after value transform if enabled)
-    Vec3<double> limitsMin_, limitsMax_;
+    Vector3 limitsMin_, limitsMax_;
     // Positive coordinate extrema of all data (after value transform if enabled)
-    Vec3<double> positiveLimitsMin_, positiveLimitsMax_;
+    Vector3 positiveLimitsMin_, positiveLimitsMax_;
     // Extrema of values (after transform if enabled)
     double valuesMin_, valuesMax_;
     // Extreme positive lixmits of transformed values
@@ -103,13 +103,13 @@ class Renderable
     // Return version of data
     virtual int dataVersion() = 0;
     // Return coordinate minima of all data (after value transform if enabled)
-    Vec3<double> limitsMin();
+    Vector3 limitsMin();
     // Return coordinate maxima of all data (after value transform if enabled)
-    Vec3<double> limitsMax();
+    Vector3 limitsMax();
     // Return positive coordinate minima of all data (after value transform if enabled)
-    Vec3<double> positiveLimitsMin();
+    Vector3 positiveLimitsMin();
     // Return positive coordinate maxima of all data (after value transform if enabled)
-    Vec3<double> positiveLimitsMax();
+    Vector3 positiveLimitsMax();
     // Return minimum of transformed values
     double valuesMin();
     // Return maximum of transformed values

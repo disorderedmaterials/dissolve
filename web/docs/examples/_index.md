@@ -12,13 +12,13 @@ It is worth understanding the two main files used by Dissolve and their respecti
 
 The **input file** describes the contents and behaviour of a simulation - i.e. the forcefield and species, how configurations should be built, and what should be done to (or calculated from) those configurations. This is the file created and saved by the Dissolve GUI as you set up your simulation.
 
-When you finally _run_ your simulation - i.e. ask Dissolve to do what you've described in the input file - it will generate a **restart file** with a `.restart` suffix. This file contains all the output generated from running your simulation - as a minimum this contains the current coordinates of any configurations, but also output from modules (radial distribution functions, structure factors, analyses quantities etc.), pair potential modifications, and certsin "system" values (timing information for modules, and the current iteration number).
+When you finally _run_ your simulation - i.e. ask Dissolve to do what you've described in the input file - it will generate a **restart file** with a `.restart` suffix. This file contains all the output generated from running your simulation - as a minimum this contains the current coordinates of any configurations, but also output from modules (radial distribution functions, structure factors, analysis quantities etc.), pair potential modifications, and certain "system" values (timing information for modules, and the current iteration number).
 
 The restart file should be considered quite precious as it is used by Dissolve to begin a simulation "from where it left off" if, for instance, your computer gets turned off, you need to go back to a previous "good" point in time, or (Heaven forbid) Dissolve crashes. Feel free to take copies of the restart file whenever you like. Better safe than sorry.
 
 ## Associated Data Files
 
-Relevant data as well as fully-constructed input files (for reference) can be downloaded as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} from the [releases page](https://github.com/disorderedmaterials/dissolve/releases). Alternatively, you can download individual files from the main [GitHub repo](https://github.com/disorderedmaterials/dissolve/tree/develop/examples).
+Relevant data as well as fully-constructed input files (for reference) can be downloaded as a [zip archive](https://github.com/disorderedmaterials/dissolve/releases/download/DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0/Dissolve-DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0-ExampleData.zip) or [gzipped tarfile](https://github.com/disorderedmaterials/dissolve/releases/download/DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0/Dissolve-DISSOLVEMAJORVERSION.DISSOLVEMINORVERSION.0-ExampleData.tar.gz) from the [releases page](https://github.com/disorderedmaterials/dissolve/releases). Alternatively, you can download individual files from the main [GitHub repo](https://github.com/disorderedmaterials/dissolve/tree/develop/examples).
 
 ## Starting Out
 

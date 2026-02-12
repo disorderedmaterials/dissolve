@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/configurationVector.h"
 #include "base/lineParser.h"
@@ -69,9 +69,9 @@ void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
 }
 
 // Express as a serialisable value
-SerialisedValue ConfigurationVectorKeyword::serialise() const
+void ConfigurationVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto &cfg) { return std::string(cfg->name()); });
+    target[tag] = fromVector(data_, [](const auto &cfg) { return std::string(cfg->name()); });
 }
 
 // Read values from a serialisable value

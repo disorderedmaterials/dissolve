@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/intraAngle/intraAngle.h"
 #include "keywords/bool.h"
@@ -29,7 +29,7 @@ IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle)
     keywords_.add<RangeKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_, 0.0, std::nullopt,
                                 Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+                                     Vector3(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
     keywords_.setOrganisation("Options", "Restrictions", "Options to restrict the angle range considered.");
     keywords_.add<BoolKeyword>(

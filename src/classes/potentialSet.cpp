@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/potentialSet.h"
 #include "base/lineParser.h"
 #include "classes/atomType.h"
-#include "classes/box.h"
 #include "classes/configuration.h"
-#include "io/export/data1D.h"
 #include "items/deserialisers.h"
-#include "items/serialisers.h"
-#include "templates/algorithms.h"
 
 PotentialSet::PotentialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
@@ -80,8 +76,8 @@ bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
         PotentialData value;
         auto key = parser.args(0);
         value.count = parser.argi(1);
-        value.at1 = coreData.findAtomType(parser.args(2));
-        value.at2 = coreData.findAtomType(parser.args(3));
+        value.at1 = coreData.findAtomType(parser.args(2)).get();
+        value.at2 = coreData.findAtomType(parser.args(3)).get();
 
         if (!value.potential.deserialise(parser))
             return false;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -21,6 +21,7 @@ class InteractionPotentialBaseKeyword : public KeywordBase
     // Source EnumBaseOptions for functional form
     EnumOptionsBase &formOptions_;
 
+    protected:
     public:
     // Return EnumBaseOptions for functional form
     const EnumOptionsBase &formOptions() const { return formOptions_; }
@@ -38,7 +39,10 @@ class InteractionPotentialBaseKeyword : public KeywordBase
     // Set parameters from supplied string
     virtual bool setParameters(std::string parameters) = 0;
     // Express as a serialisable value
-    SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise InteractionPotentialBaseKeyword"); }
+    void serialise(std::string tag, SerialisedValue &target) const override
+    {
+        throw std::runtime_error("Cannot serialise InteractionPotentialBaseKeyword");
+    }
 };
 
 // Keyword based on InteractionPotential
@@ -46,7 +50,8 @@ template <class Functions> class InteractionPotentialKeyword : public Interactio
 {
     public:
     explicit InteractionPotentialKeyword(InteractionPotential<Functions> &data)
-        : InteractionPotentialBaseKeyword(optionData_), data_(data), optionData_(Functions::forms())
+        : InteractionPotentialBaseKeyword(optionData_), data_(data), optionData_(Functions::forms()),
+          formOptionsType_(typeid(Functions))
     {
     }
     ~InteractionPotentialKeyword() override = default;
@@ -59,11 +64,14 @@ template <class Functions> class InteractionPotentialKeyword : public Interactio
     InteractionPotential<Functions> &data_;
     // Related form enum data
     EnumOptions<typename Functions::Form> optionData_;
+    const std::type_index formOptionsType_;
 
     public:
     // Return reference to data
     InteractionPotential<Functions> &data() { return data_; }
     const InteractionPotential<Functions> &data() const { return data_; }
+
+    const std::type_index formOptionsType() const { return formOptionsType_; }
 
     /*
      * Arguments

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "io/import/forces.h"
 
 // Import Moscito forces through specified parser
-bool ForceImportFileFormat::importMoscito(LineParser &parser, std::vector<Vec3<double>> &f)
+bool ForceImportFileFormat::importMoscito(LineParser &parser, std::vector<Vector3> &f)
 {
     /*
      * Import Moscito coordinate information through the specified line parser.

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/add.h"
 #include "generator/box.h"
@@ -73,7 +73,7 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
         auto newConfig = dissolve_.coreData().configurations().back().get();
 
         // Initialise the content
-        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_});
+        newConfig->initialiseContent({dissolve_});
 
         // Fully update GUI
         setModified();

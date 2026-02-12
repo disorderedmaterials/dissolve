@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#pragma once
 
 #include "classes/coreData.h"
 #include "classes/species.h"
@@ -10,9 +12,13 @@
 #include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/error.h"
+#include "math/mathFunc.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
+#include "nodes/graph.h"
+#include "nodes/serialisableData.h"
+#include "nodes/species.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -43,6 +49,11 @@ enum TestFlags
 #define EXPECT_NO_THROW_VERBOSE(CODE_BLOCK) EXPECT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
 #define ASSERT_NO_THROW_VERBOSE(CODE_BLOCK) ASSERT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
 
+/*
+ * Helper Functions
+ */
+
+// Helper function for comparing TOML values with context, but without insisting on a specific ordering of fields.
 void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
     if (toml.is_table())
@@ -67,6 +78,21 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         EXPECT_EQ(toml, toml2) << location;
     }
 }
+
+// Serialise A and deserialise into B
+template <class T> void tomlRoundTrip(T &a, T &b)
+{
+    SerialisedValue serialised;
+    auto s = std::make_shared<SerialisableClass<T>>("data", a);
+    ASSERT_NO_THROW(serialised = s->serialise());
+
+    auto d = std::make_shared<SerialisableClass<T>>("data", b);
+    ASSERT_NO_THROW(d->deserialise(serialised));
+}
+
+/*
+ * System Test Class
+ */
 
 class DissolveSystemTest
 {
@@ -127,12 +153,12 @@ class DissolveSystemTest
                 if (!otherDissolve.prepare())
                     throw(std::runtime_error("Failed to prepare simulation.\n"));
 
-                toml = otherDissolve.serialise();
+                toml = otherDissolve.into_toml();
             }
 
             dissolve_.deserialise(toml);
             dissolve_.setInputFilename(std::string(inputFile));
-            auto repeat = dissolve_.serialise();
+            auto repeat = dissolve_.into_toml();
 
             // Run any other additional setup functions
             if (additionalSetUp_)
@@ -270,6 +296,22 @@ class DissolveSystemTest
 
         return checkDouble(quantity, A.value(), B, threshold);
     }
+    // Test Data1D (by tag and external file data)
+    [[nodiscard]] static bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
+                                          double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        Data1D compare;
+        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(compare))
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType, data, compare).error;
+        auto notOK = std::isnan(error) || error > tolerance;
+        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name,
+                         error, externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
+        return !notOK;
+    }
     // Test Data1D
     [[nodiscard]] static bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
                                           std::string_view nameB, double tolerance = 5.0e-3,
@@ -277,7 +319,7 @@ class DissolveSystemTest
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA, dataB).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA,
                          error, nameB, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
@@ -317,7 +359,7 @@ class DissolveSystemTest
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Internal data '{}' has error of {:7.3f} with external data '{}' and is {} (threshold is {:6.3e})\n\n",
                          nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
 
@@ -364,21 +406,20 @@ class DissolveSystemTest
 
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, data.values(), referenceData).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
                          error, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
     // Test Vec3 data
-    static void checkVec3(const Vec3<double> &A, const Vec3<double> &B, double tolerance = 1.0e-6)
+    static void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6)
     {
         EXPECT_NEAR(A.x, B.x, tolerance);
         EXPECT_NEAR(A.y, B.y, tolerance);
         EXPECT_NEAR(A.z, B.z, tolerance);
     }
     // Test Vec3 vector data
-    static void checkVec3Vector(const std::vector<Vec3<double>> &A, const std::vector<Vec3<double>> &B,
-                                double tolerance = 1.0e-6)
+    static void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance = 1.0e-6)
     {
         ASSERT_EQ(A.size(), B.size());
         for (auto n = 0; n < A.size(); ++n)
@@ -387,8 +428,8 @@ class DissolveSystemTest
     // Test Vec3 vector data (by tag and external data)
     void checkVec3Vector(std::string_view tag, ForceImportFileFormat externalForces, double tolerance)
     {
-        auto &vec = dissolve_.processingModuleData().value<std::vector<Vec3<double>>>(tag);
-        std::vector<Vec3<double>> B(vec.size());
+        auto &vec = dissolve_.processingModuleData().value<std::vector<Vector3>>(tag);
+        std::vector<Vector3> B(vec.size());
         ASSERT_TRUE(externalForces.importData(B));
         checkVec3Vector(vec, B, tolerance);
     }
@@ -451,6 +492,71 @@ class DissolveSystemTest
         else
             checkIntramolecularTerms(std::format("improper {}", joinStrings(atoms, "-")), expectedParams,
                                      i->get().interactionPotential(), tolerance);
+    }
+    // Test consistency between the two supplied double-keyed Data1D maps
+    static bool checkDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
+                                    const DoubleKeyedMap<Data1D> &mapB, double testThreshold)
+    {
+        // Check map sizes
+        if (mapA.size() != mapB.size())
+        {
+            std::cout << std::format("Maps containing {} data are of dissimilar size (A = {}, B = {})\n", mapContents,
+                                     mapA.size(), mapB.size());
+            return false;
+        }
+
+        // Check individual data
+        for (auto &[key, dataA] : mapA)
+        {
+            // Find same-keyed data in mapB
+            if (mapB.contains(key))
+            {
+                auto errorReport = Error::percent(dataA, mapB.get(key));
+                std::cout << Error::errorReportString(errorReport) << std::endl;
+                std::cout << std::format("{} '{}' in map B has {} error of {:7.3f}{} with data in map A and is "
+                                         "{} (threshold is {:6.3f}%)\n\n",
+                                         mapContents, key, Error::errorTypes().keyword(errorReport.errorType),
+                                         errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                         errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                if (errorReport.error > testThreshold)
+                    return false;
+            }
+            else
+            {
+                std::cout << std::format("{} '{}' is present in map A but not in map B.\n", mapContents, key);
+                return false;
+            }
+        }
+
+        return true;
+    }
+    // Test consistency, and error, between supplied partial sets
+    static bool checkPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold)
+    {
+        // Full partials
+        if (!checkDoubleKeyedMap("Full Partials", setA.partials(), setB.partials(), testThreshold))
+            return false;
+
+        // Bound partials
+        if (!checkDoubleKeyedMap("Bound Partials", setA.boundPartials(), setB.boundPartials(), testThreshold))
+            return false;
+
+        // Unbound partials
+        if (!checkDoubleKeyedMap("Unbound Partials", setA.unboundPartials(), setB.unboundPartials(), testThreshold))
+            return false;
+
+        // Total
+        auto errorReport = Error::percent(setA.total(), setB.total());
+        std::cout << Error::errorReportString(errorReport) << std::endl;
+        std::cout << std::format(
+            "Total in set B has {} error of {:7.3f}{} with data in set A and is {} (threshold is {:6.3f}%)\n\n",
+            Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+            errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+            errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+        if (errorReport.error > testThreshold)
+            return false;
+
+        return true;
     }
 };
 
@@ -677,27 +783,30 @@ class SmallMolecules
         atH1_ = std::make_shared<AtomType>(Elements::H, "H1");
 
         // Set up N2 species
+        n2_.setName("N2");
         n2_.addAtom(Elements::N, {});
         n2_.addAtom(Elements::N, {1.2, 0.0, 0.0});
         n2_.atom(0).setAtomType(atN_);
         n2_.atom(1).setAtomType(atN_);
         n2_.addBond(0, 1);
         n2A15_ = n2_.addIsotopologue("N15");
-        n2A15_->setAtomTypeIsotope(atN_, Sears91::N_15);
+        n2A15_->setAtomTypeIsotope(atN_.get(), Sears91::N_15);
 
         // Set up H2 species
+        h2_.setName("H2");
         h2_.addAtom(Elements::H, {});
         h2_.addAtom(Elements::H, {0.7, 0.0, 0.0});
         h2_.atom(0).setAtomType(atH1_);
         h2_.atom(1).setAtomType(atH1_);
         h2_.addBond(0, 1);
         d2_ = h2_.addIsotopologue("D2");
-        d2_->setAtomTypeIsotope(atH1_, Sears91::H_2);
+        d2_->setAtomTypeIsotope(atH1_.get(), Sears91::H_2);
 
         // Set up H2O species
+        h2o_.setName("H2O");
         h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
         h2o_.addAtom(Elements::O, {});
-        h2o_.addAtom(Elements::H, {cos(107.4 / DEGRAD), sin(107.4 / DEGRAD), 0.0});
+        h2o_.addAtom(Elements::H, {cos(DissolveMath::toRadians(107.4)), sin(DissolveMath::toRadians(107.4)), 0.0});
         h2o_.atom(0).setAtomType(atHW_);
         h2o_.atom(1).setAtomType(atOW_);
         h2o_.atom(2).setAtomType(atHW_);
@@ -705,7 +814,7 @@ class SmallMolecules
         h2o_.addBond(1, 2);
         h2o_.addAngle(0, 1, 2);
         d2o_ = h2o_.addIsotopologue("D2O");
-        d2o_->setAtomTypeIsotope(atHW_, Sears91::H_2);
+        d2o_->setAtomTypeIsotope(atHW_.get(), Sears91::H_2);
     }
 
     private:

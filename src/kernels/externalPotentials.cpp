@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/externalPotentials.h"
 #include "classes/configuration.h"
@@ -9,10 +9,9 @@
  * Energy
  */
 
-ExternalPotentialsEnergyKernel::ExternalPotentialsEnergyKernel(const Configuration *cfg, const ProcessPool &procPool,
-                                                               const PotentialMap &potentialMap,
+ExternalPotentialsEnergyKernel::ExternalPotentialsEnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap,
                                                                std::optional<double> energyCutoff)
-    : EnergyKernel(cfg, procPool, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
+    : EnergyKernel(cfg, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
 {
 }
 
@@ -36,15 +35,14 @@ double ExternalPotentialsEnergyKernel::extendedEnergy(const Molecule &mol) const
  * Force
  */
 
-ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration *cfg, const ProcessPool &procPool,
-                                                             const PotentialMap &potentialMap,
+ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration *cfg, const PotentialMap &potentialMap,
                                                              std::optional<double> energyCutoff)
-    : ForceKernel(cfg, procPool, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
+    : ForceKernel(cfg, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
 {
 }
 
 // Calculate extended forces on supplied atom
-void ExternalPotentialsForceKernel::extendedForces(const Atom &i, Vec3<double> &fVec) const
+void ExternalPotentialsForceKernel::extendedForces(const Atom &i, Vector3 &fVec) const
 {
     for (const auto &pot : globalPotentials_)
         pot->force(i, box_, fVec);

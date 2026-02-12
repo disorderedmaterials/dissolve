@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/isotopes.h"
 #include "base/messenger.h"
@@ -471,6 +471,17 @@ Isotope isotope(Elements::Element Z, int A)
         Messenger::exception("No isotope with A = {} available for element {}.\n", A, Elements::symbol(Z));
 
     return it->isotope();
+}
+
+// Return isotope enum corresponding element and A (if it exists)
+const IsotopeData &isotopeData(Elements::Element Z, int A)
+{
+    auto it = std::find_if(sears91Data_.begin(), sears91Data_.end(),
+                           [Z, A](const auto &topeData) { return topeData.Z() == Z && topeData.A() == A; });
+    if (it == sears91Data_.end())
+        Messenger::exception("No isotope with A = {} available for element {}.\n", A, Elements::symbol(Z));
+
+    return *it;
 }
 
 // Return natural isotope for element (if it exists)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/version.h"
 #include "base/serialiser.h"
@@ -35,7 +35,7 @@ TEST(VersionTest, VersionInfo)
     CoreData coreData;
     Dissolve dissolve(coreData);
     dissolve.loadInput("dissolve/input/rdfMethod.txt");
-    auto serialised = dissolve.serialise();
+    auto serialised = dissolve.into_toml();
 
     Version::DissolveVersion fileVersion(serialised["version"].as_string().str), actual(Version::semantic());
 

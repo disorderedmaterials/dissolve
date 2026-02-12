@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/species.h"
@@ -40,7 +40,7 @@ class CellsEnergyTest : public ::testing::Test
 
     protected:
     // Create skeletal target Configuration
-    Configuration *createConfiguration(const Vec3<double> &lengths, const Vec3<double> &angles, int nMolecules)
+    Configuration *createConfiguration(const Vector3 &lengths, const Vector3 &angles, int nMolecules)
     {
         // Setup Configuration
         auto *cfg = coreData_.addConfiguration();
@@ -59,7 +59,7 @@ class CellsEnergyTest : public ::testing::Test
         auto *box = cfg->box();
         auto *pp = dissolve_.pairPotential("Ar", "Ar");
         auto energy = 0.0;
-        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules().begin(), cfg->molecules().end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
                                 {
                                     if (i == j)
@@ -79,7 +79,7 @@ class CellsEnergyTest : public ::testing::Test
         auto *box = cfg->box();
         auto *pp = dissolve_.pairPotential("Ar", "Ar");
         auto energy = 0.0;
-        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules().begin(), cfg->molecules().end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
                                 {
                                     if (i == j)
@@ -102,7 +102,7 @@ class CellsEnergyTest : public ::testing::Test
         ASSERT_TRUE(dissolve_.prepare());
 
         // Initialise an EnergyKernel with the specified cutoff
-        auto kernel = KernelProducer::energyKernel(cfg, dissolve_.worldPool(), dissolve_.potentialMap(), rCut);
+        auto kernel = KernelProducer::energyKernel(cfg, dissolve_.potentialMap(), rCut);
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve_.pairPotentialRange());
@@ -110,9 +110,8 @@ class CellsEnergyTest : public ::testing::Test
 
         // Calculate total Cell-based energy
         EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut), tabulatedEnergyNoCells(cfg, rCut), 1.0e-2);
-        EXPECT_NEAR(tabulatedEnergyNoCells(cfg, rCut),
-                    kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.0e-6);
-        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.65e-2);
+        EXPECT_NEAR(tabulatedEnergyNoCells(cfg, rCut), kernel->totalPairPotentialEnergy(false).total(), 1.0e-6);
+        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false).total(), 1.65e-2);
     }
 };
 

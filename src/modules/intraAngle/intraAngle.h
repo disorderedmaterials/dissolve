@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -27,7 +27,7 @@ class IntraAngleModule : public Module
     // Range of B-C distance axis
     Range rangeBC_{0.0, 10.0};
     // Range (min, max, binwidth) of angle axis
-    Vec3<double> angleRange_{0.0, 180.0, 1.0};
+    Vector3 angleRange_{0.0, 180.0, 1.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
     // Export target
@@ -38,5 +38,5 @@ class IntraAngleModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

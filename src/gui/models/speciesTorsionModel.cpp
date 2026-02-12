@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesTorsionModel.h"
 #include "classes/coreData.h"
 
-SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, const CoreData &coreData)
-    : torsions_(torsions), coreData_(coreData)
-{
-}
+SpeciesTorsionModel::SpeciesTorsionModel() : torsions_(nullptr) {}
 
 void SpeciesTorsionModel::reset()
 {
@@ -15,10 +12,17 @@ void SpeciesTorsionModel::reset()
     endResetModel();
 }
 
+void SpeciesTorsionModel::setTorsions(std::vector<SpeciesTorsion> &torsions)
+{
+    beginResetModel();
+    torsions_ = &torsions;
+    endResetModel();
+}
+
 int SpeciesTorsionModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return torsions_.size();
+    return torsions_->size();
 }
 
 int SpeciesTorsionModel::columnCount(const QModelIndex &parent) const
@@ -32,7 +36,7 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
-    auto &torsion = torsions_[index.row()];
+    auto &torsion = torsions_->at(index.row());
 
     if (role == Qt::UserRole)
         return QVariant::fromValue(&torsion);
@@ -97,14 +101,14 @@ Qt::ItemFlags SpeciesTorsionModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexL)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::Form && torsions_[index.row()].masterTerm())
+    if (index.column() > DataType::Form && torsions_->at(index.row()).masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
 bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    auto &torsion = torsions_[index.row()];
+    auto &torsion = torsions_->at(index.row());
     switch (index.column())
     {
         case (DataType::IndexI):
@@ -113,27 +117,17 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
         case (DataType::IndexL):
             return false;
         case (DataType::Form):
-            if (value.toString().at(0) == '@')
+            try
             {
-                auto master = coreData_.getMasterTorsion(value.toString().toStdString());
-                if (master)
-                    torsion.setMasterTerm(&master->get());
-                else
-                    return false;
+                auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
+                torsion.detachFromMasterTerm();
+                torsion.setInteractionForm(tf);
             }
-            else
+            catch (std::runtime_error &e)
             {
-                try
-                {
-                    auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
-                    torsion.detachFromMasterTerm();
-                    torsion.setInteractionForm(tf);
-                }
-                catch (std::runtime_error &e)
-                {
-                    return false;
-                }
+                return false;
             }
+
             break;
         case (DataType::Parameters):
             if (!torsion.setInteractionParameters(value.toString().toStdString()))

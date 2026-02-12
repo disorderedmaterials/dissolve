@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Species Import Formats
 class SpeciesImportFileFormat : public FileAndFormat
@@ -50,9 +49,9 @@ class SpeciesImportFileFormat : public FileAndFormat
 
     public:
     // Import coordinates direct to configuration using current filename and format
-    bool importData(Species *sp, const ProcessPool *procPool = nullptr);
+    bool importData(Species *sp);
     // Import coordinates using supplied parser and current format
-    bool importData(LineParser &parser, std::vector<Vec3<double>> &r);
+    bool importData(LineParser &parser, std::vector<Vector3> &r);
     // Import coordinates direct to configuration using supplied parser and current format
     bool importData(LineParser &parser, Species *sp);
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/site.h"
 #include "classes/species.h"
@@ -12,16 +12,15 @@ namespace UnitTest
 class SpeciesSiteTest : public ::testing::Test
 {
     public:
-    SpeciesSiteTest(){};
+    SpeciesSiteTest() {};
 
-    void testVector(const Vec3<double> &u, const Vec3<double> &v)
+    void testVector(const Vector3 &u, const Vector3 &v)
     {
         EXPECT_NEAR(u.x, v.x, 1.0e-6);
         EXPECT_NEAR(u.y, v.y, 1.0e-6);
         EXPECT_NEAR(u.z, v.z, 1.0e-6);
     }
-    void testAxes(const Matrix3 &axes, const Vec3<double> &expectedX, const Vec3<double> &expectedY,
-                  const Vec3<double> &expectedZ)
+    void testAxes(const Matrix3 &axes, const Vector3 &expectedX, const Vector3 &expectedY, const Vector3 &expectedZ)
     {
         testVector(axes.columnAsVec3(0), expectedX);
         testVector(axes.columnAsVec3(1), expectedY);

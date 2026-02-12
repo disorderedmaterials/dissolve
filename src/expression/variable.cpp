@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "expression/variable.h"
 #include "base/messenger.h"
@@ -59,7 +59,10 @@ const ExpressionValue &ExpressionVariable::value() const { return value_; }
 ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 
 // Express as a serialisable value
-SerialisedValue ExpressionVariable::serialise() const { return {{"name", baseName_}, {"value", value_}}; }
+void ExpressionVariable::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"name", baseName_}, {"value", value_}};
+}
 
 // Read values from a serialisable value
 void ExpressionVariable::deserialise(const SerialisedValue &node)

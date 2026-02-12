@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesSite.h"
 #include "base/lineParser.h"
@@ -392,8 +392,7 @@ bool SpeciesSite::generateInstances()
 
                     // Check if the fragment we have found is unique.
                     std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-                    if (std::find_if(instances_.begin(), instances_.end(),
-                                     [&](const auto &instance)
+                    if (std::find_if(instances_.begin(), instances_.end(), [&](const auto &instance)
                                      { return matchedAtomIndices == instance.allIndices(); }) != instances_.end())
                         continue;
 
@@ -445,25 +444,24 @@ const std::vector<SpeciesSiteInstance> &SpeciesSite::instances() const { return 
  */
 
 // Calculate geometric centre of atoms in the given molecule
-Vec3<double> SpeciesSite::centreOfGeometry(const std::vector<int> &indices) const
+Vector3 SpeciesSite::centreOfGeometry(const std::vector<int> &indices) const
 {
     const auto ref = parent_->atom(indices.front()).r();
-    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
-                           [&ref, this](const auto &acc, const auto idx)
+    return std::accumulate(std::next(indices.begin()), indices.end(), ref, [&ref, this](const auto &acc, const auto idx)
                            { return acc + parent_->box()->minimumImage(parent_->atom(idx).r(), ref); }) /
            indices.size();
 }
 
 // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
-Vec3<double> SpeciesSite::centreOfMass(const std::vector<int> &indices) const
+Vector3 SpeciesSite::centreOfMass(const std::vector<int> &indices) const
 {
     auto mass = AtomicMass::mass(parent_->atom(indices.front()).Z());
     const auto ref = parent_->atom(indices.front()).r();
-    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vector3, double>(ref * mass, mass),
                                 [&ref, this](const auto &acc, const auto idx)
                                 {
                                     auto mass = AtomicMass::mass(parent_->atom(idx).Z());
-                                    return std::pair<Vec3<double>, double>(
+                                    return std::pair<Vector3, double>(
                                         acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass,
                                         acc.second + mass);
                                 });
@@ -735,9 +733,9 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesSite::serialise() const
+void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue site;
+    auto &site = target[tag];
     if (type_ != SiteType::Static)
         site["type"] = siteTypes().serialise(type_);
     if (originMassWeighted_)
@@ -759,7 +757,6 @@ SerialisedValue SpeciesSite::serialise() const
             Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
             break;
     }
-    return site;
 }
 
 void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/textPrimitiveList.h"
 #include "gui/render/fontInstance.h"
@@ -9,8 +9,8 @@
 void TextPrimitiveList::clear() { textPrimitives_.clear(); }
 
 // Set data from literal coordinates and text
-void TextPrimitiveList::add(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint,
-                            TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 &localRotation,
+void TextPrimitiveList::add(FontInstance *fontInstance, QString text, Vector3 anchorPoint,
+                            TextPrimitive::TextAnchor anchorPosition, Vector3 adjustmentVector, Matrix4 &localRotation,
                             double textSize, bool flat)
 {
     auto &primitive = textPrimitives_.emplace_back();
@@ -23,7 +23,7 @@ Cuboid TextPrimitiveList::boundingCuboid(FontInstance &fontInstance, const Matri
 {
     Cuboid result = startingCuboid;
     Matrix4 textMatrix;
-    Vec3<double> corners[4], local;
+    Vector3 corners[4], local;
     for (const auto &primitive : textPrimitives_)
     {
         // Get transformation matrix and bounding box for text

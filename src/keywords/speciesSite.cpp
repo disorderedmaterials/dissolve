@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/speciesSite.h"
 #include "base/lineParser.h"
@@ -36,7 +36,7 @@ std::optional<int> SpeciesSiteKeyword::maxArguments() const { return 2; }
 bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Species (first argument)
-    Species *sp = coreData.findSpecies(parser.argsv(startArg));
+    Species *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(startArg)));
     if (!sp)
     {
         Messenger::error("Error setting SpeciesSite - no Species named '{}' exists.\n", parser.argsv(startArg));
@@ -44,7 +44,7 @@ bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const Cor
     }
 
     // Find specified Site (second argument) in the Species
-    data_ = sp->findSite(parser.argsv(startArg + 1));
+    data_ = sp->findSite(DissolveSys::niceName(parser.argsv(startArg + 1)));
     if (!data_)
         return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                 parser.argsv(startArg + 1), sp->name());
@@ -88,9 +88,9 @@ void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesSiteKeyword::serialise() const
+void SpeciesSiteKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return {{"species", data_->parent()->name()}, {"site", data_->name()}};
+    target[tag] = {{"species", data_->parent()->name()}, {"site", data_->name()}};
 }
 
 // Read values from a serialisable value

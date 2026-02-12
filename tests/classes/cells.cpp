@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
 
-extern const std::vector<Vec3<double>> refCoords;
+extern const std::vector<Vector3> refCoords;
 
 TEST(CellsTest, Basic)
 {
@@ -48,7 +49,7 @@ TEST(CellsTest, Basic)
     water->setName("Water");
     water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0);
     water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0);
-    water->addAtom(Elements::H, {-cos(109.5 / DEGRAD), sin(109.5 / DEGRAD), 0.0}, 0.0);
+    water->addAtom(Elements::H, {-cos(DissolveMath::toRadians(109.5)), sin(DissolveMath::toRadians(109.5)), 0.0}, 0.0);
     water->atom(0).setAtomType(hType);
     water->atom(1).setAtomType(oType);
     water->atom(2).setAtomType(hType);
@@ -85,14 +86,14 @@ TEST(CellsTest, Basic)
         auto [rCut, cellSize, refEnergy] = state;
 
         // Initialise an EnergyKernel with the specified cutoff
-        auto kernel = KernelProducer::energyKernel(cfg, dissolve.worldPool(), dissolve.potentialMap(), rCut);
+        auto kernel = KernelProducer::energyKernel(cfg, dissolve.potentialMap(), rCut);
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
         cfg->updateAtomLocations(true);
 
         // Calculate total Cell-based energy
-        EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy).total(), 1.0e-4);
+        EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false).total(), 1.0e-4);
 
         // Calculate atomic energy from the Ar
         EXPECT_NEAR(refEnergy, kernel->totalEnergy(cfg->atom(0)).total(), 1.0e-4);
@@ -100,7 +101,7 @@ TEST(CellsTest, Basic)
 }
 
 // Reference coordinates
-const std::vector<Vec3<double>> refCoords = {
+const std::vector<Vector3> refCoords = {
     {3.410362086, -0.6795759945, -3.512256186},       {2.848009649, 9.823521866, -1.533116425},
     {3.884490056, 9.726910976, -1.443887914},         {4.263427168, -9.801610288, -0.5713325777},
     {4.828507906, 9.261297613, 8.954301318},          {4.897990273, 9.368770975, 9.953987482},

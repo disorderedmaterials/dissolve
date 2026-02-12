@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -12,8 +12,9 @@ class Histogram3D
 {
     public:
     Histogram3D();
-    ~Histogram3D() = default;
+    Histogram3D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange, const Vector3 &zMinMaxRange);
     Histogram3D(const Histogram3D &source);
+    ~Histogram3D() = default;
     // Clear data
     void clear();
 
@@ -99,7 +100,7 @@ class Histogram3D
     // Bin specified value, returning success
     bool bin(double x, double y, double z);
     // Bin specified value (as Vec3), returning success
-    bool bin(Vec3<double> v);
+    bool bin(Vector3 v);
     // Return number of values binned over all bins
     long int nBinned() const;
     // Accumulate current histogram bins into averages
@@ -131,11 +132,4 @@ class Histogram3D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Sum histogram data onto all processes
-    bool allSum(ProcessPool &procPool);
 };

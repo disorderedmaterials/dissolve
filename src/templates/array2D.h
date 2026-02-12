@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/messenger.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <cassert>
 #include <optional>
 #include <vector>
@@ -13,7 +13,7 @@
 template <class A> class Array2D
 {
     public:
-    Array2D(int nrows = 0, int ncolumns = 0, bool half = false) : half_(half)
+    Array2D(int nrows = 0, int ncolumns = 0, bool triangular = false) : triangular_(triangular)
     {
         if ((nrows > 0) && (ncolumns > 0))
             resize(nrows, ncolumns);
@@ -33,7 +33,7 @@ template <class A> class Array2D
     {
         // Clear any existing data and reinitialise the array
         clear();
-        initialise(source.nRows_, source.nColumns_, source.half_);
+        initialise(source.nRows_, source.nColumns_, source.triangular_);
         std::copy(source.array_.begin(), source.array_.end(), array_.begin());
     }
 
@@ -46,7 +46,7 @@ template <class A> class Array2D
     // Array dimensions
     int nRows_{0}, nColumns_{0};
     // Half-matrix mode
-    bool half_;
+    bool triangular_;
     // Row offsets
     std::vector<int> rowOffsets_;
 
@@ -57,15 +57,15 @@ template <class A> class Array2D
         // Clear old data
         clear();
 
-        // If we're only interested in half the matrix then it must be square
-        if (half_)
+        // If we're only interested in the triangular matrix it must be square
+        if (triangular_)
             assert(nrows == ncolumns);
 
         // Create new array
         nRows_ = nrows;
         nColumns_ = ncolumns;
         rowOffsets_.resize(nRows_);
-        if (half_)
+        if (triangular_)
         {
             // Half-array, with element (i,j) == (j,i)
             int linearSize = 0;
@@ -86,11 +86,11 @@ template <class A> class Array2D
 
     public:
     // Initialise array
-    void initialise(int nrows, int ncolumns, bool half = false)
+    void initialise(int nrows, int ncolumns, bool triangular = false)
     {
         clear();
 
-        half_ = half;
+        triangular_ = triangular;
         if ((nrows > 0) && (ncolumns > 0))
             resize(nrows, ncolumns);
     }
@@ -114,14 +114,14 @@ template <class A> class Array2D
             nCols = nColumns_;
 
         // Reinitialise the present matrix to the new size
-        if (half_ && (nRows_ == nCols.value()))
+        if (triangular_ && (nRows_ == nCols.value()))
         {
             Messenger::warn("Adding a row to this Array2D<A> will force it to be rectangular, so it will no longer "
                             "be halved.\n");
             initialise(nRows_ + 1, nCols.value(), false);
         }
         else
-            initialise(nRows_ + 1, nCols.value(), half_);
+            initialise(nRows_ + 1, nCols.value(), triangular_);
 
         // Copy old data back in
         for (auto n = 0; n < oldArray.nRows_; ++n)
@@ -156,7 +156,7 @@ template <class A> class Array2D
         assert(row >= 0 && row < nRows_);
         assert(column >= 0 && column < nColumns_);
 
-        if (half_)
+        if (triangular_)
         {
             if (row > column)
                 return array_[rowOffsets_[column] + row - column];
@@ -173,7 +173,7 @@ template <class A> class Array2D
         assert(row >= 0 && row < nRows_);
         assert(column >= 0 && column < nColumns_);
 
-        if (half_)
+        if (triangular_)
         {
             if (row > column)
                 return array_[rowOffsets_[column] + row - column];
@@ -189,7 +189,7 @@ template <class A> class Array2D
         assert(row >= 0 && row < nRows_);
         assert(column >= 0 && column < nColumns_);
 
-        if (half_)
+        if (triangular_)
         {
             if (row > column)
                 return &array_[rowOffsets_[column] + row - column];
@@ -200,7 +200,7 @@ template <class A> class Array2D
             return &array_[rowOffsets_[row] + column];
     }
     // Return whether the array is halved
-    bool halved() const { return half_; }
+    bool halved() const { return triangular_; }
     // Return number of rows
     int nRows() const { return nRows_; }
     // Return number of columns
@@ -252,16 +252,16 @@ template <class A> class Array2D
     {
         assert(nColumns_ == B.nColumns_ && nRows_ == B.nRows_);
 
-        std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
+        std::transform(array_.begin(), array_.end(), B.array_.begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
     }
     Array2D<A> operator+(const Array2D<A> &other) const
     {
         assert(nColumns_ == other.nColumns_ && nRows_ == other.nRows_);
-        auto half = this->half_ && other.half_;
-        Array2D<A> ret(nRows_, nColumns_, half);
+        auto triangular = this->triangular_ && other.triangular_;
+        Array2D<A> ret(nRows_, nColumns_, triangular);
         for (int i = 0; i < this->nRows_; i++)
         {
-            int colStart = i ? half : 0;
+            int colStart = i ? triangular : 0;
             for (int j = colStart; j < this->nColumns_; ++j)
                 ret[{i, j}] = other[{i, j}] + (*this)[{i, j}];
         };

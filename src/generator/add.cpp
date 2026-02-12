@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/add.h"
-#include "base/randomBuffer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -13,6 +12,7 @@
 #include "keywords/nodeValue.h"
 #include "keywords/nodeValueEnumOptions.h"
 #include "keywords/species.h"
+#include "math/mathFunc.h"
 
 AddGeneratorNode::AddGeneratorNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
@@ -118,8 +118,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     }
 
     // Now we add the molecules
-    RandomBuffer randomBuffer(generatorContext.processPool(), ProcessPool::PoolProcessesCommunicator);
-    Vec3<double> newCentre, fr;
+    Vector3 newCentre, fr;
     auto coordinateSetIndex = 0;
     auto hasCoordinateSets = false;
     if (coordinateSets_)
@@ -152,7 +151,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
         switch (positioningType_)
         {
             case (AddGeneratorNodeBase::PositioningType::Random):
-                fr.set(randomBuffer.random(), randomBuffer.random(), randomBuffer.random());
+                fr.set(DissolveMath::random(), DissolveMath::random(), DissolveMath::random());
                 newCentre = box->getReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
@@ -173,7 +172,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
         // Generate and apply a random rotation matrix
         if (rotate_)
         {
-            transform.createRotationXY(randomBuffer.randomPlusMinusOne() * 180.0, randomBuffer.randomPlusMinusOne() * 180.0);
+            transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
             mol->transform(box, transform);
         }
     }

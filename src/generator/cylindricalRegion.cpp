@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/cylindricalRegion.h"
 #include "classes/configuration.h"
@@ -10,13 +10,13 @@
  * Cylindrical Region Voxel Kernel
  */
 
-CylindricalRegionVoxelKernel::CylindricalRegionVoxelKernel(Vec3<double> originFrac, double radius, Vec3<double> vector)
+CylindricalRegionVoxelKernel::CylindricalRegionVoxelKernel(Vector3 originFrac, double radius, Vector3 vector)
     : originFrac_(std::move(originFrac)), radius_(radius), vector_(std::move(vector))
 {
 }
 
 // Return whether voxel centred at supplied real coordinates is valid
-bool CylindricalRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+bool CylindricalRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vector3 &r) const
 {
     auto l0 = originFrac_;
     cfg->box()->toReal(l0);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -45,7 +45,7 @@ class VoxelDensityModule : public Module
     // 3D array for voxelising unit cell
     Array3D<double> array3D_;
     // Range (min, max, delta) of voxel histogram axis
-    Vec3<double> binRange_{0.0, 10.0, 0.05};
+    Vector3 binRange_{0.0, 10.0, 0.05};
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Target property for analysis
@@ -53,7 +53,7 @@ class VoxelDensityModule : public Module
     // Requested ideal side length of a single analysis voxel (angstroms)
     double idealVoxelSideLength_{1.0};
     // Number of analysis points along each axis of the unit cell
-    Vec3<int> nAxisVoxels_{1, 1, 1};
+    Vector3i nAxisVoxels_{1, 1, 1};
     // Voxel volume (cubic angstroms)
     double voxelVolume_{1.0};
     // Export target
@@ -64,13 +64,13 @@ class VoxelDensityModule : public Module
      */
     private:
     // Add value to array
-    void addValue(Vec3<double> coords, double value);
+    void addValue(Vector3 coords, double value);
     // Return atomic coordinates folded into unit cell
-    Vec3<double> foldedCoordinates(const Vec3<double> &r, const Box *unitCell);
+    Vector3 foldedCoordinates(const Vector3 &r, const Box *unitCell);
     // Return bound-coherent natural isotope scattering length density for element
     double scatteringLengthDensity(Elements::Element Z);
     // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
     double voxelSideLength(const double axisLength) const;
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

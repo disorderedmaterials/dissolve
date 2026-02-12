@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/cif.h"
 #include "classes/empiricalFormula.h"
@@ -15,7 +15,7 @@ class ImportCIFTest : public ::testing::Test
     // Molecular species information
     using MolecularSpeciesInfo = std::tuple<std::string, int, int>;
     // Test Box definition
-    void testBox(const Configuration *cfg, const Vec3<double> &lengths, const Vec3<double> &angles, int nAtoms)
+    void testBox(const Configuration *cfg, const Vector3 &lengths, const Vector3 &angles, int nAtoms)
     {
         ASSERT_TRUE(cfg);
         EXPECT_EQ(cfg->nAtoms(), nAtoms);
@@ -90,7 +90,7 @@ TEST_F(ImportCIFTest, NaCl)
     cifHandler.setUseCIFBondingDefinitions(true);
     EXPECT_EQ(cifHandler.molecularSpecies().size(), 2);
     testMolecularSpecies(cifHandler.molecularSpecies()[0], {"Na", 4, 1});
-    std::vector<Vec3<double>> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
+    std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
     for (auto &&[instance, r2] : zip(cifHandler.molecularSpecies()[0].instances(), R))
         DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), r2);
     testMolecularSpecies(cifHandler.molecularSpecies()[1], {"Cl", 4, 1});

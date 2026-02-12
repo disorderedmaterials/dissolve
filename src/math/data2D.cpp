@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/data2D.h"
 #include "base/lineParser.h"
@@ -421,12 +421,11 @@ bool Data2D::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-SerialisedValue Data2D::serialise() const
+void Data2D::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", y_}, {"values", values_.linearArray()}};
+    target[tag] = {{"tag", tag_}, {"x", x_}, {"y", y_}, {"values", values_.linearArray()}};
     if (hasError_)
-        result["errors"] = errors_.linearArray();
-    return result;
+        target[tag]["errors"] = errors_.linearArray();
 }
 
 // Read values from a serialisable value

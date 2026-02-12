@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/uff/uff.h"
 #include "classes/atomType.h"
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "math/mathFunc.h"
 
 /*
  * Implements "UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations"
@@ -389,7 +390,7 @@ bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAng
     double rjk = j.parameter(UFFAtomTypeData::R) + k.parameter(UFFAtomTypeData::R) + rBOjk - rENjk;
 
     // Get theta for the central atom
-    const auto theta = j.parameter(UFFAtomTypeData::Theta) / DEGRAD;
+    const auto theta = DissolveMath::toRadians(j.parameter(UFFAtomTypeData::Theta));
     const auto cosTheta = cos(theta), sinTheta = sin(theta);
 
     // Determine rik2 and rik5 values
@@ -586,7 +587,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
             phi = 86.9735;
         else if (typeI.name() == "Sb3+3")
             phi = 87.7047;
-        phi /= DEGRAD;
+        phi = DissolveMath::toRadians(phi);
         improper = {
             typeI.name(),
             typeJ.name(),

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/matrix4.h"
 #include "base/messenger.h"
+#include "math/mathFunc.h"
 #include "math/matrix3.h"
 #include <array>
 
@@ -79,18 +80,18 @@ Matrix4 Matrix4::operator-(const Matrix4 &B) const
     return A;
 }
 
-Vec3<double> Matrix4::operator*(const Vec3<double> &v) const
+Vector3 Matrix4::operator*(const Vector3 &v) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = v.x * matrix_[0] + v.y * matrix_[4] + v.z * matrix_[8] + matrix_[12];
     result.y = v.x * matrix_[1] + v.y * matrix_[5] + v.z * matrix_[9] + matrix_[13];
     result.z = v.x * matrix_[2] + v.y * matrix_[6] + v.z * matrix_[10] + matrix_[14];
     return result;
 }
 
-Vec4<double> Matrix4::operator*(const Vec4<double> &v) const
+Vector4 Matrix4::operator*(const Vector4 &v) const
 {
-    Vec4<double> result;
+    Vector4 result;
     result.x = v.x * matrix_[0] + v.y * matrix_[4] + v.z * matrix_[8] + v.w * matrix_[12];
     result.y = v.x * matrix_[1] + v.y * matrix_[5] + v.z * matrix_[9] + v.w * matrix_[13];
     result.z = v.x * matrix_[2] + v.y * matrix_[6] + v.z * matrix_[10] + v.w * matrix_[14];
@@ -384,16 +385,16 @@ void Matrix4::invert()
  */
 
 // Copy column contents to supplied Vec3
-Vec3<double> Matrix4::columnAsVec3(int col) const
+Vector3 Matrix4::columnAsVec3(int col) const
 {
-    Vec3<double> vec(matrix_[col * 4], matrix_[col * 4 + 1], matrix_[col * 4 + 2]);
+    Vector3 vec(matrix_[col * 4], matrix_[col * 4 + 1], matrix_[col * 4 + 2]);
     return vec;
 }
 
 // Copy column contents to supplied Vec4
-Vec4<double> Matrix4::columnAsVec4(int col) const
+Vector4 Matrix4::columnAsVec4(int col) const
 {
-    Vec4<double> vec(matrix_[col * 4], matrix_[col * 4 + 1], matrix_[col * 4 + 2], matrix_[col * 4 + 3]);
+    Vector4 vec(matrix_[col * 4], matrix_[col * 4 + 1], matrix_[col * 4 + 2], matrix_[col * 4 + 3]);
     return vec;
 }
 
@@ -424,7 +425,7 @@ void Matrix4::setColumn(int col, double a, double b, double c, double d)
 }
 
 // Set specified column from supplied Vec3
-void Matrix4::setColumn(int col, Vec3<double> vec, double w)
+void Matrix4::setColumn(int col, Vector3 vec, double w)
 {
     matrix_[col * 4] = vec.x;
     matrix_[col * 4 + 1] = vec.y;
@@ -433,7 +434,7 @@ void Matrix4::setColumn(int col, Vec3<double> vec, double w)
 }
 
 // Set specified column from supplied Vec4
-void Matrix4::setColumn(int col, Vec4<double> vec)
+void Matrix4::setColumn(int col, Vector4 vec)
 {
     matrix_[col * 4] = vec.x;
     matrix_[col * 4 + 1] = vec.y;
@@ -442,7 +443,7 @@ void Matrix4::setColumn(int col, Vec4<double> vec)
 }
 
 // Set specified column from supplied Vec3
-void Matrix4::setColumn(int col, Vec3<double> vec)
+void Matrix4::setColumn(int col, Vector3 vec)
 {
     matrix_[col * 4] = vec.x;
     matrix_[col * 4 + 1] = vec.y;
@@ -459,7 +460,7 @@ void Matrix4::adjustColumn(int col, double a, double b, double c, double d)
 }
 
 // Adjust specified column from supplied Vec3
-void Matrix4::adjustColumn(int col, Vec3<double> vec, double w)
+void Matrix4::adjustColumn(int col, Vector3 vec, double w)
 {
     matrix_[col * 4] += vec.x;
     matrix_[col * 4 + 1] += vec.y;
@@ -468,7 +469,7 @@ void Matrix4::adjustColumn(int col, Vec3<double> vec, double w)
 }
 
 // Adjust specified column from supplied Vec4
-void Matrix4::adjustColumn(int col, Vec4<double> vec)
+void Matrix4::adjustColumn(int col, Vector4 vec)
 {
     matrix_[col * 4] += vec.x;
     matrix_[col * 4 + 1] += vec.y;
@@ -495,7 +496,7 @@ void Matrix4::columnMultiply(int col, double d)
 }
 
 // Multiply first three columns by values in supplied vector
-void Matrix4::columnMultiply(Vec3<double> vec)
+void Matrix4::columnMultiply(Vector3 vec)
 {
     columnMultiply(0, vec.x);
     columnMultiply(1, vec.y);
@@ -550,7 +551,7 @@ void Matrix4::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 // Create rotation matrix about X
 void Matrix4::createRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = 1.0;
@@ -574,7 +575,7 @@ void Matrix4::createRotationX(double angle)
 // Create XY rotation matrix
 void Matrix4::createRotationXY(double anglex, double angley)
 {
-    double cosx, sinx, cosy, siny, thetax = anglex / DEGRAD, thetay = angley / DEGRAD;
+    double cosx, sinx, cosy, siny, thetax = DissolveMath::toRadians(anglex), thetay = DissolveMath::toRadians(angley);
     cosx = cos(thetax);
     cosy = cos(thetay);
     sinx = sin(thetax);
@@ -600,7 +601,7 @@ void Matrix4::createRotationXY(double anglex, double angley)
 // Create rotation matrix about Y
 void Matrix4::createRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -624,7 +625,7 @@ void Matrix4::createRotationY(double angle)
 // Create rotation matrix about Z
 void Matrix4::createRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -648,7 +649,7 @@ void Matrix4::createRotationZ(double angle)
 // Create axis rotation quaternion
 void Matrix4::createRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);
@@ -679,7 +680,7 @@ void Matrix4::createRotationAxis(double ax, double ay, double az, double angle, 
 // Apply rotation about X axis
 void Matrix4::applyRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -703,7 +704,7 @@ void Matrix4::applyRotationX(double angle)
 // Apply rotation about Y axis
 void Matrix4::applyRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -726,7 +727,7 @@ void Matrix4::applyRotationY(double angle)
 // Apply rotation about Z axis
 void Matrix4::applyRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -749,7 +750,7 @@ void Matrix4::applyRotationZ(double angle)
 // Apply axis rotation quaternion
 void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[8], multipliers[16];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[8], multipliers[16];
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);
@@ -797,7 +798,7 @@ void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, b
 // Apply rotation about X axis, premultiplying with current matrix
 void Matrix4::applyPreRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -823,7 +824,7 @@ void Matrix4::applyPreRotationX(double angle)
 // Apply rotation about Y axis, premultiplying with current matrix
 void Matrix4::applyPreRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -846,7 +847,7 @@ void Matrix4::applyPreRotationY(double angle)
 // Apply rotation about Z axis, premultiplying with current matrix
 void Matrix4::applyPreRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[4];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[4];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -869,7 +870,7 @@ void Matrix4::applyPreRotationZ(double angle)
 // Apply axis rotation quaternion, premultiplying with current matrix
 void Matrix4::applyPreRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[8], multipliers[16];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[8], multipliers[16];
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);
@@ -977,7 +978,7 @@ void Matrix4::createTranslation(double dx, double dy, double dz)
 }
 
 // Create a translation matrix (as glTranslated would do)
-void Matrix4::createTranslation(Vec3<double> delta) { createTranslation(delta.x, delta.y, delta.z); }
+void Matrix4::createTranslation(Vector3 delta) { createTranslation(delta.x, delta.y, delta.z); }
 
 // Apply a translation to the matrix (as glTranslated would do)
 void Matrix4::applyTranslation(double dx, double dy, double dz)
@@ -988,7 +989,7 @@ void Matrix4::applyTranslation(double dx, double dy, double dz)
 }
 
 // Apply a translation to the matrix (as glTranslated would to)
-void Matrix4::applyTranslation(Vec3<double> vec)
+void Matrix4::applyTranslation(Vector3 vec)
 {
     matrix_[12] += matrix_[0] * vec.x + matrix_[4] * vec.y + matrix_[8] * vec.z;
     matrix_[13] += matrix_[1] * vec.x + matrix_[5] * vec.y + matrix_[9] * vec.z;
@@ -1016,7 +1017,7 @@ void Matrix4::applyPreTranslation(double dx, double dy, double dz)
 }
 
 // Apply a translation, premultiplying with current matrix
-void Matrix4::applyPreTranslation(Vec3<double> vec) { applyPreTranslation(vec.x, vec.y, vec.z); }
+void Matrix4::applyPreTranslation(Vector3 vec) { applyPreTranslation(vec.x, vec.y, vec.z); }
 
 // Apply an X-translation to the matrix (as glTranslated would do)
 void Matrix4::applyTranslationX(double dx)
@@ -1043,7 +1044,7 @@ void Matrix4::applyTranslationZ(double dz)
 }
 
 // Add a translation to the matrix
-void Matrix4::addTranslation(Vec3<double> v)
+void Matrix4::addTranslation(Vector3 v)
 {
     matrix_[12] += v.x;
     matrix_[13] += v.y;
@@ -1059,7 +1060,7 @@ void Matrix4::addTranslation(double dx, double dy, double dz)
 }
 
 // Set translation in the matrix
-void Matrix4::setTranslation(Vec3<double> v)
+void Matrix4::setTranslation(Vector3 v)
 {
     matrix_[12] = v.x;
     matrix_[13] = v.y;
@@ -1087,7 +1088,7 @@ void Matrix4::applyScaling(double scalex, double scaley, double scalez)
 }
 
 // Apply a general scaling to the matrix
-void Matrix4::applyScaling(Vec3<double> scaling)
+void Matrix4::applyScaling(Vector3 scaling)
 {
     applyScalingX(scaling.x);
     applyScalingY(scaling.y);
@@ -1140,20 +1141,20 @@ void Matrix4::applyScalingZ(double scale)
  * Transforms
  */
 
-// Transform coordinates supplied and return as Vec3<double>
-Vec3<double> Matrix4::transform(double x, double y, double z) const
+// Transform coordinates supplied and return as Vector3
+Vector3 Matrix4::transform(double x, double y, double z) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = x * matrix_[0] + y * matrix_[4] + z * matrix_[8] + matrix_[12];
     result.y = x * matrix_[1] + y * matrix_[5] + z * matrix_[9] + matrix_[13];
     result.z = x * matrix_[2] + y * matrix_[6] + z * matrix_[10] + matrix_[14];
     return result;
 }
 
-// Transform coordinates supplied and return as Vec3<double>
-Vec4<double> Matrix4::transform(double x, double y, double z, double w) const
+// Transform coordinates supplied and return as Vector3
+Vector4 Matrix4::transform(double x, double y, double z, double w) const
 {
-    Vec4<double> result;
+    Vector4 result;
     result.x = x * matrix_[0] + y * matrix_[4] + z * matrix_[8] + w * matrix_[12];
     result.y = x * matrix_[1] + y * matrix_[5] + z * matrix_[9] + w * matrix_[13];
     result.z = x * matrix_[2] + y * matrix_[6] + z * matrix_[10] + w * matrix_[14];
@@ -1161,10 +1162,10 @@ Vec4<double> Matrix4::transform(double x, double y, double z, double w) const
     return result;
 }
 
-// Transform coordinates supplied and return as Vec3<double>
-Vec3<double> Matrix4::transform(Vec3<double> vec) const
+// Transform coordinates supplied and return as Vector3
+Vector3 Matrix4::transform(Vector3 vec) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = vec.x * matrix_[0] + vec.y * matrix_[4] + vec.z * matrix_[8] + matrix_[12];
     result.y = vec.x * matrix_[1] + vec.y * matrix_[5] + vec.z * matrix_[9] + matrix_[13];
     result.z = vec.x * matrix_[2] + vec.y * matrix_[6] + vec.z * matrix_[10] + matrix_[14];
@@ -1199,9 +1200,9 @@ void Matrix4::multiplyRotation(Matrix4 B)
 }
 
 // Apply rotational part of matrix to supplied vector
-Vec3<double> Matrix4::rotateVector(Vec3<double> &v) const
+Vector3 Matrix4::rotateVector(Vector3 &v) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = v.x * matrix_[0] + v.y * matrix_[4] + v.z * matrix_[8];
     result.y = v.x * matrix_[1] + v.y * matrix_[5] + v.z * matrix_[9];
     result.z = v.x * matrix_[2] + v.y * matrix_[6] + v.z * matrix_[10];
@@ -1209,9 +1210,9 @@ Vec3<double> Matrix4::rotateVector(Vec3<double> &v) const
 }
 
 // Apply rotational part of matrix to supplied vector coordinates
-Vec3<double> Matrix4::rotateVector(double x, double y, double z) const
+Vector3 Matrix4::rotateVector(double x, double y, double z) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = x * matrix_[0] + y * matrix_[4] + z * matrix_[8];
     result.y = x * matrix_[1] + y * matrix_[5] + z * matrix_[9];
     result.z = x * matrix_[2] + y * matrix_[6] + z * matrix_[10];

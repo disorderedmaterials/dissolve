@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/localMolecule.h"
 #include "classes/species.h"
 #include "data/elements.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <algorithm>
 #include <vector>
 
@@ -17,7 +17,7 @@ class Species;
 class CIFSymmetryAtom
 {
     public:
-    CIFSymmetryAtom(std::string_view label, Elements::Element Z, Vec3<double> rFrac, double occ);
+    CIFSymmetryAtom(std::string_view label, Elements::Element Z, Vector3 rFrac, double occ);
     ~CIFSymmetryAtom() = default;
 
     private:
@@ -26,7 +26,7 @@ class CIFSymmetryAtom
     // Element (from  _atom_site_type_symbol)
     Elements::Element Z_;
     // Fractional coordinate of atom (from _atom_site_fract_[xyz])
-    Vec3<double> rFrac_;
+    Vector3 rFrac_;
     // Site occupancy (from _atom_site_occupancy)
     double occupancy_;
 
@@ -36,7 +36,7 @@ class CIFSymmetryAtom
     // Return element (from  _atom_site_type_symbol)
     Elements::Element Z() const;
     // Return fractional coordinate of atom (from _atom_site_fract_[xyz])
-    Vec3<double> rFrac() const;
+    Vector3 rFrac() const;
     // Return site occupancy (from _atom_site_occupancy)
     double occupancy() const;
 };
@@ -138,5 +138,5 @@ class CIFMolecularSpecies
     // Append supplied instances to our vector
     void appendInstances(const std::vector<LocalMolecule> &newInstances);
     // Return coordinates for all instances as a vector of vectors
-    std::vector<std::vector<Vec3<double>>> allInstanceCoordinates() const;
+    std::vector<std::vector<Vector3>> allInstanceCoordinates() const;
 };

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "expression/function.h"
-#include "math/constants.h"
 #include "math/mathFunc.h"
 
 // Return enum options for NodeTypes
@@ -113,10 +112,10 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             result = tan(args[0].asDouble());
             break;
         case (ToDegreesFunction):
-            result = args[0].asDouble() * DEGRAD;
+            result = DissolveMath::toDegrees(args[0].asDouble());
             break;
         case (ToRadiansFunction):
-            result = args[0].asDouble() / DEGRAD;
+            result = DissolveMath::toRadians(args[0].asDouble());
             break;
         case (TwoPiFunction):
             result = 2.0 * M_PI;

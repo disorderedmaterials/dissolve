@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/interpolator.h"
 #include "math/data1D.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
 Interpolator::Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme)
-    : x_(x), y_(y)
+    : x_(x), y_(y), scheme_(scheme)
 {
-    interpolate(scheme);
+    interpolate();
 }
-Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x_(source.xAxis()), y_(source.values())
+Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme)
+    : x_(source.xAxis()), y_(source.values()), scheme_(scheme)
 {
-    interpolate(scheme);
+    interpolate();
 }
-
-Interpolator::~Interpolator() = default;
 
 /*
  * Interpolation
@@ -197,8 +197,6 @@ void Interpolator::interpolateSpline()
         c_[i] *= 0.5;
         a_[i] = y_[i];
     }
-
-    lastInterval_ = 0;
 }
 
 // Prepare constrained natural spline interpolation of data
@@ -251,8 +249,6 @@ void Interpolator::interpolateConstrainedSpline()
         a_[i - 1] = y_[i - 1] - b_[i - 1] * x_[i - 1] - c_[i - 1] * x_[i - 1] * x_[i - 1] -
                     d_[i - 1] * x_[i - 1] * x_[i - 1] * x_[i - 1];
     }
-
-    lastInterval_ = 0;
 }
 
 // Prepare linear interpolation of data
@@ -263,18 +259,11 @@ void Interpolator::interpolateLinear()
     a_.resize(y_.size() - 1);
     for (auto i = 0; i < y_.size() - 1; ++i)
         a_[i] = y_[i + 1] - y_[i];
-
-    lastInterval_ = 0;
 }
 
-// Prepare linear interpolation of data
-void Interpolator::interpolateThreePoint() { lastInterval_ = 0; }
-
-// Regenerate using specified scheme
-void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
+// Generate using current scheme
+void Interpolator::interpolate()
 {
-    scheme_ = scheme;
-
     // Do we have any data to work with?
     if (x_.size() < 2)
     {
@@ -294,64 +283,36 @@ void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
     else if (scheme_ == Interpolator::LinearInterpolation)
         interpolateLinear();
     else if (scheme_ == Interpolator::ThreePointInterpolation)
-        interpolateThreePoint();
+    {
+        // No setup required
+    }
 }
 
 // Return spline interpolated y value for supplied x
-double Interpolator::y(double x)
+double Interpolator::y(double x) const
 {
-    // Do we need to (re)generate the interpolation?
-    if (lastInterval_ == -1)
+    if (x < x_.front())
+        return y_.front();
+    if (x > x_.back())
+        return y_.back();
+
+    // Perform binary chop search to find interval
+    auto lastInterval = 0;
+    int i, right = h_.size() - 1;
+    while ((right - lastInterval) > 1)
     {
-        // Do we know what the interpolation scheme is?
-        if (scheme_ != Interpolator::NoInterpolation)
-            interpolate(scheme_);
+        i = (right + lastInterval) / 2;
+        if (x_[i] > x)
+            right = i;
         else
-        {
-            // No existing interpolation scheme, so use Spline by default
-            interpolate(Interpolator::SplineInterpolation);
-        }
+            lastInterval = i;
     }
 
-    // Quick check of our interval - if the data is sequential increasing in x then we should be able to quickly determine it
-    // and avoid the binary chop
-    if (lastInterval_ != -1)
-    {
-        // If the x value exceeds the next interval boundary, try to increment it
-        if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
-        {
-            ++lastInterval_;
-
-            // If there are still intervals beyond this one, check the next limit
-            if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
-                lastInterval_ = -1;
-        }
-
-        // Double-check lower limit
-        if (lastInterval_ > 0 && (x < x_[lastInterval_]))
-            lastInterval_ = -1;
-    }
-
-    // Perform binary chop search if no valid interval was found
-    if (lastInterval_ == -1)
-    {
-        lastInterval_ = 0;
-        int i, right = h_.size() - 1;
-        while ((right - lastInterval_) > 1)
-        {
-            i = (right + lastInterval_) / 2;
-            if (x_[i] > x)
-                right = i;
-            else
-                lastInterval_ = i;
-        }
-    }
-
-    return y(x, lastInterval_);
+    return y(x, lastInterval);
 }
 
 // Return spline interpolated y value for supplied x, specifying containing interval
-double Interpolator::y(double x, int interval)
+double Interpolator::y(double x, int interval) const
 {
     if (interval < 0)
         return y_.front();
@@ -395,6 +356,28 @@ double Interpolator::y(double x, int interval)
     }
 
     return 0.0;
+}
+
+// Return interpolated y values for supplied, sequentially increasing x values
+std::vector<double> Interpolator::y(const std::vector<double> &xs) const
+{
+    auto interval = 0;
+    std::vector<double> ys;
+    ys.reserve(xs.size());
+
+    for (auto x : xs)
+    {
+        if (x < x_.front())
+            ys.push_back(y_.front());
+        else
+        {
+            while (interval < (x_.size() - 1) && x_[interval + 1] < x)
+                ++interval;
+            ys.push_back(interval == x_.size() ? y_.back() : y(x, interval));
+        }
+    }
+
+    return ys;
 }
 
 /*
@@ -455,10 +438,11 @@ void Interpolator::addInterpolated(const Data1D &source, Data1D &dest, double fa
     {
         // Generate interpolation of source data
         Interpolator I(source);
+        auto interpolated = I.y(destX);
 
         // Explicit loop over values
-        for (auto &&[x, y] : zip(destX, destY))
-            y += I.y(x) * factor;
+        for (auto &&[iy, y] : zip(interpolated, destY))
+            y += iy * factor;
     }
 }
 

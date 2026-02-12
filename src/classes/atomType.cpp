@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "data/elements.h"
@@ -64,9 +64,9 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
 }
 
 // Express as a serialisable value
-SerialisedValue AtomType::serialise() const
+void AtomType::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue atomType;
+    auto &atomType = target[tag];
 
     atomType["z"] = Z_;
     atomType["charge"] = charge_;
@@ -81,8 +81,6 @@ SerialisedValue AtomType::serialise() const
             atomTypeParameters[parameter] = value;
         atomType["parameters"] = atomTypeParameters;
     }
-
-    return atomType;
 }
 
 // Read values from a serialisable value
@@ -91,8 +89,7 @@ void AtomType::deserialise(SerialisedValue node)
     Z_ = toml::find<Elements::Element>(node, "z");
     charge_ = toml::find_or<double>(node, "charge", 0.0);
     Serialisable::optionalOn(
-        node, "form",
-        [this](const auto node)
+        node, "form", [this](const auto node)
         { interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node.as_string()))); });
 
     Serialisable::optionalOn(node, "parameters",

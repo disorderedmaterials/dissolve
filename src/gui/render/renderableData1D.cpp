@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableData1D.h"
 #include "base/lineParser.h"
@@ -225,7 +225,7 @@ void RenderableData1D::constructLineXY(const std::vector<double> &displayAbsciss
 
     // Temporary variables
     GLfloat colour[4];
-    Vec3<double> nrm(0.0, 1.0, 0.0);
+    Vector3 nrm(0.0, 1.0, 0.0);
 
     // Create lines for slices
     int vertexA, vertexB;

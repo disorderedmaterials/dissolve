@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/createGrapheneSpeciesDialog.h"
 #include "classes/empiricalFormula.h"
 #include "gui/helpers/comboPopulator.h"
+#include "math/mathFunc.h"
 #include <numeric>
 
 // Useful constants
@@ -55,8 +56,8 @@ void CreateGrapheneSpeciesDialog::calculateParameters()
     a0_ = r * root3;
 
     // Set principal vectors for reference
-    va1_ = Vec3<double>(a0_, 0.0, 0.0);
-    va2_ = Vec3<double>(a0_ * sin(oneSixthPi), a0_ * cos(oneSixthPi), 0.0);
+    va1_ = Vector3(a0_, 0.0, 0.0);
+    va2_ = Vector3(a0_ * sin(oneSixthPi), a0_ * cos(oneSixthPi), 0.0);
 
     // Calculate repeat dimensions of the (n,m) sheet
     // -- A is magnitude of vecA (equation 1) and represents our X dimension
@@ -111,7 +112,7 @@ CreateGrapheneSpeciesDialog::getSortedByY(const std::map<SpeciesAtom *, std::vec
 }
 
 // Recursive branch function
-void CreateGrapheneSpeciesDialog::extendBranch(SpeciesAtom *i, const Box *box, Vec3<double> &vFrac,
+void CreateGrapheneSpeciesDialog::extendBranch(SpeciesAtom *i, const Box *box, Vector3 &vFrac,
                                                std::vector<SpeciesAtom *> &branch, double localCutoff) const
 {
     // Get PBC and non-PBC (local) bond partners for this atom and see what type of atom we have...
@@ -150,17 +151,17 @@ void CreateGrapheneSpeciesDialog::regenerate()
     const auto cFactor = ui_.CFactorSpin->value();
 
     // Determine a suitable periodic box for the species - we will always create one so that we get proper folding.
-    auto offset = Vec3<double>(), cellLengths = Vec3<double>();
+    auto offset = Vector3(), cellLengths = Vector3();
     if (roll)
     {
         // Create some extra space and set an offset so the tube is central in XZ
         cellLengths = {radius_ * 3, c_ * cFactor, radius_ * 3};
-        offset = Vec3<double>(radius_ * 1.5, 0.0, radius_ * 1.5);
+        offset = Vector3(radius_ * 1.5, 0.0, radius_ * 1.5);
     }
     else
     {
         cellLengths = {A_, c_ * cFactor, sheetZ_};
-        offset = Vec3<double>(0.0, 0.0, sheetZ_ * 0.5);
+        offset = Vector3(0.0, 0.0, sheetZ_ * 0.5);
     }
     species_.createBox(cellLengths, {90, 90, 90});
 
@@ -184,20 +185,20 @@ void CreateGrapheneSpeciesDialog::regenerate()
         for (auto i = 0; i < H_ * cFactor; ++i)
         {
             // Generate translation vector for this copy (equation 9)
-            auto delta = Vec3<double>(-i * a0_ * sin(oneSixthPi - alpha_), i * a0_ * cos(oneSixthPi - alpha_), 0.0);
-            auto r1 = delta + Vec3<double>(x1j, y1j, 0.0);
-            auto r2 = delta + Vec3<double>(x2j, y2j, 0.0);
+            auto delta = Vector3(-i * a0_ * sin(oneSixthPi - alpha_), i * a0_ * cos(oneSixthPi - alpha_), 0.0);
+            auto r1 = delta + Vector3(x1j, y1j, 0.0);
+            auto r2 = delta + Vector3(x2j, y2j, 0.0);
 
             // Get new helix pair coordinates
-            Vec3<double> p1, p2;
+            Vector3 p1, p2;
             if (roll)
             {
                 // Wrap the X coordinate (== real position on circumference) onto a tube of radius 'radius', applying the
                 // offset we set earlier when creating the periodic box so as to put it in the centre of XZ.
                 p1 = species_.box()->fold(
-                    offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r1.x / A_), r1.y, radius_ * cos(2.0 * M_PI * r1.x / A_)));
+                    offset + Vector3(radius_ * sin(2.0 * M_PI * r1.x / A_), r1.y, radius_ * cos(2.0 * M_PI * r1.x / A_)));
                 p2 = species_.box()->fold(
-                    offset + Vec3<double>(radius_ * sin(2.0 * M_PI * r2.x / A_), r2.y, radius_ * cos(2.0 * M_PI * r2.x / A_)));
+                    offset + Vector3(radius_ * sin(2.0 * M_PI * r2.x / A_), r2.y, radius_ * cos(2.0 * M_PI * r2.x / A_)));
             }
             else
             {
@@ -246,7 +247,7 @@ void CreateGrapheneSpeciesDialog::regenerate()
                 auto &pbcJ = atoms.at(i);
 
                 // Determine the fractional average vector to the pbc atoms
-                Vec3<double> vFrac;
+                Vector3 vFrac;
                 for (auto j : pbcJ)
                     vFrac += species_.box()->getFractional(j->r()) - species_.box()->getFractional(i->r());
 
@@ -279,11 +280,11 @@ void CreateGrapheneSpeciesDialog::regenerate()
                 // interested in. Along the way we maintain a fractional translation vector based on all PBC bonds we encounter
                 // which will inform the direction we might want to move the branch. Or we could just remove it.
 
-                Vec3<double> vFrac;
+                Vector3 vFrac;
                 std::vector<SpeciesAtom *> branch;
                 extendBranch(i, species_.box(), vFrac, branch, localCutoff);
                 auto maxEl = vFrac.absMaxElement();
-                Vec3<double> tVec;
+                Vector3 tVec;
                 tVec.set(maxEl, round(vFrac.get(maxEl) / fabs(vFrac.get(maxEl))));
                 tVec.multiply(cellLengths);
                 ;
@@ -345,7 +346,7 @@ void CreateGrapheneSpeciesDialog::updateWidgets()
     // Sheet properties
     ui_.ALabel->setText(QString("%1 \u212B").arg(A_, 0, 'f', 3));
     ui_.CLabel->setText(QString("%1 (%2) \u212B").arg(c_, 0, 'f', 3).arg(c_ * ui_.CFactorSpin->value(), 0, 'f', 3));
-    ui_.AlphaLabel->setText(QString("%1\u00B0").arg(alpha_ * DEGRAD, 0, 'f', 3));
+    ui_.AlphaLabel->setText(QString("%1\u00B0").arg(DissolveMath::toDegrees(alpha_), 0, 'f', 3));
     ui_.HLabel->setText(QString("%1 (%2)").arg(H_).arg(H_ * ui_.CFactorSpin->value()));
     ui_.RadiusLabel->setText(QString("%1 \u212B").arg(radius_, 0, 'f', 3));
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "expression/value.h"
 #include <format>
@@ -134,12 +134,12 @@ bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValu
 }
 
 // Express as a serialisable value
-SerialisedValue ExpressionValue::serialise() const
+void ExpressionValue::serialise(std::string tag, SerialisedValue &target) const
 {
     if (type_ == ValueType::Integer)
-        return valueI_;
+        target[tag] = valueI_;
     else
-        return valueD_;
+        target[tag] = valueD_;
 }
 
 // Read values from a serialisable value

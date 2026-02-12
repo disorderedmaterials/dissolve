@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "io/import/data3D.h"
@@ -26,7 +26,7 @@ bool Data3DImportFileFormat::importPDens(LineParser &parser, Data3D &data)
     // Get voxel sizes, assuming cubic grid
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
-    auto delta = Vec3<double>(parser.argd(0), parser.argd(4), parser.argd(8));
+    auto delta = Vector3(parser.argd(0), parser.argd(4), parser.argd(8));
 
     // Get grid origin coordinates
     if (parser.getArgsDelim() != LineParser::Success)

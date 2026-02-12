@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableSpecies.h"
 #include "base/lineParser.h"
@@ -69,7 +69,7 @@ void RenderableSpecies::transformValues()
         limitsMin_.zero();
 
         // Transform extreme upper right corner from unit to real space to get maxima
-        limitsMax_ = source_->box()->getReal(Vec3<double>(1.0, 1.0, 1.0));
+        limitsMax_ = source_->box()->getReal(Vector3(1.0, 1.0, 1.0));
     }
     else if (source_->nAtoms() > 0)
     {
@@ -359,8 +359,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint,
-                                                         Elements::Element toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vector3 toPoint, Elements::Element toElement)
 {
     // Clear existing data
     clearInteractionPrimitive();
@@ -408,8 +407,8 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Elements::Element fromElement,
-                                                         Vec3<double> toPoint, Elements::Element toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(Vector3 fromPoint, Elements::Element fromElement, Vector3 toPoint,
+                                                         Elements::Element toElement)
 {
     // Clear existing data
     clearInteractionPrimitive();

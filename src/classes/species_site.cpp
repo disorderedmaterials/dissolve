@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/species.h"
@@ -36,7 +36,7 @@ std::vector<std::unique_ptr<SpeciesSite>> &Species::sites() { return sites_; }
 // Generate unique site name with base name provided
 std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *exclude) const
 {
-    std::string_view baseName = base.empty() ? "NewSite" : base;
+    auto baseName = DissolveSys::niceName(base.empty() ? "NewSite" : base);
     std::string uniqueName{baseName};
 
     // Find all existing names which are the same as 'existingName' up to the first '_', and get the highest appended number
@@ -50,8 +50,7 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
 // Search for SpeciesSite by name
 const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
-    auto it = std::find_if(sites_.begin(), sites_.end(),
-                           [name, exclude](const auto &site)
+    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site)
                            { return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name()))); });
     if (it != sites_.end())
         return (*it).get();
@@ -60,8 +59,7 @@ const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *e
 }
 SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude)
 {
-    auto it = std::find_if(sites_.begin(), sites_.end(),
-                           [name, exclude](const auto &site)
+    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site)
                            { return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name()))); });
     if (it != sites_.end())
         return (*it).get();

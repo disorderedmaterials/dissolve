@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/serialiser.h"
+#include "base/timer.h"
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "classes/pairPotential.h"
@@ -17,6 +18,7 @@
 class Atom;
 class Box;
 class Cell;
+class DissolveGraph;
 class Isotopologue;
 class Molecule;
 
@@ -97,13 +99,15 @@ class Dissolve : public Serialisable<>
     PairPotential *addPairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2);
     // Return PairPotentials list
     const std::vector<PairPotential::Definition> &pairPotentials() const;
+    std::vector<PairPotential::Definition> &pairPotentials();
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
     // Return specified PairPotential (if defined)
-    PairPotential *pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
+    PairPotential *pairPotential(const AtomType *at1, const AtomType *at2) const;
     PairPotential *pairPotential(std::string_view at1Name, std::string_view at2Name) const;
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;
+    PotentialMap &potentialMap();
     // Update all pair potentials
     bool updatePairPotentials(std::optional<bool> useCombinationRulesHint = {});
     // Clear additional potentials
@@ -119,6 +123,19 @@ class Dissolve : public Serialisable<>
     public:
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
+
+    /*
+     * Graph node
+     */
+    public:
+    // Get graph
+    DissolveGraph *graph();
+    // Set the Dissolve graph node
+    void setGraph();
+
+    private:
+    // Dissolve graph node
+    std::unique_ptr<DissolveGraph> graphNode_;
 
     /*
      * Simulation
@@ -154,7 +171,7 @@ class Dissolve : public Serialisable<>
     void printTiming();
 
     /*
-     * I/O
+     * Serialisation
      */
     private:
     // Filename of current input file
@@ -179,10 +196,12 @@ class Dissolve : public Serialisable<>
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
+    // Save TOML file
+    bool saveToml(std::string_view filename) const;
     // Express pair potentials as a serialisable value
     SerialisedValue serialisePairPotentials() const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Load restart file
     bool loadRestart(std::string_view filename);
     // Save restart file
@@ -197,17 +216,4 @@ class Dissolve : public Serialisable<>
     std::string_view restartFilename() const;
     // Return whether a restart filename has been set
     bool hasRestartFilename() const;
-
-    /*
-     * Parallel Comms
-     */
-    private:
-    // World process pool
-    ProcessPool worldPool_;
-
-    public:
-    // Set up the world pool
-    void setUpWorldPool();
-    // Return the world process pool
-    const ProcessPool &worldPool() const;
 };

@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/cellDistributor.h"
 #include "classes/cell.h"
 
-CellDistributor::CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
-                                 bool repeatsAllowed)
-    : Distributor(cellArray.nCells(), cellArray, procPool, strategy, repeatsAllowed), cells_(cellArray)
+CellDistributor::CellDistributor(const CellArray &cellArray, bool repeatsAllowed)
+    : Distributor(cellArray.nCells(), cellArray, repeatsAllowed), cells_(cellArray)
 {
 }
 

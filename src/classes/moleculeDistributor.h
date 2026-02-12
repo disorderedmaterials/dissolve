@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -13,7 +13,7 @@ class MoleculeDistributor : public Distributor
 {
     public:
     MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
-                        ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
+                        bool repeatsAllowed);
     ~MoleculeDistributor() override;
 
     /*

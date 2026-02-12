@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -8,7 +8,7 @@
 #include "modules/md/md.h"
 
 // Cap forces in Configuration
-int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra)
+int MDModule::capForces(double maxForce, std::vector<Vector3> &fInter, std::vector<Vector3> &fIntra)
 {
     double fMag;
     const auto maxForceSq = maxForce * maxForce;
@@ -31,8 +31,7 @@ int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &fInter, std:
 
 // Determine timestep to use
 std::optional<double> MDModule::determineTimeStep(TimestepType timestepType, double requestedTimeStep,
-                                                  const std::vector<Vec3<double>> &fInter,
-                                                  const std::vector<Vec3<double>> &fIntra)
+                                                  const std::vector<Vector3> &fInter, const std::vector<Vector3> &fIntra)
 {
     if (timestepType == TimestepType::Fixed)
         return requestedTimeStep;
@@ -60,16 +59,15 @@ std::optional<double> MDModule::determineTimeStep(TimestepType timestepType, dou
 }
 
 // Evolve Species coordinates, returning new coordinates
-std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                           double temperature, int nSteps, double maxDeltaT,
-                                           const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities)
+std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Species *sp, double temperature, int nSteps,
+                                      double maxDeltaT, const std::vector<Vector3> &rInit, std::vector<Vector3> &velocities)
 {
     assert(sp);
     assert(sp->nAtoms() == velocities.size());
 
     // Create arrays
     std::vector<double> mass(sp->nAtoms(), 0.0);
-    std::vector<Vec3<double>> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
+    std::vector<Vector3> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
 
     // Variables
     auto &atoms = sp->atoms();
@@ -85,7 +83,7 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
 
     // Calculate total velocity and mass over all atoms
     auto massSum = std::accumulate(mass.begin(), mass.end(), 0.0);
-    auto vCom = std::transform_reduce(velocities.begin(), velocities.end(), mass.begin(), Vec3<double>());
+    auto vCom = std::transform_reduce(velocities.begin(), velocities.end(), mass.begin(), Vector3());
 
     // Remove any velocity shift
     vCom /= massSum;
@@ -101,10 +99,10 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
     // Zero force arrays
-    std::fill(fInter.begin(), fInter.end(), Vec3<double>());
-    std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+    std::fill(fInter.begin(), fInter.end(), Vector3());
+    std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
-    ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
+    ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
 
     // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
     std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
@@ -148,11 +146,11 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
         }
 
         // Zero force arrays
-        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
-        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+        std::fill(fInter.begin(), fInter.end(), Vector3());
+        std::fill(fIntra.begin(), fIntra.end(), Vector3());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        ForcesModule::totalForces(procPool, sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
+        ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
         std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
         std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 

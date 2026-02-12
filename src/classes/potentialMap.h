@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/pairPotential.h"
 #include "templates/array2D.h"
+#include "templates/doubleKeyedMap.h"
 
 // Forward Declarations
 class Atom;
@@ -16,6 +17,8 @@ class PotentialMap
 {
     public:
     PotentialMap() = default;
+    PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials,
+                 double pairPotentialRange);
     ~PotentialMap() = default;
     // Clear all data
     void clear();
@@ -27,13 +30,15 @@ class PotentialMap
     // Number of unique types forming the matrix
     int nTypes_;
     // PairPotential matrix
-    Array2D<PairPotential *> potentialMatrix_;
+    Array2D<const PairPotential *> potentialMatrix_;
     // PairPotential range
     double range_;
 
     public:
     // Initialise map
     bool initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
+                    const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
+    bool initialise(const std::vector<const AtomType *> &atomTypes,
                     const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
     // Return PairPotential range
     double range() const;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/customRegion.h"
 #include "classes/configuration.h"
@@ -32,7 +32,7 @@ CustomRegionVoxelKernel::CustomRegionVoxelKernel(std::string_view expressionStri
 }
 
 // Return whether voxel centred at supplied real coordinates is valid
-bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vector3 &r) const
 {
     // Poke values into our variables
     x_->setValue(r.x);

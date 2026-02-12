@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "templates/vector3.h"
+#include "math/vector3i.h"
 #include <vector>
 
 // Forward Declarations
@@ -26,7 +26,7 @@ class KVector
      */
     private:
     // Integer hkl indices of vector
-    Vec3<int> hkl_;
+    Vector3i hkl_;
     // Associated BraggReflection index
     int braggReflectionIndex_;
     // Contributions to this k-vector from individual atom types
@@ -36,7 +36,7 @@ class KVector
     // Initialise
     void initialise(int h, int k, int l, int reflectionIndex, int nAtomTypes);
     // Return hkl indices
-    const Vec3<int> &hkl() const;
+    const Vector3i &hkl() const;
     // Return h index
     int h() const;
     // Return k index

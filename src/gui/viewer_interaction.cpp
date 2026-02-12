@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/viewer.h"
 
@@ -27,19 +27,19 @@ void BaseViewer::cancelInteraction() {}
 bool BaseViewer::interacting() const { return interacting_; }
 
 // Return clicked coordinate (in Axes frame) in 2D view
-Vec3<double> BaseViewer::clicked2DAxesCoordinates() const { return clicked2DAxesCoordinates_; }
+Vector3 BaseViewer::clicked2DAxesCoordinates() const { return clicked2DAxesCoordinates_; }
 
 // Return current coordinate (in Axes frame) under mouse in 2D view
-Vec3<double> BaseViewer::current2DAxesCoordinates() const { return current2DAxesCoordinates_; }
+Vector3 BaseViewer::current2DAxesCoordinates() const { return current2DAxesCoordinates_; }
 
 // Calculate 2D Axes coordinate from screen coordinates
-Vec3<double> BaseViewer::screenTo2DAxes(int mouseX, int mouseY)
+Vector3 BaseViewer::screenTo2DAxes(int mouseX, int mouseY)
 {
     // Must be a flat view in order to return 2D local coordinates
     if (!view_.isFlatView())
-        return Vec3<double>();
+        return Vector3();
 
-    Vec3<double> result;
+    Vector3 result;
     if (view_.viewType() == View::FlatXYView)
         result.set(view_.screenToAxis(0, mouseX, mouseY, false), view_.screenToAxis(1, mouseX, mouseY, false), 0.0);
     else if (view_.viewType() == View::FlatXZView)

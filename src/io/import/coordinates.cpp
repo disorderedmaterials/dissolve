@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/coordinates.h"
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "base/sysFunc.h"
 #include "classes/configuration.h"
 #include "templates/algorithms.h"
@@ -12,13 +11,26 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
                                                        CoordinateImportFileFormat::CoordinateImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "CoordinateImportFileFormat", {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
-                                       {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
-                                       {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
-                                       {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+    formats_ = CoordinateImportFileFormat::coordinateImportFileFormat();
 
     setUpKeywords();
+}
+
+// Return enum option info for CoordinateImportFileFormat
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFileFormat()
+{
+    return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
+        "CoordinateImportFileFormat",
+        {{CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
+         {CoordinateImportFileFormat::CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+}
+
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>
+getEnumOptions(CoordinateImportFileFormat::CoordinateImportFormat)
+{
+    return CoordinateImportFileFormat::coordinateImportFileFormat();
 }
 
 /*
@@ -33,10 +45,10 @@ void CoordinateImportFileFormat::setUpKeywords() {}
  */
 
 // Import coordinates using current filename and format
-bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, const ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(std::vector<Vector3> &r)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading coordinates data.\n", filename_);
 
@@ -49,15 +61,15 @@ bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, const 
 }
 
 // Import coordinates direct to configuration using current filename and format
-bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(Configuration *cfg)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading coordinates data.\n", filename_);
 
     // Import the data
-    std::vector<Vec3<double>> r;
+    std::vector<Vector3> r;
     auto result = importData(parser, cfg);
     parser.closeFiles();
 
@@ -65,7 +77,7 @@ bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPoo
 }
 
 // Import coordinates using supplied parser and current format
-bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vector3> &r)
 {
     // Check the format
     if (!formatIndex_)
@@ -99,7 +111,7 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
 bool CoordinateImportFileFormat::importData(LineParser &parser, Configuration *cfg)
 {
     // Import the data
-    std::vector<Vec3<double>> r;
+    std::vector<Vector3> r;
     auto result = importData(parser, r);
     if (!result)
         return Messenger::error("Couldn't import configuration coordinates from file.\n");

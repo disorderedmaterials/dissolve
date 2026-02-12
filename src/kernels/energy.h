@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "base/processPool.h"
 #include "kernels/geometry.h"
 #include "templates/flags.h"
 #include <memory>
@@ -51,7 +50,7 @@ class EnergyResult
 {
     public:
     EnergyResult(PairPotentialEnergyValue pp = {}, double geom = 0.0, double ext = 0.0)
-        : total_(pp.total() + geom + ext), geometry_(geom), extended_(ext), pairPotential_(pp){};
+        : total_(pp.total() + geom + ext), geometry_(geom), extended_(ext), pairPotential_(pp) {};
 
     private:
     // Components
@@ -72,8 +71,7 @@ class EnergyKernel : public GeometryKernel
     private:
     friend class KernelProducer;
     friend class ExternalPotentialsEnergyKernel;
-    EnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                 std::optional<double> energyCutoff = {});
+    EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
 
     public:
     ~EnergyKernel() = default;
@@ -125,11 +123,13 @@ class EnergyKernel : public GeometryKernel
 
     public:
     // Return total interatomic PairPotential energy of the world
-    PairPotentialEnergyValue totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
+    PairPotentialEnergyValue totalPairPotentialEnergy(bool includeIntraMolecular) const;
     // Return total interatomic PairPotential energy from summation of molecules
     PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const;
     // Return total energy of supplied atom with the world
     EnergyResult totalEnergy(const Atom &i) const;
     // Return total energy of supplied molecule with the world
     EnergyResult totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags = {}) const;
+    // Return potential map
+    const PotentialMap &potentialMap() const;
 };

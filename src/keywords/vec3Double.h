@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "keywords/base.h"
 #include "keywords/vec3Labels.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <optional>
 
-// Keyword managing Vec3<double>
+// Keyword managing Vector3
 class Vec3DoubleKeyword : public KeywordBase
 {
     public:
-    explicit Vec3DoubleKeyword(Vec3<double> &data, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
-    explicit Vec3DoubleKeyword(Vec3<double> &data, std::optional<Vec3<double>> minValue = std::nullopt,
-                               std::optional<Vec3<double>> maxValue = std::nullopt,
+    explicit Vec3DoubleKeyword(Vector3 &data, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+    explicit Vec3DoubleKeyword(Vector3 &data, std::optional<Vector3> minValue = std::nullopt,
+                               std::optional<Vector3> maxValue = std::nullopt,
                                Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 
     ~Vec3DoubleKeyword() override = default;
@@ -24,23 +24,23 @@ class Vec3DoubleKeyword : public KeywordBase
      */
     private:
     // Reference to target data
-    Vec3<double> &data_;
+    Vector3 &data_;
     // Initial Value
-    const Vec3<double> default_;
+    const Vector3 default_;
     // Optional limits to apply
-    std::optional<Vec3<double>> minimumLimit_, maximumLimit_;
+    std::optional<Vector3> minimumLimit_, maximumLimit_;
 
     public:
     // Has not changed from initial value
     bool isDefault() const override;
     // Set data
-    bool setData(Vec3<double> value);
+    bool setData(Vector3 value);
     // Return data
-    const Vec3<double> &data() const;
+    const Vector3 &data() const;
     // Return minimum limit
-    std::optional<Vec3<double>> minimumLimit() const;
+    std::optional<Vector3> minimumLimit() const;
     // Return maximum limit
-    std::optional<Vec3<double>> maximumLimit() const;
+    std::optional<Vector3> maximumLimit() const;
 
     /*
      * Label Type
@@ -66,7 +66,7 @@ class Vec3DoubleKeyword : public KeywordBase
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

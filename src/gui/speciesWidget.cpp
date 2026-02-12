@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/speciesWidget.h"
 #include "classes/empiricalFormula.h"
@@ -63,8 +63,8 @@ void SpeciesWidget::updateStatusBar()
     if (sp)
     {
         auto selection = sp->selectedAtoms();
-        ui_.FormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
-            sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
+        ui_.FormulaLabel->setText(
+            QString::fromStdString(EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
         ui_.SelectionLabel->setText(!selection.empty() ? QString::fromStdString(EmpiricalFormula::formula(
                                                              selection, [](const auto &i) { return i->Z(); }, true))
                                                        : "--");
@@ -154,7 +154,7 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 
     // Do the optimisation
     GeometryOptimisationModule optimiser;
-    optimiser.optimiseSpecies(dissolve_->potentialMap(), dissolve_->worldPool(), sp);
+    optimiser.optimiseSpecies(dissolve_->potentialMap(), sp);
 
     // Centre the Species back at the origin
     sp->centreAtOrigin();

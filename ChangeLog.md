@@ -1,52 +1,40 @@
 # Changelog
 
-## [1.8.0] - 2025-06-10
+## [1.9.0] - 2025-11-21
 
 ### 🚀 Features
 
-- EPSRManager graph updates ([#2126](https://github.com/disorderedmaterials/dissolve/issues/2126))
-- Clustering analysis routine through clustering module ([#2063](https://github.com/disorderedmaterials/dissolve/issues/2063))
-- Species unit cells for xyx import and bond tolerance adjustment ([#2161](https://github.com/disorderedmaterials/dissolve/issues/2161))
-- Added forcefield and Function1D for MCM-41 bulk ([#2169](https://github.com/disorderedmaterials/dissolve/issues/2169))
+- Nanotube species creator ([#2188](https://github.com/disorderedmaterials/dissolve/issues/2188))
+- Clustering improvements ([#2193](https://github.com/disorderedmaterials/dissolve/issues/2193))
+- Chiral nanotube and graphene sheet creator ([#2195](https://github.com/disorderedmaterials/dissolve/issues/2195))
 
 ### 🐛 Bug Fixes
 
-- Change epsr targets function to get ([#2127](https://github.com/disorderedmaterials/dissolve/issues/2127))
-- Checking species setup would crash if CoordinateSets were used ([#2133](https://github.com/disorderedmaterials/dissolve/issues/2133))
-- Minimum distance for larger, non-orthogonal cells ([#2132](https://github.com/disorderedmaterials/dissolve/issues/2132))
-- Visual Studio dev workflow ([#2147](https://github.com/disorderedmaterials/dissolve/issues/2147))
-
-### ⚡ Performance
-
-- Fewer online checks on cell neighbours. ([#2142](https://github.com/disorderedmaterials/dissolve/issues/2142))
+- No more custom close buttons on tabs ([#2194](https://github.com/disorderedmaterials/dissolve/issues/2194))
+- Invalidated iterator error in Visual Studio build ([#2208](https://github.com/disorderedmaterials/dissolve/issues/2208))
+- Replace gtest_discover_tests for Visual Studio 2022 builds ([#2229](https://github.com/disorderedmaterials/dissolve/issues/2229))
+- No GeneralRegionGeneratorNode if mixSpecies is empty ([#2223](https://github.com/disorderedmaterials/dissolve/issues/2223))
+- Consistent object naming ([#2238](https://github.com/disorderedmaterials/dissolve/issues/2238))
+- Data limits used in potential generation ([#2236](https://github.com/disorderedmaterials/dissolve/issues/2236))
+- Update VS2022 develop branch ([#2241](https://github.com/disorderedmaterials/dissolve/issues/2241))
 
 ### ⚙️ Miscellaneous Tasks
 
-- Fix image links for ModifierOSites and QSpecies ([#2131](https://github.com/disorderedmaterials/dissolve/issues/2131))
-- Fix some code formatting issues. ([#2166](https://github.com/disorderedmaterials/dissolve/issues/2166))
-- Revert unwanted version change in code. ([#2183](https://github.com/disorderedmaterials/dissolve/issues/2183))
+- Added concurrency group to the pr workflow to automatically cancel previous low priority workflows ([#2212](https://github.com/disorderedmaterials/dissolve/issues/2212))
+- Upgrade develop branch to conan 2 ([#2237](https://github.com/disorderedmaterials/dissolve/issues/2237))
+- Fix submodule hack on CI ([#2255](https://github.com/disorderedmaterials/dissolve/issues/2255))
+- Nix flake whitelist ([#2256](https://github.com/disorderedmaterials/dissolve/issues/2256))
 
 ### 🔨️ Build Tools
 
-- Fix bad variable usage in create-release action. ([#2114](https://github.com/disorderedmaterials/dissolve/issues/2114))
-- Introduce recreate_release workflow ([#2115](https://github.com/disorderedmaterials/dissolve/issues/2115))
-- Store ChangeLog.md in release branch ([#2118](https://github.com/disorderedmaterials/dissolve/issues/2118))
-- Lock cmake to v3 (Windows) ([#2122](https://github.com/disorderedmaterials/dissolve/issues/2122))
-- Add missing GSL libs to OSX package ([#2123](https://github.com/disorderedmaterials/dissolve/issues/2123))
-- Fix auto-bumping of version in continuous builds ([#2137](https://github.com/disorderedmaterials/dissolve/issues/2137))
-- Fix generation of continuous ChangeLog.md ([#2145](https://github.com/disorderedmaterials/dissolve/issues/2145))
-- Fix continuous build for msvcVersion ([#2165](https://github.com/disorderedmaterials/dissolve/issues/2165))
-- Fix MacOS installer for the nth time ([#2172](https://github.com/disorderedmaterials/dissolve/issues/2172))
-- Fix version bumping of continuous build ([#2173](https://github.com/disorderedmaterials/dissolve/issues/2173))
-- Add missing example data archives to published assets ([#2178](https://github.com/disorderedmaterials/dissolve/issues/2178))
-- Fix target OS version for OSX dependent libs ([#2176](https://github.com/disorderedmaterials/dissolve/issues/2176))
-- Fix bad syntax in release pipeline. ([#2181](https://github.com/disorderedmaterials/dissolve/issues/2181))
-- Use artifacts for Windows and OSX Qt ([#2180](https://github.com/disorderedmaterials/dissolve/issues/2180))
+- Refactor Powershell script for Visual Studio setup ([#2191](https://github.com/disorderedmaterials/dissolve/issues/2191))
+- Add action to free up space on Linux, run on QC step. ([#2245](https://github.com/disorderedmaterials/dissolve/issues/2245))
+- Fix path to examples/_index.md in website build ([#2240](https://github.com/disorderedmaterials/dissolve/issues/2240))
+- Update singularity building pipeline ([#2253](https://github.com/disorderedmaterials/dissolve/issues/2253))
 
 ### Doc
 
-- Glass modules documentation ([#2124](https://github.com/disorderedmaterials/dissolve/issues/2124))
-- Update developer docs to reflect new release workflow. ([#2136](https://github.com/disorderedmaterials/dissolve/issues/2136))
-- Update docs. ([#2177](https://github.com/disorderedmaterials/dissolve/issues/2177))
+- Fix some typos, contributors, example data links. ([#2197](https://github.com/disorderedmaterials/dissolve/issues/2197))
+- Update compilation instructions. ([#2244](https://github.com/disorderedmaterials/dissolve/issues/2244))
 
 <!-- generated by git-cliff -->

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/sampledVector.h"
 #include "base/lineParser.h"
@@ -206,4 +206,19 @@ bool SampledVector::serialise(LineParser &parser) const
             return false;
 
     return true;
+}
+
+// Express as a serialisable value
+void SampledVector::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"count", count_}, {"mean", mean_}, {"stDev", stDev_}, {"m2", m2_}};
+}
+
+// Read values from a serialisable value
+void SampledVector::deserialise(const SerialisedValue &node)
+{
+    count_ = toml::find<int>(node, "count");
+    mean_ = toml::find<std::vector<double>>(node, "mean");
+    stDev_ = toml::find<std::vector<double>>(node, "stDev");
+    m2_ = toml::find<std::vector<double>>(node, "m2");
 }

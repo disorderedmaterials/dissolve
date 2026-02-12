@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -33,13 +33,13 @@ class KeywordStore
         for (const auto &section : sections_)
             for (const auto &group : section.groups())
             {
-                auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(),
-                                         [&](const auto *k)
-                                         {
-                                             return std::find_if(group.keywords().begin(), group.keywords().end(),
-                                                                 [k](const auto &kd)
-                                                                 { return k == kd.first; }) != group.keywords().end();
-                                         });
+                auto it =
+                    std::remove_if(allKeywords_.begin(), allKeywords_.end(),
+                                   [&](const auto *k)
+                                   {
+                                       return std::find_if(group.keywords().begin(), group.keywords().end(), [k](const auto &kd)
+                                                           { return k == kd.first; }) != group.keywords().end();
+                                   });
                 allKeywords_.erase(it, allKeywords_.end());
             }
     }
@@ -169,9 +169,9 @@ class KeywordStore
     bool set(std::string_view name, const std::string value);
     bool set(std::string_view name, const Function1DWrapper value);
     bool set(std::string_view name, const NodeValueProxy value);
-    bool set(std::string_view name, const Vec3<double> value);
-    bool set(std::string_view name, const Vec3<int> value);
-    bool set(std::string_view name, const Vec3<NodeValue> value);
+    bool set(std::string_view name, const Vector3 value);
+    bool set(std::string_view name, const Vector3i value);
+    bool set(std::string_view name, const Vector3NodeValue value);
     bool set(std::string_view name, const Range value);
     bool set(std::string_view name, const std::vector<const SpeciesSite *> value);
     bool set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value);

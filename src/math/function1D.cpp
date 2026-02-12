@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
-#define _USE_MATH_DEFINES
 #include "math/function1D.h"
-#include "math/constants.h"
+#include "classes/pairPotential.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
-#include <math.h>
-
 #include <map>
+#include <variant>
 
 /*
  * One-Dimensional Function Definition
@@ -390,13 +389,13 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          */
         functions[Functions1D::Form::Coulombic] =
             Function1DDefinition({"q1", "q2"}, [](double x, double omega, const std::vector<double> &params)
-                                 { return (COULCONVERT * params[0] * params[1]) / x; });
+                                 { return (PairPotential::CoulConvert * params[0] * params[1]) / x; });
         /*
          * dYdX(x) = - COULCONVERT * q1 * q2 * r**-2
          */
         functions[Functions1D::Form::Coulombic].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params)
-            { return (-COULCONVERT * params[0] * params[1]) / (x * x); });
+            { return (-PairPotential::CoulConvert * params[0] * params[1]) / (x * x); });
 
         /*
          * Shifted Coulomb Potential
@@ -410,15 +409,19 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          * F(x)= COULCONVERT * -------
          *                        x
          */
-        functions[Functions1D::Form::ShiftedCoulomb] = Function1DDefinition(
-            {"q1", "q2", "range"}, [](double x, double omega, const std::vector<double> &params)
-            { return COULCONVERT * params[0] * params[1] * (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]); });
+        functions[Functions1D::Form::ShiftedCoulomb] =
+            Function1DDefinition({"q1", "q2", "range"},
+                                 [](double x, double omega, const std::vector<double> &params)
+                                 {
+                                     return PairPotential::CoulConvert * params[0] * params[1] *
+                                            (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]);
+                                 });
         /*
          * dYdX(x) = - COULCONVERT * q1 * q2 * r**-2
          */
         functions[Functions1D::Form::ShiftedCoulomb].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params)
-            { return COULCONVERT * params[0] * params[1] * (1.0 / (x * x) - 1.0 / (params[2] * params[2])); });
+            { return PairPotential::CoulConvert * params[0] * params[1] * (1.0 / (x * x) - 1.0 / (params[2] * params[2])); });
     }
 
     return functions;
@@ -441,6 +444,8 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                            {Functions1D::Form::Coulombic, "Coulombic", 2},
                                            {Functions1D::Form::ShiftedCoulomb, "ShiftedCoulomb", 3}});
 }
+
+EnumOptions<Functions1D::Form> getEnumOptions(Functions1D::Form) { return Functions1D::forms(); }
 
 // Return parameters for specified form
 const std::vector<std::string> &Functions1D::parameters(Form form) { return functions1D().at(form).parameterNames(); }
@@ -570,4 +575,23 @@ double Function1DWrapper::yFT(double x, double omega) const
 double Function1DWrapper::normalisation(double omega) const
 {
     return function_.normalisation() ? function_.normalisation()(omega, internalParameters_) : 1.0;
+}
+
+// Express as a serialisable value
+void Function1DWrapper::serialise(std::string tag, SerialisedValue &target) const
+{
+    auto &result = target[tag];
+
+    result["form"] = Functions1D::forms().keywordByIndex(static_cast<int>(form_));
+
+    Serialisable::fromVector(parameters_, "parameters", result, [](const auto &x) { return x; });
+}
+
+// Read values from a serialisable value
+void Function1DWrapper::deserialise(const SerialisedValue &node)
+{
+    Functions1D::Form proxy;
+    form_ = getEnumOptions(proxy).deserialise(node);
+
+    Serialisable::toVector(node, "parameters", [this](const auto &x) { parameters_.emplace_back(toml::get<double>(x)); });
 }

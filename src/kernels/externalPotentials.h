@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -14,7 +14,7 @@ class ExternalPotentialsEnergyKernel : public EnergyKernel
 {
     private:
     friend class KernelProducer;
-    ExternalPotentialsEnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
+    ExternalPotentialsEnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap,
                                    std::optional<double> energyCutoff = {});
 
     public:
@@ -42,7 +42,7 @@ class ExternalPotentialsForceKernel : public ForceKernel
 {
     private:
     friend class KernelProducer;
-    ExternalPotentialsForceKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
+    ExternalPotentialsForceKernel(const Configuration *cfg, const PotentialMap &potentialMap,
                                   std::optional<double> energyCutoff = {});
 
     public:
@@ -60,7 +60,7 @@ class ExternalPotentialsForceKernel : public ForceKernel
      */
     private:
     // Calculate extended forces on supplied atom
-    void extendedForces(const Atom &i, Vec3<double> &fVec) const override;
+    void extendedForces(const Atom &i, Vector3 &fVec) const override;
     // Calculate extended forces on supplied molecule
     void extendedForces(const Molecule &mol, ForceVector &f) const override;
 };

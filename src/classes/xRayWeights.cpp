@@ -1,172 +1,82 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/xRayWeights.h"
-#include "base/lineParser.h"
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 #include <functional>
 #include <numeric>
 
-XRayWeights::XRayWeights() {}
-
-XRayWeights::XRayWeights(const XRayWeights &source) { (*this) = source; }
-
-void XRayWeights::operator=(const XRayWeights &source)
-{
-    formFactors_ = source.formFactors_;
-    atomTypeMix_ = source.atomTypeMix_;
-    concentrations_ = source.concentrations_;
-    concentrationProducts_ = source.concentrationProducts_;
-    formFactorData_ = source.formFactorData_;
-    preFactors_ = source.preFactors_;
-    valid_ = source.valid_;
-}
-
-/*
- * Source AtomTypes
- */
-
-// Initialise form factor data for the current atom types
-bool XRayWeights::initialiseFormFactors()
-{
-    formFactorData_.clear();
-
-    for (auto &atd : atomTypeMix_)
-    {
-        auto at = atd.atomType();
-
-        // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
-        auto data = XRayFormFactors::formFactorData(formFactors_, at->Z());
-        if (!data)
-            return Messenger::error("No form factor data present for element {} (formal charge {}) in x-ray data set '{}'.\n",
-                                    Elements::symbol(at->Z()), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
-
-        formFactorData_.push_back(*data);
-    }
-
-    return true;
-}
-
-// Clear contents
-void XRayWeights::clear()
-{
-    atomTypeMix_.clear();
-    concentrations_.clear();
-    concentrationProducts_.clear();
-    preFactors_.clear();
-    valid_ = false;
-}
-
-// Set-up from supplied SpeciesInfo list
-bool XRayWeights::setUp(std::vector<std::pair<const Species *, int>> &speciesPopulations,
+// Set-up from supplied species populations and form factors
+bool XRayWeights::setUp(const std::map<const Species *, double> &speciesPopulations,
                         XRayFormFactors::XRayFormFactorData formFactors)
 {
-    valid_ = false;
+    typeFractions_.clear();
+    concentrationProducts_.clear();
+    preFactors_.clear();
 
-    // Fill atomTypeMix_ list with AtomType populations, based on Isotopologues relative populations and associated Species
-    // populations
-    atomTypeMix_.clear();
-    for (auto &spPop : speciesPopulations)
-        for (const auto &i : spPop.first->atoms())
-            atomTypeMix_.add(i.atomType(), spPop.second);
+    // Calculate fractional type weights
+    auto sum = 0.0;
+    for (auto &[species, speciesPopulation] : speciesPopulations)
+        for (const auto &[atomType, atomTypePopulation] : species->atomTypePopulations())
+        {
+            typeFractions_[atomType] += speciesPopulation * atomTypePopulation;
+            sum += speciesPopulation * atomTypePopulation;
+        }
 
-    // Perform final setup based on now-completed atomtypes list
-    return finalise(formFactors);
-}
-
-// Add Species to weights in the specified population
-void XRayWeights::addSpecies(const Species *sp, int population)
-{
-    for (const auto &i : sp->atoms())
-        if (i.isPresence(SpeciesAtom::Presence::Physical))
-            atomTypeMix_.add(i.atomType(), population);
-
-    valid_ = false;
-}
-
-// Finalise weights after addition of all individual Species
-bool XRayWeights::finalise(XRayFormFactors::XRayFormFactorData formFactors)
-{
-    valid_ = false;
-
-    atomTypeMix_.finalise();
+    // Normalise the atom type weights
+    for (auto &value : std::views::values(typeFractions_))
+        value /= sum;
 
     // Retrieve form factor data for the current atom types
-    formFactors_ = formFactors;
-    if (!initialiseFormFactors())
-        return false;
+    formFactorData_.clear();
 
-    setUpMatrices();
+    for (auto &[atomType, fraction] : typeFractions_)
+    {
+        // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
+        auto data = XRayFormFactors::formFactorData(formFactors, atomType->Z());
+        if (!data)
+            return Messenger::error("No form factor data present for element {} (formal charge {}) in x-ray data set '{}'.\n",
+                                    Elements::symbol(atomType->Z()), 0,
+                                    XRayFormFactors::xRayFormFactorData().keyword(formFactors));
 
-    valid_ = true;
+        formFactorData_.emplace(atomType, *data);
+    }
+
+    // Set up weights matrices
+    auto nTypes = typeFractions_.size();
+    concentrationProducts_.clear(true);
+    preFactors_.clear(true);
+
+    // Determine atomic concentration products and full pre-factor
+    dissolve::for_each_pair(ParallelPolicies::seq, typeFractions_,
+                            [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
+                            {
+                                DoubleKeyedMapKey key{popI.first->name(), popJ.first->name()};
+                                auto ci = popI.second;
+                                auto cj = popJ.second;
+
+                                concentrationProducts_.set(key, ci * cj);
+                                preFactors_.set(key, ci * cj * (indexI == indexJ ? 1 : 2));
+                            });
 
     return true;
 }
 
-// Return X-Ray form factors being used
-XRayFormFactors::XRayFormFactorData XRayWeights::formFactors() const { return formFactors_; }
-
-// Return AtomTypeMix
-const AtomTypeMix &XRayWeights::atomTypeMix() const { return atomTypeMix_; }
-
-// Return number of used AtomTypes
-int XRayWeights::nUsedTypes() const { return atomTypeMix_.nItems(); }
-
-// Print atomtype information
-void XRayWeights::print() const
-{
-    // Print atomtypes table
-    Messenger::print("\n");
-    atomTypeMix_.print();
-}
-
-/*
- * Data
- */
-
-// Set up matrices based on current AtomType information
-void XRayWeights::setUpMatrices()
-{
-    concentrations_.clear();
-    concentrations_.resize(atomTypeMix_.nItems());
-    concentrationProducts_.initialise(atomTypeMix_.nItems(), atomTypeMix_.nItems(), true);
-    preFactors_.initialise(atomTypeMix_.nItems(), atomTypeMix_.nItems(), true);
-
-    // Determine atomic concentration products and full pre-factor
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
-                            {
-                                double ci = atd1.fraction();
-                                concentrations_.at(typeI) = ci;
-
-                                double cj = atd2.fraction();
-
-                                concentrationProducts_[{typeI, typeJ}] = ci * cj;
-                                preFactors_[{typeI, typeJ}] = ci * cj * (typeI == typeJ ? 1 : 2);
-                            });
-}
-
-// Return concentration product for type i
-double XRayWeights::concentration(int typeIndexI) const { return concentrations_[typeIndexI]; }
-
-// Return concentration product for types i and j
-double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
-{
-    return concentrationProducts_[{typeIndexI, typeIndexJ}];
-}
+// Return atom type fractions
+const KeyedVector<const AtomType *, double> &XRayWeights::typeFractions() const { return typeFractions_; }
 
 // Return pre-factor for types i and j
-double XRayWeights::preFactor(int typeIndexI, int typeIndexJ) const { return preFactors_[{typeIndexI, typeIndexJ}]; }
+const DoubleKeyedMap<double> &XRayWeights::preFactors() const { return preFactors_; }
 
 // Return form factor for type i over supplied Q values
-std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<double> &Q) const
+std::vector<double> XRayWeights::formFactor(const AtomType *i, const std::vector<double> &Q) const
 {
     // Initialise results array
     std::vector<double> fiq(Q.size());
 
-    auto &fi = formFactorData_[typeIndexI].get();
+    auto &fi = formFactorData_.at(i).get();
 
     for (auto n = 0; n < Q.size(); ++n)
         fiq[n] = fi.magnitude(Q[n]);
@@ -175,26 +85,26 @@ std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<do
 }
 
 // Return form factor product for types i and j at specified Q value
-double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const
+double XRayWeights::formFactorProduct(const AtomType *i, const AtomType *j, double Q) const
 {
-    return formFactorData_[typeIndexI].get().magnitude(Q) * formFactorData_[typeIndexJ].get().magnitude(Q);
+    return formFactorData_.at(i).get().magnitude(Q) * formFactorData_.at(j).get().magnitude(Q);
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const
+double XRayWeights::weight(const AtomType *i, const AtomType *j, double Q) const
 {
-    return preFactors_[{typeIndexI, typeIndexJ}] * formFactorProduct(typeIndexI, typeIndexJ, Q);
+    return preFactors_[{i->name(), j->name()}] * formFactorProduct(i, j, Q);
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const std::vector<double> &Q) const
+std::vector<double> XRayWeights::weight(const AtomType *i, const AtomType *j, const std::vector<double> &Q) const
 {
     // Initialise results array
     std::vector<double> fijq(Q.size());
 
-    auto &fi = formFactorData_[typeIndexI].get();
-    auto &fj = formFactorData_[typeIndexJ].get();
-    auto preFactor = preFactors_[{typeIndexI, typeIndexJ}];
+    auto &fi = formFactorData_.at(i).get();
+    auto &fj = formFactorData_.at(j).get();
+    auto preFactor = preFactors_.get(i->name(), j->name());
 
     std::transform(Q.begin(), Q.end(), fijq.begin(),
                    [preFactor, &fi, &fj](auto q) { return fi.magnitude(q) * fj.magnitude(q) * preFactor; });
@@ -205,8 +115,8 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
 double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 {
-    auto result = std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0.0,
-                                     std::plus<>(), [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+    auto result = std::accumulate(typeFractions_.begin(), typeFractions_.end(), 0.0, [&, Q](auto acc, const auto &typePop)
+                                  { return acc + typePop.second * formFactorData_.at(typePop.first).get().magnitude(Q); });
     return result * result;
 }
 
@@ -216,13 +126,12 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
     // Initialise results array
     std::vector<double> bbar(Q.size(), 0.0);
 
-    for (auto typeI = 0; typeI < atomTypeMix_.nItems(); ++typeI)
+    for (auto &[atomType, fraction] : typeFractions_)
     {
-        const double ci = concentrations_[typeI];
-        auto &fi = formFactorData_[typeI].get();
+        auto &fi = formFactorData_.at(atomType).get();
 
         std::transform(Q.begin(), Q.end(), bbar.begin(), bbar.begin(),
-                       [ci, &fi](auto q, auto b) { return b + ci * fi.magnitude(q); });
+                       [fraction, &fi](auto q, auto b) { return b + fraction * fi.magnitude(q); });
     }
 
     // Square the averages
@@ -234,8 +143,12 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
 double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 {
-    return std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0.0, std::plus<>(),
-                              [Q](auto con, auto form) { return con * form.get().magnitude(Q) * form.get().magnitude(Q); });
+    return std::accumulate(typeFractions_.begin(), typeFractions_.end(), 0.0,
+                           [&, Q](auto acc, const auto &typePop)
+                           {
+                               auto mag = formFactorData_.at(typePop.first).get().magnitude(Q);
+                               return acc + typePop.second * pow(mag, 2);
+                           });
 }
 
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
@@ -244,52 +157,26 @@ std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector
     // Initialise results array
     std::vector<double> bbar(Q.size(), 0.0);
 
-    for (auto typeI = 0; typeI < atomTypeMix_.nItems(); ++typeI)
+    for (auto &[atomType, fraction] : typeFractions_)
     {
-        const double ci = concentrations_[typeI];
-        auto &fi = formFactorData_[typeI].get();
+        auto &fi = formFactorData_.at(atomType).get();
 
         std::transform(Q.begin(), Q.end(), bbar.begin(), bbar.begin(),
-                       [&](auto q, auto b) { return b + ci * fi.magnitude(q) * fi.magnitude(q); });
+                       [&](auto q, auto b) { return b + fraction * fi.magnitude(q) * fi.magnitude(q); });
     }
 
     return bbar;
 }
 
-// Return whether the structure is valid (i.e. has been finalised)
-bool XRayWeights::isValid() const { return valid_; }
-
-/*
- * Serialisation
- */
-
-// Read data through specified LineParser
-bool XRayWeights::deserialise(LineParser &parser, const CoreData &coreData)
+// Print the atom fractions
+void XRayWeights::print() const
 {
-    clear();
+    Messenger::print("  AtomType  El   Fraction\n");
+    Messenger::print("  -----------------------\n");
+    for (auto &[atomType, fraction] : typeFractions_)
+    {
+        Messenger::print("  {:<8}  {:<3}  {:8.6f}\n", atomType->name(), Elements::symbol(atomType->Z()), fraction);
 
-    // Read form factor dataset to use
-    if (parser.getArgsDelim() != LineParser::Success)
-        return false;
-    formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argsv(0));
-
-    // Read AtomTypeMix
-    if (!atomTypeMix_.deserialise(parser, coreData))
-        return false;
-
-    return finalise(formFactors_);
-}
-
-// Write data through specified LineParser
-bool XRayWeights::serialise(LineParser &parser) const
-{
-    // Write x-ray form factor dataset
-    if (!parser.writeLineF("{}\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_)))
-        return false;
-
-    // Write AtomTypeMix
-    if (!atomTypeMix_.serialise(parser))
-        return false;
-
-    return true;
+        Messenger::print("  -----------------------------------------------------------------\n");
+    }
 }

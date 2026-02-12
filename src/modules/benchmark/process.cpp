@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/box.h"
@@ -7,20 +7,17 @@
 #include "io/export/data1D.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/energy/energy.h"
 #include "modules/gr/gr.h"
 
 // Run main processing
-Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve)
 {
     // Get options
     Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
-
-    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
 
     /*
      * Configuration Generation
@@ -32,11 +29,11 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate({moduleContext.processPool(), moduleContext.dissolve()});
+            targetConfiguration_->generate({dissolve});
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "Generator"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->name(), "Generator"),
                           "Configuration generator", timing, save_);
     }
 
@@ -50,19 +47,18 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             GRModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
-            targetConfiguration_->incrementContentsVersion();
+            targetConfiguration_->notifyAtomicPositionsChanged();
 
             // Run the Module calculation
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
-                                  targetConfiguration_, GRModule::CellsMethod,
+            rdfModule.calculateGR(dissolve.processingModuleData(), targetConfiguration_, GRModule::CellsMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFCells"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->name(), "RDFCells"),
                           "RDF (Cells) to half-cell limit", timing, save_);
     }
 
@@ -76,19 +72,18 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             GRModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
-            targetConfiguration_->incrementContentsVersion();
+            targetConfiguration_->notifyAtomicPositionsChanged();
 
             // Run the Module calculation
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
-                                  targetConfiguration_, GRModule::SimpleMethod,
+            rdfModule.calculateGR(dissolve.processingModuleData(), targetConfiguration_, GRModule::SimpleMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFSimple"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->name(), "RDFSimple"),
                           "RDF (Simple) to half-cell limit", timing, save_);
     }
 
@@ -102,12 +97,11 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_,
-                                               moduleContext.dissolve().potentialMap());
+            EnergyModule::intraMolecularEnergy(targetConfiguration_, dissolve.potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "IntraEnergy"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->name(), "IntraEnergy"),
                           "Intramolecular energy", timing, save_);
     }
 
@@ -121,12 +115,11 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::pairPotentialEnergy(moduleContext.processPool(), targetConfiguration_,
-                                              moduleContext.dissolve().potentialMap());
+            EnergyModule::pairPotentialEnergy(targetConfiguration_, dissolve.potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "InterEnergy"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->name(), "InterEnergy"),
                           "Interatomic energy", timing, save_);
     }
 
@@ -139,8 +132,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         for (auto n = 0; n < nRepeats_; ++n)
         {
             // Create a Molecule distributor
-            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
-                                            moduleContext.processPool(), strategy);
+            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells());
 
             Timer timer;
             Messenger::mute();
@@ -148,13 +140,6 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             {
                 // Get next set of Molecule targets from the distributor
                 auto targetMolecules = distributor.assignedMolecules();
-
-                // Switch parallel strategy if necessary
-                if (distributor.currentStrategy() != strategy)
-                {
-                    // Set the new strategy
-                    strategy = distributor.currentStrategy();
-                }
 
                 // Loop over target Molecules
                 for (auto &molId : targetMolecules)
@@ -164,7 +149,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RegionalDist"),
+        printTimingResult(std::format("{}_{}_{}.txt", name(), targetConfiguration_->name(), "RegionalDist"),
                           "Distributor (regional)", timing, save_);
     }
 

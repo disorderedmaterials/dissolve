@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include <gtest/gtest.h>
@@ -9,16 +9,28 @@ namespace UnitTest
 {
 struct NameObject
 {
-    NameObject(std::string newName) : name(std::move(newName)){};
+    NameObject(std::string newName) : name(std::move(newName)) {};
     std::string name;
 };
-TEST(SysFunc, StringManipulation)
+
+TEST(SysFunc, NiceName)
+{
+    // Nice name
+    EXPECT_TRUE(DissolveSys::niceName(" /\\#*$") == "______");
+    EXPECT_TRUE(DissolveSys::niceName("Under score") == "Under_score");
+}
+
+TEST(SysFunc, StringMatchingSimple)
 {
     // String matching
     EXPECT_TRUE(DissolveSys::sameString("Hello", "Hello", true));
     EXPECT_TRUE(DissolveSys::sameString("Hello", "hello"));
     EXPECT_FALSE(DissolveSys::sameString("Hello", "hello", true));
+    EXPECT_FALSE(DissolveSys::sameString("Hello", "Hi"));
+}
 
+TEST(SysFunc, StringMatchingWildcard)
+{
     // Wildcard string matching
     EXPECT_TRUE(DissolveSys::sameWildString("*", "Literally Anything"));
     EXPECT_FALSE(DissolveSys::sameWildString("*A", "Not Quite Anything"));
@@ -32,7 +44,14 @@ TEST(SysFunc, StringManipulation)
     EXPECT_TRUE(DissolveSys::sameWildString("abc*efg", "ABCDEFG"));
     EXPECT_FALSE(DissolveSys::sameWildString("abc*efg", "ABCDEFGH"));
     EXPECT_TRUE(DissolveSys::sameWildString("abc*efg?", "ABCDEFGH"));
+    EXPECT_FALSE(DissolveSys::sameWildString("abc*efg", "ABC"));
+    EXPECT_FALSE(DissolveSys::sameWildString("A", ""));
+    EXPECT_FALSE(DissolveSys::sameWildString("?", ""));
+    EXPECT_TRUE(DissolveSys::sameWildString("*", ""));
+}
 
+TEST(SysFunc, StringBeforeAfter)
+{
     // Before / after chars and strings
     EXPECT_TRUE(DissolveSys::beforeChar("Something=This", '=') == "Something");
     EXPECT_TRUE(DissolveSys::afterChar("Something=This", '=') == "This");
@@ -47,17 +66,19 @@ TEST(SysFunc, StringManipulation)
     EXPECT_TRUE(DissolveSys::afterLastChar("Just a string", '=').empty());
     EXPECT_TRUE(DissolveSys::afterString("Just a string", "I'm not here").empty());
     EXPECT_TRUE(DissolveSys::afterString("Just a string", "string").empty());
+}
 
+TEST(SysFunc, StringStartsEnds)
+{
     // Starts / ends with
     EXPECT_TRUE(DissolveSys::startsWith("I am a little man", "I am"));
     EXPECT_FALSE(DissolveSys::startsWith("I am a little man", "i am"));
     EXPECT_TRUE(DissolveSys::endsWith("I have a plan", "plan"));
     EXPECT_FALSE(DissolveSys::endsWith("I have a plan", "man"));
+}
 
-    // Nice name
-    EXPECT_TRUE(DissolveSys::niceName(" /\\#*$") == "______");
-    EXPECT_TRUE(DissolveSys::niceName("Under score") == "Under_score");
-
+TEST(SysFunc, StringToNumber)
+{
     // Conversion to numbers
     EXPECT_TRUE(DissolveSys::isNumber("1.0"));
     EXPECT_TRUE(DissolveSys::isNumber("1.0E-5"));
@@ -87,11 +108,17 @@ TEST(SysFunc, StringManipulation)
     EXPECT_FALSE(isFP);
     EXPECT_FALSE(DissolveSys::isNumber("e-1", isFP));
     EXPECT_FALSE(isFP);
+}
 
+TEST(SysFunc, StringReplacement)
+{
     // String replacement
     EXPECT_TRUE(DissolveSys::replace("Swap the aaa's", "a", "bee") == "Swbeep the beebeebee's");
     EXPECT_TRUE(DissolveSys::replace("Swap the AaA's", "A", "bee") == "Swap the beeabee's");
+}
 
+TEST(SysFunc, StringSplitSimple)
+{
     // String splitting / joining
     std::vector<std::string_view> v;
     const std::vector<std::string_view> expected = {"arma", "dillo", "is", "in", "pieces"};
@@ -118,11 +145,47 @@ TEST(SysFunc, StringManipulation)
     v = DissolveSys::splitString("   arma   dillo is in    pieces         ", " ");
     EXPECT_EQ(v.size(), 5);
     EXPECT_TRUE(expected == v);
+}
 
+TEST(SysFunc, StringSplitMultiple)
+{
+    const std::vector<std::string_view> abcd = {"A", "B", "C", "D"};
+
+    // -- Two character delimiter
+    auto split = DissolveSys::splitString("A//B//C//D", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Trailing two character delimiter
+    split = DissolveSys::splitString("A//B//C//D//", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Leading two character delimiter
+    split = DissolveSys::splitString("//A//B//C//D", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Leading and trailing two character delimiter
+    split = DissolveSys::splitString("//A//B//C//D//", "//");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+
+    // -- Larger delimiter
+    split = DissolveSys::splitString("AanklesBanklesCanklesDankles", "ankles");
+    EXPECT_EQ(split.size(), 4);
+    EXPECT_TRUE(split == abcd);
+}
+
+TEST(SysFunc, StringStripping)
+{
     // String strip
     EXPECT_EQ(DissolveSys::strip("No more spaces "), "Nomorespaces");
     EXPECT_EQ(DissolveSys::strip("No more spaces ", 'o'), "N mre spaces ");
+}
 
+TEST(SysFunc, UniqueNames)
+{
     // Unique Naming
     std::vector<NameObject> names;
     EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique");

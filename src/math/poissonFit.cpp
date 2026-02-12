@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/poissonFit.h"
 #include "base/lineParser.h"
 #include "math/data1D.h"
 #include "math/error.h"
 #include "math/filters.h"
+#include "math/mathFunc.h"
 #include "math/mc.h"
 #include "math/praxis.h"
 #include "templates/algorithms.h"
@@ -248,7 +249,7 @@ void PoissonFit::preCalculateTerms()
         r += rStep_;
         n += deltaN;
     }
-    fourPiSigmaRCubed_ = 4.0 * PI * sigmaR_ * sigmaR_ * sigmaR_;
+    fourPiSigmaRCubed_ = 4.0 * M_PI * sigmaR_ * sigmaR_ * sigmaR_;
 }
 
 // Update precalculated function data using specified C

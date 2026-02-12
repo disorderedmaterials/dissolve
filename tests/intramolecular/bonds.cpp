@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesBond.h"
 #include "math/data1D.h"
@@ -40,7 +40,6 @@ class BondFunctionsAnalyticTest : public ::testing::Test
         auto de_dx = Derivative::derivative(energy);
         de_dx *= -1.0;
         Interpolator force(de_dx);
-        force.interpolate();
 
         // Test analytic vs tabulated values - do this by absolute value if less than 1.0, or by ratio if greater than 1.0.
         // We do this since we span many orders of magnitude in value over the potential range, and can also have zeroes.

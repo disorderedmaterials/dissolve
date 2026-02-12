@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -7,9 +7,10 @@
 #include "gui/models/configurationModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/moduleLayersModel.h"
-#include "gui/models/speciesModel.h"
 #include "main/dissolve.h"
+#include "nodes/graph.h"
 #include "templates/optionalRef.h"
+#include <QUrl>
 #include <memory>
 
 class DissolveModel : public QObject
@@ -25,21 +26,30 @@ class DissolveModel : public QObject
     Q_PROPERTY(const MasterTorsionModel *masterTorsionsModel READ masterTorsionsModel NOTIFY mastersChanged)
     // The Master Improper Model
     Q_PROPERTY(const MasterImproperModel *masterImpropersModel READ masterImpropersModel NOTIFY mastersChanged)
-    // The Species Model
-    Q_PROPERTY(const SpeciesModel *speciesModel READ speciesModel NOTIFY speciesChanged)
     // The Configuration Model
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
     // The ModuleLayers Model
     Q_PROPERTY(const ModuleLayersModel *moduleLayersModel READ moduleLayersModel NOTIFY moduleLayersChanged)
+    // File to load
+    Q_PROPERTY(QUrl file READ fileName WRITE loadInput NOTIFY modelsUpdated)
+    // The main graph
+    Q_PROPERTY(Graph *graph READ graph NOTIFY modelsUpdated)
 
     private:
     // The Atom Type Model
     AtomTypeModel atomTypes_;
     // Master terms model
     std::unique_ptr<MasterTermTreeModel> masters_ = nullptr;
-    SpeciesModel speciesModel_;
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
+
+    public:
+    // Getter for filename
+    QUrl fileName();
+    // Setter for filename
+    void loadInput(QUrl filename);
+    // Getter for graph
+    Graph *graph();
 
     Q_SIGNALS:
     // The models might've been updated
@@ -55,6 +65,10 @@ class DissolveModel : public QObject
     void configurationsChanged();
     // ModuleLayers model has been replaced
     void moduleLayersChanged();
+
+    public Q_SLOTS:
+    // Export to a file
+    bool saveAs(QUrl filename);
 
     public:
     DissolveModel() = default;
@@ -80,8 +94,6 @@ class DissolveModel : public QObject
     const MasterImproperModel *masterImpropersModel() const;
     // The number of master impropers
     int nMasterImpropers();
-    // The Species Model
-    SpeciesModel *speciesModel();
     // The Configurations Model
     ConfigurationModel *configurationsModel();
     // The ModuleLayers Model
@@ -95,6 +107,8 @@ class DissolveModel : public QObject
     Dissolve *dissolve_ = nullptr;
 
     public:
+    // Access dissolve reference
+    Dissolve &dissolve();
     // Set reference to Dissolve
     void setDissolve(Dissolve &dissolve);
     // Update models

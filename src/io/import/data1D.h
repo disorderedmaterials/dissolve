@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -7,7 +7,6 @@
 
 // Forward Declarations
 class Data1D;
-class ProcessPool;
 
 // Data1D Import Formats
 class Data1DImportFileFormat : public FileAndFormat
@@ -20,9 +19,21 @@ class Data1DImportFileFormat : public FileAndFormat
         Histogram,
         GudrunMint
     };
+    // Return enum option info for Data1DImportFormat
+    static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> data1DImportFormat();
+
     Data1DImportFileFormat(std::string_view filename = "", Data1DImportFormat format = Data1DImportFormat::XY, int xColumn = 1,
                            int yColumn = 2, int errorColumn = 0);
+    Data1DImportFileFormat(std::string_view filename, Data1DImportFormat format, int xColumn, int yColumn, int errorColumn,
+                           std::optional<double> removeAverageFromX, std::optional<double> xMin, std::optional<double> xMax,
+                           int nPointsToRemove);
     ~Data1DImportFileFormat() override = default;
+    bool operator==(const Data1DImportFileFormat &other) const
+    {
+        return xColumn_ == other.xColumn_ && yColumn_ == other.yColumn_ && errorColumn_ == other.errorColumn_ &&
+               nPointsToRemove_ == other.nPointsToRemove_ && removeAverageFromX_ == other.removeAverageFromX_ &&
+               xMin_ == other.xMin_ && xMax_ == other.xMax_;
+    }
 
     /*
      * Keyword Options
@@ -74,7 +85,9 @@ class Data1DImportFileFormat : public FileAndFormat
 
     public:
     // Import Data1D using current filename and format
-    bool importData(Data1D &data, const ProcessPool *procPool = nullptr);
+    bool importData(Data1D &data);
     // Import Data1D using supplied parser and current format
     bool importData(LineParser &parser, Data1D &data);
 };
+
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> getEnumOptions(Data1DImportFileFormat::Data1DImportFormat);

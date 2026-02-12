@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -7,7 +7,7 @@
 #include "modules/energy/energy.h"
 
 // Create Box definition with specified lengths and angles
-void Configuration::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
+void Configuration::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
 }
@@ -16,10 +16,10 @@ void Configuration::createBox(const Vec3<double> lengths, const Vec3<double> ang
 void Configuration::createBox(const Matrix3 axes)
 {
     // Calculate cell lengths
-    Vec3<double> lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
+    Vector3 lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
 
     // Calculate cell angles
-    Vec3<double> vecx, vecy, vecz;
+    Vector3 vecx, vecy, vecz;
     vecx = axes.columnAsVec3(0);
     vecy = axes.columnAsVec3(1);
     vecz = axes.columnAsVec3(2);
@@ -27,15 +27,14 @@ void Configuration::createBox(const Matrix3 axes)
     vecy.normalise();
     vecz.normalise();
 
-    Vec3<double> angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
-    angles *= DEGRAD;
+    Vector3 angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
+    angles.toDegrees();
 
     box_ = Box::generate(lengths, angles);
 }
 
 // Create Box definition with specified lengths and angles, and initialise cell array
-void Configuration::createBoxAndCells(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic,
-                                      double pairPotentialRange)
+void Configuration::createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic, double pairPotentialRange)
 {
     createBox(lengths, angles, nonPeriodic);
     cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
@@ -44,6 +43,9 @@ void Configuration::createBoxAndCells(const Vec3<double> lengths, const Vec3<dou
 // Create Box definition from axes matrix, and initialise cell array
 void Configuration::createBoxAndCells(const Matrix3 axes, double pairPotentialRange)
 {
+    // Forcibly clear the cell array so we ensure that it is regenerated following the box change
+    cells_.clear();
+
     createBox(axes);
     cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
 }
@@ -59,12 +61,12 @@ void Configuration::updateCells(double pairPotentialRange)
 const Box *Configuration::box() const { return box_.get(); }
 
 // Scale Box lengths (and associated Cells) by specified factors
-void Configuration::scaleBox(Vec3<double> scaleFactors)
+void Configuration::scaleBox(Vector3 scaleFactors)
 {
     box_->scale(scaleFactors);
     cells_.scale(scaleFactors);
 
-    ++contentsVersion_;
+    ++version_;
 }
 
 // Set requested size factor for Box
@@ -88,7 +90,7 @@ CellArray &Configuration::cells() { return cells_; }
 const CellArray &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
-void Configuration::applySizeFactor(const ProcessPool &procPool, const PotentialMap &potentialMap)
+void Configuration::applySizeFactor(const PotentialMap &potentialMap)
 {
     const auto reductionFactor = 0.95;
 
@@ -135,7 +137,7 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             appliedSizeFactor_ = std::nullopt;
             break;
         }
-        else if (EnergyModule::interMolecularEnergy(procPool, this, potentialMap) <= 0.0)
+        else if (EnergyModule::interMolecularEnergy(this, potentialMap) <= 0.0)
         {
             requestedSF *= reductionFactor;
             if (requestedSF < 1.0)

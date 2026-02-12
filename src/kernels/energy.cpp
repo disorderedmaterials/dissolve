@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/energy.h"
 #include "classes/box.h"
@@ -53,9 +53,8 @@ double PairPotentialEnergyValue::total() const { return interMolecular_ + intraM
  * EnergyKernel
  */
 
-EnergyKernel::EnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                           std::optional<double> energyCutoff)
-    : GeometryKernel(cfg, procPool, potentialMap, energyCutoff)
+EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
+    : GeometryKernel(cfg, potentialMap, energyCutoff)
 {
 }
 
@@ -283,7 +282,7 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
     if (includeIntraMolecular)
     {
         auto intra = 0.0;
-        dissolve::for_each_pair(ParallelPolicies::seq, 0, mol.nAtoms(),
+        dissolve::for_each_pair(ParallelPolicies::seq, mol.nAtoms(),
                                 [&](int i, int j)
                                 {
                                     if (i == j)
@@ -322,8 +321,7 @@ double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
  */
 
 // Return total interatomic PairPotential energy of the world
-PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular,
-                                                                ProcessPool::DivisionStrategy strategy) const
+PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular) const
 {
     assert(cellArray_);
     auto &cells = cellArray_->get();
@@ -331,24 +329,15 @@ PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntr
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cells.getCellNeighbourPairs();
 
-    // Set start/stride for parallel loop
-    auto offset = processPool_.interleavedLoopStart(strategy);
-    auto nChunks = processPool_.interleavedLoopStride(strategy);
-
-    PairPotentialEnergyValue ppEnergy;
-    auto [begin, end] = chop_range(cellNeighbourPairs.begin(), cellNeighbourPairs.end(), nChunks, offset);
-
-    ppEnergy += dissolve::transform_reduce(ParallelPolicies::par, begin, end, PairPotentialEnergyValue(), std::plus<>(),
-                                           [&](const auto &pair)
-                                           {
-                                               if (&pair.cell == &pair.neighbour)
-                                                   return cellEnergy(pair.cell, includeIntraMolecular);
-                                               else
-                                                   return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM,
-                                                                           includeIntraMolecular);
-                                           });
-
-    return ppEnergy;
+    return dissolve::transform_reduce(
+        ParallelPolicies::par, cellNeighbourPairs.begin(), cellNeighbourPairs.end(), PairPotentialEnergyValue(), std::plus<>(),
+        [&](const auto &pair)
+        {
+            if (&pair.cell == &pair.neighbour)
+                return cellEnergy(pair.cell, includeIntraMolecular);
+            else
+                return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM, includeIntraMolecular);
+        });
 }
 
 // Return total interatomic PairPotential energy from summation of molecules
@@ -379,3 +368,6 @@ EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculat
             flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol),
             flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
+
+// Return potential map
+const PotentialMap &EnergyKernel::potentialMap() const { return potentialMap_; }

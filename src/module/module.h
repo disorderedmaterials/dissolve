@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -101,16 +101,16 @@ class Module : public Serialisable<const CoreData &>
     // Check the current configurations targeted by the module
     ExecutionResult checkConfigurationTargets(GenericList &processingModuleData);
     // Run main processing
-    virtual ExecutionResult process(ModuleContext &moduleContext) = 0;
+    virtual ExecutionResult process(Dissolve &dissolve) = 0;
 
     public:
     // Set target data
     virtual void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                             const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
-    virtual bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals = {});
+    virtual bool setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    ExecutionResult executeProcessing(ModuleContext &moduleContext);
+    ExecutionResult executeProcessing(Dissolve &dissolve);
 
     /*
      * Timing
@@ -127,7 +127,7 @@ class Module : public Serialisable<const CoreData &>
 
     public:
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

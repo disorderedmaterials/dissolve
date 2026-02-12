@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "base/serialiser.h"
 #include <vector>
 
 // Forward Declarations
@@ -10,7 +11,7 @@ class CoreData;
 class LineParser;
 
 // Vector of double values with sampling
-class SampledVector
+class SampledVector : public Serialisable<>
 {
     public:
     SampledVector();
@@ -66,4 +67,8 @@ class SampledVector
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

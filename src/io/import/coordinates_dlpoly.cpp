@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "io/import/coordinates.h"
 
 // Import DL_POLY coordinates through specified parser
-bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vector3> &r)
 {
     /*
      * Import DL_POLY coordinates information through the specified line parser.

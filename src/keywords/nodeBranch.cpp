@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/nodeBranch.h"
 #include "base/lineParser.h"
@@ -49,11 +49,11 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
 bool NodeBranchKeyword::isDefault() const { return data_.nNodes() == 0; }
 
 // Express as a serialisable value
-SerialisedValue NodeBranchKeyword::serialise() const
+void NodeBranchKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     if (isDefault())
-        return {};
-    return data_.serialise();
+        return;
+    data_.serialise(tag, target);
 }
 
 // Read values from a serialisable value

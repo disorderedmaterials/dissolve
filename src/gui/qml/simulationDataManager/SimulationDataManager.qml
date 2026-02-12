@@ -64,6 +64,7 @@ Page {
 
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                anchors.fill: parent
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
                 columnSpacing: 1

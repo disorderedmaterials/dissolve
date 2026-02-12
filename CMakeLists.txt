@@ -1,10 +1,33 @@
-cmake_minimum_required(VERSION 3.15)
-project(Dissolve)
+cmake_minimum_required(VERSION 3.24)
+
+# Use Conan for dependency provision?
+option(CONAN "Use conan to find dependencies" ON)
+if(CONAN)
+  # Fetch and include conan_provider.cmake if it doesn't exist
+  if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/conan_provider.cmake")
+    message(STATUS "Downloading conan_provider.cmake from https://github.com/conan-io/cmake-conan")
+    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/refs/heads/develop2/conan_provider.cmake"
+         "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules/conan_provider.cmake"
+    )
+  endif()
+
+  # Add local dirs to cmake Module search path
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
+  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
+
+  list(APPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES "cmake/Modules/conan_provider.cmake")
+endif(CONAN)
+
+# Set up the project
+project(Dissolve LANGUAGES CXX C)
+
+# Add our custom module search path
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "8")
+set(VERSION_MINOR "9")
 set(VERSION_PATCH "0")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -20,31 +43,11 @@ cmake_policy(SET CMP0020 NEW)
 # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
 set(CMAKE_CXX_STANDARD 20)
 
-# Add our custom module search path
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
-
 # We are setting up a development environment in MSVC
 option(MSVC_DEV "Configuration is for a Visual Studio 2022 dev environment" OFF)
 
 # Install GSL (GNU Scientific Library) with Conan for Windows and Unix-like systems
 option(CONAN_GSL "Use conan to find GSL" ON)
-
-# Include Conan Packages
-option(CONAN "Use conan to find dependencies" ON)
-if(CONAN)
-  if(CONAN_GSL)
-    list(APPEND EXTRA_CONAN_REQUIRES gsl/2.7.1)
-  endif(CONAN_GSL)
-  # Add local dirs to cmake Module search path
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
-  list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
-
-  if(BUILD_BENCHMARKS)
-    list(APPEND EXTRA_CONAN_REQUIRES benchmark/1.8.4)
-  endif(BUILD_BENCHMARKS)
-
-  include(conan-dissolve)
-endif(CONAN)
 
 # Find core dependencies
 set(CORE_LINK_LIBS "")
@@ -64,31 +67,28 @@ list(APPEND CORE_LINK_LIBS ${GSL_LIBS})
 set(antlr4-cppruntime_INCLUDE_DIRS "")
 set(antlr4-cppruntime_LIBS "")
 find_package(antlr4-runtime REQUIRED)
-if(NOT antlr4-cppruntime_INCLUDE_DIRS)
-  # nix
-  if(ANTLR4_INCLUDE_DIR)
-    set(antlr4-cppruntime_INCLUDE_DIRS ${ANTLR4_INCLUDE_DIR})
-    link_directories(${ANTLR4_LIB_DIR})
-    set(antlr4-cppruntime_LIBS "antlr4-runtime")
-  else(ANTLR4_INCLUDE_DIR)
-    message(ERROR "Failed to find Antlr4 cpp runtime.")
-  endif(ANTLR4_INCLUDE_DIR)
-endif(NOT antlr4-cppruntime_INCLUDE_DIRS)
-message(STATUS "Antlr4 cpp runtime includes: ${antlr4-cppruntime_INCLUDE_DIRS}")
-message(STATUS "Antlr4 cpp runtime libs: ${antlr4-cppruntime_LIBS}")
-include_directories(${antlr4-cppruntime_INCLUDE_DIRS})
-list(APPEND CORE_LINK_LIBS ${antlr4-cppruntime_LIBS})
+if(CONAN)
+  include_directories(${antlr4-runtime_INCLUDE_DIRS})
+  list(APPEND CORE_LINK_LIBS antlr4_shared)
+else(CONAN)
+  if(NOT antlr4-cppruntime_INCLUDE_DIRS)
+    # nix
+    if(ANTLR4_INCLUDE_DIR)
+      set(antlr4-cppruntime_INCLUDE_DIRS ${ANTLR4_INCLUDE_DIR})
+      link_directories(${ANTLR4_LIB_DIR})
+      set(antlr4-cppruntime_LIBS "antlr4-runtime")
+    else(ANTLR4_INCLUDE_DIR)
+      message(ERROR "Failed to find Antlr4 cpp runtime.")
+    endif(ANTLR4_INCLUDE_DIR)
+  endif(NOT antlr4-cppruntime_INCLUDE_DIRS)
+  message(STATUS "Antlr4 cpp runtime includes: ${antlr4-cppruntime_INCLUDE_DIRS}")
+  message(STATUS "Antlr4 cpp runtime libs: ${antlr4-cppruntime_LIBS}")
+  include_directories(${antlr4-cppruntime_INCLUDE_DIRS})
+  list(APPEND CORE_LINK_LIBS ${antlr4-cppruntime_LIBS})
+endif(CONAN)
 
 # Find Antlr4 Java Binary
 find_package(ANTLR REQUIRED)
-
-# Catch defines
-if(PARALLEL)
-  add_definitions("-DPARALLEL")
-  find_package(MPI REQUIRED)
-  include_directories(${MPI_INCLUDE_PATH})
-  list(APPEND CORE_LINK_LIBS ${MPI_LIBRARIES})
-endif(PARALLEL)
 
 # Build with threads
 option(MULTI_THREADING "Enable threading using tbb" ON)
@@ -97,11 +97,12 @@ if(MULTI_THREADING)
   add_definitions("-DMULTITHREADING")
   find_package(TBB REQUIRED)
   include_directories(${TBB_INCLUDE_DIRS})
+  include_directories(${DPL_INCLUDE_DIRS})
   list(APPEND THREADING_LINK_LIBS "TBB::tbb")
   if(CONAN)
     find_package(ParallelSTL REQUIRED)
-    include_directories(${pstl_ParallelSTL_INCLUDE_DIRS})
-    list(APPEND THREADING_LINK_LIBS ${pstl_ParallelSTL_LINK_LIBS})
+    include_directories(${ParallelSTL_INCLUDE_DIRS})
+    list(APPEND THREADING_LINK_LIBS ${ParallelSTL_LINK_LIBS})
   endif(CONAN)
   message("Threading Link Libs: ${THREADING_LINK_LIBS}")
 endif(MULTI_THREADING)
@@ -148,13 +149,9 @@ endif(GUI)
 
 # Perform system-specific setup -- Windows
 if(WIN32)
-  if(PARALLEL)
-    set(target_name Dissolve-MPI)
-  else(PARALLEL)
-    set(target_name Dissolve)
-    set(gui_target_name Dissolve-GUI)
-    set(qmlgui_target_name Dissolve-GUI-QML)
-  endif(PARALLEL)
+  set(target_name Dissolve)
+  set(gui_target_name Dissolve-GUI)
+  set(qmlgui_target_name Dissolve-GUI-QML)
 
   # Adjust external include directories for GUI
   if(GUI)
@@ -177,13 +174,10 @@ endif(WIN32)
 
 # -- Unix
 if(UNIX)
-  if(PARALLEL)
-    set(target_name dissolve-mpi)
-  else(PARALLEL)
-    set(target_name dissolve)
-    set(gui_target_name dissolve-gui)
-    set(qmlgui_target_name dissolve-gui-qml)
-  endif(PARALLEL)
+  set(target_name dissolve)
+  set(gui_target_name dissolve-gui)
+  set(qmlgui_target_name dissolve-gui-qml)
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
 
@@ -196,13 +190,9 @@ if(APPLE)
   # Suppress warnings for undefined template vars
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
 
-  if(PARALLEL)
-    set(target_name dissolve-mpi)
-  else(PARALLEL)
-    set(target_name dissolve)
-    set(gui_target_name dissolve-gui)
-    set(qmlgui_target_name dissolve-gui-qml)
-  endif(PARALLEL)
+  set(target_name dissolve)
+  set(gui_target_name dissolve-gui)
+  set(qmlgui_target_name dissolve-gui-qml)
 
   add_definitions(-D_MAC)
 
@@ -262,27 +252,10 @@ target_include_directories(
 # Add GUI targets
 if(GUI)
 
-  # Main Dissolve GUI
-  qt_add_executable(${gui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui.cpp)
-
-  # Set project-local include directories for target
-  target_include_directories(
-    ${gui_target_name}
-    PRIVATE ${PROJECT_SOURCE_DIR}/src
-            ${PROJECT_BINARY_DIR}/src
-            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
-            ${FREETYPE_INCLUDE_DIRS}
-            ${Qt6Core_INCLUDE_DIRS}
-            ${Qt6Gui_INCLUDE_DIRS}
-            ${Qt6OpenGL_INCLUDE_DIRS}
-            ${Qt6Widgets_INCLUDE_DIRS}
-            ${Qt6OpenGL_INCLUDE_DIRS}
-            ${Qt6OpenGLWidgets_INCLUDE_DIRS}
-  )
-
   # Dissolve QML GUI
   qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
   set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
+
   qt_add_qml_module(
     ${qmlgui_target_name}
     VERSION
@@ -291,6 +264,14 @@ if(GUI)
     Dissolve
     QML_FILES
     ${SRCS}/gui-qml/qml/DissolveMain.qml
+    ${SRCS}/gui/qml/nodeGraph/ForcefieldDialog.qml
+    ${SRCS}/gui/qml/nodeGraph/GraphView.qml
+    ${SRCS}/gui/qml/nodeGraph/GraphDelegate.qml
+    ${SRCS}/gui/qml/nodeGraph/ParameterDelegate.qml
+    ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
+    ${SRCS}/gui/qml/nodeGraph/SpeciesDialog.qml
+    ${SRCS}/gui/qml/nodeGraph/ElementComboBox.qml
+    RESOURCES
   )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)
@@ -333,12 +314,14 @@ set(BASIC_LINK_LIBS
     ${FF_LINK_LIBS}
     # Modules
     ${MODULE_LINK_LIBS}
+    # Nodes
+    nodes
 )
 
 # Set linker options for complete/no archive
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(WHOLE_ARCHIVE_FLAG "-Wl,-all_load")
-else()
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(WHOLE_ARCHIVE_FLAG "-Wl,-whole-archive")
   set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
 endif()
@@ -370,34 +353,6 @@ if(GUI)
 
   add_subdirectory(QuickPlot/src)
 
-  # Main Dissolve GUI
-  target_link_libraries(
-    ${gui_target_name}
-    PUBLIC ${WHOLE_ARCHIVE_FLAG}
-           ${BASIC_LINK_LIBS}
-           # Module gui libs
-           ${MODULEGUI_LINK_LIBS}
-           moduleWidgetProducer
-           # Main gui libs
-           render
-           widgets
-           keywordWidgets
-           delegates
-           models
-           gui
-           ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE # External libs
-            Qt6::Widgets
-            Qt6::Core
-            Qt6::Quick3D
-            OpenGL::GL
-            ${GUI_LINK_LIBS}
-            ${FREETYPE_LIBRARIES}
-            ${FTGL_LIBRARIES}
-            ${CORE_LINK_LIBS}
-            ${THREADING_LINK_LIBS}
-  )
-
   set_target_properties(${qmlgui_target_name} PROPERTIES QML_IMPORT_PATH ${QT_QML_OUTPUT_DIRECTORY})
 
   # Link to models when developing QML Dissolve in Visual Studio
@@ -405,27 +360,24 @@ if(GUI)
     set(QML_GUI_LIBS models)
   endif(MSVC_DEV)
 
+  # Dissolve2 QML plugins
+  set(QML_PLUGINS
+      # QtQuick plotting library
+      QuickPlotplugin
+      # Icons (.svg)
+      icons_moduleplugin
+  )
+
   # Main Dissolve GUI
   target_link_libraries(
     ${qmlgui_target_name}
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module gui libs
-           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} QuickPlotplugin
+           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} ${QML_PLUGINS}
     PRIVATE # External libs
             Qt6::Quick3D Qt6::Qml Qt6::Widgets ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
 
-  qt_generate_deploy_qml_app_script(
-    TARGET
-    ${gui_target_name}
-    FILENAME_VARIABLE
-    deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
-    MACOS_BUNDLE_POST_BUILD
-    NO_UNSUPPORTED_PLATFORM_ERROR
-    DEPLOY_USER_QML_MODULES_ON_UNSUPPORTED_PLATFORM
-  )
-  install(SCRIPT ${deploy_script})
 endif(GUI)
 
 # Install for MSVC

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -26,7 +26,7 @@ class CustomRegionVoxelKernel : public VoxelKernel
 
     public:
     // Return whether voxel centred at supplied real coordinates is valid
-    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
+    bool isVoxelValid(const Configuration *cfg, const Vector3 &r) const override;
 };
 
 // Custom Region

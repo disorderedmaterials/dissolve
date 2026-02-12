@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "modules/test/test.h"
 
 // Run main processing
-Module::ExecutionResult TestModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult TestModule::process(Dissolve &dissolve)
 {
     // MODULE CODE
 

@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "base/processPool.h"
 #include "classes/cellArray.h"
 
 // Distributor
 class Distributor
 {
     public:
-    Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
-                bool allowRepeats);
+    Distributor(int nObjects, const CellArray &cellArray, bool allowRepeats);
     virtual ~Distributor();
     // Object Status Flag
     enum ObjectStatusFlag
@@ -72,10 +70,6 @@ class Distributor
      * Distribution
      */
     private:
-    // ProcessPool that we are using
-    const ProcessPool &processPool_;
-    // Division strategy to employ
-    const ProcessPool::DivisionStrategy divisionStrategy_;
     // Number of processes / groups we are dealing with each time
     int nProcessesOrGroups_;
     // Our process / group index we have in

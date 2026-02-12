@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -73,9 +73,9 @@ class CIFHandler
     // Return space group
     SpaceGroups::SpaceGroupId spaceGroup() const;
     // Return cell lengths
-    std::optional<Vec3<double>> getCellLengths() const;
+    std::optional<Vector3> getCellLengths() const;
     // Return cell angles
-    std::optional<Vec3<double>> getCellAngles() const;
+    std::optional<Vector3> getCellAngles() const;
     // Return chemical formula
     std::string chemicalFormula() const;
     // Get (add or retrieve) named assembly
@@ -131,7 +131,7 @@ class CIFHandler
     // NETA for moiety removal, if specified
     NETADefinition moietyRemovalNETA_;
     // Supercell repeat
-    Vec3<int> supercellRepeat_{1, 1, 1};
+    Vector3i supercellRepeat_{1, 1, 1};
     // Basic unit cell
     Species unitCellSpecies_;
     Configuration unitCellConfiguration_;
@@ -172,7 +172,7 @@ class CIFHandler
     // Set NETA for moiety removal
     bool setMoietyRemovalNETA(std::string_view netaDefinition);
     // Set supercell repeat
-    void setSupercellRepeat(const Vec3<int> &repeat);
+    void setSupercellRepeat(const Vector3i &repeat);
     // Recreate the data
     bool generate(CIFGenerationStage fromStage = CIFGenerationStage::CreateBasicUnitCell);
     // Return whether the generated data is valid

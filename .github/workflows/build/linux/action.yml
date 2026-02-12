@@ -23,14 +23,8 @@ runs:
   using: "composite"
   steps:
 
-  - name: Free Space
-    shell: bash
-    run: |
-      set -ex
-      df -mh .
-      sudo rm -rf /usr/share/dotnet
-      sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-      df -mh .
+  - name: Free Up Space
+    uses: "./.github/workflows/linux-free-up-space"
 
   - name: Install nix
     uses: "./.github/workflows/get-nix"
@@ -56,45 +50,12 @@ runs:
     run: |
       set -ex
 
-      ### Begin unholy hack
-      ###
-      ### For reasons unknown, when nix is run under GitHub actions,
-      ### it ignores the submodules flag, meaning that flakes with
-      ### submodules cannot be built
-      ###
-      ### As a blasphemous workaround, I've added a step to bring the
-      ### submodule into the main repo.  Hopefully, submodules are
-      ### made the default flake behaviour in the upcoming release,
-      ### this will no longer be necessary.  If not, we might have to
-      ### make the submodule an extra input to the flake, but that
-      ### will take some extra time.
-      ###
-      ### If you are reading this comment in 2026, try removing this
-      ### entire hack and see if the problem fixed itself.  You may
-      ### also need to update the action that installs nix in the
-      ### first place.  If that doesn't solve the problem, then we
-      ### should go ahead and just make the submodule a flake input.
-
       git submodule update --init --recursive
-      git config --global user.email "no_one@example.com"
-      git config --global user.name "GitHub Actions"
-      git rm .gitmodules
-
-      cp -r QuickPlot QuickPlot.bak
-      rm -rf QuickPlot.bak/.git
-      git rm -r QuickPlot
-      git commit -m "Kill submodule"
-
-      mv QuickPlot.bak QuickPlot
-      git add QuickPlot
-      git commit -m "Resurrect submodule"
-
-      ### End unholy hack
 
       # Build Singularity target
       target=${{ inputs.target }}
       singularityTarget=${target/dissolve/singularity}
-      nix build -L ".?submodules=1#$singularityTarget"
+      nix build -L ".#$singularityTarget"
 
       # Assemble artifacts
       mkdir packages-sif
@@ -105,39 +66,39 @@ runs:
     run: |
       set -ex
 
-      nix bundle -L .#${{ inputs.target }} -o binary
+      nix bundle --bundler .#default -L .#${{ inputs.target }} -o binary
 
       # Assemble artifacts
       mkdir packages-binary
       cp -v binary packages-binary/${{ inputs.target }}-${{ inputs.currentVersion }}
 
-  - name: Run benchmarks
-    if: inputs.benchmark == 'true'
-    shell: bash
-    run: |
-      set -ex
-      export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
+  # - name: Run benchmarks
+  #   if: inputs.benchmark == 'true'
+  #   shell: bash
+  #   run: |
+  #     set -ex
+  #     export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
 
-      nix build -L .#benchmarks
-      rm result
-      nix run -L .#benchmarks > all_benchmark_results.json
+  #     nix build -L .#benchmarks
+  #     rm result
+  #     nix run -L .#benchmarks > all_benchmark_results.json
 
-      cat all_benchmark_results.json
+  #     cat all_benchmark_results.json
 
       # Must reset to HEAD here otherwise the benchmark publishing step will (rightly) fail
-      git reset HEAD --hard
+      # git reset HEAD --hard
 
-  - name: Store benchmark result
-    uses: benchmark-action/github-action-benchmark@v1
-    if: inputs.publishBenchmarks == 'true' && inputs.benchmark == 'true'
-    with:
-      tool: 'googlecpp'
-      output-file-path: all_benchmark_results.json
-      github-token: ${{ github.token }}
-      auto-push: true
-      comment-on-alert: true
-      alert-threshold: '200%'
-      alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
+  # - name: Store benchmark result
+  #   uses: benchmark-action/github-action-benchmark@v1
+  #   if: inputs.publishBenchmarks == 'true' && inputs.benchmark == 'true'
+  #   with:
+  #     tool: 'googlecpp'
+  #     output-file-path: all_benchmark_results.json
+  #     github-token: ${{ github.token }}
+  #     auto-push: true
+  #     comment-on-alert: true
+  #     alert-threshold: '200%'
+  #     alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
 
   - name: Tidy nix Store
     if: inputs.cacheOnly == 'true'

@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/vec3Double.h"
 #include "base/lineParser.h"
 
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, Vec3Labels::LabelType labelType)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vector3 &data, Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), default_(data), labelType_(labelType)
 {
 }
 
-Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, std::optional<Vec3<double>> minValue,
-                                     std::optional<Vec3<double>> maxValue, Vec3Labels::LabelType labelType)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vector3 &data, std::optional<Vector3> minValue, std::optional<Vector3> maxValue,
+                                     Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), minimumLimit_(minValue), maximumLimit_(maxValue), labelType_(labelType)
 {
 }
@@ -20,7 +20,7 @@ Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, std::optional<Vec3<doub
  */
 
 // Set data
-bool Vec3DoubleKeyword::setData(Vec3<double> value)
+bool Vec3DoubleKeyword::setData(Vector3 value)
 {
     if (minimumLimit_ &&
         (value.x < minimumLimit_.value().x || value.y < minimumLimit_.value().y || value.z < minimumLimit_.value().z))
@@ -35,13 +35,13 @@ bool Vec3DoubleKeyword::setData(Vec3<double> value)
 }
 
 // Return data
-const Vec3<double> &Vec3DoubleKeyword::data() const { return data_; }
+const Vector3 &Vec3DoubleKeyword::data() const { return data_; }
 
 // Return minimum limit
-std::optional<Vec3<double>> Vec3DoubleKeyword::minimumLimit() const { return minimumLimit_; }
+std::optional<Vector3> Vec3DoubleKeyword::minimumLimit() const { return minimumLimit_; }
 
 // Return maximum limit
-std::optional<Vec3<double>> Vec3DoubleKeyword::maximumLimit() const { return maximumLimit_; }
+std::optional<Vector3> Vec3DoubleKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Label Type
@@ -101,7 +101,7 @@ bool Vec3DoubleKeyword::serialise(LineParser &parser, std::string_view keywordNa
 bool Vec3DoubleKeyword::isDefault() const { return data_ == default_; }
 
 // Express as a serialisable value
-SerialisedValue Vec3DoubleKeyword::serialise() const { return data_.serialise(); }
+void Vec3DoubleKeyword::serialise(std::string tag, SerialisedValue &target) const { data_.serialise(tag, target); }
 
 // Read values from a serialisable value
 void Vec3DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }

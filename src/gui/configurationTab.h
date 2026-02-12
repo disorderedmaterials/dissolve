@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/units.h"
 #include "gui/mainTab.h"
-#include "gui/models/enumOptionsModel.h"
 #include "gui/models/externalPotentialModel.h"
 #include "gui/models/generatorModel.h"
 #include "gui/models/globalPotentialFilterProxy.h"

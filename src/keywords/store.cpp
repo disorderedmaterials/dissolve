@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/store.h"
 #include "base/lineParser.h"
@@ -240,15 +240,15 @@ bool KeywordStore::set(std::string_view name, const NodeValueProxy value)
 {
     return getKeyword<NodeValueKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<int> value)
+bool KeywordStore::set(std::string_view name, const Vector3i value)
 {
     return getKeyword<Vec3IntegerKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<double> value)
+bool KeywordStore::set(std::string_view name, const Vector3 value)
 {
     return getKeyword<Vec3DoubleKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
+bool KeywordStore::set(std::string_view name, const Vector3NodeValue value)
 {
     return getKeyword<Vec3NodeValueKeyword>(name, find(name))->setData(value);
 }
@@ -301,7 +301,9 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
             for (const auto &[keyword, keywordType] : group.keywords())
                 if (!keyword->isDefault())
                 {
-                    auto value = keyword->serialise();
+                    SerialisedValue outer;
+                    keyword->serialise("inner", outer);
+                    auto &value = outer["inner"];
                     if (keywordType != KeywordBase::KeywordType::Deprecated && !value.is_uninitialized())
                         node[toml_format(keyword->name())] = value;
                 }

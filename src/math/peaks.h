@@ -1,18 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "math/data1D.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <array>
 #include <variant>
 
-// Forward declarations
-
-/*
- * Peaks
- */
+// Peaks
 class Peaks
 {
     public:
@@ -27,9 +23,9 @@ class Peaks
     std::vector<double> values_;
     // Domain for which we are characterising peaks
     std::vector<double> domain_;
-    // Characterise only peaks occuring above a given vertical threshold
+    // Characterise only peaks occurring above a given vertical threshold
     double threshold_;
-    // Characterise only peaks occuring above a given horizontal isolation
+    // Characterise only peaks occurring above a given horizontal isolation
     double isolation_;
     // Check if neighbouring points correspond to a local maximum
     bool isLocalMaximum(const std::array<double, 3> &points);
@@ -39,7 +35,7 @@ class Peaks
     bool isInflectionPoint(const std::array<double, 3> &points);
 
     public:
-    // Container for a peak occuring in 1D data
+    // Container for a peak occurring in 1D data
     struct Peak1D
     {
         double peak;
@@ -78,7 +74,7 @@ class Peaks
     /*
      * Calculate the prominence of peaks.
      * Prominence is defined by the height of the peak relative to a reference height.
-     * This reference is determined by the heighest minimum of two intervals (bound by either the end of the data
+     * This reference is determined by the highest minimum of two intervals (bound by either the end of the data
      * or a higher data point), either side of the peak itself.
      */
     std::vector<Prominence1D> prominences(bool heightOrder = false);

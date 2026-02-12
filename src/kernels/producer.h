@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -17,13 +17,12 @@ class KernelProducer
 {
     public:
     // Create energy kernel for specified configuration
-    static std::unique_ptr<EnergyKernel> energyKernel(const Configuration *cfg, const ProcessPool &procPool,
-                                                      const PotentialMap &potentialMap,
+    static std::unique_ptr<EnergyKernel> energyKernel(const Configuration *cfg, const PotentialMap &potentialMap,
                                                       std::optional<double> energyCutoff = {});
     // Create force kernel for specified configuration
-    static std::unique_ptr<ForceKernel> forceKernel(const Configuration *cfg, const ProcessPool &procPool,
-                                                    const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    static std::unique_ptr<ForceKernel> forceKernel(const Configuration *cfg, const PotentialMap &potentialMap,
+                                                    std::optional<double> energyCutoff = {});
     // Create force kernel using the specified Box
-    static std::unique_ptr<ForceKernel> forceKernel(const Box *box, const ProcessPool &procPool,
-                                                    const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    static std::unique_ptr<ForceKernel> forceKernel(const Box *box, const PotentialMap &potentialMap,
+                                                    std::optional<double> energyCutoff = {});
 };

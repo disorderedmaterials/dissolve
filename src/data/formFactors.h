@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -22,6 +22,7 @@ enum XRayFormFactorData
 
 // Return EnumOptions for XRayFormFactorData
 EnumOptions<XRayFormFactorData> xRayFormFactorData();
+EnumOptions<XRayFormFactorData> getEnumOptions(XRayFormFactorData);
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
 OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Elements::Element Z,

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "gui/speciesTab.h"
@@ -47,7 +47,7 @@ void SpeciesTab::on_IsotopologuesTree_customContextMenuRequested(const QPoint &p
         for (auto &[atomType, tope] : iso->isotopes())
             if (atomType->Z() == Elements::H && tope != targetTope)
             {
-                tope = targetTope;
+                iso->isotopes().set(atomType, targetTope);
                 changesMade = true;
             }
 
@@ -65,9 +65,9 @@ void SpeciesTab::on_IsotopologuesTree_customContextMenuRequested(const QPoint &p
 
         // Set a unique name for the new isotopologue
         auto newIso = isos_.data(newIndex, Qt::UserRole).value<Isotopologue *>();
-        isos_.setData(newIndex, QString::fromStdString(DissolveSys::uniqueName(
-                                    iso->name(), species_->isotopologues(),
-                                    [newIso](const auto &oldIso) { return newIso == oldIso.get() ? "" : oldIso->name(); })));
+        isos_.setData(newIndex, QString::fromStdString(
+                                    DissolveSys::uniqueName(iso->name(), species_->isotopologues(), [newIso](const auto &oldIso)
+                                                            { return newIso == oldIso.get() ? "" : oldIso->name(); })));
 
         auto row = 0;
         for (const auto &[atomType, tope] : iso->isotopes())

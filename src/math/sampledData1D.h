@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "base/version.h"
 #include "math/data1DBase.h"
 #include "math/sampledVector.h"
@@ -12,7 +13,7 @@
 class Data1D;
 
 // One-Dimensional Data with Statistics
-class SampledData1D : public Data1DBase
+class SampledData1D : public Data1DBase, public Serialisable<>
 {
     public:
     SampledData1D();
@@ -89,4 +90,8 @@ class SampledData1D : public Data1DBase
     bool serialise(LineParser &parser) const;
     // Write value data only through specified LineParser
     bool serialiseValues(LineParser &parser) const;
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

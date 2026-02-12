@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/peaks.h"
 #include "math/mathFunc.h"
 #include <algorithm>
 
-/*
- * Peaks
- */
 Peaks::Peaks(const std::vector<double> &values, const std::vector<double> &domain) : values_(values), domain_(domain)
 {
     maxValue_ = *std::max_element(values_.begin(), values_.end());
@@ -78,7 +75,8 @@ std::vector<Peaks::Peak1D> Peaks::top(std::size_t n, std::vector<Peaks::Peak1D> 
     for (const auto &peak : peaks)
     {
         bool withinRadius = std::any_of(isolatedPeaks.begin(), isolatedPeaks.end(),
-                                        [this, &peak](const auto &p) {
+                                        [this, &peak](const auto &p)
+                                        {
                                             return (p.index != peak.index) && ((p.valueAt > peak.valueAt - isolation_) &&
                                                                                (p.valueAt < peak.valueAt + isolation_));
                                         });
@@ -125,7 +123,7 @@ std::vector<Peaks::Peak1D> Peaks::find(bool heightOrder)
  * Calculate the prominence of peaks.
  *
  * Prominence is defined by the height of the peak relative to a reference height.
- * This reference is determined by the heighest minimum of two intervals (bound by either the end of the data
+ * This reference is determined by the highest minimum of two intervals (bound by either the end of the data
  * or a higher data point), either side of the peak itself.
  */
 std::vector<Peaks::Prominence1D> Peaks::prominences(bool heightOrder)
@@ -157,7 +155,7 @@ std::vector<Peaks::Prominence1D> Peaks::prominences(const std::vector<Peaks::Pea
 
         auto heightRefRight = *std::min_element(values_.begin() + peak.index, values_.begin() + iRight);
 
-        // Calculate reference height for prominence from the heighest of the two minima
+        // Calculate reference height for prominence from the highest of the two minima
         auto referenceHeight = std::max(heightRefLeft, heightRefRight);
 
         auto prominence = peak.peak - referenceHeight;

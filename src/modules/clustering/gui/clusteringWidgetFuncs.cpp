@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableData1D.h"
 #include "io/export/coordinates.h"
@@ -58,8 +58,8 @@ void ClusteringModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 
         sizeDist_->createRenderable<RenderableData1D>(
             std::format("{}//SizeData", module_->name()),
-            std::format("SizeData//{}", module_->keywords().getConfiguration("Configuration")->niceName()),
-            module_->keywords().getConfiguration("Configuration")->niceName());
+            std::format("SizeData//{}", module_->keywords().getConfiguration("Configuration")->name()),
+            module_->keywords().getConfiguration("Configuration")->name());
 
         sizeDist_->view().showAllData();
     }

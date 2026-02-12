@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -57,8 +57,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     AngleFunctions::Form af;
     TorsionFunctions::Form tf;
     SpeciesBond::BondType bt;
-    Vec3<double> boxAngles(90.0, 90.0, 90.0);
-    std::optional<Vec3<double>> boxLengths;
+    Vector3 boxAngles(90.0, 90.0, 90.0);
+    std::optional<Vector3> boxLengths;
     auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
     auto blockDone = false, errorsEncountered = false;
     auto atomVectorFixed = false, bondVectorFixed = false, angleVectorFixed = false, torsionVectorFixed = false,
@@ -398,7 +398,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
+                    iso->setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), A));
                 }
                 break;
             case (Species::SpeciesKeyword::NAngles):
@@ -459,7 +459,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::SpeciesKeyword::Site):
                 // First argument is the name of the site to create - make sure it doesn't exist already
-                site = findSite(parser.argsv(1));
+                site = findSite(DissolveSys::niceName(parser.argsv(1)));
                 if (site)
                 {
                     Messenger::error("The site '{}' already exists on Species '{}', and cannot be redefined.\n",

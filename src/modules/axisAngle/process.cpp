@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
@@ -9,13 +9,13 @@
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
-#include "module/context.h"
+#include "math/mathFunc.h"
 #include "modules/axisAngle/axisAngle.h"
 
 // Run main processing
-Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult AxisAngleModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -52,7 +52,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
                 continue;
 
             auto distanceAB = targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin());
-            auto axisAngle = Box::angleInDegrees(siteA->axes().columnAsVec3(axisA_), siteB->axes().columnAsVec3(axisB_));
+            auto axisAngle = siteA->axes().columnAsVec3(axisA_).angleInDegrees(siteB->axes().columnAsVec3(axisB_));
             if (symmetric_ && axisAngle > 90.0)
                 axisAngle = 180.0 - axisAngle;
 
@@ -86,7 +86,8 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     aABNormalised = aAB.accumulatedData();
     DataOperator1D aABNormaliser(aABNormalised);
     // Normalise by value / sin(x)
-    aABNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    aABNormaliser.operate([](const auto &x, const auto &xDelta, const auto &value)
+                          { return value / sin(DissolveMath::toRadians(x)); });
     // Normalise to 1.0
     aABNormaliser.normaliseSumTo();
 
@@ -95,8 +96,11 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     dAxisAngleNormalised = dAxisAngle.accumulatedData();
     DataOperator2D dAxisAngleNormaliser(dAxisAngleNormalised);
     // Normalise by value / sin(y) / sin(yDelta)
-    dAxisAngleNormaliser.operate([&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
-                                 { return (symmetric_ ? value : value * 2.0) / sin(y / DEGRAD) / sin(yDelta / DEGRAD); });
+    dAxisAngleNormaliser.operate(
+        [&](const auto &x, const auto &xDelta, const auto &y, const auto &yDelta, const auto &value)
+        {
+            return (symmetric_ ? value : value * 2.0) / sin(DissolveMath::toRadians(y)) / sin(DissolveMath::toRadians(yDelta));
+        });
     // Normalise by A site population
     dAxisAngleNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density
@@ -105,18 +109,15 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
     dAxisAngleNormaliser.normaliseBySphericalShell();
 
     // Save RDF(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(rABNormalised, exportFileAndFormatRDF_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(rABNormalised, exportFileAndFormatRDF_))
         return ExecutionResult::Failed;
 
     // Save AxisAngle(A-B) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(aABNormalised, exportFileAndFormatAxisAngle_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(aABNormalised, exportFileAndFormatAxisAngle_))
         return ExecutionResult::Failed;
 
     // Save DAxisAngle(A-B) data?
-    if (!DataExporter<Data2D, Data2DExportFileFormat>::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

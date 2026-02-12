@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "items/deserialisers.h"
 #include "base/lineParser.h"
-#include "classes/atomTypeData.h"
 #include "classes/braggReflection.h"
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
 #include "classes/potentialSet.h"
-#include "classes/xRayWeights.h"
 #include "items/legacy.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
@@ -82,10 +79,10 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             }
             return true;
         });
-    registerDeserialiser<std::vector<Vec3<double>>>(
+    registerDeserialiser<std::vector<Vector3>>(
         [](std::any &a, LineParser &parser, const CoreData &coreData)
         {
-            auto &v = std::any_cast<std::vector<Vec3<double>> &>(a);
+            auto &v = std::any_cast<std::vector<Vector3> &>(a);
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             v.clear();
@@ -174,7 +171,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             }
             return true;
         });
-    registerDeserialiser<AtomTypeMix>(simpleDeserialiseCore<AtomTypeMix>);
     registerDeserialiser<Data1D>(simpleDeserialise<Data1D>);
     registerDeserialiser<Data2D>(simpleDeserialise<Data2D>);
     registerDeserialiser<Data3D>(simpleDeserialise<Data3D>);
@@ -182,32 +178,30 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<Histogram2D>(simpleDeserialise<Histogram2D>);
     registerDeserialiser<Histogram3D>(simpleDeserialise<Histogram3D>);
     registerDeserialiser<IntegerHistogram1D>(simpleDeserialise<IntegerHistogram1D>);
-    registerDeserialiser<NeutronWeights>(simpleDeserialiseCore<NeutronWeights>);
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
     registerDeserialiser<PotentialSet>(simpleDeserialiseCore<PotentialSet>);
     registerDeserialiser<SampledData1D>(simpleDeserialise<SampledData1D>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
     registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);
-    registerDeserialiser<Vec3<int>>(
+    registerDeserialiser<Vector3i>(
         [](std::any &a, LineParser &parser, const CoreData &coreData)
         {
-            auto &v = std::any_cast<Vec3<int> &>(a);
+            auto &v = std::any_cast<Vector3i &>(a);
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             v = parser.arg3i(0);
             return true;
         });
-    registerDeserialiser<Vec3<double>>(
+    registerDeserialiser<Vector3>(
         [](std::any &a, LineParser &parser, const CoreData &coreData)
         {
-            auto &v = std::any_cast<Vec3<double> &>(a);
+            auto &v = std::any_cast<Vector3 &>(a);
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             v = parser.arg3d(0);
             return true;
         });
-    registerDeserialiser<XRayWeights>(simpleDeserialiseCore<XRayWeights>);
 
     // Containers of Custom Classes
     registerDeserialiser<std::vector<BraggReflection>>(vectorDeserialise<BraggReflection>);
@@ -225,13 +219,15 @@ bool GenericItemDeserialiser::deserialiseObject(std::any &a, LineParser &parser,
 {
     // Find a suitable deserialiser and call it
     auto it = deserialisers_.find(a.type());
-    if (it == deserialisers_.end())
-        it = legacyDeserialisers_.find(a.type());
-    if (it == legacyDeserialisers_.end())
-        Messenger::exception("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
-                             a.type().name());
+    if (it != deserialisers_.end())
+        return (it->second)(a, parser, coreData);
 
-    return (it->second)(a, parser, coreData);
+    auto legacyIt = legacyDeserialisers_.find(a.type());
+    if (legacyIt != legacyDeserialisers_.end())
+        return (legacyIt->second)(a, parser, coreData);
+
+    Messenger::exception("Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n",
+                         a.type().name());
 }
 
 /*

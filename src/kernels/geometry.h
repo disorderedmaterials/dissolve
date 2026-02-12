@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "base/processPool.h"
 #include "kernels/base.h"
 #include "math/matrix3.h"
 
@@ -19,10 +18,8 @@ class SpeciesTorsion;
 class GeometryKernel : public KernelBase
 {
     public:
-    GeometryKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                   std::optional<double> energyCutoff = {});
-    GeometryKernel(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                   std::optional<double> energyCutoff = {});
+    GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    GeometryKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
     ~GeometryKernel() = default;
 
     /*
@@ -33,7 +30,7 @@ class GeometryKernel : public KernelBase
     double bondEnergy(const SpeciesBond &b, const Atom &i, const Atom &j) const;
     // Calculate SpeciesBond forces
     void bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
-    void bondForces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const;
+    void bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, ForceVector &f) const;
 
     /*
      * Angle Terms
@@ -42,21 +39,20 @@ class GeometryKernel : public KernelBase
     struct AngleParameters
     {
         AngleParameters() = default;
-        double theta_;
-        Vec3<double> dfi_dtheta_;
-        Vec3<double> dfk_dtheta_;
+        double theta;
+        Vector3 dfi_dtheta;
+        Vector3 dfk_dtheta;
     };
 
     public:
     // Return SpeciesAngle energy at Atoms specified
     double angleEnergy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const;
     // Calculate angle force parameters from supplied vectors
-    static AngleParameters calculateAngleForceParameters(Vec3<double> vecji, Vec3<double> vecjk);
+    static AngleParameters calculateAngleForceParameters(Vector3 vecji, Vector3 vecjk);
     // Calculate SpeciesAngle forces
     void angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k, int indexK,
                      ForceVector &f) const;
-    void angleForces(const SpeciesAngle &angle, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
-                     ForceVector &f) const;
+    void angleForces(const SpeciesAngle &angle, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk, ForceVector &f) const;
 
     /*
      * Torsion Terms
@@ -65,13 +61,13 @@ class GeometryKernel : public KernelBase
     struct TorsionParameters
     {
         TorsionParameters() = default;
-        double phi_;
-        Matrix3 dxpj_dij_;
-        Matrix3 dxpj_dkj_;
-        Matrix3 dxpk_dkj_;
-        Matrix3 dxpk_dlk_;
-        Vec3<double> dcos_dxpj_;
-        Vec3<double> dcos_dxpk_;
+        double phi;
+        Matrix3 dxpj_dij;
+        Matrix3 dxpj_dkj;
+        Matrix3 dxpk_dkj;
+        Matrix3 dxpk_dlk;
+        Vector3 dcos_dxpj;
+        Vector3 dcos_dxpk;
     };
     // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index
     void addTorsionForceI(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
@@ -86,13 +82,12 @@ class GeometryKernel : public KernelBase
     // Return SpeciesTorsion energy at Atoms specified
     double torsionEnergy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
     // Calculate torsion force parameters from supplied vectors
-    static TorsionParameters calculateTorsionForceParameters(const Vec3<double> &vecji, const Vec3<double> &vecjk,
-                                                             const Vec3<double> &veckl);
+    static TorsionParameters calculateTorsionForceParameters(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
     // Calculate SpeciesTorsion forces
     void torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
                        int indexK, const Atom &l, int indexL, ForceVector &f) const;
-    void torsionForces(const SpeciesTorsion &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
-                       const Vec3<double> &rl, ForceVector &f) const;
+    void torsionForces(const SpeciesTorsion &torsion, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                       const Vector3 &rl, ForceVector &f) const;
 
     /*
      * Improper Terms
@@ -103,8 +98,8 @@ class GeometryKernel : public KernelBase
     // Calculate SpeciesImproper forces
     void improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
                         int indexK, const Atom &l, int indexL, ForceVector &f) const;
-    void improperForces(const SpeciesImproper &improper, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
-                        const Vec3<double> &rl, ForceVector &f) const;
+    void improperForces(const SpeciesImproper &improper, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                        const Vector3 &rl, ForceVector &f) const;
 
     /*
      * Total Energy

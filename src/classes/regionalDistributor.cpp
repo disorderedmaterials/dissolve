@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/regionalDistributor.h"
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
 #include "classes/molecule.h"
@@ -12,13 +11,11 @@
 // Debug Mode
 const bool debugDistributor = false;
 
-RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &cellArray, const ProcessPool &procPool,
-                                         ProcessPool::DivisionStrategy strategy)
-    : processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray)
+RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &cellArray) : cellArray_(cellArray)
 {
     // Core
-    currentStrategy_ = originalStrategy_;
-    setProcessOrGroupLimits(currentStrategy_);
+    nProcessesOrGroups_ = 1;
+    processOrGroupIndex_ = 0;
     nCycles_ = 0;
 
     // Cells
@@ -65,15 +62,6 @@ std::string_view RegionalDistributor::cellStatusFlag(RegionalDistributor::CellSt
  * Core
  */
 
-// Set process/group limits based on supplied strategy
-bool RegionalDistributor::setProcessOrGroupLimits(ProcessPool::DivisionStrategy strategy)
-{
-    nProcessesOrGroups_ = processPool_.strategyNDivisions(strategy);
-    processOrGroupIndex_ = processPool_.strategyProcessIndex(strategy);
-
-    return false;
-}
-
 // Set up next distribution of Molecules amongst processes/groups, returning false if there are no more Molecules to distribute
 bool RegionalDistributor::cycle()
 {
@@ -112,10 +100,6 @@ bool RegionalDistributor::cycle()
     // Reset the Cell status flags
     std::fill(cellStatusFlags_.begin(), cellStatusFlags_.end(), CellStatusFlag::Unused);
     std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
-
-    // Set the process/group numbers for the original parallel strategy before we try to assign Molecules to groups
-    // In this way we will always allow the parallel strategy to go 'back up' to the original one specified, if we can.
-    setProcessOrGroupLimits(originalStrategy_);
 
     // If there is only one process/group, put all Molecules in it. Otherwise loop over target groups/processes, assigning
     // molecules sequentially to each
@@ -190,13 +174,6 @@ bool RegionalDistributor::cycle()
                 for (processOrGroup = 1; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
                     assignedMolecules_[processOrGroup] = assignedMolecules_[0];
 
-                // Revert to PoolStrategy
-                currentStrategy_ = ProcessPool::PoolStrategy;
-                setProcessOrGroupLimits(currentStrategy_);
-
-                Messenger::printVerbose("Distributor has reverted to PoolStrategy. Target Molecules will be "
-                                        "the same for all processes.\n");
-
                 break;
             }
         }
@@ -218,9 +195,6 @@ bool RegionalDistributor::cycle()
 
     return true;
 }
-
-// Return current parallel strategy, based on last cycle
-ProcessPool::DivisionStrategy RegionalDistributor::currentStrategy() { return currentStrategy_; }
 
 /*
  * Cells
@@ -527,27 +501,3 @@ void RegionalDistributor::setTargetMolecules(const std::vector<int> &targetMolec
 
 // Return next set of Molecule IDs assigned to this process
 std::vector<int> &RegionalDistributor::assignedMolecules() { return assignedMolecules_[processOrGroupIndex_]; }
-
-/*
- * Helper Functions
- */
-
-// Return whether to collect statistics (counts, energies etc. - ensures correct summation)
-bool RegionalDistributor::collectStatistics()
-{
-    return ((currentStrategy_ == ProcessPool::PoolStrategy) || (processPool_.isMaster()));
-}
-
-// Increment integer counter, but only if the process should (depend on the current strategy)
-void RegionalDistributor::increment(int &counter)
-{
-    if (collectStatistics())
-        ++counter;
-}
-
-// Add to double variable, but only if the process should (depend on the current strategy)
-void RegionalDistributor::increase(double &var, double value)
-{
-    if (collectStatistics())
-        var += value;
-}

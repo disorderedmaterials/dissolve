@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/cylindricalGlobalPotential.h"
 #include "classes/configuration.h"
@@ -34,7 +34,7 @@ bool CylindricalGlobalPotentialGeneratorNode::execute(const GeneratorContext &ge
     pot->setPotential(potential_);
 
     // Set origin
-    Vec3<double> origin{origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()};
+    Vector3 origin{origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()};
     if (originIsFractional_)
         cfg->box()->toReal(origin);
     pot->setOrigin(origin);

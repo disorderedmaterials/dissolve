@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -162,21 +162,18 @@ template <class DataType> class DataSourceKeyword : public DataSourceKeywordBase
         return true;
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
-        return fromVector(dataSources_,
-                          [](const auto &item) -> SerialisedValue
-                          {
-                              auto &[dataSourceA, dataSourceB] = item;
-                              if (dataSourceB->dataExists())
-                              {
-                                  return {{"dataSourceA", dataSourceA->serialise()}, {"dataSourceB", dataSourceB->serialise()}};
-                              }
-                              else
-                              {
-                                  return {{"dataSourceA", dataSourceA->serialise()}};
-                              }
-                          });
+        target[tag] = fromVector(dataSources_,
+                                 [](const auto &item) -> SerialisedValue
+                                 {
+                                     auto &[dataSourceA, dataSourceB] = item;
+                                     SerialisedValue result;
+                                     dataSourceA->serialise("dataSourceA", result);
+                                     if (dataSourceB->dataExists())
+                                         dataSourceB->serialise("dataSourceB", result);
+                                     return result;
+                                 });
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override

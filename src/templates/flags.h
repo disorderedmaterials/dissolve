@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -25,6 +25,7 @@ template <class EnumClass> class Flags
         flags_ = flagMask;
         return *this;
     }
+    bool operator==(Flags other) { return flags_ == other.flags_; }
     void operator+=(EnumClass flag) { flags_.set(flag); }
     void operator+=(int flagMask) { flags_ |= flagMask; }
     void operator-=(EnumClass flag) { flags_.reset(flag); }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/changeData.h"
 #include "base/messenger.h"
@@ -56,4 +56,4 @@ void ChangeData::revertPosition()
 bool ChangeData::hasMoved() { return moved_; }
 
 // Return position vector
-Vec3<double> ChangeData::r() const { return r_; }
+Vector3 ChangeData::r() const { return r_; }

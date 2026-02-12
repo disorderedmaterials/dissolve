@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/dataViewer.h"
 
@@ -36,8 +36,8 @@ void DataViewer::render2DOverlay()
         indicatorText += QString("S\\sub{%1}").arg(groupManager_.verticalShiftAmount());
     TextPrimitive indicatorPrimitive;
     indicatorPrimitive.set(&fontInstance_, indicatorText,
-                           Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
-                           TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
+                           Vector3(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
+                           TextPrimitive::TopLeftAnchor, Vector3(), Matrix4(), overlayTextSize, false);
     glColor3d(0.0, 0.0, 0.0);
     Matrix4 identity;
     if (fontInstance_.fontOK())

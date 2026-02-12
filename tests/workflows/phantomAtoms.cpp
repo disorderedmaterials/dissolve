@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/atomicMasses.h"
 #include "generator/add.h"
@@ -33,15 +33,16 @@ TEST_F(PhantomAtomsTest, Basic)
     auto *cfg = coreData.addConfiguration();
     auto &procedure = cfg->generator();
     auto boxLength = 20.0;
-    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vec3<NodeValue>(boxLength, boxLength, boxLength),
-                                                          Vec3<NodeValue>(90, 90, 90));
+    auto box = procedure.createRootNode<BoxGeneratorNode>("Box", Vector3NodeValue(boxLength, boxLength, boxLength),
+                                                          Vector3NodeValue(90, 90, 90));
 
     // Add in some artificial argon atoms
     const auto nMolecules = 100;
     procedure.createRootNode<AddGeneratorNode>("ArtAr", artAr, nMolecules);
 
     // Set up the prior configuration
-    cfg->generate({ProcessPool(), dissolve});
+    dissolve.updatePairPotentials();
+    cfg->generate({dissolve});
 
     // Basic species checks
     EXPECT_EQ(artAr->nAtoms(), 5);

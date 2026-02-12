@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -20,6 +20,8 @@ enum AveragingScheme
 };
 // Return enum options for AveragingScheme
 EnumOptions<Averaging::AveragingScheme> averagingSchemes();
+
+EnumOptions<Averaging::AveragingScheme> getEnumOptions(Averaging::AveragingScheme);
 
 // Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary
 int pruneOldData(GenericList &processingData, std::string_view name, std::string_view prefix, int nSetsInAverage);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "classes/atomType.h"
@@ -54,7 +54,7 @@ void Species::copyBasic(const Species *source, bool copyAtomTypes)
  */
 
 // Set name of the Species
-void Species::setName(std::string_view name) { name_ = name; }
+void Species::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return the name of the Species
 std::string_view Species::name() const { return name_; }
@@ -206,9 +206,10 @@ void Species::print() const
 int Species::version() const { return version_; }
 
 // Express as a serialisable value
-SerialisedValue Species::serialise() const
+void Species::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result;
+    auto &result = target[tag];
+    result["name"] = name_;
     if (forcefield_ != nullptr)
         result["forcefield"] = forcefield_->name().data();
 
@@ -219,15 +220,13 @@ SerialisedValue Species::serialise() const
     Serialisable::fromVector<>(impropers_, "impropers", result);
     Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
     Serialisable::fromVectorToTable<>(sites_, "sites", result);
-
-    return result;
 }
 
 // Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    Serialisable::toVector(
-        node, "atoms", [this, &coreData](const SerialisedValue &atom) { atoms_.emplace_back().deserialise(atom, coreData); });
+    Serialisable::toVector(node, "atoms", [this, &coreData](const SerialisedValue &atom)
+                           { atoms_.emplace_back().deserialise(atom, coreData); });
     if (node.contains("forcefield"))
         forcefield_ = ForcefieldLibrary::forcefield(toml::find<std::string>(node, "forcefield"));
 
@@ -273,7 +272,6 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                             isotopologues_.back()->deserialise(iso, coreData);
                         });
 
-    Serialisable::toMap(node, "sites",
-                        [this, &coreData](const std::string &name, const SerialisedValue &site)
+    Serialisable::toMap(node, "sites", [this, &coreData](const std::string &name, const SerialisedValue &site)
                         { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site, coreData); });
 }

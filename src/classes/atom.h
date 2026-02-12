@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/speciesAtom.h"
 #include "kernels/potentials/base.h"
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <memory>
 #include <vector>
 
@@ -21,33 +21,27 @@ class Atom
      */
     private:
     // Coordinates
-    Vec3<double> r_;
+    Vector3 r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
-    int localTypeIndex_{-1};
-    // Assigned master AtomType index (for pair potential indexing)
-    int masterTypeIndex_{-1};
+    int configurationTypeIndex_{-1};
 
     public:
     // Set coordinates
-    void set(const Vec3<double> r);
+    void set(const Vector3 r);
     // Set coordinates
     void set(double rx, double ry, double rz);
     // Return coordinates
-    const Vec3<double> &r() const;
+    const Vector3 &r() const;
     // Return x-coordinate
     double x() const;
     // Return y-coordinate
     double y() const;
     // Return z-coordinate
     double z() const;
-    // Set local AtomType index
-    void setLocalTypeIndex(int id);
-    // Return local AtomType index
-    int localTypeIndex() const;
-    // Set master AtomType index
-    void setMasterTypeIndex(int id);
-    // Return master AtomType index
-    int masterTypeIndex() const;
+    // Set AtomType index in parent Configuration
+    void setConfigurationTypeIndex(int id);
+    // Return AtomType index in parent Configuration
+    int configurationTypeIndex() const;
     // Return global index of the atom
     int globalIndex() const;
 
@@ -83,11 +77,11 @@ class Atom
      */
     public:
     // Set coordinates
-    void setCoordinates(const Vec3<double> &newr);
+    void setCoordinates(const Vector3 &newr);
     // Set coordinates
     void setCoordinates(double dx, double dy, double dz);
     // Translate coordinates
-    void translateCoordinates(const Vec3<double> &delta);
+    void translateCoordinates(const Vector3 &delta);
     // Translate coordinates
     void translateCoordinates(double dx, double dy, double dz);
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/potentials/spherical.h"
 #include "classes/atom.h"
@@ -7,8 +7,7 @@
 #include "keywords/interactionPotential.h"
 #include "keywords/vec3Double.h"
 
-SphericalPotential::SphericalPotential(const InteractionPotential<Functions1D> &interactionPotential,
-                                       const Vec3<double> &origin)
+SphericalPotential::SphericalPotential(const InteractionPotential<Functions1D> &interactionPotential, const Vector3 &origin)
     : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Spherical), interactionPotential_(interactionPotential),
       origin_(origin)
 {
@@ -35,7 +34,7 @@ void SphericalPotential::setPotential(const InteractionPotential<Functions1D> &p
 }
 
 // Set coordinate origin of potential
-void SphericalPotential::setOrigin(const Vec3<double> &origin) { origin_ = origin; }
+void SphericalPotential::setOrigin(const Vector3 &origin) { origin_ = origin; }
 
 // Return functional form of the potential, as a string
 const std::string SphericalPotential::formString() const { return Functions1D::forms().keyword(interactionPotential_.form()); }
@@ -54,7 +53,7 @@ double SphericalPotential::energy(const Atom &i, const Box *box) const
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void SphericalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
+void SphericalPotential::force(const Atom &i, const Box *box, Vector3 &f) const
 {
     // Get normalised vector and distance
     auto v = box->minimumVector(i.r(), origin_);

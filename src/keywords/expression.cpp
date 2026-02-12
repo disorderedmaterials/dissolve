@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/expression.h"
 #include "base/lineParser.h"
@@ -40,7 +40,7 @@ bool ExpressionKeyword::serialise(LineParser &parser, std::string_view keywordNa
 }
 
 // Express as a serialisable value
-SerialisedValue ExpressionKeyword::serialise() const { return data_.expressionString(); }
+void ExpressionKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_.expressionString(); }
 
 // Read values from a serialisable value
 void ExpressionKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -9,8 +9,7 @@
 class CellDistributor : public Distributor
 {
     public:
-    CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
-                    bool repeatsAllowed);
+    CellDistributor(const CellArray &cellArray, bool repeatsAllowed);
     ~CellDistributor() override;
 
     /*

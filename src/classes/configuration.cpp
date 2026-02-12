@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/cell.h"
@@ -28,7 +27,7 @@ void Configuration::clear()
 
     // Reset box / Cells
     requestedCellDivisionLength_ = 7.0;
-    contentsVersion_.zero();
+    version_.zero();
 
     // Reset definition
     temperature_ = 300.0;
@@ -40,19 +39,10 @@ void Configuration::clear()
  */
 
 // Set name of the Configuration
-void Configuration::setName(std::string_view name)
-{
-    name_ = name;
-
-    // Generate a nice name (i.e. no spaces, slashes etc.)
-    niceName_ = DissolveSys::niceName(name_);
-}
+void Configuration::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return name of the Configuration
 std::string_view Configuration::name() const { return name_; }
-
-// Return nice name of the Configuration
-std::string_view Configuration::niceName() const { return niceName_; }
 
 // Return the current generator
 Generator &Configuration::generator() { return generator_; }
@@ -64,10 +54,10 @@ bool Configuration::generate(const GeneratorContext &generatorContext)
     empty();
 
     // Generate the contents
-    Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
+    Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", name_);
     auto result = generator_.execute({generatorContext, this});
     if (!result)
-        return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
+        return Messenger::error("Failed to generate Configuration '{}'.\n", name_);
     Messenger::print("\n");
 
     // Set-up Cells for the Box
@@ -76,13 +66,10 @@ bool Configuration::generate(const GeneratorContext &generatorContext)
     // Make sure all objects know about each other
     updateObjectRelationships();
 
-    // Finalise atom type populations
-    atomTypePopulations_.finalise();
-
     // Link targeted potentials to atoms
     linkTargetedPotentials();
 
-    ++contentsVersion_;
+    ++version_;
 
     // Sanity check the contents - if we have zero atoms then there's a problem!
     if (nAtoms() == 0)
@@ -114,7 +101,7 @@ bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
     updateCells(generatorContext.potentialMap().range());
 
     // Apply size factor scaling if required
-    applySizeFactor(generatorContext.processPool(), generatorContext.potentialMap());
+    applySizeFactor(generatorContext.potentialMap());
 
     return true;
 }
@@ -126,9 +113,9 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 double Configuration::temperature() const { return temperature_; }
 
 // Express as a serialisable value
-SerialisedValue Configuration::serialise() const
+void Configuration::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue configuration;
+    auto &configuration = target[tag];
 
     if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
         configuration["cellDivisionLength"] = requestedCellDivisionLength_;
@@ -137,9 +124,7 @@ SerialisedValue Configuration::serialise() const
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    configuration["generator"] = generator_;
-
-    return configuration;
+    generator_.serialise("generator", configuration);
 }
 
 // Read values from a serialisable value

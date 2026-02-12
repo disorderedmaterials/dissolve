@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -9,8 +9,8 @@
 #include "classes/atomType.h"
 #include "classes/speciesSiteInstance.h"
 #include "data/elements.h"
+#include "math/vector3.h"
 #include "neta/neta.h"
-#include "templates/vector3.h"
 #include <map>
 #include <vector>
 
@@ -167,9 +167,9 @@ class SpeciesSite : public Serialisable<CoreData &>
 
     private:
     // Calculate geometric centre of atoms in the parent Species
-    Vec3<double> centreOfGeometry(const std::vector<int> &indices) const;
+    Vector3 centreOfGeometry(const std::vector<int> &indices) const;
     // Calculate (mass-weighted) coordinate centre of atoms in the parent Species
-    Vec3<double> centreOfMass(const std::vector<int> &indices) const;
+    Vector3 centreOfMass(const std::vector<int> &indices) const;
 
     public:
     // Create and return Site description from parent Species
@@ -207,6 +207,6 @@ class SpeciesSite : public Serialisable<CoreData &>
     // Write site definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

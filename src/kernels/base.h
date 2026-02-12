@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "classes/potentialMap.h"
+#include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include "templates/vector3.h"
 #include <memory>
 #include <vector>
 
@@ -13,27 +14,21 @@ class Box;
 class CellArray;
 class Configuration;
 class Molecule;
-class PotentialMap;
-class ProcessPool;
 
 // Kernel Base
 class KernelBase
 {
     public:
-    KernelBase(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-               std::optional<double> energyCutoff = {});
-    KernelBase(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-               std::optional<double> energyCutoff = {});
+    KernelBase(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    KernelBase(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
     ~KernelBase() = default;
 
     // Alias for force storage vector
-    using ForceVector = std::vector<Vec3<double>>;
+    using ForceVector = std::vector<Vector3>;
 
     protected:
-    // Process pool over which this kernel operates
-    const ProcessPool &processPool_;
     // Potential map to use
-    const PotentialMap &potentialMap_;
+    const PotentialMap potentialMap_;
     // Squared cutoff distance to use in calculation
     double cutoffDistanceSquared_;
     // Periodic Box

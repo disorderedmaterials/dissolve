@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -98,7 +98,7 @@ class View
     // Logpoint for view rotation inverse matrix calculation
     int viewRotationInversePoint_;
     // Current translation of view
-    Vec3<double> viewTranslation_;
+    Vector3 viewTranslation_;
     // Full view matrix (rotation + translation)
     Matrix4 viewMatrix_;
     // Inverse of view matrix
@@ -152,24 +152,23 @@ class View
     // Translate view matrix by amounts specified
     void translateView(double dx, double dy, double dz);
     // Return current view translation
-    Vec3<double> viewTranslation() const;
+    Vector3 viewTranslation() const;
     // Update view matrix
     void updateViewMatrix();
     // Return view matrix
     const Matrix4 &viewMatrix() const;
     // Project given data coordinates into world coordinates
-    Vec3<double> dataToWorld(Vec3<double> r) const;
+    Vector3 dataToWorld(Vector3 r) const;
     // Project given data coordinates into screen coordinates
-    Vec3<double> dataToScreen(Vec3<double> r) const;
+    Vector3 dataToScreen(Vector3 r) const;
     // Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
-    Vec3<double> dataToScreen(Vec3<double> r, double &delta) const;
+    Vector3 dataToScreen(Vector3 r, double &delta) const;
     // Project given data coordinates into screen coordinates using supplied rotation matrix and translation vector
-    Vec3<double> dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix,
-                              Vec3<double> translation = Vec3<double>()) const;
+    Vector3 dataToScreen(Vector3 r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vector3 translation = Vector3()) const;
     // Return z translation necessary to display coordinates supplied, assuming the identity view matrix
     double calculateRequiredZoom(double xMax, double yMax, double fraction) const;
     // Convert screen coordinates into data space coordinates
-    Vec3<double> screenToData(int x, int y, double z) const;
+    Vector3 screenToData(int x, int y, double z) const;
     // Calculate selection axis coordinate from supplied screen coordinates
     double screenToAxis(int axis, int x, int y, bool clamp) const;
     // Recalculate current view parameters (e.g. for 2D, autostretched 3D etc.)
@@ -179,11 +178,11 @@ class View
     // Set display limits to show all available data
     void showAllData(double xFrac = 1.0, double yFrac = 1.0, double zFrac = 1.0);
     // Zoom to specified region
-    void zoomTo(Vec3<double> limit1, Vec3<double> limit2);
+    void zoomTo(Vector3 limit1, Vector3 limit2);
     // Scale the currently displayed range
     void scaleRange(double factor);
     // Centre 2D view at specified coordinates, optionally moving only by a fraction of the distance required
-    void centre2DAt(Vec3<double> centre, double fraction);
+    void centre2DAt(Vector3 centre, double fraction);
     // Set auto-follow type in effect
     void setAutoFollowType(AutoFollowType aft);
     // Cycle auto-follow type in effect
@@ -204,17 +203,17 @@ class View
     // Axes for the view
     Axes axes_;
     // Pixel 'lengths' of axes in flat views
-    Vec3<double> axisPixelLength_;
+    Vector3 axisPixelLength_;
 
     public:
     // Return data minima over all displayed renderables
-    Vec3<double> dataMinima();
+    Vector3 dataMinima();
     // Return data maxima over all displayed renderables
-    Vec3<double> dataMaxima();
+    Vector3 dataMaxima();
     // Return positive data minima over all displayed renderables
-    Vec3<double> positiveDataMinima();
+    Vector3 positiveDataMinima();
     // Return positive data maxima over all displayed renderables
-    Vec3<double> positiveDataMaxima();
+    Vector3 positiveDataMaxima();
     // Update axis limits to represent data extent of renderables
     void updateAxisLimits(double xFrac = 1.0, double yFrac = 1.0, double zFrac = 1.0);
     // Shift flat view axis limits by specified amounts

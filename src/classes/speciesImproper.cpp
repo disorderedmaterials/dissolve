@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesImproper.h"
 #include "classes/coreData.h"
@@ -206,22 +206,23 @@ bool SpeciesImproper::isSelected() const
  * Interaction Parameters
  */
 
-// Return energy for specified angle
-double SpeciesImproper::energy(double angleInDegrees) const
+// Return energy for specified angle phi (in radians)
+double SpeciesImproper::energy(double phi) const
 {
-    return SpeciesTorsion::energy(angleInDegrees, interactionForm(), interactionParameters());
+    return SpeciesTorsion::energy(phi, interactionForm(), interactionParameters());
 }
 
-// Return force multiplier for specified angle
-double SpeciesImproper::force(double angleInDegrees) const
+// Return force multiplier for specified angle phi (in radians)
+double SpeciesImproper::force(double phi) const
 {
-    return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
+    return SpeciesTorsion::force(phi, interactionForm(), interactionParameters());
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesImproper::serialise() const
+void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
 {
-    auto improper = SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise();
+    SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise(tag, target);
+    auto &improper = target.at(tag);
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -230,9 +231,8 @@ SerialisedValue SpeciesImproper::serialise() const
         improper["k"] = k_->userIndex();
     if (l_ != nullptr)
         improper["l"] = l_->userIndex();
-
-    return improper;
 }
+
 // This method populates the object's members with values read from an 'improper' TOML node
 void SpeciesImproper::deserialise(const SerialisedValue &node, CoreData &coreData)
 {

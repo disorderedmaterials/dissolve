@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
@@ -59,7 +59,7 @@ void VoxelDensityModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             voxelDensityGraph_->createRenderable<RenderableData1D>(std::format("{}//Data1D", module_->name()),
-                                                                   std::format("Data1D//{}", cfg->niceName()), cfg->niceName());
+                                                                   std::format("Data1D//{}", cfg->name()), cfg->name());
     }
 
     voxelDensityGraph_->view().axes().setTitle(0, getData1DAxisLabel().value_or(""));

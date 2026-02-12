@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/svd.h"
 #include "base/messenger.h"
+#include "math/mathFunc.h"
 #include "templates/array2D.h"
 
 namespace SVD

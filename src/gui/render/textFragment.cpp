@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/textFragment.h"
 
-TextFragment::TextFragment(std::string_view text, double scale, Vec3<double> translation, bool isItalic, bool isBold)
+TextFragment::TextFragment(std::string_view text, double scale, Vector3 translation, bool isItalic, bool isBold)
     : text_(text), scale_(scale), translation_(translation), isItalic_(isItalic), isBold_(isBold)
 {
 }
@@ -19,7 +19,7 @@ const std::string &TextFragment::text() const { return text_; }
 double TextFragment::scale() const { return scale_; }
 
 // Return local translation for fragment
-Vec3<double> TextFragment::translation() const { return translation_; }
+Vector3 TextFragment::translation() const { return translation_; }
 
 // Return whether fragment is to be drawn italic
 bool TextFragment::isItalic() const { return isItalic_; }

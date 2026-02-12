@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -7,11 +7,10 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 
 // Run main processing
-Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult ExportPairPotentialsModule::process(Dissolve &dissolve)
 {
     if (!pairPotentialFormat_.hasFilename())
     {
@@ -19,37 +18,29 @@ Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext &modul
         return ExecutionResult::Failed;
     }
 
-    // Only the pool master saves the data
-    if (moduleContext.processPool().isMaster())
+    // Store the current (root) pair potential filename
+    std::string rootPPName{pairPotentialFormat_.filename()};
+
+    for (auto &&[at1, at2, pp] : dissolve.pairPotentials())
     {
-        // Store the current (root) pair potential filename
-        std::string rootPPName{pairPotentialFormat_.filename()};
+        Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n", pairPotentialFormat_.formatDescription(),
+                         at1->name(), at2->name());
 
-        for (auto &&[at1, at2, pp] : moduleContext.dissolve().pairPotentials())
+        // Generate filename
+        pairPotentialFormat_.setFilename(std::format("{}-{}-{}.pp", rootPPName, at1->name(), at2->name()));
+
+        // Append pair potential
+        if (!pairPotentialFormat_.exportData(pp.get()))
         {
-            Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n",
-                             pairPotentialFormat_.formatDescription(), at1->name(), at2->name());
+            Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
+            pairPotentialFormat_.setFilename(rootPPName);
 
-            // Generate filename
-            pairPotentialFormat_.setFilename(std::format("{}-{}-{}.pp", rootPPName, at1->name(), at2->name()));
-
-            // Append pair potential
-            if (!pairPotentialFormat_.exportData(pp.get()))
-            {
-                Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
-                pairPotentialFormat_.setFilename(rootPPName);
-                moduleContext.processPool().decideFalse();
-                return ExecutionResult::Failed;
-            }
-
-            moduleContext.processPool().decideTrue();
+            return ExecutionResult::Failed;
         }
-
-        // Revert root name in FileAndFormat
-        pairPotentialFormat_.setFilename(rootPPName);
     }
-    else if (!moduleContext.processPool().decision())
-        return ExecutionResult::Failed;
+
+    // Revert root name in FileAndFormat
+    pairPotentialFormat_.setFilename(rootPPName);
 
     return ExecutionResult::Success;
 }

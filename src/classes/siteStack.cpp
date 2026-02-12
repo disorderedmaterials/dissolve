@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/siteStack.h"
 #include "classes/box.h"
@@ -36,7 +36,7 @@ const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
 bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 {
     // Are we already up-to-date?
-    if (configurationIndex_ == cfg->contentsVersion())
+    if (configurationIndex_ == cfg->version())
         return true;
 
     // Set the defining information for the stack
@@ -46,19 +46,19 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     sitesHaveOrientation_ = speciesSite_->hasAxes();
 
     // Set new index and clear old arrays
-    configurationIndex_ = configuration_->contentsVersion();
+    configurationIndex_ = configuration_->version();
     sites_.clear();
 
     const auto &instances = site->instances();
     auto *targetSpecies = site->parent();
 
-    auto sPop = configuration_->speciesPopulation(targetSpecies);
+    auto sPop = configuration_->speciesPopulations().valueOr(targetSpecies, 0);
     if (sPop == 0)
         return true;
 
     sites_.reserve(instances.size() * sPop);
 
-    Vec3<double> origin, x, y;
+    Vector3 origin, x, y;
     const auto *box = configuration_->box();
 
     for (const auto &molecule : configuration_->molecules())

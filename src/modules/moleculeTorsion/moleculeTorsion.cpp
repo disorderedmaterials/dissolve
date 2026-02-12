@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "analyser/dataExporter.h"
@@ -12,7 +12,6 @@
 #include "keywords/integer.h"
 #include "keywords/species.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 
 MoleculeTorsionModule::MoleculeTorsionModule() : Module(ModuleTypes::MoleculeTorsion)
 {
@@ -36,7 +35,7 @@ MoleculeTorsionModule::MoleculeTorsionModule() : Module(ModuleTypes::MoleculeTor
 }
 
 // Run set-up stage
-bool MoleculeTorsionModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool MoleculeTorsionModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (!species_)
         return Messenger::error("[MoleculeTorsion] No target species provided.\n");
@@ -58,9 +57,9 @@ bool MoleculeTorsionModule::setUp(ModuleContext &moduleContext, Flags<KeywordBas
 }
 
 // Run main processing
-Module::ExecutionResult MoleculeTorsionModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult MoleculeTorsionModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Calculate phi(ijkl)
     auto [histIJKL, status] = processingData.realiseIf<Histogram1D>("Histo-IJKL", name(), GenericItem::InRestartFileFlag);
@@ -75,10 +74,8 @@ Module::ExecutionResult MoleculeTorsionModule::process(ModuleContext &moduleCont
         if (mol->species() != species_)
             continue;
 
-        auto rj = mol->atom(j_ - 1)->r();
-        auto rk = mol->atom(k_ - 1)->r();
-        histIJKL.bin(Box::torsionInDegrees(box->minimumVector(rj, mol->atom(i_ - 1)->r()), box->minimumVector(rj, rk),
-                                           box->minimumVector(rk, mol->atom(l_ - 1)->r())));
+        histIJKL.bin(box->torsionInDegrees(mol->atom(i_ - 1)->r(), mol->atom(j_ - 1)->r(), mol->atom(k_ - 1)->r(),
+                                           mol->atom(l_ - 1)->r()));
     }
 
     // Accumulate histogram
@@ -94,8 +91,7 @@ Module::ExecutionResult MoleculeTorsionModule::process(ModuleContext &moduleCont
     histogramNormaliser.normaliseSumTo();
 
     // Save phi(ijkl) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dataNormalisedHisto, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

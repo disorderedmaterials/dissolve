@@ -1,19 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "classes/atomTypeMix.h"
-#include "classes/neutronWeights.h"
 #include "math/data1D.h"
-#include "math/histogram1D.h"
-#include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
-#include "templates/array2D.h"
 
 // Forward Declarations
-class Configuration;
-class Interpolator;
+class AtomType;
 
 // Set of Potentials
 class PotentialSet
@@ -32,7 +26,7 @@ class PotentialSet
     {
         Data1D potential;
         double count{0};
-        std::shared_ptr<AtomType> at1, at2;
+        const AtomType *at1, *at2;
     };
     // Map of named potentials to data
     std::map<std::string, PotentialData> potentials_;

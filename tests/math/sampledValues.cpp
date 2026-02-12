@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
 #include "templates/algorithms.h"
+#include "tests/testData.h"
 #include <cmath>
 #include <gtest/gtest.h>
 #include <vector>
@@ -75,6 +76,24 @@ TEST_F(SampledValuesTest, SampledDouble)
     testDouble({9.2, 4.456, 98.7, 42.2, 12.09, 55.62});
 }
 
+TEST_F(SampledValuesTest, SampledDoubleSerialisation)
+{
+    SampledDouble a, b;
+    a += 1.0;
+    a += 2.0;
+    a += 5.0;
+
+    for (auto n = 0; n < 2; ++n)
+    {
+        EXPECT_NO_THROW(tomlRoundTrip(a, b));
+        ASSERT_EQ(a, b);
+        ASSERT_EQ(a.count(), b.count());
+
+        // Add an extra point to test clearing of the old data
+        a += 10.0;
+    }
+}
+
 TEST_F(SampledValuesTest, SampledVector)
 {
     // Data
@@ -116,6 +135,31 @@ TEST_F(SampledValuesTest, SampledVectorAssertions)
     EXPECT_ANY_THROW({ v += std::vector<double>({1, 2, 3, 4}); });
 }
 
+TEST_F(SampledValuesTest, SampledVectorSerialisation)
+{
+    SampledVector a, b;
+    a.initialise(3);
+    a += {1.0, 0.0, 3.0};
+    a += {9.0, 0.0, 2.0};
+    a += {2.0, 6.0, 1.0};
+
+    for (auto n = 0; n < 2; ++n)
+    {
+        EXPECT_NO_THROW(tomlRoundTrip(a, b));
+        ASSERT_EQ(a.count(), b.count());
+        for (auto &&[aValue, aStDev, am2, bValue, bStDev, bm2] :
+             zip(a.values(), a.stDev(), a.m2(), b.values(), b.stDev(), b.m2()))
+        {
+            EXPECT_DOUBLE_EQ(aValue, bValue);
+            EXPECT_DOUBLE_EQ(aStDev, bStDev);
+            EXPECT_DOUBLE_EQ(am2, bm2);
+        }
+
+        // Add extra data to test clearing of the old data
+        a += {5.0, 5.0, 5.0};
+    }
+}
+
 TEST_F(SampledValuesTest, SampledData1D)
 {
     SampledData1D a;
@@ -143,6 +187,29 @@ TEST_F(SampledValuesTest, SampledData1D)
     {
         EXPECT_DOUBLE_EQ(y, d.value());
         EXPECT_DOUBLE_EQ(stDev, d.stDev());
+    }
+}
+
+TEST_F(SampledValuesTest, SampledData1DSerialisation)
+{
+    SampledData1D a, b;
+    a.initialise(3);
+    a += {1.0, 0.0, 3.0};
+    a += {9.0, 0.0, 2.0};
+    a += {2.0, 6.0, 1.0};
+
+    for (auto n = 0; n < 2; ++n)
+    {
+        EXPECT_NO_THROW(tomlRoundTrip(a, b));
+        ASSERT_EQ(a.nValues(), b.nValues());
+        for (auto &&[aValue, aError, bValue, bError] : zip(a.values(), a.errors(), b.values(), b.errors()))
+        {
+            EXPECT_DOUBLE_EQ(aValue, bValue);
+            EXPECT_DOUBLE_EQ(aError, bError);
+        }
+
+        // Add extra data to test clearing of the old data
+        a += {5.0, 5.0, 5.0};
     }
 }
 

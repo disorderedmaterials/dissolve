@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/primitive.h"
 #include "base/messenger.h"
@@ -318,13 +318,13 @@ GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 }
 
 // Define next vertex and normal
-GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba)
+GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, Vector3 &normal, const GLfloat *rgba)
 {
     return defineVertex(x, y, z, normal.x, normal.y, normal.z, rgba);
 }
 
 // Define next vertex and normal
-GLuint Primitive::defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba)
+GLuint Primitive::defineVertex(Vector3 &vertex, Vector3 &normal, const GLfloat *rgba)
 {
     return defineVertex(vertex.x, vertex.y, vertex.z, normal.x, normal.y, normal.z, rgba);
 }
@@ -356,7 +356,7 @@ void Primitive::line(double x1, double y1, double z1, double x2, double y2, doub
 }
 
 // Add line to axis primitive
-void Primitive::line(Vec3<double> v1, Vec3<double> v2, const GLfloat *rgba)
+void Primitive::line(Vector3 v1, Vector3 v2, const GLfloat *rgba)
 {
     defineVertex(v1.x, v1.y, v1.z, 1.0, 0.0, 0.0, rgba);
     defineVertex(v2.x, v2.y, v2.z, 1.0, 0.0, 0.0, rgba);
@@ -370,21 +370,21 @@ void Primitive::sphere(double radius, int nStacks, int nSlices)
 
     for (i = 1; i <= nStacks; ++i)
     {
-        stack0 = PI * (-0.5 + (double)(i - 1) / nStacks);
+        stack0 = M_PI * (-0.5 + (double)(i - 1) / nStacks);
         z0 = sin(stack0);
         zr0 = cos(stack0);
 
-        stack1 = PI * (-0.5 + (double)i / nStacks);
+        stack1 = M_PI * (-0.5 + (double)i / nStacks);
         z1 = sin(stack1);
         zr1 = cos(stack1);
 
         for (j = 1; j <= nSlices; ++j)
         {
-            slice0 = 2 * PI * (double)(j - 1) / nSlices;
+            slice0 = 2 * M_PI * (double)(j - 1) / nSlices;
             x0 = cos(slice0);
             y0 = sin(slice0);
 
-            slice1 = 2 * PI * (double)j / nSlices;
+            slice1 = 2 * M_PI * (double)j / nSlices;
             x1 = cos(slice1);
             y1 = sin(slice1);
 
@@ -414,12 +414,12 @@ void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat
                          double endRadius, int nStacks, int nSlices, bool capStart, bool capEnd)
 {
     int i, j;
-    Vec3<GLfloat> u, v, w, vert[4], normal[2], deltarj, rj;
+    Vector3 u, v, w, vert[4], normal[2], deltarj, rj;
     double d, dtheta, dradius;
 
     // Setup some variables
     rj.set(vx, vy, vz);
-    dtheta = TWOPI / nSlices;
+    dtheta = 2.0 * M_PI / nSlices;
     dradius = (startRadius - endRadius) / nStacks;
     deltarj = rj / nStacks;
 
@@ -483,13 +483,13 @@ void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat
 void Primitive::ring(double radius, double width, int nStacks, int nSlices, int nSegments, bool segmented)
 {
     int n, m, o;
-    Vec3<GLfloat> x1, x2, y(0.0, 0.0, 1.0), normal[4], vert[4], r1, r2;
+    Vector3 x1, x2, y(0.0, 0.0, 1.0), normal[4], vert[4], r1, r2;
     double d1, d2, dtheta, dphi, dpsi, cosphi1, sinphi1, cosphi2, sinphi2;
 
     // Setup some variables
-    dphi = TWOPI / nStacks;
+    dphi = 2.0 * M_PI / nStacks;
     dpsi = dphi / nSegments;
-    dtheta = TWOPI / nSlices;
+    dtheta = 2.0 * M_PI / nSlices;
 
     for (n = 0; n < nStacks; ++n)
     {
@@ -543,13 +543,13 @@ void Primitive::ring(double radius, double width, int nStacks, int nSlices, int 
 void Primitive::circle(double radius, int nStacks, int nSegments, bool segmented)
 {
     int n, o;
-    Vec3<GLfloat> r1, r2;
+    Vector3 r1, r2;
     double dphi, dpsi, cosphi1, sinphi1, cosphi2, sinphi2;
 
     type_ = GL_LINES;
 
     // Setup some variables
-    dphi = TWOPI / nStacks;
+    dphi = 2.0 * M_PI / nStacks;
     dpsi = dphi / nSegments;
 
     for (n = 0; n < nStacks; ++n)
@@ -576,7 +576,7 @@ void Primitive::circle(double radius, int nStacks, int nSegments, bool segmented
 // Create vertices of cross with specified width
 void Primitive::cross(double width)
 {
-    Vec3<double> v;
+    Vector3 v;
     const auto halfWidth = 0.5 * width;
     for (auto i = 0; i < 3; ++i)
     {

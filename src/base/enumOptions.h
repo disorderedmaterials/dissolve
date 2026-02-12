@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -55,8 +55,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Return whether specified option keyword is valid
     bool isValid(std::string_view keyword) const
     {
-        return std::find_if(options_.cbegin(), options_.cend(),
-                            [keyword](auto &option)
+        return std::find_if(options_.cbegin(), options_.cend(), [keyword](auto &option)
                             { return DissolveSys::sameString(keyword, option.keyword()); }) != options_.end();
     }
 
@@ -219,3 +218,6 @@ template <class E> class EnumOptions : public EnumOptionsBase
 
     E deserialise(const SerialisedValue &node) { return enumeration(std::string(node.as_string())); }
 };
+
+template <typename T>
+concept HasEnumOptions = requires(T a) { getEnumOptions(a); };

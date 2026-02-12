@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/node.h"
 #include "base/lineParser.h"
@@ -255,12 +255,12 @@ bool GeneratorNode::serialise(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a serialisable value
-SerialisedValue GeneratorNode::serialise() const
+void GeneratorNode::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
     if (mustBeNamed())
         result["name"] = name_;
-    return keywords_.serialiseOnto(result);
+    target[tag] = keywords_.serialiseOnto(result);
 }
 
 // Read values from a serialisable value

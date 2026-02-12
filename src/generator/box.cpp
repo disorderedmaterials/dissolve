@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/box.h"
 #include "base/lineParser.h"
@@ -9,7 +9,7 @@
 #include "keywords/bool.h"
 #include "keywords/vec3NodeValue.h"
 
-BoxGeneratorNode::BoxGeneratorNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
+BoxGeneratorNode::BoxGeneratorNode(Vector3NodeValue lengths, Vector3NodeValue angles, bool nonPeriodic)
     : GeneratorNode(NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)), nonPeriodic_(nonPeriodic)
 {
     keywords_.setOrganisation("Options", "Definition");

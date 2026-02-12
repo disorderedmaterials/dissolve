@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/site.h"
 #include "base/messenger.h"
@@ -10,13 +10,13 @@
 #include <utility>
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-           const Vec3<double> &origin)
+           const Vector3 &origin)
     : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin)
 {
 }
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-           const Matrix3 &axes, const Vec3<double> &origin)
+           const Matrix3 &axes, const Vector3 &origin)
     : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin), axes_(axes),
       hasAxes_(true)
 {
@@ -24,7 +24,7 @@ Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::s
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
            const SpeciesSiteInstance &instance, const Box *box)
-    : parent_(parent), molecule_(std::move(molecule))
+    : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule))
 {
     origin_ = parent_->originMassWeighted() ? molecule_->centreOfMass(box, instance.originIndices())
                                             : molecule_->centreOfGeometry(box, instance.originIndices());
@@ -63,7 +63,7 @@ const SpeciesSite *Site::parent() const { return parent_; }
 std::optional<int> Site::uniqueSiteIndex() const { return uniqueSiteIndex_; }
 
 // Return site origin
-const Vec3<double> &Site::origin() const { return origin_; }
+const Vector3 &Site::origin() const { return origin_; }
 
 // Return Molecule to which site is related (if relevant)
 std::shared_ptr<const Molecule> Site::molecule() const { return molecule_; }

@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#pragma once
+
+#include "nodes/node.h"
+#include "nodes/number.h"
+
+// Multiply Node
+class MultiplyNode : public Node
+{
+    public:
+    MultiplyNode(Graph *parentGraph);
+    ~MultiplyNode() override = default;
+
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
+
+    /*
+     * Definition
+     */
+    private:
+    // Factor X
+    Number x_;
+    // Factor Y
+    Number y_;
+    // Product of X and Y
+    Number result_;
+
+    /*
+     * Processing
+     */
+    public:
+    // Run main processing
+    NodeConstants::ProcessResult process() override;
+};

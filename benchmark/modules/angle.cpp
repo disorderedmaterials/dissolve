@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/angle/angle.h"
 #include "common/problems.h"
-#include "module/context.h"
 #include <benchmark/benchmark.h>
 
 namespace Benchmarks
@@ -20,16 +19,15 @@ template <SpeciesType speciesType, SpeciesPopulation population> static void BM_
     module.keywords().set("SiteA", siteO);
     module.keywords().set("SiteB", siteH);
     module.keywords().set("SiteC", siteO);
-    module.keywords().set("RangeAB", Vec3<double>{0.9, 1.1, 0.01});
-    module.keywords().set("RangeAB", Vec3<double>{0.0, 5.0, 0.01});
+    module.keywords().set("RangeAB", Vector3{0.9, 1.1, 0.01});
+    module.keywords().set("RangeAB", Vector3{0.0, 5.0, 0.01});
     module.keywords().set("ExcludeSameMoleculeAB", false);
     module.keywords().set("ExcludeSameMoleculeBC", true);
     module.keywords().set("ExcludeSameSiteAC", false);
-    ModuleContext context(problemDef.dissolve().worldPool(), problemDef.dissolve());
     for (auto _ : state)
     {
-        problemDef.configuration()->incrementContentsVersion();
-        module.executeProcessing(context);
+        problemDef.configuration()->notifyAtomicPositionsChanged();
+        module.executeProcessing(problemDef.dissolve());
     }
 }
 

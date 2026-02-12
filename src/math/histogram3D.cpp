@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/histogram3D.h"
 #include "base/lineParser.h"
@@ -11,6 +11,12 @@ Histogram3D::Histogram3D()
     accumulatedData_.addErrors();
 
     clear();
+}
+
+Histogram3D::Histogram3D(const Vector3 &xMinMaxRange, const Vector3 &yMinMaxRange, const Vector3 &zMinMaxRange)
+{
+    initialise(xMinMaxRange.x, xMinMaxRange.y, xMinMaxRange.z, yMinMaxRange.x, yMinMaxRange.y, yMinMaxRange.z, zMinMaxRange.x,
+               zMinMaxRange.y, zMinMaxRange.z);
 }
 
 Histogram3D::Histogram3D(const Histogram3D &source) { (*this) = source; }
@@ -169,7 +175,7 @@ bool Histogram3D::bin(double x, double y, double z)
 }
 
 // Bin specified value (as Vec3), returning success
-bool Histogram3D::bin(Vec3<double> v) { return bin(v.x, v.y, v.z); }
+bool Histogram3D::bin(Vector3 v) { return bin(v.x, v.y, v.z); }
 
 // Return number of values binned over all bins
 long int Histogram3D::nBinned() const { return nBinned_; }
@@ -269,21 +275,6 @@ bool Histogram3D::serialise(LineParser &parser) const
     for (auto &average : averages_)
         if (!average.serialise(parser))
             return false;
-
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Sum histogram data onto all processes
-bool Histogram3D::allSum(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.allSum(bins_.linearArray().data(), bins_.linearArray().size()))
-        return false;
-#endif
 
     return true;
 }

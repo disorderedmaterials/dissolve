@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2025 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -444,6 +444,8 @@ bool hasIsotope(Elements::Element Z, int A);
 std::vector<Isotope> isotopes(Elements::Element Z);
 // Return isotope enum corresponding element and A (if it exists)
 Isotope isotope(Elements::Element Z, int A);
+// Return isotope data corresponding element and A (if it exists)
+const IsotopeData &isotopeData(Elements::Element Z, int A);
 // Return natural isotope for element (if it exists)
 Isotope naturalIsotope(Elements::Element Z);
 // Return element (Z) of Isotope
