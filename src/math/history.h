@@ -69,3 +69,58 @@ template <class T> class History : public Serialisable<>
                                       });
     }
 };
+
+// Serialisable POD Data History
+// History for PODs, e.g. double, int
+template <class T> class PODHistory : public Serialisable<>
+{
+    private:
+    // Stored historical data
+    std::vector<T> history_;
+
+    public:
+    // Push data into the history
+    void push(const T &data, int averagingLength)
+    {
+        // Push the current data onto the history stack
+        history_.emplace_back(data);
+
+        // Prune old data to get to the averagingLength
+        while (history_.size() > averagingLength)
+            history_.erase(history_.begin());
+    }
+    // Push data into the history and return current average
+    T pushAndAverage(const T &data, int averagingLength)
+    {
+        push(data, averagingLength);
+        return average();
+    }
+    // Return the current average value
+    T average() const
+    {
+        // Perform averaging of the datasets that we have
+        T averaged = T();
+
+        auto weight = 1.0 / history_.size();
+        for (auto &data : history_)
+            averaged += *data * weight;
+
+        return averaged;
+    }
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const
+    {
+        if (history_.empty())
+            return;
+
+        SerialisedValue data = {{"history", history_}};
+        target[tag] = data;
+    }
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override { history_ = toml::find<std::vector<T>>(node, "history"); }
+};
