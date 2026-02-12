@@ -139,3 +139,99 @@ EnergyNode::calculateEnergy(const Configuration *cfg, const std::unique_ptr<Ener
 
     return {ppEnergy, geometryEnergy};
 }
+
+// Calculate energy components with simple double-loops for testing
+std::pair<PairPotentialEnergyValue, GeometryEnergyValue>
+EnergyNode::calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
+{
+    PairPotentialEnergyValue ppEnergy;
+    GeometryEnergyValue geometryEnergy;
+
+    const auto *box = cfg->box();
+    const auto &potentialMap = kernel->potentialMap();
+    const auto cutoff = potentialMap.range();
+
+    // Calculate interatomic energy in a loop over defined Molecules
+    const auto molecules = cfg->molecules();
+    for (auto n = 0; n < molecules.size(); ++n)
+    {
+        auto molN = molecules[n];
+
+        // Molecule self-energy
+        for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
+        {
+            auto i = molN->atom(ii);
+
+            for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
+            {
+                auto j = molN->atom(jj);
+
+                // Get interatomic distance
+                auto r = box->minimumDistance(i->r(), j->r());
+                if (r > cutoff)
+                    continue;
+
+                // Get intramolecular scaling of atom pair
+                auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                    ppEnergy.addIntraMolecular(potentialMap.analyticEnergy(*i, *j, r));
+                else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                    ppEnergy.addIntraMolecular(potentialMap.analyticEnergy(*i, *j, r, elec14, vdw14));
+            }
+        }
+
+        // Molecule-molecule energy
+        for (auto m = n + 1; m < molecules.size(); ++m)
+        {
+            auto molM = molecules[m];
+
+            // Double loop over atoms
+            for (auto ii = 0; ii < molN->nAtoms(); ++ii)
+            {
+                auto i = molN->atom(ii);
+
+                for (auto jj = 0; jj < molM->nAtoms(); ++jj)
+                {
+                    auto j = molM->atom(jj);
+
+                    // Get interatomic distance and check cutoff
+                    auto r = box->minimumDistance(i->r(), j->r());
+                    if (r > cutoff)
+                        continue;
+
+                    ppEnergy.addInterMolecular(potentialMap.analyticEnergy(*i, *j, r));
+                }
+            }
+        }
+
+        // Bond energy
+        for (const auto &bond : molN->species()->bonds())
+            geometryEnergy.bondEnergy +=
+                bond.energy(box->minimumDistance(molN->atom(bond.indexI())->r(), molN->atom(bond.indexJ())->r()));
+
+        // Angle energy
+        for (const auto &angle : molN->species()->angles())
+        {
+            geometryEnergy.angleEnergy += angle.energy(box->angleInRadians(
+                molN->atom(angle.indexI())->r(), molN->atom(angle.indexJ())->r(), molN->atom(angle.indexK())->r()));
+        }
+
+        // Torsion energy
+        for (const auto &torsion : molN->species()->torsions())
+        {
+            geometryEnergy.torsionEnergy +=
+                torsion.energy(box->torsionInRadians(molN->atom(torsion.indexI())->r(), molN->atom(torsion.indexJ())->r(),
+                                                     molN->atom(torsion.indexK())->r(), molN->atom(torsion.indexL())->r()));
+        }
+
+        // Improper energy
+        for (const auto &imp : molN->species()->impropers())
+        {
+            geometryEnergy.improperEnergy +=
+                imp.energy(box->torsionInRadians(molN->atom(imp.indexI())->r(), molN->atom(imp.indexJ())->r(),
+                                                 molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r()));
+        }
+    }
+
+    return {ppEnergy, geometryEnergy};
+}

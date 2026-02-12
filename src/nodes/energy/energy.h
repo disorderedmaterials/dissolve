@@ -53,4 +53,7 @@ class EnergyNode : public Node
     static Kernel::EnergyResult
     calculateEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel,
                     Flags<Kernel::CalculationFlags> flags = {});
+    // Calculate energy components with simple double-loops for testing
+    static Kernel::EnergyResult
+    calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel);
 };
