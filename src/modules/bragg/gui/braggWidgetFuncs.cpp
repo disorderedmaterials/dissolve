@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/kVector.h"
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/braggWidget.h"
 #include "templates/algorithms.h"
@@ -44,8 +45,11 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
 
     // Check / update summed atom types data
     if (!reflectionAtomTypesData_)
-        reflectionAtomTypesData_ =
-            dissolve_.processingModuleData().valueIf<const AtomTypeMix>("SummedAtomTypes", module_->name());
+    {
+        auto *targetConfiguration = module_->keywords().getConfiguration("Configuration");
+        if (targetConfiguration)
+            reflectionAtomTypesData_ = targetConfiguration->atomTypePopulations();
+    }
 
     // Need to recreate renderables if requested as the updateType
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
@@ -54,23 +58,22 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
 
         if (ui_.TotalsButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//Total", module_->name()), "Total",
+            graph_->createRenderable<RenderableData1D>(std::format("{}//OriginalBragg//Total", module_->name()), "Total",
                                                        "Totals");
         }
         else if (ui_.PartialsButton->isChecked())
         {
             if (reflectionAtomTypesData_)
             {
-                PairIterator pairs(reflectionAtomTypesData_->get().nItems());
-                for (auto [first, second] : pairs)
-                {
-                    const AtomTypeData &at1 = reflectionAtomTypesData_->get()[first];
-                    const AtomTypeData &at2 = reflectionAtomTypesData_->get()[second];
-                    const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+                dissolve::for_each_pair(ParallelPolicies::seq, *reflectionAtomTypesData_,
+                                        [&](int i, auto &popI, int j, auto &popJ)
+                                        {
+                                            const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
 
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//{}", module_->name(), id),
-                                                               fmt::format("{}", id), "Full");
-                };
+                                            graph_->createRenderable<RenderableData1D>(
+                                                std::format("{}//OriginalBragg//{}", module_->name(), id),
+                                                std::format("{}", id), "Full");
+                                        });
             }
         }
     }
@@ -100,11 +103,13 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
             // Retrieve the atom types list so we know which reflections correspond to which pairs
             if (reflectionAtomTypesData_)
             {
-                const auto &atl = reflectionAtomTypesData_->get();
+                const auto typeVector = *reflectionAtomTypesData_;
                 std::vector<std::string> columnHeaders;
-                columnHeaders.reserve(atl.nItems() * (atl.nItems() + 1) / 2);
-                for (auto [first, second] : PairIterator(atl.nItems()))
-                    columnHeaders.emplace_back(fmt::format("{}-{}", atl[first].atomTypeName(), atl[second].atomTypeName()));
+                columnHeaders.reserve(DissolveMath::triangularIncDiagonals(typeVector.size()));
+                dissolve::for_each_pair(
+                    ParallelPolicies::seq, typeVector, [&](int i, auto &popI, int j, auto &popJ)
+                    { columnHeaders.emplace_back(std::format("{}-{}", popI.first->name(), popJ.first->name())); });
+
                 braggModel_.setIntensityHeaders(columnHeaders);
             }
             else

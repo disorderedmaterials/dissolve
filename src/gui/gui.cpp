@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "base/lineParser.h"
@@ -321,7 +321,7 @@ void DissolveWindow::updateStatusBar()
     {
         statusLabel_->setText("Stopped");
         statusIndicator_->setPixmap(QPixmap(":/general/icons/true.svg"));
-        timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
+        timerLabel_->setText(QString::fromStdString(std::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     else if (ui_.MainStack->currentIndex() == 1)
     {
@@ -425,13 +425,13 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     // Text is set to time elapsed if iterating indefinitely
     if (iterationsRemaining == -1)
     {
-        timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
+        timerLabel_->setText(QString::fromStdString(std::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     // Set ETA text if we can
     else
     {
         auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);
-        timerLabel_->setText(estimatedTime ? QString::fromStdString(fmt::format(
+        timerLabel_->setText(estimatedTime ? QString::fromStdString(std::format(
                                                  "Time remaining: {}", Timer::timeString(estimatedTime.value(), false)))
                                            : defaultTimerText);
     }
@@ -457,4 +457,37 @@ void DissolveWindow::statusLabelLinkClicked(const QString &link)
 {
     if (DissolveSys::sameString(link.toStdString(), "Messages"))
         ui_.MainTabs->setCurrentIndex(0);
+}
+
+/*
+ * Check functions
+ */
+
+// Checks pair potential range against all present box geometries
+void DissolveWindow::checkPairPotentialRange(QWidget *parent)
+{
+    std::optional<double> radius;
+
+    // Return smallest inscribed sphere radius if less than current pair potential range
+    for (const auto &config : dissolve_.coreData().configurations())
+    {
+        // Accounting for size factors
+        double reducedRadius = config->box()->inscribedSphereRadius() / config->requestedSizeFactor().value_or(1.0);
+        if (reducedRadius < radius.value_or(dissolve_.pairPotentialRange()) && config->nAtoms() > 0)
+            radius = reducedRadius;
+    }
+
+    // Prompt to auto-adjust
+    if (radius.has_value())
+    {
+        if (QMessageBox::question(parent, "Warning!",
+                                  QString("Maximum pair potential range exceeds smallest allowed by current Configurations! "
+                                          "Adjust pair potential range to %1?")
+                                      .arg(radius.value()),
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+        {
+            dissolve_.setPairPotentialRange(radius.value());
+            dissolve_.updatePairPotentials();
+        }
+    }
 }

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#pragma once
 
 #include "classes/coreData.h"
 #include "classes/species.h"
@@ -10,9 +12,13 @@
 #include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/error.h"
+#include "math/mathFunc.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
+#include "nodes/graph.h"
+#include "nodes/serialisableData.h"
+#include "nodes/species.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -43,6 +49,11 @@ enum TestFlags
 #define EXPECT_NO_THROW_VERBOSE(CODE_BLOCK) EXPECT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
 #define ASSERT_NO_THROW_VERBOSE(CODE_BLOCK) ASSERT_NO_THROW(PRINT_STDERR_AND_RETHROW(CODE_BLOCK))
 
+/*
+ * Helper Functions
+ */
+
+// Helper function for comparing TOML values with context, but without insisting on a specific ordering of fields.
 void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
 {
     if (toml.is_table())
@@ -51,7 +62,7 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         for (auto &[k, v] : toml.as_table())
         {
             ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
-            compareToml(fmt::format("{}.{}", location, k), v, toml2.at(k));
+            compareToml(std::format("{}.{}", location, k), v, toml2.at(k));
         }
     }
     else if (toml.is_array())
@@ -60,13 +71,28 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
         auto arr2 = toml2.as_array();
         ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
         for (int i = 0; i < arr.size(); ++i)
-            compareToml(fmt::format("{}[{}]", location, i), arr[i], arr2[i]);
+            compareToml(std::format("{}[{}]", location, i), arr[i], arr2[i]);
     }
     else
     {
         EXPECT_EQ(toml, toml2) << location;
     }
 }
+
+// Serialise A and deserialise into B
+template <class T> void tomlRoundTrip(T &a, T &b)
+{
+    SerialisedValue serialised;
+    auto s = std::make_shared<SerialisableClass<T>>("data", a);
+    ASSERT_NO_THROW(serialised = s->serialise());
+
+    auto d = std::make_shared<SerialisableClass<T>>("data", b);
+    ASSERT_NO_THROW(d->deserialise(serialised));
+}
+
+/*
+ * System Test Class
+ */
 
 class DissolveSystemTest
 {
@@ -97,7 +123,6 @@ class DissolveSystemTest
     // Set up simulation ready for running, calling any additional setup function if already set
     template <int flags = 0> void setUp(std::string_view inputFile)
     {
-
         dissolve_.clear();
         if constexpr (Dissolve::toml_testing_flag || !(flags & TomlFailure))
         {
@@ -107,18 +132,18 @@ class DissolveSystemTest
                 Dissolve otherDissolve{otherCoreData};
 
                 if (!otherDissolve.loadInput(inputFile))
-                    throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
+                    throw(std::runtime_error(std::format("Input file '{}' failed to load correctly.\n", inputFile)));
                 if (rewriteCheck_)
                 {
-                    auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                    auto newInput = std::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
                                                 DissolveSys::afterLastChar(inputFile, '/'),
                                                 ::testing::UnitTest::GetInstance()->current_test_info()->name());
                     if (!otherDissolve.saveInput(newInput))
-                        throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
+                        throw(std::runtime_error(std::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
                     otherDissolve.clear();
                     if (!otherDissolve.loadInput(newInput))
-                        throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
+                        throw(std::runtime_error(std::format("Input file '{}' failed to reload correctly.\n", newInput)));
                 }
 
                 // Run any other additional setup functions
@@ -128,12 +153,12 @@ class DissolveSystemTest
                 if (!otherDissolve.prepare())
                     throw(std::runtime_error("Failed to prepare simulation.\n"));
 
-                toml = otherDissolve.serialise();
+                toml = otherDissolve.into_toml();
             }
 
             dissolve_.deserialise(toml);
             dissolve_.setInputFilename(std::string(inputFile));
-            auto repeat = dissolve_.serialise();
+            auto repeat = dissolve_.into_toml();
 
             // Run any other additional setup functions
             if (additionalSetUp_)
@@ -147,18 +172,18 @@ class DissolveSystemTest
         else
         {
             if (!dissolve_.loadInput(inputFile))
-                throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
+                throw(std::runtime_error(std::format("Input file '{}' failed to load correctly.\n", inputFile)));
             if (rewriteCheck_)
             {
-                auto newInput = fmt::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                auto newInput = std::format("{}/TestOutput_{}.{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
                                             DissolveSys::afterLastChar(inputFile, '/'),
                                             ::testing::UnitTest::GetInstance()->current_test_info()->name());
                 if (!dissolve_.saveInput(newInput))
-                    throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
+                    throw(std::runtime_error(std::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
                 dissolve_.clear();
                 if (!dissolve_.loadInput(newInput))
-                    throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
+                    throw(std::runtime_error(std::format("Input file '{}' failed to reload correctly.\n", newInput)));
             }
 
             // Run any other additional setup functions
@@ -180,7 +205,7 @@ class DissolveSystemTest
     void loadRestart(std::string_view restartFile)
     {
         if (!dissolve_.loadRestart(restartFile))
-            throw(std::runtime_error(fmt::format("Restart file '{}' failed to load correctly.\n", restartFile)));
+            throw(std::runtime_error(std::format("Restart file '{}' failed to load correctly.\n", restartFile)));
     }
 
     /*
@@ -209,7 +234,7 @@ class DissolveSystemTest
             // Clear and reload restart file
             if (iterationsDone != nIterations)
             {
-                fmt::print("Resetting at iteration {}...\n", iterationsDone);
+                std::cout << std::format("Resetting at iteration {}...", iterationsDone) << std::endl;
                 setUp<flags>(inputFile);
                 loadRestart(restartFile);
             }
@@ -233,7 +258,7 @@ class DissolveSystemTest
     {
         auto *module = coreData_.findModule(name);
         if (!module)
-            throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
+            throw(std::runtime_error(std::format("Module '{}' does not exist.\n", name)));
         module->setEnabled(enabled);
     }
     // Find and return named module
@@ -241,11 +266,11 @@ class DissolveSystemTest
     {
         auto *module = coreData_.findModule(name);
         if (!module)
-            throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
+            throw(std::runtime_error(std::format("Module '{}' does not exist.\n", name)));
         auto *castModule = dynamic_cast<M *>(module);
         if (!castModule)
             throw(std::runtime_error(
-                fmt::format("Module '{}' did not cast to the target type '{}' (it is of Module type '{}').\n", name,
+                std::format("Module '{}' did not cast to the target type '{}' (it is of Module type '{}').\n", name,
                             typeid(M).name(), ModuleTypes::moduleType(module->type()))));
         return castModule;
     }
@@ -271,6 +296,22 @@ class DissolveSystemTest
 
         return checkDouble(quantity, A.value(), B, threshold);
     }
+    // Test Data1D (by tag and external file data)
+    [[nodiscard]] static bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
+                                          double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        Data1D compare;
+        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(compare))
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType, data, compare).error;
+        auto notOK = std::isnan(error) || error > tolerance;
+        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name,
+                         error, externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
+        return !notOK;
+    }
     // Test Data1D
     [[nodiscard]] static bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
                                           std::string_view nameB, double tolerance = 5.0e-3,
@@ -278,7 +319,7 @@ class DissolveSystemTest
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA, dataB).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA,
                          error, nameB, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
@@ -289,11 +330,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         Data1D dataB;
         if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
-            throw(std::runtime_error(fmt::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
 
         return checkData1D(optDataA->get(), tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
     }
@@ -303,11 +344,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         auto optDataB = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagB);
         if (!optDataB)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagB)));
 
         return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
@@ -318,7 +359,7 @@ class DissolveSystemTest
     {
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Internal data '{}' has error of {:7.3f} with external data '{}' and is {} (threshold is {:6.3e})\n\n",
                          nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
 
@@ -330,11 +371,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         Data3D dataB;
         if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
-            throw(std::runtime_error(fmt::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
 
         return checkData3D(*optDataA, tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
     }
@@ -344,11 +385,11 @@ class DissolveSystemTest
     {
         auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
         if (!optDataA)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
 
         auto optDataB = dissolve_.processingModuleData().search<const Data3D>(tagB);
         if (!optDataB)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagB)));
 
         return checkData3D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
@@ -360,26 +401,25 @@ class DissolveSystemTest
         // Locate the target reference data
         auto optData = dissolve_.processingModuleData().search<const SampledVector>(tag);
         if (!optData)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tag)));
+            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tag)));
         const auto &data = optData->get();
 
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, data.values(), referenceData).error;
-        auto notOK = isnan(error) || error > tolerance;
+        auto notOK = std::isnan(error) || error > tolerance;
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
                          error, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
     // Test Vec3 data
-    static void checkVec3(const Vec3<double> &A, const Vec3<double> &B, double tolerance = 1.0e-6)
+    static void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6)
     {
         EXPECT_NEAR(A.x, B.x, tolerance);
         EXPECT_NEAR(A.y, B.y, tolerance);
         EXPECT_NEAR(A.z, B.z, tolerance);
     }
     // Test Vec3 vector data
-    static void checkVec3Vector(const std::vector<Vec3<double>> &A, const std::vector<Vec3<double>> &B,
-                                double tolerance = 1.0e-6)
+    static void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance = 1.0e-6)
     {
         ASSERT_EQ(A.size(), B.size());
         for (auto n = 0; n < A.size(); ++n)
@@ -388,8 +428,8 @@ class DissolveSystemTest
     // Test Vec3 vector data (by tag and external data)
     void checkVec3Vector(std::string_view tag, ForceImportFileFormat externalForces, double tolerance)
     {
-        auto &vec = dissolve_.processingModuleData().value<std::vector<Vec3<double>>>(tag);
-        std::vector<Vec3<double>> B(vec.size());
+        auto &vec = dissolve_.processingModuleData().value<std::vector<Vector3>>(tag);
+        std::vector<Vector3> B(vec.size());
         ASSERT_TRUE(externalForces.importData(B));
         checkVec3Vector(vec, B, tolerance);
     }
@@ -420,8 +460,8 @@ class DissolveSystemTest
         ASSERT_TRUE(atoms.size() == 2);
         const auto &b = sp->getBond(atoms[0], atoms[1]);
         if (!b)
-            throw(std::runtime_error(fmt::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
-        checkIntramolecularTerms(fmt::format("bond {}", joinStrings(atoms, "-")), expectedParams,
+            throw(std::runtime_error(std::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+        checkIntramolecularTerms(std::format("bond {}", joinStrings(atoms, "-")), expectedParams,
                                  b->get().interactionPotential(), tolerance);
     }
     // Test species angle term
@@ -432,8 +472,8 @@ class DissolveSystemTest
         const auto &a = sp->getAngle(atoms[0], atoms[1], atoms[2]);
         if (!a)
             throw(
-                std::runtime_error(fmt::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
-        checkIntramolecularTerms(fmt::format("angle {}", joinStrings(atoms, "-")), expectedParams,
+                std::runtime_error(std::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+        checkIntramolecularTerms(std::format("angle {}", joinStrings(atoms, "-")), expectedParams,
                                  a->get().interactionPotential(), tolerance);
     }
     // Test species torsion / improper term
@@ -445,13 +485,78 @@ class DissolveSystemTest
         const auto &i = sp->getImproper(atoms[0], atoms[1], atoms[2], atoms[3]);
         if (!t && !i)
             throw(std::runtime_error(
-                fmt::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+                std::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
         else if (t)
-            checkIntramolecularTerms(fmt::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
+            checkIntramolecularTerms(std::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
                                      t->get().interactionPotential(), tolerance);
         else
-            checkIntramolecularTerms(fmt::format("improper {}", joinStrings(atoms, "-")), expectedParams,
+            checkIntramolecularTerms(std::format("improper {}", joinStrings(atoms, "-")), expectedParams,
                                      i->get().interactionPotential(), tolerance);
+    }
+    // Test consistency between the two supplied double-keyed Data1D maps
+    static bool checkDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
+                                    const DoubleKeyedMap<Data1D> &mapB, double testThreshold)
+    {
+        // Check map sizes
+        if (mapA.size() != mapB.size())
+        {
+            std::cout << std::format("Maps containing {} data are of dissimilar size (A = {}, B = {})\n", mapContents,
+                                     mapA.size(), mapB.size());
+            return false;
+        }
+
+        // Check individual data
+        for (auto &[key, dataA] : mapA)
+        {
+            // Find same-keyed data in mapB
+            if (mapB.contains(key))
+            {
+                auto errorReport = Error::percent(dataA, mapB.get(key));
+                std::cout << Error::errorReportString(errorReport) << std::endl;
+                std::cout << std::format("{} '{}' in map B has {} error of {:7.3f}{} with data in map A and is "
+                                         "{} (threshold is {:6.3f}%)\n\n",
+                                         mapContents, key, Error::errorTypes().keyword(errorReport.errorType),
+                                         errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                         errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                if (errorReport.error > testThreshold)
+                    return false;
+            }
+            else
+            {
+                std::cout << std::format("{} '{}' is present in map A but not in map B.\n", mapContents, key);
+                return false;
+            }
+        }
+
+        return true;
+    }
+    // Test consistency, and error, between supplied partial sets
+    static bool checkPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold)
+    {
+        // Full partials
+        if (!checkDoubleKeyedMap("Full Partials", setA.partials(), setB.partials(), testThreshold))
+            return false;
+
+        // Bound partials
+        if (!checkDoubleKeyedMap("Bound Partials", setA.boundPartials(), setB.boundPartials(), testThreshold))
+            return false;
+
+        // Unbound partials
+        if (!checkDoubleKeyedMap("Unbound Partials", setA.unboundPartials(), setB.unboundPartials(), testThreshold))
+            return false;
+
+        // Total
+        auto errorReport = Error::percent(setA.total(), setB.total());
+        std::cout << Error::errorReportString(errorReport) << std::endl;
+        std::cout << std::format(
+            "Total in set B has {} error of {:7.3f}{} with data in set A and is {} (threshold is {:6.3f}%)\n\n",
+            Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+            errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+            errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+        if (errorReport.error > testThreshold)
+            return false;
+
+        return true;
     }
 };
 
@@ -678,27 +783,30 @@ class SmallMolecules
         atH1_ = std::make_shared<AtomType>(Elements::H, "H1");
 
         // Set up N2 species
+        n2_.setName("N2");
         n2_.addAtom(Elements::N, {});
         n2_.addAtom(Elements::N, {1.2, 0.0, 0.0});
         n2_.atom(0).setAtomType(atN_);
         n2_.atom(1).setAtomType(atN_);
         n2_.addBond(0, 1);
         n2A15_ = n2_.addIsotopologue("N15");
-        n2A15_->setAtomTypeIsotope(atN_, Sears91::N_15);
+        n2A15_->setAtomTypeIsotope(atN_.get(), Sears91::N_15);
 
         // Set up H2 species
+        h2_.setName("H2");
         h2_.addAtom(Elements::H, {});
         h2_.addAtom(Elements::H, {0.7, 0.0, 0.0});
         h2_.atom(0).setAtomType(atH1_);
         h2_.atom(1).setAtomType(atH1_);
         h2_.addBond(0, 1);
         d2_ = h2_.addIsotopologue("D2");
-        d2_->setAtomTypeIsotope(atH1_, Sears91::H_2);
+        d2_->setAtomTypeIsotope(atH1_.get(), Sears91::H_2);
 
         // Set up H2O species
+        h2o_.setName("H2O");
         h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
         h2o_.addAtom(Elements::O, {});
-        h2o_.addAtom(Elements::H, {cos(107.4 / DEGRAD), sin(107.4 / DEGRAD), 0.0});
+        h2o_.addAtom(Elements::H, {cos(DissolveMath::toRadians(107.4)), sin(DissolveMath::toRadians(107.4)), 0.0});
         h2o_.atom(0).setAtomType(atHW_);
         h2o_.atom(1).setAtomType(atOW_);
         h2o_.atom(2).setAtomType(atHW_);
@@ -706,7 +814,7 @@ class SmallMolecules
         h2o_.addBond(1, 2);
         h2o_.addAngle(0, 1, 2);
         d2o_ = h2o_.addIsotopologue("D2O");
-        d2o_->setAtomTypeIsotope(atHW_, Sears91::H_2);
+        d2o_->setAtomTypeIsotope(atHW_.get(), Sears91::H_2);
     }
 
     private:
@@ -732,5 +840,25 @@ class SmallMolecules
     Isotopologue *D2() { return d2_; }
     Isotopologue *D2O() { return d2o_; }
 };
+
+// Return "tetrahedral argon" test species
+const Species &tetrahedralArgonSpecies()
+{
+    static Species tetrahedralArgon_;
+    if (tetrahedralArgon_.nAtoms() == 0)
+    {
+        tetrahedralArgon_.setName("TetrahedralArgon");
+        tetrahedralArgon_.addAtom(Elements::Ar, {0.0, 0.0, 0.0});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {0.0, 1.420000, 0.0});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {0.0, 0.474005, -1.338337});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {1.159673, -0.472997, 0.669489});
+        tetrahedralArgon_.addAtom(Elements::Phantom, {-1.159590, -0.472997, 0.669489});
+        tetrahedralArgon_.addBond(0, 1);
+        tetrahedralArgon_.addBond(0, 2);
+        tetrahedralArgon_.addBond(0, 3);
+        tetrahedralArgon_.addBond(0, 4);
+    }
+    return tetrahedralArgon_;
+}
 
 } // namespace UnitTest

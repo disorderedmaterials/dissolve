@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/rangeVector.h"
 #include "base/lineParser.h"
@@ -63,9 +63,9 @@ bool RangeVectorKeyword::serialise(LineParser &parser, std::string_view keywordN
  */
 
 // Express as a serialisable value
-SerialisedValue RangeVectorKeyword::serialise() const
+void RangeVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto &item) -> SerialisedValue { return item.serialise(); });
+    target[tag] = fromVector(data_, [](const auto &item) -> SerialisedValue { return item.into_toml(); });
 }
 
 // Read values from a serialisable value

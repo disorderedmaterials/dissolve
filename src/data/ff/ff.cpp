@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/ff.h"
 #include "classes/atomType.h"
@@ -539,3 +539,6 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
     return true;
 }
+
+// Return available pair potential overrides
+std::vector<PairPotentialOverride> Forcefield::pairPotentialOverrides() { return {}; }

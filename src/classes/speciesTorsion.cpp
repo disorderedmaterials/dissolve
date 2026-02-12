@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesTorsion.h"
 #include "classes/coreData.h"
 #include "classes/speciesAtom.h"
+#include "math/mathFunc.h"
 #include <map>
 
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(TorsionFunctions::Form::None) {}
@@ -170,7 +171,7 @@ int SpeciesTorsion::index(int n) const
     else if (n == 3)
         return indexL();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesTorsion::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesTorsion::index(int). Returning 0...\n", n);
     return 0;
 }
 
@@ -225,12 +226,9 @@ bool SpeciesTorsion::setVanDerWaals14Scaling(double scaling)
 // Return van der Waals 1-4 scaling factor for the interaction
 double SpeciesTorsion::vanDerWaals14Scaling() const { return vdw14Scaling_; }
 
-// Return energy for specified angle and functional form, given supplied parameters
-double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params)
+// Return energy for  specified angle phi (in radians) and functional form, given supplied parameters
+double SpeciesTorsion::energy(double phi, TorsionFunctions::Form form, const std::vector<double> &params)
 {
-    // Convert torsion angle from degrees to radians
-    const double phi = angleInDegrees / DEGRAD;
-
     if (form == TorsionFunctions::Form::None)
         return 0.0;
     else if (form == TorsionFunctions::Form::Cosine)
@@ -244,7 +242,7 @@ double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form
          * 2 : equilibrium angle (degrees)
          * 3 : Sign 's'
          */
-        return params[0] * (1.0 + params[3] * cos(params[1] * phi - (params[2] / DEGRAD)));
+        return params[0] * (1.0 + params[3] * cos(params[1] * phi - DissolveMath::toRadians(params[2])));
     }
     else if (form == TorsionFunctions::Form::Cos3)
     {
@@ -334,7 +332,7 @@ double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form
          * 1 : Periodicity, n
          * 2 : Equilibrium angle, eq (degrees)
          */
-        return 0.5 * params[0] * (1.0 - cos(params[1] * params[2] / DEGRAD) * cos(params[1] * phi));
+        return 0.5 * params[0] * (1.0 - cos(params[1] * DissolveMath::toRadians(params[2])) * cos(params[1] * phi));
     }
     else if (form == TorsionFunctions::Form::FourierN)
     {
@@ -352,18 +350,18 @@ double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form
         return U;
     }
 
-    throw(std::runtime_error(fmt::format("Torsion functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         TorsionFunctions::forms().keyword(form))));
+    Messenger::exception("Torsion functional form '{}' not accounted for, so can't calculate energy.\n",
+                         TorsionFunctions::forms().keyword(form));
 }
 
-// Return energy for specified angle
-double SpeciesTorsion::energy(double angleInDegrees) const
+// Return energy for specified angle phi (in radians)
+double SpeciesTorsion::energy(double phi) const
 {
-    return SpeciesTorsion::energy(angleInDegrees, interactionForm(), interactionParameters());
+    return SpeciesTorsion::energy(phi, interactionForm(), interactionParameters());
 }
 
-// Return force multiplier for specified angle and functional form, given supplied parameters
-double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params)
+// Return force multiplier for specified angle phi (in radians) and functional form, given supplied parameters
+double SpeciesTorsion::force(double phi, TorsionFunctions::Form form, const std::vector<double> &params)
 {
     /*
      * Force of any angle form is given via the chain rule:
@@ -377,9 +375,7 @@ double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form,
      *              dPhi sin(phi)
      */
 
-    // Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle, avoiding step in
-    // 1/sin(phi)
-    double phi = angleInDegrees / DEGRAD;
+    // Calculate derivative w.r.t. change in torsion angle, avoiding step in 1/sin(phi)
     auto sinPhi = sin(phi);
     // TODO Avoid singularities (#542)
     double dphi_dcosphi = -1.0 / DissolveMath::sgn(std::max(1.0e-8, fabs(sinPhi)), sinPhi);
@@ -398,7 +394,7 @@ double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form,
          * 3 : Sign 's'
          */
 
-        return params[0] * params[1] * params[3] * sin(params[1] * phi - (params[2] / DEGRAD)) * dphi_dcosphi;
+        return params[0] * params[1] * params[3] * sin(params[1] * phi - DissolveMath::toRadians(params[2])) * dphi_dcosphi;
     }
     else if (form == TorsionFunctions::Form::Cos3)
     {
@@ -495,7 +491,8 @@ double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form,
          * 2 : Equilibrium angle, eq (degrees)
          */
 
-        return -0.5 * params[0] * params[1] * cos(params[1] * params[2] / DEGRAD) * sin(params[1] * phi) * dphi_dcosphi;
+        return -0.5 * params[0] * params[1] * cos(params[1] * DissolveMath::toRadians(params[2])) * sin(params[1] * phi) *
+               dphi_dcosphi;
     }
     else if (form == TorsionFunctions::Form::FourierN)
     {
@@ -515,20 +512,21 @@ double SpeciesTorsion::force(double angleInDegrees, TorsionFunctions::Form form,
         return -dU_dphi * dphi_dcosphi;
     }
 
-    throw(std::runtime_error(fmt::format("Torsion functional form '{}' not accounted for, so can't calculate force.\n",
-                                         TorsionFunctions::forms().keyword(form))));
+    Messenger::exception("Torsion functional form '{}' not accounted for, so can't calculate force.\n",
+                         TorsionFunctions::forms().keyword(form));
 }
 
-// Return force multiplier for specified angle
-double SpeciesTorsion::force(double angleInDegrees) const
+// Return force multiplier for specified angle phi (in radians)
+double SpeciesTorsion::force(double phi) const
 {
-    return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
+    return SpeciesTorsion::force(phi, interactionForm(), interactionParameters());
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesTorsion::serialise() const
+void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
 {
-    auto torsion = SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise();
+    SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise(tag, target);
+    auto &torsion = target[tag];
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -540,8 +538,6 @@ SerialisedValue SpeciesTorsion::serialise() const
 
     torsion["q14"] = electrostatic14Scaling_;
     torsion["v14"] = vdw14Scaling_;
-
-    return torsion;
 }
 
 // This method populates the object's members with values read from a 'torsion' TOML node

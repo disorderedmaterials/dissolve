@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -57,8 +57,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     AngleFunctions::Form af;
     TorsionFunctions::Form tf;
     SpeciesBond::BondType bt;
-    Vec3<double> boxAngles(90.0, 90.0, 90.0);
-    std::optional<Vec3<double>> boxLengths;
+    Vector3 boxAngles(90.0, 90.0, 90.0);
+    std::optional<Vector3> boxLengths;
     auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
     auto blockDone = false, errorsEncountered = false;
     auto atomVectorFixed = false, bondVectorFixed = false, angleVectorFixed = false, torsionVectorFixed = false,
@@ -398,7 +398,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
+                    iso->setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), A));
                 }
                 break;
             case (Species::SpeciesKeyword::NAngles):
@@ -459,7 +459,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::SpeciesKeyword::Site):
                 // First argument is the name of the site to create - make sure it doesn't exist already
-                site = findSite(parser.argsv(1));
+                site = findSite(DissolveSys::niceName(parser.argsv(1)));
                 if (site)
                 {
                     Messenger::error("The site '{}' already exists on Species '{}', and cannot be redefined.\n",
@@ -565,7 +565,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Create new prefix
-    std::string newPrefix = fmt::format("{}  ", prefix);
+    std::string newPrefix = std::format("{}  ", prefix);
 
     // Atoms
     if (!parser.writeLineF("{}# Atoms\n", newPrefix))
@@ -681,16 +681,15 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             {
                 // Write new 1-4 scale factor line if this torsion has different values
                 if ((torsion.electrostatic14Scaling() != elec14Scaling || torsion.vanDerWaals14Scaling() != vdw14Scaling) &&
-                    !parser.writeLineF(fmt::format("{}{}  {}  {}\n", newPrefix,
-                                                   keywords().keyword(Species::SpeciesKeyword::Scaling14),
-                                                   torsion.electrostatic14Scaling(), torsion.vanDerWaals14Scaling())))
+                    !parser.writeLineF("{}{}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::Scaling14),
+                                       torsion.electrostatic14Scaling(), torsion.vanDerWaals14Scaling()))
                     return false;
 
-                if (!parser.writeLineF(fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
-                                                   keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                                   torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                                   TorsionFunctions::forms().keyword(torsion.interactionForm()),
-                                                   torsion.interactionPotential().parametersAsString())))
+                if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
+                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                       TorsionFunctions::forms().keyword(torsion.interactionForm()),
+                                       torsion.interactionPotential().parametersAsString()))
                     return false;
 
                 elec14Scaling = torsion.electrostatic14Scaling();

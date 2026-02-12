@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <array>
 
 // Column-major 3x3 matrix
@@ -11,6 +11,7 @@ class Matrix3
 {
     public:
     Matrix3();
+    Matrix3(const Vector3 &x, const Vector3 &y, const Vector3 &z);
 
     private:
     // Matrix
@@ -24,7 +25,7 @@ class Matrix3
     Matrix3 operator*(const double a) const;
     Matrix3 operator+(const Matrix3 &B) const;
     Matrix3 operator-(const Matrix3 &B) const;
-    Vec3<double> operator*(const Vec3<double> &v) const;
+    Vector3 operator*(const Vector3 &v) const;
     Matrix3 &operator*=(const Matrix3 &B);
     Matrix3 &operator*=(const double a);
     double &operator[](int);
@@ -41,10 +42,12 @@ class Matrix3
     void print() const;
     // Set the zero matrix
     void zero();
+    // Create orthogonal matrix around supplied single column vector
+    void createFromVector(const Vector3 &v, int columnIndex);
     // Return transpose of current matrix
     Matrix3 &transpose() const;
     // Transform the supplied vector by the transpose of the current matrix
-    Vec3<double> transposeMultiply(const Vec3<double> &v) const;
+    Vector3 transposeMultiply(const Vector3 &v) const;
     // Calculate determinant
     double determinant() const;
     // Invert matrix
@@ -61,23 +64,23 @@ class Matrix3
      */
     public:
     // Copy column contents to supplied Vec3
-    Vec3<double> columnAsVec3(int col) const;
+    Vector3 columnAsVec3(int col) const;
     // Set specified row from supplied triplet of values
     void setRow(int row, double x, double y, double z);
     // Set specified column from supplied values
     void setColumn(int col, double a, double b, double c);
     // Set specified column from supplied Vec3
-    void setColumn(int col, const Vec3<double> vec);
+    void setColumn(int col, const Vector3 vec);
     // Adjust specified column from supplied values
     void adjustColumn(int col, double a, double b, double c);
     // Adjust specified column from supplied Vec3
-    void adjustColumn(int col, const Vec3<double> vec);
+    void adjustColumn(int col, const Vector3 vec);
     // Calculate column magnitude
     double columnMagnitude(int column) const;
     // Multiply single column by single value
     void columnMultiply(int col, double d);
     // Multiply columns by values in supplied vector
-    void columnMultiply(const Vec3<double> vec);
+    void columnMultiply(const Vector3 vec);
     // Normalise specified column to 1
     void columnNormalise(int column);
     // Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
@@ -96,7 +99,7 @@ class Matrix3
     // Create rotation matrix about Z
     void createRotationZ(double angle);
     // Create axis rotation quaternion
-    void createRotationAxis(Vec3<double> axis, double angle, bool normalise);
+    void createRotationAxis(Vector3 axis, double angle, bool normalise);
     // Apply rotation about X axis
     void applyRotationX(double angle);
     // Apply axis rotation quaternion
@@ -109,7 +112,7 @@ class Matrix3
     // Apply a general scaling to the matrix (as glScaled would to)
     void applyScaling(double scalex, double scaley, double scalez);
     // Apply a general scaling to the matrix (as glScaled would to)
-    void applyScaling(Vec3<double> scaling);
+    void applyScaling(Vector3 scaling);
     // Apply an xy-scaling to the matrix
     void applyScalingXY(double scalex, double scaley);
     // Apply an x-scaling to the matrix
@@ -123,15 +126,15 @@ class Matrix3
      * Transforms
      */
     public:
-    // Transform coordinates supplied and return as Vec3<double>
-    Vec3<double> transform(double x, double y, double z) const;
-    // Transform coordinates supplied and return as Vec3<double>
-    Vec3<double> transform(const Vec3<double> r) const;
+    // Transform coordinates supplied and return as Vector3
+    Vector3 transform(double x, double y, double z) const;
+    // Transform coordinates supplied and return as Vector3
+    Vector3 transform(const Vector3 r) const;
 
     /*
      * Special Functions
      */
     public:
     // Construct 'cross-product' matrix of the supplied vector using cyclic permutations
-    void makeCrossProductMatrix(const Vec3<double> &v);
+    void makeCrossProductMatrix(const Vector3 &v);
 };

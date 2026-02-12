@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "math/mathFunc.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 
 // Run main processing
-Module::ExecutionResult TemperatureScheduleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult TemperatureScheduleModule::process(Dissolve &dissolve)
 {
     // Get the current configuration temperature
     auto currentT = targetConfiguration_->temperature();

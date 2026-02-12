@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "gui/speciesTab.h"
@@ -25,10 +25,13 @@ void SpeciesTab::updateInstanceCountGroup()
     else if (site->instances().empty())
         ui_.InstanceCountLabel->setText("0 (no instances generated)");
     else
+    {
         ui_.InstanceCountLabel->setText(
-            QString("%1 (%2 atom%3 each)")
-                .arg(QString::number(site->instances().size()), QString::number(site->instances().front().allIndices().size()),
-                     QString::fromStdString(DissolveSys::plural(site->instances().front().allIndices().size()))));
+            QString("%1 (%2 origin atom%3 each)")
+                .arg(QString::number(site->instances().size()),
+                     QString::number(site->instances().front().originIndices().size()),
+                     QString::fromStdString(DissolveSys::plural(site->instances().front().originIndices().size()))));
+    }
 }
 
 /*
@@ -132,7 +135,7 @@ void SpeciesTab::on_SiteFragmentDescriptionEdit_returnPressed() { on_SiteFragmen
 
 std::string siteName(const SpeciesAtom &i)
 {
-    return i.atomType() ? fmt::format("{} [{}]", i.index() + 1, i.atomType()->name()) : fmt::format("{}", i.index() + 1);
+    return i.atomType() ? std::format("{} [{}]", i.index() + 1, i.atomType()->name()) : std::format("{}", i.index() + 1);
 }
 
 // Update sites tab
@@ -169,6 +172,8 @@ void SpeciesTab::updateSitesTab()
             // Set origin atom indices
             ui_.SiteOriginAtomsEdit->setText(QString::fromStdString(
                 joinStrings(site->staticOriginAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+
+            // Set mass weighted option
             ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
             // Set x axis atom indices
@@ -200,9 +205,16 @@ void SpeciesTab::updateSitesTab()
 
             // Determine if description is valid
             ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
+
+            // Set mass weighted option
+            ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
             break;
     }
 
+    // Set visibility of origin mass weighted check
+    ui_.SiteOriginMassWeightedCheck->setVisible(site->type() != SpeciesSite::SiteType::Dynamic);
+
+    // Update the instance counts
     updateInstanceCountGroup();
 
     // If the current site has changed, also regenerate the SpeciesSite renderable

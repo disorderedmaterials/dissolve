@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "base/processPool.h"
 #include "classes/cellArray.h"
 #include "kernels/geometry.h"
 #include "templates/combinable.h"
@@ -28,10 +27,8 @@ class ForceKernel : public GeometryKernel
     private:
     friend class KernelProducer;
     friend class ExternalPotentialsForceKernel;
-    ForceKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                std::optional<double> energyCutoff = {});
-    ForceKernel(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                std::optional<double> energyCutoff = {});
+    ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    ForceKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
 
     public:
     ~ForceKernel() = default;
@@ -39,7 +36,7 @@ class ForceKernel : public GeometryKernel
     // Create combinable forces storage container
     static dissolve::CombinableContainer<ForceVector> createCombinableForces(ForceVector &parentForces)
     {
-        return {parentForces, [&]() { return std::vector<Vec3<double>>(parentForces.size()); }};
+        return {parentForces, [&]() { return std::vector<Vector3>(parentForces.size()); }};
     }
 
     /*
@@ -64,7 +61,7 @@ class ForceKernel : public GeometryKernel
      */
     private:
     // Calculate extended forces on supplied atom
-    virtual void extendedForces(const Atom &i, Vec3<double> &fVec) const;
+    virtual void extendedForces(const Atom &i, Vector3 &fVec) const;
     // Calculate extended forces on supplied molecule
     virtual void extendedForces(const Molecule &mol, ForceVector &f) const;
 
@@ -83,6 +80,5 @@ class ForceKernel : public GeometryKernel
 
     public:
     // Calculate total forces in the world
-    void totalForces(ForceVector &fUnbound, ForceVector &fBound, ProcessPool::DivisionStrategy strategy,
-                     Flags<ForceCalculationFlags> flags = {}) const;
+    void totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<ForceCalculationFlags> flags = {}) const;
 };

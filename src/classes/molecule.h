@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "templates/vector3.h"
+#include "math/vector3.h"
 #include <functional>
 #include <memory>
 #include <vector>
@@ -60,8 +60,8 @@ class Molecule : public std::enable_shared_from_this<Molecule>
      */
     private:
     // Typedef for manipulation functions
-    using ManipulationFunction = std::function<void(Atom *j, Vec3<double> rJ)>;
-    using ConstManipulationFunction = std::function<void(const Atom *j, Vec3<double> rJ)>;
+    using ManipulationFunction = std::function<void(Atom *j, Vector3 rJ)>;
+    using ConstManipulationFunction = std::function<void(const Atom *j, Vector3 rJ)>;
     // Recursive function for general manipulation
     void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ManipulationFunction action);
     void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ConstManipulationFunction action) const;
@@ -71,20 +71,24 @@ class Molecule : public std::enable_shared_from_this<Molecule>
 
     public:
     // Un-fold molecule so it is not cut by box boundaries, returning the centre of geometry
-    Vec3<double> unFold(const Box *box);
+    Vector3 unFold(const Box *box);
     // Set centre of geometry
-    void setCentreOfGeometry(const Box *box, const Vec3<double> newCentre);
+    void setCentreOfGeometry(const Box *box, const Vector3 &newCentre);
     // Calculate and return centre of geometry
-    Vec3<double> centreOfGeometry(const Box *box) const;
+    Vector3 centreOfGeometry(const Box *box) const;
+    // Calculate and return centre of geometry over supplied atom indices
+    Vector3 centreOfGeometry(const Box *box, const std::vector<int> &indices) const;
+    // Calculate and return centre of mass over supplied atom indices
+    Vector3 centreOfMass(const Box *box, const std::vector<int> &indices) const;
     // Transform molecule with supplied matrix, using centre of geometry as the origin
     void transform(const Box *box, const Matrix3 &transformationMatrix);
     // Transform molecule with supplied matrix about specified origin
-    void transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin);
+    void transform(const Box *box, const Matrix3 &transformationMatrix, const Vector3 &origin);
     // Transform selected atoms with supplied matrix, around specified origin
-    void transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin,
+    void transform(const Box *box, const Matrix3 &transformationMatrix, const Vector3 &origin,
                    const std::vector<int> &targetAtoms);
     // Translate whole molecule by the delta specified
-    void translate(const Vec3<double> delta);
+    void translate(const Vector3 &delta);
     // Translate specified atoms by the delta specified
-    void translate(const Vec3<double> &delta, const std::vector<int> &targetAtoms);
+    void translate(const Vector3 &delta, const std::vector<int> &targetAtoms);
 };

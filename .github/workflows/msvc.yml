@@ -1,0 +1,53 @@
+name: MSVC
+
+on:
+  pull_request:
+    branches:
+    - '*'
+    paths:
+    - 'develop.ps1'
+    - './.github/workflows/build/windows/action.yml'
+
+jobs:
+
+  Checkout:
+    uses: "./.github/workflows/_checkout.yml"
+    with:
+      checkoutRef: ${{ github.event.pull_request.head.sha }}
+
+  MsvcDev:
+    runs-on: windows-latest
+    needs: [Checkout]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: 'Set up Python 3.11'
+      id: setup-python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: 'Set up MSVC toolchain'
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: 'Install dependencies'
+      shell: pwsh
+      working-directory: ${{ github.workspace }}
+      env:
+        qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+        antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+        PythonPath: ${{ steps.setup-python.outputs.python-path }}
+      run: | 
+        Write-Output $env:PythonPath
+        ./develop.ps1 -release -qtVersion $env:qtVersion -antlrVersion $env:antlrVersion -pythonPath $env:PythonPath -generator "Ninja"
+        
+    - name: 'Configure and build with CMake'
+      shell: bash
+      run: |
+        git submodule update --init --recursive
+        cmake --preset GUI-Release-MSVC
+        cmake --build build
+

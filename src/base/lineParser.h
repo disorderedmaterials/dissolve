@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/messenger.h"
-#include "base/processPool.h"
-#include "templates/vector3.h"
-#include <fmt/format.h>
+#include "math/vector3.h"
+#include "math/vector3i.h"
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -16,7 +16,7 @@
 class LineParser
 {
     public:
-    LineParser(const ProcessPool *procPool = nullptr);
+    LineParser();
     ~LineParser();
     // Parse Options Enum
     enum ParseOption
@@ -44,8 +44,6 @@ class LineParser
      * Source / Destination Streams
      */
     private:
-    // Associated process pool (if any)
-    const ProcessPool *processPool_;
     // Current input filename (if any)
     std::string inputFilename_;
     // Current output filename (if any)
@@ -72,8 +70,6 @@ class LineParser
     std::istream *inputStream() const;
 
     public:
-    // Return associated process pool (if any)
-    const ProcessPool *processPool() const;
     // Return filename of current inputFile (if any)
     std::string_view inputFilename() const;
     // Return filename of current outputFile (if any)
@@ -142,56 +138,42 @@ class LineParser
     // Write line to file
     bool writeLine(std::string_view s) const;
     // Write formatted line to file
-    template <typename... Args> bool writeLineF(std::string_view format, Args... args) const
+    template <typename... Args> bool writeLineF(std::format_string<Args...> format, Args... args) const
     {
         auto result = true;
 
-        // Master handles the writing
-        if ((!processPool_) || processPool_->isMaster())
+        if (!directOutput_)
         {
-            if (!directOutput_)
+            if (cachedFile_ == nullptr)
             {
-                if (cachedFile_ == nullptr)
-                {
-                    Messenger::print("Unable to delayed-writeLineF - destination cache is not open.\n");
-                    result = false;
-                    if (processPool_ && (!processPool_->broadcast(result)))
-                        return false;
-                    return false;
-                }
-            }
-            else if (outputFile_ == nullptr)
-            {
-                Messenger::print("Unable to direct-writeLineF - destination file is not open.\n");
-                result = false;
-                if (processPool_ && (!processPool_->broadcast(result)))
-                    return false;
+                Messenger::print("Unable to delayed-writeLineF - destination cache is not open.\n");
                 return false;
             }
-
-            // Format the line and store it
-            if (directOutput_)
-                (*outputFile_) << fmt::format(format, args...);
-            else
-                (*cachedFile_) << fmt::format(format, args...);
+        }
+        else if (outputFile_ == nullptr)
+        {
+            Messenger::print("Unable to direct-writeLineF - destination file is not open.\n");
+            return false;
         }
 
-        // Broadcast result of write
-        if (processPool_ && (!processPool_->broadcast(result)))
-            return false;
+        // Format the line and store it
+        if (directOutput_)
+            (*outputFile_) << std::format(format, std::forward<Args>(args)...);
+        else
+            (*cachedFile_) << std::format(format, std::forward<Args>(args)...);
 
         return result;
     }
     // Print banner comment of fixed width
-    template <typename... Args> bool writeBannerComment(std::string_view format, Args... args)
+    template <typename... Args> bool writeBannerComment(std::format_string<Args...> format, Args... args)
     {
         const auto bannerWidth = 80;
-        static std::string bannerBorder = fmt::format("#{0:=^{1}}#", "", bannerWidth - 2);
+        static std::string bannerBorder = std::format("#{0:=^{1}}#", "", bannerWidth - 2);
 
         // Finally, print the banner
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;
-        if (!writeLineF("#{:^{}}#", fmt::format(format, args...), bannerWidth - 2))
+        if (!writeLineF("#{:^{}}#", std::format(format, std::forward<Args>(args)...), bannerWidth - 2))
             return false;
         if (!writeLineF("\n{}\n", bannerBorder))
             return false;
@@ -231,10 +213,10 @@ class LineParser
     double argd(int i) const;
     // Returns the specified argument as a bool
     bool argb(int i) const;
-    // Return the specified and next two arguments as a Vec3<int>
-    Vec3<int> arg3i(int i) const;
-    // Return the specified and next two arguments as a Vec3<double>
-    Vec3<double> arg3d(int i) const;
+    // Return the specified and next two arguments as a Vector3i
+    Vector3i arg3i(int i) const;
+    // Return the specified and next two arguments as a Vector3
+    Vector3 arg3d(int i) const;
     // Return a vector of double parameters, starting from the specified argument
     std::vector<double> argvd(int i) const;
     // Returns whether the specified argument exists

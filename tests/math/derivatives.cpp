@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
 #include "classes/speciesTorsion.h"
-#include <fmt/format.h>
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -16,10 +16,10 @@ class DerivativesTest : public ::testing::Test
     public:
     DerivativesTest() : bond_(&i_, &j_), angle_(&i_, &j_, &k_), torsion_(&i_, &j_, &k_, &l_)
     {
-        i_.set(Elements::H, Vec3<double>(-1.0, 1.0, 0.0));
-        j_.set(Elements::C, Vec3<double>(-1.0, 0.0, 0.0));
-        k_.set(Elements::C, Vec3<double>(1.0, 0.0, 0.0));
-        l_.set(Elements::O, Vec3<double>(1.0, 1.0, 0.0));
+        i_.set(Elements::H, Vector3(-1.0, 1.0, 0.0));
+        j_.set(Elements::C, Vector3(-1.0, 0.0, 0.0));
+        k_.set(Elements::C, Vector3(1.0, 0.0, 0.0));
+        l_.set(Elements::O, Vector3(1.0, 1.0, 0.0));
     }
 
     protected:
@@ -45,16 +45,26 @@ class DerivativesTest : public ::testing::Test
         const auto dx = xDelta / 100.0;
         while (x <= xMax)
         {
-            // Calculate derivative
-            auto E0 = intraTerm.energy(x - dx);
-            auto E1 = intraTerm.energy(x + dx);
-            auto grad = (E1 - E0) / (2.0 * dx);
-
-            // Compare analytic value - for angle terms, convert gradient to radians and remove factor of -1.0/sin(x) from force
+            // For angle terms, convert gradient to radians and remove factor of -1.0/sin(x) from force
             if (angular)
-                ASSERT_NEAR(-grad * DEGRAD, intraTerm.force(x) * -sin(x / DEGRAD), tolerance_);
+            {
+                // Calculate derivative
+                auto E0 = intraTerm.energy(DissolveMath::toRadians(x - dx));
+                auto E1 = intraTerm.energy(DissolveMath::toRadians(x + dx));
+                auto grad = DissolveMath::toDegrees((E1 - E0) / (2.0 * dx));
+
+                auto theta = DissolveMath::toRadians(x);
+                ASSERT_NEAR(-grad, intraTerm.force(theta) * -sin(theta), tolerance_);
+            }
             else
+            {
+                // Calculate derivative
+                auto E0 = intraTerm.energy(x - dx);
+                auto E1 = intraTerm.energy(x + dx);
+                auto grad = (E1 - E0) / (2.0 * dx);
+
                 ASSERT_NEAR(-grad, intraTerm.force(x), tolerance_);
+            }
 
             x += xDelta;
         }

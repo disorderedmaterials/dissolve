@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "module/module.h"
 #include "base/lineParser.h"
@@ -7,7 +7,6 @@
 #include "classes/coreData.h"
 #include "keywords/configuration.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 
 // Module Types
 
@@ -23,6 +22,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::Bragg, "Bragg"},
                                                                  {ModuleTypes::Checks, "Checks"},
                                                                  {ModuleTypes::CheckSpecies, "CheckSpecies"},
+                                                                 {ModuleTypes::Clustering, "Clustering"},
                                                                  {ModuleTypes::Compare, "Compare"},
                                                                  {ModuleTypes::DAngle, "DAngle"},
                                                                  {ModuleTypes::DataTest, "DataTest"},
@@ -42,6 +42,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::IntraShake, "IntraShake"},
                                                                  {ModuleTypes::MD, "MD"},
                                                                  {ModuleTypes::ModifierOSites, "ModifierOSites"},
+                                                                 {ModuleTypes::MoleculeTorsion, "MoleculeTorsion"},
                                                                  {ModuleTypes::MolShake, "MolShake"},
                                                                  {ModuleTypes::NeutronSQ, "NeutronSQ"},
                                                                  {ModuleTypes::OrientedSDF, "OrientedSDF"},
@@ -51,6 +52,8 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::SQ, "SQ"},
                                                                  {ModuleTypes::TemperatureSchedule, "TemperatureSchedule"},
                                                                  {ModuleTypes::Test, "Test"},
+                                                                 {ModuleTypes::VoxelDensity, "VoxelDensity"},
+                                                                 {ModuleTypes::TR, "TR"},
                                                                  {ModuleTypes::XRaySQ, "XRaySQ"}});
 
 // Return module type string for specified type enumeration
@@ -141,7 +144,7 @@ std::string Module::frequencyDetails(int iteration) const
     if (nToGo == 1)
         return "next iteration";
 
-    return fmt::format("in {} steps time", nToGo);
+    return std::format("in {} steps time", nToGo);
 }
 
 // Set whether the Module is enabled
@@ -230,9 +233,8 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
     else if (!executeIfTargetsUnchanged_)
     {
         // Targets are the same - are _all_ versions different?
-        if (std::any_of(currentTargets.begin(), currentTargets.end(),
-                        [&](const auto *currentTarget)
-                        { return lastProcessedConfigurations_[currentTarget] == currentTarget->contentsVersion(); }))
+        if (std::any_of(currentTargets.begin(), currentTargets.end(), [&](const auto *currentTarget)
+                        { return lastProcessedConfigurations_[currentTarget] == currentTarget->version(); }))
         {
             Messenger::warn("One or more target configurations have not changed since module '{}' was last run, so it "
                             "will not run in the current iteration.\n",
@@ -245,7 +247,7 @@ Module::ExecutionResult Module::checkConfigurationTargets(GenericList &processin
 }
 
 // Run main processing
-Module::ExecutionResult Module::process(ModuleContext &moduleContext) { return ExecutionResult::Failed; }
+Module::ExecutionResult Module::process(Dissolve &dissolve) { return ExecutionResult::Failed; }
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -268,13 +270,13 @@ void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &confi
 }
 
 // Run set-up stage
-bool Module::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
+bool Module::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
 
 // Run main processing stage
-Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
+Module::ExecutionResult Module::executeProcessing(Dissolve &dissolve)
 {
     // Check target configurations
-    auto targetCheckResult = checkConfigurationTargets(moduleContext.dissolve().processingModuleData());
+    auto targetCheckResult = checkConfigurationTargets(dissolve.processingModuleData());
     if (targetCheckResult != ExecutionResult::Success)
         return targetCheckResult;
 
@@ -283,7 +285,7 @@ Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
     timer.start();
 
     // Run main processing routine
-    auto result = process(moduleContext);
+    auto result = process(dissolve);
 
     // Accumulate timing information
     timer.stop();
@@ -294,7 +296,7 @@ Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
     // Update last processed configuration data
     auto &&[currentTargets, expectedTargetCount] = getCurrentTargetConfigurations();
     for (auto *currentTarget : currentTargets)
-        lastProcessedConfigurations_[currentTarget] = currentTarget->contentsVersion();
+        lastProcessedConfigurations_[currentTarget] = currentTarget->version();
 
     return result;
 }
@@ -314,12 +316,13 @@ bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deseria
  */
 
 // Express as a serialisable value
-SerialisedValue Module::serialise() const
+void Module::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result{{"type", ModuleTypes::moduleType(type_)}, {"frequency", frequency_}};
+    SerialisedValue result = {{"type", ModuleTypes::moduleType(type_)}, {"frequency", frequency_}};
     if (!enabled_)
         result["disabled"] = true;
-    return keywords_.serialiseOnto(result);
+    result = keywords_.serialiseOnto(result);
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

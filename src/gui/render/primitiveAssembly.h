@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -50,9 +50,8 @@ class PrimitiveAssembly
      */
     public:
     // Create cylinder bond between supplied atoms in specified assembly
-    void createCylinderBond(Primitive *bondPrimitive, Vec3<double> rI, Vec3<double> rJ, Vec3<double> vij,
-                            const std::array<float, 4> &colI, const std::array<float, 4> &colJ, bool drawFromAtoms,
-                            double radialScaling);
+    void createCylinderBond(Primitive *bondPrimitive, Vector3 rI, Vector3 rJ, Vector3 vij, const std::array<float, 4> &colI,
+                            const std::array<float, 4> &colJ, bool drawFromAtoms, double radialScaling);
 
     /*
      * GL

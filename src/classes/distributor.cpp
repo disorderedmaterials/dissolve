@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/distributor.h"
 #include "base/messenger.h"
-#include "base/processPool.h"
 #include "classes/cell.h"
 
-Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool,
-                         ProcessPool::DivisionStrategy strategy, bool allowRepeats)
-    : cellArray_(cellArray), processPool_(procPool), divisionStrategy_(strategy)
+Distributor::Distributor(int nObjects, const CellArray &cellArray, bool allowRepeats) : cellArray_(cellArray)
 {
     // Cells
     cellLocks_.resize(cellArray_.nCells());
@@ -24,8 +21,8 @@ Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &
     nUnavailableInstances_ = 0;
     nChangeBroadcastsRequired_ = 0;
 
-    nProcessesOrGroups_ = processPool_.strategyNDivisions(divisionStrategy_);
-    processOrGroupIndex_ = processPool_.strategyProcessIndex(divisionStrategy_);
+    nProcessesOrGroups_ = 1;
+    processOrGroupIndex_ = 0;
     lastObjectDistributed_.resize(nProcessesOrGroups_);
     std::fill(lastObjectDistributed_.begin(), lastObjectDistributed_.end(), Distributor::NoneAvailable);
     lastHardLockedCells_ = new std::vector<const Cell *>[nProcessesOrGroups_];
@@ -177,9 +174,8 @@ bool Distributor::canHardLock(int cellIndex) const
     auto *cell = cellArray_.cell(cellIndex);
 
     // For the specified Cell to be hard lockable its neighbours must not be HardLocked
-    if (std::find_if(cellArray_.neighbours(*cell).begin(), cellArray_.neighbours(*cell).end(),
-                     [&](const auto &nbr)
-                     { return cellLocks_[nbr.neighbour_.index()] == HardLocked; }) != cellArray_.neighbours(*cell).end())
+    if (std::find_if(cellArray_.neighbours(*cell).begin(), cellArray_.neighbours(*cell).end(), [&](const auto &nbr)
+                     { return cellLocks_[nbr.cell.index()] == HardLocked; }) != cellArray_.neighbours(*cell).end())
         return false;
 
     return true;
@@ -200,35 +196,35 @@ std::vector<const Cell *> Distributor::surroundingCells(std::vector<const Cell *
         // Local Cell neighbours
         for (auto &nbr : cellArray_.neighbours(*centralCells[n]))
         {
-            if (nbr.requiresMIM_)
+            if (nbr.requiresMIM)
                 continue;
 
             // Check presence in central cells list
-            if (std::find(centralCells.begin(), centralCells.end(), &nbr.neighbour_) != centralCells.end())
+            if (std::find(centralCells.begin(), centralCells.end(), &nbr.cell) != centralCells.end())
                 continue;
 
             // Check presence in surrounding cells list
-            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.neighbour_) != surroundingCells.end())
+            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.cell) != surroundingCells.end())
                 continue;
 
-            surroundingCells.push_back(&nbr.neighbour_);
+            surroundingCells.push_back(&nbr.cell);
         }
 
         // MIM Cell neighbours
         for (auto &nbr : cellArray_.neighbours(*centralCells[n]))
         {
-            if (!nbr.requiresMIM_)
+            if (!nbr.requiresMIM)
                 continue;
 
             // Check presence in central cells list
-            if (std::find(centralCells.begin(), centralCells.end(), &nbr.neighbour_) != centralCells.end())
+            if (std::find(centralCells.begin(), centralCells.end(), &nbr.cell) != centralCells.end())
                 continue;
 
             // Check presence in surrounding cells list
-            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.neighbour_) != surroundingCells.end())
+            if (std::find(surroundingCells.begin(), surroundingCells.end(), &nbr.cell) != surroundingCells.end())
                 continue;
 
-            surroundingCells.push_back(&nbr.neighbour_);
+            surroundingCells.push_back(&nbr.cell);
         }
     }
 

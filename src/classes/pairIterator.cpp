@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairIterator.h"
+#include "math/mathFunc.h"
 #include <cmath>
 
 PairIterator::PairIterator(int size, int index) : size_(size)
@@ -62,4 +63,4 @@ PairIterator &PairIterator::operator+=(difference_type forward)
 PairIterator::value_type PairIterator::operator[](difference_type i) const { return *(*this + i); }
 
 PairIterator PairIterator::begin() const { return PairIterator(size_, 0); }
-PairIterator PairIterator::end() const { return PairIterator(size_, size_ * (size_ + 1) / 2); }
+PairIterator PairIterator::end() const { return PairIterator(size_, DissolveMath::triangularIncDiagonals(size_)); }

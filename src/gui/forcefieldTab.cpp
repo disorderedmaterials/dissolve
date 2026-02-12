@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/forcefieldTab.h"
 #include "classes/atomType.h"
@@ -122,10 +122,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             SLOT(pairPotentialDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
     connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(pairPotentialSelectionChanged(const QItemSelection &, const QItemSelection &)));
-
-    /*
-     * Pair Potential Overrides
-     */
 
     // Set delegates for table columns
     ui_.OverridesTable->setItemDelegateForColumn(
@@ -500,12 +496,12 @@ void ForcefieldTab::pairPotentialSelectionChanged(const QItemSelection &current,
         return;
 
     ui_.PairPotentialsPlotWidget->dataViewer()->createRenderable<RenderableData1D>(
-        pp->shortRangePotential(), fmt::format("Short Range {}-{}", pp->nameI(), pp->nameJ()));
+        pp->shortRangePotential(), std::format("Short Range {}-{}", pp->nameI(), pp->nameJ()));
     ui_.PairPotentialsPlotWidget->dataViewer()
-        ->createRenderable<RenderableData1D>(pp->coulombPotential(), fmt::format("Coulomb {}-{}", pp->nameI(), pp->nameJ()))
+        ->createRenderable<RenderableData1D>(pp->coulombPotential(), std::format("Coulomb {}-{}", pp->nameI(), pp->nameJ()))
         ->setColour(StockColours::BlueStockColour);
     ui_.PairPotentialsPlotWidget->dataViewer()
-        ->createRenderable<RenderableData1D>(pp->derivative(), fmt::format("Derivative {}-{}", pp->nameI(), pp->nameJ()))
+        ->createRenderable<RenderableData1D>(pp->derivative(), std::format("Derivative {}-{}", pp->nameI(), pp->nameJ()))
         ->setColour(StockColours::RedStockColour);
 }
 

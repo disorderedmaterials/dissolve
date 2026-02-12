@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -41,7 +41,7 @@ template <typename Key, typename Value> class OrderedMap
 
     public:
     // Constructors
-    OrderedMap(){};
+    OrderedMap() {};
     // Constructor from an iterator off a std::map or std::unorderedmap
     template <typename Iter> OrderedMap(Iter begin, Iter end)
     {

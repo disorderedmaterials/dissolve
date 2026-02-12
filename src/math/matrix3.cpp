@@ -1,11 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/matrix3.h"
 #include "base/messenger.h"
+#include "math/mathFunc.h"
 #include <array>
 
 Matrix3::Matrix3() { setIdentity(); }
+
+Matrix3::Matrix3(const Vector3 &x, const Vector3 &y, const Vector3 &z)
+{
+    matrix_[0] = x.x;
+    matrix_[1] = x.y;
+    matrix_[2] = x.z;
+    matrix_[3] = y.x;
+    matrix_[4] = y.y;
+    matrix_[5] = y.z;
+    matrix_[6] = z.x;
+    matrix_[7] = z.y;
+    matrix_[8] = z.z;
+}
 
 /*
  * Operators
@@ -55,7 +69,7 @@ Matrix3 Matrix3::operator-(const Matrix3 &B) const
     return A;
 }
 
-Vec3<double> Matrix3::operator*(const Vec3<double> &v) const
+Vector3 Matrix3::operator*(const Vector3 &v) const
 {
     return {v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6], v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7],
             v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8]};
@@ -114,6 +128,30 @@ void Matrix3::print() const
 // Set zero matrix
 void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
 
+// Create orthogonal matrix around supplied single column vector
+void Matrix3::createFromVector(const Vector3 &v, int columnIndex)
+{
+    setColumn(columnIndex, v);
+    const auto v2 = v.orthogonal();
+    switch (columnIndex)
+    {
+        case 0:
+            setColumn(1, v2);
+            setColumn(2, v * v2);
+            break;
+        case 1:
+            setColumn(0, v2);
+            setColumn(2, v * v2);
+            break;
+        case 2:
+            setColumn(0, v2);
+            setColumn(1, v * v2);
+            break;
+        default:
+            throw(std::runtime_error("Invalid column index.\n"));
+    }
+}
+
 // Return transpose of current matrix
 Matrix3 &Matrix3::transpose() const
 {
@@ -131,7 +169,7 @@ Matrix3 &Matrix3::transpose() const
 }
 
 // Transform the supplied vector by the transpose of the current matrix
-Vec3<double> Matrix3::transposeMultiply(const Vec3<double> &v) const
+Vector3 Matrix3::transposeMultiply(const Vector3 &v) const
 {
     return {v.x * matrix_[0] + v.y * matrix_[1] + v.z * matrix_[2], v.x * matrix_[3] + v.y * matrix_[4] + v.z * matrix_[5],
             v.x * matrix_[6] + v.y * matrix_[7] + v.z * matrix_[8]};
@@ -247,9 +285,9 @@ double Matrix3::maxAbs() const
  */
 
 // Copy column contents to supplied Vec3
-Vec3<double> Matrix3::columnAsVec3(int col) const
+Vector3 Matrix3::columnAsVec3(int col) const
 {
-    Vec3<double> vec(matrix_[col * 3], matrix_[col * 3 + 1], matrix_[col * 3 + 2]);
+    Vector3 vec(matrix_[col * 3], matrix_[col * 3 + 1], matrix_[col * 3 + 2]);
     return vec;
 }
 
@@ -270,7 +308,7 @@ void Matrix3::setColumn(int col, double a, double b, double c)
 }
 
 // Set specified column from supplied Vec3
-void Matrix3::setColumn(int col, const Vec3<double> vec)
+void Matrix3::setColumn(int col, const Vector3 vec)
 {
     matrix_[col * 3] = vec.x;
     matrix_[col * 3 + 1] = vec.y;
@@ -286,7 +324,7 @@ void Matrix3::adjustColumn(int col, double a, double b, double c)
 }
 
 // Adjust specified column from supplied Vec3
-void Matrix3::adjustColumn(int col, const Vec3<double> vec)
+void Matrix3::adjustColumn(int col, const Vector3 vec)
 {
     matrix_[col * 3] += vec.x;
     matrix_[col * 3 + 1] += vec.y;
@@ -311,7 +349,7 @@ void Matrix3::columnMultiply(int col, double d)
 }
 
 // Multiply first three columns by values in supplied vector
-void Matrix3::columnMultiply(Vec3<double> vec)
+void Matrix3::columnMultiply(Vector3 vec)
 {
     columnMultiply(0, vec.x);
     columnMultiply(1, vec.y);
@@ -365,7 +403,7 @@ void Matrix3::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 // Create rotation matrix about X
 void Matrix3::createRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = 1.0;
@@ -384,7 +422,7 @@ void Matrix3::createRotationX(double angle)
 // Create XY rotation matrix
 void Matrix3::createRotationXY(double anglex, double angley)
 {
-    double cosx, sinx, cosy, siny, thetax = anglex / DEGRAD, thetay = angley / DEGRAD;
+    double cosx, sinx, cosy, siny, thetax = DissolveMath::toRadians(anglex), thetay = DissolveMath::toRadians(angley);
     cosx = cos(thetax);
     cosy = cos(thetay);
     sinx = sin(thetax);
@@ -405,7 +443,7 @@ void Matrix3::createRotationXY(double anglex, double angley)
 // Create rotation matrix about Y
 void Matrix3::createRotationY(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -424,7 +462,7 @@ void Matrix3::createRotationY(double angle)
 // Create rotation matrix about Z
 void Matrix3::createRotationZ(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle);
     cosx = cos(theta);
     sinx = sin(theta);
     matrix_[0] = cosx;
@@ -441,9 +479,9 @@ void Matrix3::createRotationZ(double angle)
 }
 
 // Create axis rotation quaternion
-void Matrix3::createRotationAxis(Vec3<double> axis, double angle, bool normalise)
+void Matrix3::createRotationAxis(Vector3 axis, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, oneMcosx;
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), oneMcosx;
     if (normalise)
     {
         double mag = sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
@@ -470,7 +508,7 @@ void Matrix3::createRotationAxis(Vec3<double> axis, double angle, bool normalise
 // Apply rotation about X axis
 void Matrix3::applyRotationX(double angle)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[3];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[3];
     cosx = cos(theta);
     sinx = sin(theta);
 
@@ -491,7 +529,7 @@ void Matrix3::applyRotationX(double angle)
 // Apply axis rotation quaternion
 void Matrix3::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-    double cosx, sinx, theta = angle / DEGRAD, temp[6], multipliers[9];
+    double cosx, sinx, theta = DissolveMath::toRadians(angle), temp[6], multipliers[9];
     if (normalise)
     {
         double mag = sqrt(ax * ax + ay * ay + az * az);
@@ -544,7 +582,7 @@ void Matrix3::applyScaling(double scalex, double scaley, double scalez)
 }
 
 // Apply a general scaling to the matrix (as glScaled would to)
-void Matrix3::applyScaling(Vec3<double> scaling)
+void Matrix3::applyScaling(Vector3 scaling)
 {
     applyScalingX(scaling.x);
     applyScalingY(scaling.y);
@@ -586,20 +624,20 @@ void Matrix3::applyScalingZ(double scale)
  * Transforms
  */
 
-// Transform coordinates supplied and return as Vec3<double>
-Vec3<double> Matrix3::transform(double x, double y, double z) const
+// Transform coordinates supplied and return as Vector3
+Vector3 Matrix3::transform(double x, double y, double z) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = x * matrix_[0] + y * matrix_[3] + z * matrix_[6];
     result.y = x * matrix_[1] + y * matrix_[4] + z * matrix_[7];
     result.z = x * matrix_[2] + y * matrix_[5] + z * matrix_[8];
     return result;
 }
 
-// Transform coordinates supplied and return as Vec3<double>
-Vec3<double> Matrix3::transform(Vec3<double> r) const
+// Transform coordinates supplied and return as Vector3
+Vector3 Matrix3::transform(Vector3 r) const
 {
-    Vec3<double> result;
+    Vector3 result;
     result.x = r.x * matrix_[0] + r.y * matrix_[3] + r.z * matrix_[6];
     result.y = r.x * matrix_[1] + r.y * matrix_[4] + r.z * matrix_[7];
     result.z = r.x * matrix_[2] + r.y * matrix_[5] + r.z * matrix_[8];
@@ -611,9 +649,9 @@ Vec3<double> Matrix3::transform(Vec3<double> r) const
  */
 
 // Construct 'cross-product' matrix of the supplied vector using cyclic permutations
-void Matrix3::makeCrossProductMatrix(const Vec3<double> &v)
+void Matrix3::makeCrossProductMatrix(const Vector3 &v)
 {
     for (auto n = 0; n < 3; ++n)
-        setColumn(n, Vec3<double>::unit(DissolveMath::cp3(n + 1)) * v.get(DissolveMath::cp3(n + 2)) -
-                         Vec3<double>::unit(DissolveMath::cp3(n + 2)) * v.get(DissolveMath::cp3(n + 1)));
+        setColumn(n, Vector3::unit(DissolveMath::cp3(n + 1)) * v.get(DissolveMath::cp3(n + 2)) -
+                         Vector3::unit(DissolveMath::cp3(n + 2)) * v.get(DissolveMath::cp3(n + 1)));
 }

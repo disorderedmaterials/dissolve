@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/siteStack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/speciesSite.h"
-#include "data/atomicMasses.h"
 #include <algorithm>
 #include <numeric>
 
@@ -33,36 +32,11 @@ const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
  * Generation
  */
 
-// Calculate geometric centre of atoms in the given molecule
-Vec3<double> SiteStack::centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices)
-{
-    const auto ref = mol.atom(indices.front())->r();
-    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
-                           [&ref, &mol, box](const auto &acc, const auto idx)
-                           { return acc + box->minimumImage(mol.atom(idx)->r(), ref); }) /
-           indices.size();
-}
-
-// Calculate (mass-weighted) coordinate centre of atoms in the given molecule
-Vec3<double> SiteStack::centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices)
-{
-    auto mass = AtomicMass::mass(mol.atom(indices.front())->speciesAtom()->Z());
-    const auto ref = mol.atom(indices.front())->r();
-    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
-                                [&ref, &mol, box](const auto &acc, const auto idx)
-                                {
-                                    auto mass = AtomicMass::mass(mol.atom(idx)->speciesAtom()->Z());
-                                    return std::pair<Vec3<double>, double>(
-                                        acc.first + box->minimumImage(mol.atom(idx)->r(), ref) * mass, acc.second + mass);
-                                });
-    return sums.first / sums.second;
-}
-
 // Create stack for specified Configuration and site
 bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 {
     // Are we already up-to-date?
-    if (configurationIndex_ == cfg->contentsVersion())
+    if (configurationIndex_ == cfg->version())
         return true;
 
     // Set the defining information for the stack
@@ -72,23 +46,19 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     sitesHaveOrientation_ = speciesSite_->hasAxes();
 
     // Set new index and clear old arrays
-    configurationIndex_ = configuration_->contentsVersion();
+    configurationIndex_ = configuration_->version();
     sites_.clear();
-    orientedSites_.clear();
 
     const auto &instances = site->instances();
     auto *targetSpecies = site->parent();
 
-    auto sPop = configuration_->speciesPopulation(targetSpecies);
+    auto sPop = configuration_->speciesPopulations().valueOr(targetSpecies, 0);
     if (sPop == 0)
         return true;
 
-    if (sitesHaveOrientation_)
-        orientedSites_.reserve(instances.size() * sPop);
-    else
-        sites_.reserve(instances.size() * sPop);
+    sites_.reserve(instances.size() * sPop);
 
-    Vec3<double> origin, x, y;
+    Vector3 origin, x, y;
     const auto *box = configuration_->box();
 
     for (const auto &molecule : configuration_->molecules())
@@ -99,26 +69,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         auto index = 0;
         for (const auto &instance : instances)
         {
-            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, instance.originIndices())
-                                                        : centreOfGeometry(*molecule, box, instance.originIndices());
-
-            if (sitesHaveOrientation_)
-            {
-                // Get vector from site origin to x-axis reference point and normalise it
-                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, instance.xAxisIndices()));
-                x.normalise();
-
-                // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, instance.yAxisIndices()));
-                y.orthogonalise(x);
-                y.normalise();
-
-                orientedSites_.emplace_back(speciesSite_, index, molecule, origin, x, y, x * y);
-            }
-            else
-                sites_.emplace_back(speciesSite_, index, molecule, origin);
-
-            ++index;
+            sites_.emplace_back(speciesSite_, index++, molecule, instance, box);
         }
     }
     return true;
@@ -129,7 +80,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
  */
 
 // Return number of sites in the stack
-int SiteStack::nSites() const { return (sitesHaveOrientation_ ? orientedSites_.size() : sites_.size()); }
+int SiteStack::nSites() const { return sites_.size(); }
 
 // Return site with index specified
-const Site &SiteStack::site(int index) const { return (sitesHaveOrientation_ ? orientedSites_.at(index) : sites_.at(index)); }
+const Site &SiteStack::site(int index) const { return sites_.at(index); }

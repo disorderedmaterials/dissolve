@@ -1,0 +1,3 @@
+[submodule "QuickPlot"]
+	path = QuickPlot
+	url = https://github.com/disorderedmaterials/QuickPlot.git

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/registry.h"
 #include "modules/accumulate/accumulate.h"
@@ -9,6 +9,7 @@
 #include "modules/axisAngle/axisAngle.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/bragg/bragg.h"
+#include "modules/clustering/clustering.h"
 #include "modules/compare/compare.h"
 #include "modules/dAngle/dAngle.h"
 #include "modules/energy/energy.h"
@@ -28,6 +29,7 @@
 #include "modules/md/md.h"
 #include "modules/modifierOSites/modifierOSites.h"
 #include "modules/molShake/molShake.h"
+#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/orientedSDF.h"
 #include "modules/qSpecies/qSpecies.h"
@@ -36,6 +38,8 @@
 #include "modules/sq/sq.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 #include "modules/test/test.h"
+#include "modules/tr/tr.h"
+#include "modules/voxelDensity/voxelDensity.h"
 #include "modules/xRaySQ/xRaySQ.h"
 
 ModuleRegistry::ModuleRegistry()
@@ -50,6 +54,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<BenchmarkModule>(ModuleTypes::Benchmark, "Perform benchmarking on a variety of functions",
                                       "Checks & Tests");
     registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
+    registerProducer<ClusteringModule>(ModuleTypes::Clustering, "Analyse clustering between sites", "Analysis");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
     registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
@@ -76,6 +81,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<IntraShakeModule>(ModuleTypes::IntraShake,
                                        "Perform Monte Carlo shakes on intramolecular terms within molecules", "Evolution");
     registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
+    registerProducer<MoleculeTorsionModule>(ModuleTypes::MoleculeTorsion,
+                                            "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
     registerProducer<OrientedSDFModule>(
@@ -90,6 +97,10 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
                                                 "Adjust the temperature of a configuration during a simulation", "Evolution");
     registerProducer<TestModule>(ModuleTypes::Test, "Development Module");
+    registerProducer<TRModule>(ModuleTypes::TR, "Calculate the partial and total t(r)", "Correlation Functions");
+    registerProducer<VoxelDensityModule>(
+        ModuleTypes::VoxelDensity,
+        "Describe distribution of atomic number, mass, and scattering length density across unit cell voxels", "Analysis");
     registerProducer<XRaySQModule>(ModuleTypes::XRaySQ, "Calculate x-ray-weighted S(Q)", "Correlation Functions");
 }
 

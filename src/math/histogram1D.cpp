@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/histogram1D.h"
 #include "base/lineParser.h"
@@ -13,6 +13,8 @@ Histogram1D::Histogram1D()
 
     clear();
 }
+
+Histogram1D::Histogram1D(const Vector3 &minMaxRange) { initialise(minMaxRange.x, minMaxRange.y, minMaxRange.z); }
 
 Histogram1D::Histogram1D(const Histogram1D &source) { (*this) = source; }
 
@@ -245,16 +247,24 @@ bool Histogram1D::serialise(LineParser &parser) const
     return true;
 }
 
-/*
- * Parallel Comms
- */
-
-// Sum histogram data onto all processes
-bool Histogram1D::allSum(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer)
+// Express as a serialisable value
+void Histogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
-#ifdef PARALLEL
-    if (!procPool.allSum(bins_.data(), nBins_, ProcessPool::PoolProcessesCommunicator, commsTimer))
-        return false;
-#endif
-    return true;
+    target[tag] = {{"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_},
+                   {"nBinned", nBinned_}, {"nMissed", nMissed_}, {"averages", averages_}};
+}
+
+// Read values from a serialisable value
+void Histogram1D::deserialise(const SerialisedValue &node)
+{
+    clear();
+
+    initialise(toml::find<double>(node, "minimum"), toml::find<double>(node, "maximum"), toml::find<double>(node, "binWidth"));
+
+    nBinned_ = toml::find<long>(node, "nBinned");
+    nMissed_ = toml::find<long>(node, "nMissed");
+
+    averages_ = toml::find<std::vector<SampledDouble>>(node, "averages");
+
+    updateAccumulatedData();
 }

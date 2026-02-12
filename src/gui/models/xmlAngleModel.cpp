@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
-
-#define _USE_MATH_DEFINES
-#include <math.h>
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/xmlAngleModel.h"
+#include "math/mathFunc.h"
 #include <pugixml.hpp>
 
 XmlAngleModel::XmlAngleModel() {}
@@ -101,7 +99,7 @@ std::vector<ForcefieldAngleTerm> XmlAngleModel::toVector()
     std::vector<ForcefieldAngleTerm> result;
     for (auto &angle : angles_)
         result.emplace_back(std::get<0>(angle), std::get<1>(angle), std::get<2>(angle), AngleFunctions::Form::Harmonic,
-                            fmt::format("k={} eq={}", std::get<4>(angle), std::get<3>(angle)));
+                            std::format("k={} eq={}", std::get<4>(angle), std::get<3>(angle)));
     return result;
 }
 

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "classes/species.h"
 #include "gui/addForcefieldTermsDialog.h"
 #include "gui/copySpeciesTermsDialog.h"
+#include "gui/createGrapheneSpeciesDialog.h"
 #include "gui/editSpeciesDialog.h"
 #include "gui/gui.h"
 #include "gui/importCIFDialog.h"
@@ -38,7 +39,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
     // Create the new Species, and add a single atom at {0,0,0}
     auto *newSpecies = dissolve_.coreData().addSpecies();
-    newSpecies->addAtom(Z, Vec3<double>());
+    newSpecies->addAtom(Z, Vector3());
     newSpecies->setName(DissolveSys::uniqueName(Elements::symbol(Z), dissolve().coreData().species(),
                                                 [&](const auto &sp) { return newSpecies == sp.get() ? "" : sp->name(); }));
 
@@ -91,6 +92,20 @@ void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
     }
     else
         dissolve_.coreData().removeSpecies(newSpecies);
+}
+
+void DissolveWindow::on_SpeciesCreateGrapheneAction_triggered(bool checked)
+{
+    CreateGrapheneSpeciesDialog createGrapheneSpeciesDialog(this, dissolve_);
+
+    if (createGrapheneSpeciesDialog.exec() == QDialog::Accepted)
+    {
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+
+        ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
+    }
 }
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)

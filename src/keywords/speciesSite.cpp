@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/speciesSite.h"
 #include "base/lineParser.h"
@@ -36,7 +36,7 @@ std::optional<int> SpeciesSiteKeyword::maxArguments() const { return 2; }
 bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Species (first argument)
-    Species *sp = coreData.findSpecies(parser.argsv(startArg));
+    Species *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(startArg)));
     if (!sp)
     {
         Messenger::error("Error setting SpeciesSite - no Species named '{}' exists.\n", parser.argsv(startArg));
@@ -44,7 +44,7 @@ bool SpeciesSiteKeyword::deserialise(LineParser &parser, int startArg, const Cor
     }
 
     // Find specified Site (second argument) in the Species
-    data_ = sp->findSite(parser.argsv(startArg + 1));
+    data_ = sp->findSite(DissolveSys::niceName(parser.argsv(startArg + 1)));
     if (!data_)
         return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                 parser.argsv(startArg + 1), sp->name());
@@ -88,9 +88,9 @@ void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesSiteKeyword::serialise() const
+void SpeciesSiteKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return {{"species", data_->parent()->name()}, {"site", data_->name()}};
+    target[tag] = {{"species", data_->parent()->name()}, {"site", data_->name()}};
 }
 
 // Read values from a serialisable value
@@ -103,7 +103,7 @@ void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData
     Species *sp = coreData.findSpecies(species);
     if (!sp)
     {
-        throw toml::type_error(fmt::format("Error setting SpeciesSite - no Species named '{}' exists.\n", species),
+        throw toml::type_error(std::format("Error setting SpeciesSite - no Species named '{}' exists.\n", species),
                                node.location());
     }
 
@@ -111,12 +111,12 @@ void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData
     data_ = sp->findSite(site);
     if (!data_)
         throw toml::type_error(
-            fmt::format("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n", site, sp->name()),
+            std::format("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n", site, sp->name()),
             node.location());
 
     if (axesRequired_ && (!data_->hasAxes()))
         throw toml::type_error(
-            fmt::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
+            std::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
                         data_->name(), name()),
             node.location());
 }

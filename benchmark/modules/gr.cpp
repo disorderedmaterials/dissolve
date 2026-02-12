@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/gr/gr.h"
 #include "benchmark/benchmark.h"
@@ -20,8 +20,8 @@ static void BM_CalculateGR(benchmark::State &state)
     bool upToDate = false;
     for (auto _ : state)
     {
-        grModule->calculateGR(problemDef.dissolve().processingModuleData(), problemDef.dissolve().worldPool(),
-                              problemDef.configuration(), method, rdfRange, 0.05, upToDate);
+        grModule->calculateGR(problemDef.dissolve().processingModuleData(), problemDef.configuration(), method, rdfRange, 0.05,
+                              upToDate);
         problemDef.dissolve().processingModuleData().clearAll();
     }
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/range.h"
 
@@ -49,7 +49,10 @@ bool Range::contains(double d) const { return isDefined() && (d >= minimum_) && 
 bool Range::isDefined() const { return (minimum_ && maximum_); }
 
 // Express as a serialisable value
-SerialisedValue Range::serialise() const { return {{"min", minimum()}, {"max", maximum()}}; }
+void Range::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"min", minimum()}, {"max", maximum()}};
+}
 
 // Read values from a serialisable value
 void Range::deserialise(const SerialisedValue &node)

@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesImproperModel.h"
 #include "classes/coreData.h"
 
-SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, const CoreData &coreData)
-    : impropers_(impropers), coreData_(coreData)
-{
-}
+SpeciesImproperModel::SpeciesImproperModel() : impropers_(nullptr) {}
 
 void SpeciesImproperModel::reset()
 {
@@ -15,10 +12,17 @@ void SpeciesImproperModel::reset()
     endResetModel();
 }
 
+void SpeciesImproperModel::setImpropers(std::vector<SpeciesImproper> &impropers)
+{
+    beginResetModel();
+    impropers_ = &impropers;
+    endResetModel();
+}
+
 int SpeciesImproperModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return impropers_.size();
+    return impropers_->size();
 }
 
 int SpeciesImproperModel::columnCount(const QModelIndex &parent) const
@@ -32,7 +36,7 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
-    auto &improper = impropers_[index.row()];
+    auto &improper = impropers_->at(index.row());
 
     if (role == Qt::UserRole)
         return QVariant::fromValue(&improper);
@@ -87,14 +91,14 @@ Qt::ItemFlags SpeciesImproperModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexL)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::Form && impropers_[index.row()].masterTerm())
+    if (index.column() > DataType::Form && impropers_->at(index.row()).masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
 bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    auto &improper = impropers_[index.row()];
+    auto &improper = impropers_->at(index.row());
     switch (index.column())
     {
         case (DataType::IndexI):
@@ -103,26 +107,15 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
         case (DataType::IndexL):
             return false;
         case (DataType::Form):
-            if (value.toString().at(0) == '@')
+            try
             {
-                auto master = coreData_.getMasterImproper(value.toString().toStdString());
-                if (master)
-                    improper.setMasterTerm(&master->get());
-                else
-                    return false;
+                auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
+                improper.detachFromMasterTerm();
+                improper.setInteractionForm(tf);
             }
-            else
+            catch (std::runtime_error &e)
             {
-                try
-                {
-                    auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
-                    improper.detachFromMasterTerm();
-                    improper.setInteractionForm(tf);
-                }
-                catch (std::runtime_error &e)
-                {
-                    return false;
-                }
+                return false;
             }
             break;
         case (DataType::Parameters):

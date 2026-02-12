@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/gaussFit.h"
 #include "base/lineParser.h"
 #include "math/data1D.h"
 #include "math/error.h"
 #include "math/filters.h"
+#include "math/mathFunc.h"
 #include "math/mc.h"
 #include "math/praxis.h"
 #include "templates/algorithms.h"
@@ -56,8 +57,8 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
      * preFactor argument of approximation().
      */
 
-    auto c = FWHM / TWOSQRT2LN2;
-    auto gfac = (sqrt(0.5 * PI) / (4.0 * PI * PI)) / c;
+    auto c = FWHM / TwoSqrt2Ln2;
+    auto gfac = (sqrt(0.5 * M_PI) / (4.0 * M_PI * M_PI)) / c;
     if ((x > 0.0) && (xCentre > 0.0))
         gfac /= x * xCentre;
     else
@@ -68,7 +69,7 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
 // Return Fourier transform of Gaussian at specified x value
 double GaussFit::gaussianFT(double x, double xCentre, double A, double FWHM) const
 {
-    auto c = FWHM / TWOSQRT2LN2;
+    auto c = FWHM / TwoSqrt2Ln2;
     const auto xCx = xCentre * x;
     return xCx > 0.0 ? A * exp(-(x * x * c * c) / 2.0) * sin(xCx) / (xCx) : A * exp(-(x * x * c * c) / 2.0);
 }
@@ -134,7 +135,7 @@ bool GaussFit::saveFTGaussians(std::string_view filenamePrefix, double xStep) co
     for (auto n = 0; n < nGaussians_; ++n)
     {
         LineParser parser;
-        if (!parser.openOutput(fmt::format("{}-{:03d}.gauss", filenamePrefix, n)))
+        if (!parser.openOutput(std::format("{}-{:03d}.gauss", filenamePrefix, n)))
             return false;
 
         auto xCentre = x_[n];

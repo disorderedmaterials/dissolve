@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -23,10 +23,8 @@ enum DataType
 
 enum Roles
 {
-    Display = Qt::DisplayRole,
-    Edit = Qt::EditRole,
-    Icon = Qt::DecorationRole,
-    HasMaster = Qt::UserRole
+    Raw = Qt::UserRole,
+    Query = Qt::UserRole + 1
 };
 }; // namespace MasterTermModelData
 
@@ -44,7 +42,7 @@ class MasterTermModel : public QAbstractTableModel
 
     protected:
     // Icon return function
-    std::function<bool(std::string_view termName)> iconFunction_;
+    std::function<bool(std::string_view termName)> queryFunction_;
 
     public:
     // Return model data, by type, for specified term index
@@ -52,7 +50,7 @@ class MasterTermModel : public QAbstractTableModel
     // Set model data, by type, for specified term index
     virtual bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) = 0;
     // Set function to return QIcon for item
-    void setIconFunction(std::function<bool(std::string_view termName)> func);
+    void setQueryFunction(std::function<bool(std::string_view termName)> func);
 
     /*
      * QAbstractItemModel overrides

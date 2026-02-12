@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/epsr/epsr.h"
 #include "classes/configuration.h"
@@ -64,13 +64,13 @@ TEST_F(EPSRModuleTest, Water3NInpA)
     // Estimated Partials
     EXPECT_TRUE(systemTest.checkData1D(
         "EPSR01//EstimatedSQ//OW-OW",
-        {"epsr25/water1000-neutron-xray/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 0.24));
+        {"epsr25/water1000-neutron/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
         "EPSR01//EstimatedSQ//OW-HW",
-        {"epsr25/water1000-neutron-xray/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 8.0e-3));
+        {"epsr25/water1000-neutron/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-4));
     EXPECT_TRUE(systemTest.checkData1D(
         "EPSR01//EstimatedSQ//HW-HW",
-        {"epsr25/water1000-neutron-xray/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.4e-2));
+        {"epsr25/water1000-neutron/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.0e-4));
 
     // DeltaFQ Fits
     EXPECT_TRUE(systemTest.checkData1D(
@@ -221,7 +221,7 @@ TEST_F(EPSRModuleTest, ScatteringMatrix)
     equalWeights.setRow(5, {1.0 - feedback, 0.0, 0.0});
     equalWeights.setRow(6, {0.0, 1.0 - feedback, 0.0});
     equalWeights.setRow(7, {0.0, 0.0, 1.0 - feedback});
-    testMatrices(equalWeights, W.matrix(), 1.0e-6);
+    testMatrices(equalWeights, W->matrix(0.0), 1.0e-6);
 }
 
 TEST_F(EPSRModuleTest, DataWeighting)
@@ -247,7 +247,7 @@ TEST_F(EPSRModuleTest, DataWeighting)
     unequalWeights.setRow(5, {1.0 - feedback, 0.0, 0.0});
     unequalWeights.setRow(6, {0.0, 1.0 - feedback, 0.0});
     unequalWeights.setRow(7, {0.0, 0.0, 1.0 - feedback});
-    testMatrices(unequalWeights, W.matrix(), 1.0e-6);
+    testMatrices(unequalWeights, W->matrix(0.0), 1.0e-6);
 }
 
 } // namespace UnitTest

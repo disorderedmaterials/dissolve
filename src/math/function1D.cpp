@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
-#define _USE_MATH_DEFINES
 #include "math/function1D.h"
+#include "classes/pairPotential.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
-#include <math.h>
-
 #include <map>
+#include <variant>
 
 /*
  * One-Dimensional Function Definition
@@ -286,6 +286,44 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
             });
 
         /*
+         * Modified (Camellone) BKS Potential
+         *
+         * Parameters:
+         * INPUT  0 = A
+         * INPUT  1 = B
+         * INPUT  2 = C
+         * INPUT  3 = D
+         * INPUT  4 = E
+         *
+         *                         C       D      E
+         * F(x) = A exp(-B * x) - ---- + ----- - ----
+         *                        x**6   x**12   x**8
+         *
+         */
+        functions[Functions1D::Form::Buckingham128] =
+            Function1DDefinition({"A", "B", "C", "D", "E"},
+                                 [](double x, double omega, const std::vector<double> &params)
+                                 {
+                                     auto B = exp(-params[1] * x);
+                                     auto C = params[2] / pow(x, 6.0);
+                                     auto D = params[3] / pow(x, 12.0);
+                                     auto E = params[4] / pow(x, 8.0);
+                                     return (params[0] * B - C + D - E);
+                                 });
+        /*
+         * dYdX = -B * A exp(-B * x) + 6 * C * x**-7 - 12 * D * x**-13 + 8 * E * x**-9
+         */
+        functions[Functions1D::Form::Buckingham128].setDerivativeFunction(
+            [](double x, double omega, const std::vector<double> &params)
+            {
+                auto expo = exp(-params[1] * x);
+                auto C = 6 * params[2] * pow(x, -7.0);
+                auto D = 12 * params[3] * pow(x, -13.0);
+                auto E = 8 * params[4] * pow(x, -9.0);
+                return (-params[1] * params[0] * expo + C - D + E);
+            });
+
+        /*
          * GaussianPotential with prefactor, located at specific x.
          * Intended for use as a potential override.
          *
@@ -337,6 +375,53 @@ const std::map<Functions1D::Form, Function1DDefinition> &functions1D()
          */
         functions[Functions1D::Form::Harmonic].setDerivativeFunction(
             [](double x, double omega, const std::vector<double> &params) { return params[0] * x; });
+
+        /*
+         * Coulombic Potential
+         *
+         * Parameters:
+         * INPUT  0 = q1
+         * INPUT  1 = q2
+         *
+         *                     q1 * q2
+         * F(x)= COULCONVERT * -------
+         *                        x
+         */
+        functions[Functions1D::Form::Coulombic] =
+            Function1DDefinition({"q1", "q2"}, [](double x, double omega, const std::vector<double> &params)
+                                 { return (PairPotential::CoulConvert * params[0] * params[1]) / x; });
+        /*
+         * dYdX(x) = - COULCONVERT * q1 * q2 * r**-2
+         */
+        functions[Functions1D::Form::Coulombic].setDerivativeFunction(
+            [](double x, double omega, const std::vector<double> &params)
+            { return (-PairPotential::CoulConvert * params[0] * params[1]) / (x * x); });
+
+        /*
+         * Shifted Coulomb Potential
+         *
+         * Parameters:
+         * INPUT  0 = q1
+         * INPUT  1 = q2
+         * INPUT  2 = range
+         *
+         *                     q1 * q2
+         * F(x)= COULCONVERT * -------
+         *                        x
+         */
+        functions[Functions1D::Form::ShiftedCoulomb] =
+            Function1DDefinition({"q1", "q2", "range"},
+                                 [](double x, double omega, const std::vector<double> &params)
+                                 {
+                                     return PairPotential::CoulConvert * params[0] * params[1] *
+                                            (1.0 / x + x / (params[2] * params[2]) - 2.0 / params[2]);
+                                 });
+        /*
+         * dYdX(x) = - COULCONVERT * q1 * q2 * r**-2
+         */
+        functions[Functions1D::Form::ShiftedCoulomb].setDerivativeFunction(
+            [](double x, double omega, const std::vector<double> &params)
+            { return PairPotential::CoulConvert * params[0] * params[1] * (1.0 / (x * x) - 1.0 / (params[2] * params[2])); });
     }
 
     return functions;
@@ -353,9 +438,14 @@ EnumOptions<Functions1D::Form> Functions1D::forms()
                                            {Functions1D::Form::GaussianC2, "GaussianC2", 2},
                                            {Functions1D::Form::LennardJones126, "LennardJones126", 2},
                                            {Functions1D::Form::Buckingham, "Buckingham", 3},
+                                           {Functions1D::Form::Buckingham128, "Buckingham128", 5},
                                            {Functions1D::Form::GaussianPotential, "GaussianPotential", 3},
-                                           {Functions1D::Form::Harmonic, "Harmonic", 1}});
+                                           {Functions1D::Form::Harmonic, "Harmonic", 1},
+                                           {Functions1D::Form::Coulombic, "Coulombic", 2},
+                                           {Functions1D::Form::ShiftedCoulomb, "ShiftedCoulomb", 3}});
 }
+
+EnumOptions<Functions1D::Form> getEnumOptions(Functions1D::Form) { return Functions1D::forms(); }
 
 // Return parameters for specified form
 const std::vector<std::string> &Functions1D::parameters(Form form) { return functions1D().at(form).parameterNames(); }
@@ -462,7 +552,7 @@ std::string Function1DWrapper::parameterSummary() const
 {
     std::string summary;
     for (const auto &[name, p] : zip(function_.parameterNames(), parameters_))
-        summary += fmt::format("{}{} = {}", summary.empty() ? "" : ", ", name, p);
+        summary += std::format("{}{} = {}", summary.empty() ? "" : ", ", name, p);
     return summary;
 }
 
@@ -485,4 +575,23 @@ double Function1DWrapper::yFT(double x, double omega) const
 double Function1DWrapper::normalisation(double omega) const
 {
     return function_.normalisation() ? function_.normalisation()(omega, internalParameters_) : 1.0;
+}
+
+// Express as a serialisable value
+void Function1DWrapper::serialise(std::string tag, SerialisedValue &target) const
+{
+    auto &result = target[tag];
+
+    result["form"] = Functions1D::forms().keywordByIndex(static_cast<int>(form_));
+
+    Serialisable::fromVector(parameters_, "parameters", result, [](const auto &x) { return x; });
+}
+
+// Read values from a serialisable value
+void Function1DWrapper::deserialise(const SerialisedValue &node)
+{
+    Functions1D::Form proxy;
+    form_ = getEnumOptions(proxy).deserialise(node);
+
+    Serialisable::toVector(node, "parameters", [this](const auto &x) { parameters_.emplace_back(toml::get<double>(x)); });
 }

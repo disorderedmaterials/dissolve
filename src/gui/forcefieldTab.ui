@@ -75,6 +75,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Create a copy of the selected atom type</string>
+           </property>
            <property name="text">
             <string>Duplicate</string>
            </property>
@@ -117,6 +120,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Remove the selected atom type</string>
+           </property>
            <property name="text">
             <string>Remove</string>
            </property>
@@ -142,6 +148,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Add a new atom type</string>
            </property>
            <property name="text">
             <string>Add</string>
@@ -309,6 +318,9 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="toolTip">
+                  <string>Create a copy of the selected pair potential override</string>
+                 </property>
                  <property name="text">
                   <string>Duplicate</string>
                  </property>
@@ -351,6 +363,9 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="toolTip">
+                  <string>Remove the selected pair potential override</string>
+                 </property>
                  <property name="text">
                   <string>Remove</string>
                  </property>
@@ -376,6 +391,9 @@
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Add a new pair potential override</string>
                  </property>
                  <property name="text">
                   <string>Add</string>
@@ -493,6 +511,9 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="toolTip">
+                    <string>Maximal range of tabulated pair potentials</string>
+                   </property>
                    <property name="text">
                     <string>???</string>
                    </property>
@@ -535,6 +556,9 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>Spacing, in Angstroms, between points in tabulated pair potentials</string>
                    </property>
                    <property name="text">
                     <string>???</string>
@@ -579,6 +603,9 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="toolTip">
+                    <string>Truncation scheme to apply to the short-range part of the pair potential</string>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
@@ -588,6 +615,9 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>Truncation scheme to apply to the Coulomb part of the pair potential</string>
                    </property>
                   </widget>
                  </item>
@@ -600,7 +630,7 @@
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>van der Waals</string>
+                    <string>Short Range</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -657,6 +687,9 @@
                </property>
                <item>
                 <widget class="QCheckBox" name="AutomaticChargeSourceCheck">
+                 <property name="toolTip">
+                  <string>Choose a charge source automatically based on species and configuration total charges</string>
+                 </property>
                  <property name="text">
                   <string>Choose Automatically</string>
                  </property>
@@ -697,6 +730,9 @@
                </item>
                <item>
                 <widget class="QCheckBox" name="ForceChargeSourceCheck">
+                 <property name="toolTip">
+                  <string>Force the above choice, even if Dissolve finds something odd with it</string>
+                 </property>
                  <property name="text">
                   <string>Force Choice</string>
                  </property>
@@ -838,6 +874,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Remove the selected master bond term</string>
+             </property>
              <property name="text">
               <string>Remove</string>
              </property>
@@ -863,6 +902,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Add a new master bond term</string>
              </property>
              <property name="text">
               <string>Add</string>
@@ -951,6 +993,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Remove the selected master angle term</string>
+             </property>
              <property name="text">
               <string>Remove</string>
              </property>
@@ -976,6 +1021,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Add a new master angle term</string>
              </property>
              <property name="text">
               <string>Add</string>
@@ -1064,6 +1112,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Remove the selected master torsion term</string>
+             </property>
              <property name="text">
               <string>Remove</string>
              </property>
@@ -1089,6 +1140,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Add a new master torsion term</string>
              </property>
              <property name="text">
               <string>Add</string>
@@ -1177,6 +1231,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Remove the selected master improper term</string>
+             </property>
              <property name="text">
               <string>Remove</string>
              </property>
@@ -1202,6 +1259,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Add a new master improper term</string>
              </property>
              <property name="text">
               <string>Add</string>

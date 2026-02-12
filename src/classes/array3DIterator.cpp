@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/array3DIterator.h"
 #include <cmath>
 #include <iostream>
+
+Array3DIterator::Array3DIterator() {}
 
 Array3DIterator::Array3DIterator(int sizeX, int sizeY, int sizeZ, int index) : sizeX_(sizeX), sizeY_(sizeY), sizeZ_(sizeZ)
 {

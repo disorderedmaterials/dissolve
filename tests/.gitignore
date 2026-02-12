@@ -2,8 +2,6 @@
 
 # Test outputs
 *.out
-**/*.rdf
-**/*.sq
 
 # Extraneous EPSR files
 dirlist.txt

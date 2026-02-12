@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/serialiser.h"
 #include "classes/coreData.h"
 #include "module/module.h"
+#include "module/types.h"
 #include "templates/flags.h"
 #include <map>
 #include <memory>
@@ -101,11 +102,11 @@ class ModuleLayer : public Serialisable<CoreData &>
      */
     public:
     // Run set-up stages for all modules
-    bool setUpAll(ModuleContext &moduleContext);
+    bool setUpAll(Dissolve &dissolve);
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

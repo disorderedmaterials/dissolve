@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/store.h"
 #include "base/lineParser.h"
+#include "generator/regionBase.h"
+#include "generator/select.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/configurationVector.h"
@@ -21,8 +23,6 @@
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Integer.h"
 #include "keywords/vec3NodeValue.h"
-#include "procedure/nodes/regionBase.h"
-#include "procedure/nodes/select.h"
 
 /*
  * Keyword Data
@@ -165,10 +165,10 @@ bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool o
 template <typename K> K *getKeyword(std::string_view name, std::optional<KeywordStoreEntry> optKeyword)
 {
     if (!optKeyword)
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name)));
+        Messenger::exception("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name);
     K *keyword = dynamic_cast<K *>(optKeyword->first);
     if (!keyword)
-        throw(std::runtime_error(fmt::format("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name())));
+        Messenger::exception("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name());
     return keyword;
 }
 
@@ -190,17 +190,17 @@ bool KeywordStore::set(std::string_view name, const std::vector<const SpeciesSit
     getKeyword<SpeciesSiteVectorKeyword>(name, find(name))->data() = value;
     return true;
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value)
 {
-    return getKeyword<NodeKeyword<RegionProcedureNodeBase>>(name, find(name))->setData(value);
+    return getKeyword<NodeKeyword<RegionGeneratorNodeBase>>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectGeneratorNode> value)
 {
-    return getKeyword<NodeKeyword<SelectProcedureNode>>(name, find(name))->setData(value);
+    return getKeyword<NodeKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectGeneratorNode> value)
 {
-    return getKeyword<NodeVectorKeyword<SelectProcedureNode>>(name, find(name))->setData(value);
+    return getKeyword<NodeVectorKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
 }
 bool KeywordStore::set(std::string_view name, const std::vector<Module *> value)
 {
@@ -240,15 +240,15 @@ bool KeywordStore::set(std::string_view name, const NodeValueProxy value)
 {
     return getKeyword<NodeValueKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<int> value)
+bool KeywordStore::set(std::string_view name, const Vector3i value)
 {
     return getKeyword<Vec3IntegerKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<double> value)
+bool KeywordStore::set(std::string_view name, const Vector3 value)
 {
     return getKeyword<Vec3DoubleKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
+bool KeywordStore::set(std::string_view name, const Vector3NodeValue value)
 {
     return getKeyword<Vec3NodeValueKeyword>(name, find(name))->setData(value);
 }
@@ -301,7 +301,9 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
             for (const auto &[keyword, keywordType] : group.keywords())
                 if (!keyword->isDefault())
                 {
-                    auto value = keyword->serialise();
+                    SerialisedValue outer;
+                    keyword->serialise("inner", outer);
+                    auto &value = outer["inner"];
                     if (keywordType != KeywordBase::KeywordType::Deprecated && !value.is_uninitialized())
                         node[toml_format(keyword->name())] = value;
                 }

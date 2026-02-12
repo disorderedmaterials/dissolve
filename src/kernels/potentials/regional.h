@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,13 +31,13 @@ class RegionalPotentialVoxelKernel
 
     private:
     // Set voxel position variables
-    void setVoxelPosition(const Box *box, Vec3<double> r) const;
+    void setVoxelPosition(const Box *box, Vector3 r) const;
     // Return current value of function, applying any threshold penalty
     double functionValue() const;
 
     public:
     // Calculate and store energy and force for the specified voxel centre
-    void energyAndForce(const Box *box, const Vec3<double> &r, double &energy, Vec3<double> &force) const;
+    void energyAndForce(const Box *box, const Vector3 &r, double &energy, Vector3 &force) const;
 };
 
 // Regional Potential
@@ -52,10 +52,10 @@ class RegionalPotential : public ExternalPotential
      */
     private:
     // Fractional voxel size
-    Vec3<double> voxelSizeFrac_;
+    Vector3 voxelSizeFrac_;
     // Vector fields for energy and derived force
     Array3D<double> energyVoxels_;
-    Array3D<Vec3<double>> forceVoxels_;
+    Array3D<Vector3> forceVoxels_;
 
     private:
     // Generate voxel combinable
@@ -83,5 +83,5 @@ class RegionalPotential : public ExternalPotential
     // Calculate energy on specified atom
     double energy(const Atom &i, const Box *box) const override;
     // Calculate force on specified atom, summing in to supplied vector
-    void force(const Atom &i, const Box *box, Vec3<double> &f) const override;
+    void force(const Atom &i, const Box *box, Vector3 &f) const override;
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/dataManagerDialog.h"
 #include "main/dissolve.h"
@@ -24,5 +24,11 @@ DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, Generi
     topLeftLayout->addWidget(view_);
     setLayout(topLeftLayout);
 
-    QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(accept()));
+    QObject::connect(&simModel_, SIGNAL(closeClicked()), this, SLOT(closeClicked()));
+}
+
+void DataManagerDialog::closeClicked()
+{
+    view_->rootContext()->setContextProperty("simModel", nullptr);
+    accept();
 }

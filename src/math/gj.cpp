@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/gj.h"
 #include "templates/array2D.h"
@@ -9,7 +9,7 @@ namespace GaussJordan
 // Perform Gauss-Jordan inversion of the supplied Array2D<double>
 bool invert(Array2D<double> &A)
 {
-    // Matrix must be square, and not stored as a half-matrix
+    // Matrix must be square, and not stored as a triangular-matrix
     if (A.nRows() != A.nColumns())
     {
         Messenger::error("Can't invert this Array2D since it is not square (it is {}x{}).\n", A.nRows(), A.nColumns());
@@ -17,7 +17,7 @@ bool invert(Array2D<double> &A)
     }
     if (A.halved())
     {
-        Messenger::error("Can't invert this matrix since it is stored as a half-matrix.\n");
+        Messenger::error("Can't invert this matrix since it is stored as a triangular matrix.\n");
         return false;
     }
 

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/view.h"
 #include "gui/render/fontInstance.h"
 #include "gui/render/renderable.h"
 #include "math/cuboid.h"
+#include "math/mathFunc.h"
 #include <algorithm>
 #include <cmath>
 
@@ -139,7 +140,7 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
     if (hasPerspective)
     {
         // Use reversed top and bottom values so we get y-axis (0,1,0) pointing up
-        top = tan(perspectiveFieldOfView_ / DEGRAD) * 0.5;
+        top = tan(DissolveMath::toRadians(perspectiveFieldOfView_)) * 0.5;
         bottom = -top;
         left = -aspectRatio_ * top;
         right = aspectRatio_ * top;
@@ -151,7 +152,7 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
     }
     else
     {
-        top = -tan(perspectiveFieldOfView_ / DEGRAD) * orthoZoom;
+        top = -tan(DissolveMath::toRadians(perspectiveFieldOfView_)) * orthoZoom;
         bottom = -top;
         left = -aspectRatio_ * top;
         right = aspectRatio_ * top;
@@ -319,31 +320,31 @@ void View::translateView(double dx, double dy, double dz)
 }
 
 // Return current view translation
-Vec3<double> View::viewTranslation() const { return viewTranslation_; }
+Vector3 View::viewTranslation() const { return viewTranslation_; }
 
 // Return view matrix
 const Matrix4 &View::viewMatrix() const { return viewMatrix_; }
 
 // Project given data coordinates into world coordinates
-Vec3<double> View::dataToWorld(Vec3<double> r) const
+Vector3 View::dataToWorld(Vector3 r) const
 {
     Matrix4 vmat;
-    Vec4<double> pos, temp;
+    Vector4 pos, temp;
 
     // Get the world coordinates of r - multiply by view matrix
     pos.set(r, 1.0);
     temp = viewMatrix_ * pos;
 
-    return Vec3<double>(temp.x, temp.y, temp.z);
+    return Vector3(temp.x, temp.y, temp.z);
 }
 
 // Project given data coordinates into screen coordinates
-Vec3<double> View::dataToScreen(Vec3<double> r) const
+Vector3 View::dataToScreen(Vector3 r) const
 {
-    Vec4<double> screenr, tempscreen;
-    Vec4<double> worldr;
+    Vector4 screenr, tempscreen;
+    Vector4 worldr;
     Matrix4 vmat;
-    Vec4<double> pos;
+    Vector4 pos;
 
     // Projection formula is : worldr = P x M x r
     pos.set(r, 1.0);
@@ -357,16 +358,16 @@ Vec3<double> View::dataToScreen(Vec3<double> r) const
     screenr.y = viewportMatrix_[1] + viewportMatrix_[3] * (screenr.y + 1) * 0.5;
     screenr.z = screenr.z / screenr.w;
 
-    return Vec3<double>(screenr.x, screenr.y, screenr.z);
+    return Vector3(screenr.x, screenr.y, screenr.z);
 }
 
 // Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
-Vec3<double> View::dataToScreen(Vec3<double> r, double &lengthScale) const
+Vector3 View::dataToScreen(Vector3 r, double &lengthScale) const
 {
-    Vec4<double> screenr;
-    Vec4<double> worldr;
+    Vector4 screenr;
+    Vector4 worldr;
     Matrix4 vmat;
-    Vec4<double> pos;
+    Vector4 pos;
 
     // Projection formula is : worldr = P x M x r
     pos.set(r, 1.0);
@@ -382,22 +383,21 @@ Vec3<double> View::dataToScreen(Vec3<double> r, double &lengthScale) const
 
     // Calculate 2D lengthscale around the point - multiply world[x+lengthScale] coordinates by P
     worldr.x += lengthScale;
-    Vec4<double> tempScreen = projectionMatrix_ * worldr;
+    Vector4 tempScreen = projectionMatrix_ * worldr;
     tempScreen.x /= tempScreen.w;
     lengthScale = fabs((viewportMatrix_[0] + viewportMatrix_[2] * (tempScreen.x + 1) * 0.5) - screenr.x);
 
-    return Vec3<double>(screenr.x, screenr.y, screenr.z);
+    return Vector3(screenr.x, screenr.y, screenr.z);
 }
 
 // Project given data coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation
 // vector
-Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix,
-                                Vec3<double> translation) const
+Vector3 View::dataToScreen(Vector3 r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vector3 translation) const
 {
-    Vec4<double> screenr, tempscreen;
-    Vec4<double> worldr;
+    Vector4 screenr, tempscreen;
+    Vector4 worldr;
     Matrix4 vmat;
-    Vec4<double> pos;
+    Vector4 pos;
 
     // Projection formula is : worldr = P x M x r
     pos.set(r, 1.0);
@@ -413,7 +413,7 @@ Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix
     screenr.y = viewportMatrix_[1] + viewportMatrix_[3] * (screenr.y + 1) * 0.5;
     screenr.z = screenr.z / screenr.w;
 
-    return Vec3<double>(screenr.x, screenr.y, screenr.z);
+    return Vector3(screenr.x, screenr.y, screenr.z);
 }
 
 // Return z translation necessary to display coordinates supplied, assuming the identity view matrix
@@ -425,8 +425,8 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
     // put the extent with the highest units on the very edge of the display.
 
     Matrix4 viewMatrix, projectionMatrix = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
-    Vec4<double> rScreen, rWorld, rModel(xMax, yMax, 0.0, 1.0);
-    Vec3<double> translation(0.0, 0.0, -1.0);
+    Vector4 rScreen, rWorld, rModel(xMax, yMax, 0.0, 1.0);
+    Vector3 translation(0.0, 0.0, -1.0);
 
     // Sanity check
     if (viewportMatrix_[2] == 0)
@@ -469,9 +469,9 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
 }
 
 // Convert screen coordinates into data space coordinates
-Vec3<double> View::screenToData(int x, int y, double z) const
+Vector3 View::screenToData(int x, int y, double z) const
 {
-    Vec4<double> temp, worldr;
+    Vector4 temp, worldr;
     int newx, newy;
     double dx, dy;
 
@@ -485,7 +485,7 @@ Vec3<double> View::screenToData(int x, int y, double z) const
     for (auto n = 0; n < 10; ++n)
     {
         // Determine new (better) coordinate from a yardstick centred at current world coordinates
-        temp = projectionMatrix_ * Vec4<double>(worldr.x + 1.0, worldr.y + 1.0, worldr.z, worldr.w);
+        temp = projectionMatrix_ * Vector4(worldr.x + 1.0, worldr.y + 1.0, worldr.z, worldr.w);
         dx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5 - newx;
         dy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5 - newy;
 
@@ -498,7 +498,7 @@ Vec3<double> View::screenToData(int x, int y, double z) const
     }
 
     // Finally, invert to model coordinates
-    return viewMatrixInverse_ * Vec3<double>(worldr.x, worldr.y, worldr.z);
+    return viewMatrixInverse_ * Vector3(worldr.x, worldr.y, worldr.z);
 }
 
 // Calculate selection axis coordinate from supplied screen coordinates
@@ -513,8 +513,8 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     auto axmax = dataToScreen(axes_.coordMax(axis));
 
     // Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
-    Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
-    Vec3<double> am(x - axmin.x, y - axmin.y, 0.0);
+    Vector3 ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
+    Vector3 am(x - axmin.x, y - axmin.y, 0.0);
     auto amNorm = am, abNorm = ab;
     auto ratio = am.magnitude() / ab.magnitude();
     abNorm.normalise();
@@ -582,13 +582,13 @@ void View::recalculateView(bool force)
 
     // -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get
     // literal 'pixels per unit' for (screen) X and Y
-    auto unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
+    auto unit = dataToScreen(Vector3(1.0, 1.0, 0.0), tempProjection, Matrix4());
     unit.x -= viewportMatrix_[0] + viewportMatrix_[2] / 2.0;
     unit.y -= viewportMatrix_[1] + viewportMatrix_[3] / 2.0;
     unit.z = unit.y;
 
     // Get axis min/max, accounting for logarithmic axes
-    Vec3<double> axisMin, axisMax;
+    Vector3 axisMin, axisMax;
     for (axis = 0; axis < 3; ++axis)
     {
         axisMin[axis] = axes_.logarithmic(axis) ? log10(axes_.min(axis)) : axes_.min(axis);
@@ -597,7 +597,7 @@ void View::recalculateView(bool force)
 
     // Decide how we will set stretch factors for each axis (initially set to standard xyy)
     auto axisX = 0, axisY = 1;
-    Vec3<int> axisDir(0, 1, 1);
+    Vector3i axisDir(0, 1, 1);
     if (viewType_ == View::FlatXZView)
         axisY = 2;
     else if (viewType_ == View::FlatZYView)
@@ -617,7 +617,7 @@ void View::recalculateView(bool force)
     const auto margin = 10.0 * fontInstance_.scaleFactor();
     Matrix4 viewMat, B, viewMatrixInverse;
     double tempMin, tempMax;
-    Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
+    Vector3 coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
 
     // Iterate for a few cycles
     for (auto cycle = 0; cycle < 5; ++cycle)
@@ -780,11 +780,11 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
 }
 
 // Zoom to specified region
-void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
+void View::zoomTo(Vector3 limit1, Vector3 limit2)
 {
     // The provided limits should be in local axis coordinates, and may not be in min/max order
-    Vec3<double> newMin(std::min(limit1.x, limit2.x), std::min(limit1.y, limit2.y), std::min(limit1.z, limit2.z));
-    Vec3<double> newMax(std::max(limit1.x, limit2.x), std::max(limit1.y, limit2.y), std::max(limit1.z, limit2.z));
+    Vector3 newMin(std::min(limit1.x, limit2.x), std::min(limit1.y, limit2.y), std::min(limit1.z, limit2.z));
+    Vector3 newMax(std::max(limit1.x, limit2.x), std::max(limit1.y, limit2.y), std::max(limit1.z, limit2.z));
 
     // Check the view type and set relevant coordinates
     if (isFlatView())
@@ -836,7 +836,7 @@ void View::scaleRange(double factor)
 }
 
 // Centre 2D view at specified coordinates, optionally moving only by a fraction of the distance required
-void View::centre2DAt(Vec3<double> centre, double fraction)
+void View::centre2DAt(Vector3 centre, double fraction)
 {
     // Get delta distance
     const auto delta = (centre - axes_.centre()) * fraction;
@@ -967,14 +967,14 @@ void View::autoFollowData()
  */
 
 // Return data minima over all displayed renderables
-Vec3<double> View::dataMinima()
+Vector3 View::dataMinima()
 {
     // If there are no Renderables, just return the current limits
     if (renderables_.empty())
-        return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
+        return Vector3(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
 
     auto nCounted = 0;
-    Vec3<double> v, minima;
+    Vector3 v, minima;
     for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
@@ -1000,14 +1000,14 @@ Vec3<double> View::dataMinima()
 }
 
 // Return data maxima over all displayed renderables
-Vec3<double> View::dataMaxima()
+Vector3 View::dataMaxima()
 {
     // If there are no Renderables, just return the current limits
     if (renderables_.empty())
-        return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
+        return Vector3(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
 
     auto nCounted = 0;
-    Vec3<double> v, maxima;
+    Vector3 v, maxima;
     for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
@@ -1033,10 +1033,10 @@ Vec3<double> View::dataMaxima()
 }
 
 // Return positive data minima over all displayed renderables
-Vec3<double> View::positiveDataMinima()
+Vector3 View::positiveDataMinima()
 {
     auto nCounted = 0;
-    Vec3<double> v, minima;
+    Vector3 v, minima;
     for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
@@ -1060,16 +1060,16 @@ Vec3<double> View::positiveDataMinima()
 
     // If we didn't have any data to work with, return the current axis limits
     if (nCounted == 0)
-        return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
+        return Vector3(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
     else
         return minima;
 }
 
 // Return positive data minima over all displayed renderables
-Vec3<double> View::positiveDataMaxima()
+Vector3 View::positiveDataMaxima()
 {
     auto nCounted = 0;
-    Vec3<double> v, maxima;
+    Vector3 v, maxima;
     for (const auto &rend : renderables_)
     {
         // Skip this Renderable if it is not currently visible
@@ -1081,11 +1081,11 @@ Vec3<double> View::positiveDataMaxima()
         else
         {
             v = rend->positiveLimitsMax();
-            if (v.x < maxima.x)
+            if (v.x > maxima.x)
                 maxima.x = v.x;
-            if (v.y < maxima.y)
+            if (v.y > maxima.y)
                 maxima.y = v.y;
-            if (v.z < maxima.z)
+            if (v.z > maxima.z)
                 maxima.z = v.z;
         }
         ++nCounted;
@@ -1093,7 +1093,7 @@ Vec3<double> View::positiveDataMaxima()
 
     // If we didn't have any data to work with, return the current axis limits
     if (nCounted == 0)
-        return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
+        return Vector3(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
     else
         return maxima;
 }
@@ -1112,7 +1112,7 @@ void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
     // A negative value, -1.0 < f < 0.0, tells us to increase the minimum limit
 
     // Store the fractional values in a temporary Vector to make things easier
-    Vec3<double> fractions(xFrac, yFrac, zFrac);
+    Vector3 fractions(xFrac, yFrac, zFrac);
 
     // Loop over axes
     for (auto axis = 0; axis < 3; ++axis)
@@ -1231,10 +1231,10 @@ const Axes &View::axes() const { return axes_; }
 void View::calculateFontScaling()
 {
     // Calculate text scaling factor
-    Vec3<double> translate(0.0, 0.0, viewTranslation_.z);
+    Vector3 translate(0.0, 0.0, viewTranslation_.z);
     if (hasPerspective_)
         translate.z = 0.5;
-    auto unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
+    auto unit = dataToScreen(Vector3(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
     unit.y -= viewportMatrix_[1] + viewportMatrix_[3] * 0.5;
     textZScale_ = unit.y;
 }

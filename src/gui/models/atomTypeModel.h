@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -12,6 +12,26 @@
 
 #include <vector>
 
+namespace AtomTypeModelData
+{
+// Enumerated data items for terms
+enum DataType
+{
+    Name = 0,
+    Element = 1,
+    Charge = 2,
+    ShortRangeForm = 3,
+    ShortRangeParameters = 4
+};
+
+enum Roles
+{
+    Raw = Qt::UserRole,
+    Query = Qt::UserRole + 1
+};
+}; // namespace AtomTypeModelData
+
+// AtomType Model
 class AtomTypeModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -39,15 +59,15 @@ class AtomTypeModel : public QAbstractListModel
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes_;
     // Vector containing checked items (if relevant)
     OptionalReferenceWrapper<std::vector<std::shared_ptr<AtomType>>> checkedItems_;
-    // Icon return function
-    std::function<bool(const std::shared_ptr<AtomType> &atomType)> iconFunction_;
+    // Query function
+    std::function<bool(const std::shared_ptr<AtomType> &atomType)> queryFunction_;
 
     public:
     // Set source AtomType data
     void setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
                  OptionalReferenceWrapper<const CoreData> coreData = std::nullopt);
     // Set function to return QIcon for item
-    void setIconFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func);
+    void setQueryFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func);
     // Set vector containing checked items
     void setCheckStateData(std::vector<std::shared_ptr<AtomType>> &checkedItemsVector);
     // Return object represented by specified model index

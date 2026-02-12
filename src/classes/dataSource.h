@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -13,7 +13,6 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/sampledData1D.h"
-#include "module/context.h"
 
 // Template arguments: data class (Data1D, Data2D ...)
 template <typename DataType> class DataSource : public Serialisable<const CoreData &>
@@ -78,7 +77,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     std::string_view getFilepath() { return dataSourceType_ == External ? externalDataSource_.filename() : ""; }
 
     // Obtain data from the relevant source
-    bool sourceData(const ProcessPool &procPool, GenericList &processingModuleData)
+    bool sourceData(GenericList &processingModuleData)
     {
         if (!dataExists())
         {
@@ -100,7 +99,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         else if (dataSourceType_ == External)
         {
             // For external datatypes, import the data
-            if (!externalDataSource_.importData(data_, &procPool))
+            if (!externalDataSource_.importData(data_))
             {
                 return Messenger::error("Error importing data from '{}'", externalDataSource_.filename());
             }
@@ -115,7 +114,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
     const DataType &data() const { return data_; }
 
     /*
-     * I/O
+     * Serialisation
      */
     public:
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData)
@@ -140,7 +139,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         {
             // Read the supplied arguments
             auto readResult = externalDataSource_.read(parser, startArg + 1,
-                                                       fmt::format("End{}", dataSourceTypes().keyword(External)), coreData);
+                                                       std::format("End{}", dataSourceTypes().keyword(External)), coreData);
             if (readResult == FileAndFormat::ReadResult::UnrecognisedFormat ||
                 readResult == FileAndFormat::ReadResult::UnrecognisedOption)
             {
@@ -204,7 +203,7 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
             }
 
             // Write extra keywords
-            if (!externalDataSource_.writeBlock(parser, fmt::format("  {}", prefix)))
+            if (!externalDataSource_.writeBlock(parser, std::format("  {}", prefix)))
             {
                 return false;
             }
@@ -221,16 +220,16 @@ template <typename DataType> class DataSource : public Serialisable<const CoreDa
         return true;
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         if (dataSourceType_ == Internal)
         {
-            return {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)}, {"source", internalDataSource_}};
+            target[tag] = {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)}, {"source", internalDataSource_}};
         }
         else
         {
-            return {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)},
-                    {"source", externalDataSource_.serialise()}};
+            target[tag] = {{"dataSourceType", dataSourceTypes().keyword(dataSourceType_)}};
+            externalDataSource_.serialise("source", target[tag]);
         }
     }
 };

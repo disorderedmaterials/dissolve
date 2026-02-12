@@ -22,7 +22,7 @@ add_library(
   optionalDouble.cpp
   optionalInt.cpp
   organiser.cpp
-  procedure.cpp
+  generator.cpp
   range.cpp
   rangeVector.cpp
   species.cpp
@@ -64,7 +64,7 @@ add_library(
   optionalDouble.h
   optionalInt.h
   organiser.h
-  procedure.h
+  generator.h
   range.h
   species.h
   speciesSite.h

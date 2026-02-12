@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableData3D.h"
 #include "base/lineParser.h"
@@ -205,8 +205,8 @@ const void RenderableData3D::sendToGL(const double pixelScaling)
 // Marching Cube Edge Vertex Lookup Table
 int edgevertices[12][2] = {{0, 1}, {1, 2}, {2, 3}, {0, 3}, {4, 5}, {5, 6}, {6, 7}, {4, 7}, {0, 4}, {1, 5}, {3, 7}, {2, 6}};
 
-Vec3<double> vertexPos[8] = {Vec3<double>(0, 0, 0), Vec3<double>(1, 0, 0), Vec3<double>(1, 1, 0), Vec3<double>(0, 1, 0),
-                             Vec3<double>(0, 0, 1), Vec3<double>(1, 0, 1), Vec3<double>(1, 1, 1), Vec3<double>(0, 1, 1)};
+Vector3 vertexPos[8] = {Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(1, 1, 0), Vector3(0, 1, 0),
+                        Vector3(0, 0, 1), Vector3(1, 0, 1), Vector3(1, 1, 1), Vector3(0, 1, 1)};
 
 // Marching Cube Face Triplet Lookup Table
 int facetriples[256][15] = {
@@ -478,8 +478,8 @@ void RenderableData3D::marchingCubesOriginal(const std::vector<double> &displayX
                                              const Axes &axes, Primitive *primitive)
 {
     int i, j, k, n, cubeType, *faces;
-    Vec3<GLfloat> normal, gradient[8];
-    Vec3<double> r, v1;
+    Vector3 normal, gradient[8];
+    Vector3 r, v1;
     double vertex[8], ipol, a, b;
     GLfloat colour[4];
     std::vector<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;

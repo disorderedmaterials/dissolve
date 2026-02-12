@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/energy.h"
 #include "classes/box.h"
@@ -53,9 +53,8 @@ double PairPotentialEnergyValue::total() const { return interMolecular_ + intraM
  * EnergyKernel
  */
 
-EnergyKernel::EnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
-                           std::optional<double> energyCutoff)
-    : GeometryKernel(cfg, procPool, potentialMap, energyCutoff)
+EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
+    : GeometryKernel(cfg, potentialMap, energyCutoff)
 {
 }
 
@@ -198,8 +197,8 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i) const
     return dissolve::transform_reduce(ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<>(),
                                       [&i, this](const auto &neighbour)
                                       {
-                                          auto mimRequired = neighbour.requiresMIM_;
-                                          auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+                                          auto mimRequired = neighbour.requiresMIM;
+                                          auto &nbrCellAtoms = neighbour.cell.atoms();
                                           return std::accumulate(
                                               nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                               [&i, mimRequired, this](const auto innerAcc, const auto *j)
@@ -251,55 +250,58 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
                         [&neighbour, includeIntraMolecular, this](const auto acc, const auto &i)
                         {
                             auto &ii = *i;
-                            auto mimRequired = neighbour.requiresMIM_;
-                            auto &nbrCellAtoms = neighbour.neighbour_.atoms();
-                            return acc +
-                                   std::accumulate(
-                                       nbrCellAtoms.begin(), nbrCellAtoms.end(), PairPotentialEnergyValue(),
-                                       [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc, const auto *j)
-                                       {
-                                           auto &jj = *j;
+                            auto mimRequired = neighbour.requiresMIM;
+                            auto &nbrCellAtoms = neighbour.cell.atoms();
+                            return acc + std::accumulate(
+                                             nbrCellAtoms.begin(), nbrCellAtoms.end(), PairPotentialEnergyValue(),
+                                             [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc, const auto *j)
+                                             {
+                                                 auto &jj = *j;
 
-                                           // Same molecule?
-                                           auto sameMol = ii.molecule().get() == jj.molecule().get();
-                                           if (sameMol)
-                                           {
-                                               if (!includeIntraMolecular)
-                                                   return innerAcc;
-                                               else if (&ii == &jj)
-                                                   return innerAcc;
-                                           }
+                                                 // Don't consider atoms within the target molecule here - add it on afterwards
+                                                 if (ii.molecule().get() == jj.molecule().get())
+                                                     return innerAcc;
 
-                                           // Calculate rSquared distance between atoms, and check it against
-                                           // the stored cutoff distance
-                                           auto rSq = mimRequired ? box_->minimumDistanceSquared(ii.r(), jj.r())
-                                                                  : (ii.r() - jj.r()).magnitudeSq();
-                                           if (rSq > cutoffDistanceSquared_)
-                                               return innerAcc;
+                                                 // Calculate rSquared distance between atoms, and check it against
+                                                 // the stored cutoff distance
+                                                 auto rSq = mimRequired ? box_->minimumDistanceSquared(ii.r(), jj.r())
+                                                                        : (ii.r() - jj.r()).magnitudeSq();
+                                                 if (rSq > cutoffDistanceSquared_)
+                                                     return innerAcc;
 
-                                           // If the same molecule need to check scaling (other checks already made above)
-                                           if (sameMol)
-                                           {
-                                               auto &&[scalingType, elec14, vdw14] = ii.scaling(&jj);
-                                               if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                                                   return innerAcc +
-                                                          PairPotentialEnergyValue(0.0, pairPotentialEnergy(ii, jj, sqrt(rSq)));
-                                               else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                                                   return innerAcc +
-                                                          PairPotentialEnergyValue(
-                                                              0.0, pairPotentialEnergy(ii, jj, sqrt(rSq), elec14, vdw14));
-                                               else
-                                                   return innerAcc;
-                                           }
-                                           else
-                                               return innerAcc +
-                                                      PairPotentialEnergyValue(pairPotentialEnergy(ii, jj, sqrt(rSq)), 0.0);
-                                       });
+                                                 return innerAcc +
+                                                        PairPotentialEnergyValue(pairPotentialEnergy(ii, jj, sqrt(rSq)), 0.0);
+                                             });
                         });
                 });
 
             return totalAcc + localEnergy;
         });
+
+    // Include intramolecular pairpotential (self terms)?
+    if (includeIntraMolecular)
+    {
+        auto intra = 0.0;
+        dissolve::for_each_pair(ParallelPolicies::seq, mol.nAtoms(),
+                                [&](int i, int j)
+                                {
+                                    if (i == j)
+                                        return;
+                                    const auto &ii = *mol.atom(i);
+                                    const auto &jj = *mol.atom(j);
+                                    auto rSq = box_->minimumDistanceSquared(ii.r(), jj.r());
+
+                                    if (rSq <= cutoffDistanceSquared_)
+                                    {
+                                        auto &&[scalingType, elec14, vdw14] = ii.scaling(&jj);
+                                        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                            intra += pairPotentialEnergy(ii, jj, sqrt(rSq));
+                                        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                            intra += pairPotentialEnergy(ii, jj, sqrt(rSq), elec14, vdw14);
+                                    }
+                                });
+        totalEnergy += PairPotentialEnergyValue(0.0, intra);
+    }
 
     return totalEnergy;
 }
@@ -319,8 +321,7 @@ double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
  */
 
 // Return total interatomic PairPotential energy of the world
-PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular,
-                                                                ProcessPool::DivisionStrategy strategy) const
+PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular) const
 {
     assert(cellArray_);
     auto &cells = cellArray_->get();
@@ -328,26 +329,15 @@ PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntr
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cells.getCellNeighbourPairs();
 
-    // Set start/stride for parallel loop
-    auto offset = processPool_.interleavedLoopStart(strategy);
-    auto nChunks = processPool_.interleavedLoopStride(strategy);
-
-    PairPotentialEnergyValue ppEnergy;
-    auto [begin, end] = chop_range(cellNeighbourPairs.begin(), cellNeighbourPairs.end(), nChunks, offset);
-
-    ppEnergy += dissolve::transform_reduce(ParallelPolicies::par, begin, end, PairPotentialEnergyValue(), std::plus<>(),
-                                           [&](const auto &pair)
-                                           {
-                                               auto &cellI = pair.master_;
-                                               auto &cellJ = pair.neighbour_;
-                                               auto mimRequired = pair.requiresMIM_;
-                                               if (&cellI == &cellJ)
-                                                   return cellEnergy(cellI, includeIntraMolecular);
-                                               else
-                                                   return cellToCellEnergy(cellI, cellJ, mimRequired, includeIntraMolecular);
-                                           });
-
-    return ppEnergy;
+    return dissolve::transform_reduce(
+        ParallelPolicies::par, cellNeighbourPairs.begin(), cellNeighbourPairs.end(), PairPotentialEnergyValue(), std::plus<>(),
+        [&](const auto &pair)
+        {
+            if (&pair.cell == &pair.neighbour)
+                return cellEnergy(pair.cell, includeIntraMolecular);
+            else
+                return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM, includeIntraMolecular);
+        });
 }
 
 // Return total interatomic PairPotential energy from summation of molecules
@@ -360,11 +350,8 @@ PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(bool inc
         molecularEnergy += pairPotentialEnergy(*mol, includeIntraMolecular);
 
     // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
-    // pairpotential energy, and zero intramolecular energy
-    if (mols.size() > 1)
-        molecularEnergy *= 0.5;
-
-    return molecularEnergy;
+    // pairpotential energy
+    return {molecularEnergy.interMolecular() * 0.5, molecularEnergy.intraMolecular()};
 }
 
 // Return total energy of supplied atom with the world
@@ -381,3 +368,6 @@ EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculat
             flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol),
             flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
+
+// Return potential map
+const PotentialMap &EnergyKernel::potentialMap() const { return potentialMap_; }

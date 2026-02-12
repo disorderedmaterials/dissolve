@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/serialiser.h"
-#include "procedure/nodes/aliases.h"
+#include "generator/aliases.h"
 #include "templates/flags.h"
 #include <memory>
 #include <optional>
@@ -20,7 +20,7 @@ class CoreData;
 class Isotopologue;
 class LineParser;
 class Module;
-class ProcedureNode;
+class GeneratorNode;
 class Species;
 class SpeciesSite;
 
@@ -71,9 +71,9 @@ class KeywordBase : public Serialisable<CoreData const &>
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
     // Express as a serialisable value
-    virtual SerialisedValue serialise() const override = 0;
+    virtual void serialise(std::string tag, SerialisedValue &target) const override = 0;
     // Read values from a serialisable value
-    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
+    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override {};
 
     /*
      * Keyword Types
@@ -137,6 +137,6 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual void removeReferencesTo(Species *sp);
     // Prune any references to the supplied SpeciesSite in the contained data
     virtual void removeReferencesTo(SpeciesSite *spSite);
-    // Prune any references to the supplied ProcedureNode in the contained data
+    // Prune any references to the supplied GeneratorNode in the contained data
     virtual void removeReferencesTo(NodeRef node);
 };

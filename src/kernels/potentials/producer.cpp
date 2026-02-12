@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/potentials/producer.h"
 #include "kernels/potentials/cylindrical.h"
@@ -21,8 +21,8 @@ std::unique_ptr<ExternalPotential> create(ExternalPotentialTypes::ExternalPotent
         case (ExternalPotentialTypes::ExternalPotentialType::Regional):
             return std::make_unique<RegionalPotential>();
         default:
-            throw(std::runtime_error(fmt::format("Creation of external potential type '{}' not implemented.\n",
-                                                 ExternalPotentialTypes::keyword(type))));
+            Messenger::exception("Creation of external potential type '{}' not implemented.",
+                                 ExternalPotentialTypes::keyword(type));
     }
 }
 }; // namespace ExternalPotentialProducer

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/cuboid.h"
 #include "math/mathFunc.h"
@@ -17,7 +17,7 @@ Cuboid::Cuboid()
  */
 
 // Update extreme coordinates with supplied vector
-void Cuboid::updateExtremes(Vec3<double> v)
+void Cuboid::updateExtremes(Vector3 v)
 {
     if (!minimaSet_)
         minima_ = v;
@@ -46,7 +46,7 @@ void Cuboid::updateExtremes(Vec3<double> v)
  */
 
 // Return minima for cuboid
-Vec3<double> Cuboid::minima() const { return minima_; }
+Vector3 Cuboid::minima() const { return minima_; }
 
 // Return maxima for cuboid
-Vec3<double> Cuboid::maxima() const { return maxima_; }
+Vector3 Cuboid::maxima() const { return maxima_; }

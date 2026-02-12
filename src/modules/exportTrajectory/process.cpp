@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
@@ -7,11 +7,10 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/exportTrajectory/exportTrajectory.h"
 
 // Run main processing
-Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult ExportTrajectoryModule::process(Dissolve &dissolve)
 {
     if (!trajectoryFormat_.hasFilename())
     {
@@ -19,23 +18,14 @@ Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext &moduleCon
         return ExecutionResult::Failed;
     }
 
-    // Only the pool master saves the data
-    if (moduleContext.processPool().isMaster())
+    Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n",
+                     trajectoryFormat_.formatDescription(), targetConfiguration_->name());
+
+    if (!trajectoryFormat_.exportData(targetConfiguration_))
     {
-        Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n",
-                         trajectoryFormat_.formatDescription(), targetConfiguration_->name());
-
-        if (!trajectoryFormat_.exportData(targetConfiguration_))
-        {
-            Messenger::print("Export: Failed to append trajectory file '{}'.\n", trajectoryFormat_.filename());
-            moduleContext.processPool().decideFalse();
-            return ExecutionResult::Failed;
-        }
-
-        moduleContext.processPool().decideTrue();
-    }
-    else if (!moduleContext.processPool().decision())
+        Messenger::print("Export: Failed to append trajectory file '{}'.\n", trajectoryFormat_.filename());
         return ExecutionResult::Failed;
+    }
 
     return ExecutionResult::Success;
 }

@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "items/serialisers.h"
 #include "base/lineParser.h"
 #include "classes/braggReflection.h"
 #include "classes/kVector.h"
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
-#include "classes/xRayWeights.h"
+#include "classes/potentialSet.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
 #include "math/data3D.h"
@@ -31,7 +30,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<std::string>([](const std::any &a, LineParser &parser)
                                     { return parser.writeLineF("{}\n", std::any_cast<std::string>(a)); });
     registerSerialiser<std::streampos>([](const std::any &a, LineParser &parser)
-                                       { return parser.writeLineF("{}\n", std::any_cast<std::streampos>(a)); });
+                                       { return parser.writeLineF("{}\n", (std::size_t)(std::any_cast<std::streampos>(a))); });
     registerSerialiser<std::vector<double>>(
         [](const std::any &a, LineParser &parser)
         {
@@ -43,10 +42,10 @@ GenericItemSerialiser::GenericItemSerialiser()
                     return false;
             return true;
         });
-    registerSerialiser<std::vector<Vec3<double>>>(
+    registerSerialiser<std::vector<Vector3>>(
         [](const std::any &a, LineParser &parser)
         {
-            const auto &v = std::any_cast<const std::vector<Vec3<double>> &>(a);
+            const auto &v = std::any_cast<const std::vector<Vector3> &>(a);
             if (!parser.writeLineF("{}\n", v.size()))
                 return false;
             for (auto &n : v)
@@ -100,7 +99,17 @@ GenericItemSerialiser::GenericItemSerialiser()
                     return false;
             return true;
         });
-    registerSerialiser<AtomTypeMix>(simpleSerialise<AtomTypeMix>);
+    registerSerialiser<Array3D<double>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const Array3D<double> &>(a);
+            if (!parser.writeLineF("{}  {}  {}\n", v.nX(), v.nY(), v.nZ()))
+                return false;
+            for (auto &n : v)
+                if (!parser.writeLineF("{}\n", n))
+                    return false;
+            return true;
+        });
     registerSerialiser<Data1D>(simpleSerialise<Data1D>);
     registerSerialiser<Data2D>(simpleSerialise<Data2D>);
     registerSerialiser<Data3D>(simpleSerialise<Data3D>);
@@ -108,19 +117,18 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<Histogram2D>(simpleSerialise<Histogram2D>);
     registerSerialiser<Histogram3D>(simpleSerialise<Histogram3D>);
     registerSerialiser<IntegerHistogram1D>(simpleSerialise<IntegerHistogram1D>);
-    registerSerialiser<NeutronWeights>(simpleSerialise<NeutronWeights>);
     registerSerialiser<PartialSet>(simpleSerialise<PartialSet>);
     registerSerialiser<PartialSetAccumulator>(simpleSerialise<PartialSetAccumulator>);
+    registerSerialiser<PotentialSet>(simpleSerialise<PotentialSet>);
     registerSerialiser<SampledData1D>(simpleSerialise<SampledData1D>);
     registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
     registerSerialiser<SampledVector>(simpleSerialise<SampledVector>);
-    registerSerialiser<Vec3<int>>(
+    registerSerialiser<Vector3i>(
         [](const std::any &a, LineParser &parser)
         {
-            const auto &v = std::any_cast<const Vec3<int> &>(a);
+            const auto &v = std::any_cast<const Vector3i &>(a);
             return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
         });
-    registerSerialiser<XRayWeights>(simpleSerialise<XRayWeights>);
 
     // Containers of Custom Classes
     registerSerialiser<std::vector<BraggReflection>>(vectorSerialise<BraggReflection>);
@@ -148,8 +156,8 @@ bool GenericItemSerialiser::serialiseObject(const std::any &a, LineParser &parse
     // Find a suitable serialiser and call it
     auto it = serialisers_.find(a.type());
     if (it == serialisers_.end())
-        throw(std::runtime_error(fmt::format(
-            "Item of type '{}' cannot be serialised as no suitable serialiser has been registered.\n", a.type().name())));
+        Messenger::exception("Item of type '{}' cannot be serialised as no suitable serialiser has been registered.\n",
+                             a.type().name());
 
     return (it->second)(a, parser);
 }

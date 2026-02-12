@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
@@ -58,24 +58,24 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
         // Clear any existing renderables
         energyGraph_->clearRenderables();
 
-        auto prefix = fmt::format("{}//{}", module_->name(), cfg->niceName());
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Total", prefix), "Total", "Totals");
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//PairPotential", prefix), "PairPotential", "Totals")
+        auto prefix = std::format("{}//{}", module_->name(), cfg->name());
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Total", prefix), "Total", "Totals");
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//PairPotential", prefix), "PairPotential", "Totals")
             ->setColour(StockColours::RedStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bound", prefix), "Bound", "Totals")
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Bound", prefix), "Bound", "Totals")
             ->setColour(StockColours::BlueStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Cohesive", prefix), "CohesivePP", "PairPotential")
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Cohesive", prefix), "CohesivePP", "PairPotential")
             ->setColour(StockColours::RedStockColour);
         energyGraph_
-            ->createRenderable<RenderableData1D>(fmt::format("{}//IntraPP", prefix), "IntramolecularPP", "PairPotential")
+            ->createRenderable<RenderableData1D>(std::format("{}//IntraPP", prefix), "IntramolecularPP", "PairPotential")
             ->setColour(StockColours::BlueStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Bond", prefix), "Bond", "Bound")
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Bond", prefix), "Bond", "Bound")
             ->setColour(StockColours::GreenStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Angle", prefix), "Angle", "Bound")
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Angle", prefix), "Angle", "Bound")
             ->setColour(StockColours::PurpleStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Torsion", prefix), "Torsion", "Bound")
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Torsion", prefix), "Torsion", "Bound")
             ->setColour(StockColours::OrangeStockColour);
-        energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Improper", prefix), "Improper", "Bound")
+        energyGraph_->createRenderable<RenderableData1D>(std::format("{}//Improper", prefix), "Improper", "Bound")
             ->setColour(StockColours::CyanStockColour);
         energyGraph_->groupManager().setGroupStipple("PairPotential", LineStipple::DotStipple);
     }
@@ -87,13 +87,13 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
     QPalette labelPalette = ui_.StableLabel->palette();
     if (cfg)
     {
-        if (dissolve_.processingModuleData().contains("EnergyGradient", cfg->niceName()))
+        if (dissolve_.processingModuleData().contains("EnergyGradient", cfg->name()))
             ui_.GradientValueLabel->setText(
-                QString::number(dissolve_.processingModuleData().value<double>("EnergyGradient", cfg->niceName())));
+                QString::number(dissolve_.processingModuleData().value<double>("EnergyGradient", cfg->name())));
         else
             ui_.GradientValueLabel->setText("N/A");
 
-        if (dissolve_.processingModuleData().valueOr<bool>("EnergyStable", cfg->niceName(), false))
+        if (dissolve_.processingModuleData().valueOr<bool>("EnergyStable", cfg->name(), false))
         {
             labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
             ui_.StableLabel->setText("Yes");

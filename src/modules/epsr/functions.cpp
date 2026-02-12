@@ -1,42 +1,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "math/gaussFit.h"
+#include "math/mathFunc.h"
 #include "math/poissonFit.h"
-#include "module/context.h"
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 
 // Create / update delta S(Q) information
-void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ,
-                               OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ)
+void EPSRModule::updateDeltaSQ(GenericList &processingData,
+                               OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optCalculatedSQ,
+                               OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optEstimatedSQ)
 {
     // Find the relevant data if we were not provided them
     if (!optCalculatedSQ)
-        optCalculatedSQ = processingData.valueIf<Array2D<Data1D>>("UnweightedSQ", name_);
+        optCalculatedSQ = processingData.valueIf<DoubleKeyedMap<Data1D>>("UnweightedSQ", name_);
     if (!optCalculatedSQ)
         return;
     if (!optEstimatedSQ)
-        optEstimatedSQ = processingData.valueIf<Array2D<Data1D>>("EstimatedSQ", name_);
+        optEstimatedSQ = processingData.valueIf<DoubleKeyedMap<Data1D>>("EstimatedSQ", name_);
     if (!optEstimatedSQ)
         return;
 
     const auto &calculatedSQ = optCalculatedSQ->get();
     const auto &estimatedSQ = optEstimatedSQ->get();
-    assert(calculatedSQ.nRows() == estimatedSQ.nRows() && calculatedSQ.nColumns() == estimatedSQ.nColumns());
+    assert(calculatedSQ.size() == estimatedSQ.size());
 
     // Realise the DeltaSQ array
-    auto [deltaSQ, status] = processingData.realiseIf<Array2D<Data1D>>("DeltaSQ", name_, GenericItem::ItemFlag::NoFlags);
-    if (status == GenericItem::ItemStatus::Created)
-        deltaSQ.initialise(calculatedSQ.nRows(), calculatedSQ.nRows(), true);
+    auto deltaSQ = processingData.realise<DoubleKeyedMap<Data1D>>("DeltaSQ", name_, GenericItem::ItemFlag::NoFlags);
+    deltaSQ.clear(true);
 
-    // Copy the tags from the calculated data (so we avoid requiring the source AtomTypeList) and create the data
-    for (auto &&[delta, calc, est] : zip(deltaSQ, calculatedSQ, estimatedSQ))
+    for (auto &[key, calcSQ] : calculatedSQ)
     {
-        delta.setTag(calc.tag());
-        delta = est;
-        Interpolator::addInterpolated(calc, delta, -1.0);
+        deltaSQ[key] = estimatedSQ[key];
+        Interpolator::addInterpolated(calcSQ, deltaSQ[key], -1.0);
+
+        // Copy the tag
+        deltaSQ[key].setTag(calcSQ.tag());
     }
 }
 
@@ -64,74 +65,68 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(GenericList &mod
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, double averagedRho, std::optional<int> ncoeffp, double rminpt,
-                                             double rmaxpt, double sigma1, double sigma2)
+bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, const std::vector<const AtomType *> &atomTypes,
+                                             double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
+                                             double sigma1, double sigma2)
 {
-    const auto &atomTypes = scatteringMatrix_.atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // Get coefficients array
-    Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve.processingModuleData(), nAtomTypes, ncoeffp);
+    Array2D<std::vector<double>> &coefficients =
+        potentialCoefficients(dissolve.processingModuleData(), atomTypes.size(), ncoeffp);
 
-    auto result = for_each_pair_early(
-        atomTypes.begin(), atomTypes.end(),
-        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-        {
-            auto &potCoeff = coefficients[{i, j}];
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
+                            [&](int i, auto at1, int j, auto at2)
+                            {
+                                auto &potCoeff = coefficients[{i, j}];
 
-            // Regenerate empirical potential from the stored coefficients
-            Data1D ep;
-            if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
-            {
-                // Construct our fitting object and generate the potential using it
-                GaussFit generator(ep);
-                generator.set(rmaxpt, potCoeff, sigma1);
-                ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(),
-                                             dissolve.pairPotentialRange(), sigma2 / sigma1);
-            }
-            else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
-            {
-                // Construct our fitting object and generate the potential using it
-                // We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho not
-                // present in our denominator
-                PoissonFit generator(ep);
-                generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
-                ep = generator.approximation(FunctionSpace::RealSpace, 1.0 / averagedRho, 0.0, dissolve.pairPotentialDelta(),
-                                             dissolve.pairPotentialRange());
-            }
+                                // Regenerate empirical potential from the stored coefficients
+                                Data1D ep;
+                                if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
+                                {
+                                    // Construct our fitting object and generate the potential using it
+                                    GaussFit generator(ep);
+                                    generator.set(rmaxpt, potCoeff, sigma1);
+                                    ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0,
+                                                                 dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(),
+                                                                 sigma2 / sigma1);
+                                }
+                                else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
+                                {
+                                    // Construct our fitting object and generate the potential using it
+                                    // We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho
+                                    // not present in our denominator
+                                    PoissonFit generator(ep);
+                                    generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
+                                    ep = generator.approximation(FunctionSpace::RealSpace, 1.0 / averagedRho, 0.0,
+                                                                 dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+                                }
 
-            // Multiply by truncation function
-            truncate(ep, rminpt, rmaxpt);
+                                // Multiply by truncation function
+                                truncate(ep, rminpt, rmaxpt);
 
-            // Put potentials in vector
-            empiricalPotentials_.emplace_back(at1, at2, ep);
+                                // Put potentials in vector
+                                empiricalPotentials_.emplace_back(at1, at2, ep);
 
-            // Apply potentials?
-            if (applyPotentials_)
-            {
-                // Set the additional potential in the main processing data
-                dissolve.processingModuleData().realise<Data1D>(
-                    fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
-                    GenericItem::InRestartFileFlag) = ep;
+                                // Apply potentials?
+                                if (applyPotentials_)
+                                {
+                                    // Set the additional potential in the main processing data
+                                    dissolve.processingModuleData().realise<Data1D>(
+                                        std::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                                        GenericItem::InRestartFileFlag) = ep;
 
-                // Grab pointer to the relevant pair potential (if it exists)
-                auto *pp = dissolve.pairPotential(at1, at2);
-                if (pp)
-                    pp->setAdditionalPotential(ep);
-            }
+                                    // Grab pointer to the relevant pair potential (if it exists)
+                                    auto *pp = dissolve.pairPotential(at1, at2);
+                                    if (pp)
+                                        pp->setAdditionalPotential(ep);
+                                }
+                            });
 
-            return EarlyReturn<bool>::Continue;
-        });
-
-    return result.value_or(true);
+    return true;
 }
 
 // Generate and return single empirical potential function
-Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
+Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int nAtomTypes, int i, int j, int n)
 {
-    const auto &atomTypes = scatteringMatrix_.atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // EPSR constants
     const auto mcoeff = 200;
 
@@ -170,7 +165,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
 }
 
 // Calculate absolute energy of empirical potentials
-double EPSRModule::absEnergyEP(GenericList &moduleData)
+double EPSRModule::absEnergyEP(GenericList &moduleData, const std::vector<const AtomType *> &atomTypes)
 {
     /*
      * Routine from EPSR25.
@@ -178,11 +173,8 @@ double EPSRModule::absEnergyEP(GenericList &moduleData)
      * Return the largest range we find.
      */
 
-    const auto &atomTypes = scatteringMatrix_.atomTypes();
-    const auto nAtomTypes = atomTypes.size();
-
     // Get coefficients array
-    auto &coefficients = potentialCoefficients(moduleData, nAtomTypes);
+    auto &coefficients = potentialCoefficients(moduleData, atomTypes.size());
     if (coefficients.empty())
         return 0.0;
 
@@ -204,7 +196,7 @@ double EPSRModule::absEnergyEP(GenericList &moduleData)
         Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", atomTypes[i]->name(), atomTypes[j]->name(), range);
     };
 
-    PairIterator pairs(nAtomTypes);
+    PairIterator pairs(atomTypes.size());
     dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), unaryOp);
 
     return absEnergyEP;
@@ -224,11 +216,11 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
         if (x >= rMax)
             y[n] = 0.0;
         else if (x > rMin)
-            y[n] *= 0.5 * (1.0 + cos(((x - rMin) * PI) / decay));
+            y[n] *= 0.5 * (1.0 + cos(((x - rMin) * M_PI) / decay));
     }
 }
 
-std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> EPSRModule::empiricalPotentials()
+std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> EPSRModule::empiricalPotentials()
 {
     return empiricalPotentials_;
 }

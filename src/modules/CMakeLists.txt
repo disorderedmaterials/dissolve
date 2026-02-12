@@ -59,40 +59,17 @@ macro(dissolve_add_module_gui modulename)
 
   message(STATUS "...    GUI component 'module_${modulename}_gui': ${MODULEGUI_CPP} ${MODULEGUI_H} ${MODULEGUI_UI}")
 
-  # Add library target
-  add_library(module_${modulename}_gui ${MODULEGUI_CPP} ${MODULEGUI_H} ${MODULEGUI_UI})
-  set(MODULEGUI_LINK_LIBS
-      ${MODULEGUI_LINK_LIBS} "module_${modulename}_gui"
-      CACHE INTERNAL "" FORCE
-  )
+  # # Add library target add_library(module_${modulename}_gui ${MODULEGUI_CPP} ${MODULEGUI_H} ${MODULEGUI_UI}) set(MODULEGUI_LINK_LIBS
+  # ${MODULEGUI_LINK_LIBS} "module_${modulename}_gui" CACHE INTERNAL "" FORCE )
 
-  # Because Qt has its own way of checking for C++17
-  if(MSVC)
-    target_compile_options(module_${modulename}_gui PUBLIC /Zc:__cplusplus)
-  endif(MSVC)
+  # # Add dependency on main GUI components add_dependencies(module_${modulename}_gui gui)
 
-  # Add dependency on main GUI components
-  add_dependencies(module_${modulename}_gui gui)
-
-  # Set common include dirs
-  target_include_directories(
-    module_${modulename}_gui
-    PRIVATE ${PROJECT_SOURCE_DIR}/src
-            ${PROJECT_BINARY_DIR}/src
-            ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
-            ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include
-            ${Qt6Core_INCLUDE_DIRS}
-            ${Qt6Gui_INCLUDE_DIRS}
-            ${Qt6Widgets_INCLUDE_DIRS}
-            ${Qt6OpenGL_INCLUDE_DIRS}
-            ${Qt6OpenGLWidgets_INCLUDE_DIRS}
-            ${FREETYPE_INCLUDE_DIRS}
-  )
-  target_link_libraries(
-    module_${modulename}_gui
-    PRIVATE base
-    PUBLIC ${THREADING_LINK_LIBS}
-  )
+  # # Set common include dirs target_include_directories( module_${modulename}_gui PRIVATE ${PROJECT_SOURCE_DIR}/src
+  # ${PROJECT_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include
+  # ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include_${CMAKE_BUILD_TYPE}
+  # ${CMAKE_BINARY_DIR}/src/gui/widgets/widgets_autogen/include_${CMAKE_BUILD_TYPE} ${Qt6Core_INCLUDE_DIRS} ${Qt6Gui_INCLUDE_DIRS}
+  # ${Qt6Widgets_INCLUDE_DIRS} ${Qt6OpenGL_INCLUDE_DIRS} ${Qt6OpenGLWidgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ) target_link_libraries(
+  # module_${modulename}_gui PRIVATE base PUBLIC ${THREADING_LINK_LIBS} )
 endmacro()
 
 # Module subdirectories
@@ -127,7 +104,7 @@ target_include_directories(
 
 if(GUI)
   add_library(moduleWidgetProducer widget.cpp widgetProducer.cpp widget.h widgetProducer.h)
-  add_dependencies(moduleWidgetProducer ${MODULEGUI_LINK_LIBS})
+  # add_dependencies(moduleWidgetProducer ${MODULEGUI_LINK_LIBS})
 
   # Because Qt has its own way of checking for C++17
   if(MSVC)

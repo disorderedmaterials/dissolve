@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -19,7 +19,7 @@ class Species;
 template <class Intra, class Functions> class SpeciesIntra : public Serialisable<>
 {
     public:
-    explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form){};
+    explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form) {};
     virtual ~SpeciesIntra() = default;
     SpeciesIntra(const SpeciesIntra &source) : interactionPotential_(source.interactionPotential_.form()) { (*this) = source; }
     SpeciesIntra(SpeciesIntra &&source) = delete;
@@ -211,12 +211,12 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
-        SerialisedValue result;
+        auto &result = target[tag];
 
         if (masterTerm_ != nullptr)
-            result["form"] = fmt::format("@{}", masterTerm_->name());
+            result["form"] = std::format("@{}", masterTerm_->name());
         else
             result["form"] = Functions::forms().keyword(interactionForm());
 
@@ -232,7 +232,5 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
                     parametersNode[parameters[parameterIndex]] = values[parameterIndex];
             result["parameters"] = parametersNode;
         }
-
-        return result;
     }
 };

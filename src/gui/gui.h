@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -166,6 +166,7 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesCreateAtomicAction_triggered(bool checked);
     void on_SpeciesCreateDrawAction_triggered(bool checked);
     void on_SpeciesCreateFromExistingAction_triggered(bool checked);
+    void on_SpeciesCreateGrapheneAction_triggered(bool checked);
     void on_SpeciesImportFromDissolveAction_triggered(bool checked);
     void on_SpeciesImportFromXYZAction_triggered(bool checked);
     void on_SpeciesImportLigParGenAction_triggered(bool checked);
@@ -254,4 +255,11 @@ class DissolveWindow : public QMainWindow
     Q_SIGNALS:
     void iterate(int);
     void stopIterating();
+
+    /*
+     * Checks
+     */
+    public:
+    // Checks pair potential range against all present box geometries
+    void checkPairPotentialRange(QWidget *parent = nullptr);
 };

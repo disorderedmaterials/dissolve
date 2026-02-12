@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "items/list.h"
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
 #include "main/version.h"
 #include <cassert>
-#include <fmt/format.h>
+#include <format>
 #include <typeindex>
 
 // Static Singletons
@@ -28,7 +28,7 @@ void GenericList::clearAll() { items_.clear(); }
 // Return whether the named item is contained in the list
 bool GenericList::contains(std::string_view name, std::string_view prefix) const
 {
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+    auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
     return (it != items_.end());
 }
 
@@ -38,7 +38,7 @@ const std::map<std::string, GenericItem::Type> &GenericList::items() const { ret
 // Return the version of the named item from the list
 int GenericList::version(std::string_view name, std::string_view prefix) const
 {
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+    auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
     assert(it != items_.end());
     return std::get<GenericItem::Version>(it->second);
 }
@@ -46,10 +46,10 @@ int GenericList::version(std::string_view name, std::string_view prefix) const
 // Remove named item
 void GenericList::remove(std::string_view name, std::string_view prefix)
 {
-    auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name));
+    auto it = items_.find(prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
     if (it == items_.end())
-        throw(std::runtime_error(fmt::format("GenericList::remove() - No item named '{}' exists.\n",
-                                             prefix.empty() ? std::string(name) : fmt::format("{}//{}", prefix, name))));
+        Messenger::exception("GenericList::remove() - No item named '{}' exists.\n",
+                             prefix.empty() ? std::string(name) : std::format("{}//{}", prefix, name));
 
     items_.erase(it);
 }
@@ -57,7 +57,7 @@ void GenericList::remove(std::string_view name, std::string_view prefix)
 // Remove all items with specified prefix
 void GenericList::removeWithPrefix(std::string_view prefix)
 {
-    auto delimitedPrefix = fmt::format("{}//", prefix);
+    auto delimitedPrefix = std::format("{}//", prefix);
     for (auto it = items_.begin(); it != items_.end();)
         if (DissolveSys::startsWith(it->first, delimitedPrefix))
             items_.erase(it++);
@@ -69,12 +69,12 @@ void GenericList::removeWithPrefix(std::string_view prefix)
 void GenericList::rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName,
                          std::string_view newPrefix)
 {
-    std::string oldVarName = oldPrefix.empty() ? std::string(oldName) : fmt::format("{}//{}", oldPrefix, oldName);
-    std::string newVarName = newPrefix.empty() ? std::string(newName) : fmt::format("{}//{}", newPrefix, newName);
+    std::string oldVarName = oldPrefix.empty() ? std::string(oldName) : std::format("{}//{}", oldPrefix, oldName);
+    std::string newVarName = newPrefix.empty() ? std::string(newName) : std::format("{}//{}", newPrefix, newName);
 
     auto it = items_.find(oldVarName);
     if (it == items_.end())
-        throw(std::runtime_error(fmt::format("GenericList::rename() - No item named '{}' exists.\n", oldVarName)));
+        Messenger::exception("GenericList::rename() - No item named '{}' exists.\n", oldVarName);
 
     auto handle = items_.extract(oldVarName);
     handle.key() = newVarName;
@@ -94,17 +94,16 @@ void GenericList::renamePrefix(std::string_view oldPrefix, std::string_view newP
      * every match and running until we get no match. This obviously isn't terribly efficient but the function is sparingly used
      * and so the general performance impact will be minimal.
      */
-    auto delimitedPrefix = fmt::format("{}//", oldPrefix);
+    auto delimitedPrefix = std::format("{}//", oldPrefix);
     do
     {
-        auto it =
-            std::find_if(items_.begin(), items_.end(),
-                         [delimitedPrefix](const auto &item) { return DissolveSys::startsWith(item.first, delimitedPrefix); });
+        auto it = std::find_if(items_.begin(), items_.end(), [delimitedPrefix](const auto &item)
+                               { return DissolveSys::startsWith(item.first, delimitedPrefix); });
         if (it == items_.end())
             break;
 
         auto handle = items_.extract(it);
-        handle.key() = fmt::format("{}//{}", newPrefix, DissolveSys::afterString(it->first, "//"));
+        handle.key() = std::format("{}//{}", newPrefix, DissolveSys::afterString(it->first, "//"));
         items_.insert(std::move(handle));
     } while (true);
 }
@@ -126,7 +125,7 @@ EnumOptions<GenericList::DeserialisableDataVersion> GenericList::deserialisableD
 {
     return EnumOptions<GenericList::DeserialisableDataVersion>(
         "AveragingScheme", {{GenericList::DeserialisableDataVersion::Version08X, "v0.8."},
-                            {GenericList::DeserialisableDataVersion::Current, fmt::format("v{}", Version::semantic())}});
+                            {GenericList::DeserialisableDataVersion::Current, std::format("v{}", Version::semantic())}});
 }
 
 // Set current data version being deserialised by detecting it from the supplied string
@@ -166,7 +165,7 @@ bool GenericList::serialiseAll(LineParser &parser, std::string_view headerPrefix
         // Find a suitable serialiser and call it
         auto &data = std::get<GenericItem::AnyObject>(value);
         if (!GenericItemSerialiser::serialise(data, parser))
-            return Messenger::error(fmt::format("Serialisation of item '{}' failed.\n", key));
+            return Messenger::error("Serialisation of item '{}' failed.\n", key);
     }
 
     return true;
@@ -182,7 +181,7 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, const std:
 
     // Find its deserialiser and call it
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
-        return Messenger::error(fmt::format("Deserialisation of item '{}' failed.\n", name));
+        return Messenger::error("Deserialisation of item '{}' failed.\n", name);
 
     // Check for legacy objects - we don't store them in the items_ map
     if (GenericItemDeserialiser::isLegacyObject(data))

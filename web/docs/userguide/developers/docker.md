@@ -95,9 +95,18 @@ which will hook dissolve's dev environment into the new shell.
 
 ## Debugging dissolve inside a container
 
-Using a combination of the X server and the GNU gdb debugger we can step through the container-hosted dissolve code in a visual environment.
+For Dissolve CLI, it is straightforward to debug using GDB - run `gdb -tui ./build/bin/dissolve`.
 
-However, for this Docker setup we are running dissolve's GUI via the `nixGLIntel` wrapper so debugging it is a slightly invovled process.
+To debug unit tests, navigate to the test data directory with `cd tests/data`, and then execute gdb from there `gdb -tui ../../build/bin/<TEST_EXECUTABLE_>`.
+
+Depending on the system on which you are running the Docker engine, the host graphics resources may be available to the container 
+in such a way that it is not necessary to run Dissolve GUI inside the `nixGLIntel` wrapper executable, and we can simply invoke `.\dissolve-gui`.
+
+This opens up the possibility of directly invoking the `dissolve-gui` executable in the above call to gdb.
+
+However, this is not guaranteed for all Windows systems, so debugging dissolve GUI could be a more involved process.
+
+In this example Docker setup we are running dissolve's GUI via the `nixGLIntel` wrapper.
 
 First, `exec` into the container with `direnv allow; bash` as the entrypoint as you normally would.
 

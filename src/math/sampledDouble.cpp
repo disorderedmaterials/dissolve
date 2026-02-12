@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/sampledDouble.h"
 #include "base/lineParser.h"
@@ -156,49 +156,16 @@ bool SampledDouble::deserialise(LineParser &parser)
 // Write data through specified LineParser
 bool SampledDouble::serialise(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
 
-/*
- * Parallel Comms
- */
-
-// Sum data over all processes within the pool
-bool SampledDouble::allSum(ProcessPool &procPool)
+// Express as a serialisable value
+void SampledDouble::serialise(std::string tag, SerialisedValue &target) const
 {
-#ifdef PARALLEL
-    // All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the
-    // final result
-    for (auto n = 1; n < procPool.nProcesses(); ++n)
-    {
-        if (procPool.poolRank() == 0)
-        {
-            // Rank zero receives the data and sums it
-            SampledDouble data;
-            if (!procPool.receive(data.count_, 0))
-                return false;
-            if (!procPool.receive(data.mean_, 0))
-                return false;
-            if (!procPool.receive(data.m2_, 0))
-                return false;
-
-            (*this) += data;
-        }
-        else
-        {
-            // Send our data to rank zero
-            if (!procPool.send(count_, 0))
-                return false;
-            if (!procPool.send(mean_, 0))
-                return false;
-            if (!procPool.send(m2_, 0))
-                return false;
-        }
-    }
-
-    if (!procPool.broadcast(count_))
-        return false;
-    if (!procPool.broadcast(mean_))
-        return false;
-    if (!procPool.broadcast(m2_))
-        return false;
-#endif
-    return true;
+    target[tag] = {{"mean", mean_}, {"count", count_}, {"m2", m2_}};
 }
+
+// Read values from a serialisable value
+void SampledDouble::deserialise(const SerialisedValue &value)
+{
+    mean_ = toml::find<double>(value, "mean");
+    count_ = toml::find<int>(value, "count");
+    m2_ = toml::find<double>(value, "m2");
+};

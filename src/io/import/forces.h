@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Forces Import Formats
 class ForceImportFileFormat : public FileAndFormat
@@ -52,15 +51,15 @@ class ForceImportFileFormat : public FileAndFormat
      */
     private:
     // Import DL_POLY forces through specified parser
-    bool importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importDLPOLY(LineParser &parser, std::vector<Vector3> &f);
     // Import Moscito forces through specified parser
-    bool importMoscito(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importMoscito(LineParser &parser, std::vector<Vector3> &f);
     // Import simple formatted forces through specified parser
-    bool importSimple(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importSimple(LineParser &parser, std::vector<Vector3> &f);
 
     public:
     // Import forces using current filename and format
-    bool importData(std::vector<Vec3<double>> &f, const ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vector3> &f);
     // Import forces using supplied parser and current format
-    bool importData(LineParser &parser, std::vector<Vec3<double>> &f);
+    bool importData(LineParser &parser, std::vector<Vector3> &f);
 };

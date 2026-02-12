@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesRing.h"
 #include "classes/speciesAtom.h"
 #include "data/elements.h"
 
-SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> &atoms) : atoms_(atoms){};
+SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> &atoms) : atoms_(atoms) {};
 
 bool SpeciesRing::operator==(const SpeciesRing &other) const
 {
@@ -55,8 +55,8 @@ int SpeciesRing::size() const { return atoms_.size(); }
 // Print ring information
 void SpeciesRing::print() const
 {
-    std::string s = fmt::format("Ring({}) :", atoms_.size());
+    std::string s = std::format("Ring({}) :", atoms_.size());
     for (const auto *atom : atoms_)
-        s += fmt::format(" {}({})", atom->userIndex(), Elements::symbol(atom->Z()));
+        s += std::format(" {}({})", atom->userIndex(), Elements::symbol(atom->Z()));
     Messenger::print(s);
 }

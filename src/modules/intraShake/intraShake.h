@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -42,8 +42,6 @@ class IntraShakeModule : public Module
     int nShakesPerTerm_{1};
     // Target acceptance rate for Monte Carlo moves
     double targetAcceptanceRate_{0.33};
-    // Whether only the energy of the intramolecular term is calculated and assessed
-    bool termEnergyOnly_{false};
     // Step size for torsion adjustments (degrees)
     double torsionStepSize_{10.0};
     // Minimum step size for torsion adjustments (degrees)
@@ -58,5 +56,5 @@ class IntraShakeModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

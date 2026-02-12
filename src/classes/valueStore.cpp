@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/valueStore.h"
 #include "base/lineParser.h"
@@ -22,7 +22,7 @@ bool ValueStore::addData(std::string_view dataName, LineParser &parser, int star
         return false;
 
     // Load the data
-    return format.importData(data, parser, parser.processPool());
+    return format.importData(data, parser);
 }
 
 // Check to see if the named data is present in the store
@@ -45,12 +45,12 @@ OptionalReferenceWrapper<const std::vector<double>> ValueStore::data(std::string
 const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileFormat>> &ValueStore::data() const { return data_; }
 
 // Express as a serialisable value
-SerialisedValue ValueStore::serialise() const
+void ValueStore::serialise(std::string tag, SerialisedValue &node) const
 {
     SerialisedValue result = SerialisedValue::array_type{};
     for (auto &[tag, data, format] : data_)
         result.push_back({{"tag", tag}, {"values", data}, {"format", format}});
-    return result;
+    node[tag] = result;
 }
 
 // Read values from a serialisable value

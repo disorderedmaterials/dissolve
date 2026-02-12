@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/species.h"
@@ -38,9 +38,7 @@ TEST(GeometryMinimisationTest, Water)
     // Run the geometry optimisation
     GeometryOptimisationModule geomOpt;
     geomOpt.keywords().set("Tolerance", 1.0e-6);
-    ProcessPool processPool;
-    processPool.setUp("Dummy", {0});
-    geomOpt.optimiseSpecies(potMap, processPool, &water);
+    geomOpt.optimiseSpecies(potMap, &water);
 
     // Check final geometry
     auto &b01 = water.getBond(0, 1)->get();

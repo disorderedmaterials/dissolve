@@ -8,13 +8,14 @@ import "../widgets" as D
 
 ColumnLayout {
     id: root
-    anchors.fill: parent
 
     signal atomTypesClicked
     signal configurationClicked(int index)
     signal masterTermsClicked
     signal moduleLayerClicked(int index)
     signal speciesClicked(int index)
+
+    anchors.fill: parent
 
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
@@ -106,6 +107,7 @@ ColumnLayout {
 
         Repeater {
             id: species
+
             model: dissolveModel.speciesModel
 
             delegate: Species {
@@ -133,6 +135,7 @@ ColumnLayout {
 
         Repeater {
             id: configurations
+
             model: dissolveModel.configurationsModel
 
             delegate: Configuration {
@@ -160,6 +163,7 @@ ColumnLayout {
 
         Repeater {
             id: layers
+
             model: dissolveModel.moduleLayersModel
 
             delegate: ModuleLayer {

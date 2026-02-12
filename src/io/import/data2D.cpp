@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/data2D.h"
 #include "base/lineParser.h"
@@ -34,10 +34,10 @@ void Data2DImportFileFormat::setUpKeywords()
  */
 
 // Import Data2D using current filename and format
-bool Data2DImportFileFormat::importData(Data2D &data, const ProcessPool *procPool)
+bool Data2DImportFileFormat::importData(Data2D &data)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading Data2D data.\n", filename_);
 
@@ -64,8 +64,8 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
             result = importCartesian(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data2D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data2D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

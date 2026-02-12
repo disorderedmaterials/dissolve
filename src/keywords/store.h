@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
 #include "keywords/enumOptions.h"
 #include "keywords/organiser.h"
 #include "math/function1D.h"
 #include "math/range.h"
-#include "procedure/nodeValue.h"
 #include "templates/optionalRef.h"
 #include <any>
 #include <map>
 #include <typeindex>
 
-class SelectProcedureNode;
-class RegionProcedureNodeBase;
+class SelectGeneratorNode;
+class RegionGeneratorNodeBase;
 class SQModule;
 class RDFModule;
 class Configuration;
@@ -33,13 +33,13 @@ class KeywordStore
         for (const auto &section : sections_)
             for (const auto &group : section.groups())
             {
-                auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(),
-                                         [&](const auto *k)
-                                         {
-                                             return std::find_if(group.keywords().begin(), group.keywords().end(),
-                                                                 [k](const auto &kd)
-                                                                 { return k == kd.first; }) != group.keywords().end();
-                                         });
+                auto it =
+                    std::remove_if(allKeywords_.begin(), allKeywords_.end(),
+                                   [&](const auto *k)
+                                   {
+                                       return std::find_if(group.keywords().begin(), group.keywords().end(), [k](const auto &kd)
+                                                           { return k == kd.first; }) != group.keywords().end();
+                                   });
                 allKeywords_.erase(it, allKeywords_.end());
             }
     }
@@ -60,7 +60,7 @@ class KeywordStore
     {
         // Check for keyword of this name already
         if (find(name))
-            throw(std::runtime_error(fmt::format("Keyword named '{}' already exists, and can't be added again.", name)));
+            Messenger::exception("Keyword named '{}' already exists, and can't be added again.", name);
 
         // Create new keyword using the supplied arguments
         K *k = new K(std::forward<Args>(args)...);
@@ -169,14 +169,14 @@ class KeywordStore
     bool set(std::string_view name, const std::string value);
     bool set(std::string_view name, const Function1DWrapper value);
     bool set(std::string_view name, const NodeValueProxy value);
-    bool set(std::string_view name, const Vec3<double> value);
-    bool set(std::string_view name, const Vec3<int> value);
-    bool set(std::string_view name, const Vec3<NodeValue> value);
+    bool set(std::string_view name, const Vector3 value);
+    bool set(std::string_view name, const Vector3i value);
+    bool set(std::string_view name, const Vector3NodeValue value);
     bool set(std::string_view name, const Range value);
     bool set(std::string_view name, const std::vector<const SpeciesSite *> value);
-    bool set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
-    bool set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value);
-    bool set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value);
+    bool set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value);
+    bool set(std::string_view name, const std::shared_ptr<SelectGeneratorNode> value);
+    bool set(std::string_view name, const ConstNodeVector<SelectGeneratorNode> value);
     bool set(std::string_view name, const std::vector<Module *> value);
     bool set(std::string_view name, const Module *value);
     bool set(std::string_view name, Configuration *value);
@@ -187,13 +187,11 @@ class KeywordStore
     {
         auto optKeyword = find(name);
         if (!optKeyword)
-            throw(std::runtime_error(
-                fmt::format("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name)));
+            Messenger::exception("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name);
 
         auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(optKeyword->first);
         if (!k)
-            throw(std::runtime_error(
-                fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name());
 
         k->data() = data;
     }
@@ -230,7 +228,7 @@ class KeywordStore
         // Cast the keyword
         const K *keyword = dynamic_cast<const K *>(optKeyword->first);
         if (!keyword)
-            throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name());
 
         return keyword->data();
     }
@@ -243,7 +241,7 @@ class KeywordStore
         // Cast the keyword
         K *keyword = dynamic_cast<K *>(optKeyword->first);
         if (!keyword)
-            throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name());
 
         return keyword->data();
     }
@@ -257,8 +255,7 @@ class KeywordStore
         // Cast the keyword
         const auto *keyword = dynamic_cast<const EnumOptionsKeyword<E> *>(optKeyword->first);
         if (!keyword)
-            throw(std::runtime_error(
-                fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
+            Messenger::exception("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name());
 
         return keyword->data();
     }

@@ -1,31 +1,43 @@
 name: Quality Control
+description: Run quality control checks over the source code
+
+inputs:
+  nixHash:
+    type: string
+    required: true
 
 runs:
   using: "composite"
   steps:
 
-  - name: Install Dependencies
-    shell: bash
-    run: |
-      set -ex
-      sudo apt-get update
-      sudo apt-get install --yes clang-format-13 qt6-declarative-dev-tools
-      pip install cmake_format==0.6.9
+  - name: Free Up Space
+    uses: "./.github/workflows/linux-free-up-space"
 
-  - name: Check Conventional Commits
-    # Ensure that the PR title fits the conventional commits framework
-    if: github.event_name == 'pull_request'
+  - name: Install nix
+    uses: "./.github/workflows/get-nix"
+    with:
+      target: ${{ inputs.target }}
+
+  - name: Cache Nix Store
+    uses: actions/cache@v4
+    id: nix-cache
+    with:
+      path: /tmp/nixcache
+      key: ${{ runner.os }}-${{ inputs.nixHash }}-nix-cache
+
+  - name: Import Nix Store Cache
+    if: steps.nix-cache.outputs.cache-hit == 'true'
     shell: bash
     run: |
-      set -ex
-      echo '${{ github.event.pull_request.title }}' | awk "/(^feat:)|(^fix:)|(^doc:)|(^perf:)|(^refactor:)|(^style:)|(^test:)|(^chore:)|(^revert:)|(^build:)/" | grep .
+      nix-store --import < /tmp/nixcache
+      sudo rm -rf /tmp/nixcache
 
   - name: C++ Formatting
     shell: bash
     run: |
       set -ex
-      clang-format-13 --version
-      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-13 -i {} +
+      nix develop --command clang-format --version
+      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec nix develop --command clang-format -i {} +
       git diff
       git diff --quiet
 
@@ -33,8 +45,8 @@ runs:
     shell: bash
     run: |
       set -ex
-      cmake-format --version
-      find . -type f -name CMakeLists.txt -exec cmake-format -i '{}' \;
+      nix develop --command cmake-format --version
+      find . -type f -name CMakeLists.txt -exec nix develop --command cmake-format -i '{}' \;
       git diff
       git diff --quiet
 
@@ -42,8 +54,8 @@ runs:
     shell: bash
     run: |
       set -ex
-      /usr/lib/qt6/bin/qmlformat --version
-      find . -type f -regex '.*\.qml' -exec /usr/lib/qt6/bin/qmlformat -inw 4 '{}' \;
+      nix develop --command qmlformat --version
+      find . -type f -regex '.*\.qml' -exec nix develop --command qmlformat -inw 4 '{}' \;
       git diff
       git diff --quiet
 
@@ -57,3 +69,11 @@ runs:
       git diff
       # Run quiet diff to fail the job if any changes were made (see man git-diff)
       git diff --quiet
+
+  - name: Cpp Check
+    shell: bash
+    run: |
+      set -ex
+      MAX_ERRORS=1
+      MAX_WARNINGS=1
+      nix develop -L --command scripts/cppCheckTest.sh $MAX_ERRORS $MAX_WARNINGS

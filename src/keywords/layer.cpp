@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/layer.h"
 #include "base/lineParser.h"
@@ -46,14 +46,13 @@ void LayerKeyword::deserialise(const SerialisedValue &node, const CoreData &core
     data_ = coreData.findProcessingLayer(std::string(node.as_string()));
     if (!data_)
         throw toml::type_error(
-            fmt::format("Layer '{}' given to keyword {} doesn't exist.\n", std::string(node.as_string()), KeywordBase::name()),
+            std::format("Layer '{}' given to keyword {} doesn't exist.\n", std::string(node.as_string()), KeywordBase::name()),
             node.location());
 }
 
 // Express as a serialisable value
-SerialisedValue LayerKeyword::serialise() const
+void LayerKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
     if (data_)
-        return data_->name();
-    return {};
+        target[tag] = data_->name();
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/export/coordinates.h"
 #include "base/lineParser.h"
@@ -28,7 +28,7 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
     // Export number of atoms and title
     if (!parser.writeLineF("{}\n", cfg->nAtoms()))
         return false;
-    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->version()))
         return false;
 
     // Export Atoms
@@ -44,7 +44,7 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg)
 {
     // Export title
-    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->version()))
         return false;
 
     // Export keytrj and imcon
@@ -114,8 +114,8 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
             result = exportDLPOLY(parser, cfg);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Coordinates format '{}' export has not been implemented.\n",
-                                                 formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Coordinates format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

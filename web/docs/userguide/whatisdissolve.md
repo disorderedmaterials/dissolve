@@ -30,4 +30,4 @@ EPSR (Empirical Potential Structure Refinement), written by Prof. Alan Soper, pa
 
 ### Can I simulate X or Y with Dissolve?
 
-Maybe! Dissolve is growing with new features, forcefields, and capabilities, so the range of systems it can tackle is always expanding. If in doubt, [contact us at the forum](https://forum.projectdissolve.com).
+Maybe! Dissolve is growing with new features, forcefields, and capabilities, so the range of systems it can tackle is always expanding. If in doubt, either get in touch with the [Disordered Materials Group at the ISIS Neutron and Muon Source](https://www.isis.stfc.ac.uk/Pages/Disordered-Materials.aspx), or talk to us via an [issue on GitHub](https://github.com/disorderedmaterials/dissolve/issues) if you have a specific question you need answering.

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/data3D.h"
 #include "base/lineParser.h"
@@ -26,10 +26,10 @@ void Data3DImportFileFormat::setUpKeywords() {}
  */
 
 // Import Data3D using current filename and format
-bool Data3DImportFileFormat::importData(Data3D &data, const ProcessPool *procPool)
+bool Data3DImportFileFormat::importData(Data3D &data)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading Data3D data.\n", filename_);
 
@@ -56,8 +56,8 @@ bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
             result = importPDens(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data3D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data3D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/energy/energy.h"
 #include "modules/geomOpt/geomOpt.h"
 
 // Run main processing
-Module::ExecutionResult GeometryOptimisationModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult GeometryOptimisationModule::process(Dissolve &dissolve)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
@@ -16,11 +15,11 @@ Module::ExecutionResult GeometryOptimisationModule::process(ModuleContext &modul
     Messenger::print("\n");
 
     // Initialise working arrays for coordinates and forces
-    rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-    rTemp_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
-    f_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+    rRef_.resize(targetConfiguration_->nAtoms(), Vector3());
+    rTemp_.resize(targetConfiguration_->nAtoms(), Vector3());
+    f_.resize(targetConfiguration_->nAtoms(), Vector3());
 
-    optimise<Configuration>(moduleContext.dissolve().potentialMap(), moduleContext.processPool(), targetConfiguration_);
+    optimise<Configuration>(dissolve.potentialMap(), targetConfiguration_);
 
     return ExecutionResult::Success;
 }

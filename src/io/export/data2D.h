@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "io/fileAndFormat.h"
+#include "templates/array2D.h"
 #include "templates/optionalRef.h"
 
 // Forward Declarations

@@ -1,0 +1,52 @@
+name: Detect Release
+description: Runs on any merged release PR (actioned by prepare_release.yml)
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+
+  # Note: github.event.pull_request.merged is a true bool, so do not quote the value to test.
+  Checkout:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, '[Release]')
+    uses: "./.github/workflows/_checkout.yml"
+    secrets: inherit
+    with:
+      checkoutRef: ${{ github.event.pull_request.merge_commit_sha }}
+      publishType: 'release'
+
+  BuildAndPackage:
+    needs: [Checkout]
+    uses: "./.github/workflows/_build_and_package.yml"
+    with:
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
+      osxRunner: ${{ needs.Checkout.outputs.osxRunner }}
+      qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+      antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+      conanHash: ${{ needs.Checkout.outputs.conanHash }}
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
+
+  Web:
+    needs: [Checkout]
+    uses: "./.github/workflows/_website.yml"
+    with:
+      publishType: 'release'
+      displayMajorVersion: ${{ needs.Checkout.outputs.currentVersionMajor }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.currentVersionMinor }}
+      hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
+    secrets: inherit
+
+  Publish:
+    needs: [Checkout,BuildAndPackage,Web]
+    uses: "./.github/workflows/_publish.yml"
+    with:
+      publishType: 'release'
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      releaseTag: ${{ needs.Checkout.outputs.currentVersion }}
+      releaseName: "Release ${{ needs.Checkout.outputs.currentVersion }}"
+      releaseBodyFile: ChangeLog.md
+      apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
+    secrets: inherit

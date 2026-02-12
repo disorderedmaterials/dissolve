@@ -1,0 +1,42 @@
+name: Dissolve2
+description: Continuous build workflow specifically for Dissolve 2.0 (develop2)
+
+on:
+  push:
+    branches:
+    - 'develop2'
+    paths-ignore:
+    - '.github/workflows/cacheConan.yml'
+    - '.github/workflows/cacheNix.yml'
+    - '.github/workflows/issues.yml'
+    - '.github/workflows/pr.yml'
+    - '.github/workflows/release.yml'
+    - '.github/ISSUE_TEMPLATE/**'
+    - 'README.md'
+
+jobs:
+
+  Checkout:
+    uses: "./.github/workflows/_checkout.yml"
+    with:
+      publishType: 'continuous'
+
+  QC:
+    needs: [Checkout]
+    uses: "./.github/workflows/_qc.yml"
+    with:
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
+
+  BuildAndPackage:
+    needs: [Checkout]
+    uses: "./.github/workflows/_build_and_package.yml"
+    with:
+      benchmark: true
+      publishBenchmarks: true
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+      antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+      conanHash: ${{ needs.Checkout.outputs.conanHash }}
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
+    secrets: inherit
+

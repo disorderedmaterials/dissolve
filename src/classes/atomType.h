@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -9,10 +9,11 @@
 #include "classes/shortRangeFunctions.h"
 #include "data/elements.h"
 #include <map>
+#include <memory>
 #include <vector>
 
 // AtomType Definition
-class AtomType : public Serialisable<>
+class AtomType : public Serialisable<>, public std::enable_shared_from_this<AtomType>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
@@ -51,6 +52,11 @@ class AtomType : public Serialisable<>
     int index_{-1};
 
     public:
+    // Enumeration for special type indices
+    enum SpecialTypeIndex
+    {
+        Ignore = -1
+    };
     // Return short-range interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
@@ -65,8 +71,12 @@ class AtomType : public Serialisable<>
     // Return whether our parameters are the same as those provided
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
+    /*
+     * Serialisation
+     */
+    public:
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(SerialisedValue node);
 };

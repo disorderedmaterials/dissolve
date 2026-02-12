@@ -1,11 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/dissolveModel.h"
+#include "nodes/dissolve.h"
 
 /*
  * Data
  */
+
+Dissolve &DissolveModel::dissolve()
+{
+    if (!dissolve_)
+        Messenger::exception("DissolveModel is lacking a backend.  This should *never* happen, so please contact the "
+                             "Dissolve developers to inform them of the issue.");
+    return *dissolve_;
+}
 
 // Set reference to Dissolve
 void DissolveModel::setDissolve(Dissolve &dissolve)
@@ -13,7 +22,6 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
     atomTypes_.setData(dissolve_->coreData().atomTypes());
     masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
-    speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
     moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), &dissolve_->coreData());
     Q_EMIT modelsUpdated();
@@ -30,7 +38,6 @@ void DissolveModel::update()
         masters_->torsionModel_.reset();
         masters_->improperModel_.reset();
     }
-    speciesModel_.reset();
     configurationModel_.reset();
     moduleLayersModel_.reset();
     Q_EMIT modelsUpdated();
@@ -106,11 +113,27 @@ int DissolveModel::nMasterImpropers()
     return masters_->improperModel_.rowCount();
 }
 
-// The Species Model
-SpeciesModel *DissolveModel::speciesModel() { return &speciesModel_; }
-
 // The Configuration Model
 ConfigurationModel *DissolveModel::configurationsModel() { return &configurationModel_; }
 
 // The ModuleLayers Model
 ModuleLayersModel *DissolveModel::moduleLayersModel() { return &moduleLayersModel_; }
+
+// Getter for filename
+QUrl DissolveModel::fileName() { return QUrl(dissolve_->inputFilename().data()); }
+
+void DissolveModel::loadInput(QUrl filename)
+{
+    dissolve_->loadInput(filename.toLocalFile().toStdString());
+    configurationModel_.reset();
+    Q_EMIT(modelsUpdated());
+}
+
+bool DissolveModel::saveAs(QUrl filename) { return dissolve_->saveToml(filename.toLocalFile().toStdString()); }
+
+Graph *DissolveModel::graph()
+{
+    if (!dissolve_)
+        return nullptr;
+    return dissolve_->graph();
+}

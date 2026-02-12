@@ -61,7 +61,7 @@ RUN powershell -NoProfile -ExecutionPolicy Bypass -Command \
 	$env:INCLUDE += 'C:\freetype-2.10.1\' ; \
 	$env:LIB += 'C:\build\freetype' ; \
 	Echo 'Compiling FTGL' ; \
-	git clone 'https://github.com/frankheckenbach/ftgl.git' C:\ftgl-latest ; \
+	git clone 'https://github.com/disorderedmaterials/ftgl-2.4.0' C:\ftgl-latest ; \
 	cd C:\build ; \
 	mkdir ftgl ; \
 	cd ftgl ; \

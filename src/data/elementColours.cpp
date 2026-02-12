@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/elementColours.h"
 #include <array>
@@ -127,7 +127,8 @@ constexpr std::array<float, 4> const colours_[] = {
     {1.0, 1.0, 1.0, 1.0},       // MC
     {1.0, 1.0, 1.0, 1.0},       // LV
     {1.0, 1.0, 1.0, 1.0},       // TS
-    {1.0, 1.0, 1.0, 1.0}        // OG
+    {1.0, 1.0, 1.0, 1.0},       // OG
+    {1.0, 1.0, 1.0, 1.0}        // Artificial
 };
 
 const std::array<float, 4> &colour(Elements::Element Z) { return colours_[Z]; }

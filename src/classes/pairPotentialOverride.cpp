@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairPotentialOverride.h"
 #include "classes/atomType.h"
@@ -45,13 +45,13 @@ InteractionPotential<Functions1D> &PairPotentialOverride::interactionPotential()
 const InteractionPotential<Functions1D> &PairPotentialOverride::interactionPotential() const { return interactionPotential_; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value
-SerialisedValue PairPotentialOverride::serialise() const
+void PairPotentialOverride::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue value;
+    auto &value = target[tag];
 
     value["matchI"] = matchI_;
     value["matchJ"] = matchJ_;
@@ -67,8 +67,6 @@ SerialisedValue PairPotentialOverride::serialise() const
             interactionParameters[parameter] = value;
         value["parameters"] = interactionParameters;
     }
-
-    return value;
 }
 
 // Read values from a serialisable value
@@ -77,14 +75,12 @@ void PairPotentialOverride::deserialise(const SerialisedValue &node)
     matchI_ = toml::find<std::string>(node, "matchI");
     matchJ_ = toml::find<std::string>(node, "matchJ");
 
-    Serialisable::optionalOn(node, "type",
-                             [this](const auto node)
+    Serialisable::optionalOn(node, "type", [this](const auto node)
                              { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
 
-    Serialisable::optionalOn(node, "form",
-                             [this](const auto node) {
-                                 interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string())));
-                             });
+    Serialisable::optionalOn(
+        node, "form", [this](const auto node)
+        { interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string()))); });
 
     Serialisable::optionalOn(node, "parameters",
                              [this](const auto node)

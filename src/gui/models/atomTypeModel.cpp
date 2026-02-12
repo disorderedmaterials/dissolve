@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/atomTypeModel.h"
 #include "base/sysFunc.h"
@@ -31,10 +31,10 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
     modelUpdater.connectModelSignals();
 }
 
-// Set function to return QIcon for item
-void AtomTypeModel::setIconFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func)
+// Set query function for item
+void AtomTypeModel::setQueryFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func)
 {
-    iconFunction_ = func;
+    queryFunction_ = std::move(func);
 }
 
 // Set vector containing checked items
@@ -70,53 +70,49 @@ int AtomTypeModel::columnCount(const QModelIndex &parent) const
 
 QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
 {
-    if (role >= Qt::UserRole)
+    switch (role)
     {
-        auto data = rawData(index);
-        switch (role)
-        {
-            case Qt::UserRole:
-                return QVariant::fromValue(data);
-            case Qt::UserRole + 1:
-                return QString::fromStdString(std::string(data->name()));
-            case Qt::UserRole + 2:
-                return QVariant(iconFunction_(rawData(index)));
-        }
-    }
-    if (role == Qt::DisplayRole || role == Qt::EditRole)
-    {
-        switch (index.column())
-        {
-            // Name
-            case (0):
-                return QString::fromStdString(std::string(rawData(index)->name()));
-            // Element
-            case (1):
-                if (role == Qt::EditRole)
-                    return {};
-                return QString::fromStdString(std::string(Elements::symbol(rawData(index)->Z())));
-            // Charge
-            case (2):
-                return QString::number(rawData(index)->charge());
-            // Short Range Form
-            case (3):
-                return QString::fromStdString(
-                    ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
-            // Short Range Parameters
-            case (4):
-                return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
-            default:
-                return {};
-        }
-    }
-    else if (role == Qt::DecorationRole && iconFunction_)
-        return QIcon(iconFunction_(rawData(index)) ? ":/general/icons/warn.svg" : ":/general/icons/warn.svg");
-    else if (role == Qt::CheckStateRole && checkedItems_)
-        return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
-                   ? Qt::Unchecked
-                   : Qt::Checked;
+        case (AtomTypeModelData::Raw):
+            return QVariant::fromValue(rawData(index));
+        case (AtomTypeModelData::Query):
+            return queryFunction_(rawData(index));
 
-    return {};
+        case (Qt::DisplayRole):
+        case (Qt::EditRole):
+            switch (index.column())
+            {
+                case (AtomTypeModelData::Name):
+                    return QString::fromStdString(std::string(rawData(index)->name()));
+                case (AtomTypeModelData::Element):
+                    if (role == Qt::EditRole)
+                        return {};
+                    return QString::fromStdString(std::string(Elements::symbol(rawData(index)->Z())));
+                case (AtomTypeModelData::Charge):
+                    return QString::number(rawData(index)->charge());
+                case (AtomTypeModelData::ShortRangeForm):
+                    return QString::fromStdString(
+                        ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
+                case (AtomTypeModelData::ShortRangeParameters):
+                    return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
+                default:
+                    return {};
+            }
+        case (Qt::DecorationRole):
+            if (queryFunction_)
+                return QIcon(queryFunction_(rawData(index)) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg");
+            else
+                return {};
+        case (Qt::CheckStateRole):
+            if (checkedItems_)
+                return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
+                               checkedItems_->get().end()
+                           ? Qt::Unchecked
+                           : Qt::Checked;
+            else
+                return {};
+        default:
+            return {};
+    }
 }
 
 bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -147,8 +143,7 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
 
         switch (index.column())
         {
-            // Name
-            case (0):
+            case (AtomTypeModelData::Name):
                 // Ensure uniqueness of name if we have a reference CoreData
                 if (coreData_)
                     atomType->setName(DissolveSys::uniqueName(value.toString().toStdString(), coreData_->get().atomTypes(),
@@ -157,20 +152,16 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
                 else
                     atomType->setName(value.toString().toStdString());
                 break;
-            // Element
-            case (1):
+            case (AtomTypeModelData::Element):
                 return false;
-            // Charge
-            case (2):
+            case (AtomTypeModelData::Charge):
                 atomType->setCharge(value.toDouble());
                 break;
-            // Short Range Form
-            case (3):
+            case (AtomTypeModelData::ShortRangeForm):
                 atomType->interactionPotential().setForm(
                     ShortRangeFunctions::forms().enumeration(value.toString().toStdString()));
                 break;
-            // Short Range Parameters
-            case (4):
+            case (AtomTypeModelData::ShortRangeParameters):
                 if (!atomType->interactionPotential().parseParameters(value.toString().toStdString()))
                     return false;
                 break;
@@ -193,14 +184,14 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
 Qt::ItemFlags AtomTypeModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() == 0)
+    if (index.column() == AtomTypeModelData::Name)
     {
         if (coreData_)
             flags |= Qt::ItemIsEditable;
         if (checkedItems_)
             flags |= Qt::ItemIsUserCheckable;
     }
-    else if (index.column() != 1)
+    else if (index.column() != AtomTypeModelData::Element)
         flags |= Qt::ItemIsEditable;
 
     return flags;
@@ -214,15 +205,15 @@ QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int
     if (orientation == Qt::Horizontal)
         switch (section)
         {
-            case (0):
+            case (AtomTypeModelData::Name):
                 return "Name";
-            case (1):
+            case (AtomTypeModelData::Element):
                 return "Element";
-            case (2):
+            case (AtomTypeModelData::Charge):
                 return "Charge";
-            case (3):
+            case (AtomTypeModelData::ShortRangeForm):
                 return "SR Form";
-            case (4):
+            case (AtomTypeModelData::ShortRangeParameters):
                 return "SR Parameters";
             default:
                 return {};
@@ -235,15 +226,15 @@ QHash<int, QByteArray> AtomTypeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "raw";
-    roles[Qt::UserRole + 1] = "display";
-    roles[Qt::UserRole + 2] = "icon";
+    roles[Qt::DisplayRole] = "display";
+    roles[AtomTypeModelData::Query] = "query";
     return roles;
 }
 
 void AtomTypeModel::addSuffix(int row, QString suffix)
 {
     auto &data = atomTypes_->get()[row];
-    data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
+    data->setName(std::format("{}{}", data->name(), suffix.toStdString()));
     auto idx = index(row, 0);
     Q_EMIT dataChanged(idx, idx);
 }
@@ -251,7 +242,7 @@ void AtomTypeModel::addSuffix(int row, QString suffix)
 void AtomTypeModel::addPrefix(int row, QString prefix)
 {
     auto &data = atomTypes_->get()[row];
-    data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
+    data->setName(std::format("{}{}", prefix.toStdString(), data->name()));
     auto idx = index(row, 0);
     Q_EMIT dataChanged(idx, idx);
 }

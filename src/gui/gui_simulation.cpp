@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "main/dissolve.h"
@@ -51,9 +51,13 @@ void DissolveWindow::setupIteration(int count)
     // Clear the messages tab
     clearMessages();
 
+    // Check if pair potential range is too large for configuration box, ask to auto adjust if so
+    checkPairPotentialRange();
+
     // Prepare the simulation
     if (!dissolve_.prepare())
     {
+        checkPairPotentialRange();
         updateStatusBar();
         return;
     }

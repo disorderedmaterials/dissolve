@@ -7,19 +7,24 @@ inputs:
   cacheOnly:
     type: boolean
     default: false
+  currentVersion:
+    type: string
+  nixHash:
+    type: string
+    required: true
+  benchmark:
+    type: boolean
+    default: false
+  publishBenchmarks:
+    type: boolean
+    default: false
 
 runs:
   using: "composite"
   steps:
 
-  - name: Free Space
-    shell: bash
-    run: |
-      set -ex
-      df -mh .
-      sudo rm -rf /usr/share/dotnet
-      sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-      df -mh .
+  - name: Free Up Space
+    uses: "./.github/workflows/linux-free-up-space"
 
   - name: Install nix
     uses: "./.github/workflows/get-nix"
@@ -31,10 +36,10 @@ runs:
     id: nix-cache
     with:
       path: /tmp/nixcache
-      key: ${{ runner.os }}-${{ env.nixHash }}-nix-cache
+      key: ${{ runner.os }}-${{ inputs.nixHash }}-nix-cache
 
   - name: Import Nix Store Cache
-    if: "steps.nix-cache.outputs.cache-hit == 'true'"
+    if: steps.nix-cache.outputs.cache-hit == 'true'
     shell: bash
     run: |
       nix-store --import < /tmp/nixcache
@@ -45,28 +50,58 @@ runs:
     run: |
       set -ex
 
+      git submodule update --init --recursive
+
       # Build Singularity target
       target=${{ inputs.target }}
       singularityTarget=${target/dissolve/singularity}
-      nix build -L .#$singularityTarget
+      nix build -L ".#$singularityTarget"
 
       # Assemble artifacts
       mkdir packages-sif
-      cp -v result packages-sif/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
+      cp -v result packages-sif/${{ inputs.target }}-${{ inputs.currentVersion }}.sif
 
   - name: Bundle Executable
     shell: bash
     run: |
       set -ex
 
-      nix bundle -L .#${{ inputs.target }} -o binary
+      nix bundle --bundler .#default -L .#${{ inputs.target }} -o binary
 
       # Assemble artifacts
       mkdir packages-binary
-      cp -v binary packages-binary/${{ inputs.target }}-${{ env.dissolveVersion }}
+      cp -v binary packages-binary/${{ inputs.target }}-${{ inputs.currentVersion }}
+
+  # - name: Run benchmarks
+  #   if: inputs.benchmark == 'true'
+  #   shell: bash
+  #   run: |
+  #     set -ex
+  #     export LD_LIBRARY_PATH=`pwd`/build/onetbb/lib
+
+  #     nix build -L .#benchmarks
+  #     rm result
+  #     nix run -L .#benchmarks > all_benchmark_results.json
+
+  #     cat all_benchmark_results.json
+
+      # Must reset to HEAD here otherwise the benchmark publishing step will (rightly) fail
+      # git reset HEAD --hard
+
+  # - name: Store benchmark result
+  #   uses: benchmark-action/github-action-benchmark@v1
+  #   if: inputs.publishBenchmarks == 'true' && inputs.benchmark == 'true'
+  #   with:
+  #     tool: 'googlecpp'
+  #     output-file-path: all_benchmark_results.json
+  #     github-token: ${{ github.token }}
+  #     auto-push: true
+  #     comment-on-alert: true
+  #     alert-threshold: '200%'
+  #     alert-comment-cc-users: '@disorderedmaterials/dissolve-devs'
 
   - name: Tidy nix Store
-    if: ${{ inputs.cacheOnly == 'true' }}
+    if: inputs.cacheOnly == 'true'
     shell: bash
     run: |
       set -ex
@@ -77,7 +112,7 @@ runs:
       echo "for a in \"$targets\"; do $nixStoreCmd -q --referrers-closure \$a | xargs $nixStoreCmd --delete --ignore-liveness $b; done" | sudo bash
 
   - name: Export Nix Store Cache
-    if: ${{ inputs.cacheOnly == 'true' }}
+    if: inputs.cacheOnly == 'true'
     shell: bash
     run: nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache
 

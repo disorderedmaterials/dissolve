@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "data/elements.h"
+#include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include "templates/vector3.h"
 #include <map>
 #include <memory>
 #include <vector>
@@ -38,11 +38,20 @@ class SpeciesAtom : public Serialisable<CoreData &>
     /*
      * Properties
      */
+    public:
+    // Presence
+    enum class Presence
+    {
+        Phantom = -1,
+        Physical,
+        Any
+    };
+
     private:
     // Atomic element
     Elements::Element Z_{Elements::Unknown};
     // Coordinates
-    Vec3<double> r_{0.0, 0.0, 0.0};
+    Vector3 r_{0.0, 0.0, 0.0};
     // Charge (if contained in file)
     double charge_{0.0};
     // Assigned AtomType
@@ -51,18 +60,21 @@ class SpeciesAtom : public Serialisable<CoreData &>
     int index_{-1};
     // Whether the atom is currently selected
     bool selected_{false};
+    // Presence of atom
+    Presence presence_{Presence::Physical};
 
     public:
-    // Set basic atom properties
+    // Set basic properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
-    // Set basic atom properties
-    void set(Elements::Element Z, const Vec3<double> r, double q = 0.0);
+    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
     // Set atomic element
     void setZ(Elements::Element Z);
     // Return atomic element
     Elements::Element Z() const;
+    // Return whether the atom is of the presence specified
+    bool isPresence(SpeciesAtom::Presence presence) const;
     // Return coordinates (read-only)
-    const Vec3<double> &r() const;
+    const Vector3 &r() const;
     // Set charge of Atom
     void setCharge(double charge);
     // Return charge of Atom
@@ -81,6 +93,8 @@ class SpeciesAtom : public Serialisable<CoreData &>
     void setSelected(bool selected);
     // Return whether the atom is currently selected
     bool isSelected() const;
+    // Return presence of atom
+    Presence presence() const;
 
     /*
      * Intramolecular Information
@@ -164,9 +178,9 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Set coordinates
     void setCoordinates(double x, double y, double z);
     // Set coordinates (from Vec3)
-    void setCoordinates(const Vec3<double> &newr);
+    void setCoordinates(const Vector3 &newr);
     // Translate coordinates
-    void translateCoordinates(const Vec3<double> &delta);
+    void translateCoordinates(const Vector3 &delta);
 
     /*
      * Atom Environment Helpers
@@ -200,7 +214,7 @@ class SpeciesAtom : public Serialisable<CoreData &>
     static int guessOxidationState(const SpeciesAtom *i);
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

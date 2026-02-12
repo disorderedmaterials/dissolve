@@ -6,6 +6,7 @@ import "../widgets" as D
 
 Node {
     id: moduleLayer
+
     property variant model
 
     ColumnLayout {
@@ -15,6 +16,7 @@ Node {
 
         RowLayout {
             id: banner
+
             Text {
                 text: `${model.data(model.index(index, 0), Qt.DisplayRole)}`
             }

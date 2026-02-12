@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/elementVector.h"
 #include "base/lineParser.h"
@@ -56,4 +56,7 @@ bool ElementVectorKeyword::serialise(LineParser &parser, std::string_view keywor
 }
 
 // Express as a serialisable value
-SerialisedValue ElementVectorKeyword::serialise() const { throw std::runtime_error("Cannot serialise ElementVectorKeyword"); }
+void ElementVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
+{
+    throw std::runtime_error("Cannot serialise ElementVectorKeyword");
+}

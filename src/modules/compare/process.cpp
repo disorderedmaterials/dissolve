@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/dataSource.h"
 #include "math/interpolator.h"
 #include "modules/compare/compare.h"
 
-Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult CompareModule::process(Dissolve &dissolve)
 {
     auto index = 1;
     for (auto &dataPair : data1dSources_)
@@ -26,13 +26,13 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
         ranges = ranges_;
 
         // Source the data
-        if (!dataPair.first->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.first->sourceData(dissolve.processingModuleData()))
         {
             Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
                              dataPair.second->dataName(), dataPair.first->dataName());
             continue;
         }
-        if (!dataPair.second->sourceData(moduleContext.processPool(), moduleContext.dissolve().processingModuleData()))
+        if (!dataPair.second->sourceData(dissolve.processingModuleData()))
         {
             Messenger::print("Skipping {} and {}: could not source data for {}", dataPair.first->dataName(),
                              dataPair.second->dataName(), dataPair.second->dataName());
@@ -46,10 +46,10 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          * Save Data
          */
 
-        auto &dataAStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("Pair{}_DataA", index), name_, GenericItem::InRestartFileFlag);
-        auto &dataBStorage = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-            fmt::format("Pair{}_DataB", index), name_, GenericItem::InRestartFileFlag);
+        auto &dataAStorage = dissolve.processingModuleData().realise<Data1D>(std::format("Pair{}_DataA", index), name_,
+                                                                             GenericItem::InRestartFileFlag);
+        auto &dataBStorage = dissolve.processingModuleData().realise<Data1D>(std::format("Pair{}_DataB", index), name_,
+                                                                             GenericItem::InRestartFileFlag);
 
         dataAStorage = dataA;
         dataBStorage = dataB;
@@ -81,8 +81,8 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
          * Calculating the difference (delta) between datasets
          */
 
-        auto &delta = moduleContext.dissolve().processingModuleData().realise<Data1D>(fmt::format("Pair{}_Delta", index), name_,
-                                                                                      GenericItem::InRestartFileFlag);
+        auto &delta = dissolve.processingModuleData().realise<Data1D>(std::format("Pair{}_Delta", index), name_,
+                                                                      GenericItem::InRestartFileFlag);
 
         delta.clear();
 
@@ -92,8 +92,9 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
 
         // Generate interpolation of dataPair.second
         Interpolator interpolatedB(dataB);
+        auto interpolated = interpolatedB.y(dataA.xAxis());
 
-        for (auto &&[x, y] : zip(dataA.xAxis(), dataA.values()))
+        for (auto &&[x, y, iy] : zip(dataA.xAxis(), dataA.values(), interpolated))
         {
             // Is our x value above the minimum range of each dataset ?
             if (x < rangeMin)
@@ -104,7 +105,7 @@ Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
                 break;
 
             // Add difference as a point to delta Data object
-            delta.addPoint(x, fabs(y - interpolatedB.y(x)));
+            delta.addPoint(x, fabs(y - iy));
         }
 
         ++index;

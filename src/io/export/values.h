@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Value Export Formats
 class ValueExportFileFormat : public FileAndFormat
@@ -43,5 +42,5 @@ class ValueExportFileFormat : public FileAndFormat
 
     public:
     // Export value data using current filename and format
-    bool exportData(const std::vector<double> &data, LineParser &currentParser, ProcessPool *procPool = nullptr);
+    bool exportData(const std::vector<double> &data, LineParser &currentParser);
 };

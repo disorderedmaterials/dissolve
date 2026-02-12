@@ -7,10 +7,19 @@ inputs:
   freeTypeArchive:
     default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
   ftglRepo:
-    default: https://github.com/frankheckenbach/ftgl.git
+    default: https://github.com/disorderedmaterials/ftgl-2.4.0
   cacheOnly:
     type: boolean
     default: false
+  qtVersion:
+    type: string
+    required: true
+  antlrVersion:
+    type: string
+    required: true
+  conanHash:
+    type: string
+    required: true
 
 runs:
   using: "composite"
@@ -20,30 +29,31 @@ runs:
   # Setup / Install Dependencies
   #
 
+  - uses: actions/setup-python@v5
+    with:
+      python-version: '3.11'
+
+  - name: Setup cmake
+    uses: jwlawson/actions-setup-cmake@v2
+    with:
+      cmake-version: '3.x'
+
   - name: Install Chocolatey Dependencies
     shell: bash
-    run: choco install -y ninja wget
+    run: choco install -y wget
 
   - name: Install Python Dependencies
     shell: bash
-    run: pip3 install aqtinstall conan==1.*
+    run: pip3 install py7zr==1.1.0 aqtinstall conan
 
   #
-  # Retrieve Qt cache (or install it)
+  # Install Qt
   #
-
-  - name: Retrieve Qt Cache
-    id: cache-qt
-    uses: actions/cache@v4
-    with:
-      key: windows-qt-${{ env.qtVersion }}
-      path: ${{ runner.temp }}\qt
 
   - name: Install Qt
-    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64
+      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ inputs.qtVersion }} win64_msvc2019_64 -m all
 
   - name: Setup MSVC Compiler
     uses: ilammy/msvc-dev-cmd@v1
@@ -120,11 +130,10 @@ runs:
     shell: bash
     run: |
       set -ex
-      wget https://www.antlr.org/download/antlr-${{ env.antlrVersion }}-complete.jar -Oantlr-${{ env.antlrVersion }}-complete.jar
+      wget https://www.antlr.org/download/antlr-${{ inputs.antlrVersion }}-complete.jar -Oantlr-${{ inputs.antlrVersion }}-complete.jar
       wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava.zip
       unzip java.zip
       
-
   #
   # Main Build
   #
@@ -133,7 +142,7 @@ runs:
     id: cache-conan
     uses: actions/cache@v4
     with:
-      key: windows-conan-${{ env.conanHash }}
+      key: windows-conan-${{ inputs.conanHash }}
       path: |
         ~\.conan
         ~\.conancache
@@ -142,17 +151,16 @@ runs:
     if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
-      conan profile new default --detect
-      conan profile update settings.compiler="Visual Studio" default
-      conan profile update settings.compiler.version=17 default
+      conan profile detect
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
+      git submodule update --init --recursive
       # Setup environment
-      Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
-      ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ env.antlrVersion }}-complete.jar"
+      Qt6_DIR="${RUNNER_TEMP}\qt\${{ inputs.qtVersion }}\msvc2019_64"
+      ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ inputs.antlrVersion }}-complete.jar"
       export PATH="${Qt6_DIR}\bin;$PATH"
       INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
       LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
@@ -160,15 +168,11 @@ runs:
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
 
-      # Set conan cache location
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-
       # Build
-      mkdir build && cd build
+      mkdir -p build && cd build
       TEMPD=$(mktemp -d)
       mkdir -p $TEMPD/bin
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD
-      cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
       cp bin/* $TEMPD/bin
       ninja install
@@ -182,4 +186,13 @@ runs:
       name: windows-build-artifacts
       path: |
         ${{ github.workspace }}\build
+      retention-days: 1
+
+  - name: Upload Qt Artifacts
+    if: ${{ inputs.cacheOnly == 'false' }}
+    uses: actions/upload-artifact@v4
+    with:
+      name: windows-qt
+      path: |
+        ${{ runner.temp }}\qt
       retention-days: 1

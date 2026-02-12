@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "classes/isotopeData.h"
 #include "gui/dataViewer.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
@@ -15,8 +14,6 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *m
 {
     // Set up user interface
     ui_.setupUi(this);
-
-    refreshing_ = true;
 
     // Set up graph (defaulting to total F(Q))
     graph_ = ui_.PlotWidget->dataViewer();
@@ -58,29 +55,29 @@ void NeutronSQModuleWidget::createPartialSetRenderables(std::string_view targetP
     if (!ui_.FilterEdit->text().isEmpty())
         filterText = ui_.FilterEdit->text().toStdString();
 
-    PairIterator pairs(ps.atomTypeMix().nItems());
-    for (auto [first, second] : pairs)
-    {
-        auto &at1 = ps.atomTypeMix()[first];
-        auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+    auto typeFractions = ps.atomTypeFractions();
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, auto &popI, int indexJ, auto popJ)
+        {
+            const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
 
-        // Filtering - does this 'id' match our filter?
-        if (filterText && id.find(filterText.value()) == std::string::npos)
-            continue;
+            // Filtering - does this 'id' match our filter?
+            if (filterText && id.find(filterText.value()) == std::string::npos)
+                return;
 
-        // Full partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                   fmt::format("{} (Full)", id), "Full");
+            // Full partial
+            graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                       std::format("{} (Full)", id), "Full");
 
-        // Bound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                   fmt::format("{} (Bound)", id), "Bound");
+            // Bound partial
+            graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                       std::format("{} (Bound)", id), "Bound");
 
-        // Unbound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                   fmt::format("{} (Unbound)", id), "Unbound");
-    }
+            // Unbound partial
+            graph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                       std::format("{} (Unbound)", id), "Unbound");
+        });
 }
 
 // Update controls within widget
@@ -100,21 +97,21 @@ void NeutronSQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags
 
         if (ui_.TotalFQButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->name()), "Total F(Q)",
+            graph_->createRenderable<RenderableData1D>(std::format("{}//WeightedSQ//Total", module_->name()), "Total F(Q)",
                                                        "Calculated");
             auto boundTotal = graph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedSQ//BoundTotal", module_->name()), "Bound F(Q)", "Calculated");
+                std::format("{}//WeightedSQ//BoundTotal", module_->name()), "Bound F(Q)", "Calculated");
             boundTotal->setColour(StockColours::GreenStockColour);
             boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
             auto unboundTotal = graph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedSQ//UnboundTotal", module_->name()), "Unbound F(Q)", "Calculated");
+                std::format("{}//WeightedSQ//UnboundTotal", module_->name()), "Unbound F(Q)", "Calculated");
             unboundTotal->setColour(StockColours::GreenStockColour);
             unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
             // Add on reference F(Q) data if present
             if (referenceFileAndFormat.hasFilename())
                 graph_
-                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", module_->name()), "Reference F(Q)",
+                    ->createRenderable<RenderableData1D>(std::format("{}//ReferenceData", module_->name()), "Reference F(Q)",
                                                          "Reference")
                     ->setColour(StockColours::RedStockColour);
         }
@@ -125,9 +122,9 @@ void NeutronSQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags
         }
         else if (ui_.TotalGRButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedGR//Total", module_->name()), "Calculated",
+            graph_->createRenderable<RenderableData1D>(std::format("{}//WeightedGR//Total", module_->name()), "Calculated",
                                                        "Calculated");
-            auto repGR = graph_->createRenderable<RenderableData1D>(fmt::format("{}//RepresentativeTotalGR", module_->name()),
+            auto repGR = graph_->createRenderable<RenderableData1D>(std::format("{}//RepresentativeTotalGR", module_->name()),
                                                                     "Via FT", "Calculated");
             repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
             repGR->setColour(StockColours::GreenStockColour);
@@ -135,7 +132,7 @@ void NeutronSQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags
             // Add on reference G(r) (from FT of F(Q)) if present
             if (referenceFileAndFormat.hasFilename())
                 graph_
-                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", module_->name()),
+                    ->createRenderable<RenderableData1D>(std::format("{}//ReferenceDataFT", module_->name()),
                                                          "Reference G(r) (via FT)", "Reference")
                     ->setColour(StockColours::RedStockColour);
         }

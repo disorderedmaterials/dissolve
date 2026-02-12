@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
 
 #include "base/sysFunc.h"
+#include "data/ff/camelloneBKS/camelloneBKS.h"
 #include "data/ff/kulmala2010/kulmala2010.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py4oh.h"
@@ -45,13 +46,12 @@ bool ForcefieldLibrary::registerForcefield_(const std::shared_ptr<Forcefield> &f
 {
     // Set up the forcefield, returning if not successful
     if (!ff->prepare())
-        throw(std::runtime_error(
-            fmt::format("Failed to prepare and set up forcefield '{}' - it will not be registered.\n", ff->name())));
+        Messenger::exception("Failed to prepare and set up forcefield '{}' - it will not be registered.\n", ff->name());
 
     // Generate NETA definitions for all atom types in the forcefield
     if (!ff->createNETADefinitions())
-        throw(std::runtime_error(
-            fmt::format("Failed to generate NETA definitions for forcefield '{}' - it will not be registered.\n", ff->name())));
+        Messenger::exception("Failed to generate NETA definitions for forcefield '{}' - it will not be registered.\n",
+                             ff->name());
 
     forcefields_.push_back(ff);
 
@@ -61,6 +61,7 @@ bool ForcefieldLibrary::registerForcefield_(const std::shared_ptr<Forcefield> &f
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
+    registerForcefield_(std::make_shared<Forcefield_CamelloneBKS>());
     registerForcefield_(std::make_shared<Forcefield_Kulmala2010>());
     registerForcefield_(std::make_shared<Forcefield_Ludwig_NTf2>());
     registerForcefield_(std::make_shared<Forcefield_Ludwig_Py5>());
@@ -99,9 +100,8 @@ std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 // Return named Forcefield, if it exists
 std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(std::string_view name)
 {
-    auto it =
-        std::find_if(forcefields().begin(), forcefields().end(),
-                     [&name](const std::shared_ptr<Forcefield> &ff) { return DissolveSys::sameString(ff->name(), name); });
+    auto it = std::find_if(forcefields().begin(), forcefields().end(), [&name](const std::shared_ptr<Forcefield> &ff)
+                           { return DissolveSys::sameString(ff->name(), name); });
     if (it == forcefields().end())
         return nullptr;
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/fontInstance.h"
 #include "base/messenger.h"
@@ -89,7 +89,7 @@ FTBBox FontInstance::boundingBox(std::string_view text) const
 
     // Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with
     // trailing spaces..
-    FTBBox box = font_->BBox(fmt::format(".{}.", text).c_str());
+    FTBBox box = font_->BBox(std::format(".{}.", text).c_str());
     return FTBBox(box.Lower(), FTPoint(box.Upper().X() - dotWidth_, box.Upper().Y()));
 }
 
@@ -134,7 +134,7 @@ bool FontInstance::renderText(std::string text) const
  */
 
 // Calculate bounding box for specified string
-void FontInstance::boundingBox(std::string_view text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
+void FontInstance::boundingBox(std::string_view text, Vector3 &lowerLeft, Vector3 &upperRight) const
 {
     FTBBox box = boundingBox(text);
     lowerLeft.set(box.Lower().X(), box.Lower().Y(), box.Lower().Z());

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/windowFunction.h"
 #include "base/lineParser.h"
 #include "math/data1D.h"
+#include "math/mathFunc.h"
 
 WindowFunction::WindowFunction(WindowFunction::Form function) : form_(function) {}
 
@@ -18,6 +19,8 @@ EnumOptions<WindowFunction::Form> WindowFunction::forms()
                                                                 {Form::Sine, "Sine"},
                                                                 {Form::Lorch0, "Lorch0"}});
 }
+
+EnumOptions<WindowFunction::Form> getEnumOptions(WindowFunction::Form) { return WindowFunction::forms(); }
 
 /*
  * Function Data
@@ -63,14 +66,14 @@ double WindowFunction::y(double x, double omega) const
         case (Form::Bartlett):
             return (1.0 - fabs((chi - 0.5) / 0.5));
         case (Form::Hann):
-            return 0.5 * (1.0 - cos(2 * PI * chi));
+            return 0.5 * (1.0 - cos(2 * M_PI * chi));
         case (Form::Lanczos):
-            return sin(PI * (2 * chi - 1.0)) / (PI * (2 * chi - 1.0));
+            return sin(M_PI * (2 * chi - 1.0)) / (M_PI * (2 * chi - 1.0));
         case (Form::Nuttall):
-            return (0.355768 - 0.487396 * cos(2.0 * PI * chi) + 0.144232 * cos(4.0 * PI * chi) -
-                    0.012604 * cos(6.0 * PI * chi));
+            return (0.355768 - 0.487396 * cos(2.0 * M_PI * chi) + 0.144232 * cos(4.0 * M_PI * chi) -
+                    0.012604 * cos(6.0 * M_PI * chi));
         case (Form::Sine):
-            return 1.0 - sin(PI * 0.5 * chi);
+            return 1.0 - sin(M_PI * 0.5 * chi);
         case (Form::Lorch0):
             /*
              * Original Lorch function
@@ -82,9 +85,9 @@ double WindowFunction::y(double x, double omega) const
              * f(x) = ---------------
              *          x * delta0
              */
-            return sin(x * (PI / xMax_)) / (x * (PI / xMax_));
+            return sin(x * (M_PI / xMax_)) / (x * (M_PI / xMax_));
         default:
-            throw(std::runtime_error(fmt::format("Window function enumeration {} not implemented.\n", (int)form_)));
+            Messenger::exception("Window function enumeration {} not implemented.\n", (int)form_);
     }
 
     return 0.0;

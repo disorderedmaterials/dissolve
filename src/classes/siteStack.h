@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -38,12 +38,6 @@ class SiteStack
     /*
      * Creation
      */
-    private:
-    // Calculate geometric centre of atoms in the given molecule
-    Vec3<double> centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices);
-    // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
-    Vec3<double> centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices);
-
     public:
     // Create stack for specified Configuration and site
     bool create(Configuration *cfg, const SpeciesSite *site);
@@ -56,10 +50,8 @@ class SiteStack
     bool sitesInMolecules_;
     // Whether the current stack contains local axes information
     bool sitesHaveOrientation_;
-    // Basic site array (if no local axes are defined)
+    // Site array
     std::vector<Site> sites_;
-    // Oriented site array (if local axes are defined)
-    std::vector<OrientedSite> orientedSites_;
 
     public:
     // Return number of sites in the stack

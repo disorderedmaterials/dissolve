@@ -10,9 +10,6 @@ ColumnLayout {
     property int sigFigValue
     property double smoothValue
 
-    anchors.fill: parent
-    spacing: 10
-
     function processSelection(option, x) {
         switch (option) {
         case ModifyChargesModel.Smoothing:
@@ -26,6 +23,9 @@ ColumnLayout {
         }
     }
 
+    anchors.fill: parent
+    spacing: 10
+
     D.Text {
         Layout.fillHeight: true
         Layout.fillWidth: true
@@ -35,6 +35,7 @@ ColumnLayout {
     }
     SpinBox {
         id: spinBox
+
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
         editable: modify === ModifyChargesModel.Smoothing ? true : false
@@ -50,6 +51,7 @@ ColumnLayout {
 
         D.Button {
             id: cancelButton
+
             icon.source: "qrc:/general/icons/false.svg"
             text: "Cancel"
 
@@ -60,6 +62,7 @@ ColumnLayout {
         }
         D.Button {
             id: okButton
+
             icon.source: "qrc:/general/icons/true.svg"
             text: "Ok"
 

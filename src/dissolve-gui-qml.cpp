@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "base/processPool.h"
 #include "gui/models/dissolveModel.h"
 #include "gui/models/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
+#include "math/mathFunc.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QSurfaceFormat>
 #include <clocale>
 
@@ -19,25 +20,30 @@ int main(int args, char **argv)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
+    DissolveModel dissolveModel;
+    dissolveModel.setDissolve(dissolve);
+
     // Parse CLI options
     CLIOptions options;
     if (options.parse(args, argv, true) != CLIOptions::Success)
         return 1;
 
     // Initialise random seed
-    srand(options.randomSeed().value_or((unsigned)time(nullptr)));
+    if (options.randomSeed())
+        DissolveMath::setRandomSeed(*options.randomSeed());
 
     QGuiApplication app(args, argv);
 
     QQmlApplicationEngine engine;
-    const QUrl url(u"qrc:/main/qml/DissolveMain.qml"_qs);
+    engine.rootContext()->setContextProperty("dissolve", &dissolveModel);
+    const QUrl url(u"qrc:/Dissolve/qml/DissolveMain.qml"_qs);
+    Types::registerDissolveQmlTypes();
 
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.load(url);
 
-    Types::registerDissolveQmlTypes();
     QCoreApplication::setOrganizationName("Team Dissolve");
     QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI-QML");
@@ -50,7 +56,7 @@ int main(int args, char **argv)
     QLocale::setDefault(QLocale::C);
 
     // Print GPL license information
-    Messenger::print("Dissolve-GUI-QML {} version {}, Copyright (C) 2024 Team Dissolve and contributors.\n", Version::appType(),
+    Messenger::print("Dissolve-GUI-QML {} version {}, Copyright (C) 2026 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");

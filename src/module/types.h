@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -17,6 +17,7 @@ enum ModuleType
     Bragg,
     Checks,
     CheckSpecies,
+    Clustering,
     Compare,
     DAngle,
     DataTest,
@@ -36,6 +37,7 @@ enum ModuleType
     IntraShake,
     MD,
     ModifierOSites,
+    MoleculeTorsion,
     MolShake,
     NeutronSQ,
     OrientedSDF,
@@ -46,6 +48,8 @@ enum ModuleType
     SQ,
     TemperatureSchedule,
     Test,
+    TR,
+    VoxelDensity,
     XRaySQ
 };
 

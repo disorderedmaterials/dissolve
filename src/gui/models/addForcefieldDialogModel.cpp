@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/addForcefieldDialogModel.h"
 #include "data/ff/library.h"
@@ -53,7 +53,8 @@ void AddForcefieldDialogModel::next()
             Q_EMIT assignErrors({});
             break;
         case AddForcefieldDialogModel::Page::AtomTypesPage:
-            if (!ff_) // No valud forcefield
+            // Must have a valid forcefield
+            if (!ff_)
                 return;
             modifiedSpecies_ = temporaryDissolve_->coreData().addSpecies();
             modifiedSpecies_->copyBasic(species_);
@@ -104,6 +105,7 @@ void AddForcefieldDialogModel::next()
             index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
             break;
         case AddForcefieldDialogModel::Page::IntramolecularPage:
+            assignIntramolecularTerms(ff_);
             Q_EMIT mastersChanged();
             index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
             break;
@@ -122,20 +124,19 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
 
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
-    auto node = dissolve_->coreData().serialiseMaster();
-    temporaryCoreData_.deserialiseMaster(node);
-    masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
+    masters_ = std::make_unique<MasterTermTreeModel>(temporaryCoreData_);
 
     // Set model and signals for the master terms tree
-    atomTypes_.setIconFunction([this](const auto type) { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
-    masters_->setBondIconFunction([this](std::string_view name)
-                                  { return dissolve_->coreData().getMasterBond(name).has_value(); });
-    masters_->setAngleIconFunction([this](std::string_view name)
-                                   { return dissolve_->coreData().getMasterAngle(name).has_value(); });
-    masters_->setTorsionIconFunction([this](std::string_view name)
-                                     { return dissolve_->coreData().getMasterTorsion(name).has_value(); });
-    masters_->setImproperIconFunction([this](std::string_view name)
-                                      { return dissolve_->coreData().getMasterImproper(name).has_value(); });
+    atomTypes_.setQueryFunction([this](const auto type)
+                                { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
+    masters_->setBondQueryFunction([this](std::string_view name)
+                                   { return dissolve_->coreData().getMasterBond(name).has_value(); });
+    masters_->setAngleQueryFunction([this](std::string_view name)
+                                    { return dissolve_->coreData().getMasterAngle(name).has_value(); });
+    masters_->setTorsionQueryFunction([this](std::string_view name)
+                                      { return dissolve_->coreData().getMasterTorsion(name).has_value(); });
+    masters_->setImproperQueryFunction([this](std::string_view name)
+                                       { return dissolve_->coreData().getMasterImproper(name).has_value(); });
 }
 
 // Supply the species to operate on
@@ -245,9 +246,6 @@ void AddForcefieldDialogModel::finalise()
         original.setCharge(modified.charge());
     }
 
-    // Assign intramolecular terms if we need to
-    assignIntramolecularTerms(ff_);
-
     // Copy intramolecular terms
     if (intramolecularRadio_ != Radio::None)
     {
@@ -306,6 +304,24 @@ void AddForcefieldDialogModel::finalise()
             }
         }
     }
+
+    auto &currentOverrides = dissolve_->coreData().pairPotentialOverrides();
+    for (const auto &ffOverride : ff_->pairPotentialOverrides())
+    {
+        auto it = std::find_if(
+            currentOverrides.begin(), currentOverrides.end(),
+            [&](const auto &ppOverride)
+            {
+                return (ppOverride->matchI() == ffOverride.matchI() && ppOverride.get()->matchJ() == ffOverride.matchJ()) ||
+                       (ppOverride->matchI() == ffOverride.matchJ() && ppOverride.get()->matchJ() == ffOverride.matchI());
+            });
+        if (it == currentOverrides.end())
+        {
+            dissolve_->coreData().addPairPotentialOverride(ffOverride.matchI(), ffOverride.matchJ(), ffOverride.type(),
+                                                           ffOverride.interactionPotential());
+        }
+    }
+
     accept();
 }
 
@@ -331,16 +347,16 @@ void AddForcefieldDialogModel::addMasterSuffix(int type, int index, QString suff
     switch (type)
     {
         case 0:
-            termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 1:
-            termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 2:
-            termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 3:
-            termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
     };
 }
@@ -367,16 +383,16 @@ void AddForcefieldDialogModel::addMasterPrefix(int type, int index, QString pref
     switch (type)
     {
         case 0:
-            termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 1:
-            termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 2:
-            termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
         case 3:
-            termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
             break;
     };
 }
@@ -409,13 +425,12 @@ void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
         if (intramolecularRadio_ == Radio::Selected)
             flags += Forcefield::SelectionOnlyFlag;
 
+        // Try to assign terms across the species
         if (!ff->assignIntramolecular(modifiedSpecies_, flags))
-            // Assigning failed
             return;
 
         // Reduce to master terms?
         if (!noMasterTerms_)
             modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
     }
-    return;
 }

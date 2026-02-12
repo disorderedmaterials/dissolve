@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/data3D.h"
 #include "base/lineParser.h"
@@ -53,6 +53,9 @@ void Data3D::initialise(int xSize, int ySize, int zSize, bool withError)
 
     ++version_;
 }
+
+// Initialise arrays to specified uniform size
+void Data3D::initialise(int size, bool withError) { initialise(size, size, size, withError); }
 
 // Initialise bins and axes simultaneously
 void Data3D::initialise(int nx, double xMin, double xDelta, int ny, double yMin, double yDelta, int nz, double zMin,

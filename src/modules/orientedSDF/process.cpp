@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator3D.h"
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
 #include "math/histogram3D.h"
-#include "module/context.h"
 #include "modules/orientedSDF/orientedSDF.h"
 
 // Run main processing
-Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult OrientedSDFModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -37,7 +36,7 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
             if (siteB == siteA)
                 continue;
 
-            auto axisAngle = Box::angleInDegrees(siteA->axes().columnAsVec3(axisA_), siteB->axes().columnAsVec3(axisB_));
+            auto axisAngle = siteA->axes().columnAsVec3(axisA_).angleInDegrees(siteB->axes().columnAsVec3(axisB_));
             if (symmetric_ && axisAngle > 90.0)
                 axisAngle = 180.0 - axisAngle;
             if (axisAngleRange_.contains(axisAngle))
@@ -64,8 +63,7 @@ Module::ExecutionResult OrientedSDFModule::process(ModuleContext &moduleContext)
     normaliserOrientedSDF.normaliseByGrid();
 
     // Save SDF data?
-    if (!DataExporter<Data3D, Data3DExportFileFormat>::exportData(dataOrientedSDF, sdfFileAndFormat_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dataOrientedSDF, sdfFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

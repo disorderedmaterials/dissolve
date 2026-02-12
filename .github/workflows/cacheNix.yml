@@ -10,16 +10,29 @@ on:
 
 jobs:
 
+  Checkout:
+    uses: "./.github/workflows/_checkout.yml"
+
   CacheNix:
+    needs: [Checkout]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: "./.github/workflows/setup"
+      - name: 'Download Source Tarfiles'
+        uses: actions/download-artifact@v4
+        with:
+          name: source
+
+      - name: 'Unpack Source'
+        shell: bash
+        run: tar -xvf dissolve-original-source.tar
+
       - name: "Build (Cache Only) (ubuntu-latest)"
         uses: "./.github/workflows/build"
         with:
           target: dissolve-gui
           cacheOnly: true
+          currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+          qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+          antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+          nixHash: ${{ needs.Checkout.outputs.nixHash }}
 

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/nodeValue.h"
 #include "base/lineParser.h"
-#include "procedure/nodes/node.h"
+#include "generator/node.h"
 
-NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
+NodeValueKeyword::NodeValueKeyword(NodeValue &data, GeneratorNode *parentNode)
     : KeywordBase(typeid(this)), data_(data), default_(data), parentNode_(parentNode)
 {
 }
@@ -54,7 +54,7 @@ bool NodeValueKeyword::serialise(LineParser &parser, std::string_view keywordNam
 }
 
 // Express as a serialisable value
-SerialisedValue NodeValueKeyword::serialise() const { return data_; }
+void NodeValueKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data)

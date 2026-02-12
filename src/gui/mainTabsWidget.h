@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -130,21 +130,13 @@ class MainTabsWidget : public QTabWidget
     public:
     // Set icon for tab with specified page widget
     void setTabIcon(QWidget *pageWidget, QIcon icon);
-    // Add close button to specified tab
-    QToolButton *addTabCloseButton(QWidget *pageWidget);
 
     /*
      * Widget Functions
      */
-    private:
-    // List of close buttons and their associated pageWidgets
-    std::vector<std::tuple<QToolButton *, QWidget *>> closeButtons_;
-
     private Q_SLOTS:
     // Context menu requested
     void contextMenuRequested(const QPoint &pos);
-    // Tab close button clicked
-    void tabCloseButtonClicked(bool);
     // Tab double-clicked
     void tabDoubleClicked(int index);
 

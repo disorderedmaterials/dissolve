@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include <utility>
 
@@ -65,17 +65,19 @@ PairPotential *Dissolve::addPairPotential(const std::shared_ptr<AtomType> &at1, 
 // Return first PairPotential in list
 const std::vector<PairPotential::Definition> &Dissolve::pairPotentials() const { return pairPotentials_; }
 
+std::vector<PairPotential::Definition> &Dissolve::pairPotentials() { return pairPotentials_; }
+
 // Return nth PairPotential in list
 PairPotential *Dissolve::pairPotential(int n) { return std::get<2>(pairPotentials_[n]).get(); }
 
 // Return specified PairPotential (if defined)
-PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
+PairPotential *Dissolve::pairPotential(const AtomType *at1, const AtomType *at2) const
 {
     auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(),
                            [at1, at2](const auto &ppDef)
                            {
-                               return (std::get<0>(ppDef) == at1 && std::get<1>(ppDef) == at2) ||
-                                      (std::get<0>(ppDef) == at2 && std::get<1>(ppDef) == at1);
+                               return (std::get<0>(ppDef).get() == at1 && std::get<1>(ppDef).get() == at2) ||
+                                      (std::get<0>(ppDef).get() == at2 && std::get<1>(ppDef).get() == at1);
                            });
     return it != pairPotentials_.end() ? std::get<2>(*it).get() : nullptr;
 }
@@ -95,6 +97,7 @@ PairPotential *Dissolve::pairPotential(std::string_view at1Name, std::string_vie
 
 // Return map for PairPotentials
 const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
+PotentialMap &Dissolve::potentialMap() { return potentialMap_; }
 
 // Update all pair potentials
 bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
@@ -119,39 +122,35 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                           pairPotentials_.end());
 
     // Second step - add or update tabulated pair potentials defined by the parameters and form of the associated atom types
-    if (!for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-                             [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
-                             {
-                                 // Try to locate existing pair potential between these atom types
-                                 auto *pot = pairPotential(at1, at2);
+    dissolve::for_each_pair(ParallelPolicies::seq, coreData_.atomTypes(),
+                            [&](int typeI, const auto &at1, int typeJ, const auto &at2)
+                            {
+                                // Try to locate existing pair potential between these atom types
+                                auto *pot = pairPotential(at1.get(), at2.get());
 
-                                 // If it doesn't exist we create it
-                                 if (!pot)
-                                 {
-                                     Messenger::print("Creating new PairPotential for interaction between '{}' and '{}'...\n",
-                                                      at1->name(), at2->name());
-                                     pot = addPairPotential(at1, at2);
-                                 }
+                                // If it doesn't exist we create it
+                                if (!pot)
+                                {
+                                    Messenger::print("Creating new PairPotential for interaction between '{}' and '{}'...\n",
+                                                     at1->name(), at2->name());
+                                    pot = addPairPotential(at1, at2);
+                                }
 
-                                 // Update basic parameters
-                                 pot->setNames(at1->name(), at2->name());
+                                // Update basic parameters
+                                pot->setNames(at1->name(), at2->name());
 
-                                 // Auto-update parameters using combination rules?
-                                 if (useCombinationRules)
-                                 {
-                                     // Combine the atom type parameters into potential function parameters
-                                     auto optPotential =
-                                         ShortRangeFunctions::combine(at1->interactionPotential(), at2->interactionPotential());
-                                     if (optPotential)
-                                         pot->setInteractionPotential(*optPotential);
-                                     else
-                                         pot->setInteractionPotential(Functions1D::Form::None, "");
-                                 }
-
-                                 return EarlyReturn<bool>::Continue;
-                             })
-             .value_or(true))
-        return false;
+                                // Auto-update parameters using combination rules?
+                                if (useCombinationRules)
+                                {
+                                    // Combine the atom type parameters into potential function parameters
+                                    auto optPotential =
+                                        ShortRangeFunctions::combine(at1->interactionPotential(), at2->interactionPotential());
+                                    if (optPotential)
+                                        pot->setInteractionPotential(*optPotential);
+                                    else
+                                        pot->setInteractionPotential(Functions1D::Form::None, "");
+                                }
+                            });
 
     // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
     for (auto &&[at1, at2, pot] : pairPotentials_)
@@ -213,7 +212,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     for (auto &&[at1, at2, pp] : pairPotentials_)
     {
         // Check processing module data for a named additional potential
-        auto addPotName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+        auto addPotName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
         if (processingModuleData_.contains(addPotName, "Dissolve"))
             pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
     }
@@ -230,7 +229,7 @@ void Dissolve::clearAdditionalPotentials()
         pp->resetAdditionalPotential();
 
         // Clear entry in processing module data if it exists
-        auto itemName = fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+        auto itemName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
         if (processingModuleData_.contains(itemName, "Dissolve"))
             processingModuleData_.remove(itemName, "Dissolve");
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/pairPotential.h"
@@ -61,15 +61,15 @@ class PairPotentialsAnalyticTest : public ::testing::Test
     void testEnergy(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_->analyticEnergy(r, 1.0, 1.0); },
-            [=](double r) { return pairPotential_->energy(r); });
+            form, parameters, rStart, [this](double r) { return pairPotential_->analyticEnergy(r, 1.0, 1.0); },
+            [this](double r) { return pairPotential_->energy(r); });
     }
     // Test analytic vs tabulated force for specified form and parameters
     void testForce(Functions1D::Form form, std::string_view parameters, double rStart = testRDelta_)
     {
         test(
-            form, parameters, rStart, [=](double r) { return pairPotential_->analyticForce(r, 1.0, 1.0); },
-            [=](double r) { return pairPotential_->force(r); });
+            form, parameters, rStart, [this](double r) { return pairPotential_->analyticForce(r, 1.0, 1.0); },
+            [this](double r) { return pairPotential_->force(r); });
     }
 };
 
@@ -91,6 +91,16 @@ TEST_F(PairPotentialsAnalyticTest, Buckingham)
     // Values put in for TeO2 from https://pubs.rsc.org/en/content/articlelanding/2014/cp/c4cp01273a
     testEnergy(Functions1D::Form::Buckingham, "A=153919.5503  B=2.8912848  C=96.48514925", testRDelta_ * 5);
     testForce(Functions1D::Form::Buckingham, "A=8005439.257  B=6.211565  C=3025.962812", testRDelta_ * 5);
+}
+
+TEST_F(PairPotentialsAnalyticTest, Buckingham128)
+{
+    // Values here are kJ/mol converted from eV those provided in
+    // https://www.sciencedirect.com/science/article/pii/S1387181116300609
+    testEnergy(Functions1D::Form::Buckingham128, "A=133996.2240  B=2.76  C=16884.9331  D=17367.3598  E=2315.6480",
+               testRDelta_ * 5);
+    testForce(Functions1D::Form::Buckingham128, "A=133996.2240  B=2.76  C=16884.9331  D=17367.3598  E=2315.6480",
+              testRDelta_ * 5);
 }
 
 TEST_F(PairPotentialsAnalyticTest, Gaussian)

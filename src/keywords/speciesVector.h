@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -51,5 +51,5 @@ class SpeciesVectorKeyword : public KeywordBase
     // Has not changed from initial value
     bool isDefault() const override;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
 };

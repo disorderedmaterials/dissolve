@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/optionalDouble.h"
 #include "base/lineParser.h"
@@ -8,8 +8,8 @@
 
 OptionalDoubleKeyword::OptionalDoubleKeyword(std::optional<double> &data, double minValue, std::optional<double> maxValue,
                                              double valueDelta, std::string_view textWhenNull)
-    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue},
-      valueDelta_(valueDelta), textWhenNull_{textWhenNull}
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_{minValue}, maximumLimit_{maxValue}, valueDelta_(valueDelta),
+      textWhenNull_{textWhenNull}
 {
 }
 
@@ -91,7 +91,10 @@ bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywo
 }
 
 // Express as a serialisable value
-SerialisedValue OptionalDoubleKeyword::serialise() const { return data_.value_or(minimumLimit_); }
+void OptionalDoubleKeyword::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = data_.value_or(minimumLimit_);
+}
 
 // Read values from a serialisable value
 void OptionalDoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

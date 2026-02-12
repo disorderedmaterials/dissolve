@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/spaceGroups.h"
 #include "base/messenger.h"
@@ -592,7 +592,8 @@ SpaceGroups::SpaceGroupId findByHermannMauginnSymbol(std::string_view hmSymbol, 
     // If the provided HM symbol contains a colon already, or the supplied code is empty, do a plain search.
     auto it = hmSymbol.find(':') != std::string::npos
                   ? std::find_if(symbols_.begin(), symbols_.end(),
-                                 [cleanedHMSymbol](const auto &sg) {
+                                 [cleanedHMSymbol](const auto &sg)
+                                 {
                                      return sg.hermannMauginnSymbol() == cleanedHMSymbol ||
                                             sg.condensedHermannMauginnSymbol() == cleanedHMSymbol;
                                  })
@@ -616,8 +617,7 @@ SpaceGroups::SpaceGroupId findByHermannMauginnSymbol(std::string_view hmSymbol, 
 // Find space group from supplied International Tables index and (optional) code
 SpaceGroups::SpaceGroupId findByInternationalTablesIndex(int itIndex, std::string_view code)
 {
-    auto it = std::find_if(symbols_.begin(), symbols_.end(),
-                           [itIndex, code](const auto &sg)
+    auto it = std::find_if(symbols_.begin(), symbols_.end(), [itIndex, code](const auto &sg)
                            { return sg.internationalTableIndex() == itIndex && (code.empty() || sg.code() == code); });
     return it == symbols_.end() ? SpaceGroupId::NoSpaceGroup : it->id();
 }
@@ -696,10 +696,10 @@ std::string formattedInformation(SpaceGroupId sgid)
         return {};
 
     if (symbols_[sgid].code().empty())
-        return fmt::format("{}  {}  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
+        return std::format("{}  {}  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
                            symbols_[sgid].hallSymbol());
     else
-        return fmt::format("{}  {} [{}]  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
+        return std::format("{}  {} [{}]  ({})", symbols_[sgid].internationalTableIndex(), symbols_[sgid].hermannMauginnSymbol(),
                            symbols_[sgid].code(), symbols_[sgid].hallSymbol());
 }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -12,7 +12,7 @@
 class ModuleKeywordBase : public KeywordBase
 {
     public:
-    explicit ModuleKeywordBase(ModuleTypes::ModuleType moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType){};
+    explicit ModuleKeywordBase(ModuleTypes::ModuleType moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType) {};
     ~ModuleKeywordBase() override = default;
 
     /*
@@ -62,7 +62,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
                 return Messenger::error("Module '{}' given to keyword {} is of the wrong type ({}) - only a module of "
                                         "type '{}' can be accepted.\n",
                                         module->name(), KeywordBase::name(), ModuleTypes::moduleType(module->type()),
-                                        moduleType());
+                                        ModuleTypes::moduleType(moduleType()));
 
             data_ = dynamic_cast<const M *>(module);
             assert(data_);
@@ -99,11 +99,10 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         if (data_)
-            return data_->name();
-        return {};
+            target[tag] = data_->name();
     }
 
     // Read values from a serialisable value
@@ -111,7 +110,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     {
         auto *module = coreData.findModule(std::string(node.as_string()));
         if (!module)
-            throw toml::type_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
+            throw toml::type_error(std::format("Module '{}' given to keyword {} doesn't exist.\n",
                                                std::string(node.as_string()), KeywordBase::name()),
                                    node.location());
 

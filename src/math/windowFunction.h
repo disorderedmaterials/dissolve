@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -26,6 +26,7 @@ class WindowFunction
     };
     // Return EnumOptions for FunctionType
     static EnumOptions<WindowFunction::Form> forms();
+    EnumOptions<Form> getEnumOptions(Form);
     WindowFunction(WindowFunction::Form function = Form::None);
     ~WindowFunction() = default;
 
@@ -50,3 +51,5 @@ class WindowFunction
     // Return value of function given parameters x (current abscissa value) and omega (target abscissa value)
     double y(double x, double omega) const;
 };
+
+EnumOptions<WindowFunction::Form> getEnumOptions(WindowFunction::Form);

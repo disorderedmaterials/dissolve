@@ -4,6 +4,7 @@ import "." as D
 
 ListView {
     id: control
+
     property string iconPrefix
 
     signal selected

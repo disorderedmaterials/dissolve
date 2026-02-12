@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "io/fileAndFormat.h"
 
 // Forward Declarations
-class ProcessPool;
 
 // Value Import Formats
 class ValueImportFileFormat : public FileAndFormat
@@ -43,5 +42,5 @@ class ValueImportFileFormat : public FileAndFormat
 
     public:
     // Import value data using current filename and format
-    bool importData(std::vector<double> &data, LineParser &currentParser, const ProcessPool *procPool = nullptr);
+    bool importData(std::vector<double> &data, LineParser &currentParser);
 };

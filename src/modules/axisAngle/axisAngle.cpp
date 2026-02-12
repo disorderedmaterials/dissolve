@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/axisAngle/axisAngle.h"
 #include "keywords/bool.h"
@@ -20,18 +20,16 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle)
     keywords_.setOrganisation("Options", "Sites", "Specify sites defining the axis angle interaction A-B...C.");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B...C", a_,
                                             true);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", axisA_,
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("AxisA", "Axis to use from site A", axisA_, Site::siteAxis());
     keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B...C", b_,
                                             true);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", axisB_,
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<Site::SiteAxis>>("AxisB", "Axis to use from site B", axisB_, Site::siteAxis());
 
     keywords_.setOrganisation("Options", "Ranges", "Ranges over which to bin quantities from the calculation.");
     keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, binwidth) of distance binning", distanceRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+                                     Vector3(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+                                     Vector3(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
     keywords_.setOrganisation(
         "Options", "Exclusions & Restrictions",

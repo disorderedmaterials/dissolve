@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/lineParser.h"
+#include "generator/node.h"
 #include "keywords/base.h"
 #include "keywords/nodeUnderlay.h"
-#include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword
 class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeKeywordBase(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
     {
     }
@@ -38,12 +38,12 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     }
 };
 
-// Keyword managing ProcedureNode
+// Keyword managing GeneratorNode
 template <class N> class NodeKeyword : public NodeKeywordBase
 {
     public:
-    NodeKeyword(std::shared_ptr<const N> &data, ProcedureNode *parentNode,
-                const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeKeyword(std::shared_ptr<const N> &data, GeneratorNode *parentNode,
+                const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
     }
@@ -109,7 +109,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
     // Has not changed from initial value
     bool isDefault() const override { return data_ == nullptr; }
     // Express as a serialisable value
-    SerialisedValue serialise() const override { return data_->name(); }
+    void serialise(std::string tag, SerialisedValue &target) const override { target[tag] = data_->name(); }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
@@ -121,7 +121,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
      * Object Management
      */
     protected:
-    // Prune any references to the supplied ProcedureNode in the contained data
+    // Prune any references to the supplied GeneratorNode in the contained data
     void removeReferencesTo(NodeRef node) override
     {
         if (data_ == node)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/data1D.h"
 #include "base/lineParser.h"
@@ -8,6 +8,7 @@
 #include "keywords/optionalDouble.h"
 #include "math/data1D.h"
 #include "math/filters.h"
+#include <filesystem>
 
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format,
                                                int xColumn, int yColumn, int errorColumn)
@@ -19,6 +20,31 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
                                    {Data1DImportFormat::GudrunMint, "mint", "Gudrun output (mint01)"}});
 
     setUpKeywords();
+}
+
+Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format,
+                                               int xColumn, int yColumn, int errorColumn,
+                                               std::optional<double> removeAverageFromX, std::optional<double> xMin,
+                                               std::optional<double> xMax, int nPointsToRemove)
+    : FileAndFormat(formats_, filename, (int)format), xColumn_(xColumn), yColumn_(yColumn), errorColumn_(errorColumn),
+      xMin_(xMin), xMax_(xMax), nPointsToRemove_(nPointsToRemove)
+{
+    formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
+        "Data1DImportFileFormat", {{Data1DImportFormat::XY, "xy", "Simple XY data (x = bin centres)"},
+                                   {Data1DImportFormat::Histogram, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
+                                   {Data1DImportFormat::GudrunMint, "mint", "Gudrun output (mint01)"}});
+}
+
+// Return enum option info for Data1DImportFormat
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormat()
+{
+    return EnumOptions<Data1DImportFormat>("Data1DImportFormat", {{Data1DImportFormat::XY, "XY"},
+                                                                  {Data1DImportFormat::Histogram, "Histogram"},
+                                                                  {Data1DImportFormat::GudrunMint, "GudrunMint"}});
+}
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> getEnumOptions(Data1DImportFileFormat::Data1DImportFormat)
+{
+    return Data1DImportFileFormat::data1DImportFormat();
 }
 
 /*
@@ -48,10 +74,10 @@ void Data1DImportFileFormat::setUpKeywords()
  */
 
 // Import Data1D using current filename and format
-bool Data1DImportFileFormat::importData(Data1D &data, const ProcessPool *procPool)
+bool Data1DImportFileFormat::importData(Data1D &data)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename_);
 
@@ -88,8 +114,8 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
             result = importGudrunMint(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Data1D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Data1D format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     // If we failed, may as well return now

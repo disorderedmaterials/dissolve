@@ -1,0 +1,86 @@
+name: Build and Package
+
+on:
+  workflow_call:
+    inputs:
+      currentVersion:
+        type: string
+        required: true
+        description: "Version used for labelling packages and other artifacts"
+      qtVersion:
+        type: string
+        required: true
+      osxRunner:
+        type: string
+        default: 'UNKNOWN'
+      osxTargetDeploymentVersion:
+        type: string
+        default: 'UNKNOWN'
+      antlrVersion:
+        type: string
+        required: true
+      conanHash:
+        type: string
+        required: true
+      nixHash:
+        type: string
+        required: true
+      benchmark:
+        type: boolean
+        default: false
+      publishBenchmarks:
+        type: boolean
+        default: false
+
+jobs:
+
+  Build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "${{ inputs.osxRunner }}", windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: 'Download Source Tarfiles'
+      uses: actions/download-artifact@v4
+      with:
+        name: source
+
+    - name: 'Unpack Source'
+      shell: bash
+      run: tar -xvf dissolve-versioned-source.tar
+
+    - name: "Build (${{ matrix.os }})"
+      uses: "./.github/workflows/build"
+      with:
+        qtVersion: ${{ inputs.qtVersion }}
+        antlrVersion: ${{ inputs.antlrVersion }}
+        conanHash: ${{ inputs.conanHash }}
+        osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
+
+  BuildLinux:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ dissolve, dissolve-gui ]
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Download Source Tarfiles'
+      uses: actions/download-artifact@v4
+      with:
+        name: source
+
+    - name: 'Unpack Source'
+      shell: bash
+      run: tar -xvf dissolve-versioned-source.tar
+
+    - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
+      uses: "./.github/workflows/build"
+      with:
+        target: ${{ matrix.target }}
+        currentVersion: ${{ inputs.currentVersion }}
+        nixHash: ${{ inputs.nixHash }}
+        benchmark: ${{ inputs.benchmark }}
+        publishBenchmarks: ${{ inputs.publishBenchmarks }}
+        osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
+

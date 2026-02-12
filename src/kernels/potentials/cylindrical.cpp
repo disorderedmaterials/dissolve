@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/potentials/cylindrical.h"
 #include "classes/atom.h"
@@ -9,8 +9,8 @@
 #include "keywords/vec3Labels.h"
 #include "types.h"
 
-CylindricalPotential::CylindricalPotential(const InteractionPotential<Functions1D> &interactionPotential,
-                                           const Vec3<double> &origin, const Vec3<double> &vector)
+CylindricalPotential::CylindricalPotential(const InteractionPotential<Functions1D> &interactionPotential, const Vector3 &origin,
+                                           const Vector3 &vector)
     : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Cylindrical), origin_(origin), vector_(vector)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
@@ -39,10 +39,10 @@ void CylindricalPotential::setPotential(const InteractionPotential<Functions1D> 
 }
 
 // Set coordinate origin of potential
-void CylindricalPotential::setOrigin(const Vec3<double> &origin) { origin_ = origin; }
+void CylindricalPotential::setOrigin(const Vector3 &origin) { origin_ = origin; }
 
 // Set vector of potential
-void CylindricalPotential::setVector(const Vec3<double> &vector) { vector_ = vector; }
+void CylindricalPotential::setVector(const Vector3 &vector) { vector_ = vector; }
 
 // Return functional form of the potential, as a string
 const std::string CylindricalPotential::formString() const
@@ -82,7 +82,7 @@ double CylindricalPotential::energy(const Atom &i, const Box *box) const
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void CylindricalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
+void CylindricalPotential::force(const Atom &i, const Box *box, Vector3 &f) const
 {
     // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);

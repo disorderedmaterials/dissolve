@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/data1D.h"
 #include "base/lineParser.h"
@@ -117,6 +117,13 @@ void Data1D::addPoint(double x, double value)
 // Add new data point with error
 void Data1D::addPoint(double x, double value, double error)
 {
+    // If the arrays are all empty we can allow errors to be added if they weren't specified before.
+    if (x_.empty() && !hasError_)
+    {
+        errors_.clear();
+        hasError_ = true;
+    }
+
     assert(hasError_);
 
     x_.push_back(x);
@@ -267,6 +274,12 @@ const std::vector<double> &Data1D::errors() const
  * Operators
  */
 
+bool Data1D::operator==(const Data1D &other) const
+{
+    return tag_ == other.tag_ && x_ == other.x_ && values_ == other.values_ && hasError_ == other.hasError_ &&
+           (!hasError_ || errors_ == other.errors_);
+}
+
 void Data1D::operator=(const Data1D &source)
 {
     tag_ = source.tag_;
@@ -276,6 +289,13 @@ void Data1D::operator=(const Data1D &source)
     errors_ = source.errors_;
 
     ++version_;
+}
+
+Data1D Data1D::operator+(const Data1D &source) const
+{
+    auto result = *this;
+    result += source;
+    return result;
 }
 
 void Data1D::operator+=(const Data1D &source)
@@ -297,11 +317,25 @@ void Data1D::operator+=(const Data1D &source)
     std::transform(source.values().begin(), source.values().end(), values_.begin(), values_.begin(), std::plus<>());
 }
 
+Data1D Data1D::operator+(const double delta) const
+{
+    auto result = *this;
+    result += delta;
+    return result;
+}
+
 void Data1D::operator+=(const double delta)
 {
     std::transform(values_.begin(), values_.end(), values_.begin(), [delta](auto value) { return value + delta; });
 
     ++version_;
+}
+
+Data1D Data1D::operator-(const Data1D &source) const
+{
+    auto result = *this;
+    result -= source;
+    return result;
 }
 
 void Data1D::operator-=(const Data1D &source)
@@ -323,11 +357,25 @@ void Data1D::operator-=(const Data1D &source)
     ++version_;
 }
 
+Data1D Data1D::operator-(const double delta) const
+{
+    auto result = *this;
+    result -= delta;
+    return result;
+}
+
 void Data1D::operator-=(const double delta)
 {
     std::transform(values_.begin(), values_.end(), values_.begin(), [delta](auto value) { return value - delta; });
 
     ++version_;
+}
+
+Data1D Data1D::operator*(const double factor) const
+{
+    auto result = *this;
+    result *= factor;
+    return result;
 }
 
 void Data1D::operator*=(const double factor)
@@ -345,6 +393,13 @@ void Data1D::operator*=(const std::vector<double> &factors)
     assert(x_.size() == factors.size());
 
     std::transform(values_.begin(), values_.end(), factors.begin(), values_.begin(), std::multiplies<>());
+}
+
+Data1D Data1D::operator/(const double factor) const
+{
+    auto result = *this;
+    result /= factor;
+    return result;
 }
 
 void Data1D::operator/=(const double factor)
@@ -419,12 +474,12 @@ bool Data1D::serialise(LineParser &parser) const
 }
 
 // Express as a serialisable value
-SerialisedValue Data1D::serialise() const
+void Data1D::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", values_}};
     if (hasError_)
         result["errors"] = errors_;
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

@@ -5,95 +5,61 @@ on:
     branches:
     - 'develop'
     paths-ignore:
-    - '.github/workflows/benchmark.yml'
     - '.github/workflows/cacheConan.yml'
     - '.github/workflows/cacheNix.yml'
     - '.github/workflows/issues.yml'
     - '.github/workflows/pr.yml'
     - '.github/workflows/release.yml'
-    - '.github/workflows/web**'
     - '.github/ISSUE_TEMPLATE/**'
-    - 'web/**'
     - 'README.md'
 
 jobs:
 
+  Checkout:
+    if: github.event.repository.fork == false
+    uses: "./.github/workflows/_checkout.yml"
+    with:
+      publishType: 'continuous'
+
   QC:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup
-      uses: "./.github/workflows/setup"
-    - name: Quality Control
-      uses: "./.github/workflows/qc"
+    needs: [Checkout]
+    uses: "./.github/workflows/_qc.yml"
+    with:
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
 
-  Build:
-    needs: QC
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ macos-latest, macos-13, windows-latest ]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: "./.github/workflows/setup"
-      - name: Set Short Hash
-        uses: "./.github/workflows/set-short-hash"
-      - name: "Build (${{ matrix.os }})"
-        uses: "./.github/workflows/build"
+  BuildAndPackage:
+    needs: [Checkout]
+    uses: "./.github/workflows/_build_and_package.yml"
+    with:
+      benchmark: false
+      publishBenchmarks: false
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
+      osxRunner: ${{ needs.Checkout.outputs.osxRunner }}
+      qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
+      antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
+      conanHash: ${{ needs.Checkout.outputs.conanHash }}
+      nixHash: ${{ needs.Checkout.outputs.nixHash }}
+    secrets: inherit
 
-  BuildLinux:
-    needs: QC
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [ dissolve, dissolve-gui ]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup
-      uses: "./.github/workflows/setup"
-    - name: Set Short Hash
-      uses: "./.github/workflows/set-short-hash"
-    - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
-      uses: "./.github/workflows/build"
-      with:
-        target: ${{ matrix.target }}
-
-  Package:
-    needs: Build
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ macos-latest, macos-13, windows-latest ]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: "./.github/workflows/setup"
-      - name: "Package (${{ matrix.os }})"
-        uses: "./.github/workflows/package"
+  Web:
+    needs: [Checkout]
+    uses: "./.github/workflows/_website.yml"
+    with:
+      publishType: 'continuous'
+      displayMajorVersion: ${{ needs.Checkout.outputs.currentVersionMajor }}
+      displayMinorVersion: ${{ needs.Checkout.outputs.currentVersionMinor }}
+      hugoVersion: ${{ needs.Checkout.outputs.hugoVersion }}
+    secrets: inherit
 
   Publish:
-    needs: [ Package, BuildLinux ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: "./.github/workflows/setup"
-      - name: Set Short Hash
-        uses: "./.github/workflows/set-short-hash"
-      - name: Publish
-        uses: "./.github/workflows/publish"
-        with:
-          isRelease: false
-          publish: true
-        env:
-          HARBOR_USER: ${{ secrets.HARBOR_USER }}
-          HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
+    needs: [Checkout,BuildAndPackage,Web]
+    uses: "./.github/workflows/_publish.yml"
+    with:
+      publishType: 'continuous'
+      currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
+      releaseTag: 'continuous'
+      releaseName: "Development Release ${{ needs.Checkout.outputs.currentVersion }} @ ${{ needs.Checkout.outputs.currentShortHash }}"
+      releaseBodyFile: ./ChangeLog.md
+      apptainerVersion: ${{ needs.Checkout.outputs.apptainerVersion }}
+    secrets: inherit

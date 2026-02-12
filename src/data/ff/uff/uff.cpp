@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/uff/uff.h"
 #include "classes/atomType.h"
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "math/mathFunc.h"
 
 /*
  * Implements "UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations"
@@ -389,7 +390,7 @@ bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAng
     double rjk = j.parameter(UFFAtomTypeData::R) + k.parameter(UFFAtomTypeData::R) + rBOjk - rENjk;
 
     // Get theta for the central atom
-    const auto theta = j.parameter(UFFAtomTypeData::Theta) / DEGRAD;
+    const auto theta = DissolveMath::toRadians(j.parameter(UFFAtomTypeData::Theta));
     const auto cosTheta = cos(theta), sinTheta = sin(theta);
 
     // Determine rik2 and rik5 values
@@ -565,7 +566,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeK.name(),
                     typeL.name(),
                     TorsionFunctions::Form::FourierN,
-                    fmt::format("k={} C1={} C2={} C3={}",
+                    std::format("k={} C1={} C2={} C3={}",
                                 4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0),
                                 1.0, -1.0, 0.0)};
     }
@@ -575,7 +576,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeK.name(),
                     typeL.name(),
                     TorsionFunctions::Form::FourierN,
-                    fmt::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, 1.0, -1.0, 0.0)};
+                    std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, 1.0, -1.0, 0.0)};
     else if (groupI == 15)
     {
         // Determine equilibrium angle
@@ -586,14 +587,14 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
             phi = 86.9735;
         else if (typeI.name() == "Sb3+3")
             phi = 87.7047;
-        phi /= DEGRAD;
+        phi = DissolveMath::toRadians(phi);
         improper = {
             typeI.name(),
             typeJ.name(),
             typeK.name(),
             typeL.name(),
             TorsionFunctions::Form::FourierN,
-            fmt::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0)};
+            std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0)};
     }
     else
         improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), TorsionFunctions::Form::None};

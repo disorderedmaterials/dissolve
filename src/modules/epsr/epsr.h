@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -45,7 +45,7 @@ class EPSRModule : public Module
     // Confidence factor
     double feedback_{0.9};
     // Scattering matrix
-    ScatteringMatrix scatteringMatrix_;
+    std::optional<ScatteringMatrix> scatteringMatrix_;
     // EPSR 'inpa' file from which to read deltaFQ fit coefficients from
     std::string inpaFilename_;
     // Maximum Q value over which to generate potentials from total scattering data
@@ -59,7 +59,7 @@ class EPSRModule : public Module
     // Width for Gaussian function in real space
     double gSigma2_{0.2};
     // Vector storing atom pairs and associated potentials
-    std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> empiricalPotentials_;
+    std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> empiricalPotentials_;
     // Frequency at which to apply generated perturbations to interatomic potentials
     std::optional<int> modifyPotential_{1};
     // Whether to apply this module's generated potentials to the global pair potentials
@@ -100,10 +100,8 @@ class EPSRModule : public Module
     std::vector<Range> ranges_;
 
     public:
-    // Return list of target Modules / data for refinement
-    const std::vector<Module *> &targets() const;
     // Return current scattering matrix
-    const ScatteringMatrix &scatteringMatrix() const;
+    const std::optional<ScatteringMatrix> &scatteringMatrix() const;
     // Set whether to apply this module's generated potentials to the global pair potentials
     void setApplyPotentials(bool b);
 
@@ -117,24 +115,24 @@ class EPSRModule : public Module
     private:
     // Create / update delta S(Q) information
     void updateDeltaSQ(GenericList &processingData,
-                       OptionalReferenceWrapper<const Array2D<Data1D>> optCalculatedSQ = std::nullopt,
-                       OptionalReferenceWrapper<const Array2D<Data1D>> optEstimatedSQ = std::nullopt);
+                       OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optCalculatedSQ = std::nullopt,
+                       OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optEstimatedSQ = std::nullopt);
 
     public:
     // Create / retrieve arrays for storage of empirical potential coefficients
     Array2D<std::vector<double>> &potentialCoefficients(GenericList &moduleData, const int nAtomTypes,
                                                         std::optional<int> ncoeffp = std::nullopt);
     // Generate empirical potentials from current coefficients
-    bool generateEmpiricalPotentials(Dissolve &dissolve, double rho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
-                                     double sigma1, double sigma2);
+    bool generateEmpiricalPotentials(Dissolve &dissolve, const std::vector<const AtomType *> &atomTypes, double rho,
+                                     std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
     // Generate and return single empirical potential function
-    Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
+    Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int nAtomTypes, int i, int j, int n);
     // Calculate absolute energy of empirical potentials
-    double absEnergyEP(GenericList &moduleData);
+    double absEnergyEP(GenericList &moduleData, const std::vector<const AtomType *> &atomTypes);
     // Truncate the supplied data
     void truncate(Data1D &data, double rMin, double rMax);
-    // return vector of emirical potentials
-    std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, Data1D>> empiricalPotentials();
+    // Return vector of empirical potentials
+    std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> empiricalPotentials();
 
     /*
      * EPSR File I/O
@@ -169,18 +167,18 @@ class EPSRModule : public Module
 
     public:
     // Read data from supplied pcof file
-    bool readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::string_view filename);
+    bool readPCof(Dissolve &dissolve, std::string_view filename);
     // Read Poisson coefficients from 'inpa' file
-    bool readFitCoefficients(Dissolve &dissolve, const ProcessPool &procPool, std::string_view inpaFilename);
+    bool readFitCoefficients(Dissolve &dissolve, std::string_view inpaFilename);
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 
     public:
     // Run set-up stage
-    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

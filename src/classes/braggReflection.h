@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -32,7 +32,7 @@ class BraggReflection
     // Number of k-vectors which contributed to the intensity (for normalisation)
     int nKVectors_{0};
     // Miller indices of reflection
-    Vec3<int> hkl_;
+    Vector3i hkl_;
 
     public:
     // Initialise arrays
@@ -60,7 +60,7 @@ class BraggReflection
     // Set Miller indices of reflection
     void setHKL(int h, int k, int l);
     // Return Miller indices of reflection
-    const Vec3<int> &hkl() const;
+    const Vector3i &hkl() const;
 
     /*
      * Serialisation

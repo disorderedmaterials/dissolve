@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/importCIFDialog.h"
 #include "base/units.h"
 #include "classes/empiricalFormula.h"
 #include "classes/pairIterator.h"
+#include "generator/box.h"
 #include "gui/helpers/comboPopulator.h"
-#include "procedure/nodes/box.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
@@ -61,7 +61,7 @@ void ImportCIFDialog::updateWidgets()
     // Publication Data
     ui_.InfoPublicationTitleLabel->setText(
         QString::fromStdString(cifHandler_.getTagString("_publ_section_title").value_or("<Unknown>")));
-    ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(fmt::format(
+    ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(std::format(
         "{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("N/A"),
         cifHandler_.getTagString("_journal_year").value_or("N/A"), cifHandler_.getTagString("_journal_volume").value_or("N/A"),
         cifHandler_.getTagString("_journal_page_first").value_or("N/A"))));

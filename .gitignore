@@ -5,6 +5,7 @@ configure
 aclocal.m4
 /autom4te.cache/
 Makefile
+.cache
 .deps/
 .direnv
 config.h
@@ -12,6 +13,7 @@ config.log
 config.status
 libtool
 stamp-h1
+/cmake/Modules/conan_provider.cmake
 
 # Build objects
 *.a
@@ -23,6 +25,7 @@ stamp-h1
 ui_*
 moc_*
 *.kdev4
+/.cache/
 build/
 build-*/
 *.exe
@@ -31,7 +34,11 @@ build-*/
 *swp
 changes
 *.tokens
+.cache
 .gdb_history
+*.DS_Store
+msvc-env
+aqtinstall.log
 
 # Example files
 *.beat
@@ -43,6 +50,7 @@ changes
 *.gr
 *.sq
 *.rewrite
+tests/data/*.xml
 tests/epsr/D2O-ReferenceData.q
 tests/epsr/D2O-ReferenceData.r
 tests/epsr/EPSR01-EstSQ-HW-HW.txt
@@ -55,7 +63,15 @@ tests/epsr/H2OX-weighted-total.gr.broad
 tests/epsr/HDO-ReferenceData.q
 tests/epsr/HDO-ReferenceData.r
 tests/data/dissolve/input/TestOutput_*
+tests/data/*restart.txt
 
 # Visual Studio
 .vscode/
 .vs/
+
+# CMake
+CMakeUserPresets.json
+
+# External dependencies
+dependencies
+conan

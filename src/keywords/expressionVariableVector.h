@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -8,13 +8,13 @@
 
 // Forward Declarations
 class ExpressionVariable;
-class ProcedureNode;
+class GeneratorNode;
 
 // Keyword managing vector of ExpressionVariable
 class ExpressionVariableVectorKeyword : public KeywordBase
 {
     public:
-    ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data, ProcedureNode *parentNode);
+    ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data, GeneratorNode *parentNode);
     ~ExpressionVariableVectorKeyword() override = default;
 
     /*
@@ -23,8 +23,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     private:
     // Reference to vector of data
     std::vector<std::shared_ptr<ExpressionVariable>> &data_;
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    // Parent GeneratorNode
+    GeneratorNode *parentNode_;
 
     public:
     // Has not changed from initial value
@@ -32,8 +32,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     // Return reference to vector of data
     std::vector<std::shared_ptr<ExpressionVariable>> &data();
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
-    // Return parent ProcedureNode
-    const ProcedureNode *parentNode() const;
+    // Return parent GeneratorNode
+    const GeneratorNode *parentNode() const;
 
     /*
      * Arguments
@@ -48,7 +48,7 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -25,8 +25,6 @@ class CLIOptions
     int restartFileFrequency_{10};
     // Seed for random number generator
     std::optional<int> randomSeed_;
-    // Redirection basename (for per-process output)
-    std::optional<std::string> redirectionBasename_;
     // Restart file to load, overriding default
     std::optional<std::string> restartFilename_;
     // New input file to write (after reading supplied file)
@@ -47,7 +45,7 @@ class CLIOptions
         Success = 1
     };
     // Parse supplied options
-    int parse(int args, char **argv, bool isGUI = false, bool isParallel = false);
+    int parse(int args, char **argv, bool isGUI = false);
     // Return input file to load
     std::optional<std::string> inputFile() const;
     // Return number of iterations to perform
@@ -56,8 +54,6 @@ class CLIOptions
     int restartFileFrequency() const;
     // Return seed for random number generator
     std::optional<int> randomSeed() const;
-    // Return redirection basename (for per-process output)
-    std::optional<std::string> redirectionBasename() const;
     // Return restart file to load, overriding default
     std::optional<std::string> restartFilename() const;
     // Return new input file to write (after reading supplied file)

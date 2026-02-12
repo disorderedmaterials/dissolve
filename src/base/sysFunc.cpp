@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "base/messenger.h"
@@ -41,9 +41,10 @@ std::string_view DissolveSys::onOff(bool b) { return (b ? "On" : "Off"); }
 bool DissolveSys::wildCardMatch(std::string_view::const_iterator wild, std::string_view::const_iterator wildEnd,
                                 std::string_view::const_iterator s2, std::string_view::const_iterator s2End, bool caseSensitive)
 {
-    // If we reach at the end of both strings, the match was a success
-    if ((wild == wildEnd) && (s2 == s2End))
-        return true;
+    // If we reach the end of the wild string we have either gone too far (no match) or the match was a success (if s2 ==
+    // s2End).
+    if (wild == wildEnd)
+        return s2 == s2End;
 
     // Handle wildcards '*' and '?'
     if (*wild == '*')
@@ -63,14 +64,18 @@ bool DissolveSys::wildCardMatch(std::string_view::const_iterator wild, std::stri
     else
     {
         // Wildcard '?' matches any single character, so increase both character positions and continue
-        if (*wild == '?')
+        if (s2 == s2End)
+            return false;
+        else if (*wild == '?')
             return wildCardMatch(wild + 1, wildEnd, s2 + 1, s2End, caseSensitive);
     }
 
     // Not a wildcard, so do absolute character matching
     if (!caseSensitive)
     {
-        if (std::tolower(*wild) == std::tolower(*s2))
+        if (s2 == s2End)
+            return false;
+        else if (std::tolower(*wild) == std::tolower(*s2))
             return wildCardMatch(wild + 1, wildEnd, s2 + 1, s2End, caseSensitive);
     }
     else if (*wild == *s2)
@@ -227,8 +232,7 @@ std::string DissolveSys::niceName(std::string_view original)
 {
     std::string s{original};
 
-    std::replace_if(
-        s.begin(), s.end(), [](auto &c) { return " /\\#*$"sv.find(c) != std::string::npos; }, '_');
+    std::replace_if(s.begin(), s.end(), [](auto &c) { return " /\\#*$"sv.find(c) != std::string::npos; }, '_');
 
     return s;
 }
@@ -322,32 +326,34 @@ std::string DissolveSys::replace(const std::string_view source, const std::strin
 std::vector<std::string_view> DissolveSys::splitString(std::string_view str, std::string_view delim)
 {
     std::vector<std::string_view> parts;
-    auto index = 0;
+    size_t index = 0;
     while (true)
     {
         // Search for the next occurrence of the delimiter
         auto found = str.find(delim, index);
         if (found == std::string::npos)
         {
+            // No more delimiters, so add on any remaining characters as the final part
             if (index < str.size())
                 parts.emplace_back(str.substr(index));
             break;
         }
 
-        // Consume consecutive delimiters
-        if ((found - index) >= delim.size())
+        // Store the current string fragment from index->found if we didn't find a delimiter at the starting index
+        if (found != index)
             parts.emplace_back(str.substr(index, found - index));
 
+        // Move to character after current delimiter
         index = found + delim.size();
     }
+
     return parts;
 }
 
 // Double any of the supplied characters in the string
 std::string DissolveSys::doubleChars(const std::string_view s, const std::string_view charsToDouble)
 {
-    std::string result(s.length() + std::count_if(s.begin(), s.end(),
-                                                  [charsToDouble](const char c)
+    std::string result(s.length() + std::count_if(s.begin(), s.end(), [charsToDouble](const char c)
                                                   { return charsToDouble.find(c) != std::string::npos; }),
                        ' ');
     auto pos = 0;

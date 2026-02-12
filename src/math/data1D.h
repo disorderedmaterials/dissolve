@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/lineParser.h"
-#include "base/processPool.h"
 #include "base/serialiser.h"
 #include "base/version.h"
 #include "math/data1DBase.h"
@@ -95,13 +94,20 @@ class Data1D : public Data1DBase, public Serialisable<>
      * Operators
      */
     public:
+    bool operator==(const Data1D &other) const;
     void operator=(const Data1D &source);
+    Data1D operator+(const Data1D &source) const;
     void operator+=(const Data1D &source);
+    Data1D operator+(const double delta) const;
     void operator+=(const double delta);
+    Data1D operator-(const Data1D &source) const;
     void operator-=(const Data1D &source);
+    Data1D operator-(const double delta) const;
     void operator-=(const double delta);
+    Data1D operator*(const double factor) const;
     void operator*=(const double factor);
     void operator*=(const std::vector<double> &factors);
+    Data1D operator/(const double factor) const;
     void operator/=(const double factor);
 
     /*
@@ -113,7 +119,7 @@ class Data1D : public Data1DBase, public Serialisable<>
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/isotopologueSet.h"
 #include "base/lineParser.h"
@@ -30,10 +30,10 @@ std::optional<int> IsotopologueSetKeyword::maxArguments() const { return 3; }
 bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find specified Species (first argument)
-    Species *sp = coreData.findSpecies(parser.argsv(startArg));
+    Species *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(startArg)));
     if (!sp)
         return Messenger::error("Error defining Isotopologue reference - no Species named '{}' exists.\n",
-                                parser.argsv(startArg + 1));
+                                DissolveSys::niceName(parser.argsv(startArg)));
 
     // Finally, locate isotopologue definition for species (second argument)
     const Isotopologue *iso = sp->findIsotopologue(parser.argsv(startArg + 1));
@@ -44,17 +44,22 @@ bool IsotopologueSetKeyword::deserialise(LineParser &parser, int startArg, const
     // Add the isotopologue to the set
     data_.add(iso, parser.argd(startArg + 2));
 
+    // Resolve against the current set of species
+    std::map<std::string, const Species *> speciesMap;
+    for (const auto &sp : coreData.species())
+        speciesMap[std::string(sp.get()->name())] = sp.get();
+    data_.resolve(speciesMap);
+
     return true;
 }
 
 // Serialise data to specified LineParser
 bool IsotopologueSetKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    for (auto topes : data_.isotopologues())
-        for (const auto &isoWeight : topes.mix())
+    for (auto &[species, isotopologues] : data_.isotopologues())
+        for (const auto &[iso, weight] : isotopologues)
         {
-            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, topes.species()->name(),
-                                   isoWeight.isotopologue()->name(), isoWeight.weight()))
+            if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, species.name(), iso.raw()->name(), weight))
                 return false;
         }
 
@@ -72,7 +77,7 @@ void IsotopologueSetKeyword::removeReferencesTo(Species *sp) { data_.remove(sp);
 void IsotopologueSetKeyword::removeReferencesTo(Isotopologue *iso) { data_.remove(iso); }
 
 // Express as a serialisable value
-SerialisedValue IsotopologueSetKeyword::serialise() const { return data_; }
+void IsotopologueSetKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void IsotopologueSetKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

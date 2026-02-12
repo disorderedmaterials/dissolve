@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -7,7 +7,6 @@
 
 // Forward Declarations
 class Data3D;
-class ProcessPool;
 
 // Data3D Import Formats
 class Data3DImportFileFormat : public FileAndFormat
@@ -51,7 +50,7 @@ class Data3DImportFileFormat : public FileAndFormat
 
     public:
     // Import Data3D using current filename and format
-    bool importData(Data3D &data, const ProcessPool *procPool = nullptr);
+    bool importData(Data3D &data);
     // Import Data3D using supplied parser and current format
     bool importData(LineParser &parser, Data3D &data);
 };

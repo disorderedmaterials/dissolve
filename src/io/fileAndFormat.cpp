@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/fileAndFormat.h"
 #include "base/lineParser.h"
@@ -146,11 +146,11 @@ bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view 
 // Write options and end block
 bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) const
 {
-    return keywords_.serialise(parser, fmt::format("{}  ", prefix));
+    return keywords_.serialise(parser, std::format("{}  ", prefix));
 }
 
 // Express as a serialisable value
-SerialisedValue FileAndFormat::serialise() const
+void FileAndFormat::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"filename", filename_},
                               {"format", formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"}};
@@ -158,7 +158,7 @@ SerialisedValue FileAndFormat::serialise() const
     keywords = keywords_.serialiseOnto(keywords);
     if (!keywords.is_uninitialized())
         result["keywords"] = keywords;
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

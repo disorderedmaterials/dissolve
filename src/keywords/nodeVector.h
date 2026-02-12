@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/lineParser.h"
+#include "generator/node.h"
 #include "keywords/base.h"
 #include "keywords/nodeUnderlay.h"
-#include "procedure/nodes/node.h"
 #include "templates/algorithms.h"
 
 // Base class for NodeVectorKeyword
 class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 {
     public:
-    NodeVectorKeywordBase(ProcedureNode *parentNode, const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeVectorKeywordBase(GeneratorNode *parentNode, const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeKeywordUnderlay(parentNode, allowedNodeTypes), KeywordBase(typeid(this))
     {
     }
@@ -29,7 +29,7 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual bool removeNode(ConstNodeRef node) = 0;
     // Return whether specified node is currently in the vector
     virtual bool isPresent(ConstNodeRef node) const = 0;
-    // Return plain ProcedureNode vector
+    // Return plain GeneratorNode vector
     virtual std::vector<ConstNodeRef> nodes() const = 0;
     // Validate current data, returning false if invalid data had to be pruned
     bool validate() override
@@ -41,15 +41,18 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 
         return oldData.size() == nodes().size();
     }
-    SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise NodeVectorKeywordBase"); }
+    void serialise(std::string tag, SerialisedValue &target) const override
+    {
+        throw std::runtime_error("Cannot serialise NodeVectorKeywordBase");
+    }
 };
 
-// Keyword managing vector of ProcedureNode
+// Keyword managing vector of GeneratorNode
 template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 {
     public:
-    NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode,
-                      const ProcedureNode::NodeTypeVector &allowedNodeTypes)
+    NodeVectorKeyword(ConstNodeVector<N> &data, GeneratorNode *parentNode,
+                      const GeneratorNode::NodeTypeVector &allowedNodeTypes)
         : NodeVectorKeywordBase(parentNode, allowedNodeTypes), data_(data)
     {
     }
@@ -103,7 +106,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     }
     // Return whether specified node is currently in the vector
     bool isPresent(ConstNodeRef node) const override { return std::find(data_.begin(), data_.end(), node) != data_.end(); }
-    // Return plain ProcedureNode vector
+    // Return plain GeneratorNode vector
     std::vector<ConstNodeRef> nodes() const override
     {
         std::vector<ConstNodeRef> result;
@@ -143,16 +146,16 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
             return true;
 
         if (!parser.writeLineF("{}{}  {}\n", prefix, name(),
-                               joinStrings(data_, " ", [](const auto node) { return fmt::format("'{}'", node->name()); })))
+                               joinStrings(data_, " ", [](const auto node) { return std::format("'{}'", node->name()); })))
             return false;
 
         return true;
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
-        return fromVector(data_, [](const auto &item) { return item->name(); });
+        target[tag] = fromVector(data_, [](const auto &item) { return item->name(); });
     }
 
     // Read values from a serialisable value
@@ -167,12 +170,12 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 
                      ConstNodeRef noderef = findNode(nodeName);
                      if (!noderef)
-                         throw toml::type_error(fmt::format("Node '{}' given to keyword {} doesn't exist.\n",
+                         throw toml::type_error(std::format("Node '{}' given to keyword {} doesn't exist.\n",
                                                             std::string(item.as_string()), name()),
                                                 item.location());
 
                      if (!validNode(noderef.get(), name()))
-                         throw toml::type_error(fmt::format("Invalid node: {}", name()), item.location());
+                         throw toml::type_error(std::format("Invalid node: {}", name()), item.location());
 
                      data_.push_back(std::dynamic_pointer_cast<const N>(noderef));
                  });
@@ -185,6 +188,6 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
      * Object Management
      */
     protected:
-    // Prune any references to the supplied ProcedureNode in the contained data
+    // Prune any references to the supplied GeneratorNode in the contained data
     void removeReferencesTo(NodeRef node) override { data_.erase(std::remove(data_.begin(), data_.end(), node), data_.end()); }
 };

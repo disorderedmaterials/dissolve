@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/combinations.h"
+#include "math/mathFunc.h"
 #include "math/polynomial.h"
 #include <cmath>
 
@@ -28,4 +29,4 @@ std::pair<int, int> Combinations::nthCombination(int n) const
     return {x, y};
 }
 
-int Combinations::getNumCombinations() const { return N_ * (N_ - 1) / 2; }
+int Combinations::getNumCombinations() const { return DissolveMath::triangularOffDiagonals(N_); }

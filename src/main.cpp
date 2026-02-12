@@ -1,44 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "base/processPool.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
+#include "math/mathFunc.h"
+#include <format>
 
 int main(int args, char **argv)
 {
-    // Initialise random seed before we do anything else - it might get re-initialised if a specific seed is provided
-    srand((unsigned)time(nullptr));
 
-#ifdef PARALLEL
-    // Initialise parallel communication
-    ProcessPool::initialiseMPI(&args, &argv);
-#endif
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
 
     // Parse CLI options
     CLIOptions options;
-#ifdef PARALLEL
-    if (options.parse(args, argv, false, true) != CLIOptions::Success)
-        return 1;
-#else
     if (options.parse(args, argv) != CLIOptions::Success)
         return 1;
-#endif
 
-    // Re-initialise random seed
+    // Initialise random seed
     if (options.randomSeed())
-        srand(*options.randomSeed());
+        DissolveMath::setRandomSeed(*options.randomSeed());
 
-    // Enable redirect if requested
-    if (options.redirectionBasename())
-        Messenger::enableRedirect(fmt::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
-
-    Messenger::print("Dissolve-{} version {}, Copyright (C) 2024 Team Dissolve and contributors.\n", Version::appType(),
+    Messenger::print("Dissolve-{} version {}, Copyright (C) 2026 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
@@ -48,11 +34,7 @@ int main(int args, char **argv)
     // Load input file
     Messenger::banner("Parse Input File");
     if (!dissolve.loadInput(options.inputFile().value()))
-    {
-        ProcessPool::finalise();
-        Messenger::ceaseRedirect();
         return 1;
-    }
 
     // Save input file to new output filename and quit?
     if (options.writeInputFilename() || options.toTomlFile())
@@ -63,27 +45,18 @@ int main(int args, char **argv)
             options.writeInputFilename() ? options.writeInputFilename().value() : options.toTomlFile().value();
         Messenger::print("Saving input file to '{}'...\n", filename);
         bool result;
-        if (dissolve.worldPool().isMaster())
-        {
-            if (options.writeInputFilename())
-            {
-                result = dissolve.saveInput(options.writeInputFilename().value());
-                if (result)
-                    dissolve.worldPool().decideTrue();
-                else
-                    dissolve.worldPool().decideFalse();
-            }
-            else
-            {
-                auto toml = dissolve.serialise();
-                std::ofstream outfile(options.toTomlFile().value());
-                outfile << toml;
-                outfile.close();
-                result = true;
-            }
-        }
+
+        if (options.writeInputFilename())
+            result = dissolve.saveInput(options.writeInputFilename().value());
         else
-            result = dissolve.worldPool().decision();
+        {
+            auto toml = dissolve.into_toml();
+            std::ofstream outfile(options.toTomlFile().value());
+            outfile << toml;
+            outfile.close();
+            result = true;
+        }
+
         if (!result)
             Messenger::error("Failed to save input file to '{}'.\n", filename);
 
@@ -93,18 +66,10 @@ int main(int args, char **argv)
             dissolve.clear();
             Messenger::banner("Reload Input File");
             if (!dissolve.loadInput(options.writeInputFilename().value()))
-            {
-                ProcessPool::finalise();
-                Messenger::ceaseRedirect();
                 return 1;
-            }
         }
         else
-        {
-            ProcessPool::finalise();
-            Messenger::ceaseRedirect();
             return result ? 0 : 1;
-        }
     }
 
     // Load restart file if it exists
@@ -122,8 +87,6 @@ int main(int args, char **argv)
             if (!dissolve.loadRestart(restartFile))
             {
                 Messenger::error("Restart file contained errors.\n");
-                ProcessPool::finalise();
-                Messenger::ceaseRedirect();
                 return 1;
             }
         }
@@ -142,19 +105,11 @@ int main(int args, char **argv)
 
     // If we're just checking the input and restart files, exit now
     if (!options.nIterations())
-    {
-        ProcessPool::finalise();
-        Messenger::ceaseRedirect();
         return 0;
-    }
 
     // Prepare for run
     if (!dissolve.prepare())
-    {
-        ProcessPool::finalise();
-        Messenger::ceaseRedirect();
         return 1;
-    }
 
     // Set restart file frequency
     dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
@@ -165,11 +120,6 @@ int main(int args, char **argv)
         Messenger::print("Restart file will be written after every iteration.\n", dissolve.restartFileFrequency());
     else
         Messenger::print("Restart file will be written after every {} iterations.\n", dissolve.restartFileFrequency());
-
-#ifdef PARALLEL
-    Messenger::print("This is process rank {} of {} processes total.\n", ProcessPool::worldRank(),
-                     ProcessPool::nWorldProcesses());
-#endif
 
     // Run main simulation
     auto result = true;
@@ -187,12 +137,6 @@ int main(int args, char **argv)
         Messenger::print("Dissolve is done.\n");
     else
         Messenger::print("Dissolve is done, but with errors.\n");
-
-    // Stop redirecting
-    Messenger::ceaseRedirect();
-
-    // End parallel communication
-    ProcessPool::finalise();
 
     // Done.
     return (result ? 0 : 1);

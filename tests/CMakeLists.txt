@@ -47,13 +47,18 @@ function(dissolve_add_test)
     target_include_directories(${TEST_NAME} PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
     target_link_libraries(
       ${TEST_NAME}
-      PUBLIC keywordWidgets models widgets render delegates
+      PUBLIC models widgets render delegates
       PRIVATE Qt6::Core Qt6::Widgets
     )
   endif(DISSOLVE_UNIT_TEST_GUI)
 
   # Register the test
-  gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY ${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY})
+  if(MSVC_DEV)
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+    set_tests_properties(${TEST_NAME} PROPERTIES WORKING_DIRECTORY ${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY})
+  else(MSVC_DEV)
+    gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY ${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY})
+  endif(MSVC_DEV)
 
 endfunction()
 
@@ -64,9 +69,12 @@ add_subdirectory(ff)
 if(GUI)
   add_subdirectory(gui)
 endif(GUI)
+add_subdirectory(intramolecular)
 add_subdirectory(io)
 add_subdirectory(keywords)
+add_subdirectory(generator)
 add_subdirectory(math)
 add_subdirectory(modules)
+add_subdirectory(nodes)
 add_subdirectory(pairPotentials)
-add_subdirectory(procedure)
+add_subdirectory(workflows)

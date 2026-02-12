@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/moleculeDistributor.h"
 #include "classes/atom.h"
 
 MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
-                                         ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed)
-    : Distributor(moleculeArray.size(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
+                                         bool repeatsAllowed)
+    : Distributor(moleculeArray.size(), cellArray, repeatsAllowed), moleculeArray_(moleculeArray)
 {
 }
 

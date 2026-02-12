@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/masterTermTreeModel.h"
 
@@ -25,24 +25,24 @@ MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
     }
 }
 
-void MasterTermTreeModel::setBondIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setBondQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    bondModel_.setIconFunction(func);
+    bondModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setAngleIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setAngleQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    angleModel_.setIconFunction(func);
+    angleModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setTorsionIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setTorsionQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    torsionModel_.setIconFunction(func);
+    torsionModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setImproperIconFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setImproperQueryFunction(std::function<bool(std::string_view termName)> func)
 {
-    improperModel_.setIconFunction(func);
+    improperModel_.setQueryFunction(std::move(func));
 }
 
 void MasterTermTreeModel::prefixNames(QList<QModelIndex> indices, QString prefix)

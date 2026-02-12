@@ -21,9 +21,14 @@ ColumnLayout {
     }
     SpinBox {
         id: spinBox
+
         readonly property int decimalFactor: Math.pow(10, decimals)
         property int decimals: 2
         property real realValue: value / 100
+
+        function decimalToInt(decimal) {
+            return decimal * decimalFactor;
+        }
 
         Layout.alignment: Qt.AlignRight
         Layout.fillWidth: true
@@ -40,10 +45,6 @@ ColumnLayout {
             return Math.round(parseFloat(text) * decimalFactor);
         }
 
-        function decimalToInt(decimal) {
-            return decimal * decimalFactor;
-        }
-
         validator: DoubleValidator {
             bottom: Math.min(spinBox.from, spinBox.to)
             decimals: spinBox.decimals
@@ -57,6 +58,7 @@ ColumnLayout {
 
         D.Button {
             id: cancelButton
+
             icon.source: "qrc:/general/icons/false.svg"
             text: "Cancel"
 
@@ -67,6 +69,7 @@ ColumnLayout {
         }
         D.Button {
             id: scaleButton
+
             icon.source: "qrc:/general/icons/true.svg"
             text: "Scale"
 
@@ -78,6 +81,7 @@ ColumnLayout {
         }
         D.Button {
             id: scaleToButton
+
             icon.source: "qrc:/general/icons/true.svg"
             text: "Scale To"
 

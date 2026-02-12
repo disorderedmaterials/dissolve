@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -72,13 +72,13 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
      * Interaction Parameters
      */
     public:
-    // Return energy for specified angle
-    double energy(double angleInDegrees) const;
-    // Return force multiplier for specified angle
-    double force(double angleInDegrees) const;
+    // Return energy for specified angle theta (in radians)
+    double energy(double theta) const;
+    // Return force multiplier for specified angle theta (in radians)
+    double force(double theta) const;
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };

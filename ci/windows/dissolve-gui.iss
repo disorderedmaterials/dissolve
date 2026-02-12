@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dissolve-GUI"
-#define MyAppVersion "1.6.0"
+#define MyAppVersion GetEnv('DISSOLVE_VERSION')
 #define MyAppPublisher "Team Dissolve"
 #define MyAppURL "https://www.projectdissolve.com/"
-#define MyAppExeName "Dissolve-GUI.exe"
+#define MyAppExeName "Dissolve-GUI-QML.exe"
 
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
 #define DissolveDir GetEnv('DISSOLVE_DIR')
@@ -27,11 +27,11 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={commonpf}\Dissolve-GUI
+DefaultDirName={commonpf}\Dissolve-GUI-QML
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
-OutputBaseFilename=Dissolve-GUI-1.6.0-Win64
+OutputBaseFilename=Dissolve-GUI-QML-{#MyAppVersion}-Win64
 SetupIconFile=Dissolve.ico
 Compression=lzma
 SolidCompression=yes
@@ -44,9 +44,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#DeployDir}\install\bin\*"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\install\plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
-Source: "{#DeployDir}\install\qml\*"; DestDir: "{app}\qml"; Flags: recursesubdirs
-Source: "{#DeployDir}\install\translations\*"; DestDir: "{app}\translations"
+; Source: "{#DeployDir}\install\plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
+; Source: "{#DeployDir}\install\qml\*"; DestDir: "{app}\qml"; Flags: recursesubdirs
+; Source: "{#DeployDir}\install\translations\*"; DestDir: "{app}\translations"
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "{#FreetypeDir}\freetype.dll"; DestDir: "{app}\bin"
@@ -56,11 +56,11 @@ Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
 ; Windows 10 - Now handled by windeployqt
 ; Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Conan Dependencies
-Source: "{#DeployDir}\onetbb\bin\tbb12.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\onetbb\bin\tbbbind_2_5.dll"; DestDir: "{app}\bin"
-Source: "{#DeployDir}\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbb12.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\onetbb\bin\tbbbind_2_5.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\direct_deploy\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; IconFilename: "{app}\bin\Dissolve.ico"; Filename: "{app}\bin\{#MyAppExeName}"; WorkingDir: "{app}"

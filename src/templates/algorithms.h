@@ -1,25 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 #pragma once
 
 #include "classes/array3DIterator.h"
+#include "classes/fullPairIterator.h"
 #include "classes/pairIterator.h"
 #include "templates/parallelDefs.h"
-#include <fmt/format.h>
+#include <format>
 #include <functional>
 #include <optional>
+#include <ranges>
 #include <sstream>
 #include <tuple>
 #include <utility>
-
-// Cut a range into a smaller segment for MPI
-template <typename T> auto chop_range(const T begin, const T end, const int nChunks, const int index)
-{
-    auto diff = end - begin;
-    T start = begin + std::ldiv((const long int)index * diff, (const long int)nChunks).quot;
-    T stop = begin + std::ldiv((const long int)(index + 1) * diff, (const long int)nChunks).quot;
-    return std::make_tuple(start, stop);
-}
 
 template <typename T> class EarlyReturn
 {
@@ -37,23 +30,35 @@ template <typename T> class EarlyReturn
 
     public:
     using inner = T;
-    EarlyReturn(Type t = Type::Continue, std::optional<T> v = std::nullopt) : type_(t), value_(v){};
-    EarlyReturn(const T &val) : type_(Type::Return), value_(val){};
+    EarlyReturn(Type t = Type::Continue, std::optional<T> v = std::nullopt) : type_(t), value_(v) {};
+    EarlyReturn(const T &val) : type_(Type::Return), value_(val) {};
     Type type() const { return type_; }
     std::optional<T> value() const { return value_; }
 };
 
-// Perform an operation on every pair of elements in a container
-template <class Iter, class Lam>
-auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0, *begin, 0, *end).value())
+// A way to check if a lambda *only* takes two int parameters
+template <typename T>
+concept PairIndexLambda = requires(T lam, int x, int y) { lam(x, y); };
+
+// Perform an operation on every pair of elements in a container,
+// or the triangular matrix only ([i,j] == [j,i])
+// Please note that this can *not* be transformed to use the
+// FullPairIterator, since it would prevent using `Break` to move to
+// the next loop iteration
+template <std::ranges::range Range, class Lam>
+auto for_each_pair_early(Range range, Lam lambda, bool triangular = true) -> std::optional<bool>
 {
     int i = 0;
-    for (auto elem1 = begin; elem1 != end; ++elem1, ++i)
+    for (auto elem1 = range.begin(); elem1 != range.end(); ++elem1, ++i)
     {
-        int j = i;
-        for (auto elem2 = elem1; elem2 != end; ++elem2, ++j)
+        int j = triangular ? i : 0;
+        for (auto elem2 = triangular ? elem1 : range.begin(); elem2 != range.end(); ++elem2, ++j)
         {
-            auto result = lambda(i, *elem1, j, *elem2);
+            EarlyReturn<bool> result;
+            if constexpr (PairIndexLambda<Lam>)
+                result = lambda(i, j);
+            else
+                result = lambda(i, *elem1, j, *elem2);
             switch (result.type())
             {
                 case EarlyReturn<typename decltype(result)::inner>::Return:
@@ -68,31 +73,16 @@ auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0,
     return std::nullopt;
 }
 
-// Perform an operation on every pair of elements in a range
-template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) -> decltype(lambda(0, 0).value())
+// Overload to avoid using iota everywhere
+template <class Lam> auto for_each_pair_early(int count, Lam lambda, bool triangular = true) -> std::optional<bool>
 {
-    for (auto i = begin; i < end; ++i)
-        for (auto j = i; j < end; ++j)
-        {
-            auto result = lambda(i, j);
-            switch (result.type())
-            {
-                case EarlyReturn<typename decltype(result)::inner>::Return:
-                    return result.value();
-                case EarlyReturn<typename decltype(result)::inner>::Break:
-                    break;
-                case EarlyReturn<typename decltype(result)::inner>::Continue:
-                    continue;
-            }
-        }
-
-    return std::nullopt;
+    return for_each_pair_early(std::views::iota(0, count), lambda, triangular);
 }
 
 template <typename... Args> class ZipIterator
 {
     public:
-    ZipIterator(std::tuple<Args...> args) : source_(std::move(args)){};
+    ZipIterator(std::tuple<Args...> args) : source_(std::move(args)) {};
     bool operator!=(ZipIterator<Args...> other)
     {
         return std::apply(
@@ -183,8 +173,8 @@ T transform_reduce(ParallelPolicy policy, Iter begin, Iter end, T initialVal, Bi
     return std::transform_reduce(policy, begin, end, initialVal, binaryOp, unaryOp);
 }
 
-// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
-// parallel policy
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to
+// set a parallel policy
 template <typename ParallelPolicy, class Iter, typename T, class UnaryOp, class BinaryOp,
           std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
 T transform_reduce(ParallelPolicy, Iter begin, Iter end, T initialVal, BinaryOp binaryOp, UnaryOp unaryOp)
@@ -207,8 +197,8 @@ void for_each(ParallelPolicy policy, Iter begin, Iter end, UnaryOp unaryOp)
     std::for_each(policy, begin, end, unaryOp);
 }
 
-// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to set a
-// parallel policy
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to
+// set a parallel policy
 template <typename ParallelPolicy, class Iter, class UnaryOp,
           std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
 void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
@@ -216,39 +206,66 @@ void for_each(ParallelPolicy, Iter begin, Iter end, UnaryOp unaryOp)
     dissolve::for_each(begin, end, unaryOp);
 }
 
-// Perform an operation on every pair of elements in a container
-template <typename ParallelPolicy, class Iter, class Lam>
-void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
+// Base for_each, no parallel policy
+template <class Range, class UnaryOp> void for_each(Range range, UnaryOp unaryOp) { std::ranges::for_each(range, unaryOp); }
+// Only enabled if parallelpolicies are fully defined i.e. we have compiled with multithreading enabled
+template <typename ParallelPolicy, class Range, class UnaryOp,
+          std::enable_if_t<dissolve::internal::is_execution_policy<ParallelPolicy>::value, bool> = true>
+void for_each(ParallelPolicy policy, Range range, UnaryOp unaryOp)
 {
-    PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
-    for_each(policy, start, stop,
-             [&lambda, &begin](const auto pair)
-             {
-                 auto &[i, j] = pair;
-                 lambda(i, begin[i], j, begin[j]);
-             });
+    std::for_each(policy, range, unaryOp);
 }
 
-template <typename ParalellPolicy, class Iter, class Lam>
-void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
+// Enabled if parallelpolicy is not a real execution policy, i.e. we haven't compiled with multithreading but attempted to
+// set a parallel policy
+template <typename ParallelPolicy, class Range, class UnaryOp,
+          std::enable_if_t<std::is_same_v<ParallelPolicy, FakeParallelPolicy>, bool> = true>
+void for_each(ParallelPolicy, Range range, UnaryOp unaryOp)
+{
+    dissolve::for_each(range, unaryOp);
+}
+
+// Perform an operation on every pair of elements in a container, or the triangular elements only ([i,j] == [j,i])
+template <typename ParallelPolicy, std::ranges::range Range, class Lam>
+void for_each_pair(ParallelPolicy policy, Range range, Lam lambda, bool triangular = true)
+{
+    auto actions = [&lambda, &range](const auto pair)
+    {
+        auto &[i, j] = pair;
+        if constexpr (PairIndexLambda<Lam>)
+            lambda(i, j);
+        else
+            lambda(i, range.begin()[i], j, range.begin()[j]);
+    };
+    if (triangular)
+    {
+        PairIterator start(range.end() - range.begin()),
+            stop(range.end() - range.begin(), ((range.end() - range.begin()) * (range.end() - range.begin() + 1)) / 2);
+        for_each(policy, start, stop, actions);
+    }
+    else
+    {
+        FullPairIterator start(range.end() - range.begin()),
+            stop(range.end() - range.begin(), (range.end() - range.begin()) * (range.end() - range.begin()));
+        for_each(policy, start, stop, actions);
+    }
+}
+
+// Overload to avoid using iota everywhere
+template <typename ParallelPolicy, class Lam>
+void for_each_pair(ParallelPolicy policy, int count, Lam lambda, bool triangular = true)
+{
+    for_each_pair(policy, std::views::iota(0, count), lambda, triangular);
+}
+
+template <typename ParallelPolicy, class Iter, class Lam>
+void for_each_triplet(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
     for_each(policy, begin, end,
              [&lambda](const auto triplet)
              {
                  auto [x, y, z] = triplet;
                  lambda(triplet, x, y, z);
-             });
-}
-
-// Perform an operation on every pair of elements in a range (begin <= i < end)
-template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
-{
-    PairIterator start(end), stop(end, end * (end + 1) / 2);
-    for_each(policy, start, stop,
-             [&lambda](const auto pair)
-             {
-                 auto [i, j] = pair;
-                 lambda(i, j);
              });
 }
 } // namespace dissolve
@@ -259,8 +276,8 @@ template <typename Iterator> std::string joinStrings(Iterator begin, Iterator en
     if (begin == end)
         return std::string();
     std::stringstream stream;
-    stream << fmt::format("{}", *begin);
-    std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << fmt::format("{}", value); });
+    stream << std::format("{}", *begin);
+    std::for_each(std::next(begin), end, [&stream, &delim](const auto value) { stream << delim << std::format("{}", value); });
     return stream.str();
 }
 template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, Iterator end, std::string delim, Lam lambda)
@@ -268,9 +285,9 @@ template <typename Iterator, class Lam> std::string joinStrings(Iterator begin, 
     if (begin == end)
         return std::string();
     std::stringstream stream;
-    stream << fmt::format("{}", lambda(*begin));
+    stream << std::format("{}", lambda(*begin));
     std::for_each(std::next(begin), end,
-                  [&stream, &lambda, &delim](const auto &value) { stream << delim << fmt::format("{}", lambda(value)); });
+                  [&stream, &lambda, &delim](const auto &value) { stream << delim << std::format("{}", lambda(value)); });
     return stream.str();
 }
 template <class Class> std::string joinStrings(Class range, std::string delim = ", ")
@@ -281,3 +298,9 @@ template <class Class, class Lam> std::string joinStrings(Class range, std::stri
 {
     return joinStrings(range.begin(), range.end(), delim, lambda);
 }
+
+// Template functions to determine if a given class derives from a specific base
+template <class T, template <class...> class U> inline constexpr bool is_instance_of_v = std::false_type{};
+template <template <class...> class U, class... Vs> inline constexpr bool is_instance_of_v<U<Vs...>, U> = std::true_type{};
+template <typename> constexpr bool is_optional = false;
+template <typename T> constexpr bool is_optional<std::optional<T>> = true;

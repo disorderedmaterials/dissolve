@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/coreData.h"
 #include "base/sysFunc.h"
@@ -10,7 +10,6 @@
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "module/layer.h"
 #include "module/module.h"
 
@@ -86,17 +85,17 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
 // Remove any atom types that are unused across all species
 int CoreData::removeUnusedAtomTypes()
 {
-    // Create an AtomTypeMix over all species
-    AtomTypeMix mix;
+    // Create an atom type set over all species
+    KeyedVector<const AtomType *, int> speciesAtomTypes;
     for (auto &sp : species_)
-        mix.add(sp->atomTypes());
+        speciesAtomTypes.merge(sp->atomTypePopulations());
 
     auto oldSize = atomTypes_.size();
 
     atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
                                     [&](const auto &at)
                                     {
-                                        if (mix.contains(at))
+                                        if (speciesAtomTypes.contains(at.get()))
                                             return false;
                                         else
                                         {
@@ -148,8 +147,8 @@ MasterBond &CoreData::addMasterBond(std::string_view name, std::optional<int> in
 {
     // Check for existence of master Bond already
     if (getMasterBond(name))
-        throw(std::runtime_error(
-            fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Bond named '{}' since one with the same name already exists.\n",
+                             name);
 
     auto newBond = std::make_shared<MasterBond>(name);
     if (insertAtIndex)
@@ -210,8 +209,8 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
 {
     // Check for existence of master Angle already
     if (getMasterAngle(name))
-        throw(std::runtime_error(
-            fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Angle named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.angles.emplace_back(std::make_shared<MasterAngle>(name));
 }
@@ -266,8 +265,8 @@ MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
 {
     // Check for existence of master Torsion already
     if (getMasterTorsion(name))
-        throw(std::runtime_error(fmt::format(
-            "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Torsion named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.torsions.emplace_back(std::make_shared<MasterTorsion>(name));
 }
@@ -322,8 +321,8 @@ MasterImproper &CoreData::addMasterImproper(std::string_view name)
 {
     // Check for existence of master Improper already
     if (getMasterImproper(name))
-        throw(std::runtime_error(fmt::format(
-            "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
+        Messenger::exception("Refused to add a new master Improper named '{}' since one with the same name already exists.\n",
+                             name);
 
     return *masters_.impropers.emplace_back(std::make_shared<MasterImproper>(name));
 }
@@ -582,8 +581,8 @@ Configuration *CoreData::addConfiguration()
     auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
-    newConfiguration->setName(DissolveSys::uniqueName(
-        "NewConfiguration", configurations_, [&](const auto &cfg) { return newConfiguration == cfg ? "" : cfg->name(); }));
+    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_, [&](const auto &cfg)
+                                                      { return newConfiguration == cfg ? "" : cfg->name(); }));
 
     return newConfiguration.get();
 }
@@ -624,7 +623,7 @@ Configuration *CoreData::findConfiguration(std::string_view name) const
 Configuration *CoreData::findConfigurationByNiceName(std::string_view name) const
 {
     auto it = std::find_if(configurations().begin(), configurations().end(),
-                           [&name](const auto &cfg) { return DissolveSys::sameString(name, cfg->niceName()); });
+                           [&name](const auto &cfg) { return DissolveSys::sameString(name, cfg->name()); });
     if (it == configurations().end())
         return nullptr;
     return it->get();
@@ -673,9 +672,8 @@ const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() co
 bool CoreData::setUpProcessingLayerModules(Dissolve &dissolve)
 {
     auto setUpResult = true;
-    ModuleContext context(dissolve.worldPool(), dissolve);
     for (auto &layer : processingLayers())
-        if (!layer->setUpAll(context))
+        if (!layer->setUpAll(dissolve))
             setUpResult = false;
     return setUpResult;
 }
@@ -691,37 +689,33 @@ void CoreData::setInputFilename(std::string_view filename) { inputFilename_ = fi
 std::string_view CoreData::inputFilename() const { return inputFilename_; }
 
 // Express as a serialisable value
-SerialisedValue CoreData::Masters::serialise() const
+void CoreData::Masters::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue::table_type table;
-    SerialisedValue node = table;
+    if (bonds.empty() && angles.empty() && torsions.empty() && impropers.empty())
+        return;
+    auto &node = target[tag];
     Serialisable::fromVectorToTable<>(bonds, "bonds", node);
     Serialisable::fromVectorToTable<>(angles, "angles", node);
     Serialisable::fromVectorToTable<>(torsions, "torsions", node);
     Serialisable::fromVectorToTable<>(impropers, "impropers", node);
-    return node;
 }
 
 // Read values from a serialisable value
 void CoreData::Masters::deserialise(const SerialisedValue &node)
 {
-    Serialisable::toMap(node, "bonds",
-                        [this](const std::string &name, const SerialisedValue &bond)
+    Serialisable::toMap(node, "bonds", [this](const std::string &name, const SerialisedValue &bond)
                         { bonds.emplace_back(std::make_unique<MasterBond>(name))->deserialise(bond); });
-    Serialisable::toMap(node, "angles",
-                        [this](const std::string &name, const SerialisedValue &angle)
+    Serialisable::toMap(node, "angles", [this](const std::string &name, const SerialisedValue &angle)
                         { angles.emplace_back(std::make_unique<MasterAngle>(name))->deserialise(angle); });
-    Serialisable::toMap(node, "torsions",
-                        [this](const std::string &name, const SerialisedValue &torsion)
+    Serialisable::toMap(node, "torsions", [this](const std::string &name, const SerialisedValue &torsion)
                         { torsions.emplace_back(std::make_unique<MasterTorsion>(name))->deserialise(torsion); });
-    Serialisable::toMap(node, "impropers",
-                        [this](const std::string &name, const SerialisedValue &improper)
+    Serialisable::toMap(node, "impropers", [this](const std::string &name, const SerialisedValue &improper)
                         { impropers.emplace_back(std::make_unique<MasterImproper>(name))->deserialise(improper); });
     return;
 }
 
 // Express Master terms as serialisable value
-SerialisedValue CoreData::serialiseMaster() const { return masters_.serialise(); }
+void CoreData::serialiseMaster(std::string tag, SerialisedValue &target) const { masters_.serialise(tag, target); }
 
 // Read Master values from serialisable value
 void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deserialise(node); }
@@ -757,7 +751,7 @@ void CoreData::removeReferencesTo(Species *data)
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
     for (auto &cfg : configurations_)
-        if (cfg->containsSpecies(data))
+        if (cfg->speciesPopulations().contains(data))
             cfg->empty();
 }
 void CoreData::removeReferencesTo(SpeciesSite *data) { objectNoLongerValid(this, data); }

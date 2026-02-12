@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
-#include "procedure/nodeValue.h"
 
 // Forward Declarations
 class NodeValue;
-class ProcedureNode;
+class GeneratorNode;
 
 // Keyword managing NodeValue
 class NodeValueKeyword : public KeywordBase
 {
     public:
-    NodeValueKeyword(NodeValue &value, ProcedureNode *parentNode);
+    NodeValueKeyword(NodeValue &value, GeneratorNode *parentNode);
     ~NodeValueKeyword() override = default;
 
     /*
@@ -25,8 +25,8 @@ class NodeValueKeyword : public KeywordBase
     NodeValue &data_;
     // Initial value
     const NodeValue default_;
-    // Parent ProcedureNode
-    ProcedureNode *parentNode_;
+    // Parent GeneratorNode
+    GeneratorNode *parentNode_;
 
     public:
     // Return reference to data
@@ -46,7 +46,7 @@ class NodeValueKeyword : public KeywordBase
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &cordeData) override;
     // Has not changed from initial value

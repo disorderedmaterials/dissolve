@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/mathFunc.h"
-#include "math/constants.h"
+#include "math/pcg.h"
 #include <cmath>
-#include <cstdlib>
+#include <random>
 
 namespace DissolveMath
 {
@@ -34,31 +34,20 @@ double erf(double x) { return (1.0 - erfc(x)); }
  * Random Number Generation
  */
 
-// Random Number Generator (0 - 1)
-double random()
-{
-    // Simple random number generator from C++ stdlib.
-    // Returns numbers from 0.0 to 1.0 inclusive.
-    // TODO Better generator
-    return (double(rand()) / RAND_MAX);
-}
+// Main RNG object
+pcg32 rng_(pcg_extras::seed_seq_from<std::random_device>{});
 
-// Return random value between -1 and 1.0 inclusive
+// Set random number generator seed
+void setRandomSeed(int seed) { rng_.seed(seed); }
+
+// Return a random number between 0.0 and 1.0 inclusive
+double random() { return double(rng_()) / (pcg32::max() - 1); }
+
+// Return a random number between -1.0 and 1.0 inclusive
 double randomPlusMinusOne() { return (random() - 0.5) * 2.0; }
 
-// Random number generator (0 - RAND_MAX)
-int randomimax()
-{
-    // Returns a random number from 0->(RAND_MAX-1) inclusive.
-    return rand();
-}
-
-// Random number generator (0 - range-1)
-int randomi(int range)
-{
-    // Returns a random number from 0->(range-1) inclusive.
-    return int(range * (double(rand() - 1) / RAND_MAX));
-}
+// Return a random integer between 0 and N-1 inclusive
+int randomi(int N) { return rng_(N); }
 
 /*
  * Integer Functions
@@ -88,5 +77,32 @@ double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a);
 
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i) { return (i % 3); }
+
+// Return the integer wrapped into the specified range
+int wrap(int i, int lower, int upper)
+{
+    const auto range = upper - lower + 1;
+
+    if (i < 0)
+        i += range * ((lower - i) / range + 1);
+    return lower + (i - lower) % range;
+}
+
+/*
+ * Conversion
+ */
+
+// Convert degrees <--> radians
+double toRadians(double degrees) { return degrees / DegreesPerRadian; }
+double toDegrees(double radians) { return radians * DegreesPerRadian; }
+
+/*
+ * Triangular Matrices
+ */
+
+// Return the number of elements in a triangular matrix, disregarding the diagonal terms
+int triangularOffDiagonals(int matrixSize) { return matrixSize * (matrixSize - 1) / 2; }
+// Return the number of elements in a triangular matrix, including the diagonal terms
+int triangularIncDiagonals(int matrixSize) { return matrixSize * (matrixSize + 1) / 2; }
 
 } // namespace DissolveMath

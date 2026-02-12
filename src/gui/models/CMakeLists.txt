@@ -1,3 +1,5 @@
+add_subdirectory(nodeGraph)
+
 set(models_MOC_HDRS
     addForcefieldDialogModel.h
     addSpeciesInfoModel.h
@@ -8,7 +10,6 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     dissolveModel.h
-    enumOptionsModel.h
     forcefieldModel.h
     isotopologueSetModel.h
     masterAngleModel.h
@@ -25,10 +26,11 @@ set(models_MOC_HDRS
     nodePaletteModel.h
     pairPotentialModel.h
     pairPotentialOverrideModel.h
-    procedureModel.h
-    procedureNodeModel.h
+    generatorModel.h
+    generatorNodeModel.h
     rangeVectorModel.h
     renderableGroupManagerModel.h
+    simpleForcefieldModel.h
     sitesFilterProxy.h
     sitesModel.h
     sortFilterProxy.h
@@ -67,7 +69,6 @@ set(models_SRCS
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
     dissolveModelImageProvider.h
-    enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
     ffSortFilterModel.cpp
@@ -88,12 +89,13 @@ set(models_SRCS
     nodePaletteModel.cpp
     pairPotentialModel.cpp
     pairPotentialOverrideModel.cpp
-    procedureModel.cpp
-    procedureModelMimeData.cpp
-    procedureModelMimeData.h
-    procedureNodeModel.cpp
+    generatorModel.cpp
+    generatorModelMimeData.cpp
+    generatorModelMimeData.h
+    generatorNodeModel.cpp
     rangeVectorModel.cpp
     renderableGroupManagerModel.cpp
+    simpleForcefieldModel.cpp
     sitesFilterProxy.cpp
     sitesModel.cpp
     sortFilterProxy.cpp
@@ -123,12 +125,12 @@ qt6_wrap_cpp(
   atomTypeModel.h
   braggReflectionModel.h
   dataManagerSimulationModel.h
-  enumOptionsModel.h
   expressionVariableVectorModel.h
   forcefieldModel.h
   isotopologueSetModel.h
   pairPotentialModel.h
   rangeVectorModel.h
+  simpleForcefieldModel.h
   sortFilterProxy.h
   speciesAngleModel.h
   speciesAtomModel.h
@@ -156,11 +158,11 @@ find_package(Qt6 REQUIRED COMPONENTS Core Qml)
 add_library(models ${models_SRCS} ${models_MOC_SRCS} ${types_SRCS})
 
 target_include_directories(
-  models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
-                 ${FREETYPE_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS}
+  models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+                 ${Qt6Quick_INCLUDE_DIRS}
 )
 
-target_link_libraries(models PRIVATE Qt6::Core Qt6::Qml)
+target_link_libraries(models PRIVATE Qt6::Core Qt6::Qml nodeGraphModel)
 
 # Because Qt has its own way of checking for C++17
 if(MSVC)

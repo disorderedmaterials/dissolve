@@ -9,6 +9,7 @@
     <file>icons/nodes/CustomRegion.svg</file>
     <file>icons/nodes/CoordinateSets.svg</file>
     <file>icons/nodes/AddPair.svg</file>
+    <file>icons/nodes/AddOnSphere.svg</file>
     <file>icons/nodes/CylindricalRegion.svg</file>
     <file>icons/nodes/Copy.svg</file>
     <file>icons/nodes/GeneralRegion.svg</file>
@@ -42,6 +43,7 @@
     <file>icons/modules/QSpecies.svg</file>
     <file>icons/modules/SQ.svg</file>
     <file>icons/modules/Bragg.svg</file>
+    <file>icons/modules/Clustering.svg</file>
     <file>icons/modules/AvgMol.svg</file>
     <file>icons/modules/Accumulate.svg</file>
     <file>icons/modules/OrientedSDF.svg</file>
@@ -68,6 +70,8 @@
     <file>icons/modules/GeometryOptimisation.svg</file>
     <file>icons/modules/Compare.svg</file>
     <file>icons/modules/TemperatureSchedule.svg</file>
+    <file>icons/modules/VoxelDensity.svg</file>
+    <file>icons/modules/TR.svg</file>
   </qresource>
   <qresource prefix="general">
     <file>icons/ff.svg</file>
@@ -78,6 +82,7 @@
     <file>icons/layer.svg</file>
     <file>icons/connect.svg</file>
     <file>icons/documents.svg</file>
+    <file>icons/remove_box.svg</file>
     <file>icons/book.svg</file>
     <file>icons/charge.svg</file>
     <file>icons/density.svg</file>

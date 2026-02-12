@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
 #include "classes/species.h"
@@ -29,7 +29,7 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
 }
 
 // Add a new atom to the Species, returning its index
-int Species::addAtom(Elements::Element Z, Vec3<double> r, double q, std::shared_ptr<AtomType> atomType)
+int Species::addAtom(Elements::Element Z, Vector3 r, double q, std::shared_ptr<AtomType> atomType)
 {
     auto &i = atoms_.emplace_back();
     i.set(Z, r.x, r.y, r.z, q);
@@ -37,6 +37,21 @@ int Species::addAtom(Elements::Element Z, Vec3<double> r, double q, std::shared_
     i.setAtomType(atomType);
     ++version_;
     return i.index();
+}
+
+// Add new atom type to atom types
+const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z, std::string_view name)
+{
+    // Create a suitable unique name
+    auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,
+                                              [&](const auto &at) { return at->name(); });
+
+    // Create atom type and set data
+    auto newAtomType = std::make_shared<AtomType>(Z, uniqueName);
+    atomTypes_.push_back(newAtomType);
+    newAtomType->setIndex(atomTypes_.size() - 1);
+
+    return newAtomType;
 }
 
 // Remove the specified atom from the species
@@ -86,35 +101,39 @@ void Species::removeAtoms(std::vector<int> indices)
     impropers_.clear();
 
     // Detach & remove any bond terms that involve any of the supplied atom
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(),
-                             [&indices](auto &bond)
-                             {
-                                 if (std::find_if(indices.begin(), indices.end(),
-                                                  [&bond](const auto i) {
-                                                      return (bond.i()->index() == i || bond.j()->index() == i);
-                                                  }) != indices.end())
-                                 {
-                                     bond.detach();
-                                     return true;
-                                 }
-                                 else
-                                     return false;
-                             });
+    auto it =
+        std::remove_if(bonds_.begin(), bonds_.end(),
+                       [&indices](auto &bond)
+                       {
+                           if (std::find_if(indices.begin(), indices.end(), [&bond](const auto i)
+                                            { return (bond.i()->index() == i || bond.j()->index() == i); }) != indices.end())
+                           {
+                               bond.detach();
+                               return true;
+                           }
+                           else
+                               return false;
+                       });
     if (it != bonds_.end())
         bonds_.erase(it, bonds_.end());
 
     // Now remove the atoms
-    auto atomIt =
-        std::remove_if(atoms_.begin(), atoms_.end(),
-                       [&](const auto &i) { return std::find(indices.begin(), indices.end(), i.index()) != indices.end(); });
+    auto atomIt = std::remove_if(atoms_.begin(), atoms_.end(), [&](const auto &i)
+                                 { return std::find(indices.begin(), indices.end(), i.index()) != indices.end(); });
     atoms_.erase(atomIt, atoms_.end());
     renumberAtoms();
 
     ++version_;
 }
 
-// Return the number of Atoms in the Species
-int Species::nAtoms() const { return atoms_.size(); }
+// Return the number of atoms in the species (or only those with the specified presence)
+int Species::nAtoms(SpeciesAtom::Presence withPresence) const
+{
+    return withPresence == SpeciesAtom::Presence::Any
+               ? atoms_.size()
+               : std::count_if(atoms_.begin(), atoms_.end(),
+                               [withPresence](const auto &i) { return i.isPresence(withPresence); });
+}
 
 // Renumber atoms so they are sequential in the list
 void Species::renumberAtoms()
@@ -144,7 +163,7 @@ const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
 
 // Set coordinates of specified atom
-void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
+void Species::setAtomCoordinates(SpeciesAtom *i, Vector3 r)
 {
     assert(i);
 
@@ -258,20 +277,19 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 // Return total atomic mass of Species
 double Species::mass() const
 {
-    auto m = 0.0;
-    for (const auto &i : atoms_)
-        m += AtomicMass::mass(i.Z());
-    return m;
+    return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
+                           { return acc + (i.isPresence(SpeciesAtom::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
 
-// Calculate and return atom types used in the Species
-AtomTypeMix Species::atomTypes() const
+// Calculate and return atom type populations
+KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
 {
-    AtomTypeMix mix;
+    KeyedVector<const AtomType *, int> result;
     for (const auto &i : atoms_)
-        if (i.atomType())
-            mix.add(i.atomType(), 1);
-    return mix;
+        if (i.atomType() && i.isPresence((SpeciesAtom::Presence::Physical)))
+            result[i.atomType().get()] += 1;
+
+    return result;
 }
 
 // Clear AtomType assignments for all atoms
@@ -291,8 +309,8 @@ int Species::simplifyAtomTypes()
     for (auto it = std::next(atoms_.begin()); it != atoms_.end(); ++it)
     {
         // Search all used atom types looking for a match, up to the current one
-        auto matchingIt = std::find_if(
-            atoms_.begin(), it, [&](auto &i) { return i.atomType() && i.atomType()->sameParametersAs(it->atomType().get()); });
+        auto matchingIt = std::find_if(atoms_.begin(), it, [&](auto &i)
+                                       { return i.atomType() && i.atomType()->sameParametersAs(it->atomType().get()); });
         if (matchingIt == it)
             continue;
 
@@ -319,8 +337,7 @@ void Species::setAtomCharge(SpeciesAtom *i, double q)
 double Species::totalCharge(bool useAtomTypes) const
 {
     if (useAtomTypes)
-        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
-                               [](const auto acc, const auto &i)
+        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
                                { return acc + (i.atomType() ? i.atomType()->charge() : 0.0); });
     else
         return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
@@ -330,12 +347,6 @@ double Species::totalCharge(bool useAtomTypes) const
 // Apply random noise to atoms
 void Species::randomiseCoordinates(double maxDisplacement)
 {
-    Vec3<double> deltaR;
-
     for (auto &i : atoms_)
-    {
-        deltaR.randomUnit();
-        deltaR *= maxDisplacement;
-        i.translateCoordinates(deltaR);
-    }
+        i.translateCoordinates(Vector3::randomUnit() * maxDisplacement);
 }

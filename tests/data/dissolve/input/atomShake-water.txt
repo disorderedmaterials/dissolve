@@ -41,6 +41,7 @@ Layer  'Processing'
 
   Module  AtomShake
     Configuration  'Water'
+    ShakesPerAtom  10
   EndModule
 
 EndLayer

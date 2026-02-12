@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/sampledData1D.h"
 #include "base/lineParser.h"
@@ -209,3 +209,17 @@ bool SampledData1D::serialise(LineParser &parser) const
 
 // Write value data only through specified LineParser
 bool SampledData1D::serialiseValues(LineParser &parser) const { return values_.serialise(parser); }
+
+// Express as a serialisable value
+void SampledData1D::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"x", x_}};
+    values_.serialise("values", target[tag]);
+}
+
+// Read values from a serialisable value
+void SampledData1D::deserialise(const SerialisedValue &node)
+{
+    x_ = toml::find<std::vector<double>>(node, "x");
+    values_.deserialise(node.at("values"));
+}

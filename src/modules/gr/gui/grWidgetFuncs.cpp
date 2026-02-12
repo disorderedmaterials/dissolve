@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/isotopeData.h"
 #include "gui/dataViewer.h"
 #include "gui/helpers/comboBoxController.h"
 #include "gui/render/renderableData1D.h"
@@ -61,29 +60,29 @@ void GRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
     if (!ui_.FilterEdit->text().isEmpty())
         filterText = ui_.FilterEdit->text().toStdString();
 
-    PairIterator pairs(ps.atomTypeMix().nItems());
-    for (auto [first, second] : pairs)
-    {
-        auto &at1 = ps.atomTypeMix()[first];
-        auto &at2 = ps.atomTypeMix()[second];
-        const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
+    auto typeFractions = ps.atomTypeFractions();
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, auto &popI, int indexJ, auto popJ)
+        {
+            const std::string id = std::format("{}-{}", popI.first->name(), popJ.first->name());
 
-        // Filtering - does this 'id' match our filter?
-        if (filterText && id.find(filterText.value()) == std::string::npos)
-            continue;
+            // Filtering - does this 'id' match our filter?
+            if (filterText && id.find(filterText.value()) == std::string::npos)
+                return;
 
-        // Full partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Full)", id), "Full");
+            // Full partial
+            rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
+                                                          std::format("{} (Full)", id), "Full");
 
-        // Bound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Bound)", id), "Bound");
+            // Bound partial
+            rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
+                                                          std::format("{} (Bound)", id), "Bound");
 
-        // Unbound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
-                                                      fmt::format("{} (Unbound)", id), "Unbound");
-    }
+            // Unbound partial
+            rdfGraph_->createRenderable<RenderableData1D>(std::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                          std::format("{} (Unbound)", id), "Unbound");
+        });
 }
 
 // Update controls within widget
@@ -110,14 +109,14 @@ void GRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
         }
         else if (ui_.ConfigurationPartialsButton->isChecked())
         {
-            auto targetPrefix = fmt::format("{}//UnweightedGR", (*optConfig)->niceName());
+            auto targetPrefix = std::format("{}//UnweightedGR", (*optConfig)->name());
             targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>(targetPrefix, module_->name());
             createPartialSetRenderables(targetPrefix);
         }
         else
             for (auto *cfg : cfgs)
                 rdfGraph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->niceName()), cfg->niceName(), "Total");
+                    std::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->name()), cfg->name(), "Total");
     }
 
     // Validate renderables if they need it

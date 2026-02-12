@@ -1,71 +1,44 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/partialSet.h"
 #include "base/lineParser.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/species.h"
 #include "io/export/data1D.h"
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
+#include "math/mathFunc.h"
 #include "templates/algorithms.h"
+#include <filesystem>
 
-PartialSet::PartialSet() { fingerprint_ = "NO_FINGERPRINT"; }
-
-PartialSet::~PartialSet()
+// Initialise
+void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopulations, bool triangular)
 {
-    fullHistograms_.clear();
-    boundHistograms_.clear();
-    unboundHistograms_.clear();
+    // Take integer species populations and convert to real
+    realSpeciesPopulations_.clear();
+    for (const auto &[species, population] : speciesPopulations)
+        realSpeciesPopulations_[species] = double(population);
 
-    partials_.clear();
-    boundPartials_.clear();
-    emptyBoundPartials_.clear();
-    unboundPartials_.clear();
-}
+    triangular_ = triangular;
 
-/*
- * Set of Partials
- */
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
 
-// Set up PartialSet
-bool PartialSet::setUp(const AtomTypeMix &atomTypeMix, double rdfRange, double binWidth)
-{
-    // Set up partial arrays
-    if (!setUpPartials(atomTypeMix))
-        return false;
-
-    // Initialise histograms for g(r) calculation
-    setUpHistograms(rdfRange, binWidth);
-
-    fingerprint_ = "NO_FINGERPRINT";
-
-    return true;
-}
-
-// Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
-{
-    // Copy type array
-    atomTypeMix_ = atomTypeMix;
-    auto nTypes = atomTypeMix_.nItems();
-
-    partials_.initialise(nTypes, nTypes, true);
-    boundPartials_.initialise(nTypes, nTypes, true);
-    unboundPartials_.initialise(nTypes, nTypes, true);
-    emptyBoundPartials_.initialise(nTypes, nTypes, true);
-    emptyBoundPartials_ = false;
-
-    // Set up array matrices for partials
+    // Create data for partials and set tags
     dissolve::for_each_pair(
-        ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
-        [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
+        ParallelPolicies::seq, atomTypeFractions(),
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
         {
-            partials_[{n, m}].setTag(fmt::format("{}-{}//Full", at1.atomTypeName(), at2.atomTypeName()));
-            boundPartials_[{n, m}].setTag(fmt::format("{}-{}//Bound", at1.atomTypeName(), at2.atomTypeName()));
-            unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
-        });
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+            partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()));
+            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
+            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
+        },
+        triangular_);
 
     // Set up arrays for totals
     total_.setTag("Total");
@@ -74,66 +47,122 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
     total_.clear();
     boundTotal_.clear();
     unboundTotal_.clear();
-
-    fingerprint_ = "NO_FINGERPRINT";
-
-    return true;
 }
 
-// Set up histogram arrays for g(r) calculation
-void PartialSet::setUpHistograms(double rdfRange, double binWidth)
+// Initialise from supplied real species populations
+void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpeciesPopulations, bool triangular)
 {
-    auto nTypes = atomTypeMix_.nItems();
+    // Take integer species populations and convert to real
+    realSpeciesPopulations_.clear();
+    for (const auto &[species, population] : realSpeciesPopulations)
+        realSpeciesPopulations_[species] = double(population);
 
-    fullHistograms_.initialise(nTypes, nTypes, true);
-    boundHistograms_.initialise(nTypes, nTypes, true);
-    unboundHistograms_.initialise(nTypes, nTypes, true);
+    triangular_ = triangular;
 
-    dissolve::for_each_pair(ParallelPolicies::par, 0, nTypes,
-                            [&](int i, int j)
-                            {
-                                fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                                boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                                unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
-                            });
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
+
+    // Create data for partials and set tags
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypeFractions(),
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+            partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()));
+            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
+            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
+        },
+        triangular_);
+
+    // Set up arrays for totals
+    total_.setTag("Total");
+    boundTotal_.setTag("BoundTotal");
+    unboundTotal_.setTag("UnboundTotal");
+    total_.clear();
+    boundTotal_.clear();
+    unboundTotal_.clear();
+}
+
+// Initialise based on supplied PartialSet
+void PartialSet::initialise(const PartialSet &partialSet)
+{
+    realSpeciesPopulations_ = partialSet.realSpeciesPopulations_;
+    triangular_ = partialSet.triangular_;
+    rho_ = partialSet.rho_;
+
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
+
+    // Template data from source PartialSet and set tags
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypeFractions(),
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+
+            partials_.get(key).setTag(std::format("{}-{}//Full", popI.first->name(), popJ.first->name()));
+            partials_.get(key).initialise(partialSet.partials_.get(key));
+            boundPartials_.get(key).setTag(std::format("{}-{}//Bound", popI.first->name(), popJ.first->name()));
+            boundPartials_.get(key).initialise(partialSet.boundPartials_.get(key));
+            unboundPartials_.get(key).setTag(std::format("{}-{}//Unbound", popI.first->name(), popJ.first->name()));
+            unboundPartials_.get(key).initialise(partialSet.unboundPartials_.get(key));
+        },
+        triangular_);
+
+    // Set up arrays for totals
+    total_.setTag("Total");
+    boundTotal_.setTag("BoundTotal");
+    unboundTotal_.setTag("UnboundTotal");
+    total_.initialise(partialSet.total_);
+    boundTotal_.initialise(partialSet.boundTotal_);
+    unboundTotal_.initialise(partialSet.unboundTotal_);
 }
 
 // Reset partial arrays
 void PartialSet::reset()
 {
-    // Zero histogram bins if present
-    for (auto n = 0; n < fullHistograms_.nRows(); ++n)
-        for (auto m = n; m < fullHistograms_.nColumns(); ++m)
-        {
-            fullHistograms_[{n, m}].zeroBins();
-            boundHistograms_[{n, m}].zeroBins();
-            unboundHistograms_[{n, m}].zeroBins();
-        }
-
     // Zero partials
-    dissolve::for_each_pair(
-        ParallelPolicies::par, 0, atomTypeMix_.nItems(),
-        [&](int i, int j)
-        {
-            std::fill(partials_[{i, j}].values().begin(), partials_[{i, j}].values().end(), 0.0);
-            std::fill(boundPartials_[{i, j}].values().begin(), boundPartials_[{i, j}].values().end(), 0.0);
-            std::fill(unboundPartials_[{i, j}].values().begin(), unboundPartials_[{i, j}].values().end(), 0.0);
-            emptyBoundPartials_[{i, j}] = true;
-        });
+    for (auto &partial : std::views::values(partials_))
+        std::ranges::fill(partial.values(), 0.0);
+    for (auto &partial : std::views::values(boundPartials_))
+        std::ranges::fill(partial.values(), 0.0);
+    for (auto &partial : std::views::values(unboundPartials_))
+        std::ranges::fill(partial.values(), 0.0);
 
     // Zero totals
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
     std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
-
-    fingerprint_ = "NO_FINGERPRINT";
 }
 
-// Return number of AtomTypes used to generate matrices
-int PartialSet::nAtomTypes() const { return atomTypeMix_.nItems(); }
+// Species populations
+const ResolvableKeyedVector<const Species *, double> &PartialSet::realSpeciesPopulations() const
+{
+    return realSpeciesPopulations_;
+}
 
-// Return atom types list
-const AtomTypeMix &PartialSet::atomTypeMix() const { return atomTypeMix_; }
+// Return fractional atom type populations
+KeyedVector<const AtomType *, double> PartialSet::atomTypeFractions() const
+{
+    KeyedVector<const AtomType *, double> result;
+    auto sum = 0.0;
+    for (const auto &[resolvableSpecies, speciesPopulation] : realSpeciesPopulations_)
+    {
+        for (const auto &[atomType, typePopulation] : resolvableSpecies.raw()->atomTypePopulations())
+        {
+            result[atomType] += typePopulation * speciesPopulation;
+            sum += typePopulation * speciesPopulation;
+        }
+    }
+
+    // Normalise to 1.0
+    for (auto &[_, typePopulation] : result)
+        typePopulation /= sum;
+
+    return result;
+}
 
 // Set new fingerprint
 void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
@@ -141,67 +170,87 @@ void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = f
 // Return fingerprint of partials
 std::string_view PartialSet::fingerprint() const { return fingerprint_; }
 
-// Return full histogram specified
-Histogram1D &PartialSet::fullHistogram(int i, int j) { return fullHistograms_[{i, j}]; }
+// Return full atom-atom partials
+DoubleKeyedMap<Data1D> &PartialSet::partials() { return partials_; }
+const DoubleKeyedMap<Data1D> &PartialSet::partials() const { return partials_; }
 
-// Return bound histogram specified
-Histogram1D &PartialSet::boundHistogram(int i, int j) { return boundHistograms_[{i, j}]; }
+// Return bound atom-atom partials
+DoubleKeyedMap<Data1D> &PartialSet::boundPartials() { return boundPartials_; }
+const DoubleKeyedMap<Data1D> &PartialSet::boundPartials() const { return boundPartials_; }
 
-// Return unbound histogram specified
-Histogram1D &PartialSet::unboundHistogram(int i, int j) { return unboundHistograms_[{i, j}]; }
-
-// Return full atom-atom partial specified
-Data1D &PartialSet::partial(int i, int j) { return partials_[{i, j}]; }
-const Data1D &PartialSet::partial(int i, int j) const { return partials_[{i, j}]; }
-
-// Return atom-atom partial for unbound pairs
-Data1D &PartialSet::unboundPartial(int i, int j) { return unboundPartials_[{i, j}]; }
-const Data1D &PartialSet::unboundPartial(int i, int j) const { return unboundPartials_[{i, j}]; }
-
-// Return atom-atom partial for bound pairs
-Data1D &PartialSet::boundPartial(int i, int j) { return boundPartials_[{i, j}]; }
-const Data1D &PartialSet::boundPartial(int i, int j) const { return boundPartials_[{i, j}]; }
-
-// Return whether specified bound partial is empty
-bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPartials_[{i, j}]; }
+// Return unbound atom-atom partials
+DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() { return unboundPartials_; }
+const DoubleKeyedMap<Data1D> &PartialSet::unboundPartials() const { return unboundPartials_; }
 
 // Sum partials into total
 void PartialSet::formTotals(bool applyConcentrationWeights)
 {
-    auto nTypes = atomTypeMix_.nItems();
-    if (nTypes == 0)
-    {
-        total_.clear();
-        boundTotal_.clear();
-        unboundTotal_.clear();
-        return;
-    }
+    auto typeFractions = atomTypeFractions();
 
     // Copy x and y arrays from one of the partials, and zero the latter
-    boundTotal_.initialise(partials_[{0, 0}]);
-    unboundTotal_.initialise(partials_[{0, 0}]);
-    total_.initialise(partials_[{0, 0}]);
+    boundTotal_.initialise(partials_.begin()->second);
+    unboundTotal_.initialise(partials_.begin()->second);
+    total_.initialise(partials_.begin()->second);
     std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
     std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
     dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2)
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
         {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+
             // Set weighting factor if requested
-            auto factor = applyConcentrationWeights ? at1.fraction() * at2.fraction() * (typeI == typeJ ? 1.0 : 2.0) : 1.0;
+            auto factor = applyConcentrationWeights ? popI.second * popJ.second * (indexI == indexJ ? 1.0 : 2.0) : 1.0;
 
             // Sum bound term
-            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
-                           boundPartials_[{typeI, typeJ}].values().begin(), boundTotal_.values().begin(),
-                           [=](auto total, auto partial) { return total + partial * factor; });
+            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(), boundPartials_.get(key).values().begin(),
+                           boundTotal_.values().begin(), [=](auto total, auto partial) { return total + partial * factor; });
 
             // Sum unbound term
             std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
-                           unboundPartials_[{typeI, typeJ}].values().begin(), unboundTotal_.values().begin(),
+                           unboundPartials_.get(key).values().begin(), unboundTotal_.values().begin(),
                            [=](auto total, auto partial) { return total + partial * factor; });
-        });
+        },
+        triangular_);
+
+    total_ += boundTotal_;
+    total_ += unboundTotal_;
+}
+
+// Sum partials into total for TR
+void PartialSet::formTRTotals(const NeutronWeights &weights)
+{
+    auto typeFractions = atomTypeFractions();
+
+    // Copy x and y arrays from one of the partials, and zero the latter
+    boundTotal_.initialise(partials_.begin()->second);
+    unboundTotal_.initialise(partials_.begin()->second);
+    total_.initialise(partials_.begin()->second);
+    std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
+    std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
+    std::fill(total_.values().begin(), total_.values().end(), 0.0);
+
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, typeFractions,
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ)
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
+
+            // Set weighting factor if requested
+            auto factor = popI.second * weights.boundCoherentProducts().get(key);
+
+            // Sum bound term
+            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(), boundPartials_.get(key).values().begin(),
+                           boundTotal_.values().begin(), [=](auto total, auto partial) { return total + partial * factor; });
+
+            // Sum unbound term
+            std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
+                           unboundPartials_.get(key).values().begin(), unboundTotal_.values().begin(),
+                           [=](auto total, auto partial) { return total + partial * factor; });
+        },
+        triangular_);
 
     total_ += boundTotal_;
     total_ += unboundTotal_;
@@ -215,6 +264,10 @@ const Data1D &PartialSet::total() const { return total_; }
 Data1D &PartialSet::boundTotal() { return boundTotal_; }
 const Data1D &PartialSet::boundTotal() const { return boundTotal_; }
 
+// Effective density
+void PartialSet::setEffectiveDensity(double rho) { rho_ = rho; }
+double PartialSet::effectiveDensity() const { return rho_; }
+
 // Return total unbound function
 Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
@@ -225,43 +278,49 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 {
     assert(!prefix.empty());
 
+    auto typeFractions = atomTypeFractions();
+
     LineParser parser;
 
     // Write partials
-    for_each_pair_early(atomTypeMix_.begin(), atomTypeMix_.end(),
-                        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool>
-                        {
-                            // Open file and check that we're OK to proceed writing to it
-                            std::string filename{
-                                fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
-                            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+    for_each_pair_early(
+        typeFractions,
+        [&](int indexI, const auto &popI, int indexJ, const auto &popJ) -> EarlyReturn<bool>
+        {
+            DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
 
-                            parser.openOutput(filename, true);
-                            if (!parser.isFileGoodForWriting())
-                                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
+            // Open file and check that we're OK to proceed writing to it
+            std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, popI.first->name(), popJ.first->name(), suffix)};
+            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-                            auto &full = partials_[{typeI, typeJ}];
-                            auto &bound = boundPartials_[{typeI, typeJ}];
-                            auto &unbound = unboundPartials_[{typeI, typeJ}];
-                            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
-                            for (auto n = 0; n < full.nValues(); ++n)
-                                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n),
-                                                  bound.value(n), unbound.value(n));
-                            parser.closeFiles();
+            parser.openOutput(filename, true);
+            if (!parser.isFileGoodForWriting())
+                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-                            return EarlyReturn<bool>::Continue;
-                        });
+            auto &full = partials_.get(key);
+            auto &bound = boundPartials_.get(key);
+            auto &unbound = unboundPartials_.get(key);
+
+            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
+            for (auto n = 0; n < full.nValues(); ++n)
+                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
+                                  unbound.value(n));
+            parser.closeFiles();
+
+            return EarlyReturn<bool>::Continue;
+        },
+        triangular_);
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
+    if (!Data1DExportFileFormat(std::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
         return false;
 
     Messenger::printVerbose("Writing bound total file '{}'...\n", boundTotal_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-bound.{}", prefix, tag, suffix)).exportData(boundTotal_))
+    if (!Data1DExportFileFormat(std::format("{}-{}-bound.{}", prefix, tag, suffix)).exportData(boundTotal_))
         return false;
 
     Messenger::printVerbose("Writing unbound total file '{}'...\n", unboundTotal_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-unbound.{}", prefix, tag, suffix)).exportData(unboundTotal_))
+    if (!Data1DExportFileFormat(std::format("{}-{}-unbound.{}", prefix, tag, suffix)).exportData(unboundTotal_))
         return false;
 
     return true;
@@ -274,109 +333,43 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    dissolve::for_each_pair(ParallelPolicies::par, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-                            {
-                                partials_[{n, m}] += delta;
-                                boundPartials_[{n, m}] += delta;
-                                unboundPartials_[{n, m}] += delta;
-                            });
+    // Full partials
+    dissolve::for_each(ParallelPolicies::par, partials_.begin(), partials_.end(),
+                       [delta](auto &pair) { pair.second += delta; });
 
+    // Bound partials
+    dissolve::for_each(ParallelPolicies::par, boundPartials_.begin(), boundPartials_.end(),
+                       [delta](auto &pair) { pair.second += delta; });
+
+    // Unbound partials
+    dissolve::for_each(ParallelPolicies::par, unboundPartials_.begin(), unboundPartials_.end(),
+                       [delta](auto &pair) { pair.second += delta; });
+
+    // Totals
     total_ += delta;
     boundTotal_ += delta;
     unboundTotal_ += delta;
 }
 
-// Form partials from stored Histogram data
-void PartialSet::formPartials(double boxVolume)
-{
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2)
-                            {
-                                // Calculate RDFs from histogram data
-                                calculateRDF(partials_[{n, m}], fullHistograms_[{n, m}], boxVolume, at1.population(),
-                                             at2.population(), &at1 == &at2 ? 2.0 : 1.0);
-                                calculateRDF(boundPartials_[{n, m}], boundHistograms_[{n, m}], boxVolume, at1.population(),
-                                             at2.population(), &at1 == &at2 ? 2.0 : 1.0);
-                                calculateRDF(unboundPartials_[{n, m}], unboundHistograms_[{n, m}], boxVolume, at1.population(),
-                                             at2.population(), &at1 == &at2 ? 2.0 : 1.0);
-
-                                // Set flags for bound partials specifying if they are empty (i.e. there are no contributions of
-                                // that type)
-                                emptyBoundPartials_[{n, m}] = boundHistograms_[{n, m}].nBinned() == 0;
-                            });
-}
-
 // Add in partials from source PartialSet to our own
-bool PartialSet::addPartials(PartialSet &source, double weighting)
+void PartialSet::addPartials(PartialSet &source, double weighting)
 {
-    // Loop over partials in source set
-    int typeI, typeJ, localI, localJ;
+    // Full partials
+    for (auto &[key, partial] : source.partials_.map())
+        Interpolator::addInterpolated(partial, partials_.map()[key], weighting);
 
-    auto sourceNTypes = source.atomTypeMix_.nItems();
-    for (typeI = 0; typeI < sourceNTypes; ++typeI)
-    {
-        const auto atI = source.atomTypeMix_.atomType(typeI);
-        localI = atomTypeMix_.indexOf(atI);
-        if (localI == -1)
-        {
-            Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                             atI->name());
-            return false;
-        }
+    // Bound partials
+    for (auto &[key, partial] : source.boundPartials_.map())
+        Interpolator::addInterpolated(partial, boundPartials_.map()[key], weighting);
 
-        for (typeJ = typeI; typeJ < sourceNTypes; ++typeJ)
-        {
-            const auto atJ = source.atomTypeMix_.atomType(typeJ);
-            localJ = atomTypeMix_.indexOf(atJ);
-            if (localJ == -1)
-            {
-                Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atJ->name());
-                return false;
-            }
-
-            // Add interpolated source partials to our set
-            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{localI, localJ}], weighting);
-            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{localI, localJ}], weighting);
-            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{localI, localJ}], weighting);
-
-            // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
-            // correctly
-            if (!source.isBoundPartialEmpty(typeI, typeJ))
-                emptyBoundPartials_[{typeI, typeJ}] = false;
-        }
-    }
+    // Unbound partials
+    for (auto &[key, partial] : source.unboundPartials_.map())
+        Interpolator::addInterpolated(partial, unboundPartials_.map()[key], weighting);
 
     // Add total function
     Interpolator::addInterpolated(source.total_, total_, weighting);
     Interpolator::addInterpolated(source.boundTotal_, boundTotal_, weighting);
     Interpolator::addInterpolated(source.unboundTotal_, unboundTotal_, weighting);
-
-    return true;
-}
-
-// Calculate RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
-                              int nSurrounding, double multiplier)
-{
-    auto nBins = histogram.nBins();
-    double delta = histogram.binWidth();
-    const auto &bins = histogram.bins();
-
-    destination.clear();
-
-    double shellVolume, factor, r = 0.5 * delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
-    for (auto n = 0; n < nBins; ++n)
-    {
-        shellVolume = (4.0 / 3.0) * PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
-        factor = nCentres * (shellVolume * numberDensity);
-
-        destination.addPoint(r, bins[n] * (multiplier / factor));
-
-        r += delta;
-        lowerShellLimit += delta;
-    }
 }
 
 /*
@@ -387,67 +380,50 @@ void PartialSet::operator+=(const double delta) { adjust(delta); }
 
 void PartialSet::operator+=(const PartialSet &source)
 {
-    assert(source.nAtomTypes() != 0);
+    // Full partials
+    for (auto &[key, partial] : source.partials_.map())
+        partials_.map()[key] += partial;
 
-    // If we currently contain no data, just copy the source data
-    if (atomTypeMix_.nItems() == 0)
-    {
-        (*this) = source;
-        return;
-    }
+    // Bound partials
+    for (auto &[key, partial] : source.boundPartials_.map())
+        boundPartials_.map()[key] += partial;
 
-    // Loop over partials in source set
-    const auto &types = source.atomTypeMix();
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, types.begin(), types.end(),
-        [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
-        {
-            const auto atI = atd1.atomType();
-            const auto atJ = atd2.atomType();
-            int localI = atomTypeMix_.indexOf(atI);
-            int localJ = atomTypeMix_.indexOf(atJ);
-            if (localI == -1)
-            {
-                Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atI->name());
-                return;
-            }
-            if (localJ == -1)
-            {
-                Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atJ->name());
-                return;
-            }
-
-            // Add interpolated source partials to our set
-            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{localI, localJ}]);
-            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{localI, localJ}]);
-            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{localI, localJ}]);
-
-            // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
-            if (!source.isBoundPartialEmpty(typeI, typeJ))
-                emptyBoundPartials_[{typeI, typeJ}] = false;
-        });
+    // Unbound partials
+    for (auto &[key, partial] : source.unboundPartials_.map())
+        unboundPartials_.map()[key] += partial;
 
     // Add total function
-    Interpolator::addInterpolated(source.total(), total_);
+    Interpolator::addInterpolated(source.total_, total_);
+    Interpolator::addInterpolated(source.boundTotal_, boundTotal_);
+    Interpolator::addInterpolated(source.unboundTotal_, unboundTotal_);
 }
 
 void PartialSet::operator-=(const double delta) { adjust(-delta); }
 
 void PartialSet::operator*=(const double factor)
 {
-    dissolve::for_each_pair(ParallelPolicies::par, 0, atomTypeMix_.nItems(),
-                            [&](auto n, auto m)
-                            {
-                                partials_[{n, m}] *= factor;
-                                boundPartials_[{n, m}] *= factor;
-                                unboundPartials_[{n, m}] *= factor;
-                            });
+    // Full partials
+    dissolve::for_each(ParallelPolicies::par, partials_.begin(), partials_.end(),
+                       [factor](auto &pair) { pair.second *= factor; });
+
+    // Bound partials
+    dissolve::for_each(ParallelPolicies::par, boundPartials_.begin(), boundPartials_.end(),
+                       [factor](auto &pair) { pair.second *= factor; });
+
+    // Unbound partials
+    dissolve::for_each(ParallelPolicies::par, unboundPartials_.begin(), unboundPartials_.end(),
+                       [factor](auto &pair) { pair.second *= factor; });
 
     total_ *= factor;
     boundTotal_ *= factor;
     unboundTotal_ *= factor;
+}
+
+PartialSet PartialSet::operator*(const double factor) const
+{
+    auto result = (*this);
+    result *= factor;
+    return result;
 }
 
 /*
@@ -457,17 +433,18 @@ void PartialSet::operator*=(const double factor)
 // Return Data1D with specified tag, if it exists
 OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view tag) const
 {
-    auto fullIt = std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+    auto fullIt =
+        std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.second.tag() == tag; });
     if (fullIt != partials_.end())
-        return *fullIt;
-    auto boundIt =
-        std::find_if(boundPartials_.begin(), boundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+        return fullIt->second;
+    auto boundIt = std::find_if(boundPartials_.begin(), boundPartials_.end(),
+                                [tag](const auto &data) { return data.second.tag() == tag; });
     if (boundIt != boundPartials_.end())
-        return *boundIt;
-    auto unboundIt =
-        std::find_if(unboundPartials_.begin(), unboundPartials_.end(), [tag](const auto &data) { return data.tag() == tag; });
+        return boundIt->second;
+    auto unboundIt = std::find_if(unboundPartials_.begin(), unboundPartials_.end(),
+                                  [tag](const auto &data) { return data.second.tag() == tag; });
     if (unboundIt != unboundPartials_.end())
-        return *unboundIt;
+        return unboundIt->second;
     if (total_.tag() == tag)
         return total_;
     if (boundTotal_.tag() == tag)
@@ -492,97 +469,59 @@ int readDataPoint(int argIndex, LineParser &parser, Data1D &data)
 // Read data through specified LineParser
 bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
-    if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success)
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
+    fingerprint_ = parser.argsv(0);
+    triangular_ = parser.hasArg(1) ? parser.argb(1) : true;
 
-    // Read atom types
-    atomTypeMix_.clear();
-    if (!atomTypeMix_.deserialise(parser, coreData))
+    // Read species populations
+    realSpeciesPopulations_.clear();
+
+    // Write out species populations first
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    auto nTypes = atomTypeMix_.nItems();
-
-    // Read partials
-    partials_.initialise(nTypes, nTypes, true);
-    boundPartials_.initialise(nTypes, nTypes, true);
-    unboundPartials_.initialise(nTypes, nTypes, true);
-    emptyBoundPartials_.initialise(nTypes, nTypes, true);
-    emptyBoundPartials_ = false;
-
-    for (auto typeI = 0; typeI < nTypes; ++typeI)
+    auto nSpecies = parser.argi(0);
+    for (auto n = 0; n < nSpecies; ++n)
     {
-        for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
-        {
-            auto &part = partials_[{typeI, typeJ}];
-            auto &bound = boundPartials_[{typeI, typeJ}];
-            auto &unbound = unboundPartials_[{typeI, typeJ}];
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        auto *sp = coreData.findSpecies(parser.argsv(0));
+        if (!sp)
+            return Messenger::error("Species '{}' not found.\n", parser.argsv(0));
+        realSpeciesPopulations_[sp] = parser.argd(1);
+    }
 
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            part.setTag(parser.argsv(0));
-            bound.setTag(parser.argsv(1));
-            unbound.setTag(parser.argsv(2));
+    // Clear partials
+    partials_.clear(triangular_);
+    boundPartials_.clear(triangular_);
+    unboundPartials_.clear(triangular_);
 
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
-            auto nPoints = parser.argi(0);
-            auto partError = parser.argb(1);
-            if (partError)
-                part.addErrors();
-            auto boundError = parser.argb(2);
-            if (boundError)
-                bound.addErrors();
-            auto unboundError = parser.argb(3);
-            if (unboundError)
-                unbound.addErrors();
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    auto nPartials = parser.argi(0);
 
-            part.xAxis().reserve(nPoints);
-            part.values().reserve(nPoints);
-            if (part.valuesHaveErrors())
-                part.errors().reserve(nPoints);
-            bound.xAxis().reserve(nPoints);
-            bound.values().reserve(nPoints);
-            if (bound.valuesHaveErrors())
-                bound.errors().reserve(nPoints);
-            unbound.xAxis().reserve(nPoints);
-            unbound.values().reserve(nPoints);
-            if (unbound.valuesHaveErrors())
-                unbound.errors().reserve(nPoints);
+    // Read in individual partials
+    for (auto n = 0; n < nPartials; ++n)
+    {
+        // Read key
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        auto key = parser.args(0);
 
-            for (auto n = 0; n < nPoints; ++n)
-            {
-                if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                    return false;
-                int argIndex = 0;
-                auto x = parser.argd(argIndex++);
-                part.xAxis().push_back(x);
-                bound.xAxis().push_back(x);
-                unbound.xAxis().push_back(x);
-                argIndex = readDataPoint(argIndex, parser, part);
-                argIndex = readDataPoint(argIndex, parser, bound);
-                argIndex = readDataPoint(argIndex, parser, unbound);
-            }
-        }
+        if (!partials_.map()[key].deserialise(parser))
+            return false;
+        if (!boundPartials_.map()[key].deserialise(parser))
+            return false;
+        if (!unboundPartials_.map()[key].deserialise(parser))
+            return false;
     }
 
     // Read totals
     if (!total_.deserialise(parser))
         return false;
-    if (GenericList::baseDataVersion() == GenericList::DeserialisableDataVersion::Version08X)
-    {
-        // Writing of bound & unbound totals introduced in 0.9.0
-        boundTotal_.initialise(total_);
-        unboundTotal_.initialise(total_);
-    }
-    else
-    {
-        if (!boundTotal_.deserialise(parser))
-            return false;
-        if (!unboundTotal_.deserialise(parser))
-            return false;
-    }
-
-    // Read empty bound flags
-    if (!GenericItemDeserialiser::deserialise<Array2D<char>>(emptyBoundPartials_, parser))
+    if (!boundTotal_.deserialise(parser))
+        return false;
+    if (!unboundTotal_.deserialise(parser))
         return false;
 
     return true;
@@ -591,51 +530,45 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 std::string writeDataPoint(int i, Data1D data)
 {
     if (data.valuesHaveErrors())
-        return fmt::format("{} {}", data.value(i), data.error(i));
+        return std::format("{} {}", data.value(i), data.error(i));
     else
-        return fmt::format("{}", data.value(i));
+        return std::format("{}", data.value(i));
 }
 
 // Write data through specified LineParser
 bool PartialSet::serialise(LineParser &parser) const
 {
-    if (!parser.writeLineF("{}\n", fingerprint_))
+    if (!parser.writeLineF("'{}'  {}\n", fingerprint_, triangular_))
         return false;
 
-    // Write out AtomTypes first
-    atomTypeMix_.serialise(parser);
-    auto nTypes = atomTypeMix_.nItems();
-
-    // Write individual Data1D
-    auto success = for_each_pair_early(
-        0, nTypes,
-        [&](int typeI, int typeJ) -> EarlyReturn<bool>
-        {
-            const auto &part = partials_[{typeI, typeJ}];
-            const auto &bound = boundPartials_[{typeI, typeJ}];
-            const auto &unbound = unboundPartials_[{typeI, typeJ}];
-
-            // Write tag
-            if (!parser.writeLineF("'{}' '{}' '{}'\n", part.tag(), bound.tag(), unbound.tag()))
-                return false;
-
-            // Write axis size and errors flag
-            if (!parser.writeLineF("{} {} {} {}\n", part.xAxis().size(), DissolveSys::btoa(part.valuesHaveErrors()),
-                                   DissolveSys::btoa(bound.valuesHaveErrors()), DissolveSys::btoa(unbound.valuesHaveErrors())))
-                return false;
-
-            for (auto i = 0; i < part.xAxis().size(); ++i)
-            {
-                if (!parser.writeLineF("{} {} {} {}\n", part.xAxis(i), writeDataPoint(i, part), writeDataPoint(i, bound),
-                                       writeDataPoint(i, unbound)))
-                    return false;
-            }
-
-            return EarlyReturn<bool>::Continue;
-        });
-
-    if (!success.value_or(true))
+    // Write out species populations first
+    if (!parser.writeLineF("{}\n", realSpeciesPopulations_.size()))
         return false;
+    for (auto &[resolvableSpecies, population] : realSpeciesPopulations_)
+        if (!parser.writeLineF("{} {}\n", resolvableSpecies.name(), population))
+            return false;
+
+    // Write number of keys to expect
+    if (!parser.writeLineF("{}\n", partials_.size()))
+        return false;
+
+    // Write partials using the full partials as the master key set
+    for (const auto &[key, partial] : partials_)
+    {
+        auto &bound = boundPartials_.map().at(key);
+        auto &unbound = unboundPartials_.map().at(key);
+
+        // Write key
+        if (!parser.writeLineF("{}\n", key))
+            return false;
+
+        if (!partial.serialise(parser))
+            return false;
+        if (!bound.serialise(parser))
+            return false;
+        if (!unbound.serialise(parser))
+            return false;
+    }
 
     // Write totals
     if (!total_.serialise(parser))
@@ -645,9 +578,50 @@ bool PartialSet::serialise(LineParser &parser) const
     if (!unboundTotal_.serialise(parser))
         return false;
 
-    // Write empty bound flags
-    if (!GenericItemSerialiser::serialise<Array2D<char>>(emptyBoundPartials_, parser))
-        return false;
-
     return true;
+}
+
+// Express as a serialisable value
+void PartialSet::serialise(std::string tag, SerialisedValue &target) const
+{
+    auto &result = target[tag];
+
+    result["realSpeciesPopulations"] = Serialisable::fromVectorToTable(realSpeciesPopulations_);
+
+    partials_.serialise("partials", result);
+    boundPartials_.serialise("boundPartials", result);
+    unboundPartials_.serialise("unboundPartials", result);
+
+    result["total"] = total_;
+    result["boundTotal"] = boundTotal_;
+    result["unboundTotal"] = unboundTotal_;
+}
+
+// Read values from a serialisable value
+void PartialSet::deserialise(SerialisedValue node)
+{
+    // Real species populations
+    Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
+                        { realSpeciesPopulations_[name] = population.as_floating(); });
+
+    partials_.deserialise(node["partials"]);
+    boundPartials_.deserialise(node["boundPartials"]);
+    unboundPartials_.deserialise(node["unboundPartials"]);
+
+    total_.deserialise(node["total"]);
+    boundTotal_.deserialise(node["boundTotal"]);
+    unboundTotal_.deserialise(node["unboundTotal"]);
+}
+
+// Resolve internal resolvable name references with supplied data
+void PartialSet::resolve(const std::map<std::string, const Species *> &speciesInScope)
+{
+    for (auto &resolvableSpecies : std::views::keys(realSpeciesPopulations_))
+    {
+        if (speciesInScope.contains(std::string(resolvableSpecies.name())))
+            resolvableSpecies.resolve(speciesInScope.at(std::string(resolvableSpecies.name())));
+        else
+            throw(std::runtime_error(std::format("Species '{}' is used in PartialSet, but no such species is in scope.\n",
+                                                 resolvableSpecies.name())));
+    }
 }

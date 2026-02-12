@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 #include <vector>
@@ -14,7 +14,6 @@ class Interpolator
     // Interpolation Schemes
     enum InterpolationScheme
     {
-        NoInterpolation,
         SplineInterpolation,
         /* ConstrainedSplineInterpolation, */ // Removed for now as it produces spurious features in some fits.
         LinearInterpolation,
@@ -22,22 +21,20 @@ class Interpolator
     };
     Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme = SplineInterpolation);
     Interpolator(const Data1D &source, InterpolationScheme scheme = SplineInterpolation);
-    ~Interpolator();
+    ~Interpolator() = default;
 
     /*
      * Interpolation
      */
     private:
     // Target x array
-    const std::vector<double> &x_;
+    std::vector<double> x_;
     // Target y array
-    const std::vector<double> &y_;
+    std::vector<double> y_;
     // Interpolation scheme currently employed
     InterpolationScheme scheme_;
     // Interpolation parameters
     std::vector<double> a_, b_, c_, d_, h_;
-    // Interval of last returned interpolated point
-    int lastInterval_;
 
     private:
     // Prepare natural spline interpolation of data
@@ -48,16 +45,16 @@ class Interpolator
     void interpolateLinear();
     // Prepare three-point interpolation of data
     void interpolateThreePoint();
+    // Regenerate using specified scheme
+    void interpolate();
 
     public:
-    // Regenerate using specified scheme
-    void interpolate(InterpolationScheme scheme = SplineInterpolation);
     // Return interpolated y value for supplied x
-    double y(double x);
-    // Return interpolated y value for supplied x, specifying containing interval
-    double y(double x, int interval);
-    // Return interpolated y values for all supplied x values
-    std::vector<double> y(const std::vector<double> &xs);
+    double y(double x) const;
+    // Return interpolated y value for supplied x from the specified interval
+    double y(double x, int interval) const;
+    // Return interpolated y values for supplied, sequentially increasing x values
+    std::vector<double> y(const std::vector<double> &xs) const;
 
     /*
      * Static Functions

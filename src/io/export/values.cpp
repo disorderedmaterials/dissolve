@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/export/values.h"
 #include "base/lineParser.h"
@@ -33,7 +33,7 @@ bool ValueExportFileFormat::exportSimple(LineParser &parser, const std::vector<d
 }
 
 // Export values using current filename and format
-bool ValueExportFileFormat::exportData(const std::vector<double> &data, LineParser &currentParser, ProcessPool *procPool)
+bool ValueExportFileFormat::exportData(const std::vector<double> &data, LineParser &currentParser)
 {
     // Check the format
     if (!formatIndex_)
@@ -41,7 +41,7 @@ bool ValueExportFileFormat::exportData(const std::vector<double> &data, LinePars
 
     // If the filename is simply '@' then we write to the current parser - otherwise open a new file / parser
     auto writeToCurrent = filename_ == "@";
-    LineParser fileParser(procPool);
+    LineParser fileParser;
     LineParser &parser = writeToCurrent ? currentParser : fileParser;
 
     if (!writeToCurrent && ((!parser.openOutput(filename_)) || (!parser.isFileGoodForWriting())))
@@ -55,8 +55,8 @@ bool ValueExportFileFormat::exportData(const std::vector<double> &data, LinePars
             result = exportSimple(parser, data);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Value format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Value format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

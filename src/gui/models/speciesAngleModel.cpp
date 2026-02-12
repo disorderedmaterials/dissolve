@@ -1,13 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesAngleModel.h"
-#include "classes/coreData.h"
 
-SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles, const CoreData &coreData)
-    : angles_(angles), coreData_(coreData)
-{
-}
+SpeciesAngleModel::SpeciesAngleModel() : angles_(nullptr) {}
 
 void SpeciesAngleModel::reset()
 {
@@ -15,10 +11,17 @@ void SpeciesAngleModel::reset()
     endResetModel();
 }
 
+void SpeciesAngleModel::setAngles(std::vector<SpeciesAngle> &angles)
+{
+    beginResetModel();
+    angles_ = &angles;
+    endResetModel();
+}
+
 int SpeciesAngleModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return angles_.size();
+    return angles_->size();
 }
 
 int SpeciesAngleModel::columnCount(const QModelIndex &parent) const
@@ -32,7 +35,7 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
-    auto &angle = angles_[index.row()];
+    auto angle = angles_->at(index.row());
 
     if (role == Qt::UserRole)
         return QVariant::fromValue(&angle);
@@ -83,14 +86,14 @@ Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexK)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::Form && angles_[index.row()].masterTerm())
+    if (index.column() > DataType::Form && angles_->at(index.row()).masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
 bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    auto &angle = angles_[index.row()];
+    auto &angle = angles_->at(index.row());
     switch (index.column())
     {
         case (DataType::IndexI):
@@ -98,26 +101,15 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
         case (DataType::IndexK):
             return false;
         case (DataType::Form):
-            if (value.toString().at(0) == '@')
+            try
             {
-                auto master = coreData_.getMasterAngle(value.toString().toStdString());
-                if (master)
-                    angle.setMasterTerm(&master->get());
-                else
-                    return false;
+                auto af = AngleFunctions::forms().enumeration(value.toString().toStdString());
+                angle.detachFromMasterTerm();
+                angle.setInteractionForm(af);
             }
-            else
+            catch (std::runtime_error &e)
             {
-                try
-                {
-                    auto af = AngleFunctions::forms().enumeration(value.toString().toStdString());
-                    angle.detachFromMasterTerm();
-                    angle.setInteractionForm(af);
-                }
-                catch (std::runtime_error &e)
-                {
-                    return false;
-                }
+                return false;
             }
             break;
         case (DataType::Parameters):

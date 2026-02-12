@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/atomTypeVector.h"
 #include "base/lineParser.h"
@@ -34,8 +34,7 @@ bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const 
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(),
-                               [&parser, n](const auto atomType)
+        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&parser, n](const auto atomType)
                                { return DissolveSys::sameString(atomType->name(), parser.argsv(n)); });
         if (it == coreData.atomTypes().end())
             return Messenger::error("Unrecognised AtomType '{}' given to '{}' keyword.\n", parser.argsv(n), name());
@@ -75,9 +74,9 @@ void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
 }
 
 // Express as a serialisable value
-SerialisedValue AtomTypeVectorKeyword::serialise() const
+void AtomTypeVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto &item) { return item->name(); });
+    target[tag] = fromVector(data_, [](const auto &item) { return item->name(); });
 }
 
 // Read values from a serialisable value
@@ -87,11 +86,10 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
              [this, &coreData](const auto &item)
              {
                  auto it = std::find_if(
-                     coreData.atomTypes().begin(), coreData.atomTypes().end(),
-                     [&item](const auto atomType)
+                     coreData.atomTypes().begin(), coreData.atomTypes().end(), [&item](const auto atomType)
                      { return DissolveSys::sameString(atomType->name(), std::string_view(std::string(item.as_string()))); });
                  if (it == coreData.atomTypes().end())
-                     throw toml::type_error(fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n",
+                     throw toml::type_error(std::format("Unrecognised AtomType '{}' given to '{}' keyword.\n",
                                                         std::string(item.as_string()), name()),
                                             item.location());
                  auto atomType = *it;
@@ -99,7 +97,7 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
                  // If the AtomType is already present, complain
                  if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
                      throw toml::type_error(
-                         fmt::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())),
+                         std::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())),
                          item.location());
 
                  // All OK - add it to our vector

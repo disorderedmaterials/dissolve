@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/species.h"
 
 // Calculate and return centre of geometry
-Vec3<double> Species::centreOfGeometry(const Box *box) const
+Vector3 Species::centreOfGeometry(const Box *box) const
 {
     if (atoms_.size() == 0)
-        return Vec3<double>();
+        return Vector3();
 
     // Calculate center relative to first atom in molecule
     auto cog = atoms_.front().r();
@@ -19,10 +19,10 @@ Vec3<double> Species::centreOfGeometry(const Box *box) const
 }
 
 // Set centre of geometry of species
-void Species::setCentre(const Box *box, const Vec3<double> newCentre)
+void Species::setCentre(const Box *box, const Vector3 newCentre)
 {
     // Calculate Molecule centre of geometry
-    Vec3<double> newR;
+    Vector3 newR;
     const auto cog = centreOfGeometry(box);
 
     // Apply transform
@@ -39,7 +39,7 @@ void Species::setCentre(const Box *box, const Vec3<double> newCentre)
 // Centre coordinates at origin
 void Species::centreAtOrigin()
 {
-    Vec3<double> centre;
+    Vector3 centre;
     for (const auto &i : atoms_)
         centre += i.r();
     centre /= atoms_.size();

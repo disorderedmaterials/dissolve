@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#include "math/mathFunc.h"
 
 #include "classes/configuration.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "math/filters.h"
-#include "module/context.h"
 #include "modules/bragg/bragg.h"
 #include "modules/gr/gr.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
+
+#include <ranges>
 
 // Set target data
 void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -21,7 +24,7 @@ void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &con
 }
 
 // Run main processing
-Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult SQModule::process(Dissolve &dissolve)
 {
     /*
      * Calculate S(Q) from Configuration's g(r).
@@ -71,46 +74,43 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
      */
 
     // Get unweighted g(r) from the source RDF module
-    if (!moduleContext.dissolve().processingModuleData().contains("UnweightedGR", sourceGR_->name()))
+    if (!dissolve.processingModuleData().contains("UnweightedGR", sourceGR_->name()))
     {
         Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceGR_->name());
         return ExecutionResult::Failed;
     }
-    const auto &unweightedgr =
-        moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedGR", sourceGR_->name());
+    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceGR_->name());
 
     // Get effective atomic density of underlying g(r)
     const auto rho = sourceGR_->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
-    auto uSQObject = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>("UnweightedSQ", name_,
-                                                                                           GenericItem::InRestartFileFlag);
+    auto uSQObject =
+        dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     auto &unweightedsq = uSQObject.first;
     if (uSQObject.second == GenericItem::ItemStatus::Created)
-        unweightedsq.setUpPartials(unweightedgr.atomTypeMix());
+        unweightedsq.initialise(unweightedgr);
 
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
             unweightedsq.fingerprint(),
-            fmt::format("{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
-                        sourceBragg_
-                            ? moduleContext.dissolve().processingModuleData().version("Reflections", sourceBragg_->name())
-                            : -1)))
+            std::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceGR_->name()),
+                        sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1)))
     {
         Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
         return ExecutionResult::NotExecuted;
     }
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(moduleContext.processPool(), unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, *rho,
-                               WindowFunction(windowFunction_), qBroadening_))
+    if (!calculateUnweightedSQ(unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, *rho, WindowFunction(windowFunction_),
+                               qBroadening_))
         return ExecutionResult::Failed;
 
     // Include Bragg scattering?
     if (sourceBragg_)
     {
         // Check if reflection data is present
-        if (!moduleContext.dissolve().processingModuleData().contains("Reflections", sourceBragg_->name()))
+        if (!dissolve.processingModuleData().contains("Reflections", sourceBragg_->name()))
         {
             Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                              "could not be located.\n",
@@ -118,50 +118,39 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
             return ExecutionResult::Failed;
         }
 
-        const auto &braggReflections = moduleContext.dissolve().processingModuleData().value<std::vector<BraggReflection>>(
-            "Reflections", sourceBragg_->name());
+        const auto &braggReflections =
+            dissolve.processingModuleData().value<std::vector<BraggReflection>>("Reflections", sourceBragg_->name());
         const auto nReflections = braggReflections.size();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found reflections data for module '{}' (nReflections = {}, Q(last) = {} "
                          "Angstroms**-1).\n",
                          sourceBragg_->name(), nReflections, braggQMax);
-        const auto &braggAtomTypes =
-            moduleContext.dissolve().processingModuleData().value<AtomTypeMix>("SummedAtomTypes", sourceBragg_->name());
-        const auto &v0 = moduleContext.dissolve().processingModuleData().value<double>("V0", sourceBragg_->name());
+
+        const auto &v0 = dissolve.processingModuleData().value<double>("V0", sourceBragg_->name());
 
         // Prepare a temporary object for the Bragg partials
+        auto typeFractions = unweightedsq.atomTypeFractions();
         Array2D<Data1D> braggPartials;
-        braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+        braggPartials.initialise(typeFractions.size(), typeFractions.size(), true);
         for (auto &partial : braggPartials)
-            partial.initialise(unweightedsq.partial(0, 0));
+            partial.initialise(unweightedsq.partials().begin()->second);
 
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
-        auto success = for_each_pair_early(
-            unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
-            [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool>
-            {
-                // Locate the corresponding Bragg intensities for this atom type pair
-                auto pairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
-                if (pairIndex.first == -1 || pairIndex.second == -1)
-                {
-                    Messenger::error(
-                        "SQ data has a partial between {} and {}, but no such intensities exist in the reflection data.\n",
-                        at1.atomTypeName(), at2.atomTypeName());
-                    return false;
-                }
+        auto success = for_each_pair_early(typeFractions,
+                                           [&](auto indexI, auto &popI, int indexJ, auto &popJ) -> EarlyReturn<bool>
+                                           {
+                                               // Grab relevant partial and loop over reflections
+                                               auto &partial = braggPartials[{indexI, indexJ}];
+                                               for (const auto &reflxn : braggReflections)
+                                               {
+                                                   const auto intensity = reflxn.intensity(indexI, indexJ);
+                                                   for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
+                                                       by += braggQBroadening_.y(q - reflxn.q(), q) * intensity *
+                                                             braggQBroadening_.normalisation(q) / (reflxn.q() * q);
+                                               }
 
-                // Grab relevant partial and oop over reflections
-                auto &partial = braggPartials[pairIndex];
-                for (const auto &reflxn : braggReflections)
-                {
-                    const auto intensity = reflxn.intensity(pairIndex.first, pairIndex.second);
-                    for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
-                        by += braggQBroadening_.y(q - reflxn.q(), q) * intensity * braggQBroadening_.normalisation(q) /
-                              (reflxn.q() * q);
-                }
-
-                return EarlyReturn<bool>::Continue;
-            });
+                                               return EarlyReturn<bool>::Continue;
+                                           });
         if (success && !success.value())
             return ExecutionResult::Failed;
 
@@ -171,27 +160,29 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
                            [v0](auto &val) { return val * 2.0 * pow(M_PI, 2) / v0; });
 
         // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
-        dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
-                                [&braggPartials](auto i, auto &atd1, auto j, auto &atd2)
+        dissolve::for_each_pair(ParallelPolicies::par, typeFractions,
+                                [&braggPartials](auto indexI, auto &popI, int indexJ, auto &popJ)
                                 {
                                     // Subtract self-scattering level if types are equivalent
-                                    if (i == j)
-                                        braggPartials[{i, j}] -= atd1.fraction();
+                                    if (indexI == indexJ)
+                                        braggPartials[{indexI, indexJ}] -= popI.second;
 
                                     // Remove atomic fraction normalisation
-                                    braggPartials[{i, j}] /= atd1.fraction() * atd2.fraction();
+                                    braggPartials[{indexI, indexJ}] /= popI.second * popJ.second;
                                 });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
-        dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedsq.nAtomTypes(),
-                                [&](const int i, const int j)
+        dissolve::for_each_pair(ParallelPolicies::par, typeFractions,
+                                [&](auto indexI, auto &popI, int indexJ, auto &popJ)
                                 {
                                     // Note: Intramolecular broadening will not be applied to bound terms within the
                                     // calculated Bragg scattering
-                                    auto &bound = unweightedsq.boundPartial(i, j);
-                                    auto &unbound = unweightedsq.unboundPartial(i, j);
-                                    auto &partial = unweightedsq.partial(i, j);
-                                    auto &bragg = braggPartials[{i, j}];
+                                    auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+
+                                    auto &bound = unweightedsq.boundPartials().get(key);
+                                    auto &unbound = unweightedsq.unboundPartials().get(key);
+                                    auto &partial = unweightedsq.partials().get(key);
+                                    auto &bragg = braggPartials[{indexI, indexJ}];
 
                                     for (auto n = 0; n < bound.nValues(); ++n)
                                     {
@@ -215,20 +206,20 @@ Module::ExecutionResult SQModule::process(ModuleContext &moduleContext)
         // Store the current fingerprint, since we must ensure we retain it in the averaged data.
         std::string currentFingerprint{unweightedsq.fingerprint()};
 
-        Averaging::average<PartialSet>(moduleContext.dissolve().processingModuleData(), "UnweightedSQ", name_,
-                                       averagingLength_.value(), averagingScheme_);
+        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", name_, averagingLength_.value(),
+                                       averagingScheme_);
 
         // Re-set the object names and fingerprints of the partials
         unweightedsq.setFingerprint(currentFingerprint);
     }
 
     // Set fingerprint
-    unweightedsq.setFingerprint(fmt::format(
-        "{}/{}", moduleContext.dissolve().processingModuleData().version("UnweightedGR", sourceGR_->name()),
-        sourceBragg_ ? moduleContext.dissolve().processingModuleData().version("Reflections", sourceBragg_->name()) : -1));
+    unweightedsq.setFingerprint(
+        std::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceGR_->name()),
+                    sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1));
 
     // Save data if requested
-    if (save_ && !MPIRunMaster(moduleContext.processPool(), unweightedsq.save(name_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
+    if (save_ && !unweightedsq.save(name_, "UnweightedSQ", "sq", "Q, 1/Angstroms"))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

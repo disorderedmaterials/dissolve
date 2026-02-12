@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/compare/compare.h"
 #include "tests/testData.h"
@@ -35,8 +35,8 @@ TEST_F(CompareModuleTest, IntVsIntErrors)
     EXPECT_NEAR(ranges[1].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[1].maximum(), 10, 1.0e-4);
 
-    EXPECT_NEAR(errors[0], 3.0942e-1, 1.0e-4);
-    EXPECT_NEAR(errors[1], 9.2657e-1, 1.0e-4);
+    EXPECT_NEAR(errors[0], 8.1137e-2, 1.0e-5);
+    EXPECT_NEAR(errors[1], 2.42853e-1, 1.0e-5);
 }
 
 TEST_F(CompareModuleTest, IntVsExtErrors)
@@ -52,8 +52,8 @@ TEST_F(CompareModuleTest, IntVsExtErrors)
     EXPECT_NEAR(ranges[1].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[1].maximum(), 10, 1.0e-4);
 
-    EXPECT_NEAR(errors[0], 3.0942e-1, 1.0e-4);
-    EXPECT_NEAR(errors[1], 9.2657e-1, 1.0e-4);
+    EXPECT_NEAR(errors[0], 8.1137e-2, 1.0e-5);
+    EXPECT_NEAR(errors[1], 2.42853e-1, 1.0e-5);
 }
 
 TEST_F(CompareModuleTest, ExtVsExtErrors)
@@ -69,8 +69,8 @@ TEST_F(CompareModuleTest, ExtVsExtErrors)
     EXPECT_NEAR(ranges[1].minimum(), 0, 1.0e-4);
     EXPECT_NEAR(ranges[1].maximum(), 10, 1.0e-4);
 
-    EXPECT_NEAR(errors[0], 7.0069e-3, 1.0e-4);
-    EXPECT_NEAR(errors[1], 2.0418e-2, 1.0e-4);
+    EXPECT_NEAR(errors[0], 4.84315e-3, 1.0e-6);
+    EXPECT_NEAR(errors[1], 1.39592e-2, 1.0e-5);
 }
 
 TEST_F(CompareModuleTest, IntVsIntDelta)

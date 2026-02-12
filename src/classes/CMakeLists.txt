@@ -4,8 +4,6 @@ add_library(
   array3DIterator.cpp
   atom.cpp
   atomType.cpp
-  atomTypeData.cpp
-  atomTypeMix.cpp
   bondFunctions.cpp
   box.cpp
   boxCubic.cpp
@@ -32,19 +30,22 @@ add_library(
   coreData.cpp
   distributor.cpp
   empiricalFormula.cpp
-  isotopeData.cpp
+  exchangeables.cpp
+  fullPairIterator.cpp
+  histogramSet.cpp
+  isotopeMix.cpp
   isotopologue.cpp
-  isotopologues.cpp
   isotopologueSet.cpp
-  isotopologueWeight.cpp
   kVector.cpp
   localMolecule.cpp
   molecule.cpp
   moleculeDistributor.cpp
+  moleculeSet.cpp
   neutronWeights.cpp
   pairPotential.cpp
   pairPotentialOverride.cpp
   potentialMap.cpp
+  potentialSet.cpp
   pairIterator.cpp
   partialSet.cpp
   partialSetAccumulator.cpp
@@ -77,9 +78,7 @@ add_library(
   angleFunctions.h
   array3DIterator.h
   atom.h
-  atomTypeData.h
   atomType.h
-  atomTypeMix.h
   bondFunctions.h
   box.h
   braggReflection.h
@@ -93,22 +92,24 @@ add_library(
   dataSource.h
   distributor.h
   empiricalFormula.h
+  exchangeables.h
+  histogramSet.h
   interactionPotential.h
-  isotopeData.h
+  isotopeMix.h
   isotopologue.h
-  isotopologues.h
   isotopologueSet.h
-  isotopologueWeight.h
   kVector.h
   localMolecule.h
   molecule.h
   moleculeDistributor.h
+  moleculeSet.h
   neutronWeights.h
   pairPotential.h
   pairPotentialOverride.h
   potentialMap.h
   partialSet.h
   partialSetAccumulator.h
+  potentialSet.h
   region.h
   regionalDistributor.h
   scatteringMatrix.h

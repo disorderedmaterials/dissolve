@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -79,4 +79,7 @@ class SpeciesEditor : public QWidget
     // Tools
     void on_ToolsCalculateBondingButton_clicked(bool checked);
     void on_ToolsMinimiseButton_clicked(bool checked);
+    void on_ToolsAddCellButton_clicked(bool checked);
+    void on_ToolsRemoveCellButton_clicked(bool checked);
+    void on_ToolsBondToleranceSpin_valueChanged(double value);
 };

@@ -1,0 +1,82 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#pragma once
+
+#include "math/data1D.h"
+#include "math/vector3.h"
+#include <array>
+#include <variant>
+
+// Peaks
+class Peaks
+{
+    public:
+    Peaks(const std::vector<double> &values, const std::vector<double> &domain);
+    Peaks(const Data1D &source);
+    ~Peaks() = default;
+
+    private:
+    // Maximum y-axis value
+    double maxValue_;
+    // Values for which we are characterising peaks
+    std::vector<double> values_;
+    // Domain for which we are characterising peaks
+    std::vector<double> domain_;
+    // Characterise only peaks occurring above a given vertical threshold
+    double threshold_;
+    // Characterise only peaks occurring above a given horizontal isolation
+    double isolation_;
+    // Check if neighbouring points correspond to a local maximum
+    bool isLocalMaximum(const std::array<double, 3> &points);
+    // Check if neighbouring points correspond to a local minimum
+    bool isLocalMinimum(const std::array<double, 3> &points);
+    // Check if neighbouring points correspond to an inflection point
+    bool isInflectionPoint(const std::array<double, 3> &points);
+
+    public:
+    // Container for a peak occurring in 1D data
+    struct Peak1D
+    {
+        double peak;
+        double valueAt;
+        int index;
+        Peak1D(double peak, double valueAt, int index) : peak(peak), valueAt(valueAt), index(index) {}
+    };
+
+    // Container for a prominence occuring in 1D data
+    struct Prominence1D : public Peak1D
+    {
+        double prominence;
+        Prominence1D(const Peak1D *parent, double prominence)
+            : Peak1D(parent->peak, parent->valueAt, parent->index), prominence(prominence)
+        {
+        }
+    };
+
+    public:
+    // Reset the threshold and isolation constraints
+    void resetConstraints();
+    // Sort peaks in place by peak value, from highest to lowest
+    void sortPeaks(std::vector<Peak1D> &peaks);
+    // Sort peaks in place by index, from first to last
+    template <typename T> void sortIndices(std::vector<T> &items);
+    // Sort prominences in place by prominence value, from highest to lowest
+    void sortProminences(std::vector<Prominence1D> &prominences);
+    // Sort peaks in place by index, from first to last
+    void setThreshold(double range);
+    // Set horizontal threshold for peaks
+    void setIsolation(double range);
+    // Get top n peaks
+    std::vector<Peak1D> top(std::size_t n, std::vector<Peak1D> peaks);
+    // Find the peaks (local maxima) of data
+    std::vector<Peak1D> find(bool heightOrder = false);
+    /*
+     * Calculate the prominence of peaks.
+     * Prominence is defined by the height of the peak relative to a reference height.
+     * This reference is determined by the highest minimum of two intervals (bound by either the end of the data
+     * or a higher data point), either side of the peak itself.
+     */
+    std::vector<Prominence1D> prominences(bool heightOrder = false);
+    std::vector<Prominence1D> prominences(const std::vector<Peak1D> &peaks, bool heightOrder = false);
+};

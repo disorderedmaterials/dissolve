@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/speciesTab.h"
 #include "classes/atomType.h"
@@ -13,6 +13,7 @@
 #include "gui/getSpeciesNameDialog.h"
 #include "gui/gui.h"
 #include "main/dissolve.h"
+#include "math/mathFunc.h"
 #include <QMessageBox>
 
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
@@ -113,9 +114,10 @@ void SpeciesTab::updateDensityLabel()
     if (!species_ || species_->box()->type() == Box::BoxType::NonPeriodic)
         ui_.DensityUnitsLabel->setText("N/A");
     else
-        ui_.DensityUnitsLabel->setText(QString::number(
-            ui_.DensityUnitsCombo->currentIndex() == 0 ? species_->nAtoms() / species_->box()->volume()
-                                                       : (species_->mass() / AVOGADRO) / (species_->box()->volume() / 1.0E24)));
+        ui_.DensityUnitsLabel->setText(
+            QString::number(ui_.DensityUnitsCombo->currentIndex() == 0
+                                ? species_->nAtoms() / species_->box()->volume()
+                                : (species_->mass() / DissolveMath::Avogadro) / (species_->box()->volume() / 1.0E24)));
 }
 
 // Update controls in tab
@@ -140,8 +142,8 @@ void SpeciesTab::updateControls()
     ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
 
-    ui_.EmpiricalFormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
-        species_->atoms(), [](const auto &i) { return i.Z(); }, true)));
+    ui_.EmpiricalFormulaLabel->setText(
+        QString::fromStdString(EmpiricalFormula::formula(species_->atoms(), [](const auto &i) { return i.Z(); }, true)));
 
     // Charges
     updateTotalCharges();

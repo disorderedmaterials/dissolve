@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
@@ -7,13 +7,13 @@
 #include "expression/variable.h"
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
-#include "module/context.h"
+#include "math/mathFunc.h"
 #include "modules/intraAngle/intraAngle.h"
 
 // Run main processing
-Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
+Module::ExecutionResult IntraAngleModule::process(Dissolve &dissolve)
 {
-    auto &processingData = moduleContext.dissolve().processingModuleData();
+    auto &processingData = dissolve.processingModuleData();
 
     // Select site A
     SiteSelector a(targetConfiguration_, a_);
@@ -77,13 +77,13 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     // Normalise
     DataOperator1D normaliser(dataNormalisedHisto);
     // Normalise by sin(x)
-    normaliser.operate([](const auto &x, const auto &xDelta, const auto &value) { return value / sin(x / DEGRAD); });
+    normaliser.operate([](const auto &x, const auto &xDelta, const auto &value)
+                       { return value / sin(DissolveMath::toRadians(x)); });
     // Normalise by value
     normaliser.normaliseSumTo();
 
     // Save Angle(A-B-C) data?
-    if (!DataExporter<Data1D, Data1DExportFileFormat>::exportData(dataNormalisedHisto, exportFileAndFormat_,
-                                                                  moduleContext.processPool()))
+    if (!DataExporter::exportData(dataNormalisedHisto, exportFileAndFormat_))
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

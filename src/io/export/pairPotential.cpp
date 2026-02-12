@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/export/pairPotential.h"
 #include "base/lineParser.h"
@@ -114,8 +114,8 @@ bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
             result = exportDLPOLY(parser, pp);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Pairpotential format '{}' export has not been implemented.\n",
-                                                 formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Pairpotential format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

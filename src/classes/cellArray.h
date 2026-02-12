@@ -1,14 +1,55 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "classes/cellNeighbour.h"
+#include "classes/cell.h"
 #include "math/matrix3.h"
+#include "templates/array3D.h"
 
 // Forward Declarations
 class Box;
-class Cell;
+
+// Corner Distances Structure
+struct CornerDistances
+{
+    CornerDistances() = default;
+    CornerDistances(double minLiteral, double maxLiteral, double minMim, double maxMim)
+        : minimumLiteral(minLiteral), maximumLiteral(maxLiteral), minimumMim(minMim), maximumMim(maxMim)
+    {
+    }
+
+    // Used to store the minimum and maximum corner distances, literal and mim'd, between cells
+    double minimumLiteral{0.0};
+    double maximumLiteral{0.0};
+    double minimumMim{0.0};
+    double maximumMim{0.0};
+};
+
+// Cell Neighbour
+struct CellNeighbour
+{
+    CellNeighbour(const Cell &n, bool mim) : cell(n), requiresMIM(mim) {}
+    const Cell &cell;
+    bool requiresMIM{false};
+
+    bool operator==(const Cell &other) const { return this->cell.index() == other.index(); }
+};
+
+// Cell Neighbour Pair
+struct CellNeighbourPair
+{
+    CellNeighbourPair(const Cell &c, const Cell &n, bool mim) : cell(c), neighbour(n), requiresMIM(mim) {}
+    const Cell &cell;
+    const Cell &neighbour;
+    bool requiresMIM = false;
+
+    bool operator==(const CellNeighbourPair &other) const
+    {
+        return (&this->cell == &other.cell && &this->neighbour == &other.neighbour) ||
+               (&this->neighbour == &other.cell && &this->cell == &other.neighbour);
+    }
+};
 
 // Cell Array
 class CellArray
@@ -18,17 +59,19 @@ class CellArray
      */
     private:
     // Cell divisions along each axis
-    Vec3<int> divisions_;
+    Vector3i divisions_;
     // Fractional Cell size
-    Vec3<double> fractionalCellSize_;
+    Vector3 fractionalCellSize_;
     // Real Cell size
-    Vec3<double> realCellSize_;
+    Vector3 realCellSize_;
     // Cell extents out from given central cell
-    Vec3<int> extents_;
+    Vector3i extents_;
     // Cell axes
     Matrix3 axes_;
     // Cell array (one-dimensional)
     std::vector<Cell> cells_;
+    // Pair potential range at which the array was last created
+    std::optional<double> pairPotentialRangeCreatedAt_;
     // Box associated with this cell division scheme
     const Box *box_{nullptr};
 
@@ -36,11 +79,11 @@ class CellArray
     // Return number of Cells for box
     int nCells() const;
     // Return cell divisions along each axis
-    Vec3<int> divisions() const;
+    Vector3i divisions() const;
     // Return real Cell dimensions
-    Vec3<double> realCellSize() const;
+    Vector3 realCellSize() const;
     // Return cell extents out from given central cell
-    Vec3<int> extents() const;
+    Vector3i extents() const;
     // Clear all atom pointers from cells
     void clearAtoms();
     // Retrieve Cell with (wrapped) grid reference specified
@@ -48,16 +91,18 @@ class CellArray
     // Retrieve Cell with id specified
     const Cell *cell(int id) const;
     // Return Cell which contains specified coordinate
-    Cell *cell(const Vec3<double> r);
-    const Cell *cell(const Vec3<double> r) const;
-    // Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
-    bool withinRange(const Cell *a, const Cell *b, double distance);
-    // Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
-    bool minimumImageRequired(const Cell *a, const Cell *b, double distance);
+    Cell *cell(const Vector3 r);
+    const Cell *cell(const Vector3 r) const;
+    // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified literal distance
+    bool withinLiteralRange(const Cell *a, const Cell *b, double literalDistance);
+    // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified mim distance
+    bool withinMinimumImageRange(const Cell *a, const Cell *b, double mimDistance);
     // Return the minimum image grid delta between the two specified Cells
-    Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
+    Vector3i mimGridDelta(const Cell *a, const Cell *b) const;
     // Return the minimum image equivalent of the supplied grid delta
-    Vec3<int> mimGridDelta(Vec3<int> delta) const;
+    Vector3i mimGridDelta(Vector3i delta) const;
+    // Return wrapped cell grid reference
+    Vector3i wrappedGridRef(const Vector3i &gridRef) const;
 
     /*
      * Cell Neighbours
@@ -67,10 +112,12 @@ class CellArray
     std::vector<CellNeighbourPair> neighbourPairs_;
     // Neighbour array per Cell
     std::vector<std::vector<CellNeighbour>> neighbours_;
+    // Corner distances between cells
+    Array3D<CornerDistances> cornerDistances_;
+    // Grid reference for central cell (0,0,0) in cornerDistances_
+    Vector3i cornerDistancesOrigin_;
 
     private:
-    // Add neighbour to cell vector
-    void addNeighbour(const Cell &cell, const Cell &nbr, bool useMim);
     // Construct cell neighbour pairs
     void createCellNeighbourPairs();
 
@@ -96,5 +143,5 @@ class CellArray
      */
     public:
     // Scale Cells by supplied factors along each axis
-    void scale(Vec3<double> scaleFactors);
+    void scale(Vector3 scaleFactors);
 };

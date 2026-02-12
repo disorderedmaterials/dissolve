@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
+#include "math/mathFunc.h"
 #include <gtest/gtest.h>
 #include <random>
 
@@ -76,16 +77,16 @@ TEST(IntraParameters, Ordering)
     SpeciesAngle a1, a2;
     EXPECT_TRUE(a1.setInteractionFormAndParameters(AngleFunctions::Form::Cos2, "k=100.0 C0=1 C1=2 C2=3"));
     EXPECT_TRUE(a2.setInteractionFormAndParameters(AngleFunctions::Form::Cos2, "C0=1 k=100.0 C2=3 C1=2"));
-    EXPECT_DOUBLE_EQ(testParameters(a1, 100.5), testParameters(a2, 100.5));
+    EXPECT_DOUBLE_EQ(testParameters(a1, DissolveMath::toRadians(100.5)), testParameters(a2, DissolveMath::toRadians(100.5)));
     EXPECT_TRUE(a1.setInteractionFormAndParameters(AngleFunctions::Form::Cos2, "C2=3 k=100.0 C1=2 C0=1"));
-    EXPECT_DOUBLE_EQ(testParameters(a1, 100.5), testParameters(a2, 100.5));
+    EXPECT_DOUBLE_EQ(testParameters(a1, DissolveMath::toRadians(100.5)), testParameters(a2, DissolveMath::toRadians(100.5)));
 
     SpeciesTorsion t1, t2;
     EXPECT_TRUE(t1.setInteractionFormAndParameters(TorsionFunctions::Form::CosN, "k6=9.0"));
     EXPECT_TRUE(t2.setInteractionFormAndParameters(TorsionFunctions::Form::CosN, "k1=0.0 k3=0.0 k6=9.0"));
-    EXPECT_DOUBLE_EQ(testParameters(t1, 100.5), testParameters(t2, 100.5));
+    EXPECT_DOUBLE_EQ(testParameters(t1, DissolveMath::toRadians(100.5)), testParameters(t2, DissolveMath::toRadians(100.5)));
     EXPECT_TRUE(t2.setInteractionFormAndParameters(TorsionFunctions::Form::CosN, "k6=9.0 k1=0.0 k3=0.0"));
-    EXPECT_DOUBLE_EQ(testParameters(t1, 100.5), testParameters(t2, 100.5));
+    EXPECT_DOUBLE_EQ(testParameters(t1, DissolveMath::toRadians(100.5)), testParameters(t2, DissolveMath::toRadians(100.5)));
 }
 
 } // namespace UnitTest

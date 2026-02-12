@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/bool.h"
 #include "base/lineParser.h"
@@ -53,7 +53,7 @@ bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, st
 }
 
 // Express as a serialisable value
-SerialisedValue BoolKeyword::serialise() const { return data_; }
+void BoolKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void BoolKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_boolean(); }

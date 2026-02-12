@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include <algorithm>
-#include <fmt/core.h>
+#include <format>
 #include <optional>
 #include <string_view>
 #include <vector>
@@ -80,12 +80,11 @@ class DissolveSys
 
         // Iterate until we find an unused name
         auto suffix = 0;
-        while (std::find_if(objects.begin(), objects.end(),
-                            [nameFunction, &uniqueName](const auto &object) {
-                                return !nameFunction(object).empty() &&
-                                       DissolveSys::sameString(nameFunction(object), uniqueName);
-                            }) != objects.end())
-            uniqueName = fmt::format("{}{:02d}", base, ++suffix);
+        while (std::find_if(
+                   objects.begin(), objects.end(), [nameFunction, &uniqueName](const auto &object)
+                   { return !nameFunction(object).empty() && DissolveSys::sameString(nameFunction(object), uniqueName); }) !=
+               objects.end())
+            uniqueName = std::format("{}{:02d}", base, ++suffix);
 
         return uniqueName;
     }

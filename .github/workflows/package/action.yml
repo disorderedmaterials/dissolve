@@ -1,6 +1,16 @@
 name: Package
 description: Stub action for package creation
 
+inputs:
+  currentVersion:
+    type: string
+    description: "Version used for labelling packages and other artifacts"
+    required: true
+  qtVersion:
+    type: string
+    required: true
+    description: "Qt version required in the package (same as build version)"
+
 runs:
   using: "composite"
   steps:
@@ -8,7 +18,13 @@ runs:
   - name: Package (OSX)
     if: runner.os == 'MacOS'
     uses: "./.github/workflows/package/osx"
+    with:
+      currentVersion: ${{ inputs.currentVersion }}
+      qtVersion: ${{ inputs.qtVersion }}
 
   - name: Package (Windows)
     if: runner.os == 'Windows'
     uses: "./.github/workflows/package/windows"
+    with:
+      currentVersion: ${{ inputs.currentVersion }}
+      qtVersion: ${{ inputs.qtVersion }}

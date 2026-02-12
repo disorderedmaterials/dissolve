@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/array3DIterator.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "math/vector3.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
 #include "templates/combinable.h"
 #include "templates/parallelDefs.h"
-#include "templates/vector3.h"
 #include <functional>
 #include <vector>
 
@@ -22,7 +22,7 @@ class VoxelKernel
 {
     public:
     // Return whether voxel centred at supplied real coordinates is valid
-    virtual bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const = 0;
+    virtual bool isVoxelValid(const Configuration *cfg, const Vector3 &r) const = 0;
 };
 
 // Region Data
@@ -36,13 +36,13 @@ class Region
     // Box from target Configuration
     const Box *box_;
     // 3D map of available voxels
-    Array3D<std::pair<Vec3<int>, bool>> voxelMap_;
+    Array3D<std::pair<Vector3i, bool>> voxelMap_;
     // Number of voxels along each cell axis
-    Vec3<int> nVoxels_;
+    Vector3i nVoxels_;
     // Fractional voxel size
-    Vec3<double> voxelSizeFrac_;
+    Vector3 voxelSizeFrac_;
     // Lower-left corner voxel indices of free regions
-    std::vector<std::pair<Vec3<int>, bool>> freeVoxels_;
+    std::vector<std::pair<Vector3i, bool>> freeVoxels_;
 
     private:
     // Generate voxel combinable
@@ -61,7 +61,7 @@ class Region
     // Return the fraction free voxels in the region
     double freeVoxelFraction() const;
     // Return random coordinate inside region
-    Vec3<double> randomCoordinate() const;
+    Vector3 randomCoordinate() const;
     // Return whether specified coordinate is inside the region
-    bool validCoordinate(Vec3<double> r) const;
+    bool validCoordinate(Vector3 r) const;
 };

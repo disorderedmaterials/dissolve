@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
 #include "classes/coreData.h"
 #include "classes/speciesAtom.h"
+#include "math/mathFunc.h"
 #include <map>
 
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(AngleFunctions::Form::None) {}
@@ -138,7 +139,7 @@ int SpeciesAngle::index(int n) const
     else if (n == 2)
         return indexK();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n", n);
     return 0;
 }
 
@@ -173,8 +174,8 @@ void SpeciesAngle::detach()
  * Interaction Parameters
  */
 
-// Return energy for specified angle
-double SpeciesAngle::energy(double angleInDegrees) const
+// Return energy for specified angle theta (in radians)
+double SpeciesAngle::energy(double theta) const
 {
     // Get pointer to relevant parameters array
     const auto &params = interactionParameters();
@@ -191,7 +192,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 0 : Force constant, k
          * 1 : Equilibrium angle, eq (degrees)
          */
-        const auto delta = (angleInDegrees - params[1]) / DEGRAD;
+        const auto delta = theta - DissolveMath::toRadians(params[1]);
         return 0.5 * params[0] * delta * delta;
     }
     else if (angleForm == AngleFunctions::Form::Cosine)
@@ -205,7 +206,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 2 : Equilibrium angle, eq (degrees)
          * 3 : Sign, s
          */
-        return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2] / DEGRAD));
+        return params[0] * (1.0 + params[3] * cos(params[1] * theta - DissolveMath::toRadians(params[2])));
     }
     else if (angleForm == AngleFunctions::Form::Cos2)
     {
@@ -218,16 +219,15 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 2 : Constant C1
          * 3 : Constant C2
          */
-        const auto angleInRadians = angleInDegrees / DEGRAD;
-        return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
+        return params[0] * (params[1] + params[2] * cos(theta) + params[3] * cos(2.0 * theta));
     }
 
-    throw(std::runtime_error(fmt::format("Angle functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         AngleFunctions::forms().keyword(angleForm))));
+    Messenger::exception("Angle functional form '{}' not accounted for, so can't calculate energy.\n",
+                         AngleFunctions::forms().keyword(angleForm));
 }
 
-// Return force multiplier for specified angle
-double SpeciesAngle::force(double angleInDegrees) const
+// Return force multiplier for specified angle theta (in radians)
+double SpeciesAngle::force(double theta) const
 {
     /*
      * Force of any angle form is given via the chain rule:
@@ -245,9 +245,6 @@ double SpeciesAngle::force(double angleInDegrees) const
     const auto &params = interactionParameters();
     const auto angleForm = interactionForm();
 
-    // Convert angle to radians
-    const auto angleInRadians = angleInDegrees / DEGRAD;
-
     if (angleForm == AngleFunctions::Form::None)
         return 0.0;
     else if (angleForm == AngleFunctions::Form::Harmonic)
@@ -260,7 +257,7 @@ double SpeciesAngle::force(double angleInDegrees) const
          * 1 : Equilibrium angle, eq (degrees)
          */
 
-        return params[0] * ((angleInDegrees - params[1]) / DEGRAD) / sin(angleInRadians);
+        return params[0] * (theta - DissolveMath::toRadians(params[1])) / sin(theta);
     }
     else if (angleForm == AngleFunctions::Form::Cosine)
     {
@@ -274,7 +271,7 @@ double SpeciesAngle::force(double angleInDegrees) const
          * 3 : Sign, s
          */
 
-        return -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2] / DEGRAD) / sin(angleInRadians);
+        return -params[0] * params[1] * params[3] * sin(params[1] * theta - DissolveMath::toRadians(params[2])) / sin(theta);
     }
     else if (angleForm == AngleFunctions::Form::Cos2)
     {
@@ -288,26 +285,24 @@ double SpeciesAngle::force(double angleInDegrees) const
          * 3 : Constant C2
          */
 
-        return -params[0] * (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians)) /
-               sin(angleInRadians);
+        return -params[0] * (params[2] * sin(theta) + 2.0 * params[3] * sin(2.0 * theta)) / sin(theta);
     }
 
-    throw(std::runtime_error(fmt::format("Angle functional form '{}' not accounted for, so can't calculate force.\n",
-                                         AngleFunctions::forms().keyword(angleForm))));
+    Messenger::exception("Angle functional form '{}' not accounted for, so can't calculate force.\n",
+                         AngleFunctions::forms().keyword(angleForm));
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesAngle::serialise() const
+void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
 {
-    auto angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();
+    SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise(tag, target);
+    auto &angle = target[tag];
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();
     if (j_ != nullptr)
         angle["j"] = j_->userIndex();
     if (k_ != nullptr)
         angle["k"] = k_->userIndex();
-
-    return angle;
 }
 // This method populates the object's members with values read from an 'angle' TOML node
 void SpeciesAngle::deserialise(const SerialisedValue &node, CoreData &coreData)

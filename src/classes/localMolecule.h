@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "classes/atom.h"
 #include "classes/molecule.h"
 #include <vector>
 
@@ -14,7 +15,8 @@ class LocalMolecule : public Molecule
 {
     public:
     LocalMolecule() = default;
-    ~LocalMolecule() = default;
+    virtual ~LocalMolecule() = default;
+    LocalMolecule(const Species *copyFrom);
     LocalMolecule(const LocalMolecule &copyFrom);
     LocalMolecule(LocalMolecule &&moveFrom);
     LocalMolecule &operator=(const LocalMolecule &copyFrom);

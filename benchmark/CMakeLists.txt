@@ -36,7 +36,7 @@ function(dissolve_add_benchmark)
 
 endfunction()
 
-set(DISSOLVE_BENCHMARK_INPUT_FILE_PATH \"${PROJECT_SOURCE_DIR}/benchmark/common/\")
+set(DISSOLVE_BENCHMARK_INPUT_FILE_PATH \"benchmark/common/\")
 configure_file(benchmarkConfig.h.in benchmarkConfig.h @ONLY)
 
 # Add benchmark subdirectories

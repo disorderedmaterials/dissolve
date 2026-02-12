@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesBond.h"
 #include "base/sysFunc.h"
@@ -126,7 +126,7 @@ int SpeciesBond::index(int n) const
     else if (n == 1)
         return indexJ();
 
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n", n);
     return 0;
 }
 
@@ -238,9 +238,19 @@ double SpeciesBond::energy(double distance) const
         auto oneMinusE = 1.0 - exp(-params[1] * (distance - params[2]));
         return params[0] * oneMinusE * oneMinusE;
     }
+    else if (bondForm == BondFunctions::Form::Buckingham)
+    {
+        /*
+         * Parameters:
+         * 0 : A
+         * 1 : B
+         * 2 : C
+         */
+        return params[0] * exp(-params[1] * distance) - params[2] / pow(distance, 6.0);
+    }
 
-    throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate energy.\n",
-                                         BondFunctions::forms().keyword(bondForm))));
+    Messenger::exception("Bond functional form '{}' not accounted for, so can't calculate energy.\n",
+                         BondFunctions::forms().keyword(bondForm));
 }
 
 // Return force multiplier for specified distance
@@ -287,21 +297,30 @@ double SpeciesBond::force(double distance) const
         auto e = exp(-params[1] * (distance - params[2]));
         return -2.0 * params[0] * params[1] * (1.0 - e) * e;
     }
+    else if (bondForm == BondFunctions::Form::Buckingham)
+    {
+        /*
+         * Parameters:
+         * 0 : A
+         * 1 : B
+         * 2 : C
+         */
+        return params[1] * params[0] * exp(-params[1] * distance) - 6 * params[2] * pow(distance, -7.0);
+    }
 
-    throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate force.\n",
-                                         BondFunctions::forms().keyword(bondForm))));
+    Messenger::exception("Bond functional form '{}' not accounted for, so can't calculate force.\n",
+                         BondFunctions::forms().keyword(bondForm));
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesBond::serialise() const
+void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 {
-    auto bond = SpeciesIntra<SpeciesBond, BondFunctions>::serialise();
+    SpeciesIntra<SpeciesBond, BondFunctions>::serialise(tag, target);
+    auto &bond = target[tag];
     if (i_ != nullptr)
         bond["i"] = i_->userIndex();
     if (j_ != nullptr)
         bond["j"] = j_->userIndex();
-
-    return bond;
 }
 
 // This method populates the object's members with values read from a 'bond' TOML node

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "io/import/coordinates.h"
 
 // Import EPSR ATO coordinates through specified parser
-bool CoordinateImportFileFormat::importEPSR(LineParser &parser, std::vector<Vec3<double>> &r)
+bool CoordinateImportFileFormat::importEPSR(LineParser &parser, std::vector<Vector3> &r)
 {
     // File header:
     // Either  1   : nmols, box length, temperature   (for cubic systems)
@@ -24,7 +24,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, std::vector<Vec3
     else
     {
         Messenger::print("File has a full cell specification");
-        Vec3<double> lengths, angles;
+        Vector3 lengths, angles;
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
         lengths = parser.arg3d(0);
@@ -48,7 +48,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, std::vector<Vec3
     // n+7: list of headgroup atoms that are rotated
     auto atomOffset = 0;
     int nAtoms, nRestraints, currentArg;
-    Vec3<double> com, delta;
+    Vector3 com, delta;
     r.clear();
     for (auto m = 0; m < nMols; m++)
     {

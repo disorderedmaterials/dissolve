@@ -1,38 +1,52 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
-    outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
+    self.submodules = true;
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    outdated.url = "github:NixOS/nixpkgs/nixos-24.05";
+    bundlers.url = "github:nix-community/nix-bundle";
+    bundlers.inputs.nixpkgs.follows = "outdated";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
   };
+
   outputs =
-    { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src }:
+    {
+      self,
+      nixpkgs,
+      outdated,
+      home-manager,
+      flake-utils,
+      bundlers,
+      nixGL-src,
+    }:
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
-      onedpl = pkgs:
+      onedpl =
+        pkgs:
         ((import ./nix/onedpl.nix) {
-          inherit (pkgs) lib stdenv fetchFromGitHub fetchpatch cmake;
-          tbb = pkgs.tbb_2021_8;
+          inherit (pkgs)
+            lib
+            stdenv
+            fetchFromGitHub
+            fetchpatch
+            cmake
+            ;
+          tbb = pkgs.tbb_2021_11;
         });
-      exe-name = mpi: gui:
-        if mpi then
-          "dissolve-mpi"
-        else
-          (if gui then "dissolve-gui" else "dissolve");
+      exe-name = gui: if gui then "dissolve-gui" else "dissolve";
       cmake-bool = x: if x then "ON" else "OFF";
-      version = "1.6.0";
-      base_libs = pkgs:
-        with pkgs; [
+      version = "1.9.0";
+      base_libs =
+        pkgs: with pkgs; [
           antlr4
           antlr4.runtime.cpp
           antlr4.runtime.cpp.dev
           gbenchmark
           cmake
           cli11
-          fmt_8
-          fmt_8.dev
           freetype
+          gsl
           inetutils # for rsh
           ninja
           jre
@@ -40,48 +54,65 @@
           pugixml
           (toml pkgs)
         ];
-      gui_libs = system: pkgs:
-        with pkgs; [
-          glib
-          freetype
-          ftgl
-          libGL.dev
-          libglvnd
-          libglvnd.dev
-          qt6.qtbase
-          qt6.qtbase.dev
-          qt6.qtsvg
-          qt6.qtshadertools
-          qt6.qttools
-          qt6.qtdeclarative
-          qt6.qtdeclarative.dev
-          qt6.wrapQtAppsHook
-        ];
+      gui_libs = system: pkgs: qt: [
+        pkgs.glib
+        pkgs.freetype
+        pkgs.ftgl
+        pkgs.libGL.dev
+        pkgs.libglvnd
+        pkgs.libglvnd.dev
+        qt.qt3d
+        qt.qtbase
+        qt.qtbase.dev
+        qt.qtquick3d
+        qt.qtsvg
+        qt.qtshadertools
+        qt.qttools
+        qt.qtdeclarative
+        qt.qtdeclarative.dev
+        qt.wrapQtAppsHook
+      ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
-    in flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
+    in
+    flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (
+      system:
 
       let
         pkgs = import nixpkgs { inherit system; };
+        old = import outdated { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
+        qt = old.qt6;
         dissolve =
-          { mpi ? false, gui ? false, threading ? true, checks ? true }:
-          assert (!(gui && mpi));
+          {
+            gui ? false,
+            threading ? true,
+            checks ? true,
+            benchmarks ? false,
+          }:
           pkgs.stdenv.mkDerivation ({
             inherit version;
-            pname = exe-name mpi gui;
-            src = builtins.path {
-              path = ./.;
-              name = "dissolve-src";
-              filter = path: type:
-                type != "directory" || builtins.baseNameOf path
-                != ".azure-pipelines" || builtins.baseNameOf path != "web";
+            pname = exe-name gui;
+            src = pkgs.lib.fileset.toSource {
+              root = ./.;
+              fileset = (
+                pkgs.lib.fileset.unions [
+                  ./src
+                  ./cmake
+                  ./examples
+                  ./tests
+                  ./benchmark
+                  ./CMakeLists.txt
+                  ./QuickPlot
+                ]
+              );
             };
-            buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
-              ++ pkgs.lib.optionals gui (gui_libs system pkgs)
+            buildInputs =
+              base_libs pkgs
+              ++ pkgs.lib.optionals gui (gui_libs system pkgs qt)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
-                pkgs.tbb_2021_8
+                pkgs.tbb_2021_11
                 (onedpl pkgs)
                 (onedpl pkgs).dev
               ];
@@ -93,9 +124,9 @@
               "-DCONAN=OFF"
               "-G Ninja"
               ("-DMULTI_THREADING=" + (cmake-bool threading))
-              ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
               "-DBUILD_TESTS:bool=${cmake-bool checks}"
+              "-DBUILD_BENCHMARKS:bool=${cmake-bool benchmarks}"
               "-DCMAKE_BUILD_TYPE=Release"
             ];
             doCheck = checks;
@@ -111,30 +142,32 @@
               # license = licenses.unlicense;
               maintainers = [ maintainers.rprospero ];
             };
-          }) // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
-        mkSingularity = { mpi ? false, gui ? false, threading ? true }:
+          })
+          // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
+        mkSingularity =
+          {
+            gui ? false,
+            threading ? true,
+          }:
           outdated.legacyPackages.${system}.singularity-tools.buildImage {
-            name = "${exe-name mpi gui}-${version}";
+            name = "${exe-name gui}-${version}";
             diskSize = 1024 * 50;
-            contents = [ (dissolve { inherit mpi gui threading; }) ];
-            runScript = if gui then
-              "${nixGL.nixGLIntel}/bin/nixGLIntel ${
-                dissolve { inherit mpi gui threading; }
-              }/bin/${exe-name mpi gui} $@"
-            else
-              "${dissolve { inherit mpi gui threading; }}/bin/${
-                exe-name mpi gui
-              } $@";
+            contents = [ (dissolve { inherit gui threading; }) ];
+            runScript =
+              if gui then
+                "${nixGL.nixGLIntel}/bin/nixGLIntel ${dissolve { inherit gui threading; }}/bin/${exe-name gui} $@"
+              else
+                "${dissolve { inherit gui threading; }}/bin/${exe-name gui} $@";
           };
-      in {
+      in
+      {
+        bundlers = {
+          default = bundlers.bundlers.${system}.nix-bundle;
+        };
+
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-gui = dissolve {
           gui = true;
-          checks = true;
-        };
-        checks.dissolve-mpi = dissolve {
-          mpi = true;
-          gui = false;
           checks = true;
         };
         checks.dissolve-threadless = dissolve {
@@ -147,13 +180,14 @@
 
         devShells.default = pkgs.mkShell {
           name = "dissolve-shell";
-          buildInputs = base_libs pkgs ++ gui_libs system pkgs
-            ++ check_libs pkgs ++ (with pkgs; [
-              (pkgs.clang-tools.override {
-                llvmPackages = pkgs.llvmPackages_13;
-              })
+          buildInputs =
+            base_libs pkgs
+            ++ gui_libs system pkgs qt
+            ++ check_libs pkgs
+            ++ (with pkgs; [
+              llvmPackages_20.clang-tools
 
-              (onedpl pkgs)
+                (onedpl pkgs)
 
               ccache
               ccls
@@ -161,92 +195,96 @@
               cmake-format
               cmake-language-server
               conan
-              distcc
+              cppcheck
               direnv
               gdb
               gtk3
               nixGL.nixGLIntel
-              openmpi
-              qt6.qttools
-              tbb_2021_8
+              qt.qttools
+              tbb_2021_11
               valgrind
+              weggli
             ]);
           shellHook = ''
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
-            export LIBGL_DRIVERS_PATH=${
-              pkgs.lib.makeSearchPathOutput "lib" "lib/dri"
-              [ pkgs.mesa.drivers ]
-            }
-            export LIBVA_DRIVERS_PATH=${
-              pkgs.lib.makeSearchPathOutput "out" "lib/dri"
-              [ pkgs.mesa.drivers ]
-            }
-            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
-            export LD_LIBRARY_PATH=${
-              pkgs.lib.makeLibraryPath [ pkgs.mesa.drivers ]
-            }:${
+            export LIBGL_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "lib" "lib/dri" [ pkgs.mesa ]}
+            export LIBVA_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "out" "lib/dri" [ pkgs.mesa ]}
+            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json
+            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.mesa ]}:${
               pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [ pkgs.libvdpau ]
-            }:${
-              pkgs.lib.makeLibraryPath [ pkgs.libglvnd ]
-            }"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-            export QT_PLUGIN_PATH="${pkgs.qt6.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            }:${pkgs.lib.makeLibraryPath [ pkgs.libglvnd ]}"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+            # export QT_PLUGIN_PATH="${qt.qt3d}/lib/qt-6/plugins:${qt.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+            export QT_PLUGIN_PATH="${qt.qtquick3d}/lib/qt-6/plugins:${qt.qt3d}/lib/qt-6/plugins:${qt.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
           '';
 
-          CMAKE_CXX_COMPILER_LAUNCHER =
-            "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
-          CMAKE_C_COMPILER_LAUNCHER =
-            "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
+          CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
+          CMAKE_C_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
-          QML_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
-          QML2_IMPORT_PATH = "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml/";
+          Qt6Quick3D_DIR = "${qt.qtquick3d}/lib/";
+          QML_IMPORT_PATH = "${qt.qtquick3d}/lib/qt-6/qml:${qt.qtdeclarative}/lib/qt-6/qml/";
+          QML2_IMPORT_PATH = "$\${qt.qtquick3d}/lib/qt-6/qml:{qt.qtdeclarative}/lib/qt-6/qml/";
         };
 
         apps = {
-          dissolve-app =
-            flake-utils.lib.mkApp { drv = self.packages.${system}.dissolve; };
-          dissolve-mpi-app = flake-utils.lib.mkApp {
-            drv = self.packages.${system}.dissolve-mpi;
+          benchmarks = {
+            type = "app";
+            program = toString (
+              pkgs.writeScript "benchmark.sh" ''
+                #!/bin/sh
+                set -e
+                export TMP=$(mktemp -d)
+                for bm in ${self.packages.${system}.benchmarks}/bin/benchmark_*
+                do
+                  export BENCHNAME=$(basename ${"$"}{bm})_result.json
+                  >&2 echo Running ${"$"}{BENCHNAME}
+                  ${"$"}{bm} --benchmark_format=json > $TMP/${"$"}{BENCHNAME}
+                done
+                ${pkgs.jq}/bin/jq -s '[.[] | to_entries] | flatten | reduce .[] as $dot ({}; .[$dot.key] += $dot.value)' $TMP/benchmark_*.json > $TMP/all_benchmark_results.json
+                cat $TMP/all_benchmark_results.json
+              ''
+            );
           };
+          dissolve-app = flake-utils.lib.mkApp { drv = self.packages.${system}.dissolve; };
           dissolve-gui-app = flake-utils.lib.mkApp {
             drv = self.packages.${system}.dissolve-gui;
           };
           uploader = {
             type = "app";
-            program = toString (pkgs.writeScript "upload.sh" ''
-              #!/bin/sh
-              set -e
-              if [ "$#" -ne 4 ] ; then
-                echo "Usage: nix run .#uploader HARBOR_USER HARBOR_SECRET IMAGE TAG" >&2
-                exit 1
-              fi
-              ${
-                outdated.legacyPackages.${system}.singularity
-              }/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
-              ${
-                outdated.legacyPackages.${system}.singularity
-              }/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
-            '');
+            program = toString (
+              pkgs.writeScript "upload.sh" ''
+                #!/bin/sh
+                set -e
+                if [ "$#" -ne 4 ] ; then
+                  echo "Usage: nix run .#uploader HARBOR_USER HARBOR_SECRET IMAGE TAG" >&2
+                  exit 1
+                fi
+                ${
+                  outdated.legacyPackages.${system}.singularity
+                }/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
+                ${
+                  outdated.legacyPackages.${system}.singularity
+                }/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
+              ''
+            );
           };
         };
 
-        defaultApp =
-          flake-utils.lib.mkApp { drv = self.defaultPackage.${system}; };
+        defaultApp = flake-utils.lib.mkApp { drv = self.defaultPackage.${system}; };
 
         packages = {
+          benchmarks = dissolve {
+            benchmarks = true;
+            checks = false;
+          };
           dissolve = dissolve { };
           dissolve-threadless = dissolve {
             gui = false;
             threading = false;
           };
-          dissolve-mpi = dissolve {
-            mpi = true;
-            gui = false;
-          };
           dissolve-gui = dissolve { gui = true; };
 
           singularity = mkSingularity { };
-          singularity-mpi = mkSingularity { mpi = true; };
           singularity-gui = mkSingularity { gui = true; };
           singularity-threadless = mkSingularity {
             gui = false;
@@ -267,13 +305,6 @@
               "${self.packages.${system}.dissolve-gui}/bin/dissolve-gui"
             ];
           };
-
-          docker-mpi = pkgs.dockerTools.buildImage {
-            name = "dissolve-mpi";
-            tag = "latest";
-            config.ENTRYPOINT =
-              [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
-          };
         };
 
         homeConfigurations = {
@@ -283,6 +314,9 @@
           };
         };
 
-        homeManagerModule = { user-env = import ./nix/user-env.nix; };
-      });
+        homeManagerModule = {
+          user-env = import ./nix/user-env.nix;
+        };
+      }
+    );
 }

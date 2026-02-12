@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "generator/nodeValue.h"
 #include "keywords/base.h"
 #include "keywords/enumOptions.h"
 #include "math/function1D.h"
 #include "math/range.h"
-#include "procedure/nodeValue.h"
 #include "templates/optionalRef.h"
 #include <any>
 #include <map>

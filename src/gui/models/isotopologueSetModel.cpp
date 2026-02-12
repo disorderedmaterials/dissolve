@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/isotopologueSetModel.h"
 #include "classes/species.h"
@@ -48,12 +48,12 @@ void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
 
     auto &set = set_->get();
     const auto topeIndex = index.parent().isValid() ? index.parent().row() : index.row();
-    auto &topes = set.isotopologues()[topeIndex];
-    const auto *sp = topes.species();
+    auto &[species, topes] = set.isotopologues().vector()[topeIndex];
+    const auto *sp = species.raw();
 
     if (!topes.contains(sp->naturalIsotopologue()))
     {
-        beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
+        beginInsertRows(createIndex(topeIndex, 0), topes.size(), topes.size());
         set.add(sp->naturalIsotopologue(), 1.0);
         endInsertRows();
     }
@@ -63,7 +63,7 @@ void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
         {
             if (!topes.contains(tope.get()))
             {
-                beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
+                beginInsertRows(createIndex(topeIndex, 0), topes.size(), topes.size());
                 set.add(tope.get(), 1.0);
                 endInsertRows();
                 break;
@@ -85,18 +85,18 @@ void IsotopologueSetModel::removeIndex(const QModelIndex index)
     if (!index.parent().isValid())
     {
         // Root item (Isotopologues)
-        auto &topes = set.isotopologues()[index.row()];
+        auto species = set.isotopologues().key(index.row());
         beginRemoveRows({}, index.row(), index.row());
-        set.remove(topes.species());
+        set.remove(species);
         endRemoveRows();
     }
     else
     {
         // Secondary item (IsotopologueWeight)
-        auto &topes = set.isotopologues()[index.parent().row()];
-        auto &mixItem = topes.mix()[index.row()];
+        auto &topes = set.isotopologues().value(index.parent().row());
+        auto iso = topes.key(index.row());
         beginRemoveRows(index.parent(), index.row(), index.row());
-        topes.remove(&mixItem);
+        topes.erase(iso);
         endRemoveRows();
     }
 
@@ -114,7 +114,7 @@ int IsotopologueSetModel::rowCount(const QModelIndex &parent) const
 
     if (!parent.isValid())
         return set_->get().isotopologues().size();
-    return set_->get().isotopologues()[parent.row()].nIsotopologues();
+    return set_->get().isotopologues().value(parent.row()).size();
 }
 
 int IsotopologueSetModel::columnCount(const QModelIndex &parent) const { return 3; }
@@ -142,26 +142,26 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
         if (index.row() > set.isotopologues().size())
             return {};
 
-        const auto &tope = set.isotopologues()[index.row()];
+        const auto species = set.isotopologues().key(index.row());
 
         switch (role)
         {
             case Qt::DisplayRole:
             case Qt::EditRole:
                 if (index.column() == 0)
-                    return QString::fromStdString(std::string(tope.species()->name()));
+                    return QString::fromStdString(std::string(species->name()));
                 else
                     return {};
             case Qt::UserRole:
-                return QVariant::fromValue(&tope);
+                return QVariant::fromValue(species);
             default:
                 return {};
         }
     }
 
     // Secondary item (Isotopologue/Weight)
-    const auto &tope = set.isotopologues()[index.parent().row()];
-    const auto &mixItem = tope.mix()[index.row()];
+    const auto &topes = set.isotopologues().value(index.parent().row());
+    const auto &[iso, weight] = topes.vector()[index.row()];
     if (!index.parent().parent().isValid())
     {
         switch (role)
@@ -169,12 +169,12 @@ QVariant IsotopologueSetModel::data(const QModelIndex &index, int role) const
             case Qt::DisplayRole:
             case Qt::EditRole:
                 if (index.column() == 1)
-                    return QString::fromStdString(std::string(mixItem.isotopologue()->name()));
+                    return QString::fromStdString(std::string(iso.name()));
                 else if (index.column() == 2)
-                    return mixItem.weight();
+                    return weight;
                 break;
             case Qt::UserRole:
-                return QVariant::fromValue(&mixItem);
+                return QVariant::fromValue(iso);
             default:
                 return {};
         }
@@ -233,25 +233,25 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
     if (index.parent().row() > set.isotopologues().size())
         return false;
 
-    auto &tope = set.isotopologues()[index.parent().row()];
-    auto &mixItem = tope.mix()[index.row()];
+    auto &[species, topes] = set.isotopologues().vector()[index.parent().row()];
+    auto &[iso, weight] = topes.vector()[index.row()];
 
     if (index.column() == 1)
     {
         // Convert value to Isotopologue for species
-        const auto *iso = tope.species()->findIsotopologue(value.toString().toStdString());
-        if (!iso || iso == mixItem.isotopologue())
+        const auto *newIso = species.raw()->findIsotopologue(value.toString().toStdString());
+        if (!newIso || newIso == iso.raw())
             return false;
-        mixItem.setIsotopologue(iso);
+        topes.changeKey(iso.raw(), newIso);
         Q_EMIT(dataChanged(index, index));
         return true;
     }
     else if (index.column() == 2)
     {
-        const auto weight = value.toDouble();
-        if (weight < 0.0)
+        const auto newWeight = value.toDouble();
+        if (newWeight < 0.0)
             return false;
-        mixItem.setWeight(weight);
+        weight = newWeight;
         Q_EMIT(dataChanged(index, index));
         return true;
     }

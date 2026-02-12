@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -74,9 +74,9 @@ class SpeciesViewer : public BaseViewer
     // Element for created atoms in DrawInteraction
     Elements::Element drawElement_;
     // Species-space coordinates at clicked position for DrawInteraction
-    Vec3<double> drawCoordinateStart_;
+    Vector3 drawCoordinateStart_;
     // Species-space coordinates at current position for DrawInteraction
-    Vec3<double> drawCoordinateCurrent_;
+    Vector3 drawCoordinateCurrent_;
 
     private:
     // Return atom at specified coordinates

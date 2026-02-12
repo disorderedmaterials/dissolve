@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "classes/atomType.h"
-#include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
-#include "module/context.h"
 #include "modules/intraShake/intraShake.h"
 #include <cstdio>
-#include <numeric>
 
 // Set frequency with which to write various iteration data
 void Dissolve::setRestartFileFrequency(int n) { restartFileFrequency_ = n; }
@@ -58,7 +54,7 @@ bool Dissolve::prepare()
         // If the configuration is empty, initialise it now
         if (cfg->nMolecules() == 0)
         {
-            if (!cfg->initialiseContent({worldPool_, *this}))
+            if (!cfg->initialiseContent({*this}))
                 return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
         }
         else if (newPairPotentialRange)
@@ -183,7 +179,7 @@ bool Dissolve::prepare()
         {
             auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().getConfiguration("Configuration");
             for (auto &sp : coreData_.species())
-                if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
+                if (cfg->speciesPopulations().contains(sp.get()) && !sp->attachedAtomListsGenerated())
                 {
                     Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
                                      "terms in Species '{}'...\n",
@@ -254,17 +250,15 @@ bool Dissolve::iterate(int nIterations)
             Messenger::heading("'{}'", cfg->name());
 
             // Apply the current size factor
-            cfg->applySizeFactor(worldPool(), potentialMap_);
+            cfg->applySizeFactor(potentialMap_);
         }
 
         // Sync up all processes
         Messenger::printVerbose("Waiting for other processes at end of Configuration upkeep...\n");
-        worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
-         *  2)	Run processing Modules (using the world pool).
+         *  2)	Run processing Modules
          */
-        ModuleContext context(worldPool(), *this);
         for (auto &layer : coreData_.processingLayers())
         {
             // Check if this layer is due to run this iteration
@@ -285,19 +279,18 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-                if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
+                if (module->executeProcessing(*this) == Module::ExecutionResult::Failed)
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }
 
         // Sync up all processes
         Messenger::printVerbose("Waiting for other processes at end of main processing...\n");
-        worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         /*
          *  3)	Write restart file.
          */
-        if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0))
+        if ((restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0))
         {
             Messenger::banner("Write Restart File");
 
@@ -307,16 +300,15 @@ bool Dissolve::iterate(int nIterations)
             // -- Pair Potentials
             for (auto &&[at1, at2, pot] : pairPotentials_)
             {
-                processingModuleData_.realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
+                processingModuleData_.realise<Data1D>(std::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
                                                       "Dissolve", GenericItem::InRestartFileFlag) = pot->additionalPotential();
             }
 
             // Check and remove restart file backup
-            std::string restartFileBackup = fmt::format("{}.prev", restartFilename_);
+            std::string restartFileBackup = std::format("{}.prev", restartFilename_);
             if (DissolveSys::fileExists(restartFileBackup) && (std::remove(restartFileBackup.c_str()) != 0))
             {
                 Messenger::error("Could not remove old restart file backup.\n");
-                worldPool().decideFalse();
                 return false;
             }
 
@@ -325,7 +317,6 @@ bool Dissolve::iterate(int nIterations)
                 (std::rename(restartFilename_.c_str(), restartFileBackup.c_str()) != 0))
             {
                 Messenger::error("Could not rename current restart file.\n");
-                worldPool().decideFalse();
                 return false;
             }
 
@@ -336,23 +327,12 @@ bool Dissolve::iterate(int nIterations)
             if (!saveRestart(restartFilename_))
             {
                 Messenger::error("Failed to write restart file.\n");
-                worldPool().decideFalse();
                 return false;
             }
 
             saveRestartTimer.stop();
             saveRestartTimes_ += saveRestartTimer.secondsElapsed();
-
-            // All good. Carry on!
-            worldPool().decideTrue();
         }
-        else if (worldPool().isSlave() && (restartFileFrequency_ > 0) && (iteration_ % restartFileFrequency_ == 0) &&
-                 (!worldPool().decision()))
-            return false;
-
-        // Sync up all processes
-        Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
-        worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
         iterationTime_ += iterationTimer_.split();
 
@@ -432,7 +412,7 @@ void Dissolve::printTiming()
         {
             SampledDouble timingInfo = module->processTimes();
             Messenger::print("      --> {:>20}  {:<{}}  {:7.2g} s/iter  ({} iterations)",
-                             ModuleTypes::moduleType(module->type()), fmt::format("({})", module->name()), maxLength,
+                             ModuleTypes::moduleType(module->type()), std::format("({})", module->name()), maxLength,
                              timingInfo.value(), timingInfo.count());
         }
 

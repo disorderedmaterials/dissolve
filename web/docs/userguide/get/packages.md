@@ -29,17 +29,17 @@ xattr -rd com.apple.quarantine  Dissolve-GUI-<Processor>.app/Contents/MacOS/diss
 chmod +x  Dissolve-GUI-<Processor>.app/Contents/MacOS/dissolve-gui
 ```
 
-You will also need to have [FTGL](https://formulae.brew.sh/formula/ftgleforge.net/projects/ftgl/) installed on your system, which is used for rendering fonts. The libraries should be installed using homebrew, as pre-built Dissolve is linked to the homebrew directories.
+As of version 1.7.0 there is no longer any need to install FTGL or Freetype via Homebrew.
 
 ### Linux
 
 
 We provide Singularity images of Dissolve in an attempt to cover the needs of many / most / some Linux users. The alternative is to [compile it yourself]({{< ref "compilation" >}}).
 
-You will need to have the main [`singularity` package installed](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) on your system. Once done, running the container should be as simple as:
+You will need to have the main [`apptainer`](https://github.com/apptainer/apptainer/releases) or [`singularity`](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) package installed on your system. Once done, running the container should be as simple as (using `apptainer`, but replace with `singularity` if that's what you have):
 
 ```
-bob@linux:~> singularity run dissolve-0.9.1.sif
+bob@linux:~> apptainer run dissolve-0.9.1.sif
 ```
 
 When running the GUI image you may well find that this doesn't quite work, with errors along the lines of the following:
@@ -58,7 +58,7 @@ Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, 
 /nix/store/3cwnv48rpwzsx62nmgpfy7xn5p4hhxpa-nixGLIntel/bin/nixGLIntel: line 5: 77941 Aborted                 (core dumped) "$@"
 ```
 
-The important error here is `qt.qpa.xcb: could not connect to display :1` - you'll need to allow the singularity image to connect to your local display:
+The important error here is `qt.qpa.xcb: could not connect to display :1` - you'll need to allow the image to connect to your local display:
 
 ```
 bob@linux:~> xhost + local:
@@ -69,7 +69,7 @@ This allows local, non-network connections to your X display (note the trailing 
 Finally, you will probably need to let the container have read-only access to a system directory so it knows what it's doing. We can do this with the `-B` option to the run command:
 
 ```
-bob@linux:~> singularity run -B/etc:/etc:ro dissolve-gui-0.9.1.sif
+bob@linux:~> apptainer run -B/etc:/etc:ro dissolve-gui-0.9.1.sif
 ```
 
-and which should now let the Dissolve GUI run properly. If the GUI runs correctly but displays odd characters or looks like it is missing a font entirely, add `-B/usr/share:/usr/share:ro` to the singularity command. You may need to adjust this depending on where fonts are stored on your system.
+and which should now let the Dissolve GUI run properly. If the GUI runs correctly but displays odd characters or looks like it is missing a font entirely, add `-B/usr/share:/usr/share:ro` to the command. You may need to adjust this depending on where fonts are stored on your system.

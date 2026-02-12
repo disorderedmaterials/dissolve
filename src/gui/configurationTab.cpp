@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/configurationTab.h"
 #include "base/units.h"
@@ -16,7 +16,7 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
+      generatorModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
       targetedPotentialModel_(cfg->targetedPotentials())
 {
     ui_.setupUi(this);
@@ -31,8 +31,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     // Set target for ConfigurationViewer
     ui_.ViewerWidget->setConfiguration(configuration_);
 
-    // Set-up the generator procedure editor
-    ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
+    // Set-up the generator editor
+    ui_.GeneratorEditor->setUp(dissolveWindow_, configuration_->generator());
 
     // Set warning for Size Factor indicator
     ui_.SizeFactorIndicator->setWarning();
@@ -182,14 +182,14 @@ void ConfigurationTab::updateControls()
 // Prevent editing within tab
 void ConfigurationTab::preventEditing()
 {
-    ui_.GeneratorWidget->setEnabled(false);
+    ui_.GeneratorEditor->setEnabled(false);
     ui_.GenerateButton->setEnabled(false);
 }
 
 // Allow editing within tab
 void ConfigurationTab::allowEditing()
 {
-    ui_.GeneratorWidget->setEnabled(true);
+    ui_.GeneratorEditor->setEnabled(true);
     ui_.GenerateButton->setEnabled(true);
 }
 
@@ -224,7 +224,10 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolve_.updatePairPotentials();
 
     // Initialise the content
-    configuration_->initialiseContent({dissolve_.worldPool(), dissolve_});
+    configuration_->initialiseContent({dissolve_});
+
+    // Check pair potential range against box geometries
+    dissolveWindow_->checkPairPotentialRange();
 
     // Update
     updateControls();

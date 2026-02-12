@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAtom.h"
 #include "classes/atomType.h"
@@ -27,6 +27,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
     atomType_ = source.atomType_;
     selected_ = source.selected_;
     index_ = source.index_;
+    presence_ = source.presence_;
 
     bonds_ = std::move(source.bonds_);
     angles_ = std::move(source.angles_);
@@ -43,7 +44,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
     for (auto &improper : impropers_)
         improper.get().switchAtom(&source, this);
 
-    // Tidy old element
+    // Tidy old data
     source.Z_ = Elements::Unknown;
     source.r_ = {};
     source.charge_ = 0.0;
@@ -60,20 +61,15 @@ void SpeciesAtom::move(SpeciesAtom &source)
  * Properties
  */
 
-// Set basic SpeciesAtom properties
-void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q)
-{
-    Z_ = Z;
-    r_.set(rx, ry, rz);
-    charge_ = q;
-}
-
-// Set basic SpeciesAtom properties
-void SpeciesAtom::set(Elements::Element Z, const Vec3<double> r, double q)
+// Set basic properties
+void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q) { set(Z, {rx, ry, rz}, q); }
+void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
 {
     Z_ = Z;
     r_ = r;
     charge_ = q;
+
+    presence_ = Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
 }
 
 // Set atomic element
@@ -82,8 +78,14 @@ void SpeciesAtom::setZ(Elements::Element Z) { Z_ = Z; }
 // Return atomic element
 Elements::Element SpeciesAtom::Z() const { return Z_; }
 
+// Return whether the atom is of the presence specified
+bool SpeciesAtom::isPresence(SpeciesAtom::Presence presence) const
+{
+    return presence == SpeciesAtom::Presence::Any || presence_ == presence;
+}
+
 // Return coordinates
-const Vec3<double> &SpeciesAtom::r() const { return r_; }
+const Vector3 &SpeciesAtom::r() const { return r_; }
 
 // Set charge of SpeciesAtom
 void SpeciesAtom::setCharge(double charge) { charge_ = charge; }
@@ -122,6 +124,9 @@ void SpeciesAtom::setSelected(bool selected) { selected_ = selected; }
 
 // Return whether the atom is currently selected
 bool SpeciesAtom::isSelected() const { return selected_; }
+
+// Return presence of atom
+SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
 
 /*
  * Bond Information
@@ -305,10 +310,10 @@ void SpeciesAtom::setCoordinates(double x, double y, double z)
 }
 
 // Set coordinates (from Vec3)
-void SpeciesAtom::setCoordinates(const Vec3<double> &newr) { r_ = newr; }
+void SpeciesAtom::setCoordinates(const Vector3 &newr) { r_ = newr; }
 
 // Translate coordinates of atom
-void SpeciesAtom::translateCoordinates(const Vec3<double> &delta) { r_ += delta; }
+void SpeciesAtom::translateCoordinates(const Vector3 &delta) { r_ += delta; }
 
 /*
  * Atom Environment Helpers
@@ -479,18 +484,17 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesAtom::serialise() const
+void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
-    return {{"index", userIndex()}, {"z", Z_}, {"r", r_}, {"charge", charge_}, {"type", atomType_->name().data()}};
+    target[tag] = {{"index", userIndex()}, {"z", Z_}, {"r", r_}, {"charge", charge_}};
+    if (atomType_)
+        target[tag]["type"] = atomType_->name().data();
 }
 void SpeciesAtom::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     index_ = toml::find<int>(node, "index") - 1;
-    Z_ = toml::find<Elements::Element>(node, "z");
 
-    r_ = toml::find<Vec3<double>>(node, "r");
-
-    charge_ = toml::find_or<double>(node, "charge", 0);
+    set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "charge", 0));
 
     Serialisable::optionalOn(node, "type",
                              [this, &coreData](const auto node)

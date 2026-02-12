@@ -30,16 +30,16 @@ Now let's set up the three {{< module "NeutronSQ" >}} modules to calculate what 
 
 {{< action type="mouse">}}Click on the second {{< module "NeutronSQ" >}} module to select it{{< /action >}}
 {{< action type="edit" text="Change its name to `C6D6`" />}}
-{{< action type="mouse" text="In the **Control** section click the button for the **Isotopologue** option" />}}
+{{< action type="mouse" text="In the **Isotopes & Normalisation** section click the button for the **Isotopologue** option" />}}
 {{< action type="mouse">}}Press the {{< gui-button icon="add" text="Species" >}} button to add the natural isotopologue for the first species present{{< /action >}}
 {{< action type="edit" text="Change the isotopologue from `Natural` to `C6D6`" />}}
-{{< action type="edit" text="Find the **Reference Data** settings group, and for the **Reference** keyword select the file `C6D6.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="Find the **Reference Data** section, and for the **Reference** keyword select the file `C6D6.mint01` and set the format of the data to `mint`" />}}
 
 ### 50:50 Mix
 
 {{< action type="mouse">}}Click on the third {{< module "NeutronSQ" >}} module to display its options{{< /action >}}
 {{< action type="edit" text="Change its name to `5050`" />}}
-{{< action type="mouse" text="In the **Control** section click the button for the **Isotopologue** option" />}}
+{{< action type="mouse" text="In the **Isotopes & Normalisation** section click the button for the **Isotopologue** option" />}}
 {{< action type="mouse">}}Press the {{< gui-button icon="add" text="Species" >}} button to add the natural isotopologue for the first species present{{< /action >}}
 {{< step >}}Select either row in the table and click the {{< gui-button icon="add" text="Isotopologue" >}} button to insert the next unused isotopologue (i.e. the deuterated analogue){{< /step >}}
 

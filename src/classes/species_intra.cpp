@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
@@ -152,6 +152,17 @@ void Species::removeHigherOrderIntramolecularTerms()
     impropers_.clear();
 
     ++version_;
+}
+
+// Clear and recalculate all bonds on the species
+void Species::recalculateIntermolecularTerms(double tolerance)
+{
+    // Need to detach().
+    while (bonds_.size())
+        removeBond(bonds_[0].i(), bonds_[0].j());
+
+    addMissingBonds(tolerance);
+    updateIntramolecularTerms();
 }
 
 // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
@@ -616,7 +627,7 @@ void generateMasterTerm(Intra &term, std::string_view termName,
     // Search for an existing master term by this name, or a related one suffixed with a number
     OptionalReferenceWrapper<Master> optMaster;
     auto index = 0;
-    while ((optMaster = termGetter(index == 0 ? termName : fmt::format("{}_{}", termName, index))))
+    while ((optMaster = termGetter(index == 0 ? termName : std::format("{}_{}", termName, index))))
     {
         // Are the parameters the same as our local term?
         const Master &master = optMaster->get();
@@ -638,7 +649,7 @@ void generateMasterTerm(Intra &term, std::string_view termName,
     // If we no longer have a valid reference, need to create a new term
     if (!optMaster)
     {
-        optMaster = termCreator(index == 0 ? termName : fmt::format("{}_{}", termName, index));
+        optMaster = termCreator(index == 0 ? termName : std::format("{}_{}", termName, index));
         optMaster->get().setInteractionFormAndParameters(term.interactionForm(), term.interactionParameters());
     }
 
@@ -674,14 +685,14 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
         if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
             generateMasterTerm<MasterAngle>(
                 angle,
-                fmt::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
+                std::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
                             angle.k()->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
                 [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
         else
             generateMasterTerm<MasterAngle>(
                 angle,
-                fmt::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
+                std::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
                             angle.i()->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
                 [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
@@ -698,14 +709,14 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
         if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
             generateMasterTerm<MasterTorsion>(
                 torsion,
-                fmt::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
+                std::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
                             torsion.k()->atomType()->name(), torsion.l()->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
                 [&coreData](auto name) -> MasterTorsion & { return coreData.addMasterTorsion(name); });
         else
             generateMasterTerm<MasterTorsion>(
                 torsion,
-                fmt::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
+                std::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
                             torsion.j()->atomType()->name(), torsion.i()->atomType()->name()),
                 [&coreData](std::string_view name) { return coreData.getMasterTorsion(name); },
                 [&coreData](auto name) -> MasterTorsion & { return coreData.addMasterTorsion(name); });
@@ -723,7 +734,7 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
                                              improper.l()->atomType()->name()};
         std::sort(jkl.begin(), jkl.end());
         generateMasterTerm<MasterImproper>(
-            improper, fmt::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")),
+            improper, std::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")),
             [&coreData](std::string_view name) { return coreData.getMasterImproper(name); },
             [&coreData](auto name) -> MasterImproper & { return coreData.addMasterImproper(name); });
     }
@@ -736,7 +747,7 @@ const Box *Species::box() const { return box_.get(); }
 void Species::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
 
 // Create Box definition with specified lengths and angles
-void Species::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
+void Species::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
 }

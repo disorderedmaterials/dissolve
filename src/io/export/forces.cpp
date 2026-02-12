@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/export/forces.h"
 #include "base/lineParser.h"
@@ -22,7 +22,7 @@ ForceExportFileFormat::ForceExportFileFormat(std::string_view filename, ForceExp
  */
 
 // Export simple forces
-bool ForceExportFileFormat::exportSimple(LineParser &parser, const std::vector<Vec3<double>> &f)
+bool ForceExportFileFormat::exportSimple(LineParser &parser, const std::vector<Vector3> &f)
 {
     if (!parser.writeLine("# Atom        FX            FY            FZ"))
         return false;
@@ -39,7 +39,7 @@ bool ForceExportFileFormat::exportSimple(LineParser &parser, const std::vector<V
 }
 
 // Export forces using current filename and format
-bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
+bool ForceExportFileFormat::exportData(const std::vector<Vector3> &f)
 {
     // Open the file
     LineParser parser;
@@ -57,8 +57,8 @@ bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
             result = exportSimple(parser, f);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Forces format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Forces format '{}' export has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     return result;

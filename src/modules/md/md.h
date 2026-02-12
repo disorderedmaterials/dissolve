@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -66,22 +66,20 @@ class MDModule : public Module
      */
     private:
     // Cap forces in Configuration
-    static int capForces(double maxForceSq, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra);
+    static int capForces(double maxForceSq, std::vector<Vector3> &fInter, std::vector<Vector3> &fIntra);
     // Determine timestep to use
     static std::optional<double> determineTimeStep(TimestepType timestepType, double requestedTimeStep,
-                                                   const std::vector<Vec3<double>> &fInter,
-                                                   const std::vector<Vec3<double>> &fIntra);
+                                                   const std::vector<Vector3> &fInter, const std::vector<Vector3> &fIntra);
 
     public:
     // Evolve Species coordinates, returning new coordinates
-    static std::vector<Vec3<double>> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                            double temperature, int nSteps, double maxDeltaT,
-                                            const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities);
+    static std::vector<Vector3> evolve(const PotentialMap &potentialMap, const Species *sp, double temperature, int nSteps,
+                                       double maxDeltaT, const std::vector<Vector3> &rInit, std::vector<Vector3> &velocities);
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

@@ -6,28 +6,33 @@ import "../widgets" as D
 
 Page {
     id: root
-    height: 500
-    visible: true
-    width: 670
 
     function filterByRegExp(proxy, text) {
         proxy.filterRegularExpression = RegExp(text);
     }
     function getHeaderStringArray(model) {
         var headerArray = [];
+        if (!model)
+            return headerArray;
         for (var i = 0; i < model.columnCount(); ++i) {
             headerArray.push(qsTr(model.headerData(i, Qt.Horizontal)));
         }
         return headerArray;
     }
 
+    height: 500
+    visible: true
+    width: 670
+
     SortFilterProxy {
         id: proxy
+
         filterRegularExpression: RegExp(searchBox.text)
         model: simModel
     }
     D.GroupBox {
         id: gb
+
         anchors.fill: parent
         title: "Current Module Data"
 
@@ -36,26 +41,30 @@ Page {
 
             TextField {
                 id: searchBox
+
                 Layout.alignment: Qt.AlignRight
                 Layout.preferredWidth: gb.width / 4
                 placeholderText: qsTr("Search...")
             }
             HorizontalHeaderView {
                 id: header
+
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight
                 Layout.preferredWidth: contentWidth
                 clip: true
-                enabled: simModel.rowCount() == 0 ? false : true
+                enabled: !simModel || simModel.rowCount() == 0 ? false : true
                 model: getHeaderStringArray(simModel)
                 syncView: table
             }
             TableView {
                 id: table
+
                 property variant colWidths: [300, 300, 50]
 
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                anchors.fill: parent
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
                 columnSpacing: 1
@@ -72,6 +81,7 @@ Page {
 
                     D.Text {
                         id: tableText
+
                         padding: 12
                         text: display
                     }
@@ -79,6 +89,7 @@ Page {
             }
             D.Button {
                 id: closeButton
+
                 Layout.alignment: Qt.AlignRight
                 text: "Close"
 

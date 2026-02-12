@@ -1,6 +1,14 @@
 name: Package
 description: Package Windows artifacts
 
+inputs:
+  currentVersion:
+    type: string
+    required: true
+  qtVersion:
+    type: string
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -8,12 +16,6 @@ runs:
   #
   # Setup / Install Dependencies
   #
-
-  - name: Retrieve Qt Cache
-    uses: actions/cache@v4
-    with:
-      key: windows-qt-${{ env.qtVersion }}
-      path: ${{ runner.temp }}\qt
 
   - name: Retrieve FTGL Cache
     uses: actions/cache@v4
@@ -30,6 +32,12 @@ runs:
       path: |
         ${{ runner.temp }}\freetype-latest
         ${{ runner.temp }}\freetype-install
+
+  - name: Retrieve Qt Artifacts
+    uses: actions/download-artifact@v4
+    with:
+      name: windows-qt
+      path: ${{ runner.temp }}\qt
 
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v4
@@ -53,12 +61,13 @@ runs:
       set -ex
 
       # Setup environment
-      export Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
+      export Qt6_DIR="${RUNNER_TEMP}\qt\${{ inputs.qtVersion }}\msvc2019_64"
       export PATH="${Qt6_DIR}\bin;$PATH"
       export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
       export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
       export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\install\bin"
       export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
+      export DISSOLVE_VERSION="${{ inputs.currentVersion }}"
 
       # Run Inno Setup Compiler
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss

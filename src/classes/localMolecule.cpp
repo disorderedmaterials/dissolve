@@ -1,9 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/localMolecule.h"
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
+
+LocalMolecule::LocalMolecule(const Species *copyFrom)
+{
+    setSpecies(copyFrom);
+    for (auto &&[local, i] : zip(localAtoms_, copyFrom->atoms()))
+    {
+        local.setCoordinates(i.r());
+    }
+}
 
 LocalMolecule::LocalMolecule(const LocalMolecule &copyFrom) { copyData(copyFrom); }
 

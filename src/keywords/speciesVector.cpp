@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/speciesVector.h"
 #include "base/lineParser.h"
@@ -30,9 +30,10 @@ bool SpeciesVectorKeyword::deserialise(LineParser &parser, int startArg, const C
     // Each argument is the name of a Species
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
-        const auto *sp = coreData.findSpecies(parser.argsv(n));
+        const auto *sp = coreData.findSpecies(DissolveSys::niceName(parser.argsv(n)));
         if (!sp)
-            return Messenger::error("Error reading keyword '{}' - no Species named '{}' exists.\n", name(), parser.argsv(n));
+            return Messenger::error("Error reading keyword '{}' - no Species named '{}' exists.\n", name(),
+                                    DissolveSys::niceName(parser.argsv(n)));
 
         data_.push_back(sp);
     }
@@ -61,9 +62,9 @@ void SpeciesVectorKeyword::removeReferencesTo(Species *sp)
 }
 
 // Express as a serialisable value
-SerialisedValue SpeciesVectorKeyword::serialise() const
+void SpeciesVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto *item) { return item->name(); });
+    target[tag] = fromVector(data_, [](const auto *item) { return item->name(); });
 }
 
 // Read values from a serialisable value
@@ -75,7 +76,7 @@ void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreDa
                  auto title = toml::get<std::string>(item);
                  auto *species = coreData.findSpecies(title);
                  if (!species)
-                     throw toml::type_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
+                     throw toml::type_error(std::format("No Species named '{}' exists.\n", title), item.location());
 
                  data_.push_back(species);
              });

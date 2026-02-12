@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/base.h"
 #include "base/messenger.h"
@@ -97,7 +97,7 @@ void KeywordBase::removeReferencesTo(SpeciesSite *spSite)
     // Default action - ignore
 }
 
-// Prune any references to the supplied ProcedureNode in the contained data
+// Prune any references to the supplied GeneratorNode in the contained data
 void KeywordBase::removeReferencesTo(NodeRef node)
 {
     // Default action - ignore

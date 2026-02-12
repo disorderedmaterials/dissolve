@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,4 +31,17 @@ class EPSRManagerModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::EPSRManagerModuleWidget ui_;
+    // DataViewer contained within this widget
+    DataViewer *graph_;
+
+    /*
+     * Widgets / Functions
+     */
+    public:
+    // Update controls within widget
+    void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
+
+    private Q_SLOTS:
+    void on_PotentialsButton_clicked(bool checked);
+    void on_RFactorButton_clicked(bool checked);
 };

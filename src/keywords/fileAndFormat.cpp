@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/fileAndFormat.h"
 #include "base/lineParser.h"
@@ -50,7 +50,7 @@ bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywor
     if (!data_.hasFilename())
         return true;
 
-    if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
+    if (!data_.writeFilenameAndFormat(parser, std::format("{}{}  ", prefix, keywordName)))
         return false;
     if (!data_.writeBlock(parser, prefix))
         return false;
@@ -61,7 +61,7 @@ bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywor
 }
 
 // Express as a serialisable value
-SerialisedValue FileAndFormatKeyword::serialise() const { return data_; }
+void FileAndFormatKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void FileAndFormatKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)

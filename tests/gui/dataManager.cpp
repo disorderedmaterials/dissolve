@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/dataManagerSimulationModel.h"
 #include <gtest/gtest.h>
@@ -32,11 +32,11 @@ TEST_F(DataManagerTest, DataManager)
 
     EXPECT_EQ(sim.columnCount(), 3);
     // There are 38 processing data items in the restart file
-    EXPECT_EQ(sim.rowCount(), 38);
-    EXPECT_EQ(sim.data(sim.index(0, 0)).toString().toStdString(), "5050//FullWeights");
-    EXPECT_EQ(sim.data(sim.index(0, 1)).toString().toStdString(), "NeutronWeights");
+    EXPECT_EQ(sim.rowCount(), 36);
+    EXPECT_EQ(sim.data(sim.index(0, 0)).toString().toStdString(), "5050//RepresentativeTotalGR");
+    EXPECT_EQ(sim.data(sim.index(0, 1)).toString().toStdString(), "Data1D");
     EXPECT_EQ(sim.data(sim.index(0, 2)).toInt(), 1);
-    EXPECT_EQ(sim.data(sim.index(1, 0)).toString().toStdString(), "5050//RepresentativeTotalGR");
+    EXPECT_EQ(sim.data(sim.index(1, 0)).toString().toStdString(), "5050//WeightedGR");
 }
 
 } // namespace UnitTest

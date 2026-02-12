@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "module/layer.h"
 #include "base/lineParser.h"
@@ -40,7 +40,7 @@ std::string ModuleLayer::frequencyDetails(int iteration) const
     if (nToGo == 1)
         return "next iteration";
 
-    return fmt::format("in {} steps time", nToGo);
+    return std::format("in {} steps time", nToGo);
 }
 
 // Return whether the layer should execute this iteration
@@ -153,12 +153,12 @@ std::map<ModuleTypes::ModuleType, std::vector<const Module *>> ModuleLayer::modu
  */
 
 // Run set-up stages for all modules
-bool ModuleLayer::setUpAll(ModuleContext &moduleContext)
+bool ModuleLayer::setUpAll(Dissolve &dissolve)
 {
     auto result = true;
 
     for (auto &module : modules_)
-        if (!module->setUp(moduleContext))
+        if (!module->setUp(dissolve))
             result = false;
 
     return result;
@@ -189,7 +189,7 @@ std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
 }
 
 // Express as a serialisable value
-SerialisedValue ModuleLayer::serialise() const
+void ModuleLayer::serialise(std::string tag, SerialisedValue &target) const
 {
     SerialisedValue result = {{"frequency", frequency_}};
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
@@ -199,7 +199,7 @@ SerialisedValue ModuleLayer::serialise() const
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
         result["requireSizeFactors"] = true;
     Serialisable::fromVectorToTable(modules_, "modules", result);
-    return result;
+    target[tag] = result;
 }
 
 // Read values from a serialisable value

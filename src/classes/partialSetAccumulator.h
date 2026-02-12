@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "classes/partialSet.h"
 #include "math/sampledData1D.h"
 #include "templates/array2D.h"
+#include "templates/doubleKeyedMap.h"
 
 // Accumulator for PartialSet
 class PartialSetAccumulator
 {
     public:
-    PartialSetAccumulator();
+    PartialSetAccumulator() = default;
     ~PartialSetAccumulator() = default;
     void operator+=(const PartialSet &source);
 
@@ -22,11 +23,11 @@ class PartialSetAccumulator
     // Number of accumulated points
     int nAccumulated_{0};
     // Full matrix, containing sampling of full atom-atom partial
-    Array2D<SampledData1D> partials_;
+    DoubleKeyedMap<SampledData1D> partials_;
     // Bound matrix, containing sampling of atom-atom partial of bound pairs
-    Array2D<SampledData1D> boundPartials_;
+    DoubleKeyedMap<SampledData1D> boundPartials_;
     // Unbound matrix, containing sampling of atom-atom partial of unbound pairs
-    Array2D<SampledData1D> unboundPartials_;
+    DoubleKeyedMap<SampledData1D> unboundPartials_;
     // Sample of the total function
     SampledData1D total_;
 
@@ -34,11 +35,11 @@ class PartialSetAccumulator
     // Return number of accumulated points
     int nAccumulated() const;
     // Return full matrix, containing sampling of full atom-atom partial
-    const Array2D<SampledData1D> &partials() const;
+    const DoubleKeyedMap<SampledData1D> &partials() const;
     // Return bound matrix, containing sampling of atom-atom partial of bound pairs
-    const Array2D<SampledData1D> &boundPartials() const;
+    const DoubleKeyedMap<SampledData1D> &boundPartials() const;
     // Return unbound matrix, containing sampling of atom-atom partial of unbound pairs
-    const Array2D<SampledData1D> &unboundPartials() const;
+    const DoubleKeyedMap<SampledData1D> &unboundPartials() const;
     // Return the sampled total function
     const SampledData1D &total() const;
     // Save all partials and total (with errors)
@@ -54,12 +55,6 @@ class PartialSetAccumulator
     /*
      * Serialisation
      */
-    private:
-    // Read array through specified LineParser
-    static bool deserialiseArray(LineParser &parser, Array2D<SampledData1D> &array, const std::vector<double> &xAxis);
-    // Write array through specified LineParser
-    static bool serialiseArray(LineParser &parser, const Array2D<SampledData1D> &array);
-
     public:
     // Read data through specified LineParser
     bool deserialise(LineParser &parser);

@@ -5,6 +5,7 @@ import Dissolve
 
 Page {
     id: root
+
     height: 166
     title: {
         switch (modify) {
@@ -23,15 +24,16 @@ Page {
 
     Loader {
         id: loader
+
         anchors.fill: parent
         anchors.margins: 10
         objectName: "loader"
         sourceComponent: {
             var path = modify === ModifyChargesModel.Scaling ? "ScaleLayout.qml" : "Layout.qml";
             loader.setSource(qsTr("qrc:/dialogs/qml/modifyCharges/") + path, {
-                    "dialogModel": dialogModel,
-                    "modify": modify
-                });
+                "dialogModel": dialogModel,
+                "modify": modify
+            });
         }
     }
 }

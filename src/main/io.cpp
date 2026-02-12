@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
 #include "base/messenger.h"
@@ -12,6 +12,7 @@
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
+#include "nodes/dissolve.h"
 #include <cstring>
 #include <fstream>
 #include <functional>
@@ -80,7 +81,7 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::SpeciesBlockKeyword):
                 // Check to see if a Species with this name already exists...
-                if (coreData_.findSpecies(parser.argsv(1)))
+                if (coreData_.findSpecies(DissolveSys::niceName(parser.argsv(1))))
                     return Messenger::error("Redefinition of species '{}'.\n", parser.argsv(1));
 
                 sp = coreData_.addSpecies();
@@ -116,7 +117,7 @@ bool Dissolve::loadInput(LineParser &parser)
 bool Dissolve::loadInputFromString(std::string_view inputString)
 {
     // Set strings and check that we're OK to proceed reading from them
-    LineParser parser(&worldPool());
+    LineParser parser;
     if (!parser.openInputString(inputString))
         return false;
 
@@ -150,7 +151,9 @@ SerialisedValue Dissolve::serialisePairPotentials() const
                                  [](const auto &term)
                                  {
                                      const auto &[at1, at2, pot] = term;
-                                     auto value = pot->serialise();
+                                     SerialisedValue target;
+                                     pot->serialise("inner", target);
+                                     auto &value = target["inner"];
                                      value["atomTypeI"] = at1->name();
                                      value["atomTypeJ"] = at2->name();
                                      return value;
@@ -160,27 +163,27 @@ SerialisedValue Dissolve::serialisePairPotentials() const
 }
 
 // Express as a serialisable value
-SerialisedValue Dissolve::serialise() const
+void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue root;
+    auto &root = target[tag];
 
     root["version"] = Version::semantic();
 
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
-        root["master"] = coreData_.serialiseMaster();
+        coreData_.serialiseMaster("master", root);
 
     Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
     root["pairPotentials"] = serialisePairPotentials();
+
+    graphNode_->serialise("graph", root);
 
     Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
-
-    return root;
 }
 
 // This method populates the object's members with values read from a 'pairPotentials' TOML node
@@ -197,8 +200,7 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     PairPotential::setShortRangeTruncationScheme(PairPotential::shortRangeTruncationSchemes().deserialise(
         toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted")));
 
-    toMap(node, "atomTypes",
-          [this](const std::string &name, const auto &data)
+    toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
           { coreData().atomTypes().emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
 
     useCombinationRules_ = toml::find_or<bool>(node, "useCombinationRules", true);
@@ -228,14 +230,15 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
         Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
     const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
+    Serialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
+
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 
     Serialisable::toVector(node, "pairPotentialOverrides",
                            [this](const auto node) { coreData_.addPairPotentialOverride()->deserialise(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
-    toMap(node, "species",
-          [this](const std::string &name, const SerialisedValue &data)
+    toMap(node, "species", [this](const std::string &name, const SerialisedValue &data)
           { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
 
     toMap(node, "configurations",
@@ -301,7 +304,7 @@ bool Dissolve::loadInput(std::string_view filename)
     {
         // The file didn't have TOML syntax, so try the original parser
         // Open file and check that we're OK to proceed reading from it
-        LineParser parser(&worldPool());
+        LineParser parser;
         if (!parser.openInput(filename))
             return false;
 
@@ -320,6 +323,16 @@ bool Dissolve::loadInput(std::string_view filename)
         Messenger::error("Could not load TOML file\n\n{}", e.what());
     }
     return false;
+}
+
+// Save TOML file
+bool Dissolve::saveToml(std::string_view filename) const
+{
+    std::ofstream outfile;
+    outfile.open(std::string(filename));
+    outfile << into_toml() << std::endl;
+    outfile.close();
+    return true;
 }
 
 // Save input file
@@ -363,8 +376,8 @@ bool Dissolve::saveInput(std::string_view filename)
         {
             // Write new 1-4 scale factor line if this torsion has different values
             if ((t->electrostatic14Scaling() != elec14Scaling || t->vanDerWaals14Scaling() != vdw14Scaling) &&
-                !parser.writeLineF(fmt::format("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
-                                               t->electrostatic14Scaling(), t->vanDerWaals14Scaling())))
+                !parser.writeLineF("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
+                                   t->electrostatic14Scaling(), t->vanDerWaals14Scaling()))
                 return false;
 
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
@@ -557,7 +570,7 @@ bool Dissolve::saveInput(std::string_view filename)
 bool Dissolve::loadRestart(std::string_view filename)
 {
     // Open file and check that we're OK to proceed reading from it
-    LineParser parser(&worldPool());
+    LineParser parser;
     if (!parser.openInput(filename))
         return false;
 
@@ -596,7 +609,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             auto result = module->keywords().deserialise(parser, coreData_, 2);
             if (result == KeywordBase::ParseResult::Unrecognised)
             {
-                Messenger::error("Module '{}' has no keyword '{}'.\n", parser.argsv(2));
+                Messenger::error("Module '{}' has no keyword '{}'.\n", module->name(), parser.argsv(2));
                 error = true;
                 break;
             }
@@ -672,8 +685,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::error("Errors encountered while loading restart file.\n");
 
     // Done
-    if (worldPool().isWorldMaster())
-        parser.closeFiles();
+    parser.closeFiles();
 
     return (!error);
 }
@@ -702,7 +714,7 @@ bool Dissolve::saveRestart(std::string_view filename)
             for (const auto &group : section.groups())
                 for (const auto &[keyword, keywordType] : group.keywords())
                     if (keywordType == KeywordBase::KeywordType::Restartable &&
-                        !keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->name(), keyword->name())))
+                        !keyword->serialise(parser, std::format("Keyword  {}  {}  ", module->name(), keyword->name())))
                         return false;
     }
 
@@ -746,7 +758,7 @@ void Dissolve::setInputFilename(std::string_view filename)
     inputFilename_ = filename;
     coreData_.setInputFilename(filename);
 
-    restartFilename_ = fmt::format("{}.restart", inputFilename_);
+    restartFilename_ = std::format("{}.restart", inputFilename_);
 }
 
 // Return current input filename

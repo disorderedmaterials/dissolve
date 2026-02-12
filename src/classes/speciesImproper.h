@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -80,13 +80,13 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
      * Interaction Parameters
      */
     public:
-    // Return energy for specified angle
-    double energy(double angleInDegrees) const;
-    // Return force multiplier for specified angle
-    double force(double angleInDegrees) const;
+    // Return energy for specified angle phi (in radians)
+    double energy(double phi) const;
+    // Return force multiplier for specified angle phi (in radians)
+    double force(double phi) const;
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };

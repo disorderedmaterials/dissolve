@@ -22,7 +22,7 @@ First, stop the simulation if it's running:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF / Neutron S(Q)">}} layer tab{{< /action >}}
 {{< action type="mouse">}}Select the {{< module "SQ" >}} module{{< /action >}}
-{{< action type="edit">}}In the **Control** settings group change the **WindowFunction** to `Lorch0`{{< /action >}}
+{{< action type="edit">}}In the **Broadening & Windowing** settings group change the **WindowFunction** to `Lorch0`{{< /action >}}
 
 
 Start the simulation running again and after a few steps you should see much smoother structure factors:

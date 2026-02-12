@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -35,9 +35,9 @@ class ExpressionValue : public Serialisable<>
     ValueType type_;
     // Whether current result type is fixed
     bool typeFixed_;
-    // Integer value (if type_ == IntegerType)
+    // Integer value (if storedDataType_ == IntegerType)
     int valueI_;
-    // Double value (if type_ == DoubleType)
+    // Double value (if storedDataType_ == DoubleType)
     double valueD_;
 
     public:
@@ -67,7 +67,7 @@ class ExpressionValue : public Serialisable<>
     // Return the supplied ExpressionValues both contain double types
     static bool bothDoubles(const ExpressionValue &a, const ExpressionValue &b);
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };

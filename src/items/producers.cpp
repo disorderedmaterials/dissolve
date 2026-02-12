@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "items/producers.h"
 #include "classes/braggReflection.h"
 #include "classes/kVector.h"
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
+#include "classes/potentialSet.h"
 #include "classes/xRayWeights.h"
 #include "items/legacy.h"
 #include "math/data1D.h"
@@ -29,28 +29,30 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<std::string>("std::string");
     registerProducer<std::streampos>("streampos");
     registerProducer<std::vector<double>>("std::vector<double>");
-    registerProducer<std::vector<Vec3<double>>>("std::vector<Vec3<double>>");
+    registerProducer<std::vector<Vector3>>("std::vector<Vector3>");
 
     // Custom Classes / Containers
     registerProducer<Array2D<double>>("Array2D<double>");
     registerProducer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>");
     registerProducer<Array2D<Data1D>>("Array2D<Data1D>");
-    registerProducer<AtomTypeMix>("AtomTypeMix");
+    registerProducer<Array3D<double>>("Array3D<double>");
     registerProducer<Data1D>("Data1D");
     registerProducer<Data2D>("Data2D");
     registerProducer<Data3D>("Data3D");
+    registerProducer<DoubleKeyedMap<double>>("DoubleKeyedMap<double>");
+    registerProducer<DoubleKeyedMap<Data1D>>("DoubleKeyedMap<Data1D>");
     registerProducer<Histogram1D>("Histogram1D");
     registerProducer<Histogram2D>("Histogram2D");
     registerProducer<Histogram3D>("Histogram3D");
     registerProducer<IntegerHistogram1D>("IntegerHistogram1D");
-    registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
     registerProducer<PartialSetAccumulator>("PartialSetAccumulator");
+    registerProducer<PotentialSet>("PotentialSet");
     registerProducer<SampledData1D>("SampledData1D");
     registerProducer<SampledDouble>("SampledDouble");
     registerProducer<SampledVector>("SampledVector");
-    registerProducer<Vec3<int>>("Vec3<int>");
-    registerProducer<Vec3<double>>("Vec3<double>");
+    registerProducer<Vector3i>("Vector3i");
+    registerProducer<Vector3>("Vector3");
     registerProducer<XRayWeights>("XRayWeights");
 
     // Containers of Custom Classes
@@ -70,9 +72,9 @@ std::any GenericItemProducer::produce(const std::type_info &objectType) const
 {
     auto it = producers_.find(objectType);
     if (it == producers_.end())
-        throw(std::runtime_error(
-            fmt::format("A producer has not been registered for type '{}', so a new object of this type cannot be created.\n",
-                        objectType.name())));
+        Messenger::exception(
+            "A producer has not been registered for type '{}', so a new object of this type cannot be created.\n",
+            objectType.name());
 
     return (it->second)();
 }
@@ -83,9 +85,9 @@ std::any GenericItemProducer::produce(const std::string_view className) const
     auto it =
         std::find_if(classNames_.begin(), classNames_.end(), [className](auto &item) { return item.second == className; });
     if (it == classNames_.end())
-        throw(std::runtime_error(fmt::format(
+        Messenger::exception(
             "A producer has not been registered for class name '{}', so a new object of this type cannot be created.\n",
-            className)));
+            className);
 
     auto producer = producers_.find(it->first);
     return (producer->second)();
@@ -96,7 +98,7 @@ std::string GenericItemProducer::className(const std::type_info &objectType) con
 {
     auto it = classNames_.find(objectType);
     if (it == classNames_.end())
-        throw(std::runtime_error(fmt::format("Class name has not been registered for type '{}'.\n", objectType.name())));
+        Messenger::exception("Class name has not been registered for type '{}'.\n", objectType.name());
 
     return it->second;
 }

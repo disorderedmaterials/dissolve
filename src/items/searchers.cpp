@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/partialSetAccumulator.h"
 #include "items/list.h"
@@ -9,6 +8,7 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/sampledData1D.h"
+#include "math/sampledDouble.h"
 
 /*
  * Data1D
@@ -23,6 +23,15 @@ template <> GenericItemSearcher<const Data1D>::GenericItemSearcher()
             auto &array = std::any_cast<const Array2D<Data1D> &>(a);
             auto it = std::find_if(array.begin(), array.end(), [dataName](const auto &data) { return dataName == data.tag(); });
             return it == array.end() ? OptionalReferenceWrapper<const Data1D>() : OptionalReferenceWrapper<const Data1D>(*it);
+        });
+    registerSearcher<DoubleKeyedMap<Data1D>>(
+        [](const std::any &a, std::string_view dataName)
+        {
+            auto &map = std::any_cast<const DoubleKeyedMap<Data1D> &>(a);
+            auto it =
+                std::find_if(map.begin(), map.end(), [dataName](const auto &pair) { return dataName == pair.second.tag(); });
+            return it == map.end() ? OptionalReferenceWrapper<const Data1D>()
+                                   : OptionalReferenceWrapper<const Data1D>(it->second);
         });
     registerSearcher<PartialSet>(
         [](const std::any &a, std::string_view dataName)

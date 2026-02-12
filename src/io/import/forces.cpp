@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/forces.h"
 #include "base/lineParser.h"
@@ -33,10 +33,10 @@ void ForceImportFileFormat::setUpKeywords()
  */
 
 // Read forces using current filename and format
-bool ForceImportFileFormat::importData(std::vector<Vec3<double>> &f, const ProcessPool *procPool)
+bool ForceImportFileFormat::importData(std::vector<Vector3> &f)
 {
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser(procPool);
+    LineParser parser;
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
         return Messenger::error("Couldn't open file '{}' for loading forces data.\n", filename_);
 
@@ -49,7 +49,7 @@ bool ForceImportFileFormat::importData(std::vector<Vec3<double>> &f, const Proce
 }
 
 // Import forces using supplied parser and current format
-bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &f)
+bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vector3> &f)
 {
     // Check the format
     if (!formatIndex_)
@@ -69,8 +69,8 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
             result = importSimple(parser, f);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Force format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
+            Messenger::exception("Force format '{}' import has not been implemented.\n",
+                                 formats_.keywordByIndex(*formatIndex_));
     }
 
     // Apply factor to data

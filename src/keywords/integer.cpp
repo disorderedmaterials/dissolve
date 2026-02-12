@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/integer.h"
 #include "base/lineParser.h"
@@ -74,7 +74,7 @@ bool IntegerKeyword::serialise(LineParser &parser, std::string_view keywordName,
 }
 
 // Express as a serialisable value
-SerialisedValue IntegerKeyword::serialise() const { return data_; }
+void IntegerKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
 void IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_integer(); }

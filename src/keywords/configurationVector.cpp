@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "keywords/configurationVector.h"
 #include "base/lineParser.h"
@@ -55,7 +55,7 @@ bool ConfigurationVectorKeyword::serialise(LineParser &parser, std::string_view 
         return true;
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName,
-                             joinStrings(data_, "  ", [](const auto *cfg) { return fmt::format("'{}'", cfg->name()); }));
+                             joinStrings(data_, "  ", [](const auto *cfg) { return std::format("'{}'", cfg->name()); }));
 }
 
 /*
@@ -69,9 +69,9 @@ void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
 }
 
 // Express as a serialisable value
-SerialisedValue ConfigurationVectorKeyword::serialise() const
+void ConfigurationVectorKeyword::serialise(std::string tag, SerialisedValue &target) const
 {
-    return fromVector(data_, [](const auto &cfg) { return std::string(cfg->name()); });
+    target[tag] = fromVector(data_, [](const auto &cfg) { return std::string(cfg->name()); });
 }
 
 // Read values from a serialisable value
@@ -83,13 +83,13 @@ void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const 
                  auto *cfg = coreData.findConfiguration(std::string_view(std::string(name.as_string())));
                  if (!cfg)
                      throw toml::type_error(
-                         fmt::format("Error defining Configuration targets - no Configuration named '{}' exists.\n",
+                         std::format("Error defining Configuration targets - no Configuration named '{}' exists.\n",
                                      std::string(name.as_string())),
                          name.location());
 
                  // Check that the configuration isn't already present
                  if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
-                     throw toml::type_error(fmt::format("Configuration '{}' has already been referenced.\n", cfg->name()),
+                     throw toml::type_error(std::format("Configuration '{}' has already been referenced.\n", cfg->name()),
                                             name.location());
 
                  data_.push_back(cfg);

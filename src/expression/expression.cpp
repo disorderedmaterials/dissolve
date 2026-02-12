@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "expression/expression.h"
 #include "ExpressionLexer.h"
@@ -33,11 +33,9 @@ void Expression::operator=(const Expression &source)
 // Add local variable
 std::shared_ptr<ExpressionVariable> Expression::addLocalVariable(std::string_view name)
 {
-    if (std::find_if(localVariables_.begin(), localVariables_.end(),
-                     [name](const auto &var)
+    if (std::find_if(localVariables_.begin(), localVariables_.end(), [name](const auto &var)
                      { return DissolveSys::sameString(name, var->baseName()); }) != localVariables_.end())
-        throw(std::runtime_error(
-            fmt::format("Tried to create local variable '{}' in Expression, but it already exists.\n", name)));
+        Messenger::exception("Tried to create local variable '{}' in Expression, but it already exists.\n", name);
 
     return localVariables_.emplace_back(std::make_shared<ExpressionVariable>(name));
 }
@@ -96,9 +94,9 @@ bool Expression::create(std::string_view expressionString,
     }
     catch (ExpressionExceptions::ExpressionSyntaxException &ex)
     {
-        fmt::print(ex.what());
+        std::cout << ex.what();
         clearNodes();
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     };
 
     // Visit the nodes in the AST
@@ -109,9 +107,9 @@ bool Expression::create(std::string_view expressionString,
     }
     catch (std::exception &ex)
     {
-        fmt::print(ex.what());
+        std::cout << ex.what();
         clearNodes();
-        return Messenger::error(ex.what());
+        return Messenger::error("{}", ex.what());
     }
 
     return true;
@@ -142,7 +140,7 @@ int Expression::asInteger() const
 {
     auto result = evaluate();
     if (!result)
-        throw(std::runtime_error(fmt::format("Failed to evaluate expression '{}'.", expressionString())));
+        Messenger::exception("Failed to evaluate expression '{}'.", expressionString());
 
     return (*result).asInteger();
 }
@@ -152,7 +150,7 @@ double Expression::asDouble() const
 {
     auto result = evaluate();
     if (!result)
-        throw(std::runtime_error(fmt::format("Failed to evaluate expression '{}'.", expressionString())));
+        Messenger::exception("Failed to evaluate expression '{}'.", expressionString());
 
     return (*result).asDouble();
 }

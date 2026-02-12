@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
 #include "keywords/base.h"
 #include "keywords/vec3Labels.h"
-#include "templates/vector3.h"
+#include "math/vector3i.h"
 #include <optional>
 
-// Keyword managing Vec3<int>
+// Keyword managing Vector3i
 class Vec3IntegerKeyword : public KeywordBase
 {
     public:
-    explicit Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>> minValue = std::nullopt,
-                                std::optional<Vec3<int>> maxValue = std::nullopt,
+    explicit Vec3IntegerKeyword(Vector3i &data, std::optional<Vector3i> minValue = std::nullopt,
+                                std::optional<Vector3i> maxValue = std::nullopt,
                                 Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
     ~Vec3IntegerKeyword() override = default;
 
@@ -22,23 +22,23 @@ class Vec3IntegerKeyword : public KeywordBase
      */
     private:
     // Reference to target data
-    Vec3<int> &data_;
+    Vector3i &data_;
     // Initial Value
-    const Vec3<int> default_;
+    const Vector3i default_;
     // Optional limits to apply
-    std::optional<Vec3<int>> minimumLimit_, maximumLimit_;
+    std::optional<Vector3i> minimumLimit_, maximumLimit_;
 
     public:
     // Has not changed from initial value
     bool isDefault() const override;
     // Set data
-    bool setData(Vec3<int> value);
+    bool setData(Vector3i value);
     // Return data
-    const Vec3<int> &data() const;
+    const Vector3i &data() const;
     // Return minimum limit
-    std::optional<Vec3<int>> minimumLimit() const;
+    std::optional<Vector3i> minimumLimit() const;
     // Return maximum limit
-    std::optional<Vec3<int>> maximumLimit() const;
+    std::optional<Vector3i> maximumLimit() const;
 
     /*
      * Label Type
@@ -64,7 +64,7 @@ class Vec3IntegerKeyword : public KeywordBase
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

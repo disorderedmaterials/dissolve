@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/isotopes.h"
+#include "base/messenger.h"
 #include <algorithm>
-#include <fmt/format.h>
+#include <format>
 #include <stdexcept>
 
 namespace Sears91
@@ -400,7 +401,8 @@ static std::vector<IsotopeData> sears91Data_ = {
     {Isotope::Am_Natural, Elements::Am, 0, "5/2(-)", 243.06138, 8.3, 0, 8.7, 0.3, 9, 75},
     {Isotope::Am_244, Elements::Am, 244, "0(+)", 244.06275, 9.5, 0, 11.3, 0, 11.3, 16.2},
     {Isotope::Am_246, Elements::Am, 246, "0(+)", 246.06722, 9.3, 0, 10.9, 0, 10.9, 1.36},
-    {Isotope::Am_248, Elements::Am, 248, "0(+)", 248.07234, 7.7, 0, 7.5, 0, 7.5, 3}};
+    {Isotope::Am_248, Elements::Am, 248, "0(+)", 248.07234, 7.7, 0, 7.5, 0, 7.5, 3},
+    {Isotope::Phantom_Natural, Elements::Phantom, 0, "", 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
 
 /*
  * IsotopeData
@@ -466,9 +468,20 @@ Isotope isotope(Elements::Element Z, int A)
     auto it = std::find_if(sears91Data_.begin(), sears91Data_.end(),
                            [Z, A](const auto &topeData) { return topeData.Z() == Z && topeData.A() == A; });
     if (it == sears91Data_.end())
-        throw(std::runtime_error(fmt::format("No isotope with A = {} available for element {}.\n", A, Elements::symbol(Z))));
+        Messenger::exception("No isotope with A = {} available for element {}.\n", A, Elements::symbol(Z));
 
     return it->isotope();
+}
+
+// Return isotope enum corresponding element and A (if it exists)
+const IsotopeData &isotopeData(Elements::Element Z, int A)
+{
+    auto it = std::find_if(sears91Data_.begin(), sears91Data_.end(),
+                           [Z, A](const auto &topeData) { return topeData.Z() == Z && topeData.A() == A; });
+    if (it == sears91Data_.end())
+        Messenger::exception("No isotope with A = {} available for element {}.\n", A, Elements::symbol(Z));
+
+    return *it;
 }
 
 // Return natural isotope for element (if it exists)
@@ -477,8 +490,7 @@ Isotope naturalIsotope(Elements::Element Z)
     auto it = std::find_if(sears91Data_.begin(), sears91Data_.end(),
                            [Z](const auto &topeData) { return topeData.Z() == Z && topeData.A() == 0; });
     if (it == sears91Data_.end())
-        throw(
-            std::runtime_error(fmt::format("No natural isotope information available for element {}.\n", Elements::symbol(Z))));
+        Messenger::exception("No natural isotope information available for element {}.\n", Elements::symbol(Z));
 
     return it->isotope();
 }

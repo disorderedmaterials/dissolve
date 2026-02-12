@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/speciesEditor.h"
 #include "classes/empiricalFormula.h"
 #include "classes/species.h"
 #include "data/ff/library.h"
+#include "gui/speciesCellDialog.h"
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"
 #include "modules/geomOpt/geomOpt.h"
@@ -94,8 +95,8 @@ void SpeciesEditor::updateStatusBar()
 
     // Set / update empirical formula for the Species and its current atom selection
     auto selection = sp->selectedAtoms();
-    ui_.FormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
-        sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
+    ui_.FormulaLabel->setText(
+        QString::fromStdString(EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
     ui_.SelectionLabel->setText(selection.empty() ? "--"
                                                   : QString::fromStdString(EmpiricalFormula::formula(
                                                         selection, [](const auto &i) { return i->Z(); }, true)));
@@ -187,8 +188,7 @@ void SpeciesEditor::on_ToolsCalculateBondingButton_clicked(bool checked)
     if (!sp)
         return;
 
-    // Calculate missing bonds
-    sp->addMissingBonds();
+    sp->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
 
     // Signal that the data shown has been modified
     speciesViewer()->postRedisplay();
@@ -246,7 +246,7 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
 
     // Do the optimisation
     GeometryOptimisationModule optimiser;
-    optimiser.optimiseSpecies(dissolve.potentialMap(), dissolve.worldPool(), sp);
+    optimiser.optimiseSpecies(dissolve.potentialMap(), sp);
 
     // Centre the Species back at the origin
     sp->centreAtOrigin();
@@ -258,4 +258,37 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     speciesViewer()->view().showAllData();
     speciesViewer()->postRedisplay();
     speciesViewer()->notifyDataModified();
+}
+
+void SpeciesEditor::on_ToolsAddCellButton_clicked(bool checked)
+{
+    SpeciesCellDialog dialog(this, speciesViewer()->species());
+
+    if (dialog.createUnitCell())
+    {
+        speciesViewer()->species()->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
+        speciesViewer()->view().showAllData();
+        speciesViewer()->postRedisplay();
+        speciesViewer()->notifyDataModified();
+    }
+}
+
+void SpeciesEditor::on_ToolsRemoveCellButton_clicked(bool checked)
+{
+    speciesViewer()->species()->recalculateIntermolecularTerms(ui_.ToolsBondToleranceSpin->value());
+    speciesViewer()->species()->removeBox();
+    speciesViewer()->view().showAllData();
+    speciesViewer()->postRedisplay();
+    speciesViewer()->notifyDataModified();
+}
+
+void SpeciesEditor::on_ToolsBondToleranceSpin_valueChanged(double value)
+{
+    // Get displayed Species
+    auto *sp = speciesViewer()->species();
+    if (!sp)
+        return;
+
+    sp->recalculateIntermolecularTerms(value);
+    speciesViewer()->postRedisplay();
 }

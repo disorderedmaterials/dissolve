@@ -59,6 +59,7 @@ The `Natural` isotopologue is always available and doesn't need to be created, b
 We'll locate our analysis site at the centre of the benzene ring and give it some axes so that we may calculate orientational / spatial functions around it. The figure below shows the atoms we'll select to define the origin (purple), x-axis (red) and y-axis (blue). Using these atoms as reference points for our coordinate system will set the XY plane to that of the ring, with the _z_ axis perpendicular to the ring, pointing out of its center.
 
 {{< cimage src="../site.png" caption="Origin (purple), x-axis (red) and y-axis (blue) atoms defining the oriented benzene site" >}}
+{{< cimage src="../site_axes.png" caption="Resulting axis definition in 3D" width="50%" >}}
 
 {{< action type="tabs" >}} Go to the {{< gui-tab type="species"  text="Benzene" >}} species tab{{< /action >}}
 {{< action type="mouse" text="Select all six carbon atoms by shift-clicking on them in the viewer (you may need to click _reset view_ first, to see the whole molecule)" />}}

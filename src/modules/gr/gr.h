@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
+#include "classes/histogramSet.h"
 #include "classes/partialSet.h"
 #include "math/averaging.h"
 #include "math/function1D.h"
@@ -59,35 +60,43 @@ class GRModule : public Module
     bool save_{false};
     // Whether to save original (unbroadened) partials and total functions to disk
     bool saveOriginal_{false};
+    // Histograms for RDF calculation
+    std::optional<HistogramSet> histograms_;
 
     /*
      * Functions
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
-    bool calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet);
+    bool calculateGRTestSerial(Configuration *cfg,
+                               const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
     // Calculate partial g(r) with optimised double-loop
-    bool calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange);
+    bool calculateGRSimple(Configuration *cfg, const double rdfRange,
+                           const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
     // Calculate partial g(r) utilising Cell neighbour lists
-    bool calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth);
+    bool calculateGRCells(Configuration *cfg, const double binWidth,
+                          const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT);
+    // Calculate RDF from raw histogram
+    void calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
+                      double multiplier);
 
     public:
     // Calculate and return effective density based on target Configurations
     std::optional<double> effectiveDensity() const;
     // Calculate and return used species populations based on target Configurations
-    std::vector<std::pair<const Species *, double>> speciesPopulations() const;
+    const std::map<const Species *, double> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
-    bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
-                     GRModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
+    bool calculateGR(GenericList &processingData, Configuration *cfg, GRModule::PartialsMethod method, const double rdfRange,
+                     const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
-    static bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &weightedgr, const Function1DWrapper intraBroadening, int smoothing);
+    static bool calculateUnweightedGR(Configuration *cfg, const PartialSet &originalgr, PartialSet &weightedgr,
+                                      const Function1DWrapper intraBroadening, int smoothing);
     // Sum unweighted g(r) over the supplied Module's target Configurations
-    static bool sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
-                                std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
-                                PartialSet &summedUnweightedGR);
+    static bool sumUnweightedGR(GenericList &processingData, std::string_view targetPrefix, std::string_view parentPrefix,
+                                const std::vector<Configuration *> &parentCfgs, PartialSet &summedUnweightedGR);
     // Test supplied PartialSets against each other
-    static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
+    static bool testReferencePartials(const std::vector<const AtomType *> &types, PartialSet &setA, PartialSet &setB,
+                                      double testThreshold);
     // Test calculated partial against supplied reference data
     static bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
                                      std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");
@@ -97,5 +106,5 @@ class GRModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext &moduleContext) override;
+    Module::ExecutionResult process(Dissolve &dissolve) override;
 };

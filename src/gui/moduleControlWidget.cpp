@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/moduleControlWidget.h"
 #include "base/lineParser.h"
@@ -7,8 +7,7 @@
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/producers.h"
 #include "gui/keywordWidgets/widget.h"
-#include "keywords/procedure.h"
-#include "module/context.h"
+#include "keywords/generator.h"
 #include "module/module.h"
 #include "modules/widget.h"
 #include "modules/widgetProducer.h"
@@ -59,21 +58,6 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         }
     }
 
-    // Treat any ProcedureKeywords as special cases
-    auto procedures = module_->keywords().allOfType<ProcedureKeyword>();
-    if (procedures.empty())
-        ui_.ProcedureWidgetButton->setVisible(false);
-    else
-    {
-        procedureWidget_ = new ProcedureWidget();
-        procedureWidget_->setUp(dissolveWindow, procedures.front()->data());
-        ui_.ModuleControlStack->addWidget(procedureWidget_);
-        controlStackMap_[ui_.ProcedureWidgetButton] = ui_.ModuleControlStack->count() - 1;
-
-        if (keywordWidgets_.empty())
-            ui_.ProcedureWidgetButton->setChecked(true);
-    }
-
     // Create any additional controls offered by the Module
     moduleWidget_ = ModuleWidgetProducer::create(module_, dissolve_);
     if (moduleWidget_ == nullptr)
@@ -88,7 +72,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         controlStackMap_[ui_.ModuleWidgetButton] = ui_.ModuleControlStack->count() - 1;
         moduleWidget_->updateControls(ModuleWidget::RecreateRenderablesFlag);
 
-        if (keywordWidgets_.empty() && !ui_.ProcedureWidgetButton->isVisible())
+        if (keywordWidgets_.empty())
             ui_.ModuleWidgetButton->setChecked(true);
     }
 
@@ -162,12 +146,6 @@ void ModuleControlWidget::on_ModuleWidgetButton_clicked(bool checked)
         switchControlStackPage(ui_.ModuleWidgetButton);
 }
 
-void ModuleControlWidget::on_ProcedureWidgetButton_clicked(bool checked)
-{
-    if (checked)
-        switchControlStackPage(ui_.ProcedureWidgetButton);
-}
-
 // Prepare widget for deletion
 void ModuleControlWidget::prepareForDeletion()
 {
@@ -204,11 +182,9 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
         keywordSignals -= KeywordBase::KeywordSignal::ClearModuleData;
     }
 
-    ModuleContext context(dissolve_.worldPool(), dissolve_);
-
     // Call the module's setUp() function if any other flags are still set
     if (keywordSignals.anySet())
-        module_->setUp(context, keywordSignals);
+        module_->setUp(dissolve_, keywordSignals);
 
     // Update the module widget
     if (moduleWidget_)

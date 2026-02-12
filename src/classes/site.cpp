@@ -1,22 +1,59 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/site.h"
-
 #include "base/messenger.h"
+#include "classes/box.h"
+#include "classes/molecule.h"
+#include "classes/speciesSite.h"
+#include "classes/speciesSiteInstance.h"
 #include <utility>
 
-/*
- * Site
- */
+Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
+           const Vector3 &origin)
+    : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin)
+{
+}
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-           Vec3<double> origin)
+           const Matrix3 &axes, const Vector3 &origin)
+    : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule)), origin_(origin), axes_(axes),
+      hasAxes_(true)
 {
-    parent_ = parent;
-    uniqueSiteIndex_ = uniqueSiteIndex;
-    molecule_ = std::move(molecule);
-    origin_ = origin;
+}
+
+Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
+           const SpeciesSiteInstance &instance, const Box *box)
+    : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule))
+{
+    origin_ = parent_->originMassWeighted() ? molecule_->centreOfMass(box, instance.originIndices())
+                                            : molecule_->centreOfGeometry(box, instance.originIndices());
+
+    if (parent_->hasAxes())
+    {
+        // Get vector from site origin to x-axis reference point and normalise it
+        auto x = box->minimumVector(origin_, molecule_->centreOfGeometry(box, instance.xAxisIndices()));
+        x.normalise();
+
+        axes_.setColumn(0, x);
+
+        // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
+        auto y = box->minimumVector(origin_, molecule_->centreOfGeometry(box, instance.yAxisIndices()));
+        y.orthogonalise(x);
+        y.normalise();
+
+        axes_.setColumn(1, y);
+
+        axes_.setColumn(2, x * y);
+
+        hasAxes_ = true;
+    }
+}
+
+// Return enum options for SiteAxis
+EnumOptions<Site::SiteAxis> Site::siteAxis()
+{
+    return EnumOptions<Site::SiteAxis>("SiteAxis", {{Site::XAxis, "X"}, {Site::YAxis, "Y"}, {Site::ZAxis, "Z"}});
 }
 
 // Return the parent
@@ -26,45 +63,13 @@ const SpeciesSite *Site::parent() const { return parent_; }
 std::optional<int> Site::uniqueSiteIndex() const { return uniqueSiteIndex_; }
 
 // Return site origin
-const Vec3<double> &Site::origin() const { return origin_; }
+const Vector3 &Site::origin() const { return origin_; }
 
 // Return Molecule to which site is related (if relevant)
 std::shared_ptr<const Molecule> Site::molecule() const { return molecule_; }
 
 // Return whether local axes are present
-bool Site::hasAxes() const { return false; }
+bool Site::hasAxes() const { return hasAxes_; }
 
 // Return local axes
-const Matrix3 &Site::axes() const
-{
-    static Matrix3 dummy;
-    Messenger::warn("Returning empty axes for this Site, since it doesn't have any.\n");
-    return dummy;
-}
-
-/*
- * Oriented Site
- */
-
-OrientedSite::OrientedSite(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex,
-                           std::shared_ptr<const Molecule> molecule, Vec3<double> origin, Vec3<double> xAxis,
-                           Vec3<double> yAxis, Vec3<double> zAxis)
-    : Site(parent, uniqueSiteIndex, std::move(molecule), origin)
-{
-    axes_.setColumn(0, xAxis);
-    axes_.setColumn(1, yAxis);
-    axes_.setColumn(2, zAxis);
-}
-
-// Return whether local axes are present
-bool OrientedSite::hasAxes() const { return true; }
-
-// Return enum options for SiteAxis
-EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
-{
-    return EnumOptions<OrientedSite::SiteAxis>(
-        "SiteAxis", {{OrientedSite::XAxis, "X"}, {OrientedSite::YAxis, "Y"}, {OrientedSite::ZAxis, "Z"}});
-}
-
-// Return local axes
-const Matrix3 &OrientedSite::axes() const { return axes_; }
+const Matrix3 &Site::axes() const { return axes_; }

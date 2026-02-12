@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
@@ -75,9 +75,9 @@ class Primitive
     // Define next vertex and normal
     GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, const GLfloat *rgba = nullptr);
     // Define next vertex and normal
-    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba = nullptr);
+    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vector3 &normal, const GLfloat *rgba = nullptr);
     // Define next vertex and normal
-    GLuint defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba = nullptr);
+    GLuint defineVertex(Vector3 &vertex, Vector3 &normal, const GLfloat *rgba = nullptr);
     // Define next index double
     void defineIndices(GLuint a, GLuint b);
     // Define next index triple
@@ -90,7 +90,7 @@ class Primitive
     // Draw line
     void line(double x1, double y1, double z1, double x2, double y2, double z2, const GLfloat *rgba = nullptr);
     // Draw line
-    void line(Vec3<double> v1, Vec3<double> v2, const GLfloat *rgba = nullptr);
+    void line(Vector3 v1, Vector3 v2, const GLfloat *rgba = nullptr);
     // Create vertices of sphere with specified radius and quality
     void sphere(double radius, int nstacks, int nslices);
     // Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified
