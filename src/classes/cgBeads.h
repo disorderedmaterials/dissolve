@@ -132,6 +132,9 @@ class CGBead
             }
         }
         innerSum *= c;
+        intraBeadSQ_.copyArrays(formFactor_);
+        intraBeadSQ_ *= formFactor_.values();
+        intraBeadSQ_ *= innerSum * (1.0 / av_noa_bead);
     };
 
     const AtomTypeMix &atomTypes() const
@@ -289,7 +292,7 @@ class CGBeadMap
         dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
                            [&](const int &i) { av_noa_bead_ += fractions[i] * beads_[i].nAtoms(); });
         dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
-                           [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_, true); });
+                           [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_, false); });
     }
 
     void deuterate(const double fraction)
