@@ -13,7 +13,7 @@ PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes, const
 {
     // Create PairPotential matrix
     nTypes_ = atomTypes.size();
-    potentialMatrix_.initialise(nTypes_, nTypes_);
+    potentialMatrix_.initialise(nTypes_, nTypes_, true);
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypes,
