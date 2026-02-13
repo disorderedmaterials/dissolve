@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors#pragma once 
 #pragma once 
@@ -171,20 +170,29 @@ class CGBead
         return scatteringLength_; 
     }
 
-    const double scatteringLength(const bool deuterated) const
-    {
+    const double nonExchangeScatteringLength() const
+    { 
+        const bool mix = (dFraction_ > 0.0 && dFraction_ < 1.0);
         double nb = 0.0;
-        for (const AtomTypeData &atm : atomTypes_)
+        if (mix)
         {
-            if (atm.atomType()->Z() == Elements::H)
+            for (const AtomTypeData& atm : atomTypes_)
             {
-                auto iso = deuterated ? Sears91::H_2 : Sears91::H_Natural;
-                nb += atm.population() * Sears91::boundCoherent(iso) * 0.1;
+                if (atm.atomType()->Z() == Elements::H)
+                {
+                    double nbi = dFraction_ * Sears91::boundCoherent(Sears91::H_2);
+                    nbi += (1.0 - dFraction_) * Sears91::boundCoherent(Sears91::H_Natural);
+                    nb += 0.1 * atm.population() * nbi;
+                }
+                else
+                {
+                    nb += atm.population() * atm.boundCoherent();
+                }
             }
-            else 
-            {
-                nb += atm.population() * atm.boundCoherent();
-            }
+        }
+        else
+        {
+            nb = scatteringLength();
         }
         return nb;
     }
@@ -218,9 +226,9 @@ class CGBeadMap
 
     ~CGBeadMap() = default;
 
-    void initialiseFromFile(const double isoFraction) 
+    void initialiseFromFile(const double isoFraction, const std::string &filename = "bead_definitions.txt") 
     {
-        std::ifstream file("bead_definitions.txt");
+        std::ifstream file(filename);
         if (!file.is_open())
         {
             throw std::runtime_error("Cannot open bead_definitions.txt");

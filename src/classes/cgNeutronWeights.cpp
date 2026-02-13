@@ -192,9 +192,7 @@ void CGNeutronWeights::calculateWeightingMatrices()
                                         else 
                                         {
 
-                                            bi = beadMap_[typeI].scatteringLength(
-                                                tope->atomTypeIsotope(localI.atomType()) != Sears91::naturalIsotope(localI.atomType()->Z())
-                                            );
+                                            bi = beadMap_[typeI].nonExchangeScatteringLength();
                                         }
                                         
                                         if (localJ.exchangeable()) 
@@ -203,9 +201,7 @@ void CGNeutronWeights::calculateWeightingMatrices()
                                         }
                                         else 
                                         {
-                                            bj = beadMap_[typeJ].scatteringLength(
-                                                tope->atomTypeIsotope(localJ.atomType()) != Sears91::naturalIsotope(localJ.atomType()->Z())
-                                            );
+                                            bj = beadMap_[typeJ].nonExchangeScatteringLength();
                                         }
 
                                         // Convert from fm to barns
