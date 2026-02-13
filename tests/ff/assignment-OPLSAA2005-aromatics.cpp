@@ -23,8 +23,7 @@ TEST(OPLSAA2005AromaticsAssignmentTest, Benzene)
     ASSERT_EQ(species.nTorsions(), 24);
     ASSERT_EQ(species.nImpropers(), 6);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "CA");
-    systemTest.checkSpeciesAtomType(&species, 1, "HA");
+    systemTest.checkSpeciesAtomType(&species, {{0, "CA"}, {1, "HA"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=3071.06 eq=1.08"});
     systemTest.checkSpeciesIntramolecular(&species, {0, 2}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
     systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=292.88 eq=120"});
@@ -49,24 +48,24 @@ TEST(OPLSAA2005AromaticsAssignmentTest, Naphthalene)
     ASSERT_EQ(species.nTorsions(), 44);
     ASSERT_EQ(species.nImpropers(), 10);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "CA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CA");
-    systemTest.checkSpeciesAtomType(&species, 2, "CNap");
-    systemTest.checkSpeciesAtomType(&species, 3, "CA");
-    systemTest.checkSpeciesAtomType(&species, 4, "CA");
-    systemTest.checkSpeciesAtomType(&species, 5, "CA");
-    systemTest.checkSpeciesAtomType(&species, 6, "CA");
-    systemTest.checkSpeciesAtomType(&species, 7, "CNap");
-    systemTest.checkSpeciesAtomType(&species, 8, "CA");
-    systemTest.checkSpeciesAtomType(&species, 9, "CA");
-    systemTest.checkSpeciesAtomType(&species, 10, "HA");
-    systemTest.checkSpeciesAtomType(&species, 11, "HA");
-    systemTest.checkSpeciesAtomType(&species, 12, "HA");
-    systemTest.checkSpeciesAtomType(&species, 13, "HA");
-    systemTest.checkSpeciesAtomType(&species, 14, "HA");
-    systemTest.checkSpeciesAtomType(&species, 15, "HA");
-    systemTest.checkSpeciesAtomType(&species, 16, "HA");
-    systemTest.checkSpeciesAtomType(&species, 17, "HA");
+    systemTest.checkSpeciesAtomType(&species, {{0, "CA"},
+                                               {1, "CA"},
+                                               {2, "CNap"},
+                                               {3, "CA"},
+                                               {4, "CA"},
+                                               {5, "CA"},
+                                               {6, "CA"},
+                                               {7, "CNap"},
+                                               {8, "CA"},
+                                               {9, "CA"},
+                                               {10, "HA"},
+                                               {11, "HA"},
+                                               {12, "HA"},
+                                               {13, "HA"},
+                                               {14, "HA"},
+                                               {15, "HA"},
+                                               {16, "HA"},
+                                               {17, "HA"}});
     systemTest.checkSpeciesIntramolecular(&species, {2, 7}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
     systemTest.checkSpeciesIntramolecular(&species, {1, 2, 7}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
     systemTest.checkSpeciesIntramolecular(&species, {1, 2, 3}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});

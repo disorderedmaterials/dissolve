@@ -23,32 +23,11 @@ TEST(PCL2019CationsAssignmentTest, benzc1im)
     ASSERT_EQ(species.nTorsions(), 62);
     ASSERT_EQ(species.nImpropers(), 11);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1T");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "H1");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "CAT");
-    systemTest.checkSpeciesAtomType(&species, 16, "CAO");
-    systemTest.checkSpeciesAtomType(&species, 17, "CAM");
-    systemTest.checkSpeciesAtomType(&species, 18, "CAP");
-    systemTest.checkSpeciesAtomType(&species, 19, "CAM");
-    systemTest.checkSpeciesAtomType(&species, 20, "CAO");
-    systemTest.checkSpeciesAtomType(&species, 21, "HAT");
-    systemTest.checkSpeciesAtomType(&species, 22, "HAT");
-    systemTest.checkSpeciesAtomType(&species, 23, "HAT");
-    systemTest.checkSpeciesAtomType(&species, 24, "HAT");
-    systemTest.checkSpeciesAtomType(&species, 25, "HAT");
+    systemTest.checkSpeciesAtomType(&species,
+                                    {{0, "NA"},   {1, "CR"},   {2, "NA"},   {3, "CW"},   {4, "CW"},   {5, "C1"},   {6, "HCR"},
+                                     {7, "C1T"},  {8, "HCW"},  {9, "HCW"},  {10, "H1"},  {11, "H1"},  {12, "H1"},  {13, "H1"},
+                                     {14, "H1"},  {15, "CAT"}, {16, "CAO"}, {17, "CAM"}, {18, "CAP"}, {19, "CAM"}, {20, "CAO"},
+                                     {21, "HAT"}, {22, "HAT"}, {23, "HAT"}, {24, "HAT"}, {25, "HAT"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -67,55 +46,13 @@ TEST(PCL2019CationsAssignmentTest, c12c1im)
     ASSERT_EQ(species.nTorsions(), 131);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "CS");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "CS");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "CS");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "CS");
-    systemTest.checkSpeciesAtomType(&species, 26, "HC");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "CS");
-    systemTest.checkSpeciesAtomType(&species, 29, "HC");
-    systemTest.checkSpeciesAtomType(&species, 30, "HC");
-    systemTest.checkSpeciesAtomType(&species, 31, "CS");
-    systemTest.checkSpeciesAtomType(&species, 32, "HC");
-    systemTest.checkSpeciesAtomType(&species, 33, "HC");
-    systemTest.checkSpeciesAtomType(&species, 34, "CS");
-    systemTest.checkSpeciesAtomType(&species, 35, "HC");
-    systemTest.checkSpeciesAtomType(&species, 36, "HC");
-    systemTest.checkSpeciesAtomType(&species, 37, "CS");
-    systemTest.checkSpeciesAtomType(&species, 38, "HC");
-    systemTest.checkSpeciesAtomType(&species, 39, "HC");
-    systemTest.checkSpeciesAtomType(&species, 40, "CS");
-    systemTest.checkSpeciesAtomType(&species, 41, "HC");
-    systemTest.checkSpeciesAtomType(&species, 42, "HC");
-    systemTest.checkSpeciesAtomType(&species, 43, "CT");
-    systemTest.checkSpeciesAtomType(&species, 44, "HC");
-    systemTest.checkSpeciesAtomType(&species, 45, "HC");
-    systemTest.checkSpeciesAtomType(&species, 46, "HC");
-    systemTest.checkSpeciesAtomType(&species, 47, "HC");
-    systemTest.checkSpeciesAtomType(&species, 48, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species,
+        {{0, "NA"},  {1, "CR"},  {2, "NA"},  {3, "CW"},  {4, "CW"},  {5, "C1"},  {6, "HCR"}, {7, "C1"},  {8, "HCW"}, {9, "HCW"},
+         {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C2"}, {14, "H1"}, {15, "H1"}, {16, "CS"}, {17, "HC"}, {18, "HC"}, {19, "CS"},
+         {20, "HC"}, {21, "HC"}, {22, "CS"}, {23, "HC"}, {24, "HC"}, {25, "CS"}, {26, "HC"}, {27, "HC"}, {28, "CS"}, {29, "HC"},
+         {30, "HC"}, {31, "CS"}, {32, "HC"}, {33, "HC"}, {34, "CS"}, {35, "HC"}, {36, "HC"}, {37, "CS"}, {38, "HC"}, {39, "HC"},
+         {40, "CS"}, {41, "HC"}, {42, "HC"}, {43, "CT"}, {44, "HC"}, {45, "HC"}, {46, "HC"}, {47, "HC"}, {48, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -134,22 +71,22 @@ TEST(PCL2019CationsAssignmentTest, c1c1im)
     ASSERT_EQ(species.nTorsions(), 32);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "H1");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
+    systemTest.checkSpeciesAtomType(&species, {{0, "NA"},
+                                               {1, "CR"},
+                                               {2, "NA"},
+                                               {3, "CW"},
+                                               {4, "CW"},
+                                               {5, "C1"},
+                                               {6, "HCR"},
+                                               {7, "C1"},
+                                               {8, "HCW"},
+                                               {9, "HCW"},
+                                               {10, "H1"},
+                                               {11, "H1"},
+                                               {12, "H1"},
+                                               {13, "H1"},
+                                               {14, "H1"},
+                                               {15, "H1"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -168,27 +105,10 @@ TEST(PCL2019CationsAssignmentTest, c1c1pyrr)
     ASSERT_EQ(species.nTorsions(), 63);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C2");
-    systemTest.checkSpeciesAtomType(&species, 4, "C2");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "C1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "HC");
-    systemTest.checkSpeciesAtomType(&species, 12, "HC");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "H1");
-    systemTest.checkSpeciesAtomType(&species, 17, "H1");
-    systemTest.checkSpeciesAtomType(&species, 18, "H1");
-    systemTest.checkSpeciesAtomType(&species, 19, "H1");
-    systemTest.checkSpeciesAtomType(&species, 20, "H1");
+    systemTest.checkSpeciesAtomType(&species,
+                                    {{0, "N4"},  {1, "C1"},  {2, "C1"},  {3, "C2"},  {4, "C2"},  {5, "C1"},  {6, "C1"},
+                                     {7, "H1"},  {8, "H1"},  {9, "H1"},  {10, "H1"}, {11, "HC"}, {12, "HC"}, {13, "HC"},
+                                     {14, "HC"}, {15, "H1"}, {16, "H1"}, {17, "H1"}, {18, "H1"}, {19, "H1"}, {20, "H1"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -207,28 +127,10 @@ TEST(PCL2019CationsAssignmentTest, c2c1c1im)
     ASSERT_EQ(species.nTorsions(), 47);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NAM");
-    systemTest.checkSpeciesAtomType(&species, 1, "CRM");
-    systemTest.checkSpeciesAtomType(&species, 2, "NAM");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "CCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "CE");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "HC");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "H1");
-    systemTest.checkSpeciesAtomType(&species, 20, "H1");
-    systemTest.checkSpeciesAtomType(&species, 21, "H1");
+    systemTest.checkSpeciesAtomType(&species, {{0, "NAM"}, {1, "CRM"}, {2, "NAM"}, {3, "CW"},  {4, "CW"},  {5, "C1"},
+                                               {6, "CCR"}, {7, "C1"},  {8, "HCW"}, {9, "HCW"}, {10, "H1"}, {11, "H1"},
+                                               {12, "H1"}, {13, "CE"}, {14, "H1"}, {15, "H1"}, {16, "HC"}, {17, "HC"},
+                                               {18, "HC"}, {19, "H1"}, {20, "H1"}, {21, "H1"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -247,25 +149,25 @@ TEST(PCL2019CationsAssignmentTest, c2c1im)
     ASSERT_EQ(species.nTorsions(), 41);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "CE");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "HC");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
+    systemTest.checkSpeciesAtomType(&species, {{0, "NA"},
+                                               {1, "CR"},
+                                               {2, "NA"},
+                                               {3, "CW"},
+                                               {4, "CW"},
+                                               {5, "C1"},
+                                               {6, "HCR"},
+                                               {7, "C1"},
+                                               {8, "HCW"},
+                                               {9, "HCW"},
+                                               {10, "H1"},
+                                               {11, "H1"},
+                                               {12, "H1"},
+                                               {13, "CE"},
+                                               {14, "H1"},
+                                               {15, "H1"},
+                                               {16, "HC"},
+                                               {17, "HC"},
+                                               {18, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -284,22 +186,22 @@ TEST(PCL2019CationsAssignmentTest, c2im)
     ASSERT_EQ(species.nTorsions(), 35);
     ASSERT_EQ(species.nImpropers(), 4);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NAH");
-    systemTest.checkSpeciesAtomType(&species, 1, "CRH");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CWH");
-    systemTest.checkSpeciesAtomType(&species, 5, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 6, "C1");
-    systemTest.checkSpeciesAtomType(&species, 7, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "CE");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "HC");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "HNA");
+    systemTest.checkSpeciesAtomType(&species, {{0, "NAH"},
+                                               {1, "CRH"},
+                                               {2, "NA"},
+                                               {3, "CW"},
+                                               {4, "CWH"},
+                                               {5, "HCR"},
+                                               {6, "C1"},
+                                               {7, "HCW"},
+                                               {8, "HCW"},
+                                               {9, "CE"},
+                                               {10, "H1"},
+                                               {11, "H1"},
+                                               {12, "HC"},
+                                               {13, "HC"},
+                                               {14, "HC"},
+                                               {15, "HNA"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -318,26 +220,10 @@ TEST(PCL2019CationsAssignmentTest, c2OHc1im)
     ASSERT_EQ(species.nTorsions(), 44);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2O");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "OH");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "HO");
+    systemTest.checkSpeciesAtomType(&species,
+                                    {{0, "NA"},  {1, "CR"},  {2, "NA"},  {3, "CW"},  {4, "CW"},  {5, "C1"},  {6, "HCR"},
+                                     {7, "C1"},  {8, "HCW"}, {9, "HCW"}, {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C2O"},
+                                     {14, "H1"}, {15, "H1"}, {16, "OH"}, {17, "HC"}, {18, "HC"}, {19, "HO"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -356,24 +242,24 @@ TEST(PCL2019CationsAssignmentTest, c2py)
     ASSERT_EQ(species.nTorsions(), 39);
     ASSERT_EQ(species.nImpropers(), 6);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NAP");
-    systemTest.checkSpeciesAtomType(&species, 1, "CAPO");
-    systemTest.checkSpeciesAtomType(&species, 2, "CAPO");
-    systemTest.checkSpeciesAtomType(&species, 3, "CAPM");
-    systemTest.checkSpeciesAtomType(&species, 4, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 5, "CAPP");
-    systemTest.checkSpeciesAtomType(&species, 6, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 7, "CAPM");
-    systemTest.checkSpeciesAtomType(&species, 8, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 9, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 10, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 11, "C1");
-    systemTest.checkSpeciesAtomType(&species, 12, "CE");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "HC");
-    systemTest.checkSpeciesAtomType(&species, 16, "H1");
-    systemTest.checkSpeciesAtomType(&species, 17, "H1");
+    systemTest.checkSpeciesAtomType(&species, {{0, "NAP"},
+                                               {1, "CAPO"},
+                                               {2, "CAPO"},
+                                               {3, "CAPM"},
+                                               {4, "HAP"},
+                                               {5, "CAPP"},
+                                               {6, "HAP"},
+                                               {7, "CAPM"},
+                                               {8, "HAP"},
+                                               {9, "HAP"},
+                                               {10, "HAP"},
+                                               {11, "C1"},
+                                               {12, "CE"},
+                                               {13, "HC"},
+                                               {14, "HC"},
+                                               {15, "HC"},
+                                               {16, "H1"},
+                                               {17, "H1"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -392,28 +278,10 @@ TEST(PCL2019CationsAssignmentTest, c3c1im)
     ASSERT_EQ(species.nTorsions(), 50);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "CT");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
+    systemTest.checkSpeciesAtomType(&species, {{0, "NA"},  {1, "CR"},  {2, "NA"},  {3, "CW"},  {4, "CW"},  {5, "C1"},
+                                               {6, "HCR"}, {7, "C1"},  {8, "HCW"}, {9, "HCW"}, {10, "H1"}, {11, "H1"},
+                                               {12, "H1"}, {13, "C2"}, {14, "H1"}, {15, "H1"}, {16, "CT"}, {17, "HC"},
+                                               {18, "HC"}, {19, "HC"}, {20, "HC"}, {21, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -432,33 +300,10 @@ TEST(PCL2019CationsAssignmentTest, c3c1pyrr)
     ASSERT_EQ(species.nTorsions(), 81);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C2");
-    systemTest.checkSpeciesAtomType(&species, 4, "C2");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "C1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "HC");
-    systemTest.checkSpeciesAtomType(&species, 12, "HC");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "H1");
-    systemTest.checkSpeciesAtomType(&species, 17, "H1");
-    systemTest.checkSpeciesAtomType(&species, 18, "H1");
-    systemTest.checkSpeciesAtomType(&species, 19, "H1");
-    systemTest.checkSpeciesAtomType(&species, 20, "C2");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "CT");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "HC");
-    systemTest.checkSpeciesAtomType(&species, 26, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species, {{0, "N4"},  {1, "C1"},  {2, "C1"},  {3, "C2"},  {4, "C2"},  {5, "C1"},  {6, "C1"},  {7, "H1"},  {8, "H1"},
+                   {9, "H1"},  {10, "H1"}, {11, "HC"}, {12, "HC"}, {13, "HC"}, {14, "HC"}, {15, "H1"}, {16, "H1"}, {17, "H1"},
+                   {18, "H1"}, {19, "H1"}, {20, "C2"}, {21, "HC"}, {22, "HC"}, {23, "CT"}, {24, "HC"}, {25, "HC"}, {26, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -477,34 +322,11 @@ TEST(PCL2019CationsAssignmentTest, c4c1c1im)
     ASSERT_EQ(species.nTorsions(), 65);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NAM");
-    systemTest.checkSpeciesAtomType(&species, 1, "CRM");
-    systemTest.checkSpeciesAtomType(&species, 2, "NAM");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "CCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "CS");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "CT");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "H1");
-    systemTest.checkSpeciesAtomType(&species, 26, "H1");
-    systemTest.checkSpeciesAtomType(&species, 27, "H1");
+    systemTest.checkSpeciesAtomType(&species,
+                                    {{0, "NAM"}, {1, "CRM"}, {2, "NAM"}, {3, "CW"},  {4, "CW"},  {5, "C1"},  {6, "CCR"},
+                                     {7, "C1"},  {8, "HCW"}, {9, "HCW"}, {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C2"},
+                                     {14, "H1"}, {15, "H1"}, {16, "CS"}, {17, "HC"}, {18, "HC"}, {19, "CT"}, {20, "HC"},
+                                     {21, "HC"}, {22, "HC"}, {23, "HC"}, {24, "HC"}, {25, "H1"}, {26, "H1"}, {27, "H1"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -523,31 +345,10 @@ TEST(PCL2019CationsAssignmentTest, c4c1im)
     ASSERT_EQ(species.nTorsions(), 59);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "CS");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "CT");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species, {{0, "NA"},  {1, "CR"},  {2, "NA"},  {3, "CW"},  {4, "CW"},  {5, "C1"},  {6, "HCR"}, {7, "C1"},  {8, "HCW"},
+                   {9, "HCW"}, {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C2"}, {14, "H1"}, {15, "H1"}, {16, "CS"}, {17, "HC"},
+                   {18, "HC"}, {19, "CT"}, {20, "HC"}, {21, "HC"}, {22, "HC"}, {23, "HC"}, {24, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -566,36 +367,11 @@ TEST(PCL2019CationsAssignmentTest, c4c1pyrr)
     ASSERT_EQ(species.nTorsions(), 90);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C2");
-    systemTest.checkSpeciesAtomType(&species, 4, "C2");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "C1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "HC");
-    systemTest.checkSpeciesAtomType(&species, 12, "HC");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "H1");
-    systemTest.checkSpeciesAtomType(&species, 17, "H1");
-    systemTest.checkSpeciesAtomType(&species, 18, "H1");
-    systemTest.checkSpeciesAtomType(&species, 19, "H1");
-    systemTest.checkSpeciesAtomType(&species, 20, "C2");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "CS");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "HC");
-    systemTest.checkSpeciesAtomType(&species, 26, "CT");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "HC");
-    systemTest.checkSpeciesAtomType(&species, 29, "HC");
+    systemTest.checkSpeciesAtomType(&species, {{0, "N4"},  {1, "C1"},  {2, "C1"},  {3, "C2"},  {4, "C2"},  {5, "C1"},
+                                               {6, "C1"},  {7, "H1"},  {8, "H1"},  {9, "H1"},  {10, "H1"}, {11, "HC"},
+                                               {12, "HC"}, {13, "HC"}, {14, "HC"}, {15, "H1"}, {16, "H1"}, {17, "H1"},
+                                               {18, "H1"}, {19, "H1"}, {20, "C2"}, {21, "HC"}, {22, "HC"}, {23, "CS"},
+                                               {24, "HC"}, {25, "HC"}, {26, "CT"}, {27, "HC"}, {28, "HC"}, {29, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -614,40 +390,11 @@ TEST(PCL2019CationsAssignmentTest, c4c4im)
     ASSERT_EQ(species.nTorsions(), 86);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "C2");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "CS");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "HC");
-    systemTest.checkSpeciesAtomType(&species, 16, "CT");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "C2");
-    systemTest.checkSpeciesAtomType(&species, 23, "H1");
-    systemTest.checkSpeciesAtomType(&species, 24, "H1");
-    systemTest.checkSpeciesAtomType(&species, 25, "CS");
-    systemTest.checkSpeciesAtomType(&species, 26, "HC");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "CT");
-    systemTest.checkSpeciesAtomType(&species, 29, "HC");
-    systemTest.checkSpeciesAtomType(&species, 30, "HC");
-    systemTest.checkSpeciesAtomType(&species, 31, "HC");
-    systemTest.checkSpeciesAtomType(&species, 32, "HC");
-    systemTest.checkSpeciesAtomType(&species, 33, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species, {{0, "NA"},  {1, "CR"},  {2, "NA"},  {3, "CW"},  {4, "CW"},  {5, "C1"},  {6, "HCR"}, {7, "C1"},  {8, "HCW"},
+                   {9, "HCW"}, {10, "C2"}, {11, "H1"}, {12, "H1"}, {13, "CS"}, {14, "HC"}, {15, "HC"}, {16, "CT"}, {17, "HC"},
+                   {18, "HC"}, {19, "HC"}, {20, "HC"}, {21, "HC"}, {22, "C2"}, {23, "H1"}, {24, "H1"}, {25, "CS"}, {26, "HC"},
+                   {27, "HC"}, {28, "CT"}, {29, "HC"}, {30, "HC"}, {31, "HC"}, {32, "HC"}, {33, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -666,30 +413,10 @@ TEST(PCL2019CationsAssignmentTest, c4pyri)
     ASSERT_EQ(species.nTorsions(), 57);
     ASSERT_EQ(species.nImpropers(), 6);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NAP");
-    systemTest.checkSpeciesAtomType(&species, 1, "CAPO");
-    systemTest.checkSpeciesAtomType(&species, 2, "CAPM");
-    systemTest.checkSpeciesAtomType(&species, 3, "CAPP");
-    systemTest.checkSpeciesAtomType(&species, 4, "CAPM");
-    systemTest.checkSpeciesAtomType(&species, 5, "CAPO");
-    systemTest.checkSpeciesAtomType(&species, 6, "C1");
-    systemTest.checkSpeciesAtomType(&species, 7, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 8, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 9, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 10, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 11, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 12, "C2");
-    systemTest.checkSpeciesAtomType(&species, 13, "H1");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "CS");
-    systemTest.checkSpeciesAtomType(&species, 16, "HC");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "CT");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
+    systemTest.checkSpeciesAtomType(&species, {{0, "NAP"}, {1, "CAPO"}, {2, "CAPM"}, {3, "CAPP"}, {4, "CAPM"}, {5, "CAPO"},
+                                               {6, "C1"},  {7, "HAP"},  {8, "HAP"},  {9, "HAP"},  {10, "HAP"}, {11, "HAP"},
+                                               {12, "C2"}, {13, "H1"},  {14, "H1"},  {15, "CS"},  {16, "HC"},  {17, "HC"},
+                                               {18, "CT"}, {19, "HC"},  {20, "HC"},  {21, "HC"},  {22, "HC"},  {23, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -708,37 +435,11 @@ TEST(PCL2019CationsAssignmentTest, c6c1im)
     ASSERT_EQ(species.nTorsions(), 77);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "CS");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "CS");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "CS");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "CT");
-    systemTest.checkSpeciesAtomType(&species, 26, "HC");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "HC");
-    systemTest.checkSpeciesAtomType(&species, 29, "HC");
-    systemTest.checkSpeciesAtomType(&species, 30, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species, {{0, "NA"},  {1, "CR"},  {2, "NA"},  {3, "CW"},  {4, "CW"},  {5, "C1"},  {6, "HCR"}, {7, "C1"},
+                   {8, "HCW"}, {9, "HCW"}, {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C2"}, {14, "H1"}, {15, "H1"},
+                   {16, "CS"}, {17, "HC"}, {18, "HC"}, {19, "CS"}, {20, "HC"}, {21, "HC"}, {22, "CS"}, {23, "HC"},
+                   {24, "HC"}, {25, "CT"}, {26, "HC"}, {27, "HC"}, {28, "HC"}, {29, "HC"}, {30, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -757,43 +458,12 @@ TEST(PCL2019CationsAssignmentTest, c8c1im)
     ASSERT_EQ(species.nTorsions(), 95);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "CS");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "CS");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "CS");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "CS");
-    systemTest.checkSpeciesAtomType(&species, 26, "HC");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "CS");
-    systemTest.checkSpeciesAtomType(&species, 29, "HC");
-    systemTest.checkSpeciesAtomType(&species, 30, "HC");
-    systemTest.checkSpeciesAtomType(&species, 31, "CT");
-    systemTest.checkSpeciesAtomType(&species, 32, "HC");
-    systemTest.checkSpeciesAtomType(&species, 33, "HC");
-    systemTest.checkSpeciesAtomType(&species, 34, "HC");
-    systemTest.checkSpeciesAtomType(&species, 35, "HC");
-    systemTest.checkSpeciesAtomType(&species, 36, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species,
+        {{0, "NA"},  {1, "CR"},  {2, "NA"},  {3, "CW"},  {4, "CW"},  {5, "C1"},  {6, "HCR"}, {7, "C1"},  {8, "HCW"}, {9, "HCW"},
+         {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C2"}, {14, "H1"}, {15, "H1"}, {16, "CS"}, {17, "HC"}, {18, "HC"}, {19, "CS"},
+         {20, "HC"}, {21, "HC"}, {22, "CS"}, {23, "HC"}, {24, "HC"}, {25, "CS"}, {26, "HC"}, {27, "HC"}, {28, "CS"}, {29, "HC"},
+         {30, "HC"}, {31, "CT"}, {32, "HC"}, {33, "HC"}, {34, "HC"}, {35, "HC"}, {36, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -812,43 +482,12 @@ TEST(PCL2019CationsAssignmentTest, c8fc1im)
     ASSERT_EQ(species.nTorsions(), 95);
     ASSERT_EQ(species.nImpropers(), 5);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NA");
-    systemTest.checkSpeciesAtomType(&species, 1, "CR");
-    systemTest.checkSpeciesAtomType(&species, 2, "NA");
-    systemTest.checkSpeciesAtomType(&species, 3, "CW");
-    systemTest.checkSpeciesAtomType(&species, 4, "CW");
-    systemTest.checkSpeciesAtomType(&species, 5, "C1");
-    systemTest.checkSpeciesAtomType(&species, 6, "HCR");
-    systemTest.checkSpeciesAtomType(&species, 7, "C1H");
-    systemTest.checkSpeciesAtomType(&species, 8, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 9, "HCW");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "CFH");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "CSF");
-    systemTest.checkSpeciesAtomType(&species, 20, "F");
-    systemTest.checkSpeciesAtomType(&species, 21, "F");
-    systemTest.checkSpeciesAtomType(&species, 22, "CSF");
-    systemTest.checkSpeciesAtomType(&species, 23, "F");
-    systemTest.checkSpeciesAtomType(&species, 24, "F");
-    systemTest.checkSpeciesAtomType(&species, 25, "CSF");
-    systemTest.checkSpeciesAtomType(&species, 26, "F");
-    systemTest.checkSpeciesAtomType(&species, 27, "F");
-    systemTest.checkSpeciesAtomType(&species, 28, "CSF");
-    systemTest.checkSpeciesAtomType(&species, 29, "F");
-    systemTest.checkSpeciesAtomType(&species, 30, "F");
-    systemTest.checkSpeciesAtomType(&species, 31, "CTF");
-    systemTest.checkSpeciesAtomType(&species, 32, "F");
-    systemTest.checkSpeciesAtomType(&species, 33, "F");
-    systemTest.checkSpeciesAtomType(&species, 34, "F");
-    systemTest.checkSpeciesAtomType(&species, 35, "F");
-    systemTest.checkSpeciesAtomType(&species, 36, "F");
+    systemTest.checkSpeciesAtomType(
+        &species, {{0, "NA"},   {1, "CR"},   {2, "NA"},  {3, "CW"},   {4, "CW"},   {5, "C1"},  {6, "HCR"},  {7, "C1H"},
+                   {8, "HCW"},  {9, "HCW"},  {10, "H1"}, {11, "H1"},  {12, "H1"},  {13, "C2"}, {14, "H1"},  {15, "H1"},
+                   {16, "CFH"}, {17, "HC"},  {18, "HC"}, {19, "CSF"}, {20, "F"},   {21, "F"},  {22, "CSF"}, {23, "F"},
+                   {24, "F"},   {25, "CSF"}, {26, "F"},  {27, "F"},   {28, "CSF"}, {29, "F"},  {30, "F"},   {31, "CTF"},
+                   {32, "F"},   {33, "F"},   {34, "F"},  {35, "F"},   {36, "F"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -867,48 +506,13 @@ TEST(PCL2019CationsAssignmentTest, c8isoqui)
     ASSERT_EQ(species.nTorsions(), 113);
     ASSERT_EQ(species.nImpropers(), 10);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "NAQ");
-    systemTest.checkSpeciesAtomType(&species, 1, "CA");
-    systemTest.checkSpeciesAtomType(&species, 2, "CAQ");
-    systemTest.checkSpeciesAtomType(&species, 3, "CA");
-    systemTest.checkSpeciesAtomType(&species, 4, "CA");
-    systemTest.checkSpeciesAtomType(&species, 5, "CA");
-    systemTest.checkSpeciesAtomType(&species, 6, "CA");
-    systemTest.checkSpeciesAtomType(&species, 7, "CAQ");
-    systemTest.checkSpeciesAtomType(&species, 8, "CA");
-    systemTest.checkSpeciesAtomType(&species, 9, "CA");
-    systemTest.checkSpeciesAtomType(&species, 10, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 11, "HA");
-    systemTest.checkSpeciesAtomType(&species, 12, "HA");
-    systemTest.checkSpeciesAtomType(&species, 13, "HA");
-    systemTest.checkSpeciesAtomType(&species, 14, "HA");
-    systemTest.checkSpeciesAtomType(&species, 15, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 16, "HAP");
-    systemTest.checkSpeciesAtomType(&species, 17, "C1");
-    systemTest.checkSpeciesAtomType(&species, 18, "H1");
-    systemTest.checkSpeciesAtomType(&species, 19, "H1");
-    systemTest.checkSpeciesAtomType(&species, 20, "C2");
-    systemTest.checkSpeciesAtomType(&species, 21, "CS");
-    systemTest.checkSpeciesAtomType(&species, 22, "CS");
-    systemTest.checkSpeciesAtomType(&species, 23, "CS");
-    systemTest.checkSpeciesAtomType(&species, 24, "CS");
-    systemTest.checkSpeciesAtomType(&species, 25, "CS");
-    systemTest.checkSpeciesAtomType(&species, 26, "CT");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "HC");
-    systemTest.checkSpeciesAtomType(&species, 29, "HC");
-    systemTest.checkSpeciesAtomType(&species, 30, "HC");
-    systemTest.checkSpeciesAtomType(&species, 31, "HC");
-    systemTest.checkSpeciesAtomType(&species, 32, "HC");
-    systemTest.checkSpeciesAtomType(&species, 33, "HC");
-    systemTest.checkSpeciesAtomType(&species, 34, "HC");
-    systemTest.checkSpeciesAtomType(&species, 35, "HC");
-    systemTest.checkSpeciesAtomType(&species, 36, "HC");
-    systemTest.checkSpeciesAtomType(&species, 37, "HC");
-    systemTest.checkSpeciesAtomType(&species, 38, "HC");
-    systemTest.checkSpeciesAtomType(&species, 39, "HC");
-    systemTest.checkSpeciesAtomType(&species, 40, "HC");
-    systemTest.checkSpeciesAtomType(&species, 41, "HC");
+    systemTest.checkSpeciesAtomType(&species,
+                                    {{0, "NAQ"}, {1, "CA"},   {2, "CAQ"},  {3, "CA"},   {4, "CA"},  {5, "CA"},  {6, "CA"},
+                                     {7, "CAQ"}, {8, "CA"},   {9, "CA"},   {10, "HAP"}, {11, "HA"}, {12, "HA"}, {13, "HA"},
+                                     {14, "HA"}, {15, "HAP"}, {16, "HAP"}, {17, "C1"},  {18, "H1"}, {19, "H1"}, {20, "C2"},
+                                     {21, "CS"}, {22, "CS"},  {23, "CS"},  {24, "CS"},  {25, "CS"}, {26, "CT"}, {27, "HC"},
+                                     {28, "HC"}, {29, "HC"},  {30, "HC"},  {31, "HC"},  {32, "HC"}, {33, "HC"}, {34, "HC"},
+                                     {35, "HC"}, {36, "HC"},  {37, "HC"},  {38, "HC"},  {39, "HC"}, {40, "HC"}, {41, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -927,27 +531,10 @@ TEST(PCL2019CationsAssignmentTest, cholinium)
     ASSERT_EQ(species.nTorsions(), 48);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C1");
-    systemTest.checkSpeciesAtomType(&species, 4, "H1");
-    systemTest.checkSpeciesAtomType(&species, 5, "H1");
-    systemTest.checkSpeciesAtomType(&species, 6, "H1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C1");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "COL");
-    systemTest.checkSpeciesAtomType(&species, 16, "H1");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "OH");
-    systemTest.checkSpeciesAtomType(&species, 20, "HO");
+    systemTest.checkSpeciesAtomType(&species,
+                                    {{0, "N4"},  {1, "C1"},   {2, "C1"},  {3, "C1"},  {4, "H1"},  {5, "H1"},  {6, "H1"},
+                                     {7, "H1"},  {8, "H1"},   {9, "H1"},  {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C1"},
+                                     {14, "H1"}, {15, "COL"}, {16, "H1"}, {17, "HC"}, {18, "HC"}, {19, "OH"}, {20, "HO"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -966,16 +553,9 @@ TEST(PCL2019CationsAssignmentTest, gua)
     ASSERT_EQ(species.nTorsions(), 12);
     ASSERT_EQ(species.nImpropers(), 4);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "CG");
-    systemTest.checkSpeciesAtomType(&species, 1, "NG");
-    systemTest.checkSpeciesAtomType(&species, 2, "NG");
-    systemTest.checkSpeciesAtomType(&species, 3, "NG");
-    systemTest.checkSpeciesAtomType(&species, 4, "HG");
-    systemTest.checkSpeciesAtomType(&species, 5, "HG");
-    systemTest.checkSpeciesAtomType(&species, 6, "HG");
-    systemTest.checkSpeciesAtomType(&species, 7, "HG");
-    systemTest.checkSpeciesAtomType(&species, 8, "HG");
-    systemTest.checkSpeciesAtomType(&species, 9, "HG");
+    systemTest.checkSpeciesAtomType(
+        &species,
+        {{0, "CG"}, {1, "NG"}, {2, "NG"}, {3, "NG"}, {4, "HG"}, {5, "HG"}, {6, "HG"}, {7, "HG"}, {8, "HG"}, {9, "HG"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -994,20 +574,20 @@ TEST(PCL2019CationsAssignmentTest, N1110)
     ASSERT_EQ(species.nTorsions(), 27);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N3");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C1");
-    systemTest.checkSpeciesAtomType(&species, 4, "H3");
-    systemTest.checkSpeciesAtomType(&species, 5, "H1");
-    systemTest.checkSpeciesAtomType(&species, 6, "H1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "H1");
+    systemTest.checkSpeciesAtomType(&species, {{0, "N3"},
+                                               {1, "C1"},
+                                               {2, "C1"},
+                                               {3, "C1"},
+                                               {4, "H3"},
+                                               {5, "H1"},
+                                               {6, "H1"},
+                                               {7, "H1"},
+                                               {8, "H1"},
+                                               {9, "H1"},
+                                               {10, "H1"},
+                                               {11, "H1"},
+                                               {12, "H1"},
+                                               {13, "H1"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -1026,23 +606,23 @@ TEST(PCL2019CationsAssignmentTest, N1111)
     ASSERT_EQ(species.nTorsions(), 36);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C1");
-    systemTest.checkSpeciesAtomType(&species, 4, "C1");
-    systemTest.checkSpeciesAtomType(&species, 5, "H1");
-    systemTest.checkSpeciesAtomType(&species, 6, "H1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "H1");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "H1");
+    systemTest.checkSpeciesAtomType(&species, {{0, "N4"},
+                                               {1, "C1"},
+                                               {2, "C1"},
+                                               {3, "C1"},
+                                               {4, "C1"},
+                                               {5, "H1"},
+                                               {6, "H1"},
+                                               {7, "H1"},
+                                               {8, "H1"},
+                                               {9, "H1"},
+                                               {10, "H1"},
+                                               {11, "H1"},
+                                               {12, "H1"},
+                                               {13, "H1"},
+                                               {14, "H1"},
+                                               {15, "H1"},
+                                               {16, "H1"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -1061,29 +641,10 @@ TEST(PCL2019CationsAssignmentTest, N2220)
     ASSERT_EQ(species.nTorsions(), 54);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N3");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C1");
-    systemTest.checkSpeciesAtomType(&species, 4, "CE");
-    systemTest.checkSpeciesAtomType(&species, 5, "H1");
-    systemTest.checkSpeciesAtomType(&species, 6, "H1");
-    systemTest.checkSpeciesAtomType(&species, 7, "HC");
-    systemTest.checkSpeciesAtomType(&species, 8, "HC");
-    systemTest.checkSpeciesAtomType(&species, 9, "HC");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "CE");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "HC");
-    systemTest.checkSpeciesAtomType(&species, 16, "H1");
-    systemTest.checkSpeciesAtomType(&species, 17, "H1");
-    systemTest.checkSpeciesAtomType(&species, 18, "CE");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "H3");
+    systemTest.checkSpeciesAtomType(&species, {{0, "N3"},  {1, "C1"},  {2, "C1"},  {3, "C1"},  {4, "CE"},  {5, "H1"},
+                                               {6, "H1"},  {7, "HC"},  {8, "HC"},  {9, "HC"},  {10, "H1"}, {11, "H1"},
+                                               {12, "CE"}, {13, "HC"}, {14, "HC"}, {15, "HC"}, {16, "H1"}, {17, "H1"},
+                                               {18, "CE"}, {19, "HC"}, {20, "HC"}, {21, "HC"}, {22, "H3"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -1102,35 +663,11 @@ TEST(PCL2019CationsAssignmentTest, N2222)
     ASSERT_EQ(species.nTorsions(), 72);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C1");
-    systemTest.checkSpeciesAtomType(&species, 4, "C1");
-    systemTest.checkSpeciesAtomType(&species, 5, "H1");
-    systemTest.checkSpeciesAtomType(&species, 6, "H1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "CE");
-    systemTest.checkSpeciesAtomType(&species, 14, "CE");
-    systemTest.checkSpeciesAtomType(&species, 15, "CE");
-    systemTest.checkSpeciesAtomType(&species, 16, "CE");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "HC");
-    systemTest.checkSpeciesAtomType(&species, 26, "HC");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "HC");
+    systemTest.checkSpeciesAtomType(&species, {{0, "N4"},  {1, "C1"},  {2, "C1"},  {3, "C1"},  {4, "C1"},  {5, "H1"},
+                                               {6, "H1"},  {7, "H1"},  {8, "H1"},  {9, "H1"},  {10, "H1"}, {11, "H1"},
+                                               {12, "H1"}, {13, "CE"}, {14, "CE"}, {15, "CE"}, {16, "CE"}, {17, "HC"},
+                                               {18, "HC"}, {19, "HC"}, {20, "HC"}, {21, "HC"}, {22, "HC"}, {23, "HC"},
+                                               {24, "HC"}, {25, "HC"}, {26, "HC"}, {27, "HC"}, {28, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -1149,59 +686,13 @@ TEST(PCL2019CationsAssignmentTest, N4444)
     ASSERT_EQ(species.nTorsions(), 144);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "N4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1");
-    systemTest.checkSpeciesAtomType(&species, 3, "C1");
-    systemTest.checkSpeciesAtomType(&species, 4, "C1");
-    systemTest.checkSpeciesAtomType(&species, 5, "H1");
-    systemTest.checkSpeciesAtomType(&species, 6, "H1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "H1");
-    systemTest.checkSpeciesAtomType(&species, 11, "H1");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "C2");
-    systemTest.checkSpeciesAtomType(&species, 14, "C2");
-    systemTest.checkSpeciesAtomType(&species, 15, "C2");
-    systemTest.checkSpeciesAtomType(&species, 16, "C2");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "HC");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "CS");
-    systemTest.checkSpeciesAtomType(&species, 26, "CS");
-    systemTest.checkSpeciesAtomType(&species, 27, "CS");
-    systemTest.checkSpeciesAtomType(&species, 28, "CS");
-    systemTest.checkSpeciesAtomType(&species, 29, "CT");
-    systemTest.checkSpeciesAtomType(&species, 30, "CT");
-    systemTest.checkSpeciesAtomType(&species, 31, "CT");
-    systemTest.checkSpeciesAtomType(&species, 32, "CT");
-    systemTest.checkSpeciesAtomType(&species, 33, "HC");
-    systemTest.checkSpeciesAtomType(&species, 34, "HC");
-    systemTest.checkSpeciesAtomType(&species, 35, "HC");
-    systemTest.checkSpeciesAtomType(&species, 36, "HC");
-    systemTest.checkSpeciesAtomType(&species, 37, "HC");
-    systemTest.checkSpeciesAtomType(&species, 38, "HC");
-    systemTest.checkSpeciesAtomType(&species, 39, "HC");
-    systemTest.checkSpeciesAtomType(&species, 40, "HC");
-    systemTest.checkSpeciesAtomType(&species, 41, "HC");
-    systemTest.checkSpeciesAtomType(&species, 42, "HC");
-    systemTest.checkSpeciesAtomType(&species, 43, "HC");
-    systemTest.checkSpeciesAtomType(&species, 44, "HC");
-    systemTest.checkSpeciesAtomType(&species, 45, "HC");
-    systemTest.checkSpeciesAtomType(&species, 46, "HC");
-    systemTest.checkSpeciesAtomType(&species, 47, "HC");
-    systemTest.checkSpeciesAtomType(&species, 48, "HC");
-    systemTest.checkSpeciesAtomType(&species, 49, "HC");
-    systemTest.checkSpeciesAtomType(&species, 50, "HC");
-    systemTest.checkSpeciesAtomType(&species, 51, "HC");
-    systemTest.checkSpeciesAtomType(&species, 52, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species, {{0, "N4"},  {1, "C1"},  {2, "C1"},  {3, "C1"},  {4, "C1"},  {5, "H1"},  {6, "H1"},  {7, "H1"},  {8, "H1"},
+                   {9, "H1"},  {10, "H1"}, {11, "H1"}, {12, "H1"}, {13, "C2"}, {14, "C2"}, {15, "C2"}, {16, "C2"}, {17, "HC"},
+                   {18, "HC"}, {19, "HC"}, {20, "HC"}, {21, "HC"}, {22, "HC"}, {23, "HC"}, {24, "HC"}, {25, "CS"}, {26, "CS"},
+                   {27, "CS"}, {28, "CS"}, {29, "CT"}, {30, "CT"}, {31, "CT"}, {32, "CT"}, {33, "HC"}, {34, "HC"}, {35, "HC"},
+                   {36, "HC"}, {37, "HC"}, {38, "HC"}, {39, "HC"}, {40, "HC"}, {41, "HC"}, {42, "HC"}, {43, "HC"}, {44, "HC"},
+                   {45, "HC"}, {46, "HC"}, {47, "HC"}, {48, "HC"}, {49, "HC"}, {50, "HC"}, {51, "HC"}, {52, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 
@@ -1220,107 +711,19 @@ TEST(PCL2019CationsAssignmentTest, P66614)
     ASSERT_EQ(species.nTorsions(), 288);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "P4");
-    systemTest.checkSpeciesAtomType(&species, 1, "C1P");
-    systemTest.checkSpeciesAtomType(&species, 2, "C1P");
-    systemTest.checkSpeciesAtomType(&species, 3, "C1P");
-    systemTest.checkSpeciesAtomType(&species, 4, "C1P");
-    systemTest.checkSpeciesAtomType(&species, 5, "C2");
-    systemTest.checkSpeciesAtomType(&species, 6, "H1");
-    systemTest.checkSpeciesAtomType(&species, 7, "H1");
-    systemTest.checkSpeciesAtomType(&species, 8, "H1");
-    systemTest.checkSpeciesAtomType(&species, 9, "H1");
-    systemTest.checkSpeciesAtomType(&species, 10, "C2");
-    systemTest.checkSpeciesAtomType(&species, 11, "C2");
-    systemTest.checkSpeciesAtomType(&species, 12, "H1");
-    systemTest.checkSpeciesAtomType(&species, 13, "H1");
-    systemTest.checkSpeciesAtomType(&species, 14, "H1");
-    systemTest.checkSpeciesAtomType(&species, 15, "H1");
-    systemTest.checkSpeciesAtomType(&species, 16, "C2");
-    systemTest.checkSpeciesAtomType(&species, 17, "CS");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "CS");
-    systemTest.checkSpeciesAtomType(&species, 21, "HC");
-    systemTest.checkSpeciesAtomType(&species, 22, "HC");
-    systemTest.checkSpeciesAtomType(&species, 23, "CS");
-    systemTest.checkSpeciesAtomType(&species, 24, "HC");
-    systemTest.checkSpeciesAtomType(&species, 25, "HC");
-    systemTest.checkSpeciesAtomType(&species, 26, "CT");
-    systemTest.checkSpeciesAtomType(&species, 27, "HC");
-    systemTest.checkSpeciesAtomType(&species, 28, "HC");
-    systemTest.checkSpeciesAtomType(&species, 29, "HC");
-    systemTest.checkSpeciesAtomType(&species, 30, "HC");
-    systemTest.checkSpeciesAtomType(&species, 31, "HC");
-    systemTest.checkSpeciesAtomType(&species, 32, "CS");
-    systemTest.checkSpeciesAtomType(&species, 33, "HC");
-    systemTest.checkSpeciesAtomType(&species, 34, "HC");
-    systemTest.checkSpeciesAtomType(&species, 35, "CS");
-    systemTest.checkSpeciesAtomType(&species, 36, "HC");
-    systemTest.checkSpeciesAtomType(&species, 37, "HC");
-    systemTest.checkSpeciesAtomType(&species, 38, "CS");
-    systemTest.checkSpeciesAtomType(&species, 39, "HC");
-    systemTest.checkSpeciesAtomType(&species, 40, "HC");
-    systemTest.checkSpeciesAtomType(&species, 41, "CT");
-    systemTest.checkSpeciesAtomType(&species, 42, "HC");
-    systemTest.checkSpeciesAtomType(&species, 43, "HC");
-    systemTest.checkSpeciesAtomType(&species, 44, "HC");
-    systemTest.checkSpeciesAtomType(&species, 45, "HC");
-    systemTest.checkSpeciesAtomType(&species, 46, "HC");
-    systemTest.checkSpeciesAtomType(&species, 47, "CS");
-    systemTest.checkSpeciesAtomType(&species, 48, "HC");
-    systemTest.checkSpeciesAtomType(&species, 49, "HC");
-    systemTest.checkSpeciesAtomType(&species, 50, "CS");
-    systemTest.checkSpeciesAtomType(&species, 51, "HC");
-    systemTest.checkSpeciesAtomType(&species, 52, "HC");
-    systemTest.checkSpeciesAtomType(&species, 53, "CS");
-    systemTest.checkSpeciesAtomType(&species, 54, "HC");
-    systemTest.checkSpeciesAtomType(&species, 55, "HC");
-    systemTest.checkSpeciesAtomType(&species, 56, "CT");
-    systemTest.checkSpeciesAtomType(&species, 57, "HC");
-    systemTest.checkSpeciesAtomType(&species, 58, "HC");
-    systemTest.checkSpeciesAtomType(&species, 59, "HC");
-    systemTest.checkSpeciesAtomType(&species, 60, "HC");
-    systemTest.checkSpeciesAtomType(&species, 61, "HC");
-    systemTest.checkSpeciesAtomType(&species, 62, "CS");
-    systemTest.checkSpeciesAtomType(&species, 63, "HC");
-    systemTest.checkSpeciesAtomType(&species, 64, "HC");
-    systemTest.checkSpeciesAtomType(&species, 65, "CS");
-    systemTest.checkSpeciesAtomType(&species, 66, "HC");
-    systemTest.checkSpeciesAtomType(&species, 67, "HC");
-    systemTest.checkSpeciesAtomType(&species, 68, "CS");
-    systemTest.checkSpeciesAtomType(&species, 69, "HC");
-    systemTest.checkSpeciesAtomType(&species, 70, "HC");
-    systemTest.checkSpeciesAtomType(&species, 71, "CS");
-    systemTest.checkSpeciesAtomType(&species, 72, "HC");
-    systemTest.checkSpeciesAtomType(&species, 73, "HC");
-    systemTest.checkSpeciesAtomType(&species, 74, "CS");
-    systemTest.checkSpeciesAtomType(&species, 75, "HC");
-    systemTest.checkSpeciesAtomType(&species, 76, "HC");
-    systemTest.checkSpeciesAtomType(&species, 77, "CS");
-    systemTest.checkSpeciesAtomType(&species, 78, "HC");
-    systemTest.checkSpeciesAtomType(&species, 79, "HC");
-    systemTest.checkSpeciesAtomType(&species, 80, "CS");
-    systemTest.checkSpeciesAtomType(&species, 81, "HC");
-    systemTest.checkSpeciesAtomType(&species, 82, "HC");
-    systemTest.checkSpeciesAtomType(&species, 83, "CS");
-    systemTest.checkSpeciesAtomType(&species, 84, "HC");
-    systemTest.checkSpeciesAtomType(&species, 85, "HC");
-    systemTest.checkSpeciesAtomType(&species, 86, "CS");
-    systemTest.checkSpeciesAtomType(&species, 87, "HC");
-    systemTest.checkSpeciesAtomType(&species, 88, "HC");
-    systemTest.checkSpeciesAtomType(&species, 89, "CS");
-    systemTest.checkSpeciesAtomType(&species, 90, "HC");
-    systemTest.checkSpeciesAtomType(&species, 91, "HC");
-    systemTest.checkSpeciesAtomType(&species, 92, "CS");
-    systemTest.checkSpeciesAtomType(&species, 93, "HC");
-    systemTest.checkSpeciesAtomType(&species, 94, "HC");
-    systemTest.checkSpeciesAtomType(&species, 95, "CT");
-    systemTest.checkSpeciesAtomType(&species, 96, "HC");
-    systemTest.checkSpeciesAtomType(&species, 97, "HC");
-    systemTest.checkSpeciesAtomType(&species, 98, "HC");
-    systemTest.checkSpeciesAtomType(&species, 99, "HC");
-    systemTest.checkSpeciesAtomType(&species, 100, "HC");
+    systemTest.checkSpeciesAtomType(
+        &species,
+        {{0, "P4"},  {1, "C1P"}, {2, "C1P"}, {3, "C1P"}, {4, "C1P"}, {5, "C2"},  {6, "H1"},  {7, "H1"},  {8, "H1"},  {9, "H1"},
+         {10, "C2"}, {11, "C2"}, {12, "H1"}, {13, "H1"}, {14, "H1"}, {15, "H1"}, {16, "C2"}, {17, "CS"}, {18, "HC"}, {19, "HC"},
+         {20, "CS"}, {21, "HC"}, {22, "HC"}, {23, "CS"}, {24, "HC"}, {25, "HC"}, {26, "CT"}, {27, "HC"}, {28, "HC"}, {29, "HC"},
+         {30, "HC"}, {31, "HC"}, {32, "CS"}, {33, "HC"}, {34, "HC"}, {35, "CS"}, {36, "HC"}, {37, "HC"}, {38, "CS"}, {39, "HC"},
+         {40, "HC"}, {41, "CT"}, {42, "HC"}, {43, "HC"}, {44, "HC"}, {45, "HC"}, {46, "HC"}, {47, "CS"}, {48, "HC"}, {49, "HC"},
+         {50, "CS"}, {51, "HC"}, {52, "HC"}, {53, "CS"}, {54, "HC"}, {55, "HC"}, {56, "CT"}, {57, "HC"}, {58, "HC"}, {59, "HC"},
+         {60, "HC"}, {61, "HC"}, {62, "CS"}, {63, "HC"}, {64, "HC"}, {65, "CS"}, {66, "HC"}, {67, "HC"}, {68, "CS"}, {69, "HC"},
+         {70, "HC"}, {71, "CS"}, {72, "HC"}, {73, "HC"}, {74, "CS"}, {75, "HC"}, {76, "HC"}, {77, "CS"}, {78, "HC"}, {79, "HC"},
+         {80, "CS"}, {81, "HC"}, {82, "HC"}, {83, "CS"}, {84, "HC"}, {85, "HC"}, {86, "CS"}, {87, "HC"}, {88, "HC"}, {89, "CS"},
+         {90, "HC"}, {91, "HC"}, {92, "CS"}, {93, "HC"}, {94, "HC"}, {95, "CT"}, {96, "HC"}, {97, "HC"}, {98, "HC"}, {99, "HC"},
+         {100, "HC"}});
     EXPECT_NEAR(species.totalCharge(true), 1, 1.0e-6);
 }
 }; // namespace UnitTest

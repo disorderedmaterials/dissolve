@@ -23,23 +23,23 @@ TEST(OPLSAA2005AlkanesAssignmentTest, Heptane)
     ASSERT_EQ(species.nTorsions(), 36);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "CT3");
-    systemTest.checkSpeciesAtomType(&species, 1, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 2, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 3, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 4, "CT3");
-    systemTest.checkSpeciesAtomType(&species, 5, "HC");
-    systemTest.checkSpeciesAtomType(&species, 6, "HC");
-    systemTest.checkSpeciesAtomType(&species, 7, "HC");
-    systemTest.checkSpeciesAtomType(&species, 8, "HC");
-    systemTest.checkSpeciesAtomType(&species, 9, "HC");
-    systemTest.checkSpeciesAtomType(&species, 10, "HC");
-    systemTest.checkSpeciesAtomType(&species, 11, "HC");
-    systemTest.checkSpeciesAtomType(&species, 12, "HC");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "HC");
-    systemTest.checkSpeciesAtomType(&species, 16, "HC");
+    systemTest.checkSpeciesAtomType(&species, {{0, "CT3"},
+                                               {1, "CT2"},
+                                               {2, "CT2"},
+                                               {3, "CT2"},
+                                               {4, "CT3"},
+                                               {5, "HC"},
+                                               {6, "HC"},
+                                               {7, "HC"},
+                                               {8, "HC"},
+                                               {9, "HC"},
+                                               {10, "HC"},
+                                               {11, "HC"},
+                                               {12, "HC"},
+                                               {13, "HC"},
+                                               {14, "HC"},
+                                               {15, "HC"},
+                                               {16, "HC"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"});
     systemTest.checkSpeciesIntramolecular(&species, {0, 7}, {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1, 9}, {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"});
@@ -65,27 +65,10 @@ TEST(OPLSAA2005AlkanesAssignmentTest, Cycloheptane)
     ASSERT_EQ(species.nTorsions(), 63);
     ASSERT_EQ(species.nImpropers(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, 0, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 1, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 2, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 3, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 4, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 5, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 6, "CT2");
-    systemTest.checkSpeciesAtomType(&species, 7, "HC");
-    systemTest.checkSpeciesAtomType(&species, 8, "HC");
-    systemTest.checkSpeciesAtomType(&species, 9, "HC");
-    systemTest.checkSpeciesAtomType(&species, 10, "HC");
-    systemTest.checkSpeciesAtomType(&species, 11, "HC");
-    systemTest.checkSpeciesAtomType(&species, 12, "HC");
-    systemTest.checkSpeciesAtomType(&species, 13, "HC");
-    systemTest.checkSpeciesAtomType(&species, 14, "HC");
-    systemTest.checkSpeciesAtomType(&species, 15, "HC");
-    systemTest.checkSpeciesAtomType(&species, 16, "HC");
-    systemTest.checkSpeciesAtomType(&species, 17, "HC");
-    systemTest.checkSpeciesAtomType(&species, 18, "HC");
-    systemTest.checkSpeciesAtomType(&species, 19, "HC");
-    systemTest.checkSpeciesAtomType(&species, 20, "HC");
+    systemTest.checkSpeciesAtomType(&species,
+                                    {{0, "CT2"}, {1, "CT2"}, {2, "CT2"}, {3, "CT2"}, {4, "CT2"}, {5, "CT2"}, {6, "CT2"},
+                                     {7, "HC"},  {8, "HC"},  {9, "HC"},  {10, "HC"}, {11, "HC"}, {12, "HC"}, {13, "HC"},
+                                     {14, "HC"}, {15, "HC"}, {16, "HC"}, {17, "HC"}, {18, "HC"}, {19, "HC"}, {20, "HC"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"});
     systemTest.checkSpeciesIntramolecular(&species, {0, 7}, {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1, 9}, {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"});
