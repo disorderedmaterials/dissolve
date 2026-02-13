@@ -16,7 +16,9 @@
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
+#include "kernels/energy.h"
 #include "nodes/graph.h"
+#include "nodes/energy.h"
 #include "nodes/serialisableData.h"
 #include "nodes/species.h"
 #include <gtest/gtest.h>
@@ -867,6 +869,12 @@ const Species &tetrahedralArgonSpecies()
         tetrahedralArgon_.addBond(0, 4);
     }
     return tetrahedralArgon_;
+}
+
+// Check consistency between production and test forces for the supplied configuration
+bool checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
+{
+    auto &&[productionPP, productionGeometry] = EnergyNode::calculateEnergy(cfg, kernel);
 }
 
 } // namespace UnitTest

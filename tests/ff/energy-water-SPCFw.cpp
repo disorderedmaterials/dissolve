@@ -3,6 +3,7 @@
 
 #include "nodes/energy.h"
 #include "nodes/gr/gr.h"
+#include "nodes/dissolve.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -16,14 +17,17 @@ TEST(WaterSPCFwEnergyTest, Water)
                      CoordinateImportFileFormat("dlpoly/water3000_energyForce/CONFIG",
                                                 CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
 
-    // Add energy node
-    auto energyNode = data.graphRoot.createNode("Energy");
-    ASSERT_TRUE(energyNode);
-    ASSERT_TRUE(data.graphRoot.addEdge({"Import", "Configuration", "Energy", "Configuration"}));
+    // Run the graph from the Import node to set up the configuration
+    auto importNode = data.graphRoot.findNode("Import");
+    ASSERT_TRUE(importNode);
+    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importNode->versionIndex(), 0);
 
-    // Run the graph from the Energy node
-    ASSERT_EQ(energyNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(energyNode->versionIndex(), 0);
+    // Get the configuration
+    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+
+    // Check consistency between production and test energies
+    DissolveSystemTest::checkEnergyConsistency(cfg, data.graphRoot.dissolveGraph->prepareEnergyKernel(cfg));
 }
 
 } // namespace UnitTest
