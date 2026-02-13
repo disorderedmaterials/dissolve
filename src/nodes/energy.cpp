@@ -40,7 +40,7 @@ NodeConstants::ProcessResult EnergyNode::process()
 
     message("Calculating total energy for Configuration '{}'...\n", targetConfiguration_->name());
 
-    auto kernel = dissolveGraph()->createEnergyCalculation(targetConfiguration_);
+    auto kernel = dissolveGraph()->prepareEnergyKernel(targetConfiguration_);
 
     Timer timer;
     auto &&[ppEnergy, geometryEnergy] = calculateEnergy(targetConfiguration_, kernel);
