@@ -13,12 +13,14 @@
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 
-
 SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
+    addInput<Configuration *>("Configuration", "Set target configuration for the module", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+
+    // Outputs
+    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", a_);
@@ -47,10 +49,10 @@ std::string_view SiteRDFNode::summary() const
 NodeConstants::ProcessResult SiteRDFNode::process()
 {
     // Select site A
-    SiteSelector a(targetConfiguration_, a_.getSpeciesSites());
+    SiteSelector a(configuration_, a_.getSpeciesSites());
 
     // Select site B
-    SiteSelector b(targetConfiguration_, b_.getSpeciesSites());
+    SiteSelector b(configuration_, b_.getSpeciesSites());
 
     // Calculate rAB
     Histogram1D histAB;
@@ -68,7 +70,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
                            {
                                if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
                                    continue;
-                               hist.bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+                               hist.bin(configuration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
                            }
                        });
 
@@ -87,7 +89,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
     normaliserRDF.divide(double(a.sites().size()));
 
     // Normalise by B site population density
-    normaliserRDF.divide(double(b.sites().size()) / targetConfiguration_->box()->volume());
+    normaliserRDF.divide(double(b.sites().size()) / configuration_->box()->volume());
 
     // Normalise by spherical shell
     normaliserRDF.normaliseBySphericalShell();

@@ -31,7 +31,7 @@ class SiteRDFNode : public Node
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_;
     // Whether to exclude correlations between sites on the same molecule
