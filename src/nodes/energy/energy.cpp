@@ -53,20 +53,26 @@ NodeConstants::ProcessResult EnergyNode::process()
             geometryEnergy.angleEnergy, geometryEnergy.torsionEnergy, geometryEnergy.improperEnergy);
 
     // Update histories
-    // TODO
-    Data1D totalEnergyArray;
-    totalEnergyArray.addPoint(dissolve().iteration(), ppEnergy.total() + geometryEnergy.total());
+    totalEnergyHistory_.push(ppEnergy.total() + geometryEnergy.total(), podHistoryLength_);
+    totalPairPotentialHistory_.push(ppEnergy.total(), podHistoryLength_);
+    totalMoleculePPHistory_.push(ppEnergy.intraMolecular(), podHistoryLength_);
+    totalCohesiveHistory.push(ppEnergy.interMolecular(), podHistoryLength_);
+    totalGeometryHistory_.push(geometryEnergy.total(), podHistoryLength_);
+    bondHistory_.push(geometryEnergy.bondEnergy, podHistoryLength_);
+    angleHistory_.push(geometryEnergy.angleEnergy, podHistoryLength_);
+    torsionHistory_.push(geometryEnergy.torsionEnergy, podHistoryLength_);
+    improperHistory_.push(geometryEnergy.improperEnergy, podHistoryLength_);
 
     // Determine stability of energy
     // Check number of points already stored for the Configuration
     auto grad = 0.0;
     auto stable = false;
-    if (stabilityWindow_ > totalEnergyArray.nValues())
+    if (stabilityWindow_ > totalEnergyHistory_.history().size())
         message("Too few points to assess stability.\n");
     else
     {
         auto yMean = 0.0;
-        grad = Regression::linear(totalEnergyArray, stabilityWindow_, yMean);
+        grad = Regression::linearGradient(totalEnergyHistory_.history(), stabilityWindow_, yMean);
         auto thresholdValue = fabs(stabilityThreshold_ * yMean);
         stable = fabs(grad) < thresholdValue;
 

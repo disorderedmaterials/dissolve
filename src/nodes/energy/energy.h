@@ -4,6 +4,7 @@
 #pragma once
 
 #include "kernels/energy.h"
+#include "math/history.h"
 #include "nodes/node.h"
 
 // Forward Declarations
@@ -37,6 +38,15 @@ class EnergyNode : public Node
     double stabilityThreshold_{0.001};
     // Number of points over which to assess the stability of the energy (per Configuration)
     int stabilityWindow_{10};
+
+    /*
+     * Calculated Data
+     */
+    private:
+    // Energy histories
+    PODHistory<double> totalEnergyHistory_;
+    PODHistory<double> totalPairPotentialHistory_, totalMoleculePPHistory_, totalGeometryHistory_, totalCohesiveHistory;
+    PODHistory<double> bondHistory_, angleHistory_, torsionHistory_, improperHistory_;
 
     /*
      * Functions
