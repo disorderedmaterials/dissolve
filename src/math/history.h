@@ -107,6 +107,8 @@ template <class T> class PODHistory : public Serialisable<>
 
         return averaged;
     }
+    // Return the history data vector
+    const std::vector<T> &history() const { return history_; }
 
     /*
      * Serialisation
