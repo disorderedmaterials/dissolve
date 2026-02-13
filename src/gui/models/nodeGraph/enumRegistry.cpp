@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "enumRegistry.h"
+#include "classes/speciesSite.h"
 #include "data/structureFactors.h"
 #include "gui/models/nodeGraph/enumOptionsModel.h"
 #include "math/averaging.h"
@@ -39,5 +40,7 @@ void EnumRegistry::instantiateOptions()
                 {typeid(GRNode::PartialsMethod), wrap(GRNode::partialsMethods())},
                 {typeid(MDNode::TimestepType), wrap(MDNode::timestepType())},
                 {typeid(WindowFunction::Form), wrap(WindowFunction::forms())},
+                {typeid(SpeciesSite::SiteType), wrap(SpeciesSite::siteTypes())},
+                {typeid(SpeciesSite::SiteKeyword), wrap(SpeciesSite::keywords())},
                 {typeid(Averaging::AveragingScheme), wrap(Averaging::averagingSchemes())}};
 }

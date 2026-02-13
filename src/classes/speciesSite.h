@@ -210,3 +210,6 @@ class SpeciesSite : public Serialisable<CoreData &>
     void serialise(std::string tag, SerialisedValue &target) const override;
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };
+
+EnumOptions<SpeciesSite::SiteType> getEnumOptions(SpeciesSite::SiteType);
+EnumOptions<SpeciesSite::SiteKeyword> getEnumOptions(SpeciesSite::SiteKeyword);

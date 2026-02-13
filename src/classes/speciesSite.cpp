@@ -26,8 +26,8 @@ SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
 // Enum of types
 EnumOptions<SpeciesSite::SiteType> SpeciesSite::siteTypes()
 {
-    return EnumOptions<SiteType>(
-        "SiteType", {{SiteType::Static, "Static"}, {SiteType::Dynamic, "Dynamic"}, {SiteType::Fragment, "Fragment"}});
+    // Call getEnumOptions on *any* of the enum values
+    return getEnumOptions(SiteType::Static);
 }
 
 // Set name of site
@@ -505,20 +505,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
  */
 
 // Return enum option info for SiteKeyword
-EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
-{
-    return EnumOptions<SpeciesSite::SiteKeyword>("SiteKeyword",
-                                                 {{SpeciesSite::AtomTypeKeyword, "AtomType", OptionArguments::OneOrMore},
-                                                  {SpeciesSite::DynamicKeyword, "Dynamic"},
-                                                  {SpeciesSite::ElementKeyword, "Element", OptionArguments::OneOrMore},
-                                                  {SpeciesSite::FragmentKeyword, "Fragment"},
-                                                  {SpeciesSite::DescriptionKeyword, "Description", 1},
-                                                  {SpeciesSite::EndSiteKeyword, "EndSite"},
-                                                  {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
-                                                  {SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1},
-                                                  {SpeciesSite::XAxisKeyword, "XAxis", OptionArguments::OneOrMore},
-                                                  {SpeciesSite::YAxisKeyword, "YAxis", OptionArguments::OneOrMore}});
-}
+EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords() { return getEnumOptions(SpeciesSite::AtomTypeKeyword); }
 
 // Read site definition from specified LineParser
 bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
@@ -787,4 +774,28 @@ void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
     originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
 
     generateInstances();
+}
+
+EnumOptions<SpeciesSite::SiteType> getEnumOptions(SpeciesSite::SiteType _unused)
+{
+
+    return EnumOptions<SpeciesSite::SiteType>("SiteType", {{SpeciesSite::SiteType::Static, "Static"},
+                                                           {SpeciesSite::SiteType::Dynamic, "Dynamic"},
+                                                           {SpeciesSite::SiteType::Fragment, "Fragment"}});
+}
+
+EnumOptions<SpeciesSite::SiteKeyword> getEnumOptions(SpeciesSite::SiteKeyword _unused)
+{
+
+    return EnumOptions<SpeciesSite::SiteKeyword>("SiteKeyword",
+                                                 {{SpeciesSite::AtomTypeKeyword, "AtomType", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::DynamicKeyword, "Dynamic"},
+                                                  {SpeciesSite::ElementKeyword, "Element", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::FragmentKeyword, "Fragment"},
+                                                  {SpeciesSite::DescriptionKeyword, "Description", 1},
+                                                  {SpeciesSite::EndSiteKeyword, "EndSite"},
+                                                  {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1},
+                                                  {SpeciesSite::XAxisKeyword, "XAxis", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::YAxisKeyword, "YAxis", OptionArguments::OneOrMore}});
 }

@@ -138,6 +138,11 @@ Pane {
                         graphModel: graphRoot.rootModel
                     }
                 }
+                MenuItem {
+                    text: "Species Site"
+
+                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "SpeciesSite", "New Species Site")
+                }
             }
         }
     }
