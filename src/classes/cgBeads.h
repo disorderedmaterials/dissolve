@@ -39,6 +39,7 @@ class CGBead
 
     void deuterate(const double fraction)
     {
+        dFraction_ = fraction;
         for (std::size_t i = 0; i < atomTypes_.nItems(); ++i) 
         {
             Elements::Element z = atomTypes_[i].atomType()->Z(); 
@@ -75,35 +76,63 @@ class CGBead
                 formFactor_.addPoint(q, 1.0);
             }
         }
-        std::cout << "Form Factor for " << label_ << ": ";
-        std::cout << std::accumulate(
-            formFactor_.values().begin(), formFactor_.values().end(), 0.0
-        ) << std::endl;
     };
 
     int nqvalues() const { return formFactor_.nValues(); }
 
-    void calculateSelfScattrering(const double c, const double av_noa_bead)
+    void calculateSelfScattrering(const double c, const double av_noa_bead, const bool exchangeable)
     {
         double innerSum = 0.0;
+        bool deuterated = (dFraction_ > 0.0 && dFraction_ < 1.0 && !exchangeable);
         for (auto atmI = atomTypes_.begin(); atmI != atomTypes_.end(); ++atmI)
         {
             for (auto atmJ = atmI; atmJ != atomTypes_.end(); ++atmJ)
             {
                 const double multiplier = (atmI == atmJ) ? 1.0 : 2.0;
-                innerSum += atmI->population() * atmJ->population() * atmI->boundCoherent() * atmJ->boundCoherent() * multiplier;
+                double nb = 0.0;
+                if (deuterated && (atmI->atomType()->Z() == Elements::H || atmJ->atomType()->Z() == Elements::H))
+                {
+                    if (atmI == atmJ)
+                    {
+                        nb = dFraction_ * Sears91::boundCoherent(Sears91::H_2) * Sears91::boundCoherent(Sears91::H_2);
+                        nb += (1.0 - dFraction_) * Sears91::boundCoherent(Sears91::H_Natural) * Sears91::boundCoherent(Sears91::H_Natural);
+                        nb *= 0.1 * 0.1; // convert to barn
+                    }
+                    else
+                    {
+                        if (atmI->atomType()->Z() == Elements::H)
+                        {
+                            nb = dFraction_ * atmJ->boundCoherent() * Sears91::boundCoherent(Sears91::H_2);
+                            nb += (1.0 - dFraction_) * atmJ->boundCoherent() * Sears91::boundCoherent(Sears91::H_Natural);
+                            nb *= 0.1; // convert to barn
+                        }
+                        else
+                        {
+                            nb = dFraction_ * atmI->boundCoherent() * Sears91::boundCoherent(Sears91::H_2);
+                            nb += (1.0 - dFraction_) * atmI->boundCoherent() * Sears91::boundCoherent(Sears91::H_Natural);
+                            nb *= 0.1; // convert to barn
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    nb = atmI->boundCoherent() * atmJ->boundCoherent();
+                }
+                innerSum += atmI->population() * atmJ->population() * nb * multiplier;
             }
-            innerSum -= (atmI->population() * atmI->boundCoherent() * atmI->boundCoherent());
+            if (deuterated && atmI->atomType()->Z() == Elements::H) 
+            {
+                double bh = Sears91::boundCoherent(Sears91::H_Natural) * 0.1;
+                double bd = Sears91::boundCoherent(Sears91::H_2) * 0.1;
+                innerSum -= atmI->population() * ((dFraction_ * bd * bd) + ((1.0 - dFraction_) * bh * bh)); 
+            }
+            else
+            {
+                innerSum -= (atmI->population() * atmI->boundCoherent() * atmI->boundCoherent());
+            }
         }
         innerSum *= c;
-        intraBeadSQ_.copyArrays(formFactor_);
-        intraBeadSQ_ *= formFactor_.values();
-        intraBeadSQ_ *= innerSum * (1.0 / av_noa_bead);
-        
-        std::cout << "Single Bead Scattering for " << label_ << ": ";
-        std::cout << std::accumulate(
-            intraBeadSQ_.values().begin(), intraBeadSQ_.values().end(), 0.0
-        ) << std::endl;
     };
 
     const AtomTypeMix &atomTypes() const
@@ -163,6 +192,7 @@ class CGBead
     private:
     double radius_ = 0.0;
     double scatteringLength_ = 0.0;
+    double dFraction_ = 0.0;
     std::string label_;
     AtomTypeMix atomTypes_;
     Data1D formFactor_;
@@ -236,7 +266,7 @@ class CGBeadMap
     void calculateFormFactors(const std::vector<double> &qvals)
     {
         dissolve::for_each(
-            ParallelPolicies::par,
+            ParallelPolicies::seq,
             beads_.begin(), 
             beads_.end(), 
             [&](CGBead &b){ b.calculateFormFactor(0, qvals); }
@@ -250,14 +280,14 @@ class CGBeadMap
         std::iota(indices.begin(), indices.end(), 0);
         dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
                            [&](const int &i) { av_noa_bead_ += fractions[i] * beads_[i].nAtoms(); });
-        dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
-                           [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_); });
+        dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
+                           [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_, true); });
     }
 
     void deuterate(const double fraction)
     {
         dissolve::for_each(
-            ParallelPolicies::par,
+            ParallelPolicies::seq,
             beads_.begin(), 
             beads_.end(), 
             [fraction=fraction](CGBead &b){ b.deuterate(fraction); }

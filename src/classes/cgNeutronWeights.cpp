@@ -249,6 +249,11 @@ void CGNeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr
     atomTypes_.clear();
     for (auto &topes : isotopologueMixtures_)
     {
+        if (topes.nIsotopologues() > 2)
+        {
+            throw std::runtime_error("Invalid isotopologue definition for coarse grained system");
+        }
+
         // Loop over the Isotopologues in the mixture
         for (const auto &isoWeight : topes.mix())
         {
@@ -260,13 +265,9 @@ void CGNeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr
             {
                 if (i.isPresence(SpeciesAtom::Presence::Physical))
                 {
-                        atomTypes_.addIsotope(i.atomType(), top->atomTypeIsotope(i.atomType()),
+                    atomTypes_.addIsotope(i.atomType(), top->atomTypeIsotope(i.atomType()),
                                           isoWeight.weight() * topes.speciesPopulation());
-                }
-                
-                if (i.Z() == Elements::H)
-                {
-                    if (top->atomTypeIsotope(i.atomType()) != Sears91::H_Natural)
+                    if (top->atomTypeIsotope(i.atomType()) != Sears91::naturalIsotope(i.Z()))
                     {
                         dFraction = isoWeight.weight();
                     }
