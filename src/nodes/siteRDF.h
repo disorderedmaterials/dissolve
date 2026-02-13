@@ -5,17 +5,19 @@
 
 #include "analyser/siteFilter.h"
 #include "analyser/siteSelector.h"
-#include "io/export/data1D.h"
-#include "math/range.h"
-#include "nodes/node.h"
 #include "classes/speciesSites.h"
-#include "math/vector3.h"
-#include <string_view>
+#include "io/export/data1D.h"
 #include "io/import/data1D.h"
+#include "math/range.h"
+#include "math/vector3.h"
+#include "nodes/node.h"
+#include <string_view>
 
 // Calculate RDF Module
 class SiteRDFNode : public Node
 {
+    using Sums = std::map<std::string, std::pair<SampledDouble, std::optional<Data1D>>>;
+
     public:
     SiteRDFNode(Graph *parentGraph);
     ~SiteRDFNode() override = default;
@@ -45,7 +47,7 @@ class SiteRDFNode : public Node
     // Whether to export instantaneous coordination numbers to disk
     bool exportInstantaneous_{false};
     // Export target
-    Data1DImportFileFormat::Data1DImportFormat exportFileAndFormat_;
+    Data1DExportFileFormat exportFileAndFormat_;
 
     public:
     // Return whether specified coordination number range is enabled
