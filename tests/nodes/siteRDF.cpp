@@ -19,7 +19,7 @@ class SiteRDFTest : public ::testing::Test
     ~SiteRDFTest() = default;
 
     protected:
-    bool importTrajectory(const std::string &name = "dlpoly/water267-analysis/water-267-298K.xyz")
+    bool importTrajectory(std::string name = "dlpoly/water267-analysis/water-267-298K.xyz")
     {
         if (!(cfgTrajImporter() && iterator()))
             return false;
@@ -73,7 +73,8 @@ TEST_F(SiteRDFTest, Water)
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator()->setOption<Number>("N", 95));
-    ASSERT_EQ(iterator()->run(), NodeConstants::ProcessResult::Success);
+    auto result = iterator()->run();
+    ASSERT_EQ(result, NodeConstants::ProcessResult::Success);
 }
 
 } // namespace UnitTest
