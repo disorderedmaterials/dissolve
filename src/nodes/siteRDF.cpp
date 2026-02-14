@@ -29,11 +29,11 @@ SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule",
               excludeSameMolecule_);
     addOption("RangeAEnabled", "Whether calculation of the second coordination number is enabled", rangeEnabled_[0]);
-    addOption("RangeA", "Distance range for first coordination number", range_[0]);
+    addOption("RangeA", "Distance range for first coordination number", rangeA_);
     addOption("RangeBEnabled", "Whether calculation of the second coordination number is enabled", rangeEnabled_[1]);
-    addOption("RangeB", "Distance range for second coordination number", range_[1]);
+    addOption("RangeB", "Distance range for second coordination number", rangeB_);
     addOption("RangeCEnabled", "Whether calculation of the third coordination number is enabled", rangeEnabled_[2]);
-    addOption("RangeC", "Distance range for third coordination number", range_[2]);
+    addOption("RangeC", "Distance range for third coordination number", rangeC_);
     addOption("Instantaneous", "Whether to calculate instantaneous coordination numbers rather than forming an average",
               instantaneous_);
 }
@@ -80,11 +80,10 @@ NodeConstants::ProcessResult SiteRDFNode::process()
     histAB.accumulate();
 
     // RDF
-    Data1D dataRDF;
-    dataRDF = histAB.accumulatedData();
+    dataRDF_ = histAB.accumulatedData();
 
     // Normalise
-    DataOperator1D normaliserRDF(dataRDF);
+    DataOperator1D normaliserRDF(dataRDF_);
     // Normalise by A site population
     normaliserRDF.divide(double(a.sites().size()));
 
@@ -104,14 +103,14 @@ NodeConstants::ProcessResult SiteRDFNode::process()
     normaliserCN.divide(double(a.sites().size()));
 
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
-    Sums sums;
+    Range ranges[3] = {rangeA_, rangeB_, rangeC_};
     for (int i = 0; i < 3; ++i)
         if (rangeEnabled_[i])
         {
             auto rangeName = rangeNames[i];
-            sums.try_emplace(rangeName, SampledDouble(), instantaneous_ ? std::optional<Data1D>{} : std::nullopt);
-            auto &[sumN, sumNInst] = sums[rangeName];
-            sumN += Integrator::sum(dataCN, range_[i]);
+            sums_.try_emplace(rangeName, SampledDouble(), instantaneous_ ? std::optional<Data1D>{} : std::nullopt);
+            auto &[sumN, sumNInst] = sums_[rangeName];
+            sumN += Integrator::sum(dataCN, ranges[i]);
             if (sumNInst)
             {
                 sumNInst->addPoint(dissolve().iteration(), sumN.value());
@@ -145,8 +144,12 @@ NodeConstants::ProcessResult SiteRDFNode::process()
                    });
 
     // Save RDF data?
-    if (!DataExporter::exportData(dataRDF, exportFileAndFormat_))
+    if (!DataExporter::exportData(dataRDF_, exportFileAndFormat_))
         return NodeConstants::ProcessResult::Failed;
 
     return NodeConstants::ProcessResult::Failed;
 }
+
+const Data1D &SiteRDFNode::dataRDF() { return dataRDF_; }
+
+const SiteRDFNode::Sums &SiteRDFNode::sums() { return sums_; }
