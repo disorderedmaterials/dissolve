@@ -34,12 +34,18 @@ class SiteRDFNode : public Node
     Configuration *configuration_{nullptr};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_;
+    // Sums
+    Sums sums_;
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range (min, max, delta) of distance axis
     Vector3 distanceRange_{0.0, 10.0, 0.05};
     // Ranges for sums
-    Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
+    Range rangeA_{0.0, 3.0};
+    Range rangeB_{3.0, 6.0};
+    Range rangeC_{6.0, 9.0};
+    // Site RDF
+    Data1D dataRDF_;
     // Flags for ranges
     bool rangeEnabled_[3] = {true, false, false};
     // Whether to calculate the instantaneous coordination numbers rather than forming an average
@@ -59,4 +65,9 @@ class SiteRDFNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    // Getters
+    public:
+    const Data1D &dataRDF();
+    const Sums &sums();
 };
