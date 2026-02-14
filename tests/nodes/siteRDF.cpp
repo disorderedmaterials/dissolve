@@ -52,7 +52,6 @@ class SiteRDFTest : public ::testing::Test
         // Import water trajectory
         EXPECT_TRUE(importTrajectory());
 
-
         // Create a site RDF node
         ASSERT_TRUE(iterator()->createNode("SiteRDF"));
     }
