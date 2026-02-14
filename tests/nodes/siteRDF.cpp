@@ -46,11 +46,12 @@ class SiteRDFTest : public ::testing::Test
         // Create a dynamic input from the graph's existing Insert node
         EXPECT_TRUE(root()->addEdge({"Insert", "Configuration", "Iterator", "Configuration"}));
 
+        // Create an import configuration trajectory node
+        ASSERT_TRUE(iterator()->createNode("ImportConfigurationTrajectory"));
+
         // Import water trajectory
         EXPECT_TRUE(importTrajectory());
 
-        // Create an import configuration trajectory node
-        ASSERT_TRUE(iterator()->createNode("ImportConfigurationTrajectory"));
 
         // Create a site RDF node
         ASSERT_TRUE(iterator()->createNode("SiteRDF"));
