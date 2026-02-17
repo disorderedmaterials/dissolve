@@ -5,6 +5,7 @@
 #include "classes/speciesSites.h"
 #include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
+#include "nodes/importConfigurationTrajectory.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
@@ -12,11 +13,23 @@
 
 namespace UnitTest
 {
-class SiteRDFTest : public ::testing::Test
+class SiteRDFNodeTest : public ::testing::Test
 {
     public:
-    SiteRDFTest() { setUp(); }
-    ~SiteRDFTest() = default;
+    SiteRDFNodeTest() { setUp(); }
+    ~SiteRDFNodeTest() = default;
+
+    private:
+    static void editWaterSites(Species *sp)
+    {
+        // Remove "H" site
+        auto hSiteToRemove = const_cast<SpeciesSite *>(sp->findSite("H"));
+        const_cast<Species *>(sp)->removeSite(hSiteToRemove);
+
+        // Replace with H1 and H2
+        sp->addSite("H1")->setStaticIndices({0}, {}, {});
+        sp->addSite("H2")->setStaticIndices({2}, {}, {});
+    }
 
     protected:
     bool importTrajectory(std::string name = "dlpoly/water267-analysis/water-267-298K.xyz")
@@ -30,51 +43,101 @@ class SiteRDFTest : public ::testing::Test
 
         return iterator()->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"});
     }
-    Node *cfgTrajImporter() { return iterator() ? iterator()->findNode("ImportConfigurationTrajectory") : nullptr; }
-    Node *siteRDF() { return iterator() ? iterator()->findNode("SiteRDF") : nullptr; }
+    ImportConfigurationTrajectoryNode *cfgTrajImporter()
+    {
+        return iterator()
+                   ? static_cast<ImportConfigurationTrajectoryNode *>(iterator()->findNode("ImportConfigurationTrajectory"))
+                   : nullptr;
+    }
+    SiteRDFNode *siteRDF(const std::string &name)
+    {
+        return iterator() ? static_cast<SiteRDFNode *>(iterator()->findNode("SiteRDF//" + name)) : nullptr;
+    }
     IterableGraph *iterator() { return static_cast<IterableGraph *>(root()->findNode("Iterator")); }
     const Species *water() { return root()->findNode("Water")->getOutputValue<const Species *>("Species"); }
     DissolveGraph *root() { return &(testData_.graphRoot); }
     void setUp()
     {
         // Add iterator
-        ASSERT_TRUE(dynamic_cast<IterableGraph *>(root()->createNode("Iterator")));
+        ASSERT_TRUE(dynamic_cast<IterableGraph *>(root()->createNode("Iterator", "Iterator")));
 
         // Create water graph
         createWaterGraph(root(), 267);
+        auto editableWater = const_cast<Species *>(water());
+        editWaterSites(editableWater);
 
         // Create a dynamic input from the graph's existing Insert node
         EXPECT_TRUE(root()->addEdge({"Insert", "Configuration", "Iterator", "Configuration"}));
 
         // Create an import configuration trajectory node
-        ASSERT_TRUE(iterator()->createNode("ImportConfigurationTrajectory"));
+        ASSERT_TRUE(iterator()->createNode("ImportConfigurationTrajectory", "ImportConfigurationTrajectory"));
 
         // Import water trajectory
         EXPECT_TRUE(importTrajectory());
 
-        // Create a site RDF node
-        ASSERT_TRUE(iterator()->createNode("SiteRDF"));
+        // Create site RDF nodes
+        ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//O-O"));
+        ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//H1-H2"));
+        ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//COM-COM"));
+
+        ASSERT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF//O-O", "Configuration"}));
+        ASSERT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF//H1-H2", "Configuration"}));
+        ASSERT_TRUE(
+            iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF//COM-COM", "Configuration"}));
     }
 
     // Root test data
     GraphTestData testData_;
 };
 
-TEST_F(SiteRDFTest, Water)
+TEST_F(SiteRDFNodeTest, Water)
 {
     // Set options
-    ASSERT_TRUE(siteRDF()->setOption<SpeciesSites>("SiteA", {{water()->findSite("COM")}}));
-    ASSERT_TRUE(siteRDF()->setOption<SpeciesSites>("SiteB", {{water()->findSite("COM")}}));
-    ASSERT_TRUE(siteRDF()->setOption<Vector3>("DistanceRange", {0.0, 20.0, 0.05}));
-    ASSERT_TRUE(siteRDF()->setOption<Range>("RangeA", {0.0, 3.3}));
-    ASSERT_TRUE(siteRDF()->setOption<Range>("RangeB", {3.3, 5.6}));
-    ASSERT_TRUE(siteRDF()->setOption("RangeBEnabled", true));
-    ASSERT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF", "Configuration"}));
+    ASSERT_TRUE(siteRDF("O-O"));
+    ASSERT_TRUE(siteRDF("H1-H2"));
+    ASSERT_TRUE(siteRDF("COM-COM"));
+    ASSERT_TRUE(iterator());
+
+    // O-O
+    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteA", {{water()->findSite("O")}}));
+    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteB", {{water()->findSite("O")}}));
+    ASSERT_TRUE(siteRDF("O-O")->setOption<Vector3>("DistanceRange", {0.0, 20.0, 0.01}));
+    ASSERT_TRUE(siteRDF("O-O")->setOption("RangeBEnabled", true));
+
+    // H1-H2
+    ASSERT_TRUE(siteRDF("H1-H2")->setOption<SpeciesSites>("SiteA", {{water()->findSite("H1")}}));
+    ASSERT_TRUE(siteRDF("H1-H2")->setOption<SpeciesSites>("SiteB", {{water()->findSite("H2")}}));
+    ASSERT_TRUE(siteRDF("H1-H2")->setOption<Vector3>("DistanceRange", {0.0, 20.0, 0.01}));
+    ASSERT_TRUE(siteRDF("H1-H2")->setOption("RangeBEnabled", true));
+
+    // COM-COM
+    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteA", {{water()->findSite("COM")}}));
+    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteB", {{water()->findSite("COM")}}));
+    ASSERT_TRUE(siteRDF("COM-COM")->setOption<Vector3>("DistanceRange", {0.0, 20.0, 0.05}));
+    ASSERT_TRUE(siteRDF("COM-COM")->setOption<Range>("RangeA", {0.0, 3.3}));
+    ASSERT_TRUE(siteRDF("COM-COM")->setOption<Range>("RangeB", {3.3, 5.6}));
+    ASSERT_TRUE(siteRDF("COM-COM")->setOption("RangeBEnabled", true));
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator()->setOption<Number>("N", 95));
-    auto result = iterator()->run();
-    ASSERT_EQ(result, NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(iterator()->run(), NodeConstants::ProcessResult::Success);
+
+    // O-O RDF
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
+        {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        1.0e-2));
+
+    // H1-H2 RDF, excluding intramolecular
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)//RDF",
+        {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
+        5.0e-3));
+
+    // COM-COM RDF
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)//RDF",
+        {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
 }
 
 } // namespace UnitTest

@@ -56,6 +56,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
 
     // Calculate rAB
     Histogram1D histAB;
+    histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
     histAB.zeroBins();
 
     auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(histAB);
