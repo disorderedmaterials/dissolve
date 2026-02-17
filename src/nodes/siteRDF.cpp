@@ -147,7 +147,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
     if (!DataExporter::exportData(dataRDF_, exportFileAndFormat_))
         return NodeConstants::ProcessResult::Failed;
 
-    return NodeConstants::ProcessResult::Failed;
+    return NodeConstants::ProcessResult::Success;
 }
 
 const Data1D &SiteRDFNode::dataRDF() { return dataRDF_; }
