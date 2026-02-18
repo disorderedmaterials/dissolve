@@ -296,6 +296,11 @@ class DissolveSystemTest
 
         return checkDouble(quantity, A.value(), B, threshold);
     }
+    // Test sampled double
+    [[nodiscard]] static bool checkSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold)
+    {
+        return checkDouble(quantity, A.value(), B, threshold);
+    }
     // Test Data1D against external file data
     [[nodiscard]] static bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
                                           double tolerance = 5.0e-3,

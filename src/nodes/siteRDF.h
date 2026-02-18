@@ -74,5 +74,5 @@ class SiteRDFNode : public Node
     // Getters
     public:
     const Data1D &dataRDF();
-    const Sums &sums();
+    const std::pair<SampledDouble, std::optional<Data1D>> &sums(std::string name);
 };
