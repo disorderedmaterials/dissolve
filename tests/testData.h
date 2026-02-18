@@ -434,13 +434,16 @@ class DissolveSystemTest
         checkVec3Vector(vec, B, tolerance);
     }
     // Test species atom type
-    static void checkSpeciesAtomType(const Species *sp, int atomIndex, std::string_view atomTypeName)
+    static void checkSpeciesAtomType(const Species *sp, const std::map<int, std::string> &namesById)
     {
-        ASSERT_TRUE(atomIndex >= 0 && atomIndex < sp->nAtoms());
-        auto &spAtom = sp->atom(atomIndex);
-        auto at = spAtom.atomType();
-        ASSERT_TRUE(at);
-        EXPECT_EQ(at->name(), atomTypeName);
+        for (auto &[atomIndex, atomTypeName] : namesById)
+        {
+            ASSERT_TRUE(atomIndex >= 0 && atomIndex < sp->nAtoms());
+            auto &spAtom = sp->atom(atomIndex);
+            auto at = spAtom.atomType();
+            ASSERT_TRUE(at);
+            EXPECT_EQ(at->name(), atomTypeName);
+        }
     }
     // Test interaction parameters
     template <class Intra>

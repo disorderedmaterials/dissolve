@@ -61,7 +61,6 @@ add_library(
   speciesBond.cpp
   species.cpp
   species_atomic.cpp
-  species_ff.cpp
   species_intra.cpp
   species_io.cpp
   species_isotopologues.cpp

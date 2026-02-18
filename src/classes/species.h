@@ -170,7 +170,7 @@ class Species : public Serialisable<const CoreData &>
     // Remove all higher order intramolecular terms
     void removeHigherOrderIntramolecularTerms();
     // Clear and regenerate bonds based on tolerance
-    void recalculateIntermolecularTerms(double tolerance);
+    void recalculateIntermolecularTerms(double tolerance = 1.1);
     // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
     void updateIntramolecularTerms();
     // Add new SpeciesAngle definition
@@ -256,19 +256,11 @@ class Species : public Serialisable<const CoreData &>
     void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
 
     /*
-     * Source Forcefield (if any)
+     * Forcefield
      */
-    private:
-    // Forcefield to source terms from
-    std::shared_ptr<Forcefield> forcefield_;
-
     public:
-    // Set Forcefield to source terms from
-    void setForcefield(std::shared_ptr<Forcefield> ff);
-    // Return Forcefield to source terms from
-    std::shared_ptr<Forcefield> forcefield() const;
-    // Apply terms from source Forcefield
-    bool applyForcefieldTerms(CoreData &coreData);
+    // Apply terms from specified Forcefield
+    bool applyForcefieldTerms(std::shared_ptr<Forcefield> ff, CoreData &coreData);
     // Clear forcefield terms
     void clearForcefieldTerms(bool nullifyAtomTypes = true);
 
@@ -338,7 +330,7 @@ class Species : public Serialisable<const CoreData &>
     void centreAtOrigin();
 
     /*
-     * Read / Write
+     * Serialisation
      */
     public:
     // Species Block Keyword Enum

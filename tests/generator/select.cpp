@@ -19,8 +19,7 @@ class SelectGeneratorNodeTest : public ::testing::Test
     {
         // Set up species
         alphaSpecies_ = coreData_.copySpecies(&diatomicSpecies());
-        alphaSpecies_->setForcefield(ForcefieldLibrary::forcefield("UFF"));
-        alphaSpecies_->applyForcefieldTerms(coreData_);
+        alphaSpecies_->applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF"), coreData_);
         alphaSite_ = alphaSpecies_->addSite("NO");
         alphaSite_->setType(SpeciesSite::SiteType::Dynamic);
         alphaSite_->setDynamicElements({Elements::N, Elements::O});
@@ -32,15 +31,13 @@ class SelectGeneratorNodeTest : public ::testing::Test
         alphaSiteO_->setDynamicElements({Elements::N});
 
         betaSpecies_ = coreData_.copySpecies(&diatomicSpecies());
-        betaSpecies_->setForcefield(ForcefieldLibrary::forcefield("UFF"));
-        betaSpecies_->applyForcefieldTerms(coreData_);
+        betaSpecies_->applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF"), coreData_);
         betaSite_ = betaSpecies_->addSite("N");
         betaSite_->setType(SpeciesSite::SiteType::Dynamic);
         betaSite_->setDynamicElements({Elements::N, Elements::O});
 
         argonSpecies_ = coreData_.copySpecies(&argonSpecies());
-        argonSpecies_->setForcefield(ForcefieldLibrary::forcefield("UFF"));
-        argonSpecies_->applyForcefieldTerms(coreData_);
+        argonSpecies_->applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF"), coreData_);
         argonSite_ = argonSpecies_->addSite("Ar");
         argonSite_->setType(SpeciesSite::SiteType::Static);
         argonSite_->setStaticOriginAtoms({&argonSpecies_->atom(0)});
