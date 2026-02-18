@@ -75,6 +75,8 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     auto hSite = species->addSite("H");
     hSite->setType(SpeciesSite::SiteType::Dynamic);
     hSite->setDynamicElements({Elements::Element::H});
+    species->addSite("H1")->setStaticIndices({0}, {}, {});
+    species->addSite("H2")->setStaticIndices({2}, {}, {});
     auto comSite = species->addSite("COM");
     comSite->setStaticIndices({0, 1, 2}, {}, {});
     comSite->setOriginMassWeighted(true);
