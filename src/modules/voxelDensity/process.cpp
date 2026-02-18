@@ -1,7 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "main/dissolve.h"
-#include "math/gaussFit.h"
+#include "math/histogram1D.h"
 #include "voxelDensity.h"
 
 void VoxelDensityModule::addValue(Vector3 coords, double value)

@@ -3,10 +3,9 @@
 
 #include "analyser/dataOperator1D.h"
 #include "analyser/typeDefs.h"
-#include "base/sysFunc.h"
 #include "data/elements.h"
-#include "generator/box.h"
 #include "generator/copy.h"
+#include "math/histogram1D.h"
 #include "math/mathFunc.h"
 #include "math/regression.h"
 #include "math/vector3.h"

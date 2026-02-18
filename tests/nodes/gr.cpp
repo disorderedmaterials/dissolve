@@ -40,8 +40,9 @@ TEST(GRNodeTest, Methods)
 TEST(GRNodeTest, Water)
 {
     GraphTestData data;
-    createWater1000Graph(&data.graphRoot, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                                     CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    createWaterGraph(&data.graphRoot, 1000,
+                     CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                                CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Set GR options
     auto grNode = data.graphRoot.findNode("GR");

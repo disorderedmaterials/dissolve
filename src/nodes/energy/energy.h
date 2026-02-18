@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "kernels//energy.h"
+#include "kernels/energy.h"
 #include "nodes/node.h"
 
 // Forward Declarations

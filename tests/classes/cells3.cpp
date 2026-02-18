@@ -3,6 +3,7 @@
 
 #include "classes/atomType.h"
 #include "classes/species.h"
+#include "io/import/coordinates.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "templates/algorithms.h"

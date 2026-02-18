@@ -10,6 +10,8 @@
 void Configuration::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
+
+    cells_.clear();
 }
 
 // Create Box definition from axes matrix
@@ -31,6 +33,8 @@ void Configuration::createBox(const Matrix3 axes)
     angles.toDegrees();
 
     box_ = Box::generate(lengths, angles);
+
+    cells_.clear();
 }
 
 // Create Box definition with specified lengths and angles, and initialise cell array

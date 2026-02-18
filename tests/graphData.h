@@ -5,6 +5,7 @@
 
 #include "classes/isotopologueSet.h"
 #include "data/structureFactors.h"
+#include "io/import/coordinates.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
 #include "nodes/configuration.h"
@@ -134,7 +135,8 @@ inline void createArgonGraph(Graph *root, int population = 1000,
 }
 
 // Create a water graph in the supplied root node
-inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initialCoordinates)
+inline void createWaterGraph(Graph *root, int population,
+                             CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
 {
     // Create species and configuration
     auto waterNode = createWater(root);
@@ -145,22 +147,26 @@ inline void createWater1000Graph(Graph *root, CoordinateImportFileFormat initial
     ASSERT_TRUE(insertNode);
     ASSERT_TRUE(root->addEdge({"Water", "Species", "Insert", "Species"}));
     ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-    ASSERT_TRUE(insertNode->setInput<Number>("Population", 1000));
+    ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
     ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.1));
     ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
 
     // Import reference coordinates
-    auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
-    ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
-    ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "FileFormat",
-        CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
-    ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+    if (initialCoordinates.hasFilename())
+    {
+        auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
+        ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
+        ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+            "FileFormat",
+            CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
+        ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+    }
 
     // Add GR node and link to the import node
     auto grNode = root->createNode("GR");
     ASSERT_TRUE(grNode);
-    ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
+    ASSERT_TRUE(
+        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GR", "Configuration"}));
 
     // Create the SQ node
     auto sqNode = root->createNode("SQ");

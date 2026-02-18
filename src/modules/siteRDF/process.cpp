@@ -3,9 +3,9 @@
 
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
-#include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "math/histogram1D.h"
 #include "math/integrator.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"

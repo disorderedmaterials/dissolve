@@ -296,7 +296,7 @@ class DissolveSystemTest
 
         return checkDouble(quantity, A.value(), B, threshold);
     }
-    // Test Data1D (by tag and external file data)
+    // Test Data1D against external file data
     [[nodiscard]] static bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
                                           double tolerance = 5.0e-3,
                                           Error::ErrorType errorType = Error::ErrorType::EuclideanError)
@@ -308,8 +308,8 @@ class DissolveSystemTest
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, data, compare).error;
         auto notOK = std::isnan(error) || error > tolerance;
-        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name,
-                         error, externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
+        Messenger::print("Data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name, error,
+                         externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
     // Test Data1D
@@ -320,8 +320,8 @@ class DissolveSystemTest
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, dataA, dataB).error;
         auto notOK = std::isnan(error) || error > tolerance;
-        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA,
-                         error, nameB, notOK ? "NOT OK" : "OK", tolerance);
+        Messenger::print("Data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA, error,
+                         nameB, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
     // Test Data1D (by tag and external file data)

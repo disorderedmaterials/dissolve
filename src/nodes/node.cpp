@@ -115,7 +115,7 @@ NodeConstants::ProcessResult Node::run()
             switch (edge->pull())
             {
                 case (NodeConstants::ProcessResult::Failed):
-                case (NodeConstants::ProcessResult::InputsNotSatisfied):
+                    error("Input '{}' is receiving bad data from source node '{}'.\n", inputName, edge->sourceNode().name());
                     return NodeConstants::ProcessResult::Failed;
                 case (NodeConstants::ProcessResult::Success):
                 case (NodeConstants::ProcessResult::Unchanged):
@@ -132,7 +132,6 @@ NodeConstants::ProcessResult Node::run()
         switch (result)
         {
             case (NodeConstants::ProcessResult::Failed):
-            case (NodeConstants::ProcessResult::InputsNotSatisfied):
                 break;
             case (NodeConstants::ProcessResult::Success):
                 ++versionIndex_;
