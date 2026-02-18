@@ -61,7 +61,8 @@ double linearGradient(const std::vector<double> &y, int nSamples, OptionalRefere
     for (auto n = 0; n < nSamples; ++n)
     {
         dx = n - xBar;
-        dy = y[y.size() - nSamples + n] - yBar;
+        auto i = y.size() - nSamples + n;
+        dy = y[i] - yBar;
         Sxx += dx * dx;
         Syy += dy * dy;
         Sxy += dx * dy;
