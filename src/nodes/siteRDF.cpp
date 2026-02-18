@@ -55,11 +55,11 @@ NodeConstants::ProcessResult SiteRDFNode::process()
     SiteSelector b(configuration_, b_.getSpeciesSites());
 
     // Calculate rAB
-    Histogram1D histAB;
-    histAB.initialise(distanceRange_.x, distanceRange_.y, distanceRange_.z);
-    histAB.zeroBins();
+    if (!histAB_)
+        histAB_.emplace(distanceRange_.value());
+    histAB_->zeroBins();
 
-    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(histAB);
+    auto combinableHistograms = dissolve::CombinableValue<Histogram1D>(*histAB_);
 
     dissolve::for_each(std::execution::par, a.sites().begin(), a.sites().end(),
                        [this, &b, &combinableHistograms](const auto &pair)
@@ -75,13 +75,13 @@ NodeConstants::ProcessResult SiteRDFNode::process()
                            }
                        });
 
-    histAB = combinableHistograms.finalize();
+    histAB_ = combinableHistograms.finalize();
 
     // Accumulate histogram
-    histAB.accumulate();
+    histAB_->accumulate();
 
     // RDF
-    dataRDF_ = histAB.accumulatedData();
+    dataRDF_ = histAB_->accumulatedData();
 
     // Normalise
     DataOperator1D normaliserRDF(dataRDF_);
@@ -96,7 +96,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
 
     // CN
     Data1D dataCN;
-    dataCN = histAB.accumulatedData();
+    dataCN = histAB_->accumulatedData();
 
     // Normalise
     DataOperator1D normaliserCN(dataCN);
@@ -128,7 +128,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
         }
 
     // Accumulate instantaneous binValues
-    auto instBinValues = histAB.data();
+    auto instBinValues = histAB_->data();
 
     // Normalise Data
     DataOperator1D normaliserInstBinValues(instBinValues);
