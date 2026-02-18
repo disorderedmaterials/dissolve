@@ -144,9 +144,11 @@ NodeConstants::ProcessResult SiteRDFNode::process()
                        return sum;
                    });
 
+    /*
     // Save RDF data?
     if (!DataExporter::exportData(dataRDF_, exportFileAndFormat_))
         return NodeConstants::ProcessResult::Failed;
+    */
 
     return NodeConstants::ProcessResult::Success;
 }
