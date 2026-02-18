@@ -361,7 +361,7 @@ Module::ExecutionResult ClusteringModule::process(Dissolve &dissolve)
         loglog.addPoint(std::log(radiusOfGyration_[clusterID]), std::log(clusterMasses_[clusterID]));
 
     // Perform linear regression
-    fractalDimension_ = (Regression::linear(loglog, radiusOfGyration_.size()));
+    fractalDimension_ = Regression::linearGradient(loglog, radiusOfGyration_.size());
 
     if (saveSizeDist_)
     {

@@ -60,7 +60,7 @@ NodeConstants::ProcessResult EnergyNode::process()
     else
     {
         auto yMean = 0.0;
-        grad = Regression::linear(totalEnergyArray, stabilityWindow_, yMean);
+        grad = Regression::linearGradient(totalEnergyArray, stabilityWindow_, yMean);
         auto thresholdValue = fabs(stabilityThreshold_ * yMean);
         stable = fabs(grad) < thresholdValue;
 

@@ -6,23 +6,16 @@
 
 namespace Regression
 {
-// Return gradient of last n points
-double linear(const Data1D &data, int nSamples)
-{
-    double yMean;
-    return linear(data, nSamples, yMean);
-}
-
 // Return gradient of last n points, along with average y value
-double linear(const Data1D &data, int nSamples, double &yBar)
+double linearGradient(const Data1D &data, int nSamples, OptionalReferenceWrapper<double> returnYBar)
 {
     // Grab data arrays
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
-    double xBar = 0.0;
-    yBar = 0.0;
+    auto Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
+    auto xBar = 0.0;
+    auto yBar = 0.0;
 
     // Calculate mean values of x and y
     for (auto n = data.nValues() - nSamples; n < data.nValues(); ++n)
@@ -44,7 +37,43 @@ double linear(const Data1D &data, int nSamples, double &yBar)
         Sxy += dx * dy;
     }
 
+    // Set the supplied external var if present
+    if (returnYBar)
+        returnYBar->get() = yBar;
+
     // Return the gradient
     return Sxy / Sxx;
 }
+
+// Return linear gradient of last n points, along with average y value, assuming unit spacing between points
+double linearGradient(const std::vector<double> &y, int nSamples, OptionalReferenceWrapper<double> returnYBar)
+{
+    auto Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
+    auto xBar = (nSamples - 1) / 2.0, yBar = 0.0;
+
+    // Calculate mean values of x and y
+    for (auto n = y.size() - nSamples; n < y.size(); ++n)
+        yBar += y[n];
+    yBar /= nSamples;
+
+    // Determine Sx, Sy, and Sxy
+    double dx, dy;
+    for (auto n = 0; n < nSamples; ++n)
+    {
+        dx = n - xBar;
+        auto i = y.size() - nSamples + n;
+        dy = y[i] - yBar;
+        Sxx += dx * dx;
+        Syy += dy * dy;
+        Sxy += dx * dy;
+    }
+
+    // Set the supplied external var if present
+    if (returnYBar)
+        returnYBar->get() = yBar;
+
+    // Return the gradient
+    return Sxy / Sxx;
+}
+
 } // namespace Regression
