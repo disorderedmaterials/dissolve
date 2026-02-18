@@ -27,7 +27,7 @@ TEST(WaterSPCFwEnergyTest, Water)
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
 
     // Check consistency between production and test energies
-    DissolveSystemTest::checkEnergyConsistency(cfg, data.graphRoot.dissolveGraph()->prepareEnergyKernel(cfg));
+    checkEnergyConsistency(cfg, data.graphRoot.dissolveGraph()->prepareEnergyKernel(cfg));
 }
 
 } // namespace UnitTest

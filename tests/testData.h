@@ -872,7 +872,7 @@ const Species &tetrahedralArgonSpecies()
 }
 
 // Check consistency between production and test forces for the supplied configuration
-bool checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
+void checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
 {
     auto &&[productionPP, productionGeometry] = EnergyNode::calculateEnergy(cfg, kernel);
     auto &&[testPP, testGeometry] = EnergyNode::calculateTestEnergy(cfg, kernel);
