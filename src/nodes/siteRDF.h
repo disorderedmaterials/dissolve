@@ -8,9 +8,12 @@
 #include "classes/speciesSites.h"
 #include "io/export/data1D.h"
 #include "io/import/data1D.h"
+#include "math/histogram1D.h"
 #include "math/range.h"
+#include "math/rangedVector3.h"
 #include "math/vector3.h"
 #include "nodes/node.h"
+#include <optional>
 #include <string_view>
 
 // Calculate RDF Module
@@ -39,13 +42,15 @@ class SiteRDFNode : public Node
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range (min, max, delta) of distance axis
-    Vector3 distanceRange_{0.0, 10.0, 0.05};
+    RangedVector3 distanceRange_{{0.0, 10.0, 0.05}};
     // Ranges for sums
     Range rangeA_{0.0, 3.0};
     Range rangeB_{3.0, 6.0};
     Range rangeC_{6.0, 9.0};
     // Site RDF
     Data1D dataRDF_;
+    // Histogram1D between A and B sites
+    std::optional<Histogram1D> histAB_;
     // Flags for ranges
     bool rangeEnabled_[3] = {true, false, false};
     // Whether to calculate the instantaneous coordination numbers rather than forming an average
