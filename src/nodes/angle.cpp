@@ -219,25 +219,25 @@ NodeConstants::ProcessResult AngleNode::process()
     // Normalise by spherical shell
     normaliserDAngleBC.normaliseBySphericalShell();
 
-    // Save RDF(A-B) data?
-    if (!DataExporter::exportData(rdfAB_, exportFileAndFormatAB_))
-        return NodeConstants::ProcessResult::Failed;
+    // // Save RDF(A-B) data?
+    // if (!DataExporter::exportData(rdfAB_, exportFileAndFormatAB_))
+    //     return NodeConstants::ProcessResult::Failed;
 
-    // Save RDF(B-C) data?
-    if (!DataExporter::exportData(rdfBC_, exportFileAndFormatBC_))
-        return NodeConstants::ProcessResult::Failed;
+    // // Save RDF(B-C) data?
+    // if (!DataExporter::exportData(rdfBC_, exportFileAndFormatBC_))
+    //     return NodeConstants::ProcessResult::Failed;
 
-    // Save Angle(A-B-C) data?
-    if (!DataExporter::exportData(angleABC_, exportFileAndFormatAngle_))
-        return NodeConstants::ProcessResult::Failed;
+    // // Save Angle(A-B-C) data?
+    // if (!DataExporter::exportData(angleABC_, exportFileAndFormatAngle_))
+    //     return NodeConstants::ProcessResult::Failed;
 
-    // Save DAngle((A-B)-C) data?
-    if (!DataExporter::exportData(dAngleAB_, exportFileAndFormatDAngleAB_))
-        return NodeConstants::ProcessResult::Failed;
+    // // Save DAngle((A-B)-C) data?
+    // if (!DataExporter::exportData(dAngleAB_, exportFileAndFormatDAngleAB_))
+    //     return NodeConstants::ProcessResult::Failed;
 
-    // Save DAngle(A-(B-C)) data?
-    if (!DataExporter::exportData(dAngleBC_, exportFileAndFormatDAngleBC_))
-        return NodeConstants::ProcessResult::Failed;
+    // // Save DAngle(A-(B-C)) data?
+    // if (!DataExporter::exportData(dAngleBC_, exportFileAndFormatDAngleBC_))
+    //     return NodeConstants::ProcessResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }
