@@ -875,6 +875,9 @@ const Species &tetrahedralArgonSpecies()
 bool checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
 {
     auto &&[productionPP, productionGeometry] = EnergyNode::calculateEnergy(cfg, kernel);
+    auto &&[testPP, testGeometry] = EnergyNode::calculateTestEnergy(cfg, kernel);
+    EXPECT_NEAR(productionPP.total(), testPP.total(), 1.0e-6);
+    EXPECT_NEAR(productionGeometry.total(), testGeometry.total(), 1.0e-6);
 }
 
 } // namespace UnitTest
