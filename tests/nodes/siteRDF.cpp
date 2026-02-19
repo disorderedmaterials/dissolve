@@ -21,6 +21,7 @@ class SiteRDFNodeTest : public ::testing::Test
     ~SiteRDFNodeTest() = default;
 
     protected:
+    // Import trajectpry into iterable graph
     bool importTrajectory(std::string name = "dlpoly/water267-analysis/water-267-298K.xyz")
     {
         if (!(cfgTrajImporter() && iterator()))
@@ -32,19 +33,25 @@ class SiteRDFNodeTest : public ::testing::Test
 
         return iterator()->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"});
     }
+    // Return pointer to ImportConfiguationTrajectory node
     ImportConfigurationTrajectoryNode *cfgTrajImporter()
     {
         return iterator()
                    ? static_cast<ImportConfigurationTrajectoryNode *>(iterator()->findNode("ImportConfigurationTrajectory"))
                    : nullptr;
     }
+    // Return pointer to SiteRDF node
     SiteRDFNode *siteRDF(const std::string &name)
     {
         return iterator() ? static_cast<SiteRDFNode *>(iterator()->findNode("SiteRDF//" + name)) : nullptr;
     }
+    // Return pointer to IterableGraph node
     IterableGraph *iterator() { return static_cast<IterableGraph *>(root()->findNode("Iterator")); }
+    // Return graph water species
     const Species *water() { return root()->findNode("Water")->getOutputValue<const Species *>("Species"); }
+    // Return pointer to DissolveGraph
     DissolveGraph *root() { return &(testData_->graphRoot); }
+    // create graph
     void createGraph()
     {
         // Create graph test data, resetting unique pointer if necessary
