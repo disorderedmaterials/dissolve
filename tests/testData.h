@@ -9,6 +9,7 @@
 #include "io/import/data1D.h"
 #include "io/import/data3D.h"
 #include "io/import/forces.h"
+#include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/error.h"
@@ -16,9 +17,8 @@
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
-#include "kernels/energy.h"
-#include "nodes/graph.h"
 #include "nodes/energy.h"
+#include "nodes/graph.h"
 #include "nodes/serialisableData.h"
 #include "nodes/species.h"
 #include <gtest/gtest.h>
@@ -871,13 +871,32 @@ const Species &tetrahedralArgonSpecies()
     return tetrahedralArgon_;
 }
 
-// Check consistency between production and test forces for the supplied configuration
-void checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
+// Check consistency between production, molecular, and test forces for the supplied configuration
+void checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
 {
+    // Calculate production energies (fully optimised)
     auto &&[productionPP, productionGeometry] = EnergyNode::calculateEnergy(cfg, kernel);
+
+    // Calculate baseline teset energies (simple double-loop, PBC always)
     auto &&[testPP, testGeometry] = EnergyNode::calculateTestEnergy(cfg, kernel);
-    EXPECT_NEAR(productionPP.total(), testPP.total(), 1.0e-6);
-    EXPECT_NEAR(productionGeometry.total(), testGeometry.total(), 1.0e-6);
+
+    // Calculate molecule-centric energy
+    auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(false).total();
+    auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy(true).total();
+
+    // Compare basic energies with production value
+
+    EXPECT_NEAR(testPP.interMolecular(), productionPP.interMolecular(), testThreshold);
+    EXPECT_NEAR(testPP.intraMolecular(), productionPP.intraMolecular(), testThreshold);
+    EXPECT_NEAR(testGeometry.total(), productionGeometry.total(), testThreshold);
+
+    // Compare basic energies with molecule-based values
+    EXPECT_NEAR(testPP.total(), molecularPPEnergyFull, testThreshold);
+    EXPECT_NEAR(testPP.interMolecular(), molecularPPEnergyInter, testThreshold);
+
+    // "Compare molecule-based energies with production values
+    EXPECT_NEAR(molecularPPEnergyFull, productionPP.total(), testThreshold);
+    EXPECT_NEAR(molecularPPEnergyInter, productionPP.interMolecular(), testThreshold);
 }
 
 } // namespace UnitTest
