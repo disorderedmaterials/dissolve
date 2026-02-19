@@ -155,4 +155,4 @@ NodeConstants::ProcessResult SiteRDFNode::process()
 
 const Data1D &SiteRDFNode::dataRDF() { return dataRDF_; }
 
-const SiteRDFNode::Sums &SiteRDFNode::sums() { return sums_; }
+const std::pair<SampledDouble, std::optional<Data1D>> &SiteRDFNode::sumN(std::string name) { return sums_[name]; }

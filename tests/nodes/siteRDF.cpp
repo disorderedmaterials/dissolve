@@ -146,6 +146,12 @@ TEST_F(SiteRDFNodeTest, Water)
         siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)_RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
     */
+
+    // Coordination numbers
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM")->sumN("A").first, 4.32359551,
+                                                       6.5e-1));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM")->sumN("B").first, 19.413049,
+                                                       6.5e-1));
 }
 
 TEST_F(SiteRDFNodeTest, WaterNPT)
@@ -234,6 +240,12 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
         siteRDF("H-H")->dataRDF(), "RDF(H-H)_RDF_DYNAMIC",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         3.0e-3));
+
+    // Coordination numbers
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM")->sumN("A").first, 4.32359551,
+                                                       6.5e-1));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM")->sumN("B").first, 19.413049,
+                                                       6.5e-1));
 }
 
 TEST_F(SiteRDFNodeTest, WaterFragments)
