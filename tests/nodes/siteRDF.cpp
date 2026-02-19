@@ -22,14 +22,13 @@ class SiteRDFNodeTest : public ::testing::Test
 
     protected:
     // Import trajectpry into iterable graph
-    bool importTrajectory(std::string name = "dlpoly/water267-analysis/water-267-298K.xyz")
+    bool importTrajectory(const std::string &name, TrajectoryImportFileFormat::TrajectoryImportFormat format)
     {
         if (!(cfgTrajImporter() && iterator()))
             return false;
 
         cfgTrajImporter()->setOption<std::string>("FilePath", name);
-        cfgTrajImporter()->setOption<TrajectoryImportFileFormat::TrajectoryImportFormat>(
-            "FileFormat", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
+        cfgTrajImporter()->setOption<TrajectoryImportFileFormat::TrajectoryImportFormat>("FileFormat", format);
 
         return iterator()->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"});
     }
@@ -52,7 +51,7 @@ class SiteRDFNodeTest : public ::testing::Test
     // Return pointer to DissolveGraph
     DissolveGraph *root() { return &(testData_->graphRoot); }
     // create graph
-    void createGraph()
+    void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
     {
         // Create graph test data, resetting unique pointer if necessary
         if (!testData_.get())
@@ -73,7 +72,7 @@ class SiteRDFNodeTest : public ::testing::Test
         ASSERT_TRUE(iterator()->createNode("ImportConfigurationTrajectory", "ImportConfigurationTrajectory"));
 
         // Import water trajectory
-        EXPECT_TRUE(importTrajectory());
+        ASSERT_TRUE(importTrajectory(trajectoryFilename, format));
 
         // Create site RDF nodes
         ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//O-O"));
@@ -92,7 +91,7 @@ class SiteRDFNodeTest : public ::testing::Test
 
 TEST_F(SiteRDFNodeTest, Water)
 {
-    createGraph();
+    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
 
     // Set options
     ASSERT_TRUE(siteRDF("O-O"));
