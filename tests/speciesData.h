@@ -84,6 +84,54 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     return speciesNodePtr;
 }
 
+// Create and return water test species in the specified graph with DL_POLY ordering
+inline SpeciesNode *createWaterDlPoly(Graph *parentGraph)
+{
+    const auto name = "Water";
+
+    // Add species node
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodePtr = speciesNodeUniquePtr.get();
+    auto species = &(speciesNodePtr->species());
+    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
+    species->setName(name);
+
+    // Set up atom types
+    auto hW = species->addAtomType(Elements::Element::H, "HW");
+    hW->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+    hW->setCharge(0.41);
+    species->addAtom(Elements::Element::H, {1, 0, 0}, 0.41, hW);
+    auto oW = species->addAtomType(Elements::Element::O, "OW");
+    oW->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.6503 sigma=3.165492");
+    oW->setCharge(-0.82);
+    species->addAtom(Elements::Element::O, {}, -0.82, oW);
+    species->addAtom(Elements::Element::H, {cos(DissolveMath::toRadians(113.24)), sin(DissolveMath::toRadians(113.24)), 0.0},
+                     0.41, hW);
+
+    // Apply intramolecular terms
+    species->addBond(0, 1).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
+    species->addBond(0, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
+    species->addAngle(1, 0, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24");
+
+    // Create isotopologue
+    auto iso = species->addIsotopologue("D2O");
+    iso->setAtomTypeIsotope(hW.get(), Sears91::H_2);
+
+    // Create sites
+    species->addSite("Origin")->setStaticIndices({1}, {0, 2}, {2});
+    species->addSite("O")->setStaticIndices({1}, {}, {});
+    auto hSite = species->addSite("H");
+    hSite->setType(SpeciesSite::SiteType::Dynamic);
+    hSite->setDynamicElements({Elements::Element::H});
+    species->addSite("H1")->setStaticIndices({0}, {}, {});
+    species->addSite("H2")->setStaticIndices({2}, {}, {});
+    auto comSite = species->addSite("COM");
+    comSite->setStaticIndices({0, 1, 2}, {}, {});
+    comSite->setOriginMassWeighted(true);
+
+    return speciesNodePtr;
+}
+
 // Create and return methanol test species in the specified graph
 inline SpeciesNode *createMethanol(Graph *parentGraph)
 {

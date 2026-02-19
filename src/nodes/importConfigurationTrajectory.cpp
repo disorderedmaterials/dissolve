@@ -16,7 +16,7 @@ ImportConfigurationTrajectoryNode::ImportConfigurationTrajectoryNode(Graph *pare
     addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
 
     // Serialisable data
-    //addSerialisable("filePosition", filePosition_);
+    // addSerialisable("filePosition", filePosition_);
 }
 
 std::string_view ImportConfigurationTrajectoryNode::type() const { return "ImportTrajectory"; }

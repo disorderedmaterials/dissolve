@@ -54,7 +54,7 @@ class SiteRDFNodeTest : public ::testing::Test
     void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
     {
         // Create graph test data, resetting unique pointer if necessary
-        if (!testData_.get())
+        if (testData_.get())
             testData_.reset();
 
         testData_ = std::make_unique<GraphTestData>();
@@ -63,7 +63,7 @@ class SiteRDFNodeTest : public ::testing::Test
         ASSERT_TRUE(dynamic_cast<IterableGraph *>(root()->createNode("Iterator", "Iterator")));
 
         // Create water graph
-        createWaterGraph(root(), 267);
+        createWaterGraphDlPoly(root(), 267);
 
         // Create a dynamic input from the graph's existing Insert node
         EXPECT_TRUE(root()->addEdge({"Insert", "Configuration", "Iterator", "Configuration"}));
@@ -130,22 +130,20 @@ TEST_F(SiteRDFNodeTest, Water)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)_RDF",
+        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-2));
 
     // H1-H2 RDF, excluding intramolecular
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)_RDF",
+        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         5.0e-3));
 
     // COM-COM RDF
-    /*
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)_RDF",
+        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
-    */
 
     // Coordination numbers
     EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM")->sumN("A").first, 4.32359551,
@@ -191,21 +189,19 @@ TEST_F(SiteRDFNodeTest, WaterNPT)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)_RDF_NPT",
+        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-npt/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)_RDF_NPT",
+        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)//RDF",
         {"dlpoly/water267-npt/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
 
-    /*
     // COM-COM RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)_RDF_NPT",
+        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)//RDF",
         {"dlpoly/water267-npt/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         7.0e-3));
-    */
 }
 
 TEST_F(SiteRDFNodeTest, WaterDynamic)
@@ -231,13 +227,13 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)_RDF_DYNAMIC",
+        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         9.0e-3));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H-H")->dataRDF(), "RDF(H-H)_RDF_DYNAMIC",
+        siteRDF("H-H")->dataRDF(), "RDF(H-H)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         3.0e-3));
 
@@ -287,22 +283,20 @@ TEST_F(SiteRDFNodeTest, WaterFragments)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)_RDF_FRAGMENTS",
+        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-2));
 
     // H1-H2 RDF, excluding intramolecular
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)_RDF_FRAGMENTS",
+        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         5.0e-3));
 
-    /*
     // COM-COM RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)_RDF_FRAGMENTS",
+        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
-    */
 }
 
 } // namespace UnitTest
