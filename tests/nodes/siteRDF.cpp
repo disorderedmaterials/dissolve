@@ -78,11 +78,13 @@ class SiteRDFNodeTest : public ::testing::Test
         ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//O-O"));
         ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//H1-H2"));
         ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//COM-COM"));
+        ASSERT_TRUE(iterator()->createNode("SiteRDF", "SiteRDF//H-H"));
 
         ASSERT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF//O-O", "Configuration"}));
         ASSERT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF//H1-H2", "Configuration"}));
         ASSERT_TRUE(
             iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF//COM-COM", "Configuration"}));
+        ASSERT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", "SiteRDF//H-H", "Configuration"}));
     }
 
     // Root test data
