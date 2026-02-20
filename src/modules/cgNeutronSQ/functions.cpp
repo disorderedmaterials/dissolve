@@ -67,9 +67,6 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
             double weight = weights.weight(typeI, typeJ);
             double boundWeight = weights.intramolecularWeight(typeI, typeJ);
 
-            std::cout << "Weights (" << typeI << ", " << typeJ << ") --> ";
-            std::cout << "Bound: " << boundWeight << "    UnBound: " << weight << std::endl;
-
             weight /= weights.beadMap_.average_natoms_per_bead();
             boundWeight /= weights.beadMap_.average_natoms_per_bead();
 
@@ -97,8 +94,6 @@ bool CGNeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Part
     {
         weightedsq.total() += weights.beadMap_[typeI].intraBeadSQ();
     }
-    std::cout << "Total Weighted SQ: ";
-    std::cout << std::accumulate(weightedsq.total().values().begin(), weightedsq.total().values().end(), 0.0) << std::endl;
 
     // Apply normalisation to all totals
     if (normalisation != StructureFactors::NoNormalisation)

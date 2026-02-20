@@ -135,6 +135,7 @@ class CGBead
         intraBeadSQ_.copyArrays(formFactor_);
         intraBeadSQ_ *= formFactor_.values();
         intraBeadSQ_ *= innerSum * (1.0 / av_noa_bead);
+
     };
 
     const AtomTypeMix &atomTypes() const
@@ -173,23 +174,28 @@ class CGBead
         return scatteringLength_; 
     }
 
-    const double nonExchangeScatteringLength() const
+    const double nonExchangeScatteringLength(const bool deuterated) const
     { 
         const bool mix = (dFraction_ > 0.0 && dFraction_ < 1.0);
         double nb = 0.0;
         if (mix)
         {
-            for (const AtomTypeData& atm : atomTypes_)
+            for (const AtomTypeData& atomType : atomTypes_)
             {
-                if (atm.atomType()->Z() == Elements::H)
+                if (atomType.atomType()->Z() == Elements::H)
                 {
-                    double nbi = dFraction_ * Sears91::boundCoherent(Sears91::H_2);
-                    nbi += (1.0 - dFraction_) * Sears91::boundCoherent(Sears91::H_Natural);
-                    nb += 0.1 * atm.population() * nbi;
+                    if (deuterated)
+                    {
+                        nb += atomType.population() * Sears91::boundCoherent(Sears91::H_2) * 0.1;
+                    }
+                    else
+                    {
+                        nb += atomType.population() * Sears91::boundCoherent(Sears91::H_Natural) * 0.1;
+                    }
                 }
                 else
                 {
-                    nb += atm.population() * atm.boundCoherent();
+                    nb += atomType.population() * atomType.boundCoherent();
                 }
             }
         }

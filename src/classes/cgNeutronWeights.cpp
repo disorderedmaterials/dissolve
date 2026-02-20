@@ -183,25 +183,37 @@ void CGNeutronWeights::calculateWeightingMatrices()
                                         auto &localI = atomTypes_[typeI];
                                         auto &localJ = atomTypes_[typeJ];
 
+
                                         // If an AtomType is exchangeable, add the averaged scattering length from the local
                                         // AtomTypesList instead of its actual isotopic length.
                                         if (localI.exchangeable()) 
                                         {
                                             bi = beadMap_[typeI].scatteringLength();
                                         }
-                                        else 
+                                        else if (tope->atomTypeIsotope(atd1.atomType()) == 
+                                            Sears91::naturalIsotope(localI.atomType()->Z()))
                                         {
 
-                                            bi = beadMap_[typeI].nonExchangeScatteringLength();
+                                            bi = beadMap_[typeI].nonExchangeScatteringLength(false);
+                                        }
+                                        else
+                                        {
+                                            bi = beadMap_[typeI].nonExchangeScatteringLength(true);
                                         }
                                         
                                         if (localJ.exchangeable()) 
                                         {
                                             bj = beadMap_[typeJ].scatteringLength();
                                         }
-                                        else 
+                                        else if (tope->atomTypeIsotope(atd2.atomType()) ==
+                                                 Sears91::naturalIsotope(localJ.atomType()->Z()))
                                         {
-                                            bj = beadMap_[typeJ].nonExchangeScatteringLength();
+
+                                            bj = beadMap_[typeJ].nonExchangeScatteringLength(false);
+                                        }
+                                        else
+                                        {
+                                            bj = beadMap_[typeJ].nonExchangeScatteringLength(true);
                                         }
 
                                         // Convert from fm to barns
