@@ -221,6 +221,10 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
     ASSERT_TRUE(siteRDF("H-H//Dynamic")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
     ASSERT_TRUE(siteRDF("H-H//Dynamic")->setOption("ExcludeSameMolecule", true));
 
+    // Run from the iterator node explicitly
+    ASSERT_TRUE(iterator()->setOption<Number>("N", 95));
+    ASSERT_EQ(iterator()->run(), NodeConstants::ProcessResult::Success);
+
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         siteRDF("O-O//Dynamic")->dataRDF(), "RDF(OW-OW)//RDF",
