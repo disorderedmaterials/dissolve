@@ -143,10 +143,10 @@ TEST_F(SiteRDFNodeTest, Water)
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
 
     // Coordination numbers
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM")->sumN("A").first, 4.32359551,
-                                                       6.5e-1));
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM")->sumN("B").first, 19.413049,
-                                                       6.5e-1));
+    auto &[cNA, cNAData] = siteRDF("COM-COM")->sumN("A");
+    auto &[cNB, cNBData] = siteRDF("COM-COM")->sumN("B");
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 6.5e-1));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 6.5e-1));
 }
 
 TEST_F(SiteRDFNodeTest, WaterNPT)
@@ -289,10 +289,10 @@ TEST_F(SiteRDFNodeTest, WaterFragments)
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
 
     // Coordination numbers
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM//Fragments")->sumN("A").first,
-                                                       4.32359551, 6.5e-1));
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM//Fragments")->sumN("B").first,
-                                                       19.413049, 6.5e-1));
+    auto &[cNA, cNAData] = siteRDF("COM-COM//Fragments")->sumN("A");
+    auto &[cNB, cNBData] = siteRDF("COM-COM//Fragments")->sumN("B");
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 6.5e-1));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 6.5e-1));
 }
 
 } // namespace UnitTest
