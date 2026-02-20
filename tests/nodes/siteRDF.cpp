@@ -232,12 +232,6 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
         siteRDF("H-H//Dynamic")->dataRDF(), "RDF(H-H)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         3.0e-3));
-
-    // Coordination numbers
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM//Dynamic")->sumN("A").first, 4.32359551,
-                                                       6.5e-1));
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM//Dynamic")->sumN("B").first, 19.413049,
-                                                       6.5e-1));
 }
 
 TEST_F(SiteRDFNodeTest, WaterFragments)
@@ -293,6 +287,12 @@ TEST_F(SiteRDFNodeTest, WaterFragments)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         siteRDF("COM-COM//Fragments")->dataRDF(), "RDF(COM-COM)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
+
+    // Coordination numbers
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM//Fragments")->sumN("A").first,
+                                                       4.32359551, 6.5e-1));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM//Fragments")->sumN("B").first,
+                                                       19.413049, 6.5e-1));
 }
 
 } // namespace UnitTest
