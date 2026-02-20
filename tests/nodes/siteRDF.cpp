@@ -234,9 +234,9 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
         3.0e-3));
 
     // Coordination numbers
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM")->sumN("A").first, 4.32359551,
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", siteRDF("COM-COM//Dynamic")->sumN("A").first, 4.32359551,
                                                        6.5e-1));
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM")->sumN("B").first, 19.413049,
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", siteRDF("COM-COM//Dynamic")->sumN("B").first, 19.413049,
                                                        6.5e-1));
 }
 
