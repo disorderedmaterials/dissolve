@@ -110,7 +110,7 @@ inline SpeciesNode *createWaterDlPoly(Graph *parentGraph)
 
     // Apply intramolecular terms
     species->addBond(1, 0).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
-    species->addBond(2, 0).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
+    species->addBond(1, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
     species->addAngle(0, 1, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24");
 
     // Create isotopologue
