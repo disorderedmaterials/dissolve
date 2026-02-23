@@ -17,6 +17,9 @@ TEST(WaterSPCFwEnergyTest, Water)
                      CoordinateImportFileFormat("dlpoly/water3000_energyForce/CONFIG",
                                                 CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
 
+    // Adjust pair potential properties
+    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
+
     // Run the graph from the Import node to set up the configuration
     auto importNode = data.graphRoot.findNode("Import");
     ASSERT_TRUE(importNode);
