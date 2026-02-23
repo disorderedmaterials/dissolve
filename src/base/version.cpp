@@ -20,4 +20,8 @@ void VersionCounter::zero() { version_ = 0; }
 VersionCounter::operator int() const { return version_; }
 
 // Prefix increment
-int VersionCounter::operator++() { return (++version_); }
+VersionCounter &VersionCounter::operator++()
+{
+    ++version_;
+    return *this;
+}
