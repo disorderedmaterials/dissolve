@@ -52,7 +52,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(Dissolve &dissolve)
         if ((unitCell.value() - targetConfiguration_->box()->axes()).maxAbs() > 1.0e-8)
         {
             // Create new Box and cells for the configuration
-            targetConfiguration_->createBoxAndCells(unitCell.value(), dissolve.pairPotentialRange());
+            targetConfiguration_->createBoxAndCells(unitCell.value());
 
             clearExistingLocations = true;
         }

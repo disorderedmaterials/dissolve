@@ -7,6 +7,10 @@
 #include "math/derivative.h"
 
 // Static members
+VersionCounter PairPotential::coreDefinitionsVersion_ = ++VersionCounter();
+double PairPotential::range_ = 15.0;
+double PairPotential::delta_ = 0.005;
+double PairPotential::rDelta_ = 1.0 / 0.005;
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ =
     PairPotential::ShiftedShortRangeTruncation;
@@ -47,8 +51,26 @@ EnumOptions<PairPotential::ShortRangeTruncationScheme> PairPotential::shortRange
 }
 
 /*
- * Seed Interaction Type
+ * Global Parameters
  */
+
+// Set pair potential range and delta
+void PairPotential::setRange(double range, std::optional<double> delta)
+{
+    range_ = range;
+    if (delta)
+    {
+        delta_ = *delta;
+        rDelta_ = 1.0 / delta_;
+    }
+    ++coreDefinitionsVersion_;
+}
+
+// Return pair potential range
+double PairPotential::range() { return range_; }
+
+// Return spacing between points
+double PairPotential::delta() { return delta_; }
 
 // Set short-ranged truncation scheme
 void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme scheme)
@@ -108,11 +130,13 @@ std::string_view PairPotential::nameJ() const { return nameJ_; };
 // Set interaction potential
 bool PairPotential::setInteractionPotential(Functions1D::Form form, std::string_view parameters)
 {
+    version_.zero();
     return interactionPotential_.setFormAndParameters(form, parameters) &&
            potentialFunction_.setFormAndParameters(form, interactionPotential_.parameters());
 }
 bool PairPotential::setInteractionPotential(const InteractionPotential<Functions1D> &potential)
 {
+    version_.zero();
     interactionPotential_ = potential;
     return potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
@@ -120,12 +144,20 @@ bool PairPotential::setInteractionPotential(const InteractionPotential<Functions
 // Set form of interaction potential
 void PairPotential::setInteractionPotentialForm(Functions1D::Form form)
 {
+    version_.zero();
     interactionPotential_.setForm(form);
     potentialFunction_.setFormAndParameters(interactionPotential_.form(), interactionPotential_.parameters());
 }
 
 // Return interaction potential
 const InteractionPotential<Functions1D> &PairPotential::interactionPotential() const { return interactionPotential_; }
+
+// Set local charge product (if including Coulomb terms)
+void PairPotential::setLocalChargeProduct(double qiqj)
+{
+    version_.zero();
+    localChargeProduct_ = qiqj;
+}
 
 // Return local charge product (if including Coulomb terms)
 double PairPotential::localChargeProduct() const { return localChargeProduct_; }
@@ -193,20 +225,21 @@ void PairPotential::updateTotals()
 }
 
 // Generate energy and force tables
-void PairPotential::tabulate(double maxR, double delta, double chargeProduct)
+void PairPotential::tabulate()
 {
-    // Determine
-    delta_ = delta;
-    rDelta_ = 1.0 / delta_;
-    range_ = maxR;
+    // Are we already up do date?
+    if (version_ == coreDefinitionsVersion_)
+    {
+        printf("SAME\n");
+        return;
+    }
 
     // Precalculate some quantities
     shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, PairPotential::NoShortRangeTruncation);
     shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, PairPotential::NoShortRangeTruncation);
-    localChargeProduct_ = includeCoulombPotential_ ? chargeProduct : 0.0;
 
     // Set up containers
-    const auto nPoints = int(range_ / delta);
+    const auto nPoints = int(range_ / delta_);
     referenceShortRangePotential_.initialise(nPoints);
     for (auto n = 0; n < nPoints; ++n)
         referenceShortRangePotential_.xAxis()[n] = n * delta_;
@@ -221,7 +254,7 @@ void PairPotential::tabulate(double maxR, double delta, double chargeProduct)
          zip(referenceShortRangePotential_.xAxis(), referenceShortRangePotential_.values(), coulombPotential_.values()))
     {
         refSR = analyticShortRangeEnergy(r);
-        coul = analyticCoulombEnergy(localChargeProduct_, r);
+        coul = analyticCoulombEnergy(includeCoulombPotential_ ? localChargeProduct_ : 0.0, r);
     }
 
     // Since the first point at r = 0.0 risks being a nan, set it to ten times the second point instead
@@ -233,6 +266,8 @@ void PairPotential::tabulate(double maxR, double delta, double chargeProduct)
 
     // Update totals
     updateTotals();
+
+    version_ = coreDefinitionsVersion_;
 }
 
 // Add supplied function to the reference short-range potential
@@ -247,12 +282,6 @@ void PairPotential::addToReferenceShortRangePotential(const Function1DWrapper &p
     // Update totals
     updateTotals();
 }
-
-// Return range of potential
-double PairPotential::range() const { return range_; }
-
-// Return spacing between points
-double PairPotential::delta() const { return delta_; }
 
 // Return potential at specified r
 double PairPotential::energy(double r) const
@@ -276,7 +305,8 @@ double PairPotential::analyticEnergy(double r, double elecScale, double srScale)
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return srScale * analyticShortRangeEnergy(r) + elecScale * analyticCoulombEnergy(localChargeProduct_, r);
+    return srScale * analyticShortRangeEnergy(r) +
+           elecScale * analyticCoulombEnergy(includeCoulombPotential_ ? localChargeProduct_ : 0.0, r);
 }
 
 // Return analytic potential at specified r, including Coulomb term from supplied charge product
@@ -323,7 +353,8 @@ double PairPotential::analyticForce(double r, double elecScale, double srScale) 
         return 0.0;
 
     // Short-range potential and Coulomb contribution
-    return srScale * analyticShortRangeForce(r) + elecScale * analyticCoulombForce(localChargeProduct_, r);
+    return srScale * analyticShortRangeForce(r) +
+           elecScale * analyticCoulombForce(includeCoulombPotential_ ? localChargeProduct_ : 0.0, r);
 }
 
 // Return analytic force at specified r, including Coulomb term from supplied charge product

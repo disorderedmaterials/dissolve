@@ -49,7 +49,7 @@ PairPotentialEnergyValue EnergyNode::pairPotentialEnergy(const Configuration *cf
 // Return total pair potential energy of Species
 double EnergyNode::pairPotentialEnergy(const Species *sp, const PotentialMap &potentialMap)
 {
-    const auto cutoff = potentialMap.range();
+    const auto cutoff = PairPotential::range();
 
     Combinations comb(sp->nAtoms());
     return dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(0),

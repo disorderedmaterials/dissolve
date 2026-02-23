@@ -159,11 +159,11 @@ class Configuration : public Serialisable<const CoreData &>
     // Create Box definition from axes matrix
     void createBox(const Matrix3 axes);
     // Create Box definition with specified lengths and angles, and initialise cell array
-    void createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic, double pairPotentialRange);
+    void createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic);
     // Create Box definition from axes matrix, and initialise cell array
-    void createBoxAndCells(const Matrix3 axes, double pairPotentialRange);
+    void createBoxAndCells(const Matrix3 axes);
     // Update cell array, and reassign atoms to cells
-    void updateCells(double pairPotentialRange);
+    void updateCells();
     // Return Box
     const Box *box() const;
     // Scale Box lengths (and associated Cells) by specified factors
@@ -255,7 +255,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Write through specified LineParser
     bool serialise(LineParser &parser) const;
     // Read from specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials);
+    bool deserialise(LineParser &parser, const CoreData &coreData, bool hasPotentials);
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value

@@ -133,8 +133,8 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
 SerialisedValue Dissolve::serialisePairPotentials() const
 {
     SerialisedValue pairPotentials = {
-        {"range", pairPotentialRange_},
-        {"delta", pairPotentialDelta_},
+        {"range", PairPotential::range()},
+        {"delta", PairPotential::delta()},
         {"autoChargeSource", automaticChargeSource_},
         {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme())},
         {"shortRangeTruncation",
@@ -189,8 +189,7 @@ void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 // This method populates the object's members with values read from a 'pairPotentials' TOML node
 void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 {
-    pairPotentialRange_ = toml::find_or<double>(node, "range", 15.0);
-    pairPotentialDelta_ = toml::find_or<double>(node, "delta", 0.005);
+    PairPotential::setRange(toml::find_or<double>(node, "range", 15.0), toml::find_or<double>(node, "delta", 0.005));
     atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
     forceChargeSource_ = toml::find_or<bool>(node, "forceChargeSource", false);
     automaticChargeSource_ = toml::find_or<bool>(node, "autoChargeSource", true);
@@ -454,10 +453,10 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword),
-                           pairPotentialRange_))
+                           PairPotential::range()))
         return false;
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword),
-                           pairPotentialDelta_))
+                           PairPotential::delta()))
         return false;
     if (!automaticChargeSource_)
     {
@@ -642,7 +641,7 @@ bool Dissolve::loadRestart(std::string_view filename)
                 error = true;
                 break;
             }
-            else if (!cfg->deserialise(parser, coreData_, pairPotentialRange_,
+            else if (!cfg->deserialise(parser, coreData_,
                                        DissolveSys::sameString(parser.argsv(0), "ConfigurationWithPotentials")))
                 error = true;
         }

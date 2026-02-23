@@ -134,7 +134,7 @@ class CellArray
      */
     public:
     // Generate array for provided Box
-    bool generate(const Box *box, double cellSize, double pairPotentialRange);
+    bool generate(const Box *box, double cellSize);
     // Clear Cell arrays
     void clear();
 

@@ -16,7 +16,7 @@ class CellsEnergyTest : public ::testing::Test
     public:
     CellsEnergyTest() : dissolve_(coreData_)
     {
-        dissolve_.setPairPotentialRange(20.0);
+        PairPotential::setRange(20.0);
         dissolve_.setAutomaticChargeSource(false);
         dissolve_.setForceChargeSource(true);
         PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
@@ -45,7 +45,7 @@ class CellsEnergyTest : public ::testing::Test
     {
         // Setup Configuration
         auto *cfg = coreData_.addConfiguration();
-        cfg->createBoxAndCells(lengths, angles, false, dissolve_.pairPotentialRange());
+        cfg->createBoxAndCells(lengths, angles, false);
 
         // Add molecules
         for (auto n = 0; n < nMolecules; ++n)
@@ -106,7 +106,7 @@ class CellsEnergyTest : public ::testing::Test
         auto kernel = KernelProducer::energyKernel(cfg, dissolve_.potentialMap(), rCut);
 
         // Regenerate cells to new size spec and re-assign atoms
-        cfg->cells().generate(cfg->box(), cellSize, dissolve_.pairPotentialRange());
+        cfg->cells().generate(cfg->box(), cellSize);
         cfg->updateAtomLocations(true);
 
         // Calculate total Cell-based energy

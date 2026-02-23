@@ -14,7 +14,7 @@ class CellsPBCTest : public ::testing::Test
     public:
     CellsPBCTest() : dissolve_(coreData_)
     {
-        dissolve_.setPairPotentialRange(9.0);
+        PairPotential::setRange(9.0);
         dissolve_.setAutomaticChargeSource(false);
         dissolve_.setForceChargeSource(true);
 
@@ -42,7 +42,7 @@ class CellsPBCTest : public ::testing::Test
     {
         // Setup Configuration
         auto *cfg = coreData_.addConfiguration();
-        cfg->createBoxAndCells(lengths, angles, false, 12.0);
+        cfg->createBoxAndCells(lengths, angles, false);
 
         // Add a molecule at the origin
         auto central = cfg->addMolecule(argon_);

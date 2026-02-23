@@ -18,7 +18,7 @@ TEST(CellsTest, Basic)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
-    dissolve.setPairPotentialRange(9.0);
+    PairPotential::setRange(9.0);
     dissolve.setAutomaticChargeSource(false);
     dissolve.setForceChargeSource(true);
     PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
@@ -58,8 +58,8 @@ TEST(CellsTest, Basic)
 
     // Setup Configuration
     auto *cfg = coreData.addConfiguration();
-    cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, dissolve.pairPotentialRange());
-    cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
+    cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false);
+    cfg->cells().generate(cfg->box(), 7.0);
     cfg->addMolecule(argon);
     for (auto n = 0; n < 267; ++n)
         cfg->addMolecule(water);
@@ -89,7 +89,7 @@ TEST(CellsTest, Basic)
         auto kernel = KernelProducer::energyKernel(cfg, dissolve.potentialMap(), rCut);
 
         // Regenerate cells to new size spec and re-assign atoms
-        cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
+        cfg->cells().generate(cfg->box(), cellSize);
         cfg->updateAtomLocations(true);
 
         // Calculate total Cell-based energy

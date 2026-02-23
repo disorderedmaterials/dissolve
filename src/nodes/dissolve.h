@@ -39,10 +39,6 @@ class DissolveGraph : public Graph
     Dissolve &dissolve_;
     // Pair potential store
     DoubleKeyedMap<PairPotential> pairPotentialStore_{true};
-    // Pair potential range
-    double pairPotentialRange_{12};
-    // Pair potential delta
-    double pairPotentialDelta_{0.005};
 
     public:
     // Return dissolve
@@ -55,15 +51,13 @@ class DissolveGraph : public Graph
     /*
      * Functions
      */
+    private:
+    // Update specified pair potential
+    void updatePairPotential(const AtomType &i, const AtomType &j);
+
     public:
-    // Return range of tabulated pari potentials
-    double pairPotentialRange() const;
     // Ensure that the specified Configuration has updated type indexing, cells etc.
     void updateIndexingAndCells(Configuration *cfg) const;
     // Create an energy kernel suitable for the supplied Configuration
-    std::unique_ptr<EnergyKernel> createEnergyCalculation(Configuration *cfg);
-
-    private:
-    // Update pair potential store
-    void updatePairPotentials(const AtomType &i, const AtomType &j);
+    std::unique_ptr<EnergyKernel> createEnergyKernel(Configuration *cfg);
 };

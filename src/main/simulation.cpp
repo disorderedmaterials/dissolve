@@ -36,11 +36,11 @@ bool Dissolve::prepare()
     static std::optional<double> lastPairPotentialRange;
     std::optional<double> newPairPotentialRange;
     if (!lastPairPotentialRange)
-        lastPairPotentialRange = pairPotentialRange_;
-    else if (lastPairPotentialRange != pairPotentialRange_)
+        lastPairPotentialRange = PairPotential::range();
+    else if (lastPairPotentialRange != PairPotential::range())
     {
-        lastPairPotentialRange = pairPotentialRange_;
-        newPairPotentialRange = pairPotentialRange_;
+        lastPairPotentialRange = PairPotential::range();
+        newPairPotentialRange = PairPotential::range();
     }
 
     // Make sure pair potentials are up-to-date
@@ -58,13 +58,13 @@ bool Dissolve::prepare()
                 return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
         }
         else if (newPairPotentialRange)
-            cfg->updateCells(*newPairPotentialRange);
+            cfg->updateCells();
 
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();
-        if (pairPotentialRange_ > maxPPRange)
+        if (PairPotential::range() > maxPPRange)
             return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance ({}).\n",
-                                    pairPotentialRange_, maxPPRange);
+                                    PairPotential::range(), maxPPRange);
 
         // Update species usage for the next check
         for (auto &[sp, pop] : cfg->speciesPopulations())

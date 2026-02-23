@@ -446,7 +446,7 @@ bool CIFHandler::createBasicUnitCell()
 
     // Configuration
     Messenger::setQuiet(true);
-    unitCellConfiguration_.createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+    unitCellConfiguration_.createBoxAndCells(cellLengths.value(), cellAngles.value(), false);
     Messenger::setQuiet(false);
 
     // -- Generate atoms
@@ -510,7 +510,7 @@ bool CIFHandler::createCleanedUnitCell()
 
     // Configuration
     Messenger::setQuiet(true);
-    cleanedUnitCellConfiguration_.createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+    cleanedUnitCellConfiguration_.createBoxAndCells(cellLengths.value(), cellAngles.value(), false);
     Messenger::setQuiet(false);
 
     if (removeAtomics_)
@@ -686,7 +686,7 @@ bool CIFHandler::createSupercell()
 
     // Set up configuration
     Messenger::setQuiet(true);
-    supercellConfiguration_.createBoxAndCells(supercellLengths, cleanedUnitCellSpecies_.box()->axisAngles(), false, 1.0);
+    supercellConfiguration_.createBoxAndCells(supercellLengths, cleanedUnitCellSpecies_.box()->axisAngles(), false);
     Messenger::setQuiet(false);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards

@@ -74,7 +74,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 break;
             case (PairPotentialsBlock::DeltaKeyword):
-                dissolve->setPairPotentialDelta(parser.argd(1));
+                PairPotential::setRange(PairPotential::range(), parser.argd(1));
                 break;
             case (PairPotentialsBlock::EndPairPotentialsKeyword):
                 Messenger::print("Found end of {} block.\n",
@@ -197,7 +197,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 break;
             case (PairPotentialsBlock::RangeKeyword):
-                dissolve->setPairPotentialRange(parser.argd(1));
+                PairPotential::setRange(parser.argd(1));
                 break;
             case (PairPotentialsBlock::ShortRangeTruncationKeyword):
                 if (PairPotential::shortRangeTruncationSchemes().isValid(parser.argsv(1)))

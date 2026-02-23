@@ -9,8 +9,7 @@
 #include "classes/pairPotential.h"
 #include "classes/species.h"
 
-PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials,
-                           double pairPotentialRange)
+PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials)
 {
     // Create PairPotential matrix
     nTypes_ = atomTypes.size();
@@ -34,9 +33,6 @@ PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes, const
                 potentialMatrix_[{i, j}] = &pairPotentials.get({atI->name(), atJ->name()});
             }
         });
-
-    // Store potential range
-    range_ = pairPotentialRange;
 }
 
 // Clear all data
@@ -48,7 +44,7 @@ void PotentialMap::clear() { potentialMatrix_.clear(); }
 
 // Initialise maps
 bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
-                              const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange)
+                              const std::vector<PairPotential::Definition> &pairPotentials)
 {
     // Clear old data first
     clear();
@@ -83,15 +79,12 @@ bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &mast
             potentialMatrix_[{indexJ, indexI}] = pp.get();
         }
     }
-
-    // Store potential range
-    range_ = pairPotentialRange;
 
     return true;
 }
 
 bool PotentialMap::initialise(const std::vector<const AtomType *> &masterAtomTypes,
-                              const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange)
+                              const std::vector<PairPotential::Definition> &pairPotentials)
 {
     // Clear old data first
     clear();
@@ -127,14 +120,8 @@ bool PotentialMap::initialise(const std::vector<const AtomType *> &masterAtomTyp
         }
     }
 
-    // Store potential range
-    range_ = pairPotentialRange;
-
     return true;
 }
-
-// Return PairPotential range
-double PotentialMap::range() const { return range_; }
 
 /*
  * Energy / Force

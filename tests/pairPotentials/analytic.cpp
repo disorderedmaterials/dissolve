@@ -40,7 +40,8 @@ class PairPotentialsAnalyticTest : public ::testing::Test
     {
         // Set up and tabulate pair potential
         pairPotential_->setInteractionPotential(form, parameters);
-        pairPotential_->tabulate(ppRange_, ppDelta_);
+        PairPotential::setRange(ppRange_, ppDelta_);
+        pairPotential_->tabulate();
 
         // Test analytic vs tabulated values - do this by absolute value if less than 1.0, or by ratio if greater than 1.0.
         // We do this since we span many orders of magnitude in value over the potential range, and can also have zeroes.

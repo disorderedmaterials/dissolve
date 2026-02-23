@@ -55,8 +55,8 @@ class SelectGeneratorNodeTest : public ::testing::Test
          */
 
         configuration_ = coreData_.addConfiguration();
-        configuration_->createBoxAndCells({nType_ * 4.0, 20, 20}, {90, 90, 90}, false, 10.0);
-        configuration_->updateCells(10.0);
+        configuration_->createBoxAndCells({nType_ * 4.0, 20, 20}, {90, 90, 90}, false);
+        configuration_->updateCells();
 
         // Add our molecules
         for (auto pos = 0; pos < nType_ * 2; ++pos)

@@ -85,9 +85,8 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, const std::vect
                                     // Construct our fitting object and generate the potential using it
                                     GaussFit generator(ep);
                                     generator.set(rmaxpt, potCoeff, sigma1);
-                                    ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0,
-                                                                 dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(),
-                                                                 sigma2 / sigma1);
+                                    ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, PairPotential::delta(),
+                                                                 PairPotential::range(), sigma2 / sigma1);
                                 }
                                 else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
                                 {
@@ -97,7 +96,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, const std::vect
                                     PoissonFit generator(ep);
                                     generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
                                     ep = generator.approximation(FunctionSpace::RealSpace, 1.0 / averagedRho, 0.0,
-                                                                 dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+                                                                 PairPotential::delta(), PairPotential::range());
                                 }
 
                                 // Multiply by truncation function
@@ -131,7 +130,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int nA
     const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
-    auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : dissolve.pairPotentialRange();
+    auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : PairPotential::range();
     auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
     nCoeffP_ = nCoeffP_ <= 0 ? std::min(int(10.0 * rmaxpt + 0.0001), mcoeff) : nCoeffP_;
 
@@ -146,16 +145,16 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int nA
         // Construct our fitting object and generate the potential using it
         GaussFit generator(result);
         generator.set(rmaxpt, potCoeff, gSigma1_);
-        result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(),
-                                          dissolve.pairPotentialRange(), gSigma2_ / gSigma1_);
+        result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, PairPotential::delta(), PairPotential::range(),
+                                          gSigma2_ / gSigma1_);
     }
     else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
     {
         // Construct our fitting object and generate the potential using it
         PoissonFit generator(result);
         generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, pSigma1_, pSigma2_);
-        result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(),
-                                          dissolve.pairPotentialRange());
+        result =
+            generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, PairPotential::delta(), PairPotential::range());
     }
 
     // Multiply by truncation function

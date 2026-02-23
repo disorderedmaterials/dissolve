@@ -61,7 +61,7 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
         Messenger::print("Test threshold for failure is {}%.\n", testThreshold_);
 
         const auto &potentialMap = dissolve.potentialMap();
-        const auto cutoffSq = potentialMap.range() * potentialMap.range();
+        const auto cutoffSq = PairPotential::range() * PairPotential::range();
 
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();

@@ -61,7 +61,7 @@ bool Configuration::generate(const GeneratorContext &generatorContext)
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, generatorContext.potentialMap().range());
+    cells_.generate(box_.get(), requestedCellDivisionLength_);
 
     // Make sure all objects know about each other
     updateObjectRelationships();
@@ -98,7 +98,7 @@ bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
         return false;
 
     // Create cell array
-    updateCells(generatorContext.potentialMap().range());
+    updateCells();
 
     // Apply size factor scaling if required
     applySizeFactor(generatorContext.potentialMap());

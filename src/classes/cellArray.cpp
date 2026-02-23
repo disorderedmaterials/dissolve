@@ -4,6 +4,7 @@
 #include "classes/cellArray.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/pairPotential.h"
 #include "math/mathFunc.h"
 
 /*
@@ -188,10 +189,10 @@ bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
  */
 
 // Generate Cells for Box
-bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRange)
+bool CellArray::generate(const Box *box, double cellSize)
 {
     // We need to regenerate the cell array only if it is currently empty or the pair potential range has changed
-    if (!cells_.empty() && pairPotentialRangeCreatedAt_ && pairPotentialRangeCreatedAt_.value() == pairPotentialRange)
+    if (!cells_.empty() && pairPotentialRangeCreatedAt_ && pairPotentialRangeCreatedAt_.value() == PairPotential::range())
         return true;
 
     clear();
@@ -199,7 +200,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     const auto minCellsPerSide = 3;
     const auto tolerance = 0.01;
 
-    pairPotentialRangeCreatedAt_ = pairPotentialRange;
+    pairPotentialRangeCreatedAt_ = PairPotential::range();
     box_ = box;
 
     Messenger::print("Generating cells for box - minimum cells per side is {}, cell size is {}...\n", minCellsPerSide,
@@ -392,7 +393,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             ++extents_[n];
             r[n] = extents_[n];
             r = cellAxes * r;
-        } while (r[n] < pairPotentialRange);
+        } while (r[n] < PairPotential::range());
 
         // If we require a larger number of cells than the box physically has along this direction, reduce it accordingly
         if ((extents_[n] * 2 + 1) > divisions_[n])
@@ -433,7 +434,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
                         r.set(j.x, j.y, j.z);
                         r = cellAxes * r;
-                        if (r.magnitude() < pairPotentialRange)
+                        if (r.magnitude() < PairPotential::range())
                         {
                             close = true;
                             break;

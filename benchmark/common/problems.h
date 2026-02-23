@@ -57,7 +57,7 @@ template <SpeciesType speciesType, SpeciesPopulation population> class Problem
 
         // Generate the configuration and set the pair potential range accordingly
         cfg->generate({dissolve_});
-        dissolve_.setPairPotentialRange(std::min(cfg->box()->inscribedSphereRadius(), 15.0));
+        PairPotential::setRange(std::min(cfg->box()->inscribedSphereRadius(), 15.0));
 
         // Prepare the simulation
         dissolve_.prepare();

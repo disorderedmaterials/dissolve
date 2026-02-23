@@ -79,7 +79,7 @@ void ForcesModule::totalForces(const Species *sp, const PotentialMap &potentialM
     std::fill(fBound.begin(), fBound.end(), Vector3());
 
     auto *box = sp->box();
-    const auto cutoffSq = potentialMap.range() * potentialMap.range();
+    const auto cutoffSq = PairPotential::range() * PairPotential::range();
     auto combinableUnbound = ForceKernel::createCombinableForces(fUnbound);
 
     auto pairwiseForceOperator =
