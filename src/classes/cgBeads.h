@@ -44,8 +44,9 @@ class CGBead
             Elements::Element z = atomTypes_[i].atomType()->Z(); 
             if (z == Elements::H)
             {
-                double b = (1.0 - fraction) * atomTypes_[i].boundCoherent();
-                b += fraction * Sears91::boundCoherent(Sears91::H_2) * 0.1;
+                double b = (1.0 - fraction) * Sears91::boundCoherent(Sears91::H_Natural);
+                b += fraction * Sears91::boundCoherent(Sears91::H_2);
+                b *= 0.1;
                 atomTypes_[i].setBoundCoherent(b);
             }
         }
