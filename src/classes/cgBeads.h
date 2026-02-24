@@ -375,6 +375,7 @@ class CGBeadMap
     const double average_natoms_per_bead() const { return av_noa_bead_; }
 
     const CGBead &operator[](const int i) const { return beads_[i]; };
+    CGBead &operator[](const int i) { return beads_[i]; };
 
     void calculateFormFactors(const std::vector<double> &qvals)
     {
@@ -463,6 +464,9 @@ class CGBeadMap
     {
         dissolve::for_each(beads_.begin(), beads_.end(), [](CGBead &bead) { bead.initialiseXRayFormFactors(); });
     }
+
+    std::vector<CGBead>::const_iterator begin() const { return beads_.begin(); }
+    std::vector<CGBead>::const_iterator end() const { return beads_.end(); }
 
     private:
     std::vector<CGBead> beads_;
