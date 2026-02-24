@@ -250,8 +250,6 @@ void CGNeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr
     for (auto &topes : isotopologueMixtures_)
         topes.normalise();
 
-    double dFraction = 0.0;
-
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
@@ -275,17 +273,32 @@ void CGNeutronWeights::createFromIsotopologues(const std::vector<std::shared_ptr
                 {
                     atomTypes_.addIsotope(i.atomType(), top->atomTypeIsotope(i.atomType()),
                                           isoWeight.weight() * topes.speciesPopulation());
-                    if (top->atomTypeIsotope(i.atomType()) != Sears91::naturalIsotope(i.Z()))
-                    {
-                        dFraction = isoWeight.weight();
-                    }
                 }
             }
         }
     }
     atomTypes_.finalise(exchangeableTypes);
 
-    beadMap_.initialiseFromFile(dFraction);
+    std::vector<double> dfractions(atomTypes_.nItems(), 0.0);
+    for (std::size_t i = 0; i < atomTypes_.nItems(); ++i)
+    {
+        for (const auto& iso : atomTypes_[i].isotopeData())
+        {
+            if (iso.isotope() != Sears91::naturalIsotope(atomTypes_[i].atomType()->Z()))
+            {
+                dfractions.at(i) += iso.fraction();
+            }
+        }
+    }
+
+    beadMap_.initialiseFromFile();
+
+    if (beadMap_.nBeads() != atomTypes_.nItems())
+    {
+        throw std::runtime_error("Missing bead definitions in 'bead_definitions.txt'");
+    }
+
+    beadMap_.deuterate(dfractions);
 
     calculateWeightingMatrices();
 

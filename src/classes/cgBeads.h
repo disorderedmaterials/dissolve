@@ -21,19 +21,27 @@ class CGBead
 
     ~CGBead() = default;
 
-    void addAtomType(std::shared_ptr<AtomType> atomType, double population, double b)
+    void addAtomType(std::shared_ptr<AtomType> atomType, const double population, const double b)
     {
         std::pair<AtomTypeData &, int> data = atomTypes_.add(atomType, population);
         data.first.setBoundCoherent(b);
-        calculateScatteringLength();
     }
 
-    void addAtomType(std::string atomSymbol, double population) 
+    void addAtomType(const std::string &atomSymbol, const double population) 
     {
         const Elements::Element z = Elements::element(atomSymbol);
         double b = Sears91::boundCoherent(Sears91::naturalIsotope(z)) * 0.1;
         std::shared_ptr<AtomType> atomType = std::make_shared<AtomType>(z);
         addAtomType(atomType, population, b);
+    }
+
+    void calculateScatteringLength()
+    {
+        scatteringLength_ = 0.0;
+        for (const AtomTypeData &atomType : atomTypes_)
+        {
+            scatteringLength_ += atomType.population() * atomType.boundCoherent();
+        }
     }
 
     void deuterate(const double fraction)
@@ -216,15 +224,6 @@ class CGBead
     Data1D formFactor_;
     Data1D intraBeadSQ_;
 
-    void calculateScatteringLength()
-    {
-        scatteringLength_ = 0.0;
-        for (const AtomTypeData &atomType : atomTypes_)
-        {
-            scatteringLength_ += atomType.population() * atomType.boundCoherent();
-        }
-    }
-
 };
 
 class CGBeadMap 
@@ -236,7 +235,7 @@ class CGBeadMap
 
     ~CGBeadMap() = default;
 
-    void initialiseFromFile(const double isoFraction, const std::string &filename = "bead_definitions.txt") 
+    void initialiseFromFile(const std::string &filename = "bead_definitions.txt") 
     {
         std::ifstream file(filename);
         if (!file.is_open())
@@ -268,10 +267,8 @@ class CGBeadMap
 
                 bead.addAtomType(atom, population);
             }
-            if (isoFraction > 0.0) 
-            {
-                bead.deuterate(isoFraction);
-            }
+
+            bead.calculateScatteringLength();
         }
     }
 
@@ -284,7 +281,7 @@ class CGBeadMap
     void calculateFormFactors(const std::vector<double> &qvals)
     {
         dissolve::for_each(
-            ParallelPolicies::seq,
+            ParallelPolicies::par,
             beads_.begin(), 
             beads_.end(), 
             [&](CGBead &b){ b.calculateFormFactor(0, qvals); }
@@ -298,7 +295,7 @@ class CGBeadMap
         std::iota(indices.begin(), indices.end(), 0);
         dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
                            [&](const int &i) { av_noa_bead_ += fractions[i] * beads_[i].nAtoms(); });
-        dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
+        dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
                            [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_, false); });
     }
 
@@ -310,6 +307,20 @@ class CGBeadMap
             beads_.end(), 
             [fraction=fraction](CGBead &b){ b.deuterate(fraction); }
         );
+    }
+
+    void deuterate(const std::vector<double> &dfractions)
+    {
+        std::vector<int> indices(dfractions.size());
+        std::iota(indices.begin(), indices.end(), 0);
+        dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
+                           [&](const int &i)
+                           {
+                               if (dfractions[i] > 0.0)
+                               {
+                                   beads_[i].deuterate(dfractions[i]);
+                               }
+                           });
     }
     
     void print() const 
