@@ -26,7 +26,8 @@ class CGBead
     CGBead(const CGBead &source) { (*this) = source; }
 
     void operator=(const CGBead& source)
-    { label_ = source.label_;
+    { 
+        label_ = source.label_;
         radius_ = source.radius_;
         atomDistribution_ = source.atomDistribution_;
         scatteringLength_ = source.scatteringLength_;
