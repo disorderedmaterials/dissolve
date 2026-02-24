@@ -195,7 +195,7 @@ Module::ExecutionResult CGNeutronSQModule::process(ModuleContext &moduleContext)
                                                                                             GenericItem::InRestartFileFlag);
                                                                                     //  CGNeutronWeights weights(weights_atm);
     CGNeutronWeights weights;
-    weights.set_atom_types(weights_atm.atomTypes());
+    weights.setAtomTypes(weights_atm.atomTypes());
     calculateWeights(rdfModule, weights);
     Messenger::print("Isotopologue and isotope composition:\n\n");
     weights.print();
