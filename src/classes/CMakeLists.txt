@@ -135,6 +135,8 @@ add_library(
 
   cgNeutronWeights.cpp 
   cgNeutronWeights.h 
+  cgXRayWeights.cpp
+  cgXRayWeights.h
 )
 
 target_include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
