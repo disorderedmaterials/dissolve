@@ -97,10 +97,7 @@ template <class T> class PODHistory : public Serialisable<>
         return average();
     }
     // Return the current average value
-    T average() const
-    {
-        return std::accumulate(history_.begin(), history_.end(), T()) / history_.size();
-    }
+    T average() const { return std::accumulate(history_.begin(), history_.end(), T()) / history_.size(); }
     // Return the history data vector
     const std::vector<T> &history() const { return history_; }
 
