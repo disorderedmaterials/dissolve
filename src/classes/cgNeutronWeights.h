@@ -66,7 +66,7 @@ class CGNeutronWeights
     public:
     CGBeadMap beadMap_;
 
-    void set_atom_types(const AtomTypeMix& atomTypes);
+    void setAtomTypes(const AtomTypeMix& atomTypes);
     void calculateSelfScatteringTerms();
     //
 

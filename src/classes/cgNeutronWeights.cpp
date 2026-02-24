@@ -425,7 +425,7 @@ bool CGNeutronWeights::serialise(LineParser &parser) const
     return true;
 }
 
-void CGNeutronWeights::set_atom_types(const AtomTypeMix& atomTypes)
+void CGNeutronWeights::setAtomTypes(const AtomTypeMix& atomTypes)
 {
     atomTypes_ = atomTypes;
 }
