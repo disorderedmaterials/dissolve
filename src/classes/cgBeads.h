@@ -2,8 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors#pragma once 
 #pragma once 
 
-#include <vector>
 #include <numeric>
+#include <string>
+#include <vector>
 
 #include "classes/atomType.h"
 #include "classes/atomTypeMix.h"
@@ -14,7 +15,8 @@
 class CGBead 
 {
     public:
-    CGBead(const std::string &label, const double r) : label_(label), radius_(r)
+    CGBead(const std::string &label, const double r, const int atomDistribution)
+        : label_(label), radius_(r), atomDistribution_(atomDistribution)
     {
 
     };
@@ -61,19 +63,19 @@ class CGBead
         calculateScatteringLength();
     }
 
-    void calculateFormFactor(const int formKey, const std::vector<double> &qvals)
+    void calculateFormFactor(const std::vector<double> &qvals)
     {
         formFactor_.clear();
         for (double q : qvals)
         {
             double qs = q * sigma();
-            if (formKey == 0) // gaussian
+            if (atomDistribution_ == 0) // gaussian
             {
                 double f = -0.5 * std::pow((0.51 * qs), 2);
                 f = std::exp(f);
                 formFactor_.addPoint(q, f);
             }
-            else if (formKey == 1) // uniform 
+            else if (atomDistribution_ == 1) // uniform 
             {
                 double f = 3.0 / std::pow((qs), 3);
                 f *= (std::sin(qs) - qs * std::cos(qs));
@@ -215,7 +217,21 @@ class CGBead
         return nb;
     }
 
+    const char* atomDistribution() const
+    {
+        if (atomDistribution_ == 0)
+        {
+            return "Gaussian";
+        }
+        else if (atomDistribution_ == 1)
+        {
+            return "Uniform";
+        }
+        return "None";
+    }
+
     private:
+    int atomDistribution_ = 0;
     double radius_ = 0.0;
     double scatteringLength_ = 0.0;
     double dFraction_ = 0.0;
@@ -250,11 +266,13 @@ class CGBeadMap
             std::string beadLabel;
             int nAtomTypes = 0;
             double r;
+            int atomDistribution = 0;
             ss >> beadLabel;
             ss >> nAtomTypes;
             ss >> r;
+            ss >> atomDistribution; // 0 = gaussian, 1 = uniform 
 
-            CGBead &bead = beads_.emplace_back(CGBead(beadLabel, r));
+            CGBead &bead = beads_.emplace_back(CGBead(beadLabel, r, atomDistribution));
             
             for (int i = 0; i < nAtomTypes; i++)
             {
@@ -284,7 +302,7 @@ class CGBeadMap
             ParallelPolicies::par,
             beads_.begin(), 
             beads_.end(), 
-            [&](CGBead &b){ b.calculateFormFactor(0, qvals); }
+            [&](CGBead &b){ b.calculateFormFactor(qvals); }
         );
     }
 
@@ -295,6 +313,7 @@ class CGBeadMap
         std::iota(indices.begin(), indices.end(), 0);
         dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
                            [&](const int &i) { av_noa_bead_ += fractions[i] * beads_[i].nAtoms(); });
+        Messenger::print("Calculated average atoms per bead = {:7.3f}\n", av_noa_bead_);
         dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
                            [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_, false); });
     }
@@ -326,13 +345,20 @@ class CGBeadMap
     void print() const 
     {
         Messenger::print("CG Bead Representations: \n");
-        Messenger::print("     Bead      nb (barn)\n");
-        Messenger::print("    --------------------\n");
+        Messenger::print("  Bead      nb (barn)   Sigma   Distribution  Composition\n");
+        Messenger::print("  -------------------------------------------------------\n");
         for (const CGBead &bead : beads_)
-        {
-            Messenger::print("      {}     {:6.3f}\n", bead.label(), bead.scatteringLength());
+        {          
+            Messenger::print("  {:8s}  {:9.4f}   {:6.3f}  {:^14s}\n", bead.label(), bead.scatteringLength(), bead.sigma(),
+                             bead.atomDistribution());
+            dissolve::for_each(bead.atomTypes().begin(), bead.atomTypes().end(),
+                               [&](const AtomTypeData &atm)
+                               {
+                                   Messenger::print("{:47s}{:3d} x {:3s}", " ", atm.population(),
+                                                    Elements::symbol(atm.atomType()->Z()));
+                               });
         }
-        Messenger::print("    ---------------------\n");
+        Messenger::print("  -------------------------------------------------------\n");
     }
 
     private:
