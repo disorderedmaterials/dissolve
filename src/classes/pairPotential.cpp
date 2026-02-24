@@ -84,6 +84,8 @@ double PairPotential::delta() { return delta_; }
 // Set short-ranged truncation scheme
 void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme scheme)
 {
+    if (scheme != shortRangeTruncationScheme_)
+        ++coreDefinitionsVersion_;
     shortRangeTruncationScheme_ = scheme;
 }
 
@@ -102,7 +104,12 @@ void PairPotential::setChargeSource(PairPotential::ChargeSource source)
 PairPotential::ChargeSource PairPotential::chargeSource() { return chargeSource_; }
 
 // Set whether Coulomb contributions should be included in the generated potential
-void PairPotential::setIncludeCoulombPotential(bool b) { includeCoulombPotential_ = b; }
+void PairPotential::setIncludeCoulombPotential(bool b)
+{
+    if (b != includeCoulombPotential_)
+        ++coreDefinitionsVersion_;
+    includeCoulombPotential_ = b;
+}
 
 // Return whether Coulomb contributions should be included in the generated potential
 bool PairPotential::includeCoulombPotential() { return includeCoulombPotential_; }
@@ -110,6 +117,8 @@ bool PairPotential::includeCoulombPotential() { return includeCoulombPotential_;
 // Set Coulomb truncation scheme
 void PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme scheme)
 {
+    if (scheme != coulombTruncationScheme_)
+        ++coreDefinitionsVersion_;
     coulombTruncationScheme_ = scheme;
 }
 
