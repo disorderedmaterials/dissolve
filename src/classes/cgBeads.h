@@ -23,6 +23,20 @@ class CGBead
 
     ~CGBead() = default;
 
+    CGBead(const CGBead &source) { (*this) = source; }
+
+    void operator=(const CGBead& source)
+    { label_ = source.label_;
+        radius_ = source.radius_;
+        atomDistribution_ = source.atomDistribution_;
+        scatteringLength_ = source.scatteringLength_;
+        dFraction_ = source.dFraction_;
+        atomTypes_ = source.atomTypes_;
+        formFactor_ = source.formFactor_;
+        intraBeadSQ_ = source.intraBeadSQ_;
+
+    }
+
     void addAtomType(std::shared_ptr<AtomType> atomType, const double population, const double b)
     {
         std::pair<AtomTypeData &, int> data = atomTypes_.add(atomType, population);
@@ -249,6 +263,14 @@ class CGBeadMap
     {
     };
 
+    CGBeadMap(const CGBeadMap &source) { (*this) = source; }
+
+    void operator=(const CGBeadMap &source)
+    {
+        beads_ = source.beads_;
+        av_noa_bead_ = source.av_noa_bead_;
+    }
+
     ~CGBeadMap() = default;
 
     void initialiseFromFile(const std::string &filename = "bead_definitions.txt") 
@@ -359,6 +381,12 @@ class CGBeadMap
                                });
         }
         Messenger::print("  -------------------------------------------------------\n");
+    }
+
+    void clear()
+    {
+        beads_.clear();
+        av_noa_bead_ = 0.0;
     }
 
     private:

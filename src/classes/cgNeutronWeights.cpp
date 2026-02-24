@@ -30,6 +30,7 @@ void CGNeutronWeights::operator=(const CGNeutronWeights &source)
     boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
     boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
     valid_ = source.valid_;
+    beadMap_ = source.beadMap_;
 }
 
 /*
@@ -48,6 +49,7 @@ void CGNeutronWeights::clear()
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
     valid_ = false;
+    beadMap_.clear();
 }
 
 // Add Isotopologue for Species
