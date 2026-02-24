@@ -6,6 +6,7 @@
 #include "base/serialiser.h"
 #include <functional>
 #include <memory>
+#include <numeric>
 #include <vector>
 
 // Serialisable Data History
@@ -99,13 +100,12 @@ template <class T> class PODHistory : public Serialisable<>
     T average() const
     {
         // Perform averaging of the datasets that we have
-        T averaged = T();
+        T averaged = std::accumulate(history_.begin(), history_.end(), T());
 
-        auto weight = 1.0 / history_.size();
         for (auto &data : history_)
-            averaged += data * weight;
+            averaged += data;
 
-        return averaged;
+        return averaged / history_.size();
     }
     // Return the history data vector
     const std::vector<T> &history() const { return history_; }
