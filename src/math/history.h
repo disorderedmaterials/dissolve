@@ -103,7 +103,7 @@ template <class T> class PODHistory : public Serialisable<>
 
         auto weight = 1.0 / history_.size();
         for (auto &data : history_)
-            averaged += *data * weight;
+            averaged += data * weight;
 
         return averaged;
     }
