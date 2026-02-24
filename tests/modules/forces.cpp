@@ -37,8 +37,7 @@ TEST_F(ForcesModuleTest, DLPOLYWater3000VanDerWaals)
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                              [](Dissolve &D, CoreData &C)
                                              {
-                                                 D.setAtomTypeChargeSource(true);
-                                                 D.setAutomaticChargeSource(false);
+                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
                                                  C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
                                                  C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
                                              }));
@@ -81,7 +80,7 @@ TEST_F(ForcesModuleTest, DLPOLYWater3000Bound)
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                              [](Dissolve &D, CoreData &C)
                                              {
-                                                 D.setAtomTypeChargeSource(true);
+                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
                                                  C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
                                                  C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
                                              }));
@@ -153,8 +152,7 @@ TEST_F(ForcesModuleTest, DLPOLYHexane200Bound)
                                              {
                                                  for (auto at : C.atomTypes())
                                                      at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                                 D.setAtomTypeChargeSource(true);
-                                                 D.setAutomaticChargeSource(false);
+                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
                                              }));
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
@@ -179,8 +177,7 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181VanDerWaals)
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
                                              [](Dissolve &D, CoreData &C)
                                              {
-                                                 D.setAtomTypeChargeSource(true);
-                                                 D.setAutomaticChargeSource(false);
+                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
                                                  for (auto &b : C.masterBonds())
                                                      b->setInteractionForm(BondFunctions::Form::None);
                                                  for (auto &a : C.masterAngles())
@@ -224,7 +221,7 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181Bound)
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
                                              [](Dissolve &D, CoreData &C)
                                              {
-                                                 D.setAtomTypeChargeSource(true);
+                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
                                                  C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
                                                  C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
                                              }));

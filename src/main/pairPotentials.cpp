@@ -11,24 +11,6 @@ void Dissolve::setUseCombinationRules(bool b) { useCombinationRules_ = b; }
 // Return whether pair potentials are updated automatically through combination rules
 bool Dissolve::useCombinationRules() const { return useCombinationRules_; }
 
-// Set whether to automatically determine charge source
-void Dissolve::setAutomaticChargeSource(bool b) { automaticChargeSource_ = b; };
-
-// Return whether to automatically determine charge source
-bool Dissolve::automaticChargeSource() const { return automaticChargeSource_; }
-
-// Set whether to force the use of the specified charge source (if not automatic choice)
-void Dissolve::setForceChargeSource(bool b) { forceChargeSource_ = b; }
-
-// Return whether to force the use of the specified charge source (if not automatic choice)
-bool Dissolve::forceChargeSource() const { return forceChargeSource_; }
-
-// Set whether charges from atom types are to be used (and included in PairPotentials)
-void Dissolve::setAtomTypeChargeSource(bool b) { atomTypeChargeSource_ = b; }
-
-// Return whether charges from atom types are to be used (and included in PairPotentials)
-bool Dissolve::atomTypeChargeSource() const { return atomTypeChargeSource_; }
-
 // Return index of specified PairPotential
 int Dissolve::indexOf(PairPotential *pp)
 {
@@ -93,9 +75,6 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     potentialMap_.clear();
 
     auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
-
-    // Set the charge handling for all pair potentials
-    PairPotential::setIncludeCoulombPotential(atomTypeChargeSource_);
 
     // First step - remove any pair potentials which reference non-existent atom types
     pairPotentials_.erase(std::remove_if(pairPotentials_.begin(), pairPotentials_.end(),

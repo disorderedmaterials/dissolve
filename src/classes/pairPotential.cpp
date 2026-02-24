@@ -14,6 +14,7 @@ double PairPotential::rDelta_ = 1.0 / 0.005;
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ =
     PairPotential::ShiftedShortRangeTruncation;
+PairPotential::ChargeSource PairPotential::chargeSource_ = PairPotential::ChargeSource::Automatic;
 bool PairPotential::includeCoulombPotential_ = false;
 
 PairPotential::PairPotential(std::string_view nameI, std::string_view nameJ)
@@ -50,6 +51,14 @@ EnumOptions<PairPotential::ShortRangeTruncationScheme> PairPotential::shortRange
         {{PairPotential::NoShortRangeTruncation, "None"}, {PairPotential::ShiftedShortRangeTruncation, "Shifted"}});
 }
 
+// Return enum options for ChargeSource
+EnumOptions<PairPotential::ChargeSource> PairPotential::chargeSources()
+{
+    return EnumOptions<PairPotential::ChargeSource>("ChargeSource", {{ChargeSource::Automatic, "Automatic"},
+                                                                     {ChargeSource::SpeciesAtoms, "SpeciesAtoms"},
+                                                                     {ChargeSource::AtomTypes, "AtomTypes"}});
+}
+
 /*
  * Global Parameters
  */
@@ -80,6 +89,17 @@ void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTrunc
 
 // Return short-ranged truncation scheme
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme() { return shortRangeTruncationScheme_; }
+
+// Set charge source
+void PairPotential::setChargeSource(PairPotential::ChargeSource source)
+{
+    if (chargeSource_ != source)
+        ++coreDefinitionsVersion_;
+    chargeSource_ = source;
+}
+
+// Return current charge source
+PairPotential::ChargeSource PairPotential::chargeSource() { return chargeSource_; }
 
 // Set whether Coulomb contributions should be included in the generated potential
 void PairPotential::setIncludeCoulombPotential(bool b) { includeCoulombPotential_ = b; }

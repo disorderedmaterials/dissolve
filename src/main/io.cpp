@@ -135,14 +135,10 @@ SerialisedValue Dissolve::serialisePairPotentials() const
     SerialisedValue pairPotentials = {
         {"range", PairPotential::range()},
         {"delta", PairPotential::delta()},
-        {"autoChargeSource", automaticChargeSource_},
+        {"chargeSource", PairPotential::chargeSources().serialise(PairPotential::chargeSource())},
         {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme())},
         {"shortRangeTruncation",
          PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme())}};
-    if (forceChargeSource_)
-        pairPotentials["forceChargeSource"] = true;
-    if (atomTypeChargeSource_)
-        pairPotentials["includeCoulomb"] = true;
     Serialisable::fromVectorToTable(coreData_.atomTypes(), "atomTypes", pairPotentials);
     if (!useCombinationRules_)
     {
@@ -190,10 +186,8 @@ void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 {
     PairPotential::setRange(toml::find_or<double>(node, "range", 15.0), toml::find_or<double>(node, "delta", 0.005));
-    atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
-    forceChargeSource_ = toml::find_or<bool>(node, "forceChargeSource", false);
-    automaticChargeSource_ = toml::find_or<bool>(node, "autoChargeSource", true);
-
+    PairPotential::setChargeSource(
+        PairPotential::chargeSources().deserialise(toml::find_or<std::string>(node, "chargeSource", "Automatic")));
     PairPotential::setCoulombTruncationScheme(PairPotential::coulombTruncationSchemes().deserialise(
         toml::find_or<std::string>(node, "coulombTruncation", "Shifted")));
     PairPotential::setShortRangeTruncationScheme(PairPotential::shortRangeTruncationSchemes().deserialise(
@@ -458,22 +452,13 @@ bool Dissolve::saveInput(std::string_view filename)
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword),
                            PairPotential::delta()))
         return false;
-    if (!automaticChargeSource_)
-    {
-        if (!parser.writeLineF("  {}  {}\n",
-                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ManualChargeSourceKeyword),
-                               DissolveSys::btoa(true)))
-            return false;
-        if (!parser.writeLineF("  {}  {}\n",
-                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::IncludeCoulombKeyword),
-                               DissolveSys::btoa(atomTypeChargeSource_)))
-            return false;
-        if (forceChargeSource_ &&
-            !parser.writeLineF("  {}  {}\n",
-                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ForceChargeSourceKeyword),
-                               DissolveSys::btoa(true)))
-            return false;
-    }
+    if (!parser.writeLineF("  {}  {}\n",
+                           PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ManualChargeSourceKeyword),
+                           DissolveSys::btoa(PairPotential::chargeSource() != PairPotential::ChargeSource::Automatic)))
+        return false;
+    if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::IncludeCoulombKeyword),
+                           DissolveSys::btoa(PairPotential::chargeSource() == PairPotential::ChargeSource::AtomTypes)))
+        return false;
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::CoulombTruncationKeyword),
                            PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme())))
         return false;

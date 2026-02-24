@@ -15,8 +15,7 @@ class CellsPBCTest : public ::testing::Test
     CellsPBCTest() : dissolve_(coreData_)
     {
         PairPotential::setRange(9.0);
-        dissolve_.setAutomaticChargeSource(false);
-        dissolve_.setForceChargeSource(true);
+        PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
         // Add atom types and LJ pair potentials (only one real one - between Ar and Ar)
         auto arType = coreData_.addAtomType(Elements::Ar);

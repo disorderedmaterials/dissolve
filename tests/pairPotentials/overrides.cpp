@@ -21,8 +21,7 @@ TEST_F(PairPotentialOverridesTest, Water3000)
     ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
-                                         D.setAtomTypeChargeSource(true);
-                                         D.setAutomaticChargeSource(false);
+                                         PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
                                          C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
                                          C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
                                      }));

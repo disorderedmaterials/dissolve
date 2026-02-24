@@ -34,6 +34,15 @@ class PairPotential : Serialisable<>
     };
     // Return enum options for ShortRangeTruncationScheme
     static EnumOptions<PairPotential::ShortRangeTruncationScheme> shortRangeTruncationSchemes();
+    // Charge Source
+    enum ChargeSource
+    {
+        Automatic,
+        SpeciesAtoms,
+        AtomTypes
+    };
+    // Return enum options for ChargeSource
+    static EnumOptions<PairPotential::ChargeSource> chargeSources();
     // Typedefs
     using Definition = std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType>, std::unique_ptr<PairPotential>>;
 
@@ -49,6 +58,8 @@ class PairPotential : Serialisable<>
     static double delta_, rDelta_;
     // Truncation scheme to apply to short-range part of potential
     static ShortRangeTruncationScheme shortRangeTruncationScheme_;
+    // Charge source for pair potentials
+    static ChargeSource chargeSource_;
     // Whether Coulomb contributions should be included in the generated potential
     static bool includeCoulombPotential_;
     // Truncation scheme to apply to Coulomb part of potential
@@ -67,6 +78,10 @@ class PairPotential : Serialisable<>
     static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
     // Return short-ranged truncation scheme
     static ShortRangeTruncationScheme shortRangeTruncationScheme();
+    // Set charge source
+    static void setChargeSource(ChargeSource source);
+    // Return current charge source
+    static ChargeSource chargeSource();
     // Set whether Coulomb contributions should be included in the generated potential
     static void setIncludeCoulombPotential(bool b);
     // Return whether Coulomb contributions should be included in the generated potential

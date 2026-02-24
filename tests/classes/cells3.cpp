@@ -17,8 +17,7 @@ class CellsEnergyTest : public ::testing::Test
     CellsEnergyTest() : dissolve_(coreData_)
     {
         PairPotential::setRange(20.0);
-        dissolve_.setAutomaticChargeSource(false);
-        dissolve_.setForceChargeSource(true);
+        PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
         PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
 
         // Add atom type
