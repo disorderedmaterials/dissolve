@@ -10,6 +10,7 @@
 #include "classes/atomTypeMix.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
+#include "data/formFactors.h"
 #include "math/data1D.h"
 
 class CGBead 
@@ -164,6 +165,32 @@ class CGBead
 
     };
 
+    void calculateXRaySelfScattrering(const double c, const double av_noa_bead)
+    {
+        intraBeadSQ_.copyArrays(formFactor_);
+        intraBeadSQ_ *= formFactor_.values();
+        std::vector<double> innerSum(intraBeadSQ_.nValues(), 0.0);
+
+        std::transform(intraBeadSQ_.xAxis().begin(), intraBeadSQ_.xAxis().end(), innerSum.begin(),
+                       [&](const double q)
+                       {
+                           double innerSumq = 0.0;
+                           for (auto i = 0; i < atomTypes_.nItems(); ++i)
+                           {
+                               const double nbi = atomTypes_[i].population() * xRayFormFactorData_[i].get().magnitude(q);
+                               for (auto j = i; j < atomTypes_.nItems(); ++j)
+                               {
+                                   const double multiplier = (i == j) ? 1.0 : 2.0;
+                                   const double nbj = atomTypes_[j].population() * xRayFormFactorData_[j].get().magnitude(q);
+                                   innerSumq += nbi * nbj * multiplier;
+                               }
+                               innerSumq -= nbi;
+                           }
+                           return innerSumq * (c / av_noa_bead);
+                       });
+        intraBeadSQ_ *= innerSum;
+    }
+
     const AtomTypeMix &atomTypes() const
     {
         return atomTypes_;
@@ -245,6 +272,34 @@ class CGBead
         return "None";
     }
 
+    bool initialiseXRayFormFactors()
+    { 
+        xRayFormFactorData_.clear();
+        for (auto& atm : atomTypes_)
+        {
+            auto at = atm.atomType();
+            auto data = XRayFormFactors::formFactorData(XRayFormFactors::WaasmaierKirfel1995, at->Z());
+            if (!data)
+            {
+                return Messenger::error(
+                    "No form factor data present for element {} (formal charge {}) in x-ray data set '{}'.\n",
+                    Elements::symbol(at->Z()), 0,
+                    XRayFormFactors::xRayFormFactorData().keyword(XRayFormFactors::WaasmaierKirfel1995));
+            }
+        }
+        return true;
+    }
+
+    double xRayFormFactorMagnitude(const double q) const
+    {
+        double fq = 0.0;
+        for (auto i = 0; i < atomTypes_.nItems(); ++i)
+        {
+            fq += atomTypes_[i].population() * xRayFormFactorData_[i].get().magnitude(q);
+        }
+        return fq;
+    }
+
     private:
     int atomDistribution_ = 0;
     double radius_ = 0.0;
@@ -252,6 +307,8 @@ class CGBead
     double dFraction_ = 0.0;
     std::string label_;
     AtomTypeMix atomTypes_;
+    // Form factor data for atom types
+    std::vector<std::reference_wrapper<const FormFactorData>> xRayFormFactorData_;
     Data1D formFactor_;
     Data1D intraBeadSQ_;
 
@@ -341,6 +398,18 @@ class CGBeadMap
                            [&](const int &i) { beads_[i].calculateSelfScattrering(fractions[i], av_noa_bead_, false); });
     }
 
+    void calculateXRaySelfInteractionTerms(const std::vector<double>& fractions)
+    {
+        av_noa_bead_ = 0.0;
+        std::vector<int> indices(fractions.size());
+        std::iota(indices.begin(), indices.end(), 0);
+        dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
+                           [&](const int &i) { av_noa_bead_ += fractions[i] * beads_[i].nAtoms(); });
+        Messenger::print("Calculated average atoms per bead = {:7.3f}\n", av_noa_bead_);
+        dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
+                           [&](const int &i) { beads_[i].calculateXRaySelfScattrering(fractions[i], av_noa_bead_); });
+    }
+
     void deuterate(const double fraction)
     {
         dissolve::for_each(
@@ -388,6 +457,11 @@ class CGBeadMap
     {
         beads_.clear();
         av_noa_bead_ = 0.0;
+    }
+
+    bool initialiseXRayFormFactors()
+    {
+        dissolve::for_each(beads_.begin(), beads_.end(), [](CGBead &bead) { bead.initialiseXRayFormFactors(); });
     }
 
     private:
