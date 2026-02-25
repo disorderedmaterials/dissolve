@@ -10,7 +10,7 @@
 // Forward Declarations
 class PotentialMap;
 
-// Energy Module
+// Energy Node
 class EnergyNode : public Node
 {
     public:
