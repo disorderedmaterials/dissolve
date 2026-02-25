@@ -155,7 +155,7 @@ EnergyNode::calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<
 
     const auto *box = cfg->box();
     const auto &potentialMap = kernel->potentialMap();
-    const auto cutoff = potentialMap.range();
+    const auto cutoff = PairPotential::range();
 
     // Calculate interatomic energy in a loop over defined Molecules
     const auto molecules = cfg->molecules();
