@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/lineParser.h"
+#include "base/serialiser.h"
 #include "templates/array2D.h"
 
 // BraggReflection Class
@@ -70,4 +71,34 @@ class BraggReflection
     bool deserialise(LineParser &parser);
     // Write data through specified parser
     bool serialise(LineParser &parser) const;
+};
+
+// BraggReflectionVector class
+class BraggReflectionVector : public Serialisable<>
+{
+    public:
+    BraggReflectionVector() = default;
+    BraggReflectionVector(const BraggReflectionVector &other);
+    ~BraggReflectionVector() = default;
+
+    private:
+    // Bragg reflections
+    std::vector<BraggReflection> reflections_;
+
+    public:
+    // Addition in place operator
+    void operator+=(const BraggReflectionVector &other);
+    // Multiplication operator
+    BraggReflectionVector operator*(double factor);
+    // Index operator
+    const BraggReflection &operator[](int i);
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

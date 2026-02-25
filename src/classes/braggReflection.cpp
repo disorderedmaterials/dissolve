@@ -6,6 +6,35 @@
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
 
+BraggReflectionVector::BraggReflectionVector(const BraggReflectionVector &other) : reflections_(other.reflections_) {}
+
+// Addition in place operator
+void BraggReflectionVector::operator+=(const BraggReflectionVector &other)
+{
+    auto &otherReflections = other.reflections_;
+    for (int i = 0; i < otherReflections.size(); i++)
+        reflections_[i] += otherReflections[i];
+}
+
+// Multiplication operator
+BraggReflectionVector BraggReflectionVector::operator*(double factor)
+{
+    BraggReflectionVector v(*this);
+    for (int i = 0; i < reflections_.size(); i++)
+        v.reflections_[i] *= factor;
+
+    return v;
+}
+
+// Index operator
+const BraggReflection &BraggReflectionVector::operator[](int i) { return reflections_[i]; }
+
+// Express as a serialisable value
+void BraggReflectionVector::serialise(std::string tag, SerialisedValue &target) const {}
+
+// Read values from a serialisable value
+void BraggReflectionVector::deserialise(const SerialisedValue &node) {}
+
 BraggReflection::BraggReflection() {}
 
 void BraggReflection::operator+=(const BraggReflection &source)
