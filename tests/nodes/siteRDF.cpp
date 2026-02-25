@@ -20,6 +20,13 @@ class SiteRDFNodeTest : public ::testing::Test
     SiteRDFNodeTest() = default;
     ~SiteRDFNodeTest() = default;
 
+    enum TestCase
+    {
+        Static,
+        Dynamic,
+        Fragments
+    };
+
     protected:
     // Import trajectpry into iterable graph
     bool importTrajectory(const std::string &name, TrajectoryImportFileFormat::TrajectoryImportFormat format)
@@ -39,11 +46,6 @@ class SiteRDFNodeTest : public ::testing::Test
                    ? static_cast<ImportConfigurationTrajectoryNode *>(iterator()->findNode("ImportConfigurationTrajectory"))
                    : nullptr;
     }
-    // Return pointer to SiteRDF node
-    SiteRDFNode *siteRDF(const std::string &name)
-    {
-        return iterator() ? static_cast<SiteRDFNode *>(iterator()->findNode("SiteRDF//" + name)) : nullptr;
-    }
     // Return pointer to IterableGraph node
     IterableGraph *iterator() { return static_cast<IterableGraph *>(root()->findNode("Iterator")); }
     // Return graph water species
@@ -51,13 +53,8 @@ class SiteRDFNodeTest : public ::testing::Test
     // Return pointer to DissolveGraph
     DissolveGraph *root() { return &(testData_->graphRoot); }
     // create graph
-    void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format,
-                     std::vector<std::string> siteNames)
+    void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
     {
-        // Create graph test data, resetting unique pointer if necessary
-        if (testData_.get())
-            testData_.reset();
-
         testData_ = std::make_unique<GraphTestData>();
 
         // Add iterator
@@ -74,15 +71,49 @@ class SiteRDFNodeTest : public ::testing::Test
 
         // Import water trajectory
         ASSERT_TRUE(importTrajectory(trajectoryFilename, format));
-
-        // Create site RDF nodes
-        for (const auto &sites : siteNames)
-        {
-            auto name = "SiteRDF//" + std::string(sites);
-            ASSERT_TRUE(iterator()->createNode("SiteRDF", name));
-            ASSERT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", name, "Configuration"}));
-        }
     }
+    // create SiteRDF node
+    SiteRDFNode *createSiteRDFNode(std::pair<std::string, std::string> sites, std::array<double, 3> distanceRange,
+                                   bool enableSameMolecule, SiteRDFNodeTest::TestCase testCase = SiteRDFNodeTest::Static)
+    {
+        auto name = "SiteRDF//" + sites.first + "-" + sites.second;
+        EXPECT_TRUE(iterator()->createNode("SiteRDF", name));
+        auto node = iterator()->findNode(name);
+        EXPECT_TRUE(iterator()->addEdge({"ImportConfigurationTrajectory", "Configuration", name, "Configuration"}));
+        auto [x, y, z] = distanceRange;
+
+        std::string a, b;
+        switch (testCase)
+        {
+            case (TestCase::Static):
+                a = sites.first;
+                b = sites.second;
+                break;
+            case (TestCase::Dynamic):
+                a = sites.first + "-dyn";
+                b = sites.second + "-dyn";
+                break;
+            case (TestCase::Fragments):
+                a = sites.first + "-frag";
+                b = sites.second + "-frag";
+                break;
+            default:
+                a = "UNKNOWN";
+                b = "UNKNOWN";
+                break;
+        }
+        auto aSite = water()->findSite(a);
+        auto bSite = water()->findSite(b);
+        checkSiteExists(aSite);
+        checkSiteExists(bSite);
+        EXPECT_TRUE(node->setOption<SpeciesSites>("SiteA", {{aSite}}));
+        EXPECT_TRUE(node->setOption<SpeciesSites>("SiteB", {{bSite}}));
+        EXPECT_TRUE(node->setOption<RangedVector3>("DistanceRange", {{x, y, z}}));
+        EXPECT_TRUE(node->setOption("ExcludeSameMolecule", enableSameMolecule));
+
+        return static_cast<SiteRDFNode *>(node);
+    }
+    static void checkSiteExists(const SpeciesSite *site) { ASSERT_TRUE(site); }
 
     // Root test data
     std::unique_ptr<GraphTestData> testData_;
@@ -90,37 +121,18 @@ class SiteRDFNodeTest : public ::testing::Test
 
 TEST_F(SiteRDFNodeTest, Water)
 {
-    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ,
-                {"O-O", "H1-H2", "COM-COM"});
+    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
 
-    // Set options
-    ASSERT_TRUE(siteRDF("O-O"));
-    ASSERT_TRUE(siteRDF("H1-H2"));
-    ASSERT_TRUE(siteRDF("COM-COM"));
-    ASSERT_TRUE(iterator());
+    auto oORDF = createSiteRDFNode({"O", "O"}, {0.0, 20.0, 0.01}, true);
+    ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
 
-    // O-O
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteA", {{water()->findSite("O")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteB", {{water()->findSite("O")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("O-O")->setOption("RangeBEnabled", true));
+    auto h1H2RDF = createSiteRDFNode({"H1", "H2"}, {0.0, 20.0, 0.01}, true);
+    ASSERT_TRUE(h1H2RDF->setOption("RangeBEnabled", true));
 
-    // H1-H2
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption<SpeciesSites>("SiteA", {{water()->findSite("H1")}}));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption<SpeciesSites>("SiteB", {{water()->findSite("H2")}}));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption("RangeBEnabled", true));
-
-    // COM-COM
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteA", {{water()->findSite("COM")}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteB", {{water()->findSite("COM")}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.05}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<Range>("RangeA", {0.0, 3.3}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<Range>("RangeB", {3.3, 5.6}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption("RangeBEnabled", true));
+    auto comCOMRDF = createSiteRDFNode({"COM", "COM"}, {0.0, 20.0, 0.05}, true);
+    ASSERT_TRUE(comCOMRDF->setOption<Range>("RangeA", {0.0, 3.3}));
+    ASSERT_TRUE(comCOMRDF->setOption<Range>("RangeB", {3.3, 5.6}));
+    ASSERT_TRUE(comCOMRDF->setOption("RangeBEnabled", true));
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator()->setOption<Number>("N", 95));
@@ -128,59 +140,40 @@ TEST_F(SiteRDFNodeTest, Water)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
+        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-2));
 
     // H1-H2 RDF, excluding intramolecular
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)//RDF",
+        h1H2RDF->dataRDF(), "RDF(H1-H2)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         5.0e-3));
 
     // COM-COM RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)//RDF",
+        comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
 
     // Coordination numbers
-    auto &[cNA, cNAData] = siteRDF("COM-COM")->sumN("A");
-    auto &[cNB, cNBData] = siteRDF("COM-COM")->sumN("B");
+    auto &[cNA, cNAData] = comCOMRDF->sumN("A");
+    auto &[cNB, cNBData] = comCOMRDF->sumN("B");
     EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 6.5e-1));
     EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 6.5e-1));
 }
 
 TEST_F(SiteRDFNodeTest, WaterNPT)
 {
-    createGraph("dlpoly/water267-npt/water-267-298K.HISf", TrajectoryImportFileFormat::TrajectoryImportFormat::DLPOLYFormatted,
-                {"O-O", "H1-H2", "COM-COM"});
+    createGraph("dlpoly/water267-npt/water-267-298K.HISf", TrajectoryImportFileFormat::TrajectoryImportFormat::DLPOLYFormatted);
 
-    // Set options
-    ASSERT_TRUE(siteRDF("O-O"));
-    ASSERT_TRUE(siteRDF("H1-H2"));
-    ASSERT_TRUE(siteRDF("COM-COM"));
-    ASSERT_TRUE(iterator());
+    auto oORDF = createSiteRDFNode({"O", "O"}, {0.0, 20.0, 0.01}, true);
+    ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
 
-    // O-O
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteA", {{water()->findSite("O")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteB", {{water()->findSite("O")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("O-O")->setOption("RangeBEnabled", true));
+    auto h1H2RDF = createSiteRDFNode({"H1", "H2"}, {0.0, 20.0, 0.01}, true);
+    ASSERT_TRUE(h1H2RDF->setOption("RangeBEnabled", true));
 
-    // H1-H2
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption<SpeciesSites>("SiteA", {{water()->findSite("H1")}}));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption<SpeciesSites>("SiteB", {{water()->findSite("H2")}}));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("H1-H2")->setOption("RangeBEnabled", true));
-
-    // COM-COM
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteA", {{water()->findSite("COM")}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteB", {{water()->findSite("COM")}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.05}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption("RangeBEnabled", true));
+    auto comCOMRDF = createSiteRDFNode({"COM", "COM"}, {0.0, 20.0, 0.05}, true);
+    ASSERT_TRUE(comCOMRDF->setOption("RangeBEnabled", true));
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator()->setOption<Number>("N", 95));
@@ -188,41 +181,29 @@ TEST_F(SiteRDFNodeTest, WaterNPT)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
+        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-npt/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H1-H2")->dataRDF(), "RDF(H1-H2)//RDF",
+        h1H2RDF->dataRDF(), "RDF(H1-H2)//RDF",
         {"dlpoly/water267-npt/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
 
     // COM-COM RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)//RDF",
+        comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
         {"dlpoly/water267-npt/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 7.0e-3));
 }
 
 TEST_F(SiteRDFNodeTest, WaterDynamic)
 {
-    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ,
-                {"O-O", "H-H"});
+    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
 
-    // Set options
-    ASSERT_TRUE(siteRDF("O-O"));
-    ASSERT_TRUE(siteRDF("H-H"));
-    ASSERT_TRUE(iterator());
+    auto oORDF = createSiteRDFNode({"O", "O"}, {0.0, 20.0, 0.01}, true, TestCase::Dynamic);
+    ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
 
-    // O-O
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteA", {{water()->findSite("O-dyn")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteB", {{water()->findSite("O-dyn")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption("ExcludeSameMolecule", true));
-
-    // H-H
-    ASSERT_TRUE(siteRDF("H-H")->setOption<SpeciesSites>("SiteA", {{water()->findSite("H-dyn")}}));
-    ASSERT_TRUE(siteRDF("H-H")->setOption<SpeciesSites>("SiteB", {{water()->findSite("H-dyn")}}));
-    ASSERT_TRUE(siteRDF("H-H")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("H-H")->setOption("ExcludeSameMolecule", true));
+    auto hHRDF = createSiteRDFNode({"H", "H"}, {0.0, 20.0, 0.01}, true, TestCase::Dynamic);
+    ASSERT_TRUE(hHRDF->setOption("RangeBEnabled", true));
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator()->setOption<Number>("N", 95));
@@ -230,50 +211,31 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
+        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         9.0e-3));
 
     // H1-H2 RDF, excluding intramolecular interactions
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H-H")->dataRDF(), "RDF(H-H)//RDF",
+        hHRDF->dataRDF(), "RDF(H-H)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         3.0e-3));
 }
 
 TEST_F(SiteRDFNodeTest, WaterFragments)
 {
-    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ,
-                {"O-O", "H-H", "COM-COM"});
+    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
 
-    // Set options
-    ASSERT_TRUE(siteRDF("O-O"));
-    ASSERT_TRUE(siteRDF("H-H"));
-    ASSERT_TRUE(siteRDF("COM-COM"));
-    ASSERT_TRUE(iterator());
+    auto oORDF = createSiteRDFNode({"O", "O"}, {0.0, 20.0, 0.01}, true, TestCase::Fragments);
+    ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
 
-    // O-O
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteA", {{water()->findSite("O-frag")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<SpeciesSites>("SiteB", {{water()->findSite("O-frag")}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("O-O")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("O-O")->setOption("RangeBEnabled", true));
+    auto hHRDF = createSiteRDFNode({"H", "H"}, {0.0, 20.0, 0.01}, true, TestCase::Fragments);
+    ASSERT_TRUE(hHRDF->setOption("RangeBEnabled", true));
 
-    // H1-H2
-    ASSERT_TRUE(siteRDF("H-H")->setOption<SpeciesSites>("SiteA", {{water()->findSite("H-frag")}}));
-    ASSERT_TRUE(siteRDF("H-H")->setOption<SpeciesSites>("SiteB", {{water()->findSite("H-frag")}}));
-    ASSERT_TRUE(siteRDF("H-H")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.01}}));
-    ASSERT_TRUE(siteRDF("H-H")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("H-H")->setOption("RangeBEnabled", true));
-
-    // COM-COM
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteA", {{water()->findSite("COM-frag")}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<SpeciesSites>("SiteB", {{water()->findSite("COM-frag")}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<RangedVector3>("DistanceRange", {{0.0, 20.0, 0.05}}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<Range>("RangeA", {0.0, 3.3}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption<Range>("RangeB", {3.3, 5.6}));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption("ExcludeSameMolecule", true));
-    ASSERT_TRUE(siteRDF("COM-COM")->setOption("RangeBEnabled", true));
+    auto comCOMRDF = createSiteRDFNode({"COM", "COM"}, {0.0, 20.0, 0.05}, true, TestCase::Fragments);
+    ASSERT_TRUE(comCOMRDF->setOption<Range>("RangeA", {0.0, 3.3}));
+    ASSERT_TRUE(comCOMRDF->setOption<Range>("RangeB", {3.3, 5.6}));
+    ASSERT_TRUE(comCOMRDF->setOption("RangeBEnabled", true));
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator()->setOption<Number>("N", 95));
@@ -281,24 +243,24 @@ TEST_F(SiteRDFNodeTest, WaterFragments)
 
     // O-O RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("O-O")->dataRDF(), "RDF(OW-OW)//RDF",
+        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-2));
 
     // H1-H2 RDF, excluding intramolecular
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("H-H")->dataRDF(), "RDF(H-H)//RDF",
+        hHRDF->dataRDF(), "RDF(H-H)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
         1.0e-2));
 
     // COM-COM RDF
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        siteRDF("COM-COM")->dataRDF(), "RDF(COM-COM)//RDF",
+        comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
         {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
 
     // Coordination numbers
-    auto &[cNA, cNAData] = siteRDF("COM-COM")->sumN("A");
-    auto &[cNB, cNBData] = siteRDF("COM-COM")->sumN("B");
+    auto &[cNA, cNAData] = comCOMRDF->sumN("A");
+    auto &[cNB, cNBData] = comCOMRDF->sumN("B");
     EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 6.5e-1));
     EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 6.5e-1));
 }

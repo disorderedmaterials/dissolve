@@ -219,36 +219,6 @@ inline void createWaterGraphDlPoly(Graph *root, int population,
             CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
         ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
     }
-
-    // Add GR node and link to the import node
-    auto grNode = root->createNode("GR");
-    ASSERT_TRUE(grNode);
-    ASSERT_TRUE(
-        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GR", "Configuration"}));
-
-    // Create the SQ node
-    auto sqNode = root->createNode("SQ");
-    ASSERT_TRUE(sqNode);
-    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
-
-    // Add in NeutronSQ
-    auto isoD = waterNode->species().findIsotopologue("D2O");
-    ASSERT_TRUE(isoD);
-    addNeutronSQ(root, "H2O", {}, {},
-                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
-                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    addNeutronSQ(root, "D2O", IsotopologueSet({{isoD, 1.0}}), {},
-                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
-                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    addNeutronSQ(root, "HDO", IsotopologueSet({{isoD, 1.0}, {waterNode->species().naturalIsotopologue(), 1.0}}),
-                 Exchangeables({"HW"}),
-                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
-                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-
-    // Add in XRaySQ
-    addXRaySQ(
-        root, "H2Ox",
-        Data1DImportFileFormat("epsr25/water1000-neutron-xray/PCCPfofq.txt", Data1DImportFileFormat::Data1DImportFormat::XY));
 }
 
 // Create a water graph in the supplied root node
