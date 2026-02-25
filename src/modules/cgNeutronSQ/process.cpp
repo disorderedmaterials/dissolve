@@ -191,11 +191,10 @@ Module::ExecutionResult CGNeutronSQModule::process(ModuleContext &moduleContext)
         moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Calculate and store weights
-    auto &weights_atm = moduleContext.dissolve().processingModuleData().realise<NeutronWeights>("FullWeights", name_,
-                                                                                            GenericItem::InRestartFileFlag);
-                                                                                    //  CGNeutronWeights weights(weights_atm);
+    //auto &weights_atm = moduleContext.dissolve().processingModuleData().realise<NeutronWeights>("FullWeights", name_,
+    //                                                                                        GenericItem::InRestartFileFlag);
+
     CGNeutronWeights weights;
-    weights.setAtomTypes(weights_atm.atomTypes());
     calculateWeights(rdfModule, weights);
     Messenger::print("Isotopologue and isotope composition:\n\n");
     weights.print();

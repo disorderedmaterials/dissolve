@@ -299,8 +299,6 @@ bool CGXRayWeights::serialise(LineParser &parser) const
     return true;
 }
 
-void CGXRayWeights::setAtomTypes(const AtomTypeMix &atomTypes) { atomTypeMix_ = atomTypes; }
-
 void CGXRayWeights::calculateSelfScatteringTerms() {
     std::vector<double> fractions(atomTypeMix_.nItems());
     for (int i = 0; i < atomTypeMix_.nItems(); ++i)

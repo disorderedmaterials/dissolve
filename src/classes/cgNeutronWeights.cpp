@@ -425,11 +425,6 @@ bool CGNeutronWeights::serialise(LineParser &parser) const
     return true;
 }
 
-void CGNeutronWeights::setAtomTypes(const AtomTypeMix& atomTypes)
-{
-    atomTypes_ = atomTypes;
-}
-
 void CGNeutronWeights::calculateSelfScatteringTerms() {
     std::vector<double> fractions(atomTypes_.nItems());
     for (int i = 0; i < atomTypes_.nItems(); ++i)

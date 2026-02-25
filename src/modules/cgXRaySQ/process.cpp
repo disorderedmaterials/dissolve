@@ -208,10 +208,9 @@ Module::ExecutionResult CGXRaySQModule::process(ModuleContext &moduleContext)
         moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Construct weights matrix
-    auto &weights = moduleContext.dissolve().processingModuleData().realise<CGXRayWeights>("FullWeights", name_,
-                                                                                         GenericItem::InRestartFileFlag);
-    //CGXRayWeights weights;
-    //weights.setAtomTypes(weights_atm.atomTypeMix());
+    /*auto &weights = moduleContext.dissolve().processingModuleData().realise<CGXRayWeights>("FullWeights", name_,
+                                                                                         GenericItem::InRestartFileFlag);*/
+    CGXRayWeights weights;
     calculateWeights(grModule, weights, formFactors_);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
