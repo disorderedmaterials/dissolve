@@ -98,6 +98,9 @@ void PairPotential::setChargeSource(PairPotential::ChargeSource source)
     if (chargeSource_ != source)
         ++coreDefinitionsVersion_;
     chargeSource_ = source;
+
+    // Set whether to include charges in pair potentials here - it will be overridden as necessary for ChargeSource::Auto
+    includeCoulombPotential_ = source != ChargeSource::SpeciesAtoms;
 }
 
 // Return current charge source
