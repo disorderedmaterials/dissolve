@@ -96,9 +96,9 @@ bool CGXRayWeights::finalise(XRayFormFactors::XRayFormFactorData formFactors)
     atomTypeMix_.finalise();
 
     // Retrieve form factor data for the current atom types
-    formFactors_ = formFactors;
-    if (!initialiseFormFactors())
-        return false;
+    //formFactors_ = formFactors;
+    //if (!initialiseFormFactors())
+    //    return false;
 
     setUpMatrices();
 

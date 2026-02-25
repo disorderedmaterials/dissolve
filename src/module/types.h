@@ -19,6 +19,7 @@ enum ModuleType
     CheckSpecies,
     Clustering,
     CGNeutronSQ,
+    CGXRaySQ,
     Compare,
     DAngle,
     DataTest,

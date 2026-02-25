@@ -20,6 +20,8 @@
 #include "modules/clustering/gui/clusteringWidget.h"
 #include "modules/cgNeutronSQ/cgNeutronSQ.h"
 #include "modules/cgNeutronSQ/gui/cgNeutronSQWidget.h"
+#include "modules/cgXRaySQ/cgXRaySQ.h"
+#include "modules/cgXRaySQ/gui/cgXRaySQWidget.h"
 #include "modules/compare/compare.h"
 #include "modules/compare/gui/compareWidget.h"
 #include "modules/dAngle/dAngle.h"
@@ -80,6 +82,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<CompareModule, CompareModuleWidget>();
     registerProducer<ClusteringModule, ClusteringModuleWidget>();
     registerProducer<CGNeutronSQModule, CGNeutronSQModuleWidget>();
+    registerProducer<CGXRaySQModule, CGXRaySQModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
