@@ -11,7 +11,7 @@
 EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
+    addInput<Configuration *>("Configuration", "Configuration to calculate energy for", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
