@@ -116,8 +116,8 @@ TEST_F(SiteRDFNodeTest, Water)
     // Coordination numbers
     auto &[cNA, cNAData] = comCOMRDF->sumN("A");
     auto &[cNB, cNBData] = comCOMRDF->sumN("B");
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 6.5e-1));
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 6.5e-1));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 2.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 7.0e-4));
 }
 
 TEST_F(SiteRDFNodeTest, WaterNPT)
@@ -219,8 +219,8 @@ TEST_F(SiteRDFNodeTest, WaterFragments)
     // Coordination numbers
     auto &[cNA, cNAData] = comCOMRDF->sumN("A");
     auto &[cNB, cNBData] = comCOMRDF->sumN("B");
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 6.5e-1));
-    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 6.5e-1));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number A", cNA, 4.32359551, 2.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkSampledDouble("coordination number B", cNB, 19.413049, 7.0e-4));
 }
 
 } // namespace UnitTest
