@@ -871,8 +871,9 @@ const Species &tetrahedralArgonSpecies()
     return tetrahedralArgon_;
 }
 
-// Check consistency between production, molecular, and test forces for the supplied configuration
-void checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
+// Check consistency between production, molecular, and test forces for the supplied configuration, returning production values
+std::pair<PairPotentialEnergyValue, GeometryEnergyValue>
+checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
 {
     // Calculate production energies (fully optimised)
     auto &&[productionPP, productionGeometry] = EnergyNode::calculateEnergy(cfg, kernel);
@@ -897,6 +898,8 @@ void checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKern
     // "Compare molecule-based energies with production values
     EXPECT_NEAR(molecularPPEnergyFull, productionPP.total(), testThreshold);
     EXPECT_NEAR(molecularPPEnergyInter, productionPP.interMolecular(), testThreshold);
+
+    return {productionPP, productionGeometry};
 }
 
 } // namespace UnitTest
