@@ -20,6 +20,7 @@ class SpeciesExportFileFormat : public FileAndFormat
     };
     SpeciesExportFileFormat(std::string_view filename = "", SpeciesExportFormat format = SpeciesExportFormat::XYZ);
     ~SpeciesExportFileFormat() override = default;
+    SpeciesExportFileFormat &operator=(const SpeciesExportFileFormat &other);
 
     /*
      * Formats

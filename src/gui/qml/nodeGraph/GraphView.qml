@@ -76,6 +76,11 @@ Pane {
                 title: "Action"
 
                 MenuItem {
+                    text: "Average Molecule"
+
+                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AvgMol", "New AvgMol")
+                }
+                MenuItem {
                     text: "Atomic MC"
 
                     onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicMC", "New Node")

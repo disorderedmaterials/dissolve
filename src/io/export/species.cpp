@@ -16,6 +16,13 @@ SpeciesExportFileFormat::SpeciesExportFileFormat(std::string_view filename, Spec
                                     {SpeciesExportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG File"}});
 }
 
+SpeciesExportFileFormat &SpeciesExportFileFormat::operator=(const SpeciesExportFileFormat &other)
+{
+  formats_=other.formats_;
+
+  return *this;
+}
+
 /*
  * Export Functions
  */
