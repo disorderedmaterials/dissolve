@@ -18,6 +18,14 @@ TEST(History, SimpleIntegerNumbers)
         EXPECT_EQ(i.push(value, 5).asInteger(), value);
 }
 
+TEST(PODHistory, SimpleIntegerNumbers)
+{
+    PODHistory<int> i;
+    const auto value = 12345;
+    for (auto n = 0; n < 10; ++n)
+        EXPECT_EQ(i.pushAndAverage(value, 5), value);
+}
+
 TEST(History, SimpleDoubleNumbers)
 {
     History<Number> d;
@@ -27,6 +35,17 @@ TEST(History, SimpleDoubleNumbers)
     EXPECT_DOUBLE_EQ(d.push(3.0, avgLength).asDouble(), (1 + 2 + 3) / 3.0);
     EXPECT_DOUBLE_EQ(d.push(4.0, avgLength).asDouble(), (2 + 3 + 4) / 3.0);
     EXPECT_DOUBLE_EQ(d.push(5.0, avgLength).asDouble(), (3 + 4 + 5) / 3.0);
+}
+
+TEST(PODHistory, SimpleDoubleNumbers)
+{
+    PODHistory<double> d;
+    const auto avgLength = 3;
+    EXPECT_DOUBLE_EQ(d.pushAndAverage(1.0, avgLength), 1.0);
+    EXPECT_DOUBLE_EQ(d.pushAndAverage(2.0, avgLength), (1 + 2) / 2.0);
+    EXPECT_DOUBLE_EQ(d.pushAndAverage(3.0, avgLength), (1 + 2 + 3) / 3.0);
+    EXPECT_DOUBLE_EQ(d.pushAndAverage(4.0, avgLength), (2 + 3 + 4) / 3.0);
+    EXPECT_DOUBLE_EQ(d.pushAndAverage(5.0, avgLength), (3 + 4 + 5) / 3.0);
 }
 
 TEST(History, SimpleDeserialisation)

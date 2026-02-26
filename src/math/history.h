@@ -6,6 +6,7 @@
 #include "base/serialiser.h"
 #include <functional>
 #include <memory>
+#include <numeric>
 #include <vector>
 
 // Serialisable Data History
@@ -68,4 +69,51 @@ template <class T> class History : public Serialisable<>
                                           unique->deserialise(value);
                                       });
     }
+};
+
+// Serialisable POD Data History
+// History for PODs, e.g. double, int
+template <class T> class PODHistory : public Serialisable<>
+{
+    private:
+    // Stored historical data
+    std::vector<T> history_;
+
+    public:
+    // Push data into the history
+    void push(const T &data, int averagingLength)
+    {
+        // Push the current data onto the history stack
+        history_.emplace_back(data);
+
+        // Prune old data to get to the averagingLength
+        while (history_.size() > averagingLength)
+            history_.erase(history_.begin());
+    }
+    // Push data into the history and return current average
+    T pushAndAverage(const T &data, int averagingLength)
+    {
+        push(data, averagingLength);
+        return average();
+    }
+    // Return the current average value
+    T average() const { return std::accumulate(history_.begin(), history_.end(), T()) / history_.size(); }
+    // Return the history data vector
+    const std::vector<T> &history() const { return history_; }
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const
+    {
+        if (history_.empty())
+            return;
+
+        SerialisedValue data = {{"history", history_}};
+        target[tag] = data;
+    }
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override { history_ = toml::find<std::vector<T>>(node, "history"); }
 };
