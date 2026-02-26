@@ -54,6 +54,7 @@ justfile
 *.rewrite
 **.mermaid
 tests/data/*.xml
+tests/data/test.ANGLE
 tests/epsr/D2O-ReferenceData.q
 tests/epsr/D2O-ReferenceData.r
 tests/epsr/EPSR01-EstSQ-HW-HW.txt

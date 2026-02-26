@@ -6,6 +6,7 @@
 #include "nodes/add.h"
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
+#include "nodes/avgmol/avgmol.h"
 #include "nodes/bragg.h"
 #include "nodes/calculateBonding.h"
 #include "nodes/cif/importCIFStructure.h"
@@ -67,6 +68,7 @@ void NodeRegistry::instantiateNodeProducers()
     producers_ = {{"Add", makeDerivedNode<AddNode>()},
                   {"Angle", makeDerivedNode<AngleNode>()},
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
+                  {"AvgMol", makeDerivedNode<AvgMolNode>()},
                   {"Bragg", makeDerivedNode<BraggNode>()},
                   {"CalculateBonding", makeDerivedNode<CalculateBondingNode>()},
                   {"ClearBonding", makeDerivedNode<ClearBondingNode>()},
