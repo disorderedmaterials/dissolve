@@ -3,7 +3,13 @@
 
 #include "nodes/bragg.h"
 
-BraggNode::BraggNode(Graph *parentGraph) : Node(parentGraph)
+BraggNode::BraggNode(Graph *parentGraph)
+    : Node(parentGraph), braggReflectionHistory_(
+                             [&]()
+                             {
+                                 BraggReflectionVector v;
+                                 return v;
+                             })
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
@@ -85,17 +91,15 @@ NodeConstants::ProcessResult BraggNode::process()
 
     // Calculate Bragg vectors and intensities for the current Configuration
     bool alreadyUpToDate;
-    if (!calculateBraggTerms(*braggReflections_, targetConfiguration_, qMin, qDelta, qMax, multiplicity_))
+    if (!calculateBraggTerms(braggReflections_->values(), targetConfiguration_, qMin, qDelta, qMax, multiplicity_))
         return NodeConstants::ProcessResult::Failed;
 
     // Perform averaging of reflections data if requested
-    /*
     if (averagingLength_)
-        Averaging::vectorAverage<std::vector<BraggReflection>>(dissolve.processingModuleData(), "Reflections", name(),
-                                                               averagingLength_.value(), averagingScheme_);
-                                                               */
+        (*braggReflections_) = braggReflectionHistory_.push(*braggReflections_, averagingLength_.value().asInteger());
+
     // Form partial and total reflection functions
-    formReflectionFunctions(*braggReflections_, targetConfiguration_, *braggPartials_, qMin, qDelta, qMax);
+    formReflectionFunctions(braggReflections_->values(), targetConfiguration_, *braggPartials_, qMin, qDelta, qMax);
 
     // Save reflection data?
     if (saveReflections_)
@@ -106,7 +110,7 @@ NodeConstants::ProcessResult BraggNode::process()
             return NodeConstants::ProcessResult::Failed;
         braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
         auto count = 0;
-        for (const auto &reflxn : *braggReflections_)
+        for (const auto &reflxn : braggReflections_->values())
         {
             if (!braggParser.writeLineF("{:6d}  {:10.6f} {} {} {} {:8d}  {:10.6e}\n", ++count, reflxn.q(), reflxn.hkl().x,
                                         reflxn.hkl().y, reflxn.hkl().z, reflxn.nKVectors(), reflxn.intensity(0, 0)))
@@ -124,7 +128,7 @@ NodeConstants::ProcessResult BraggNode::process()
                 if (!intensityParser.openOutput(std::format("{}-{}-{}.txt", name(), popI.first->name(), popJ.first->name())))
                     return false;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", popI.first->name(), popJ.first->name());
-                for (const auto &reflxn : *braggReflections_)
+                for (const auto &reflxn : braggReflections_->values())
                     if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", reflxn.q(), reflxn.intensity(i, j)))
                         return false;
                 intensityParser.closeFiles();

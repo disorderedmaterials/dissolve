@@ -17,6 +17,7 @@
 #include "nodes/node.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
+#include "math/history.h"
 
 // Bragg Module
 class BraggNode : public Node
@@ -47,7 +48,9 @@ class BraggNode : public Node
     // Minimum Q value for Bragg calculation
     Number qMin_{0.01};
     // Bragg reflections
-    std::optional<std::vector<BraggReflection>> braggReflections_;
+    std::optional<BraggReflectionVector> braggReflections_;
+    // Bragg reflections history
+    History<BraggReflectionVector> braggReflectionHistory_;
     // Bragg partials
     std::optional<Array2D<Data1D>> braggPartials_;
     // Whether to save Bragg reflection data to disk

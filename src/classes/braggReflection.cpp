@@ -8,13 +8,13 @@
 
 BraggReflectionVector::BraggReflectionVector(const BraggReflectionVector &other) : reflections_(other.reflections_) {}
 
-// Size of reflections vector
-int BraggReflectionVector::size() const { return reflections_.size(); }
+// Return reflections vector
+std::vector<BraggReflection> &BraggReflectionVector::values() { return reflections_; }
 
 // Addition in place operator
-void BraggReflectionVector::operator+=(BraggReflectionVector &other)
+void BraggReflectionVector::operator+=(BraggReflectionVector other)
 {
-    for (int i = 0; i < other.size(); i++)
+    for (int i = 0; i < other.values().size(); i++)
         (*this)[i] += other[i];
 }
 
@@ -22,7 +22,7 @@ void BraggReflectionVector::operator+=(BraggReflectionVector &other)
 BraggReflectionVector BraggReflectionVector::operator*(double factor)
 {
     BraggReflectionVector v(*this);
-    for (int i = 0; i < size(); i++)
+    for (int i = 0; i < values().size(); i++)
         v[i] *= factor;
 
     return v;

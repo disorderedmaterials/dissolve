@@ -90,10 +90,10 @@ class BraggReflectionVector : public Serialisable<>
     std::vector<BraggReflection> reflections_;
 
     public:
-    // Size of reflections vector
-    int size() const;
+    // Return reflections vector
+    std::vector<BraggReflection> &values();
     // Addition in place operator
-    void operator+=(BraggReflectionVector &other);
+    void operator+=(BraggReflectionVector other);
     // Multiplication operator
     BraggReflectionVector operator*(double factor);
     // Index operator
