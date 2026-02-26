@@ -83,7 +83,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> act
             return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", name_);
 
         // Set up the additional potentials - reconstruct them from the current coefficients
-        auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : dissolve.pairPotentialRange();
+        auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : PairPotential::range();
         auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
@@ -131,7 +131,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
-    auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : dissolve.pairPotentialRange();
+    auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : PairPotential::range();
     auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
     auto ncoeffp = nCoeffP_ ? nCoeffP_.value() : std::min(int(10.0 * rmaxpt + 0.0001), mcoeff);
 

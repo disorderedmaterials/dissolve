@@ -14,9 +14,8 @@ class CellsPBCTest : public ::testing::Test
     public:
     CellsPBCTest() : dissolve_(coreData_)
     {
-        dissolve_.setPairPotentialRange(9.0);
-        dissolve_.setAutomaticChargeSource(false);
-        dissolve_.setForceChargeSource(true);
+        PairPotential::setRange(9.0);
+        PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
         // Add atom types and LJ pair potentials (only one real one - between Ar and Ar)
         auto arType = coreData_.addAtomType(Elements::Ar);
@@ -42,7 +41,7 @@ class CellsPBCTest : public ::testing::Test
     {
         // Setup Configuration
         auto *cfg = coreData_.addConfiguration();
-        cfg->createBoxAndCells(lengths, angles, false, 12.0);
+        cfg->createBoxAndCells(lengths, angles, false);
 
         // Add a molecule at the origin
         auto central = cfg->addMolecule(argon_);

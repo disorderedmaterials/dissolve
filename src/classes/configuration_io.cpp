@@ -6,6 +6,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coreData.h"
+#include "classes/pairPotential.h"
 #include "classes/species.h"
 #include "kernels/potentials/producer.h"
 #include <algorithm>
@@ -83,7 +84,7 @@ bool Configuration::serialise(LineParser &parser) const
 }
 
 // Read from specified LineParser
-bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials)
+bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, bool hasPotentials)
 {
     // Clear current contents of Configuration
     empty();
@@ -112,7 +113,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
         return false;
     const auto angles = parser.arg3d(0);
 
-    createBoxAndCells(lengths, angles, nonPeriodic, pairPotentialRange);
+    createBoxAndCells(lengths, angles, nonPeriodic);
 
     // Read total number of Molecules to expect
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

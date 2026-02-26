@@ -31,5 +31,5 @@ class VersionCounter
     // Automatic conversion to integer
     operator int() const;
     // Prefix increment
-    int operator++();
+    VersionCounter &operator++();
 };

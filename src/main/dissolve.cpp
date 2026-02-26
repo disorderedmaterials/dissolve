@@ -39,11 +39,7 @@ void Dissolve::clear()
     // PairPotentials
     Messenger::printVerbose("Clearing Pair Potentials...\n");
     useCombinationRules_ = true;
-    pairPotentialDelta_ = 0.005;
-    pairPotentialRange_ = 15.0;
-    automaticChargeSource_ = true;
-    forceChargeSource_ = false;
-    atomTypeChargeSource_ = true;
+    PairPotential::setChargeSource(PairPotential::ChargeSource::Automatic);
     pairPotentials_.clear();
     potentialMap_.clear();
 

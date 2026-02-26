@@ -8,13 +8,13 @@
 KernelBase::KernelBase(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
     : potentialMap_(potentialMap), box_(cfg->box()), cellArray_(cfg->cells()), molecules_(cfg->molecules())
 {
-    cutoffDistanceSquared_ =
-        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
+    cutoffDistanceSquared_ = energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value()
+                                                      : PairPotential::range() * PairPotential::range();
 }
 
 KernelBase::KernelBase(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
     : potentialMap_(potentialMap), box_(box)
 {
-    cutoffDistanceSquared_ =
-        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
+    cutoffDistanceSquared_ = energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value()
+                                                      : PairPotential::range() * PairPotential::range();
 }

@@ -32,6 +32,8 @@ TEST_F(ForcefieldTabTest, PairPotentials)
 
     dissolve.clear();
     ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
+    PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
+    PairPotential::setIncludeCoulombPotential(true);
     ASSERT_TRUE(dissolve.updatePairPotentials());
 
     PairPotentialModel pairs(dissolve.pairPotentials());

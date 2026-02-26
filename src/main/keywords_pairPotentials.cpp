@@ -39,6 +39,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     Elements::Element Z;
     PairPotential *pot;
     auto &coreData = dissolve->coreData();
+    bool autoChargeSource = true, includeCoulomb = false;
 
     while (!parser.eofOrBlank())
     {
@@ -74,7 +75,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 break;
             case (PairPotentialsBlock::DeltaKeyword):
-                dissolve->setPairPotentialDelta(parser.argd(1));
+                PairPotential::setRange(PairPotential::range(), parser.argd(1));
                 break;
             case (PairPotentialsBlock::EndPairPotentialsKeyword):
                 Messenger::print("Found end of {} block.\n",
@@ -82,13 +83,13 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 blockDone = true;
                 break;
             case (PairPotentialsBlock::ForceChargeSourceKeyword):
-                dissolve->setForceChargeSource(parser.argb(1));
+                Messenger::warn("The ForceChargeSource keyword is now redundant.\n");
                 break;
             case (PairPotentialsBlock::IncludeCoulombKeyword):
-                dissolve->setAtomTypeChargeSource(parser.argb(1));
+                includeCoulomb = parser.argb(1);
                 break;
             case (PairPotentialsBlock::ManualChargeSourceKeyword):
-                dissolve->setAutomaticChargeSource(!parser.argb(1));
+                autoChargeSource = !parser.argb(1);
                 break;
             case (PairPotentialsBlock::OverrideKeyword):
             {
@@ -197,7 +198,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 break;
             case (PairPotentialsBlock::RangeKeyword):
-                dissolve->setPairPotentialRange(parser.argd(1));
+                PairPotential::setRange(parser.argd(1));
                 break;
             case (PairPotentialsBlock::ShortRangeTruncationKeyword):
                 if (PairPotential::shortRangeTruncationSchemes().isValid(parser.argsv(1)))
@@ -227,6 +228,11 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
         if (blockDone)
             break;
     }
+
+    // Set pair potential charge source
+    PairPotential::setChargeSource(autoChargeSource ? PairPotential::ChargeSource::Automatic
+                                                    : (includeCoulomb ? PairPotential::ChargeSource::AtomTypes
+                                                                      : PairPotential::ChargeSource::SpeciesAtoms));
 
     // If there's no error and the blockDone flag isn't set, return an error
     if (!errorsEncountered && !blockDone)

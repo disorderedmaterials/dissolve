@@ -153,7 +153,7 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
         Vector3 vecji, vecjk, veckl;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
-        const auto cutoff = dissolve.potentialMap().range();
+        const auto cutoff = PairPotential::range();
 
         Timer testTimer;
 

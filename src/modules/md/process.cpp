@@ -15,7 +15,7 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
 {
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
-    auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
+    auto rCut = cutoffDistance_.value_or(PairPotential::range());
 
     // Units
     // J = kg m2 s-2  -->   10 J = g Ang2 ps-2

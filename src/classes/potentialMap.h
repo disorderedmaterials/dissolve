@@ -17,8 +17,7 @@ class PotentialMap
 {
     public:
     PotentialMap() = default;
-    PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials,
-                 double pairPotentialRange);
+    PotentialMap(const std::vector<const AtomType *> &atomTypes, const DoubleKeyedMap<PairPotential> &pairPotentials);
     ~PotentialMap() = default;
     // Clear all data
     void clear();
@@ -31,17 +30,13 @@ class PotentialMap
     int nTypes_;
     // PairPotential matrix
     Array2D<const PairPotential *> potentialMatrix_;
-    // PairPotential range
-    double range_;
 
     public:
     // Initialise map
     bool initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
-                    const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
+                    const std::vector<PairPotential::Definition> &pairPotentials);
     bool initialise(const std::vector<const AtomType *> &atomTypes,
-                    const std::vector<PairPotential::Definition> &pairPotentials, double pairPotentialRange);
-    // Return PairPotential range
-    double range() const;
+                    const std::vector<PairPotential::Definition> &pairPotentials);
 
     /*
      * Energy / Force

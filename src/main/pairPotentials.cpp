@@ -1,46 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include <utility>
-
 #include "classes/atomType.h"
 #include "main/dissolve.h"
+#include <utility>
 
 // Set whether pair potentials are updated automatically through combination rules
 void Dissolve::setUseCombinationRules(bool b) { useCombinationRules_ = b; }
 
 // Return whether pair potentials are updated automatically through combination rules
 bool Dissolve::useCombinationRules() const { return useCombinationRules_; }
-
-// Set maximum distance for tabulated PairPotentials
-void Dissolve::setPairPotentialRange(double range) { pairPotentialRange_ = range; }
-
-// Return maximum distance for tabulated PairPotentials
-double Dissolve::pairPotentialRange() const { return pairPotentialRange_; }
-
-// Set delta to use in tabulations
-void Dissolve::setPairPotentialDelta(double delta) { pairPotentialDelta_ = delta; }
-
-// Return delta to use in tabulations
-double Dissolve::pairPotentialDelta() const { return pairPotentialDelta_; }
-
-// Set whether to automatically determine charge source
-void Dissolve::setAutomaticChargeSource(bool b) { automaticChargeSource_ = b; };
-
-// Return whether to automatically determine charge source
-bool Dissolve::automaticChargeSource() const { return automaticChargeSource_; }
-
-// Set whether to force the use of the specified charge source (if not automatic choice)
-void Dissolve::setForceChargeSource(bool b) { forceChargeSource_ = b; }
-
-// Return whether to force the use of the specified charge source (if not automatic choice)
-bool Dissolve::forceChargeSource() const { return forceChargeSource_; }
-
-// Set whether charges from atom types are to be used (and included in PairPotentials)
-void Dissolve::setAtomTypeChargeSource(bool b) { atomTypeChargeSource_ = b; }
-
-// Return whether charges from atom types are to be used (and included in PairPotentials)
-bool Dissolve::atomTypeChargeSource() const { return atomTypeChargeSource_; }
 
 // Return index of specified PairPotential
 int Dissolve::indexOf(PairPotential *pp)
@@ -107,9 +76,6 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 
     auto useCombinationRules = useCombinationRulesHint.value_or(useCombinationRules_);
 
-    // Set the charge handling for all pair potentials
-    PairPotential::setIncludeCoulombPotential(atomTypeChargeSource_);
-
     // First step - remove any pair potentials which reference non-existent atom types
     pairPotentials_.erase(std::remove_if(pairPotentials_.begin(), pairPotentials_.end(),
                                          [&](const auto &pot)
@@ -150,13 +116,14 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
                                     else
                                         pot->setInteractionPotential(Functions1D::Form::None, "");
                                 }
+
+                                // Set local charge product
+                                pot->setLocalChargeProduct(at1->charge() * at2->charge());
                             });
 
     // Re-tabulate the potentials to account for changes in charge inclusion/exclusion, range etc. as well as parameters
     for (auto &&[at1, at2, pot] : pairPotentials_)
-    {
-        pot->tabulate(pairPotentialRange_, pairPotentialDelta_, at1->charge() * at2->charge());
-    }
+        pot->tabulate();
 
     // Third step - apply any overrides
     Messenger::print("Applying pair potential overrides...\n");
@@ -218,7 +185,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     }
 
     // Reinitialise the potential map
-    return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
+    return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_);
 }
 
 // Clear additional potentials

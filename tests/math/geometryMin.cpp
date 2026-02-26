@@ -22,7 +22,7 @@ TEST(GeometryMinimisationTest, Water)
     pairPotentials.emplace_back(atH, atH, std::make_unique<PairPotential>("H", "H"));
     pairPotentials.emplace_back(atO, atH, std::make_unique<PairPotential>("O", "H"));
     PotentialMap potMap;
-    potMap.initialise(coreData.atomTypes(), pairPotentials, 15.0);
+    potMap.initialise(coreData.atomTypes(), pairPotentials);
 
     Species water;
     water.addAtom(Elements::H, {0.5, 0.1, 0.0});

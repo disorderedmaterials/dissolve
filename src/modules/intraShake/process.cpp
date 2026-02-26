@@ -18,7 +18,7 @@
 Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve)
 {
     // Retrieve control parameters
-    auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
+    auto rCut = cutoffDistance_.value_or(PairPotential::range());
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary

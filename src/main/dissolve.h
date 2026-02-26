@@ -51,16 +51,6 @@ class Dissolve : public Serialisable<>
     private:
     // Whether pair potentials are updated automatically through combination rules
     bool useCombinationRules_;
-    // Maximum distance for tabulated PairPotentials
-    double pairPotentialRange_;
-    // Delta to use in tabulation
-    double pairPotentialDelta_;
-    // Whether to automatically determine charge source
-    bool automaticChargeSource_;
-    // Whether to force the use of the specified charge source (if not automatic choice)
-    bool forceChargeSource_;
-    // Whether charges from atom types are to be used (and included in PairPotentials)
-    bool atomTypeChargeSource_;
     // Simulation PairPotentials
     std::vector<PairPotential::Definition> pairPotentials_;
     // Map for PairPotentials
@@ -71,26 +61,6 @@ class Dissolve : public Serialisable<>
     void setUseCombinationRules(bool b);
     // Return whether pair potentials are updated automatically through combination rules
     bool useCombinationRules() const;
-    // Set maximum distance for tabulated PairPotentials
-    void setPairPotentialRange(double range);
-    // Return maximum distance for tabulated PairPotentials
-    double pairPotentialRange() const;
-    // Set delta to use in tabulations
-    void setPairPotentialDelta(double delta);
-    // Return delta to use in tabulations
-    double pairPotentialDelta() const;
-    // Set whether to automatically determine charge source
-    void setAutomaticChargeSource(bool b);
-    // Return whether to automatically determine charge source
-    bool automaticChargeSource() const;
-    // Set whether to force the use of the specified charge source (if not automatic choice)
-    void setForceChargeSource(bool b);
-    // Return whether to force the use of the specified charge source (if not automatic choice)
-    bool forceChargeSource() const;
-    // Set whether charges from atom types are to be used (and included in PairPotentials)
-    void setAtomTypeChargeSource(bool b);
-    // Return whether charges from atom types are to be used (and included in PairPotentials)
-    bool atomTypeChargeSource() const;
     // Return index of specified PairPotential
     int indexOf(PairPotential *pp);
     // Return number of defined PairPotentials

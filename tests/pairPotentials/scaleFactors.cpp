@@ -47,7 +47,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
     // Set up potentials
     void setUpPotentials(bool useAtomTypeCharges)
     {
-        const auto ppRange = 15.0, ppDelta = 0.001;
+        PairPotential::setRange(15.0, 0.001);
 
         potentialMap_.clear();
         pairPotentials_.clear();
@@ -60,20 +60,23 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
                                                               std::make_unique<PairPotential>(atC1_->name(), atC1_->name())))
                          .get();
         pp11->setInteractionPotential(interactionPotential_);
-        pp11->tabulate(ppRange, ppDelta, atC1_->charge() * atC1_->charge());
+        pp11->setLocalChargeProduct(atC1_->charge() * atC1_->charge());
+        pp11->tabulate();
         auto *pp12 = std::get<2>(pairPotentials_.emplace_back(atC1_, atC2_,
                                                               std::make_unique<PairPotential>(atC1_->name(), atC2_->name())))
                          .get();
         pp12->setInteractionPotential(interactionPotential_);
-        pp12->tabulate(ppRange, ppDelta, atC1_->charge() * atC2_->charge());
+        pp12->setLocalChargeProduct(atC1_->charge() * atC2_->charge());
+        pp12->tabulate();
         auto *pp22 = std::get<2>(pairPotentials_.emplace_back(atC2_, atC2_,
                                                               std::make_unique<PairPotential>(atC2_->name(), atC2_->name())))
                          .get();
         pp22->setInteractionPotential(interactionPotential_);
-        pp22->tabulate(ppRange, ppDelta, atC2_->charge() * atC2_->charge());
+        pp22->setLocalChargeProduct(atC2_->charge() * atC2_->charge());
+        pp22->tabulate();
 
         // Create PotentialMap
-        potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, ppRange);
+        potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_);
     }
     // Return reference energy at distance r given specified charge product and scalings
     double referenceEnergy(double r, double chargeProduct, double elecScale = 1.0, double srScale = 1.0)
