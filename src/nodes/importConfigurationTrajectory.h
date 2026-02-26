@@ -5,6 +5,7 @@
 
 #include "io/import/trajectory.h"
 #include "nodes/node.h"
+#include <iostream>
 
 // Forward Declarations
 class Configuration;
@@ -31,7 +32,7 @@ class ImportConfigurationTrajectoryNode : public Node
     // File format
     TrajectoryImportFileFormat::TrajectoryImportFormat format_{TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ};
     // Last read file position (as int)
-    int filePosition_;
+    std::streampos filePosition_;
     // Target configuration
     Configuration *configuration_;
 

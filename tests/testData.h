@@ -289,6 +289,11 @@ class DissolveSystemTest
         return isOK;
     }
     // Test sampled double
+    [[nodiscard]] static bool checkSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold)
+    {
+        return checkDouble(quantity, A.value(), B, threshold);
+    }
+    // Test sampled double
     [[nodiscard]] bool checkSampledDouble(std::string_view quantity, std::string_view tag, double B, double threshold)
     {
         // Locate the target reference data
