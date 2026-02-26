@@ -8,32 +8,47 @@
 
 BraggReflectionVector::BraggReflectionVector(const BraggReflectionVector &other) : reflections_(other.reflections_) {}
 
+// Size of reflections vector
+int BraggReflectionVector::size() const { return reflections_.size(); }
+
 // Addition in place operator
-void BraggReflectionVector::operator+=(const BraggReflectionVector &other)
+void BraggReflectionVector::operator+=(BraggReflectionVector &other)
 {
-    auto &otherReflections = other.reflections_;
-    for (int i = 0; i < otherReflections.size(); i++)
-        reflections_[i] += otherReflections[i];
+    for (int i = 0; i < other.size(); i++)
+        (*this)[i] += other[i];
 }
 
 // Multiplication operator
 BraggReflectionVector BraggReflectionVector::operator*(double factor)
 {
     BraggReflectionVector v(*this);
-    for (int i = 0; i < reflections_.size(); i++)
-        v.reflections_[i] *= factor;
+    for (int i = 0; i < size(); i++)
+        v[i] *= factor;
 
     return v;
 }
 
 // Index operator
-const BraggReflection &BraggReflectionVector::operator[](int i) { return reflections_[i]; }
+BraggReflection &BraggReflectionVector::operator[](int i) { return reflections_[i]; }
+const BraggReflection &BraggReflectionVector::operator[](int i) const { return reflections_[i]; }
 
 // Express as a serialisable value
-void BraggReflectionVector::serialise(std::string tag, SerialisedValue &target) const {}
+void BraggReflectionVector::serialise(std::string tag, SerialisedValue &target) const
+{
+    Serialisable::fromVector(reflections_, tag, target);
+}
 
 // Read values from a serialisable value
-void BraggReflectionVector::deserialise(const SerialisedValue &node) {}
+void BraggReflectionVector::deserialise(const SerialisedValue &node)
+{
+    reflections_.clear();
+    return Serialisable::toVector(node,
+                                  [&](const auto &value)
+                                  {
+                                      auto &reflection = reflections_.emplace_back();
+                                      reflection.deserialise(value);
+                                  });
+}
 
 BraggReflection::BraggReflection() {}
 
@@ -140,6 +155,27 @@ bool BraggReflection::deserialise(LineParser &parser)
         return false;
 
     return true;
+}
+
+// Read values from a serialisable value
+void BraggReflection::deserialise(const SerialisedValue &node)
+{
+    index_ = toml::find<int>(node, "index");
+    q_ = toml::find<double>(node, "q");
+    nKVectors_ = toml::find<int>(node, "nKVectors");
+    hkl_.zero();
+    hkl_.deserialise(node);
+}
+
+// Express as a serialisable value
+void BraggReflection::serialise(std::string tag, SerialisedValue &target) const
+{
+    auto &braggReflection = target[tag];
+
+    braggReflection["index"] = index_;
+    braggReflection["q"] = q_;
+    braggReflection["nKVectors"] = nKVectors_;
+    hkl_.serialise(tag, target);
 }
 
 // Write data through specified parser
