@@ -47,12 +47,7 @@ NodeConstants::ProcessResult AvgMolNode::process()
     }
 
     // Get site parent species
-    auto *sp = targetSite_->parent();
-    if (sp != targetSpecies_)
-    {
-        Messenger::error("Internal error - target site parent is not the same as the target species.\n");
-        return NodeConstants::ProcessResult::Failed;
-    }
+    targetSpecies_ = targetSite_->parent();
 
     Messenger::print("AvgMol: Target site (species) is {} ({}).\n", targetSite_->name(), targetSpecies_->name());
     if (exportFileAndFormat_.hasFilename())
