@@ -26,8 +26,8 @@ class BraggNode : public Node
     BraggNode(Graph *parentGraph);
     ~BraggNode() override = default;
 
-    std::string_view BraggNode::type() const override;
-    std::string_view BraggNode::summary() const override;
+    std::string_view type() const override;
+    std::string_view summary() const override;
 
     /*
      * Definition
