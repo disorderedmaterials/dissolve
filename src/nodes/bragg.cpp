@@ -90,7 +90,6 @@ NodeConstants::ProcessResult BraggNode::process()
     auto unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Calculate Bragg vectors and intensities for the current Configuration
-    bool alreadyUpToDate;
     if (!calculateBraggTerms(braggReflections_->values(), targetConfiguration_, qMin, qDelta, qMax, multiplicity_))
         return NodeConstants::ProcessResult::Failed;
 
