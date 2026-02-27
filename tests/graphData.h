@@ -8,6 +8,8 @@
 #include "io/import/coordinates.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
+#include "math/windowFunction.h"
+#include "nodes/bragg.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/insert.h"
@@ -133,7 +135,74 @@ inline void createArgonGraph(Graph *root, int population = 1000,
     ASSERT_TRUE(data1DImportNode->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
     ASSERT_TRUE(root->addEdge({"Yarnell", "Data", "NeutronSQ", "ReferenceData"}));
 }
+// Create a MgO graph in the supplied root node
+inline void createMgOGraph(Graph *root, int populationMG, int populationO,
+                           CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
+{
+    // Create species and configuration
+    auto [mGNode, oNode] = createMgOSpecies(root);
+    ASSERT_TRUE(mGNode);
+    auto configurationNode = root->createNode("Configuration", "Crystal");
+    ASSERT_TRUE(configurationNode);
 
+    // Insert Mg species
+    auto insertMgNode = root->createNode("Insert");
+    ASSERT_TRUE(insertMgNode);
+    ASSERT_TRUE(root->addEdge({"Mg", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "Insert", "Configuration"}));
+    ASSERT_TRUE(insertMgNode->setInput<Number>("Population", populationMG));
+    ASSERT_TRUE(insertMgNode->setInput<Number>("Density", 0.1));
+    ASSERT_TRUE(insertMgNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+
+    // Insert O species
+    auto insertONode = root->createNode("Insert");
+    ASSERT_TRUE(insertONode);
+    ASSERT_TRUE(root->addEdge({"O", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "Insert", "Configuration"}));
+    ASSERT_TRUE(insertONode->setInput<Number>("Population", populationO));
+    ASSERT_TRUE(insertONode->setInput<Number>("Density", 0.1));
+    ASSERT_TRUE(insertONode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+
+    // Import reference coordinates
+    if (initialCoordinates.hasFilename())
+    {
+        auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
+        ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
+        ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+            "FileFormat",
+            CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
+        ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+    }
+
+    // Add Bragg node
+    auto braggNode = root->createNode("Bragg", "Bragg01");
+    ASSERT_TRUE(braggNode);
+    ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Bragg01", "Configuration"}));
+    ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
+    ASSERT_TRUE(braggNode->setOption("QMax", 20.0));
+
+    // Add GR node and link to the import node
+    auto grNode = root->createNode("GR", "GRs");
+    ASSERT_TRUE(grNode);
+    ASSERT_TRUE(
+        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GRs", "Configuration"}));
+
+    // Create the SQ node
+    auto sqNode = root->createNode("SQ", "SQs");
+    ASSERT_TRUE(sqNode);
+    ASSERT_TRUE(root->addEdge({"GRs", "UnweightedGR", "SQs", "UnweightedGR"}));
+    ASSERT_TRUE(sqNode->setOption("QMin", 0.05));
+    ASSERT_TRUE(sqNode->setOption("QMax", 19.0));
+    ASSERT_TRUE(sqNode->setOption("QDelta", 0.05));
+    ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.0, 0.02}}));
+    ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
+    ASSERT_TRUE(
+        sqNode->setOption<Function1DWrapper>("BraggQBroadening", {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
+
+    // Add in NeutronSQ
+    addNeutronSQ(root, "NeutronSQ01", {}, {},
+                 {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2});
+}
 // Create a water graph in the supplied root node
 inline void createWaterGraph(Graph *root, int population,
                              CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())

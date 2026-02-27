@@ -37,6 +37,36 @@ inline SpeciesNode *createArgon(Graph *parentGraph)
 }
 
 // Create and return water test species in the specified graph
+inline std::pair<SpeciesNode *, SpeciesNode *> createMgOSpecies(Graph *parentGraph)
+{
+    // Add species node 'Mg'
+    auto mGNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto mGNodePtr = mGNodeUniquePtr.get();
+    auto mG = &(mGNodePtr->species());
+    parentGraph->addNode(std::move(mGNodeUniquePtr), "Mg");
+    mG->setName("Mg");
+
+    // Add species node 'Mg'
+    auto oNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto oNodePtr = oNodeUniquePtr.get();
+    auto o = &(oNodePtr->species());
+    parentGraph->addNode(std::move(oNodeUniquePtr), "O");
+    o->setName("O");
+
+    // Set up atom types
+    auto mGAt = mG->addAtomType(Elements::Element::O, "Mg");
+    mGAt->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=1.0 sigma=2.0");
+    mGAt->setCharge(-0.82);
+    mG->addAtom(Elements::Element::Mg, {}, 0.82, mGAt);
+    auto oAt = o->addAtomType(Elements::Element::O, "O");
+    oAt->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.6503 sigma=3.165492");
+    oAt->setCharge(-0.82);
+    o->addAtom(Elements::Element::O, {}, -0.82, oAt);
+
+    return {mGNodePtr, oNodePtr};
+}
+
+// Create and return water test species in the specified graph
 inline SpeciesNode *createWater(Graph *parentGraph)
 {
     const auto name = "Water";

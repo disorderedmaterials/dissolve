@@ -518,3 +518,6 @@ bool BraggNode::reBinReflections(std::vector<BraggReflection> &braggReflections,
     }
     return true;
 }
+
+// Get reflections data
+const std::vector<BraggReflection> &BraggNode::braggReflections() { return braggReflections_->values(); }

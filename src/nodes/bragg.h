@@ -14,10 +14,10 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
+#include "math/history.h"
 #include "nodes/node.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
-#include "math/history.h"
 
 // Bragg Module
 class BraggNode : public Node
@@ -68,6 +68,9 @@ class BraggNode : public Node
                                  Array2D<Data1D> &braggPartials, const double qMin, const double qDelta, const double qMax);
     // Re-bin reflection data into supplied arrays
     bool reBinReflections(std::vector<BraggReflection> &braggReflections, Configuration *cfg, Array2D<Data1D> &braggPartials);
+
+    // Get reflections data
+    const std::vector<BraggReflection> &braggReflections();
 
     /*
      * Processing
