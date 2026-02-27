@@ -50,7 +50,7 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve)
 
     // Create a local ChangeStore and a suitable EnergyKernel
     ChangeStore changeStore;
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
 
     int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0,
                nGeneralAttempts = 0;

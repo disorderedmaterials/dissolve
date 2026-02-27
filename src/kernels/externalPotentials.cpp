@@ -9,9 +9,8 @@
  * Energy
  */
 
-ExternalPotentialsEnergyKernel::ExternalPotentialsEnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                                               std::optional<double> energyCutoff)
-    : EnergyKernel(cfg, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
+ExternalPotentialsEnergyKernel::ExternalPotentialsEnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap)
+    : EnergyKernel(cfg, potentialMap), globalPotentials_(cfg->globalPotentials())
 {
 }
 
@@ -35,9 +34,8 @@ double ExternalPotentialsEnergyKernel::extendedEnergy(const Molecule &mol) const
  * Force
  */
 
-ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                                             std::optional<double> energyCutoff)
-    : ForceKernel(cfg, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
+ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration *cfg, const PotentialMap &potentialMap)
+    : ForceKernel(cfg, potentialMap), globalPotentials_(cfg->globalPotentials())
 {
 }
 

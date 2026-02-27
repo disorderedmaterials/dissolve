@@ -53,10 +53,7 @@ double PairPotentialEnergyValue::total() const { return interMolecular_ + intraM
  * EnergyKernel
  */
 
-EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
-    : GeometryKernel(cfg, potentialMap, energyCutoff)
-{
-}
+EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap) : GeometryKernel(cfg, potentialMap) {}
 
 /*
  * Base Routines
@@ -92,12 +89,18 @@ PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool include
         {
             // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
             auto &jj = atoms[j];
-
+            if ((ii->globalIndex() == 296 && jj->globalIndex() == 2638) ||
+                (ii->globalIndex() == 2638 && jj->globalIndex() == 296))
+            {
+                printf("TEST  %d  %d  rSq = %e  r = %e\n", ii->globalIndex(), jj->globalIndex(),
+                       box_->minimumDistanceSquared(rI, jj->r()), box_->minimumDistance(rI, jj->r()));
+            }
             auto rSq = (rI - jj->r()).magnitudeSq();
             if (rSq > cutoffDistanceSquared_)
                 continue;
 
-            // Check for atoms in the same molecule
+            // printf("C1  %d  %d  %e  %e\n", ii->globalIndex(), jj->globalIndex(), sqrt(rSq), pairPotentialEnergy(*ii, *jj,
+            // sqrt(rSq))); Check for atoms in the same molecule
             if (molI != jj->molecule())
                 totalEnergy.addInterMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
             else if (includeIntraMolecular)
@@ -133,12 +136,19 @@ PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell,
             // Straight loop over other cell atoms
             for (const auto &jj : otherAtoms)
             {
+                if ((ii->globalIndex() == 296 && jj->globalIndex() == 2638) ||
+                    (ii->globalIndex() == 2638 && jj->globalIndex() == 296))
+                {
+                    printf("TEST  %d  %d  rSq = %e  r = %e\n", ii->globalIndex(), jj->globalIndex(),
+                           box_->minimumDistanceSquared(rI, jj->r()), box_->minimumDistance(rI, jj->r()));
+                }
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = box_->minimumDistanceSquared(rI, jj->r());
                 if (rSq > cutoffDistanceSquared_)
                     continue;
 
-                // Check for atoms in the same species
+                // printf("C2  %d  %d  %e  %e\n", ii->globalIndex(), jj->globalIndex(), sqrt(rSq), pairPotentialEnergy(*ii, *jj,
+                // sqrt(rSq))); Check for atoms in the same species
                 if (molI != jj->molecule())
                     totalEnergy.addInterMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
                 else if (includeIntraMolecular)
@@ -162,10 +172,18 @@ PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell,
             // Straight loop over other cell atoms
             for (const auto &jj : otherAtoms)
             {
+                if ((ii->globalIndex() == 296 && jj->globalIndex() == 2638) ||
+                    (ii->globalIndex() == 2638 && jj->globalIndex() == 296))
+                {
+                    printf("TEST  %d  %d  rSq = %e  r = %e\n", ii->globalIndex(), jj->globalIndex(),
+                           box_->minimumDistanceSquared(rI, jj->r()), box_->minimumDistance(rI, jj->r()));
+                }
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = (rI - jj->r()).magnitudeSq();
                 if (rSq > cutoffDistanceSquared_)
                     continue;
+                // printf("C2  %d  %d  %e  %e\n", ii->globalIndex(), jj->globalIndex(), sqrt(rSq), pairPotentialEnergy(*ii, *jj,
+                // sqrt(rSq)));
 
                 // Check for atoms in the same molecule
                 if (molI != jj->molecule())
@@ -328,7 +346,6 @@ PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntr
 
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cells.getCellNeighbourPairs();
-
     return dissolve::transform_reduce(
         ParallelPolicies::par, cellNeighbourPairs.begin(), cellNeighbourPairs.end(), PairPotentialEnergyValue(), std::plus<>(),
         [&](const auto &pair)

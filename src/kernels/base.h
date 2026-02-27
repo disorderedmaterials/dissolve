@@ -19,8 +19,8 @@ class Molecule;
 class KernelBase
 {
     public:
-    KernelBase(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
-    KernelBase(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    KernelBase(const Configuration *cfg, const PotentialMap &potentialMap);
+    KernelBase(const Box *box, const PotentialMap &potentialMap);
     ~KernelBase() = default;
 
     // Alias for force storage vector

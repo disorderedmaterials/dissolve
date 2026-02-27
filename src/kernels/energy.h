@@ -71,7 +71,7 @@ class EnergyKernel : public GeometryKernel
     private:
     friend class KernelProducer;
     friend class ExternalPotentialsEnergyKernel;
-    EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff = {});
+    EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap);
 
     public:
     ~EnergyKernel() = default;

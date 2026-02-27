@@ -32,7 +32,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore;
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
 
     auto nAttempts = 0, nAccepted = 0;
     bool accept;

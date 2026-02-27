@@ -9,15 +9,9 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-GeometryKernel::GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
-    : KernelBase(cfg, potentialMap, energyCutoff)
-{
-}
+GeometryKernel::GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap) : KernelBase(cfg, potentialMap) {}
 
-GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
-    : KernelBase(box, potentialMap, energyCutoff)
-{
-}
+GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap) : KernelBase(box, potentialMap) {}
 
 /*
  * Bond Terms
