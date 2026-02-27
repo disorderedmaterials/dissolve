@@ -146,19 +146,19 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
     ASSERT_TRUE(configurationNode);
 
     // Insert Mg species
-    auto insertMgNode = root->createNode("Insert");
+    auto insertMgNode = root->createNode("Insert", "InsertMg");
     ASSERT_TRUE(insertMgNode);
-    ASSERT_TRUE(root->addEdge({"Mg", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "Insert", "Configuration"}));
+    ASSERT_TRUE(root->addEdge({"Mg", "Species", "InsertMg", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "InsertMg", "Configuration"}));
     ASSERT_TRUE(insertMgNode->setInput<Number>("Population", populationMG));
     ASSERT_TRUE(insertMgNode->setInput<Number>("Density", 0.1));
     ASSERT_TRUE(insertMgNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
 
     // Insert O species
-    auto insertONode = root->createNode("Insert");
+    auto insertONode = root->createNode("Insert", "InsertO");
     ASSERT_TRUE(insertONode);
-    ASSERT_TRUE(root->addEdge({"O", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "Insert", "Configuration"}));
+    ASSERT_TRUE(root->addEdge({"O", "Species", "InsertO", "Species"}));
+    ASSERT_TRUE(root->addEdge({"InsertMg", "Configuration", "InsertO", "Configuration"}));
     ASSERT_TRUE(insertONode->setInput<Number>("Population", populationO));
     ASSERT_TRUE(insertONode->setInput<Number>("Density", 0.1));
     ASSERT_TRUE(insertONode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
@@ -171,15 +171,8 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
         ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
             "FileFormat",
             CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
-        ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
+        ASSERT_TRUE(root->addEdge({"InsertO", "Configuration", "Import", "Configuration"}));
     }
-
-    // Add Bragg node
-    auto braggNode = root->createNode("Bragg", "Bragg01");
-    ASSERT_TRUE(braggNode);
-    ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Bragg01", "Configuration"}));
-    ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
-    ASSERT_TRUE(braggNode->setOption("QMax", 20.0));
 
     // Add GR node and link to the import node
     auto grNode = root->createNode("GR", "GRs");
@@ -187,21 +180,20 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
     ASSERT_TRUE(
         root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GRs", "Configuration"}));
 
+    // Add Bragg node
+    auto braggNode = root->createNode("Bragg", "Bragg01");
+    ASSERT_TRUE(braggNode);
+    ASSERT_TRUE(
+        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "Bragg01", "Configuration"}));
+
     // Create the SQ node
     auto sqNode = root->createNode("SQ", "SQs");
     ASSERT_TRUE(sqNode);
     ASSERT_TRUE(root->addEdge({"GRs", "UnweightedGR", "SQs", "UnweightedGR"}));
-    ASSERT_TRUE(sqNode->setOption("QMin", 0.05));
-    ASSERT_TRUE(sqNode->setOption("QMax", 19.0));
-    ASSERT_TRUE(sqNode->setOption("QDelta", 0.05));
-    ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.0, 0.02}}));
-    ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
-    ASSERT_TRUE(
-        sqNode->setOption<Function1DWrapper>("BraggQBroadening", {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
 
     // Add in NeutronSQ
     addNeutronSQ(root, "NeutronSQ01", {}, {},
-                 {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2});
+                 {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, "SQs");
 }
 // Create a water graph in the supplied root node
 inline void createWaterGraph(Graph *root, int population,

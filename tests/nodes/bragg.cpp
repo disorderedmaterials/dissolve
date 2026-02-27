@@ -26,31 +26,31 @@ class BraggNodeTest : public ::testing::Test
 
     protected:
     GraphTestData testData_;
-    IterableGraph *iterator_{nullptr};
-    ImportConfigurationTrajectoryNode *trajectoryImport_{nullptr};
-    const Species *mGO_;
 
     protected:
     // Create graph
     void createGraph()
     {
-        // Add iterator
-        iterator_ = dynamic_cast<IterableGraph *>(testData_.graphRoot.createNode("Iterator", "Iterator"));
-        ASSERT_TRUE(iterator_);
-
         // Create water graph
         createMgOGraph(
             &testData_.graphRoot, 500, 500,
             CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
-        // Grab the water species for convenience
-        auto mGONode = testData_.graphRoot.findNode("MgO");
-        ASSERT_TRUE(mGONode);
-        mGO_ = mGONode->getOutputValue<const Species *>("Species");
-        ASSERT_TRUE(mGONode);
+        // Set options on Bragg node
+        auto braggNode = testData_.graphRoot.findNode("Bragg01");
+        ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
+        ASSERT_TRUE(braggNode->setOption<Number>("QMax", 20.0));
 
-        // Create a dynamic input from the graph's existing Insert node
-        EXPECT_TRUE(testData_.graphRoot.addEdge({"Insert", "Crystal", "Iterator", "Crystal"}));
+        // Set options on SQ node
+        auto sqNode = testData_.graphRoot.findNode("SQs");
+        ASSERT_TRUE(sqNode->setOption<Number>("QMin", 0.05));
+        ASSERT_TRUE(sqNode->setOption<Number>("QMax", 19.0));
+        ASSERT_TRUE(sqNode->setOption<Number>("QDelta", 0.05));
+        ASSERT_TRUE(
+            sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.0, 0.02}}));
+        ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
+        ASSERT_TRUE(
+            sqNode->setOption<Function1DWrapper>("BraggQBroadening", {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
     }
 
     static bool testReflections(const std::vector<BraggReflection> &braggReflections,
@@ -109,9 +109,8 @@ TEST_F(BraggNodeTest, MgO_Full)
 {
     createGraph();
 
-    // Run from the iterator node explicitly
-    ASSERT_TRUE(iterator_->setOption<Number>("N", 95));
-    ASSERT_EQ(iterator_->run(), NodeConstants::ProcessResult::Success);
+    // Run once
+    ASSERT_EQ(testData_.graphRoot.run(), NodeConstants::ProcessResult::Success);
 
     // Check Partial S(Q) data
     // Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX

@@ -14,7 +14,7 @@ std::vector<BraggReflection> &BraggReflectionVector::values() { return reflectio
 // Addition in place operator
 void BraggReflectionVector::operator+=(BraggReflectionVector other)
 {
-    for (int i = 0; i < other.values().size(); i++)
+    for (int i = 0; i < values().size(); i++)
         (*this)[i] += other[i];
 }
 

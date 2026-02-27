@@ -46,7 +46,7 @@ inline std::pair<SpeciesNode *, SpeciesNode *> createMgOSpecies(Graph *parentGra
     parentGraph->addNode(std::move(mGNodeUniquePtr), "Mg");
     mG->setName("Mg");
 
-    // Add species node 'Mg'
+    // Add species node 'O'
     auto oNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
     auto oNodePtr = oNodeUniquePtr.get();
     auto o = &(oNodePtr->species());
@@ -54,11 +54,11 @@ inline std::pair<SpeciesNode *, SpeciesNode *> createMgOSpecies(Graph *parentGra
     o->setName("O");
 
     // Set up atom types
-    auto mGAt = mG->addAtomType(Elements::Element::O, "Mg");
+    auto mGAt = mG->addAtomType(Elements::Element::Mg, "Mg");
     mGAt->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=1.0 sigma=2.0");
     mGAt->setCharge(-0.82);
     mG->addAtom(Elements::Element::Mg, {}, 0.82, mGAt);
-    auto oAt = o->addAtomType(Elements::Element::O, "O");
+    auto oAt = o->addAtomType(Elements::Element::O, "OX");
     oAt->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.6503 sigma=3.165492");
     oAt->setCharge(-0.82);
     o->addAtom(Elements::Element::O, {}, -0.82, oAt);
