@@ -10,22 +10,6 @@
 // Forward Declarations
 class Box;
 
-// Corner Distances Structure
-struct CornerDistances
-{
-    CornerDistances() = default;
-    CornerDistances(double minLiteral, double maxLiteral, double minMim, double maxMim)
-        : minimumLiteral(minLiteral), maximumLiteral(maxLiteral), minimumMim(minMim), maximumMim(maxMim)
-    {
-    }
-
-    // Used to store the minimum and maximum corner distances, literal and mim'd, between cells
-    double minimumLiteral{0.0};
-    double maximumLiteral{0.0};
-    double minimumMim{0.0};
-    double maximumMim{0.0};
-};
-
 // Cell Neighbour
 struct CellNeighbour
 {
@@ -110,10 +94,8 @@ class CellArray
     std::vector<CellNeighbourPair> neighbourPairs_;
     // Neighbour array per Cell
     std::vector<std::vector<CellNeighbour>> neighbours_;
-    // Corner distances between cells
-    Array3D<CornerDistances> cornerDistances_;
-    // Grid reference for central cell (0,0,0) in cornerDistances_
-    Vector3i cornerDistancesOrigin_;
+    // Minimum possible distances betwen cells around the origin
+    OffsetArray3D<double> cellMinimumDistances_;
 
     private:
     // Construct cell neighbour pairs
