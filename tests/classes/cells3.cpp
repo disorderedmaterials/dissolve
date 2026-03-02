@@ -150,7 +150,12 @@ TEST_F(CellsEnergyTest, Monoclinic)
     ASSERT_TRUE(importer.importData(cfg));
 
     // Test range of cell sizes for various cutoffs - should make no difference to total energy
-    std::vector<std::tuple<double, double, double, double>> states = {{9.0, 5.0, -9.747556e3, -0.794931e3}};
+    std::vector<std::tuple<double, double, double, double>> states = {
+        {9.0, 5.0, -9.747556e3, -0.794931e3},  {9.0, 7.0, -9.747556e3, -0.794931e3},   {9.0, 9.0, -9.747556e3, -0.794931e3},
+        {9.0, 12.0, -9.747556e3, -0.794931e3}, {12.0, 5.0, -9.748103e3, -0.335651e3},  {12.0, 7.0, -9.748103e3, -0.335651e3},
+        {12.0, 9.0, -9.748103e3, -0.335651e3}, {12.0, 12.0, -9.748103e3, -0.335651e3}, {15.0, 5.0, -9.747836e3, -0.171877e3},
+        {15.0, 7.0, -9.747836e3, -0.171877e3}, {15.0, 9.0, -9.747836e3, -0.171877e3},  {15.0, 15.0, -9.747836e3, -0.171877e3}};
+
     for (auto &state : states)
         testEnergy(cfg, state);
 }
