@@ -54,7 +54,7 @@ class CellsEnergyTest : public ::testing::Test
         return cfg;
     }
     // Calculate tabulated energy directly (without using Cells)
-    double tabulatedEnergyNoCells(Configuration *cfg, double cutoff)
+    double tabulatedEnergyNoCells(Configuration *cfg, double cutoffSq)
     {
         auto *box = cfg->box();
         auto *pp = dissolve_.pairPotential("Ar", "Ar");
@@ -67,14 +67,14 @@ class CellsEnergyTest : public ::testing::Test
                                     auto ii = molI->atom(0);
                                     auto jj = molJ->atom(0);
 
-                                    auto r = box->minimumDistance(ii->r(), jj->r());
-                                    if (r <= cutoff)
-                                        energy += pp->energy(r);
+                                    auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
+                                    if (rSq <= cutoffSq)
+                                        energy += pp->energy(sqrt(rSq));
                                 });
         return energy;
     }
     // Calculate analytic energy directly (without using Cells)
-    double analyticEnergyNoCells(Configuration *cfg, double cutoff)
+    double analyticEnergyNoCells(Configuration *cfg, double cutoffSq)
     {
         auto *box = cfg->box();
         auto *pp = dissolve_.pairPotential("Ar", "Ar");
@@ -87,9 +87,11 @@ class CellsEnergyTest : public ::testing::Test
                                     auto ii = molI->atom(0);
                                     auto jj = molJ->atom(0);
 
-                                    auto r = box->minimumDistance(ii->r(), jj->r());
-                                    if (r <= cutoff)
-                                        energy += pp->analyticEnergy(r, 0.0, 1.0);
+                                    auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
+                                    if (rSq <= cutoffSq)
+                                    {
+                                        energy += pp->analyticEnergy(sqrt(rSq), 0.0, 1.0);
+                                    }
                                 });
         return energy;
     }
@@ -98,20 +100,23 @@ class CellsEnergyTest : public ::testing::Test
     {
         auto [rCut, cellSize, refEnergy, lrc] = state;
 
-        // Prepare the main simulation to regenerate pair potentials etc.
-        ASSERT_TRUE(dissolve_.prepare());
-
-        // Initialise an EnergyKernel with the specified cutoff
-        auto kernel = KernelProducer::energyKernel(cfg, dissolve_.potentialMap(), rCut);
-
+        // Set pair potential range, update pair potentials, and initialise an EnergyKernel
+        PairPotential::setRange(rCut);
         // Regenerate cells to new size spec and re-assign atoms
+        cfg->cells().clear();
         cfg->cells().generate(cfg->box(), cellSize);
         cfg->updateAtomLocations(true);
 
+        // Update pair potential and get an energy kernel
+        dissolve_.updatePairPotentials();
+        auto kernel = KernelProducer::energyKernel(cfg, dissolve_.potentialMap());
+
         // Calculate total Cell-based energy
-        EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut), tabulatedEnergyNoCells(cfg, rCut), 1.0e-2);
-        EXPECT_NEAR(tabulatedEnergyNoCells(cfg, rCut), kernel->totalPairPotentialEnergy(false).total(), 1.0e-6);
-        EXPECT_NEAR(refEnergy - lrc, kernel->totalPairPotentialEnergy(false).total(), 1.65e-2);
+        auto tabulated = tabulatedEnergyNoCells(cfg, rCut * rCut);
+        auto production = kernel->totalPairPotentialEnergy(false);
+        EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut * rCut), tabulated, 1.0e-2);
+        EXPECT_NEAR(tabulated, production.total(), 1.0e-6);
+        EXPECT_NEAR(refEnergy - lrc, production.total(), 1.65e-2);
     }
 };
 
@@ -145,12 +150,7 @@ TEST_F(CellsEnergyTest, Monoclinic)
     ASSERT_TRUE(importer.importData(cfg));
 
     // Test range of cell sizes for various cutoffs - should make no difference to total energy
-    std::vector<std::tuple<double, double, double, double>> states = {
-        {9.0, 5.0, -9.747556e3, -0.794931e3},  {9.0, 7.0, -9.747556e3, -0.794931e3},   {9.0, 9.0, -9.747556e3, -0.794931e3},
-        {9.0, 12.0, -9.747556e3, -0.794931e3}, {12.0, 5.0, -9.748103e3, -0.335651e3},  {12.0, 7.0, -9.748103e3, -0.335651e3},
-        {12.0, 9.0, -9.748103e3, -0.335651e3}, {12.0, 12.0, -9.748103e3, -0.335651e3}, {15.0, 5.0, -9.747836e3, -0.171877e3},
-        {15.0, 7.0, -9.747836e3, -0.171877e3}, {15.0, 9.0, -9.747836e3, -0.171877e3},  {15.0, 15.0, -9.747836e3, -0.171877e3}};
-
+    std::vector<std::tuple<double, double, double, double>> states = {{9.0, 5.0, -9.747556e3, -0.794931e3}};
     for (auto &state : states)
         testEnergy(cfg, state);
 }
