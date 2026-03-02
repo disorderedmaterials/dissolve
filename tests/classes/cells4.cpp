@@ -59,12 +59,12 @@ class CellsMIMTest : public ::testing::Test
         auto *box = cfg->box();
         const auto &i = cfg->atom(fromIndex);
         return std::count_if(cfg->atoms().begin(), cfg->atoms().end(),
-                                   [&](const auto &j)
-                                   {
-                                       if (&i == &j)
-                                           return false;
-                                       return (box->minimumDistance(i.r(), j.r()) <= cutoff);
-                                   });
+                             [&](const auto &j)
+                             {
+                                 if (&i == &j)
+                                     return false;
+                                 return (box->minimumDistance(i.r(), j.r()) <= cutoff);
+                             });
     }
     // Count number of atoms within range of a target atom in the box using cells
     int atomsWithRangeWithCells(Configuration *cfg, int fromIndex, double cutoff)
