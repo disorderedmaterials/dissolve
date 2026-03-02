@@ -81,6 +81,9 @@ Cell *CellArray::cell(const Vector3 r)
     return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
 }
 
+// Return the cell array
+const std::vector<Cell> &CellArray::cells() const { return cells_; }
+
 // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified mim distance
 bool CellArray::withinMinimumImageRange(const Cell *a, const Cell *b, double mimDistance)
 {
