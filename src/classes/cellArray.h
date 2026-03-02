@@ -93,8 +93,6 @@ class CellArray
     // Return Cell which contains specified coordinate
     Cell *cell(const Vector3 r);
     const Cell *cell(const Vector3 r) const;
-    // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified literal distance
-    bool withinLiteralRange(const Cell *a, const Cell *b, double literalDistance);
     // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified mim distance
     bool withinMinimumImageRange(const Cell *a, const Cell *b, double mimDistance);
     // Return the minimum image grid delta between the two specified Cells

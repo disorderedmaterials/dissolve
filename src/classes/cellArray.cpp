@@ -81,19 +81,6 @@ Cell *CellArray::cell(const Vector3 r)
     return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
 }
 
-// Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified literal distance
-bool CellArray::withinLiteralRange(const Cell *a, const Cell *b, double literalDistance)
-{
-    assert(a != nullptr);
-    assert(b != nullptr);
-
-    // Get relevant index in the lookup array
-    auto v = mimGridDelta(a, b) + cornerDistancesOrigin_;
-
-    // If the minimum corner distance is less than the specified distance, the cells are within literal distance range
-    return cornerDistances_[{v.x, v.y, v.z}].minimumLiteral <= literalDistance;
-}
-
 // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified mim distance
 bool CellArray::withinMinimumImageRange(const Cell *a, const Cell *b, double mimDistance)
 {
