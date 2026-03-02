@@ -197,6 +197,7 @@ template <class A> class Array3D
 template <class A> class OffsetArray3D
 {
     public:
+    OffsetArray3D() = default;
     OffsetArray3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
     {
         initialise(xMin, xMax, yMin, yMax, zMin, zMax);
