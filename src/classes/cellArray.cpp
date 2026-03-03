@@ -81,18 +81,8 @@ Cell *CellArray::cell(const Vector3 r)
     return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
 }
 
-// Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified literal distance
-bool CellArray::withinLiteralRange(const Cell *a, const Cell *b, double literalDistance)
-{
-    assert(a != nullptr);
-    assert(b != nullptr);
-
-    // Get relevant index in the lookup array
-    auto v = mimGridDelta(a, b) + cornerDistancesOrigin_;
-
-    // If the minimum corner distance is less than the specified distance, the cells are within literal distance range
-    return cornerDistances_[{v.x, v.y, v.z}].minimumLiteral <= literalDistance;
-}
+// Return the cell array
+const std::vector<Cell> &CellArray::cells() const { return cells_; }
 
 // Return whether it is possible for any pair of Atoms in the supplied cells to be within the specified mim distance
 bool CellArray::withinMinimumImageRange(const Cell *a, const Cell *b, double mimDistance)
@@ -101,10 +91,10 @@ bool CellArray::withinMinimumImageRange(const Cell *a, const Cell *b, double mim
     assert(b != nullptr);
 
     // Get relevant index in the lookup array
-    auto v = mimGridDelta(a, b) + cornerDistancesOrigin_;
+    auto v = mimGridDelta(a, b);
 
     // If the minimum corner distance is less than the specified distance, the cells are within literal distance range
-    return cornerDistances_[{v.x, v.y, v.z}].minimumMim <= mimDistance;
+    return cellMinimumDistances_[{v.x, v.y, v.z}] <= mimDistance;
 }
 
 // Return the minimum image grid delta between the two specified Cells
@@ -328,136 +318,85 @@ bool CellArray::generate(const Box *box, double cellSize)
 
     // Create cell distance matrix giving us the minimum "corner distances" between a cell at 0,0,0 and the max cell divisions.
     // These represent the minimum and maximum possible contact distances between any atoms located in each cell.
-    cornerDistances_.initialise(divisions_.x * 2 - 1, divisions_.y * 2 - 1, divisions_.z * 2 - 1);
-    cornerDistancesOrigin_ = divisions_ - Vector3i(1, 1, 1);
-    for (auto x = -divisions_.x + 1; x < divisions_.x; ++x)
-    {
-        for (auto y = -divisions_.y + 1; y < divisions_.y; ++y)
-        {
-            for (auto z = -divisions_.z + 1; z < divisions_.z; ++z)
-            {
-                // Determine corner distance extrema
-                auto minLiteral = 1.0e6, maxLiteral = 0.0, minMim = 1.0e6, maxMim = 0.0;
-                for (auto iCorner = 0; iCorner < 8; ++iCorner)
-                {
-                    // Set integer vertex of corner on 'central' box
-                    const auto i = Vector3i(iCorner & 1 ? 1 : 0, iCorner & 2 ? 1 : 0, iCorner & 4 ? 1 : 0);
-
-                    // Get real coordinates of i
-                    const auto ri = axes_ * Vector3(i.x, i.y, i.z);
-
-                    for (auto jCorner = 0; jCorner < 8; ++jCorner)
-                    {
-                        // Set integer vertex of corner on 'other' box
-                        Vector3i j(x + (jCorner & 1 ? 1 : 0), y + (jCorner & 2 ? 1 : 0), z + (jCorner & 4 ? 1 : 0));
-
-                        // Get real coordinates of j
-                        const auto rj = axes_ * Vector3(j.x, j.y, j.z);
-                        // Calculate corner distance and update literal extrema
-                        auto rij = (ri - rj).magnitude();
-                        if (rij < minLiteral)
-                            minLiteral = rij;
-                        else if (rij > maxLiteral)
-                            maxLiteral = rij;
-
-                        // Get minimum image grid position and corner distance
-                        auto rijmim = box_->minimumDistance(ri, rj);
-                        if (rijmim < minMim)
-                            minMim = rijmim;
-                        else if (rijmim > maxMim)
-                            maxMim = rijmim;
-                    }
-                }
-
-                cornerDistances_[{x + cornerDistancesOrigin_.x, y + cornerDistancesOrigin_.y, z + cornerDistancesOrigin_.z}] =
-                    CornerDistances(minLiteral, maxLiteral, minMim, maxMim);
-            }
-        }
-    }
-
-    // Construct Cell neighbour lists
-    Messenger::print("Creating cell neighbour lists...\n");
-
-    // Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists
-    Vector3 r;
-    Matrix3 cellAxes = box_->axes();
-    cellAxes.applyScaling(fractionalCellSize_.x, fractionalCellSize_.y, fractionalCellSize_.z);
-    extents_.zero();
-
-    // First, establish a maximal extent in principal directions...
-    for (auto n = 0; n < 3; ++n)
-    {
-        do
-        {
-            r.zero();
-            ++extents_[n];
-            r[n] = extents_[n];
-            r = cellAxes * r;
-        } while (r[n] < PairPotential::range());
-
-        // If we require a larger number of cells than the box physically has along this direction, reduce it accordingly
-        if ((extents_[n] * 2 + 1) > divisions_[n])
-            extents_[n] = divisions_[n] / 2;
-    }
-    Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = ({},{},{}).\n", extents_.x, extents_.y,
-                     extents_.z);
-
-    // Now, loop over extent integers and construct list of gridReferences within range
+    cellMinimumDistances_.initialise(-divisions_.x, divisions_.x, -divisions_.y, divisions_.y, -divisions_.z, divisions_.z);
     std::vector<Vector3i> neighbourIndices;
-    std::vector<const Cell *> cellNbrs;
-    Vector3i i, j;
-    const Cell *nbr;
-    for (auto x = -extents_.x; x <= extents_.x; ++x)
+    std::set<const Cell *> neighbourCells;
+    std::vector<std::pair<int, int>> edges = {{0, 1}, {2, 3}, {4, 5}, {6, 7}, {0, 2}, {1, 3},
+                                              {4, 6}, {5, 7}, {0, 4}, {1, 5}, {2, 6}, {3, 7}};
+    for (auto x = -divisions_.x; x <= divisions_.x; ++x)
     {
-        for (auto y = -extents_.y; y <= extents_.y; ++y)
+        for (auto y = -divisions_.y; y <= divisions_.y; ++y)
         {
-            for (auto z = -extents_.z; z <= extents_.z; ++z)
+            for (auto z = -divisions_.z; z <= divisions_.z; ++z)
             {
-                if ((x == 0) && (y == 0) && (z == 0))
+                if (x == 0 && y == 0 && z == 0)
                     continue;
 
-                // Check a nominal central cell at (0,0,0) and this grid reference to see if any pairs of
-                // corners are in range
-                auto close = false;
-                for (auto iCorner = 0; iCorner < 8; ++iCorner)
+                // Determine shortest distance between the edges of the surrounding cell j and the corners of the central cell
+                cellMinimumDistances_[{x, y, z}] = 1.0e10;
+                auto minLiteral = 1.0e10;
+
+                for (const auto &[cornerB, cornerC] : edges)
                 {
-                    // Set integer vertex of corner on 'central' box
-                    i.set(iCorner & 1 ? 1 : 0, iCorner & 2 ? 1 : 0, iCorner & 4 ? 1 : 0);
+                    // Get coordinates at the endpoints of the defined line BC (cell edge)
+                    auto B = axes_ * Vector3(x + (cornerB & 1 ? 1 : 0), y + (cornerB & 2 ? 1 : 0), z + (cornerB & 4 ? 1 : 0));
+                    auto C = axes_ * Vector3(x + (cornerC & 1 ? 1 : 0), y + (cornerC & 2 ? 1 : 0), z + (cornerC & 4 ? 1 : 0));
 
-                    for (auto jCorner = 0; jCorner < 8; ++jCorner)
+                    // Determine normalised line vector d
+                    auto d = C - B;
+                    auto dMag = d.magAndNormalise();
+
+                    // Loop over corners of the central cell
+                    for (auto cornerA = 0; cornerA < 8; ++cornerA)
                     {
-                        // Set integer vertex of corner on 'other' box
-                        j.set(x + (jCorner & 1 ? 1 : 0), y + (jCorner & 2 ? 1 : 0), z + (jCorner & 4 ? 1 : 0));
+                        // Get coordinates of A
+                        auto A = axes_ * Vector3(cornerA & 1 ? 1 : 0, cornerA & 2 ? 1 : 0, cornerA & 4 ? 1 : 0);
 
-                        // Get minimum image of vertex j w.r.t. i
-                        j = mimGridDelta(j - i);
+                        // Determine vector v = BA
+                        auto v = A - B;
 
-                        r.set(j.x, j.y, j.z);
-                        r = cellAxes * r;
-                        if (r.magnitude() < PairPotential::range())
-                        {
-                            close = true;
-                            break;
-                        }
+                        // Determine the distance of the intersection on the line from point B
+                        auto t = v.dp(d);
+
+                        // Determine closest point on line
+                        Vector3 P;
+                        if (t < 0.0)
+                            P = B;
+                        else if (t > dMag)
+                            P = C;
+                        else
+                            P = B + d * t;
+
+                        // Get shortest distance
+                        auto rAP = (P - A).magnitude();
+                        if (rAP < minLiteral)
+                            minLiteral = rAP;
+
+                        // Get minimum image'd shortest distance
+                        auto rAPmim = box_->minimumDistance(A, P);
+                        if (rAPmim < cellMinimumDistances_[{x, y, z}])
+                            cellMinimumDistances_[{x, y, z}] = rAPmim;
                     }
-                    if (close)
-                        break;
                 }
-                if (!close)
-                    continue;
 
-                // Check that the cell is not already in the list by querying the cellNbrs vector
-                nbr = cell(x, y, z);
-                if (std::find(cellNbrs.begin(), cellNbrs.end(), nbr) != cellNbrs.end())
-                    continue;
-                neighbourIndices.emplace_back(x, y, z);
-                cellNbrs.push_back(nbr);
+                // If the minimum possible literal distance between the cells is less than the pairpotential range, store it
+                if (minLiteral <= (PairPotential::range()))
+                {
+                    // Check that the cell is not already in the list by querying the cellNbrs vector
+                    auto *nbr = cell(x, y, z);
+                    if (!neighbourCells.contains(nbr))
+                    {
+                        neighbourIndices.emplace_back(x, y, z);
+                        neighbourCells.insert(nbr);
+                    }
+                }
             }
         }
     }
-    Messenger::print("Added {} Cells to representative neighbour list.\n", neighbourIndices.size());
+    Messenger::print("There are {} cells neighbours within the pair potential range.\n", neighbourIndices.size());
 
     // Construct neighbour arrays for individual Cells
+    Messenger::print("Creating cell neighbour lists...\n");
     neighbours_.clear();
     neighbours_.resize(cells_.size());
     for (auto &nbrVector : neighbours_)

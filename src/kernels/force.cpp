@@ -11,15 +11,9 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
-    : GeometryKernel(cfg, potentialMap, energyCutoff)
-{
-}
+ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap) : GeometryKernel(cfg, potentialMap) {}
 
-ForceKernel::ForceKernel(const Box *box, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
-    : GeometryKernel(box, potentialMap, energyCutoff)
-{
-}
+ForceKernel::ForceKernel(const Box *box, const PotentialMap &potentialMap) : GeometryKernel(box, potentialMap) {}
 
 /*
  * Force Calculation

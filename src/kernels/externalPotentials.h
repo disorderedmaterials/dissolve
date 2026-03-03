@@ -14,8 +14,7 @@ class ExternalPotentialsEnergyKernel : public EnergyKernel
 {
     private:
     friend class KernelProducer;
-    ExternalPotentialsEnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                   std::optional<double> energyCutoff = {});
+    ExternalPotentialsEnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap);
 
     public:
     ~ExternalPotentialsEnergyKernel() = default;
@@ -42,8 +41,7 @@ class ExternalPotentialsForceKernel : public ForceKernel
 {
     private:
     friend class KernelProducer;
-    ExternalPotentialsForceKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                  std::optional<double> energyCutoff = {});
+    ExternalPotentialsForceKernel(const Configuration *cfg, const PotentialMap &potentialMap);
 
     public:
     ~ExternalPotentialsForceKernel() = default;

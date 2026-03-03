@@ -53,10 +53,7 @@ double PairPotentialEnergyValue::total() const { return interMolecular_ + intraM
  * EnergyKernel
  */
 
-EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap, std::optional<double> energyCutoff)
-    : GeometryKernel(cfg, potentialMap, energyCutoff)
-{
-}
+EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap) : GeometryKernel(cfg, potentialMap) {}
 
 /*
  * Base Routines
@@ -97,7 +94,6 @@ PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool include
             if (rSq > cutoffDistanceSquared_)
                 continue;
 
-            // Check for atoms in the same molecule
             if (molI != jj->molecule())
                 totalEnergy.addInterMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
             else if (includeIntraMolecular)
@@ -328,7 +324,6 @@ PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntr
 
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cells.getCellNeighbourPairs();
-
     return dissolve::transform_reduce(
         ParallelPolicies::par, cellNeighbourPairs.begin(), cellNeighbourPairs.end(), PairPotentialEnergyValue(), std::plus<>(),
         [&](const auto &pair)

@@ -84,8 +84,10 @@ TEST(CellsTest, Basic)
     {
         auto [rCut, cellSize, refEnergy] = state;
 
-        // Initialise an EnergyKernel with the specified cutoff
-        auto kernel = KernelProducer::energyKernel(cfg, dissolve.potentialMap(), rCut);
+        // Set pair potential range, update pair potentials, and initialise an EnergyKernel
+        PairPotential::setRange(rCut);
+        dissolve.updatePairPotentials();
+        auto kernel = KernelProducer::energyKernel(cfg, dissolve.potentialMap());
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize);

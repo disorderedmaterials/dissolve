@@ -8,28 +8,25 @@
 #include "kernels/force.h"
 
 // Create energy kernel for specified configuration
-std::unique_ptr<EnergyKernel> KernelProducer::energyKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                                           std::optional<double> energyCutoff)
+std::unique_ptr<EnergyKernel> KernelProducer::energyKernel(const Configuration *cfg, const PotentialMap &potentialMap)
 {
     if (!cfg->globalPotentials().empty() || !cfg->targetedPotentials().empty())
-        return std::unique_ptr<EnergyKernel>(new ExternalPotentialsEnergyKernel(cfg, potentialMap, energyCutoff));
+        return std::unique_ptr<EnergyKernel>(new ExternalPotentialsEnergyKernel(cfg, potentialMap));
     else
-        return std::unique_ptr<EnergyKernel>(new EnergyKernel(cfg, potentialMap, energyCutoff));
+        return std::unique_ptr<EnergyKernel>(new EnergyKernel(cfg, potentialMap));
 }
 
 // Create force kernel for specified configuration
-std::unique_ptr<ForceKernel> KernelProducer::forceKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                                         std::optional<double> energyCutoff)
+std::unique_ptr<ForceKernel> KernelProducer::forceKernel(const Configuration *cfg, const PotentialMap &potentialMap)
 {
     if (!cfg->globalPotentials().empty() || !cfg->targetedPotentials().empty())
-        return std::unique_ptr<ForceKernel>(new ExternalPotentialsForceKernel(cfg, potentialMap, energyCutoff));
+        return std::unique_ptr<ForceKernel>(new ExternalPotentialsForceKernel(cfg, potentialMap));
     else
-        return std::unique_ptr<ForceKernel>(new ForceKernel(cfg, potentialMap, energyCutoff));
+        return std::unique_ptr<ForceKernel>(new ForceKernel(cfg, potentialMap));
 }
 
 // Create force kernel using the specified Box
-std::unique_ptr<ForceKernel> KernelProducer::forceKernel(const Box *box, const PotentialMap &potentialMap,
-                                                         std::optional<double> energyCutoff)
+std::unique_ptr<ForceKernel> KernelProducer::forceKernel(const Box *box, const PotentialMap &potentialMap)
 {
-    return std::unique_ptr<ForceKernel>(new ForceKernel(box, potentialMap, energyCutoff));
+    return std::unique_ptr<ForceKernel>(new ForceKernel(box, potentialMap));
 }

@@ -48,7 +48,7 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve)
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore;
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
 
     // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
     if (!restrictToSpecies_.empty())

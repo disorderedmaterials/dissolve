@@ -17,12 +17,9 @@ class KernelProducer
 {
     public:
     // Create energy kernel for specified configuration
-    static std::unique_ptr<EnergyKernel> energyKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                                      std::optional<double> energyCutoff = {});
+    static std::unique_ptr<EnergyKernel> energyKernel(const Configuration *cfg, const PotentialMap &potentialMap);
     // Create force kernel for specified configuration
-    static std::unique_ptr<ForceKernel> forceKernel(const Configuration *cfg, const PotentialMap &potentialMap,
-                                                    std::optional<double> energyCutoff = {});
+    static std::unique_ptr<ForceKernel> forceKernel(const Configuration *cfg, const PotentialMap &potentialMap);
     // Create force kernel using the specified Box
-    static std::unique_ptr<ForceKernel> forceKernel(const Box *box, const PotentialMap &potentialMap,
-                                                    std::optional<double> energyCutoff = {});
+    static std::unique_ptr<ForceKernel> forceKernel(const Box *box, const PotentialMap &potentialMap);
 };
