@@ -145,11 +145,16 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
     auto configurationNode = root->createNode("Configuration", "Crystal");
     ASSERT_TRUE(configurationNode);
 
+    // Set cell
+    auto setCellNode = root->createNode("SetCell", "Box");
+    ASSERT_TRUE(setCellNode);
+    ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "Box", "Configuration"}));
+    ASSERT_TRUE(root->addEdge({"Box", "Configuration", "InsertMg", "Configuration"}));
+
     // Insert Mg species
     auto insertMgNode = root->createNode("Insert", "InsertMg");
     ASSERT_TRUE(insertMgNode);
     ASSERT_TRUE(root->addEdge({"Mg", "Species", "InsertMg", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "InsertMg", "Configuration"}));
     ASSERT_TRUE(insertMgNode->setInput<Number>("Population", populationMG));
     ASSERT_TRUE(insertMgNode->setInput<Number>("Density", 0.1));
     ASSERT_TRUE(insertMgNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));

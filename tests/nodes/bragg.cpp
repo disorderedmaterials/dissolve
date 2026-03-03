@@ -36,6 +36,10 @@ class BraggNodeTest : public ::testing::Test
             &testData_.graphRoot, 500, 500,
             CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
+        // Set cell dimensions
+        auto setCellNode = testData_.graphRoot.findNode("SetCell");
+        ASSERT_TRUE(setCellNode->setOption<Vector3>("Lengths", {21.085, 21.085, 21.085}));
+
         // Set options on Bragg node
         auto braggNode = testData_.graphRoot.findNode("Bragg01");
         ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
