@@ -6,6 +6,7 @@ add_library(
   force.cpp
   geometry.cpp
   producer.cpp
+  species.cpp
   base.h
   energy.h
   externalPotentials.h
@@ -13,6 +14,7 @@ add_library(
   geometry.h
   producer.h
   result.h
+  species.h
 )
 
 target_include_directories(kernels PRIVATE ${PROJECT_SOURCE_DIR}/src)
