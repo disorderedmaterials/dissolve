@@ -4,66 +4,13 @@
 #pragma once
 
 #include "kernels/geometry.h"
+#include "kernels/result.h"
 #include "templates/flags.h"
-#include <memory>
-#include <optional>
 
 // Forward Declarations
 class Atom;
 class Cell;
-class CellArray;
-class Box;
-class Configuration;
-class PotentialMap;
 class Molecule;
-class SpeciesBond;
-class SpeciesAngle;
-class SpeciesImproper;
-class SpeciesTorsion;
-
-// PairPotential Energy Value
-class PairPotentialEnergyValue
-{
-    public:
-    PairPotentialEnergyValue(double inter = 0.0, double intra = 0.0);
-    PairPotentialEnergyValue operator+(const PairPotentialEnergyValue &value) const;
-    PairPotentialEnergyValue operator-(const PairPotentialEnergyValue &value) const;
-    PairPotentialEnergyValue &operator+=(const PairPotentialEnergyValue &value);
-    PairPotentialEnergyValue &operator*=(const double scale);
-
-    private:
-    // Energy values
-    double interMolecular_{0.0}, intraMolecular_{0.0};
-
-    public:
-    // Increment Energies
-    void addInterMolecular(double e);
-    void addIntraMolecular(double e);
-    // Return Energies
-    double interMolecular() const;
-    double intraMolecular() const;
-    double total() const;
-};
-
-// Energy Result
-class EnergyResult
-{
-    public:
-    EnergyResult(PairPotentialEnergyValue pp = {}, double geom = 0.0, double ext = 0.0)
-        : total_(pp.total() + geom + ext), geometry_(geom), extended_(ext), pairPotential_(pp) {};
-
-    private:
-    // Components
-    double total_, geometry_, extended_;
-    PairPotentialEnergyValue pairPotential_;
-
-    public:
-    double total() const { return total_; };
-    PairPotentialEnergyValue pairPotential() const { return pairPotential_; };
-    double geometry() const { return geometry_; };
-    double extended() const { return extended_; };
-    double totalUnbound() const { return pairPotential_.total() + extended_; }
-};
 
 // Standard Energy Kernel, inheriting GeometryKernel
 class EnergyKernel : public GeometryKernel

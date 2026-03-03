@@ -12,6 +12,7 @@ add_library(
   force.h
   geometry.h
   producer.h
+  result.h
 )
 
 target_include_directories(kernels PRIVATE ${PROJECT_SOURCE_DIR}/src)
