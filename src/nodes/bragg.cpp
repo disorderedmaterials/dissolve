@@ -5,9 +5,10 @@
 
 BraggNode::BraggNode(Graph *parentGraph)
     : Node(parentGraph), braggReflectionHistory_(
-                             [&]()
+                             [this]()
                              {
                                  BraggReflectionVector v;
+                                 v.values().resize(this->braggReflections_->values().size());
                                  return v;
                              })
 {
