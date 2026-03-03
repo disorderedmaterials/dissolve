@@ -149,15 +149,16 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
     auto setCellNode = root->createNode("SetCell", "Box");
     ASSERT_TRUE(setCellNode);
     ASSERT_TRUE(root->addEdge({"Crystal", "Configuration", "Box", "Configuration"}));
-    ASSERT_TRUE(root->addEdge({"Box", "Configuration", "InsertMg", "Configuration"}));
 
     // Insert Mg species
     auto insertMgNode = root->createNode("Insert", "InsertMg");
     ASSERT_TRUE(insertMgNode);
     ASSERT_TRUE(root->addEdge({"Mg", "Species", "InsertMg", "Species"}));
+    ASSERT_TRUE(root->addEdge({"Box", "Configuration", "InsertMg", "Configuration"}));
     ASSERT_TRUE(insertMgNode->setInput<Number>("Population", populationMG));
     ASSERT_TRUE(insertMgNode->setInput<Number>("Density", 0.1));
     ASSERT_TRUE(insertMgNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+    ASSERT_TRUE(insertMgNode->setOption<InsertNode::BoxActionStyle>("BoxAction", InsertNode::BoxActionStyle::None));
 
     // Insert O species
     auto insertONode = root->createNode("Insert", "InsertO");
@@ -167,6 +168,7 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
     ASSERT_TRUE(insertONode->setInput<Number>("Population", populationO));
     ASSERT_TRUE(insertONode->setInput<Number>("Density", 0.1));
     ASSERT_TRUE(insertONode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+    ASSERT_TRUE(insertONode->setOption<InsertNode::BoxActionStyle>("BoxAction", InsertNode::BoxActionStyle::None));
 
     // Import reference coordinates
     if (initialCoordinates.hasFilename())

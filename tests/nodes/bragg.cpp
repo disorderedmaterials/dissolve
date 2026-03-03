@@ -9,6 +9,7 @@
 #include "nodes/importConfigurationTrajectory.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/sq/sq.h"
+#include "nodes/gr/gr.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -31,19 +32,23 @@ class BraggNodeTest : public ::testing::Test
     // Create graph
     void createGraph()
     {
-        // Create water graph
+        // Create MgO graph
         createMgOGraph(
             &testData_.graphRoot, 500, 500,
             CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
         // Set cell dimensions
-        auto setCellNode = testData_.graphRoot.findNode("SetCell");
+        auto setCellNode = testData_.graphRoot.findNode("Box");
         ASSERT_TRUE(setCellNode->setOption<Vector3>("Lengths", {21.085, 21.085, 21.085}));
 
         // Set options on Bragg node
         auto braggNode = testData_.graphRoot.findNode("Bragg01");
         ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
         ASSERT_TRUE(braggNode->setOption<Number>("QMax", 20.0));
+
+        // Set options on SQ node
+        auto grNode = testData_.graphRoot.findNode("GRs");
+        ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::SimpleMethod));
 
         // Set options on SQ node
         auto sqNode = testData_.graphRoot.findNode("SQs");
@@ -123,7 +128,10 @@ TEST_F(BraggNodeTest, MgO_Full)
     ASSERT_TRUE(sqNode);
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     auto unboundPartials = unweightedSQ->unboundPartials();
-    auto weightedSQ = sqNode->getOutputValue<PartialSet *>("WeightedSQ");
+
+    auto neutronSqNode = testData_.graphRoot.findNode("NeutronSQ01");
+    ASSERT_TRUE(neutronSqNode);
+    auto weightedSQ = neutronSqNode->getOutputValue<PartialSet *>("WeightedSQ");
     auto weightedTotal = weightedSQ->total();
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
