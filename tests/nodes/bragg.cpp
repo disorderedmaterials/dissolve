@@ -46,8 +46,9 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
         ASSERT_TRUE(braggNode->setOption<Number>("QMax", 20.0));
 
-        // Set options on SQ node
+        // Set options on GR node
         auto grNode = testData_.graphRoot.findNode("GRs");
+        ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.025));
         ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::SimpleMethod));
 
         // Set options on SQ node
