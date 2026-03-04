@@ -26,7 +26,7 @@ class SetCellNode : public Node
      */
     private:
     // Configuration object
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Box side length dimensions
     Vector3 lengths_{1.0, 1.0, 1.0};
     // Box angles
