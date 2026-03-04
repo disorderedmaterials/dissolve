@@ -26,30 +26,15 @@ class SpeciesKernel : public GeometryKernel
     ~SpeciesKernel() = default;
 
     /*
-     * Base Routines
-     */
-    private:
-    // Return PairPotential energy between atoms
-    double pairPotentialEnergy(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
-    // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-    double pairPotentialEnergy(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double srScale) const;
-
-    /*
      * Totals
      */
-    public:
-    // Energy calculation flags
-    enum EnergyCalculationFlags
-    {
-        ExcludePairPotential,
-        ExcludeGeometry,
-        ExcludeExtended,
-        ExcludeIntraMolecularPairPotential
-    };
+    private:
+    // Return total pair potential energy of Species
+    PairPotentialEnergyValue pairPotentialEnergy(const Species *sp);
+    // Return total geometric energy of Species
+    double geometryEnergy(const Species *sp);
 
     public:
-    // Return total interatomic PairPotential energy of the world
-    PairPotentialEnergyValue totalPairPotentialEnergy(bool includeIntraMolecular) const;
-    // Return total interatomic PairPotential energy from summation of molecules
-    PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const;
+    // Return total energy (interatomic and intramolecular) of Species
+    EnergyResult totalEnergy(const Species *sp);
 };
