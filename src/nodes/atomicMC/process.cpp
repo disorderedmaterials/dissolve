@@ -64,7 +64,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
                 // Trial the transformed Atom position
                 auto delta =
-                    (eNew.totalUnbound() + eNew.geometry().total()) - (eCurrent.totalUnbound() + eCurrent.geometry().total());
+                    (eNew.totalUnbound() + eNew.geometry.total()) - (eCurrent.totalUnbound() + eCurrent.geometry.total());
                 auto accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
 
                 if (accept)

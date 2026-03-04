@@ -4,8 +4,15 @@
 #pragma once
 
 // Geometry Energy Value
-struct GeometryEnergyValue
+class GeometryEnergyValue
 {
+    public:
+    GeometryEnergyValue(double bond = 0.0, double angle = 0.0, double torsion = 0.0, double improper = 0.0)
+        : bondEnergy(bond), angleEnergy(angle), torsionEnergy(torsion), improperEnergy(improper)
+    {
+    }
+
+    // Energy values
     double bondEnergy{0.0};
     double angleEnergy{0.0};
     double torsionEnergy{0.0};
@@ -21,8 +28,11 @@ struct GeometryEnergyValue
 };
 
 // PairPotential Energy Value
-struct PairPotentialEnergyValue
+class PairPotentialEnergyValue
 {
+    public:
+    PairPotentialEnergyValue(double inter = 0.0, double intra = 0.0) : interMolecular(inter), intraMolecular(intra) {}
+
     // Energy values
     double interMolecular{0.0}, intraMolecular{0.0};
 
@@ -46,7 +56,6 @@ struct PairPotentialEnergyValue
         intraMolecular *= scale;
         return *this;
     }
-
     // Return total
     double total() const { return interMolecular + intraMolecular; }
 };
@@ -56,20 +65,16 @@ class EnergyResult
 {
     public:
     EnergyResult(PairPotentialEnergyValue pp = {}, GeometryEnergyValue geom = {}, double ext = 0.0)
-        : total_(pp.total() + geom.total() + ext), geometry_(geom), extended_(ext), pairPotential_(pp)
+        : pairPotential(pp), geometry(geom), extended(ext)
     {
     }
 
-    private:
-    // Components
-    double total_, extended_;
-    PairPotentialEnergyValue pairPotential_;
-    GeometryEnergyValue geometry_;
+    public:
+    PairPotentialEnergyValue pairPotential;
+    GeometryEnergyValue geometry;
+    double extended;
 
     public:
-    double total() const { return total_; };
-    PairPotentialEnergyValue pairPotential() const { return pairPotential_; }
-    GeometryEnergyValue geometry() const { return geometry_; }
-    double extended() const { return extended_; }
-    double totalUnbound() const { return pairPotential_.total() + extended_; }
+    double total() const { return pairPotential.total() + geometry.total() + extended; };
+    double totalUnbound() const { return pairPotential.total() + extended; }
 };

@@ -65,7 +65,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
                 // Calculate reference energies for the Atom
                 er = kernel->totalEnergy(*i);
                 currentEnergy = er.totalUnbound();
-                currentIntraEnergy = er.geometry().total();
+                currentIntraEnergy = er.geometry.total();
 
                 // Loop over number of shakes per Atom
                 for (auto n = 0; n < nShakesPerAtom_; ++n)
@@ -81,7 +81,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
                     // Calculate new energy
                     er = kernel->totalEnergy(*i);
                     newEnergy = er.totalUnbound();
-                    newIntraEnergy = er.geometry().total();
+                    newIntraEnergy = er.geometry.total();
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
