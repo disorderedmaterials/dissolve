@@ -10,7 +10,7 @@
 #include <numeric>
 
 // Return pair potential energy of Species
-PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Species *sp)
+Kernel::PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Species *sp)
 {
     const auto cutoff = PairPotential::range();
 
@@ -42,9 +42,9 @@ PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Species *sp)
 }
 
 // Return geometric energy of Species
-GeometryEnergyValue SpeciesKernel::geometryEnergy(const Species *sp)
+Kernel::GeometryEnergyValue SpeciesKernel::geometryEnergy(const Species *sp)
 {
-    GeometryEnergyValue energy;
+    Kernel::GeometryEnergyValue energy;
 
     // Loop over bonds
     energy.bondEnergy = std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0, [&](const auto acc, const auto &b)

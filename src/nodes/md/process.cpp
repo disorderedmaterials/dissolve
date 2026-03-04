@@ -78,8 +78,8 @@ NodeConstants::ProcessResult MDNode::process()
     auto nCapped = 0;
     auto &atoms = targetConfiguration_->atoms();
     double tInstant, ke, tScale;
-    GeometryEnergyValue peBound;
-    PairPotentialEnergyValue pePP;
+    Kernel::GeometryEnergyValue peBound;
+    Kernel::PairPotentialEnergyValue pePP;
 
     // Determine target molecules from the restrictedSpecies vector (if any)
     std::vector<const Molecule *> targetMolecules;

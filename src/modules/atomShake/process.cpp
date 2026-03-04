@@ -37,7 +37,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
     bool accept;
     double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
     Vector3 rDelta;
-    EnergyResult er;
+    Kernel::EnergyResult er;
 
     Timer timer;
     while (distributor.cycle())

@@ -308,14 +308,14 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &r
  */
 
 // Return geometry energy for the specified moleculatom
-GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Atom &i) const
+Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Atom &i) const
 {
     // Get the SpeciesAtom and Molecule
     const auto *spAtom = i.speciesAtom();
     assert(spAtom);
     const auto &mol = *i.molecule();
 
-    GeometryEnergyValue energy;
+    Kernel::GeometryEnergyValue energy;
 
     // Add energy from SpeciesAngle terms
     energy.bondEnergy = std::accumulate(
@@ -353,9 +353,9 @@ GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Atom &i) const
 }
 
 // Return geometry energy for the specified molecule
-GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
+Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
 {
-    GeometryEnergyValue energy;
+    Kernel::GeometryEnergyValue energy;
 
     // Loop over Bonds
     energy.bondEnergy =

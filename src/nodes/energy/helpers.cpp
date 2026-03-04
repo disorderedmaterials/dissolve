@@ -13,7 +13,7 @@
 #include <numeric>
 
 // Return total pair potential energy of Configuration
-PairPotentialEnergyValue EnergyNode::pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
+Kernel::PairPotentialEnergyValue EnergyNode::pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
@@ -94,9 +94,9 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
 
     const auto &molecules = cfg->molecules();
 
-    auto unaryOp = [&](const auto &mol) -> GeometryEnergyValue
+    auto unaryOp = [&](const auto &mol) -> Kernel::GeometryEnergyValue
     {
-        GeometryEnergyValue localEnergies;
+        Kernel::GeometryEnergyValue localEnergies;
 
         // Loop over Bond
         localEnergies.bondEnergy =
@@ -133,8 +133,9 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
         return localEnergies;
     };
 
-    auto energies = dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), GeometryEnergyValue(),
-                                               std::plus<GeometryEnergyValue>(), unaryOp);
+    auto energies =
+        dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), Kernel::GeometryEnergyValue(),
+                                   std::plus<Kernel::GeometryEnergyValue>(), unaryOp);
 
     bondEnergy = energies.bondEnergy;
     angleEnergy = energies.angleEnergy;
@@ -184,7 +185,7 @@ double EnergyNode::totalEnergy(const Configuration *cfg, const PotentialMap &pot
 
 // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
 double EnergyNode::totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap,
-                               PairPotentialEnergyValue &interEnergy, double &bondEnergy, double &angleEnergy,
+                               Kernel::PairPotentialEnergyValue &interEnergy, double &bondEnergy, double &angleEnergy,
                                double &torsionEnergy, double &improperEnergy)
 {
     interEnergy = pairPotentialEnergy(cfg, potentialMap);

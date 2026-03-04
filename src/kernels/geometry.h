@@ -109,9 +109,9 @@ class GeometryKernel : public KernelBase
      */
     public:
     // Return geometry energy for the specified atom
-    GeometryEnergyValue totalGeometryEnergy(const Atom &i) const;
+    Kernel::GeometryEnergyValue totalGeometryEnergy(const Atom &i) const;
     // Return geometry energy for the specified molecule
-    GeometryEnergyValue totalGeometryEnergy(const Molecule &mol) const;
+    Kernel::GeometryEnergyValue totalGeometryEnergy(const Molecule &mol) const;
 
     /*
      * Total Force

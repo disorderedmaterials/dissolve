@@ -45,7 +45,7 @@ class EnergyNode : public Node
         EnergyUnstable = 1
     };
     // Return total pair potential energy of Configuration
-    PairPotentialEnergyValue pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
+    Kernel::PairPotentialEnergyValue pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total pair potential energy of Species
     double pairPotentialEnergy(const Species *sp, const PotentialMap &potentialMap);
     // Return total intermolecular energy
@@ -60,7 +60,7 @@ class EnergyNode : public Node
     // Return total energy (interatomic and intramolecular)
     double totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
-    double totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap, PairPotentialEnergyValue &ppEnergy,
+    double totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap, Kernel::PairPotentialEnergyValue &ppEnergy,
                        double &bondEnergy, double &angleEnergy, double &torsionEnergy, double &improperEnergy);
     // Return total energy (interatomic and intramolecular) of Species
     double totalEnergy(const Species *sp, const PotentialMap &potentialMap);

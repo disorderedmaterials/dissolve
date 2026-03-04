@@ -11,7 +11,7 @@
 #include <numeric>
 
 // Return total pair potential energy of Configuration
-PairPotentialEnergyValue EnergyModule::pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
+Kernel::PairPotentialEnergyValue EnergyModule::pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
@@ -46,16 +46,16 @@ double EnergyModule::interMolecularEnergy(const Configuration *cfg, const Potent
 }
 
 // Return total geometry energy of Configuration
-GeometryEnergyValue EnergyModule::geometryEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
+Kernel::GeometryEnergyValue EnergyModule::geometryEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
     const auto &molecules = cfg->molecules();
 
-    auto unaryOp = [&](const auto &mol) -> GeometryEnergyValue
+    auto unaryOp = [&](const auto &mol) -> Kernel::GeometryEnergyValue
     {
-        GeometryEnergyValue localEnergies;
+        Kernel::GeometryEnergyValue localEnergies;
 
         // Loop over Bond
         localEnergies.bondEnergy =
@@ -92,8 +92,9 @@ GeometryEnergyValue EnergyModule::geometryEnergy(const Configuration *cfg, const
         return localEnergies;
     };
 
-    auto energies = dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), GeometryEnergyValue(),
-                                               std::plus<GeometryEnergyValue>(), unaryOp);
+    auto energies =
+        dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), Kernel::GeometryEnergyValue(),
+                                   std::plus<Kernel::GeometryEnergyValue>(), unaryOp);
 
     Messenger::printVerbose("Intramolecular energy is {:15.9e} kJ/mol ({:15.9e} bond + {:15.9e} angle + {:15.9e} "
                             "torsion + {:15.9e} improper)\n",

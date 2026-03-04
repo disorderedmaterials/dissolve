@@ -3,6 +3,8 @@
 
 #pragma once
 
+namespace Kernel
+{
 // Geometry Energy Value
 class GeometryEnergyValue
 {
@@ -78,3 +80,4 @@ class EnergyResult
     double total() const { return pairPotential.total() + geometry.total() + extended; };
     double totalUnbound() const { return pairPotential.total() + extended; }
 };
+}; // namespace Kernel

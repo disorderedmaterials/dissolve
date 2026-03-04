@@ -32,9 +32,9 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r,
  */
 
 // Return PairPotential energy of atoms in the supplied cell
-PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool includeIntraMolecular) const
+Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool includeIntraMolecular) const
 {
-    PairPotentialEnergyValue totalEnergy;
+    Kernel::PairPotentialEnergyValue totalEnergy;
     auto &atoms = cell.atoms();
 
     for (auto i = 0; i < atoms.size(); ++i)
@@ -70,10 +70,10 @@ PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool include
 }
 
 // Return PairPotential energy between atoms in supplied cells
-PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell, const Cell &otherCell, bool applyMim,
-                                                        bool includeIntraMolecular) const
+Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell, const Cell &otherCell, bool applyMim,
+                                                                bool includeIntraMolecular) const
 {
-    PairPotentialEnergyValue totalEnergy;
+    Kernel::PairPotentialEnergyValue totalEnergy;
     auto &centralAtoms = centralCell.atoms();
     auto &otherAtoms = otherCell.atoms();
 
@@ -177,7 +177,7 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i) const
 }
 
 // Return PairPotential energy of Molecule with world
-PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular) const
+Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular) const
 {
     assert(cellArray_);
     auto &cells = cellArray_->get();
@@ -188,7 +188,7 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
         locationMap[i->cell()].push_back(i);
 
     auto totalEnergy = std::accumulate(
-        locationMap.begin(), locationMap.end(), PairPotentialEnergyValue(),
+        locationMap.begin(), locationMap.end(), Kernel::PairPotentialEnergyValue(),
         [&](const auto totalAcc, const auto &location)
         {
             const auto &centralCellAtoms = location.second;
@@ -197,18 +197,18 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
             auto &neighbours = cells.neighbours(*location.first);
 
             auto localEnergy = dissolve::transform_reduce(
-                ParallelPolicies::par, neighbours.begin(), neighbours.end(), PairPotentialEnergyValue(), std::plus<>(),
+                ParallelPolicies::par, neighbours.begin(), neighbours.end(), Kernel::PairPotentialEnergyValue(), std::plus<>(),
                 [&centralCellAtoms, includeIntraMolecular, this](const auto &neighbour)
                 {
                     return std::accumulate(
-                        centralCellAtoms.begin(), centralCellAtoms.end(), PairPotentialEnergyValue(),
+                        centralCellAtoms.begin(), centralCellAtoms.end(), Kernel::PairPotentialEnergyValue(),
                         [&neighbour, includeIntraMolecular, this](const auto acc, const auto &i)
                         {
                             auto &ii = *i;
                             auto mimRequired = neighbour.requiresMIM;
                             auto &nbrCellAtoms = neighbour.cell.atoms();
                             return acc + std::accumulate(
-                                             nbrCellAtoms.begin(), nbrCellAtoms.end(), PairPotentialEnergyValue(),
+                                             nbrCellAtoms.begin(), nbrCellAtoms.end(), Kernel::PairPotentialEnergyValue(),
                                              [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc, const auto *j)
                                              {
                                                  auto &jj = *j;
@@ -224,8 +224,8 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
                                                  if (rSq > cutoffDistanceSquared_)
                                                      return innerAcc;
 
-                                                 return innerAcc +
-                                                        PairPotentialEnergyValue(pairPotentialEnergy(ii, jj, sqrt(rSq)), 0.0);
+                                                 return innerAcc + Kernel::PairPotentialEnergyValue(
+                                                                       pairPotentialEnergy(ii, jj, sqrt(rSq)), 0.0);
                                              });
                         });
                 });
@@ -255,7 +255,7 @@ PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, 
                                             intra += pairPotentialEnergy(ii, jj, sqrt(rSq), elec14, vdw14);
                                     }
                                 });
-        totalEnergy += PairPotentialEnergyValue(0.0, intra);
+        totalEnergy += Kernel::PairPotentialEnergyValue(0.0, intra);
     }
 
     return totalEnergy;
@@ -276,30 +276,31 @@ double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
  */
 
 // Return total interatomic PairPotential energy of the world
-PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular) const
+Kernel::PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular) const
 {
     assert(cellArray_);
     auto &cells = cellArray_->get();
 
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cells.getCellNeighbourPairs();
-    return dissolve::transform_reduce(
-        ParallelPolicies::par, cellNeighbourPairs.begin(), cellNeighbourPairs.end(), PairPotentialEnergyValue(), std::plus<>(),
-        [&](const auto &pair)
-        {
-            if (&pair.cell == &pair.neighbour)
-                return cellEnergy(pair.cell, includeIntraMolecular);
-            else
-                return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM, includeIntraMolecular);
-        });
+    return dissolve::transform_reduce(ParallelPolicies::par, cellNeighbourPairs.begin(), cellNeighbourPairs.end(),
+                                      Kernel::PairPotentialEnergyValue(), std::plus<>(),
+                                      [&](const auto &pair)
+                                      {
+                                          if (&pair.cell == &pair.neighbour)
+                                              return cellEnergy(pair.cell, includeIntraMolecular);
+                                          else
+                                              return cellToCellEnergy(pair.cell, pair.neighbour, pair.requiresMIM,
+                                                                      includeIntraMolecular);
+                                      });
 }
 
 // Return total interatomic PairPotential energy from summation of molecules
-PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const
+Kernel::PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const
 {
     assert(molecules_);
     auto &mols = molecules_->get();
-    PairPotentialEnergyValue molecularEnergy;
+    Kernel::PairPotentialEnergyValue molecularEnergy;
     for (const auto &mol : mols)
         molecularEnergy += pairPotentialEnergy(*mol, includeIntraMolecular);
 
@@ -309,17 +310,17 @@ PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(bool inc
 }
 
 // Return total energy of supplied atom with the world
-EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
+Kernel::EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
 {
     return {{pairPotentialEnergy(i), 0.0}, totalGeometryEnergy(i), extendedEnergy(i)};
 }
 
 // Return total energy of supplied molecule with the world
-EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags) const
+Kernel::EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags) const
 {
-    return {flags.isSet(ExcludePairPotential) ? PairPotentialEnergyValue()
+    return {flags.isSet(ExcludePairPotential) ? Kernel::PairPotentialEnergyValue()
                                               : pairPotentialEnergy(mol, !flags.isSet(ExcludeIntraMolecularPairPotential)),
-            flags.isSet(ExcludeGeometry) ? GeometryEnergyValue() : totalGeometryEnergy(mol),
+            flags.isSet(ExcludeGeometry) ? Kernel::GeometryEnergyValue() : totalGeometryEnergy(mol),
             flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
 
