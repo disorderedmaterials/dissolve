@@ -122,30 +122,33 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
         localEnergies.bondEnergy +=
             std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
-                            { return acc + kernel->bondEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
+                            { return acc + kernel->bondEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r()); });
 
         // Loop over Angle
-        localEnergies.angleEnergy += std::accumulate(
-            mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
-            [&mol, &kernel](auto const acc, const auto &t)
-            { return acc + kernel->angleEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
+        localEnergies.angleEnergy +=
+            std::accumulate(mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
+                            [&mol, &kernel](auto const acc, const auto &t)
+                            {
+                                return acc + kernel->angleEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r(),
+                                                                 mol->atom(t.indexK())->r());
+                            });
 
         // Loop over Torsions
         localEnergies.torsionEnergy +=
             std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
                             {
-                                return acc + kernel->torsionEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
-                                                                   *mol->atom(t.indexK()), *mol->atom(t.indexL()));
+                                return acc + kernel->torsionEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r(),
+                                                                   mol->atom(t.indexK())->r(), mol->atom(t.indexL())->r());
                             });
 
-        localEnergies.improperEnergy +=
-            std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &imp)
-                            {
-                                return acc + kernel->improperEnergy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
-                                                                    *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
-                            });
+        localEnergies.improperEnergy += std::accumulate(
+            mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
+            [&mol, &kernel](auto const acc, const auto &imp)
+            {
+                return acc + kernel->improperEnergy(imp, mol->atom(imp.indexI())->r(), mol->atom(imp.indexJ())->r(),
+                                                    mol->atom(imp.indexK())->r(), mol->atom(imp.indexL())->r());
+            });
 
         return localEnergies;
     };

@@ -26,8 +26,8 @@ class GeometryKernel : public KernelBase
      * Bond Terms
      */
     public:
-    // Return SpeciesBond energy at Atoms specified
-    double bondEnergy(const SpeciesBond &b, const Atom &i, const Atom &j) const;
+    // Return SpeciesBond energy using specified positions
+    double bondEnergy(const SpeciesBond &b, const Vector3 &ri, const Vector3 &rj) const;
     // Calculate SpeciesBond forces
     void bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
     void bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, ForceVector &f) const;
@@ -45,8 +45,8 @@ class GeometryKernel : public KernelBase
     };
 
     public:
-    // Return SpeciesAngle energy at Atoms specified
-    double angleEnergy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const;
+    // Return SpeciesAngle energy using specified positions
+    double angleEnergy(const SpeciesAngle &a, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk) const;
     // Calculate angle force parameters from supplied vectors
     static AngleParameters calculateAngleForceParameters(Vector3 vecji, Vector3 vecjk);
     // Calculate SpeciesAngle forces
@@ -79,8 +79,9 @@ class GeometryKernel : public KernelBase
     void addTorsionForceL(double du_dphi, int index, TorsionParameters &torsionParameters, ForceVector &f) const;
 
     public:
-    // Return SpeciesTorsion energy at Atoms specified
-    double torsionEnergy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
+    // Return SpeciesTorsion energy using specified positions
+    double torsionEnergy(const SpeciesTorsion &t, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                         const Vector3 &rl) const;
     // Calculate torsion force parameters from supplied vectors
     static TorsionParameters calculateTorsionForceParameters(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
     // Calculate SpeciesTorsion forces
@@ -93,8 +94,9 @@ class GeometryKernel : public KernelBase
      * Improper Terms
      */
     public:
-    // Return SpeciesImproper energy at Atoms specified
-    double improperEnergy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
+    // Return SpeciesImproper energy using specified positions
+    double improperEnergy(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                          const Vector3 &rl) const;
     // Calculate SpeciesImproper forces
     void improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
                         int indexK, const Atom &l, int indexL, ForceVector &f) const;
