@@ -12,47 +12,6 @@
 #include <iterator>
 #include <numeric>
 
-/*
- * PairPotentialEnergyValue
- */
-
-PairPotentialEnergyValue::PairPotentialEnergyValue(double inter, double intra) : interMolecular_(inter), intraMolecular_(intra)
-{
-}
-PairPotentialEnergyValue PairPotentialEnergyValue::operator+(const PairPotentialEnergyValue &value) const
-{
-    return {interMolecular_ + value.interMolecular_, intraMolecular_ + value.intraMolecular_};
-}
-PairPotentialEnergyValue PairPotentialEnergyValue::operator-(const PairPotentialEnergyValue &value) const
-{
-    return {interMolecular_ - value.interMolecular_, intraMolecular_ - value.intraMolecular_};
-}
-PairPotentialEnergyValue &PairPotentialEnergyValue::operator+=(const PairPotentialEnergyValue &value)
-{
-    interMolecular_ += value.interMolecular_;
-    intraMolecular_ += value.intraMolecular_;
-    return *this;
-}
-PairPotentialEnergyValue &PairPotentialEnergyValue::operator*=(const double scale)
-{
-    interMolecular_ *= scale;
-    intraMolecular_ *= scale;
-    return *this;
-}
-
-// Increment Energies
-void PairPotentialEnergyValue::addInterMolecular(double e) { interMolecular_ += e; }
-void PairPotentialEnergyValue::addIntraMolecular(double e) { intraMolecular_ += e; }
-
-// Return Energies
-double PairPotentialEnergyValue::interMolecular() const { return interMolecular_; }
-double PairPotentialEnergyValue::intraMolecular() const { return intraMolecular_; };
-double PairPotentialEnergyValue::total() const { return interMolecular_ + intraMolecular_; }
-
-/*
- * EnergyKernel
- */
-
 EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap) : GeometryKernel(cfg, potentialMap) {}
 
 /*
@@ -95,14 +54,14 @@ PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool include
                 continue;
 
             if (molI != jj->molecule())
-                totalEnergy.addInterMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
+                totalEnergy.interMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
             else if (includeIntraMolecular)
             {
                 auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
                 if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                    totalEnergy.addIntraMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
+                    totalEnergy.intraMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                 else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                    totalEnergy.addIntraMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14));
+                    totalEnergy.intraMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14);
             }
         }
     }
@@ -136,14 +95,14 @@ PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell,
 
                 // Check for atoms in the same species
                 if (molI != jj->molecule())
-                    totalEnergy.addInterMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
+                    totalEnergy.interMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
                     auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        totalEnergy.addIntraMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
+                        totalEnergy.intraMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        totalEnergy.addIntraMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14));
+                        totalEnergy.intraMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14);
                 }
             }
         }
@@ -165,14 +124,14 @@ PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &centralCell,
 
                 // Check for atoms in the same molecule
                 if (molI != jj->molecule())
-                    totalEnergy.addInterMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
+                    totalEnergy.interMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
                     auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        totalEnergy.addIntraMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq)));
+                        totalEnergy.intraMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        totalEnergy.addIntraMolecular(pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14));
+                        totalEnergy.intraMolecular += pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14);
                 }
             }
         }
@@ -346,19 +305,19 @@ PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(bool inc
 
     // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
     // pairpotential energy
-    return {molecularEnergy.interMolecular() * 0.5, molecularEnergy.intraMolecular()};
+    return {molecularEnergy.interMolecular * 0.5, molecularEnergy.intraMolecular};
 }
 
 // Return total energy of supplied atom with the world
 EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
 {
-    return {pairPotentialEnergy(i), totalGeometryEnergy(i), extendedEnergy(i)};
+    return {{pairPotentialEnergy(i), 0.0}, totalGeometryEnergy(i), extendedEnergy(i)};
 }
 
 // Return total energy of supplied molecule with the world
 EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags) const
 {
-    return {flags.isSet(ExcludePairPotential) ? 0.0
+    return {flags.isSet(ExcludePairPotential) ? PairPotentialEnergyValue()
                                               : pairPotentialEnergy(mol, !flags.isSet(ExcludeIntraMolecularPairPotential)),
             flags.isSet(ExcludeGeometry) ? GeometryEnergyValue() : totalGeometryEnergy(mol),
             flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};

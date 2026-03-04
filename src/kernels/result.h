@@ -13,37 +13,42 @@ struct GeometryEnergyValue
 
     GeometryEnergyValue operator+(const GeometryEnergyValue &other) const
     {
-        return {.bondEnergy = this->bondEnergy + other.bondEnergy,
-                .angleEnergy = this->angleEnergy + other.angleEnergy,
-                .torsionEnergy = this->torsionEnergy + other.torsionEnergy,
-                .improperEnergy = this->improperEnergy + other.improperEnergy};
+        return {bondEnergy + other.bondEnergy, angleEnergy + other.angleEnergy, torsionEnergy + other.torsionEnergy,
+                improperEnergy + other.improperEnergy};
     }
     // Return total
     double total() const { return bondEnergy + angleEnergy + torsionEnergy + improperEnergy; }
 };
 
 // PairPotential Energy Value
-class PairPotentialEnergyValue
+struct PairPotentialEnergyValue
 {
-    public:
-    PairPotentialEnergyValue(double inter = 0.0, double intra = 0.0);
-    PairPotentialEnergyValue operator+(const PairPotentialEnergyValue &value) const;
-    PairPotentialEnergyValue operator-(const PairPotentialEnergyValue &value) const;
-    PairPotentialEnergyValue &operator+=(const PairPotentialEnergyValue &value);
-    PairPotentialEnergyValue &operator*=(const double scale);
-
-    private:
     // Energy values
-    double interMolecular_{0.0}, intraMolecular_{0.0};
+    double interMolecular{0.0}, intraMolecular{0.0};
 
-    public:
-    // Increment Energies
-    void addInterMolecular(double e);
-    void addIntraMolecular(double e);
-    // Return Energies
-    double interMolecular() const;
-    double intraMolecular() const;
-    double total() const;
+    PairPotentialEnergyValue operator+(const PairPotentialEnergyValue &value) const
+    {
+        return {interMolecular + value.interMolecular, intraMolecular + value.intraMolecular};
+    }
+    PairPotentialEnergyValue operator-(const PairPotentialEnergyValue &value) const
+    {
+        return {interMolecular - value.interMolecular, intraMolecular - value.intraMolecular};
+    }
+    PairPotentialEnergyValue &operator+=(const PairPotentialEnergyValue &value)
+    {
+        interMolecular += value.interMolecular;
+        intraMolecular += value.intraMolecular;
+        return *this;
+    }
+    PairPotentialEnergyValue &operator*=(const double scale)
+    {
+        interMolecular *= scale;
+        intraMolecular *= scale;
+        return *this;
+    }
+
+    // Return total
+    double total() const { return interMolecular + intraMolecular; }
 };
 
 // Energy Result

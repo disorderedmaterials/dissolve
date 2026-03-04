@@ -9,40 +9,36 @@
 #include "templates/algorithms.h"
 #include <numeric>
 
-/*
- * Totals
- */
-
 // Return pair potential energy of Species
 PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Species *sp)
 {
     const auto cutoff = PairPotential::range();
 
     Combinations comb(sp->nAtoms());
-    return dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(0),
-                                      dissolve::counting_iterator<int>(comb.getNumCombinations()), 0.0, std::plus<>(),
-                                      [&](const auto idx)
-                                      {
-                                          auto [n, m] = comb.nthCombination(idx);
-                                          auto &i = sp->atom(n);
-                                          auto &j = sp->atom(m);
-                                          auto &rI = i.r();
-                                          auto &rJ = j.r();
+    return {0.0, dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(0),
+                                            dissolve::counting_iterator<int>(comb.getNumCombinations()), 0.0, std::plus<>(),
+                                            [&](const auto idx)
+                                            {
+                                                auto [n, m] = comb.nthCombination(idx);
+                                                auto &i = sp->atom(n);
+                                                auto &j = sp->atom(m);
+                                                auto &rI = i.r();
+                                                auto &rJ = j.r();
 
-                                          // Get interatomic distance
-                                          double r = (rJ - rI).magnitude();
-                                          if (r > cutoff)
-                                              return 0.0;
+                                                // Get interatomic distance
+                                                double r = (rJ - rI).magnitude();
+                                                if (r > cutoff)
+                                                    return 0.0;
 
-                                          // Get intramolecular scaling of atom pair
-                                          auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
-                                          if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                                              return potentialMap_.energy(&i, &j, r);
-                                          else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                                              return potentialMap_.energy(&i, &j, r, elec14, vdw14);
+                                                // Get intramolecular scaling of atom pair
+                                                auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
+                                                if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                                    return potentialMap_.energy(&i, &j, r);
+                                                else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                                    return potentialMap_.energy(&i, &j, r, elec14, vdw14);
 
-                                          return 0.0;
-                                      });
+                                                return 0.0;
+                                            })};
 }
 
 // Return geometric energy of Species

@@ -12,26 +12,6 @@
 #include <atomic>
 #include <numeric>
 
-namespace
-{
-// Structure to store energy values
-struct Energies
-{
-    double bondEnergy;
-    double angleEnergy;
-    double torsionEnergy;
-    double improperEnergy;
-
-    Energies operator+(const Energies &other) const
-    {
-        return {.bondEnergy = this->bondEnergy + other.bondEnergy,
-                .angleEnergy = this->angleEnergy + other.angleEnergy,
-                .torsionEnergy = this->torsionEnergy + other.torsionEnergy,
-                .improperEnergy = this->improperEnergy + other.improperEnergy};
-    }
-};
-} // namespace
-
 // Return total pair potential energy of Configuration
 PairPotentialEnergyValue EnergyNode::pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
@@ -114,18 +94,18 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
 
     const auto &molecules = cfg->molecules();
 
-    auto unaryOp = [&](const auto &mol) -> Energies
+    auto unaryOp = [&](const auto &mol) -> GeometryEnergyValue
     {
-        Energies localEnergies{.bondEnergy = 0.0, .angleEnergy = 0.0, .torsionEnergy = 0.0, .improperEnergy = 0.0};
+        GeometryEnergyValue localEnergies;
 
         // Loop over Bond
-        localEnergies.bondEnergy +=
+        localEnergies.bondEnergy =
             std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
                             { return acc + kernel->bondEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r()); });
 
         // Loop over Angle
-        localEnergies.angleEnergy +=
+        localEnergies.angleEnergy =
             std::accumulate(mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
                             {
@@ -134,7 +114,7 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
                             });
 
         // Loop over Torsions
-        localEnergies.torsionEnergy +=
+        localEnergies.torsionEnergy =
             std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
                             {
@@ -142,7 +122,7 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
                                                                    mol->atom(t.indexK())->r(), mol->atom(t.indexL())->r());
                             });
 
-        localEnergies.improperEnergy += std::accumulate(
+        localEnergies.improperEnergy = std::accumulate(
             mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
             [&mol, &kernel](auto const acc, const auto &imp)
             {
@@ -153,8 +133,8 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
         return localEnergies;
     };
 
-    auto energies = dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), Energies(),
-                                               std::plus<Energies>(), unaryOp);
+    auto energies = dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), GeometryEnergyValue(),
+                                               std::plus<GeometryEnergyValue>(), unaryOp);
 
     bondEnergy = energies.bondEnergy;
     angleEnergy = energies.angleEnergy;
