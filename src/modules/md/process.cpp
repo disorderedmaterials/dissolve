@@ -72,7 +72,8 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
     // Variables
     auto nCapped = 0;
     auto &atoms = targetConfiguration_->atoms();
-    double tInstant, ke, tScale, peBound;
+    double tInstant, ke, tScale;
+    GeometryEnergyValue peBound;
     PairPotentialEnergyValue pePP;
 
     // Determine target molecules from the restrictedSpecies vector (if any)
@@ -305,9 +306,9 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
             if (energyFrequency_ && (step % energyFrequency_.value() == 0))
             {
                 pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, dissolve.potentialMap());
-                peBound = EnergyModule::intraMolecularEnergy(targetConfiguration_, dissolve.potentialMap());
+                peBound = EnergyModule::geometryEnergy(targetConfiguration_, dissolve.potentialMap());
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
-                                 tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
+                                 tInstant, ke, pePP.total(), peBound.total(), ke + peBound.total() + pePP.total(), dT);
             }
             else
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n", step,
@@ -323,8 +324,8 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
             // Construct and write header
             std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps_, tInstant, ke);
             if (energyFrequency_ && (step % energyFrequency_.value() == 0))
-                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
-                                      ke + pePP.total() + peBound);
+                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound.total(),
+                                      ke + pePP.total() + peBound.total());
             if (!trajParser.writeLine(header))
                 return ExecutionResult::Failed;
 

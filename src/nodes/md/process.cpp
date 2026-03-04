@@ -77,7 +77,8 @@ NodeConstants::ProcessResult MDNode::process()
     // Variables
     auto nCapped = 0;
     auto &atoms = targetConfiguration_->atoms();
-    double tInstant, ke, tScale, peBound;
+    double tInstant, ke, tScale;
+    GeometryEnergyValue peBound;
     PairPotentialEnergyValue pePP;
 
     // Determine target molecules from the restrictedSpecies vector (if any)
@@ -315,9 +316,9 @@ NodeConstants::ProcessResult MDNode::process()
             if (energyFrequency > 0 && (step % energyFrequency == 0))
             {
                 pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, potentialMap);
-                peBound = EnergyModule::intraMolecularEnergy(targetConfiguration_, potentialMap);
+                peBound = EnergyModule::geometryEnergy(targetConfiguration_, potentialMap);
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
-                                 tInstant, ke, pePP.total(), peBound, ke + peBound + pePP.total(), dT);
+                                 tInstant, ke, pePP.total(), peBound.total(), ke + peBound.total() + pePP.total(), dT);
             }
             else
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n", step,
@@ -333,8 +334,8 @@ NodeConstants::ProcessResult MDNode::process()
             // Construct and write header
             std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
             if (energyFrequency && (step % energyFrequency == 0))
-                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound,
-                                      ke + pePP.total() + peBound);
+                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound.total(),
+                                      ke + pePP.total() + peBound.total());
             if (!trajParser.writeLine(header))
                 return NodeConstants::ProcessResult::Failed;
 

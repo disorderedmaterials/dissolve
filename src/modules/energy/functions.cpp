@@ -45,32 +45,11 @@ double EnergyModule::interMolecularEnergy(const Configuration *cfg, const Potent
     return ppEnergy;
 }
 
-// Return total intramolecular energy of Configuration
-double EnergyModule::intraMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
+// Return total geometry energy of Configuration
+GeometryEnergyValue EnergyModule::geometryEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
-    double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
-
-    return intraMolecularEnergy(cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
-}
-
-// Return total intramolecular energy of Configuration, storing components in provided variables
-double EnergyModule::intraMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap, double &bondEnergy,
-                                          double &angleEnergy, double &torsionEnergy, double &improperEnergy)
-{
-    /*
-     * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
-     * terms in all Molecules.
-     *
-     * This is a parallel routine, with processes operating as a standard world group.
-     */
-
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
-
-    bondEnergy = 0;
-    angleEnergy = 0;
-    torsionEnergy = 0;
-    improperEnergy = 0;
 
     const auto &molecules = cfg->molecules();
 
@@ -116,34 +95,18 @@ double EnergyModule::intraMolecularEnergy(const Configuration *cfg, const Potent
     auto energies = dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), GeometryEnergyValue(),
                                                std::plus<GeometryEnergyValue>(), unaryOp);
 
-    bondEnergy = energies.bondEnergy;
-    angleEnergy = energies.angleEnergy;
-    improperEnergy = energies.improperEnergy;
-    torsionEnergy = energies.torsionEnergy;
-    double totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
-
     Messenger::printVerbose("Intramolecular energy is {:15.9e} kJ/mol ({:15.9e} bond + {:15.9e} angle + {:15.9e} "
                             "torsion + {:15.9e} improper)\n",
-                            totalIntra, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
+                            energies.total(), energies.bondEnergy, energies.angleEnergy, energies.torsionEnergy,
+                            energies.improperEnergy);
 
-    return totalIntra;
+    return energies;
 }
 
 // Return total energy (interatomic and intramolecular) of Configuration
 double EnergyModule::totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
-    return (pairPotentialEnergy(cfg, potentialMap).total() + intraMolecularEnergy(cfg, potentialMap));
-}
-
-// Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
-double EnergyModule::totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap,
-                                 PairPotentialEnergyValue &interEnergy, double &bondEnergy, double &angleEnergy,
-                                 double &torsionEnergy, double &improperEnergy)
-{
-    interEnergy = pairPotentialEnergy(cfg, potentialMap);
-    intraMolecularEnergy(cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
-
-    return interEnergy.total() + bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
+    return (pairPotentialEnergy(cfg, potentialMap).total() + geometryEnergy(cfg, potentialMap).total());
 }
 
 // Check energy stability of specified Configuration

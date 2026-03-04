@@ -48,16 +48,10 @@ class EnergyModule : public Module
     static PairPotentialEnergyValue pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total intermolecular energy
     static double interMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
-    // Return total intramolecular energy of Configuration
-    static double intraMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
-    // Return total intramolecular energy of Configuration, storing components in provided variables
-    static double intraMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap, double &bondEnergy,
-                                       double &angleEnergy, double &torsionEnergy, double &improperEnergy);
+    // Return total geometry energy of Configuration
+    static GeometryEnergyValue geometryEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total energy (interatomic and intramolecular)
     static double totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap);
-    // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
-    static double totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap, PairPotentialEnergyValue &ppEnergy,
-                              double &bondEnergy, double &angleEnergy, double &torsionEnergy, double &improperEnergy);
     // Check energy stability of specified Configuration
     static EnergyStability checkStability(GenericList &processingData, const Configuration *cfg);
     // Check energy stability of specified Configurations, returning the number that are unstable
