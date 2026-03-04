@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "kernels/common.h"
 #include "kernels/geometry.h"
-#include "kernels/result.h"
 #include "templates/flags.h"
 
 // Forward Declarations

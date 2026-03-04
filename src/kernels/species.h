@@ -3,11 +3,9 @@
 
 #pragma once
 
+#include "kernels/common.h"
 #include "kernels/geometry.h"
-#include "kernels/result.h"
 #include "templates/flags.h"
-#include <memory>
-#include <optional>
 
 // Forward Declarations
 class Atom;

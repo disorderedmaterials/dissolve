@@ -4,7 +4,7 @@
 #pragma once
 
 #include "kernels/base.h"
-#include "kernels/result.h"
+#include "kernels/common.h"
 #include "math/matrix3.h"
 
 // Forward Declarations

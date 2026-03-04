@@ -8,12 +8,12 @@ add_library(
   producer.cpp
   species.cpp
   base.h
+  common.h
   energy.h
   externalPotentials.h
   force.h
   geometry.h
   producer.h
-  result.h
   species.h
 )
 
