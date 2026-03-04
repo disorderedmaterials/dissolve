@@ -23,12 +23,9 @@ BraggNode::BraggNode(Graph *parentGraph)
     addOutput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
 
     // Options
-    addOption<Number>("QMin", "Minimum Q value for Bragg calculation", qMin_)
-        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-    addOption<Number>("QMax", "Maximum Q value for Bragg calculation", qMax_)
-        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-    addOption<Number>("QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections", qDelta_)
-        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addOption<Number>("QMin", "Minimum Q value for Bragg calculation", qMin_);
+    addOption<Number>("QMax", "Maximum Q value for Bragg calculation", qMax_);
+    addOption<Number>("QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections", qDelta_);
     addOption<Vector3i>("Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration",
                         multiplicity_);
     addOption<std::optional<Number>>("Averaging", "Number of historical data sets to combine into final reflection data",
