@@ -52,13 +52,14 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(sqNode->setOption<Number>("QMax", 19.0));
         ASSERT_TRUE(sqNode->setOption<Number>("QDelta", 0.05));
         ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
+        ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.02}}));
 
         // Set options on Bragg node
         auto braggNode = testData_.graphRoot.findNode("Bragg01");
         ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
         ASSERT_TRUE(braggNode->setOption<Number>("QMax", 20.0));
-        ASSERT_TRUE(
-            braggNode->setOption<Function1DWrapper>("BraggQBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.0, 0.02}}));
+        ASSERT_TRUE(braggNode->setOption<Function1DWrapper>(
+            "BraggQBroadening", {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
     }
 
     static bool testReflections(const std::vector<BraggReflection> &braggReflections,
