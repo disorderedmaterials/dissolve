@@ -151,7 +151,7 @@ TEST_F(BraggNodeTest, MgO_Full)
         {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.7e-3));
 
     // Check intensities
-    //                            Q     h k l     mult    I(Mg-Mg           Mg-O         O-O)
+    //                                   Q     h k l     mult    I(Mg-Mg           Mg-O         O-O)
     auto braggNode = static_cast<BraggNode *>(testData_.graphRoot.findNode("Bragg01"));
     EXPECT_TRUE(testReflections(braggNode->braggReflections(),
                                 {{0, 1.489500, {1, 0, 0}, 6, {5.597167e-30, 5.597167e-30, 5.597167e-30}},
