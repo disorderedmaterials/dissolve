@@ -312,7 +312,7 @@ TEST_F(BraggNodeTest, MgO_Intensities111)
     createGraph();
 
     // Set multiplicities to (1,1,1)
-    braggNode_->setOption<Vector3i>("Multiplicities", {1, 1, 1});
+    braggNode_->setOption<Vector3i>("Multiplicity", {1, 1, 1});
 
     // Run once
     ASSERT_EQ(testData_.graphRoot.run(), NodeConstants::ProcessResult::Success);
