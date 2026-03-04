@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#define _USE_MATH_DEFINES
+
 #include "nodes/bragg.h"
 
 BraggNode::BraggNode(Graph *parentGraph)
@@ -15,6 +17,10 @@ BraggNode::BraggNode(Graph *parentGraph)
     // Inputs
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addInput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
+
+    // Outputs
+    addOutput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
 
     // Options
     addOption<Number>("QMin", "Minimum Q value for Bragg calculation", qMin_)
@@ -30,6 +36,8 @@ BraggNode::BraggNode(Graph *parentGraph)
         ->setFlags({ParameterBase::ClearData});
     addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging reflection data",
                                           averagingScheme_);
+    addOption<Function1DWrapper>("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)",
+                                 braggQBroadening_);
     addOption<bool>("SaveReflections", "Whether to save Bragg reflection data to disk", saveReflections_);
 }
 
@@ -85,10 +93,18 @@ NodeConstants::ProcessResult BraggNode::process()
         message("Bragg: No averaging of reflections will be performed.\n");
     message("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity_.x, multiplicity_.y,
             multiplicity_.z);
+    if (unweightedSQ_)
+    {
+        if (braggQBroadening_.form() == Functions1D::Form::None)
+            Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
+        else
+            Messenger::print("SQ: Broadening to be applied in calculated Bragg S(Q) is {} ({}).",
+                             Functions1D::forms().keyword(braggQBroadening_.form()), braggQBroadening_.parameterSummary());
+    }
     message("\n");
 
     // Store unit cell information
-    auto unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
+    const auto unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Calculate Bragg vectors and intensities for the current Configuration
     if (!calculateBraggTerms(braggReflections_->values(), targetConfiguration_, qMin, qDelta, qMax, multiplicity_))
@@ -137,6 +153,83 @@ NodeConstants::ProcessResult BraggNode::process()
             });
         if (!success.value_or(true))
             return NodeConstants::ProcessResult::Failed;
+    }
+
+    if (unweightedSQ_)
+    {
+        const auto nReflections = braggReflections_->values().size();
+        const auto braggQMax = braggReflections_->values().at(nReflections - 1).q();
+        message("Found reflections data (nReflections = {}, Q(last) = {} Angstroms**-1).\n", nReflections, braggQMax);
+
+        // Prepare a temporary object for the Bragg partials
+        auto typeFractions = unweightedSQ_->atomTypeFractions();
+        // braggPartials.initialise(typeFractions.size(), typeFractions.size(), true);
+        for (auto &partial : *braggPartials_)
+            partial.initialise(unweightedSQ_->partials().begin()->second);
+
+        // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
+        auto success = for_each_pair_early(typeFractions,
+                                           [&](auto indexI, auto &popI, int indexJ, auto &popJ) -> EarlyReturn<bool>
+                                           {
+                                               // Grab relevant partial and loop over reflections
+                                               auto &partial = (*braggPartials_)[{indexI, indexJ}];
+                                               for (const auto &reflxn : braggReflections_->values())
+                                               {
+                                                   const auto intensity = reflxn.intensity(indexI, indexJ);
+                                                   for (auto &&[q, by] : zip(partial.xAxis(), partial.values()))
+                                                       by += braggQBroadening_.y(q - reflxn.q(), q) * intensity *
+                                                             braggQBroadening_.normalisation(q) / (reflxn.q() * q);
+                                               }
+
+                                               return EarlyReturn<bool>::Continue;
+                                           });
+        if (success && !success.value())
+            return NodeConstants::ProcessResult::Failed;
+
+        // Finalise partials
+        for (auto &partial : *braggPartials_)
+            std::transform(partial.values().begin(), partial.values().end(), partial.values().begin(),
+                           [unitCellVolume](auto &val) { return val * 2.0 * pow(M_PI, 2) / unitCellVolume; });
+
+        // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
+        dissolve::for_each_pair(ParallelPolicies::par, typeFractions,
+                                [&](auto indexI, auto &popI, int indexJ, auto &popJ)
+                                {
+                                    // Subtract self-scattering level if types are equivalent
+                                    if (indexI == indexJ)
+                                        (*braggPartials_)[{indexI, indexJ}] -= popI.second;
+
+                                    // Remove atomic fraction normalisation
+                                    (*braggPartials_)[{indexI, indexJ}] /= popI.second * popJ.second;
+                                });
+
+        // Blend the bound/unbound and Bragg partials at the higher Q limit
+        dissolve::for_each_pair(ParallelPolicies::par, typeFractions,
+                                [&](auto indexI, auto &popI, int indexJ, auto &popJ)
+                                {
+                                    // Note: Intramolecular broadening will not be applied to bound terms within the
+                                    // calculated Bragg scattering
+                                    auto key = DoubleKeyedMapKey{popI.first->name(), popJ.first->name()};
+
+                                    auto &bound = unweightedSQ_->boundPartials().get(key);
+                                    auto &unbound = unweightedSQ_->unboundPartials().get(key);
+                                    auto &partial = unweightedSQ_->partials().get(key);
+                                    auto &bragg = (*braggPartials_)[{indexI, indexJ}];
+
+                                    for (auto n = 0; n < bound.nValues(); ++n)
+                                    {
+                                        const auto q = bound.xAxis(n);
+                                        if (q <= braggQMax)
+                                        {
+                                            bound.value(n) = 0.0;
+                                            unbound.value(n) = bragg.value(n);
+                                            partial.value(n) = bragg.value(n);
+                                        }
+                                    }
+                                });
+
+        // Re-form the total function
+        unweightedSQ_->formTotals(true);
     }
 
     return NodeConstants::ProcessResult::Success;

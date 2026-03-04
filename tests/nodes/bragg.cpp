@@ -41,11 +41,6 @@ class BraggNodeTest : public ::testing::Test
         auto setCellNode = testData_.graphRoot.findNode("Box");
         ASSERT_TRUE(setCellNode->setOption<Vector3>("Lengths", {21.085, 21.085, 21.085}));
 
-        // Set options on Bragg node
-        auto braggNode = testData_.graphRoot.findNode("Bragg01");
-        ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
-        ASSERT_TRUE(braggNode->setOption<Number>("QMax", 20.0));
-
         // Set options on GR node
         auto grNode = testData_.graphRoot.findNode("GRs");
         ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.025));
@@ -56,11 +51,16 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(sqNode->setOption<Number>("QMin", 0.05));
         ASSERT_TRUE(sqNode->setOption<Number>("QMax", 19.0));
         ASSERT_TRUE(sqNode->setOption<Number>("QDelta", 0.05));
-        ASSERT_TRUE(
-            sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.0, 0.02}}));
         ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
         ASSERT_TRUE(
             sqNode->setOption<Function1DWrapper>("BraggQBroadening", {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
+
+        // Set options on Bragg node
+        auto braggNode = testData_.graphRoot.findNode("Bragg01");
+        ASSERT_TRUE(braggNode->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
+        ASSERT_TRUE(braggNode->setOption<Number>("QMax", 20.0));
+        ASSERT_TRUE(
+            braggNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.0, 0.02}}));
     }
 
     static bool testReflections(const std::vector<BraggReflection> &braggReflections,
@@ -125,9 +125,9 @@ TEST_F(BraggNodeTest, MgO_Full)
     // Check Partial S(Q) data
     // Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
     //                                 Column:    2        4        6
-    auto sqNode = testData_.graphRoot.findNode("SQs");
-    ASSERT_TRUE(sqNode);
-    auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
+    auto braggNode = static_cast<BraggNode *>(testData_.graphRoot.findNode("Bragg01"));
+    ASSERT_TRUE(braggNode);
+    auto unweightedSQ = braggNode->getOutputValue<PartialSet *>("UnweightedSQ");
     auto unboundPartials = unweightedSQ->unboundPartials();
 
     auto neutronSqNode = testData_.graphRoot.findNode("NeutronSQ01");
@@ -136,23 +136,22 @@ TEST_F(BraggNodeTest, MgO_Full)
     auto weightedTotal = weightedSQ->total();
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("Mg//Mg"), "SQs//UnweightedSQ//Mg-Mg//Unbound",
+        unboundPartials.get("Mg//Mg"), "SQs_UnweightedSQ_Mg-Mg_Unbound",
         {"epsr25/mgo500-555/mgo.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.5e-2));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("Mg//OX"), "SQs//UnweightedSQ//Mg-OX//Unbound",
+        unboundPartials.get("Mg//OX"), "SQs_UnweightedSQ_Mg-OX_Unbound",
         {"epsr25/mgo500-555/mgo.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 1.5e-2));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("OX//OX"), "SQs//UnweightedSQ//OX-OX//Unbound",
+        unboundPartials.get("OX//OX"), "SQs_UnweightedSQ_OX-OX_Unbound",
         {"epsr25/mgo500-555/mgo.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.5e-2));
 
     // Check total F(Q)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        weightedTotal, "NeutronSQ01//WeightedSQ//Total",
+        weightedTotal, "NeutronSQ01_WeightedSQ_Total",
         {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.7e-3));
 
     // Check intensities
     //                                   Q     h k l     mult    I(Mg-Mg           Mg-O         O-O)
-    auto braggNode = static_cast<BraggNode *>(testData_.graphRoot.findNode("Bragg01"));
     EXPECT_TRUE(testReflections(braggNode->braggReflections(),
                                 {{0, 1.489500, {1, 0, 0}, 6, {5.597167e-30, 5.597167e-30, 5.597167e-30}},
                                  {1, 2.107500, {1, 1, 0}, 12, {1.056419e-62, 8.702265e-63, 8.336351e-63}},

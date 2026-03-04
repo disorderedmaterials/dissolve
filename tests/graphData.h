@@ -187,20 +187,36 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
     ASSERT_TRUE(
         root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GRs", "Configuration"}));
 
-    // Add Bragg node
-    auto braggNode = root->createNode("Bragg", "Bragg01");
-    ASSERT_TRUE(braggNode);
-    ASSERT_TRUE(
-        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "Bragg01", "Configuration"}));
-
     // Create the SQ node
     auto sqNode = root->createNode("SQ", "SQs");
     ASSERT_TRUE(sqNode);
     ASSERT_TRUE(root->addEdge({"GRs", "UnweightedGR", "SQs", "UnweightedGR"}));
 
+    // Add Bragg node
+    auto braggNode = root->createNode("Bragg", "Bragg01");
+    ASSERT_TRUE(braggNode);
+    ASSERT_TRUE(
+        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "Bragg01", "Configuration"}));
+    ASSERT_TRUE(root->addEdge({"SQs", "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
+
     // Add in NeutronSQ
-    addNeutronSQ(root, "NeutronSQ01", {}, {},
-                 {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, "SQs");
+    Data1DImportFileFormat referenceData = {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1,
+                                            2};
+    auto neutronSQNode = root->createNode("NeutronSQ", "NeutronSQ01");
+    ASSERT_TRUE(neutronSQNode);
+    ASSERT_TRUE(root->addEdge({"SQs", "UnweightedGR", "NeutronSQ01", "UnweightedGR"}));
+    ASSERT_TRUE(root->addEdge({"Bragg01", "UnweightedSQ", "NeutronSQ01", "UnweightedSQ"}));
+
+    // Set reference F(Q) data
+    if (referenceData.hasFilename())
+    {
+        auto data1DImportNode = root->createNode("Data1DImport", std::format("{}-Reference", "NeutronSQ01"));
+        ASSERT_TRUE(data1DImportNode);
+        ASSERT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
+        ASSERT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+            "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
+        ASSERT_TRUE(root->addEdge({std::format("{}-Reference", "NeutronSQ01"), "Data", "NeutronSQ01", "ReferenceData"}));
+    }
 }
 // Create a water graph in the supplied root node
 inline void createWaterGraph(Graph *root, int population,

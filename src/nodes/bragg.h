@@ -53,6 +53,10 @@ class BraggNode : public Node
     History<BraggReflectionVector> braggReflectionHistory_;
     // Bragg partials
     std::optional<Array2D<Data1D>> braggPartials_;
+    // Unweighted S(Q)
+    PartialSet *unweightedSQ_{nullptr};
+    // Broadening function to apply to Bragg S(Q)
+    Function1DWrapper braggQBroadening_{Functions1D::Form::GaussianC2, {0.0, 0.02}};
     // Whether to save Bragg reflection data to disk
     bool saveReflections_{false};
 
