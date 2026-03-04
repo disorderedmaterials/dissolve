@@ -35,6 +35,6 @@ class KernelBase
     const Box *box_;
     // Periodic box CellArray (optional)
     OptionalReferenceWrapper<const CellArray> cellArray_;
-    // Target molecule array (if available))
+    // Target molecule array (if available)
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<Molecule>>> molecules_;
 };
