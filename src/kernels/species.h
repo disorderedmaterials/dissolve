@@ -29,10 +29,10 @@ class SpeciesKernel : public GeometryKernel
      * Totals
      */
     private:
-    // Return total pair potential energy of Species
+    // Return pair potential energy of Species
     PairPotentialEnergyValue pairPotentialEnergy(const Species *sp);
-    // Return total geometric energy of Species
-    double geometryEnergy(const Species *sp);
+    // Return geometric energy of Species
+    GeometryEnergyValue geometryEnergy(const Species *sp);
 
     public:
     // Return total energy (interatomic and intramolecular) of Species

@@ -21,7 +21,6 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
 
     // Retrieve control parameters from Configuration
-    const auto termScale = 1.0;
     const auto rRT = 1.0 / (.008314472 * temperature_.asDouble());
 
     // Print argument/parameter summary
@@ -64,8 +63,8 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                 auto eNew = kernel->totalEnergy(*i);
 
                 // Trial the transformed Atom position
-                auto delta = (eNew.totalUnbound() + eNew.geometry() * termScale) -
-                             (eCurrent.totalUnbound() + eCurrent.geometry() * termScale);
+                auto delta =
+                    (eNew.totalUnbound() + eNew.geometry().total()) - (eCurrent.totalUnbound() + eCurrent.geometry().total());
                 auto accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta * rRT));
 
                 if (accept)

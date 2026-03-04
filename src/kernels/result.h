@@ -3,6 +3,25 @@
 
 #pragma once
 
+// Geometry Energy Value
+struct GeometryEnergyValue
+{
+    double bondEnergy{0.0};
+    double angleEnergy{0.0};
+    double torsionEnergy{0.0};
+    double improperEnergy{0.0};
+
+    GeometryEnergyValue operator+(const GeometryEnergyValue &other) const
+    {
+        return {.bondEnergy = this->bondEnergy + other.bondEnergy,
+                .angleEnergy = this->angleEnergy + other.angleEnergy,
+                .torsionEnergy = this->torsionEnergy + other.torsionEnergy,
+                .improperEnergy = this->improperEnergy + other.improperEnergy};
+    }
+    // Return total
+    double total() const { return bondEnergy + angleEnergy + torsionEnergy + improperEnergy; }
+};
+
 // PairPotential Energy Value
 class PairPotentialEnergyValue
 {
@@ -31,20 +50,21 @@ class PairPotentialEnergyValue
 class EnergyResult
 {
     public:
-    EnergyResult(PairPotentialEnergyValue pp = {}, double geom = 0.0, double ext = 0.0)
-        : total_(pp.total() + geom + ext), geometry_(geom), extended_(ext), pairPotential_(pp)
+    EnergyResult(PairPotentialEnergyValue pp = {}, GeometryEnergyValue geom = {}, double ext = 0.0)
+        : total_(pp.total() + geom.total() + ext), geometry_(geom), extended_(ext), pairPotential_(pp)
     {
     }
 
     private:
     // Components
-    double total_, geometry_, extended_;
+    double total_, extended_;
     PairPotentialEnergyValue pairPotential_;
+    GeometryEnergyValue geometry_;
 
     public:
     double total() const { return total_; };
     PairPotentialEnergyValue pairPotential() const { return pairPotential_; }
-    double geometry() const { return geometry_; }
+    GeometryEnergyValue geometry() const { return geometry_; }
     double extended() const { return extended_; }
     double totalUnbound() const { return pairPotential_.total() + extended_; }
 };

@@ -13,7 +13,7 @@
  * Totals
  */
 
-// Return total pair potential energy of Species
+// Return pair potential energy of Species
 PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Species *sp)
 {
     const auto cutoff = PairPotential::range();
@@ -45,26 +45,27 @@ PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Species *sp)
                                       });
 }
 
-// Return total geometric energy of Species
-double SpeciesKernel::geometryEnergy(const Species *sp)
+// Return geometric energy of Species
+GeometryEnergyValue SpeciesKernel::geometryEnergy(const Species *sp)
 {
-    auto energy = 0.0;
+    GeometryEnergyValue energy;
 
     // Loop over bonds
-    energy += std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0,
-                              [&](const auto acc, const auto &b) { return acc + bondEnergy(b, b.j()->r(), b.i()->r()); });
+    energy.bondEnergy = std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0, [&](const auto acc, const auto &b)
+                                        { return acc + bondEnergy(b, b.j()->r(), b.i()->r()); });
 
     // Loop over angles
-    energy += std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0, [&](const auto acc, const auto &a)
-                              { return acc + angleEnergy(a, a.i()->r(), a.j()->r(), a.k()->r()); });
+    energy.angleEnergy = std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0, [&](const auto acc, const auto &a)
+                                         { return acc + angleEnergy(a, a.i()->r(), a.j()->r(), a.k()->r()); });
 
     // Loop over torsions
-    energy += std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0, [&](const auto acc, const auto &t)
-                              { return acc + torsionEnergy(t, t.i()->r(), t.j()->r(), t.k()->r(), t.l()->r()); });
+    energy.torsionEnergy = std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0, [&](const auto acc, const auto &t)
+                                           { return acc + torsionEnergy(t, t.i()->r(), t.j()->r(), t.k()->r(), t.l()->r()); });
 
     // Loop over impropers
-    energy += std::accumulate(sp->impropers().begin(), sp->impropers().end(), 0.0, [&](const auto acc, const auto &imp)
-                              { return acc + improperEnergy(imp, imp.i()->r(), imp.j()->r(), imp.k()->r(), imp.l()->r()); });
+    energy.improperEnergy =
+        std::accumulate(sp->impropers().begin(), sp->impropers().end(), 0.0, [&](const auto acc, const auto &imp)
+                        { return acc + improperEnergy(imp, imp.i()->r(), imp.j()->r(), imp.k()->r(), imp.l()->r()); });
 
     return energy;
 }

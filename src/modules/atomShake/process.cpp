@@ -16,7 +16,6 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
 {
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(PairPotential::range());
-    const auto termScale = 1.0;
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary
@@ -66,7 +65,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
                 // Calculate reference energies for the Atom
                 er = kernel->totalEnergy(*i);
                 currentEnergy = er.totalUnbound();
-                currentIntraEnergy = er.geometry() * termScale;
+                currentIntraEnergy = er.geometry().total();
 
                 // Loop over number of shakes per Atom
                 for (auto n = 0; n < nShakesPerAtom_; ++n)
@@ -82,7 +81,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
                     // Calculate new energy
                     er = kernel->totalEnergy(*i);
                     newEnergy = er.totalUnbound();
-                    newIntraEnergy = er.geometry() * termScale;
+                    newIntraEnergy = er.geometry().total();
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);

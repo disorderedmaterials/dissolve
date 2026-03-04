@@ -307,35 +307,32 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &r
  * Total Energy
  */
 
-// Return total energy for the geometry terms involving the specified atom
-double GeometryKernel::totalGeometryEnergy(const Atom &i) const
+// Return geometry energy for the specified moleculatom
+GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Atom &i) const
 {
     // Get the SpeciesAtom and Molecule
     const auto *spAtom = i.speciesAtom();
     assert(spAtom);
     const auto &mol = *i.molecule();
 
-    // If no terms are present, return zero
-    if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0))
-        return 0.0;
-
-    auto intraEnergy = 0.0;
+    GeometryEnergyValue energy;
 
     // Add energy from SpeciesAngle terms
-    intraEnergy += std::accumulate(
+    energy.bondEnergy = std::accumulate(
         spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const SpeciesBond &bond)
         { return acc + bondEnergy(bond, mol.atom(bond.indexI())->r(), mol.atom(bond.indexJ())->r()); });
 
     // Add energy from SpeciesAngle terms
-    intraEnergy += std::accumulate(spAtom->angles().begin(), spAtom->angles().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesAngle &angle)
-                                   {
-                                       return acc + angleEnergy(angle, mol.atom(angle.indexI())->r(),
-                                                                mol.atom(angle.indexJ())->r(), mol.atom(angle.indexK())->r());
-                                   });
+    energy.angleEnergy =
+        std::accumulate(spAtom->angles().begin(), spAtom->angles().end(), 0.0,
+                        [this, &mol](const auto acc, const SpeciesAngle &angle)
+                        {
+                            return acc + angleEnergy(angle, mol.atom(angle.indexI())->r(), mol.atom(angle.indexJ())->r(),
+                                                     mol.atom(angle.indexK())->r());
+                        });
 
     // Add energy from SpeciesTorsion terms
-    intraEnergy += std::accumulate(
+    energy.torsionEnergy = std::accumulate(
         spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
         [this, &mol](const auto acc, const SpeciesTorsion &torsion)
         {
@@ -344,7 +341,7 @@ double GeometryKernel::totalGeometryEnergy(const Atom &i) const
         });
 
     // Add energy from SpeciesImproper terms
-    intraEnergy += std::accumulate(
+    energy.improperEnergy = std::accumulate(
         spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
         [this, &mol](const auto acc, const SpeciesImproper &improper)
         {
@@ -352,23 +349,23 @@ double GeometryKernel::totalGeometryEnergy(const Atom &i) const
                                         mol.atom(improper.indexK())->r(), mol.atom(improper.indexL())->r());
         });
 
-    return intraEnergy;
+    return energy;
 }
 
-// Return total energy for the geometry terms in the specified molecule
-double GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
+// Return geometry energy for the specified molecule
+GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
 {
-    auto intraEnergy = 0.0;
+    GeometryEnergyValue energy;
 
     // Loop over Bonds
-    intraEnergy =
-        dissolve::transform_reduce(ParallelPolicies::par, mol.species()->bonds().begin(), mol.species()->bonds().end(),
-                                   intraEnergy, std::plus<double>(), [&mol, this](const auto &bond)
+    energy.bondEnergy =
+        dissolve::transform_reduce(ParallelPolicies::par, mol.species()->bonds().begin(), mol.species()->bonds().end(), 0.0,
+                                   std::plus<double>(), [&mol, this](const auto &bond)
                                    { return bondEnergy(bond, mol.atom(bond.indexI())->r(), mol.atom(bond.indexJ())->r()); });
 
     // Loop over Angles
-    intraEnergy = dissolve::transform_reduce(
-        ParallelPolicies::seq, mol.species()->angles().begin(), mol.species()->angles().end(), intraEnergy, std::plus<double>(),
+    energy.angleEnergy = dissolve::transform_reduce(
+        ParallelPolicies::seq, mol.species()->angles().begin(), mol.species()->angles().end(), 0.0, std::plus<double>(),
         [&mol, this](const auto &angle) -> double
         {
             return angleEnergy(angle, mol.atom(angle.indexI())->r(), mol.atom(angle.indexJ())->r(),
@@ -376,26 +373,24 @@ double GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
         });
 
     // Loop over Torsions
-    intraEnergy = dissolve::transform_reduce(ParallelPolicies::par, mol.species()->torsions().begin(),
-                                             mol.species()->torsions().end(), intraEnergy, std::plus<double>(),
-                                             [&mol, this](const auto &torsion) -> double
-                                             {
-                                                 return torsionEnergy(
-                                                     torsion, mol.atom(torsion.indexI())->r(), mol.atom(torsion.indexJ())->r(),
-                                                     mol.atom(torsion.indexK())->r(), mol.atom(torsion.indexL())->r());
-                                             });
+    energy.torsionEnergy = dissolve::transform_reduce(
+        ParallelPolicies::par, mol.species()->torsions().begin(), mol.species()->torsions().end(), 0.0, std::plus<double>(),
+        [&mol, this](const auto &torsion) -> double
+        {
+            return torsionEnergy(torsion, mol.atom(torsion.indexI())->r(), mol.atom(torsion.indexJ())->r(),
+                                 mol.atom(torsion.indexK())->r(), mol.atom(torsion.indexL())->r());
+        });
 
     // Loop over Impropers
-    intraEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, mol.species()->impropers().begin(), mol.species()->impropers().end(), intraEnergy,
-        std::plus<double>(),
+    energy.improperEnergy = dissolve::transform_reduce(
+        ParallelPolicies::par, mol.species()->impropers().begin(), mol.species()->impropers().end(), 0.0, std::plus<double>(),
         [&mol, this](const auto &improper) -> double
         {
             return improperEnergy(improper, mol.atom(improper.indexI())->r(), mol.atom(improper.indexJ())->r(),
                                   mol.atom(improper.indexK())->r(), mol.atom(improper.indexL())->r());
         });
 
-    return intraEnergy;
+    return energy;
 }
 
 // Calculate total forces within the specified molecule arising from geometry terms

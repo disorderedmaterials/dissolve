@@ -4,6 +4,7 @@
 #pragma once
 
 #include "kernels/base.h"
+#include "kernels/result.h"
 #include "math/matrix3.h"
 
 // Forward Declarations
@@ -107,10 +108,10 @@ class GeometryKernel : public KernelBase
      * Total Energy
      */
     public:
-    // Return total energy for the geometry terms involving the specified atom
-    double totalGeometryEnergy(const Atom &i) const;
-    // Return total energy for the geometry terms in the specified molecule
-    double totalGeometryEnergy(const Molecule &mol) const;
+    // Return geometry energy for the specified atom
+    GeometryEnergyValue totalGeometryEnergy(const Atom &i) const;
+    // Return geometry energy for the specified molecule
+    GeometryEnergyValue totalGeometryEnergy(const Molecule &mol) const;
 
     /*
      * Total Force

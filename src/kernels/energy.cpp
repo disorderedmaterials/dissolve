@@ -360,7 +360,7 @@ EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculat
 {
     return {flags.isSet(ExcludePairPotential) ? 0.0
                                               : pairPotentialEnergy(mol, !flags.isSet(ExcludeIntraMolecularPairPotential)),
-            flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol),
+            flags.isSet(ExcludeGeometry) ? GeometryEnergyValue() : totalGeometryEnergy(mol),
             flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
 
