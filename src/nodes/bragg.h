@@ -65,13 +65,11 @@ class BraggNode : public Node
      */
     public:
     // Calculate Bragg terms for specified Configuration
-    bool calculateBraggTerms(std::vector<BraggReflection> &braggReflections, Configuration *cfg, const double qMin,
-                             const double qDelta, const double qMax, Vector3i multiplicity);
+    bool calculateBraggTerms();
     // Form partial and total reflection functions from calculated reflection data
-    bool formReflectionFunctions(std::vector<BraggReflection> &braggReflections, Configuration *cfg,
-                                 Array2D<Data1D> &braggPartials, const double qMin, const double qDelta, const double qMax);
+    bool formReflectionFunctions();
     // Re-bin reflection data into supplied arrays
-    bool reBinReflections(std::vector<BraggReflection> &braggReflections, Configuration *cfg, Array2D<Data1D> &braggPartials);
+    bool reBinReflections();
 
     // Get reflections data
     const std::vector<BraggReflection> &braggReflections();

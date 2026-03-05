@@ -10,17 +10,17 @@ SetCellNode::SetCellNode(Graph *parentGraph) : Node(parentGraph)
         ->setFlags({ParameterBase::Required});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Target configuration object", targetConfiguration_);
+    addOutput<Configuration *>("Configuration", "Target configuration for the cell definition", targetConfiguration_);
 
     // Options
-    addOption<Vector3>("Lengths", "Specified dimensions (x, y, z) of the box in terms of side lengths", lengths_);
-    addOption<Vector3>("Angles", "Specified dimensions (alpha, beta, gamma) of the box in terms of side angles", angles_);
-    addOption<bool>("NonPeriodic", "Nonperiodic box type", nonPeriodic_);
+    addOption<Vector3>("Lengths", "Side lengths (A, B, C) of the cell (Angstroms)", lengths_);
+    addOption<Vector3>("Angles", "Cell angles (alpha, beta, gamma) of the cell (degrees)", angles_);
+    addOption<bool>("NonPeriodic", "Whether the cell should be defined as non-periodic", nonPeriodic_);
 }
 
-std::string_view SetCellNode::type() const { return "Set cell"; }
+std::string_view SetCellNode::type() const { return "SetCell"; }
 
-std::string_view SetCellNode::summary() const { return "Set a fixed volume for a configuration unit cell box."; }
+std::string_view SetCellNode::summary() const { return "Define / overwrite a target configuration's unit cell."; }
 
 NodeConstants::ProcessResult SetCellNode::process()
 {

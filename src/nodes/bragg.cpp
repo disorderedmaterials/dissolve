@@ -45,13 +45,6 @@ std::string_view BraggNode::summary() const { return "Calculates the Bragg refle
 // Run main processing
 NodeConstants::ProcessResult BraggNode::process()
 {
-    /*
-     * Calculate Bragg contributions.
-     *
-     * This is a serial routine, with each process constructing its own copy of the data.
-     * Partial calculation routines called by this routine are parallel.
-     */
-
     auto qMin = qMin_.asDouble();
     auto qMax = qMax_.asDouble();
     auto qDelta = qDelta_.asDouble();
@@ -68,7 +61,7 @@ NodeConstants::ProcessResult BraggNode::process()
 
         // Generate empty Data1D over the Q range specified, setting bin centres
         Data1D temp;
-        double q = 0.5 * qDelta;
+        auto q = 0.5 * qDelta;
         while (q <= qMax)
         {
             temp.addPoint(q, 0.0);
@@ -80,22 +73,21 @@ NodeConstants::ProcessResult BraggNode::process()
     }
 
     // Print argument/parameter summary
-    message("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n", qMin, qMax,
-            qDelta);
-    message("Bragg: Multiplicity is ({} {} {}).\n", multiplicity_.x, multiplicity_.y, multiplicity_.z);
+    message("Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n", qMin, qMax, qDelta);
+    message("Multiplicity is ({} {} {}).\n", multiplicity_.x, multiplicity_.y, multiplicity_.z);
     if (averagingLength_)
-        message("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asInteger(),
+        message("Reflections will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asInteger(),
                 Averaging::averagingSchemes().keyword(averagingScheme_));
     else
-        message("Bragg: No averaging of reflections will be performed.\n");
+        message("No averaging of reflections will be performed.\n");
     message("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity_.x, multiplicity_.y,
             multiplicity_.z);
     if (unweightedSQ_)
     {
         if (braggQBroadening_.form() == Functions1D::Form::None)
-            Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
+            Messenger::print("No additional broadening will be applied to calculated Bragg S(Q).");
         else
-            Messenger::print("SQ: Broadening to be applied in calculated Bragg S(Q) is {} ({}).",
+            Messenger::print("Broadening to be applied in calculated Bragg S(Q) is {} ({}).",
                              Functions1D::forms().keyword(braggQBroadening_.form()), braggQBroadening_.parameterSummary());
     }
     message("\n");
@@ -104,7 +96,7 @@ NodeConstants::ProcessResult BraggNode::process()
     const auto unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Calculate Bragg vectors and intensities for the current Configuration
-    if (!calculateBraggTerms(braggReflections_->values(), targetConfiguration_, qMin, qDelta, qMax, multiplicity_))
+    if (!calculateBraggTerms())
         return NodeConstants::ProcessResult::Failed;
 
     // Perform averaging of reflections data if requested
@@ -112,7 +104,7 @@ NodeConstants::ProcessResult BraggNode::process()
         (*braggReflections_) = braggReflectionHistory_.push(*braggReflections_, averagingLength_.value().asInteger());
 
     // Form partial and total reflection functions
-    formReflectionFunctions(braggReflections_->values(), targetConfiguration_, *braggPartials_, qMin, qDelta, qMax);
+    formReflectionFunctions();
 
     // Save reflection data?
     if (saveReflections_)
@@ -233,9 +225,10 @@ NodeConstants::ProcessResult BraggNode::process()
 }
 
 // Calculate unweighted Bragg scattering for specified Configuration
-bool BraggNode::calculateBraggTerms(std::vector<BraggReflection> &braggReflections, Configuration *cfg, const double qMin,
-                                    const double qDelta, const double qMax, Vector3i multiplicity)
+bool BraggNode::calculateBraggTerms()
 {
+    auto &braggReflections = braggReflections_->values();
+
     // Realise the arrays from the Configuration
     std::vector<KVector> braggKVectors;
     Array2D<double> braggAtomVectorXCos;
@@ -247,20 +240,20 @@ bool BraggNode::calculateBraggTerms(std::vector<BraggReflection> &braggReflectio
     Vector3i braggMaximumHKL;
 
     // Grab some useful values
-    const auto *box = cfg->box();
-    auto nTypes = cfg->atomTypePopulations().size();
-    auto nAtoms = cfg->nAtoms(SpeciesAtom::Presence::Physical);
-    auto &atoms = cfg->atoms();
+    const auto *box = targetConfiguration_->box();
+    auto nTypes = targetConfiguration_->atomTypePopulations().size();
+    auto nAtoms = targetConfiguration_->nAtoms(SpeciesAtom::Presence::Physical);
+    auto &atoms = targetConfiguration_->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
     auto rAxes = box->reciprocalAxes();
-    rAxes.columnMultiply(0, multiplicity.x);
-    rAxes.columnMultiply(1, multiplicity.y);
-    rAxes.columnMultiply(2, multiplicity.z);
+    rAxes.columnMultiply(0, multiplicity_.x);
+    rAxes.columnMultiply(1, multiplicity_.y);
+    rAxes.columnMultiply(2, multiplicity_.z);
     auto rLengths = box->reciprocalAxisLengths();
-    rLengths.x *= multiplicity.x;
-    rLengths.y *= multiplicity.y;
-    rLengths.z *= multiplicity.z;
+    rLengths.x *= multiplicity_.x;
+    rLengths.y *= multiplicity_.y;
+    rLengths.z *= multiplicity_.z;
     message("Reciprocal axes and lengths (accounting for multiplicity) are:\n");
     message("	r(x) = {:e} {:e} {:e} ({:e})\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y, rAxes.columnAsVec3(0).z,
             rLengths.x);
@@ -284,8 +277,8 @@ bool BraggNode::calculateBraggTerms(std::vector<BraggReflection> &braggReflectio
     {
         message("Performing initial set up of Bragg arrays...\n");
         timer.start();
-
-        double qMaxSq = qMax * qMax, qMinSQ = qMin * qMin;
+        auto qMax = qMax_.asDouble(), qMin = qMin_.asDouble(), qDelta = qDelta_.asDouble();
+        auto qMaxSq = qMax * qMax, qMinSQ = qMin * qMin;
         auto nBraggBins = qMax / qDelta + 1;
 
         // Determine extents of hkl indices to use
@@ -504,17 +497,17 @@ bool BraggNode::calculateBraggTerms(std::vector<BraggReflection> &braggReflectio
                   [&braggReflections](auto &kvec) { kvec.calculateIntensities(braggReflections); });
 
     // Normalise intensities against number of atoms and unit cell multiplicity
-    const auto divisor = 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
+    const auto divisor = 1.0 / (nAtoms * multiplicity_.x * multiplicity_.y * multiplicity_.z);
     std::for_each(braggReflections.begin(), braggReflections.end(), [divisor](auto &reflxn) { reflxn *= divisor; });
 
     return true;
 }
 
 // Form partial and total reflection functions from calculated reflection data
-bool BraggNode::formReflectionFunctions(std::vector<BraggReflection> &braggReflections, Configuration *cfg,
-                                        Array2D<Data1D> &braggPartials, const double qMin, const double qDelta,
-                                        const double qMax)
+bool BraggNode::formReflectionFunctions()
 {
+    auto &braggReflections = braggReflections_->values();
+    auto &braggPartials = braggPartials_.value();
     const auto nReflections = braggReflections.size();
 
     Data1D braggTotal;
@@ -527,7 +520,7 @@ bool BraggNode::formReflectionFunctions(std::vector<BraggReflection> &braggRefle
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
     int bin;
-    auto types = cfg->atomTypePopulations();
+    auto types = targetConfiguration_->atomTypePopulations();
     dissolve::for_each_pair(ParallelPolicies::seq, types,
                             [&](int typeI, auto &popI, int typeJ, auto &popJ)
                             {
@@ -540,7 +533,7 @@ bool BraggNode::formReflectionFunctions(std::vector<BraggReflection> &braggRefle
                                 {
                                     // Get q value and intensity of reflection
                                     qCentre = braggReflections.at(n).q();
-                                    bin = qCentre / qDelta;
+                                    bin = qCentre / qDelta_.asDouble();
 
                                     partial.value(bin) += braggReflections.at(n).intensity(typeI, typeJ);
                                 }
@@ -556,12 +549,13 @@ bool BraggNode::formReflectionFunctions(std::vector<BraggReflection> &braggRefle
 }
 
 // Re-bin reflection data into supplied arrays
-bool BraggNode::reBinReflections(std::vector<BraggReflection> &braggReflections, Configuration *cfg,
-                                 Array2D<Data1D> &braggPartials)
+bool BraggNode::reBinReflections()
 {
+    auto &braggReflections = braggReflections_->values();
+    auto &braggPartials = braggPartials_.value();
     const auto nReflections = braggReflections.size();
 
-    const auto nTypes = cfg->atomTypePopulations().size();
+    const auto nTypes = targetConfiguration_->atomTypePopulations().size();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
     const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
@@ -585,7 +579,7 @@ bool BraggNode::reBinReflections(std::vector<BraggReflection> &braggReflections,
         ++nAdded[bin];
 
         // Loop over pairs of atom types, binning intensity contributions from this reflection
-        auto types = cfg->atomTypePopulations();
+        auto types = targetConfiguration_->atomTypePopulations();
         int typeI = 0;
         for (auto atd1 = types.begin(); atd1 != types.end(); typeI++, atd1++)
         {

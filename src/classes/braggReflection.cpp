@@ -14,7 +14,7 @@ std::vector<BraggReflection> &BraggReflectionVector::values() { return reflectio
 // Addition in place operator
 void BraggReflectionVector::operator+=(BraggReflectionVector other)
 {
-    for (int i = 0; i < values().size(); i++)
+    for (auto i = 0; i < values().size(); ++i)
         (*this)[i] += other[i];
 }
 
@@ -22,7 +22,7 @@ void BraggReflectionVector::operator+=(BraggReflectionVector other)
 BraggReflectionVector BraggReflectionVector::operator*(double factor)
 {
     BraggReflectionVector v(*this);
-    for (int i = 0; i < values().size(); i++)
+    for (auto i = 0; i < values().size(); ++i)
         v[i] *= factor;
 
     return v;
