@@ -101,7 +101,7 @@ bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
     updateCells();
 
     // Apply size factor scaling if required
-    applySizeFactor(generatorContext.potentialMap());
+    // applySizeFactor(generatorContext.potentialMap());
 
     return true;
 }
