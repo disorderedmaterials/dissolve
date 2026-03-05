@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include "math/vector3.h"
+#include "templates/combinable.h"
+
 namespace Kernel
 {
 // Calculation flags
@@ -89,4 +92,11 @@ class EnergyResult
     double total() const { return pairPotential.total() + geometry.total() + extended; };
     double totalUnbound() const { return pairPotential.total() + extended; }
 };
+
+// Create combinable Vector3 storage container
+static dissolve::CombinableContainer<std::vector<Vector3>> createCombinableVector3(std::vector<Vector3> &parentForces)
+{
+    return {parentForces, [&]() { return std::vector<Vector3>(parentForces.size()); }};
+}
+
 }; // namespace Kernel

@@ -20,7 +20,7 @@ ForceKernel::ForceKernel(const Box *box, const PotentialMap &potentialMap) : Geo
  */
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -34,8 +34,8 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
-                                   double srScale) const
+void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f,
+                                   double elecScale, double srScale) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -49,7 +49,7 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const
 {
     auto vij = box_->minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
@@ -63,7 +63,7 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f, double elecScale,
                                 double srScale) const
 {
     auto vij = box_->minimumVector(i.r(), j.r());
@@ -83,7 +83,7 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
 
 // Calculate forces between atoms in supplied cells
 void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const Cell *otherCell, bool applyMim,
-                                                ForceVector &f) const
+                                                std::vector<Vector3> &f) const
 {
     assert(centralCell && otherCell);
     auto &centralAtoms = centralCell->atoms();
@@ -125,14 +125,15 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
 void ForceKernel::extendedForces(const Atom &i, Vector3 &fVec) const { return; }
 
 // Calculate extended forces on supplied molecule
-void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { return; }
+void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) const { return; }
 
 /*
  * Totals
  */
 
 // Calculate total forces in the world
-void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<Kernel::CalculationFlags> flags) const
+void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
+                              Flags<Kernel::CalculationFlags> flags) const
 {
     assert(molecules_);
     assert(cellArray_);
@@ -140,8 +141,8 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<
     auto &molecules = molecules_->get();
     auto &cellArray = cellArray_->get();
 
-    auto combinableUnbound = createCombinableForces(fUnbound);
-    auto combinableBound = createCombinableForces(fBound);
+    auto combinableUnbound = Kernel::createCombinableVector3(fUnbound);
+    auto combinableBound = Kernel::createCombinableVector3(fBound);
 
     // Pair potential forces between different molecules
     if (flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential))

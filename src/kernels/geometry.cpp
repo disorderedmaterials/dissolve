@@ -25,7 +25,7 @@ double GeometryKernel::bondEnergy(const SpeciesBond &b, const Vector3 &ri, const
 
 // Calculate SpeciesBond forces
 void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                ForceVector &f) const
+                                std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
 
@@ -41,7 +41,7 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, int inde
 }
 
 // Calculate SpeciesBond forces
-void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, ForceVector &f) const
+void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
 
@@ -85,7 +85,7 @@ GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Ve
 
 // Calculate SpeciesAngle forces
 void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
-                                 int indexK, ForceVector &f) const
+                                 int indexK, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(j.r(), i.r());
     auto vecjk = box_->minimumVector(j.r(), k.r());
@@ -103,7 +103,7 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int i
 
 // Calculate SpeciesAngle forces
 void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
-                                 ForceVector &f) const
+                                 std::vector<Vector3> &f) const
 {
     auto angleParameters = calculateAngleForceParameters(ri - rj, rk - rj);
     const auto force = angle.force(angleParameters.theta);
@@ -122,7 +122,7 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vector3 &ri, c
 
 // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceI(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     auto &dcos_dxpj = torsionParameters.dcos_dxpj;
 
@@ -133,7 +133,7 @@ void GeometryKernel::addTorsionForceI(double du_dphi, int index, GeometryKernel:
 
 // Add torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceJ(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     f[index].add(du_dphi * (torsionParameters.dcos_dxpj.dp(-torsionParameters.dxpj_dij.columnAsVec3(0) -
                                                            torsionParameters.dxpj_dkj.columnAsVec3(0)) -
@@ -148,7 +148,7 @@ void GeometryKernel::addTorsionForceJ(double du_dphi, int index, GeometryKernel:
 
 // Add torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceK(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     f[index].add(du_dphi * (torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(0) -
                                                            torsionParameters.dxpk_dlk.columnAsVec3(0)) +
@@ -163,7 +163,7 @@ void GeometryKernel::addTorsionForceK(double du_dphi, int index, GeometryKernel:
 
 // Add torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceL(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     f[index].add(du_dphi * torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dlk.columnAsVec3(0)),
                  du_dphi * torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dlk.columnAsVec3(1)),
@@ -221,7 +221,7 @@ GeometryKernel::TorsionParameters GeometryKernel::calculateTorsionForceParameter
 
 // Calculate SpeciesTorsion forces
 void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                   const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
+                                   const Atom &k, int indexK, const Atom &l, int indexL, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
     auto vecjk = box_->minimumVector(k.r(), j.r());
@@ -240,7 +240,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i,
 
 // Calculate SpeciesTorsion forces
 void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
-                                   const Vector3 &rl, ForceVector &f) const
+                                   const Vector3 &rl, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
     auto vecjk = box_->minimumVector(rk, rj);
@@ -269,7 +269,7 @@ double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const Vector3 
 
 // Calculate SpeciesImproper forces
 void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                    const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
+                                    const Atom &k, int indexK, const Atom &l, int indexL, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
     auto vecjk = box_->minimumVector(k.r(), j.r());
@@ -287,7 +287,7 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom 
 
 // Calculate SpeciesImproper forces
 void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
-                                    const Vector3 &rl, ForceVector &f) const
+                                    const Vector3 &rl, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
     auto vecjk = box_->minimumVector(rk, rj);
@@ -394,7 +394,7 @@ Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Molecule &
 }
 
 // Calculate total forces within the specified molecule arising from geometry terms
-void GeometryKernel::totalGeometryForces(const Molecule &mol, ForceVector &f) const
+void GeometryKernel::totalGeometryForces(const Molecule &mol, std::vector<Vector3> &f) const
 {
     const auto offset = mol.globalAtomOffset();
 

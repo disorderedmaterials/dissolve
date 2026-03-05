@@ -49,7 +49,7 @@ void ExternalPotentialsForceKernel::extendedForces(const Atom &i, Vector3 &fVec)
 }
 
 // Calculate extended forces on supplied molecule
-void ExternalPotentialsForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const
+void ExternalPotentialsForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) const
 {
     auto offset = mol.globalAtomOffset();
     for (const auto &i : mol.atoms())

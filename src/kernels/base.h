@@ -23,9 +23,6 @@ class KernelBase
     KernelBase(const Box *box, const PotentialMap &potentialMap);
     ~KernelBase() = default;
 
-    // Alias for force storage vector
-    using ForceVector = std::vector<Vector3>;
-
     protected:
     // Potential map to use
     const PotentialMap potentialMap_;
