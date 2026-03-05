@@ -133,14 +133,14 @@ void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) c
  */
 
 // Calculate total forces in the world
-void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
+void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
                               Flags<Kernel::CalculationFlags> flags) const
 {
     auto &cellArray = configuration_->cells();
     auto &molecules = configuration_->molecules();
 
-    auto combinableUnbound = Kernel::createCombinableVector3(fUnbound);
-    auto combinableBound = Kernel::createCombinableVector3(fBound);
+    auto combinablePP = Kernel::createCombinableVector3(ppForceVector);
+    auto combinableGeometric = Kernel::createCombinableVector3(geometryForceVector);
 
     // Pair potential forces between different molecules
     if (flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential))
@@ -149,7 +149,7 @@ void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector
         auto unaryOp = [&](const int id)
         {
             auto *cellI = cellArray.cell(id);
-            auto &fLocal = combinableUnbound.local();
+            auto &fLocal = combinablePP.local();
 
             // Interatomic interactions between atoms in this cell, excluding those within the same molecule
             dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms(),
@@ -179,8 +179,8 @@ void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector
     // Other molecule forces
     auto moleculeForceOperator = [&](const auto &mol)
     {
-        auto &fLocalUnbound = combinableUnbound.local();
-        auto &fLocalBound = combinableBound.local();
+        auto &fLocalUnbound = combinablePP.local();
+        auto &fLocalBound = combinableGeometric.local();
 
         auto offset = mol->globalAtomOffset();
 
@@ -210,6 +210,6 @@ void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector
 
     dissolve::for_each(ParallelPolicies::par, molecules.begin(), molecules.end(), moleculeForceOperator);
 
-    combinableUnbound.finalize();
-    combinableBound.finalize();
+    combinablePP.finalize();
+    combinableGeometric.finalize();
 }

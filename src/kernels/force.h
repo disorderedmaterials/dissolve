@@ -59,7 +59,7 @@ class ForceKernel : public GeometryKernel
      * Totals
      */
     public:
-    // Calculate total forces in the world
-    void totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
+    // Calculate total forces
+    void totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
                      Flags<Kernel::CalculationFlags> flags = {}) const;
 };
