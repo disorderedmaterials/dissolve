@@ -7,7 +7,6 @@
 #include "modules/atomShake/atomShake.h"
 #include "modules/avgMol/avgMol.h"
 #include "modules/axisAngle/axisAngle.h"
-#include "modules/benchmark/benchmark.h"
 #include "modules/bragg/bragg.h"
 #include "modules/clustering/clustering.h"
 #include "modules/compare/compare.h"
@@ -51,8 +50,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<AvgMolModule>(ModuleTypes::AvgMol,
                                    "Calculate average atomic positions of a species around an oriented site", "Analysis");
     registerProducer<AxisAngleModule>(ModuleTypes::AxisAngle, "Calculate distance/angle map between site axes", "Analysis");
-    registerProducer<BenchmarkModule>(ModuleTypes::Benchmark, "Perform benchmarking on a variety of functions",
-                                      "Checks & Tests");
     registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
     registerProducer<ClusteringModule>(ModuleTypes::Clustering, "Analyse clustering between sites", "Analysis");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
