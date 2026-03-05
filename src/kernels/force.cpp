@@ -11,9 +11,10 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap) : GeometryKernel(cfg, potentialMap) {}
-
-ForceKernel::ForceKernel(const Box *box, const PotentialMap &potentialMap) : GeometryKernel(box, potentialMap) {}
+ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap)
+    : GeometryKernel(cfg->box(), potentialMap), configuration_(cfg)
+{
+}
 
 /*
  * Force Calculation
@@ -135,11 +136,8 @@ void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) c
 void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
                               Flags<Kernel::CalculationFlags> flags) const
 {
-    assert(molecules_);
-    assert(cellArray_);
-
-    auto &molecules = molecules_->get();
-    auto &cellArray = cellArray_->get();
+    auto &cellArray = configuration_->cells();
+    auto &molecules = configuration_->molecules();
 
     auto combinableUnbound = Kernel::createCombinableVector3(fUnbound);
     auto combinableBound = Kernel::createCombinableVector3(fBound);
@@ -165,7 +163,7 @@ void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector
                                     });
 
             // Interatomic interactions between atoms in this cell and its neighbours
-            auto &neighbours = cellArray_->get().neighbours(*cellI);
+            auto &neighbours = cellArray.neighbours(*cellI);
             for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
             {
                 if (it->cell.index() < cellI->index())

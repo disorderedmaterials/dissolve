@@ -12,7 +12,10 @@
 #include <iterator>
 #include <numeric>
 
-EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap) : GeometryKernel(cfg, potentialMap) {}
+EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap)
+    : GeometryKernel(cfg->box(), potentialMap), configuration_(cfg)
+{
+}
 
 /*
  * Base Routines
@@ -152,8 +155,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
 // Return PairPotential energy of Atom with world
 double EnergyKernel::pairPotentialEnergy(const Atom &i) const
 {
-    assert(cellArray_);
-    auto &cells = cellArray_->get();
+    auto &cells = configuration_->cells();
 
     // Get cell neighbours for atom i's cell
     auto &neighbours = cells.neighbours(*i.cell());
@@ -189,8 +191,7 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i) const
 Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeInter,
                                                                    bool includeIntra) const
 {
-    assert(cellArray_);
-    auto &cells = cellArray_->get();
+    auto &cells = configuration_->cells();
 
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
@@ -293,8 +294,7 @@ double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
 // Return total interatomic PairPotential energy of the world
 Kernel::PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool includeInter, bool includeIntra) const
 {
-    assert(cellArray_);
-    auto &cells = cellArray_->get();
+    auto &cells = configuration_->cells();
 
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cells.getCellNeighbourPairs();
@@ -313,8 +313,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::totalPairPotentialEnergy(bool inc
 // Return total interatomic PairPotential energy from summation of molecules
 Kernel::PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(bool includeInter, bool includeIntra) const
 {
-    assert(molecules_);
-    auto &mols = molecules_->get();
+    auto &mols = configuration_->molecules();
     Kernel::PairPotentialEnergyValue molecularEnergy;
     for (const auto &mol : mols)
         molecularEnergy += pairPotentialEnergy(*mol, includeInter, includeIntra);

@@ -11,15 +11,11 @@
 
 // Forward Declarations
 class Box;
-class CellArray;
-class Configuration;
-class Molecule;
 
 // Kernel Base
 class KernelBase
 {
     public:
-    KernelBase(const Configuration *cfg, const PotentialMap &potentialMap);
     KernelBase(const Box *box, const PotentialMap &potentialMap);
     ~KernelBase() = default;
 
@@ -30,8 +26,4 @@ class KernelBase
     double cutoffDistanceSquared_;
     // Periodic Box
     const Box *box_;
-    // Periodic box CellArray (optional)
-    OptionalReferenceWrapper<const CellArray> cellArray_;
-    // Target molecule array (if available)
-    OptionalReferenceWrapper<const std::vector<std::shared_ptr<Molecule>>> molecules_;
 };

@@ -19,7 +19,6 @@ class SpeciesTorsion;
 class GeometryKernel : public KernelBase
 {
     public:
-    GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap);
     GeometryKernel(const Box *box, const PotentialMap &potentialMap);
     ~GeometryKernel() = default;
 

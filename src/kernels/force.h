@@ -5,9 +5,7 @@
 
 #include "classes/cellArray.h"
 #include "kernels/geometry.h"
-#include "templates/combinable.h"
 #include "templates/flags.h"
-#include <optional>
 
 // Forward Declarations
 class Atom;
@@ -15,11 +13,6 @@ class Box;
 class Cell;
 class Configuration;
 class PotentialMap;
-class Species;
-class SpeciesAngle;
-class SpeciesBond;
-class SpeciesImproper;
-class SpeciesTorsion;
 
 // ForceKernel
 class ForceKernel : public GeometryKernel
@@ -28,10 +21,13 @@ class ForceKernel : public GeometryKernel
     friend class KernelProducer;
     friend class ExternalPotentialsForceKernel;
     ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap);
-    ForceKernel(const Box *box, const PotentialMap &potentialMap);
 
     public:
     ~ForceKernel() = default;
+
+    private:
+    // Target Configuration
+    const Configuration *configuration_{nullptr};
 
     /*
      * PairPotential Terms

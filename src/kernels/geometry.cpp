@@ -9,8 +9,6 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-GeometryKernel::GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap) : KernelBase(cfg, potentialMap) {}
-
 GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap) : KernelBase(box, potentialMap) {}
 
 /*

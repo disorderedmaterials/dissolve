@@ -10,6 +10,7 @@
 // Forward Declarations
 class Atom;
 class Cell;
+class Configuration;
 class Molecule;
 
 // Standard Energy Kernel, inheriting GeometryKernel
@@ -22,6 +23,10 @@ class EnergyKernel : public GeometryKernel
 
     public:
     ~EnergyKernel() = default;
+
+    private:
+    // Target Configuration
+    const Configuration *configuration_{nullptr};
 
     /*
      * Base Routines
