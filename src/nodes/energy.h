@@ -59,11 +59,6 @@ class EnergyNode : public Node
         EnergyStable = 0,
         EnergyUnstable = 1
     };
-    // Calculate energy components
-    static Kernel::EnergyResult
-    calculateEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel,
-                    Flags<Kernel::CalculationFlags> flags = {});
     // Calculate energy components with simple double-loops for testing
-    static Kernel::EnergyResult
-    calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel);
+    static Kernel::EnergyResult calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel);
 };

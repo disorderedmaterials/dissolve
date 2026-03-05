@@ -43,25 +43,26 @@ NodeConstants::ProcessResult EnergyNode::process()
     auto kernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
 
     Timer timer;
-    auto &&[ppEnergy, geometryEnergy] = calculateEnergy(targetConfiguration_, kernel);
+    auto energy = kernel->totalEnergy();
     timer.stop();
 
     message("Time to do energy was {}.\n", timer.totalTimeString());
     message("Total energy is {:15.9e} kJ/mol ({:15.9e} kJ/mol pair potential + {:15.9e} kJ/mol "
             "geometry ({:15.9e} bond + {:15.9e} angle + {:15.9e} torsion + {:15.9e} improper).\n",
-            ppEnergy.total() + geometryEnergy.total(), ppEnergy.total(), geometryEnergy.total(), geometryEnergy.bondEnergy,
-            geometryEnergy.angleEnergy, geometryEnergy.torsionEnergy, geometryEnergy.improperEnergy);
+            energy.pairPotential.total() + energy.geometry.total(), energy.pairPotential.total(), energy.geometry.total(),
+            energy.geometry.bondEnergy, energy.geometry.angleEnergy, energy.geometry.torsionEnergy,
+            energy.geometry.improperEnergy);
 
     // Update histories
-    totalEnergyHistory_.push(ppEnergy.total() + geometryEnergy.total(), podHistoryLength_);
-    totalPairPotentialHistory_.push(ppEnergy.total(), podHistoryLength_);
-    totalMoleculePPHistory_.push(ppEnergy.intraMolecular(), podHistoryLength_);
-    totalCohesiveHistory.push(ppEnergy.interMolecular(), podHistoryLength_);
-    totalGeometryHistory_.push(geometryEnergy.total(), podHistoryLength_);
-    bondHistory_.push(geometryEnergy.bondEnergy, podHistoryLength_);
-    angleHistory_.push(geometryEnergy.angleEnergy, podHistoryLength_);
-    torsionHistory_.push(geometryEnergy.torsionEnergy, podHistoryLength_);
-    improperHistory_.push(geometryEnergy.improperEnergy, podHistoryLength_);
+    totalEnergyHistory_.push(energy.pairPotential.total() + energy.geometry.total(), podHistoryLength_);
+    totalPairPotentialHistory_.push(energy.pairPotential.total(), podHistoryLength_);
+    totalMoleculePPHistory_.push(energy.pairPotential.intraMolecular, podHistoryLength_);
+    totalCohesiveHistory.push(energy.pairPotential.interMolecular, podHistoryLength_);
+    totalGeometryHistory_.push(energy.geometry.total(), podHistoryLength_);
+    bondHistory_.push(energy.geometry.bondEnergy, podHistoryLength_);
+    angleHistory_.push(energy.geometry.angleEnergy, podHistoryLength_);
+    torsionHistory_.push(energy.geometry.torsionEnergy, podHistoryLength_);
+    improperHistory_.push(energy.geometry.improperEnergy, podHistoryLength_);
 
     // Determine stability of energy
     // Check number of points already stored for the Configuration
@@ -91,67 +92,11 @@ NodeConstants::ProcessResult EnergyNode::process()
  * Functions
  */
 
-// Calculate energy components
-std::pair<PairPotentialEnergyValue, GeometryEnergyValue>
-EnergyNode::calculateEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel,
-                            PairPotentialEnergyType ppType, bool calculateGeometryEnergy)
-{
-    // Calculate pair potential energy
-    PairPotentialEnergyValue ppEnergy;
-    if (ppType != PairPotentialEnergyType::None)
-        ppEnergy = kernel->totalPairPotentialEnergy(ppType == PairPotentialEnergyType::Full);
-
-    const auto &molecules = cfg->molecules();
-    auto unaryOp = [&](const auto &mol) -> GeometryEnergyValue
-    {
-        GeometryEnergyValue localEnergies{.bondEnergy = 0.0, .angleEnergy = 0.0, .torsionEnergy = 0.0, .improperEnergy = 0.0};
-
-        // Loop over Bond
-        localEnergies.bondEnergy +=
-            std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &t)
-                            { return acc + kernel->bondEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
-
-        // Loop over Angle
-        localEnergies.angleEnergy += std::accumulate(
-            mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
-            [&mol, &kernel](auto const acc, const auto &t)
-            { return acc + kernel->angleEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
-
-        // Loop over Torsions
-        localEnergies.torsionEnergy +=
-            std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &t)
-                            {
-                                return acc + kernel->torsionEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
-                                                                   *mol->atom(t.indexK()), *mol->atom(t.indexL()));
-                            });
-
-        localEnergies.improperEnergy +=
-            std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &imp)
-                            {
-                                return acc + kernel->improperEnergy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
-                                                                    *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
-                            });
-
-        return localEnergies;
-    };
-
-    GeometryEnergyValue geometryEnergy;
-    if (calculateGeometryEnergy)
-        geometryEnergy = dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(),
-                                                    GeometryEnergyValue(), std::plus<>(), unaryOp);
-
-    return {ppEnergy, geometryEnergy};
-}
-
 // Calculate energy components with simple double-loops for testing
-std::pair<PairPotentialEnergyValue, GeometryEnergyValue>
-EnergyNode::calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
+Kernel::EnergyResult EnergyNode::calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel)
 {
-    PairPotentialEnergyValue ppEnergy;
-    GeometryEnergyValue geometryEnergy;
+    Kernel::PairPotentialEnergyValue ppEnergy;
+    Kernel::GeometryEnergyValue geometryEnergy;
 
     const auto *box = cfg->box();
     const auto &potentialMap = kernel->potentialMap();
@@ -180,9 +125,9 @@ EnergyNode::calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<
                 // Get intramolecular scaling of atom pair
                 auto &&[scalingType, elec14, vdw14] = i->scaling(j);
                 if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                    ppEnergy.addIntraMolecular(potentialMap.analyticEnergy(*i, *j, r));
+                    ppEnergy.intraMolecular += potentialMap.analyticEnergy(*i, *j, r);
                 else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                    ppEnergy.addIntraMolecular(potentialMap.analyticEnergy(*i, *j, r, elec14, vdw14));
+                    ppEnergy.intraMolecular += potentialMap.analyticEnergy(*i, *j, r, elec14, vdw14);
             }
         }
 
@@ -205,7 +150,7 @@ EnergyNode::calculateTestEnergy(const Configuration *cfg, const std::unique_ptr<
                     if (r > cutoff)
                         continue;
 
-                    ppEnergy.addInterMolecular(potentialMap.analyticEnergy(*i, *j, r));
+                    ppEnergy.interMolecular += potentialMap.analyticEnergy(*i, *j, r);
                 }
             }
         }

@@ -872,34 +872,33 @@ const Species &tetrahedralArgonSpecies()
 }
 
 // Check consistency between production, molecular, and test forces for the supplied configuration, returning production values
-std::pair<PairPotentialEnergyValue, GeometryEnergyValue>
-checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
+Kernel::EnergyResult checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel,
+                                            double testThreshold = 1.0e-6)
 {
     // Calculate production energies (fully optimised)
-    auto &&[productionPP, productionGeometry] = EnergyNode::calculateEnergy(cfg, kernel);
+    auto productionEnergy = kernel->totalEnergy();
 
     // Calculate baseline teset energies (simple double-loop, PBC always)
-    auto &&[testPP, testGeometry] = EnergyNode::calculateTestEnergy(cfg, kernel);
+    auto testEnergy = EnergyNode::calculateTestEnergy(cfg, kernel);
 
     // Calculate molecule-centric energy
-    auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(false).total();
-    auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy(true).total();
+    auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy();
 
     // Compare basic energies with production value
 
-    EXPECT_NEAR(testPP.interMolecular(), productionPP.interMolecular(), testThreshold);
-    EXPECT_NEAR(testPP.intraMolecular(), productionPP.intraMolecular(), testThreshold);
-    EXPECT_NEAR(testGeometry.total(), productionGeometry.total(), testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.intraMolecular, productionEnergy.pairPotential.intraMolecular, testThreshold);
+    EXPECT_NEAR(testEnergy.geometry.total(), productionEnergy.geometry.total(), testThreshold);
 
     // Compare basic energies with molecule-based values
-    EXPECT_NEAR(testPP.total(), molecularPPEnergyFull, testThreshold);
-    EXPECT_NEAR(testPP.interMolecular(), molecularPPEnergyInter, testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.total(), molecularPPEnergy.total(), testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, molecularPPEnergy.interMolecular, testThreshold);
 
     // "Compare molecule-based energies with production values
-    EXPECT_NEAR(molecularPPEnergyFull, productionPP.total(), testThreshold);
-    EXPECT_NEAR(molecularPPEnergyInter, productionPP.interMolecular(), testThreshold);
+    EXPECT_NEAR(molecularPPEnergy.total(), productionEnergy.pairPotential.total(), testThreshold);
+    EXPECT_NEAR(molecularPPEnergy.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
 
-    return {productionPP, productionGeometry};
+    return productionEnergy;
 }
 
 } // namespace UnitTest

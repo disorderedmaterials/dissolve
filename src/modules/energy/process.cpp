@@ -39,55 +39,53 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
      * This is a serial routine (subroutines called from within are parallel).
      */
 
+    // Create an energy kernel
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
+
     // Calculate pair potential energy
-    Timer interTimer;
-    auto ppEnergy = pairPotentialEnergy(targetConfiguration_, dissolve.potentialMap());
-    interTimer.stop();
+    Timer timer;
+    auto energy = kernel->totalEnergy();
+    timer.stop();
 
-    // Calculate intra-molecular (bound) energy
-    Timer intraTimer;
-    auto geomEnergy = geometryEnergy(targetConfiguration_, dissolve.potentialMap());
-    intraTimer.stop();
-
-    Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
-                     intraTimer.totalTimeString());
+    Messenger::print("Time to do full energy energy was {}.\n", timer.totalTimeString());
     Messenger::print("Total Energy (World) is {:15.9e} kJ/mol ({:15.9e} kJ/mol pair potential + {:15.9e} kJ/mol "
                      "intramolecular).\n",
-                     ppEnergy.total() + geomEnergy.total(), ppEnergy.total(), geomEnergy.total());
+                     energy.total(), energy.pairPotential.total(), energy.geometry.total());
     Messenger::print("Intramolecular contributions are - bonds = {:15.9e} kJ/mol, angles = {:15.9e} kJ/mol, "
                      "torsions = {:15.9e} kJ/mol, impropers = {:15.9e} kJ/mol.\n",
-                     geomEnergy.bondEnergy, geomEnergy.angleEnergy, geomEnergy.torsionEnergy, geomEnergy.improperEnergy);
+                     energy.geometry.bondEnergy, energy.geometry.angleEnergy, energy.geometry.torsionEnergy,
+                     energy.geometry.improperEnergy);
 
     // Store current energies in the Configuration in case somebody else needs them
     auto &interData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//PairPotential", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
-    interData.addPoint(dissolve.iteration(), ppEnergy.total());
+    interData.addPoint(dissolve.iteration(), energy.pairPotential.total());
     auto &intraData = dissolve.processingModuleData().realise<Data1D>(std::format("{}//Bound", targetConfiguration_->name()),
                                                                       name(), GenericItem::InRestartFileFlag);
-    intraData.addPoint(dissolve.iteration(), geomEnergy.total());
+    intraData.addPoint(dissolve.iteration(), energy.geometry.total());
     auto &bondData = dissolve.processingModuleData().realise<Data1D>(std::format("{}//Bond", targetConfiguration_->name()),
                                                                      name(), GenericItem::InRestartFileFlag);
-    bondData.addPoint(dissolve.iteration(), geomEnergy.bondEnergy);
+    bondData.addPoint(dissolve.iteration(), energy.geometry.bondEnergy);
     auto &angleData = dissolve.processingModuleData().realise<Data1D>(std::format("{}//Angle", targetConfiguration_->name()),
                                                                       name(), GenericItem::InRestartFileFlag);
-    angleData.addPoint(dissolve.iteration(), geomEnergy.angleEnergy);
+    angleData.addPoint(dissolve.iteration(), energy.geometry.angleEnergy);
     auto &torsionData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Torsion", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
-    torsionData.addPoint(dissolve.iteration(), geomEnergy.torsionEnergy);
+    torsionData.addPoint(dissolve.iteration(), energy.geometry.torsionEnergy);
     auto &improperData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Improper", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
-    improperData.addPoint(dissolve.iteration(), geomEnergy.improperEnergy);
+    improperData.addPoint(dissolve.iteration(), energy.geometry.improperEnergy);
     auto &cohesiveData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Cohesive", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
-    cohesiveData.addPoint(dissolve.iteration(), ppEnergy.interMolecular);
+    cohesiveData.addPoint(dissolve.iteration(), energy.pairPotential.interMolecular);
     auto &intraPPData = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//IntraPP", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
-    intraPPData.addPoint(dissolve.iteration(), ppEnergy.intraMolecular);
+    intraPPData.addPoint(dissolve.iteration(), energy.pairPotential.intraMolecular);
 
     // Append to arrays of total energies
     auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(
         std::format("{}//Total", targetConfiguration_->name()), name(), GenericItem::InRestartFileFlag);
-    totalEnergyArray.addPoint(dissolve.iteration(), ppEnergy.total() + geomEnergy.total());
+    totalEnergyArray.addPoint(dissolve.iteration(), energy.pairPotential.total() + energy.geometry.total());
 
     // Determine stability of energy
     // Check number of points already stored for the Configuration
@@ -130,9 +128,9 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
         else
             parser.appendOutput(filename);
         parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
-                          dissolve.iteration(), ppEnergy.total() + geomEnergy.total(), ppEnergy.total(),
-                          ppEnergy.interMolecular, geomEnergy.bondEnergy, geomEnergy.angleEnergy, geomEnergy.torsionEnergy,
-                          geomEnergy.improperEnergy, grad, stable);
+                          dissolve.iteration(), energy.total(), energy.pairPotential.total(),
+                          energy.pairPotential.interMolecular, energy.geometry.bondEnergy, energy.geometry.angleEnergy,
+                          energy.geometry.torsionEnergy, energy.geometry.improperEnergy, grad, stable);
         parser.closeFiles();
     }
 
@@ -253,23 +251,23 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
         // Calculate total interatomic energy from molecules
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
-        auto [molecularPPEnergy, moleculesGeomEnergy] = kernel->totalEnergyMolecules();
+        auto [molecularPPEnergyInter, molecularPPEnergyIntra] = kernel->totalMoleculePairPotentialEnergy();
         moleculeTimer.stop();
 
-        Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", ppEnergy.total());
-        Messenger::print("Production intramolecular energy is {:15.9e} kJ/mol\n", geomEnergy.total());
-        Messenger::print("Total production energy is {:15.9e} kJ/mol\n", ppEnergy.total() + geomEnergy.total());
+        Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", energy.pairPotential.total());
+        Messenger::print("Production intramolecular energy is {:15.9e} kJ/mol\n", energy.geometry.total());
+        Messenger::print("Total production energy is {:15.9e} kJ/mol\n",
+                         energy.pairPotential.total() + energy.geometry.total());
         Messenger::print("Molecular pairpotential energy (excluding intramolecular terms) is {:15.9e} kJ/mol\n",
                          molecularPPEnergyInter);
-        Messenger::print("Molecular pairpotential energy (full) is {:15.9e} kJ/mol\n", molecularPPEnergyFull);
-        Messenger::print("Time to do interatomic energy was {}.\n", interTimer.totalTimeString());
-        Messenger::print("Time to do intramolecular energy was {}.\n", intraTimer.totalTimeString());
+        Messenger::print("Molecular pairpotential energy (full) is {:15.9e} kJ/mol\n",
+                         molecularPPEnergyInter + molecularPPEnergyIntra);
         Messenger::print("Time to do intermolecular energy was {}.\n", moleculeTimer.totalTimeString());
 
         // Compare production vs 'correct' values
-        auto interDelta = correctInterEnergy - ppEnergy.total();
-        auto intraDelta = correctIntraEnergy - geomEnergy.total();
-        auto moleculeDeltaA = correctInterEnergy - molecularPPEnergyFull;
+        auto interDelta = correctInterEnergy - energy.pairPotential.total();
+        auto intraDelta = correctIntraEnergy - energy.geometry.total();
+        auto moleculeDeltaA = correctInterEnergy - (molecularPPEnergyInter + molecularPPEnergyIntra);
         auto moleculeDeltaB = correctInterEnergy - (molecularPPEnergyInter + correctSelfEnergy);
         Messenger::print("Comparing 'correct' with production values...\n");
         Messenger::print("Interatomic energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n", interDelta,

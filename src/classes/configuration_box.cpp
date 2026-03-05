@@ -141,7 +141,10 @@ void Configuration::applySizeFactor(const EnergyKernel *kernel)
             appliedSizeFactor_ = std::nullopt;
             break;
         }
-        else if (kernel->totalEnergy({EnergyKernel::ExcludeExtended, EnergyKernel::ExcludeGeometry, EnergyKernel::ExcludeIntraMolecularPairPotential}).total() <= 0.0)
+        else if (kernel
+                     ->totalEnergy(
+                         {Kernel::ExcludeExtended, Kernel::ExcludeGeometric, Kernel::ExcludeIntraMolecularPairPotential})
+                     .total() <= 0.0)
         {
             requestedSF *= reductionFactor;
             if (requestedSF < 1.0)

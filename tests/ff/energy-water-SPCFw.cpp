@@ -32,15 +32,15 @@ TEST(WaterSPCFwEnergyTest, Full)
     auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto &&[productionPP, productionGeometry] = checkEnergyConsistency(cfg, kernel);
+    auto productionEnergy = checkEnergyConsistency(cfg, kernel);
 
     // Interatomic energy: 1716.032 LJ + 54.1342 correction + -29163.384451743802 Coulomb
-    EXPECT_NEAR(1716.032 + 54.1342 - 29163.384451743802, productionPP.interMolecular(), 4.3e-2);
+    EXPECT_NEAR(1716.032 + 54.1342 - 29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
 
     // Intramolecular energy: 4.664830886619E+03 bond + 2.528107096550E+03 angle
-    EXPECT_NEAR(4.664830886619E+03 + 2.528107096550E+03, productionGeometry.total(), 3.0e-2);
-    EXPECT_NEAR(4.664830886619E+03, productionGeometry.bondEnergy, 3.0e-2);
-    EXPECT_NEAR(2.528107096550E+03, productionGeometry.angleEnergy, 7.0e-5);
+    EXPECT_NEAR(4.664830886619E+03 + 2.528107096550E+03, productionEnergy.geometry.total(), 3.0e-2);
+    EXPECT_NEAR(4.664830886619E+03, productionEnergy.geometry.bondEnergy, 3.0e-2);
+    EXPECT_NEAR(2.528107096550E+03, productionEnergy.geometry.angleEnergy, 7.0e-5);
 }
 
 TEST(WaterSPCFwEnergyTest, ShortRangeOnly)
@@ -75,10 +75,10 @@ TEST(WaterSPCFwEnergyTest, ShortRangeOnly)
     auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto &&[productionPP, productionGeometry] = checkEnergyConsistency(cfg, kernel);
+    auto productionEnergy = checkEnergyConsistency(cfg, kernel);
 
     // Interatomic energy: 1716.032 LJ + 54.1342 correction
-    EXPECT_NEAR(1716.032 + 54.1342, productionPP.interMolecular(), 4.3e-2);
+    EXPECT_NEAR(1716.032 + 54.1342, productionEnergy.pairPotential.interMolecular, 4.3e-2);
 }
 
 TEST(WaterSPCFwEnergyTest, ElectrostaticsOnly)
@@ -110,10 +110,10 @@ TEST(WaterSPCFwEnergyTest, ElectrostaticsOnly)
     auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto &&[productionPP, productionGeometry] = checkEnergyConsistency(cfg, kernel);
+    auto productionEnergy = checkEnergyConsistency(cfg, kernel);
 
     // Interatomic energy: -29163.384451743802 Coulomb
-    EXPECT_NEAR(-29163.384451743802, productionPP.interMolecular(), 4.3e-2);
+    EXPECT_NEAR(-29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
 }
 
 } // namespace UnitTest

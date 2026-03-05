@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class Atom;
+class Configuration;
 class Molecule;
 class SpeciesAngle;
 class SpeciesBond;
@@ -109,10 +110,12 @@ class GeometryKernel : public KernelBase
      * Total Energy
      */
     public:
+    // Return geometry energy for the specified configuration
+    Kernel::GeometryEnergyValue totalGeometryEnergy(const Configuration *cfg) const;
     // Return geometry energy for the specified atom
-    Kernel::GeometryEnergyValue totalGeometryEnergy(const Atom &i) const;
+    Kernel::GeometryEnergyValue geometryEnergy(const Atom &i) const;
     // Return geometry energy for the specified molecule
-    Kernel::GeometryEnergyValue totalGeometryEnergy(const Molecule &mol) const;
+    Kernel::GeometryEnergyValue geometryEnergy(const Molecule &mol) const;
 
     /*
      * Total Force

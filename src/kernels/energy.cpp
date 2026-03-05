@@ -281,6 +281,15 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
  * Extended Terms
  */
 
+// Return total extended energy
+double EnergyKernel::totalExtendedEnergy() const
+{
+    const auto &molecules = configuration_->molecules();
+
+    return dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), 0.0, std::plus(),
+                                      [&](const auto &mol) { return extendedEnergy(*mol); });
+}
+
 // Return energy of supplied atom from ad hoc extended terms
 double EnergyKernel::extendedEnergy(const Atom &i) const { return 0.0; }
 
@@ -323,18 +332,27 @@ Kernel::PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(
     return {molecularEnergy.interMolecular * 0.5, molecularEnergy.intraMolecular};
 }
 
-// Return total energy of supplied atom with the world
-Kernel::EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
+// Return total energy of supplied atom
+Kernel::EnergyResult EnergyKernel::totalEnergy(Flags<Kernel::CalculationFlags> flags) const
 {
-    return {{pairPotentialEnergy(i), 0.0}, totalGeometryEnergy(i), extendedEnergy(i)};
+    return {totalPairPotentialEnergy(flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential),
+                                     flags.isNotSet(Kernel::ExcludeIntraMolecularPairPotential)),
+            flags.isSet(Kernel::ExcludeGeometric) ? 0.0 : totalGeometryEnergy(configuration_),
+            flags.isSet(Kernel::ExcludeExtended) ? 0.0 : totalExtendedEnergy()};
 }
 
-// Return total energy of supplied molecule with the world
+// Return total energy of supplied atom
+Kernel::EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
+{
+    return {{pairPotentialEnergy(i), 0.0}, geometryEnergy(i), extendedEnergy(i)};
+}
+
+// Return total energy of supplied molecule
 Kernel::EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<Kernel::CalculationFlags> flags) const
 {
     return {pairPotentialEnergy(mol, flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential),
                                 flags.isNotSet(Kernel::ExcludeIntraMolecularPairPotential)),
-            flags.isSet(Kernel::ExcludeGeometric) ? Kernel::GeometryEnergyValue() : totalGeometryEnergy(mol),
+            flags.isSet(Kernel::ExcludeGeometric) ? Kernel::GeometryEnergyValue() : geometryEnergy(mol),
             flags.isSet(Kernel::ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
 
