@@ -253,8 +253,8 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
         // Calculate total interatomic energy from molecules
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
-        auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(false).total();
-        auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy(true).total();
+        auto molecularPPEnergyInter = kernel->totalMoleculePairPotentialEnergy(true, false).total();
+        auto molecularPPEnergyFull = kernel->totalMoleculePairPotentialEnergy().total();
         moleculeTimer.stop();
 
         Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", ppEnergy.total());

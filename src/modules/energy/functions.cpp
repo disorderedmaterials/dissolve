@@ -17,7 +17,7 @@ Kernel::PairPotentialEnergyValue EnergyModule::pairPotentialEnergy(const Configu
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
     // Calculate total energy
-    auto ppEnergy = kernel->totalPairPotentialEnergy(true);
+    auto ppEnergy = kernel->totalPairPotentialEnergy();
 
     Messenger::printVerbose("Interatomic energy is {:15.9e}\n", ppEnergy.total());
 
@@ -27,18 +27,11 @@ Kernel::PairPotentialEnergyValue EnergyModule::pairPotentialEnergy(const Configu
 // Return total intermolecular energy of Configuration
 double EnergyModule::interMolecularEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
-    /*
-     * Calculates the total intermolecular energy of the system, i.e. the energy contributions from PairPotential
-     * interactions between individual Atoms of different Molecules, thus neglecting intramolecular terms
-     *
-     * This is a parallel routine, with processes operating as process groups.
-     */
-
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
-    // Grab the Cell array and calculate total energy
-    auto ppEnergy = kernel->totalPairPotentialEnergy(false).total();
+    // Grab the Cell array and calculate total pair potential energy between molecule, excluding intramolecular contributions
+    auto ppEnergy = kernel->totalPairPotentialEnergy(true, false).total();
 
     Messenger::printVerbose("Intermolecular energy is {:15.9e}\n", ppEnergy);
 

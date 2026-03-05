@@ -28,13 +28,13 @@ void ForcesModule::totalForces(Configuration *cfg, const PotentialMap &potential
     if (calculationType == ForceCalculationType::Full)
         kernel->totalForces(fUnbound, fBound);
     else if (calculationType == ForceCalculationType::PairPotentialOnly)
-        kernel->totalForces(fUnbound, fBound, {ForceKernel::ExcludeGeometry, ForceKernel::ExcludeExtended});
+        kernel->totalForces(fUnbound, fBound, {Kernel::ExcludeGeometric, Kernel::ExcludeExtended});
     else if (calculationType == ForceCalculationType::IntraMolecularFull)
-        kernel->totalForces(fUnbound, fBound, {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeExtended});
+        kernel->totalForces(fUnbound, fBound, {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
     else if (calculationType == ForceCalculationType::IntraMolecularGeometry)
-        kernel->totalForces(fUnbound, fBound,
-                            {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential,
-                             ForceKernel::ExcludeExtended});
+        kernel->totalForces(
+            fUnbound, fBound,
+            {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeIntraMolecularPairPotential, Kernel::ExcludeExtended});
 
     timer.stop();
     Messenger::printVerbose("Time to do forces was {}.\n", timer.totalTimeString());

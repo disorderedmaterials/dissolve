@@ -69,16 +69,6 @@ class ForceKernel : public GeometryKernel
      * Totals
      */
     public:
-    // Force calculation flags
-    enum ForceCalculationFlags
-    {
-        ExcludeInterMolecularPairPotential,
-        ExcludeIntraMolecularPairPotential,
-        ExcludeGeometry,
-        ExcludeExtended
-    };
-
-    public:
     // Calculate total forces in the world
-    void totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<ForceCalculationFlags> flags = {}) const;
+    void totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<Kernel::CalculationFlags> flags = {}) const;
 };

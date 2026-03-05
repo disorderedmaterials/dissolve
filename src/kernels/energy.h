@@ -37,14 +37,15 @@ class EnergyKernel : public GeometryKernel
      */
     private:
     // Return PairPotential energy of atoms in the supplied cell
-    Kernel::PairPotentialEnergyValue cellEnergy(const Cell &cell, bool includeIntraMolecular) const;
+    Kernel::PairPotentialEnergyValue cellEnergy(const Cell &cell, bool includeInter = true, bool includeIntra = true) const;
     // Return PairPotential energy between two cells
     Kernel::PairPotentialEnergyValue cellToCellEnergy(const Cell &cell, const Cell &otherCell, bool applyMim,
-                                                      bool includeIntraMolecular) const;
+                                                      bool includeInter = true, bool includeIntra = true) const;
     // Return PairPotential energy of atom with world
     double pairPotentialEnergy(const Atom &i) const;
     // Return PairPotential energy of Molecule with world
-    Kernel::PairPotentialEnergyValue pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular) const;
+    Kernel::PairPotentialEnergyValue pairPotentialEnergy(const Molecule &mol, bool includeInter = true,
+                                                         bool includeIntra = true) const;
 
     /*
      * Extended Terms
@@ -59,24 +60,14 @@ class EnergyKernel : public GeometryKernel
      * Totals
      */
     public:
-    // Energy calculation flags
-    enum EnergyCalculationFlags
-    {
-        ExcludePairPotential,
-        ExcludeGeometry,
-        ExcludeExtended,
-        ExcludeIntraMolecularPairPotential
-    };
-
-    public:
     // Return total interatomic PairPotential energy of the world
-    Kernel::PairPotentialEnergyValue totalPairPotentialEnergy(bool includeIntraMolecular) const;
+    Kernel::PairPotentialEnergyValue totalPairPotentialEnergy(bool includeInter = true, bool includeIntra = true) const;
     // Return total interatomic PairPotential energy from summation of molecules
-    Kernel::PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const;
+    Kernel::PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeInter = true, bool includeIntra = true) const;
     // Return total energy of supplied atom with the world
     Kernel::EnergyResult totalEnergy(const Atom &i) const;
     // Return total energy of supplied molecule with the world
-    Kernel::EnergyResult totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags = {}) const;
+    Kernel::EnergyResult totalEnergy(const Molecule &mol, Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return potential map
     const PotentialMap &potentialMap() const;
 };

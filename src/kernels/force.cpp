@@ -132,7 +132,7 @@ void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { re
  */
 
 // Calculate total forces in the world
-void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<ForceCalculationFlags> flags) const
+void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<Kernel::CalculationFlags> flags) const
 {
     assert(molecules_);
     assert(cellArray_);
@@ -144,7 +144,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<
     auto combinableBound = createCombinableForces(fBound);
 
     // Pair potential forces between different molecules
-    if (!flags.isSet(ExcludeInterMolecularPairPotential))
+    if (flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential))
     {
         // Force operator
         auto unaryOp = [&](const int id)
@@ -178,41 +178,38 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<
     }
 
     // Other molecule forces
-    if (!(flags.isSet(ExcludeGeometry) && flags.isSet(ExcludeIntraMolecularPairPotential) && flags.isSet(ExcludeExtended)))
+    auto moleculeForceOperator = [&](const auto &mol)
     {
-        auto moleculeForceOperator = [&](const auto &mol)
-        {
-            auto &fLocalUnbound = combinableUnbound.local();
-            auto &fLocalBound = combinableBound.local();
+        auto &fLocalUnbound = combinableUnbound.local();
+        auto &fLocalBound = combinableBound.local();
 
-            auto offset = mol->globalAtomOffset();
+        auto offset = mol->globalAtomOffset();
 
-            // Geometric terms
-            if (!flags.isSet(ExcludeGeometry))
-                totalGeometryForces(*mol.get(), fLocalBound);
+        // Geometric terms
+        if (flags.isNotSet(Kernel::ExcludeGeometric))
+            totalGeometryForces(*mol.get(), fLocalBound);
 
-            // Pair potential interactions between atoms within the molecule
-            if (!flags.isSet(ExcludeIntraMolecularPairPotential))
-                dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms(),
-                                        [&](int indexI, const auto &i, int indexJ, const auto &j)
-                                        {
-                                            if (indexI == indexJ)
-                                                return;
-                                            auto &&[scalingType, elec14, vdw14] = i->scaling(j);
-                                            if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                                                forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound);
-                                            else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                                                forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound, elec14,
-                                                              vdw14);
-                                        });
+        // Pair potential interactions between atoms within the molecule
+        if (flags.isNotSet(Kernel::ExcludeIntraMolecularPairPotential))
+            dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms(),
+                                    [&](int indexI, const auto &i, int indexJ, const auto &j)
+                                    {
+                                        if (indexI == indexJ)
+                                            return;
+                                        auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                                        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                            forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound);
+                                        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                            forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound, elec14,
+                                                          vdw14);
+                                    });
 
-            // Extended forces
-            if (!flags.isSet(ExcludeExtended))
-                extendedForces(*mol.get(), fLocalUnbound);
-        };
+        // Extended forces
+        if (flags.isNotSet(Kernel::ExcludeExtended))
+            extendedForces(*mol.get(), fLocalUnbound);
+    };
 
-        dissolve::for_each(ParallelPolicies::par, molecules.begin(), molecules.end(), moleculeForceOperator);
-    }
+    dissolve::for_each(ParallelPolicies::par, molecules.begin(), molecules.end(), moleculeForceOperator);
 
     combinableUnbound.finalize();
     combinableBound.finalize();

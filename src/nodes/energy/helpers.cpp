@@ -19,7 +19,7 @@ Kernel::PairPotentialEnergyValue EnergyNode::pairPotentialEnergy(const Configura
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
     // Calculate total energy
-    auto ppEnergy = kernel->totalPairPotentialEnergy(true);
+    auto ppEnergy = kernel->totalPairPotentialEnergy();
 
     message("Interatomic energy is {:15.9e}\n", ppEnergy.total());
 
@@ -65,7 +65,7 @@ double EnergyNode::interMolecularEnergy(const Configuration *cfg, const Potentia
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
     // Calculate total energy
-    auto ppEnergy = kernel->totalPairPotentialEnergy(false).total();
+    auto ppEnergy = kernel->totalPairPotentialEnergy(true, false).total();
 
     message("Intermolecular energy is {:15.9e}\n", ppEnergy);
 

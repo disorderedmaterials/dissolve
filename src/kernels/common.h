@@ -5,6 +5,15 @@
 
 namespace Kernel
 {
+// Calculation flags
+enum CalculationFlags
+{
+    ExcludeInterMolecularPairPotential,
+    ExcludeIntraMolecularPairPotential,
+    ExcludeGeometric,
+    ExcludeExtended
+};
+
 // Geometry Energy Value
 class GeometryEnergyValue
 {
