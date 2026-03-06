@@ -18,9 +18,8 @@ enum CalculationFlags
 };
 
 // Geometry Energy Value
-class GeometryEnergyValue
+struct GeometryEnergyValue
 {
-    public:
     GeometryEnergyValue(double bond = 0.0, double angle = 0.0, double torsion = 0.0, double improper = 0.0)
         : bondEnergy(bond), angleEnergy(angle), torsionEnergy(torsion), improperEnergy(improper)
     {
@@ -37,14 +36,13 @@ class GeometryEnergyValue
         return {bondEnergy + other.bondEnergy, angleEnergy + other.angleEnergy, torsionEnergy + other.torsionEnergy,
                 improperEnergy + other.improperEnergy};
     }
-    // Return total
+
     double total() const { return bondEnergy + angleEnergy + torsionEnergy + improperEnergy; }
 };
 
 // PairPotential Energy Value
-class PairPotentialEnergyValue
+struct PairPotentialEnergyValue
 {
-    public:
     PairPotentialEnergyValue(double inter = 0.0, double intra = 0.0) : interMolecular(inter), intraMolecular(intra) {}
 
     // Energy values
@@ -70,25 +68,22 @@ class PairPotentialEnergyValue
         intraMolecular *= scale;
         return *this;
     }
-    // Return total
+
     double total() const { return interMolecular + intraMolecular; }
 };
 
 // Energy Result
-class EnergyResult
+struct EnergyResult
 {
-    public:
     EnergyResult(PairPotentialEnergyValue pp = {}, GeometryEnergyValue geom = {}, double ext = 0.0)
         : pairPotential(pp), geometry(geom), extended(ext)
     {
     }
 
-    public:
     PairPotentialEnergyValue pairPotential;
     GeometryEnergyValue geometry;
     double extended;
 
-    public:
     double total() const { return pairPotential.total() + geometry.total() + extended; };
     double totalUnbound() const { return pairPotential.total() + extended; }
 };
