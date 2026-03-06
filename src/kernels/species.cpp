@@ -86,11 +86,11 @@ void SpeciesKernel::pairPotentialForces(const Species *sp, std::vector<Vector3> 
 
         // Determine final forces
         auto vecij = box_->minimumVector(i.r(), j.r());
-        auto magjisq = vecij.magnitudeSq();
-        if (magjisq > cutoffDistanceSquared_)
+        auto magSq = vecij.magnitudeSq();
+        if (magSq > cutoffDistanceSquared_)
             return;
 
-        auto r = sqrt(magjisq);
+        auto r = sqrt(magSq);
         vecij /= r;
 
         if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
@@ -126,11 +126,11 @@ void SpeciesKernel::pairPotentialForces(const Species *sp, std::vector<Vector3> 
 
         // Determine final forces
         auto vecij = box_->minimumVector(r[indexI], r[indexJ]);
-        auto magjisq = vecij.magnitudeSq();
-        if (magjisq > cutoffDistanceSquared_)
+        auto magSq = vecij.magnitudeSq();
+        if (magSq > cutoffDistanceSquared_)
             return;
 
-        auto r = sqrt(magjisq);
+        auto r = sqrt(magSq);
         vecij /= r;
 
         if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
