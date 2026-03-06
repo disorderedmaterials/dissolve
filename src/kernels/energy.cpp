@@ -358,3 +358,96 @@ Kernel::EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<Kernel
 
 // Return potential map
 const PotentialMap &EnergyKernel::potentialMap() const { return potentialMap_; }
+
+// Calculate energy components with simple double-loops for testing
+Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
+{
+    Kernel::PairPotentialEnergyValue ppEnergy;
+    Kernel::GeometryEnergyValue geometryEnergy;
+
+    const auto cutoff = PairPotential::range();
+
+    // Calculate interatomic energy in a loop over defined Molecules
+    const auto molecules = configuration_->molecules();
+    for (auto n = 0; n < molecules.size(); ++n)
+    {
+        auto molN = molecules[n];
+
+        // Molecule self-energy
+        for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
+        {
+            auto i = molN->atom(ii);
+
+            for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
+            {
+                auto j = molN->atom(jj);
+
+                // Get interatomic distance
+                auto r = box_->minimumDistance(i->r(), j->r());
+                if (r > cutoff)
+                    continue;
+
+                // Get intramolecular scaling of atom pair
+                auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                    ppEnergy.intraMolecular += potentialMap_.analyticEnergy(*i, *j, r);
+                else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                    ppEnergy.intraMolecular += potentialMap_.analyticEnergy(*i, *j, r, elec14, vdw14);
+            }
+        }
+
+        // Molecule-molecule energy
+        for (auto m = n + 1; m < molecules.size(); ++m)
+        {
+            auto molM = molecules[m];
+
+            // Double loop over atoms
+            for (auto ii = 0; ii < molN->nAtoms(); ++ii)
+            {
+                auto i = molN->atom(ii);
+
+                for (auto jj = 0; jj < molM->nAtoms(); ++jj)
+                {
+                    auto j = molM->atom(jj);
+
+                    // Get interatomic distance and check cutoff
+                    auto r = box_->minimumDistance(i->r(), j->r());
+                    if (r > cutoff)
+                        continue;
+
+                    ppEnergy.interMolecular += potentialMap_.analyticEnergy(*i, *j, r);
+                }
+            }
+        }
+
+        // Bond energy
+        for (const auto &bond : molN->species()->bonds())
+            geometryEnergy.bondEnergy +=
+                bond.energy(box_->minimumDistance(molN->atom(bond.indexI())->r(), molN->atom(bond.indexJ())->r()));
+
+        // Angle energy
+        for (const auto &angle : molN->species()->angles())
+        {
+            geometryEnergy.angleEnergy += angle.energy(box_->angleInRadians(
+                molN->atom(angle.indexI())->r(), molN->atom(angle.indexJ())->r(), molN->atom(angle.indexK())->r()));
+        }
+
+        // Torsion energy
+        for (const auto &torsion : molN->species()->torsions())
+        {
+            geometryEnergy.torsionEnergy +=
+                torsion.energy(box_->torsionInRadians(molN->atom(torsion.indexI())->r(), molN->atom(torsion.indexJ())->r(),
+                                                     molN->atom(torsion.indexK())->r(), molN->atom(torsion.indexL())->r()));
+        }
+
+        // Improper energy
+        for (const auto &imp : molN->species()->impropers())
+        {
+            geometryEnergy.improperEnergy +=
+                imp.energy(box_->torsionInRadians(molN->atom(imp.indexI())->r(), molN->atom(imp.indexJ())->r(),
+                                                 molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r()));
+        }
+    }
+
+    return {ppEnergy, geometryEnergy};
+}

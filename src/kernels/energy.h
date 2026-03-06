@@ -79,4 +79,6 @@ class EnergyKernel : public GeometryKernel
     Kernel::EnergyResult totalEnergy(const Molecule &mol, Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return potential map
     const PotentialMap &potentialMap() const;
+    // Calculate energy components with simple double-loops for testing
+    Kernel::EnergyResult totalEnergySimple() const;
 };

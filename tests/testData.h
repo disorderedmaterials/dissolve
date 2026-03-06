@@ -879,7 +879,7 @@ Kernel::EnergyResult checkEnergyConsistency(Configuration *cfg, const std::uniqu
     auto productionEnergy = kernel->totalEnergy();
 
     // Calculate baseline teset energies (simple double-loop, PBC always)
-    auto testEnergy = EnergyNode::calculateTestEnergy(cfg, kernel);
+    auto testEnergy = kernel->totalEnergySimple();
 
     // Calculate molecule-centric energy
     auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy();
