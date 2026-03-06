@@ -12,7 +12,7 @@
 // #include "modules/avgMol/gui/avgMolWidget.h"
 #include "modules/axisAngle/axisAngle.h"
 // #include "modules/axisAngle/gui/axisAngleWidget.h"
-#include "modules/benchmark/benchmark.h"
+// #include "modules/benchmark/benchmark.h"
 // #include "modules/benchmark/gui/benchmarkWidget.h"
 #include "modules/bragg/bragg.h"
 // #include "modules/bragg/gui/braggWidget.h"
