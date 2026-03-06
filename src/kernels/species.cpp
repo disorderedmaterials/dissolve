@@ -34,12 +34,14 @@ Kernel::PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Specie
 
                                                 // Get intramolecular scaling of atom pair
                                                 auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
-                                                if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                                                    return potentialMap_.energy(&i, &j, r);
-                                                else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                                                    return potentialMap_.energy(&i, &j, r, elec14, vdw14);
-
-                                                return 0.0;
+                                                switch(scalingType) {
+                                                    case (SpeciesAtom::ScaledInteraction::NotScaled):
+                                                        return potentialMap_.energy(&i, &j, r);
+                                                    case (SpeciesAtom::ScaledInteraction::Scaled):
+                                                        return potentialMap_.energy(&i, &j, r, elec14, vdw14);
+                                                    default:
+                                                        return 0.0;
+                                                }
                                             })};
 }
 
