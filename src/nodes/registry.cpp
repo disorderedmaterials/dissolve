@@ -7,6 +7,11 @@
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/bragg.h"
+#include "nodes/cifAtomicOptions.h"
+#include "nodes/cifBondingOptions.h"
+#include "nodes/cifConfiguration.h"
+#include "nodes/cifLoader.h"
+#include "nodes/cifNETAOptions.h"
 #include "nodes/configuration.h"
 #include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
@@ -24,6 +29,7 @@
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
+#include "nodes/setCIFAtomGroupActivity.h"
 #include "nodes/setCell.h"
 #include "nodes/siteRDF.h"
 #include "nodes/species.h"
@@ -56,6 +62,12 @@ void NodeRegistry::instantiateNodeProducers()
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
                   {"Bragg", makeDerivedNode<BraggNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
+                  {"SetCIFAtomGroupActivity", makeDerivedNode<SetCIFAtomGroupActivityNode>()},
+                  {"CIFAtomicOptions", makeDerivedNode<CIFAtomicOptionsNode>()},
+                  {"CIFBondingOptions", makeDerivedNode<CIFBondingOptionsNode>()},
+                  {"CIFConfiguration", makeDerivedNode<CIFConfigurationNode>()},
+                  {"CIFLoader", makeDerivedNode<CIFLoaderNode>()},
+                  {"CIFNETAOptions", makeDerivedNode<CIFNETAOptionsNode>()},
                   {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
