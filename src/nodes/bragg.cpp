@@ -36,6 +36,9 @@ BraggNode::BraggNode(Graph *parentGraph)
     addOption<Function1DWrapper>("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)",
                                  braggQBroadening_);
     addOption<bool>("SaveReflections", "Whether to save Bragg reflection data to disk", saveReflections_);
+
+    // Serialisables
+    addSerialisable("weightedGR", braggReflections_);
 }
 
 std::string_view BraggNode::type() const { return "Bragg"; }
