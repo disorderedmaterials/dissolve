@@ -36,23 +36,19 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
 
     Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
 
-    // Realise the force vector
-    auto &f = dissolve.processingModuleData().realise<std::vector<Vector3>>(
-        std::format("{}//Forces", targetConfiguration_->name()), name());
-    f.resize(targetConfiguration_->nAtoms());
+    // Realise the force vectors
+    std::vector<Vector3> pairPotentialForces(targetConfiguration_->nAtoms()), geometryForces(targetConfiguration_->nAtoms());
 
     // Calculate forces
-    totalForces(targetConfiguration_, dissolve.potentialMap(), ForcesModule::ForceCalculationType::Full, f, f);
-
-    // Convert forces to 10J/mol
-    std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });
+    auto forceKernel = KernelProducer::forceKernel(targetConfiguration_, dissolve.potentialMap());
+    forceKernel->totalForces(pairPotentialForces, geometryForces);
 
     // If writing to a file, append it here
-    if (saveData && !exportedForces_.exportData(f))
-    {
-        Messenger::error("Failed to save forces.\n");
-        return ExecutionResult::Failed;
-    }
+    // if (saveData && !exportedForces_.exportData())
+    // {
+    //     Messenger::error("Failed to save forces.\n");
+    //     return ExecutionResult::Failed;
+    // }
 
     // Test calculated forces
     if (test_)
@@ -292,8 +288,9 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
 
         for (auto n = 0; n < targetConfiguration_->nAtoms(); ++n)
         {
+            auto productionForce = pairPotentialForces[n] + geometryForces[n];
             auto fTot = fInter[n] + fIntra[n];
-            fRatio = fTot - f[n];
+            fRatio = fTot - productionForce;
             auto testFailed = false;
 
             for (auto fc = 0; fc < 3; ++fc)
@@ -310,7 +307,8 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
             {
                 Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:8.3e}%) {:15.8e} "
                                  "({:8.3e}%) {:15.8e} ({:8.3e}%) (x y z) 10J/mol\n",
-                                 n + 1, fTot.x - f[n].x, fRatio.x, fTot.y - f[n].y, fRatio.y, fTot.z - f[n].z, fRatio.z);
+                                 n + 1, fTot.x - productionForce.x, fRatio.x, fTot.y - productionForce.y, fRatio.y,
+                                 fTot.z - productionForce.z, fRatio.z);
                 ++nFailed;
             }
         }

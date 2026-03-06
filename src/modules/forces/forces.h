@@ -5,8 +5,8 @@
 
 #include "io/export/forces.h"
 #include "io/import/forces.h"
+#include "kernels/common.h"
 #include "module/module.h"
-#include <memory>
 
 // Forward Declarations
 class Molecule;
@@ -45,24 +45,4 @@ class ForcesModule : public Module
     public:
     // Run set-up stage
     bool setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals) override;
-
-    /*
-     * Functions
-     */
-    public:
-    // Force calculation type
-    enum class ForceCalculationType
-    {
-        Full,
-        PairPotentialOnly,
-        IntraMolecularFull,
-        IntraMolecularGeometry
-    };
-    // Calculate total forces within the specified Configuration
-    static void totalForces(Configuration *cfg, const PotentialMap &potentialMap, ForceCalculationType calculationType,
-                            std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound);
-    // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
-    static void totalForces(Configuration *cfg, const std::vector<const Molecule *> &targetMolecules,
-                            const PotentialMap &potentialMap, ForceCalculationType calculationType,
-                            std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound);
 };

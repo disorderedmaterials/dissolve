@@ -68,10 +68,11 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
 
     // Create kernels
     auto energyKernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
+    auto forceKernel = KernelProducer::forceKernel(targetConfiguration_, dissolve.potentialMap());
 
     // Create arrays
     std::vector<double> mass(targetConfiguration_->nAtoms(), 0.0);
-    std::vector<Vector3> fBound(targetConfiguration_->nAtoms()), fUnbound(targetConfiguration_->nAtoms()),
+    std::vector<Vector3> geometryForces(targetConfiguration_->nAtoms()), pairPotentialForces(targetConfiguration_->nAtoms()),
         accelerations(targetConfiguration_->nAtoms());
 
     // Variables
@@ -198,27 +199,19 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
     // If we're not using a fixed timestep the forces need to be available immediately
     if (timestepType_ != TimestepType::Fixed)
     {
-        // Zero force arrays
-        std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
-        std::fill(fBound.begin(), fBound.end(), Vector3());
-
         if (targetMolecules.empty())
-            ForcesModule::totalForces(targetConfiguration_, dissolve.potentialMap(),
-                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
-                                                                : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound);
+        {
+            if (intramolecularForcesOnly_)
+                forceKernel->totalForces(pairPotentialForces, geometryForces,
+                                         {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
+            else
+                forceKernel->totalForces(pairPotentialForces, geometryForces);
+        }
         else
-            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve.potentialMap(),
-                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
-                                                                : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound);
-
-        // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
-        std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
+            throw(std::runtime_error("Forces calculation on a set of molecules is currently not available.\n"));
 
         // Check for suitable timestep
-        if (!determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound))
+        if (!determineTimeStep(timestepType_, fixedTimestep_, pairPotentialForces, geometryForces))
         {
             Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
             return ExecutionResult::NotExecuted;
@@ -230,7 +223,7 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
     for (step = 1; step <= nSteps_; ++step)
     {
         // Get timestep
-        auto optDT = determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound);
+        auto optDT = determineTimeStep(timestepType_, fixedTimestep_, pairPotentialForces, geometryForces);
         if (!optDT)
         {
             Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
@@ -256,27 +249,20 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
         // Update Atom locations
         targetConfiguration_->updateAtomLocations();
 
-        // Zero force arrays
-        std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
-        std::fill(fBound.begin(), fBound.end(), Vector3());
-
-        // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+        // Calculate forces
         if (targetMolecules.empty())
-            ForcesModule::totalForces(targetConfiguration_, dissolve.potentialMap(),
-                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
-                                                                : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound);
+        {
+            if (intramolecularForcesOnly_)
+                forceKernel->totalForces(pairPotentialForces, geometryForces,
+                                         {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
+            else
+                forceKernel->totalForces(pairPotentialForces, geometryForces);
+        }
         else
-            ForcesModule::totalForces(targetConfiguration_, targetMolecules, dissolve.potentialMap(),
-                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
-                                                                : ForcesModule::ForceCalculationType::Full,
-                                      fUnbound, fBound);
-        std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
-        std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
-
+            throw(std::runtime_error("Forces calculation on a set of molecules is currently not available.\n"));
         // Cap forces
         if (capForces_)
-            nCapped = capForces(maxForce, fUnbound, fBound);
+            nCapped = capForces(maxForce, pairPotentialForces, geometryForces);
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -284,7 +270,7 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
         // B:  a(t+dt) = F(t+dt)/m
         // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
         ke = 0.0;
-        for (auto &&[f1, f2, v, a, m] : zip(fUnbound, fBound, velocities, accelerations, mass))
+        for (auto &&[f1, f2, v, a, m] : zip(pairPotentialForces, geometryForces, velocities, accelerations, mass))
         {
             // Determine new accelerations
             a = (f1 + f2) / m;

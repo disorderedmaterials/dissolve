@@ -136,6 +136,10 @@ void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) c
 void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
                               Flags<Kernel::CalculationFlags> flags) const
 {
+    // Zero force arrays
+    std::fill(ppForceVector.begin(), ppForceVector.end(), Vector3());
+    std::fill(geometryForceVector.begin(), geometryForceVector.end(), Vector3());
+
     auto &cellArray = configuration_->cells();
     auto &molecules = configuration_->molecules();
 
@@ -212,4 +216,9 @@ void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<V
 
     combinablePP.finalize();
     combinableGeometric.finalize();
+
+    // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+    std::transform(ppForceVector.begin(), ppForceVector.end(), ppForceVector.begin(), [](auto f) { return f * 100.0; });
+    std::transform(geometryForceVector.begin(), geometryForceVector.end(), geometryForceVector.begin(),
+                   [](auto f) { return f * 100.0; });
 }

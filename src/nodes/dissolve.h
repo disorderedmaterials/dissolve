@@ -9,8 +9,8 @@
 #include "templates/doubleKeyedMap.h"
 
 // Forward declarations
-
 class EnergyKernel;
+class ForceKernel;
 class PotentialMap;
 
 // Main Dissolve Node
@@ -60,4 +60,6 @@ class DissolveGraph : public Graph
     void updateIndexingAndCells(Configuration *cfg) const;
     // Create an energy kernel suitable for the supplied Configuration
     std::unique_ptr<EnergyKernel> createEnergyKernel(Configuration *cfg);
+    // Create a force kernel suitable for the supplied Configuration
+    std::unique_ptr<ForceKernel> createForceKernel(Configuration *cfg);
 };

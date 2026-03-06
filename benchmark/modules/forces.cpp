@@ -96,9 +96,9 @@ static void BM_CalculateForces_TotalForces(benchmark::State &state)
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
     std::vector<Vector3> forces(cfg->nAtoms());
-    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
+    auto forceKernel = KernelProducer::forceKernel(cfg, problemDef.dissolve().potentialMap());
     for (auto _ : state)
-        ForcesModule::totalForces(cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
+        forceKernel->totalForces(forces, forces);
 }
 // small molecule benchmarks
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
