@@ -43,6 +43,13 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
     auto forceKernel = KernelProducer::forceKernel(targetConfiguration_, dissolve.potentialMap());
     forceKernel->totalForces(pairPotentialForces, geometryForces);
 
+    // Realise the force vector
+    auto &totalForces = dissolve.processingModuleData().realise<std::vector<Vector3>>(
+        std::format("{}//Forces", targetConfiguration_->name()), name());
+    totalForces.resize(targetConfiguration_->nAtoms());
+    std::transform(pairPotentialForces.begin(), pairPotentialForces.end(), geometryForces.begin(), totalForces.begin(),
+                   std::plus());
+
     // If writing to a file, append it here
     // if (saveData && !exportedForces_.exportData())
     // {
