@@ -34,7 +34,8 @@ Kernel::PairPotentialEnergyValue SpeciesKernel::pairPotentialEnergy(const Specie
 
                                                 // Get intramolecular scaling of atom pair
                                                 auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
-                                                switch(scalingType) {
+                                                switch (scalingType)
+                                                {
                                                     case (SpeciesAtom::ScaledInteraction::NotScaled):
                                                         return potentialMap_.energy(&i, &j, r);
                                                     case (SpeciesAtom::ScaledInteraction::Scaled):
