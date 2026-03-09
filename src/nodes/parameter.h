@@ -7,7 +7,6 @@
 #include "base/serialiser.h"
 #include "classes/coreData.h"
 #include "math/data1D.h"
-#include "math/function1D.h"
 #include "nodes/number.h"
 #include "templates/algorithms.h"
 #include "templates/flags.h"
@@ -21,8 +20,8 @@
 // Forward Declarations
 class Node;
 class ParameterBase;
-template <typename T> class Parameter;
-template <typename T> class SerialisableParameter;
+template <typename T, typename C = void> class Parameter;
+template <typename T, typename C = void> class SerialisableParameter;
 
 // Parameter Proxy
 template <class T> class ParameterProxy
@@ -44,7 +43,8 @@ struct ParameterLink
 class ParameterBase : public Serialisable<>
 {
     public:
-    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
+    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType,
+                  std::type_index contextDataType);
     virtual ~ParameterBase() = default;
 
     // Parameter Flags
@@ -76,6 +76,8 @@ class ParameterBase : public Serialisable<>
     std::string description_;
     // Stored data type in the parameter
     std::type_index storedDataType_;
+    // Stored data type of the context
+    std::type_index contextDataType_;
     // Flags for the parameter
     Flags<ParameterBase::ParameterFlags> flags_;
 
@@ -132,6 +134,20 @@ class ParameterBase : public Serialisable<>
         auto cast = dynamic_cast<Parameter<DataClass> *>(this);
         if (!cast)
             throw(std::runtime_error(std::format("ParameterBase::get() failed to cast, name = {}.\n", name_)));
+        return cast->getData();
+    }
+    // Get the parameter's value
+    template <typename DataClass, typename ContextClass> ContextClass context()
+    {
+        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
+        if (std::type_index(typeid(ContextClass)) != contextDataType_)
+            throw(std::runtime_error(std::format("ParameterBase::context() called with wrong type ({} vs {}), name = {}\n",
+                                                 std::type_index(typeid(ContextClass)).name(), storedDataType_.name(), name_)));
+
+        // Upcast to Parameter<T> (common base of all parameter types)
+        auto cast = dynamic_cast<Parameter<DataClass, ContextClass> *>(this);
+        if (!cast)
+            throw(std::runtime_error(std::format("ParameterBase::context() failed to cast, name = {}.\n", name_)));
         return cast->getData();
     }
     // Set the parameter's value
@@ -191,36 +207,41 @@ std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view
 }; // namespace ParameterFactory
 
 // Primary type for a Parameter to a specific DataClass
-template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
+template <typename DataClass, typename Context>
+class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
 {
     public:
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         requires(is_instance_of_v<DataClass, std::vector>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+          data_(value), default_(value)
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value)
         requires(std::is_pointer_v<DataClass>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
-          dataGetter_([&]() { return &value; }), dataSetter_([](const DataClass &value) { return false; })
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+          data_(localPointer_), default_(nullptr), dataGetter_([&]() { return &value; }),
+          dataSetter_([](const DataClass &value) { return false; })
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
               std::optional<std::remove_pointer_t<DataClass>> &targetData)
         requires(std::is_pointer_v<DataClass>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+          data_(localPointer_), default_(nullptr),
           dataGetter_([&]() { return targetData.has_value() ? &targetData.value() : nullptr; }),
           dataSetter_([](const DataClass &value) { return false; })
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+          data_(value), default_(value)
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
               std::shared_ptr<ParameterProxy<DataClass>> &proxy)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(proxy->data),
-          default_(proxy->data)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+          data_(proxy->data), default_(proxy->data)
     {
         // Store the proxy data smart pointer to preserve the lifetime of the data
         proxyData_ = proxy;
@@ -387,11 +408,11 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 };
 
 // Primary type for a Parameter to a specific DataClass
-template <typename DataClass> class SerialisableParameter : public Parameter<DataClass>
+template <typename DataClass, typename Context> class SerialisableParameter : public Parameter<DataClass>
 {
     public:
     SerialisableParameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
-        : Parameter<DataClass>(parent, name, description, value)
+        : Parameter<DataClass, Context>(parent, name, description, value)
     {
     }
     // Helper templates for handling serialisation
