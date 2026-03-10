@@ -12,7 +12,6 @@
 #include "data/elements.h"
 #include "math/vector3.h"
 #include "neta/neta.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
@@ -217,8 +216,7 @@ class SpeciesSite : public Serialisable<CoreData &>
 
 class Configuration;
 
-template <>
-struct Context<const SpeciesSite *>
+template <> struct Context<const SpeciesSite *>
 {
     using type = Configuration *;
 };

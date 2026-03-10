@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include <string>
 #include <variant>
 
 template <typename T> struct Context
 {
-  using type = std::monostate;
+    using type = std::monostate;
 };

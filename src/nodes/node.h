@@ -228,8 +228,8 @@ class Node : public Serialisable<>
             Messenger::exception("Output parameter '{}' already exists, and can't be added again.", outputName);
 
         auto param = outputs_
-                         .emplace(std::make_pair(
-                                                 outputName, ParameterFactory::createPointer<ClassObject>(this, outputName, description, object, {})))
+                         .emplace(std::make_pair(outputName, ParameterFactory::createPointer<ClassObject>(
+                                                                 this, outputName, description, object, {})))
                          .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;

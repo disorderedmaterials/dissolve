@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/forces/forces.h"
-#include "classes/cell.h"
 #include "common/problems.h"
 #include "kernels/producer.h"
 #include <benchmark/benchmark.h>
@@ -64,8 +63,8 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        forceKernel->totalForces(
-            forces, forces, {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeIntraMolecularPairPotential});
+        forceKernel->totalForces(forces, forces,
+                                 {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeIntraMolecularPairPotential});
 }
 
 template <SpeciesType speciesType, SpeciesPopulation population>
