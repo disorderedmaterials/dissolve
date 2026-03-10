@@ -13,15 +13,14 @@
 #include <stdexcept>
 #include <string>
 #include <typeindex>
+#include <variant>
 #include <vector>
-
-#include <iostream>
 
 // Forward Declarations
 class Node;
 class ParameterBase;
-template <typename T, typename C = void> class Parameter;
-template <typename T, typename C = void> class SerialisableParameter;
+template <typename T, typename C = std::monostate> class Parameter;
+template <typename T, typename C = std::monostate> class SerialisableParameter;
 
 // Parameter Proxy
 template <class T> class ParameterProxy
@@ -141,8 +140,9 @@ class ParameterBase : public Serialisable<>
     {
         // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
         if (std::type_index(typeid(ContextClass)) != contextDataType_)
-            throw(std::runtime_error(std::format("ParameterBase::context() called with wrong type ({} vs {}), name = {}\n",
-                                                 std::type_index(typeid(ContextClass)).name(), storedDataType_.name(), name_)));
+            throw(
+                std::runtime_error(std::format("ParameterBase::context() called with wrong type ({} vs {}), name = {}\n",
+                                               std::type_index(typeid(ContextClass)).name(), contextDataType_.name(), name_)));
 
         // Upcast to Parameter<T> (common base of all parameter types)
         auto cast = dynamic_cast<Parameter<DataClass, ContextClass> *>(this);
@@ -213,38 +213,44 @@ class Parameter : public ParameterBase, public std::enable_shared_from_this<Para
     public:
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         requires(is_instance_of_v<DataClass, std::vector>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(Context))),
           data_(value), default_(value)
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value)
         requires(std::is_pointer_v<DataClass>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(Context))),
           data_(localPointer_), default_(nullptr), dataGetter_([&]() { return &value; }),
-          dataSetter_([](const DataClass &value) { return false; })
+          dataSetter_([](const DataClass &value) { return false; }), context_(std::monostate{})
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
               std::optional<std::remove_pointer_t<DataClass>> &targetData)
         requires(std::is_pointer_v<DataClass>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(Context))),
           data_(localPointer_), default_(nullptr),
           dataGetter_([&]() { return targetData.has_value() ? &targetData.value() : nullptr; }),
-          dataSetter_([](const DataClass &value) { return false; })
+          dataSetter_([](const DataClass &value) { return false; }), context_(std::monostate{})
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
-          data_(value), default_(value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(Context))),
+          data_(value), default_(value), context_(std::monostate{})
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
               std::shared_ptr<ParameterProxy<DataClass>> &proxy)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(void))),
-          data_(proxy->data), default_(proxy->data)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(Context))),
+          data_(proxy->data), default_(proxy->data), context_(std::monostate{})
     {
         // Store the proxy data smart pointer to preserve the lifetime of the data
         proxyData_ = proxy;
+    }
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value, Context &context)
+        requires(is_instance_of_v<DataClass, std::vector>)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)), std::type_index(typeid(Context))),
+          data_(value), default_(value), context_(context)
+    {
     }
     virtual ~Parameter() = default;
 
@@ -290,6 +296,8 @@ class Parameter : public ParameterBase, public std::enable_shared_from_this<Para
     protected:
     // Reference to target data
     DataClass &data_;
+    // Reference to target data
+    Context context_;
     // Specialised container for local pointer referencing, if relevant
     std::conditional_t<std::is_pointer_v<DataClass>, DataClass, bool> localPointer_;
     // Getter for target data, defaulting so simple return of data_ reference member
