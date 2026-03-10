@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/context.h"
 #include "base/messenger.h"
 #include "base/serialiser.h"
 #include "module/module.h"
@@ -228,7 +229,7 @@ class Node : public Serialisable<>
 
         auto param = outputs_
                          .emplace(std::make_pair(
-                             outputName, ParameterFactory::createPointer<ClassObject>(this, outputName, description, object)))
+                                                 outputName, ParameterFactory::createPointer<ClassObject>(this, outputName, description, object, {})))
                          .first->second;
         param->setFlags(ParameterBase::ParameterFlags::Output);
         return param;

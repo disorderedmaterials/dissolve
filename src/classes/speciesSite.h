@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/context.h"
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "base/version.h"
@@ -212,4 +213,12 @@ class SpeciesSite : public Serialisable<CoreData &>
 
     void serialise(std::string tag, SerialisedValue &target) const override;
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
+};
+
+class Configuration;
+
+template <>
+struct Context<const SpeciesSite *>
+{
+    using type = Configuration *;
 };
