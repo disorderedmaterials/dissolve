@@ -15,6 +15,7 @@
 #include <vector>
 
 // Forward Declarations
+class Configuration;
 class LineParser;
 class Site;
 class Species;
@@ -213,8 +214,6 @@ class SpeciesSite : public Serialisable<CoreData &>
     void serialise(std::string tag, SerialisedValue &target) const override;
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };
-
-class Configuration;
 
 template <> struct Context<const SpeciesSite *>
 {

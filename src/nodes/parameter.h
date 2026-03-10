@@ -135,7 +135,7 @@ class ParameterBase : public Serialisable<>
             throw(std::runtime_error(std::format("ParameterBase::get() failed to cast, name = {}.\n", name_)));
         return cast->getData();
     }
-    // Get the parameter's value
+    // Get the parameter's context
     template <typename DataClass> Context<DataClass>::type context()
     {
         // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
@@ -299,7 +299,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     protected:
     // Reference to target data
     DataClass &data_;
-    // Reference to target data
+    // Reference to target context
     Context<DataClass>::type context_;
     // Specialised container for local pointer referencing, if relevant
     std::conditional_t<std::is_pointer_v<DataClass>, DataClass, bool> localPointer_;
