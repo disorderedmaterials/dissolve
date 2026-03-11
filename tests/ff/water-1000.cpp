@@ -65,8 +65,7 @@ TEST(Water1000ForcesTest, Full)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    kernel->totalForces(pairPotentialForces, geometryForces);
-
+    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
 }
 
 TEST(Water1000EnergyTest, ShortRangeOnly)

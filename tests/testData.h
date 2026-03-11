@@ -10,6 +10,7 @@
 #include "io/import/data3D.h"
 #include "io/import/forces.h"
 #include "kernels/energy.h"
+#include "kernels/force.h"
 #include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/error.h"
@@ -897,6 +898,33 @@ Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> 
     EXPECT_NEAR(molecularPPEnergy.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
 
     return productionEnergy;
+}
+
+// Check consistency between production and test forces
+void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces, std::vector<Vector3> &geomForces, double ppTestThreshold = 1.0e-4, double geomTestThreshold = 1.0e-6)
+{
+    // Calculate production forces(fully optimised)
+    kernel->totalForces(ppForces, geomForces);
+
+    // Calculate baseline test forces (simple double-loop, PBC always)
+    std::vector<Vector3> ppTestForces, geomTestForces;
+    kernel->totalForcesSimple(ppTestForces, geomTestForces);
+
+    // Pair potential forces
+    for (auto &&[test, production] : zip(ppTestForces, ppForces))
+    {
+        EXPECT_NEAR(test.x, production.x, ppTestThreshold);
+        EXPECT_NEAR(test.y, production.y, ppTestThreshold);
+        EXPECT_NEAR(test.z, production.z, ppTestThreshold);
+    }
+
+    // Geometric forces
+    for (auto &&[test, production] : zip(geomTestForces, geomForces))
+    {
+        EXPECT_NEAR(test.x, production.x, geomTestThreshold);
+        EXPECT_NEAR(test.y, production.y, geomTestThreshold);
+        EXPECT_NEAR(test.z, production.z, geomTestThreshold);
+    }
 }
 
 } // namespace UnitTest
