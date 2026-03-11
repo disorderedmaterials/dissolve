@@ -877,7 +877,7 @@ Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> 
     // Calculate production energies (fully optimised)
     auto productionEnergy = kernel->totalEnergy();
 
-    // Calculate baseline teset energies (simple double-loop, PBC always)
+    // Calculate baseline test energies (simple double-loop, PBC always)
     auto testEnergy = kernel->totalEnergySimple();
 
     // Calculate molecule-centric energy
@@ -892,7 +892,7 @@ Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> 
     EXPECT_NEAR(testEnergy.pairPotential.total(), molecularPPEnergy.total(), testThreshold);
     EXPECT_NEAR(testEnergy.pairPotential.interMolecular, molecularPPEnergy.interMolecular, testThreshold);
 
-    // "Compare molecule-based energies with production values
+    // Compare molecule-based energies with production values
     EXPECT_NEAR(molecularPPEnergy.total(), productionEnergy.pairPotential.total(), testThreshold);
     EXPECT_NEAR(molecularPPEnergy.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
 
