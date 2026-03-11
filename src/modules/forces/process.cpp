@@ -36,11 +36,9 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
 
     Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
 
-    // Realise the force vectors
-    std::vector<Vector3> pairPotentialForces(targetConfiguration_->nAtoms()), geometryForces(targetConfiguration_->nAtoms());
-
     // Calculate forces
     auto forceKernel = KernelProducer::forceKernel(targetConfiguration_, dissolve.potentialMap());
+    std::vector<Vector3> pairPotentialForces, geometryForces;
     forceKernel->totalForces(pairPotentialForces, geometryForces);
 
     // Realise the force vector

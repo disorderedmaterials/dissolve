@@ -136,7 +136,9 @@ void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) c
 void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
                               Flags<Kernel::CalculationFlags> flags) const
 {
-    // Zero force arrays
+    // Resize and zero force arrays
+    ppForceVector.resize(configuration_->nAtoms());
+    geometryForceVector.resize(configuration_->nAtoms());
     std::fill(ppForceVector.begin(), ppForceVector.end(), Vector3());
     std::fill(geometryForceVector.begin(), geometryForceVector.end(), Vector3());
 
@@ -226,7 +228,9 @@ void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<V
 // Calculate total forces with simple loops for testing
 void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector) const
 {
-    // Zero force arrays
+    // Resize and zero force arrays
+    ppForceVector.resize(configuration_->nAtoms());
+    geometryForceVector.resize(configuration_->nAtoms());
     std::fill(ppForceVector.begin(), ppForceVector.end(), Vector3());
     std::fill(geometryForceVector.begin(), geometryForceVector.end(), Vector3());
 
