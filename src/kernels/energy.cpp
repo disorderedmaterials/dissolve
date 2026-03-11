@@ -437,7 +437,7 @@ Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
         {
             geometryEnergy.torsionEnergy +=
                 torsion.energy(box_->torsionInRadians(molN->atom(torsion.indexI())->r(), molN->atom(torsion.indexJ())->r(),
-                                                     molN->atom(torsion.indexK())->r(), molN->atom(torsion.indexL())->r()));
+                                                      molN->atom(torsion.indexK())->r(), molN->atom(torsion.indexL())->r()));
         }
 
         // Improper energy
@@ -445,7 +445,7 @@ Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
         {
             geometryEnergy.improperEnergy +=
                 imp.energy(box_->torsionInRadians(molN->atom(imp.indexI())->r(), molN->atom(imp.indexJ())->r(),
-                                                 molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r()));
+                                                  molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r()));
         }
     }
 

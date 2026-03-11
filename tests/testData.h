@@ -872,8 +872,7 @@ const Species &tetrahedralArgonSpecies()
 }
 
 // Check consistency between production, molecular, and test forces for the supplied configuration, returning production values
-Kernel::EnergyResult checkEnergyConsistency(Configuration *cfg, const std::unique_ptr<EnergyKernel> &kernel,
-                                            double testThreshold = 1.0e-6)
+Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
 {
     // Calculate production energies (fully optimised)
     auto productionEnergy = kernel->totalEnergy();
@@ -885,7 +884,6 @@ Kernel::EnergyResult checkEnergyConsistency(Configuration *cfg, const std::uniqu
     auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy();
 
     // Compare basic energies with production value
-
     EXPECT_NEAR(testEnergy.pairPotential.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
     EXPECT_NEAR(testEnergy.pairPotential.intraMolecular, productionEnergy.pairPotential.intraMolecular, testThreshold);
     EXPECT_NEAR(testEnergy.geometry.total(), productionEnergy.geometry.total(), testThreshold);

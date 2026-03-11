@@ -32,7 +32,7 @@ TEST(Water1000EnergyTest, Full)
     auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(cfg, kernel);
+    auto productionEnergy = checkEnergyConsistency(kernel);
 
     // Interatomic energy: 1716.032 LJ + 54.1342 correction + -29163.384451743802 Coulomb
     EXPECT_NEAR(1716.032 + 54.1342 - 29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
@@ -75,7 +75,7 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(cfg, kernel);
+    auto productionEnergy = checkEnergyConsistency(kernel);
 
     // Interatomic energy: 1716.032 LJ + 54.1342 correction
     EXPECT_NEAR(1716.032 + 54.1342, productionEnergy.pairPotential.interMolecular, 4.3e-2);
@@ -110,7 +110,7 @@ TEST(Water1000EnergyTest, ElectrostaticsOnly)
     auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(cfg, kernel);
+    auto productionEnergy = checkEnergyConsistency(kernel);
 
     // Interatomic energy: -29163.384451743802 Coulomb
     EXPECT_NEAR(-29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
