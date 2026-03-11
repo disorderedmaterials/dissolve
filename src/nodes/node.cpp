@@ -395,7 +395,7 @@ void Node::deserialiseData(const SerialisedValue &node)
         }
 }
 
-std::set<const Node *> Node::ancestors() const
+std::set<const Node *> Node::ancestors_() const
 {
     std::set<const Node *> result{}, stack{this};
     while (!stack.empty())
