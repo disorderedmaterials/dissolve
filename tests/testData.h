@@ -871,7 +871,7 @@ const Species &tetrahedralArgonSpecies()
     return tetrahedralArgon_;
 }
 
-// Check consistency between production, molecular, and test forces for the supplied configuration, returning production values
+// Check consistency between production, molecular, and test energies, returning production values
 Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
 {
     // Calculate production energies (fully optimised)
