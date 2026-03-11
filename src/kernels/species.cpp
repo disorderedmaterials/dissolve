@@ -216,7 +216,9 @@ Kernel::EnergyResult SpeciesKernel::totalEnergy(Flags<Kernel::CalculationFlags> 
 void SpeciesKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometricForceVector,
                                 Flags<Kernel::CalculationFlags> flags)
 {
-    // Zero force arrays
+    // Resize and zero force arrays
+    ppForceVector.resize(species_->nAtoms());
+    geometricForceVector.resize(species_->nAtoms());
     std::fill(ppForceVector.begin(), ppForceVector.end(), Vector3());
     std::fill(geometricForceVector.begin(), geometricForceVector.end(), Vector3());
 
@@ -240,7 +242,9 @@ void SpeciesKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector
 {
     assert(species_->nAtoms() == r.size());
 
-    // Zero force arrays
+    // Resize and zero force arrays
+    ppForceVector.resize(species_->nAtoms());
+    geometricForceVector.resize(species_->nAtoms());
     std::fill(ppForceVector.begin(), ppForceVector.end(), Vector3());
     std::fill(geometricForceVector.begin(), geometricForceVector.end(), Vector3());
 

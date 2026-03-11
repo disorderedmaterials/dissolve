@@ -73,7 +73,7 @@ static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto &sp = problemDef.coreData().species().front();
-    std::vector<Vector3> ppForces(sp->nAtoms()), geomForces(sp->nAtoms());
+    std::vector<Vector3> ppForces, geomForces;
     auto kernel = KernelProducer::speciesKernel(sp.get(), problemDef.dissolve().potentialMap());
     for (auto _ : state)
         kernel->totalForces(ppForces, geomForces);
