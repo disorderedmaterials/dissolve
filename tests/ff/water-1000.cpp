@@ -10,7 +10,7 @@
 
 namespace UnitTest
 {
-TEST(WaterSPCFwEnergyTest, Full)
+TEST(Water1000EnergyTest, Full)
 {
     GraphTestData data;
     createWaterGraph(
@@ -43,7 +43,7 @@ TEST(WaterSPCFwEnergyTest, Full)
     EXPECT_NEAR(2.528107096550E+03, productionEnergy.geometry.angleEnergy, 7.0e-5);
 }
 
-TEST(WaterSPCFwEnergyTest, ShortRangeOnly)
+TEST(Water1000EnergyTest, ShortRangeOnly)
 {
     GraphTestData data;
     createWaterGraph(
@@ -81,7 +81,7 @@ TEST(WaterSPCFwEnergyTest, ShortRangeOnly)
     EXPECT_NEAR(1716.032 + 54.1342, productionEnergy.pairPotential.interMolecular, 4.3e-2);
 }
 
-TEST(WaterSPCFwEnergyTest, ElectrostaticsOnly)
+TEST(Water1000EnergyTest, ElectrostaticsOnly)
 {
     GraphTestData data;
     createWaterGraph(
