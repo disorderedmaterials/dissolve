@@ -2,8 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/dissolve.h"
-#include "nodes/energy.h"
-#include "nodes/gr/gr.h"
+#include "kernels/force.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -41,6 +40,33 @@ TEST(Water1000EnergyTest, Full)
     EXPECT_NEAR(4.664830886619E+03 + 2.528107096550E+03, productionEnergy.geometry.total(), 3.0e-2);
     EXPECT_NEAR(4.664830886619E+03, productionEnergy.geometry.bondEnergy, 3.0e-2);
     EXPECT_NEAR(2.528107096550E+03, productionEnergy.geometry.angleEnergy, 7.0e-5);
+}
+
+TEST(Water1000ForcesTest, Full)
+{
+    GraphTestData data;
+    createWaterGraph(
+        &data.graphRoot, 1000,
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+
+    // Adjust pair potential properties
+    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
+    PairPotential::setRange(15.0, 1.0e-4);
+
+    // Run the graph from the Import node to set up the configuration
+    auto importNode = data.graphRoot.findNode("Import");
+    ASSERT_TRUE(importNode);
+    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importNode->versionIndex(), 0);
+
+    // Get the configuration and create a force kernel
+    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+
+    // Check consistency between production and test forces
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    kernel->totalForces(pairPotentialForces, geometryForces);
+
 }
 
 TEST(Water1000EnergyTest, ShortRangeOnly)
