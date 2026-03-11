@@ -9,9 +9,8 @@
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include "nodes/serialisableData.h"
-#include "templates/algorithms.h"
-#include "templates/resolvable.h"
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -96,6 +95,8 @@ class Node : public Serialisable<>
     void echo();
 
     public:
+    // Get all nodes that lead into this node
+    std::set<const Node*> ancestors() const;
     // Message store vector
     const MessageStore &messages() const;
     // Returns true if message with given status exists

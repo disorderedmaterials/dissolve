@@ -188,6 +188,8 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(y_->versionIndex(), 1);
     EXPECT_EQ(z_->versionIndex(), 3);
     EXPECT_EQ(zResult_->get<Number>().asInteger(), 18);
+
+    EXPECT_EQ(z_->ancestors().size(), 3);
 }
 
 TEST_F(GraphFlowTest, RemoveEdges)
