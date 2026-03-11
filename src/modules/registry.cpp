@@ -18,7 +18,6 @@
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 #include "modules/exportTrajectory/exportTrajectory.h"
 #include "modules/forces/forces.h"
-#include "modules/geomOpt/geomOpt.h"
 #include "modules/gr/gr.h"
 #include "modules/histogramCN/histogramCN.h"
 #include "modules/importTrajectory/importTrajectory.h"
@@ -64,8 +63,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ExportTrajectoryModule>(ModuleTypes::ExportTrajectory, "Export trajectory for a Configuration", "Export");
     registerProducer<ForcesModule>(ModuleTypes::Forces, "Calculate the total atomic forces within a Configuration",
                                    "Forcefield");
-    registerProducer<GeometryOptimisationModule>(ModuleTypes::GeometryOptimisation,
-                                                 "Optimise geometry with respect to energy (minimise)", "Optimisation");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
     registerProducer<HistogramCNModule>(ModuleTypes::HistogramCN, "Produce a histogram of Coordination numbers between sites",
                                         "Analysis");

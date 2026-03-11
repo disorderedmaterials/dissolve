@@ -5,6 +5,7 @@
 
 #include "kernels/energy.h"
 #include "kernels/force.h"
+#include "kernels/species.h"
 #include <memory>
 
 // Forward Declarations
@@ -22,4 +23,6 @@ class KernelProducer
     static std::unique_ptr<ForceKernel> forceKernel(const Configuration *cfg, const PotentialMap &potentialMap);
     // Create force kernel using the specified Box
     static std::unique_ptr<ForceKernel> forceKernel(const Box *box, const PotentialMap &potentialMap);
+    // Create species kernel
+    static std::unique_ptr<SpeciesKernel> speciesKernel(const Species *sp, const PotentialMap &potentialMap);
 };

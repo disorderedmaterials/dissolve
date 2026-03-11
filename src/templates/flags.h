@@ -51,6 +51,8 @@ template <class EnumClass> class Flags
     bool anySet() const { return flags_.any(); }
     // Return true if the specified flag is set
     bool isSet(EnumClass flag) const { return flags_.test(flag); }
+    // Return true if the specified flag is not set
+    bool isNotSet(EnumClass flag) const { return !flags_.test(flag); }
     // Return true if the specified flag is set, or if none are set at all
     bool isSetOrNone(EnumClass flag) const { return flags_.none() || flags_.test(flag); }
 };

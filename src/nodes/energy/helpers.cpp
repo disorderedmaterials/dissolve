@@ -12,34 +12,14 @@
 #include <atomic>
 #include <numeric>
 
-namespace
-{
-// Structure to store energy values
-struct Energies
-{
-    double bondEnergy;
-    double angleEnergy;
-    double torsionEnergy;
-    double improperEnergy;
-
-    Energies operator+(const Energies &other) const
-    {
-        return {.bondEnergy = this->bondEnergy + other.bondEnergy,
-                .angleEnergy = this->angleEnergy + other.angleEnergy,
-                .torsionEnergy = this->torsionEnergy + other.torsionEnergy,
-                .improperEnergy = this->improperEnergy + other.improperEnergy};
-    }
-};
-} // namespace
-
 // Return total pair potential energy of Configuration
-PairPotentialEnergyValue EnergyNode::pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
+Kernel::PairPotentialEnergyValue EnergyNode::pairPotentialEnergy(const Configuration *cfg, const PotentialMap &potentialMap)
 {
     // Create an EnergyKernel
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
     // Calculate total energy
-    auto ppEnergy = kernel->totalPairPotentialEnergy(true);
+    auto ppEnergy = kernel->totalPairPotentialEnergy();
 
     message("Interatomic energy is {:15.9e}\n", ppEnergy.total());
 
@@ -85,7 +65,7 @@ double EnergyNode::interMolecularEnergy(const Configuration *cfg, const Potentia
     auto kernel = KernelProducer::energyKernel(cfg, potentialMap);
 
     // Calculate total energy
-    auto ppEnergy = kernel->totalPairPotentialEnergy(false).total();
+    auto ppEnergy = kernel->totalPairPotentialEnergy(true, false).total();
 
     message("Intermolecular energy is {:15.9e}\n", ppEnergy);
 
@@ -114,44 +94,48 @@ double EnergyNode::intraMolecularEnergy(const Configuration *cfg, const Potentia
 
     const auto &molecules = cfg->molecules();
 
-    auto unaryOp = [&](const auto &mol) -> Energies
+    auto unaryOp = [&](const auto &mol) -> Kernel::GeometryEnergyValue
     {
-        Energies localEnergies{.bondEnergy = 0.0, .angleEnergy = 0.0, .torsionEnergy = 0.0, .improperEnergy = 0.0};
+        Kernel::GeometryEnergyValue localEnergies;
 
         // Loop over Bond
-        localEnergies.bondEnergy +=
+        localEnergies.bondEnergy =
             std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
-                            { return acc + kernel->bondEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
+                            { return acc + kernel->bondEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r()); });
 
         // Loop over Angle
-        localEnergies.angleEnergy += std::accumulate(
-            mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
-            [&mol, &kernel](auto const acc, const auto &t)
-            { return acc + kernel->angleEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
+        localEnergies.angleEnergy =
+            std::accumulate(mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
+                            [&mol, &kernel](auto const acc, const auto &t)
+                            {
+                                return acc + kernel->angleEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r(),
+                                                                 mol->atom(t.indexK())->r());
+                            });
 
         // Loop over Torsions
-        localEnergies.torsionEnergy +=
+        localEnergies.torsionEnergy =
             std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
                             {
-                                return acc + kernel->torsionEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
-                                                                   *mol->atom(t.indexK()), *mol->atom(t.indexL()));
+                                return acc + kernel->torsionEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r(),
+                                                                   mol->atom(t.indexK())->r(), mol->atom(t.indexL())->r());
                             });
 
-        localEnergies.improperEnergy +=
-            std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &imp)
-                            {
-                                return acc + kernel->improperEnergy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
-                                                                    *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
-                            });
+        localEnergies.improperEnergy = std::accumulate(
+            mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
+            [&mol, &kernel](auto const acc, const auto &imp)
+            {
+                return acc + kernel->improperEnergy(imp, mol->atom(imp.indexI())->r(), mol->atom(imp.indexJ())->r(),
+                                                    mol->atom(imp.indexK())->r(), mol->atom(imp.indexL())->r());
+            });
 
         return localEnergies;
     };
 
-    auto energies = dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), Energies(),
-                                               std::plus<Energies>(), unaryOp);
+    auto energies =
+        dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), Kernel::GeometryEnergyValue(),
+                                   std::plus<Kernel::GeometryEnergyValue>(), unaryOp);
 
     bondEnergy = energies.bondEnergy;
     angleEnergy = energies.angleEnergy;
@@ -201,7 +185,7 @@ double EnergyNode::totalEnergy(const Configuration *cfg, const PotentialMap &pot
 
 // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
 double EnergyNode::totalEnergy(const Configuration *cfg, const PotentialMap &potentialMap,
-                               PairPotentialEnergyValue &interEnergy, double &bondEnergy, double &angleEnergy,
+                               Kernel::PairPotentialEnergyValue &interEnergy, double &bondEnergy, double &angleEnergy,
                                double &torsionEnergy, double &improperEnergy)
 {
     interEnergy = pairPotentialEnergy(cfg, potentialMap);

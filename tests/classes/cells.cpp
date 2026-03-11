@@ -94,7 +94,7 @@ TEST(CellsTest, Basic)
         cfg->updateAtomLocations(true);
 
         // Calculate total Cell-based energy
-        EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false).total(), 1.0e-4);
+        EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(true, false).total(), 1.0e-4);
 
         // Calculate atomic energy from the Ar
         EXPECT_NEAR(refEnergy, kernel->totalEnergy(cfg->atom(0)).total(), 1.0e-4);

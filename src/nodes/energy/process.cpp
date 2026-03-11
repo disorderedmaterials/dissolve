@@ -89,7 +89,7 @@ NodeConstants::ProcessResult EnergyNode::process()
         else
             parser.appendOutput(filename);
         parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
-                          dissolve().iteration(), ppEnergy.total() + boundEnergy, ppEnergy.total(), ppEnergy.interMolecular(),
+                          dissolve().iteration(), ppEnergy.total() + boundEnergy, ppEnergy.total(), ppEnergy.interMolecular,
                           bondEnergy, angleEnergy, torsionEnergy, improperEnergy, grad, stable);
         parser.closeFiles();
     }

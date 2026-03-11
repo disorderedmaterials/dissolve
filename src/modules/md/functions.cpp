@@ -4,6 +4,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "data/atomicMasses.h"
+#include "kernels/producer.h"
 #include "modules/forces/forces.h"
 #include "modules/md/md.h"
 
@@ -69,6 +70,9 @@ std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Sp
     std::vector<double> mass(sp->nAtoms(), 0.0);
     std::vector<Vector3> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
 
+    // Create a species kernel
+    auto kernel = KernelProducer::speciesKernel(sp, potentialMap);
+
     // Variables
     auto &atoms = sp->atoms();
     double tInstant, ke, tScale;
@@ -98,15 +102,8 @@ std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Sp
     tScale = sqrt(temperature / tInstant);
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
-    // Zero force arrays
-    std::fill(fInter.begin(), fInter.end(), Vector3());
-    std::fill(fIntra.begin(), fIntra.end(), Vector3());
-
-    ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
-
-    // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-    std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
-    std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+    // Calculate total forces
+    kernel->totalForces(sp, fInter, fIntra, rInit);
 
     // Check for suitable timestep
     if (!determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra))
@@ -145,14 +142,8 @@ std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Sp
             v += a * 0.5 * dT;
         }
 
-        // Zero force arrays
-        std::fill(fInter.begin(), fInter.end(), Vector3());
-        std::fill(fIntra.begin(), fIntra.end(), Vector3());
-
-        // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
-        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
-        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+        // Calculate forces
+        kernel->totalForces(sp, fInter, fIntra, rNew);
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2

@@ -28,13 +28,13 @@ void ForcesModule::totalForces(Configuration *cfg, const PotentialMap &potential
     if (calculationType == ForceCalculationType::Full)
         kernel->totalForces(fUnbound, fBound);
     else if (calculationType == ForceCalculationType::PairPotentialOnly)
-        kernel->totalForces(fUnbound, fBound, {ForceKernel::ExcludeGeometry, ForceKernel::ExcludeExtended});
+        kernel->totalForces(fUnbound, fBound, {Kernel::ExcludeGeometric, Kernel::ExcludeExtended});
     else if (calculationType == ForceCalculationType::IntraMolecularFull)
-        kernel->totalForces(fUnbound, fBound, {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeExtended});
+        kernel->totalForces(fUnbound, fBound, {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
     else if (calculationType == ForceCalculationType::IntraMolecularGeometry)
-        kernel->totalForces(fUnbound, fBound,
-                            {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential,
-                             ForceKernel::ExcludeExtended});
+        kernel->totalForces(
+            fUnbound, fBound,
+            {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeIntraMolecularPairPotential, Kernel::ExcludeExtended});
 
     timer.stop();
     Messenger::printVerbose("Time to do forces was {}.\n", timer.totalTimeString());
@@ -57,92 +57,4 @@ void ForcesModule::totalForces(Configuration *cfg, const std::vector<const Molec
             fUnbound[i->globalIndex()] = tempFUnbound[i->globalIndex()];
             fBound[i->globalIndex()] = tempFBound[i->globalIndex()];
         }
-}
-
-// Calculate total forces within the specified Species
-void ForcesModule::totalForces(const Species *sp, const PotentialMap &potentialMap, ForceCalculationType calculationType,
-                               std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
-                               OptionalReferenceWrapper<const std::vector<Vector3>> r)
-{
-    if (r)
-        assert(sp->nAtoms() == r->get().size());
-
-    // Set position retrieval function
-    std::function<Vector3(int, const SpeciesAtom *)> rFunction;
-    if (r)
-        rFunction = [&r, sp](int id, const SpeciesAtom *i) { return r->get()[id]; };
-    else
-        rFunction = [sp](int id, const SpeciesAtom *i) { return i->r(); };
-
-    // Zero force arrays
-    std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
-    std::fill(fBound.begin(), fBound.end(), Vector3());
-
-    auto *box = sp->box();
-    const auto cutoffSq = PairPotential::range() * PairPotential::range();
-    auto combinableUnbound = ForceKernel::createCombinableForces(fUnbound);
-
-    auto pairwiseForceOperator =
-        [&combinableUnbound, rFunction, &potentialMap, cutoffSq, box](int indexI, const auto &i, int indexJ, const auto &j)
-    {
-        if (indexI == indexJ)
-            return;
-
-        auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
-        if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
-            return;
-
-        // Determine final forces
-        auto vecij = box->minimumVector(rFunction(indexI, &i), rFunction(indexJ, &j));
-        auto magjisq = vecij.magnitudeSq();
-        if (magjisq > cutoffSq)
-            return;
-
-        auto r = sqrt(magjisq);
-        vecij /= r;
-
-        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-            vecij *= potentialMap.force(&i, &j, r);
-        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-            vecij *= potentialMap.force(&i, &j, r, elec14, vdw14);
-
-        auto &fLocal = combinableUnbound.local();
-        fLocal[indexI] -= vecij;
-        fLocal[indexJ] += vecij;
-    };
-
-    // Calculate pairwise forces between atoms
-    if (calculationType == ForceCalculationType::Full || calculationType == ForceCalculationType::PairPotentialOnly)
-    {
-        if (sp->nAtoms() < 100)
-            dissolve::for_each_pair(ParallelPolicies::seq, std::span(sp->atoms().begin(), sp->nAtoms()), pairwiseForceOperator);
-        else
-            dissolve::for_each_pair(ParallelPolicies::par, std::span(sp->atoms().begin(), sp->nAtoms()), pairwiseForceOperator);
-        combinableUnbound.finalize();
-    }
-
-    if (calculationType != ForceCalculationType::PairPotentialOnly)
-    {
-        // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
-        auto kernel = KernelProducer::forceKernel(sp->box(), potentialMap);
-
-        // Loop over bonds
-        for (const auto &b : sp->bonds())
-            kernel->bondForces(b, rFunction(b.i()->index(), b.i()), rFunction(b.j()->index(), b.j()), fBound);
-
-        // Loop over angles
-        for (const auto &a : sp->angles())
-            kernel->angleForces(a, rFunction(a.i()->index(), a.i()), rFunction(a.j()->index(), a.j()),
-                                rFunction(a.k()->index(), a.k()), fBound);
-
-        // Loop over torsions
-        for (const auto &t : sp->torsions())
-            kernel->torsionForces(t, rFunction(t.i()->index(), t.i()), rFunction(t.j()->index(), t.j()),
-                                  rFunction(t.k()->index(), t.k()), rFunction(t.l()->index(), t.l()), fBound);
-
-        // Loop over impropers
-        for (const auto &imp : sp->impropers())
-            kernel->improperForces(imp, rFunction(imp.i()->index(), imp.i()), rFunction(imp.j()->index(), imp.j()),
-                                   rFunction(imp.k()->index(), imp.k()), rFunction(imp.l()->index(), imp.l()), fBound);
-    }
 }

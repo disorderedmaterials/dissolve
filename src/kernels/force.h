@@ -5,9 +5,7 @@
 
 #include "classes/cellArray.h"
 #include "kernels/geometry.h"
-#include "templates/combinable.h"
 #include "templates/flags.h"
-#include <optional>
 
 // Forward Declarations
 class Atom;
@@ -15,11 +13,6 @@ class Box;
 class Cell;
 class Configuration;
 class PotentialMap;
-class Species;
-class SpeciesAngle;
-class SpeciesBond;
-class SpeciesImproper;
-class SpeciesTorsion;
 
 // ForceKernel
 class ForceKernel : public GeometryKernel
@@ -28,33 +21,30 @@ class ForceKernel : public GeometryKernel
     friend class KernelProducer;
     friend class ExternalPotentialsForceKernel;
     ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap);
-    ForceKernel(const Box *box, const PotentialMap &potentialMap);
 
     public:
     ~ForceKernel() = default;
 
-    // Create combinable forces storage container
-    static dissolve::CombinableContainer<ForceVector> createCombinableForces(ForceVector &parentForces)
-    {
-        return {parentForces, [&]() { return std::vector<Vector3>(parentForces.size()); }};
-    }
+    private:
+    // Target Configuration
+    const Configuration *configuration_{nullptr};
 
     /*
      * PairPotential Terms
      */
     private:
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
+    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f, double elecScale,
                           double srScale) const;
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
+    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f, double elecScale,
                        double srScale) const;
     // Calculate forces between two cells
-    void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, ForceVector &f) const;
+    void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, std::vector<Vector3> &f) const;
 
     /*
      * Extended Terms
@@ -63,22 +53,13 @@ class ForceKernel : public GeometryKernel
     // Calculate extended forces on supplied atom
     virtual void extendedForces(const Atom &i, Vector3 &fVec) const;
     // Calculate extended forces on supplied molecule
-    virtual void extendedForces(const Molecule &mol, ForceVector &f) const;
+    virtual void extendedForces(const Molecule &mol, std::vector<Vector3> &f) const;
 
     /*
      * Totals
      */
     public:
-    // Force calculation flags
-    enum ForceCalculationFlags
-    {
-        ExcludeInterMolecularPairPotential,
-        ExcludeIntraMolecularPairPotential,
-        ExcludeGeometry,
-        ExcludeExtended
-    };
-
-    public:
     // Calculate total forces in the world
-    void totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<ForceCalculationFlags> flags = {}) const;
+    void totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
+                     Flags<Kernel::CalculationFlags> flags = {}) const;
 };

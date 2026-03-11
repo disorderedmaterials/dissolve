@@ -28,7 +28,7 @@
 // #include "modules/epsr/gui/epsrWidget.h"
 #include "modules/epsrManager/epsrManager.h"
 // #include "modules/epsrManager/gui/epsrManagerWidget.h"
-#include "modules/geomOpt/geomOpt.h"
+// #include "modules/geomOpt/geomOpt.h"
 // #include "modules/geomOpt/gui/geomOptWidget.h"
 #include "modules/gr/gr.h"
 // #include "modules/gr/gui/grWidget.h"

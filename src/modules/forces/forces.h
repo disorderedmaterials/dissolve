@@ -65,8 +65,4 @@ class ForcesModule : public Module
     static void totalForces(Configuration *cfg, const std::vector<const Molecule *> &targetMolecules,
                             const PotentialMap &potentialMap, ForceCalculationType calculationType,
                             std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound);
-    // Calculate total forces within the specified Species
-    static void totalForces(const Species *sp, const PotentialMap &potentialMap, ForceCalculationType calculationType,
-                            std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
-                            OptionalReferenceWrapper<const std::vector<Vector3>> r = {});
 };

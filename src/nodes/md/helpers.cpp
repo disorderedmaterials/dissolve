@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#include "kernels/producer.h"
 #include "nodes/md/md.h"
 
 // Return enum options for TimestepType
@@ -9,12 +13,12 @@ EnumOptions<MDNode::TimestepType> MDNode::timestepType()
 }
 
 // Cap forces in Configuration
-int MDNode::capForces(double maxForce, std::vector<Vector3> &fInter, std::vector<Vector3> &fIntra)
+int MDNode::capForces(double maxForce, std::vector<Vector3> &pairPotentialForces, std::vector<Vector3> &geometricForces)
 {
     double fMag;
     const auto maxForceSq = maxForce * maxForce;
     auto nCapped = 0;
-    for (auto &&[inter, intra] : zip(fInter, fIntra))
+    for (auto &&[inter, intra] : zip(pairPotentialForces, geometricForces))
     {
         fMag = (inter + intra).magnitudeSq();
         if (fMag < maxForceSq)
@@ -32,7 +36,8 @@ int MDNode::capForces(double maxForce, std::vector<Vector3> &fInter, std::vector
 
 // Determine timestep to use
 std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, double requestedTimeStep,
-                                                const std::vector<Vector3> &fInter, const std::vector<Vector3> &fIntra)
+                                                const std::vector<Vector3> &pairPotentialForces,
+                                                const std::vector<Vector3> &geometricForces)
 {
     if (timestepType == TimestepType::Fixed)
         return requestedTimeStep;
@@ -41,7 +46,7 @@ std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, doubl
     if (timestepType == TimestepType::Variable)
     {
         auto absFMax = 0.0;
-        for (auto &&[inter, intra] : zip(fInter, fIntra))
+        for (auto &&[inter, intra] : zip(pairPotentialForces, geometricForces))
             absFMax = std::max(absFMax, (inter + intra).absMax());
 
         return 1.0 / absFMax;
@@ -49,9 +54,9 @@ std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, doubl
 
     // Automatic timestep determination, using maximal interatomic force to guide the timestep up to the current fixed timestep
     // value
-    auto absFMaxInter =
-        std::max_element(fInter.begin(), fInter.end(), [](auto &left, auto &right) { return left.absMax() < right.absMax(); })
-            ->absMax();
+    auto absFMaxInter = std::max_element(pairPotentialForces.begin(), pairPotentialForces.end(),
+                                         [](auto &left, auto &right) { return left.absMax() < right.absMax(); })
+                            ->absMax();
 
     auto deltaT = 100.0 / absFMaxInter;
     if (deltaT < (requestedTimeStep / 100.0))
@@ -69,7 +74,10 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
 
     // Create arrays
     std::vector<double> mass(sp->nAtoms(), 0.0);
-    std::vector<Vector3> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
+    std::vector<Vector3> pairPotentialForces(sp->nAtoms()), geometricForces(sp->nAtoms()), accelerations(sp->nAtoms());
+
+    // Create a species kernel
+    auto kernel = KernelProducer::speciesKernel(sp, potentialMap);
 
     // Variables
     auto &atoms = sp->atoms();
@@ -100,18 +108,11 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
     tScale = sqrt(temperature / tInstant);
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
-    // Zero force arrays
-    std::fill(fInter.begin(), fInter.end(), Vector3());
-    std::fill(fIntra.begin(), fIntra.end(), Vector3());
-
-    ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rInit);
-
-    // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-    std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
-    std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+    // Calculate total forces
+    kernel->totalForces(sp, pairPotentialForces, geometricForces, rInit);
 
     // Check for suitable timestep
-    if (!determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra))
+    if (!determineTimeStep(TimestepType::Automatic, maxDeltaT, pairPotentialForces, geometricForces))
     {
         Messenger::print("Forces are currently too high for species MD to proceed. Try decreasing the maximum timestep.\n");
         return rInit;
@@ -124,7 +125,7 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
     for (auto step = 1; step <= nSteps; ++step)
     {
         // Get timestep
-        auto optDT = determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra);
+        auto optDT = determineTimeStep(TimestepType::Automatic, maxDeltaT, pairPotentialForces, geometricForces);
         if (!optDT)
         {
             Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
@@ -147,14 +148,8 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
             v += a * 0.5 * dT;
         }
 
-        // Zero force arrays
-        std::fill(fInter.begin(), fInter.end(), Vector3());
-        std::fill(fIntra.begin(), fIntra.end(), Vector3());
-
-        // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        ForcesModule::totalForces(sp, potentialMap, ForcesModule::ForceCalculationType::Full, fInter, fIntra, rNew);
-        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
-        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+        // Calculate total forces
+        kernel->totalForces(sp, pairPotentialForces, geometricForces, rNew);
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -162,7 +157,7 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
         // B:  a(t+dt) = F(t+dt)/m
         // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
         ke = 0.0;
-        for (auto &&[f1, f2, v, a, m] : zip(fInter, fIntra, velocities, accelerations, mass))
+        for (auto &&[f1, f2, v, a, m] : zip(pairPotentialForces, geometricForces, velocities, accelerations, mass))
         {
             // Determine new accelerations
             a = (f1 + f2) / m;

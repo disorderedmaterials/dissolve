@@ -11,16 +11,17 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap) : GeometryKernel(cfg, potentialMap) {}
-
-ForceKernel::ForceKernel(const Box *box, const PotentialMap &potentialMap) : GeometryKernel(box, potentialMap) {}
+ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap)
+    : GeometryKernel(cfg->box(), potentialMap), configuration_(cfg)
+{
+}
 
 /*
  * Force Calculation
  */
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -34,8 +35,8 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
-                                   double srScale) const
+void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f,
+                                   double elecScale, double srScale) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -49,7 +50,7 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
+void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const
 {
     auto vij = box_->minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
@@ -63,7 +64,7 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f, double elecScale,
                                 double srScale) const
 {
     auto vij = box_->minimumVector(i.r(), j.r());
@@ -83,7 +84,7 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
 
 // Calculate forces between atoms in supplied cells
 void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const Cell *otherCell, bool applyMim,
-                                                ForceVector &f) const
+                                                std::vector<Vector3> &f) const
 {
     assert(centralCell && otherCell);
     auto &centralAtoms = centralCell->atoms();
@@ -125,26 +126,24 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
 void ForceKernel::extendedForces(const Atom &i, Vector3 &fVec) const { return; }
 
 // Calculate extended forces on supplied molecule
-void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { return; }
+void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) const { return; }
 
 /*
  * Totals
  */
 
 // Calculate total forces in the world
-void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<ForceCalculationFlags> flags) const
+void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
+                              Flags<Kernel::CalculationFlags> flags) const
 {
-    assert(molecules_);
-    assert(cellArray_);
+    auto &cellArray = configuration_->cells();
+    auto &molecules = configuration_->molecules();
 
-    auto &molecules = molecules_->get();
-    auto &cellArray = cellArray_->get();
-
-    auto combinableUnbound = createCombinableForces(fUnbound);
-    auto combinableBound = createCombinableForces(fBound);
+    auto combinableUnbound = Kernel::createCombinableVector3(fUnbound);
+    auto combinableBound = Kernel::createCombinableVector3(fBound);
 
     // Pair potential forces between different molecules
-    if (!flags.isSet(ExcludeInterMolecularPairPotential))
+    if (flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential))
     {
         // Force operator
         auto unaryOp = [&](const int id)
@@ -164,7 +163,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<
                                     });
 
             // Interatomic interactions between atoms in this cell and its neighbours
-            auto &neighbours = cellArray_->get().neighbours(*cellI);
+            auto &neighbours = cellArray.neighbours(*cellI);
             for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
             {
                 if (it->cell.index() < cellI->index())
@@ -178,41 +177,38 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Flags<
     }
 
     // Other molecule forces
-    if (!(flags.isSet(ExcludeGeometry) && flags.isSet(ExcludeIntraMolecularPairPotential) && flags.isSet(ExcludeExtended)))
+    auto moleculeForceOperator = [&](const auto &mol)
     {
-        auto moleculeForceOperator = [&](const auto &mol)
-        {
-            auto &fLocalUnbound = combinableUnbound.local();
-            auto &fLocalBound = combinableBound.local();
+        auto &fLocalUnbound = combinableUnbound.local();
+        auto &fLocalBound = combinableBound.local();
 
-            auto offset = mol->globalAtomOffset();
+        auto offset = mol->globalAtomOffset();
 
-            // Geometric terms
-            if (!flags.isSet(ExcludeGeometry))
-                totalGeometryForces(*mol.get(), fLocalBound);
+        // Geometric terms
+        if (flags.isNotSet(Kernel::ExcludeGeometric))
+            totalGeometryForces(*mol.get(), fLocalBound);
 
-            // Pair potential interactions between atoms within the molecule
-            if (!flags.isSet(ExcludeIntraMolecularPairPotential))
-                dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms(),
-                                        [&](int indexI, const auto &i, int indexJ, const auto &j)
-                                        {
-                                            if (indexI == indexJ)
-                                                return;
-                                            auto &&[scalingType, elec14, vdw14] = i->scaling(j);
-                                            if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                                                forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound);
-                                            else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                                                forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound, elec14,
-                                                              vdw14);
-                                        });
+        // Pair potential interactions between atoms within the molecule
+        if (flags.isNotSet(Kernel::ExcludeIntraMolecularPairPotential))
+            dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms(),
+                                    [&](int indexI, const auto &i, int indexJ, const auto &j)
+                                    {
+                                        if (indexI == indexJ)
+                                            return;
+                                        auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                                        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                            forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound);
+                                        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                            forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound, elec14,
+                                                          vdw14);
+                                    });
 
-            // Extended forces
-            if (!flags.isSet(ExcludeExtended))
-                extendedForces(*mol.get(), fLocalUnbound);
-        };
+        // Extended forces
+        if (flags.isNotSet(Kernel::ExcludeExtended))
+            extendedForces(*mol.get(), fLocalUnbound);
+    };
 
-        dissolve::for_each(ParallelPolicies::par, molecules.begin(), molecules.end(), moleculeForceOperator);
-    }
+    dissolve::for_each(ParallelPolicies::par, molecules.begin(), molecules.end(), moleculeForceOperator);
 
     combinableUnbound.finalize();
     combinableBound.finalize();

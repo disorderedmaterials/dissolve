@@ -9,8 +9,6 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-GeometryKernel::GeometryKernel(const Configuration *cfg, const PotentialMap &potentialMap) : KernelBase(cfg, potentialMap) {}
-
 GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap) : KernelBase(box, potentialMap) {}
 
 /*
@@ -18,14 +16,14 @@ GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap)
  */
 
 // Return SpeciesBond energy at Atoms specified
-double GeometryKernel::bondEnergy(const SpeciesBond &b, const Atom &i, const Atom &j) const
+double GeometryKernel::bondEnergy(const SpeciesBond &b, const Vector3 &ri, const Vector3 &rj) const
 {
-    return b.energy(box_->minimumDistance(i.r(), j.r()));
+    return b.energy(box_->minimumDistance(ri, rj));
 }
 
 // Calculate SpeciesBond forces
 void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                ForceVector &f) const
+                                std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
 
@@ -41,7 +39,7 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, int inde
 }
 
 // Calculate SpeciesBond forces
-void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, ForceVector &f) const
+void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
 
@@ -61,9 +59,9 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, cons
  */
 
 // Return SpeciesAngle energy at Atoms specified
-double GeometryKernel::angleEnergy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const
+double GeometryKernel::angleEnergy(const SpeciesAngle &a, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk) const
 {
-    return a.energy(box_->angleInRadians(i.r(), j.r(), k.r()));
+    return a.energy(box_->angleInRadians(ri, rj, rk));
 }
 
 // Calculate angle force parameters from supplied vectors, storing results in supplied variables
@@ -85,7 +83,7 @@ GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Ve
 
 // Calculate SpeciesAngle forces
 void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
-                                 int indexK, ForceVector &f) const
+                                 int indexK, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(j.r(), i.r());
     auto vecjk = box_->minimumVector(j.r(), k.r());
@@ -103,7 +101,7 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int i
 
 // Calculate SpeciesAngle forces
 void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
-                                 ForceVector &f) const
+                                 std::vector<Vector3> &f) const
 {
     auto angleParameters = calculateAngleForceParameters(ri - rj, rk - rj);
     const auto force = angle.force(angleParameters.theta);
@@ -122,7 +120,7 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Vector3 &ri, c
 
 // Add torsion forces for atom 'i' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceI(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     auto &dcos_dxpj = torsionParameters.dcos_dxpj;
 
@@ -133,7 +131,7 @@ void GeometryKernel::addTorsionForceI(double du_dphi, int index, GeometryKernel:
 
 // Add torsion forces for atom 'j' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceJ(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     f[index].add(du_dphi * (torsionParameters.dcos_dxpj.dp(-torsionParameters.dxpj_dij.columnAsVec3(0) -
                                                            torsionParameters.dxpj_dkj.columnAsVec3(0)) -
@@ -148,7 +146,7 @@ void GeometryKernel::addTorsionForceJ(double du_dphi, int index, GeometryKernel:
 
 // Add torsion forces for atom 'k' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceK(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     f[index].add(du_dphi * (torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dkj.columnAsVec3(0) -
                                                            torsionParameters.dxpk_dlk.columnAsVec3(0)) +
@@ -163,7 +161,7 @@ void GeometryKernel::addTorsionForceK(double du_dphi, int index, GeometryKernel:
 
 // Add torsion forces for atom 'l' in 'i-j-k-l' into the specified vector index and input vector
 void GeometryKernel::addTorsionForceL(double du_dphi, int index, GeometryKernel::TorsionParameters &torsionParameters,
-                                      ForceVector &f) const
+                                      std::vector<Vector3> &f) const
 {
     f[index].add(du_dphi * torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dlk.columnAsVec3(0)),
                  du_dphi * torsionParameters.dcos_dxpk.dp(torsionParameters.dxpk_dlk.columnAsVec3(1)),
@@ -171,9 +169,10 @@ void GeometryKernel::addTorsionForceL(double du_dphi, int index, GeometryKernel:
 }
 
 // Return SpeciesTorsion energy at Atoms specified
-double GeometryKernel::torsionEnergy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const
+double GeometryKernel::torsionEnergy(const SpeciesTorsion &t, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                                     const Vector3 &rl) const
 {
-    return t.energy(box_->torsionInRadians(i.r(), j.r(), k.r(), l.r()));
+    return t.energy(box_->torsionInRadians(ri, rj, rk, rl));
 }
 
 // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
@@ -220,7 +219,7 @@ GeometryKernel::TorsionParameters GeometryKernel::calculateTorsionForceParameter
 
 // Calculate SpeciesTorsion forces
 void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                   const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
+                                   const Atom &k, int indexK, const Atom &l, int indexL, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
     auto vecjk = box_->minimumVector(k.r(), j.r());
@@ -239,7 +238,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i,
 
 // Calculate SpeciesTorsion forces
 void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
-                                   const Vector3 &rl, ForceVector &f) const
+                                   const Vector3 &rl, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
     auto vecjk = box_->minimumVector(rk, rj);
@@ -260,15 +259,15 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 
  */
 
 // Return SpeciesImproper energy at Atoms specified
-double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k,
-                                      const Atom &l) const
+double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
+                                      const Vector3 &rl) const
 {
-    return imp.energy(box_->torsionInRadians(i.r(), j.r(), k.r(), l.r()));
+    return imp.energy(box_->torsionInRadians(ri, rj, rk, rl));
 }
 
 // Calculate SpeciesImproper forces
 void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ,
-                                    const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
+                                    const Atom &k, int indexK, const Atom &l, int indexL, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
     auto vecjk = box_->minimumVector(k.r(), j.r());
@@ -286,7 +285,7 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom 
 
 // Calculate SpeciesImproper forces
 void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
-                                    const Vector3 &rl, ForceVector &f) const
+                                    const Vector3 &rl, std::vector<Vector3> &f) const
 {
     auto vecji = box_->minimumVector(ri, rj);
     auto vecjk = box_->minimumVector(rk, rj);
@@ -306,92 +305,94 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &r
  * Total Energy
  */
 
-// Return total energy for the geometry terms involving the specified atom
-double GeometryKernel::totalGeometryEnergy(const Atom &i) const
+// Return geometry energy for the specified moleculatom
+Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Atom &i) const
 {
     // Get the SpeciesAtom and Molecule
     const auto *spAtom = i.speciesAtom();
     assert(spAtom);
     const auto &mol = *i.molecule();
 
-    // If no terms are present, return zero
-    if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0))
-        return 0.0;
-
-    auto intraEnergy = 0.0;
+    Kernel::GeometryEnergyValue energy;
 
     // Add energy from SpeciesAngle terms
-    intraEnergy += std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesBond &bond)
-                                   { return acc + bondEnergy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ())); });
+    energy.bondEnergy = std::accumulate(
+        spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const SpeciesBond &bond)
+        { return acc + bondEnergy(bond, mol.atom(bond.indexI())->r(), mol.atom(bond.indexJ())->r()); });
 
     // Add energy from SpeciesAngle terms
-    intraEnergy += std::accumulate(
-        spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const SpeciesAngle &angle)
-        { return acc + angleEnergy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
+    energy.angleEnergy =
+        std::accumulate(spAtom->angles().begin(), spAtom->angles().end(), 0.0,
+                        [this, &mol](const auto acc, const SpeciesAngle &angle)
+                        {
+                            return acc + angleEnergy(angle, mol.atom(angle.indexI())->r(), mol.atom(angle.indexJ())->r(),
+                                                     mol.atom(angle.indexK())->r());
+                        });
 
     // Add energy from SpeciesTorsion terms
-    intraEnergy +=
-        std::accumulate(spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
-                        [this, &mol](const auto acc, const SpeciesTorsion &torsion)
-                        {
-                            return acc + torsionEnergy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
-                                                       *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
-                        });
+    energy.torsionEnergy = std::accumulate(
+        spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
+        [this, &mol](const auto acc, const SpeciesTorsion &torsion)
+        {
+            return acc + torsionEnergy(torsion, mol.atom(torsion.indexI())->r(), mol.atom(torsion.indexJ())->r(),
+                                       mol.atom(torsion.indexK())->r(), mol.atom(torsion.indexL())->r());
+        });
 
     // Add energy from SpeciesImproper terms
-    intraEnergy +=
-        std::accumulate(spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
-                        [this, &mol](const auto acc, const SpeciesImproper &improper)
-                        {
-                            return acc + improperEnergy(improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
-                                                        *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
-                        });
+    energy.improperEnergy = std::accumulate(
+        spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
+        [this, &mol](const auto acc, const SpeciesImproper &improper)
+        {
+            return acc + improperEnergy(improper, mol.atom(improper.indexI())->r(), mol.atom(improper.indexJ())->r(),
+                                        mol.atom(improper.indexK())->r(), mol.atom(improper.indexL())->r());
+        });
 
-    return intraEnergy;
+    return energy;
 }
 
-// Return total energy for the geometry terms in the specified molecule
-double GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
+// Return geometry energy for the specified molecule
+Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
 {
-    auto intraEnergy = 0.0;
+    Kernel::GeometryEnergyValue energy;
 
     // Loop over Bonds
-    intraEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, mol.species()->bonds().begin(), mol.species()->bonds().end(), intraEnergy, std::plus<double>(),
-        [&mol, this](const auto &bond) { return bondEnergy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ())); });
+    energy.bondEnergy =
+        dissolve::transform_reduce(ParallelPolicies::par, mol.species()->bonds().begin(), mol.species()->bonds().end(), 0.0,
+                                   std::plus<double>(), [&mol, this](const auto &bond)
+                                   { return bondEnergy(bond, mol.atom(bond.indexI())->r(), mol.atom(bond.indexJ())->r()); });
 
     // Loop over Angles
-    intraEnergy = dissolve::transform_reduce(
-        ParallelPolicies::seq, mol.species()->angles().begin(), mol.species()->angles().end(), intraEnergy, std::plus<double>(),
+    energy.angleEnergy = dissolve::transform_reduce(
+        ParallelPolicies::seq, mol.species()->angles().begin(), mol.species()->angles().end(), 0.0, std::plus<double>(),
         [&mol, this](const auto &angle) -> double
-        { return angleEnergy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
+        {
+            return angleEnergy(angle, mol.atom(angle.indexI())->r(), mol.atom(angle.indexJ())->r(),
+                               mol.atom(angle.indexK())->r());
+        });
 
     // Loop over Torsions
-    intraEnergy =
-        dissolve::transform_reduce(ParallelPolicies::par, mol.species()->torsions().begin(), mol.species()->torsions().end(),
-                                   intraEnergy, std::plus<double>(),
-                                   [&mol, this](const auto &torsion) -> double
-                                   {
-                                       return torsionEnergy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
-                                                            *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
-                                   });
+    energy.torsionEnergy = dissolve::transform_reduce(
+        ParallelPolicies::par, mol.species()->torsions().begin(), mol.species()->torsions().end(), 0.0, std::plus<double>(),
+        [&mol, this](const auto &torsion) -> double
+        {
+            return torsionEnergy(torsion, mol.atom(torsion.indexI())->r(), mol.atom(torsion.indexJ())->r(),
+                                 mol.atom(torsion.indexK())->r(), mol.atom(torsion.indexL())->r());
+        });
 
     // Loop over Impropers
-    intraEnergy = dissolve::transform_reduce(ParallelPolicies::par, mol.species()->impropers().begin(),
-                                             mol.species()->impropers().end(), intraEnergy, std::plus<double>(),
-                                             [&mol, this](const auto &improper) -> double
-                                             {
-                                                 return improperEnergy(
-                                                     improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
-                                                     *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
-                                             });
+    energy.improperEnergy = dissolve::transform_reduce(
+        ParallelPolicies::par, mol.species()->impropers().begin(), mol.species()->impropers().end(), 0.0, std::plus<double>(),
+        [&mol, this](const auto &improper) -> double
+        {
+            return improperEnergy(improper, mol.atom(improper.indexI())->r(), mol.atom(improper.indexJ())->r(),
+                                  mol.atom(improper.indexK())->r(), mol.atom(improper.indexL())->r());
+        });
 
-    return intraEnergy;
+    return energy;
 }
 
 // Calculate total forces within the specified molecule arising from geometry terms
-void GeometryKernel::totalGeometryForces(const Molecule &mol, ForceVector &f) const
+void GeometryKernel::totalGeometryForces(const Molecule &mol, std::vector<Vector3> &f) const
 {
     const auto offset = mol.globalAtomOffset();
 

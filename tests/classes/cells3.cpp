@@ -113,7 +113,7 @@ class CellsEnergyTest : public ::testing::Test
 
         // Calculate total Cell-based energy
         auto tabulated = tabulatedEnergyNoCells(cfg, rCut * rCut);
-        auto production = kernel->totalPairPotentialEnergy(false);
+        auto production = kernel->totalPairPotentialEnergy(true, false);
         EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut * rCut), tabulated, 1.0e-2);
         EXPECT_NEAR(tabulated, production.total(), 1.0e-6);
         EXPECT_NEAR(refEnergy - lrc, production.total(), 1.65e-2);

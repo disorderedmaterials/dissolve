@@ -25,8 +25,8 @@ std::unique_ptr<ForceKernel> KernelProducer::forceKernel(const Configuration *cf
         return std::unique_ptr<ForceKernel>(new ForceKernel(cfg, potentialMap));
 }
 
-// Create force kernel using the specified Box
-std::unique_ptr<ForceKernel> KernelProducer::forceKernel(const Box *box, const PotentialMap &potentialMap)
+// Create species kernel
+std::unique_ptr<SpeciesKernel> KernelProducer::speciesKernel(const Species *sp, const PotentialMap &potentialMap)
 {
-    return std::unique_ptr<ForceKernel>(new ForceKernel(box, potentialMap));
+    return std::unique_ptr<SpeciesKernel>(new SpeciesKernel(sp, potentialMap));
 }

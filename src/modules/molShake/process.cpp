@@ -90,8 +90,7 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve)
 
             // Calculate reference pair potential energy for Molecule, excluding all intramolecular contributions
             currentEnergy =
-                kernel->totalEnergy(*mol, {EnergyKernel::ExcludeGeometry, EnergyKernel::ExcludeIntraMolecularPairPotential})
-                    .total();
+                kernel->totalEnergy(*mol, {Kernel::ExcludeGeometric, Kernel::ExcludeIntraMolecularPairPotential}).total();
 
             // Loop over number of shakes per atom
             for (shake = 0; shake < nShakesPerMolecule_; ++shake)
@@ -135,8 +134,7 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve)
 
                 // Calculate new energy
                 newEnergy =
-                    kernel->totalEnergy(*mol, {EnergyKernel::ExcludeGeometry, EnergyKernel::ExcludeIntraMolecularPairPotential})
-                        .total();
+                    kernel->totalEnergy(*mol, {Kernel::ExcludeGeometric, Kernel::ExcludeIntraMolecularPairPotential}).total();
 
                 // Trial the transformed atom position
                 delta = newEnergy - currentEnergy;
