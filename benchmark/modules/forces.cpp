@@ -64,8 +64,8 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     std::vector<Vector3> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        forceKernel->totalForces(
-            forces, forces, {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeIntraMolecularPairPotential});
+        forceKernel->totalForces(forces, forces,
+                                 {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeIntraMolecularPairPotential});
 }
 
 template <SpeciesType speciesType, SpeciesPopulation population>
@@ -76,7 +76,7 @@ static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
     std::vector<Vector3> ppForces(sp->nAtoms()), geomForces(sp->nAtoms());
     auto kernel = KernelProducer::speciesKernel(sp.get(), problemDef.dissolve().potentialMap());
     for (auto _ : state)
-        kernel->totalForces(sp.get(), ppForces, geomForces);
+        kernel->totalForces(ppForces, geomForces);
 }
 
 template <SpeciesType speciesType, SpeciesPopulation population>
