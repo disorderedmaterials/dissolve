@@ -6,6 +6,50 @@
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
 
+BraggReflectionVector::BraggReflectionVector(const BraggReflectionVector &other) : reflections_(other.reflections_) {}
+
+// Return reflections vector
+std::vector<BraggReflection> &BraggReflectionVector::values() { return reflections_; }
+
+// Addition in place operator
+void BraggReflectionVector::operator+=(BraggReflectionVector other)
+{
+    for (auto i = 0; i < values().size(); ++i)
+        (*this)[i] += other[i];
+}
+
+// Multiplication operator
+BraggReflectionVector BraggReflectionVector::operator*(double factor)
+{
+    BraggReflectionVector v(*this);
+    for (auto i = 0; i < values().size(); ++i)
+        v[i] *= factor;
+
+    return v;
+}
+
+// Index operator
+BraggReflection &BraggReflectionVector::operator[](int i) { return reflections_[i]; }
+const BraggReflection &BraggReflectionVector::operator[](int i) const { return reflections_[i]; }
+
+// Express as a serialisable value
+void BraggReflectionVector::serialise(std::string tag, SerialisedValue &target) const
+{
+    Serialisable::fromVector(reflections_, tag, target);
+}
+
+// Read values from a serialisable value
+void BraggReflectionVector::deserialise(const SerialisedValue &node)
+{
+    reflections_.clear();
+    return Serialisable::toVector(node,
+                                  [&](const auto &value)
+                                  {
+                                      auto &reflection = reflections_.emplace_back();
+                                      reflection.deserialise(value);
+                                  });
+}
+
 BraggReflection::BraggReflection() {}
 
 void BraggReflection::operator+=(const BraggReflection &source)
@@ -111,6 +155,27 @@ bool BraggReflection::deserialise(LineParser &parser)
         return false;
 
     return true;
+}
+
+// Read values from a serialisable value
+void BraggReflection::deserialise(const SerialisedValue &node)
+{
+    index_ = toml::find<int>(node, "index");
+    q_ = toml::find<double>(node, "q");
+    nKVectors_ = toml::find<int>(node, "nKVectors");
+    hkl_.zero();
+    hkl_.deserialise(node);
+}
+
+// Express as a serialisable value
+void BraggReflection::serialise(std::string tag, SerialisedValue &target) const
+{
+    auto &braggReflection = target[tag];
+
+    braggReflection["index"] = index_;
+    braggReflection["q"] = q_;
+    braggReflection["nKVectors"] = nKVectors_;
+    hkl_.serialise(tag, target);
 }
 
 // Write data through specified parser

@@ -27,9 +27,6 @@ SQNode::SQNode(Graph *parentGraph)
     addOption<Function1DWrapper>("QBroadening", "Instrument broadening function to apply when calculating S(Q)", qBroadening_);
     addOption<WindowFunction::Form>(
         "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_);
-    addOption<Function1DWrapper>("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)",
-                                 braggQBroadening_);
-
     addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
                                      averagingLength_);
     addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging partials",

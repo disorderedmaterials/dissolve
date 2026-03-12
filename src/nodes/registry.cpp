@@ -6,6 +6,7 @@
 #include "nodes/add.h"
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
+#include "nodes/bragg.h"
 #include "nodes/configuration.h"
 #include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
@@ -23,6 +24,7 @@
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
+#include "nodes/setCell.h"
 #include "nodes/siteRDF.h"
 #include "nodes/species.h"
 #include "nodes/sq/sq.h"
@@ -52,6 +54,7 @@ void NodeRegistry::instantiateNodeProducers()
     producers_ = {{"Add", makeDerivedNode<AddNode>()},
                   {"Angle", makeDerivedNode<AngleNode>()},
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
+                  {"Bragg", makeDerivedNode<BraggNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
@@ -69,6 +72,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
+                  {"SetCell", makeDerivedNode<SetCellNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},
                   {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
                   {"SQ", makeDerivedNode<SQNode>()},
