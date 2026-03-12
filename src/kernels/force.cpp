@@ -237,8 +237,6 @@ void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::ve
 
     const auto &molecules = configuration_->molecules();
     std::shared_ptr<Molecule> molN, molM;
-    ppForceVector.resize(configuration_->nAtoms(), Vector3());
-    geometryForceVector.resize(configuration_->nAtoms(), Vector3());
 
     // Calculate interatomic and intramolecular energy in a loop over defined Molecules
     for (auto n = 0; n < configuration_->nMolecules(); ++n)
