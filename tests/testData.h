@@ -901,29 +901,76 @@ Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> 
 }
 
 // Check consistency between production and test forces
-void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces, std::vector<Vector3> &geomForces, double ppTestThreshold = 1.0e-4, double geomTestThreshold = 1.0e-6)
+void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
+                           std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags = {},
+                           double ppPercentThreshold = 5.0e-3, double geomPercentThreshold = 1.0e-6,
+                           double ppAbsoluteThreshold = 1.0e-4, double geomAbsoluteThreshold = 1.0e-4)
 {
-    // Calculate production forces(fully optimised)
-    kernel->totalForces(ppForces, geomForces);
+    // Calculate production forces (fully optimised)
+    kernel->totalForces(ppForces, geomForces, flags);
 
     // Calculate baseline test forces (simple double-loop, PBC always)
     std::vector<Vector3> ppTestForces, geomTestForces;
-    kernel->totalForcesSimple(ppTestForces, geomTestForces);
+    kernel->totalForcesSimple(ppTestForces, geomTestForces, flags);
 
     // Pair potential forces
-    for (auto &&[test, production] : zip(ppTestForces, ppForces))
-    {
-        EXPECT_NEAR(test.x, production.x, ppTestThreshold);
-        EXPECT_NEAR(test.y, production.y, ppTestThreshold);
-        EXPECT_NEAR(test.z, production.z, ppTestThreshold);
-    }
+    if (!(flags.isSet(Kernel::CalculationFlags::ExcludeInterMolecularPairPotential) &&
+          flags.isSet(Kernel::CalculationFlags::ExcludeIntraMolecularPairPotential)))
+        for (auto &&[pairPotentialTestForce, pairPotentialProductionForce] : zip(ppTestForces, ppForces))
+        {
+            auto referenceForceAbsoluteDifference = pairPotentialProductionForce - pairPotentialTestForce;
+            auto referenceForcePercentageDifference = (referenceForceAbsoluteDifference / pairPotentialTestForce) * 100.0;
+            if (abs(pairPotentialTestForce.x) < 1.0e-3)
+                EXPECT_NEAR(referenceForceAbsoluteDifference.x, 0.0, ppAbsoluteThreshold);
+            else
+                EXPECT_NEAR(referenceForcePercentageDifference.x, 0.0, ppPercentThreshold);
+            if (abs(pairPotentialTestForce.y) < 1.0e-3)
+                EXPECT_NEAR(referenceForceAbsoluteDifference.y, 0.0, ppAbsoluteThreshold);
+            else
+                EXPECT_NEAR(referenceForcePercentageDifference.y, 0.0, ppPercentThreshold);
+            if (abs(pairPotentialTestForce.z) < 1.0e-3)
+                EXPECT_NEAR(referenceForceAbsoluteDifference.z, 0.0, ppAbsoluteThreshold);
+            else
+                EXPECT_NEAR(referenceForcePercentageDifference.z, 0.0, ppPercentThreshold);
+        }
 
     // Geometric forces
-    for (auto &&[test, production] : zip(geomTestForces, geomForces))
+    if (flags.isNotSet(Kernel::CalculationFlags::ExcludeGeometric))
+        for (auto &&[geometryTestForce, geometryProductionForce] : zip(geomTestForces, geomForces))
+        {
+            auto geometricForcePercentageDifference =
+                ((geometryTestForce - geometryProductionForce) / geometryTestForce) * 100.0;
+            EXPECT_NEAR(geometricForcePercentageDifference.x, 0.0, geomPercentThreshold);
+            EXPECT_NEAR(geometricForcePercentageDifference.y, 0.0, geomPercentThreshold);
+            EXPECT_NEAR(geometricForcePercentageDifference.z, 0.0, geomPercentThreshold);
+        }
+}
+
+// Check supplied forces against external reference values
+void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
+                                    ForceImportFileFormat format, double percentThreshold = 1.0e-3,
+                                    double absoluteThreshold = 1.0e-4)
+{
+    // Load external reference forces
+    std::vector<Vector3> referenceForces(ppForces.size());
+    ASSERT_TRUE(format.importData(referenceForces));
+
+    for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
     {
-        EXPECT_NEAR(test.x, production.x, geomTestThreshold);
-        EXPECT_NEAR(test.y, production.y, geomTestThreshold);
-        EXPECT_NEAR(test.z, production.z, geomTestThreshold);
+        auto referenceForceAbsoluteDifference = (ppForce + geometryForce) - referenceForce;
+        auto referenceForcePercentageDifference = (referenceForceAbsoluteDifference / referenceForce) * 100.0;
+        if (abs(referenceForce.x) < 1.0e-3)
+            EXPECT_NEAR(referenceForceAbsoluteDifference.x, 0.0, absoluteThreshold);
+        else
+            EXPECT_NEAR(referenceForcePercentageDifference.x, 0.0, percentThreshold);
+        if (abs(referenceForce.y) < 1.0e-3)
+            EXPECT_NEAR(referenceForceAbsoluteDifference.y, 0.0, absoluteThreshold);
+        else
+            EXPECT_NEAR(referenceForcePercentageDifference.y, 0.0, percentThreshold);
+        if (abs(referenceForce.z) < 1.0e-3)
+            EXPECT_NEAR(referenceForceAbsoluteDifference.z, 0.0, absoluteThreshold);
+        else
+            EXPECT_NEAR(referenceForcePercentageDifference.z, 0.0, percentThreshold);
     }
 }
 

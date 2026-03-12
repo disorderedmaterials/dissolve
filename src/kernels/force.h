@@ -63,5 +63,6 @@ class ForceKernel : public GeometryKernel
     void totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
                      Flags<Kernel::CalculationFlags> flags = {}) const;
     // Calculate total forces with simple loops for testing
-    void totalForcesSimple(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector) const;
+    void totalForcesSimple(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
+                           Flags<Kernel::CalculationFlags> flags = {}) const;
 };
