@@ -395,7 +395,8 @@ void Node::deserialiseData(const SerialisedValue &node)
         }
 }
 
-std::set<const Node *> Node::ancestors_() const
+// Get all nodes that lead into this node
+std::set<const Node *> Node::allAncestors() const
 {
     std::set<const Node *> result{}, stack{this};
     while (!stack.empty())

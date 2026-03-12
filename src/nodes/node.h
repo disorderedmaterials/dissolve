@@ -94,17 +94,17 @@ class Node : public Serialisable<>
         return NodeConstants::ProcessResult::Failed;
     }
     // Get all nodes that lead into this node
-    std::set<const Node *> ancestors_() const;
+    std::set<const Node *> allAncestors() const;
     // Print latest message
     void echo();
 
     public:
     // Get specific ancestors
-    template <typename NodeKind> std::set<const NodeKind *> ancestors() const
+    template <typename NodeKind> std::vector<const NodeKind *> ancestors() const
     {
-        std::set<const NodeKind *> result{};
-        std::ranges::copy_if(ancestors_() | std::views::transform([](auto x) { return dynamic_cast<const NodeKind *>(x); }),
-                             std::inserter(result, result.begin()), std::identity());
+        std::vector<const NodeKind *> result{};
+        std::ranges::copy_if(allAncestors() | std::views::transform([](auto x) { return dynamic_cast<const NodeKind *>(x); }),
+                             std::back_inserter(result), std::identity());
         return result;
     }
     // Message store vector
