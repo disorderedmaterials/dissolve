@@ -42,7 +42,7 @@ TEST(Water1000EnergyTest, Full)
     EXPECT_NEAR(2.528107096550E+03, productionEnergy.geometry.angleEnergy, 7.0e-5);
 }
 
-TEST(Water1000ForcesTest, Full)
+TEST(Water1000ForceTest, Full)
 {
     GraphTestData data;
     createWaterGraph(
