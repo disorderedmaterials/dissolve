@@ -261,10 +261,7 @@ void PairPotential::tabulate()
 {
     // Are we already up do date?
     if (version_ == coreDefinitionsVersion_)
-    {
-        printf("SAME\n");
         return;
-    }
 
     // Precalculate some quantities
     shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, PairPotential::NoShortRangeTruncation);
