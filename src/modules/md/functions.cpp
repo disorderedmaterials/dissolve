@@ -103,7 +103,7 @@ std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Sp
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
     // Calculate total forces
-    kernel->totalForces(sp, fInter, fIntra, rInit);
+    kernel->totalForces(fInter, fIntra, rInit);
 
     // Check for suitable timestep
     if (!determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra))
@@ -143,7 +143,7 @@ std::vector<Vector3> MDModule::evolve(const PotentialMap &potentialMap, const Sp
         }
 
         // Calculate forces
-        kernel->totalForces(sp, fInter, fIntra, rNew);
+        kernel->totalForces(fInter, fIntra, rNew);
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2

@@ -109,7 +109,7 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
     // Calculate total forces
-    kernel->totalForces(sp, pairPotentialForces, geometricForces, rInit);
+    kernel->totalForces(pairPotentialForces, geometricForces, rInit);
 
     // Check for suitable timestep
     if (!determineTimeStep(TimestepType::Automatic, maxDeltaT, pairPotentialForces, geometricForces))
@@ -149,7 +149,7 @@ std::vector<Vector3> MDNode::evolve(const ProcessPool &procPool, const Potential
         }
 
         // Calculate total forces
-        kernel->totalForces(sp, pairPotentialForces, geometricForces, rNew);
+        kernel->totalForces(pairPotentialForces, geometricForces, rNew);
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2

@@ -23,33 +23,37 @@ class SpeciesKernel : public GeometryKernel
     public:
     ~SpeciesKernel() = default;
 
+    private:
+    // Target species
+    const Species *species_{nullptr};
+
     /*
      * Components
      */
     private:
     // Return pair potential energy of Species
-    Kernel::PairPotentialEnergyValue pairPotentialEnergy(const Species *sp) const;
+    Kernel::PairPotentialEnergyValue pairPotentialEnergy() const;
     // Return geometric energy of Species
-    Kernel::GeometryEnergyValue geometricEnergy(const Species *sp) const;
+    Kernel::GeometryEnergyValue geometricEnergy() const;
     // Calculate pair potential forces within of Species
-    void pairPotentialForces(const Species *sp, std::vector<Vector3> &forces) const;
+    void pairPotentialForces(std::vector<Vector3> &forces) const;
     // Calculate pair potential forces within of Species at the specified coordinates
-    void pairPotentialForces(const Species *sp, std::vector<Vector3> &forces, const std::vector<Vector3> &r) const;
+    void pairPotentialForces(std::vector<Vector3> &forces, const std::vector<Vector3> &r) const;
     // Calculate geometric forces within Species
-    void geometricForces(const Species *sp, std::vector<Vector3> &forces) const;
+    void geometricForces(std::vector<Vector3> &forces) const;
     // Calculate geometric forces within Species at the specified coordinates
-    void geometricForces(const Species *sp, std::vector<Vector3> &forces, const std::vector<Vector3> &r) const;
+    void geometricForces(std::vector<Vector3> &forces, const std::vector<Vector3> &r) const;
 
     /*
      * Totals
      */
     public:
     // Return total energy (interatomic and intramolecular) of Species
-    Kernel::EnergyResult totalEnergy(const Species *sp, Flags<Kernel::CalculationFlags> flags = {});
+    Kernel::EnergyResult totalEnergy(Flags<Kernel::CalculationFlags> flags = {});
     // Calculate total forces within the specified Species
-    void totalForces(const Species *sp, std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometricForceVector,
+    void totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometricForceVector,
                      Flags<Kernel::CalculationFlags> flags = {});
     // Calculate total forces within the specified Species at the specified coordinates
-    void totalForces(const Species *sp, std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometricForceVector,
+    void totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometricForceVector,
                      const std::vector<Vector3> &r, Flags<Kernel::CalculationFlags> flags = {});
 };
