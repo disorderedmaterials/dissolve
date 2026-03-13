@@ -199,7 +199,7 @@ TEST(Water1000ForceTest, CoulombOnly)
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
-    PairPotential::setRange(14.9999, 1.0e-4);
+    PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
     auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
@@ -221,6 +221,12 @@ TEST(Water1000ForceTest, CoulombOnly)
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
     checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+
+    // A single atom pair in the simulation sits at "exactly" 15.0 Angstroms apart. Dissolve includes the forces from this pair,
+    // but DL_POLY does not, hence the adjustments made to the forces on two atoms here.
+    Vector3 forceDiff(17.451528090645297, 43.419091624640259, -92.653925158222137);
+    pairPotentialForces[1183] -= forceDiff;
+    pairPotentialForces[1904] += forceDiff;
 
     // Check agreement with external reference forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
