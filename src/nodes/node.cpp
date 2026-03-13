@@ -394,3 +394,22 @@ void Node::deserialiseData(const SerialisedValue &node)
             serialisable->resolve(reachableSpecies);
         }
 }
+
+// Get all nodes that lead into this node
+std::set<const Node *> Node::allAncestors() const
+{
+    std::set<const Node *> result{}, stack{this};
+    while (!stack.empty())
+    {
+        auto current = stack.extract(stack.begin());
+        result.insert(current.value());
+        for (auto &[key, edges] : current.value()->inputEdges_)
+            for (auto edge : edges)
+            {
+                auto source = &edge->sourceNode();
+                if (!result.contains(source))
+                    stack.insert(source);
+            }
+    }
+    return result;
+}

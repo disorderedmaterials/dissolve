@@ -9,9 +9,10 @@
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include "nodes/serialisableData.h"
-#include "templates/algorithms.h"
-#include "templates/resolvable.h"
+#include <iterator>
 #include <map>
+#include <ranges>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -92,10 +93,20 @@ class Node : public Serialisable<>
 
         return NodeConstants::ProcessResult::Failed;
     }
+    // Get all nodes that lead into this node
+    std::set<const Node *> allAncestors() const;
     // Print latest message
     void echo();
 
     public:
+    // Get specific ancestors
+    template <typename NodeKind> std::vector<const NodeKind *> ancestors() const
+    {
+        std::vector<const NodeKind *> result{};
+        std::ranges::copy_if(allAncestors() | std::views::transform([](auto x) { return dynamic_cast<const NodeKind *>(x); }),
+                             std::back_inserter(result), std::identity());
+        return result;
+    }
     // Message store vector
     const MessageStore &messages() const;
     // Returns true if message with given status exists

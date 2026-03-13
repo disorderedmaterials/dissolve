@@ -5,6 +5,7 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include "nodes/number.h"
+#include "nodes/numberNode.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -188,6 +189,9 @@ TEST_F(GraphFlowTest, SetInput)
     EXPECT_EQ(y_->versionIndex(), 1);
     EXPECT_EQ(z_->versionIndex(), 3);
     EXPECT_EQ(zResult_->get<Number>().asInteger(), 18);
+
+    EXPECT_EQ(z_->ancestors<AddNode>().size(), 3);
+    EXPECT_EQ(z_->ancestors<NumberNode>().size(), 0);
 }
 
 TEST_F(GraphFlowTest, RemoveEdges)
