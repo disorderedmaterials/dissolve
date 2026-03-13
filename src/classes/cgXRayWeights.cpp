@@ -310,3 +310,5 @@ void CGXRayWeights::calculateSelfScatteringTerms() {
 
 CGBeadMap &CGXRayWeights::beadMap() { return beadMap_; }
 const CGBeadMap &CGXRayWeights::beadMap() const { return beadMap_; }
+
+void CGXRayWeights::initialiseBeadsFromFile() { beadMap_.initialiseFromFile(); }

@@ -79,6 +79,7 @@ class CGXRayWeights
     CGBeadMap &beadMap();
     const CGBeadMap &beadMap() const;
     void calculateSelfScatteringTerms();
+    void initialiseBeadsFromFile();
 
     private:
     // Set up matrices based on current AtomType information

@@ -405,7 +405,10 @@ class CGBeadMap
         std::vector<int> indices(fractions.size());
         std::iota(indices.begin(), indices.end(), 0);
         dissolve::for_each(ParallelPolicies::seq, indices.begin(), indices.end(),
-                           [&](const int &i) { av_noa_bead_ += fractions[i] * beads_[i].nAtoms(); });
+                           [&](const int &i)
+                           {
+                               av_noa_bead_ += fractions[i] * beads_[i].nAtoms();
+                           });
         Messenger::print("Calculated average atoms per bead = {:7.3f}\n", av_noa_bead_);
         dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
                            [&](const int &i) { beads_[i].calculateXRaySelfScattrering(fractions[i], av_noa_bead_); });

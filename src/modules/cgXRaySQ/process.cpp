@@ -211,6 +211,7 @@ Module::ExecutionResult CGXRaySQModule::process(ModuleContext &moduleContext)
     /*auto &weights = moduleContext.dissolve().processingModuleData().realise<CGXRayWeights>("FullWeights", name_,
                                                                                          GenericItem::InRestartFileFlag);*/
     CGXRayWeights weights;
+    weights.initialiseBeadsFromFile();
     calculateWeights(grModule, weights, formFactors_);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
