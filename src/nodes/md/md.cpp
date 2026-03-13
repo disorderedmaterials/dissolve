@@ -5,10 +5,15 @@
 
 MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Inputs
     addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-
     addInput<Number>("NSteps", "Number of MD steps to perform", nSteps_);
+
+    // Outputs
+    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+
+    // Options
     addOption<MDNode::TimestepType>("Timestep", "Timestep type to use in calculation", timestepType_);
     addOption<Number>("DeltaT", "Fixed timestep (ps) to use in MD simulation", fixedTimestep_);
     addOption<bool>("RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation",
@@ -28,7 +33,6 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
     addOption<bool>("IntraOnly",
                     "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
                     intramolecularForcesOnly_);
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
 
     // Serialisables
     addSerialisable("velocities", velocities_);
