@@ -10,6 +10,7 @@
 VersionCounter PairPotential::coreDefinitionsVersion_ = ++VersionCounter();
 double PairPotential::range_ = 15.0;
 double PairPotential::delta_ = 0.005;
+int PairPotential::nPoints_ = int(15.0 / 0.005);
 double PairPotential::rDelta_ = 1.0 / 0.005;
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ =
@@ -68,10 +69,13 @@ void PairPotential::setRange(double range, std::optional<double> delta)
 {
     range_ = range;
     if (delta)
-    {
         delta_ = *delta;
-        rDelta_ = 1.0 / delta_;
-    }
+
+    // Determine actual delta to cover requested pair potential range
+    nPoints_ = int(range_ / delta_);
+    delta_ += (range_ - (nPoints_ * delta_)) / nPoints_;
+    rDelta_ = 1.0 / delta_;
+
     ++coreDefinitionsVersion_;
 }
 
@@ -268,9 +272,8 @@ void PairPotential::tabulate()
     shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, PairPotential::NoShortRangeTruncation);
 
     // Set up containers
-    const auto nPoints = int(range_ / delta_);
-    referenceShortRangePotential_.initialise(nPoints);
-    for (auto n = 0; n < nPoints; ++n)
+    referenceShortRangePotential_.initialise(nPoints_);
+    for (auto n = 0; n < nPoints_; ++n)
         referenceShortRangePotential_.xAxis()[n] = n * delta_;
     coulombPotential_ = referenceShortRangePotential_;
     additionalShortRangePotential_ = referenceShortRangePotential_;

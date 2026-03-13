@@ -54,6 +54,8 @@ class PairPotential : Serialisable<>
     static VersionCounter coreDefinitionsVersion_;
     // Pair potential range
     static double range_;
+    // Number of points in each pair potential
+    static int nPoints_;
     // Pair potential delta
     static double delta_, rDelta_;
     // Truncation scheme to apply to short-range part of potential
