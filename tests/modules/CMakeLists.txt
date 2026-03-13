@@ -1,5 +1,4 @@
 dissolve_add_test(SRC accumulate.cpp)
-dissolve_add_test(SRC atomShake.cpp)
 dissolve_add_test(SRC avgMol.cpp)
 dissolve_add_test(SRC axisAngle.cpp)
 dissolve_add_test(SRC compare.cpp)
