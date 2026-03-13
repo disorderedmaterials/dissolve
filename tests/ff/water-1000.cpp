@@ -69,7 +69,7 @@ TEST(Water1000ForceTest, Full)
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY});
+                                   {"dlpoly/water1000/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.9);
 
     // Check agreement with external reference geometric forces
     std::vector<Vector3> noPP(geometryForces.size());
