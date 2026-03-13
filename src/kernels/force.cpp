@@ -261,20 +261,20 @@ void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::ve
                         continue;
 
                     // Determine final forces
-                    auto vecij = box_->minimumVector(i->r(), j->r());
-                    auto magjisq = vecij.magnitudeSq();
+                    auto vij = box_->minimumVector(i->r(), j->r());
+                    auto magjisq = vij.magnitudeSq();
                     if (magjisq > cutoffDistanceSquared_)
                         continue;
                     auto r = sqrt(magjisq);
-                    vecij /= r;
+                    vij /= r;
 
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        vecij *= potentialMap_.analyticForce(*molN->atom(ii), *molN->atom(jj), r);
+                        vij *= potentialMap_.analyticForce(*molN->atom(ii), *molN->atom(jj), r);
                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        vecij *= potentialMap_.analyticForce(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
+                        vij *= potentialMap_.analyticForce(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
 
-                    ppForceVector[offsetN + ii] -= vecij;
-                    ppForceVector[offsetN + jj] += vecij;
+                    ppForceVector[offsetN + ii] -= vij;
+                    ppForceVector[offsetN + jj] += vij;
                 }
             }
 
@@ -295,17 +295,17 @@ void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::ve
                         auto *j = molM->atom(jj);
 
                         // Determine final forces
-                        auto vecij = box_->minimumVector(i->r(), j->r());
-                        auto magjisq = vecij.magnitudeSq();
+                        auto vij = box_->minimumVector(i->r(), j->r());
+                        auto magjisq = vij.magnitudeSq();
                         if (magjisq > cutoffDistanceSquared_)
                             continue;
                         auto r = sqrt(magjisq);
-                        vecij /= r;
+                        vij /= r;
 
-                        vecij *= potentialMap_.analyticForce(*i, *j, r);
+                        vij *= potentialMap_.analyticForce(*i, *j, r);
 
-                        ppForceVector[offsetN + ii] -= vecij;
-                        ppForceVector[offsetM + jj] += vecij;
+                        ppForceVector[offsetN + ii] -= vij;
+                        ppForceVector[offsetM + jj] += vij;
                     }
                 }
             }
