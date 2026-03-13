@@ -9,75 +9,9 @@
 
 namespace UnitTest
 {
-TEST(Water1000EnergyTest, Full)
-{
-    GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+std::vector<double> cutoffs = {10.0, 11.425, 11.5, 13.7875, 13.8, 14.999, 15.0};
 
-    // Adjust pair potential properties
-    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
-    PairPotential::setRange(15.0, 1.0e-4);
-
-    // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
-
-    // Get the configuration and create an energy kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
-
-    // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
-
-    // Interatomic energy: 1716.032 LJ + 54.1342 correction + -29163.384451743802 Coulomb
-    EXPECT_NEAR(1716.032 + 54.1342 - 29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
-
-    // Intramolecular energy: 4.664830886619E+03 bond + 2.528107096550E+03 angle
-    EXPECT_NEAR(4.664830886619E+03 + 2.528107096550E+03, productionEnergy.geometry.total(), 3.0e-2);
-    EXPECT_NEAR(4.664830886619E+03, productionEnergy.geometry.bondEnergy, 3.0e-2);
-    EXPECT_NEAR(2.528107096550E+03, productionEnergy.geometry.angleEnergy, 7.0e-5);
-}
-
-TEST(Water1000ForceTest, Full)
-{
-    GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
-        CoordinateImportFileFormat("dlpoly/water1000/full.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-
-    // Adjust pair potential properties
-    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
-    PairPotential::setRange(15.0, 1.0e-4);
-
-    // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
-
-    // Get the configuration and create a force kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
-
-    // Check consistency between production and test forces
-    std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
-
-    // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY});
-
-    // Check agreement with external reference geometric forces
-    std::vector<Vector3> noPP(geometryForces.size());
-    checkReferenceForceConsistency(noPP, geometryForces,
-                                   {"dlpoly/water1000/intra.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.9);
-}
-
-TEST(Water1000EnergyTest, ShortRangeOnly)
+TEST(PairPotentialCutoffTest, ShortRange)
 {
     GraphTestData data;
     createWaterGraph(
@@ -87,7 +21,6 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
     PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-    PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
     auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
@@ -104,93 +37,20 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
-    // Get the configuration and create an energy kernel
+    // Get the configuration
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
 
-    // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
-
-    // Interatomic energy: 1716.032 LJ + 54.1342 correction
-    EXPECT_NEAR(1716.032 + 54.1342, productionEnergy.pairPotential.interMolecular, 4.3e-2);
-}
-
-TEST(Water1000ForceTest, ShortRangeOnly)
-{
-    GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
-        CoordinateImportFileFormat("dlpoly/water1000/vdw.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-
-    // Adjust pair potential properties
-    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
-    PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-    PairPotential::setRange(15.0, 1.0e-4);
-
-    // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto hw = waterNode->species().findAtomType("HW");
-    auto ow = waterNode->species().findAtomType("OW");
-    ASSERT_TRUE(hw && ow);
-    hw->setCharge(0.0);
-    ow->setCharge(0.0);
-
-    // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
-
-    // Get the configuration and create a force kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
-
-    // Check consistency between production and test forces
+    // Check consistency between production and test forces at different cutoffs
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
-
-    // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/vdw.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.6e-1);
+    for (auto cutoff : cutoffs)
+    {
+        PairPotential::setRange(cutoff, 1.0e-4);
+        auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+        checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    }
 }
 
-TEST(Water1000EnergyTest, ShiftedCoulombOnly)
-{
-    GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-
-    // Adjust pair potential properties
-    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
-    PairPotential::setRange(15.0, 1.0e-4);
-
-    // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto ow = waterNode->species().findAtomType("OW");
-    ASSERT_TRUE(ow);
-    ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=3.0");
-
-    // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
-
-    // Get the configuration and create an energy kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
-
-    // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
-
-    // Interatomic energy: -29163.384451743802 Coulomb
-    EXPECT_NEAR(-29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
-}
-
-TEST(Water1000ForceTest, CoulombOnly)
+TEST(PairPotentialCutoffTest, Coulomb)
 {
     GraphTestData data;
     createWaterGraph(
@@ -199,7 +59,6 @@ TEST(Water1000ForceTest, CoulombOnly)
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
-    PairPotential::setRange(14.9999, 1.0e-4);
 
     // Remove charges from atom types
     auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
@@ -214,56 +73,17 @@ TEST(Water1000ForceTest, CoulombOnly)
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
-    // Get the configuration and create a force kernel
+    // Get the configuration
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
 
-    // Check consistency between production and test forces
+    // Check consistency between production and test forces at different cutoffs
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
-
-    // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/coulomb.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
-                                   1.6e-1);
-}
-
-TEST(Water1000ForceTest, ShiftedCoulombOnly)
-{
-    GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-
-    // Adjust pair potential properties
-    PairPotential::setRange(15.0, 1.0e-4);
-
-    // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto hw = waterNode->species().findAtomType("HW");
-    auto ow = waterNode->species().findAtomType("OW");
-    ASSERT_TRUE(hw && ow);
-    ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
-
-    // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
-
-    // Get the configuration and create a force kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
-
-    // Check consistency between production and test forces
-    std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
-
-    // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/shifted.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
-                                   1.6e-1);
+    for (auto cutoff : cutoffs)
+    {
+        PairPotential::setRange(cutoff, 1.0e-4);
+        auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+        checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    }
 }
 
 } // namespace UnitTest
