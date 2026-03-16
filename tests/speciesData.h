@@ -12,17 +12,14 @@
 
 namespace UnitTest
 {
-// Create and return argon test species in the specified graph
-inline SpeciesNode *createArgon(Graph *parentGraph)
+// Create and return argon test species
+inline std::unique_ptr<SpeciesNode> createArgon()
 {
-    const auto name = "Argon";
-
     // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &(speciesNodePtr->species());
-    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
-    species->setName(name);
+    species->setName("Ar");
 
     // Set up atom types
     auto Ar = species->addAtomType(Elements::Element::Ar, "Ar");
@@ -33,7 +30,7 @@ inline SpeciesNode *createArgon(Graph *parentGraph)
     auto iso = species->addIsotopologue("Ar36");
     iso->setAtomTypeIsotope(Ar.get(), Sears91::Ar_36);
 
-    return speciesNodePtr;
+    return speciesNodeUniquePtr;
 }
 
 // Create and return water test species in the specified graph
