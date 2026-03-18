@@ -17,7 +17,7 @@ TEST(GraphArgonTest, InitSimulation)
     createArgonGraph(&data.graphRoot);
 
     // Get the Insert node and run the graph
-    auto insertNode = data.graphRoot.findNode("Insert");
+    auto insertNode = data.graphRoot.findNode("Insert-Ar");
     ASSERT_TRUE(insertNode);
     ASSERT_EQ(insertNode->run(), NodeConstants::ProcessResult::Success);
 
@@ -35,7 +35,7 @@ TEST(GraphArgonTest, AllCorrelations)
                                                 CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
 
     // Run the Graph from the NeutronSQ node
-    auto neutronSQNode = data.graphRoot.findNode("NeutronSQ");
+    auto neutronSQNode = data.graphRoot.findNode("Yarnell");
     ASSERT_TRUE(neutronSQNode);
     ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(neutronSQNode->versionIndex(), 0);

@@ -19,7 +19,7 @@ TEST(BroadeningTest, ArgonBroadening)
     // Get the SQ and NeutronSQ nodes
     auto sqNode = data.graphRoot.findNode("SQ");
     ASSERT_TRUE(sqNode);
-    auto neutronSQNode = data.graphRoot.findNode("NeutronSQ");
+    auto neutronSQNode = data.graphRoot.findNode("Yarnell");
     ASSERT_TRUE(neutronSQNode);
 
     std::vector<std::tuple<std::string, Functions1D::Form, std::vector<double>>> tests = {

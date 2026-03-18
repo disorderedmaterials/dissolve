@@ -13,8 +13,8 @@
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/insert.h"
-#include "nodes/sq/sq.h"
 #include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include "tests/speciesData.h"
 #include <gtest/gtest.h>
@@ -31,28 +31,33 @@ class GraphTestData
     DissolveGraph graphRoot;
 };
 
-
 // Create basic configuration graph, returning the last node
-inline Node* createConfiguration(Graph *root, std::vector<std::pair<std::unique_ptr<SpeciesNode>, int>> species, double densityAtomsPerAngstrom)
+inline Node *createConfiguration(Graph *root,
+                                 const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
+                                 double densityAtomsPerAngstrom)
 {
     // Create configuration node
     auto lastNode = root->createNode("Configuration", "Mixture");
     EXPECT_TRUE(lastNode);
 
     // Add Species and Insert nodes
-    for (auto &[speciesNode, population] : species)
+    for (auto &[speciesCreator, population] : species)
     {
-        // Move the species node into the graph
-        root->addNode(std::move(speciesNode), speciesNode->name());
+        // Create the species node and get the species pointer
+        auto speciesUnique = speciesCreator();
+        auto &speciesNode = speciesUnique->species();
 
-        auto insertNodeName = std::format("Insert{}", speciesNode->name());
+        // Move the species node into the graph
+        root->addNode(std::move(speciesUnique), speciesNode.name());
+
+        auto insertNodeName = std::format("Insert-{}", speciesNode.name());
         auto insertNode = root->createNode("Insert", insertNodeName);
 
         EXPECT_TRUE(insertNode);
         EXPECT_TRUE(insertNode->setInput<Number>("Population", population));
         EXPECT_TRUE(insertNode->setInput<Number>("Density", densityAtomsPerAngstrom));
         EXPECT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
-        EXPECT_TRUE(root->addEdge({std::string(speciesNode->name()), "Species", insertNodeName, "Species"}));
+        EXPECT_TRUE(root->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
         EXPECT_TRUE(root->addEdge({std::string(lastNode->name()), "Configuration", insertNodeName, "Configuration"}));
 
         lastNode = insertNode;
@@ -62,20 +67,20 @@ inline Node* createConfiguration(Graph *root, std::vector<std::pair<std::unique_
 }
 
 // Append an import coordinates node
-inline Node* appendImportCoordinates(Graph *root, Node *lastNode, CoordinateImportFileFormat fileFormat)
+inline Node *appendImportCoordinates(Graph *root, Node *lastNode, CoordinateImportFileFormat fileFormat)
 {
     auto importCoordinates = root->createNode("ImportConfigurationCoordinates");
     EXPECT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(fileFormat.filename())));
     EXPECT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "FileFormat",
-        CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(fileFormat.formatIndex())));
-    EXPECT_TRUE(root->addEdge({std::string(lastNode->name()), "Configuration", "ImportConfigurationCoordinates", "Configuration"}));
+        "FileFormat", CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(fileFormat.formatIndex())));
+    EXPECT_TRUE(
+        root->addEdge({std::string(lastNode->name()), "Configuration", "ImportConfigurationCoordinates", "Configuration"}));
 
     return importCoordinates;
 }
 
 // Append GR and SQ nodes
-inline SQNode* appendGRSQ(Graph *root, Node* lastNode, bool noAveraging = false, bool noIntraBroadening = false)
+inline SQNode *appendGRSQ(Graph *root, Node *lastNode, bool noAveraging = false, bool noIntraBroadening = false)
 {
     // Create and setup the GR node
     auto grNode = root->createNode("GR");
@@ -85,8 +90,7 @@ inline SQNode* appendGRSQ(Graph *root, Node* lastNode, bool noAveraging = false,
     if (noIntraBroadening)
         EXPECT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
 
-    EXPECT_TRUE(
-        root->addEdge({std::string(lastNode->name()), "Configuration", "GR", "Configuration"}));
+    EXPECT_TRUE(root->addEdge({std::string(lastNode->name()), "Configuration", "GR", "Configuration"}));
 
     // Create the SQ node
     auto sqNode = dynamic_cast<SQNode *>(root->createNode("SQ"));
@@ -98,8 +102,8 @@ inline SQNode* appendGRSQ(Graph *root, Node* lastNode, bool noAveraging = false,
 
 // Create a NeutronSQ node with optional reference data
 inline NeutronSQNode *appendNeutronSQ(Graph *root, SQNode *sqNode, std::string name, const IsotopologueSet &isotopologues = {},
-                         const Exchangeables &exchangeables = {},
-                         Data1DImportFileFormat referenceData = Data1DImportFileFormat())
+                                      const Exchangeables &exchangeables = {},
+                                      Data1DImportFileFormat referenceData = Data1DImportFileFormat())
 {
     auto neutronSQNode = dynamic_cast<NeutronSQNode *>(root->createNode("NeutronSQ", name));
     EXPECT_TRUE(neutronSQNode);
@@ -111,19 +115,20 @@ inline NeutronSQNode *appendNeutronSQ(Graph *root, SQNode *sqNode, std::string n
     // Set reference F(Q) data
     if (referenceData.hasFilename())
     {
-        auto data1DImportNode = root->createNode("Data1DImport", std::format("{}-Reference", name));
+        auto data1DImportNode = root->createNode("Data1DImport", std::format("Reference-{}", name));
         EXPECT_TRUE(data1DImportNode);
         EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
         EXPECT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
             "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
-        EXPECT_TRUE(root->addEdge({std::format("{}-Reference", name), "Data", name, "ReferenceData"}));
+        EXPECT_TRUE(root->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
     }
 
     return neutronSQNode;
 }
 
 // Create an XRaySQ node with optional reference data
-inline XRaySQNode *appendXRaySQ(Graph *root, SQNode *sqNode, std::string name, Data1DImportFileFormat referenceData = Data1DImportFileFormat())
+inline XRaySQNode *appendXRaySQ(Graph *root, SQNode *sqNode, std::string name,
+                                Data1DImportFileFormat referenceData = Data1DImportFileFormat())
 {
     auto xRaySQNode = dynamic_cast<XRaySQNode *>(root->createNode("XRaySQ", name));
     EXPECT_TRUE(xRaySQNode);
@@ -133,12 +138,12 @@ inline XRaySQNode *appendXRaySQ(Graph *root, SQNode *sqNode, std::string name, D
     // Set reference F(Q) data
     if (referenceData.hasFilename())
     {
-        auto data1DImportNode = root->createNode("Data1DImport", std::format("{}-Reference", name));
+        auto data1DImportNode = root->createNode("Data1DImport", std::format("Reference-{}", name));
         EXPECT_TRUE(data1DImportNode);
         EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
         EXPECT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
             "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
-        EXPECT_TRUE(root->addEdge({std::format("{}-Reference", name), "Data", name, "ReferenceData"}));
+        EXPECT_TRUE(root->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
     }
 
     return xRaySQNode;
@@ -148,71 +153,30 @@ inline XRaySQNode *appendXRaySQ(Graph *root, SQNode *sqNode, std::string name, D
 inline void createArgonGraph(Graph *root, int population = 1000,
                              CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
 {
-    // // Create species
-    // auto arNode = createArgon(root);
-    // ASSERT_TRUE(arNode);
-    //
-    // // Create configuration
-    // auto configurationNode = root->createNode("Configuration", "Bulk");
-    // ASSERT_TRUE(configurationNode);
-    // auto insertNode = root->createNode("Insert", "Insert");
-    // ASSERT_TRUE(insertNode);
-    // ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
-    // ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.0213));
-    // ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
-    // ASSERT_TRUE(root->addEdge({"Argon", "Species", "Insert", "Species"}));
-    // ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-
-    auto lastNode = createConfiguration(root, {std::pair<std::unique_ptr<SpeciesNode>, int>(createArgon(), population)}, 0.0213);
-
+    // Create the box
+    auto lastNode = createConfiguration(root, {{createArgon, population}}, 0.0213);
 
     // Import reference coordinates?
     if (initialCoordinates.hasFilename())
-    {
-        // auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
-        // ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
-        // ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-        //     "FileFormat",
-        //     CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
-        // ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
         lastNode = appendImportCoordinates(root, lastNode, initialCoordinates);
-    }
 
-    //
-    // // Add GR node and link in configuration / import node
-    // auto grNode = root->createNode("GR", "GR");
-    // ASSERT_TRUE(grNode);
-    // ASSERT_TRUE(grNode->setOption("Averaging", std::optional<Number>()));
-    // ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
-    // ASSERT_TRUE(
-    //     root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GR", "Configuration"}));
-
-    // // Create the SQ node
-    // auto sqNode = root->createNode("SQ");
-    // ASSERT_TRUE(sqNode);
-    // ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
-
+    // Append GR and SQ nodes
     auto sqNode = appendGRSQ(root, lastNode, true, true);
     auto arSpeciesNode = root->findNode("Ar");
     ASSERT_TRUE(arSpeciesNode);
-    auto arSpecies = arSpeciesNode->getOutputValue<Species *>("Species");
+
+    // Get argon species and set up neutron SQ
+    auto arSpecies = arSpeciesNode->getOutputValue<const Species *>("Species");
     ASSERT_TRUE(arSpecies);
+    appendNeutronSQ(root, sqNode, "Yarnell", IsotopologueSet({{arSpecies->findIsotopologue("Ar36"), 1.0}}), {},
+                    {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY});
 
-    appendNeutronSQ(root, sqNode, "Yarnell", IsotopologueSet({{arSpecies->findIsotopologue("Ar36"), 1.0}}), {}, {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY} );
-    // // Add NeutronSQ node and reference data
-    // auto neutronSQNode = root->createNode("NeutronSQ", "NeutronSQ");
-    // ASSERT_TRUE(neutronSQNode);
-    // ASSERT_TRUE(neutronSQNode->setOption<StructureFactors::NormalisationType>("ReferenceNormalisedTo",
-    //                                                                           StructureFactors::SquareOfAverageNormalisation));
-    // ASSERT_TRUE(neutronSQNode->setOption<IsotopologueSet>(
-    //     "Isotopologues", IsotopologueSet({{arNode->species().findIsotopologue("Ar36"), 1.0}})));
-    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "NeutronSQ", "UnweightedGR"}));
-    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "NeutronSQ", "UnweightedSQ"}));
-
-    auto referenceDataNode = root->findNode("Yarnell-Reference");
+    // Set import options for reference data
+    auto referenceDataNode = root->findNode("Reference-Yarnell");
     ASSERT_TRUE(referenceDataNode);
     ASSERT_TRUE(referenceDataNode->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
 }
+
 // Create a MgO graph in the supplied root node
 inline void createMgOGraph(Graph *root, int populationMG, int populationO,
                            CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
@@ -339,15 +303,15 @@ inline void createWaterGraph(Graph *root, int population,
     auto isoD = waterNode->species().findIsotopologue("D2O");
     ASSERT_TRUE(isoD);
     appendNeutronSQ(root, sqNode, "H2O", {}, {},
-                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
-                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    appendNeutronSQ(root, sqNode,"D2O", IsotopologueSet({{isoD, 1.0}}), {},
-                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
-                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    appendNeutronSQ(root, sqNode,"HDO", IsotopologueSet({{isoD, 1.0}, {waterNode->species().naturalIsotopologue(), 1.0}}),
-                 Exchangeables({"HW"}),
-                 Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
-                                        Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+                    Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
+                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    appendNeutronSQ(root, sqNode, "D2O", IsotopologueSet({{isoD, 1.0}}), {},
+                    Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
+                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    appendNeutronSQ(root, sqNode, "HDO", IsotopologueSet({{isoD, 1.0}, {waterNode->species().naturalIsotopologue(), 1.0}}),
+                    Exchangeables({"HW"}),
+                    Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
+                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
 
     // Add in XRaySQ
     appendXRaySQ(
@@ -445,7 +409,7 @@ inline void createWaterMethanolGraph(Graph *root)
         {"HHD", {{h2o, 1.0}, {methylD_OH, 1.0}}}, {"DDH", {{d2o, 1.0}, {OD_methylH, 1.0}}},
         {"HDD", {{h2o, 1.0}, {methanolD, 1.0}}},  {"DDD", {{d2o, 1.0}, {methanolD, 1.0}}}};
     for (const auto &[name, isotopologues] : samples)
-        appendNeutronSQ(root,sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
+        appendNeutronSQ(root, sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
 }
 
 // Create a benzene graph in the supplied root node
@@ -485,7 +449,7 @@ inline void createBenzeneGraph(Graph *root)
     ASSERT_TRUE(isoD);
     appendNeutronSQ(root, sqNode, "C6H6");
     appendNeutronSQ(root, sqNode, "C6D6", IsotopologueSet({{isoD, 1.0}}));
-    appendNeutronSQ(root, sqNode,"5050", IsotopologueSet({{benzeneNode->species().naturalIsotopologue(), 1.0}, {isoD, 1.0}}));
+    appendNeutronSQ(root, sqNode, "5050", IsotopologueSet({{benzeneNode->species().naturalIsotopologue(), 1.0}, {isoD, 1.0}}));
 
     // Add in XRaySQ?
     // auto X = root->createNode("XRaySQ", "X");
