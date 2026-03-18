@@ -80,3 +80,18 @@ std::unique_ptr<EnergyKernel> DissolveGraph::createEnergyKernel(Configuration *c
     // Generate and return kernel
     return KernelProducer::energyKernel(cfg, PotentialMap(atomTypes, pairPotentialStore_));
 }
+
+// Create a force kernel suitable for the supplied Configuration
+std::unique_ptr<ForceKernel> DissolveGraph::createForceKernel(Configuration *cfg)
+{
+    // Update types and cells in Configuration
+    updateIndexingAndCells(cfg);
+    auto atomTypes = cfg->atomTypeVector();
+
+    // Update pair potentials
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
+                            [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotential(*atI, *atJ); });
+
+    // Generate and return kernel
+    return KernelProducer::forceKernel(cfg, PotentialMap(atomTypes, pairPotentialStore_));
+}

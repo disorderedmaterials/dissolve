@@ -10,6 +10,7 @@
 #include "io/import/data3D.h"
 #include "io/import/forces.h"
 #include "kernels/energy.h"
+#include "kernels/force.h"
 #include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/error.h"
@@ -897,6 +898,55 @@ Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> 
     EXPECT_NEAR(molecularPPEnergy.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
 
     return productionEnergy;
+}
+
+// Check consistency between production and test forces
+void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
+                           std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags = {},
+                           double ppMaxDeviation = 1.0e-2, double geomMaxDeviation = 1.0e-6)
+{
+    // Calculate production forces (fully optimised)
+    kernel->totalForces(ppForces, geomForces, flags);
+
+    // Calculate baseline test forces (simple double-loop, PBC always)
+    std::vector<Vector3> ppTestForces, geomTestForces;
+    kernel->totalForcesSimple(ppTestForces, geomTestForces, flags);
+
+    // Pair potential forces
+    if (!(flags.isSet(Kernel::CalculationFlags::ExcludeInterMolecularPairPotential) &&
+          flags.isSet(Kernel::CalculationFlags::ExcludeIntraMolecularPairPotential)))
+        for (auto &&[pairPotentialTestForce, pairPotentialProductionForce] : zip(ppTestForces, ppForces))
+        {
+            EXPECT_NEAR(pairPotentialProductionForce.x, pairPotentialTestForce.x, ppMaxDeviation);
+            EXPECT_NEAR(pairPotentialProductionForce.y, pairPotentialTestForce.y, ppMaxDeviation);
+            EXPECT_NEAR(pairPotentialProductionForce.z, pairPotentialTestForce.z, ppMaxDeviation);
+        }
+
+    // Geometric forces
+    if (flags.isNotSet(Kernel::CalculationFlags::ExcludeGeometric))
+        for (auto &&[geometryTestForce, geometryProductionForce] : zip(geomTestForces, geomForces))
+        {
+            EXPECT_NEAR(geometryProductionForce.x, geometryTestForce.x, geomMaxDeviation);
+            EXPECT_NEAR(geometryProductionForce.y, geometryTestForce.y, geomMaxDeviation);
+            EXPECT_NEAR(geometryProductionForce.z, geometryTestForce.z, geomMaxDeviation);
+        }
+}
+
+// Check supplied forces against external reference values
+void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
+                                    ForceImportFileFormat format, double maxDeviation = 1.0e-3)
+{
+    // Load external reference forces
+    std::vector<Vector3> referenceForces(ppForces.size());
+    ASSERT_TRUE(format.importData(referenceForces));
+
+    for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
+    {
+        auto calculatedForce = ppForce + geometryForce;
+        EXPECT_NEAR(calculatedForce.x, referenceForce.x, maxDeviation);
+        EXPECT_NEAR(calculatedForce.y, referenceForce.y, maxDeviation);
+        EXPECT_NEAR(calculatedForce.z, referenceForce.z, maxDeviation);
+    }
 }
 
 } // namespace UnitTest

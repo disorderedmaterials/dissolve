@@ -133,14 +133,20 @@ void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) c
  */
 
 // Calculate total forces in the world
-void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector3> &fBound,
+void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
                               Flags<Kernel::CalculationFlags> flags) const
 {
+    // Resize and zero force arrays
+    ppForceVector.resize(configuration_->nAtoms());
+    geometryForceVector.resize(configuration_->nAtoms());
+    std::fill(ppForceVector.begin(), ppForceVector.end(), Vector3());
+    std::fill(geometryForceVector.begin(), geometryForceVector.end(), Vector3());
+
     auto &cellArray = configuration_->cells();
     auto &molecules = configuration_->molecules();
 
-    auto combinableUnbound = Kernel::createCombinableVector3(fUnbound);
-    auto combinableBound = Kernel::createCombinableVector3(fBound);
+    auto combinablePP = Kernel::createCombinableVector3(ppForceVector);
+    auto combinableGeometric = Kernel::createCombinableVector3(geometryForceVector);
 
     // Pair potential forces between different molecules
     if (flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential))
@@ -149,7 +155,7 @@ void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector
         auto unaryOp = [&](const int id)
         {
             auto *cellI = cellArray.cell(id);
-            auto &fLocal = combinableUnbound.local();
+            auto &fLocal = combinablePP.local();
 
             // Interatomic interactions between atoms in this cell, excluding those within the same molecule
             dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms(),
@@ -179,8 +185,8 @@ void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector
     // Other molecule forces
     auto moleculeForceOperator = [&](const auto &mol)
     {
-        auto &fLocalUnbound = combinableUnbound.local();
-        auto &fLocalBound = combinableBound.local();
+        auto &fLocalUnbound = combinablePP.local();
+        auto &fLocalBound = combinableGeometric.local();
 
         auto offset = mol->globalAtomOffset();
 
@@ -210,6 +216,129 @@ void ForceKernel::totalForces(std::vector<Vector3> &fUnbound, std::vector<Vector
 
     dissolve::for_each(ParallelPolicies::par, molecules.begin(), molecules.end(), moleculeForceOperator);
 
-    combinableUnbound.finalize();
-    combinableBound.finalize();
+    combinablePP.finalize();
+    combinableGeometric.finalize();
+
+    // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+    std::transform(ppForceVector.begin(), ppForceVector.end(), ppForceVector.begin(), [](auto f) { return f * 100.0; });
+    std::transform(geometryForceVector.begin(), geometryForceVector.end(), geometryForceVector.begin(),
+                   [](auto f) { return f * 100.0; });
+}
+
+// Calculate total forces with simple loops for testing
+void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::vector<Vector3> &geometryForceVector,
+                                    Flags<Kernel::CalculationFlags> flags) const
+{
+    // Resize and zero force arrays
+    ppForceVector.resize(configuration_->nAtoms());
+    geometryForceVector.resize(configuration_->nAtoms());
+    std::fill(ppForceVector.begin(), ppForceVector.end(), Vector3());
+    std::fill(geometryForceVector.begin(), geometryForceVector.end(), Vector3());
+
+    const auto &molecules = configuration_->molecules();
+    std::shared_ptr<Molecule> molN, molM;
+
+    // Calculate interatomic and intramolecular energy in a loop over defined Molecules
+    for (auto n = 0; n < configuration_->nMolecules(); ++n)
+    {
+        molN = molecules[n];
+        auto offsetN = molN->globalAtomOffset();
+
+        // Intramolecular forces (excluding bound terms) in molecule N
+        if (flags.isNotSet(Kernel::CalculationFlags::ExcludeIntraMolecularPairPotential))
+            for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
+            {
+                auto *i = molN->atom(ii);
+
+                for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
+                {
+                    auto *j = molN->atom(jj);
+
+                    // Get intramolecular scaling of atom pair
+                    auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+
+                    if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
+                        continue;
+
+                    // Determine final forces
+                    auto vij = box_->minimumVector(i->r(), j->r());
+                    auto magjisq = vij.magnitudeSq();
+                    if (magjisq > cutoffDistanceSquared_)
+                        continue;
+                    auto r = sqrt(magjisq);
+                    vij /= r;
+
+                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                        vij *= potentialMap_.analyticForce(*molN->atom(ii), *molN->atom(jj), r);
+                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                        vij *= potentialMap_.analyticForce(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
+
+                    ppForceVector[offsetN + ii] -= vij;
+                    ppForceVector[offsetN + jj] += vij;
+                }
+            }
+
+        // Forces between molecule N and molecule M
+        if (flags.isNotSet(Kernel::CalculationFlags::ExcludeInterMolecularPairPotential))
+            for (auto m = n + 1; m < configuration_->nMolecules(); ++m)
+            {
+                molM = molecules[m];
+                auto offsetM = molM->globalAtomOffset();
+
+                // Double loop over atoms
+                for (auto ii = 0; ii < molN->nAtoms(); ++ii)
+                {
+                    auto *i = molN->atom(ii);
+
+                    for (auto jj = 0; jj < molM->nAtoms(); ++jj)
+                    {
+                        auto *j = molM->atom(jj);
+
+                        // Determine final forces
+                        auto vij = box_->minimumVector(i->r(), j->r());
+                        auto magjisq = vij.magnitudeSq();
+                        if (magjisq > cutoffDistanceSquared_)
+                            continue;
+                        auto r = sqrt(magjisq);
+                        vij /= r;
+
+                        vij *= potentialMap_.analyticForce(*i, *j, r);
+
+                        ppForceVector[offsetN + ii] -= vij;
+                        ppForceVector[offsetM + jj] += vij;
+                    }
+                }
+            }
+
+        if (flags.isNotSet(Kernel::CalculationFlags::ExcludeGeometric))
+        {
+            // Bond forces
+            for (const auto &bond : molN->species()->bonds())
+                bondForces(bond, *molN->atom(bond.indexI()), offsetN + bond.indexI(), *molN->atom(bond.indexJ()),
+                           offsetN + bond.indexJ(), geometryForceVector);
+
+            // Angle forces
+            for (const auto &angle : molN->species()->angles())
+                angleForces(angle, *molN->atom(angle.indexI()), offsetN + angle.indexI(), *molN->atom(angle.indexJ()),
+                            offsetN + angle.indexJ(), *molN->atom(angle.indexK()), offsetN + angle.indexK(),
+                            geometryForceVector);
+
+            // Torsion forces
+            for (const auto &torsion : molN->species()->torsions())
+                torsionForces(torsion, *molN->atom(torsion.indexI()), offsetN + torsion.indexI(), *molN->atom(torsion.indexJ()),
+                              offsetN + torsion.indexJ(), *molN->atom(torsion.indexK()), offsetN + torsion.indexK(),
+                              *molN->atom(torsion.indexL()), offsetN + torsion.indexL(), geometryForceVector);
+
+            // Improper forces
+            for (const auto &imp : molN->species()->impropers())
+                improperForces(imp, *molN->atom(imp.indexI()), offsetN + imp.indexI(), *molN->atom(imp.indexJ()),
+                               offsetN + imp.indexJ(), *molN->atom(imp.indexK()), offsetN + imp.indexK(),
+                               *molN->atom(imp.indexL()), offsetN + imp.indexL(), geometryForceVector);
+        }
+    }
+
+    // Convert forces to 10J/mol
+    std::transform(ppForceVector.begin(), ppForceVector.end(), ppForceVector.begin(), [](auto &f) { return f * 100.0; });
+    std::transform(geometryForceVector.begin(), geometryForceVector.end(), geometryForceVector.begin(),
+                   [](auto &f) { return f * 100.0; });
 }

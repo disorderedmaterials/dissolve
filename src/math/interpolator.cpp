@@ -284,7 +284,11 @@ void Interpolator::interpolate()
         interpolateLinear();
     else if (scheme_ == Interpolator::ThreePointInterpolation)
     {
-        // No setup required
+        // Store delta y for each interval in a_
+        a_.clear();
+        a_.resize(x_.size() - 1);
+        for (auto i = 0; i < x_.size() - 1; ++i)
+            a_[i] = y_[i + 1] - y_[i];
     }
 }
 
@@ -322,14 +326,14 @@ double Interpolator::y(double x, int interval) const
         if (x >= x_.back())
             return y_.back();
 
-        double h = x - x_[interval];
-        double hh = h * h;
+        auto h = x - x_[interval];
+        auto hh = h * h;
         return a_[interval] + b_[interval] * h + c_[interval] * hh + d_[interval] * hh * h;
     }
     //	else if (scheme_ == Interpolator::ConstrainedSplineInterpolation)
     //	{
-    //		double h = x;
-    //		double hh = h*h;
+    //		auto h = x;
+    //		auto hh = h*h;
     //		return a_[interval] + b_[interval]*h + c_[interval]*hh + d_[interval]*hh*h;
     //	}
     else if (scheme_ == Interpolator::LinearInterpolation)
@@ -337,21 +341,21 @@ double Interpolator::y(double x, int interval) const
         if (interval >= (x_.size() - 1))
             return y_.back();
 
-        double delta = (x - x_[interval]) / h_[interval];
+        auto delta = (x - x_[interval]) / h_[interval];
         return y_[interval] + delta * a_[interval];
     }
     else if (scheme_ == Interpolator::ThreePointInterpolation)
     {
         if (interval >= (x_.size() - 3))
-            return y_.back();
+            return y_.back() + (x - x_.back()) * a_.back() / h_.back();
 
-        double ppp = (x - x_[interval]) / h_[interval];
+        auto ppp = (x - x_[interval]) / h_[interval];
 
-        double vk0 = y_[interval];
-        double vk1 = y_[interval + 1];
-        double vk2 = y_[interval + 2];
-        double t1 = vk0 + (vk1 - vk0) * ppp;
-        double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
+        auto vk0 = y_[interval];
+        auto vk1 = y_[interval + 1];
+        auto vk2 = y_[interval + 2];
+        auto t1 = vk0 + (vk1 - vk0) * ppp;
+        auto t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
         return t1 + (t2 - t1) * ppp * 0.5;
     }
 
@@ -408,14 +412,14 @@ double Interpolator::approximate(const Data1D &data, double x)
             left = i;
     }
 
-    double ppp = (x - xData[left]) / (xData[right] - xData[left]);
+    auto ppp = (x - xData[left]) / (xData[right] - xData[left]);
 
-    double vk0 = yData[left];
-    double vk1 = yData[left + 1];
-    double vk2 = yData[left + 2];
+    auto vk0 = yData[left];
+    auto vk1 = yData[left + 1];
+    auto vk2 = yData[left + 2];
 
-    double t1 = vk0 + (vk1 - vk0) * ppp;
-    double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
+    auto t1 = vk0 + (vk1 - vk0) * ppp;
+    auto t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
 
     return t1 + (t2 - t1) * ppp * 0.5;
 }

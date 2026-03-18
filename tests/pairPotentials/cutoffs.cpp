@@ -1,0 +1,89 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#include "kernels/force.h"
+#include "nodes/dissolve.h"
+#include "tests/graphData.h"
+#include "tests/testData.h"
+#include <gtest/gtest.h>
+
+namespace UnitTest
+{
+std::vector<double> cutoffs = {10.0, 11.425, 11.5, 13.7875, 13.8, 14.999, 15.0};
+
+TEST(PairPotentialCutoffTest, ShortRange)
+{
+    GraphTestData data;
+    createWaterGraph(
+        &data.graphRoot, 1000,
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+
+    // Adjust pair potential properties
+    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
+    PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
+
+    // Remove charges from atom types
+    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    ASSERT_TRUE(waterNode);
+    auto hw = waterNode->species().findAtomType("HW");
+    auto ow = waterNode->species().findAtomType("OW");
+    ASSERT_TRUE(hw && ow);
+    hw->setCharge(0.0);
+    ow->setCharge(0.0);
+
+    // Run the graph from the Import node to set up the configuration
+    auto importNode = data.graphRoot.findNode("Import");
+    ASSERT_TRUE(importNode);
+    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importNode->versionIndex(), 0);
+
+    // Get the configuration
+    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+
+    // Check consistency between production and test forces at different cutoffs
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    for (auto cutoff : cutoffs)
+    {
+        PairPotential::setRange(cutoff, 1.0e-4);
+        auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+        checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    }
+}
+
+TEST(PairPotentialCutoffTest, Coulomb)
+{
+    GraphTestData data;
+    createWaterGraph(
+        &data.graphRoot, 1000,
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+
+    // Adjust pair potential properties
+    PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
+
+    // Remove charges from atom types
+    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    ASSERT_TRUE(waterNode);
+    auto ow = waterNode->species().findAtomType("OW");
+    ASSERT_TRUE(ow);
+    ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+
+    // Run the graph from the Import node to set up the configuration
+    auto importNode = data.graphRoot.findNode("Import");
+    ASSERT_TRUE(importNode);
+    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importNode->versionIndex(), 0);
+
+    // Get the configuration
+    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+
+    // Check consistency between production and test forces at different cutoffs
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    for (auto cutoff : cutoffs)
+    {
+        PairPotential::setRange(cutoff, 1.0e-4);
+        auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+        checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    }
+}
+
+} // namespace UnitTest

@@ -61,7 +61,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vector3> forces(cfg->nAtoms());
+    std::vector<Vector3> forces;
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
         forceKernel->totalForces(forces, forces,
@@ -84,7 +84,7 @@ static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vector3> forces(cfg->nAtoms());
+    std::vector<Vector3> forces;
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
         forceKernel->totalForces(forces, forces, Kernel::ExcludeGeometric);
@@ -95,10 +95,10 @@ static void BM_CalculateForces_TotalForces(benchmark::State &state)
 {
     Problem<speciesType, population> problemDef;
     auto *cfg = problemDef.configuration();
-    std::vector<Vector3> forces(cfg->nAtoms());
-    const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
+    std::vector<Vector3> forces;
+    auto forceKernel = KernelProducer::forceKernel(cfg, problemDef.dissolve().potentialMap());
     for (auto _ : state)
-        ForcesModule::totalForces(cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
+        forceKernel->totalForces(forces, forces);
 }
 // small molecule benchmarks
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
