@@ -20,7 +20,7 @@
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/md/md.h"
+#include "nodes/md.h"
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"

@@ -1,10 +1,111 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "nodes/md.h"
 #include "kernels/force.h"
 #include "math/mathFunc.h"
 #include "nodes/dissolve.h"
-#include "nodes/md/md.h"
+
+MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
+{
+    // Inputs
+    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
+        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addInput<Number>("NSteps", "Number of MD steps to perform", nSteps_);
+
+    // Outputs
+    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+
+    // Options
+    addOption<MDNode::TimestepType>("Timestep", "Timestep type to use in calculation", timestepType_);
+    addOption<Number>("DeltaT", "Fixed timestep (ps) to use in MD simulation", fixedTimestep_);
+    addOption<bool>("RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation",
+                    randomVelocities_);
+
+    addOption<std::vector<const Species *>>("RestrictToSpecies", "Restrict the calculation to the specified Species",
+                                            restrictToSpecies_);
+    addOption<bool>("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable", onlyWhenEnergyStable_);
+
+    addOption<std::optional<Number>>("EnergyFrequency", "Frequency at which to calculate total system energy",
+                                     energyFrequency_);
+    addOption<std::optional<Number>>("OutputFrequency", "Frequency at which to output step information", outputFrequency_);
+    addOption<std::optional<Number>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_);
+
+    addOption<bool>("CapForces", "Control whether atomic forces are capped every step", capForces_);
+    addOption<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_);
+    addOption<bool>("IntraOnly",
+                    "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
+                    intramolecularForcesOnly_);
+
+    // Serialisables
+    addSerialisable("velocities", velocities_);
+}
+
+std::string_view MDNode::type() const { return "MD"; }
+
+std::string_view MDNode::summary() const { return "Run a short molecular dynamics simulation."; }
+
+EnumOptions<MDNode::TimestepType> getEnumOptions(MDNode::TimestepType) { return MDNode::timestepType(); }
+
+// Return enum options for TimestepType
+EnumOptions<MDNode::TimestepType> MDNode::timestepType()
+{
+    return EnumOptions<MDNode::TimestepType>(
+        "TimestepType",
+        {{TimestepType::Fixed, "Fixed"}, {TimestepType::Variable, "Variable"}, {TimestepType::Automatic, "Auto"}});
+}
+
+// Cap forces in Configuration
+int MDNode::capForces(double maxForce, std::vector<Vector3> &pairPotentialForces, std::vector<Vector3> &geometricForces)
+{
+    double fMag;
+    const auto maxForceSq = maxForce * maxForce;
+    auto nCapped = 0;
+    for (auto &&[inter, intra] : zip(pairPotentialForces, geometricForces))
+    {
+        fMag = (inter + intra).magnitudeSq();
+        if (fMag < maxForceSq)
+            continue;
+
+        fMag = maxForce / sqrt(fMag);
+        inter *= fMag;
+        intra *= fMag;
+
+        ++nCapped;
+    }
+
+    return nCapped;
+}
+
+// Determine timestep to use
+std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, double requestedTimeStep,
+                                                const std::vector<Vector3> &pairPotentialForces,
+                                                const std::vector<Vector3> &geometricForces)
+{
+    if (timestepType == TimestepType::Fixed)
+        return requestedTimeStep;
+
+    // Simple variable timestep
+    if (timestepType == TimestepType::Variable)
+    {
+        auto absFMax = 0.0;
+        for (auto &&[inter, intra] : zip(pairPotentialForces, geometricForces))
+            absFMax = std::max(absFMax, (inter + intra).absMax());
+
+        return 1.0 / absFMax;
+    }
+
+    // Automatic timestep determination, using maximal interatomic force to guide the timestep up to the current fixed timestep
+    // value
+    auto absFMaxInter = std::max_element(pairPotentialForces.begin(), pairPotentialForces.end(),
+                                         [](auto &left, auto &right) { return left.absMax() < right.absMax(); })
+                            ->absMax();
+
+    auto deltaT = 100.0 / absFMaxInter;
+    if (deltaT < (requestedTimeStep / 100.0))
+        return {};
+    return deltaT > requestedTimeStep ? requestedTimeStep : deltaT;
+}
 
 // Run main processing
 NodeConstants::ProcessResult MDNode::process()
