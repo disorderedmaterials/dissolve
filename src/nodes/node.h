@@ -330,6 +330,8 @@ class Node : public Serialisable<>
      * Serialisation
      */
     protected:
+    // Length for POD history serialisables
+    int podHistoryLength_{1000};
     // Persistent data serialisables
     std::map<std::string, std::shared_ptr<SerialisableData>> serialisables_;
     // Serialise any hidden content

@@ -94,7 +94,7 @@ CellArray &Configuration::cells() { return cells_; }
 const CellArray &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
-void Configuration::applySizeFactor(const PotentialMap &potentialMap)
+void Configuration::applySizeFactor(const EnergyKernel *kernel)
 {
     const auto reductionFactor = 0.95;
 
@@ -141,7 +141,10 @@ void Configuration::applySizeFactor(const PotentialMap &potentialMap)
             appliedSizeFactor_ = std::nullopt;
             break;
         }
-        else if (EnergyModule::interMolecularEnergy(this, potentialMap) <= 0.0)
+        else if (kernel
+                     ->totalEnergy(
+                         {Kernel::ExcludeExtended, Kernel::ExcludeGeometric, Kernel::ExcludeIntraMolecularPairPotential})
+                     .total() <= 0.0)
         {
             requestedSF *= reductionFactor;
             if (requestedSF < 1.0)

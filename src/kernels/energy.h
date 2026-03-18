@@ -56,6 +56,8 @@ class EnergyKernel : public GeometryKernel
      * Extended Terms
      */
     private:
+    // Return total extended energy
+    double totalExtendedEnergy() const;
     // Return energy of supplied atom from ad hoc extended terms
     virtual double extendedEnergy(const Atom &i) const;
     // Return energy of supplied molecule from ad hoc extended terms
@@ -65,14 +67,18 @@ class EnergyKernel : public GeometryKernel
      * Totals
      */
     public:
-    // Return total interatomic PairPotential energy of the world
+    // Return total interatomic PairPotential energy
     Kernel::PairPotentialEnergyValue totalPairPotentialEnergy(bool includeInter = true, bool includeIntra = true) const;
     // Return total interatomic PairPotential energy from summation of molecules
     Kernel::PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeInter = true, bool includeIntra = true) const;
-    // Return total energy of supplied atom with the world
+    // Return total energy of supplied atom
+    Kernel::EnergyResult totalEnergy(Flags<Kernel::CalculationFlags> flags = {}) const;
+    // Return total energy of supplied atom
     Kernel::EnergyResult totalEnergy(const Atom &i) const;
-    // Return total energy of supplied molecule with the world
+    // Return total energy of supplied molecule
     Kernel::EnergyResult totalEnergy(const Molecule &mol, Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return potential map
     const PotentialMap &potentialMap() const;
+    // Calculate energy components with simple double-loops for testing
+    Kernel::EnergyResult totalEnergySimple() const;
 };

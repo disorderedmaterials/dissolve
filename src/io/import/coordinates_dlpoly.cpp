@@ -33,7 +33,12 @@ bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Ve
     auto keytrj = parser.argi(0);
     auto imcon = parser.argi(1);
     auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
-    Messenger::print(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
+    if (nAtoms == 0)
+        Messenger::print(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
+                         "until end of file.\n",
+                         nAtoms, keytrj, imcon);
+    else
+        Messenger::print(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
     r.clear();
 
     // Skip cell information if given

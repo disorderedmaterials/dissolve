@@ -4,6 +4,7 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/species.h"
+#include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "modules/intraShake/intraShake.h"
 #include <cstdio>
@@ -238,8 +239,10 @@ bool Dissolve::iterate(int nIterations)
         {
             Messenger::heading("'{}'", cfg->name());
 
+            auto kernel = KernelProducer::energyKernel(cfg.get(), potentialMap_);
+
             // Apply the current size factor
-            cfg->applySizeFactor(potentialMap_);
+            cfg->applySizeFactor(kernel.get());
         }
 
         // Sync up all processes

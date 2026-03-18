@@ -54,6 +54,15 @@ const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z, std::s
     return newAtomType;
 }
 
+// Find and return the named atom type
+AtomType *Species::findAtomType(std::string_view name) const
+{
+    auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(), [name](const auto at) { return at->name() == name; });
+    if (it != atomTypes_.end())
+        return it->get();
+    return nullptr;
+}
+
 // Remove the specified atom from the species
 void Species::removeAtom(int index)
 {

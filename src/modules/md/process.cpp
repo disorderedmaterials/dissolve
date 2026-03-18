@@ -10,6 +10,8 @@
 #include "modules/forces/forces.h"
 #include "modules/md/md.h"
 
+#include <kernels/producer.h>
+
 // Run main processing
 Module::ExecutionResult MDModule::process(Dissolve &dissolve)
 {
@@ -64,6 +66,9 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
     // Get temperature from Configuration
     const auto temperature = targetConfiguration_->temperature();
 
+    // Create kernels
+    auto energyKernel = KernelProducer::energyKernel(targetConfiguration_, dissolve.potentialMap());
+
     // Create arrays
     std::vector<double> mass(targetConfiguration_->nAtoms(), 0.0);
     std::vector<Vector3> fBound(targetConfiguration_->nAtoms()), fUnbound(targetConfiguration_->nAtoms()),
@@ -73,8 +78,7 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
     auto nCapped = 0;
     auto &atoms = targetConfiguration_->atoms();
     double tInstant, ke, tScale;
-    Kernel::GeometryEnergyValue peBound;
-    Kernel::PairPotentialEnergyValue pePP;
+    Kernel::EnergyResult pe;
 
     // Determine target molecules from the restrictedSpecies vector (if any)
     std::vector<const Molecule *> targetMolecules;
@@ -305,10 +309,10 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
             // Include total energy term?
             if (energyFrequency_ && (step % energyFrequency_.value() == 0))
             {
-                pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, dissolve.potentialMap());
-                peBound = EnergyModule::geometryEnergy(targetConfiguration_, dissolve.potentialMap());
+                pe = energyKernel->totalEnergy();
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
-                                 tInstant, ke, pePP.total(), peBound.total(), ke + peBound.total() + pePP.total(), dT);
+                                 tInstant, ke, pe.total(), pe.geometry.total(),
+                                 ke + pe.geometry.total() + pe.pairPotential.total(), dT);
             }
             else
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n", step,
@@ -324,8 +328,8 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
             // Construct and write header
             std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps_, tInstant, ke);
             if (energyFrequency_ && (step % energyFrequency_.value() == 0))
-                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound.total(),
-                                      ke + pePP.total() + peBound.total());
+                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pe.pairPotential.total(),
+                                      pe.geometry.total(), ke + pe.pairPotential.total() + pe.geometry.total());
             if (!trajParser.writeLine(header))
                 return ExecutionResult::Failed;
 

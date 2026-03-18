@@ -12,7 +12,7 @@
 #include "nodes/derivative.h"
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
-#include "nodes/energy/energy.h"
+#include "nodes/energy.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr/gr.h"
 #include "nodes/importConfigurationCoordinates.h"

@@ -72,6 +72,8 @@ class Species : public Serialisable<const CoreData &>
     int addAtom(Elements::Element Z, Vector3 r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
     // Add new atom type to atom types
     const std::shared_ptr<AtomType> addAtomType(Elements::Element Z, std::string_view name = "");
+    // Find and return the named atom type
+    AtomType *findAtomType(std::string_view name) const;
     // Remove the specified atom from the species
     void removeAtom(int index);
     // Remove set of atom indices

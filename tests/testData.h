@@ -9,6 +9,7 @@
 #include "io/import/data1D.h"
 #include "io/import/data3D.h"
 #include "io/import/forces.h"
+#include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "math/data3D.h"
 #include "math/error.h"
@@ -16,6 +17,7 @@
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
+#include "nodes/energy.h"
 #include "nodes/graph.h"
 #include "nodes/serialisableData.h"
 #include "nodes/species.h"
@@ -867,6 +869,34 @@ const Species &tetrahedralArgonSpecies()
         tetrahedralArgon_.addBond(0, 4);
     }
     return tetrahedralArgon_;
+}
+
+// Check consistency between production, molecular, and test energies, returning production values
+Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
+{
+    // Calculate production energies (fully optimised)
+    auto productionEnergy = kernel->totalEnergy();
+
+    // Calculate baseline test energies (simple double-loop, PBC always)
+    auto testEnergy = kernel->totalEnergySimple();
+
+    // Calculate molecule-centric energy
+    auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy();
+
+    // Compare basic energies with production value
+    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.intraMolecular, productionEnergy.pairPotential.intraMolecular, testThreshold);
+    EXPECT_NEAR(testEnergy.geometry.total(), productionEnergy.geometry.total(), testThreshold);
+
+    // Compare basic energies with molecule-based values
+    EXPECT_NEAR(testEnergy.pairPotential.total(), molecularPPEnergy.total(), testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, molecularPPEnergy.interMolecular, testThreshold);
+
+    // Compare molecule-based energies with production values
+    EXPECT_NEAR(molecularPPEnergy.total(), productionEnergy.pairPotential.total(), testThreshold);
+    EXPECT_NEAR(molecularPPEnergy.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
+
+    return productionEnergy;
 }
 
 } // namespace UnitTest

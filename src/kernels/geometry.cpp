@@ -4,6 +4,7 @@
 #include "kernels/geometry.h"
 #include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configuration.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
 #include "math/mathFunc.h"
@@ -305,8 +306,58 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &r
  * Total Energy
  */
 
-// Return geometry energy for the specified moleculatom
-Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Atom &i) const
+// Return total geometry energy of Configuration
+Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Configuration *cfg) const
+{
+    const auto &molecules = cfg->molecules();
+
+    auto unaryOp = [&](const auto &mol) -> Kernel::GeometryEnergyValue
+    {
+        Kernel::GeometryEnergyValue localEnergies;
+
+        // Loop over bonds
+        localEnergies.bondEnergy = std::accumulate(
+            mol->species()->bonds().begin(), mol->species()->bonds().end(), 0.0, [&](auto const acc, const auto &t)
+            { return acc + bondEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r()); });
+
+        // Loop over angles
+        localEnergies.angleEnergy = std::accumulate(
+            mol->species()->angles().begin(), mol->species()->angles().end(), 0.0,
+            [&](auto const acc, const auto &t)
+            {
+                return acc + angleEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r(), mol->atom(t.indexK())->r());
+            });
+
+        // Loop over torsions
+        localEnergies.torsionEnergy =
+            std::accumulate(mol->species()->torsions().begin(), mol->species()->torsions().end(), 0.0,
+                            [&](auto const acc, const auto &t)
+                            {
+                                return acc + torsionEnergy(t, mol->atom(t.indexI())->r(), mol->atom(t.indexJ())->r(),
+                                                           mol->atom(t.indexK())->r(), mol->atom(t.indexL())->r());
+                            });
+
+        // Loop over impropers
+        localEnergies.improperEnergy =
+            std::accumulate(mol->species()->impropers().begin(), mol->species()->impropers().end(), 0.0,
+                            [&](auto const acc, const auto &imp)
+                            {
+                                return acc + improperEnergy(imp, mol->atom(imp.indexI())->r(), mol->atom(imp.indexJ())->r(),
+                                                            mol->atom(imp.indexK())->r(), mol->atom(imp.indexL())->r());
+                            });
+
+        return localEnergies;
+    };
+
+    auto energies =
+        dissolve::transform_reduce(ParallelPolicies::par, molecules.begin(), molecules.end(), Kernel::GeometryEnergyValue(),
+                                   std::plus<Kernel::GeometryEnergyValue>(), unaryOp);
+
+    return energies;
+}
+
+// Return geometry energy for the specified molecule
+Kernel::GeometryEnergyValue GeometryKernel::geometryEnergy(const Atom &i) const
 {
     // Get the SpeciesAtom and Molecule
     const auto *spAtom = i.speciesAtom();
@@ -351,7 +402,7 @@ Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Atom &i) c
 }
 
 // Return geometry energy for the specified molecule
-Kernel::GeometryEnergyValue GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
+Kernel::GeometryEnergyValue GeometryKernel::geometryEnergy(const Molecule &mol) const
 {
     Kernel::GeometryEnergyValue energy;
 

@@ -48,7 +48,7 @@ NodeConstants::ProcessResult MDNode::process()
                 joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     message("\n");
 
-    auto kernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
+    auto energyKernel = dissolveGraph()->createEnergyKernel(targetConfiguration_);
 
     /*
     if (onlyWhenEnergyStable_)
@@ -78,8 +78,7 @@ NodeConstants::ProcessResult MDNode::process()
     auto nCapped = 0;
     auto &atoms = targetConfiguration_->atoms();
     double tInstant, ke, tScale;
-    Kernel::GeometryEnergyValue peBound;
-    Kernel::PairPotentialEnergyValue pePP;
+    Kernel::EnergyResult pe;
 
     // Determine target molecules from the restrictedSpecies vector (if any)
     std::vector<const Molecule *> targetMolecules;
@@ -204,8 +203,8 @@ NodeConstants::ProcessResult MDNode::process()
         std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
-        auto potentialMap = kernel->potentialMap();
-
+        // TODO Remove this when we re-do ForcesModule
+        auto potentialMap = energyKernel->potentialMap();
         if (targetMolecules.empty())
             ForcesModule::totalForces(targetConfiguration_, potentialMap,
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
@@ -264,8 +263,8 @@ NodeConstants::ProcessResult MDNode::process()
         std::fill(fUnbound.begin(), fUnbound.end(), Vector3());
         std::fill(fBound.begin(), fBound.end(), Vector3());
 
-        auto potentialMap = kernel->potentialMap();
-
+        // TODO Remove this when we re-do ForcesModule
+        auto potentialMap = energyKernel->potentialMap();
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
             ForcesModule::totalForces(targetConfiguration_, potentialMap,
@@ -315,10 +314,10 @@ NodeConstants::ProcessResult MDNode::process()
             // Include total energy term?
             if (energyFrequency > 0 && (step % energyFrequency == 0))
             {
-                pePP = EnergyModule::pairPotentialEnergy(targetConfiguration_, potentialMap);
-                peBound = EnergyModule::geometryEnergy(targetConfiguration_, potentialMap);
+                pe = energyKernel->totalEnergy();
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
-                                 tInstant, ke, pePP.total(), peBound.total(), ke + peBound.total() + pePP.total(), dT);
+                                 tInstant, ke, pe.pairPotential.total(), pe.geometry.total(),
+                                 ke + pe.geometry.total() + pe.pairPotential.total(), dT);
             }
             else
                 Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n", step,
@@ -334,8 +333,8 @@ NodeConstants::ProcessResult MDNode::process()
             // Construct and write header
             std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
             if (energyFrequency && (step % energyFrequency == 0))
-                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pePP.total(), peBound.total(),
-                                      ke + pePP.total() + peBound.total());
+                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pe.pairPotential.total(),
+                                      pe.geometry.total(), ke + pe.pairPotential.total() + pe.geometry.total());
             if (!trajParser.writeLine(header))
                 return NodeConstants::ProcessResult::Failed;
 
