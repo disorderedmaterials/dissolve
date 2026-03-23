@@ -65,6 +65,7 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
         case MODEL:
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return QVariant::fromValue(EnumRegistry::options(it->second->storedDataType()).get());
+            return {};
 
         default:
             return {};

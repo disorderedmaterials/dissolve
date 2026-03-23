@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/forces/forces.h"
-#include "classes/cell.h"
 #include "common/problems.h"
 #include "kernels/producer.h"
 #include <benchmark/benchmark.h>

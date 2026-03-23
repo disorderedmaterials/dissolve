@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/context.h"
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "base/version.h"
@@ -11,10 +12,10 @@
 #include "data/elements.h"
 #include "math/vector3.h"
 #include "neta/neta.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
+class Configuration;
 class LineParser;
 class Site;
 class Species;
@@ -212,4 +213,9 @@ class SpeciesSite : public Serialisable<CoreData &>
 
     void serialise(std::string tag, SerialisedValue &target) const override;
     void deserialise(const SerialisedValue &node, CoreData &coreData) override;
+};
+
+template <> struct Context<const SpeciesSite *>
+{
+    using type = Configuration *;
 };
