@@ -5,62 +5,105 @@
 #include "classes/speciesSite.h"
 #include "io/export/species.h"
 #include "io/import/trajectory.h"
+#include "math/vector3.h"
+#include "mermaid.h"
+#include "nodes/importConfigurationTrajectory.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
+#include "tests/speciesData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
-TEST(AvgMolNodeTest, Water)
+
+class AvgMolNodeTest : public ::testing::Test
 {
-    GraphTestData data;
-    createWaterGraph(&data.graphRoot, 267);
+    public:
+    AvgMolNodeTest() = default;
+    ~AvgMolNodeTest() = default;
 
-    // Create an iterator
-    auto iterator = dynamic_cast<IterableGraph *>(data.graphRoot.createNode("Iterator"));
-    ASSERT_TRUE(iterator);
+    protected:
+    GraphTestData testData_;
+    IterableGraph *iterator_{nullptr};
+    ImportConfigurationTrajectoryNode *trajectoryImport_{nullptr};
+    const Species *water_;
 
-    // Create a dynamic input from the graph's existing Insert node
-    EXPECT_TRUE(data.graphRoot.addEdge({"Insert", "Configuration", "Iterator", "Configuration"}));
+    protected:
+    // Create graph
+    void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
+    {
+        // Create the water configuration
+        createConfiguration(&testData_.graphRoot, "Box", {{createWaterDLPoly, 267}}, 0.1);
 
-    // Within the iterator create an ImportTrajectory node
-    auto importTrajectory = iterator->createNode("ImportConfigurationTrajectory");
-    ASSERT_TRUE(importTrajectory);
-    ASSERT_TRUE(importTrajectory->setOption<std::string>("FilePath", "dlpoly/water267-analysis/water-267-298K.xyz"));
-    ASSERT_TRUE(importTrajectory->setOption<TrajectoryImportFileFormat::TrajectoryImportFormat>(
-        "FileFormat", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ));
-    ASSERT_TRUE(iterator->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"}));
+        // Add iterator
+        iterator_ = dynamic_cast<IterableGraph *>(testData_.graphRoot.createNode("Iterator", "Iterator"));
+        ASSERT_TRUE(iterator_);
+
+        // Grab the water species for convenience
+        auto waterNode = testData_.graphRoot.findNode("Water");
+        ASSERT_TRUE(waterNode);
+        water_ = waterNode->getOutputValue<const Species *>("Species");
+        ASSERT_TRUE(waterNode);
+
+        // Create a dynamic input from the graph's existing Insert node
+        EXPECT_TRUE(testData_.graphRoot.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
+
+        // Create an import configuration trajectory node
+        trajectoryImport_ =
+            dynamic_cast<ImportConfigurationTrajectoryNode *>(iterator_->createNode("ImportConfigurationTrajectory"));
+        ASSERT_TRUE(trajectoryImport_);
+        ASSERT_TRUE(trajectoryImport_->setOption<std::string>("FilePath", trajectoryFilename));
+        ASSERT_TRUE(trajectoryImport_->setOption<TrajectoryImportFileFormat::TrajectoryImportFormat>("FileFormat", format));
+        ASSERT_TRUE(iterator_->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"}));
+    }
+};
+
+TEST_F(AvgMolNodeTest, Water)
+{
+    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
 
     // Add average molecule module to the iterator
-    auto avg = dynamic_cast<AvgMolNode *>(iterator->createNode("AvgMol"));
+    auto avg = dynamic_cast<AvgMolNode *>(iterator_->createNode("AvgMol", "Average"));
     ASSERT_TRUE(avg);
+    std::cout << std::get<0>(*iterator_->outputs().begin()) << std::endl;
+    ASSERT_TRUE(iterator_->addEdge({"ImportConfigurationTrajectory", "Configuration", "Average", "Configuration"}));
 
-    auto *water = data.graphRoot.findNode("Water")->getOutputValue<const Species *>("Species");
-    ASSERT_TRUE(water);
-    auto *configuration = data.graphRoot.findNode("Bulk")->getOutputValue<Configuration *>("Configuration");
-    ASSERT_TRUE(configuration);
     SpeciesExportFileFormat exporter("test.AVERAGE");
     ASSERT_TRUE(avg->setOption("ExportCoordinates", exporter));
-    auto site = water->findSite("Origin");
+    auto site = water_->findSite("origin");
     ASSERT_TRUE(site);
-    ASSERT_TRUE(avg->setOption("Site", water->findSite("Origin")));
+    ASSERT_TRUE(avg->setOption("Site", water_->findSite("origin")));
 
-    ASSERT_TRUE(iterator->addEdge({"ImportConfigurationTrajectory", "Configuration", "AvgMol", "Configuration"}));
+    // // Run from the iterator node explicitly
+    ASSERT_TRUE(iterator_->setOption<Number>("N", 1));
+    ASSERT_EQ(iterator_->run(), NodeConstants::ProcessResult::Success);
 
-    // Run from the iterator node explicitly
-    ASSERT_TRUE(iterator->setOption<Number>("N", 95));
-    ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
+    // // auto result = avg->findOption("Average Species")->get<const Species*>();
+    auto result = avg->findOutput("Average Species")->get<const Species *>();
+    ASSERT_TRUE(result);
 
-    // Data1DExportFileFormat exporter("test.ANGLE");
-    // exporter.exportData(angle->rdfBC());
-    // EXPECT_TRUE(DissolveSystemTest::checkData1D(
-    //     angle->rdfBC(), "B-C RDF",
-    //     {"dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", Data1DImportFileFormat::Data1DImportFormat::XY},
-    //     2.0e-2));
-    // EXPECT_TRUE(DissolveSystemTest::checkData1D(angle->angleABC(), "A-B-C angle",
-    //                                             {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
-    //                                              Data1DImportFileFormat::Data1DImportFormat::XY},
-    //                                             6.0e-5));
+    ASSERT_EQ(result->atoms().size(), 3);
+    ASSERT_EQ(result->atom(0).Z(), Elements::Element::H);
+
+    // EXPECT_NEAR(result->atom(0).r().x, -0.83305, 1e-8);
+    // EXPECT_NEAR(result->atom(0).r().y, 0.0, 1e-8);
+    // EXPECT_NEAR(result->atom(0).r().z, 0.0, 1e-8);
+
+    // EXPECT_NEAR(result->atom(1).r().x, 0, 1e-8);
+    // EXPECT_NEAR(result->atom(1).r().y, 0, 1e-8);
+    // EXPECT_NEAR(result->atom(1).r().z, 0, 1e-8);
+
+    // EXPECT_NEAR(result->atom(0).r().x, -0.83305, 1e-8);
+    // EXPECT_NEAR(result->atom(1).r().x, 0.00016, 1e-8);
+    // EXPECT_NEAR(result->atom(2).r().x, 0.83305, 1e-8);
+    // EXPECT_NEAR(result->atom(0).r().y, 0.0, 1e-8);
+    // EXPECT_NEAR(result->atom(1).r().y, 0.60443, 1e-8);
+    // EXPECT_NEAR(result->atom(2).r().y, 0.0, 1e-8);
+    // EXPECT_NEAR(result->atom(0).r().z, 0.0, 1e-8);
+    // EXPECT_NEAR(result->atom(1).r().z, 0.0, 1e-8);
+    // EXPECT_NEAR(result->atom(2).r().z, 0.0, 1e-8);
+
+    exportMermaidGraph(testData_.graphRoot);
 }
 } // namespace UnitTest

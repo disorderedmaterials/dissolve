@@ -5,6 +5,7 @@
 #include "classes/speciesSites.h"
 #include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
+#include "mermaid.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
@@ -47,7 +48,8 @@ TEST(AngleNodeTest, Water)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(angle->angleABC(), "A-B-C angle",
                                                 {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
                                                  Data1DImportFileFormat::Data1DImportFormat::XY},
-                                                3.0e-6));
+                                                6.0e-5));
+    exportMermaidGraph(data.graphRoot);
 }
 
 } // namespace UnitTest

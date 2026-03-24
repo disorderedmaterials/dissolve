@@ -49,6 +49,18 @@ NodeConstants::ProcessResult AvgMolNode::process()
     // Get site parent species
     targetSpecies_ = targetSite_->parent();
 
+    if (targetSpecies_)
+    {
+        averageSpecies_.clear();
+        for (const auto &i : targetSpecies_->atoms())
+            averageSpecies_.addAtom(i.Z(), i.r());
+        for (const auto &bond : targetSpecies_->bonds())
+            averageSpecies_.addBond(bond.indexI(), bond.indexJ());
+        // Set name and object tag for average species
+        averageSpecies_.setName(
+            std::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
+    }
+
     Messenger::print("AvgMol: Target site (species) is {} ({}).\n", targetSite_->name(), targetSpecies_->name());
     if (exportFileAndFormat_.hasFilename())
         Messenger::print("AvgMol: Coordinates will be exported to '{}' ({}).\n", exportFileAndFormat_.filename(),
