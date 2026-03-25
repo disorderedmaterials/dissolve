@@ -7,11 +7,11 @@
 #include "nodes/node.h"
 
 // CIFLoader Node
-class CIFNETAOptionsNode : public Node
+class CIFRemoveWaterNode : public Node
 {
     public:
-    CIFNETAOptionsNode(Graph *parentGraph);
-    ~CIFNETAOptionsNode() override = default;
+    CIFRemoveWaterNode(Graph *parentGraph);
+    ~CIFRemoveWaterNode() override = default;
 
     public:
     std::string_view type() const override;
@@ -23,12 +23,8 @@ class CIFNETAOptionsNode : public Node
     private:
     // CIF handler context
     CIFLoaderNode::CIFContext *context_{nullptr};
-    // Whether to remove by NETA definition in clean-up
-    bool removeNETA_{false};
-    // Whether to expand NETA matches to fragments when removing in clean-up
-    bool removeNETAByFragment_{false};
-    // NETA for moiety removal, if specified
-    std::string moietyRemovalNETA_;
+    // Whether to remove water and coordinated oxygen atoms in clean-up
+    bool RemoveWaterAndCoordinatedOxygens_{false};
 
     /*
      * Processing

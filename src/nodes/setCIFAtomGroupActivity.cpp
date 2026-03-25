@@ -6,7 +6,8 @@
 SetCIFAtomGroupActivityNode::SetCIFAtomGroupActivityNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
+    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+        ->setFlags({ParameterBase::Required});
 
     // Outputs
     addOutput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
@@ -27,11 +28,6 @@ std::string_view SetCIFAtomGroupActivityNode::summary() const
 // Run main processing
 NodeConstants::ProcessResult SetCIFAtomGroupActivityNode::process()
 {
-    if (!context_)
-    {
-        error("CIF context is null");
-        return NodeConstants::ProcessResult::Failed;
-    }
 
     auto &atomGroup = context_->getAssembly(assemblyName_).getGroup(atomGroupName_);
     atomGroup.setActive(active_);

@@ -7,11 +7,11 @@
 #include "nodes/node.h"
 
 // CIFLoader Node
-class CIFAtomicOptionsNode : public Node
+class CIFRemoveAtomicNode : public Node
 {
     public:
-    CIFAtomicOptionsNode(Graph *parentGraph);
-    ~CIFAtomicOptionsNode() override = default;
+    CIFRemoveAtomicNode(Graph *parentGraph);
+    ~CIFRemoveAtomicNode() override = default;
 
     public:
     std::string_view type() const override;
@@ -23,12 +23,8 @@ class CIFAtomicOptionsNode : public Node
     private:
     // CIF handler context
     CIFLoaderNode::CIFContext *context_{nullptr};
-    // Tolerance for removal of overlapping atoms
-    Number overlapTolerance_{0.1};
     // Whether to remove free atomic moieties in clean-up
     bool removeAtomics_{false};
-    // Whether to remove water and coordinated oxygen atoms in clean-up
-    bool removeWaterAndCoordinateOxygens_{false};
 
     /*
      * Processing

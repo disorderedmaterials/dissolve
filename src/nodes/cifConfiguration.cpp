@@ -6,7 +6,8 @@
 CIFConfigurationNode::CIFConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
+    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+        ->setFlags({ParameterBase::Required});
 
     // Outputs
     addOutput<const Species *>("UnitCellSpecies", "Cleaned unit cell", unitCellSpecies_);
@@ -25,11 +26,6 @@ std::string_view CIFConfigurationNode::summary() const { return "Generate a supe
 // Run main processing
 NodeConstants::ProcessResult CIFConfigurationNode::process()
 {
-    if (!context_)
-    {
-        error("CIF context is null");
-        return NodeConstants::ProcessResult::Failed;
-    }
 
     // Generate from CIF context
     context_->setSupercellRepeat(supercellRepeat_);

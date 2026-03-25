@@ -9,7 +9,8 @@
 CIFLoaderNode::CIFLoaderNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Outputs
-    addPointerOutput<CIFContext>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
+    addPointerOutput<CIFContext>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+        ->setFlags({ParameterBase::Required});
 
     // Option
     addOption<std::string>("FilePath", "File path", filePath_);

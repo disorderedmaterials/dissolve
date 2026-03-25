@@ -32,13 +32,15 @@ class CIFNodeTest : public ::testing::Test
         auto loaderNode = testData_.graphRoot.createNode("CIFLoader", name);
         loaderNode->setOption("FilePath", path_ + filename);
         auto bondingNode = testData_.graphRoot.createNode("CIFBondingOptions", name + "//BondingOptions");
-        auto atomicNode = testData_.graphRoot.createNode("CIFAtomicOptions", name + "//AtomicOptions");
-        auto nETANode = testData_.graphRoot.createNode("CIFNETAOptions", name + "//NETAOptions");
+        auto removeAtomicNode = testData_.graphRoot.createNode("CIFRemoveAtomic", name + "//RemoveAtomic");
+        auto removeWaterNode = testData_.graphRoot.createNode("CIFRemoveWater", name + "//RemoveWater");
+        auto nETANode = testData_.graphRoot.createNode("CIFCleanup", name + "//Cleanup");
         auto configurationNode = testData_.graphRoot.createNode("CIFConfiguration", name + "//Configuration");
         testData_.graphRoot.addEdge({name, "CIFContext", name + "//BondingOptions", "CIFContext"});
-        testData_.graphRoot.addEdge({name + "//BondingOptions", "CIFContext", name + "//AtomicOptions", "CIFContext"});
-        testData_.graphRoot.addEdge({name + "//AtomicOptions", "CIFContext", name + "//NETAOptions", "CIFContext"});
-        testData_.graphRoot.addEdge({name + "//NETAOptions", "CIFContext", name + "//Configuration", "CIFContext"});
+        testData_.graphRoot.addEdge({name + "//BondingOptions", "CIFContext", name + "//RemoveAtomic", "CIFContext"});
+        testData_.graphRoot.addEdge({name + "//RemoveAtomic", "CIFContext", name + "//RemoveWater", "CIFContext"});
+        testData_.graphRoot.addEdge({name + "//RemoveWater", "CIFContext", name + "//Cleanup", "CIFContext"});
+        testData_.graphRoot.addEdge({name + "//Cleanup", "CIFContext", name + "//Configuration", "CIFContext"});
     }
     // Determine CIF node name from filename
     std::string cifNameFromFile(std::string filename)
@@ -249,9 +251,9 @@ TEST_F(CIFNodeTest, CuBTC)
     atomGroupC2->setOption("AtomGroup", std::string("2"));
     atomGroupC2->setOption("SetActive", true);
     testData_.graphRoot.removeEdge(
-        {cifNameFromFile(cif) + "//NETAOptions", "CIFContext", std::string(configurationNode->name()), "CIFContext"});
+        {cifNameFromFile(cif) + "//Cleanup", "CIFContext", std::string(configurationNode->name()), "CIFContext"});
     testData_.graphRoot.addEdge(
-        {cifNameFromFile(cif) + "//NETAOptions", "CIFContext", std::string(atomGroupA1->name()), "CIFContext"});
+        {cifNameFromFile(cif) + "//Cleanup", "CIFContext", std::string(atomGroupA1->name()), "CIFContext"});
     testData_.graphRoot.addEdge(
         {std::string(atomGroupA1->name()), "CIFContext", std::string(atomGroupB2->name()), "CIFContext"});
     testData_.graphRoot.addEdge(
@@ -265,8 +267,8 @@ TEST_F(CIFNodeTest, CuBTC)
               EmpiricalFormula::formula(cellFormulaNH2));
 
     // Remove those free oxygens so we just have a framework
-    auto atomicsNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//AtomicOptions");
-    atomicsNode->setOption("RemoveAtomics", true);
+    auto removeAtomicsNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//RemoveAtomic");
+    removeAtomicsNode->setOption("RemoveAtomics", true);
     testData_.graphRoot.setUpdateRequired();
     ASSERT_EQ(configurationNode->run(), NodeConstants::ProcessResult::Success);
     auto cifMolsB = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");

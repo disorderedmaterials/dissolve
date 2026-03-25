@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/cifNETAOptions.h"
+#include "nodes/cifCleanup.h"
 
-CIFNETAOptionsNode::CIFNETAOptionsNode(Graph *parentGraph) : Node(parentGraph)
+CIFCleanupNode::CIFCleanupNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
+    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+        ->setFlags({ParameterBase::Required});
 
     // Outputs
     addOutput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
@@ -18,18 +19,13 @@ CIFNETAOptionsNode::CIFNETAOptionsNode(Graph *parentGraph) : Node(parentGraph)
     addOption<std::string>("MoietyRemovalNETA", "NETA for moiety removal", moietyRemovalNETA_);
 }
 
-std::string_view CIFNETAOptionsNode::type() const { return "CIFNETAOptions"; }
+std::string_view CIFCleanupNode::type() const { return "CIFCleanup"; }
 
-std::string_view CIFNETAOptionsNode::summary() const { return "Apply NETA options to a CIF context"; }
+std::string_view CIFCleanupNode::summary() const { return "Clean up a CIF context"; }
 
 // Run main processing
-NodeConstants::ProcessResult CIFNETAOptionsNode::process()
+NodeConstants::ProcessResult CIFCleanupNode::process()
 {
-    if (!context_)
-    {
-        error("CIF context is null");
-        return NodeConstants::ProcessResult::Failed;
-    }
 
     context_->setRemoveNETA(removeNETA_, removeNETAByFragment_);
     context_->setMoietyRemovalNETA(std::string_view(moietyRemovalNETA_));

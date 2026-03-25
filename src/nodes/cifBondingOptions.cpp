@@ -6,7 +6,8 @@
 CIFBondingOptionsNode::CIFBondingOptionsNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
+    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+        ->setFlags({ParameterBase::Required});
 
     // Outputs
     addOutput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
@@ -25,11 +26,6 @@ std::string_view CIFBondingOptionsNode::summary() const { return "Apply bonding 
 // Run main processing
 NodeConstants::ProcessResult CIFBondingOptionsNode::process()
 {
-    if (!context_)
-    {
-        error("CIF context is null");
-        return NodeConstants::ProcessResult::Failed;
-    }
 
     context_->setBondingTolerance(bondingTolerance_.asDouble());
     context_->setUseCIFBondingDefinitions(useCIFBondingDefinitions_);

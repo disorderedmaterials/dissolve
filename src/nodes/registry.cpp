@@ -7,11 +7,12 @@
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/bragg.h"
-#include "nodes/cifAtomicOptions.h"
 #include "nodes/cifBondingOptions.h"
+#include "nodes/cifCleanup.h"
 #include "nodes/cifConfiguration.h"
 #include "nodes/cifLoader.h"
-#include "nodes/cifNETAOptions.h"
+#include "nodes/cifRemoveAtomic.h"
+#include "nodes/cifRemoveWater.h"
 #include "nodes/configuration.h"
 #include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
@@ -61,13 +62,14 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Angle", makeDerivedNode<AngleNode>()},
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
                   {"Bragg", makeDerivedNode<BraggNode>()},
+                  {"CIFCleanup", makeDerivedNode<CIFCleanupNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
-                  {"SetCIFAtomGroupActivity", makeDerivedNode<SetCIFAtomGroupActivityNode>()},
-                  {"CIFAtomicOptions", makeDerivedNode<CIFAtomicOptionsNode>()},
                   {"CIFBondingOptions", makeDerivedNode<CIFBondingOptionsNode>()},
                   {"CIFConfiguration", makeDerivedNode<CIFConfigurationNode>()},
                   {"CIFLoader", makeDerivedNode<CIFLoaderNode>()},
-                  {"CIFNETAOptions", makeDerivedNode<CIFNETAOptionsNode>()},
+                  {"CIFRemoveAtomic", makeDerivedNode<CIFRemoveAtomicNode>()},
+                  {"CIFRemoveWater", makeDerivedNode<CIFRemoveWaterNode>()},
+                  {"SetCIFAtomGroupActivity", makeDerivedNode<SetCIFAtomGroupActivityNode>()},
                   {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
