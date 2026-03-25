@@ -134,7 +134,7 @@ TEST_F(CIFNodeTest, NaCl)
     testBox(configurationNode->getOutputValue<Configuration *>("SuperCellConfiguration"), {A, A, A}, {90, 90, 90}, 8);
 
     // Calculating bonding is the default, but this gives a continuous framework...
-    EXPECT_EQ(configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies")->size(), 0);
+    EXPECT_EQ(configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies").size(), 0);
 
     // Get molecular species
     auto bondingNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//BondingOptions");
@@ -142,15 +142,15 @@ TEST_F(CIFNodeTest, NaCl)
     testData_.graphRoot.setUpdateRequired();
     ASSERT_EQ(configurationNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto molecularSpecies = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");
+    auto molecularSpecies = configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies");
 
-    EXPECT_EQ(molecularSpecies->size(), 2);
-    testMolecularSpecies(molecularSpecies->at(0), {"Na", 4, 1});
+    EXPECT_EQ(molecularSpecies.size(), 2);
+    testMolecularSpecies(molecularSpecies.at(0), {"Na", 4, 1});
     std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
-    for (auto &&[instance, r2] : zip(molecularSpecies->at(0).instances(), R))
+    for (auto &&[instance, r2] : zip(molecularSpecies.at(0).instances(), R))
         DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), r2);
-    testMolecularSpecies(molecularSpecies->at(1), {"Cl", 4, 1});
-    for (auto &&[instance, r2] : zip(molecularSpecies->at(1).instances(), R))
+    testMolecularSpecies(molecularSpecies.at(1), {"Cl", 4, 1});
+    for (auto &&[instance, r2] : zip(molecularSpecies.at(1).instances(), R))
         DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), (r2 - A / 2).abs());
 
     // 2x2x2 supercell
@@ -187,20 +187,20 @@ TEST_F(CIFNodeTest, NaClO3)
     testData_.graphRoot.setUpdateRequired();
     ASSERT_EQ(configurationNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto cifMolsA = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");
-    ASSERT_EQ(cifMolsA->size(), 3);
-    testMolecularSpecies(cifMolsA->at(0), {"Na", 4, 1});
-    testMolecularSpecies(cifMolsA->at(1), {"Cl", 4, 1});
-    testMolecularSpecies(cifMolsA->at(2), {"O", 12, 1});
+    auto cifMolsA = configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies");
+    ASSERT_EQ(cifMolsA.size(), 3);
+    testMolecularSpecies(cifMolsA.at(0), {"Na", 4, 1});
+    testMolecularSpecies(cifMolsA.at(1), {"Cl", 4, 1});
+    testMolecularSpecies(cifMolsA.at(2), {"O", 12, 1});
 
     // Calculate bonding ourselves to get the correct species
     bondingNode->setOption("UseCIFBondingDefinitions", false);
     testData_.graphRoot.setUpdateRequired();
     ASSERT_EQ(configurationNode->run(), NodeConstants::ProcessResult::Success);
-    auto cifMolsB = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");
-    ASSERT_EQ(cifMolsB->size(), 2);
-    testMolecularSpecies(cifMolsB->at(0), {"Na", 4, 1});
-    testMolecularSpecies(cifMolsB->at(1), {"ClO3", 4, 4});
+    auto cifMolsB = configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies");
+    ASSERT_EQ(cifMolsB.size(), 2);
+    testMolecularSpecies(cifMolsB.at(0), {"Na", 4, 1});
+    testMolecularSpecies(cifMolsB.at(1), {"ClO3", 4, 4});
 }
 
 TEST_F(CIFNodeTest, CuBTC)
@@ -231,8 +231,8 @@ TEST_F(CIFNodeTest, CuBTC)
     EXPECT_EQ(EmpiricalFormula::formula(configurationNode->getOutputValue<Configuration *>("SuperCellConfiguration")->atoms(),
                                         [](const auto &i) { return i.speciesAtom()->Z(); }),
               EmpiricalFormula::formula(cellFormulaH));
-    auto cifMolsA = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");
-    EXPECT_EQ(cifMolsA->size(), 2);
+    auto cifMolsA = configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies");
+    EXPECT_EQ(cifMolsA.size(), 2);
 
     // Change active assemblies to get amine-substituted structure
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaNH2 = cellFormulaH;
@@ -271,8 +271,8 @@ TEST_F(CIFNodeTest, CuBTC)
     removeAtomicsNode->setOption("RemoveAtomics", true);
     testData_.graphRoot.setUpdateRequired();
     ASSERT_EQ(configurationNode->run(), NodeConstants::ProcessResult::Success);
-    auto cifMolsB = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");
-    EXPECT_EQ(cifMolsB->size(), 0);
+    auto cifMolsB = configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies");
+    EXPECT_EQ(cifMolsB.size(), 0);
 }
 
 TEST_F(CIFNodeTest, MoleculeOrdering)
@@ -292,10 +292,10 @@ TEST_F(CIFNodeTest, MoleculeOrdering)
         auto configurationNode = testData_.graphRoot.findNode(cifNameFromFile(cifFile) + "//Configuration");
         ASSERT_EQ(configurationNode->run(), NodeConstants::ProcessResult::Success);
 
-        auto molecularSpecies = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");
-        EXPECT_EQ(molecularSpecies->size(), 1);
+        auto molecularSpecies = configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies");
+        EXPECT_EQ(molecularSpecies.size(), 1);
 
-        auto &cifMolecule = molecularSpecies->front();
+        auto &cifMolecule = molecularSpecies.front();
         EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
             {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
         testMolecularSpecies(cifMolecule, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
@@ -318,10 +318,10 @@ TEST_F(CIFNodeTest, BigMoleculeOrdering)
     auto configurationNode = testData_.graphRoot.findNode(cifNameFromFile(cifFile) + "//Configuration");
     ASSERT_EQ(configurationNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto molecularSpecies = configurationNode->getOutputValue<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies");
-    EXPECT_EQ(molecularSpecies->size(), 1);
+    auto molecularSpecies = configurationNode->getOutputValue<std::vector<CIFMolecularSpecies>>("MolecularSpecies");
+    EXPECT_EQ(molecularSpecies.size(), 1);
 
-    auto &cifMolecule = molecularSpecies->front();
+    auto &cifMolecule = molecularSpecies.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {{Elements::O, 6}, {Elements::C, 51}, {Elements::H, 54}};
     testMolecularSpecies(cifMolecule, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
 

@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/cifConfiguration.h"
+#include <algorithm>
+#include <iterator>
 
 CIFConfigurationNode::CIFConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -12,7 +14,7 @@ CIFConfigurationNode::CIFConfigurationNode(Graph *parentGraph) : Node(parentGrap
     // Outputs
     addOutput<const Species *>("UnitCellSpecies", "Cleaned unit cell", unitCellSpecies_);
     addOutput<const Species *>("SuperCellSpecies", "Supercell species", supercellSpecies_);
-    addOutput<const std::vector<CIFMolecularSpecies> *>("MolecularSpecies", "Detected molecular species", molecularSpecies_);
+    addOutput<std::vector<CIFMolecularSpecies>>("MolecularSpecies", "Detected molecular species", molecularSpecies_);
     addOutput<Configuration *>("SuperCellConfiguration", "Supercell configuration pointer", supercellConfiguration_);
 
     // Options
@@ -41,7 +43,9 @@ NodeConstants::ProcessResult CIFConfigurationNode::process()
     supercellSpecies_ = &(context_->supercellSpecies());
 
     // Get detected molecular species
-    molecularSpecies_ = &(context_->molecularSpecies());
+    auto &cifMols = context_->molecularSpecies();
+    molecularSpecies_.clear();
+    std::copy(cifMols.begin(), cifMols.end(), std::back_inserter(molecularSpecies_));
 
     return NodeConstants::ProcessResult::Success;
 }

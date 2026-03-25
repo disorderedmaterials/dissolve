@@ -30,7 +30,7 @@ class CIFConfigurationNode : public Node
     // Supercell species
     const Species *supercellSpecies_{nullptr};
     // Detected molecular species
-    const std::vector<CIFMolecularSpecies> *molecularSpecies_{nullptr};
+    std::vector<CIFMolecularSpecies> molecularSpecies_;
     // Supercell repeat
     Vector3i supercellRepeat_{1, 1, 1};
 
