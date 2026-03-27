@@ -7,11 +7,11 @@
 #include "nodes/node.h"
 
 // CIFLoader Node
-class CIFCleanupNode : public Node
+class CIFMolecularSpeciesNode : public Node
 {
     public:
-    CIFCleanupNode(Graph *parentGraph);
-    ~CIFCleanupNode() override = default;
+    CIFMolecularSpeciesNode(Graph *parentGraph);
+    ~CIFMolecularSpeciesNode() override = default;
 
     public:
     std::string_view type() const override;
@@ -23,12 +23,12 @@ class CIFCleanupNode : public Node
     private:
     // CIF handler context
     CIFLoaderNode::CIFContext *context_{nullptr};
-    // Whether to remove by NETA definition in clean-up
-    bool removeNETA_{false};
-    // Whether to expand NETA matches to fragments when removing in clean-up
-    bool removeNETAByFragment_{false};
-    // NETA for moiety removal, if specified
-    std::string moietyRemovalNETA_;
+    // Supercell configuration
+    Configuration *supercellConfiguration_{nullptr};
+    // Detected molecular species
+    std::vector<CIFMolecularSpecies> molecularSpecies_;
+    // Supercell repeat
+    Vector3i supercellRepeat_{1, 1, 1};
 
     /*
      * Processing
@@ -36,4 +36,11 @@ class CIFCleanupNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    /*
+     * Getters
+     */
+    public:
+    // Get cleaned unit cell species
+    const Species &cleanedUnitCellSpecies() const;
 };

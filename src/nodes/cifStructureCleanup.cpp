@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/cifCleanup.h"
+#include "nodes/cifStructureCleanup.h"
 
-CIFCleanupNode::CIFCleanupNode(Graph *parentGraph) : Node(parentGraph)
+CIFStructureCleanupNode::CIFStructureCleanupNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
@@ -19,12 +19,12 @@ CIFCleanupNode::CIFCleanupNode(Graph *parentGraph) : Node(parentGraph)
     addOption<std::string>("MoietyRemovalNETA", "NETA for moiety removal", moietyRemovalNETA_);
 }
 
-std::string_view CIFCleanupNode::type() const { return "CIFCleanup"; }
+std::string_view CIFStructureCleanupNode::type() const { return "CIFStructureCleanup"; }
 
-std::string_view CIFCleanupNode::summary() const { return "Clean up a CIF context"; }
+std::string_view CIFStructureCleanupNode::summary() const { return "Clean up a CIF context"; }
 
 // Run main processing
-NodeConstants::ProcessResult CIFCleanupNode::process()
+NodeConstants::ProcessResult CIFStructureCleanupNode::process()
 {
 
     context_->setRemoveNETA(removeNETA_, removeNETAByFragment_);
