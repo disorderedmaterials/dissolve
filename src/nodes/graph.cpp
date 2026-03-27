@@ -6,7 +6,7 @@
 #include "nodes/inputs.h"
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
-#include "species.h"
+#include <algorithm>
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
@@ -274,4 +274,48 @@ void Graph::deserialise(const SerialisedValue &node)
               child->deserialise(value);
           });
     toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
+}
+
+static const std::vector<std::string> DATA_NAMES = {"Species", "Configuration", "Data1DImport"};
+static const std::vector<std::string> MATH_NAMES = {"Add", "Subtract", "Multiply", "Dot Product", "Integrator", "Derivative"};
+static const std::vector<std::string> GRAPH_NAMES = {"Dissolve", "Graph", "Iterator"};
+
+// Print as mermaid state diagram
+std::string Graph::to_mermaid(int depth) const
+{
+    std::string result{}, spacer{};
+    spacer.resize(depth);
+    std::ranges::fill(spacer, ' ');
+    for (auto &[k, v] : nodes_)
+    {
+        if (std::ranges::find(DATA_NAMES, v->type()) != DATA_NAMES.end())
+            result += spacer + std::string("class ") + std::string(v->name()) + " data\n";
+        else if (std::ranges::find(MATH_NAMES, v->type()) != MATH_NAMES.end())
+            result += spacer + std::string("class ") + std::string(v->name()) + " math\n";
+        else if (std::ranges::find(GRAPH_NAMES, v->type()) != GRAPH_NAMES.end())
+        {
+            result += spacer + std::string("state ") + std::string(v->name()) + " {\n";
+            auto casted = dynamic_cast<Graph *>(v.get());
+            if (casted)
+            {
+                result += casted->to_mermaid(depth + 4);
+            }
+            result += spacer + "}\n";
+        }
+    }
+    for (auto &edge : edges_)
+    {
+        result += spacer + std::string(edge->sourceNode().name()) + " --> " + std::string(edge->targetNode().name()) + ":" +
+                  std::string(edge->sourceOutput().name()) + "-" + std::string(edge->targetInput().name()) + "\n";
+    }
+    return result;
+}
+
+std::ostream &operator<<(std::ostream &stream, const Graph &node)
+{
+    stream << "stateDiagram-v2" << std::endl;
+    stream << "    classDef data fill:#FFD0D0" << std::endl;
+    stream << "    classDef math fill:#D0FFD0" << std::endl;
+    stream << node.to_mermaid(4);
+    return stream;
 }
