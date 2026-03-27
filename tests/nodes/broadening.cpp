@@ -11,16 +11,23 @@ namespace UnitTest
 {
 TEST(BroadeningTest, ArgonBroadening)
 {
+    // Set up the test graph
     GraphTestData data;
-    createArgonGraph(
-        &data.graphRoot, 10000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createArgon, 10000}}, 0.0213);
+    lastNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
-    // Get the SQ and NeutronSQ nodes
-    auto sqNode = data.graphRoot.findNode("SQ");
-    ASSERT_TRUE(sqNode);
-    auto neutronSQNode = data.graphRoot.findNode("Yarnell");
-    ASSERT_TRUE(neutronSQNode);
+    // Append GR and SQ nodes
+    auto sqNode = appendGRSQ(&data.graphRoot, lastNode, true, true);
+    auto arSpeciesNode = data.graphRoot.findNode("Ar");
+    ASSERT_TRUE(arSpeciesNode);
+
+    // Get argon species and set up neutron SQ
+    auto arSpecies = arSpeciesNode->getOutputValue<const Species *>("Species");
+    ASSERT_TRUE(arSpecies);
+    auto neutronSQNode =
+        appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", IsotopologueSet({{arSpecies->findIsotopologue("Ar36"), 1.0}}));
 
     std::vector<std::tuple<std::string, Functions1D::Form, std::vector<double>>> tests = {
         {"epsr25/argon10000/argon_dep0.1indep0.2.EPSR.u01", Functions1D::Form::GaussianC2, {0.2, 0.1}},

@@ -11,9 +11,14 @@ namespace UnitTest
 {
 TEST(GRNodeTest, Methods)
 {
+    // Set up the test graph
     GraphTestData data;
-    createArgonGraph(&data.graphRoot, 5000);
+    auto lastNode = createConfiguration(&data.graphRoot, {{createArgon, 5000}}, 0.0213);
 
+    // Append GR and SQ nodes
+    auto sqNode = appendGRSQ(&data.graphRoot, lastNode, true, true);
+    auto arSpeciesNode = data.graphRoot.findNode("Ar");
+    ASSERT_TRUE(arSpeciesNode);
     auto grNode = data.graphRoot.findNode("GR");
 
     // Calculate baseline GR with the "Test" method, a simple, serial double-loop

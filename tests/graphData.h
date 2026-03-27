@@ -149,34 +149,6 @@ inline XRaySQNode *appendXRaySQ(Graph *root, SQNode *sqNode, std::string name,
     return xRaySQNode;
 }
 
-// Create an Argon graph in the supplied root node
-inline void createArgonGraph(Graph *root, int population = 1000,
-                             CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
-{
-    // Create the box
-    auto lastNode = createConfiguration(root, {{createArgon, population}}, 0.0213);
-
-    // Import reference coordinates?
-    if (initialCoordinates.hasFilename())
-        lastNode = appendImportCoordinates(root, lastNode, initialCoordinates);
-
-    // Append GR and SQ nodes
-    auto sqNode = appendGRSQ(root, lastNode, true, true);
-    auto arSpeciesNode = root->findNode("Ar");
-    ASSERT_TRUE(arSpeciesNode);
-
-    // Get argon species and set up neutron SQ
-    auto arSpecies = arSpeciesNode->getOutputValue<const Species *>("Species");
-    ASSERT_TRUE(arSpecies);
-    appendNeutronSQ(root, sqNode, "Yarnell", IsotopologueSet({{arSpecies->findIsotopologue("Ar36"), 1.0}}), {},
-                    {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY});
-
-    // Set import options for reference data
-    auto referenceDataNode = root->findNode("Reference-Yarnell");
-    ASSERT_TRUE(referenceDataNode);
-    ASSERT_TRUE(referenceDataNode->setOption<std::optional<Number>>("RemoveAverageFromX", 9.0));
-}
-
 // Create a MgO graph in the supplied root node
 inline void createMgOGraph(Graph *root, int populationMG, int populationO,
                            CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())

@@ -13,8 +13,9 @@ namespace UnitTest
 {
 TEST(GraphArgonTest, InitSimulation)
 {
+    // Set up the test graph
     GraphTestData data;
-    createArgonGraph(&data.graphRoot);
+    createConfiguration(&data.graphRoot, {{createArgon, 1000}}, 0.0213);
 
     // Get the Insert node and run the graph
     auto insertNode = data.graphRoot.findNode("Insert-Ar");
@@ -29,20 +30,30 @@ TEST(GraphArgonTest, InitSimulation)
 
 TEST(GraphArgonTest, AllCorrelations)
 {
+    // Set up the test graph
     GraphTestData data;
-    createArgonGraph(&data.graphRoot, 1000,
-                     CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
-                                                CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
+    auto lastNode = createConfiguration(&data.graphRoot, {{createArgon, 1000}}, 0.0213);
+    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
+                                       CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
+                                                                  CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
+
+    // Append GR and SQ nodes
+    auto sqNode = appendGRSQ(&data.graphRoot, lastNode, true, true);
+    auto arSpeciesNode = data.graphRoot.findNode("Ar");
+    ASSERT_TRUE(arSpeciesNode);
+
+    // Get argon species and set up neutron SQ
+    auto arSpecies = arSpeciesNode->getOutputValue<const Species *>("Species");
+    ASSERT_TRUE(arSpecies);
+    auto neutronSQNode =
+        appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", IsotopologueSet({{arSpecies->findIsotopologue("Ar36"), 1.0}}), {},
+                        {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY});
 
     // Run the Graph from the NeutronSQ node
-    auto neutronSQNode = data.graphRoot.findNode("Yarnell");
-    ASSERT_TRUE(neutronSQNode);
     ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(neutronSQNode->versionIndex(), 0);
 
     // Check total unweighted SQ
-    auto sqNode = data.graphRoot.findNode("SQ");
-    ASSERT_TRUE(sqNode);
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     ASSERT_TRUE(unweightedSQ);
     ASSERT_TRUE(
