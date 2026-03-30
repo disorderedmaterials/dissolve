@@ -258,61 +258,6 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
     }
 }
 // Create a water graph in the supplied root node
-inline void createWaterGraph(Graph *root, int population,
-                             CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
-{
-    // Create species and configuration
-    auto waterNode = createWater(root);
-    ASSERT_TRUE(waterNode);
-    auto configurationNode = root->createNode("Configuration", "Bulk");
-    ASSERT_TRUE(configurationNode);
-    auto insertNode = root->createNode("Insert");
-    ASSERT_TRUE(insertNode);
-    ASSERT_TRUE(root->addEdge({"Water", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-    ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
-    ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.1));
-    ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
-
-    // Import reference coordinates
-    if (initialCoordinates.hasFilename())
-    {
-        auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
-        ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
-        ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-            "FileFormat",
-            CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
-        ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
-    }
-
-    // Add GR node and link to the import node
-    auto grNode = root->createNode("GR");
-    ASSERT_TRUE(grNode);
-    ASSERT_TRUE(
-        root->addEdge({initialCoordinates.hasFilename() ? "Import" : "Insert", "Configuration", "GR", "Configuration"}));
-
-    // Create the SQ node
-    auto sqNode = dynamic_cast<SQNode *>(root->createNode("SQ"));
-    ASSERT_TRUE(sqNode);
-    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
-
-    // Add in NeutronSQ
-    appendNeutronSQ(root, sqNode, "H2O", {}, {},
-                    Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
-                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    appendNeutronSQ(root, sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
-                    Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
-                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    appendNeutronSQ(root, sqNode, "HDO", {{"Water", "D2O", 1.0}, {"Water", "Natural", 1.0}}, Exchangeables({"HW"}),
-                    Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
-                                           Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-
-    // Add in XRaySQ
-    appendXRaySQ(
-        root, sqNode, "H2Ox",
-        Data1DImportFileFormat("epsr25/water1000-neutron-xray/PCCPfofq.txt", Data1DImportFileFormat::Data1DImportFormat::XY));
-}
-// Create a water graph in the supplied root node
 inline void createWaterGraphDlPoly(Graph *root, int population,
                                    CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
 {
@@ -345,7 +290,7 @@ inline void createWaterGraphDlPoly(Graph *root, int population,
 inline void createWaterMethanolGraph(Graph *root)
 {
     // Create species and configuration
-    auto waterNode = createWater(root);
+    auto waterNode = createWater();
     ASSERT_TRUE(waterNode);
     auto methanolNode = createMethanol(root);
     ASSERT_TRUE(methanolNode);

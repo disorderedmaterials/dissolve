@@ -5,19 +5,16 @@
 #include "io/import/coordinates.h"
 #include "io/import/data1D.h"
 #include "nodes/configuration.h"
-#include "nodes/data1DImport.h"
 #include "nodes/dissolve.h"
-#include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/numberNode.h"
-#include "nodes/species.h"
+#include "tests/graphData.h"
 #include "tests/speciesData.h"
 #include "tests/testData.h"
 #include <array>
 #include <gtest/gtest.h>
 #include <map>
-#include <math/vector3.h>
 #include <tuple>
 #include <variant>
 #include <vector>
@@ -27,43 +24,22 @@ namespace UnitTest
 
 TEST(AtomShakeTest, Water)
 {
-    // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
-    CoreData coreData;
-    Dissolve dissolve{coreData};
-    DissolveGraph root{dissolve};
-
-    coreData.clear();
+    // Set up the test graph
+    GraphTestData data;
+    auto insertNode = createConfiguration(&data.graphRoot, {{createWater, 1}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
-    auto iterator = dynamic_cast<IterableGraph *>(root.createNode("Iterator", "Iterator"));
-
+    auto iterator = dynamic_cast<IterableGraph *>(data.graphRoot.createNode("Iterator", "Iterator"));
     auto atomicMCNode = dynamic_cast<AtomicMCNode *>(iterator->createNode("AtomicMC", "AtomicMC"));
     ASSERT_TRUE(atomicMCNode->setOption<Number>("ShakesPerAtom", 10));
 
-    // Water species
-    auto species = createWater(&root);
-
-    // Water configuration
-    auto configurationNode = dynamic_cast<ConfigurationNode *>(root.createNode("Configuration", "Bulk"));
-    ASSERT_TRUE(configurationNode);
-
-    auto insertNode = dynamic_cast<InsertNode *>(root.createNode("Insert", "Insert"));
-    ASSERT_TRUE(insertNode);
-    ASSERT_TRUE(insertNode->setInput<Number>("Population", 1));
-    ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.1));
-
     // Create number node to modify temperature
-    auto temperatureValueNode = dynamic_cast<NumberNode *>(root.createNode("Number", "Temperature"));
+    auto temperatureValueNode = dynamic_cast<NumberNode *>(data.graphRoot.createNode("Number", "Temperature"));
     ASSERT_TRUE(temperatureValueNode);
     ASSERT_TRUE(temperatureValueNode->setOption<Number>("X", 0));
 
-    // Set density units
-    ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
-
     // Set connections
-    EXPECT_TRUE(root.addEdge({"Water", "Species", "Insert", "Species"}));
-    EXPECT_TRUE(root.addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-    EXPECT_TRUE(root.addEdge({"Insert", "Configuration", "Iterator", "Configuration"}));
+    EXPECT_TRUE(data.graphRoot.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
     EXPECT_TRUE(iterator->addEdge({"Inputs", "Configuration", "AtomicMC", "Configuration"}));
     // TODO: Output parameter name cannot be the same as loopback (although loopback param CAN match input).
     // May need to enforce this.
@@ -75,13 +51,13 @@ TEST(AtomShakeTest, Water)
     ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 
     // Zero K optimization for 100 iterations
-    EXPECT_TRUE(root.addEdge({"Temperature", "X", "Iterator", "X"}));
+    EXPECT_TRUE(data.graphRoot.addEdge({"Temperature", "X", "Iterator", "X"}));
     EXPECT_TRUE(iterator->addEdge({"Inputs", "X", "AtomicMC", "Temperature"}));
     ASSERT_TRUE(iterator->setOption<Number>("N", 100));
     ASSERT_TRUE(iterator->run() == NodeConstants::ProcessResult::Success);
 
     // Check the geometry of the molecule
-    auto cfg = configurationNode->getOutputValue<Configuration *>("Configuration");
+    auto cfg = insertNode->getOutputValue<Configuration *>("Configuration");
     auto *box = cfg->box();
     auto &atoms = cfg->atoms();
     auto rMin01 = box->minimumDistance(atoms[0].r(), atoms[1].r());

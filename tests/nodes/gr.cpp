@@ -44,15 +44,16 @@ TEST(GRNodeTest, Methods)
 
 TEST(GRNodeTest, Water)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(&data.graphRoot, 1000,
-                     CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
+                                       CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
-    // Set GR options
-    auto grNode = data.graphRoot.findNode("GR");
+    // Add correlation function nodes
+    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
     ASSERT_TRUE(grNode);
-    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
     // Run the graph from the GR node

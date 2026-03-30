@@ -14,15 +14,16 @@ namespace UnitTest
 {
 TEST(AngleNodeTest, Water)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(&data.graphRoot, 267);
+    createConfiguration(&data.graphRoot, {{createWater, 267}}, 0.1);
 
-    // Create an iterator
-    auto iterator = dynamic_cast<IterableGraph *>(data.graphRoot.createNode("Iterator"));
+    // Create iterable graph containing an AtomicMCNode
+    auto iterator = dynamic_cast<IterableGraph *>(data.graphRoot.createNode("Iterator", "Iterator"));
     ASSERT_TRUE(iterator);
 
     // Create a dynamic input from the graph's existing Insert node
-    EXPECT_TRUE(data.graphRoot.addEdge({"Insert", "Configuration", "Iterator", "Configuration"}));
+    EXPECT_TRUE(data.graphRoot.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
 
     // Within the iterator create an ImportTrajectory node
     auto importTrajectory = iterator->createNode("ImportConfigurationTrajectory");

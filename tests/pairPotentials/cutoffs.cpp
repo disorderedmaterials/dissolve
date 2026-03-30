@@ -13,10 +13,13 @@ std::vector<double> cutoffs = {10.0, 11.425, 11.5, 13.7875, 13.8, 14.999, 15.0};
 
 TEST(PairPotentialCutoffTest, ShortRange)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto insertNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, insertNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -32,8 +35,6 @@ TEST(PairPotentialCutoffTest, ShortRange)
     ow->setCharge(0.0);
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
@@ -52,10 +53,13 @@ TEST(PairPotentialCutoffTest, ShortRange)
 
 TEST(PairPotentialCutoffTest, Coulomb)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto insertNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, insertNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
@@ -68,8 +72,6 @@ TEST(PairPotentialCutoffTest, Coulomb)
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 

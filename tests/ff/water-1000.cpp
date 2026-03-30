@@ -11,18 +11,19 @@ namespace UnitTest
 {
 TEST(Water1000EnergyTest, Full)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
@@ -44,18 +45,19 @@ TEST(Water1000EnergyTest, Full)
 
 TEST(Water1000ForceTest, Full)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/full.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
@@ -79,10 +81,13 @@ TEST(Water1000ForceTest, Full)
 
 TEST(Water1000EnergyTest, ShortRangeOnly)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -99,8 +104,6 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     ow->setCharge(0.0);
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
@@ -117,10 +120,13 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
 
 TEST(Water1000ForceTest, ShortRangeOnly)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/vdw.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -137,8 +143,6 @@ TEST(Water1000ForceTest, ShortRangeOnly)
     ow->setCharge(0.0);
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
@@ -157,10 +161,13 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 
 TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -174,8 +181,6 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=3.0");
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
@@ -192,10 +197,13 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 
 TEST(Water1000ForceTest, CoulombOnly)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
@@ -209,8 +217,6 @@ TEST(Water1000ForceTest, CoulombOnly)
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 
@@ -236,10 +242,13 @@ TEST(Water1000ForceTest, CoulombOnly)
 
 TEST(Water1000ForceTest, ShiftedCoulombOnly)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterGraph(
-        &data.graphRoot, 1000,
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto importNode = appendImportCoordinates(
+        &data.graphRoot, lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setRange(15.0, 1.0e-4);
@@ -253,8 +262,6 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
     // Run the graph from the Import node to set up the configuration
-    auto importNode = data.graphRoot.findNode("Import");
-    ASSERT_TRUE(importNode);
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(importNode->versionIndex(), 0);
 

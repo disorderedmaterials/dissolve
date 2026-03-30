@@ -64,16 +64,13 @@ inline std::pair<SpeciesNode *, SpeciesNode *> createMgOSpecies(Graph *parentGra
 }
 
 // Create and return water test species in the specified graph
-inline SpeciesNode *createWater(Graph *parentGraph)
+inline std::unique_ptr<SpeciesNode> createWater()
 {
-    const auto name = "Water";
-
     // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &(speciesNodePtr->species());
-    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
-    species->setName(name);
+    species->setName("Water");
 
     // Set up atom types
     auto oW = species->addAtomType(Elements::Element::O, "OW");
@@ -111,7 +108,7 @@ inline SpeciesNode *createWater(Graph *parentGraph)
     comSite->setStaticIndices({0, 1, 2}, {}, {});
     comSite->setOriginMassWeighted(true);
 
-    return speciesNodePtr;
+    return speciesNodeUniquePtr;
 }
 
 // Create and return water test species in the specified graph with DL_POLY ordering
