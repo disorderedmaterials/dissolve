@@ -19,7 +19,7 @@ TEST(BroadeningTest, ArgonBroadening)
         CoordinateImportFileFormat("epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Append GR and SQ nodes
-    auto sqNode = appendGRSQ(&data.graphRoot, lastNode, true, true);
+    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, true, true);
     auto arSpeciesNode = data.graphRoot.findNode("Ar");
     ASSERT_TRUE(arSpeciesNode);
 

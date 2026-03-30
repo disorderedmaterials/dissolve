@@ -38,7 +38,7 @@ TEST(GraphArgonTest, AllCorrelations)
                                                                   CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
 
     // Append GR and SQ nodes
-    auto sqNode = appendGRSQ(&data.graphRoot, lastNode, true, true);
+    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, true, true);
     auto arSpeciesNode = data.graphRoot.findNode("Ar");
     ASSERT_TRUE(arSpeciesNode);
 

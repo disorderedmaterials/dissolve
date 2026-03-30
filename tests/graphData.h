@@ -80,10 +80,10 @@ inline Node *appendImportCoordinates(Graph *root, Node *lastNode, CoordinateImpo
 }
 
 // Append GR and SQ nodes
-inline SQNode *appendGRSQ(Graph *root, Node *lastNode, bool noAveraging = false, bool noIntraBroadening = false)
+inline std::pair<GRNode *, SQNode *> appendGRSQ(Graph *root, Node *lastNode, bool noAveraging = false, bool noIntraBroadening = false)
 {
     // Create and setup the GR node
-    auto grNode = root->createNode("GR");
+    auto grNode = dynamic_cast<GRNode *>(root->createNode("GR"));
     EXPECT_TRUE(grNode);
     if (noAveraging)
         EXPECT_TRUE(grNode->setOption("Averaging", std::optional<Number>()));
