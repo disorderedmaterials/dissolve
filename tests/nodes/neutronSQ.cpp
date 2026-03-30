@@ -27,7 +27,8 @@ TEST(NeutronSQNodeTest, Water)
     // Add in NeutronSQ
     auto H2O = appendNeutronSQ(&data.graphRoot, sqNode, "H2O");
     auto D2O = appendNeutronSQ(&data.graphRoot, sqNode, "D2O", {{"Water", "D2O", 1.0}});
-    auto HDO = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}});
+    auto HDO = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
+                               Exchangeables({"HW"}));
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
@@ -71,9 +72,16 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
     ASSERT_TRUE(sqNode);
 
     // Add in NeutronSQ
-    auto H2O = appendNeutronSQ(&data.graphRoot, sqNode, "H2O");
-    auto D2O = appendNeutronSQ(&data.graphRoot, sqNode, "D2O", {{"Water", "D2O", 1.0}});
-    auto HDO = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}));
+    auto H2O = appendNeutronSQ(&data.graphRoot, sqNode, "H2O", {}, {},
+                               Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
+                                                      Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    auto D2O = appendNeutronSQ(&data.graphRoot, sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
+                               Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
+                                                      Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    auto HDO = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
+                               Exchangeables({"HW"}),
+                               Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
+                                                      Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
