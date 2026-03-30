@@ -115,4 +115,4 @@ TEST_F(GraphCoreTest, NodeCreation)
     // Wrong case in existing node type (succeeds with non-strict type name checking)
     EXPECT_EQ(NodeRegistry::getNodeTypesFuzzy("prod")[0], "DotProduct");
 }
-}
+} // namespace UnitTest

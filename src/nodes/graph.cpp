@@ -7,6 +7,7 @@
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
 #include <algorithm>
+#include <codecvt>
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
@@ -276,8 +277,15 @@ void Graph::deserialise(const SerialisedValue &node)
     toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
 }
 
+/*
+ *Mermaid processing code
+ */
+
+// Node types that represent data sources
 static const std::vector<std::string> DATA_NAMES = {"Species", "Configuration", "Data1DImport"};
+// Node types that represent math operations
 static const std::vector<std::string> MATH_NAMES = {"Add", "Subtract", "Multiply", "Dot Product", "Integrator", "Derivative"};
+// Node types that contain subgraphs
 static const std::vector<std::string> GRAPH_NAMES = {"Dissolve", "Graph", "Iterator"};
 
 // Generate random names for the mermaid conversion
@@ -332,8 +340,8 @@ std::string Graph::to_mermaid(int depth) const
 std::ostream &operator<<(std::ostream &stream, const Graph &node)
 {
     stream << "stateDiagram-v2" << std::endl;
-    stream << "    classDef data fill:#FFD0D0" << std::endl;
-    stream << "    classDef math fill:#D0FFD0" << std::endl;
+    stream << "    classDef data fill:#FFD0D0,color:#000000" << std::endl;
+    stream << "    classDef math fill:#D0FFD0,color:#000000" << std::endl;
     stream << node.to_mermaid(4);
     return stream;
 }
