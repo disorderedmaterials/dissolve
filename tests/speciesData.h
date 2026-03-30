@@ -257,17 +257,14 @@ inline SpeciesNode *createMethanol(Graph *parentGraph)
     return speciesNodePtr;
 }
 
-// Create and return benzene test species in the specified graph
-inline SpeciesNode *createBenzene(Graph *parentGraph)
+// Create and return a new benzene SpeciesNode
+inline std::unique_ptr<SpeciesNode> createBenzene()
 {
-    const auto name = "Benzene";
-
     // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &(speciesNodePtr->species());
-    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
-    species->setName(name);
+    species->setName("Benzene");
 
     // Set up atom types
     auto CA = species->addAtomType(Elements::Element::C, "CA");
@@ -325,6 +322,6 @@ inline SpeciesNode *createBenzene(Graph *parentGraph)
     auto iso = species->addIsotopologue("C6D6");
     iso->setAtomTypeIsotope(HA.get(), Sears91::H_2);
 
-    return speciesNodePtr;
+    return speciesNodeUniquePtr;
 }
 } // namespace UnitTest

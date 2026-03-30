@@ -260,13 +260,17 @@ TEST(GRNodeTest, WaterMethanol)
 
 TEST(GRNodeTest, Benzene)
 {
+    // Set up the test graph
     GraphTestData data;
-    createBenzeneGraph(&data.graphRoot);
+    auto lastNode =
+        createConfiguration(&data.graphRoot, {{createBenzene, 200}}, 0.876, Units::DensityUnits::GramsPerCentimetreCubedUnits);
+    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
+                                       CoordinateImportFileFormat("epsr25/benzene200-neutron/boxbenz.ato",
+                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
-    // Set GR options
-    auto grNode = data.graphRoot.findNode("GR");
+    // Add correlation function nodes
+    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
     ASSERT_TRUE(grNode);
-    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
     // Run the graph from the GR node

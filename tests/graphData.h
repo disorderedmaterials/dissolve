@@ -80,7 +80,8 @@ inline Node *appendImportCoordinates(Graph *root, Node *lastNode, CoordinateImpo
 }
 
 // Append GR and SQ nodes
-inline std::pair<GRNode *, SQNode *> appendGRSQ(Graph *root, Node *lastNode, bool noAveraging = false, bool noIntraBroadening = false)
+inline std::pair<GRNode *, SQNode *> appendGRSQ(Graph *root, Node *lastNode, bool noAveraging = false,
+                                                bool noIntraBroadening = false)
 {
     // Create and setup the GR node
     auto grNode = dynamic_cast<GRNode *>(root->createNode("GR"));
@@ -407,52 +408,6 @@ inline void createWaterMethanolGraph(Graph *root)
         {"DDD", {{"Water", "D2O", 1.0}, {"Methanol", "Deuteriated", 1.0}}}};
     for (const auto &[name, isotopologues] : samples)
         appendNeutronSQ(root, sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
-}
-
-// Create a benzene graph in the supplied root node
-inline void createBenzeneGraph(Graph *root)
-{
-    // Create species and configuration
-    auto benzeneNode = createBenzene(root);
-    ASSERT_TRUE(benzeneNode);
-    auto configurationNode = root->createNode("Configuration", "Bulk");
-    ASSERT_TRUE(configurationNode);
-    auto insertNode = root->createNode("Insert");
-    ASSERT_TRUE(insertNode);
-    ASSERT_TRUE(root->addEdge({"Benzene", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-    ASSERT_TRUE(insertNode->setInput<Number>("Population", 200));
-    ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.876));
-
-    // Import reference coordinates
-    auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
-    ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", "epsr25/benzene200-neutron/boxbenz.ato"));
-    ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "FileFormat", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
-    ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
-
-    // Add GR node and link to the import node
-    auto grNode = root->createNode("GR");
-    ASSERT_TRUE(grNode);
-    ASSERT_TRUE(root->addEdge({"Import", "Configuration", "GR", "Configuration"}));
-
-    // Create the SQ node
-    auto sqNode = dynamic_cast<SQNode *>(root->createNode("SQ"));
-    ASSERT_TRUE(sqNode);
-    ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
-
-    // Add in NeutronSQ
-    auto isoD = benzeneNode->species().findIsotopologue("C6D6");
-    ASSERT_TRUE(isoD);
-    appendNeutronSQ(root, sqNode, "C6H6");
-    appendNeutronSQ(root, sqNode, "C6D6", IsotopologueSet({{isoD, 1.0}}));
-    appendNeutronSQ(root, sqNode, "5050", IsotopologueSet({{benzeneNode->species().naturalIsotopologue(), 1.0}, {isoD, 1.0}}));
-
-    // Add in XRaySQ?
-    // auto X = root->createNode("XRaySQ", "X");
-    // ASSERT_TRUE(X);
-    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedGR", "X", "UnweightedGR"}));
-    // ASSERT_TRUE(root->addEdge({"SQ", "UnweightedSQ", "X", "UnweightedSQ"}));
 }
 
 } // namespace UnitTest

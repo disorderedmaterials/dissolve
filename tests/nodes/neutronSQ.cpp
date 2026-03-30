@@ -180,37 +180,40 @@ TEST(NeutronSQNodeTest, WaterMethanol)
 
 TEST(NeutronSQNodeTest, Benzene)
 {
+    // Set up the test graph
     GraphTestData data;
-    createBenzeneGraph(&data.graphRoot);
+    auto lastNode =
+        createConfiguration(&data.graphRoot, {{createBenzene, 200}}, 0.876, Units::DensityUnits::GramsPerCentimetreCubedUnits);
+    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
+                                       CoordinateImportFileFormat("epsr25/benzene200-neutron/boxbenz.ato",
+                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
-    // Set GR and SQ options
-    auto grNode = data.graphRoot.findNode("GR");
+    // Add correlation function nodes
+    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
     ASSERT_TRUE(grNode);
-    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
-    auto sqNode = data.graphRoot.findNode("SQ");
     ASSERT_TRUE(sqNode);
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 
+    // Add in NeutronSQ
+    auto C6H6 = appendNeutronSQ(&data.graphRoot, sqNode, "C6H6");
+    auto C6D6 = appendNeutronSQ(&data.graphRoot, sqNode, "C6D6", {{"Benzene", "C6D6", 1.0}});
+    auto FiftyFifty = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Benzene", "Natural", 1.0}, {"Benzene", "C6D6", 1.0}});
+
     // Run the graph from each NeutronSQ node
-    auto C6H6 = data.graphRoot.findNode("C6H6");
     ASSERT_TRUE(C6H6);
     ASSERT_EQ(C6H6->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
     ASSERT_EQ(C6H6->versionIndex(), 0);
-    auto C6D6 = data.graphRoot.findNode("C6D6");
     ASSERT_TRUE(C6D6);
     ASSERT_EQ(C6D6->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
     ASSERT_EQ(C6D6->versionIndex(), 0);
-    auto FiftyFifty = data.graphRoot.findNode("5050");
     ASSERT_TRUE(FiftyFifty);
     ASSERT_EQ(FiftyFifty->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(grNode->versionIndex(), 0);
     ASSERT_EQ(FiftyFifty->versionIndex(), 0);
 
-    // Get the SQ
-    auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     // Total F(Q)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         C6H6->getOutputValue<PartialSet *>("WeightedSQ")->total(), "C6H6 Total F(Q)",
