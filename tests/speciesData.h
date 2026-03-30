@@ -18,7 +18,7 @@ inline std::unique_ptr<SpeciesNode> createArgon()
     // Add species node
     auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
-    auto species = &(speciesNodePtr->species());
+    auto species = &speciesNodePtr->species();
     species->setName("Ar");
 
     // Set up atom types

@@ -20,14 +20,10 @@ TEST(BroadeningTest, ArgonBroadening)
 
     // Append GR and SQ nodes
     auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, true, true);
-    auto arSpeciesNode = data.graphRoot.findNode("Ar");
-    ASSERT_TRUE(arSpeciesNode);
 
-    // Get argon species and set up neutron SQ
-    auto arSpecies = arSpeciesNode->getOutputValue<const Species *>("Species");
-    ASSERT_TRUE(arSpecies);
-    auto neutronSQNode =
-        appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", IsotopologueSet({{arSpecies->findIsotopologue("Ar36"), 1.0}}));
+    // Set up neutron SQ
+    auto neutronSQNode = appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}});
+    ASSERT_TRUE(neutronSQNode);
 
     std::vector<std::tuple<std::string, Functions1D::Form, std::vector<double>>> tests = {
         {"epsr25/argon10000/argon_dep0.1indep0.2.EPSR.u01", Functions1D::Form::GaussianC2, {0.2, 0.1}},

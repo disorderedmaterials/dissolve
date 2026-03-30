@@ -97,17 +97,41 @@ inline std::pair<GRNode *, SQNode *> appendGRSQ(Graph *root, Node *lastNode, boo
     EXPECT_TRUE(sqNode);
     EXPECT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
-    return sqNode;
+    return {grNode, sqNode};
 }
 
 // Create a NeutronSQ node with optional reference data
-inline NeutronSQNode *appendNeutronSQ(Graph *root, SQNode *sqNode, std::string name, const IsotopologueSet &isotopologues = {},
+inline NeutronSQNode *appendNeutronSQ(Graph *root, SQNode *sqNode, std::string name,
+                                      const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
                                       const Exchangeables &exchangeables = {},
                                       Data1DImportFileFormat referenceData = Data1DImportFileFormat())
 {
+    // Construct the isotopologue set
+    IsotopologueSet isotopologueSet;
+    for (auto &&[speciesName, isotopologueName, relativeWeight] : isotopologues)
+    {
+        // Find the named species node
+        auto speciesNode = dynamic_cast<SpeciesNode *>(root->findNode(speciesName));
+        if (!speciesNode)
+        {
+            std::cout << std::format("No species named '{}' exists in the graph - can't construct IsotopologueSet\n",
+                                     speciesName);
+            return nullptr;
+        }
+        auto &species = speciesNode->species();
+        auto isotopologue = species.findIsotopologue(isotopologueName);
+        if (!isotopologue)
+        {
+            std::cout << std::format("No isotopologue named '{}' exists in species '{}' - can't construct IsotopologueSet\n",
+                                     isotopologueName, speciesName);
+            return nullptr;
+        }
+        isotopologueSet.add(isotopologue, relativeWeight);
+    }
+
     auto neutronSQNode = dynamic_cast<NeutronSQNode *>(root->createNode("NeutronSQ", name));
     EXPECT_TRUE(neutronSQNode);
-    EXPECT_TRUE(neutronSQNode->setOption("Isotopologues", isotopologues));
+    EXPECT_TRUE(neutronSQNode->setOption("Isotopologues", isotopologueSet));
     EXPECT_TRUE(neutronSQNode->setOption("Exchangeables", exchangeables));
     EXPECT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
     EXPECT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
@@ -272,16 +296,13 @@ inline void createWaterGraph(Graph *root, int population,
     ASSERT_TRUE(root->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
     // Add in NeutronSQ
-    auto isoD = waterNode->species().findIsotopologue("D2O");
-    ASSERT_TRUE(isoD);
     appendNeutronSQ(root, sqNode, "H2O", {}, {},
                     Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
                                            Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    appendNeutronSQ(root, sqNode, "D2O", IsotopologueSet({{isoD, 1.0}}), {},
+    appendNeutronSQ(root, sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
                     Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
                                            Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    appendNeutronSQ(root, sqNode, "HDO", IsotopologueSet({{isoD, 1.0}, {waterNode->species().naturalIsotopologue(), 1.0}}),
-                    Exchangeables({"HW"}),
+    appendNeutronSQ(root, sqNode, "HDO", {{"Water", "D2O", 1.0}, {"Water", "Natural", 1.0}}, Exchangeables({"HW"}),
                     Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
                                            Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
 
@@ -375,11 +396,15 @@ inline void createWaterMethanolGraph(Graph *root)
     ASSERT_TRUE(methanolH);
     auto methanolD = methanolNode->species().findIsotopologue("Deuteriated");
     ASSERT_TRUE(methanolD);
-    std::vector<std::tuple<std::string, std::vector<std::pair<const Isotopologue *, double>>>> samples = {
-        {"HHH", {{h2o, 1.0}, {methanolH, 1.0}}},  {"H5H", {{h2o, 1.0}, {methanolH, 0.5}, {OD_methylH, 0.5}}},
-        {"DHH", {{d2o, 1.0}, {methanolH, 1.0}}},  {"HDH", {{h2o, 1.0}, {OD_methylH, 1.0}}},
-        {"HHD", {{h2o, 1.0}, {methylD_OH, 1.0}}}, {"DDH", {{d2o, 1.0}, {OD_methylH, 1.0}}},
-        {"HDD", {{h2o, 1.0}, {methanolD, 1.0}}},  {"DDD", {{d2o, 1.0}, {methanolD, 1.0}}}};
+    std::vector<std::tuple<std::string, std::vector<std::tuple<std::string, std::string, double>>>> samples = {
+        {"HHH", {{"Water", "Natural", 1.0}, {"Methanol", "Natural", 1.0}}},
+        {"H5H", {{"Water", "Natural", 1.0}, {"Methanol", "Natural", 0.5}, {"Methanol", "OD-MethylH", 0.5}}},
+        {"DHH", {{"Water", "D2O", 1.0}, {"Methanol", "Natural", 1.0}}},
+        {"HDH", {{"Water", "Natural", 1.0}, {"Methanol", "OD-MethylH", 1.0}}},
+        {"HHD", {{"Water", "Natural", 1.0}, {"Methanol", "MethylD-OH", 1.0}}},
+        {"DDH", {{"Water", "D2O", 1.0}, {"Methanol", "OD-MethylH", 1.0}}},
+        {"HDD", {{"Water", "Natural", 1.0}, {"Methanol", "Deuteriated", 1.0}}},
+        {"DDD", {{"Water", "D2O", 1.0}, {"Methanol", "Deuteriated", 1.0}}}};
     for (const auto &[name, isotopologues] : samples)
         appendNeutronSQ(root, sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
 }

@@ -39,15 +39,10 @@ TEST(GraphArgonTest, AllCorrelations)
 
     // Append GR and SQ nodes
     auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, true, true);
-    auto arSpeciesNode = data.graphRoot.findNode("Ar");
-    ASSERT_TRUE(arSpeciesNode);
 
-    // Get argon species and set up neutron SQ
-    auto arSpecies = arSpeciesNode->getOutputValue<const Species *>("Species");
-    ASSERT_TRUE(arSpecies);
-    auto neutronSQNode =
-        appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", IsotopologueSet({{arSpecies->findIsotopologue("Ar36"), 1.0}}), {},
-                        {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY});
+    // Set up neutron SQ
+    auto neutronSQNode = appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}}, {},
+                                         {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY});
 
     // Run the Graph from the NeutronSQ node
     ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);
