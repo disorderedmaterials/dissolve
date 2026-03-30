@@ -280,21 +280,38 @@ static const std::vector<std::string> DATA_NAMES = {"Species", "Configuration", 
 static const std::vector<std::string> MATH_NAMES = {"Add", "Subtract", "Multiply", "Dot Product", "Integrator", "Derivative"};
 static const std::vector<std::string> GRAPH_NAMES = {"Dissolve", "Graph", "Iterator"};
 
+// Generate random names for the mermaid conversion
+std::string randomName()
+{
+    const int length = 10;
+    const std::string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    std::string result;
+
+    for (size_t i = 0; i < length; ++i)
+    {
+        result += characters[std::rand() % characters.size()];
+    }
+    return result;
+}
+
 // Print as mermaid state diagram
 std::string Graph::to_mermaid(int depth) const
 {
     std::string result{}, spacer{};
     spacer.resize(depth);
     std::ranges::fill(spacer, ' ');
+    std::map<Node *, std::string> pseudo_names;
     for (auto &[k, v] : nodes_)
     {
+        auto name = randomName();
+        pseudo_names[v.get()] = name;
         if (std::ranges::find(DATA_NAMES, v->type()) != DATA_NAMES.end())
-            result += spacer + std::string("class ") + std::string(v->name()) + " data\n";
+            result += spacer + std::string("class ") + name + " data\n";
         else if (std::ranges::find(MATH_NAMES, v->type()) != MATH_NAMES.end())
-            result += spacer + std::string("class ") + std::string(v->name()) + " math\n";
+            result += spacer + std::string("class ") + name + " math\n";
         else if (std::ranges::find(GRAPH_NAMES, v->type()) != GRAPH_NAMES.end())
         {
-            result += spacer + std::string("state ") + std::string(v->name()) + " {\n";
+            result += spacer + std::string("state ") + name + " {\n";
             auto casted = dynamic_cast<Graph *>(v.get());
             if (casted)
             {
@@ -302,10 +319,11 @@ std::string Graph::to_mermaid(int depth) const
             }
             result += spacer + "}\n";
         }
+        result += spacer + name + " : " + std::string(v->name()) + "\n";
     }
     for (auto &edge : edges_)
     {
-        result += spacer + std::string(edge->sourceNode().name()) + " --> " + std::string(edge->targetNode().name()) + ":" +
+        result += spacer + pseudo_names[&edge->sourceNode()] + " --> " + pseudo_names[&edge->targetNode()] + ":" +
                   edge->sourceOutput().storedDataType().name() + "\n";
     }
     return result;

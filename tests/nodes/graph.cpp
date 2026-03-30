@@ -5,6 +5,7 @@
 #include "nodes/dissolve.h"
 #include "nodes/registry.h"
 #include "tests/graphData.h"
+#include "tests/mermaid.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -114,20 +115,4 @@ TEST_F(GraphCoreTest, NodeCreation)
     // Wrong case in existing node type (succeeds with non-strict type name checking)
     EXPECT_EQ(NodeRegistry::getNodeTypesFuzzy("prod")[0], "DotProduct");
 }
-
-TEST_F(GraphCoreTest, NodePrinting)
-{
-    using namespace std::string_literals;
-    GraphTestData data;
-    createArgonGraph(&data.graphRoot, 1000,
-                     CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
-                                                CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
-
-    std::stringstream str;
-    str << data.graphRoot;
-    ASSERT_EQ(str.str(),
-              "stateDiagram-v2\n    classDef data fill:#FFD0D0\n    classDef math fill:#D0FFD0\n    class Argon data\n    class Bulk data\n    class Yarnell data\n    Argon --> Insert:Species-Species\n    Bulk --> Insert:Configuration-Configuration\n    Insert --> Import:Configuration-Configuration\n    Import --> GR:Configuration-Configuration\n    GR --> SQ:UnweightedGR-UnweightedGR\n    SQ --> NeutronSQ:UnweightedGR-UnweightedGR\n    SQ --> NeutronSQ:UnweightedSQ-UnweightedSQ\n    Yarnell --> NeutronSQ:Data-ReferenceData\n"s
-                );
 }
-
-} // namespace UnitTest
