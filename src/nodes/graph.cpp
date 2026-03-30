@@ -306,7 +306,7 @@ std::string Graph::to_mermaid(int depth) const
     for (auto &edge : edges_)
     {
         result += spacer + std::string(edge->sourceNode().name()) + " --> " + std::string(edge->targetNode().name()) + ":" +
-                  std::string(edge->sourceOutput().name()) + "-" + std::string(edge->targetInput().name()) + "\n";
+                  edge->sourceOutput().storedDataType().name() + "\n";
     }
     return result;
 }
