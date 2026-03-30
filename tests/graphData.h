@@ -34,7 +34,7 @@ class GraphTestData
 // Create basic configuration graph, returning the last node
 inline Node *createConfiguration(Graph *root,
                                  const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
-                                 double densityAtomsPerAngstrom)
+                                 double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
 {
     // Create configuration node
     auto lastNode = root->createNode("Configuration", "Mixture");
@@ -55,8 +55,8 @@ inline Node *createConfiguration(Graph *root,
 
         EXPECT_TRUE(insertNode);
         EXPECT_TRUE(insertNode->setInput<Number>("Population", population));
-        EXPECT_TRUE(insertNode->setInput<Number>("Density", densityAtomsPerAngstrom));
-        EXPECT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
+        EXPECT_TRUE(insertNode->setInput<Number>("Density", rho));
+        EXPECT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
         EXPECT_TRUE(root->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
         EXPECT_TRUE(root->addEdge({std::string(lastNode->name()), "Configuration", insertNodeName, "Configuration"}));
 
