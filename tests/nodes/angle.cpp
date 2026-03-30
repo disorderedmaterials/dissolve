@@ -51,8 +51,6 @@ TEST(AngleNodeTest, Water)
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
-    Data1DExportFileFormat exporter("test.ANGLE");
-    exporter.exportData(angle->rdfBC());
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         angle->rdfBC(), "B-C RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", Data1DImportFileFormat::Data1DImportFormat::XY},
