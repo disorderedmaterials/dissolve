@@ -4,7 +4,7 @@
 #include "math/windowFunction.h"
 #include "nodes/gr/gr.h"
 #include "tests/graphData.h"
-#include "tests/mermaid.h"
+#include "tests/nodes/mermaid.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 

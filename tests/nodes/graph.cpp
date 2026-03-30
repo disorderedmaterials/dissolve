@@ -5,7 +5,7 @@
 #include "nodes/dissolve.h"
 #include "nodes/registry.h"
 #include "tests/graphData.h"
-#include "tests/mermaid.h"
+#include "tests/nodes/mermaid.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 

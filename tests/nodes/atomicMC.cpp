@@ -12,7 +12,7 @@
 #include "nodes/iterableGraph.h"
 #include "nodes/numberNode.h"
 #include "nodes/species.h"
-#include "tests/mermaid.h"
+#include "tests/nodes/mermaid.h"
 #include "tests/speciesData.h"
 #include "tests/testData.h"
 #include <array>

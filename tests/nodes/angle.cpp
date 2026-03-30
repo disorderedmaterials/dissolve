@@ -7,7 +7,6 @@
 #include "math/rangedVector3.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
-#include "tests/mermaid.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -61,7 +60,6 @@ TEST(AngleNodeTest, Water)
                                                 {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
                                                  Data1DImportFileFormat::Data1DImportFormat::XY},
                                                 6.0e-5));
-    export_mermaid_graph(data.graphRoot);
 }
 
 } // namespace UnitTest

@@ -11,6 +11,7 @@
 namespace UnitTest
 {
 
+// Save the graph in Mermaid format to a file named after the unit test
 void export_mermaid_graph(Graph &graph, std::optional<std::string> context = {})
 {
     auto suite = ::testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
