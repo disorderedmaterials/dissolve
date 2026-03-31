@@ -30,15 +30,18 @@ class GraphTestData
     Dissolve dissolve;
     DissolveGraph graphRoot;
 };
-
 // Create basic configuration graph, returning the last node
-inline Node *createConfiguration(Graph *root,
+inline Node *createConfiguration(Graph *root, std::string name,
                                  const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
-                                 double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
+                                 double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
+                                 InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
 {
-    // Create configuration node
-    auto lastNode = root->createNode("Configuration", "Mixture");
+    // Create configuration and SetCell nodes
+    auto lastNode = root->createNode("Configuration", name);
     EXPECT_TRUE(lastNode);
+    lastNode = root->createNode("SetCell");
+    EXPECT_TRUE(lastNode);
+    EXPECT_TRUE(root->addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
     // Add Species and Insert nodes
     for (auto &[speciesCreator, population] : species)
@@ -56,6 +59,7 @@ inline Node *createConfiguration(Graph *root,
         EXPECT_TRUE(insertNode);
         EXPECT_TRUE(insertNode->setInput<Number>("Population", population));
         EXPECT_TRUE(insertNode->setInput<Number>("Density", rho));
+        EXPECT_TRUE(insertNode->setOption("BoxAction", boxActionStyle));
         EXPECT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
         EXPECT_TRUE(root->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
         EXPECT_TRUE(root->addEdge({std::string(lastNode->name()), "Configuration", insertNodeName, "Configuration"}));

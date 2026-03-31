@@ -15,7 +15,7 @@ TEST(GraphArgonTest, InitSimulation)
 {
     // Set up the test graph
     GraphTestData data;
-    createConfiguration(&data.graphRoot, {{createArgon, 1000}}, 0.0213);
+    createConfiguration(&data.graphRoot, "Box", {{createArgon, 1000}}, 0.0213);
 
     // Get the Insert node and run the graph
     auto insertNode = data.graphRoot.findNode("Insert-Ar");
@@ -32,7 +32,7 @@ TEST(GraphArgonTest, AllCorrelations)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, {{createArgon, 1000}}, 0.0213);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createArgon, 1000}}, 0.0213);
     lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
                                        CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
                                                                   CoordinateImportFileFormat::CoordinateImportFormat::XYZ));

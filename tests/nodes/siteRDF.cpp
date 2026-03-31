@@ -31,7 +31,7 @@ class SiteRDFNodeTest : public ::testing::Test
     void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
     {
         // Create the water configuration
-        createConfiguration(&testData_.graphRoot, {{createWaterDLPoly, 267}}, 0.1);
+        createConfiguration(&testData_.graphRoot, "Box", {{createWaterDLPoly, 267}}, 0.1);
 
         // Add iterator
         iterator_ = dynamic_cast<IterableGraph *>(testData_.graphRoot.createNode("Iterator", "Iterator"));

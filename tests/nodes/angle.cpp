@@ -16,7 +16,7 @@ TEST(AngleNodeTest, Water)
 {
     // Set up the test graph
     GraphTestData data;
-    createConfiguration(&data.graphRoot, {{createWater, 267}}, 0.1);
+    createConfiguration(&data.graphRoot, "Box", {{createWater, 267}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
     auto iterator = dynamic_cast<IterableGraph *>(data.graphRoot.createNode("Iterator", "Iterator"));

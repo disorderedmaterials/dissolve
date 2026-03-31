@@ -15,7 +15,7 @@ TEST(PairPotentialCutoffTest, ShortRange)
 {
     // Set up the test graph
     GraphTestData data;
-    auto insertNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto insertNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
     auto importNode = appendImportCoordinates(
         &data.graphRoot, insertNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
@@ -55,7 +55,7 @@ TEST(PairPotentialCutoffTest, Coulomb)
 {
     // Set up the test graph
     GraphTestData data;
-    auto insertNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto insertNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
     auto importNode = appendImportCoordinates(
         &data.graphRoot, insertNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));

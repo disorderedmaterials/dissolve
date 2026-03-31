@@ -13,7 +13,7 @@ TEST(NeutronSQNodeTest, Water)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
     lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
                                        CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
                                                                   CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
@@ -60,7 +60,7 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
     lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
                                        CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
                                                                   CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
@@ -112,7 +112,7 @@ TEST(NeutronSQNodeTest, WaterMethanol)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 300}, {createMethanol, 600}}, 0.1);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 300}, {createMethanol, 600}}, 0.1);
     lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
                                        CoordinateImportFileFormat("epsr25/water300methanol600/watermeth.ato",
                                                                   CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
@@ -180,8 +180,8 @@ TEST(NeutronSQNodeTest, Benzene)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode =
-        createConfiguration(&data.graphRoot, {{createBenzene, 200}}, 0.876, Units::DensityUnits::GramsPerCentimetreCubedUnits);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createBenzene, 200}}, 0.876,
+                                        Units::DensityUnits::GramsPerCentimetreCubedUnits);
     lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
                                        CoordinateImportFileFormat("epsr25/benzene200-neutron/boxbenz.ato",
                                                                   CoordinateImportFileFormat::CoordinateImportFormat::EPSR));

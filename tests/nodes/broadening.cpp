@@ -13,7 +13,7 @@ TEST(BroadeningTest, ArgonBroadening)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, {{createArgon, 10000}}, 0.0213);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createArgon, 10000}}, 0.0213);
     lastNode = appendImportCoordinates(
         &data.graphRoot, lastNode,
         CoordinateImportFileFormat("epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));

@@ -13,7 +13,7 @@ TEST(XRaySQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 1000}}, 0.1);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
     lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
                                        CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
                                                                   CoordinateImportFileFormat::CoordinateImportFormat::EPSR));

@@ -26,7 +26,7 @@ TEST(AtomShakeTest, Water)
 {
     // Set up the test graph
     GraphTestData data;
-    auto insertNode = createConfiguration(&data.graphRoot, {{createWater, 1}}, 0.1);
+    auto insertNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
     auto iterator = dynamic_cast<IterableGraph *>(data.graphRoot.createNode("Iterator", "Iterator"));
