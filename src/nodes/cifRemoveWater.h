@@ -24,7 +24,7 @@ class CIFRemoveWaterNode : public Node
     // CIF handler context
     CIFLoaderNode::CIFContext *context_{nullptr};
     // Whether to remove water and coordinated oxygen atoms in clean-up
-    bool RemoveWaterAndCoordinatedOxygens_{false};
+    bool removeWaterAndCoordinatedOxygens_{false};
 
     /*
      * Processing

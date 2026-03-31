@@ -14,7 +14,7 @@ CIFRemoveWaterNode::CIFRemoveWaterNode(Graph *parentGraph) : Node(parentGraph)
 
     // Options
     addOption<bool>("RemoveWaterAndCoordinatedOxygens", "Whether to remove water and coordinated oxygen atoms in clean-up",
-                    RemoveWaterAndCoordinatedOxygens_);
+                    removeWaterAndCoordinatedOxygens_);
 }
 
 std::string_view CIFRemoveWaterNode::type() const { return "CIFRemoveWater"; }
@@ -25,7 +25,7 @@ std::string_view CIFRemoveWaterNode::summary() const { return "Remove water from
 NodeConstants::ProcessResult CIFRemoveWaterNode::process()
 {
 
-    context_->setRemoveWaterAndCoordinateOxygens(RemoveWaterAndCoordinatedOxygens_);
+    context_->setRemoveWaterAndCoordinateOxygens(removeWaterAndCoordinatedOxygens_);
 
     return NodeConstants::ProcessResult::Success;
 }

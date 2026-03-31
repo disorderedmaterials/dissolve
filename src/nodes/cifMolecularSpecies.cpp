@@ -40,7 +40,7 @@ NodeConstants::ProcessResult CIFMolecularSpeciesNode::process()
     // Get detected molecular species
     auto &cifMols = context_->molecularSpecies();
     molecularSpecies_.clear();
-    std::copy(cifMols.begin(), cifMols.end(), std::back_inserter(molecularSpecies_));
+    std::ranges::copy(cifMols, std::back_inserter(molecularSpecies_));
 
     return NodeConstants::ProcessResult::Success;
 }
