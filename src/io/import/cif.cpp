@@ -479,10 +479,11 @@ bool CIFHandler::createBasicUnitCell()
         return false;
 
     // Bonding
-    if (useCIFBondingDefinitions_)
-        applyCIFBonding(&unitCellSpecies_, preventMetallicBonds_);
-    else
-        unitCellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+    if (!preventAllBonds_)
+        if (useCIFBondingDefinitions_)
+            applyCIFBonding(&unitCellSpecies_, preventMetallicBonds_);
+        else
+            unitCellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
     unitCellConfiguration_.addMolecule(&unitCellSpecies_);
     unitCellConfiguration_.updateObjectRelationships();
@@ -610,12 +611,13 @@ bool CIFHandler::detectMolecules()
         }
 
         // Give the species a temporary unit cell so we can calculate / apply bonding
-        sp->createBox(cleanedUnitCellSpecies_.box()->axisLengths(), cleanedUnitCellSpecies_.box()->axisAngles());
-        if (useCIFBondingDefinitions_)
-            applyCIFBonding(sp, preventMetallicBonds_);
-        else
-            sp->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
-        sp->removeBox();
+        if (!preventAllBonds_)
+            sp->createBox(cleanedUnitCellSpecies_.box()->axisLengths(), cleanedUnitCellSpecies_.box()->axisAngles());
+            if (useCIFBondingDefinitions_)
+                applyCIFBonding(sp, preventMetallicBonds_);
+            else
+                sp->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+            sp->removeBox();
 
         // Set up a temporary molecule to unfold the species
         LocalMolecule tempMol(sp);
@@ -702,10 +704,11 @@ bool CIFHandler::createSupercell()
                     for (const auto &i : cleanedUnitCellSpecies_.atoms())
                         supercellSpecies_.addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
                 }
-        if (useCIFBondingDefinitions_)
-            applyCIFBonding(&supercellSpecies_, preventMetallicBonds_);
-        else
-            supercellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+        if (!preventAllBonds_)
+            if (useCIFBondingDefinitions_)
+                applyCIFBonding(&supercellSpecies_, preventMetallicBonds_);
+            else
+                supercellSpecies_.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
         // Add the structural species to the configuration
         supercellConfiguration_.addMolecule(&supercellSpecies_);
@@ -798,6 +801,17 @@ void CIFHandler::setBondingTolerance(double tol)
 
     if (!useCIFBondingDefinitions_)
         generate();
+}
+
+// Whether to ignore all bonds
+void CIFHandler::setPreventAllBonds(bool b)
+{
+    if (preventAllBonds_ == b)
+        return;
+
+    preventAllBonds_ = b;
+
+    generate();
 }
 
 // Set whether to prevent metallic bonding
@@ -1135,10 +1149,11 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
         // -- Store the local root atom so we can access its coordinates for the origin translation
         auto &instanceSpeciesRootAtom = instanceSpecies.atom(rootAtomLocalIndex);
         // -- Calculate / apply bonding
-        if (useCIFBondingDefinitions_)
-            applyCIFBonding(&instanceSpecies, preventMetallicBonds_);
-        else
-            instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+        if (!preventAllBonds_)
+            if (useCIFBondingDefinitions_)
+                applyCIFBonding(&instanceSpecies, preventMetallicBonds_);
+            else
+                instanceSpecies.addMissingBonds(bondingTolerance_, preventMetallicBonds_);
 
         // Create a LocalMolecule as a working area for folding, translation, and rotation of the instance coordinates.
         LocalMolecule instanceMolecule;

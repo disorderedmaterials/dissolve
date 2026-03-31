@@ -132,7 +132,7 @@ TEST_F(CIFNodeTest, NaCl)
 
     EXPECT_EQ(cifContext->spaceGroup(), SpaceGroups::SpaceGroup_225);
     constexpr double A = 5.62;
-    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration"), {A, A, A}, {90, 90, 90}, 8);
+    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 8);
 
     // Calculating bonding is the default, but this gives a continuous framework...
     EXPECT_EQ(molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies").size(), 0);
@@ -155,10 +155,10 @@ TEST_F(CIFNodeTest, NaCl)
         DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), (r2 - A / 2).abs());
 
     // 2x2x2 supercell
-    molecularSpeciesNode->setOption<Vector3i>("SuperCellRepeat", {2, 2, 2});
-    testGraph_.setUpdateRequired();
+    molecularSpeciesNode->setOption<Vector3i>("SupercellRepeat", {2, 2, 2});
+    testData_.graphRoot.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
-    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration"), {A * 2, A * 2, A * 2},
+    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A * 2, A * 2, A * 2},
             {90, 90, 90}, 8 * 8);
 }
 
@@ -179,7 +179,7 @@ TEST_F(CIFNodeTest, NaClO3)
 
     EXPECT_EQ(cifContext->spaceGroup(), SpaceGroups::SpaceGroup_198);
     constexpr double A = 6.55;
-    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration"), {A, A, A}, {90, 90, 90}, 20);
+    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 20);
 
     // Turn off automatic bond calculation - there are no bonding defs in the CIF, so we expect species for each atomic
     // component (4 Na, 4 Cl, and 12 O)
@@ -221,7 +221,7 @@ TEST_F(CIFNodeTest, CuBTC)
 
     EXPECT_EQ(cifContext->spaceGroup(), SpaceGroups::SpaceGroup_225);
     constexpr auto A = 26.3336;
-    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration"), {A, A, A}, {90, 90, 90}, 672);
+    testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 672);
 
     // 16 basic formula units per unit cell
     constexpr auto N = 16;
@@ -230,7 +230,7 @@ TEST_F(CIFNodeTest, CuBTC)
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaH = {
         {Elements::Cu, 3 * N}, {Elements::C, 18 * N}, {Elements::H, 6 * N}, {Elements::O, 15 * N}};
     EXPECT_EQ(
-        EmpiricalFormula::formula(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration")->atoms(),
+        EmpiricalFormula::formula(molecularSpeciesNode->getOutputValue<Configuration *>("SupercellConfiguration")->atoms(),
                                   [](const auto &i) { return i.speciesAtom()->Z(); }),
         EmpiricalFormula::formula(cellFormulaH));
     auto cifMolsA = molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies");
@@ -263,7 +263,7 @@ TEST_F(CIFNodeTest, CuBTC)
     testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(
-        EmpiricalFormula::formula(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration")->atoms(),
+        EmpiricalFormula::formula(molecularSpeciesNode->getOutputValue<Configuration *>("SupercellConfiguration")->atoms(),
                                   [](const auto &i) { return i.speciesAtom()->Z(); }),
         EmpiricalFormula::formula(cellFormulaNH2));
 

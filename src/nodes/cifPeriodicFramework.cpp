@@ -11,10 +11,10 @@ CIFPeriodicFrameworkNode::CIFPeriodicFrameworkNode(Graph *parentGraph) : Node(pa
 
     // Outputs
     addOutput<const Species *>("FrameworkSpecies", "Species", frameworkSpecies_);
-    addOutput<Configuration *>("SuperCellConfiguration", "Supercell configuration pointer", supercellConfiguration_);
+    addOutput<Configuration *>("SupercellConfiguration", "Supercell configuration pointer", supercellConfiguration_);
 
     // Options
-    addOption<Vector3i>("SuperCellRepeat", "Supercell repeat", supercellRepeat_);
+    addOption<Vector3i>("SupercellRepeat", "Supercell repeat", supercellRepeat_);
 }
 
 std::string_view CIFPeriodicFrameworkNode::type() const { return "CIFPeriodicFramework"; }

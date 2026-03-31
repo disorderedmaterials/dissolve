@@ -118,6 +118,8 @@ class CIFHandler
     bool useCIFBondingDefinitions_{false};
     // Bonding tolerance, if calculating bonding rather than using CIF definitions
     double bondingTolerance_{1.1};
+    // Whether to ignore all bonds
+    bool preventAllBonds_{false};
     // Whether to prevent metallic bonding
     bool preventMetallicBonds_{true};
     // Whether to remove free atomic moieties in clean-up
@@ -161,6 +163,8 @@ class CIFHandler
     void setUseCIFBondingDefinitions(bool b);
     // Set bonding tolerance
     void setBondingTolerance(double tol);
+    // Whether to ignore all bonds
+    void setPreventAllBonds(bool b);
     // Set whether to prevent metallic bonding
     void setPreventMetallicBonds(bool b);
     // Set whether to remove free atomic moieties in clean-up
