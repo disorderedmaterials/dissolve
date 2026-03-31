@@ -27,34 +27,48 @@ class BraggNodeTest : public ::testing::Test
 
     protected:
     GraphTestData testData_;
+    NeutronSQNode *neutronSQNode_{nullptr};
     BraggNode *braggNode_{nullptr};
 
     protected:
     // Create graph
     void createGraph()
     {
-        // Create MgO graph
-        createMgOGraph(
-            &testData_.graphRoot, 500, 500,
+        // Set up the test graph
+        auto lastNode = createConfiguration(
+            &testData_.graphRoot, "Crystal",
+            {{[] { return createAtomic(Elements::Mg); }, 500}, {[] { return createAtomic(Elements::O); }, 500}}, 0.1,
+            Units::DensityUnits::AtomsPerAngstromUnits, InsertNode::BoxActionStyle::None);
+        lastNode = appendImportCoordinates(
+            &testData_.graphRoot, lastNode,
             CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
-        braggNode_ = static_cast<BraggNode *>(testData_.graphRoot.findNode("Bragg01"));
 
-        // Set cell dimensions
-        auto setCellNode = testData_.graphRoot.findNode("Box");
-        ASSERT_TRUE(setCellNode->setOption<Vector3>("Lengths", {21.085, 21.085, 21.085}));
-
-        // Set options on GR node
-        auto grNode = testData_.graphRoot.findNode("GRs");
+        // Add correlation function nodes
+        auto &&[grNode, sqNode] = appendGRSQ(&testData_.graphRoot, lastNode, false, true);
+        ASSERT_TRUE(grNode);
         ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.025));
-        ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::SimpleMethod));
-
-        // Set options on SQ node
-        auto sqNode = testData_.graphRoot.findNode("SQs");
+        ASSERT_TRUE(sqNode);
         ASSERT_TRUE(sqNode->setOption<Number>("QMin", 0.05));
         ASSERT_TRUE(sqNode->setOption<Number>("QMax", 19.0));
         ASSERT_TRUE(sqNode->setOption<Number>("QDelta", 0.05));
         ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
         ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.02}}));
+        neutronSQNode_ = appendNeutronSQ(&testData_.graphRoot, sqNode, "NeutronSQ", {}, {},
+                                         {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY});
+        ASSERT_TRUE(neutronSQNode_);
+        braggNode_ = dynamic_cast<BraggNode *>(testData_.graphRoot.createNode("Bragg"));
+        ASSERT_TRUE(braggNode_);
+        ASSERT_TRUE(braggNode_->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
+        ASSERT_TRUE(braggNode_->setOption<Number>("QMax", 20.0));
+        ASSERT_TRUE(braggNode_->setOption<Function1DWrapper>("BraggQBroadening",
+                                                             {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
+
+        ASSERT_TRUE(testData_.graphRoot.addEdge({std::string(lastNode->name()), "Configuration", "Bragg", "Configuration"}));
+        ASSERT_TRUE(testData_.graphRoot.addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg", "UnweightedSQ"}));
+
+        // Set cell dimensions
+        auto setCellNode = testData_.graphRoot.findNode("SetCell");
+        ASSERT_TRUE(setCellNode->setOption<Vector3>("Lengths", {21.085, 21.085, 21.085}));
 
         // Set options on Bragg node
         ASSERT_TRUE(braggNode_->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
@@ -125,23 +139,20 @@ TEST_F(BraggNodeTest, MgO_Full)
     // Check Partial S(Q) data
     // Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
     //                                 Column:    2        4        6
-    ASSERT_TRUE(braggNode_);
     auto unweightedSQ = braggNode_->getOutputValue<PartialSet *>("UnweightedSQ");
     auto unboundPartials = unweightedSQ->unboundPartials();
 
-    auto neutronSqNode = testData_.graphRoot.findNode("NeutronSQ01");
-    ASSERT_TRUE(neutronSqNode);
-    auto weightedSQ = neutronSqNode->getOutputValue<PartialSet *>("WeightedSQ");
+    auto weightedSQ = neutronSQNode_->getOutputValue<PartialSet *>("WeightedSQ");
     auto weightedTotal = weightedSQ->total();
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         unboundPartials.get("Mg//Mg"), "SQs_UnweightedSQ_Mg-Mg_Unbound",
         {"epsr25/mgo500-555/mgo.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.5e-2));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("Mg//OX"), "SQs_UnweightedSQ_Mg-OX_Unbound",
+        unboundPartials.get("Mg//O"), "SQs_UnweightedSQ_Mg-OX_Unbound",
         {"epsr25/mgo500-555/mgo.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 1.5e-2));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("OX//OX"), "SQs_UnweightedSQ_OX-OX_Unbound",
+        unboundPartials.get("O//O"), "SQs_UnweightedSQ_OX-OX_Unbound",
         {"epsr25/mgo500-555/mgo.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.5e-2));
 
     // Check total F(Q)
