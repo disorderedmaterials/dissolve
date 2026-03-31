@@ -291,14 +291,8 @@ static const std::vector<std::string> GRAPH_NAMES = {"Dissolve", "Graph", "Itera
 // Generate random names for the mermaid conversion
 std::string randomName()
 {
-    const int length = 10;
-    const std::string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    std::string result;
-
-    for (size_t i = 0; i < length; ++i)
-    {
-        result += characters[std::rand() % characters.size()];
-    }
+    std::string result(10, ' ');
+    std::ranges::generate(result, []{ return std::string_view("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").at(rand() % 52); });
     return result;
 }
 
