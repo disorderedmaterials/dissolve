@@ -17,6 +17,7 @@ CIFBondingOptionsNode::CIFBondingOptionsNode(Graph *parentGraph) : Node(parentGr
                       bondingTolerance_);
     addOption<bool>("UseCIFBondingDefinitions", "Whether to use CIF bonding definitions", useCIFBondingDefinitions_);
     addOption<bool>("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
+    addOption<bool>("PreventAllBonds", "Whether to ignore all bonding", preventAllBonds_);
 }
 
 std::string_view CIFBondingOptionsNode::type() const { return "CIFBondingOptions"; }

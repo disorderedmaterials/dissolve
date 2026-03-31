@@ -27,6 +27,8 @@ class CIFBondingOptionsNode : public Node
     Number bondingTolerance_{1.1};
     // Whether to use CIF bonding definitions
     bool useCIFBondingDefinitions_{false};
+    // Whether to ignore all bonding
+    bool preventAllBonds_{false};
     // Whether to prevent metallic bonding
     bool preventMetallicBonds_{true};
 
