@@ -110,87 +110,69 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
 
 TEST(NeutronSQNodeTest, WaterMethanol)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterMethanolGraph(&data.graphRoot);
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 300}, {createMethanol, 600}}, 0.1);
+    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
+                                       CoordinateImportFileFormat("epsr25/water300methanol600/watermeth.ato",
+                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
-    // Set GR and SQ options
-    auto grNode = data.graphRoot.findNode("GR");
+    // Add correlation function nodes
+    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
     ASSERT_TRUE(grNode);
-    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
-    auto sqNode = data.graphRoot.findNode("SQ");
     ASSERT_TRUE(sqNode);
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 
+    // Add in NeutronSQ
+    std::vector<std::tuple<std::string, std::vector<std::tuple<std::string, std::string, double>>>> samples = {
+        {"HHH", {{"Water", "Natural", 1.0}, {"Methanol", "Natural", 1.0}}},
+        {"H5H", {{"Water", "Natural", 1.0}, {"Methanol", "Natural", 0.5}, {"Methanol", "OD-MethylH", 0.5}}},
+        {"DHH", {{"Water", "D2O", 1.0}, {"Methanol", "Natural", 1.0}}},
+        {"HDH", {{"Water", "Natural", 1.0}, {"Methanol", "OD-MethylH", 1.0}}},
+        {"HHD", {{"Water", "Natural", 1.0}, {"Methanol", "MethylD-OH", 1.0}}},
+        {"DDH", {{"Water", "D2O", 1.0}, {"Methanol", "OD-MethylH", 1.0}}},
+        {"HDD", {{"Water", "Natural", 1.0}, {"Methanol", "Deuteriated", 1.0}}},
+        {"DDD", {{"Water", "D2O", 1.0}, {"Methanol", "Deuteriated", 1.0}}}};
+    std::map<std::string, NeutronSQNode *> neutronSQ;
+    for (const auto &[name, isotopologues] : samples)
+        neutronSQ[name] = appendNeutronSQ(&data.graphRoot, sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
+
     // Run the graph from each NeutronSQ node
-    auto HHH = data.graphRoot.findNode("HHH");
-    ASSERT_TRUE(HHH);
-    ASSERT_EQ(HHH->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(HHH->versionIndex(), 0);
-    auto H5H = data.graphRoot.findNode("H5H");
-    ASSERT_TRUE(H5H);
-    ASSERT_EQ(H5H->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(H5H->versionIndex(), 0);
-    auto DHH = data.graphRoot.findNode("DHH");
-    ASSERT_TRUE(DHH);
-    ASSERT_EQ(DHH->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(DHH->versionIndex(), 0);
-    auto HDH = data.graphRoot.findNode("HDH");
-    ASSERT_TRUE(HDH);
-    ASSERT_EQ(HDH->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(HDH->versionIndex(), 0);
-    auto HHD = data.graphRoot.findNode("HHD");
-    ASSERT_TRUE(HHD);
-    ASSERT_EQ(HHD->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(HHD->versionIndex(), 0);
-    auto DDH = data.graphRoot.findNode("DDH");
-    ASSERT_TRUE(DDH);
-    ASSERT_EQ(DDH->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(DDH->versionIndex(), 0);
-    auto HDD = data.graphRoot.findNode("HDD");
-    ASSERT_TRUE(HDD);
-    ASSERT_EQ(HDD->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(HDD->versionIndex(), 0);
-    auto DDD = data.graphRoot.findNode("DDD");
-    ASSERT_TRUE(DDD);
-    ASSERT_EQ(DDD->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(grNode->versionIndex(), 0);
-    ASSERT_EQ(DDD->versionIndex(), 0);
+    for (auto node : std::views::values(neutronSQ))
+    {
+        ASSERT_EQ(node->run(), NodeConstants::ProcessResult::Success);
+        ASSERT_EQ(grNode->versionIndex(), 0);
+        ASSERT_EQ(node->versionIndex(), 0);
+    }
 
     // Check total F(Q)
     // u01 file: 1  2   4   6   8  10  12  14  16
     //           Q HHH H5H DHH HDH HHD DDH HDD DDD
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HHH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HHH Total F(Q)",
+        neutronSQ["HHH"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HHH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        H5H->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H5H Total F(Q)",
+        neutronSQ["H5H"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H5H Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        DHH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DHH Total F(Q)",
+        neutronSQ["DHH"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DHH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HDH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDH Total F(Q)",
+        neutronSQ["HDH"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 1.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HHD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HHD Total F(Q)",
+        neutronSQ["HHD"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HHD Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 10}, 5.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        DDH->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DDH Total F(Q)",
+        neutronSQ["DDH"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DDH Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 12}, 8.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        HDD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDD Total F(Q)",
+        neutronSQ["HDD"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDD Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 14}, 5.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        DDD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DDD Total F(Q)",
+        neutronSQ["DDD"]->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DDD Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 16}, 5.0e-4));
 }
 

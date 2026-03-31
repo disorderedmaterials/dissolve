@@ -61,15 +61,17 @@ TEST(SQNodeTest, Water)
 
 TEST(SQNodeTest, WaterMethanol)
 {
+    // Set up the test graph
     GraphTestData data;
-    createWaterMethanolGraph(&data.graphRoot);
+    auto lastNode = createConfiguration(&data.graphRoot, {{createWater, 300}, {createMethanol, 600}}, 0.1);
+    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
+                                       CoordinateImportFileFormat("epsr25/water300methanol600/watermeth.ato",
+                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
-    // Set GR and SQ options
-    auto grNode = data.graphRoot.findNode("GR");
+    // Add correlation function nodes
+    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
     ASSERT_TRUE(grNode);
-    ASSERT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
-    auto sqNode = data.graphRoot.findNode("SQ");
     ASSERT_TRUE(sqNode);
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 

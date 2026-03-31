@@ -191,15 +191,14 @@ inline SpeciesNode *createWaterDlPoly(Graph *parentGraph)
 }
 
 // Create and return methanol test species in the specified graph
-inline SpeciesNode *createMethanol(Graph *parentGraph)
+inline std::unique_ptr<SpeciesNode> createMethanol()
 {
     const auto name = "Methanol";
 
     // Add methanol species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &(speciesNodePtr->species());
-    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
     species->setName(name);
 
     // Create atom types
@@ -251,7 +250,7 @@ inline SpeciesNode *createMethanol(Graph *parentGraph)
     auto MeH = species->addIsotopologue("OD-MethylH");
     MeH->setAtomTypeIsotope(HO.get(), Sears91::H_2);
 
-    return speciesNodePtr;
+    return speciesNodeUniquePtr;
 }
 
 // Create and return a new benzene SpeciesNode
