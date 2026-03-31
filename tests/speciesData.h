@@ -141,6 +141,9 @@ inline std::unique_ptr<SpeciesNode> createWaterDLPoly()
     species->addBond(1, 2).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
     species->addAngle(0, 1, 2).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24");
 
+    // Create scaled interaction matrices
+    species->setUpScaledInteractions();
+
     // Create isotopologue
     auto iso = species->addIsotopologue("D2O");
     iso->setAtomTypeIsotope(hW.get(), Sears91::H_2);
@@ -242,6 +245,9 @@ inline std::unique_ptr<SpeciesNode> createMethanol()
     species->addAngle(3, 0, 4).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
     species->addAngle(5, 2, 0).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
 
+    // Create scaled interaction matrices
+    species->setUpScaledInteractions();
+
     // Create isotopologues
     auto D = species->addIsotopologue("Deuteriated");
     D->setAtomTypeIsotope(HO.get(), Sears91::H_2);
@@ -315,10 +321,110 @@ inline std::unique_ptr<SpeciesNode> createBenzene()
             .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
     }
 
+    // Create scaled interaction matrices
+    species->setUpScaledInteractions();
+
     // Create isotopologue
     auto iso = species->addIsotopologue("C6D6");
     iso->setAtomTypeIsotope(HA.get(), Sears91::H_2);
 
     return speciesNodeUniquePtr;
 }
+
+// Create and return a new hexane SpeciesNode
+inline std::unique_ptr<SpeciesNode> createHexane()
+{
+    // Add species node
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
+    auto speciesNodePtr = speciesNodeUniquePtr.get();
+    auto species = &(speciesNodePtr->species());
+    species->setName("Hexane");
+
+    // Set up atom types
+    auto CT = species->addAtomType(Elements::Element::C, "CA");
+    CT->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.276144 sigma=3.5");
+    CT->setCharge(0.0);
+    auto HC = species->addAtomType(Elements::Element::H, "HA");
+    HC->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
+                                                    "epsilon=0.12552 sigma=2.5");
+    HC->setCharge(0.0);
+
+    // Add atoms
+    species->addAtom(Elements::Element::C, {1.394413, 0.879180, -1.034297}, -0.12, CT);
+    species->addAtom(Elements::Element::C, {2.854160, 0.616768, -1.547410}, -0.18, CT);
+    species->addAtom(Elements::Element::H, {0.827064, 1.406880, -1.789904}, 0.06, HC);
+    species->addAtom(Elements::Element::C, {0.467798, -0.253944, -0.621617}, -0.12, CT);
+    species->addAtom(Elements::Element::H, {1.425551, 1.554936, -0.188621}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {2.941276, -0.178066, -2.261415}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {3.268200, 1.438243, -2.042539}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {3.555799, 0.375074, -0.677249}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {0.094379, -0.811092, -1.516546}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {1.005981, -0.955768, 0.031426}, 0.06, HC);
+    species->addAtom(Elements::Element::C, {-1.350694, -0.931340, 1.113953}, -0.12, CT);
+    species->addAtom(Elements::Element::C, {-2.699047, -0.563668, 1.698929}, -0.18, CT);
+    species->addAtom(Elements::Element::H, {-1.500299, -1.881433, 0.648230}, 0.06, HC);
+    species->addAtom(Elements::Element::C, {-0.665486, 0.211048, 0.274056}, -0.12, CT);
+    species->addAtom(Elements::Element::H, {-0.667963, -1.185234, 1.908842}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {-2.860498, 0.511084, 1.772119}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {-3.482257, -0.915899, 1.044346}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {-3.069806, -1.002188, 2.608314}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {-1.297749, 0.735327, -0.364927}, 0.06, HC);
+    species->addAtom(Elements::Element::H, {-0.240820, 0.950092, 0.944310}, 0.06, HC);
+
+    // Bonds: C-C
+    std::vector<std::tuple<int, int>> bondsCC = {{0, 1}, {0, 3}, {3, 13}, {10, 11}, {10, 13}};
+    for (auto &[i, j] : bondsCC)
+        species->addBond(i, j).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=2242.6240  eq=1.5290");
+
+    // Bonds: C-H
+    std::vector<std::tuple<int, int>> bondsCH = {{0, 2},   {0, 4},   {1, 5},   {1, 6},   {1, 7},   {3, 8},   {3, 9},
+                                                 {10, 12}, {10, 14}, {11, 15}, {11, 16}, {11, 17}, {13, 18}, {13, 19}};
+    for (auto &[i, j] : bondsCH)
+        species->addBond(i, j).setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=2845.1200  eq=1.09");
+
+    // Angles: C-C-C
+    std::vector<std::tuple<int, int, int>> anglesCCC = {{1, 0, 3}, {3, 13, 10}, {0, 3, 13}, {11, 10, 13}};
+    for (auto &[i, j, k] : anglesCCC)
+        species->addAngle(i, j, k).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=488.2728  eq=112.7000");
+
+    // Angles: C-C-H
+    std::vector<std::tuple<int, int, int>> anglesCCH = {
+        {1, 0, 2},    {1, 0, 4},    {2, 0, 3},   {3, 0, 4},    {0, 1, 5},    {0, 1, 6},    {0, 1, 7},    {0, 3, 8},
+        {0, 3, 9},    {8, 3, 13},   {9, 3, 13},  {11, 10, 12}, {11, 10, 14}, {12, 10, 13}, {13, 10, 14}, {10, 11, 15},
+        {10, 11, 16}, {10, 11, 17}, {3, 13, 18}, {3, 13, 19},  {10, 13, 18}, {10, 13, 19}};
+    for (auto &[i, j, k] : anglesCCH)
+        species->addAngle(i, j, k).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=313.8000  eq=110.7000");
+
+    // Angles: H-C-H
+    std::vector<std::tuple<int, int, int>> anglesHCH = {{2, 0, 4}, {5, 1, 6},    {5, 1, 7},    {6, 1, 7},    {18, 13, 19},
+                                                        {8, 3, 9}, {12, 10, 14}, {15, 11, 16}, {15, 11, 17}, {16, 11, 17}};
+    for (auto &[i, j, k] : anglesHCH)
+        species->addAngle(i, j, k).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=276.1440  eq=107.8000");
+
+    // Torsions: C-C-C-C
+    std::vector<std::tuple<int, int, int, int>> torsionsCCCC = {{11, 10, 13, 3}, {0, 3, 13, 10}, {1, 0, 3, 13}};
+    for (auto &[i, j, k, l] : torsionsCCCC)
+        species->addTorsion(i, j, k, l)
+            .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=5.4392  k2=-0.2092  k3=0.8368");
+
+    // Torsions: H-C-C-X
+    std::vector<std::tuple<int, int, int, int>> torsionsHCCX = {
+        {9, 3, 13, 10},   {9, 3, 13, 18},   {9, 3, 13, 19},   {11, 10, 13, 18}, {11, 10, 13, 19}, {12, 10, 11, 15},
+        {12, 10, 11, 16}, {12, 10, 11, 17}, {12, 10, 13, 18}, {12, 10, 13, 19}, {12, 10, 13, 3},  {13, 10, 11, 15},
+        {13, 10, 11, 16}, {13, 10, 11, 17}, {0, 3, 13, 18},   {0, 3, 13, 19},   {14, 10, 11, 15}, {14, 10, 11, 16},
+        {14, 10, 11, 17}, {14, 10, 13, 18}, {14, 10, 13, 19}, {14, 10, 13, 3},  {1, 0, 3, 9},     {1, 0, 3, 8},
+        {2, 0, 1, 5},     {2, 0, 1, 6},     {2, 0, 1, 7},     {2, 0, 3, 9},     {2, 0, 3, 13},    {2, 0, 3, 8},
+        {3, 0, 1, 5},     {3, 0, 1, 6},     {3, 0, 1, 7},     {4, 0, 1, 5},     {4, 0, 1, 6},     {4, 0, 1, 7},
+        {4, 0, 3, 9},     {4, 0, 3, 13},    {4, 0, 3, 8},     {8, 3, 13, 10},   {8, 3, 13, 18},   {8, 3, 13, 19}};
+    for (auto &[i, j, k, l] : torsionsHCCX)
+        species->addTorsion(i, j, k, l)
+            .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0  k2=0.0  k3=1.2552");
+
+    // Create scaled interaction matrices
+    species->setUpScaledInteractions();
+
+    return speciesNodeUniquePtr;
+}
+
 } // namespace UnitTest
