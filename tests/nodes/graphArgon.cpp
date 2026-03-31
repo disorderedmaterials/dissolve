@@ -14,11 +14,11 @@ namespace UnitTest
 TEST(GraphArgonTest, InitSimulation)
 {
     // Set up the test graph
-    GraphTestData data;
-    createConfiguration(&data.graphRoot, "Box", {{[] { return createAtomic(Elements::Ar); }, 1000}}, 0.0213);
+    TestGraph testGraph;
+    testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 1000}}, 0.0213);
 
     // Get the Insert node and run the graph
-    auto insertNode = data.graphRoot.findNode("Insert-Ar");
+    auto insertNode = testGraph.findNode("Insert-Ar");
     ASSERT_TRUE(insertNode);
     ASSERT_EQ(insertNode->run(), NodeConstants::ProcessResult::Success);
 
@@ -31,18 +31,19 @@ TEST(GraphArgonTest, InitSimulation)
 TEST(GraphArgonTest, AllCorrelations)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{[] { return createAtomic(Elements::Ar); }, 1000}}, 0.0213);
-    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
-                                       CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
-                                                                  CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 1000}}, 0.0213);
+    lastNode = testGraph.appendImportCoordinates(
+        lastNode, CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
+                                             CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
 
     // Append GR and SQ nodes
-    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, true, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, true, true);
 
     // Set up neutron SQ
-    auto neutronSQNode = appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}}, {},
-                                         {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY});
+    auto neutronSQNode =
+        testGraph.appendNeutronSQ(sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}}, {},
+                                  {"dissolve2/argon/yarnell.sq", Data1DImportFileFormat::Data1DImportFormat::XY});
 
     // Run the Graph from the NeutronSQ node
     ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);

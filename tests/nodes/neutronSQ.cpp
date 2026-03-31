@@ -13,23 +13,23 @@ namespace UnitTest
 TEST(NeutronSQNodeTest, Water)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
-                                       CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    lastNode = testGraph.appendImportCoordinates(
+        lastNode, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
     ASSERT_TRUE(sqNode);
 
     // Add in NeutronSQ
-    auto H2O = appendNeutronSQ(&data.graphRoot, sqNode, "H2O");
-    auto D2O = appendNeutronSQ(&data.graphRoot, sqNode, "D2O", {{"Water", "D2O", 1.0}});
-    auto HDO = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
-                               Exchangeables({"HW"}));
+    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O");
+    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}});
+    auto HDO =
+        testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}));
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
@@ -61,29 +61,29 @@ TEST(NeutronSQNodeTest, Water)
 TEST(NeutronSQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
-                                       CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    lastNode = testGraph.appendImportCoordinates(
+        lastNode, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
     ASSERT_TRUE(sqNode);
 
     // Add in NeutronSQ
-    auto H2O = appendNeutronSQ(&data.graphRoot, sqNode, "H2O", {}, {},
-                               Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
-                                                      Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    auto D2O = appendNeutronSQ(&data.graphRoot, sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
-                               Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
-                                                      Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    auto HDO = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
-                               Exchangeables({"HW"}),
-                               Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
-                                                      Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {}, {},
+                                         Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
+                                                                Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
+                                         Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
+                                                                Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    auto HDO =
+        testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}),
+                                  Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
+                                                         Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
@@ -114,14 +114,14 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
 TEST(NeutronSQNodeTest, WaterMethanol)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 300}, {createMethanol, 600}}, 0.1);
-    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
-                                       CoordinateImportFileFormat("epsr25/water300methanol600/watermeth.ato",
-                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 300}, {createMethanol, 600}}, 0.1);
+    lastNode = testGraph.appendImportCoordinates(
+        lastNode, CoordinateImportFileFormat("epsr25/water300methanol600/watermeth.ato",
+                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
     ASSERT_TRUE(sqNode);
@@ -139,7 +139,7 @@ TEST(NeutronSQNodeTest, WaterMethanol)
         {"DDD", {{"Water", "D2O", 1.0}, {"Methanol", "Deuteriated", 1.0}}}};
     std::map<std::string, NeutronSQNode *> neutronSQ;
     for (const auto &[name, isotopologues] : samples)
-        neutronSQ[name] = appendNeutronSQ(&data.graphRoot, sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
+        neutronSQ[name] = testGraph.appendNeutronSQ(sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
 
     // Run the graph from each NeutronSQ node
     for (auto node : std::views::values(neutronSQ))
@@ -183,24 +183,24 @@ TEST(NeutronSQNodeTest, WaterMethanol)
 TEST(NeutronSQNodeTest, Benzene)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createBenzene, 200}}, 0.876,
-                                        Units::DensityUnits::GramsPerCentimetreCubedUnits);
-    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
-                                       CoordinateImportFileFormat("epsr25/benzene200-neutron/boxbenz.ato",
-                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    TestGraph testGraph;
+    auto lastNode =
+        testGraph.createConfiguration("Box", {{createBenzene, 200}}, 0.876, Units::DensityUnits::GramsPerCentimetreCubedUnits);
+    lastNode = testGraph.appendImportCoordinates(
+        lastNode, CoordinateImportFileFormat("epsr25/benzene200-neutron/boxbenz.ato",
+                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
     ASSERT_TRUE(sqNode);
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 
     // Add in NeutronSQ
-    auto C6H6 = appendNeutronSQ(&data.graphRoot, sqNode, "C6H6");
-    auto C6D6 = appendNeutronSQ(&data.graphRoot, sqNode, "C6D6", {{"Benzene", "C6D6", 1.0}});
-    auto FiftyFifty = appendNeutronSQ(&data.graphRoot, sqNode, "5050", {{"Benzene", "Natural", 1.0}, {"Benzene", "C6D6", 1.0}});
+    auto C6H6 = testGraph.appendNeutronSQ(sqNode, "C6H6");
+    auto C6D6 = testGraph.appendNeutronSQ(sqNode, "C6D6", {{"Benzene", "C6D6", 1.0}});
+    auto FiftyFifty = testGraph.appendNeutronSQ(sqNode, "5050", {{"Benzene", "Natural", 1.0}, {"Benzene", "C6D6", 1.0}});
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(C6H6);
