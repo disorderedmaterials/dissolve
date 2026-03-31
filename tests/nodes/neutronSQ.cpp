@@ -50,7 +50,7 @@ TEST(NeutronSQNodeTest, Water)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         HDO->getOutputValue<PartialSet *>("WeightedSQ")->total(), "Total F(Q)",
         {"epsr25/water1000-neutron/water.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-5));
-    export_mermaid_graph(data.graphRoot);
+    exportMermaidGraph(data.graphRoot);
 }
 
 TEST(NeutronSQNodeTest, WaterReferenceFT)
@@ -92,7 +92,7 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         HDO->getOutputValue<Data1D>("ReferenceGR"), "HDO Reference G(r)",
         {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 5.0e-5));
-    export_mermaid_graph(data.graphRoot);
+    exportMermaidGraph(data.graphRoot);
 }
 
 TEST(NeutronSQNodeTest, WaterMethanol)
@@ -179,7 +179,7 @@ TEST(NeutronSQNodeTest, WaterMethanol)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         DDD->getOutputValue<PartialSet *>("WeightedSQ")->total(), "DDD Total F(Q)",
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 16}, 5.0e-4));
-    export_mermaid_graph(data.graphRoot);
+    exportMermaidGraph(data.graphRoot);
 }
 
 TEST(NeutronSQNodeTest, Benzene)
@@ -225,7 +225,7 @@ TEST(NeutronSQNodeTest, Benzene)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         FiftyFifty->getOutputValue<PartialSet *>("WeightedSQ")->total(), "5050 Total F(Q)",
         {"epsr25/benzene200-neutron/benzene.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-3));
-    export_mermaid_graph(data.graphRoot);
+    exportMermaidGraph(data.graphRoot);
 }
 
 } // namespace UnitTest

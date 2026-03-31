@@ -91,7 +91,7 @@ TEST(AtomShakeTest, Water)
     EXPECT_NEAR(rMin01, 1.0, 1.0e-4);
     EXPECT_NEAR(rMin02, 1.0, 1.0e-4);
     EXPECT_NEAR(angle102, 113.24, 1.7e-3);
-    export_mermaid_graph(root);
+    exportMermaidGraph(root);
 }
 
 } // namespace UnitTest

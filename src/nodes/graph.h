@@ -107,7 +107,7 @@ class Graph : public Node
     // Return a path to this graph from the root
     std::string location() const;
     // Print as mermaid state diagram
-    std::string to_mermaid(int depth) const;
+    std::string toMermaid(int depth) const;
     friend std::ostream &operator<<(std::ostream &stream, const Graph &node);
 
     /*

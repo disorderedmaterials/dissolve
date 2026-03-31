@@ -292,12 +292,13 @@ static const std::vector<std::string> GRAPH_NAMES = {"Dissolve", "Graph", "Itera
 std::string randomName()
 {
     std::string result(10, ' ');
-    std::ranges::generate(result, []{ return std::string_view("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").at(rand() % 52); });
+    std::ranges::generate(result, []
+                          { return std::string_view("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").at(rand() % 52); });
     return result;
 }
 
 // Print as mermaid state diagram
-std::string Graph::to_mermaid(int depth) const
+std::string Graph::toMermaid(int depth) const
 {
     std::string result{}, spacer{};
     spacer.resize(depth);
@@ -317,7 +318,7 @@ std::string Graph::to_mermaid(int depth) const
             auto casted = dynamic_cast<Graph *>(v.get());
             if (casted)
             {
-                result += casted->to_mermaid(depth + 4);
+                result += casted->toMermaid(depth + 4);
             }
             result += spacer + "}\n";
         }
@@ -336,6 +337,6 @@ std::ostream &operator<<(std::ostream &stream, const Graph &node)
     stream << "stateDiagram-v2" << std::endl;
     stream << "    classDef data fill:#FFD0D0,color:#000000" << std::endl;
     stream << "    classDef math fill:#D0FFD0,color:#000000" << std::endl;
-    stream << node.to_mermaid(4);
+    stream << node.toMermaid(4);
     return stream;
 }
