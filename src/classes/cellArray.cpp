@@ -182,7 +182,8 @@ bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
 bool CellArray::generate(const Box *box, double cellSize)
 {
     // We need to regenerate the cell array only if it is currently empty or the pair potential range has changed
-    if (!cells_.empty() && pairPotentialRangeCreatedAt_ && pairPotentialRangeCreatedAt_.value() == PairPotential::range())
+    if (!cells_.empty() && axesCreatedAt_ && axesCreatedAt_.value().isApproximately(box_->axes()) &&
+        pairPotentialRangeCreatedAt_ && pairPotentialRangeCreatedAt_.value() == PairPotential::range())
         return true;
 
     clear();
@@ -192,6 +193,7 @@ bool CellArray::generate(const Box *box, double cellSize)
 
     pairPotentialRangeCreatedAt_ = PairPotential::range();
     box_ = box;
+    axesCreatedAt_ = box_->axes();
 
     Messenger::print("Generating cells for box - minimum cells per side is {}, cell size is {}...\n", minCellsPerSide,
                      cellSize);

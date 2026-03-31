@@ -56,6 +56,8 @@ class CellArray
     std::vector<Cell> cells_;
     // Pair potential range at which the array was last created
     std::optional<double> pairPotentialRangeCreatedAt_;
+    // Box axes at which the array was last created
+    std::optional<Matrix3> axesCreatedAt_;
     // Box associated with this cell division scheme
     const Box *box_{nullptr};
 

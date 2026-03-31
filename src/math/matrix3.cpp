@@ -106,6 +106,14 @@ Matrix3 &Matrix3::operator*=(const double a)
 
 double &Matrix3::operator[](int index) { return matrix_[index]; }
 
+bool Matrix3::isApproximately(const Matrix3 &other, double tolerance) const
+{
+    for (auto i = 0; i < 9; ++i)
+        if (fabs(matrix_[i] - other.matrix_[i]) > tolerance)
+            return false;
+    return true;
+}
+
 /*
  * General Routines
  */

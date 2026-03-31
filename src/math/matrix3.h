@@ -29,6 +29,7 @@ class Matrix3
     Matrix3 &operator*=(const Matrix3 &B);
     Matrix3 &operator*=(const double a);
     double &operator[](int);
+    bool isApproximately(const Matrix3 &other, double tolerance = 1.0e-6) const;
 
     /*
      * General Routines
