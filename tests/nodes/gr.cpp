@@ -13,7 +13,7 @@ TEST(GRNodeTest, Methods)
 {
     // Set up the test graph
     GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createArgon, 5000}}, 0.0213);
+    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{[] { return createAtomic(Elements::Ar); }, 5000}}, 0.0213);
 
     // Append GR and SQ nodes
     auto sqNode = appendGRSQ(&data.graphRoot, lastNode, true, true);

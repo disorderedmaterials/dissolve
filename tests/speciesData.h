@@ -12,23 +12,27 @@
 
 namespace UnitTest
 {
-// Create and return argon test species
-inline std::unique_ptr<SpeciesNode> createArgon()
+// Create and return atomic SpeciesNode
+inline std::unique_ptr<SpeciesNode> createAtomic(Elements::Element element,
+                                                 InteractionPotential<ShortRangeFunctions> potential = {})
 {
     // Add species node
     auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &speciesNodePtr->species();
-    species->setName("Ar");
+    species->setName(Elements::symbol(element));
 
     // Set up atom types
-    auto Ar = species->addAtomType(Elements::Element::Ar, "Ar");
-    Ar->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.978638 sigma=3.401");
-    species->addAtom(Elements::Element::Ar, {}, 0.0, Ar);
+    auto atomType = species->addAtomType(element, Elements::symbol(element));
+    atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
+    species->addAtom(element, {}, 0.0, atomType);
 
-    // Create isotopologue
-    auto iso = species->addIsotopologue("Ar36");
-    iso->setAtomTypeIsotope(Ar.get(), Sears91::Ar_36);
+    // Create isotopologues
+    for (auto isotope : Sears91::isotopes(element))
+    {
+        auto iso = species->addIsotopologue(std::format("{}{}", Elements::symbol(element), Sears91::A(isotope)));
+        iso->setAtomTypeIsotope(atomType.get(), isotope);
+    }
 
     return speciesNodeUniquePtr;
 }
