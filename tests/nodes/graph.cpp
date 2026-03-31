@@ -4,6 +4,8 @@
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
 #include "nodes/registry.h"
+#include "tests/graphData.h"
+#include "tests/nodes/mermaid.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -113,5 +115,4 @@ TEST_F(GraphCoreTest, NodeCreation)
     // Wrong case in existing node type (succeeds with non-strict type name checking)
     EXPECT_EQ(NodeRegistry::getNodeTypesFuzzy("prod")[0], "DotProduct");
 }
-
 } // namespace UnitTest
