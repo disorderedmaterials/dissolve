@@ -112,16 +112,13 @@ inline std::unique_ptr<SpeciesNode> createWater()
 }
 
 // Create and return water test species in the specified graph with DL_POLY ordering
-inline SpeciesNode *createWaterDlPoly(Graph *parentGraph)
+inline std::unique_ptr<SpeciesNode> createWaterDLPoly()
 {
-    const auto name = "Water";
-
     // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(parentGraph);
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
     auto speciesNodePtr = speciesNodeUniquePtr.get();
     auto species = &(speciesNodePtr->species());
-    parentGraph->addNode(std::move(speciesNodeUniquePtr), name);
-    species->setName(name);
+    species->setName("Water");
 
     // Set up atom types
     auto hW = species->addAtomType(Elements::Element::H, "HW");
@@ -187,7 +184,7 @@ inline SpeciesNode *createWaterDlPoly(Graph *parentGraph)
     comFragSite->setFragmentDefinitionString("?O, #origin, -H(#origin), -H(#origin)");
     comFragSite->setOriginMassWeighted(true);
 
-    return speciesNodePtr;
+    return speciesNodeUniquePtr;
 }
 
 // Create and return methanol test species in the specified graph

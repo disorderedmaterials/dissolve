@@ -257,33 +257,5 @@ inline void createMgOGraph(Graph *root, int populationMG, int populationO,
         ASSERT_TRUE(root->addEdge({std::format("{}-Reference", "NeutronSQ01"), "Data", "NeutronSQ01", "ReferenceData"}));
     }
 }
-// Create a water graph in the supplied root node
-inline void createWaterGraphDlPoly(Graph *root, int population,
-                                   CoordinateImportFileFormat initialCoordinates = CoordinateImportFileFormat())
-{
-    // Create species and configuration
-    auto waterNode = createWaterDlPoly(root);
-    ASSERT_TRUE(waterNode);
-    auto configurationNode = root->createNode("Configuration", "Bulk");
-    ASSERT_TRUE(configurationNode);
-    auto insertNode = root->createNode("Insert");
-    ASSERT_TRUE(insertNode);
-    ASSERT_TRUE(root->addEdge({"Water", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(root->addEdge({"Bulk", "Configuration", "Insert", "Configuration"}));
-    ASSERT_TRUE(insertNode->setInput<Number>("Population", population));
-    ASSERT_TRUE(insertNode->setInput<Number>("Density", 0.1));
-    ASSERT_TRUE(insertNode->setOption<Units::DensityUnits>("DensityUnits", Units::DensityUnits::AtomsPerAngstromUnits));
-
-    // Import reference coordinates
-    if (initialCoordinates.hasFilename())
-    {
-        auto importCoordinates = root->createNode("ImportConfigurationCoordinates", "Import");
-        ASSERT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(initialCoordinates.filename())));
-        ASSERT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-            "FileFormat",
-            CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(initialCoordinates.formatIndex())));
-        ASSERT_TRUE(root->addEdge({"Insert", "Configuration", "Import", "Configuration"}));
-    }
-}
 
 } // namespace UnitTest
