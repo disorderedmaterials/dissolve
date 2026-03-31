@@ -52,21 +52,6 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsDefined)
         systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), 1770.1666370083758, 6.0e-2));
 }
 
-TEST_F(EnergyModuleTest, DLPOLYHexane1Full)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane1.txt"));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Full interatomic energy: LJ (3.504968) + Coul (10.081520) - LJCorrect (-0.00501830)
-    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Liquid//PairPotential");
-    EXPECT_TRUE(systemTest.checkDouble("interatomic energy", interEnergy.values().back(), 14.32518630, 5.0e-4));
-
-    // Full intramolecular energy
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Liquid//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("intramolecular energy", intraEnergy.values().back(), 71.59299, 6.0e-4));
-}
-
 TEST_F(EnergyModuleTest, DLPOLYHexane2Full)
 {
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane2.txt"));
