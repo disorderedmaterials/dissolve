@@ -39,8 +39,11 @@ class BraggNodeTest : public ::testing::Test
 
         auto cifLoaderNode = root->createNode("CIFLoader", "CIFLoader");
         ASSERT_TRUE(cifLoaderNode->setOption<std::string>("FilePath", "cif/1000053.cif"));
-        auto cifConfigurationNode = root->createNode("CIFConfiguration", "Crystal");
-        ASSERT_TRUE(root->addEdge({"CIFLoader", "CIFContext", "Crystal", "CIFContext"}));
+        auto cifBondingNode = root->createNode("CIFBondingOptions", "CIFBonds");
+        ASSERT_TRUE(root->addEdge({"CIFLoader", "CIFContext", "CIFBonds", "CIFContext"}));
+        auto cifConfigurationNode = root->createNode("CIFMolecularSpecies", "Crystal");
+        ASSERT_TRUE(root->addEdge({"CIFBonds", "CIFContext", "Crystal", "CIFContext"}));
+        ASSERT_TRUE(cifBondingNode->setOption("PreventAllBonds", true));
 
         // Set cell
         auto setCellNode = root->createNode("SetCell", "Box");
