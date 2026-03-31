@@ -90,7 +90,6 @@ double Configuration::requestedCellDivisionLength() const { return requestedCell
 
 // Return cell array
 CellArray &Configuration::cells() { return cells_; }
-
 const CellArray &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
