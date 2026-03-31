@@ -31,6 +31,7 @@ NodeConstants::ProcessResult CIFBondingOptionsNode::process()
     context_->setBondingTolerance(bondingTolerance_.asDouble());
     context_->setUseCIFBondingDefinitions(useCIFBondingDefinitions_);
     context_->setPreventMetallicBonds(preventMetallicBonds_);
+    context_->setPreventAllBonds(preventAllBonds_);
 
     return NodeConstants::ProcessResult::Success;
 }

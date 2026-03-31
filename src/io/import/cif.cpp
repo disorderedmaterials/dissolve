@@ -805,6 +805,17 @@ void CIFHandler::setBondingTolerance(double tol)
         generate();
 }
 
+// Set whether to ignore all bonding
+void CIFHandler::setPreventAllBonds(bool b)
+{
+    if (preventAllBonds_ == b)
+        return;
+
+    preventAllBonds_ = b;
+
+    generate();
+}
+
 // Set whether to prevent metallic bonding
 void CIFHandler::setPreventMetallicBonds(bool b)
 {
