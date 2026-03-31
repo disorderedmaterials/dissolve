@@ -64,7 +64,6 @@ tests/epsr/HDO-ReferenceData.q
 tests/epsr/HDO-ReferenceData.r
 tests/data/dissolve/input/TestOutput_*
 tests/data/*restart.txt
-tests/data/*.ANGLE
 
 # Visual Studio
 .vscode/
