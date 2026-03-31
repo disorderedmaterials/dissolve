@@ -177,6 +177,8 @@ class CIFHandler
     bool generate(CIFGenerationStage fromStage = CIFGenerationStage::CreateBasicUnitCell);
     // Return whether the generated data is valid
     bool isValid() const;
+    // Return supercell species
+    const Species &supercellSpecies() const;
     // Return cleaned unit cell species
     const Species &cleanedUnitCellSpecies() const;
     // Return the detected molecular species

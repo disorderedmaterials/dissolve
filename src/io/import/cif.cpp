@@ -886,6 +886,9 @@ bool CIFHandler::isValid() const
     return !molecularSpecies_.empty() || supercellSpecies_.fragment(0).size() != supercellSpecies_.nAtoms();
 }
 
+// Return supercell species
+const Species &CIFHandler::supercellSpecies() const { return supercellSpecies_; }
+
 // Return cleaned unit cell species
 const Species &CIFHandler::cleanedUnitCellSpecies() const { return cleanedUnitCellSpecies_; }
 

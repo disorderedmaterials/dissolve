@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumOptions.h"
 #include "math/matrix4.h"
 #include "sginfo/sginfo.h"
 #include "templates/optionalRef.h"
@@ -551,6 +552,9 @@ enum SpaceGroupId
     SpaceGroup_230,
     nSpaceGroupIds
 };
+// Return enum option info for SpaceGroupID
+EnumOptions<SpaceGroupId> spaceGroupID();
+EnumOptions<SpaceGroupId> getEnumOptions(SpaceGroupId);
 
 // Space Group Symbols
 class SpaceGroupSymbol
