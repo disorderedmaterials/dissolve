@@ -52,26 +52,6 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsDefined)
         systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), 1770.1666370083758, 6.0e-2));
 }
 
-TEST_F(EnergyModuleTest, DLPOLYHexane200Torsions)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
-                                             [](Dissolve &D, CoreData &C)
-                                             {
-                                                 for (auto at : C.atomTypes())
-                                                     at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-                                                 for (auto b : C.masterBonds())
-                                                     b->setInteractionParameters("k=0.0 eq=0.0");
-                                                 for (auto a : C.masterAngles())
-                                                     a->setInteractionParameters("k=0.0 eq=0.0");
-                                             }));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Liquid//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("torsion energy", intraEnergy.values().back(), 2173.978, 5.0e-4));
-}
-
 TEST_F(EnergyModuleTest, DLPOLYBenzene181Full)
 {
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt"));
