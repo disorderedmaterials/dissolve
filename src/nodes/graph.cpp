@@ -6,7 +6,8 @@
 #include "nodes/inputs.h"
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
-#include "species.h"
+#include <algorithm>
+#include <codecvt>
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
@@ -274,4 +275,68 @@ void Graph::deserialise(const SerialisedValue &node)
               child->deserialise(value);
           });
     toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
+}
+
+/*
+ *Mermaid processing code
+ */
+
+// Node types that represent data sources
+static const std::vector<std::string> DATA_NAMES = {"Species", "Configuration", "Data1DImport"};
+// Node types that represent math operations
+static const std::vector<std::string> MATH_NAMES = {"Add", "Subtract", "Multiply", "Dot Product", "Integrator", "Derivative"};
+// Node types that contain subgraphs
+static const std::vector<std::string> GRAPH_NAMES = {"Dissolve", "Graph", "Iterator"};
+
+// Generate random names for the mermaid conversion
+std::string randomName()
+{
+    std::string result(10, ' ');
+    std::ranges::generate(result, []
+                          { return std::string_view("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").at(rand() % 52); });
+    return result;
+}
+
+// Print as mermaid state diagram
+std::string Graph::toMermaid(int depth) const
+{
+    std::string result{}, spacer{};
+    spacer.resize(depth);
+    std::ranges::fill(spacer, ' ');
+    std::map<Node *, std::string> pseudo_names;
+    for (auto &[k, v] : nodes_)
+    {
+        auto name = randomName();
+        pseudo_names[v.get()] = name;
+        if (std::ranges::find(DATA_NAMES, v->type()) != DATA_NAMES.end())
+            result += spacer + std::string("class ") + name + " data\n";
+        else if (std::ranges::find(MATH_NAMES, v->type()) != MATH_NAMES.end())
+            result += spacer + std::string("class ") + name + " math\n";
+        else if (std::ranges::find(GRAPH_NAMES, v->type()) != GRAPH_NAMES.end())
+        {
+            result += spacer + std::string("state ") + name + " {\n";
+            auto casted = dynamic_cast<Graph *>(v.get());
+            if (casted)
+            {
+                result += casted->toMermaid(depth + 4);
+            }
+            result += spacer + "}\n";
+        }
+        result += spacer + name + " : " + std::string(v->name()) + "\n";
+    }
+    for (auto &edge : edges_)
+    {
+        result += spacer + pseudo_names[&edge->sourceNode()] + " --> " + pseudo_names[&edge->targetNode()] + ":" +
+                  edge->sourceOutput().storedDataType().name() + "\n";
+    }
+    return result;
+}
+
+std::ostream &operator<<(std::ostream &stream, const Graph &node)
+{
+    stream << "stateDiagram-v2" << std::endl;
+    stream << "    classDef data fill:#FFD0D0,color:#000000" << std::endl;
+    stream << "    classDef math fill:#D0FFD0,color:#000000" << std::endl;
+    stream << node.toMermaid(4);
+    return stream;
 }
