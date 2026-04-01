@@ -46,7 +46,7 @@ TEST(PairPotentialCutoffTest, ShortRange)
     for (auto cutoff : cutoffs)
     {
         PairPotential::setRange(cutoff, 1.0e-4);
-        auto kernel = testGraph.dissolveGraph()->createForceKernel(cfg);
+        auto kernel = testGraph.createForceKernel(cfg);
         checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
     }
 }
@@ -83,7 +83,7 @@ TEST(PairPotentialCutoffTest, Coulomb)
     for (auto cutoff : cutoffs)
     {
         PairPotential::setRange(cutoff, 1.0e-4);
-        auto kernel = testGraph.dissolveGraph()->createForceKernel(cfg);
+        auto kernel = testGraph.createForceKernel(cfg);
         checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
     }
 }

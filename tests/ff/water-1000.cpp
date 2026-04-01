@@ -29,7 +29,7 @@ TEST(Water1000EnergyTest, Full)
 
     // Get the configuration and create an energy kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.dissolveGraph()->createEnergyKernel(cfg);
+    auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
     auto productionEnergy = checkEnergyConsistency(kernel);
@@ -63,7 +63,7 @@ TEST(Water1000ForceTest, Full)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
@@ -109,7 +109,7 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
 
     // Get the configuration and create an energy kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.dissolveGraph()->createEnergyKernel(cfg);
+    auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
     auto productionEnergy = checkEnergyConsistency(kernel);
@@ -148,7 +148,7 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
@@ -186,7 +186,7 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 
     // Get the configuration and create an energy kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.dissolveGraph()->createEnergyKernel(cfg);
+    auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
     auto productionEnergy = checkEnergyConsistency(kernel);
@@ -222,7 +222,7 @@ TEST(Water1000ForceTest, CoulombOnly)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
@@ -267,7 +267,7 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
