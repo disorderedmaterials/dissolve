@@ -41,7 +41,6 @@ TEST(GRNodeTest, Methods)
     auto rawGRCells = *grNode->getOutputValue<PartialSet *>("RawGR");
     ASSERT_EQ(grNode->versionIndex(), 2);
     ASSERT_TRUE(DissolveSystemTest::checkPartialSet(rawGRBaseline, rawGRCells, 1.0e-8));
-    exportMermaidGraph(data.graphRoot);
 }
 
 TEST(GRNodeTest, Water)
@@ -87,7 +86,6 @@ TEST(GRNodeTest, Water)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
         {"epsr25/water1000-neutron/water.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.5e-2));
-    exportMermaidGraph(data.graphRoot);
 }
 
 TEST(GRNodeTest, WaterMethanol)
@@ -263,7 +261,6 @@ TEST(GRNodeTest, WaterMethanol)
         rawGR->boundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Bound Partial",
         {"epsr25/water300methanol600/watermeth.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 42}, 1.0e-5,
         Error::ErrorType::RMSEError));
-    exportMermaidGraph(data.graphRoot);
 }
 
 TEST(GRNodeTest, Benzene)
@@ -309,7 +306,6 @@ TEST(GRNodeTest, Benzene)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         rawGR->boundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Bound Partial",
         {"epsr25/benzene200-neutron/benzene.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 9.0e-2));
-    exportMermaidGraph(data.graphRoot);
 }
 
 } // namespace UnitTest

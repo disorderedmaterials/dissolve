@@ -24,7 +24,8 @@ namespace UnitTest
 class TestGraph : public DissolveGraph
 {
     public:
-    TestGraph() : dissolve(coreData), DissolveGraph(dissolve) { Node::echo_ = true; }
+    TestGraph() : DissolveGraph(dissolve), dissolve(coreData) { Node::echo_ = true; }
+    ~TestGraph() { exportMermaidGraph(); }
     CoreData coreData;
     Dissolve dissolve;
 
@@ -173,8 +174,28 @@ class TestGraph : public DissolveGraph
                 "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
             EXPECT_TRUE(addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
         }
-
         return xRaySQNode;
     }
+
+    /*
+     * Utility Functions
+     */
+    public:
+    // Save the specified graph in Mermaid format to a file named after the unit test
+    static void exportMermaidGraph(Graph &graph, std::optional<std::string> context = {})
+    {
+        auto suite = ::testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
+        auto name = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::string filename = std::format("{}-{}.mermaid", suite, name);
+        if (context)
+            filename = std::format("{}-{}-{}.mermaid", suite, name, filename);
+
+        std::ofstream myfile;
+        myfile.open(filename);
+        myfile << graph;
+        myfile.close();
+    }
+    // Save the current graph in Mermaid format to a file named after the unit test
+    void exportMermaidGraph(std::optional<std::string> context = {}) { exportMermaidGraph(*this, context); }
 };
 } // namespace UnitTest
