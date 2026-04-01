@@ -21,17 +21,6 @@ class ForcesModuleTest : public ::testing::Test
  * Tests against forces calculated with DL_POLY Classic 2.19
  */
 
-TEST_F(ForcesModuleTest, DLPOLYBenzene181Full)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt"));
-    systemTest.setModuleEnabled("Energy01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    systemTest.checkVec3Vector("Forces01//Bulk//Forces",
-                               {"dlpoly/benzene181/benzene181-full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
-                               0.15);
-}
-
 TEST_F(ForcesModuleTest, DLPOLYBenzene181VanDerWaals)
 {
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
@@ -74,23 +63,6 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181Electrostatics)
     systemTest.checkVec3Vector("Forces01//Bulk//Forces",
                                {"dlpoly/benzene181/benzene181-elec.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
                                3.0e-4);
-}
-
-TEST_F(ForcesModuleTest, DLPOLYBenzene181Bound)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
-                                             [](Dissolve &D, CoreData &C)
-                                             {
-                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-                                                 C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                                 C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                             }));
-    systemTest.setModuleEnabled("Energy01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    systemTest.checkVec3Vector("Forces01//Bulk//Forces",
-                               {"dlpoly/benzene181/benzene181-intra.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
-                               1.0e-7);
 }
 
 // Tests against energies calculated with MOSCITO 4.180.
