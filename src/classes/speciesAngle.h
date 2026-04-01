@@ -80,7 +80,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node, Species *);
 };
 
 // MasterAngle Definition

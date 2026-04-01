@@ -490,22 +490,22 @@ void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
-void SpeciesAtom::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesAtom::deserialise(const SerialisedValue &node, Species *parent)
 {
     index_ = toml::find<int>(node, "index") - 1;
 
     set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "charge", 0));
 
     Serialisable::optionalOn(node, "type",
-                             [this, &coreData](const auto node)
+                             [&](const auto node)
                              {
                                  if (Z_ == Elements::Unknown)
                                      return;
                                  std::string name = toml::get<std::string>(node);
-                                 atomType_ = coreData.findAtomType(name);
+                                 atomType_ = parent->findAtomType(name);
                                  if (atomType_ == nullptr)
                                  {
-                                     atomType_ = coreData.addAtomType(Z_);
+                                     atomType_ = parent->addAtomType(Z_);
                                      atomType_->setName(name);
                                  }
                              });

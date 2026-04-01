@@ -305,7 +305,7 @@ void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
         angle["k"] = k_->userIndex();
 }
 // This method populates the object's members with values read from an 'angle' TOML node
-void SpeciesAngle::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesAngle::deserialise(const SerialisedValue &node, Species *parent)
 {
-    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterAngle(form); });
+    deserialiseForm(node, [parent](auto &form) { return parent->getMasterAngle(form); });
 }

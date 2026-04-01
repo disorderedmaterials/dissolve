@@ -20,7 +20,7 @@
 class Forcefield;
 
 // Species Definition
-class Species : public Serialisable<const CoreData &>
+class Species : public Serialisable<>
 {
     public:
     Species(std::string name = "Unnamed");
@@ -73,7 +73,7 @@ class Species : public Serialisable<const CoreData &>
     // Add new atom type to atom types
     const std::shared_ptr<AtomType> addAtomType(Elements::Element Z, std::string_view name = "");
     // Find and return the named atom type
-    AtomType *findAtomType(std::string_view name) const;
+    std::shared_ptr<AtomType> findAtomType(std::string_view name) const;
     // Remove the specified atom from the species
     void removeAtom(int index);
     // Remove set of atom indices
@@ -243,6 +243,69 @@ class Species : public Serialisable<const CoreData &>
     void reduceToMasterTerms(CoreData &coreData, bool selectionOnly = false);
 
     /*
+     * Master Terms
+     */
+    private:
+    // Master bond parameters for Species
+    std::vector<std::shared_ptr<MasterBond>> masterBonds_;
+    // Master angles parameters for Species
+    std::vector<std::shared_ptr<MasterAngle>> masterAngles_;
+    // Master torsions parameters for Species
+    std::vector<std::shared_ptr<MasterTorsion>> masterTorsions_;
+    // Master improper parameters for Species
+    std::vector<std::shared_ptr<MasterImproper>> masterImpropers_;
+
+    public:
+    // Add new master bond
+    MasterBond &addMasterBond(std::string_view name, std::optional<int> insertAtIndex = {});
+    // Remove specified master bond
+    void removeMasterBond(const std::shared_ptr<MasterBond> &bond);
+    // Return number of defined master bonds
+    int nMasterBonds() const;
+    // Return vector of master bonds
+    std::vector<std::shared_ptr<MasterBond>> &masterBonds();
+    const std::vector<std::shared_ptr<MasterBond>> &masterBonds() const;
+    // Return whether named master bond exists
+    OptionalReferenceWrapper<MasterBond> getMasterBond(std::string_view name);
+    OptionalReferenceWrapper<const MasterBond> getMasterBond(std::string_view name) const;
+    // Add new master angle
+    MasterAngle &addMasterAngle(std::string_view name);
+    // Remove specified master angle
+    void removeMasterAngle(const std::shared_ptr<MasterAngle> &angle);
+    // Return number of defined master angles
+    int nMasterAngles() const;
+    // Return vector of master angles
+    std::vector<std::shared_ptr<MasterAngle>> &masterAngles();
+    const std::vector<std::shared_ptr<MasterAngle>> &masterAngles() const;
+    // Return whether named master angle exists
+    OptionalReferenceWrapper<MasterAngle> getMasterAngle(std::string_view name);
+    OptionalReferenceWrapper<const MasterAngle> getMasterAngle(std::string_view name) const;
+    // Add new master torsion
+    MasterTorsion &addMasterTorsion(std::string_view name);
+    // Remove specified master torsion
+    void removeMasterTorsion(const std::shared_ptr<MasterTorsion> &torsion);
+    // Return number of defined master torsions
+    int nMasterTorsions() const;
+    // Return vector of master torsions
+    std::vector<std::shared_ptr<MasterTorsion>> &masterTorsions();
+    const std::vector<std::shared_ptr<MasterTorsion>> &masterTorsions() const;
+    // Return whether named master torsion exists
+    OptionalReferenceWrapper<MasterTorsion> getMasterTorsion(std::string_view name);
+    OptionalReferenceWrapper<const MasterTorsion> getMasterTorsion(std::string_view name) const;
+    // Add new master improper
+    MasterImproper &addMasterImproper(std::string_view name);
+    // Remove specified master impropers
+    void removeMasterImproper(const std::shared_ptr<MasterImproper> &improper);
+    // Return number of defined master impropers
+    int nMasterImpropers() const;
+    // Return list of master impropers
+    std::vector<std::shared_ptr<MasterImproper>> &masterImpropers();
+    const std::vector<std::shared_ptr<MasterImproper>> &masterImpropers() const;
+    // Return whether named master improper exists
+    OptionalReferenceWrapper<MasterImproper> getMasterImproper(std::string_view name);
+    OptionalReferenceWrapper<const MasterImproper> getMasterImproper(std::string_view name) const;
+
+    /*
      * Box Definition (if any)
      */
     private:
@@ -368,5 +431,5 @@ class Species : public Serialisable<const CoreData &>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node);
 };

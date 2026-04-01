@@ -16,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // Base class for intramolecular interactions within Species
-template <class Intra, class Functions> class SpeciesIntra : public Serialisable<>
+template <class Intra, class Functions> class SpeciesIntra : public Serialisable<Species *>
 {
     public:
     explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form) {};
@@ -199,7 +199,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     }
 
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node, Species *) override
     {
         Serialisable::optionalOn(node, "form",
                                  [this](const auto node)

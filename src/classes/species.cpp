@@ -259,58 +259,62 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
     Serialisable::fromVector<>(angles_, "angles", result);
     Serialisable::fromVector<>(torsions_, "torsions", result);
     Serialisable::fromVector<>(impropers_, "impropers", result);
+    Serialisable::fromVectorToTable(atomTypes_, "atomTypes", result);
     Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
     Serialisable::fromVectorToTable<>(sites_, "sites", result);
 }
 
 // Read values from a serialisable value
-void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
+void Species::deserialise(const SerialisedValue &node)
 {
-    Serialisable::toVector(node, "atoms", [this, &coreData](const SerialisedValue &atom)
-                           { atoms_.emplace_back().deserialise(atom, coreData); });
+    Serialisable::toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
+          { atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
+
+    Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom)
+                           { atoms_.emplace_back().deserialise(atom, this); });
 
     Serialisable::toVector(
         node, "bonds",
-        [this, &coreData](const SerialisedValue &bond)
+        [this](const SerialisedValue &bond)
         {
             bonds_.emplace_back(&atoms_.at(toml::find<int>(bond, "i") - 1), &atoms_.at(toml::find<int>(bond, "j") - 1))
-                .deserialise(bond, coreData);
+                .deserialise(bond, this);
         });
     Serialisable::toVector(node, "angles",
-                           [this, &coreData](const SerialisedValue &angle)
+                           [this](const SerialisedValue &angle)
                            {
                                angles_
                                    .emplace_back(&atoms_.at(toml::find<int>(angle, "i") - 1),
                                                  &atoms_.at(toml::find<int>(angle, "j") - 1),
                                                  &atoms_.at(toml::find<int>(angle, "k") - 1))
-                                   .deserialise(angle, coreData);
+                                   .deserialise(angle, this);
                            });
     Serialisable::toVector(
         node, "impropers",
-        [this, &coreData](const SerialisedValue &improper)
+        [this](const SerialisedValue &improper)
         {
             impropers_
                 .emplace_back(&atoms_.at(toml::find<int>(improper, "i") - 1), &atoms_.at(toml::find<int>(improper, "j") - 1),
                               &atoms_.at(toml::find<int>(improper, "k") - 1), &atoms_.at(toml::find<int>(improper, "l") - 1))
-                .deserialise(improper, coreData);
+                .deserialise(improper, this);
         });
     Serialisable::toVector(
         node, "torsions",
-        [this, &coreData](const SerialisedValue &torsion)
+        [this](const SerialisedValue &torsion)
         {
             torsions_
                 .emplace_back(&atoms_.at(toml::find<int>(torsion, "i") - 1), &atoms_.at(toml::find<int>(torsion, "j") - 1),
                               &atoms_.at(toml::find<int>(torsion, "k") - 1), &atoms_.at(toml::find<int>(torsion, "l") - 1))
-                .deserialise(torsion, coreData);
+                .deserialise(torsion, this);
         });
 
     Serialisable::toMap(node, "isotopologues",
-                        [this, &coreData](const std::string &name, const SerialisedValue &iso)
+                        [this](const std::string &name, const SerialisedValue &iso)
                         {
                             isotopologues_.emplace_back(std::make_unique<Isotopologue>())->setName(name);
-                            isotopologues_.back()->deserialise(iso, coreData);
+                            isotopologues_.back()->deserialise(iso, this);
                         });
 
-    Serialisable::toMap(node, "sites", [this, &coreData](const std::string &name, const SerialisedValue &site)
-                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site, coreData); });
+    Serialisable::toMap(node, "sites", [this](const std::string &name, const SerialisedValue &site)
+                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site, this); });
 }

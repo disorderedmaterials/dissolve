@@ -8,20 +8,20 @@
 #include "data/elements.h"
 #include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include <map>
 #include <memory>
 #include <vector>
 
 // Forward Declarations
 class AtomType;
 class CoreData;
+class Species;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Serialisable<CoreData &>
+class SpeciesAtom : public Serialisable<Species *>
 {
     public:
     SpeciesAtom() = default;
@@ -216,5 +216,5 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData) override;
+    void deserialise(const SerialisedValue &node, Species *parent) override;
 };
