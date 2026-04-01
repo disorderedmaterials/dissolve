@@ -149,5 +149,10 @@ TEST_F(HexaneForcefieldTest, Forces200)
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
                                    {"dlpoly/hexane200/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.2);
+
+    // Check agreement with external reference total bound forces only
+    std::ranges::fill(pairPotentialForces, Vector3());
+    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                   {"dlpoly/hexane200/bound.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.0e-7);
 }
 } // namespace UnitTest

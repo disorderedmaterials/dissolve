@@ -52,38 +52,6 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsDefined)
         systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), 1770.1666370083758, 6.0e-2));
 }
 
-TEST_F(EnergyModuleTest, DLPOLYHexane200Full)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane200.txt"));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Full interatomic energy:  LJ (-5124.720) + Coul (2020.063) - LJ correct (-200.732)
-    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Liquid//PairPotential");
-    EXPECT_TRUE(systemTest.checkDouble("interatomic energy", interEnergy.values().back(), -2903.925, 5.0e-2));
-
-    // Full intramolecular energy
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Liquid//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("intramolecular energy", intraEnergy.values().back(), 11488.122, 6.0e-4));
-}
-
-TEST_F(EnergyModuleTest, DLPOLYHexane200Bound)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
-                                             [](Dissolve &D, CoreData &C)
-                                             {
-                                                 for (auto at : C.atomTypes())
-                                                     at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-                                             }));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Full intramolecular energy
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Liquid//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("intramolecular energy", intraEnergy.values().back(), 11488.122, 6.0e-4));
-}
-
 TEST_F(EnergyModuleTest, DLPOLYHexane200Torsions)
 {
     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
