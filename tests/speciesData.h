@@ -281,17 +281,17 @@ inline std::unique_ptr<SpeciesNode> createBenzene()
 
     // Add atoms
     species->addAtom(Elements::Element::C, {-1.203775, 0.695, 0.0}, -0.115, CA);
-    species->addAtom(Elements::Element::H, {-2.069801, 1.195, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::H, {-2.069801, 1.195, 0.0}, 0.115, HA);
     species->addAtom(Elements::Element::C, {-0.000000, 1.390, 0.0}, -0.115, CA);
-    species->addAtom(Elements::Element::H, {-0.000000, 2.390, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::H, {-0.000000, 2.390, 0.0}, 0.115, HA);
     species->addAtom(Elements::Element::C, {1.203775, 0.695, 0.0}, -0.115, CA);
-    species->addAtom(Elements::Element::H, {2.069801, 1.195, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::H, {2.069801, 1.195, 0.0}, 0.115, HA);
     species->addAtom(Elements::Element::C, {1.203775, -0.695, 0.0}, -0.115, CA);
-    species->addAtom(Elements::Element::H, {2.069801, -1.195, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::H, {2.069801, -1.195, 0.0}, 0.115, HA);
     species->addAtom(Elements::Element::C, {-0.000000, -1.390, 0.0}, -0.115, CA);
-    species->addAtom(Elements::Element::H, {-0.000000, -2.390, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::H, {-0.000000, -2.390, 0.0}, 0.115, HA);
     species->addAtom(Elements::Element::C, {-1.203775, -0.695, 0.0}, -0.115, CA);
-    species->addAtom(Elements::Element::H, {-2.069801, -1.195, 0.0}, -0.115, HA);
+    species->addAtom(Elements::Element::H, {-2.069801, -1.195, 0.0}, 0.115, HA);
 
     // Add intramolecular terms
     for (auto i = 0; i < 12; i += 2)
@@ -311,8 +311,12 @@ inline std::unique_ptr<SpeciesNode> createBenzene()
         // H-C-C-H torsion: (i+1, i, i+2, i+3)
         species->addTorsion(i + 1, i, DissolveMath::wrap(i + 2, 0, 11), DissolveMath::wrap(i + 3, 0, 11))
             .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
-        // H-C-C-C torsion: (i+1, i, i+2, i+4)
+        // H-C-C-C torsions: (i+1, i, i+2, i+4) and (i, i+2, i+4, i+5)
         species->addTorsion(i + 1, i, DissolveMath::wrap(i + 2, 0, 11), DissolveMath::wrap(i + 4, 0, 11))
+            .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
+        species
+            ->addTorsion(i, DissolveMath::wrap(i + 2, 0, 11), DissolveMath::wrap(i + 4, 0, 11),
+                         DissolveMath::wrap(i + 5, 0, 11))
             .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.334 k3=0.0");
         // C-C-C-C torsion: (i, i+2, i+4, i+6)
         species
