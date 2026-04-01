@@ -19,7 +19,7 @@ class CIFNodeTest : public ::testing::Test
     ~CIFNodeTest() = default;
 
     protected:
-    GraphTestData testData_;
+    TestGraph testGraph_;
     const std::string delimiter_{".cif"};
     const std::string path_{"cif/"};
 
@@ -30,18 +30,18 @@ class CIFNodeTest : public ::testing::Test
     void createGraph(std::string filename)
     {
         auto name = cifNameFromFile(filename);
-        auto loaderNode = testData_.graphRoot.createNode("CIFLoader", name);
+        auto loaderNode = testGraph_.createNode("CIFLoader", name);
         loaderNode->setOption("FilePath", path_ + filename);
-        auto bondingNode = testData_.graphRoot.createNode("CIFBondingOptions", name + "//BondingOptions");
-        auto removeAtomicNode = testData_.graphRoot.createNode("CIFRemoveAtomic", name + "//RemoveAtomic");
-        auto removeWaterNode = testData_.graphRoot.createNode("CIFRemoveWater", name + "//RemoveWater");
-        auto structureCleanupNode = testData_.graphRoot.createNode("CIFStructureCleanup", name + "//StructureCleanup");
-        auto molecularSpeciesNode = testData_.graphRoot.createNode("CIFMolecularSpecies", name + "//MolecularSpecies");
-        testData_.graphRoot.addEdge({name, "CIFContext", name + "//BondingOptions", "CIFContext"});
-        testData_.graphRoot.addEdge({name + "//BondingOptions", "CIFContext", name + "//RemoveAtomic", "CIFContext"});
-        testData_.graphRoot.addEdge({name + "//RemoveAtomic", "CIFContext", name + "//RemoveWater", "CIFContext"});
-        testData_.graphRoot.addEdge({name + "//RemoveWater", "CIFContext", name + "//StructureCleanup", "CIFContext"});
-        testData_.graphRoot.addEdge({name + "//StructureCleanup", "CIFContext", name + "//MolecularSpecies", "CIFContext"});
+        auto bondingNode = testGraph_.createNode("CIFBondingOptions", name + "//BondingOptions");
+        auto removeAtomicNode = testGraph_.createNode("CIFRemoveAtomic", name + "//RemoveAtomic");
+        auto removeWaterNode = testGraph_.createNode("CIFRemoveWater", name + "//RemoveWater");
+        auto structureCleanupNode = testGraph_.createNode("CIFStructureCleanup", name + "//StructureCleanup");
+        auto molecularSpeciesNode = testGraph_.createNode("CIFMolecularSpecies", name + "//MolecularSpecies");
+        testGraph_.addEdge({name, "CIFContext", name + "//BondingOptions", "CIFContext"});
+        testGraph_.addEdge({name + "//BondingOptions", "CIFContext", name + "//RemoveAtomic", "CIFContext"});
+        testGraph_.addEdge({name + "//RemoveAtomic", "CIFContext", name + "//RemoveWater", "CIFContext"});
+        testGraph_.addEdge({name + "//RemoveWater", "CIFContext", name + "//StructureCleanup", "CIFContext"});
+        testGraph_.addEdge({name + "//StructureCleanup", "CIFContext", name + "//MolecularSpecies", "CIFContext"});
     }
     // Determine CIF node name from filename
     std::string cifNameFromFile(std::string filename)
@@ -53,7 +53,7 @@ class CIFNodeTest : public ::testing::Test
     CIFLoaderNode::CIFContext *getContextByFileName(std::string filename)
     {
         auto name = cifNameFromFile(filename);
-        auto node = testData_.graphRoot.findNode(name);
+        auto node = testGraph_.findNode(name);
         auto context = node->getOutputValue<CIFLoaderNode::CIFContext *>("CIFContext");
         return context;
     }
@@ -110,7 +110,7 @@ TEST_F(CIFNodeTest, Parse)
     for (auto &cif : cifs)
     {
         createGraph(cif);
-        ASSERT_EQ(testData_.graphRoot.findNode(cifNameFromFile(cif))->run(), NodeConstants::ProcessResult::Success);
+        ASSERT_EQ(testGraph_.findNode(cifNameFromFile(cif))->run(), NodeConstants::ProcessResult::Success);
     }
 }
 
@@ -119,7 +119,7 @@ TEST_F(CIFNodeTest, NaCl)
     // Load the CIF file
     auto cif = "NaCl-1000041.cif";
     createGraph(cif);
-    auto loaderNode = testData_.graphRoot.findNode(cifNameFromFile(cif));
+    auto loaderNode = testGraph_.findNode(cifNameFromFile(cif));
     ASSERT_EQ(loaderNode->run(), NodeConstants::ProcessResult::Success);
 
     auto cifContext = getContextByFileName(cif);
@@ -127,7 +127,7 @@ TEST_F(CIFNodeTest, NaCl)
     EXPECT_TRUE(cifContext->generate());
 
     // Check basic info
-    auto molecularSpeciesNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//MolecularSpecies");
+    auto molecularSpeciesNode = testGraph_.findNode(cifNameFromFile(cif) + "//MolecularSpecies");
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
 
     EXPECT_EQ(cifContext->spaceGroup(), SpaceGroups::SpaceGroup_225);
@@ -138,9 +138,9 @@ TEST_F(CIFNodeTest, NaCl)
     EXPECT_EQ(molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies").size(), 0);
 
     // Get molecular species
-    auto bondingNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//BondingOptions");
+    auto bondingNode = testGraph_.findNode(cifNameFromFile(cif) + "//BondingOptions");
     bondingNode->setOption("UseCIFBondingDefinitions", true);
-    testData_.graphRoot.setUpdateRequired();
+    testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
 
     auto molecularSpecies = molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies");
@@ -156,7 +156,7 @@ TEST_F(CIFNodeTest, NaCl)
 
     // 2x2x2 supercell
     molecularSpeciesNode->setOption<Vector3i>("SuperCellRepeat", {2, 2, 2});
-    testData_.graphRoot.setUpdateRequired();
+    testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
     testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration"), {A * 2, A * 2, A * 2},
             {90, 90, 90}, 8 * 8);
@@ -167,14 +167,14 @@ TEST_F(CIFNodeTest, NaClO3)
     // Load the CIF file
     auto cif = "NaClO3-1010057.cif";
     createGraph(cif);
-    ASSERT_EQ(testData_.graphRoot.findNode(cifNameFromFile(cif))->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph_.findNode(cifNameFromFile(cif))->run(), NodeConstants::ProcessResult::Success);
 
     auto cifContext = getContextByFileName(cif);
     ASSERT_TRUE(cifContext);
     EXPECT_TRUE(cifContext->generate());
 
     // Check basic info
-    auto molecularSpeciesNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//MolecularSpecies");
+    auto molecularSpeciesNode = testGraph_.findNode(cifNameFromFile(cif) + "//MolecularSpecies");
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
 
     EXPECT_EQ(cifContext->spaceGroup(), SpaceGroups::SpaceGroup_198);
@@ -183,9 +183,9 @@ TEST_F(CIFNodeTest, NaClO3)
 
     // Turn off automatic bond calculation - there are no bonding defs in the CIF, so we expect species for each atomic
     // component (4 Na, 4 Cl, and 12 O)
-    auto bondingNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//BondingOptions");
+    auto bondingNode = testGraph_.findNode(cifNameFromFile(cif) + "//BondingOptions");
     bondingNode->setOption("UseCIFBondingDefinitions", true);
-    testData_.graphRoot.setUpdateRequired();
+    testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
 
     auto cifMolsA = molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies");
@@ -196,7 +196,7 @@ TEST_F(CIFNodeTest, NaClO3)
 
     // Calculate bonding ourselves to get the correct species
     bondingNode->setOption("UseCIFBondingDefinitions", false);
-    testData_.graphRoot.setUpdateRequired();
+    testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
     auto cifMolsB = molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies");
     ASSERT_EQ(cifMolsB.size(), 2);
@@ -209,14 +209,14 @@ TEST_F(CIFNodeTest, CuBTC)
     // Load the CIF file
     auto cif = "CuBTC-7108574.cif";
     createGraph(cif);
-    ASSERT_EQ(testData_.graphRoot.findNode(cifNameFromFile(cif))->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph_.findNode(cifNameFromFile(cif))->run(), NodeConstants::ProcessResult::Success);
 
     auto cifContext = getContextByFileName(cif);
     ASSERT_TRUE(cifContext);
     EXPECT_TRUE(cifContext->generate());
 
     // Check basic info
-    auto molecularSpeciesNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//MolecularSpecies");
+    auto molecularSpeciesNode = testGraph_.findNode(cifNameFromFile(cif) + "//MolecularSpecies");
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
 
     EXPECT_EQ(cifContext->spaceGroup(), SpaceGroups::SpaceGroup_225);
@@ -240,29 +240,27 @@ TEST_F(CIFNodeTest, CuBTC)
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaNH2 = cellFormulaH;
     cellFormulaNH2[Elements::N] = 6 * N;
     cellFormulaNH2[Elements::H] *= 2;
-    auto atomGroupA1 = testData_.graphRoot.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupA1");
+    auto atomGroupA1 = testGraph_.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupA1");
     atomGroupA1->setOption("Assembly", std::string("A"));
     atomGroupA1->setOption("AtomGroup", std::string("1"));
     atomGroupA1->setOption("SetActive", false);
-    auto atomGroupB2 = testData_.graphRoot.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupB2");
+    auto atomGroupB2 = testGraph_.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupB2");
     atomGroupB2->setOption("Assembly", std::string("B"));
     atomGroupB2->setOption("AtomGroup", std::string("2"));
     atomGroupB2->setOption("SetActive", true);
-    auto atomGroupC2 = testData_.graphRoot.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupC2");
+    auto atomGroupC2 = testGraph_.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupC2");
     atomGroupC2->setOption("Assembly", std::string("C"));
     atomGroupC2->setOption("AtomGroup", std::string("2"));
     atomGroupC2->setOption("SetActive", true);
-    testData_.graphRoot.removeEdge(
+    testGraph_.removeEdge(
         {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", std::string(molecularSpeciesNode->name()), "CIFContext"});
-    testData_.graphRoot.addEdge(
+    testGraph_.addEdge(
         {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", std::string(atomGroupA1->name()), "CIFContext"});
-    testData_.graphRoot.addEdge(
-        {std::string(atomGroupA1->name()), "CIFContext", std::string(atomGroupB2->name()), "CIFContext"});
-    testData_.graphRoot.addEdge(
-        {std::string(atomGroupB2->name()), "CIFContext", std::string(atomGroupC2->name()), "CIFContext"});
-    testData_.graphRoot.addEdge(
+    testGraph_.addEdge({std::string(atomGroupA1->name()), "CIFContext", std::string(atomGroupB2->name()), "CIFContext"});
+    testGraph_.addEdge({std::string(atomGroupB2->name()), "CIFContext", std::string(atomGroupC2->name()), "CIFContext"});
+    testGraph_.addEdge(
         {std::string(atomGroupC2->name()), "CIFContext", std::string(molecularSpeciesNode->name()), "CIFContext"});
-    testData_.graphRoot.setUpdateRequired();
+    testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(
         EmpiricalFormula::formula(molecularSpeciesNode->getOutputValue<Configuration *>("SuperCellConfiguration")->atoms(),
@@ -270,9 +268,9 @@ TEST_F(CIFNodeTest, CuBTC)
         EmpiricalFormula::formula(cellFormulaNH2));
 
     // Remove those free oxygens so we just have a framework
-    auto removeAtomicsNode = testData_.graphRoot.findNode(cifNameFromFile(cif) + "//RemoveAtomic");
+    auto removeAtomicsNode = testGraph_.findNode(cifNameFromFile(cif) + "//RemoveAtomic");
     removeAtomicsNode->setOption("RemoveAtomics", true);
-    testData_.graphRoot.setUpdateRequired();
+    testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
     auto cifMolsB = molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies");
     EXPECT_EQ(cifMolsB.size(), 0);
@@ -286,13 +284,13 @@ TEST_F(CIFNodeTest, MoleculeOrdering)
     {
         // Load the CIF file
         createGraph(cifFile);
-        ASSERT_EQ(testData_.graphRoot.findNode(cifNameFromFile(cifFile))->run(), NodeConstants::ProcessResult::Success);
+        ASSERT_EQ(testGraph_.findNode(cifNameFromFile(cifFile))->run(), NodeConstants::ProcessResult::Success);
 
         auto cifContext = getContextByFileName(cifFile);
         ASSERT_TRUE(cifContext);
         EXPECT_TRUE(cifContext->generate());
 
-        auto molecularSpeciesNode = testData_.graphRoot.findNode(cifNameFromFile(cifFile) + "//MolecularSpecies");
+        auto molecularSpeciesNode = testGraph_.findNode(cifNameFromFile(cifFile) + "//MolecularSpecies");
         ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
 
         auto molecularSpecies =
@@ -313,13 +311,13 @@ TEST_F(CIFNodeTest, BigMoleculeOrdering)
 {
     const auto cifFile = "Bisphen_n_arenes_1517789.cif";
     createGraph(cifFile);
-    ASSERT_EQ(testData_.graphRoot.findNode(cifNameFromFile(cifFile))->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph_.findNode(cifNameFromFile(cifFile))->run(), NodeConstants::ProcessResult::Success);
 
     auto cifContext = getContextByFileName(cifFile);
     ASSERT_TRUE(cifContext);
     EXPECT_TRUE(cifContext->generate());
 
-    auto molecularSpeciesNode = testData_.graphRoot.findNode(cifNameFromFile(cifFile) + "//MolecularSpecies");
+    auto molecularSpeciesNode = testGraph_.findNode(cifNameFromFile(cifFile) + "//MolecularSpecies");
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
 
     auto molecularSpecies = molecularSpeciesNode->getOutputValue<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies");
