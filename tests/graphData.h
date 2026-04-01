@@ -34,9 +34,9 @@ class TestGraph : public DissolveGraph
     public:
     // Create basic configuration graph, returning the last node
     Node *createConfiguration(std::string name,
-                                     const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
-                                     double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
-                                     InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
+                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
+                              double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
+                              InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
         // Create configuration and SetCell nodes
         auto lastNode = createNode("Configuration", name);
@@ -107,9 +107,9 @@ class TestGraph : public DissolveGraph
     }
     // Create a NeutronSQ node with optional reference data
     NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
-                                          const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
-                                          const Exchangeables &exchangeables = {},
-                                          Data1DImportFileFormat referenceData = Data1DImportFileFormat())
+                                   const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
+                                   const Exchangeables &exchangeables = {},
+                                   Data1DImportFileFormat referenceData = Data1DImportFileFormat())
     {
         // Construct the isotopologue set
         IsotopologueSet isotopologueSet;
@@ -156,8 +156,7 @@ class TestGraph : public DissolveGraph
         return neutronSQNode;
     }
     // Create an XRaySQ node with optional reference data
-    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name,
-                                    Data1DImportFileFormat referenceData = Data1DImportFileFormat())
+    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, Data1DImportFileFormat referenceData = Data1DImportFileFormat())
     {
         auto xRaySQNode = dynamic_cast<XRaySQNode *>(createNode("XRaySQ", name));
         EXPECT_TRUE(xRaySQNode);
