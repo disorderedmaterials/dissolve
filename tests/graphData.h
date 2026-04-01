@@ -32,21 +32,13 @@ class TestGraph : public DissolveGraph
     /*
      * Graph Creation Helpers
      */
-    public:
-    // Create basic configuration graph, returning the last node
-    Node *createConfiguration(std::string name,
-                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
-                              double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
-                              InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
+    private:
+    // Create species insertion node chain
+    Node *insertSpecies(Node *lastNode,
+                        const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species, double rho,
+                        Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
+                        InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
-        // Create configuration and SetCell nodes
-        auto lastNode = createNode("Configuration", name);
-        EXPECT_TRUE(lastNode);
-        lastNode = createNode("SetCell");
-        EXPECT_TRUE(lastNode);
-        EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
-
-        // Add Species and Insert nodes
         for (auto &[speciesCreator, population] : species)
         {
             // Create the species node and get the species pointer
@@ -71,6 +63,42 @@ class TestGraph : public DissolveGraph
         }
 
         return lastNode;
+    }
+
+    public:
+    // Create basic configuration graph, returning the last node
+    Node *createConfiguration(std::string name,
+                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
+                              double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
+    {
+        // Create configuration and SetCell nodes
+        auto lastNode = createNode("Configuration", name);
+        EXPECT_TRUE(lastNode);
+        lastNode = createNode("SetCell");
+        EXPECT_TRUE(lastNode);
+        EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
+
+        // Add Species and Insert nodes
+        return insertSpecies(lastNode, species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
+    }
+
+    // Create basic configuration graph, returning the last node
+    Node *createConfiguration(std::string name,
+                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
+                              const Vector3 &cellLengths, const Vector3 &cellAngles = {90.0, 90.0, 90.0})
+    {
+        // Create configuration and SetCell nodes
+        auto lastNode = createNode("Configuration", name);
+        EXPECT_TRUE(lastNode);
+        lastNode = createNode("SetCell");
+        lastNode->setOption<Vector3>("Lengths", cellLengths);
+        lastNode->setOption<Vector3>("Angles", cellAngles);
+        EXPECT_TRUE(lastNode);
+        EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
+
+        // Add Species and Insert nodes
+        return insertSpecies(lastNode, species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
+                             InsertNode::BoxActionStyle::None);
     }
     // Append an import coordinates node
     Node *appendImportCoordinates(Node *lastNode, CoordinateImportFileFormat fileFormat)
