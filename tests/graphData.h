@@ -33,7 +33,7 @@ class TestGraph : public DissolveGraph
      */
     public:
     // Create basic configuration graph, returning the last node
-    inline Node *createConfiguration(std::string name,
+    Node *createConfiguration(std::string name,
                                      const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
                                      double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
                                      InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
@@ -72,7 +72,7 @@ class TestGraph : public DissolveGraph
         return lastNode;
     }
     // Append an import coordinates node
-    inline Node *appendImportCoordinates(Node *lastNode, CoordinateImportFileFormat fileFormat)
+    Node *appendImportCoordinates(Node *lastNode, CoordinateImportFileFormat fileFormat)
     {
         auto importCoordinates = createNode("ImportConfigurationCoordinates");
         EXPECT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(fileFormat.filename())));
@@ -86,7 +86,7 @@ class TestGraph : public DissolveGraph
     }
 
     // Append GR and SQ nodes
-    inline std::pair<GRNode *, SQNode *> appendGRSQ(Node *lastNode, bool noAveraging = false, bool noIntraBroadening = false)
+    std::pair<GRNode *, SQNode *> appendGRSQ(Node *lastNode, bool noAveraging = false, bool noIntraBroadening = false)
     {
         // Create and setup the GR node
         auto grNode = dynamic_cast<GRNode *>(createNode("GR"));
@@ -106,7 +106,7 @@ class TestGraph : public DissolveGraph
         return {grNode, sqNode};
     }
     // Create a NeutronSQ node with optional reference data
-    inline NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
+    NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
                                           const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
                                           const Exchangeables &exchangeables = {},
                                           Data1DImportFileFormat referenceData = Data1DImportFileFormat())
@@ -156,7 +156,7 @@ class TestGraph : public DissolveGraph
         return neutronSQNode;
     }
     // Create an XRaySQ node with optional reference data
-    inline XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name,
+    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name,
                                     Data1DImportFileFormat referenceData = Data1DImportFileFormat())
     {
         auto xRaySQNode = dynamic_cast<XRaySQNode *>(createNode("XRaySQ", name));
