@@ -12,10 +12,10 @@ namespace UnitTest
 TEST(Water1000EnergyTest, Full)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -29,7 +29,7 @@ TEST(Water1000EnergyTest, Full)
 
     // Get the configuration and create an energy kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
+    auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
     auto productionEnergy = checkEnergyConsistency(kernel);
@@ -46,10 +46,10 @@ TEST(Water1000EnergyTest, Full)
 TEST(Water1000ForceTest, Full)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/full.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -63,7 +63,7 @@ TEST(Water1000ForceTest, Full)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
@@ -82,10 +82,10 @@ TEST(Water1000ForceTest, Full)
 TEST(Water1000EnergyTest, ShortRangeOnly)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -95,7 +95,7 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto hw = waterNode->species().findAtomType("HW");
     auto ow = waterNode->species().findAtomType("OW");
@@ -109,7 +109,7 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
 
     // Get the configuration and create an energy kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
+    auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
     auto productionEnergy = checkEnergyConsistency(kernel);
@@ -121,10 +121,10 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
 TEST(Water1000ForceTest, ShortRangeOnly)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/vdw.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -134,7 +134,7 @@ TEST(Water1000ForceTest, ShortRangeOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto hw = waterNode->species().findAtomType("HW");
     auto ow = waterNode->species().findAtomType("OW");
@@ -148,7 +148,7 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
@@ -162,10 +162,10 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -174,7 +174,7 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto ow = waterNode->species().findAtomType("OW");
     ASSERT_TRUE(ow);
@@ -186,7 +186,7 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 
     // Get the configuration and create an energy kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createEnergyKernel(cfg);
+    auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
     auto productionEnergy = checkEnergyConsistency(kernel);
@@ -198,10 +198,10 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 TEST(Water1000ForceTest, CoulombOnly)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -210,7 +210,7 @@ TEST(Water1000ForceTest, CoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto ow = waterNode->species().findAtomType("OW");
     ASSERT_TRUE(ow);
@@ -222,7 +222,7 @@ TEST(Water1000ForceTest, CoulombOnly)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
@@ -243,10 +243,10 @@ TEST(Water1000ForceTest, CoulombOnly)
 TEST(Water1000ForceTest, ShiftedCoulombOnly)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -254,7 +254,7 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto hw = waterNode->species().findAtomType("HW");
     auto ow = waterNode->species().findAtomType("OW");
@@ -267,7 +267,7 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
 
     // Get the configuration and create a force kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+    auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;

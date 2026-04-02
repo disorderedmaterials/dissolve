@@ -21,7 +21,7 @@ class SiteRDFNodeTest : public ::testing::Test
     ~SiteRDFNodeTest() = default;
 
     protected:
-    GraphTestData testData_;
+    TestGraph testGraph_;
     IterableGraph *iterator_{nullptr};
     ImportConfigurationTrajectoryNode *trajectoryImport_{nullptr};
     const Species *water_;
@@ -31,20 +31,20 @@ class SiteRDFNodeTest : public ::testing::Test
     void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
     {
         // Create the water configuration
-        createConfiguration(&testData_.graphRoot, "Box", {{createWaterDLPoly, 267}}, 0.1);
+        testGraph_.createConfiguration("Box", {{createWaterDLPoly, 267}}, 0.1);
 
         // Add iterator
-        iterator_ = dynamic_cast<IterableGraph *>(testData_.graphRoot.createNode("Iterator", "Iterator"));
+        iterator_ = dynamic_cast<IterableGraph *>(testGraph_.createNode("Iterator", "Iterator"));
         ASSERT_TRUE(iterator_);
 
         // Grab the water species for convenience
-        auto waterNode = testData_.graphRoot.findNode("Water");
+        auto waterNode = testGraph_.findNode("Water");
         ASSERT_TRUE(waterNode);
         water_ = waterNode->getOutputValue<const Species *>("Species");
         ASSERT_TRUE(waterNode);
 
         // Create a dynamic input from the graph's existing Insert node
-        EXPECT_TRUE(testData_.graphRoot.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
+        EXPECT_TRUE(testGraph_.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
 
         // Create an import configuration trajectory node
         trajectoryImport_ =

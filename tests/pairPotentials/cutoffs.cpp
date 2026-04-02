@@ -14,10 +14,10 @@ std::vector<double> cutoffs = {10.0, 11.425, 11.5, 13.7875, 13.8, 14.999, 15.0};
 TEST(PairPotentialCutoffTest, ShortRange)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto insertNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, insertNode,
+    TestGraph testGraph;
+    auto insertNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        insertNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -26,7 +26,7 @@ TEST(PairPotentialCutoffTest, ShortRange)
     PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto hw = waterNode->species().findAtomType("HW");
     auto ow = waterNode->species().findAtomType("OW");
@@ -46,7 +46,7 @@ TEST(PairPotentialCutoffTest, ShortRange)
     for (auto cutoff : cutoffs)
     {
         PairPotential::setRange(cutoff, 1.0e-4);
-        auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+        auto kernel = testGraph.createForceKernel(cfg);
         checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
     }
 }
@@ -54,10 +54,10 @@ TEST(PairPotentialCutoffTest, ShortRange)
 TEST(PairPotentialCutoffTest, Coulomb)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto insertNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    auto importNode = appendImportCoordinates(
-        &data.graphRoot, insertNode,
+    TestGraph testGraph;
+    auto insertNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        insertNode,
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
     ASSERT_TRUE(importNode);
 
@@ -65,7 +65,7 @@ TEST(PairPotentialCutoffTest, Coulomb)
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(data.graphRoot.findNode("Water"));
+    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto ow = waterNode->species().findAtomType("OW");
     ASSERT_TRUE(ow);
@@ -83,7 +83,7 @@ TEST(PairPotentialCutoffTest, Coulomb)
     for (auto cutoff : cutoffs)
     {
         PairPotential::setRange(cutoff, 1.0e-4);
-        auto kernel = data.graphRoot.dissolveGraph()->createForceKernel(cfg);
+        auto kernel = testGraph.createForceKernel(cfg);
         checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
     }
 }

@@ -15,15 +15,15 @@ namespace UnitTest
 TEST(AngleNodeTest, Water)
 {
     // Set up the test graph
-    GraphTestData data;
-    createConfiguration(&data.graphRoot, "Box", {{createWater, 267}}, 0.1);
+    TestGraph testGraph;
+    testGraph.createConfiguration("Box", {{createWater, 267}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
-    auto iterator = dynamic_cast<IterableGraph *>(data.graphRoot.createNode("Iterator", "Iterator"));
+    auto iterator = dynamic_cast<IterableGraph *>(testGraph.createNode("Iterator", "Iterator"));
     ASSERT_TRUE(iterator);
 
     // Create a dynamic input from the graph's existing Insert node
-    EXPECT_TRUE(data.graphRoot.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
+    EXPECT_TRUE(testGraph.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
 
     // Within the iterator create an ImportTrajectory node
     auto importTrajectory = iterator->createNode("ImportConfigurationTrajectory");
@@ -36,7 +36,7 @@ TEST(AngleNodeTest, Water)
     // Add the analysis module to the iterator
     auto angle = dynamic_cast<AngleNode *>(iterator->createNode("Angle"));
     ASSERT_TRUE(angle);
-    auto *water = data.graphRoot.findNode("Water")->getOutputValue<const Species *>("Species");
+    auto *water = testGraph.findNode("Water")->getOutputValue<const Species *>("Species");
     ASSERT_TRUE(water);
     ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteA", {{water->findSite("O")}}));
     ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteB", {{water->findSite("H")}}));

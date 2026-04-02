@@ -12,17 +12,17 @@ namespace UnitTest
 TEST(BroadeningTest, ArgonBroadening)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{[] { return createAtomic(Elements::Ar); }, 10000}}, 0.0213);
-    lastNode = appendImportCoordinates(
-        &data.graphRoot, lastNode,
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 10000}}, 0.0213);
+    lastNode = testGraph.appendImportCoordinates(
+        lastNode,
         CoordinateImportFileFormat("epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Append GR and SQ nodes
-    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, true, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, true, true);
 
     // Set up neutron SQ
-    auto neutronSQNode = appendNeutronSQ(&data.graphRoot, sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}});
+    auto neutronSQNode = testGraph.appendNeutronSQ(sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}});
     ASSERT_TRUE(neutronSQNode);
 
     std::vector<std::tuple<std::string, Functions1D::Form, std::vector<double>>> tests = {

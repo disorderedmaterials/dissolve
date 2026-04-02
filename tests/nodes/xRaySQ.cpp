@@ -12,21 +12,21 @@ namespace UnitTest
 TEST(XRaySQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
-    GraphTestData data;
-    auto lastNode = createConfiguration(&data.graphRoot, "Box", {{createWater, 1000}}, 0.1);
-    lastNode = appendImportCoordinates(&data.graphRoot, lastNode,
-                                       CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                                                  CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    lastNode = testGraph.appendImportCoordinates(
+        lastNode, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
+                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = appendGRSQ(&data.graphRoot, lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
     ASSERT_TRUE(sqNode);
 
     // Add XRaySQ
-    auto H2Ox = appendXRaySQ(
-        &data.graphRoot, sqNode, "H2Ox",
+    auto H2Ox = testGraph.appendXRaySQ(
+        sqNode, "H2Ox",
         Data1DImportFileFormat("epsr25/water1000-neutron-xray/PCCPfofq.txt", Data1DImportFileFormat::Data1DImportFormat::XY));
     ASSERT_TRUE(H2Ox);
     ASSERT_TRUE(H2Ox->setOption<StructureFactors::NormalisationType>(

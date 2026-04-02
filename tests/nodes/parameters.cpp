@@ -11,20 +11,20 @@ namespace UnitTest
 {
 TEST(ParametersTest, OptionalPointerOutput)
 {
-    GraphTestData data;
+    TestGraph testGraph;
 
     // Create a couple of TestNodes
-    auto *a = dynamic_cast<TestNode *>(data.graphRoot.addNode(std::make_unique<TestNode>(&data.graphRoot), "TestA"));
+    auto *a = dynamic_cast<TestNode *>(testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestA"));
     ASSERT_TRUE(a);
     auto createOptA = a->findInput("CreateConfiguration");
     ASSERT_TRUE(createOptA);
-    auto *b = data.graphRoot.addNode(std::make_unique<TestNode>(&data.graphRoot), "TestB");
+    auto *b = testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestB");
     ASSERT_TRUE(b);
     auto configInputB = b->findInput("ConfigurationInput");
     ASSERT_TRUE(configInputB);
 
     // Create an edge between nodes
-    ASSERT_TRUE(data.graphRoot.addEdge({"TestA", "OptionalConfiguration", "TestB", "ConfigurationInput"}));
+    ASSERT_TRUE(testGraph.addEdge({"TestA", "OptionalConfiguration", "TestB", "ConfigurationInput"}));
 
     // Inputs to TestB should be valid (there is no optional data yet, but the Edge definitions are correct)
     EXPECT_TRUE(b->inputsAreValid());
@@ -44,10 +44,10 @@ TEST(ParametersTest, OptionalPointerOutput)
 
 TEST(ParametersTest, VectorParameter)
 {
-    GraphTestData data;
+    TestGraph testGraph;
 
     // Create a couple of TestNodes
-    auto *a = data.graphRoot.addNode(std::make_unique<TestNode>(&data.graphRoot), "TestA");
+    auto *a = testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestA");
     ASSERT_TRUE(a);
     auto numbersABase = a->findInput("NumberVector");
     ASSERT_TRUE(numbersABase);
@@ -61,7 +61,7 @@ TEST(ParametersTest, VectorParameter)
     EXPECT_ANY_THROW(numbersABase->set(Number{1.0}));
 
     // Create a Number node
-    auto n1 = data.graphRoot.addNode(std::make_unique<NumberNode>(&data.graphRoot), "Number1");
+    auto n1 = testGraph.addNode(std::make_unique<NumberNode>(&testGraph), "Number1");
     ASSERT_TRUE(n1);
     auto number1 = n1->findOption("X");
     number1->set(Number{1.0});
@@ -81,33 +81,31 @@ TEST(ParametersTest, VectorParameter)
 
 TEST(ParametersTest, VectorInputOutput)
 {
-    CoreData coreData_;
-    Dissolve dissolve_(coreData_);
-    GraphTestData data;
+    TestGraph testGraph;
 
     // Create a couple of TestNodes
-    auto *a = data.graphRoot.addNode(std::make_unique<TestNode>(&data.graphRoot), "TestA");
+    auto *a = testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestA");
     ASSERT_TRUE(a);
     auto numbersA = a->findInput("NumberVector");
     ASSERT_TRUE(numbersA);
-    auto *b = data.graphRoot.addNode(std::make_unique<TestNode>(&data.graphRoot), "TestB");
+    auto *b = testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestB");
     ASSERT_TRUE(b);
     auto numbersB = b->findInput("NumberVector");
     ASSERT_TRUE(numbersB);
 
     // Create an edge linking the vector output from A to the vector input of B
-    ASSERT_TRUE(data.graphRoot.addEdge({"TestA", "NumberVector", "TestB", "NumberVector"}));
+    ASSERT_TRUE(testGraph.addEdge({"TestA", "NumberVector", "TestB", "NumberVector"}));
 
     // Create three Number nodes as inputs for TestA's number vector
-    auto *n1 = data.graphRoot.addNode(std::make_unique<NumberNode>(&data.graphRoot), "Number1");
+    auto *n1 = testGraph.addNode(std::make_unique<NumberNode>(&testGraph), "Number1");
     ASSERT_TRUE(n1);
     auto number1 = n1->findOption("X");
     ASSERT_TRUE(number1);
-    auto *n2 = data.graphRoot.addNode(std::make_unique<NumberNode>(&data.graphRoot), "Number2");
+    auto *n2 = testGraph.addNode(std::make_unique<NumberNode>(&testGraph), "Number2");
     ASSERT_TRUE(n2);
     auto number2 = n2->findOption("X");
     ASSERT_TRUE(number2);
-    auto *n3 = data.graphRoot.addNode(std::make_unique<NumberNode>(&data.graphRoot), "Number3");
+    auto *n3 = testGraph.addNode(std::make_unique<NumberNode>(&testGraph), "Number3");
     ASSERT_TRUE(n3);
     auto number3 = n3->findOption("X");
     ASSERT_TRUE(number3);
@@ -118,9 +116,9 @@ TEST(ParametersTest, VectorInputOutput)
     number3->set(Number{8.0});
 
     // Link all three numbers in to the TestA vector
-    ASSERT_TRUE(data.graphRoot.addEdge({"Number1", "X", "TestA", "NumberVector"}));
-    ASSERT_TRUE(data.graphRoot.addEdge({"Number2", "X", "TestA", "NumberVector"}));
-    ASSERT_TRUE(data.graphRoot.addEdge({"Number3", "X", "TestA", "NumberVector"}));
+    ASSERT_TRUE(testGraph.addEdge({"Number1", "X", "TestA", "NumberVector"}));
+    ASSERT_TRUE(testGraph.addEdge({"Number2", "X", "TestA", "NumberVector"}));
+    ASSERT_TRUE(testGraph.addEdge({"Number3", "X", "TestA", "NumberVector"}));
 
     // Run the TestB node to pull the number edge vector from TestA, using the numbers from the three number nodes
     EXPECT_TRUE(a->inputsAreValid());
@@ -154,7 +152,7 @@ TEST(ParametersTest, VectorInputOutput)
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
 
     // Remove a single edge - this should flag TestA and TestB as being out of date
-    EXPECT_TRUE(data.graphRoot.removeEdge({"Number1", "X", "TestA", "NumberVector"}));
+    EXPECT_TRUE(testGraph.removeEdge({"Number1", "X", "TestA", "NumberVector"}));
     EXPECT_TRUE(a->inputsAreValid());
     EXPECT_TRUE(b->inputsAreValid());
     EXPECT_FALSE(a->isUpToDate());
@@ -169,8 +167,8 @@ TEST(ParametersTest, VectorInputOutput)
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
 
     // Remove both of the other edges
-    EXPECT_TRUE(data.graphRoot.removeEdge({"Number3", "X", "TestA", "NumberVector"}));
-    EXPECT_TRUE(data.graphRoot.removeEdge({"Number2", "X", "TestA", "NumberVector"}));
+    EXPECT_TRUE(testGraph.removeEdge({"Number3", "X", "TestA", "NumberVector"}));
+    EXPECT_TRUE(testGraph.removeEdge({"Number2", "X", "TestA", "NumberVector"}));
     EXPECT_TRUE(a->inputsAreValid());
     EXPECT_TRUE(b->inputsAreValid());
     EXPECT_FALSE(a->isUpToDate());
