@@ -32,13 +32,12 @@ TEST(GraphArgonTest, AllCorrelations)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 1000}}, 0.0213);
-    lastNode = testGraph.appendImportCoordinates(
-        lastNode, CoordinateImportFileFormat("dissolve2/argon/Ar_bulk_step1000.xyz",
-                                             CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 1000}}, 0.0213));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
+        "dissolve2/argon/Ar_bulk_step1000.xyz", CoordinateImportFileFormat::CoordinateImportFormat::XYZ)));
 
     // Append GR and SQ nodes
-    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, true, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(true, true);
 
     // Set up neutron SQ
     auto neutronSQNode =

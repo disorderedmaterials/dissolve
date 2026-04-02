@@ -15,11 +15,9 @@ TEST(PairPotentialCutoffTest, ShortRange)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto insertNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
-    auto importNode = testGraph.appendImportCoordinates(
-        insertNode,
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-    ASSERT_TRUE(importNode);
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -35,11 +33,11 @@ TEST(PairPotentialCutoffTest, ShortRange)
     ow->setCharge(0.0);
 
     // Run the graph from the Import node to set up the configuration
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
     // Get the configuration
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
 
     // Check consistency between production and test forces at different cutoffs
     std::vector<Vector3> pairPotentialForces, geometryForces;
@@ -55,11 +53,9 @@ TEST(PairPotentialCutoffTest, Coulomb)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto insertNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
-    auto importNode = testGraph.appendImportCoordinates(
-        insertNode,
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-    ASSERT_TRUE(importNode);
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
@@ -72,11 +68,11 @@ TEST(PairPotentialCutoffTest, Coulomb)
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
     // Run the graph from the Import node to set up the configuration
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
     // Get the configuration
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
 
     // Check consistency between production and test forces at different cutoffs
     std::vector<Vector3> pairPotentialForces, geometryForces;

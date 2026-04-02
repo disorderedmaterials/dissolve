@@ -30,13 +30,13 @@ class CIFNodeTest : public ::testing::Test
     void createGraph(std::string filename)
     {
         auto name = cifNameFromFile(filename);
-        auto loaderNode = testGraph_.createNode("CIFLoader", name);
-        loaderNode->setOption("FilePath", path_ + filename);
-        auto bondingNode = testGraph_.createNode("CIFBondingOptions", name + "//BondingOptions");
-        auto removeAtomicNode = testGraph_.createNode("CIFRemoveAtomic", name + "//RemoveAtomic");
-        auto removeWaterNode = testGraph_.createNode("CIFRemoveWater", name + "//RemoveWater");
-        auto structureCleanupNode = testGraph_.createNode("CIFStructureCleanup", name + "//StructureCleanup");
-        auto molecularSpeciesNode = testGraph_.createNode("CIFMolecularSpecies", name + "//MolecularSpecies");
+        EXPECT_TRUE(testGraph_.nextNode("CIFLoader", name));
+        testGraph_.fetchHead()->setOption("FilePath", path_ + filename);
+        EXPECT_TRUE(testGraph_.nextNode("CIFBondingOptions", name + "//BondingOptions"));
+        EXPECT_TRUE(testGraph_.nextNode("CIFRemoveAtomic", name + "//RemoveAtomic"));
+        EXPECT_TRUE(testGraph_.nextNode("CIFRemoveWater", name + "//RemoveWater"));
+        EXPECT_TRUE(testGraph_.nextNode("CIFStructureCleanup", name + "//StructureCleanup"));
+        EXPECT_TRUE(testGraph_.nextNode("CIFMolecularSpecies", name + "//MolecularSpecies"));
         testGraph_.addEdge({name, "CIFContext", name + "//BondingOptions", "CIFContext"});
         testGraph_.addEdge({name + "//BondingOptions", "CIFContext", name + "//RemoveAtomic", "CIFContext"});
         testGraph_.addEdge({name + "//RemoveAtomic", "CIFContext", name + "//RemoveWater", "CIFContext"});
@@ -240,26 +240,28 @@ TEST_F(CIFNodeTest, CuBTC)
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaNH2 = cellFormulaH;
     cellFormulaNH2[Elements::N] = 6 * N;
     cellFormulaNH2[Elements::H] *= 2;
-    auto atomGroupA1 = testGraph_.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupA1");
-    atomGroupA1->setOption("Assembly", std::string("A"));
-    atomGroupA1->setOption("AtomGroup", std::string("1"));
-    atomGroupA1->setOption("SetActive", false);
-    auto atomGroupB2 = testGraph_.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupB2");
-    atomGroupB2->setOption("Assembly", std::string("B"));
-    atomGroupB2->setOption("AtomGroup", std::string("2"));
-    atomGroupB2->setOption("SetActive", true);
-    auto atomGroupC2 = testGraph_.createNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupC2");
-    atomGroupC2->setOption("Assembly", std::string("C"));
-    atomGroupC2->setOption("AtomGroup", std::string("2"));
-    atomGroupC2->setOption("SetActive", true);
+    EXPECT_TRUE(testGraph_.nextNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupA1"));
+    testGraph_.fetchHead()->setOption("Assembly", std::string("A"));
+    testGraph_.fetchHead()->setOption("AtomGroup", std::string("1"));
+    testGraph_.fetchHead()->setOption("SetActive", false);
+    EXPECT_TRUE(testGraph_.nextNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupB2"));
+    testGraph_.fetchHead()->setOption("Assembly", std::string("B"));
+    testGraph_.fetchHead()->setOption("AtomGroup", std::string("2"));
+    testGraph_.fetchHead()->setOption("SetActive", true);
+    EXPECT_TRUE(testGraph_.nextNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupC2"));
+    testGraph_.fetchHead()->setOption("Assembly", std::string("C"));
+    testGraph_.fetchHead()->setOption("AtomGroup", std::string("2"));
+    testGraph_.fetchHead()->setOption("SetActive", true);
     testGraph_.removeEdge(
         {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", std::string(molecularSpeciesNode->name()), "CIFContext"});
     testGraph_.addEdge(
-        {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", std::string(atomGroupA1->name()), "CIFContext"});
-    testGraph_.addEdge({std::string(atomGroupA1->name()), "CIFContext", std::string(atomGroupB2->name()), "CIFContext"});
-    testGraph_.addEdge({std::string(atomGroupB2->name()), "CIFContext", std::string(atomGroupC2->name()), "CIFContext"});
+        {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", cifNameFromFile(cif) + "//AtomGroupA1", "CIFContext"});
     testGraph_.addEdge(
-        {std::string(atomGroupC2->name()), "CIFContext", std::string(molecularSpeciesNode->name()), "CIFContext"});
+        {cifNameFromFile(cif) + "//AtomGroupA1", "CIFContext", cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext"});
+    testGraph_.addEdge(
+        {cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext", cifNameFromFile(cif) + "//AtomGroupC2", "CIFContext"});
+    testGraph_.addEdge(
+        {cifNameFromFile(cif) + "//AtomGroupC2", "CIFContext", std::string(molecularSpeciesNode->name()), "CIFContext"});
     testGraph_.setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(

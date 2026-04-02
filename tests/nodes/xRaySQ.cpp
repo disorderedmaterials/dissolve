@@ -13,13 +13,12 @@ TEST(XRaySQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
-    lastNode = testGraph.appendImportCoordinates(
-        lastNode, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
+        "epsr25/water1000-neutron/waterbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
     ASSERT_TRUE(sqNode);

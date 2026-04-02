@@ -13,10 +13,10 @@ TEST(GRNodeTest, Methods)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 5000}}, 0.0213);
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 5000}}, 0.0213));
 
     // Append GR and SQ nodes
-    auto sqNode = testGraph.appendGRSQ(lastNode, true, true);
+    auto sqNode = testGraph.appendGRSQ(true, true);
     auto arSpeciesNode = testGraph.findNode("Ar");
     ASSERT_TRUE(arSpeciesNode);
     auto grNode = testGraph.findNode("GR");
@@ -46,13 +46,12 @@ TEST(GRNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
-    lastNode = testGraph.appendImportCoordinates(
-        lastNode, CoordinateImportFileFormat("epsr25/water1000-neutron/waterbox.ato",
-                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
+        "epsr25/water1000-neutron/waterbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
@@ -91,13 +90,12 @@ TEST(GRNodeTest, WaterMethanol)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 300}, {createMethanol, 600}}, 0.1);
-    lastNode = testGraph.appendImportCoordinates(
-        lastNode, CoordinateImportFileFormat("epsr25/water300methanol600/watermeth.ato",
-                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{createWater, 300}, {createMethanol, 600}}, 0.1));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
+        "epsr25/water300methanol600/watermeth.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 
     // Add correlation function nodes
-    auto &&[grNode, _] = testGraph.appendGRSQ(lastNode, false, true);
+    auto &&[grNode, _] = testGraph.appendGRSQ(false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
@@ -266,14 +264,13 @@ TEST(GRNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode =
-        testGraph.createConfiguration("Box", {{createBenzene, 200}}, 0.876, Units::DensityUnits::GramsPerCentimetreCubedUnits);
-    lastNode = testGraph.appendImportCoordinates(
-        lastNode, CoordinateImportFileFormat("epsr25/benzene200-neutron/boxbenz.ato",
-                                             CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{createBenzene, 200}}, 0.876, Units::DensityUnits::GramsPerCentimetreCubedUnits));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
+        "epsr25/benzene200-neutron/boxbenz.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
 
