@@ -66,6 +66,8 @@ class SpeciesAtom : public Serialisable<>
     Presence presence_{Presence::Physical};
 
     public:
+    // Return parent Species
+    Species *parent() const;
     // Set basic properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
     void set(Elements::Element Z, const Vector3 &r, double q = 0.0);

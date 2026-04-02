@@ -64,6 +64,9 @@ void SpeciesAtom::move(SpeciesAtom &source)
  * Properties
  */
 
+// Return parent Species
+Species *SpeciesAtom::parent() const { return parent_; }
+
 // Set basic properties
 void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q) { set(Z, {rx, ry, rz}, q); }
 void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
