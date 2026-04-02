@@ -11,6 +11,13 @@ namespace UnitTest
 {
 TEST(Water1000EnergyTest, Full)
 {
+    auto water = createWater();
+    std::ofstream file("water.toml");
+    SerialisedValue toml;
+    water->species().serialise("species", toml);
+    file << toml;
+    file.close();
+
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));

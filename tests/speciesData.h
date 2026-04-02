@@ -32,7 +32,7 @@ inline std::unique_ptr<SpeciesNode> createAtomic(Elements::Element element,
     for (auto isotope : Sears91::isotopes(element))
     {
         auto iso = species->addIsotopologue(std::format("{}{}", Elements::symbol(element), Sears91::A(isotope)));
-        iso->setAtomTypeIsotope(atomType.get(), isotope);
+        iso->setAtomTypeIsotope(atomType, isotope);
     }
 
     return speciesNodeUniquePtr;
@@ -127,7 +127,7 @@ inline std::unique_ptr<SpeciesNode> createWater()
 
     // Create isotopologue
     auto iso = species->addIsotopologue("D2O");
-    iso->setAtomTypeIsotope(hW.get(), Sears91::H_2);
+    iso->setAtomTypeIsotope(hW, Sears91::H_2);
 
     // Create sites
     species->addSite("Origin")->setStaticIndices({1}, {0, 2}, {2});
@@ -201,7 +201,7 @@ inline std::unique_ptr<SpeciesNode> createWaterDLPoly()
 
     // Create isotopologue
     auto iso = species->addIsotopologue("D2O");
-    iso->setAtomTypeIsotope(hW.get(), Sears91::H_2);
+    iso->setAtomTypeIsotope(hW, Sears91::H_2);
 
     // Create sites
 
@@ -305,12 +305,12 @@ inline std::unique_ptr<SpeciesNode> createMethanol()
 
     // Create isotopologues
     auto D = species->addIsotopologue("Deuteriated");
-    D->setAtomTypeIsotope(HO.get(), Sears91::H_2);
-    D->setAtomTypeIsotope(HC.get(), Sears91::H_2);
+    D->setAtomTypeIsotope(HO, Sears91::H_2);
+    D->setAtomTypeIsotope(HC, Sears91::H_2);
     auto MeD = species->addIsotopologue("MethylD-OH");
-    MeD->setAtomTypeIsotope(HC.get(), Sears91::H_2);
+    MeD->setAtomTypeIsotope(HC, Sears91::H_2);
     auto MeH = species->addIsotopologue("OD-MethylH");
-    MeH->setAtomTypeIsotope(HO.get(), Sears91::H_2);
+    MeH->setAtomTypeIsotope(HO, Sears91::H_2);
 
     return speciesNodeUniquePtr;
 }
@@ -385,7 +385,7 @@ inline std::unique_ptr<SpeciesNode> createBenzene()
 
     // Create isotopologue
     auto iso = species->addIsotopologue("C6D6");
-    iso->setAtomTypeIsotope(HA.get(), Sears91::H_2);
+    iso->setAtomTypeIsotope(HA, Sears91::H_2);
 
     return speciesNodeUniquePtr;
 }

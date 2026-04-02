@@ -29,9 +29,9 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
 }
 
 // Add a new atom to the Species, returning its index
-int Species::addAtom(Elements::Element Z, Vector3 r, double q, std::shared_ptr<AtomType> atomType)
+int Species::addAtom(Elements::Element Z, Vector3 r, double q, AtomType *atomType)
 {
-    auto &i = atoms_.emplace_back();
+    auto &i = atoms_.emplace_back(this);
     i.set(Z, r.x, r.y, r.z, q);
     i.setIndex(atoms_.size() - 1);
     i.setAtomType(atomType);
@@ -267,7 +267,7 @@ double Species::mass() const
 }
 
 // Add new atom type to atom types
-const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z, std::string_view name)
+const AtomType* Species::addAtomType(Elements::Element Z, std::string_view name)
 {
     // Create a suitable unique name
     auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,
@@ -278,7 +278,7 @@ const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z, std::s
     atomTypes_.push_back(newAtomType);
     newAtomType->setIndex(atomTypes_.size() - 1);
 
-    return newAtomType;
+    return newAtomType.get();
 }
 
 // Find and return the named atom type
@@ -300,7 +300,7 @@ KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
     KeyedVector<const AtomType *, int> result;
     for (const auto &i : atoms_)
         if (i.atomType() && i.isPresence((SpeciesAtom::Presence::Physical)))
-            result[i.atomType().get()] += 1;
+            result[i.atomType()] += 1;
 
     return result;
 }
@@ -322,8 +322,8 @@ int Species::simplifyAtomTypes()
     for (auto it = std::next(atoms_.begin()); it != atoms_.end(); ++it)
     {
         // Search all used atom types looking for a match, up to the current one
-        auto matchingIt = std::find_if(atoms_.begin(), it, [&](auto &i)
-                                       { return i.atomType() && i.atomType()->sameParametersAs(it->atomType().get()); });
+        auto matchingIt = std::find_if(atoms_.begin(), it,
+                                       [&](auto &i) { return i.atomType() && i.atomType()->sameParametersAs(it->atomType()); });
         if (matchingIt == it)
             continue;
 

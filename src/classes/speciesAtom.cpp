@@ -9,6 +9,8 @@
 #include "classes/speciesBond.h"
 #include <algorithm>
 
+SpeciesAtom::SpeciesAtom(Species *parent) : parent_(parent) {}
+
 SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
 
 SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
@@ -21,6 +23,7 @@ SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
 // Move all data from source to this
 void SpeciesAtom::move(SpeciesAtom &source)
 {
+    parent_ = source.parent_;
     Z_ = source.Z_;
     r_ = source.r_;
     charge_ = source.charge_;
@@ -94,7 +97,7 @@ void SpeciesAtom::setCharge(double charge) { charge_ = charge; }
 double SpeciesAtom::charge() const { return charge_; }
 
 // Set AtomType of SpeciesAtom
-void SpeciesAtom::setAtomType(const std::shared_ptr<AtomType> &at)
+void SpeciesAtom::setAtomType(AtomType *at)
 {
     // Check elements
     if (at && (at->Z() != Z_))
@@ -108,7 +111,7 @@ void SpeciesAtom::setAtomType(const std::shared_ptr<AtomType> &at)
 }
 
 // Return SpeciesAtomType of SpeciesAtom
-std::shared_ptr<AtomType> SpeciesAtom::atomType() const { return atomType_; }
+AtomType *SpeciesAtom::atomType() const { return atomType_; }
 
 // Set index (0->[N-1])
 void SpeciesAtom::setIndex(int id) { index_ = id; }
@@ -490,22 +493,22 @@ void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
-void SpeciesAtom::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
     index_ = toml::find<int>(node, "index") - 1;
 
     set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "charge", 0));
 
     Serialisable::optionalOn(node, "type",
-                             [this, &coreData](const auto node)
+                             [&](const auto innerNode)
                              {
                                  if (Z_ == Elements::Unknown)
                                      return;
-                                 std::string name = toml::get<std::string>(node);
-                                 atomType_ = coreData.findAtomType(name);
+                                 std::string name = toml::get<std::string>(innerNode);
+                                 atomType_ = parent_->findAtomType(name);
                                  if (atomType_ == nullptr)
                                  {
-                                     atomType_ = coreData.addAtomType(Z_);
+                                     atomType_ = parent_->addAtomType(Z_);
                                      atomType_->setName(name);
                                  }
                              });

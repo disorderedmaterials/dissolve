@@ -12,7 +12,6 @@ TEST(PhantomAtomsTest, Basic)
 {
     // Construct the test graph
     TestGraph testGraph;
-
     const auto nMolecules = 100;
     testGraph.createConfiguration("Box", {{createTetrahedralArgon, nMolecules}}, {20.0, 20.0, 20.0}, {90.0, 90.0, 90.0});
 

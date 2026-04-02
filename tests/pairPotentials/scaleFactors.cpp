@@ -25,10 +25,10 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         atC2_->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, ljParameters);
 
         // Create Species
-        fourSixthsBenzene_.addAtom(Elements::C, {-1.390000, 0.000000, 0.000000}, -0.2, atC1_);
-        fourSixthsBenzene_.addAtom(Elements::C, {-0.695000, 1.203775, 0.000000}, 0.2, atC2_);
-        fourSixthsBenzene_.addAtom(Elements::C, {0.695000, 1.203775, 0.000000}, 0.2, atC2_);
-        fourSixthsBenzene_.addAtom(Elements::C, {1.390000, 0.000000, 0.000000}, -0.2, atC1_);
+        fourSixthsBenzene_.addAtom(Elements::C, {-1.390000, 0.000000, 0.000000}, -0.2, atC1_.get());
+        fourSixthsBenzene_.addAtom(Elements::C, {-0.695000, 1.203775, 0.000000}, 0.2, atC2_.get());
+        fourSixthsBenzene_.addAtom(Elements::C, {0.695000, 1.203775, 0.000000}, 0.2, atC2_.get());
+        fourSixthsBenzene_.addAtom(Elements::C, {1.390000, 0.000000, 0.000000}, -0.2, atC1_.get());
         fourSixthsBenzene_.addMissingBonds();
         torsion_ = fourSixthsBenzene_.addTorsion(0, 1, 2, 3);
         fourSixthsBenzene_.setUpScaledInteractions();

@@ -428,7 +428,7 @@ void CoreData::copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom
         at->setCharge(sourceAtom.atomType()->charge());
     }
 
-    destAtom.setAtomType(at);
+    destAtom.setAtomType(at.get());
 }
 
 // Copy intramolecular interaction parameters, adding master term if necessary
@@ -738,7 +738,7 @@ void CoreData::removeReferencesTo(std::shared_ptr<AtomType> data)
     {
         for (auto &atom : species->atoms())
         {
-            if (atom.atomType() == data)
+            if (atom.atomType() == data.get())
             {
                 atom.setAtomType(nullptr);
             }

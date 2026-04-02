@@ -177,7 +177,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
 
                 // Finally, set AtomType for the Atom
-                atoms_[atomIndex++].setAtomType(at);
+                atoms_[atomIndex++].setAtomType(at.get());
                 break;
             case (Species::SpeciesKeyword::Bond):
                 // Create a new bond definition between the specified atoms
@@ -407,9 +407,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     return Messenger::error("{} keyword must specified before the first atom definition.\n",
                                             keywords().keyword(Species::SpeciesKeyword::NAtoms));
                 atomVectorFixed = true;
-                atoms_.resize(parser.argi(1));
+                atoms_.clear();
+                atoms_.reserve(parser.argi(1));
                 for (auto i = 0; i < atoms_.size(); ++i)
-                    atoms_[i].setIndex(i);
+                    atoms_.emplace_back(this).setIndex(i);
                 break;
             case (Species::SpeciesKeyword::NBonds):
                 if (bondVectorFixed)

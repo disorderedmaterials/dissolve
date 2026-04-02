@@ -37,7 +37,7 @@ void Configuration::linkTargetedPotentials()
         // Atom types
         for (const auto &at : pot->targetAtomTypes())
             for (auto &atom : atoms_)
-                if (atom.speciesAtom()->atomType() == at)
+                if (atom.speciesAtom()->atomType() == at.get())
                     atom.addTargetedPotential(pot.get());
 
         // Species

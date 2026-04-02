@@ -470,8 +470,8 @@ bool CIFHandler::createBasicUnitCell()
 
                         // Create the new atom
                         auto atIt = std::find_if(atomLabelTypes_.begin(), atomLabelTypes_.end(),
-                                                 [&unique](const auto &at) { return unique.label() == at->name(); });
-                        unitCellSpecies_.addAtom(unique.Z(), r, 0.0, atIt != atomLabelTypes_.end() ? *atIt : nullptr);
+                                                 [&unique](const auto at) { return unique.label() == at->name(); });
+                        unitCellSpecies_.addAtom(unique.Z(), r, 0.0, atIt != atomLabelTypes_.end() ? atIt->get() : nullptr);
                     }
 
     // Check that we actually generated some atoms...

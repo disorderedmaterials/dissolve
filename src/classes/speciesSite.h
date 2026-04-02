@@ -136,7 +136,7 @@ class SpeciesSite : public Serialisable<CoreData &>
     // Target elements for selection as sites
     std::vector<Elements::Element> dynamicElements_;
     // Target atom types for selection as sites
-    std::vector<std::shared_ptr<AtomType>> dynamicAtomTypes_;
+    std::vector<const AtomType *> dynamicAtomTypes_;
 
     public:
     // Add target elements for selection as sites
@@ -146,11 +146,11 @@ class SpeciesSite : public Serialisable<CoreData &>
     // Return elements for selection as sites
     const std::vector<Elements::Element> dynamicElements() const;
     // Add target atom type for selection as sites
-    bool addDynamicAtomType(const std::shared_ptr<AtomType> &at);
+    bool addDynamicAtomType(const AtomType *at);
     // Set target atom types for selection as sites
-    bool setDynamicAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types);
+    bool setDynamicAtomTypes(const std::vector<const AtomType *> &types);
     // Return atom types for selection as sites
-    const std::vector<std::shared_ptr<AtomType>> &dynamicAtomTypes() const;
+    const std::vector<const AtomType *> &dynamicAtomTypes() const;
 
     /*
      * Fragment Site Definition
