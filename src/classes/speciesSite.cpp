@@ -775,7 +775,7 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
     }
 }
 
-void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesSite::deserialise(const SerialisedValue &node)
 {
     type_ = siteTypes().deserialise(toml::find_or(node, "type", "static"));
 
@@ -787,8 +787,8 @@ void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
             toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
             toVector(node, "elements",
                      [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
-            toVector(node, "atomTypes", [&, this](const auto &at)
-                     { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string())).get()); });
+            toVector(node, "atomTypes",
+                     [&, this](const auto &at) { addDynamicAtomType(parent_->findAtomType(std::string(at.as_string()))); });
 
             break;
         case SiteType::Fragment:
