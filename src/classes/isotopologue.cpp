@@ -71,13 +71,14 @@ void Isotopologue::serialise(std::string tag, SerialisedValue &target) const
         result[type->name().data()] = Sears91::A(isotope);
 }
 
-void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)
+// Read values from a serialisable value
+void Isotopologue::deserialise(const SerialisedValue &node)
 {
     for (auto &[name, value] : node.as_table())
     {
         if (value.is_string())
             continue;
-        auto at = coreData.findAtomType(name);
-        setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), value.as_integer()));
+        auto at = parent_->findAtomType(name);
+        setAtomTypeIsotope(at, Sears91::isotope(at->Z(), value.as_integer()));
     }
 }

@@ -303,12 +303,8 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                 .deserialise(torsion, coreData);
         });
 
-    Serialisable::toMap(node, "isotopologues",
-                        [this, &coreData](const std::string &name, const SerialisedValue &iso)
-                        {
-                            isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name));
-                            isotopologues_.back()->deserialise(iso, coreData);
-                        });
+    Serialisable::toMap(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
+                        { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
 
     Serialisable::toMap(node, "sites", [this, &coreData](const std::string &name, const SerialisedValue &site)
                         { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site, coreData); });
