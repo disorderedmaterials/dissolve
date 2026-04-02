@@ -182,13 +182,11 @@ class TestGraph : public DissolveGraph
      */
     public:
     // Save the specified graph in Mermaid format to a file named after the unit test
-    static void exportMermaidGraph(Graph &graph, std::optional<std::string> context = {})
+    static void exportMermaidGraph(Graph &graph)
     {
         auto suite = ::testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
         auto name = ::testing::UnitTest::GetInstance()->current_test_info()->name();
         std::string filename = std::format("{}-{}.mermaid", suite, name);
-        if (context)
-            filename = std::format("{}-{}-{}.mermaid", suite, name, filename);
 
         std::ofstream myfile;
         myfile.open(filename);
@@ -196,6 +194,6 @@ class TestGraph : public DissolveGraph
         myfile.close();
     }
     // Save the current graph in Mermaid format to a file named after the unit test
-    void exportMermaidGraph(std::optional<std::string> context = {}) { exportMermaidGraph(*this, context); }
+    void exportMermaidGraph() { exportMermaidGraph(*this); }
 };
 } // namespace UnitTest
