@@ -188,6 +188,9 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, bo
             return false;
     }
 
+    // Get atom types present in configuration
+    auto atomTypes = atomTypeVector();
+
     // Read in targeted potentials
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
@@ -206,9 +209,6 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, bo
         pot = ExternalPotentialProducer::create(*potentialType);
 
         // Additional arguments after the potential type correspond to targets for the potential
-        std::vector<int> atomIndices;
-        std::vector<std::shared_ptr<AtomType>> atomTypes;
-
         for (auto n = 1; n < parser.nArgs(); ++n)
         {
             // Plain number - corresponds to a specific atom in the configuration
@@ -219,8 +219,13 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, bo
                     Messenger::exception("Atom index {} for targeted potential is out of range.\n", i);
                 pot->addTargetAtomIndex(i);
             }
-            else if (coreData.findAtomType(parser.args(n)))
-                pot->addTargetAtomType(coreData.findAtomType(parser.args(n)));
+            else if (std::ranges::find_if(atomTypes, [&](const auto at)
+                                          { return DissolveSys::sameString(at->name(), parser.args(n)); }) != atomTypes.end())
+            {
+                auto it = std::ranges::find_if(atomTypes, [&](const auto at)
+                                               { return DissolveSys::sameString(at->name(), parser.args(n)); });
+                pot->addTargetAtomType(*it);
+            }
             else if (coreData.findSpecies(DissolveSys::niceName(parser.args(n))))
                 pot->addTargetSpecies(coreData.findSpecies(DissolveSys::niceName(parser.args(n))));
             else

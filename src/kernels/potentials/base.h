@@ -35,7 +35,7 @@ class ExternalPotential
     // Atom indices targeted by the potential
     std::vector<int> targetAtomIndices_;
     // Atom types targeted by the potential
-    std::vector<std::shared_ptr<AtomType>> targetAtomTypes_;
+    std::vector<const AtomType *> targetAtomTypes_;
     // Species targeted by the potential
     std::vector<const Species *> targetSpecies_;
 
@@ -48,11 +48,11 @@ class ExternalPotential
     // Return atom indices targeted by the potential
     const std::vector<int> &targetAtomIndices() const;
     // Atom types targeted by the potential
-    void setTargetAtomTypes(const std::vector<std::shared_ptr<AtomType>> &targets);
+    void setTargetAtomTypes(const std::vector<const AtomType *> &targets);
     // Add target atom type
-    void addTargetAtomType(std::shared_ptr<AtomType> target);
+    void addTargetAtomType(const AtomType *target);
     // Return atom types targeted by the potential
-    const std::vector<std::shared_ptr<AtomType>> &targetAtomTypes() const;
+    const std::vector<const AtomType *> &targetAtomTypes() const;
     // Species targeted by the potential
     void setTargetSpecies(const std::vector<const Species *> &targets);
     // Add target species
