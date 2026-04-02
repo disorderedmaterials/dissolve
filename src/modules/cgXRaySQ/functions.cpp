@@ -102,6 +102,7 @@ void CGXRaySQModule::calculateWeights(const GRModule *rdfModule, CGXRayWeights &
     // Clear weights and get species populations from GRModule
     weights.clear();
     auto populations = rdfModule->speciesPopulations();
+    weights.initialiseBeadsFromFile();
 
     for (auto speciesPop : populations)
         weights.addSpecies(speciesPop.first, speciesPop.second);

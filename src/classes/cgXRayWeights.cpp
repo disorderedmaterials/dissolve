@@ -32,22 +32,7 @@ void CGXRayWeights::operator=(const CGXRayWeights &source)
 // Initialise form factor data for the current atom types
 bool CGXRayWeights::initialiseFormFactors()
 {
-    formFactorData_.clear();
-
-    for (auto &atd : atomTypeMix_)
-    {
-        auto at = atd.atomType();
-
-        // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
-        auto data = XRayFormFactors::formFactorData(formFactors_, at->Z());
-        if (!data)
-            return Messenger::error("No form factor data present for element {} (formal charge {}) in x-ray data set '{}'.\n",
-                                    Elements::symbol(at->Z()), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
-
-        formFactorData_.push_back(*data);
-    }
-
-    return true;
+    return  beadMap_.initialiseFormFactors();;
 }
 
 // Clear contents
@@ -97,8 +82,8 @@ bool CGXRayWeights::finalise(XRayFormFactors::XRayFormFactorData formFactors)
 
     // Retrieve form factor data for the current atom types
     //formFactors_ = formFactors;
-    //if (!initialiseFormFactors())
-    //    return false;
+    if (!initialiseFormFactors())
+        return false;
 
     setUpMatrices();
 

@@ -286,6 +286,7 @@ class CGBead
                     Elements::symbol(at->Z()), 0,
                     XRayFormFactors::xRayFormFactorData().keyword(XRayFormFactors::WaasmaierKirfel1995));
             }
+            xRayFormFactorData_.push_back(*data);
         }
         return true;
     }
@@ -370,6 +371,12 @@ class CGBeadMap
         }
     }
 
+    bool initialiseFormFactors()
+    {
+        dissolve::for_each(ParallelPolicies::par, beads_.begin(), beads_.end(), [](CGBead &bead) { bead.initialiseXRayFormFactors(); });
+        return true;
+    }
+
     const std::size_t nBeads() const { return beads_.size(); }
 
     const double average_natoms_per_bead() const { return av_noa_bead_; }
@@ -411,7 +418,10 @@ class CGBeadMap
                            });
         Messenger::print("Calculated average atoms per bead = {:7.3f}\n", av_noa_bead_);
         dissolve::for_each(ParallelPolicies::par, indices.begin(), indices.end(),
-                           [&](const int &i) { beads_[i].calculateXRaySelfScattrering(fractions[i], av_noa_bead_); });
+                           [&](const int &i) 
+                           { 
+                               beads_[i].calculateXRaySelfScattrering(fractions[i], av_noa_bead_);
+                           });
     }
 
     void deuterate(const double fraction)
