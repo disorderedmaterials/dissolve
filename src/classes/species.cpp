@@ -7,13 +7,9 @@
 #include "data/ff/library.h"
 #include "data/isotopes.h"
 
-Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false)
+Species::Species(std::string name) : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
 {
     box_ = std::make_unique<SingleImageBox>();
-
-    // Set up natural Isotopologue
-    naturalIsotopologue_.setName("Natural");
-    naturalIsotopologue_.setParent(this);
 }
 
 // Clear Data
@@ -310,7 +306,7 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
     Serialisable::toMap(node, "isotopologues",
                         [this, &coreData](const std::string &name, const SerialisedValue &iso)
                         {
-                            isotopologues_.emplace_back(std::make_unique<Isotopologue>())->setName(name);
+                            isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name));
                             isotopologues_.back()->deserialise(iso, coreData);
                         });
 

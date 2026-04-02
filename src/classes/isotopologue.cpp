@@ -7,14 +7,11 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue(std::string name) : name_(name) {}
+Isotopologue::Isotopologue(const Species *parent, std::string name) : parent_(parent), name_(name) {}
 
 /*
  * Basic Information
  */
-
-// Set parent Species
-void Isotopologue::setParent(const Species *parent) { parent_ = parent; }
 
 // Return parent Species
 const Species *Isotopologue::parent() const { return parent_; }
