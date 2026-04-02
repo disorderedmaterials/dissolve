@@ -254,6 +254,7 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
     auto &result = target[tag];
     result["name"] = name_;
 
+    Serialisable::fromVectorToTable(atomTypes_, "atomTypes", result);
     Serialisable::fromVector<>(atoms_, "atoms", result);
     Serialisable::fromVector<>(bonds_, "bonds", result);
     Serialisable::fromVector<>(angles_, "angles", result);
@@ -266,6 +267,9 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
+    Serialisable::toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
+                        { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
+
     Serialisable::toVector(node, "atoms", [this, &coreData](const SerialisedValue &atom)
                            { atoms_.emplace_back().deserialise(atom, coreData); });
 
