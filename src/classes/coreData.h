@@ -158,8 +158,6 @@ class CoreData
     const std::vector<std::unique_ptr<Species>> &species() const;
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
-    // Copy AtomType between SpeciesAtoms, creating a new one if necessary
-    void copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom);
     // Copy intramolecular interaction parameters, adding master term if necessary
     void copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest);
     void copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest);

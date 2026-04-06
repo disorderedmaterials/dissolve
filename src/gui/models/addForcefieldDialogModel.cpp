@@ -233,7 +233,7 @@ void AddForcefieldDialogModel::finalise()
             continue;
 
         // Copy AtomType
-        dissolve_->coreData().copyAtomType(modified, original);
+        // dissolve_->coreData().copyAtomType(modified, original);
 
         // Overwrite existing parameters?
         if (overwriteParametersCheck_)

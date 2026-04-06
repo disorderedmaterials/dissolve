@@ -408,29 +408,6 @@ Species *CoreData::findSpecies(std::string_view name) const
     }
 }
 
-// Copy AtomType, creating a new one if necessary
-void CoreData::copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom)
-{
-    // Check for no AtomType being set
-    if (!sourceAtom.atomType())
-    {
-        destAtom.setAtomType(nullptr);
-        return;
-    }
-
-    // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-    auto at = findAtomType(sourceAtom.atomType()->name());
-    if (!at)
-    {
-        at = addAtomType(sourceAtom.Z());
-        at->setName(sourceAtom.atomType()->name());
-        at->interactionPotential() = sourceAtom.atomType()->interactionPotential();
-        at->setCharge(sourceAtom.atomType()->charge());
-    }
-
-    destAtom.setAtomType(at.get());
-}
-
 // Copy intramolecular interaction parameters, adding master term if necessary
 void CoreData::copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest)
 {
@@ -501,6 +478,14 @@ Species *CoreData::copySpecies(const Species *species)
     if (species->box()->type() != Box::BoxType::NonPeriodic)
         newSpecies->createBox(species->box()->axisLengths(), species->box()->axisAngles());
 
+    // Duplicate atom types
+    for (auto &at : species->atomTypes())
+    {
+        // Create a new atom type and copy the data of the other
+        auto newAt = newSpecies->addAtomType(at->Z());
+        *newAt = *at;
+    }
+
     // Duplicate atoms
     for (auto &i : species->atoms())
     {
@@ -509,8 +494,8 @@ Species *CoreData::copySpecies(const Species *species)
         if (i.isSelected())
             newSpecies->selectAtom(id);
 
-        // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-        copyAtomType(i, newSpecies->atom(id));
+        // Find and assign the atom type
+        newSpecies->atom(id).setAtomType(newSpecies->findAtomType(i.atomType()->name()));
     }
 
     // Duplicate bonds
