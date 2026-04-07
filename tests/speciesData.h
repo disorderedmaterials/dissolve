@@ -341,11 +341,11 @@ inline std::unique_ptr<SpeciesNode> createHexane()
     species->setName("Hexane");
 
     // Set up atom types
-    auto CT = species->addAtomType(Elements::Element::C, "CA");
+    auto CT = species->addAtomType(Elements::Element::C, "CT");
     CT->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
                                                     "epsilon=0.276144 sigma=3.5");
     CT->setCharge(0.0);
-    auto HC = species->addAtomType(Elements::Element::H, "HA");
+    auto HC = species->addAtomType(Elements::Element::H, "HC");
     HC->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJonesGeometric,
                                                     "epsilon=0.12552 sigma=2.5");
     HC->setCharge(0.0);
