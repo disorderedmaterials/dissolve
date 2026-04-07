@@ -39,30 +39,6 @@ int Species::addAtom(Elements::Element Z, Vector3 r, double q, std::shared_ptr<A
     return i.index();
 }
 
-// Add new atom type to atom types
-const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z, std::string_view name)
-{
-    // Create a suitable unique name
-    auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,
-                                              [&](const auto &at) { return at->name(); });
-
-    // Create atom type and set data
-    auto newAtomType = std::make_shared<AtomType>(Z, uniqueName);
-    atomTypes_.push_back(newAtomType);
-    newAtomType->setIndex(atomTypes_.size() - 1);
-
-    return newAtomType;
-}
-
-// Find and return the named atom type
-AtomType *Species::findAtomType(std::string_view name) const
-{
-    auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(), [name](const auto at) { return at->name() == name; });
-    if (it != atomTypes_.end())
-        return it->get();
-    return nullptr;
-}
-
 // Remove the specified atom from the species
 void Species::removeAtom(int index)
 {
@@ -289,6 +265,34 @@ double Species::mass() const
     return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
                            { return acc + (i.isPresence(SpeciesAtom::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
+
+// Add new atom type to atom types
+const std::shared_ptr<AtomType> Species::addAtomType(Elements::Element Z, std::string_view name)
+{
+    // Create a suitable unique name
+    auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,
+                                              [&](const auto &at) { return at->name(); });
+
+    // Create atom type and set data
+    auto newAtomType = std::make_shared<AtomType>(Z, uniqueName);
+    atomTypes_.push_back(newAtomType);
+    newAtomType->setIndex(atomTypes_.size() - 1);
+
+    return newAtomType;
+}
+
+// Find and return the named atom type
+AtomType *Species::findAtomType(std::string_view name) const
+{
+    auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(), [name](const auto at) { return at->name() == name; });
+    if (it != atomTypes_.end())
+        return it->get();
+    return nullptr;
+}
+
+// Return atom types in the species
+std::vector<std::shared_ptr<AtomType>> &Species::atomTypes() { return atomTypes_; };
+const std::vector<std::shared_ptr<AtomType>> &Species::atomTypes() const { return atomTypes_; }
 
 // Calculate and return atom type populations
 KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
