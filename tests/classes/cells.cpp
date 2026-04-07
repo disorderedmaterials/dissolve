@@ -6,6 +6,7 @@
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
+#include "tests/graphData.h"
 #include "templates/algorithms.h"
 #include <gtest/gtest.h>
 
@@ -16,8 +17,8 @@ extern const std::vector<Vector3> refCoords;
 
 TEST(CellsTest, Basic)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
+    // Set up the test graph
+    TestGraph testGraph;
     PairPotential::setRange(9.0);
     PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
     PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
