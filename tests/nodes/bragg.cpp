@@ -36,8 +36,8 @@ class BraggNodeTest : public ::testing::Test
     {
         // Set up the test graph
         auto lastNode = testGraph_.createConfiguration(
-            "Crystal", {{[] { return createAtomic(Elements::Mg); }, 500}, {[] { return createAtomic(Elements::O); }, 500}}, 0.1,
-            Units::DensityUnits::AtomsPerAngstromUnits, InsertNode::BoxActionStyle::None);
+            "Crystal", {{[] { return createAtomic(Elements::Mg); }, 500}, {[] { return createAtomic(Elements::O); }, 500}},
+            {21.085, 21.085, 21.085});
         lastNode = testGraph_.appendImportCoordinates(
             lastNode,
             CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
@@ -64,10 +64,6 @@ class BraggNodeTest : public ::testing::Test
 
         ASSERT_TRUE(testGraph_.addEdge({std::string(lastNode->name()), "Configuration", "Bragg", "Configuration"}));
         ASSERT_TRUE(testGraph_.addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg", "UnweightedSQ"}));
-
-        // Set cell dimensions
-        auto setCellNode = testGraph_.findNode("SetCell");
-        ASSERT_TRUE(setCellNode->setOption<Vector3>("Lengths", {21.085, 21.085, 21.085}));
 
         // Set options on Bragg node
         ASSERT_TRUE(braggNode_->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
