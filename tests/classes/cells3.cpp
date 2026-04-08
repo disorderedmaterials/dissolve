@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atomType.h"
-#include "classes/species.h"
-#include "io/import/coordinates.h"
 #include "kernels/producer.h"
-#include "main/dissolve.h"
 #include "templates/algorithms.h"
+#include "tests/graphData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -14,50 +11,54 @@ namespace UnitTest
 class CellsEnergyTest : public ::testing::Test
 {
     public:
-    CellsEnergyTest() : dissolve_(coreData_)
+    CellsEnergyTest()
     {
         PairPotential::setRange(20.0);
         PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
         PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
-
-        // Add atom type
-        auto arType = coreData_.addAtomType(Elements::Ar);
-        arType->setName("Ar");
-        arType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones,
-                                                            "epsilon=0.77404 sigma=3.445996");
-
-        // Set up pseudo-species
-        argon_ = coreData_.addSpecies();
-        argon_->setName("Argon");
-        argon_->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0);
-        argon_->atom(0).setAtomType(arType);
     }
 
     protected:
-    CoreData coreData_;
-    Dissolve dissolve_;
-    Species *argon_;
+    TestGraph testGraph_;
+    std::shared_ptr<AtomType> atomType_;
 
     protected:
-    // Create skeletal target Configuration
-    Configuration *createConfiguration(const Vector3 &lengths, const Vector3 &angles, int nMolecules)
+    // Set up graph
+    Configuration *setUp(const Vector3 &lengths, const Vector3 &angles, int nMolecules, std::string referenceCoordinates)
     {
-        // Setup Configuration
-        auto *cfg = coreData_.addConfiguration();
-        cfg->createBoxAndCells(lengths, angles, false);
+        auto lastNode =
+            testGraph_.createConfiguration("Box",
+                                           {{[]()
+                                             {
+                                                 return createAtomic(Elements::Ar, {ShortRangeFunctions::Form::LennardJones,
+                                                                                    "epsilon=0.774040 sigma=3.445996"});
+                                             },
+                                             nMolecules}},
+                                           0.1, Units::DensityUnits::AtomsPerAngstromUnits);
+        auto importNode = testGraph_.appendImportCoordinates(
+            lastNode,
+            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
 
-        // Add molecules
-        for (auto n = 0; n < nMolecules; ++n)
-            cfg->addMolecule(argon_);
-        cfg->updateObjectRelationships();
+        // Set cell dimensions
+        auto setCellNode = testGraph_.findNode("SetCell");
+        EXPECT_TRUE(setCellNode->setOption<Vector3>("Lengths", lengths));
+        EXPECT_TRUE(setCellNode->setOption<Vector3>("Angles", angles));
 
-        return cfg;
+        // Run the graph from the Import node to set up the configuration
+        EXPECT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+        EXPECT_EQ(importNode->versionIndex(), 0);
+
+        // Create a pair potential for testing
+        auto arSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph_.findNode("Ar"));
+        EXPECT_TRUE(arSpeciesNode);
+        atomType_ = arSpeciesNode->species().atom(0).atomType();
+
+        return importNode->getOutputValue<Configuration *>("Configuration");
     }
     // Calculate tabulated energy directly (without using Cells)
     double tabulatedEnergyNoCells(Configuration *cfg, double cutoffSq)
     {
         auto *box = cfg->box();
-        auto *pp = dissolve_.pairPotential("Ar", "Ar");
         auto energy = 0.0;
         dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
@@ -69,7 +70,7 @@ class CellsEnergyTest : public ::testing::Test
 
                                     auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
                                     if (rSq <= cutoffSq)
-                                        energy += pp->energy(sqrt(rSq));
+                                        energy += pairPotential_.energy(sqrt(rSq));
                                 });
         return energy;
     }
@@ -77,7 +78,6 @@ class CellsEnergyTest : public ::testing::Test
     double analyticEnergyNoCells(Configuration *cfg, double cutoffSq)
     {
         auto *box = cfg->box();
-        auto *pp = dissolve_.pairPotential("Ar", "Ar");
         auto energy = 0.0;
         dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
@@ -90,7 +90,7 @@ class CellsEnergyTest : public ::testing::Test
                                     auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
                                     if (rSq <= cutoffSq)
                                     {
-                                        energy += pp->analyticEnergy(sqrt(rSq), 0.0, 1.0);
+                                        energy += pairPotential_.analyticEnergy(sqrt(rSq), 0.0, 1.0);
                                     }
                                 });
         return energy;
@@ -100,16 +100,18 @@ class CellsEnergyTest : public ::testing::Test
     {
         auto [rCut, cellSize, refEnergy, lrc] = state;
 
-        // Set pair potential range, update pair potentials, and initialise an EnergyKernel
-        PairPotential::setRange(rCut);
         // Regenerate cells to new size spec and re-assign atoms
-        cfg->cells().clear();
         cfg->cells().generate(cfg->box(), cellSize);
         cfg->updateAtomLocations(true);
 
-        // Update pair potential and get an energy kernel
-        dissolve_.updatePairPotentials();
-        auto kernel = KernelProducer::energyKernel(cfg, dissolve_.potentialMap());
+        // Set pair potential range and initialise an EnergyKernel
+        PairPotential::setRange(rCut);
+        auto kernel = testGraph_.createEnergyKernel(cfg);
+
+        // Create a reference potential
+        auto optPotential = ShortRangeFunctions::combine(atomType_->interactionPotential(), atomType_->interactionPotential());
+        EXPECT_TRUE(optPotential);
+        auto pairPotential = PairPotential(atomType_->name(), atomType_->name(), *optPotential);
 
         // Calculate total Cell-based energy
         auto tabulated = tabulatedEnergyNoCells(cfg, rCut * rCut);
@@ -122,12 +124,8 @@ class CellsEnergyTest : public ::testing::Test
 
 TEST_F(CellsEnergyTest, Cubic)
 {
-    auto *cfg = createConfiguration({100, 100, 100}, {90, 90, 90}, 6755);
-
-    // Load the test coordinates
-    CoordinateImportFileFormat importer("dlpoly/argon/cubic/big_argon.CONFIG",
-                                        CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY);
-    ASSERT_TRUE(importer.importData(cfg));
+    auto *cfg = setUp({100, 100, 100}, {90, 90, 90}, 6755, "dlpoly/argon/cubic/big_argon.CONFIG");
+    ASSERT_TRUE(cfg);
 
     // Test range of cell sizes for various cutoffs - should make no difference to total energy
     std::vector<std::tuple<double, double, double, double>> states = {
@@ -142,12 +140,8 @@ TEST_F(CellsEnergyTest, Cubic)
 
 TEST_F(CellsEnergyTest, Monoclinic)
 {
-    auto *cfg = createConfiguration({100, 100, 100}, {90, 90, 120}, 6802);
-
-    // Load the test coordinates
-    CoordinateImportFileFormat importer("dlpoly/argon/monoclinic/big_argon.CONFIG",
-                                        CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY);
-    ASSERT_TRUE(importer.importData(cfg));
+    auto *cfg = setUp({100, 100, 100}, {90, 90, 120}, 6802, "dlpoly/argon/monoclinic/big_argon.CONFIG");
+    ASSERT_TRUE(cfg);
 
     // Test range of cell sizes for various cutoffs - should make no difference to total energy
     std::vector<std::tuple<double, double, double, double>> states = {
@@ -162,12 +156,8 @@ TEST_F(CellsEnergyTest, Monoclinic)
 
 TEST_F(CellsEnergyTest, TriclinicBox)
 {
-    auto *cfg = createConfiguration({100, 100, 100}, {80, 70, 60}, 6528);
-
-    // Load the test coordinates
-    CoordinateImportFileFormat importer("dlpoly/argon/triclinic/big_argon.CONFIG",
-                                        CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY);
-    ASSERT_TRUE(importer.importData(cfg));
+    auto *cfg = setUp({100, 100, 100}, {80, 70, 60}, 6528, "dlpoly/argon/triclinic/big_argon.CONFIG");
+    ASSERT_TRUE(cfg);
 
     // Test range of cell sizes for various cutoffs - should make no difference to total energy
     std::vector<std::tuple<double, double, double, double>> states = {
