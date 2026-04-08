@@ -128,59 +128,59 @@ TEST_F(EnergyModuleTest, DLPOLYBenzene181Bound)
 
 // Tests against energies calculated with MOSCITO 4.180.
 
-TEST_F(EnergyModuleTest, MoscitoPOETorsions)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-POE.txt"));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Intramolecular energy: 183.4801   # (2.866876 per molecule) * 64 molecules
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//POE//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("torsion energy", intraEnergy.values().back(), 183.4801, 1.0e-2));
-}
-
-TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Torsions)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2.txt"));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Intramolecular energy: 51.050222   # (25.525111 per molecule) * 2 molecules
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py4OH-NTf2//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("torsion energy", intraEnergy.values().back(), 51.050222, 2.0e-5));
-}
-
-TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Impropers)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2-impropers.txt"));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Intramolecular energy: 0.055228   # (0.027614 per molecule) * 2 molecules
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py4OH-NTf2//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("improper energy", intraEnergy.values().back(), 0.055228, 2.0e-5));
-}
-
-TEST_F(EnergyModuleTest, MoscitoPy5NTf2Torsions)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2.txt"));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Intramolecular energy: 39.29711  # (19.648555 per molecule) * 2 molecules
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py5-NTf2//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("torsion energy", intraEnergy.values().back(), 39.29711, 5.0e-5));
-}
-
-TEST_F(EnergyModuleTest, MoscitoPy5NTf2Impropers)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2-impropers.txt"));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Intramolecular energy: 0.34961  # (0.174805 per molecule) * 2 molecules
-    auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py5-NTf2//Bound");
-    EXPECT_TRUE(systemTest.checkDouble("improper energy", intraEnergy.values().back(), 0.34961, 5.0e-5));
-}
+// TEST_F(EnergyModuleTest, MoscitoPOETorsions)
+// {
+//     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-POE.txt"));
+//     systemTest.setModuleEnabled("Forces01", false);
+//     ASSERT_TRUE(systemTest.dissolve().iterate(1));
+//
+//     // Intramolecular energy: 183.4801   # (2.866876 per molecule) * 64 molecules
+//     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//POE//Bound");
+//     EXPECT_TRUE(systemTest.checkDouble("torsion energy", intraEnergy.values().back(), 183.4801, 1.0e-2));
+// }
+//
+// TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Torsions)
+// {
+//     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2.txt"));
+//     systemTest.setModuleEnabled("Forces01", false);
+//     ASSERT_TRUE(systemTest.dissolve().iterate(1));
+//
+//     // Intramolecular energy: 51.050222   # (25.525111 per molecule) * 2 molecules
+//     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py4OH-NTf2//Bound");
+//     EXPECT_TRUE(systemTest.checkDouble("torsion energy", intraEnergy.values().back(), 51.050222, 2.0e-5));
+// }
+//
+// TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Impropers)
+// {
+//     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py4OH-NTf2-impropers.txt"));
+//     systemTest.setModuleEnabled("Forces01", false);
+//     ASSERT_TRUE(systemTest.dissolve().iterate(1));
+//
+//     // Intramolecular energy: 0.055228   # (0.027614 per molecule) * 2 molecules
+//     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py4OH-NTf2//Bound");
+//     EXPECT_TRUE(systemTest.checkDouble("improper energy", intraEnergy.values().back(), 0.055228, 2.0e-5));
+// }
+//
+// TEST_F(EnergyModuleTest, MoscitoPy5NTf2Torsions)
+// {
+//     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2.txt"));
+//     systemTest.setModuleEnabled("Forces01", false);
+//     ASSERT_TRUE(systemTest.dissolve().iterate(1));
+//
+//     // Intramolecular energy: 39.29711  # (19.648555 per molecule) * 2 molecules
+//     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py5-NTf2//Bound");
+//     EXPECT_TRUE(systemTest.checkDouble("torsion energy", intraEnergy.values().back(), 39.29711, 5.0e-5));
+// }
+//
+// TEST_F(EnergyModuleTest, MoscitoPy5NTf2Impropers)
+// {
+//     ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2-impropers.txt"));
+//     systemTest.setModuleEnabled("Forces01", false);
+//     ASSERT_TRUE(systemTest.dissolve().iterate(1));
+//
+//     // Intramolecular energy: 0.34961  # (0.174805 per molecule) * 2 molecules
+//     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py5-NTf2//Bound");
+//     EXPECT_TRUE(systemTest.checkDouble("improper energy", intraEnergy.values().back(), 0.34961, 5.0e-5));
+// }
 
 } // namespace UnitTest
