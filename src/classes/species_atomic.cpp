@@ -267,7 +267,7 @@ double Species::mass() const
 }
 
 // Add new atom type to atom types
-AtomType* Species::addAtomType(Elements::Element Z, std::string_view name)
+AtomType *Species::addAtomType(Elements::Element Z, std::string_view name)
 {
     // Create a suitable unique name
     auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,
