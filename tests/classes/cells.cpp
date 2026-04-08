@@ -16,8 +16,9 @@ TEST(CellsTest, Basic)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{[]() { return createAtomic(Elements::Ar); }, 1}, {createWater, 267}},
-                                                  0.1, Units::DensityUnits::AtomsPerAngstromUnits);
+    auto lastNode =
+        testGraph.createConfiguration("Box", {{[]() { return createAtomic(Elements::Ar); }, 1}, {createWaterDLPoly, 267}}, 0.1,
+                                      Units::DensityUnits::AtomsPerAngstromUnits);
     auto importNode = testGraph.appendImportCoordinates(
         lastNode, CoordinateImportFileFormat("dlpoly/solvated_atom/solvated-argon-rcut5.CONFIG",
                                              CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
@@ -43,8 +44,8 @@ TEST(CellsTest, Basic)
     PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
 
     // Create an override potential to describe the Ar-OW interaction
-    // dissolve.coreData().addPairPotentialOverride("Ar", "OW", PairPotentialOverride::PairPotentialOverrideType::Replace,
-    // {Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166"});
+    testGraph.addPairPotentialOverride("Ar", "OW", PairPotentialOverride::PairPotentialOverrideType::Replace,
+                                       {Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166"});
 
     // Run the graph from the Import node to set up the configuration
     ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
@@ -52,7 +53,6 @@ TEST(CellsTest, Basic)
 
     // Get the configuration and create an energy kernel
     auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
-    auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Test consistency of energy calculation with DL_POLY reference energies over a range of cutoffs / cell sizes
     std::vector<std::tuple<double, double, double>> states = {
@@ -63,14 +63,15 @@ TEST(CellsTest, Basic)
     {
         auto [rCut, cellSize, refEnergy] = state;
 
-        // Set pair potential range, update pair potentials, and initialise an EnergyKernel
+        // Set pair potential range and initialise an EnergyKernel
         PairPotential::setRange(rCut);
+        auto kernel = testGraph.createEnergyKernel(cfg);
 
         // Calculate production energies (fully optimised)
         auto productionEnergy = kernel->totalEnergy();
 
         // Calculate total Cell-based energy
-        EXPECT_NEAR(refEnergy, productionEnergy.total(), 1.0e-4);
+        EXPECT_NEAR(refEnergy, productionEnergy.pairPotential.total(), 1.0e-4);
 
         // Calculate atomic energy from the Ar
         EXPECT_NEAR(refEnergy, kernel->totalEnergy(cfg->atom(0)).total(), 1.0e-4);
