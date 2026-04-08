@@ -34,7 +34,7 @@ class CellsEnergyTest : public ::testing::Test
                                                                                     "epsilon=0.774040 sigma=3.445996"});
                                              },
                                              nMolecules}},
-                                           0.1, Units::DensityUnits::AtomsPerAngstromUnits);
+                                           lengths, angles);
         auto importNode = testGraph_.appendImportCoordinates(
             lastNode,
             CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
@@ -69,7 +69,6 @@ class CellsEnergyTest : public ::testing::Test
                                     auto jj = molJ->atom(0);
 
                                     auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
-                                    if (rSq < 0.5) printf("LASKJDLKSAJDLKJSALKDJASLKJD\n");
                                     if (rSq <= cutoffSq)
                                         energy += pairPotential.energy(sqrt(rSq));
                                 });
