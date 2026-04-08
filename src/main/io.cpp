@@ -175,8 +175,6 @@ void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 
     graphNode_->serialise("graph", root);
 
-    Serialisable::fromVector<>(coreData_.pairPotentialOverrides(), "pairPotentialOverrides", root);
-
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
@@ -227,8 +225,6 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 
-    Serialisable::toVector(node, "pairPotentialOverrides",
-                           [this](const auto node) { coreData_.addPairPotentialOverride()->deserialise(node); });
     Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
     toMap(node, "species", [this](const std::string &name, const SerialisedValue &data)
@@ -435,16 +431,6 @@ bool Dissolve::saveInput(std::string_view filename)
                                    pot->interactionPotential().parametersAsString()))
                 return false;
     }
-
-    // Pair potential overrides
-    for (const auto &ppOverride : coreData_.pairPotentialOverrides())
-        if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}  {}\n",
-                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::OverrideKeyword),
-                               ppOverride->matchI(), ppOverride->matchJ(),
-                               PairPotentialOverride::pairPotentialOverrideTypes().keyword(ppOverride->type()),
-                               Functions1D::forms().keyword(ppOverride->interactionPotential().form()),
-                               ppOverride->interactionPotential().parametersAsString()))
-            return false;
 
     if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword),
                            PairPotential::range()))

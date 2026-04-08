@@ -74,4 +74,13 @@ class DissolveGraph : public Graph
     std::unique_ptr<EnergyKernel> createEnergyKernel(Configuration *cfg);
     // Create a force kernel suitable for the supplied Configuration
     std::unique_ptr<ForceKernel> createForceKernel(Configuration *cfg);
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

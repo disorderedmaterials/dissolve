@@ -136,3 +136,23 @@ std::unique_ptr<ForceKernel> DissolveGraph::createForceKernel(Configuration *cfg
     // Generate and return kernel
     return KernelProducer::forceKernel(cfg, PotentialMap(atomTypes, pairPotentialStore_));
 }
+
+/*
+ * Serialisation
+ */
+
+// Express as a serialisable value
+void DissolveGraph::serialise(std::string tag, SerialisedValue &target) const
+{
+    Graph::serialise(tag, target);
+    auto &result = target[tag];
+    Serialisable::fromVector<>(pairPotentialOverrides_, "pairPotentialOverrides", result);
+}
+
+// Read values from a serialisable value
+void DissolveGraph::deserialise(const SerialisedValue &node)
+{
+    Graph::deserialise(node);
+    Serialisable::toVector(node, "pairPotentialOverrides",
+                           [this](const auto ppOverrideNode) { addPairPotentialOverride()->deserialise(ppOverrideNode); });
+}

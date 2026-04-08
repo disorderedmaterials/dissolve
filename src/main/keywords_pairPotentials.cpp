@@ -114,10 +114,10 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                     errorsEncountered = true;
                     break;
                 }
-
-                coreData.addPairPotentialOverride(
-                    parser.argsv(1), parser.argsv(2),
-                    PairPotentialOverride::pairPotentialOverrideTypes().enumeration(parser.argsv(3)), potential);
+                //
+                // coreData.addPairPotentialOverride(
+                //     parser.argsv(1), parser.argsv(2),
+                //     PairPotentialOverride::pairPotentialOverrideTypes().enumeration(parser.argsv(3)), potential);
             }
             break;
             case (PairPotentialsBlock::PairPotentialKeyword):
