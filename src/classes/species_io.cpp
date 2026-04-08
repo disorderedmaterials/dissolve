@@ -46,7 +46,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     Messenger::print("\nParsing Species '{}'\n", name());
 
     Elements::Element Z;
-    std::shared_ptr<AtomType> at;
+    const AtomType *at;
     Isotopologue *iso;
     OptionalReferenceWrapper<SpeciesAngle> a;
     OptionalReferenceWrapper<SpeciesBond> b;
@@ -167,17 +167,16 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     at = nullptr;
                 else
                 {
-                    at = coreData.findAtomType(parser.argsv(6));
+                    at = findAtomType(parser.argsv(6));
                     if (!at)
                     {
                         Messenger::printVerbose("Creating AtomType '{}'...\n", parser.argsv(6));
-                        at = coreData.addAtomType(Z);
-                        at->setName(parser.argsv(6));
+                        at = addAtomType(Z, parser.argsv(6));
                     }
                 }
 
                 // Finally, set AtomType for the Atom
-                atoms_[atomIndex++].setAtomType(at.get());
+                atoms_[atomIndex++].setAtomType(at);
                 break;
             case (Species::SpeciesKeyword::Bond):
                 // Create a new bond definition between the specified atoms

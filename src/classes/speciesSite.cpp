@@ -569,8 +569,8 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
             case (SpeciesSite::AtomTypeKeyword):
                 for (auto n = 1; n < parser.nArgs(); ++n)
                 {
-                    auto at = coreData.findAtomType(parser.args(n));
-                    if (!at || !addDynamicAtomType(at.get()))
+                    auto at = parent_->findAtomType(parser.args(n));
+                    if (!at || !addDynamicAtomType(at))
                     {
                         Messenger::error("Failed to add target atom type for site '{}'.\n", name());
                         errorsEncountered = true;
