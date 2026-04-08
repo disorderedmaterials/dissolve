@@ -264,5 +264,45 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
                                    {"dlpoly/water1000/shifted.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
                                    1.6e-1);
 }
+TEST(Water1000EnergyTest, Override)
+{
+    // Set up the test graph
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
+    // Adjust pair potential properties
+    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
+    PairPotential::setRange(15.0, 1.0e-4);
+
+    // Set all charge and short-range interaction potentials to zero
+    auto waterSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
+    ASSERT_TRUE(waterSpeciesNode);
+    for (auto &at : waterSpeciesNode->species().atomTypes())
+    {
+        at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
+        at->setCharge(0.0);
+    }
+
+    // Create an override potential to describe the Ar-OW interaction
+    testGraph.addPairPotentialOverride("OW", "OW", PairPotentialOverride::PairPotentialOverrideType::Replace,
+                                       {Functions1D::Form::LennardJones126, "epsilon=0.6503 sigma=3.165492"});
+
+    // Run the graph from the Import node to set up the configuration
+    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importNode->versionIndex(), 0);
+
+    // Get the configuration and create an energy kernel
+    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto kernel = testGraph.createEnergyKernel(cfg);
+
+    // Check consistency between production and test energies
+    auto productionEnergy = kernel->totalEnergy();
+
+    // Interatomic energy: 1716.032 LJ + 54.1342 correction
+    EXPECT_NEAR(1716.032 + 54.1342, productionEnergy.pairPotential.interMolecular, 4.3e-2);
+}
 } // namespace UnitTest
