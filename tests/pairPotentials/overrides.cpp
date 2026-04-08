@@ -2,76 +2,80 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/energy/energy.h"
-#include "tests/testData.h"
+#include "tests/graphData.h"
 #include <gtest/gtest.h>
 #include <vector>
 
 namespace UnitTest
 {
-class PairPotentialOverridesTest : public ::testing::Test
-{
-    protected:
-    DissolveSystemTest systemTest;
-};
-
 // Calculate the van der Waals energy of our water test system 3000
-TEST_F(PairPotentialOverridesTest, Water3000)
+TEST(PairPotentialOverridesTest, Water)
 {
-    const auto expectedVanDerWaalsEnergy = 1770.1666370083758;
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
-                                     [](Dissolve &D, CoreData &C)
-                                     {
-                                         PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-                                         C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                         C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                     }));
+    // Set up the test graph
+    TestGraph testGraph;
+    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
+    auto importNode = testGraph.appendImportCoordinates(
+        lastNode,
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+    ASSERT_TRUE(importNode);
 
-    // Disable all modules except Energy01
-    systemTest.disableAllModules("Energy01");
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+    // Adjust pair potential properties
+    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
+    PairPotential::setRange(15.0, 1.0e-4);
+    PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
-    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
-    EXPECT_TRUE(systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(),
-                                       expectedVanDerWaalsEnergy, 6.0e-2));
+    // Set all atomtype charges zero
+    auto waterSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
+    ASSERT_TRUE(waterSpeciesNode);
+    for (auto &at : waterSpeciesNode->species().atomTypes())
+        at->setCharge(0.0);
 
-    // Get the two atom types
-    auto hw = systemTest.coreData().findAtomType("HW");
-    ASSERT_TRUE(hw);
-    auto ow = systemTest.coreData().findAtomType("OW");
-    ASSERT_TRUE(ow);
+    // Run the graph from the Import node to set up the configuration
+    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importNode->versionIndex(), 0);
 
-    // Set the potentials to zero and check that the new energy is zero
-    EXPECT_TRUE(ow->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0"));
-    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-    EXPECT_TRUE(systemTest.checkDouble("zeroed van der Waals energy", interEnergy.values().back(), 0.0, 6.0e-2));
+    // Get the configuration and create an energy kernel
+    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto kernel = testGraph.createEnergyKernel(cfg);
 
-    // Reinstate our only potential (OW-OW) with an override ("Off" to begin with)
-    auto *owOverride =
-        systemTest.coreData().addPairPotentialOverride("OW", "OW", PairPotentialOverride::PairPotentialOverrideType::Off,
+    // Test energy with various states of an override potential
+    const auto expectedVanDerWaalsEnergy = 1716.032 + 54.1342;
+    auto productionEnergy = kernel->totalEnergy({Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_NEAR(productionEnergy.pairPotential.interMolecular, expectedVanDerWaalsEnergy, 4.3e-2);
+
+    // Set all short-range interaction potentials to zero
+    for (auto &at : waterSpeciesNode->species().atomTypes())
+        at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
+
+    // Get a new kernel - total energy should now be zero
+    kernel = testGraph.createEnergyKernel(cfg);
+    productionEnergy = kernel->totalEnergy({Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_NEAR(productionEnergy.pairPotential.interMolecular, 0.0, 4.3e-2);
+
+    // Create an override potential to describe the OW-OW interaction (Off to begin with
+    auto override = testGraph.addPairPotentialOverride("OW", "OW", PairPotentialOverride::PairPotentialOverrideType::Off,
                                                        {Functions1D::Form::LennardJones126, "epsilon=0.6503 sigma=3.165492"});
-    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-    EXPECT_TRUE(systemTest.checkDouble("overridden (Off) van der Waals energy", interEnergy.values().back(), 0.0, 6.0e-2));
 
-    // Need to turn off internal consistency checking for the energy at this point since our reference atomic potentials
-    // will no longer represent the final, overridden potentials
-    auto *energyModule = systemTest.getModule<EnergyModule>("Energy01");
-    energyModule->keywords().set("Test", false);
+    // Get a new kernel - total energy should still be zero
+    kernel = testGraph.createEnergyKernel(cfg);
+    productionEnergy = kernel->totalEnergy({Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_NEAR(productionEnergy.pairPotential.interMolecular, 0.0, 4.3e-2);
 
-    // Turn it on to Add
-    owOverride->setType(PairPotentialOverride::PairPotentialOverrideType::Add);
-    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-    EXPECT_TRUE(systemTest.checkDouble("overridden (Add) van der Waals energy", interEnergy.values().back(),
-                                       expectedVanDerWaalsEnergy, 6.0e-2));
+    // Turn the potential to "Add"
+    override->setType(PairPotentialOverride::Add);
 
-    // And now to Replace
-    owOverride->setType(PairPotentialOverride::PairPotentialOverrideType::Replace);
-    EXPECT_TRUE(systemTest.dissolve().updatePairPotentials());
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-    EXPECT_TRUE(systemTest.checkDouble("overridden (Replace) van der Waals energy", interEnergy.values().back(),
-                                       expectedVanDerWaalsEnergy, 6.0e-2));
+    // Get a new kernel - total energy should now be as expected
+    kernel = testGraph.createEnergyKernel(cfg);
+    productionEnergy = kernel->totalEnergy({Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_NEAR(productionEnergy.pairPotential.interMolecular, expectedVanDerWaalsEnergy, 4.3e-2);
+
+    // Turn the potential to "Replace"
+    override->setType(PairPotentialOverride::Replace);
+
+    // Get a new kernel - total energy should still be as expected
+    kernel = testGraph.createEnergyKernel(cfg);
+    productionEnergy = kernel->totalEnergy({Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_NEAR(productionEnergy.pairPotential.interMolecular, expectedVanDerWaalsEnergy, 4.3e-2);
 }
 
 } // namespace UnitTest
