@@ -57,7 +57,7 @@ class SpeciesAtom : public Serialisable<>
     // Charge (if contained in file)
     double charge_{0.0};
     // Assigned AtomType
-    AtomType *atomType_{nullptr};
+    const AtomType *atomType_{nullptr};
     // Index in Species
     int index_{-1};
     // Whether the atom is currently selected
@@ -84,9 +84,9 @@ class SpeciesAtom : public Serialisable<>
     // Return charge of Atom
     double charge() const;
     // Set AtomType of Atom
-    void setAtomType(AtomType *at);
+    void setAtomType(const AtomType *at);
     // Return AtomType of Atom
-    AtomType *atomType() const;
+    const AtomType *atomType() const;
     // Set index (0->[N-1])
     void setIndex(int id);
     // Return index (0->[N-1])

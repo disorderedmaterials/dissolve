@@ -50,7 +50,7 @@ void AtomType::setIndex(int id) { index_ = id; }
 int AtomType::index() const { return index_; }
 
 // Return whether our parameters are the same as those provided
-bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
+bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge) const
 {
     if (Z_ != other->Z_ || interactionPotential_.form() != other->interactionPotential_.form() ||
         interactionPotential_.nParameters() != other->interactionPotential_.nParameters())

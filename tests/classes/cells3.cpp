@@ -20,7 +20,7 @@ class CellsEnergyTest : public ::testing::Test
 
     protected:
     TestGraph testGraph_;
-    std::shared_ptr<AtomType> atomType_;
+    const AtomType *atomType_{nullptr};
 
     protected:
     // Set up graph

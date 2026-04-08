@@ -100,7 +100,7 @@ void SpeciesAtom::setCharge(double charge) { charge_ = charge; }
 double SpeciesAtom::charge() const { return charge_; }
 
 // Set AtomType of SpeciesAtom
-void SpeciesAtom::setAtomType(AtomType *at)
+void SpeciesAtom::setAtomType(const AtomType *at)
 {
     // Check elements
     if (at && (at->Z() != Z_))
@@ -114,7 +114,7 @@ void SpeciesAtom::setAtomType(AtomType *at)
 }
 
 // Return SpeciesAtomType of SpeciesAtom
-AtomType *SpeciesAtom::atomType() const { return atomType_; }
+const AtomType *SpeciesAtom::atomType() const { return atomType_; }
 
 // Set index (0->[N-1])
 void SpeciesAtom::setIndex(int id) { index_ = id; }
@@ -510,9 +510,6 @@ void SpeciesAtom::deserialise(const SerialisedValue &node)
                                  std::string name = toml::get<std::string>(innerNode);
                                  atomType_ = parent_->findAtomType(name);
                                  if (atomType_ == nullptr)
-                                 {
-                                     atomType_ = parent_->addAtomType(Z_);
-                                     atomType_->setName(name);
-                                 }
+                                     atomType_ = parent_->addAtomType(Z_, name);
                              });
 }

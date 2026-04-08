@@ -29,7 +29,7 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
 }
 
 // Add a new atom to the Species, returning its index
-int Species::addAtom(Elements::Element Z, Vector3 r, double q, AtomType *atomType)
+int Species::addAtom(Elements::Element Z, Vector3 r, double q, const AtomType *atomType)
 {
     auto &i = atoms_.emplace_back(this);
     i.set(Z, r.x, r.y, r.z, q);
@@ -267,7 +267,7 @@ double Species::mass() const
 }
 
 // Add new atom type to atom types
-const AtomType* Species::addAtomType(Elements::Element Z, std::string_view name)
+AtomType* Species::addAtomType(Elements::Element Z, std::string_view name)
 {
     // Create a suitable unique name
     auto uniqueName = DissolveSys::uniqueName(name == "" ? Elements::symbol(Z) : name, atomTypes_,

@@ -325,8 +325,7 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, C
     auto at = i.parent()->findAtomType(ffa.name());
     if (!at)
     {
-        at = i.parent()->addAtomType(i.Z());
-        at->setName(ffa.name());
+        at = i.parent()->addAtomType(i.Z(), ffa.name());
         Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
     }
     else

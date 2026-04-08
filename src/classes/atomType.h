@@ -69,7 +69,7 @@ class AtomType : public Serialisable<>, public std::enable_shared_from_this<Atom
     // Return index of this type in the master type index
     int index() const;
     // Return whether our parameters are the same as those provided
-    bool sameParametersAs(const AtomType *other, bool checkCharge = false);
+    bool sameParametersAs(const AtomType *other, bool checkCharge = false) const;
 
     /*
      * Serialisation
