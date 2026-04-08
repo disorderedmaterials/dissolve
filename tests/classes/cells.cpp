@@ -63,6 +63,10 @@ TEST(CellsTest, Basic)
     {
         auto [rCut, cellSize, refEnergy] = state;
 
+        // Update the cell array in the configuration
+        cfg->cells().generate(cfg->box(), cellSize);
+        cfg->updateAtomLocations(true);
+
         // Set pair potential range and initialise an EnergyKernel
         PairPotential::setRange(rCut);
         auto kernel = testGraph.createEnergyKernel(cfg);
