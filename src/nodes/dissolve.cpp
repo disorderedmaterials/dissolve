@@ -92,11 +92,12 @@ void DissolveGraph::updateIndexingAndCells(Configuration *cfg) const
 }
 
 // Create new pair potential override
-void DissolveGraph::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
-                                             PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                             const InteractionPotential<Functions1D> &potential)
+PairPotentialOverride *DissolveGraph::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                                                               PairPotentialOverride::PairPotentialOverrideType overrideType,
+                                                               const InteractionPotential<Functions1D> &potential)
 {
     pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
+    return pairPotentialOverrides_.back().get();
 }
 
 // Return defined pair potential overrides

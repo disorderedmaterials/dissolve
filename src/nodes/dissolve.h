@@ -63,7 +63,7 @@ class DissolveGraph : public Graph
     // Ensure that the specified Configuration has updated type indexing, cells etc.
     void updateIndexingAndCells(Configuration *cfg) const;
     // Create new pair potential override
-    void addPairPotentialOverride(
+    PairPotentialOverride *addPairPotentialOverride(
         std::string_view matchI = "", std::string_view matchJ = "",
         PairPotentialOverride::PairPotentialOverrideType overrideType = PairPotentialOverride::PairPotentialOverrideType::Off,
         const InteractionPotential<Functions1D> &potential = {});
