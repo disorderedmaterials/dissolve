@@ -287,7 +287,7 @@ TEST(Water1000EnergyTest, Override)
         at->setCharge(0.0);
     }
 
-    // Create an override potential to describe the Ar-OW interaction
+    // Create an override potential to describe the OW-OW interaction
     testGraph.addPairPotentialOverride("OW", "OW", PairPotentialOverride::PairPotentialOverrideType::Replace,
                                        {Functions1D::Form::LennardJones126, "epsilon=0.6503 sigma=3.165492"});
 
