@@ -39,16 +39,11 @@ class CellsEnergyTest : public ::testing::Test
             lastNode,
             CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
 
-        // Set cell dimensions
-        auto setCellNode = testGraph_.findNode("SetCell");
-        EXPECT_TRUE(setCellNode->setOption<Vector3>("Lengths", lengths));
-        EXPECT_TRUE(setCellNode->setOption<Vector3>("Angles", angles));
-
         // Run the graph from the Import node to set up the configuration
         EXPECT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(importNode->versionIndex(), 0);
 
-        // Create a pair potential for testing
+        // Get the species atom type for pair potential generation
         auto arSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph_.findNode("Ar"));
         EXPECT_TRUE(arSpeciesNode);
         atomType_ = arSpeciesNode->species().atom(0).atomType();
