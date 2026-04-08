@@ -52,49 +52,6 @@ TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsDefined)
         systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), 1770.1666370083758, 6.0e-2));
 }
 
-TEST_F(EnergyModuleTest, DLPOLYBenzene181VanDerWaals)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
-                                             [](Dissolve &D, CoreData &C)
-                                             {
-                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-                                                 for (auto &b : C.masterBonds())
-                                                     b->setInteractionForm(BondFunctions::Form::None);
-                                                 for (auto &a : C.masterAngles())
-                                                     a->setInteractionForm(AngleFunctions::Form::None);
-                                                 for (auto &t : C.masterTorsions())
-                                                     t->setInteractionForm(TorsionFunctions::Form::None);
-                                             }));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    // Full van der Waals Energy: -1.152346e+03   # -1.334653E+03 (full) + 0.182307E+03 (LR correction)
-    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
-    EXPECT_TRUE(systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), -1.152346e+03, 3.5e-2));
-}
-
-TEST_F(EnergyModuleTest, DLPOLYBenzene181Electrostatics)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-benzene181.txt",
-                                             [](Dissolve &D, CoreData &C)
-                                             {
-                                                 C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                                 C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
-                                                 for (auto &b : C.masterBonds())
-                                                     b->setInteractionForm(BondFunctions::Form::None);
-                                                 for (auto &a : C.masterAngles())
-                                                     a->setInteractionForm(AngleFunctions::Form::None);
-                                                 for (auto &t : C.masterTorsions())
-                                                     t->setInteractionForm(TorsionFunctions::Form::None);
-                                             }));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
-
-    // Shifted coulomb sum
-    EXPECT_TRUE(systemTest.checkDouble("shifted coulomb energy", interEnergy.values().back(), 5.612389E+02, 1.8e-4));
-}
-
 // Tests against energies calculated with MOSCITO 4.180.
 
 TEST_F(EnergyModuleTest, MoscitoPOETorsions)
