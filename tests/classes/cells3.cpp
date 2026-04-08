@@ -56,7 +56,7 @@ class CellsEnergyTest : public ::testing::Test
         return importNode->getOutputValue<Configuration *>("Configuration");
     }
     // Calculate tabulated energy directly (without using Cells)
-    double tabulatedEnergyNoCells(Configuration *cfg, double cutoffSq)
+    double tabulatedEnergyNoCells(Configuration *cfg, const PairPotential &pairPotential, double cutoffSq)
     {
         auto *box = cfg->box();
         auto energy = 0.0;
@@ -69,13 +69,14 @@ class CellsEnergyTest : public ::testing::Test
                                     auto jj = molJ->atom(0);
 
                                     auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
+                                    if (rSq < 0.5) printf("LASKJDLKSAJDLKJSALKDJASLKJD\n");
                                     if (rSq <= cutoffSq)
-                                        energy += pairPotential_.energy(sqrt(rSq));
+                                        energy += pairPotential.energy(sqrt(rSq));
                                 });
         return energy;
     }
     // Calculate analytic energy directly (without using Cells)
-    double analyticEnergyNoCells(Configuration *cfg, double cutoffSq)
+    double analyticEnergyNoCells(Configuration *cfg, const PairPotential &pairPotential, double cutoffSq)
     {
         auto *box = cfg->box();
         auto energy = 0.0;
@@ -89,9 +90,7 @@ class CellsEnergyTest : public ::testing::Test
 
                                     auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
                                     if (rSq <= cutoffSq)
-                                    {
-                                        energy += pairPotential_.analyticEnergy(sqrt(rSq), 0.0, 1.0);
-                                    }
+                                        energy += pairPotential.analyticEnergy(sqrt(rSq), 0.0, 1.0);
                                 });
         return energy;
     }
@@ -112,11 +111,12 @@ class CellsEnergyTest : public ::testing::Test
         auto optPotential = ShortRangeFunctions::combine(atomType_->interactionPotential(), atomType_->interactionPotential());
         EXPECT_TRUE(optPotential);
         auto pairPotential = PairPotential(atomType_->name(), atomType_->name(), *optPotential);
+        pairPotential.tabulate();
 
         // Calculate total Cell-based energy
-        auto tabulated = tabulatedEnergyNoCells(cfg, rCut * rCut);
+        auto tabulated = tabulatedEnergyNoCells(cfg, pairPotential, rCut * rCut);
         auto production = kernel->totalPairPotentialEnergy(true, false);
-        EXPECT_NEAR(analyticEnergyNoCells(cfg, rCut * rCut), tabulated, 1.0e-2);
+        EXPECT_NEAR(analyticEnergyNoCells(cfg, pairPotential, rCut * rCut), tabulated, 1.0e-2);
         EXPECT_NEAR(tabulated, production.total(), 1.0e-6);
         EXPECT_NEAR(refEnergy - lrc, production.total(), 1.65e-2);
     }
