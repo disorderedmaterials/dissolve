@@ -156,7 +156,7 @@ TEST_F(CIFNodeTest, NaCl)
 
     // 2x2x2 supercell
     molecularSpeciesNode->setOption<Vector3i>("SupercellRepeat", {2, 2, 2});
-    testData_.graphRoot.setUpdateRequired();
+    testGraph_.dissolveGraph()->setUpdateRequired();
     ASSERT_EQ(molecularSpeciesNode->run(), NodeConstants::ProcessResult::Success);
     testBox(molecularSpeciesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A * 2, A * 2, A * 2},
             {90, 90, 90}, 8 * 8);

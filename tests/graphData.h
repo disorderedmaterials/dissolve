@@ -101,15 +101,15 @@ class TestGraph : public DissolveGraph
                              InsertNode::BoxActionStyle::None);
     }
     // Append an import coordinates node
-    Node *appendImportCoordinates(Node *lastNode, CoordinateImportFileFormat fileFormat)
+    Node *appendImportCoordinates(Node *lastNode, CoordinateImportFileFormat fileFormat, bool supercell = false)
     {
         auto importCoordinates = createNode("ImportConfigurationCoordinates");
         EXPECT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(fileFormat.filename())));
         EXPECT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
             "FileFormat",
             CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(fileFormat.formatIndex())));
-        EXPECT_TRUE(
-            addEdge({std::string(lastNode->name()), "Configuration", "ImportConfigurationCoordinates", "Configuration"}));
+        EXPECT_TRUE(addEdge({std::string(lastNode->name()), supercell ? "SupercellConfiguration" : "Configuration",
+                             "ImportConfigurationCoordinates", "Configuration"}));
 
         return importCoordinates;
     }

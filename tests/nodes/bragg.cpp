@@ -38,7 +38,7 @@ class BraggNodeTest : public ::testing::Test
     void createGraph(const Vector3i &braggMultiplicities)
     {
         // Create species and configuration from MgO cif file
-        auto root = &testData_.graphRoot;
+        auto root = testGraph_.dissolveGraph();
 
         auto cifLoaderNode = root->createNode("CIFLoader", "CIFLoader");
         ASSERT_TRUE(cifLoaderNode->setOption<std::string>("FilePath", "cif/1000053.cif"));
@@ -54,17 +54,18 @@ class BraggNodeTest : public ::testing::Test
 
         ASSERT_TRUE(root->addEdge({"CIFBonds", "CIFContext", "Crystal", "CIFContext"}));
 
-        // GR node
-        auto grNode = root->createNode("GR", "GRs");
-        ASSERT_TRUE(grNode);
-        ASSERT_TRUE(root->addEdge({"Crystal", "SupercellConfiguration", "GRs", "Configuration"}));
-        ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.025));
-        ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::SimpleMethod));
+        // Import coordinates
+        auto cfgName = std::string(cifConfigurationNode_->name());
+        auto importCoordsNode = testGraph_.appendImportCoordinates(
+            cifConfigurationNode_,
+            CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR),
+            true);
 
-        // SQ node
-        auto sqNode = root->createNode("SQ", "SQs");
+        // Add correlation function nodes
+        auto &&[grNode, sqNode] = testGraph_.appendGRSQ(importCoordsNode, false, true);
+        ASSERT_TRUE(grNode);
+        ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.025));
         ASSERT_TRUE(sqNode);
-        ASSERT_TRUE(root->addEdge({"GRs", "UnweightedGR", "SQs", "UnweightedGR"}));
         ASSERT_TRUE(sqNode->setOption<Number>("QMin", 0.05));
         ASSERT_TRUE(sqNode->setOption<Number>("QMax", 19.0));
         ASSERT_TRUE(sqNode->setOption<Number>("QDelta", 0.05));
@@ -73,46 +74,18 @@ class BraggNodeTest : public ::testing::Test
         neutronSQNode_ = testGraph_.appendNeutronSQ(
             sqNode, "NeutronSQ", {}, {}, {"epsr25/mgo500-555/mgo.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY});
         ASSERT_TRUE(neutronSQNode_);
-        braggNode_ = dynamic_cast<BraggNode *>(testGraph_.createNode("Bragg"));
-        ASSERT_TRUE(braggNode_);
-        ASSERT_TRUE(braggNode_->setOption<Vector3i>("Multiplicity", {5, 5, 5}));
-        ASSERT_TRUE(braggNode_->setOption<Number>("QMax", 20.0));
-        ASSERT_TRUE(braggNode_->setOption<Function1DWrapper>("BraggQBroadening",
-                                                             {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
-
-        ASSERT_TRUE(testGraph_.addEdge({std::string(lastNode->name()), "Configuration", "Bragg", "Configuration"}));
-        ASSERT_TRUE(testGraph_.addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg", "UnweightedSQ"}));
 
         // Bragg node
         braggNode_ = static_cast<BraggNode *>(root->createNode("Bragg", "Bragg01"));
         ASSERT_TRUE(braggNode_);
         ASSERT_TRUE(root->addEdge({"Crystal", "SupercellConfiguration", "Bragg01", "Configuration"}));
-        ASSERT_TRUE(root->addEdge({"SQs", "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
+        ASSERT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
         ASSERT_TRUE(braggNode_->setOption<Number>("QMax", 20.0));
         ASSERT_TRUE(braggNode_->setOption<Function1DWrapper>("BraggQBroadening",
                                                              {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
 
         // Set Bragg multiplicities
         ASSERT_TRUE(braggNode_->setOption<Vector3i>("Multiplicity", braggMultiplicities));
-
-        // NeutronSQ
-        Data1DImportFileFormat referenceData = {"epsr25/mgo500-555/mgo.EPSR.u01",
-                                                Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2};
-        auto neutronSQNode = root->createNode("NeutronSQ", "NeutronSQ01");
-        ASSERT_TRUE(neutronSQNode);
-        ASSERT_TRUE(root->addEdge({"SQs", "UnweightedGR", "NeutronSQ01", "UnweightedGR"}));
-        ASSERT_TRUE(root->addEdge({"Bragg01", "UnweightedSQ", "NeutronSQ01", "UnweightedSQ"}));
-
-        // Set reference F(Q) data
-        if (referenceData.hasFilename())
-        {
-            auto data1DImportNode = root->createNode("Data1DImport", std::format("{}-Reference", "NeutronSQ01"));
-            ASSERT_TRUE(data1DImportNode);
-            ASSERT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
-            ASSERT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
-                "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
-            ASSERT_TRUE(root->addEdge({std::format("{}-Reference", "NeutronSQ01"), "Data", "NeutronSQ01", "ReferenceData"}));
-        }
     }
 
     static bool testReflections(const std::vector<BraggReflection> &braggReflections,
