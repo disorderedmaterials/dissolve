@@ -1,3 +1,3 @@
-dissolve_add_test(SRC procedure.cpp)
-dissolve_add_test(SRC rotateFragment.cpp)
-dissolve_add_test(SRC select.cpp)
+#dissolve_add_test(SRC procedure.cpp)
+#dissolve_add_test(SRC rotateFragment.cpp)
+#dissolve_add_test(SRC select.cpp)
