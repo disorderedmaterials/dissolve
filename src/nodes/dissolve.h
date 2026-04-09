@@ -37,8 +37,6 @@ class DissolveGraph : public Graph
     private:
     // Dissolve reference
     Dissolve &dissolve_;
-    // Pair potential store
-    DoubleKeyedMap<PairPotential> pairPotentialStore_{true};
 
     public:
     // Return dissolve
@@ -50,6 +48,8 @@ class DissolveGraph : public Graph
      * Pair Potentials, Energy and Forces
      */
     private:
+    // Generated pair potentials
+    DoubleKeyedMap<PairPotential> pairPotentials_{true};
     // Defined pair potential overrides
     std::vector<std::unique_ptr<PairPotentialOverride>> pairPotentialOverrides_;
 
@@ -60,6 +60,8 @@ class DissolveGraph : public Graph
     void updatePairPotential(const AtomType &i, const AtomType &j);
 
     public:
+    // Clear all pair potentials
+    void clearPairPotentials();
     // Ensure that the specified Configuration has updated type indexing, cells etc.
     void updateIndexingAndCells(Configuration *cfg) const;
     // Create new pair potential override

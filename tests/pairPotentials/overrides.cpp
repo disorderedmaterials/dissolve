@@ -47,6 +47,9 @@ TEST(PairPotentialOverridesTest, Water)
     for (auto &at : waterSpeciesNode->species().atomTypes())
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
 
+    // TODO Need to manually clear the pair potential data so it is correctly regenerated
+    testGraph.clearPairPotentials();
+
     // Get a new kernel - total energy should now be zero
     kernel = testGraph.createEnergyKernel(cfg);
     productionEnergy = kernel->totalEnergy({Kernel::CalculationFlags::ExcludeGeometric});
