@@ -173,11 +173,6 @@ Module  NeutronSQ  '5050'
   Frequency  1
 EndModule
 
-# Calculate energy of the Configuration
-Module Energy
-  Configuration  'Liquid'
-EndModule
-
 # Refine potentials
 Module  EPSR  'EPSR01'
   Target  'C6H6'
