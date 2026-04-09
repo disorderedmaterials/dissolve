@@ -126,7 +126,6 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
         pot->tabulate();
 
     // Third step - apply any overrides
-    Messenger::print("Applying pair potential overrides...\n");
     // REMOVED for Dissolve2
 
     // Fourth step - set any additional potential
@@ -139,7 +138,9 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     }
 
     // Reinitialise the potential map
-    return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_);
+    // DSABLED FOR DISSOLVE2
+    // return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_);
+    return true;
 }
 
 // Clear additional potentials

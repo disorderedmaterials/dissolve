@@ -54,8 +54,6 @@ class CoreData
     std::shared_ptr<AtomType> atomType(int n);
     // Search for AtomType by name
     std::shared_ptr<AtomType> findAtomType(std::string_view name) const;
-    // Remove any atom types that are unused across all species
-    int removeUnusedAtomTypes();
     // Clear all atom types
     void clearAtomTypes();
 

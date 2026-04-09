@@ -363,7 +363,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     std::string_view arg1 = DissolveSys::beforeChar(parser.argsv(n), '=');
                     std::string_view arg2 = DissolveSys::afterChar(parser.argsv(n), '=');
 
-                    at = coreData.findAtomType(arg1);
+                    at = findAtomType(arg1);
                     if (!at)
                     {
                         Messenger::error("Failed to find AtomType '{}', referred to in Isotopologue '{}', "
@@ -385,7 +385,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    iso->setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), A));
+                    iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
                 }
                 break;
             case (Species::SpeciesKeyword::NAngles):

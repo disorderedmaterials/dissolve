@@ -81,37 +81,6 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
     return *it;
 }
 
-// Remove any atom types that are unused across all species
-int CoreData::removeUnusedAtomTypes()
-{
-    // Create an atom type set over all species
-    KeyedVector<const AtomType *, int> speciesAtomTypes;
-    for (auto &sp : species_)
-        speciesAtomTypes.merge(sp->atomTypePopulations());
-
-    auto oldSize = atomTypes_.size();
-
-    atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
-                                    [&](const auto &at)
-                                    {
-                                        if (speciesAtomTypes.contains(at.get()))
-                                            return false;
-                                        else
-                                        {
-                                            Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
-                                            return true;
-                                        }
-                                    }),
-                     atomTypes_.end());
-
-    // Reassign AtomType indices (in case one or more have been added / removed)
-    auto count = 0;
-    for (const auto &at : atomTypes_)
-        at->setIndex(count++);
-
-    return oldSize - atomTypes_.size();
-}
-
 // Clear all atom types
 void CoreData::clearAtomTypes() { atomTypes_.clear(); }
 

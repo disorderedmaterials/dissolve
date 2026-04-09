@@ -29,9 +29,6 @@ bool Dissolve::prepare()
         sp->setUpScaledInteractions();
     }
 
-    // Remove unused atom types
-    coreData_.removeUnusedAtomTypes();
-
     // Store / update last-used pair potential cutoff
     // If lastPairPotentialCutoff is nullopt, store the current value and move on leaving the cutoff to use as nullopt.
     static std::optional<double> lastPairPotentialRange;
@@ -76,89 +73,6 @@ bool Dissolve::prepare()
     if (coreData_.nConfigurations() == 0)
         for (const auto &sp : coreData_.species())
             globalUsedSpecies.emplace(sp.get());
-
-    // Check pair potential style - first, determine which styles might be valid for use
-    // -- Configuration charges must always be zero
-    auto neutralConfigsWithPPCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
-                                                   [](const auto &cfg) { return fabs(cfg->totalCharge(true)) < 1.0e-5; });
-    Messenger::printVerbose("Configuration neutrality if using charges on atom types    : {}\n",
-                            DissolveSys::btoa(neutralConfigsWithPPCharges));
-    auto neutralConfigsWithSpeciesCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
-                                                        [](const auto &cfg) { return fabs(cfg->totalCharge(false)) < 1.0e-5; });
-    Messenger::printVerbose("Configuration neutrality if using charges on species atoms : {}\n",
-                            DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
-
-    // -- Do all used Species have 95% non-zero atomic charges?
-    auto speciesHaveValidAtomicCharges =
-        std::all_of(globalUsedSpecies.begin(), globalUsedSpecies.end(),
-                    [](const auto &sp)
-                    {
-                        return (std::count_if(sp->atoms().begin(), sp->atoms().end(),
-                                              [](const auto &i) { return fabs(i.charge()) > 1.0e-5; }) /
-                                double(sp->nAtoms())) > 0.95;
-                    });
-    Messenger::printVerbose("Species atomic charge validity  : {}\n", DissolveSys::btoa(speciesHaveValidAtomicCharges));
-    // -- Do all atom types have 95% non-zero charges
-    auto atomTypesHaveValidAtomicCharges = (std::count_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-                                                          [](const auto &at) { return fabs(at->charge()) > 1.0e-5; }) /
-                                            double(coreData_.nAtomTypes())) > 0.95;
-    Messenger::printVerbose("AtomType atomic charge validity : {}\n", DissolveSys::btoa(atomTypesHaveValidAtomicCharges));
-
-    if (PairPotential::chargeSource() == PairPotential::ChargeSource::Automatic)
-    {
-        // Prefer charges on atom types as this is more efficient
-        if (neutralConfigsWithPPCharges && atomTypesHaveValidAtomicCharges)
-        {
-            PairPotential::setIncludeCoulombPotential(true);
-            Messenger::print("[AUTO] Pair potentials will include Coulomb terms - charges will be taken from atom types.\n");
-        }
-        else if (neutralConfigsWithSpeciesCharges && speciesHaveValidAtomicCharges)
-        {
-            PairPotential::setIncludeCoulombPotential(false);
-            Messenger::print(
-                "[AUTO] Pair potentials will not include Coulomb terms - charges will be taken from species atoms.\n");
-        }
-        else
-            return Messenger::error("Current charges (or lack thereof) assigned to atom types and species prevent "
-                                    "automatic\ndetermination of a pair potential scheme. Please check your setup!\n");
-    }
-    else if (PairPotential::chargeSource() == PairPotential::ChargeSource::AtomTypes)
-    {
-        // User-selected choice is to embed charges from atom types into the pair potential
-        if (neutralConfigsWithPPCharges && atomTypesHaveValidAtomicCharges)
-            Messenger::print("[MANUAL] Pair potentials will include Coulomb terms - charges will be taken from atom types.\n");
-        else if (!neutralConfigsWithPPCharges)
-        {
-            Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
-                             "neutral with this approach.\n");
-            for (const auto &cfg : coreData_.configurations())
-                Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(true));
-            return false;
-        }
-
-        PairPotential::setIncludeCoulombPotential(true);
-    }
-    else if (PairPotential::chargeSource() == PairPotential::ChargeSource::SpeciesAtoms)
-    {
-        // User-selected choice is to use charges from species atoms (i.e. no charge contributions to pair potentials)
-        if (neutralConfigsWithSpeciesCharges && speciesHaveValidAtomicCharges)
-            Messenger::print(
-                "[MANUAL] Pair potentials will not include Coulomb terms - charges will be taken from species atoms.\n");
-        else if (!neutralConfigsWithSpeciesCharges)
-        {
-            Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
-                             "neutral with this approach.\n");
-            for (const auto &cfg : coreData_.configurations())
-                Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(false));
-            return false;
-        }
-
-        PairPotential::setIncludeCoulombPotential(false);
-    }
-
-    // Make sure pair potentials are up-to-date
-    if (!updatePairPotentials())
-        return false;
 
     // Generate attached atom lists if IntraShake modules are present and enabled
     auto intraShakeModules = coreData_.allOfType(ModuleTypes::IntraShake);

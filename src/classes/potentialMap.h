@@ -31,13 +31,6 @@ class PotentialMap
     // PairPotential matrix
     Array2D<const PairPotential *> potentialMatrix_;
 
-    public:
-    // Initialise map
-    bool initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
-                    const std::vector<PairPotential::Definition> &pairPotentials);
-    bool initialise(const std::vector<const AtomType *> &atomTypes,
-                    const std::vector<PairPotential::Definition> &pairPotentials);
-
     /*
      * Energy / Force
      */
