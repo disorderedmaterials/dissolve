@@ -2,25 +2,26 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/isotopologueSetModel.h"
-#include "keywords/isotopologueSet.h"
-#include "main/dissolve.h"
-#include "modules/neutronSQ/neutronSQ.h"
+#include "classes/isotopologueSet.h"
+#include "tests/speciesData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
 TEST(IsotopologueSetModelTest, Basic)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/correlations-waterMethanol.txt"));
+    auto waterNode = createWater();
+    ASSERT_TRUE(waterNode);
+    auto &water = waterNode->species();
 
-    // Find the 'H5H' NeutronSQ module and grab the relevant IsotopologueSet
-    auto *h5h = dynamic_cast<NeutronSQModule *>(coreData.findModule("H5H"));
-    assert(h5h);
-    auto optH5hSet = h5h->keywords().get<IsotopologueSet, IsotopologueSetKeyword>("Isotopologue");
-    ASSERT_TRUE(optH5hSet.has_value());
-    auto &h5hSet = optH5hSet.value();
+    auto methanolNode = createMethanol();
+    ASSERT_TRUE(methanolNode);
+    auto &methanol = methanolNode->species();
+
+    // Create an isotopologue set
+    auto h5hSet = IsotopologueSet({{water.naturalIsotopologue(), 1.0},
+                                   {methanol.naturalIsotopologue(), 0.5},
+                                   {methanol.findIsotopologue("OD-MethylH"), 0.5}});
 
     // Set up the model
     IsotopologueSetModel model;
@@ -33,9 +34,9 @@ TEST(IsotopologueSetModelTest, Basic)
     // Sub-data
     EXPECT_EQ(model.data(model.index(0, 0)).toString().toStdString(), "Water");
     EXPECT_EQ(model.rowCount(model.index(0, 0)), 1);
-    EXPECT_EQ(model.data(model.index(0, 1, model.index(0, 0))).toString().toStdString(), "Protiated");
+    EXPECT_EQ(model.data(model.index(0, 1, model.index(0, 0))).toString().toStdString(), "Natural");
     EXPECT_EQ(model.rowCount(model.index(1, 0)), 2);
-    EXPECT_EQ(model.data(model.index(0, 1, model.index(1, 0))).toString().toStdString(), "Protiated");
+    EXPECT_EQ(model.data(model.index(0, 1, model.index(1, 0))).toString().toStdString(), "Natural");
     EXPECT_EQ(model.data(model.index(1, 1, model.index(1, 0))).toString().toStdString(), "OD-MethylH");
     EXPECT_DOUBLE_EQ(model.data(model.index(0, 2, model.index(1, 0))).toDouble(), 0.5);
     EXPECT_DOUBLE_EQ(model.data(model.index(1, 2, model.index(1, 0))).toDouble(), 0.5);
