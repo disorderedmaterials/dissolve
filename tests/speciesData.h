@@ -38,6 +38,30 @@ inline std::unique_ptr<SpeciesNode> createAtomic(Elements::Element element,
     return speciesNodeUniquePtr;
 }
 
+// Return "tetrahedral argon" test species
+inline std::unique_ptr<SpeciesNode> createTetrahedralArgon()
+{
+    // Add species node
+    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
+    auto speciesNodePtr = speciesNodeUniquePtr.get();
+    auto species = &speciesNodePtr->species();
+    species->setName("TetrahedralArgon");
+
+    species->addAtom(Elements::Ar, {0.0, 0.0, 0.0});
+    species->addAtom(Elements::Phantom, {0.0, 1.420000, 0.0});
+    species->addAtom(Elements::Phantom, {0.0, 0.474005, -1.338337});
+    species->addAtom(Elements::Phantom, {1.159673, -0.472997, 0.669489});
+    species->addAtom(Elements::Phantom, {-1.159590, -0.472997, 0.669489});
+    species->addBond(0, 1);
+    species->addBond(0, 2);
+    species->addBond(0, 3);
+    species->addBond(0, 4);
+
+    species->setUpScaledInteractions();
+
+    return speciesNodeUniquePtr;
+}
+
 // Create and return water test species in the specified graph
 inline std::pair<SpeciesNode *, SpeciesNode *> createMgOSpecies(Graph *parentGraph)
 {
