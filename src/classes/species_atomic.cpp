@@ -293,6 +293,12 @@ AtomType *Species::findAtomType(std::string_view name) const
 // Return atom types in the species
 std::vector<std::shared_ptr<AtomType>> &Species::atomTypes() { return atomTypes_; };
 const std::vector<std::shared_ptr<AtomType>> &Species::atomTypes() const { return atomTypes_; }
+std::vector<const AtomType *> Species::atomTypesRaw() const
+{
+    std::vector<const AtomType *> result;
+    std::transform(atomTypes_.begin(), atomTypes_.end(), std::back_inserter(result), [](const auto &at) { return at.get(); });
+    return result;
+}
 
 // Calculate and return atom type populations
 KeyedVector<const AtomType *, int> Species::atomTypePopulations() const

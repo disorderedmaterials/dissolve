@@ -119,6 +119,7 @@ class Species : public Serialisable<const CoreData &>
     // Return atom types in the species
     std::vector<std::shared_ptr<AtomType>> &atomTypes();
     const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
+    std::vector<const AtomType *> atomTypesRaw() const;
     // Calculate and return atom type populations
     KeyedVector<const AtomType *, int> atomTypePopulations() const;
     // Clear AtomType assignments for all atoms
