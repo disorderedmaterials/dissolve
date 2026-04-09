@@ -3,6 +3,7 @@
 
 #include "gui/models/addForcefieldDialogModel.h"
 #include "main/dissolve.h"
+#include "tests/speciesData.h"
 #include <QTableView>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -24,14 +25,13 @@ TEST_F(AddForcefieldDialogModelTest, benzene)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
-    auto species = dissolve.coreData().findSpecies("benzene");
-    ASSERT_NE(species, nullptr);
+    auto benzeneNode = createBenzene();
+    ASSERT_TRUE(benzeneNode);
+    auto &benzene = benzeneNode->species();
 
     AddForcefieldDialogModel model;
     model.setDissolve(dissolve);
-    model.setSpecies(species);
+    model.setSpecies(&benzene);
     model.ready();
 
     // ForceFieldPicker
