@@ -45,19 +45,31 @@ class DissolveGraph : public Graph
     Dissolve &dissolve() const;
     // Return the DissolveGraph reference
     DissolveGraph *dissolveGraph() override;
-    // Return pair potential store
-    const DoubleKeyedMap<PairPotential> &pairPotentialStore();
 
     /*
-     * Functions
+     * Pair Potentials, Energy and Forces
      */
     private:
+    // Defined pair potential overrides
+    std::vector<std::unique_ptr<PairPotentialOverride>> pairPotentialOverrides_;
+
+    private:
+    // Apply relevant overrides to the specified pair potential
+    void applyPairPotentialOverrides(PairPotential &pot);
     // Update specified pair potential
     void updatePairPotential(const AtomType &i, const AtomType &j);
 
     public:
     // Ensure that the specified Configuration has updated type indexing, cells etc.
     void updateIndexingAndCells(Configuration *cfg) const;
+    // Create new pair potential override
+    void addPairPotentialOverride(
+        std::string_view matchI = "", std::string_view matchJ = "",
+        PairPotentialOverride::PairPotentialOverrideType overrideType = PairPotentialOverride::PairPotentialOverrideType::Off,
+        const InteractionPotential<Functions1D> &potential = {});
+    // Return defined pair potential overrides
+    std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides();
+    const std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides() const;
     // Create an energy kernel suitable for the supplied Configuration
     std::unique_ptr<EnergyKernel> createEnergyKernel(Configuration *cfg);
     // Create a force kernel suitable for the supplied Configuration

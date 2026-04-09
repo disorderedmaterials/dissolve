@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atomType.h"
-#include "classes/species.h"
 #include "io/import/coordinates.h"
 #include "kernels/producer.h"
-#include "main/dissolve.h"
 #include "templates/algorithms.h"
+#include "tests/graphData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -14,44 +12,38 @@ namespace UnitTest
 class CellsMIMTest : public ::testing::Test
 {
     public:
-    CellsMIMTest() : dissolve_(coreData_)
+    CellsMIMTest()
     {
         PairPotential::setRange(20.0);
         PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
         PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
-
-        // Add atom type
-        auto arType = coreData_.addAtomType(Elements::Ar);
-        arType->setName("Ar");
-        arType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones,
-                                                            "epsilon=0.77404 sigma=3.445996");
-
-        // Set up pseudo-species
-        argon_ = coreData_.addSpecies();
-        argon_->setName("Argon");
-        argon_->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0);
-        argon_->atom(0).setAtomType(arType);
     }
 
     protected:
-    CoreData coreData_;
-    Dissolve dissolve_;
-    Species *argon_;
+    TestGraph testGraph_;
 
     protected:
-    // Create skeletal target Configuration
-    Configuration *createConfiguration(const Vector3 &lengths, const Vector3 &angles, int nMolecules)
+    // Set up graph
+    Configuration *setUp(const Vector3 &lengths, const Vector3 &angles, int nMolecules, std::string referenceCoordinates)
     {
-        // Setup Configuration
-        auto *cfg = coreData_.addConfiguration();
-        cfg->createBoxAndCells(lengths, angles, false);
+        auto lastNode =
+            testGraph_.createConfiguration("Box",
+                                           {{[]()
+                                             {
+                                                 return createAtomic(Elements::Ar, {ShortRangeFunctions::Form::LennardJones,
+                                                                                    "epsilon=0.774040 sigma=3.445996"});
+                                             },
+                                             nMolecules}},
+                                           lengths, angles);
+        auto importNode = testGraph_.appendImportCoordinates(
+            lastNode,
+            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
 
-        // Add molecules
-        for (auto n = 0; n < nMolecules; ++n)
-            cfg->addMolecule(argon_);
-        cfg->updateObjectRelationships();
+        // Run the graph from the Import node to set up the configuration
+        EXPECT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
+        EXPECT_EQ(importNode->versionIndex(), 0);
 
-        return cfg;
+        return importNode->getOutputValue<Configuration *>("Configuration");
     }
     // Count number of atoms within range of a target atom in the box without using cells
     int atomsWithRangeNoCells(Configuration *cfg, int fromIndex, double cutoff)
@@ -93,12 +85,12 @@ class CellsMIMTest : public ::testing::Test
 
 TEST_F(CellsMIMTest, Cubic)
 {
-    auto *cfg = createConfiguration({100, 100, 100}, {90, 90, 90}, 6755);
+    auto *cfg = setUp({100, 100, 100}, {90, 90, 90}, 6755, "dlpoly/argon/cubic/big_argon.CONFIG");
+    ASSERT_TRUE(cfg);
 
-    // Load the test coordinates
-    CoordinateImportFileFormat importer("dlpoly/argon/cubic/big_argon.CONFIG",
-                                        CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY);
-    ASSERT_TRUE(importer.importData(cfg));
+    // Regenerate cells to new size spec and re-assign atoms
+    cfg->cells().generate(cfg->box(), 7.0);
+    cfg->updateAtomLocations(true);
 
     auto cutoff = cfg->box()->inscribedSphereRadius();
     for (auto id = 0; id < cfg->nAtoms(); ++id)
@@ -107,12 +99,12 @@ TEST_F(CellsMIMTest, Cubic)
 
 TEST_F(CellsMIMTest, Monoclinic)
 {
-    auto *cfg = createConfiguration({100, 100, 100}, {90, 90, 120}, 6802);
+    auto *cfg = setUp({100, 100, 100}, {90, 90, 120}, 6802, "dlpoly/argon/monoclinic/big_argon.CONFIG");
+    ASSERT_TRUE(cfg);
 
-    // Load the test coordinates
-    CoordinateImportFileFormat importer("dlpoly/argon/monoclinic/big_argon.CONFIG",
-                                        CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY);
-    ASSERT_TRUE(importer.importData(cfg));
+    // Regenerate cells to new size spec and re-assign atoms
+    cfg->cells().generate(cfg->box(), 7.0);
+    cfg->updateAtomLocations(true);
 
     auto cutoff = cfg->box()->inscribedSphereRadius();
     for (auto id = 0; id < cfg->nAtoms(); ++id)
@@ -121,12 +113,12 @@ TEST_F(CellsMIMTest, Monoclinic)
 
 TEST_F(CellsMIMTest, TriclinicBox)
 {
-    auto *cfg = createConfiguration({100, 100, 100}, {80, 70, 60}, 6528);
+    auto *cfg = setUp({100, 100, 100}, {80, 70, 60}, 6528, "dlpoly/argon/triclinic/big_argon.CONFIG");
+    ASSERT_TRUE(cfg);
 
-    // Load the test coordinates
-    CoordinateImportFileFormat importer("dlpoly/argon/triclinic/big_argon.CONFIG",
-                                        CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY);
-    ASSERT_TRUE(importer.importData(cfg));
+    // Regenerate cells to new size spec and re-assign atoms
+    cfg->cells().generate(cfg->box(), 7.0);
+    cfg->updateAtomLocations(true);
 
     auto cutoff = cfg->box()->inscribedSphereRadius();
     for (auto id = 0; id < cfg->nAtoms(); ++id)

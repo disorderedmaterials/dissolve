@@ -25,35 +25,60 @@ Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
 // Return the DissolveGraph reference
 DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
 
-// Return pair potential store
-const DoubleKeyedMap<PairPotential> &DissolveGraph::pairPotentialStore() { return pairPotentialStore_; }
-
 /*
- * Functions
+ * Pair Potentials, Energy and Forces
  */
+
+// Apply relevant overrides to the specified pair potential
+void DissolveGraph::applyPairPotentialOverrides(PairPotential &pot)
+{
+    for (const auto &override : pairPotentialOverrides_)
+    {
+        // Is the override enabled?
+        if (override->type() == PairPotentialOverride::PairPotentialOverrideType::Off)
+            continue;
+
+        // Is this override a match for the atom types in the potential?
+        if ((DissolveSys::sameWildString(override->matchI(), pot.nameI()) &&
+             DissolveSys::sameWildString(override->matchJ(), pot.nameJ())) ||
+            (DissolveSys::sameWildString(override->matchJ(), pot.nameI()) &&
+             DissolveSys::sameWildString(override->matchI(), pot.nameJ())))
+        {
+            // Create a function wrapper for the potential
+            Function1DWrapper overridePotential(override->interactionPotential().form(),
+                                                override->interactionPotential().parameters());
+            // Apply the potential
+            pot.addToReferenceShortRangePotential(
+                overridePotential, override->type() == PairPotentialOverride::PairPotentialOverrideType::Replace);
+        }
+    }
+}
 
 // Update specified pair potential
 void DissolveGraph::updatePairPotential(const AtomType &i, const AtomType &j)
 {
     auto nameI = i.name(), nameJ = j.name();
 
-    // Ensure existing potential is up-to-date if it exists
-    if (pairPotentialStore_.contains(nameI, nameJ))
+    // Create the potential if it doesn't already exist
+    if (!pairPotentialStore_.contains(nameI, nameJ))
     {
-        pairPotentialStore_.get(nameI, nameJ).tabulate();
-        return;
+        auto interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
+
+        if (interactionPotential.has_value())
+            pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
+        else
+            pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ});
+
+        auto &pot = pairPotentialStore_.get({nameI, nameJ});
+        pot.setLocalChargeProduct(i.charge() * j.charge());
     }
 
-    auto interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
-
-    if (interactionPotential.has_value())
-        pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
-    else
-        pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ});
-
-    auto &pot = pairPotentialStore_.get({nameI, nameJ});
-    pot.setLocalChargeProduct(i.charge() * j.charge());
+    // Update the tabulated potential
+    auto &pot = pairPotentialStore_.get(nameI, nameJ);
     pot.tabulate();
+
+    // Apply any relevant overrides
+    applyPairPotentialOverrides(pot);
 }
 
 // Ensure that the specified Configuration has updated type indexing, cells etc.
@@ -64,6 +89,21 @@ void DissolveGraph::updateIndexingAndCells(Configuration *cfg) const
 
     // Regenerate cells in the configuration if necessary
     cfg->updateCells();
+}
+
+// Create new pair potential override
+void DissolveGraph::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                                             PairPotentialOverride::PairPotentialOverrideType overrideType,
+                                             const InteractionPotential<Functions1D> &potential)
+{
+    pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
+}
+
+// Return defined pair potential overrides
+std::vector<std::unique_ptr<PairPotentialOverride>> &DissolveGraph::pairPotentialOverrides() { return pairPotentialOverrides_; }
+const std::vector<std::unique_ptr<PairPotentialOverride>> &DissolveGraph::pairPotentialOverrides() const
+{
+    return pairPotentialOverrides_;
 }
 
 // Create an energy kernel suitable for the supplied Configuration
