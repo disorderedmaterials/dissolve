@@ -10,7 +10,10 @@
 
 SpeciesBond::SpeciesBond() : SpeciesIntra(nullptr, BondFunctions::Form::None) {}
 
-SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(parent, BondFunctions::Form::None) { assign(i, j); }
+SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(parent, BondFunctions::Form::None)
+{
+    assign(i, j);
+}
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 

@@ -267,7 +267,7 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
     }
 
     // OK to add new angle
-    angles_.emplace_back(i, j, k);
+    angles_.emplace_back(this, i, j, k);
 
     ++version_;
 
@@ -328,7 +328,7 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
     }
 
     // OK to add new torsion
-    torsions_.emplace_back(i, j, k, l);
+    torsions_.emplace_back(this, i, j, k, l);
 
     ++version_;
 
@@ -394,7 +394,7 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
     }
 
     // OK to add new improper
-    impropers_.emplace_back(i, j, k, l);
+    impropers_.emplace_back(this, i, j, k, l);
 
     ++version_;
 

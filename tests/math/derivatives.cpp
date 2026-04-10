@@ -15,8 +15,8 @@ class DerivativesTest : public ::testing::Test
 {
     public:
     DerivativesTest()
-        : i_(nullptr), j_(nullptr), k_(nullptr), l_(nullptr), bond_(&i_, &j_), angle_(&i_, &j_, &k_),
-          torsion_(&i_, &j_, &k_, &l_)
+        : i_(nullptr), j_(nullptr), k_(nullptr), l_(nullptr), bond_(nullptr, &i_, &j_), angle_(nullptr, &i_, &j_, &k_),
+          torsion_(nullptr, &i_, &j_, &k_, &l_)
     {
         i_.set(Elements::H, Vector3(-1.0, 1.0, 0.0));
         j_.set(Elements::C, Vector3(-1.0, 0.0, 0.0));

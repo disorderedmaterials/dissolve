@@ -9,7 +9,8 @@
 
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(nullptr, AngleFunctions::Form::None) {}
 
-SpeciesAngle::SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(parent, AngleFunctions::Form::None)
+SpeciesAngle::SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
+    : SpeciesIntra(parent, AngleFunctions::Form::None)
 {
     assign(i, j, k);
 }
