@@ -5,56 +5,6 @@
 #==============================================================================#
 
 Master
-  Bond  'C1-H1'  Harmonic  k=2845 eq=1.09
-  Bond  'C1-NA'  Harmonic  k=2820 eq=1.466
-  Bond  'C1-CE'  Harmonic  k=2242 eq=1.529
-  Bond  'CR-NA'  Harmonic  k=3992 eq=1.315
-  Bond  'CW-NA'  Harmonic  k=3574 eq=1.378
-  Bond  'CR-HCR'  Harmonic  k=2845 eq=1.08
-  Bond  'CW-CW'  Harmonic  k=4352 eq=1.341
-  Bond  'CW-HCW'  Harmonic  k=2845 eq=1.08
-  Bond  'CE-HC'  Harmonic  k=2845 eq=1.09
-  Bond  'CTA-HCA'  Harmonic  k=2845 eq=1.09
-  Bond  'CO2-O2'  Harmonic  k=5489 eq=1.25
-  Bond  'CO2-CTA'  Harmonic  k=2653 eq=1.522
-  Angle  'H1-C1-NA'  Harmonic  k=313.8 eq=110.7
-  Angle  'C1-NA-CR'  Harmonic  k=585.8 eq=126.4
-  Angle  'C1-NA-CW'  Harmonic  k=585.8 eq=125.6
-  Angle  'CE-C1-NA'  Harmonic  k=488.3 eq=112.7
-  Angle  'CE-C1-H1'  Harmonic  k=313.8 eq=110.7
-  Angle  'C1-CE-HC'  Harmonic  k=313.8 eq=110.7
-  Angle  'H1-C1-H1'  Harmonic  k=276.1 eq=107.8
-  Angle  'NA-CR-NA'  Harmonic  k=585.8 eq=109.8
-  Angle  'HCR-CR-NA'  Harmonic  k=292.9 eq=125.1
-  Angle  'CR-NA-CW'  Harmonic  k=585.8 eq=108
-  Angle  'CW-CW-NA'  Harmonic  k=585.8 eq=107.1
-  Angle  'HCW-CW-NA'  Harmonic  k=292.9 eq=122
-  Angle  'CW-CW-HCW'  Harmonic  k=292.9 eq=130.9
-  Angle  'HC-CE-HC'  Harmonic  k=276.1 eq=107.8
-  Angle  'CTA-CO2-O2'  Harmonic  k=585.8 eq=117
-  Angle  'CO2-CTA-HCA'  Harmonic  k=292.9 eq=109.5
-  Torsion  'CR-NA-C1-H1'  Cos4  k1=0 k2=0 k3=0 k4=0
-  Torsion  'CW-NA-C1-H1'  Cos4  k1=0 k2=0 k3=0.519 k4=0
-  Torsion  'CE-C1-NA-CR'  Cos4  k1=-5.2691 k2=0 k3=0 k4=0
-  Torsion  'CE-C1-NA-CW'  Cos4  k1=-7.1535 k2=6.1064 k3=0.7939 k4=0
-  Torsion  'H1-C1-CE-HC'  Cos4  k1=0 k2=0 k3=1.2552 k4=0
-  Torsion  'HC-CE-C1-NA'  Cos4  k1=0 k2=0 k3=0.367 k4=0
-  Torsion  'C1-NA-CR-NA'  Cos4  k1=0 k2=19.46 k3=0 k4=0
-  Torsion  'C1-NA-CR-HCR'  Cos4  k1=0 k2=19.46 k3=0 k4=0
-  Torsion  'CW-NA-CR-NA'  Cos4  k1=0 k2=19.46 k3=0 k4=0
-  Torsion  'CW-NA-CR-HCR'  Cos4  k1=0 k2=19.46 k3=0 k4=0
-  Torsion  'C1-NA-CW-CW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
-  Torsion  'C1-NA-CW-HCW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
-  Torsion  'CR-NA-CW-CW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
-  Torsion  'CR-NA-CW-HCW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
-  Torsion  'NA-CW-CW-NA'  Cos4  k1=0 k2=44.98 k3=0 k4=0
-  Torsion  'HCW-CW-CW-NA'  Cos4  k1=0 k2=44.98 k3=0 k4=0
-  Torsion  'HCW-CW-CW-HCW'  Cos4  k1=0 k2=44.98 k3=0 k4=0
-  Torsion  'HCA-CTA-CO2-O2'  Cos4  k1=0 k2=0 k3=0 k4=0
-  Improper  'NA-C1-CR-CW'  Cos4  k1=0 k2=8.368 k3=0 k4=0
-  Improper  'CR-HCR-NA-NA'  Cos4  k1=0 k2=9.2048 k3=0 k4=0
-  Improper  'CW-CW-HCW-NA'  Cos4  k1=0 k2=9.2048 k3=0 k4=0
-  Improper  'CO2-CTA-O2-O2'  Cos4  k1=0 k2=87.864 k3=0 k4=0
 EndMaster
 
 #==============================================================================#
@@ -83,6 +33,50 @@ Species '1-ethyl-3-methylimidazolium'
   Atom   17  H    2.465246e+00  -3.742331e-01  1.825918e+00  'HC'  5.100000e-02
   Atom   18  H    1.949107e+00  4.317605e-01  3.308038e+00  'HC'  5.100000e-02
   Atom   19  H    1.150019e-01  -1.007452e+00  2.452802e+00  'H1'  1.105000e-01
+
+  Bond  'C1-H1'  Harmonic  k=2845 eq=1.09
+  Bond  'C1-NA'  Harmonic  k=2820 eq=1.466
+  Bond  'C1-CE'  Harmonic  k=2242 eq=1.529
+  Bond  'CR-NA'  Harmonic  k=3992 eq=1.315
+  Bond  'CW-NA'  Harmonic  k=3574 eq=1.378
+  Bond  'CR-HCR'  Harmonic  k=2845 eq=1.08
+  Bond  'CW-CW'  Harmonic  k=4352 eq=1.341
+  Bond  'CW-HCW'  Harmonic  k=2845 eq=1.08
+  Bond  'CE-HC'  Harmonic  k=2845 eq=1.09
+  Angle  'H1-C1-NA'  Harmonic  k=313.8 eq=110.7
+  Angle  'C1-NA-CR'  Harmonic  k=585.8 eq=126.4
+  Angle  'C1-NA-CW'  Harmonic  k=585.8 eq=125.6
+  Angle  'CE-C1-NA'  Harmonic  k=488.3 eq=112.7
+  Angle  'CE-C1-H1'  Harmonic  k=313.8 eq=110.7
+  Angle  'C1-CE-HC'  Harmonic  k=313.8 eq=110.7
+  Angle  'H1-C1-H1'  Harmonic  k=276.1 eq=107.8
+  Angle  'NA-CR-NA'  Harmonic  k=585.8 eq=109.8
+  Angle  'HCR-CR-NA'  Harmonic  k=292.9 eq=125.1
+  Angle  'CR-NA-CW'  Harmonic  k=585.8 eq=108
+  Angle  'CW-CW-NA'  Harmonic  k=585.8 eq=107.1
+  Angle  'HCW-CW-NA'  Harmonic  k=292.9 eq=122
+  Angle  'CW-CW-HCW'  Harmonic  k=292.9 eq=130.9
+  Angle  'HC-CE-HC'  Harmonic  k=276.1 eq=107.8
+  Torsion  'CR-NA-C1-H1'  Cos4  k1=0 k2=0 k3=0 k4=0
+  Torsion  'CW-NA-C1-H1'  Cos4  k1=0 k2=0 k3=0.519 k4=0
+  Torsion  'CE-C1-NA-CR'  Cos4  k1=-5.2691 k2=0 k3=0 k4=0
+  Torsion  'CE-C1-NA-CW'  Cos4  k1=-7.1535 k2=6.1064 k3=0.7939 k4=0
+  Torsion  'H1-C1-CE-HC'  Cos4  k1=0 k2=0 k3=1.2552 k4=0
+  Torsion  'HC-CE-C1-NA'  Cos4  k1=0 k2=0 k3=0.367 k4=0
+  Torsion  'C1-NA-CR-NA'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'C1-NA-CR-HCR'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'CW-NA-CR-NA'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'CW-NA-CR-HCR'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'C1-NA-CW-CW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'C1-NA-CW-HCW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'CR-NA-CW-CW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'CR-NA-CW-HCW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'NA-CW-CW-NA'  Cos4  k1=0 k2=44.98 k3=0 k4=0
+  Torsion  'HCW-CW-CW-NA'  Cos4  k1=0 k2=44.98 k3=0 k4=0
+  Torsion  'HCW-CW-CW-HCW'  Cos4  k1=0 k2=44.98 k3=0 k4=0
+  Improper  'NA-C1-CR-CW'  Cos4  k1=0 k2=8.368 k3=0 k4=0
+  Improper  'CR-HCR-NA-NA'  Cos4  k1=0 k2=9.2048 k3=0 k4=0
+  Improper  'CW-CW-HCW-NA'  Cos4  k1=0 k2=9.2048 k3=0 k4=0
 
   # Bonds
   NBonds  19
@@ -215,6 +209,14 @@ Species 'Acetate Anion'
   Atom    5  O    -1.573147e+00  -6.415200e-01  4.949280e-01  'O2'  -6.800000e-01
   Atom    6  C    -3.536540e-01  -4.826980e-01  5.194300e-01  'CO2'  5.950000e-01
   Atom    7  C    3.158470e-01  4.483340e-01  -3.583300e-01  'CTA'  -2.380000e-01
+
+  Bond  'CTA-HCA'  Harmonic  k=2845 eq=1.09
+  Bond  'CO2-O2'  Harmonic  k=5489 eq=1.25
+  Bond  'CO2-CTA'  Harmonic  k=2653 eq=1.522
+  Angle  'CTA-CO2-O2'  Harmonic  k=585.8 eq=117
+  Angle  'CO2-CTA-HCA'  Harmonic  k=292.9 eq=109.5
+  Torsion  'HCA-CTA-CO2-O2'  Cos4  k1=0 k2=0 k3=0 k4=0
+  Improper  'CO2-CTA-O2-O2'  Cos4  k1=0 k2=87.864 k3=0 k4=0
 
   # Bonds
   NBonds  6
