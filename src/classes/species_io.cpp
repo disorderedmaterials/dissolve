@@ -540,11 +540,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 af = AngleFunctions::forms().enumeration(parser.argsv(2));
 
-                // Create a new master angle definition
+                // Create a new common angle definition
                 try
                 {
-                    auto &masterAngle = addCommonAngle(parser.argsv(1));
-                    masterAngle.setInteractionForm(af);
+                    auto &commonAngle = addCommonAngle(parser.argsv(1));
+                    commonAngle.setInteractionForm(af);
 
                     // Check number of args provided
                     if (!AngleFunctions::forms().validNArgs(af, parser.nArgs() - 3))
@@ -554,15 +554,15 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    if (!masterAngle.setInteractionParameters(parser, 3))
+                    if (!commonAngle.setInteractionParameters(parser, 3))
                     {
                         errorsEncountered = true;
                         break;
                     }
 
-                    Messenger::printVerbose("Defined master angle term: {:<10}  {:<12}  {}\n", masterAngle.name(),
-                                            AngleFunctions::forms().keyword(masterAngle.interactionForm()),
-                                            masterAngle.interactionPotential().parametersAsString());
+                    Messenger::printVerbose("Defined common angle term: {:<10}  {:<12}  {}\n", commonAngle.name(),
+                                            AngleFunctions::forms().keyword(commonAngle.interactionForm()),
+                                            commonAngle.interactionPotential().parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {
@@ -580,11 +580,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 bf = BondFunctions::forms().enumeration(parser.argsv(2));
 
-                // Create a new master bond definition
+                // Create a new common bond definition
                 try
                 {
-                    auto &masterBond = addCommonBond(parser.argsv(1));
-                    masterBond.setInteractionForm(bf);
+                    auto &commonBond = addCommonBond(parser.argsv(1));
+                    commonBond.setInteractionForm(bf);
 
                     // Check number of args provided
                     if (!BondFunctions::forms().validNArgs(bf, parser.nArgs() - 3))
@@ -594,15 +594,15 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    if (!masterBond.setInteractionParameters(parser, 3))
+                    if (!commonBond.setInteractionParameters(parser, 3))
                     {
                         errorsEncountered = true;
                         break;
                     }
 
-                    Messenger::printVerbose("Defined master bond term: {:<10}  {:<12}  {}\n", masterBond.name(),
-                                            BondFunctions::forms().keyword(masterBond.interactionForm()),
-                                            masterBond.interactionPotential().parametersAsString());
+                    Messenger::printVerbose("Defined common bond term: {:<10}  {:<12}  {}\n", commonBond.name(),
+                                            BondFunctions::forms().keyword(commonBond.interactionForm()),
+                                            commonBond.interactionPotential().parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {
@@ -620,11 +620,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
 
-                // Create a new master improper definition
+                // Create a new common improper definition
                 try
                 {
-                    auto &masterImproper = addCommonImproper(parser.argsv(1));
-                    masterImproper.setInteractionForm(tf);
+                    auto &commonImproper = addCommonImproper(parser.argsv(1));
+                    commonImproper.setInteractionForm(tf);
 
                     // Check number of args provided
                     if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
@@ -634,15 +634,15 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    if (!masterImproper.setInteractionParameters(parser, 3))
+                    if (!commonImproper.setInteractionParameters(parser, 3))
                     {
                         errorsEncountered = true;
                         break;
                     }
 
-                    Messenger::printVerbose("Defined master improper term: {:<10}  {:<12}  {}\n", masterImproper.name(),
-                                            TorsionFunctions::forms().keyword(masterImproper.interactionForm()),
-                                            masterImproper.interactionPotential().parametersAsString());
+                    Messenger::printVerbose("Defined common improper term: {:<10}  {:<12}  {}\n", commonImproper.name(),
+                                            TorsionFunctions::forms().keyword(commonImproper.interactionForm()),
+                                            commonImproper.interactionPotential().parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {
@@ -660,11 +660,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
 
-                // Create a new master torsion definition
+                // Create a new common torsion definition
                 try
                 {
-                    auto &masterTorsion = addCommonTorsion(parser.argsv(1));
-                    masterTorsion.setInteractionForm(tf);
+                    auto &commonTorsion = addCommonTorsion(parser.argsv(1));
+                    commonTorsion.setInteractionForm(tf);
 
                     // Check number of args provided
                     if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
@@ -674,18 +674,18 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Set parameters
-                    if (!masterTorsion.setInteractionParameters(parser, 3))
+                    if (!commonTorsion.setInteractionParameters(parser, 3))
                     {
                         errorsEncountered = true;
                         break;
                     }
 
                     // Set scaling factors
-                    masterTorsion.set14ScalingFactors(elec14Scaling, vdw14Scaling);
+                    commonTorsion.set14ScalingFactors(elec14Scaling, vdw14Scaling);
 
-                    Messenger::printVerbose("Defined master torsion term: {:<10}  {:<12}  {}\n", masterTorsion.name(),
-                                            TorsionFunctions::forms().keyword(masterTorsion.interactionForm()),
-                                            masterTorsion.interactionPotential().parametersAsString());
+                    Messenger::printVerbose("Defined common torsion term: {:<10}  {:<12}  {}\n", commonTorsion.name(),
+                                            TorsionFunctions::forms().keyword(commonTorsion.interactionForm()),
+                                            commonTorsion.interactionPotential().parametersAsString());
                 }
                 catch (const std::runtime_error &e)
                 {
