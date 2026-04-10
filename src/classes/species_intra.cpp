@@ -461,7 +461,7 @@ void Species::setUpScaledInteractions()
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
 
-// Generate attached SpeciesAtom lists for all intramolecular terms
+// Generate attached atom lists for all intramolecular terms
 void Species::generateAttachedAtomLists()
 {
     // Bonds
@@ -588,35 +588,6 @@ void Species::detachFromMasterTerms()
 
     for (auto &improper : impropers_)
         improper.detachFromMasterTerm();
-}
-
-// Detach links to specified master term, copying parameters to local SpeciesIntra
-void Species::detachFromMasterTerm(MasterBond *master)
-{
-    for (auto &bond : bonds_)
-        if (bond.masterTerm() == master)
-            bond.detachFromMasterTerm();
-}
-
-void Species::detachFromMasterTerm(MasterAngle *master)
-{
-    for (auto &angle : angles_)
-        if (angle.masterTerm() == master)
-            angle.detachFromMasterTerm();
-}
-
-void Species::detachFromMasterTerm(MasterTorsion *master)
-{
-    for (auto &torsion : torsions_)
-        if (torsion.masterTerm() == master)
-            torsion.detachFromMasterTerm();
-}
-
-void Species::detachFromMasterTerm(MasterImproper *master)
-{
-    for (auto &improper : impropers_)
-        if (improper.masterTerm() == master)
-            improper.detachFromMasterTerm();
 }
 
 template <class Master, class Intra>

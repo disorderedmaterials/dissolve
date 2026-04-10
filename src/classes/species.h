@@ -234,15 +234,10 @@ class Species : public Serialisable<const CoreData &>
     void setUpScaledInteractions();
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
-    // Generate attached Atom lists for all intramolecular terms
+    // Generate attached atom lists for all intramolecular terms
     void generateAttachedAtomLists();
     // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
     void detachFromMasterTerms();
-    // Detach links to specified master term, copying parameters to local SpeciesIntra
-    void detachFromMasterTerm(MasterBond *master);
-    void detachFromMasterTerm(MasterAngle *master);
-    void detachFromMasterTerm(MasterTorsion *master);
-    void detachFromMasterTerm(MasterImproper *master);
     // Reduce intramolecular terms to master terms
     void reduceToMasterTerms(CoreData &coreData, bool selectionOnly = false);
 
