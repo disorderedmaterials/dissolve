@@ -5,13 +5,6 @@
 #==============================================================================#
 
 Master
-  Bond  'CA-HA'  Harmonic  k=3071.056 eq=1.08
-  Bond  'CA-CA'  Harmonic  k=3924.592 eq=1.4
-  Angle  'CA-CA-HA'  Harmonic  k=292.88 eq=120
-  Angle  'CA-CA-CA'  Harmonic  k=527.184 eq=120
-  Torsion  'HA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
-  Torsion  'CA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
-  Torsion  'CA-CA-CA-CA'  Cos3  k1=0 k2=30.334 k3=0
 EndMaster
 
 #==============================================================================#
@@ -33,6 +26,14 @@ Species 'Benzene'
   Atom   10  H    2.243236e-06  -2.489208e+00  -7.515157e-06  'HA'  1.150000e-01
   Atom   11  C    -1.220098e+00  -7.044267e-01  -6.093728e-05  'CA'  -1.150000e-01
   Atom   12  H    -2.155786e+00  -1.244549e+00  -2.144777e-04  'HA'  1.150000e-01
+
+  CommonBond  'CA-HA'  Harmonic  k=3071.056 eq=1.08
+  CommonBond  'CA-CA'  Harmonic  k=3924.592 eq=1.4
+  CommonAngle  'CA-CA-HA'  Harmonic  k=292.88 eq=120
+  CommonAngle  'CA-CA-CA'  Harmonic  k=527.184 eq=120
+  CommonTorsion  'HA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
+  CommonTorsion  'CA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
+  CommonTorsion  'CA-CA-CA-CA'  Cos3  k1=0 k2=30.334 k3=0
 
   # Bonds
   NBonds  12

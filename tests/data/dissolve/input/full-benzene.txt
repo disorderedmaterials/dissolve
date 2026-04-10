@@ -5,13 +5,6 @@
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'CA-CA'  Harmonic  3924.590     1.400
-  Bond  'CA-HA'  Harmonic  3071.060     1.080
-  Angle  'CA-CA-CA'  Harmonic   527.184   120.000
-  Angle  'CA-CA-HA'  Harmonic   292.880   120.000
-  Torsion  'CA-CA-CA-CA'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CA-CA-HA'  Cos3     0.000    30.334     0.000
-  Torsion  'HA-CA-CA-HA'  Cos3     0.000    30.334     0.000
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -32,6 +25,14 @@ Species 'Benzene'
   Atom   10    H  -1.483000e+00  -2.000000e+00  0.000000e+00  'HA'  1.150000e-01
   Atom   11    H  -2.472000e+00  2.820000e-01  0.000000e+00  'HA'  1.150000e-01
   Atom   12    H  -9.900000e-01  2.284000e+00  0.000000e+00  'HA'  1.150000e-01
+
+  CommonBond  'CA-CA'  Harmonic  3924.590     1.400
+  CommonBond  'CA-HA'  Harmonic  3071.060     1.080
+  CommonAngle  'CA-CA-CA'  Harmonic   527.184   120.000
+  CommonAngle  'CA-CA-HA'  Harmonic   292.880   120.000
+  CommonTorsion  'CA-CA-CA-CA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'HA-CA-CA-HA'  Cos3     0.000    30.334     0.000
 
   # Bonds
   Bond    1    2  @CA-CA
