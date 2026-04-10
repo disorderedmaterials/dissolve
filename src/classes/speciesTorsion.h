@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/speciesIntra.h"
 #include "classes/torsionFunctions.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
@@ -20,7 +18,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
-    SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesTorsion() override;
     SpeciesTorsion(SpeciesTorsion &source);
     SpeciesTorsion(SpeciesTorsion &&source) noexcept;

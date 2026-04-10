@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/bondFunctions.h"
 #include "classes/speciesIntra.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
@@ -20,7 +18,7 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
-    SpeciesBond(SpeciesAtom *i, SpeciesAtom *j);
+    SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j);
     ~SpeciesBond() override = default;
     SpeciesBond(SpeciesBond &source);
     SpeciesBond(SpeciesBond &&source) noexcept;

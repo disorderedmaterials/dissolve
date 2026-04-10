@@ -7,10 +7,10 @@
 #include "math/mathFunc.h"
 #include <map>
 
-SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(TorsionFunctions::Form::None) {}
+SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
-SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(TorsionFunctions::Form::None)
+SpeciesTorsion::SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+    : SpeciesIntra(parent, TorsionFunctions::Form::None)
 {
     assign(i, j, k, l);
 }

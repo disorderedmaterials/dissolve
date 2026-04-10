@@ -8,9 +8,9 @@
 #include "data/atomicMasses.h"
 #include <map>
 
-SpeciesBond::SpeciesBond() : SpeciesIntra(BondFunctions::Form::None) {}
+SpeciesBond::SpeciesBond() : SpeciesIntra(nullptr, BondFunctions::Form::None) {}
 
-SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(BondFunctions::Form::None) { assign(i, j); }
+SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(parent, BondFunctions::Form::None) { assign(i, j); }
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 

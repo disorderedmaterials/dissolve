@@ -6,10 +6,10 @@
 #include "classes/speciesAtom.h"
 #include "classes/speciesTorsion.h"
 
-SpeciesImproper::SpeciesImproper() : SpeciesIntra(TorsionFunctions::Form::None) {}
+SpeciesImproper::SpeciesImproper() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
-SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(TorsionFunctions::Form::None)
+SpeciesImproper::SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+    : SpeciesIntra(parent, TorsionFunctions::Form::None)
 {
     assign(i, j, k, l);
 }

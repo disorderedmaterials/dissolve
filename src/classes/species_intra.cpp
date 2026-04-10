@@ -27,7 +27,7 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
     }
 
     // OK to add new Bond
-    bonds_.emplace_back(i, j);
+    bonds_.emplace_back(this, i, j);
 
     ++version_;
 

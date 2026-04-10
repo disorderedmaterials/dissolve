@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/angleFunctions.h"
 #include "classes/speciesIntra.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
@@ -20,7 +18,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
-    SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
+    SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     ~SpeciesAngle() override = default;
     SpeciesAngle(SpeciesAngle &source);
     SpeciesAngle(SpeciesAngle &&source) noexcept;

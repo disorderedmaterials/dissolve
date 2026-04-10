@@ -7,9 +7,9 @@
 #include "math/mathFunc.h"
 #include <map>
 
-SpeciesAngle::SpeciesAngle() : SpeciesIntra(AngleFunctions::Form::None) {}
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(nullptr, AngleFunctions::Form::None) {}
 
-SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(AngleFunctions::Form::None)
+SpeciesAngle::SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra(parent, AngleFunctions::Form::None)
 {
     assign(i, j, k);
 }

@@ -13,7 +13,7 @@ CommonBond &Species::addCommonBond(std::string_view name, std::optional<int> ins
     if (getCommonBond(name))
         Messenger::exception("Refused to add a new common bond named '{}' since one with the same name already exists.\n",
                              name);
-
+    printf("CREATING COMMON BOND\n");
     auto newBond = std::make_shared<CommonBond>(name);
     if (insertAtIndex)
         commonBonds_.insert(commonBonds_.begin() + *insertAtIndex, newBond);
