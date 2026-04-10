@@ -14,15 +14,13 @@ class BenzeneForcefieldTest : public ::testing::Test
     public:
     void setUp(std::string referenceCoordinates)
     {
-        auto lastNode = testGraph_.createConfiguration("Box",
-                                                       {
-                                                           {createBenzene, 181},
-                                                       },
-                                                       {29.925089931, 29.925089931, 29.925089931});
-        auto importNode = testGraph_.appendImportCoordinates(
-            lastNode,
-            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-        ASSERT_TRUE(importNode);
+        ASSERT_TRUE(testGraph_.createConfiguration("Box",
+                                                   {
+                                                       {createBenzene, 181},
+                                                   },
+                                                   {29.925089931, 29.925089931, 29.925089931}));
+        ASSERT_TRUE(testGraph_.appendImportCoordinates(
+            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -30,11 +28,11 @@ class BenzeneForcefieldTest : public ::testing::Test
         PairPotential::setRange(12.0, 1.0e-4);
 
         // Run the graph from the Import node to set up the configuration
-        ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-        ASSERT_EQ(importNode->versionIndex(), 0);
+        ASSERT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+        ASSERT_EQ(testGraph_.fetchHead()->versionIndex(), 0);
 
         // Get the configuration
-        configuration_ = importNode->getOutputValue<Configuration *>("Configuration");
+        configuration_ = testGraph_.fetchHead()->getOutputValue<Configuration *>("Configuration");
     }
 
     protected:

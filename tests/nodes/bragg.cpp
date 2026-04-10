@@ -45,7 +45,7 @@ class BraggNodeTest : public ::testing::Test
 
         ASSERT_TRUE(testGraph_.nextNode("CIFBondingOptions", "CIFBonds"));
         ASSERT_TRUE(root->addEdge({"CIFLoader", "CIFContext", "CIFBonds", "CIFContext"}));
-        ASSERT_TRUE(fetchHead()->setOption<bool>("PreventAllBonds", true));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<bool>("PreventAllBonds", true));
 
         // Create a supercell that is 5 * unitcell
         ASSERT_TRUE(testGraph_.nextNode("CIFMolecularSpecies", "Crystal"));
@@ -77,12 +77,12 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(root->addEdge({"Crystal", "SupercellConfiguration", "Bragg01", "Configuration"}));
         ASSERT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Number>("QMax", 20.0));
-        ASSERT_TRUE(testGraph_.fetchHead()->setOption<Function1DWrapper>("BraggQBroadening",
-                                                             {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<Function1DWrapper>(
+            "BraggQBroadening", {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
 
         // Set Bragg multiplicities
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Vector3i>("Multiplicity", braggMultiplicities));
-        
+
         braggNode_ = testGraph_.head<BraggNode>();
         ASSERT_TRUE(braggNode_);
     }

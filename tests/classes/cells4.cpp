@@ -26,24 +26,23 @@ class CellsMIMTest : public ::testing::Test
     // Set up graph
     Configuration *setUp(const Vector3 &lengths, const Vector3 &angles, int nMolecules, std::string referenceCoordinates)
     {
-        auto lastNode =
-            testGraph_.createConfiguration("Box",
-                                           {{[]()
-                                             {
-                                                 return createAtomic(Elements::Ar, {ShortRangeFunctions::Form::LennardJones,
-                                                                                    "epsilon=0.774040 sigma=3.445996"});
-                                             },
-                                             nMolecules}},
-                                           lengths, angles);
-        auto importNode = testGraph_.appendImportCoordinates(
-            lastNode,
-            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
+        EXPECT_TRUE(testGraph_.createConfiguration("Box",
+                                                   {{[]()
+                                                     {
+                                                         return createAtomic(Elements::Ar,
+                                                                             {ShortRangeFunctions::Form::LennardJones,
+                                                                              "epsilon=0.774040 sigma=3.445996"});
+                                                     },
+                                                     nMolecules}},
+                                                   lengths, angles));
+        EXPECT_TRUE(testGraph_.appendImportCoordinates(
+            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
         // Run the graph from the Import node to set up the configuration
-        EXPECT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-        EXPECT_EQ(importNode->versionIndex(), 0);
+        EXPECT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+        EXPECT_EQ(testGraph_.fetchHead()->versionIndex(), 0);
 
-        return importNode->getOutputValue<Configuration *>("Configuration");
+        return testGraph_.fetchHead()->getOutputValue<Configuration *>("Configuration");
     }
     // Count number of atoms within range of a target atom in the box without using cells
     int atomsWithRangeNoCells(Configuration *cfg, int fromIndex, double cutoff)

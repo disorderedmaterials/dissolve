@@ -11,6 +11,7 @@
 #include "nodes/bragg.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
+#include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/sq/sq.h"
@@ -64,6 +65,8 @@ class TestGraph : public DissolveGraph
                         Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
                         InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
+        const auto cfgSourceNode = fetchHead();
+
         // Add Species and Insert nodes
         for (auto &[speciesCreator, population] : species)
         {
@@ -81,7 +84,7 @@ class TestGraph : public DissolveGraph
             EXPECT_TRUE(fetchHead()->setOption("BoxAction", boxActionStyle));
             EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
             EXPECT_TRUE(addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
-            EXPECT_TRUE(addEdge({std::string(fetchHead()->name()), "Configuration", insertNodeName, "Configuration"}));
+            EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), "Configuration", insertNodeName, "Configuration"}));
         }
 
         return fetchHead();
@@ -94,8 +97,8 @@ class TestGraph : public DissolveGraph
                               double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
     {
         // Create configuration and SetCell nodes
-        EXPECT_TRUE(createNode("Configuration", name));
-        EXPECT_TRUE(createNode("SetCell"));
+        EXPECT_TRUE(nextNode("Configuration", name));
+        EXPECT_TRUE(nextNode("SetCell"));
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
@@ -115,21 +118,22 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return insertSpecies(species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
-                             InsertNode::BoxActionStyle::None);
+        return insertSpecies(species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits, InsertNode::BoxActionStyle::None);
     }
     // Append an import coordinates node
     Node *appendImportCoordinates(CoordinateImportFileFormat fileFormat, bool supercell = false)
     {
-        auto importCoordinates = createNode("ImportConfigurationCoordinates");
-        EXPECT_TRUE(importCoordinates->setOption<std::string>("FilePath", std::string(fileFormat.filename())));
-        EXPECT_TRUE(importCoordinates->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
+        const auto cfgSourceNode = fetchHead();
+
+        EXPECT_TRUE(nextNode("ImportConfigurationCoordinates"));
+        EXPECT_TRUE(fetchHead()->setOption<std::string>("FilePath", std::string(fileFormat.filename())));
+        EXPECT_TRUE(fetchHead()->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
             "FileFormat",
             CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(fileFormat.formatIndex())));
-        EXPECT_TRUE(addEdge({std::string(fetchHead()->name()), supercell ? "SupercellConfiguration" : "Configuration",
+        EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), supercell ? "SupercellConfiguration" : "Configuration",
                              "ImportConfigurationCoordinates", "Configuration"}));
 
-        return importCoordinates;
+        return head<ImportConfigurationCoordinatesNode>();
     }
 
     // Append GR and SQ nodes
