@@ -11,7 +11,6 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class CoreData;
 
 // SpeciesTorsion Definition
 class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
@@ -102,7 +101,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node) override;
 };
 
 // CommonTorsion Definition

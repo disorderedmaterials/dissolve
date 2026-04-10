@@ -279,7 +279,7 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
         [this, &coreData](const SerialisedValue &bond)
         {
             bonds_.emplace_back(this, &atoms_.at(toml::find<int>(bond, "i") - 1), &atoms_.at(toml::find<int>(bond, "j") - 1))
-                .deserialise(bond, coreData);
+                .deserialise(bond);
         });
 
     Serialisable::toMap(node, "commonAngles", [this](const std::string &name, const SerialisedValue &bond)
@@ -291,7 +291,7 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                                    .emplace_back(this, &atoms_.at(toml::find<int>(angle, "i") - 1),
                                                  &atoms_.at(toml::find<int>(angle, "j") - 1),
                                                  &atoms_.at(toml::find<int>(angle, "k") - 1))
-                                   .deserialise(angle, coreData);
+                                   .deserialise(angle);
                            });
 
     Serialisable::toMap(node, "commonImpropers", [this](const std::string &name, const SerialisedValue &bond)
@@ -304,7 +304,7 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                                                  &atoms_.at(toml::find<int>(improper, "j") - 1),
                                                  &atoms_.at(toml::find<int>(improper, "k") - 1),
                                                  &atoms_.at(toml::find<int>(improper, "l") - 1))
-                                   .deserialise(improper, coreData);
+                                   .deserialise(improper);
                            });
 
     Serialisable::toMap(node, "commonTorsions", [this](const std::string &name, const SerialisedValue &bond)
@@ -317,7 +317,7 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                                                  &atoms_.at(toml::find<int>(torsion, "j") - 1),
                                                  &atoms_.at(toml::find<int>(torsion, "k") - 1),
                                                  &atoms_.at(toml::find<int>(torsion, "l") - 1))
-                                   .deserialise(torsion, coreData);
+                                   .deserialise(torsion);
                            });
 
     Serialisable::toMap(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)

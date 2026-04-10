@@ -234,7 +234,7 @@ void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
 }
 
 // This method populates the object's members with values read from an 'improper' TOML node
-void SpeciesImproper::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesImproper::deserialise(const SerialisedValue &node)
 {
     deserialiseForm(node, [&](auto &form) { return parent_->getCommonImproper(form); });
 }

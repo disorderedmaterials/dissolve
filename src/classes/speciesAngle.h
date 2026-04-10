@@ -11,7 +11,6 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class CoreData;
 
 // SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
@@ -78,7 +77,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node) override;
 };
 
 // CommonAngle Definition

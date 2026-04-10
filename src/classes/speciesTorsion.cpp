@@ -541,7 +541,7 @@ void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
 }
 
 // This method populates the object's members with values read from a 'torsion' TOML node
-void SpeciesTorsion::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesTorsion::deserialise(const SerialisedValue &node)
 {
     deserialiseForm(node, [&](auto &form) { return parent_->getCommonTorsion(form); });
 
