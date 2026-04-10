@@ -737,6 +737,37 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
     }
 
+    // Write master terms
+    for (auto &b : commonBonds_)
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonBond), b->name(),
+                               BondFunctions::forms().keyword(b->interactionForm()),
+                               b->interactionPotential().parametersAsString()))
+            return false;
+
+    for (auto &a : commonAngles_)
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonAngle), a->name(),
+                               AngleFunctions::forms().keyword(a->interactionForm()),
+                               a->interactionPotential().parametersAsString()))
+            return false;
+
+    auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
+    for (auto &t : commonTorsions_)
+    {
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonTorsion), t->name(),
+                               TorsionFunctions::forms().keyword(t->interactionForm()),
+                               t->interactionPotential().parametersAsString()))
+            return false;
+
+        elec14Scaling = t->electrostatic14Scaling();
+        vdw14Scaling = t->vanDerWaals14Scaling();
+    }
+
+    for (auto &imp : commonImpropers_)
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonImproper), imp->name(),
+                               TorsionFunctions::forms().keyword(imp->interactionForm()),
+                               imp->interactionPotential().parametersAsString()))
+            return false;
+
     // Bonds
     std::vector<const SpeciesBond *> bondTypes[SpeciesBond::nBondTypes];
     if (!bonds_.empty())
