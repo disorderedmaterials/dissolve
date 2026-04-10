@@ -29,6 +29,8 @@ class CIFBondingOptionsNode : public Node
     bool useCIFBondingDefinitions_{false};
     // Whether to prevent metallic bonding
     bool preventMetallicBonds_{true};
+    // Whether to ignore all bonds
+    bool preventAllBonds_{false};
 
     /*
      * Processing

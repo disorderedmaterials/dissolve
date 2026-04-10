@@ -14,7 +14,8 @@ namespace UnitTest
 {
 // Create and return atomic SpeciesNode
 inline std::unique_ptr<SpeciesNode> createAtomic(Elements::Element element,
-                                                 InteractionPotential<ShortRangeFunctions> potential = {})
+                                                 InteractionPotential<ShortRangeFunctions> potential = {
+                                                     ShortRangeFunctions::Form::Undefined, ""})
 {
     // Add species node
     auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);

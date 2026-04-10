@@ -19,10 +19,7 @@ CIFLoaderNode::CIFLoaderNode(Graph *parentGraph) : Node(parentGraph)
 
 std::string_view CIFLoaderNode::type() const { return "CIFLoader"; }
 
-std::string_view CIFLoaderNode::summary() const
-{
-    return "Load a CIF file and apply contained crystallographic data to a target configuration";
-}
+std::string_view CIFLoaderNode::summary() const { return "Load and parse a Crystallographic Information File (CIF)"; }
 
 // Run main processing
 NodeConstants::ProcessResult CIFLoaderNode::process()

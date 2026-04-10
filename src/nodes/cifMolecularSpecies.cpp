@@ -13,10 +13,10 @@ CIFMolecularSpeciesNode::CIFMolecularSpeciesNode(Graph *parentGraph) : Node(pare
 
     // Outputs
     addOutput<std::vector<CIFMolecularSpecies>>("DetectedMolecularSpecies", "Detected molecular species", molecularSpecies_);
-    addOutput<Configuration *>("SuperCellConfiguration", "Supercell configuration pointer", supercellConfiguration_);
+    addOutput<Configuration *>("SupercellConfiguration", "Supercell configuration pointer", supercellConfiguration_);
 
     // Options
-    addOption<Vector3i>("SuperCellRepeat", "Supercell repeat", supercellRepeat_);
+    addOption<Vector3i>("SupercellRepeat", "Supercell repeat", supercellRepeat_);
 }
 
 std::string_view CIFMolecularSpeciesNode::type() const { return "CIFMolecularSpecies"; }
