@@ -613,11 +613,11 @@ bool CIFHandler::detectMolecules()
         // Give the species a temporary unit cell so we can calculate / apply bonding
         if (!preventAllBonds_)
             sp->createBox(cleanedUnitCellSpecies_.box()->axisLengths(), cleanedUnitCellSpecies_.box()->axisAngles());
-            if (useCIFBondingDefinitions_)
-                applyCIFBonding(sp, preventMetallicBonds_);
-            else
-                sp->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
-            sp->removeBox();
+        if (useCIFBondingDefinitions_)
+            applyCIFBonding(sp, preventMetallicBonds_);
+        else
+            sp->addMissingBonds(bondingTolerance_, preventMetallicBonds_);
+        sp->removeBox();
 
         // Set up a temporary molecule to unfold the species
         LocalMolecule tempMol(sp);
