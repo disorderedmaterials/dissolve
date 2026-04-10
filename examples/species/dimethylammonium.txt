@@ -5,16 +5,6 @@
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'HDM-NDM'  Harmonic  3632.000     1.010
-  Bond  'CDM-NDM'  Harmonic  3071.000     1.499
-  Bond  'CDM-HCD'  Harmonic  2845.120     1.090
-  Angle  'HDM-NDM-HDM'  Harmonic   292.900   105.500
-  Angle  'CDM-NDM-HDM'  Harmonic   418.400   109.200
-  Angle  'CDM-NDM-CDM'  Harmonic   418.400   114.300
-  Angle  'HCD-CDM-NDM'  Harmonic   209.200   108.500
-  Angle  'HCD-CDM-HCD'  Harmonic   276.144   107.800
-  Torsion  'HCD-CDM-NDM-HDM'  Cos3     0.000     0.000     0.000
-  Torsion  'CDM-NDM-CDM-HCD'  Cos3     0.000     0.000     3.377
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -34,6 +24,17 @@ Species 'Dimethylammonium'
   Atom    9    H  -3.609572e-01  -1.754681e+00  3.781023e-01  'HCD'  1.500000e-01
   Atom   10    H  -1.211826e+00  -8.512418e-01  1.625755e+00  'HCD'  1.500000e-01
   Atom   11    H  5.456495e-01  -8.007856e-01  1.553546e+00  'HCD'  1.500000e-01
+
+  CommonBond  'HDM-NDM'  Harmonic  3632.000     1.010
+  CommonBond  'CDM-NDM'  Harmonic  3071.000     1.499
+  CommonBond  'CDM-HCD'  Harmonic  2845.120     1.090
+  CommonAngle  'HDM-NDM-HDM'  Harmonic   292.900   105.500
+  CommonAngle  'CDM-NDM-HDM'  Harmonic   418.400   109.200
+  CommonAngle  'CDM-NDM-CDM'  Harmonic   418.400   114.300
+  CommonAngle  'HCD-CDM-NDM'  Harmonic   209.200   108.500
+  CommonAngle  'HCD-CDM-HCD'  Harmonic   276.144   107.800
+  CommonTorsion  'HCD-CDM-NDM-HDM'  Cos3     0.000     0.000     0.000
+  CommonTorsion  'CDM-NDM-CDM-HCD'  Cos3     0.000     0.000     3.377
 
   # Bonds
   Bond    1    2  @HDM-NDM
