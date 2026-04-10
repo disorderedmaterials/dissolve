@@ -106,7 +106,7 @@ void AddForcefieldDialogModel::next()
             break;
         case AddForcefieldDialogModel::Page::IntramolecularPage:
             assignIntramolecularTerms(ff_);
-            Q_EMIT mastersChanged();
+            Q_EMIT commonsChanged();
             index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
             break;
         case AddForcefieldDialogModel::Page::MasterTermsPage:
@@ -124,19 +124,19 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
 
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
-    // masters_ = std::make_unique<MasterTermTreeModel>(temporaryCoreData_);
+    // commons_ = std::make_unique<MasterTermTreeModel>(temporaryCoreData_);
     // TODO DISSOLVE2
 
-    // Set model and signals for the master terms tree
+    // Set model and signals for the common terms tree
     atomTypes_.setQueryFunction([this](const auto type)
                                 { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
-    // masters_->setBondQueryFunction([this](std::string_view name)
+    // commons_->setBondQueryFunction([this](std::string_view name)
     //                                { return dissolve_->coreData().getCommonBond(name).has_value(); });
-    // masters_->setAngleQueryFunction([this](std::string_view name)
+    // commons_->setAngleQueryFunction([this](std::string_view name)
     //                                 { return dissolve_->coreData().getCommonAngle(name).has_value(); });
-    // masters_->setTorsionQueryFunction([this](std::string_view name)
+    // commons_->setTorsionQueryFunction([this](std::string_view name)
     //                                   { return dissolve_->coreData().getCommonTorsion(name).has_value(); });
-    // masters_->setImproperQueryFunction([this](std::string_view name)
+    // commons_->setImproperQueryFunction([this](std::string_view name)
     //                                    { return dissolve_->coreData().getCommonImproper(name).has_value(); });
     // TODO DISSOLVE2
 }
@@ -183,33 +183,33 @@ bool AddForcefieldDialogModel::atEnd() const { return index_ == Page::MasterTerm
 // The Master Bond Model
 const CommonBondModel *AddForcefieldDialogModel::bonds() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->bondModel_;
+    return &commons_->bondModel_;
 }
 
 // The Master Angle Model
 const CommonAngleModel *AddForcefieldDialogModel::angles() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->angleModel_;
+    return &commons_->angleModel_;
 }
 
 // The Master Torsion Model
 const CommonTorsionModel *AddForcefieldDialogModel::torsions() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->torsionModel_;
+    return &commons_->torsionModel_;
 }
 
 // The Master Improper Model
 const CommonImproperModel *AddForcefieldDialogModel::impropers() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->improperModel_;
+    return &commons_->improperModel_;
 }
 
 // Apply the forcefield
@@ -339,32 +339,32 @@ void AddForcefieldDialogModel::addMasterSuffix(int type, int index, QString suff
     switch (type)
     {
         case 0:
-            termData = masters_->bondModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->bondModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
         case 1:
-            termData = masters_->angleModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->angleModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
         case 2:
-            termData = masters_->torsionModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->torsionModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
         case 3:
-            termData = masters_->improperModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->improperModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
     };
     auto newName = termData.toString() + suffix;
     switch (type)
     {
         case 0:
-            masters_->bondModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->bondModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
         case 1:
-            masters_->angleModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->angleModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
         case 2:
-            masters_->torsionModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->torsionModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
         case 3:
-            masters_->improperModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->improperModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
     };
 }
@@ -375,32 +375,32 @@ void AddForcefieldDialogModel::addMasterPrefix(int type, int index, QString pref
     switch (type)
     {
         case 0:
-            termData = masters_->bondModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->bondModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
         case 1:
-            termData = masters_->angleModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->angleModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
         case 2:
-            termData = masters_->torsionModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->torsionModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
         case 3:
-            termData = masters_->improperModel_.getTermData(index, CommonTermModelData::DataType::Name);
+            termData = commons_->improperModel_.getTermData(index, CommonTermModelData::DataType::Name);
             break;
     };
     auto newName = prefix + termData.toString();
     switch (type)
     {
         case 0:
-            masters_->bondModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->bondModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
         case 1:
-            masters_->angleModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->angleModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
         case 2:
-            masters_->torsionModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->torsionModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
         case 3:
-            masters_->improperModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
+            commons_->improperModel_.setTermData(index, CommonTermModelData::DataType::Name, newName);
             break;
     };
 }
@@ -438,7 +438,7 @@ void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
         if (!ff->assignIntramolecular(modifiedSpecies_, flags))
             return;
 
-        // Reduce to master terms?
+        // Reduce to common terms?
         if (!noMasterTerms_)
             modifiedSpecies_->reduceToCommonTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
     }

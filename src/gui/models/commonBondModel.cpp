@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterBondModel.h"
+#include "gui/models/commonBondModel.h"
 
 CommonBondModel::CommonBondModel(Species *species) : CommonTermModel(species), sourceData_(species->commonBonds())
 {

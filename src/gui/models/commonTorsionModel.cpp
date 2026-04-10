@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterAngleModel.h"
+#include "gui/models/commonTorsionModel.h"
 
-CommonAngleModel::CommonAngleModel(Species *species) : CommonTermModel(species), sourceData_(species->commonAngles())
+CommonTorsionModel::CommonTorsionModel(Species *species) : CommonTermModel(species), sourceData_(species->commonTorsions())
 {
     // Set connections
     modelUpdater.setModel(this);
@@ -11,15 +11,17 @@ CommonAngleModel::CommonAngleModel(Species *species) : CommonTermModel(species),
 }
 
 // Refresh model data
-void CommonAngleModel::reset()
+void CommonTorsionModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-int CommonAngleModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
+int CommonTorsionModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
-QVariant CommonAngleModel::getTermData(int row, CommonTermModelData::DataType dataType) const
+int CommonTorsionModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 5; }
+
+QVariant CommonTorsionModel::getTermData(int row, CommonTermModelData::DataType dataType) const
 {
     if (row < 0 || row >= sourceData_.size())
         return {};
@@ -30,17 +32,19 @@ QVariant CommonAngleModel::getTermData(int row, CommonTermModelData::DataType da
         case (CommonTermModelData::DataType::Name):
             return QString::fromStdString(std::string(t->name()));
         case (CommonTermModelData::DataType::Form):
-            return QString::fromStdString(std::string(AngleFunctions::forms().keyword(t->interactionForm())));
+            return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(t->interactionForm())));
         case (CommonTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
-        default:
-            return {};
+        case (CommonTermModelData::DataType::Electrostatic14Scale):
+            return QString::number(t->electrostatic14Scaling());
+        case (CommonTermModelData::DataType::VanDerWaals14Scale):
+            return QString::number(t->vanDerWaals14Scaling());
     }
 
     return {};
 }
 
-bool CommonAngleModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
+bool CommonTorsionModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
 {
     if (row < 0 || row >= sourceData_.size())
         return false;
@@ -56,7 +60,7 @@ bool CommonAngleModel::setTermData(int row, CommonTermModelData::DataType dataTy
         case (CommonTermModelData::DataType::Form):
             try
             {
-                auto tf = AngleFunctions::forms().enumeration(value.toString().toStdString());
+                auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
                 t->setInteractionForm(tf);
             }
             catch (std::runtime_error &e)
@@ -68,6 +72,14 @@ bool CommonAngleModel::setTermData(int row, CommonTermModelData::DataType dataTy
             if (!t->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
+        case (CommonTermModelData::DataType::Electrostatic14Scale):
+            if (!t->setElectrostatic14Scaling(value.toDouble()))
+                return false;
+            break;
+        case (CommonTermModelData::DataType::VanDerWaals14Scale):
+            if (!t->setVanDerWaals14Scaling(value.toDouble()))
+                return false;
+            break;
         default:
             return false;
     }
@@ -76,7 +88,7 @@ bool CommonAngleModel::setTermData(int row, CommonTermModelData::DataType dataTy
     return true;
 }
 
-const std::shared_ptr<CommonAngle> &CommonAngleModel::rawData(const QModelIndex &index) const
+const std::shared_ptr<CommonTorsion> &CommonTorsionModel::rawData(const QModelIndex &index) const
 {
     return sourceData_[index.row()];
 }

@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/models/masterAngleModel.h"
-#include "gui/models/masterBondModel.h"
-#include "gui/models/masterImproperModel.h"
-#include "gui/models/masterTorsionModel.h"
+#include "gui/models/commonAngleModel.h"
+#include "gui/models/commonBondModel.h"
+#include "gui/models/commonImproperModel.h"
+#include "gui/models/commonTorsionModel.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QObject>

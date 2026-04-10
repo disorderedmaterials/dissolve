@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterTorsionModel.h"
+#include "gui/models/commonImproperModel.h"
 
-CommonTorsionModel::CommonTorsionModel(Species *species) : CommonTermModel(species), sourceData_(species->commonTorsions())
+CommonImproperModel::CommonImproperModel(Species *species) : CommonTermModel(species), sourceData_(species->commonImpropers())
 {
     // Set connections
     modelUpdater.setModel(this);
@@ -11,17 +11,15 @@ CommonTorsionModel::CommonTorsionModel(Species *species) : CommonTermModel(speci
 }
 
 // Refresh model data
-void CommonTorsionModel::reset()
+void CommonImproperModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-int CommonTorsionModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
+int CommonImproperModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
-int CommonTorsionModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 5; }
-
-QVariant CommonTorsionModel::getTermData(int row, CommonTermModelData::DataType dataType) const
+QVariant CommonImproperModel::getTermData(int row, CommonTermModelData::DataType dataType) const
 {
     if (row < 0 || row >= sourceData_.size())
         return {};
@@ -35,16 +33,14 @@ QVariant CommonTorsionModel::getTermData(int row, CommonTermModelData::DataType 
             return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(t->interactionForm())));
         case (CommonTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
-        case (CommonTermModelData::DataType::Electrostatic14Scale):
-            return QString::number(t->electrostatic14Scaling());
-        case (CommonTermModelData::DataType::VanDerWaals14Scale):
-            return QString::number(t->vanDerWaals14Scaling());
+        default:
+            return {};
     }
 
     return {};
 }
 
-bool CommonTorsionModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
+bool CommonImproperModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
 {
     if (row < 0 || row >= sourceData_.size())
         return false;
@@ -72,23 +68,15 @@ bool CommonTorsionModel::setTermData(int row, CommonTermModelData::DataType data
             if (!t->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
-        case (CommonTermModelData::DataType::Electrostatic14Scale):
-            if (!t->setElectrostatic14Scaling(value.toDouble()))
-                return false;
-            break;
-        case (CommonTermModelData::DataType::VanDerWaals14Scale):
-            if (!t->setVanDerWaals14Scaling(value.toDouble()))
-                return false;
-            break;
         default:
             return false;
     }
-    endResetModel();
+    beginResetModel();
 
     return true;
 }
 
-const std::shared_ptr<CommonTorsion> &CommonTorsionModel::rawData(const QModelIndex &index) const
+const std::shared_ptr<CommonImproper> &CommonImproperModel::rawData(const QModelIndex &index) const
 {
     return sourceData_[index.row()];
 }

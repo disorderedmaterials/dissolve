@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterAngleModel.h"
-#include "gui/models/masterBondModel.h"
-#include "gui/models/masterTorsionModel.h"
+#include "gui/models/commonAngleModel.h"
+#include "gui/models/commonBondModel.h"
+#include "gui/models/commonTorsionModel.h"
 #include "main/dissolve.h"
 #include <QTableView>
 #include <gmock/gmock.h>

@@ -3,13 +3,12 @@
 
 #pragma once
 
-#include "classes/speciesImproper.h"
-#include "gui/models/masterTermModel.h"
+#include "classes/speciesBond.h"
+#include "gui/models/commonTermModel.h"
 #include "gui/models/modelUpdater.h"
-#include "templates/optionalRef.h"
 
-// CommonImproper model
-class CommonImproperModel : public CommonTermModel
+// CommonBond model
+class CommonBondModel : public CommonTermModel
 {
     Q_OBJECT
 
@@ -20,11 +19,11 @@ class CommonImproperModel : public CommonTermModel
     void modelsUpdated();
 
     public:
-    explicit CommonImproperModel(Species *species);
+    explicit CommonBondModel(Species *species);
 
     private:
     // Source term data
-    std::vector<std::shared_ptr<CommonImproper>> &sourceData_;
+    std::vector<std::shared_ptr<CommonBond>> &sourceData_;
 
     public:
     // Refresh model data
@@ -37,7 +36,9 @@ class CommonImproperModel : public CommonTermModel
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant getTermData(int row, CommonTermModelData::DataType dataType) const override;
     bool setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value) override;
-    const std::shared_ptr<CommonImproper> &rawData(const QModelIndex &index) const;
+    const std::shared_ptr<CommonBond> &rawData(const QModelIndex &index) const;
+    bool insertRows(int row, int count, const QModelIndex &parent) override;
+    bool removeRows(int row, int count, const QModelIndex &parent) override;
 
     private:
     ModelUpdater modelUpdater;

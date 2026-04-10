@@ -6,7 +6,7 @@
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/ffSortFilterModel.h"
 #include "gui/models/forcefieldModel.h"
-#include "gui/models/masterTermTreeModel.h"
+#include "gui/models/commonTermTreeModel.h"
 #include "main/dissolve.h"
 #include <QObject>
 #include <memory>
@@ -23,13 +23,13 @@ class AddForcefieldDialogModel : public QObject
     // The chosen forcefield
     Q_PROPERTY(Forcefield *ff READ ff WRITE setFf NOTIFY progressionAllowedChanged)
     // The Master Bond Model
-    Q_PROPERTY(const CommonBondModel *bonds READ bonds NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonBondModel *bonds READ bonds NOTIFY commonsChanged)
     // The Master Angle Model
-    Q_PROPERTY(const CommonAngleModel *angles READ angles NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonAngleModel *angles READ angles NOTIFY commonsChanged)
     // The Master Torsion Model
-    Q_PROPERTY(const CommonTorsionModel *torsions READ torsions NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonTorsionModel *torsions READ torsions NOTIFY commonsChanged)
     // The Master Improper Model
-    Q_PROPERTY(const CommonImproperModel *impropers READ impropers NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonImproperModel *impropers READ impropers NOTIFY commonsChanged)
     // The number of atom types conflicts
     Q_PROPERTY(int atomTypesIndicator READ atomTypesIndicator NOTIFY atomTypesIndicatorChanged);
     // Whether it is safe to move to the next page
@@ -76,7 +76,7 @@ class AddForcefieldDialogModel : public QObject
     // Whether the user can continue has changed
     void progressionAllowedChanged();
     // The Master terms models have been replaced
-    void mastersChanged();
+    void commonsChanged();
     // Atom types failed to be assigned
     void assignErrors(QList<int> indices);
     // The model is prepared to begin work
@@ -93,7 +93,7 @@ class AddForcefieldDialogModel : public QObject
     Dissolve *dissolve_ = nullptr;
     // The chosen forcefield
     Forcefield *ff_ = nullptr;
-    std::unique_ptr<MasterTermTreeModel> masters_ = nullptr;
+    std::unique_ptr<MasterTermTreeModel> commons_ = nullptr;
     // Temporary Dissolve reference for creating / importing layers
     std::unique_ptr<Dissolve> temporaryDissolve_;
     // Temporary core data for applying Forcefield terms
@@ -155,9 +155,9 @@ class AddForcefieldDialogModel : public QObject
     // Whether we are at the final page of the wizard
     bool atEnd() const;
 
-    // Add a suffix to the name of a master term
+    // Add a suffix to the name of a common term
     Q_INVOKABLE void addMasterSuffix(int type, int index, QString suffix);
-    // Add a prefix to the name of a master term
+    // Add a prefix to the name of a common term
     Q_INVOKABLE void addMasterPrefix(int type, int index, QString prefix);
 
     // Supply the main Dissolve instance

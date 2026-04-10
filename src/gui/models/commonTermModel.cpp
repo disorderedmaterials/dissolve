@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterTermModel.h"
+#include "gui/models/commonTermModel.h"
 
 CommonTermModel::CommonTermModel(Species *species) : species_(species) {}
 

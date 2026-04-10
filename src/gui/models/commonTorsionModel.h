@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "classes/speciesAngle.h"
-#include "gui/models/masterTermModel.h"
+#include "classes/speciesTorsion.h"
+#include "gui/models/commonTermModel.h"
 #include "gui/models/modelUpdater.h"
 #include "templates/optionalRef.h"
 
-// CommonAngle model
-class CommonAngleModel : public CommonTermModel
+// CommonTorsion model
+class CommonTorsionModel : public CommonTermModel
 {
     Q_OBJECT
 
@@ -20,11 +20,11 @@ class CommonAngleModel : public CommonTermModel
     void modelsUpdated();
 
     public:
-    explicit CommonAngleModel(Species *species);
+    explicit CommonTorsionModel(Species *species);
 
     private:
     // Source term data
-    std::vector<std::shared_ptr<CommonAngle>> &sourceData_;
+    std::vector<std::shared_ptr<CommonTorsion>> &sourceData_;
 
     public:
     // Refresh model data
@@ -35,9 +35,10 @@ class CommonAngleModel : public CommonTermModel
      */
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant getTermData(int row, CommonTermModelData::DataType dataType) const override;
     bool setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value) override;
-    const std::shared_ptr<CommonAngle> &rawData(const QModelIndex &index) const;
+    const std::shared_ptr<CommonTorsion> &rawData(const QModelIndex &index) const;
 
     private:
     ModelUpdater modelUpdater;

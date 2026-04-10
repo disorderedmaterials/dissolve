@@ -28,7 +28,7 @@ enum Roles
 };
 }; // namespace CommonTermModelData
 
-// Base master term model
+// Base common term model
 class CommonTermModel : public QAbstractTableModel
 {
     Q_OBJECT

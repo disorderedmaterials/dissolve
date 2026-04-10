@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterTermTreeModel.h"
+#include "gui/models/commonTermTreeModel.h"
 
 MasterTermTreeModel::MasterTermTreeModel(Species *species)
     : bondModel_(species), angleModel_(species), torsionModel_(species), improperModel_(species)

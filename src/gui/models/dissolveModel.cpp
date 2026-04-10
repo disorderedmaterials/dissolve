@@ -21,7 +21,7 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 {
     dissolve_ = &dissolve;
     atomTypes_.setData(dissolve_->coreData().atomTypes());
-    // masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
+    // commons_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
     // TODO DISSOLVE2
     configurationModel_.setData(dissolve_->coreData().configurations());
     moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), &dissolve_->coreData());
@@ -32,12 +32,12 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 void DissolveModel::update()
 {
     atomTypes_.reset();
-    if (masters_)
+    if (commons_)
     {
-        masters_->bondModel_.reset();
-        masters_->angleModel_.reset();
-        masters_->torsionModel_.reset();
-        masters_->improperModel_.reset();
+        commons_->bondModel_.reset();
+        commons_->angleModel_.reset();
+        commons_->torsionModel_.reset();
+        commons_->improperModel_.reset();
     }
     configurationModel_.reset();
     moduleLayersModel_.reset();
@@ -51,67 +51,67 @@ AtomTypeModel *DissolveModel::atomTypesModel() { return &atomTypes_; }
 int DissolveModel::nAtomTypes() { return atomTypes_.rowCount(); }
 
 // The Master Bond Model
-const CommonBondModel *DissolveModel::masterBondsModel() const
+const CommonBondModel *DissolveModel::commonBondsModel() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->bondModel_;
+    return &commons_->bondModel_;
 }
 
-// The number of master bonds
+// The number of common bonds
 int DissolveModel::nCommonBonds()
 {
-    if (!masters_)
+    if (!commons_)
         return 0;
-    return masters_->bondModel_.rowCount();
+    return commons_->bondModel_.rowCount();
 }
 
 // The Master Angle Model
-const CommonAngleModel *DissolveModel::masterAnglesModel() const
+const CommonAngleModel *DissolveModel::commonAnglesModel() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->angleModel_;
+    return &commons_->angleModel_;
 }
 
-// The number of master angles
+// The number of common angles
 int DissolveModel::nCommonAngles()
 {
-    if (!masters_)
+    if (!commons_)
         return 0;
-    return masters_->angleModel_.rowCount();
+    return commons_->angleModel_.rowCount();
 }
 
 // The Master Torsion Model
-const CommonTorsionModel *DissolveModel::masterTorsionsModel() const
+const CommonTorsionModel *DissolveModel::commonTorsionsModel() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->torsionModel_;
+    return &commons_->torsionModel_;
 }
 
-// The number of master torsions
+// The number of common torsions
 int DissolveModel::nCommonTorsions()
 {
-    if (!masters_)
+    if (!commons_)
         return 0;
-    return masters_->torsionModel_.rowCount();
+    return commons_->torsionModel_.rowCount();
 }
 
 // The Master Improper Model
-const CommonImproperModel *DissolveModel::masterImpropersModel() const
+const CommonImproperModel *DissolveModel::commonImpropersModel() const
 {
-    if (!masters_)
+    if (!commons_)
         return nullptr;
-    return &masters_->improperModel_;
+    return &commons_->improperModel_;
 }
 
-// The number of master impropers
+// The number of common impropers
 int DissolveModel::nCommonImpropers()
 {
-    if (!masters_)
+    if (!commons_)
         return 0;
-    return masters_->improperModel_.rowCount();
+    return commons_->improperModel_.rowCount();
 }
 
 // The Configuration Model

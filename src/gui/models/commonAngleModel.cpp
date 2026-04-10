@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterImproperModel.h"
+#include "gui/models/commonAngleModel.h"
 
-CommonImproperModel::CommonImproperModel(Species *species) : CommonTermModel(species), sourceData_(species->commonImpropers())
+CommonAngleModel::CommonAngleModel(Species *species) : CommonTermModel(species), sourceData_(species->commonAngles())
 {
     // Set connections
     modelUpdater.setModel(this);
@@ -11,15 +11,15 @@ CommonImproperModel::CommonImproperModel(Species *species) : CommonTermModel(spe
 }
 
 // Refresh model data
-void CommonImproperModel::reset()
+void CommonAngleModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-int CommonImproperModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
+int CommonAngleModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
-QVariant CommonImproperModel::getTermData(int row, CommonTermModelData::DataType dataType) const
+QVariant CommonAngleModel::getTermData(int row, CommonTermModelData::DataType dataType) const
 {
     if (row < 0 || row >= sourceData_.size())
         return {};
@@ -30,7 +30,7 @@ QVariant CommonImproperModel::getTermData(int row, CommonTermModelData::DataType
         case (CommonTermModelData::DataType::Name):
             return QString::fromStdString(std::string(t->name()));
         case (CommonTermModelData::DataType::Form):
-            return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(t->interactionForm())));
+            return QString::fromStdString(std::string(AngleFunctions::forms().keyword(t->interactionForm())));
         case (CommonTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
         default:
@@ -40,7 +40,7 @@ QVariant CommonImproperModel::getTermData(int row, CommonTermModelData::DataType
     return {};
 }
 
-bool CommonImproperModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
+bool CommonAngleModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
 {
     if (row < 0 || row >= sourceData_.size())
         return false;
@@ -56,7 +56,7 @@ bool CommonImproperModel::setTermData(int row, CommonTermModelData::DataType dat
         case (CommonTermModelData::DataType::Form):
             try
             {
-                auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
+                auto tf = AngleFunctions::forms().enumeration(value.toString().toStdString());
                 t->setInteractionForm(tf);
             }
             catch (std::runtime_error &e)
@@ -71,12 +71,12 @@ bool CommonImproperModel::setTermData(int row, CommonTermModelData::DataType dat
         default:
             return false;
     }
-    beginResetModel();
+    endResetModel();
 
     return true;
 }
 
-const std::shared_ptr<CommonImproper> &CommonImproperModel::rawData(const QModelIndex &index) const
+const std::shared_ptr<CommonAngle> &CommonAngleModel::rawData(const QModelIndex &index) const
 {
     return sourceData_[index.row()];
 }
