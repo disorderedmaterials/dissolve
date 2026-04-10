@@ -27,7 +27,7 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -40,7 +40,7 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -56,7 +56,7 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     // Clean source
@@ -326,5 +326,5 @@ void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 // This method populates the object's members with values read from a 'bond' TOML node
 void SpeciesBond::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterBond(form); });
+    deserialiseForm(node, [&](auto &form) { return parent_->getCommonBond(form); });
 }

@@ -25,15 +25,15 @@ class MasterTermsTableModelTest : public ::testing::Test
 
 std::vector<Qt::ItemDataRole> roles = {Qt::DisplayRole, Qt::EditRole};
 
-TEST_F(MasterTermsTableModelTest, MasterBonds)
+TEST_F(MasterTermsTableModelTest, CommonBonds)
 {
-    CoreData coreData;
-    auto &b1 = coreData.addMasterBond("CA-CA");
+    Species species;
+    auto &b1 = species.addCommonBond("CA-CA");
     b1.setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3924.590   eq=1.400");
-    auto &b2 = coreData.addMasterBond("CA-HA");
+    auto &b2 = species.addCommonBond("CA-HA");
     b2.setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.060   eq=1.080");
 
-    MasterBondModel model(coreData);
+    CommonBondModel model(&species);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -67,15 +67,15 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
                 testing::AnyOf(testing::Eq("C/2=3.0 eq=4.0"), testing::Eq("C/2=3 eq=4")));
 }
 
-TEST_F(MasterTermsTableModelTest, MasterAngles)
+TEST_F(MasterTermsTableModelTest, CommonAngles)
 {
-    CoreData coreData;
-    auto &a1 = coreData.addMasterAngle("CA-CA-CA");
+    Species species;
+    auto &a1 = species.addCommonAngle("CA-CA-CA");
     a1.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=527.184   eq=120.000");
-    auto &a2 = coreData.addMasterAngle("CA-CA-HA");
+    auto &a2 = species.addCommonAngle("CA-CA-HA");
     a2.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.880   eq=120.000");
 
-    MasterAngleModel model(coreData);
+    CommonAngleModel model(&species);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 3);
@@ -110,17 +110,17 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
                 testing::AnyOf(testing::Eq("k=3.0 n=4.0 eq=1.0 s=1.0"), testing::Eq("k=3 n=4 eq=1 s=1")));
 }
 
-TEST_F(MasterTermsTableModelTest, MasterTorsions)
+TEST_F(MasterTermsTableModelTest, CommonTorsions)
 {
-    CoreData coreData;
-    auto &t1 = coreData.addMasterTorsion("CA-CA-CA-CA");
+    Species species;
+    auto &t1 = species.addCommonTorsion("CA-CA-CA-CA");
     t1.setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     0.000");
-    auto &t2 = coreData.addMasterTorsion("CA-CA-CA-HA");
+    auto &t2 = species.addCommonTorsion("CA-CA-CA-HA");
     t2.setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     1.000");
-    auto &t3 = coreData.addMasterTorsion("HA-CA-CA-HA");
+    auto &t3 = species.addCommonTorsion("HA-CA-CA-HA");
     t3.setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     2.000");
 
-    MasterTorsionModel model(coreData);
+    CommonTorsionModel model(&species);
 
     // test table structure
     EXPECT_EQ(model.columnCount(), 5);

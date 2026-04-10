@@ -30,13 +30,13 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
 
     // Set model and signals for the master terms tree
     masterTermModel_.setBondQueryFunction([&](std::string_view name)
-                                          { return dissolve_.coreData().getMasterBond(name).has_value(); });
+                                          { return dissolve_.coreData().getCommonBond(name).has_value(); });
     masterTermModel_.setAngleQueryFunction([&](std::string_view name)
-                                           { return dissolve_.coreData().getMasterAngle(name).has_value(); });
+                                           { return dissolve_.coreData().getCommonAngle(name).has_value(); });
     masterTermModel_.setTorsionQueryFunction([&](std::string_view name)
-                                             { return dissolve_.coreData().getMasterTorsion(name).has_value(); });
+                                             { return dissolve_.coreData().getCommonTorsion(name).has_value(); });
     masterTermModel_.setImproperQueryFunction([&](std::string_view name)
-                                              { return dissolve_.coreData().getMasterImproper(name).has_value(); });
+                                              { return dissolve_.coreData().getCommonImproper(name).has_value(); });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));
@@ -111,8 +111,8 @@ std::optional<int> ImportSpeciesDialog::determineNextPage(int currentIndex)
     {
         case (ImportSpeciesDialog::AtomTypesPage):
             // If there are master terms present, go to that page first. Otherwise, skip straight to naming
-            if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() ||
-                temporaryCoreData_.nMasterTorsions() || temporaryCoreData_.nMasterImpropers())
+            if (temporaryCoreData_.nCommonBonds() || temporaryCoreData_.nCommonAngles() ||
+                temporaryCoreData_.nCommonTorsions() || temporaryCoreData_.nCommonImpropers())
                 return ImportSpeciesDialog::MasterTermsPage;
             else
                 return ImportSpeciesDialog::SpeciesNamePage;
@@ -261,25 +261,25 @@ void ImportSpeciesDialog::updateMasterTermsPage()
     // Determine whether we have any naming conflicts
     auto conflicts = false;
     for (auto &intra : temporaryCoreData_.masterBonds())
-        if (dissolve_.coreData().getMasterBond(intra->name()))
+        if (dissolve_.coreData().getCommonBond(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterAngles())
-        if (dissolve_.coreData().getMasterAngle(intra->name()))
+        if (dissolve_.coreData().getCommonAngle(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterTorsions())
-        if (dissolve_.coreData().getMasterTorsion(intra->name()))
+        if (dissolve_.coreData().getCommonTorsion(intra->name()))
         {
             conflicts = true;
             break;
         }
     for (auto &intra : temporaryCoreData_.masterImpropers())
-        if (dissolve_.coreData().getMasterImproper(intra->name()))
+        if (dissolve_.coreData().getCommonImproper(intra->name()))
         {
             conflicts = true;
             break;

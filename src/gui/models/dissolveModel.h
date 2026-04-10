@@ -19,13 +19,13 @@ class DissolveModel : public QObject
     // The Atom Type Model
     Q_PROPERTY(AtomTypeModel *atomTypesModel READ atomTypesModel NOTIFY atomTypesChanged)
     // The Master Bond Model
-    Q_PROPERTY(const MasterBondModel *masterBondsModel READ masterBondsModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonBondModel *masterBondsModel READ masterBondsModel NOTIFY mastersChanged)
     // The Master Angle Model
-    Q_PROPERTY(const MasterAngleModel *masterAnglesModel READ masterAnglesModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonAngleModel *masterAnglesModel READ masterAnglesModel NOTIFY mastersChanged)
     // The Master Torsion Model
-    Q_PROPERTY(const MasterTorsionModel *masterTorsionsModel READ masterTorsionsModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonTorsionModel *masterTorsionsModel READ masterTorsionsModel NOTIFY mastersChanged)
     // The Master Improper Model
-    Q_PROPERTY(const MasterImproperModel *masterImpropersModel READ masterImpropersModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonImproperModel *masterImpropersModel READ masterImpropersModel NOTIFY mastersChanged)
     // The Configuration Model
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
     // The ModuleLayers Model
@@ -79,21 +79,21 @@ class DissolveModel : public QObject
     // The number of atom types
     int nAtomTypes();
     // The Master Bond Model
-    const MasterBondModel *masterBondsModel() const;
+    const CommonBondModel *masterBondsModel() const;
     // The number of master bonds
-    int nMasterBonds();
+    int nCommonBonds();
     // The Master Angle Model
-    const MasterAngleModel *masterAnglesModel() const;
+    const CommonAngleModel *masterAnglesModel() const;
     // The number of master angles
-    int nMasterAngles();
+    int nCommonAngles();
     // The Master Torsion Model
-    const MasterTorsionModel *masterTorsionsModel() const;
+    const CommonTorsionModel *masterTorsionsModel() const;
     // The number of master torsions
-    int nMasterTorsions();
+    int nCommonTorsions();
     // The Master Improper Model
-    const MasterImproperModel *masterImpropersModel() const;
+    const CommonImproperModel *masterImpropersModel() const;
     // The number of master impropers
-    int nMasterImpropers();
+    int nCommonImpropers();
     // The Configurations Model
     ConfigurationModel *configurationsModel();
     // The ModuleLayers Model

@@ -21,7 +21,8 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 {
     dissolve_ = &dissolve;
     atomTypes_.setData(dissolve_->coreData().atomTypes());
-    masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
+    // masters_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
+    // TODO DISSOLVE2
     configurationModel_.setData(dissolve_->coreData().configurations());
     moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), &dissolve_->coreData());
     Q_EMIT modelsUpdated();
@@ -50,7 +51,7 @@ AtomTypeModel *DissolveModel::atomTypesModel() { return &atomTypes_; }
 int DissolveModel::nAtomTypes() { return atomTypes_.rowCount(); }
 
 // The Master Bond Model
-const MasterBondModel *DissolveModel::masterBondsModel() const
+const CommonBondModel *DissolveModel::masterBondsModel() const
 {
     if (!masters_)
         return nullptr;
@@ -58,7 +59,7 @@ const MasterBondModel *DissolveModel::masterBondsModel() const
 }
 
 // The number of master bonds
-int DissolveModel::nMasterBonds()
+int DissolveModel::nCommonBonds()
 {
     if (!masters_)
         return 0;
@@ -66,7 +67,7 @@ int DissolveModel::nMasterBonds()
 }
 
 // The Master Angle Model
-const MasterAngleModel *DissolveModel::masterAnglesModel() const
+const CommonAngleModel *DissolveModel::masterAnglesModel() const
 {
     if (!masters_)
         return nullptr;
@@ -74,7 +75,7 @@ const MasterAngleModel *DissolveModel::masterAnglesModel() const
 }
 
 // The number of master angles
-int DissolveModel::nMasterAngles()
+int DissolveModel::nCommonAngles()
 {
     if (!masters_)
         return 0;
@@ -82,7 +83,7 @@ int DissolveModel::nMasterAngles()
 }
 
 // The Master Torsion Model
-const MasterTorsionModel *DissolveModel::masterTorsionsModel() const
+const CommonTorsionModel *DissolveModel::masterTorsionsModel() const
 {
     if (!masters_)
         return nullptr;
@@ -90,7 +91,7 @@ const MasterTorsionModel *DissolveModel::masterTorsionsModel() const
 }
 
 // The number of master torsions
-int DissolveModel::nMasterTorsions()
+int DissolveModel::nCommonTorsions()
 {
     if (!masters_)
         return 0;
@@ -98,7 +99,7 @@ int DissolveModel::nMasterTorsions()
 }
 
 // The Master Improper Model
-const MasterImproperModel *DissolveModel::masterImpropersModel() const
+const CommonImproperModel *DissolveModel::masterImpropersModel() const
 {
     if (!masters_)
         return nullptr;
@@ -106,7 +107,7 @@ const MasterImproperModel *DissolveModel::masterImpropersModel() const
 }
 
 // The number of master impropers
-int DissolveModel::nMasterImpropers()
+int DissolveModel::nCommonImpropers()
 {
     if (!masters_)
         return 0;

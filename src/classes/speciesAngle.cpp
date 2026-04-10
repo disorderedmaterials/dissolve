@@ -29,7 +29,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) noexcept : SpeciesIntra(source
     // Copy data
     assign(source.i_, source.j_, source.k_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -42,7 +42,7 @@ SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
     // Copy data
     assign(source.i_, source.j_, source.k_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -57,7 +57,7 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source) noexcept
     // Copy data
     assign(source.i_, source.j_, source.k_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     // Clean source
@@ -307,5 +307,5 @@ void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
 // This method populates the object's members with values read from an 'angle' TOML node
 void SpeciesAngle::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterAngle(form); });
+    deserialiseForm(node, [&](auto &form) { return parent_->getCommonAngle(form); });
 }

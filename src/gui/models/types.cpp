@@ -25,10 +25,10 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<ConfigurationModel>(PROJECT, 1, 0, "ConfigurationModel");
     qmlRegisterType<ModuleLayersModel>(PROJECT, 1, 0, "ModuleLayersModel");
     qmlRegisterType<AtomTypeModel>(PROJECT, 1, 0, "AtomTypeModel");
-    qmlRegisterType<MasterAngleModel>(PROJECT, 1, 0, "MasterAngleModel");
-    qmlRegisterType<MasterBondModel>(PROJECT, 1, 0, "MasterBondModel");
-    qmlRegisterType<MasterImproperModel>(PROJECT, 1, 0, "MasterImproperModel");
-    qmlRegisterType<MasterTorsionModel>(PROJECT, 1, 0, "MasterTorsionModel");
+    qmlRegisterType<CommonAngleModel>(PROJECT, 1, 0, "CommonAngleModel");
+    qmlRegisterType<CommonBondModel>(PROJECT, 1, 0, "CommonBondModel");
+    qmlRegisterType<CommonImproperModel>(PROJECT, 1, 0, "CommonImproperModel");
+    qmlRegisterType<CommonTorsionModel>(PROJECT, 1, 0, "CommonTorsionModel");
     qmlRegisterType<ModifyChargesModel>(PROJECT, 1, 0, "ModifyChargesModel");
     qmlRegisterType<SortFilterProxy>(PROJECT, 1, 0, "SortFilterProxy");
     qmlRegisterType<GraphModel>(PROJECT, 1, 0, "GraphModel");

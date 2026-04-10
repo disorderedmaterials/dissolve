@@ -6,10 +6,9 @@
 #include "classes/speciesBond.h"
 #include "gui/models/masterTermModel.h"
 #include "gui/models/modelUpdater.h"
-#include "templates/optionalRef.h"
 
-// MasterBond model
-class MasterBondModel : public MasterTermModel
+// CommonBond model
+class CommonBondModel : public CommonTermModel
 {
     Q_OBJECT
 
@@ -20,11 +19,11 @@ class MasterBondModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    explicit MasterBondModel(CoreData &coreData);
+    explicit CommonBondModel(Species *species);
 
     private:
     // Source term data
-    std::vector<std::shared_ptr<MasterBond>> &sourceData_;
+    std::vector<std::shared_ptr<CommonBond>> &sourceData_;
 
     public:
     // Refresh model data
@@ -35,9 +34,9 @@ class MasterBondModel : public MasterTermModel
      */
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
-    bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
-    const std::shared_ptr<MasterBond> &rawData(const QModelIndex &index) const;
+    QVariant getTermData(int row, CommonTermModelData::DataType dataType) const override;
+    bool setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value) override;
+    const std::shared_ptr<CommonBond> &rawData(const QModelIndex &index) const;
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     bool removeRows(int row, int count, const QModelIndex &parent) override;
 

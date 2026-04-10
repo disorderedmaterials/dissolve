@@ -3,7 +3,7 @@
 
 #include "gui/models/masterTorsionModel.h"
 
-MasterTorsionModel::MasterTorsionModel(CoreData &coreData) : MasterTermModel(coreData), sourceData_(coreData.masterTorsions())
+CommonTorsionModel::CommonTorsionModel(Species *species) : CommonTermModel(species), sourceData_(species->commonTorsions())
 {
     // Set connections
     modelUpdater.setModel(this);
@@ -11,17 +11,17 @@ MasterTorsionModel::MasterTorsionModel(CoreData &coreData) : MasterTermModel(cor
 }
 
 // Refresh model data
-void MasterTorsionModel::reset()
+void CommonTorsionModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-int MasterTorsionModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
+int CommonTorsionModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
-int MasterTorsionModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 5; }
+int CommonTorsionModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 5; }
 
-QVariant MasterTorsionModel::getTermData(int row, MasterTermModelData::DataType dataType) const
+QVariant CommonTorsionModel::getTermData(int row, CommonTermModelData::DataType dataType) const
 {
     if (row < 0 || row >= sourceData_.size())
         return {};
@@ -29,22 +29,22 @@ QVariant MasterTorsionModel::getTermData(int row, MasterTermModelData::DataType 
     auto &t = sourceData_[row];
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             return QString::fromStdString(std::string(t->name()));
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(t->interactionForm())));
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
-        case (MasterTermModelData::DataType::Electrostatic14Scale):
+        case (CommonTermModelData::DataType::Electrostatic14Scale):
             return QString::number(t->electrostatic14Scaling());
-        case (MasterTermModelData::DataType::VanDerWaals14Scale):
+        case (CommonTermModelData::DataType::VanDerWaals14Scale):
             return QString::number(t->vanDerWaals14Scaling());
     }
 
     return {};
 }
 
-bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
+bool CommonTorsionModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
 {
     if (row < 0 || row >= sourceData_.size())
         return false;
@@ -54,10 +54,10 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
     beginResetModel();
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             t->setName(value.toString().toStdString());
             break;
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             try
             {
                 auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
@@ -68,15 +68,15 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
                 return false;
             }
             break;
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             if (!t->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
-        case (MasterTermModelData::DataType::Electrostatic14Scale):
+        case (CommonTermModelData::DataType::Electrostatic14Scale):
             if (!t->setElectrostatic14Scaling(value.toDouble()))
                 return false;
             break;
-        case (MasterTermModelData::DataType::VanDerWaals14Scale):
+        case (CommonTermModelData::DataType::VanDerWaals14Scale):
             if (!t->setVanDerWaals14Scaling(value.toDouble()))
                 return false;
             break;
@@ -88,7 +88,7 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
     return true;
 }
 
-const std::shared_ptr<MasterTorsion> &MasterTorsionModel::rawData(const QModelIndex &index) const
+const std::shared_ptr<CommonTorsion> &CommonTorsionModel::rawData(const QModelIndex &index) const
 {
     return sourceData_[index.row()];
 }

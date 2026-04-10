@@ -23,13 +23,13 @@ class AddForcefieldDialogModel : public QObject
     // The chosen forcefield
     Q_PROPERTY(Forcefield *ff READ ff WRITE setFf NOTIFY progressionAllowedChanged)
     // The Master Bond Model
-    Q_PROPERTY(const MasterBondModel *bonds READ bonds NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonBondModel *bonds READ bonds NOTIFY mastersChanged)
     // The Master Angle Model
-    Q_PROPERTY(const MasterAngleModel *angles READ angles NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonAngleModel *angles READ angles NOTIFY mastersChanged)
     // The Master Torsion Model
-    Q_PROPERTY(const MasterTorsionModel *torsions READ torsions NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonTorsionModel *torsions READ torsions NOTIFY mastersChanged)
     // The Master Improper Model
-    Q_PROPERTY(const MasterImproperModel *impropers READ impropers NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonImproperModel *impropers READ impropers NOTIFY mastersChanged)
     // The number of atom types conflicts
     Q_PROPERTY(int atomTypesIndicator READ atomTypesIndicator NOTIFY atomTypesIndicatorChanged);
     // Whether it is safe to move to the next page
@@ -136,13 +136,13 @@ class AddForcefieldDialogModel : public QObject
     // The Atom Type Model
     AtomTypeModel *atomTypes();
     // The Master Bond Model
-    const MasterBondModel *bonds() const;
+    const CommonBondModel *bonds() const;
     // The Master Angle Model
-    const MasterAngleModel *angles() const;
+    const CommonAngleModel *angles() const;
     // The Master Torsion Model
-    const MasterTorsionModel *torsions() const;
+    const CommonTorsionModel *torsions() const;
     // The Master Improper Model
-    const MasterImproperModel *impropers() const;
+    const CommonImproperModel *impropers() const;
     // The chosen forcefield
     Forcefield *ff() const;
     // Update the chosen forcefield

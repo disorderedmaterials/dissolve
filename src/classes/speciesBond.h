@@ -112,11 +112,11 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };
 
-// MasterBond Definition
-class MasterBond : public SpeciesBond
+// CommonBond Definition
+class CommonBond : public SpeciesBond
 {
     public:
-    explicit MasterBond(std::string_view name) : SpeciesBond(), name_{name} {};
+    explicit CommonBond(std::string_view name) : SpeciesBond(), name_{name} {};
     using SpeciesIntra<SpeciesBond, BondFunctions>::deserialise;
     /*
      * Identifying Name

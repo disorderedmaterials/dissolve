@@ -34,30 +34,30 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
 
     // Set item delegates for tables
     // -- Functional Forms
-    ui_.MasterBondsTable->setItemDelegateForColumn(
+    ui_.CommonBondsTable->setItemDelegateForColumn(
         1, new ComboListDelegate(this, new ComboEnumOptionsItems<BondFunctions::Form>(BondFunctions::forms())));
-    ui_.MasterAnglesTable->setItemDelegateForColumn(
+    ui_.CommonAnglesTable->setItemDelegateForColumn(
         1, new ComboListDelegate(this, new ComboEnumOptionsItems<AngleFunctions::Form>(AngleFunctions::forms())));
-    ui_.MasterTorsionsTable->setItemDelegateForColumn(
+    ui_.CommonTorsionsTable->setItemDelegateForColumn(
         1, new ComboListDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms())));
-    ui_.MasterImpropersTable->setItemDelegateForColumn(
+    ui_.CommonImpropersTable->setItemDelegateForColumn(
         1, new ComboListDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms())));
 
     // Set models for tables
-    ui_.MasterBondsTable->setModel(&masterBondsTableModel_);
-    ui_.MasterAnglesTable->setModel(&masterAnglesTableModel_);
-    ui_.MasterTorsionsTable->setModel(&masterTorsionsTableModel_);
-    ui_.MasterImpropersTable->setModel(&masterImpropersTableModel_);
+    ui_.CommonBondsTable->setModel(&masterBondsTableModel_);
+    ui_.CommonAnglesTable->setModel(&masterAnglesTableModel_);
+    ui_.CommonTorsionsTable->setModel(&masterTorsionsTableModel_);
+    ui_.CommonImpropersTable->setModel(&masterImpropersTableModel_);
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
-    ui_.MasterBondsTable->horizontalHeader()->setFont(font());
-    ui_.MasterBondsTable->horizontalHeader()->setVisible(true);
-    ui_.MasterAnglesTable->horizontalHeader()->setFont(font());
-    ui_.MasterAnglesTable->horizontalHeader()->setVisible(true);
-    ui_.MasterTorsionsTable->horizontalHeader()->setFont(font());
-    ui_.MasterTorsionsTable->horizontalHeader()->setVisible(true);
-    ui_.MasterImpropersTable->horizontalHeader()->setFont(font());
-    ui_.MasterImpropersTable->horizontalHeader()->setVisible(true);
+    ui_.CommonBondsTable->horizontalHeader()->setFont(font());
+    ui_.CommonBondsTable->horizontalHeader()->setVisible(true);
+    ui_.CommonAnglesTable->horizontalHeader()->setFont(font());
+    ui_.CommonAnglesTable->horizontalHeader()->setVisible(true);
+    ui_.CommonTorsionsTable->horizontalHeader()->setFont(font());
+    ui_.CommonTorsionsTable->horizontalHeader()->setVisible(true);
+    ui_.CommonImpropersTable->horizontalHeader()->setFont(font());
+    ui_.CommonImpropersTable->horizontalHeader()->setVisible(true);
 
     connect(&masterBondsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(masterBondsDataChanged(const QModelIndex &, const QModelIndex &)));
@@ -67,13 +67,13 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
             SLOT(masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &)));
     connect(&masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(masterImpropersDataChanged(const QModelIndex &, const QModelIndex &)));
-    connect(ui_.MasterBondsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+    connect(ui_.CommonBondsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(masterBondsSelectionChanged(const QItemSelection &, const QItemSelection &)));
-    connect(ui_.MasterAnglesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+    connect(ui_.CommonAnglesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(masterAnglesSelectionChanged(const QItemSelection &, const QItemSelection &)));
-    connect(ui_.MasterTorsionsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+    connect(ui_.CommonTorsionsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(masterTorsionsSelectionChanged(const QItemSelection &, const QItemSelection &)));
-    connect(ui_.MasterImpropersTable->selectionModel(),
+    connect(ui_.CommonImpropersTable->selectionModel(),
             SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(masterImpropersSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
@@ -181,10 +181,10 @@ void ForcefieldTab::updateControls()
     masterAnglesTableModel_.reset();
     masterTorsionsTableModel_.reset();
     masterImpropersTableModel_.reset();
-    ui_.MasterBondsTable->resizeColumnsToContents();
-    ui_.MasterAnglesTable->resizeColumnsToContents();
-    ui_.MasterTorsionsTable->resizeColumnsToContents();
-    ui_.MasterImpropersTable->resizeColumnsToContents();
+    ui_.CommonBondsTable->resizeColumnsToContents();
+    ui_.CommonAnglesTable->resizeColumnsToContents();
+    ui_.CommonTorsionsTable->resizeColumnsToContents();
+    ui_.CommonImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
     atomTypesModel_.setData(dissolve_.coreData().atomTypes());
@@ -552,24 +552,24 @@ void ForcefieldTab::overrideSelectionChanged(const QItemSelection &current, cons
 
 void ForcefieldTab::masterBondsDataChanged(const QModelIndex &, const QModelIndex &)
 {
-    ui_.MasterBondsTable->resizeColumnsToContents();
+    ui_.CommonBondsTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
 }
 void ForcefieldTab::masterAnglesDataChanged(const QModelIndex &, const QModelIndex &)
 {
-    ui_.MasterAnglesTable->resizeColumnsToContents();
+    ui_.CommonAnglesTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &)
 {
-    ui_.MasterTorsionsTable->resizeColumnsToContents();
+    ui_.CommonTorsionsTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::masterImpropersDataChanged(const QModelIndex &, const QModelIndex &)
 {
-    ui_.MasterImpropersTable->resizeColumnsToContents();
+    ui_.CommonImpropersTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
 }
 
@@ -597,7 +597,7 @@ void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
 {
     masterBondsTableModel_.insertRows(masterBondsTableModel_.rowCount(), 1, {});
 
-    ui_.MasterBondsTable->resizeColumnsToContents();
+    ui_.CommonBondsTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
 }
@@ -614,7 +614,7 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
     if (queryBox.exec() != QMessageBox::Yes)
         return;
 
-    auto index = ui_.MasterBondsTable->currentIndex();
+    auto index = ui_.CommonBondsTable->currentIndex();
     if (!index.isValid())
         return;
 
@@ -624,7 +624,7 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
 
     if (masterBondsTableModel_.removeRows(index.row(), 1, {}))
     {
-        ui_.MasterBondsTable->resizeColumnsToContents();
+        ui_.CommonBondsTable->resizeColumnsToContents();
 
         dissolveWindow_->setModified();
     }
@@ -632,9 +632,9 @@ void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
 
 void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
 {
-    dissolve_.coreData().addMasterAngle(
+    dissolve_.coreData().addCommonAngle(
         DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterAngles(), [](const auto &a) { return a->name(); }));
-    ui_.MasterAnglesTable->resizeColumnsToContents();
+    ui_.CommonAnglesTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
 }
 
@@ -650,7 +650,7 @@ void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
     if (queryBox.exec() != QMessageBox::Yes)
         return;
 
-    auto index = ui_.MasterAnglesTable->currentIndex();
+    auto index = ui_.CommonAnglesTable->currentIndex();
     if (!index.isValid())
         return;
 
@@ -658,21 +658,21 @@ void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
     auto angle = masterAnglesTableModel_.rawData(index);
     assert(angle);
 
-    dissolve_.coreData().removeMasterAngle(angle);
+    dissolve_.coreData().removeCommonAngle(angle);
 
     Locker refreshLocker(refreshLock_);
 
-    ui_.MasterAnglesTable->resizeColumnsToContents();
+    ui_.CommonAnglesTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
 {
-    dissolve_.coreData().addMasterTorsion(
+    dissolve_.coreData().addCommonTorsion(
         DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterTorsions(), [](const auto &t) { return t->name(); }));
 
-    ui_.MasterTorsionsTable->resizeColumnsToContents();
+    ui_.CommonTorsionsTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
 }
 
@@ -688,7 +688,7 @@ void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
     if (queryBox.exec() != QMessageBox::Yes)
         return;
 
-    auto index = ui_.MasterTorsionsTable->currentIndex();
+    auto index = ui_.CommonTorsionsTable->currentIndex();
     if (!index.isValid())
         return;
 
@@ -696,21 +696,21 @@ void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
     auto torsion = masterTorsionsTableModel_.rawData(index);
     assert(torsion);
 
-    dissolve_.coreData().removeMasterTorsion(torsion);
+    dissolve_.coreData().removeCommonTorsion(torsion);
 
     Locker refreshLocker(refreshLock_);
 
-    ui_.MasterTorsionsTable->resizeColumnsToContents();
+    ui_.CommonTorsionsTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
 {
-    dissolve_.coreData().addMasterImproper(
+    dissolve_.coreData().addCommonImproper(
         DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterImpropers(), [](const auto &i) { return i->name(); }));
 
-    ui_.MasterImpropersTable->resizeColumnsToContents();
+    ui_.CommonImpropersTable->resizeColumnsToContents();
     dissolveWindow_->setModified();
 }
 
@@ -726,7 +726,7 @@ void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
     if (queryBox.exec() != QMessageBox::Yes)
         return;
 
-    auto index = ui_.MasterImpropersTable->currentIndex();
+    auto index = ui_.CommonImpropersTable->currentIndex();
     if (!index.isValid())
         return;
 
@@ -734,11 +734,11 @@ void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked)
     auto improper = masterImpropersTableModel_.rawData(index);
     assert(improper);
 
-    dissolve_.coreData().removeMasterImproper(improper);
+    dissolve_.coreData().removeCommonImproper(improper);
 
     Locker refreshLocker(refreshLock_);
 
-    ui_.MasterImpropersTable->resizeColumnsToContents();
+    ui_.CommonImpropersTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
 }

@@ -91,11 +91,11 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };
 
-// MasterImproper Definition
-class MasterImproper : public SpeciesImproper
+// CommonImproper Definition
+class CommonImproper : public SpeciesImproper
 {
     public:
-    explicit MasterImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
+    explicit CommonImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
     using SpeciesIntra<SpeciesImproper, TorsionFunctions>::deserialise;
 
     /*

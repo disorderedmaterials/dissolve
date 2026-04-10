@@ -50,12 +50,12 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
             case (DataType::IndexL):
                 return improper.index(index.column()) + 1;
             case (DataType::Form):
-                return improper.masterTerm()
-                           ? QString::fromStdString("@" + std::string(improper.masterTerm()->name()))
+                return improper.commonTerm()
+                           ? QString::fromStdString("@" + std::string(improper.commonTerm()->name()))
                            : QString::fromStdString(TorsionFunctions::forms().keyword(improper.interactionForm()));
             case (DataType::Parameters):
-                return improper.masterTerm()
-                           ? QString::fromStdString(improper.masterTerm()->interactionPotential().parametersAsString())
+                return improper.commonTerm()
+                           ? QString::fromStdString(improper.commonTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(improper.interactionPotential().parametersAsString());
             default:
                 return {};
@@ -91,7 +91,7 @@ Qt::ItemFlags SpeciesImproperModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexL)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::Form && impropers_->at(index.row()).masterTerm())
+    if (index.column() > DataType::Form && impropers_->at(index.row()).commonTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -110,7 +110,7 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
             try
             {
                 auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
-                improper.detachFromMasterTerm();
+                improper.detachFromCommonTerm();
                 improper.setInteractionForm(tf);
             }
             catch (std::runtime_error &e)

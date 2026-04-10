@@ -9,7 +9,7 @@
 #include <QModelIndex>
 #include <QObject>
 
-namespace MasterTermModelData
+namespace CommonTermModelData
 {
 // Enumerated data items for terms
 enum DataType
@@ -26,29 +26,27 @@ enum Roles
     Raw = Qt::UserRole,
     Query = Qt::UserRole + 1
 };
-}; // namespace MasterTermModelData
+}; // namespace CommonTermModelData
 
 // Base master term model
-class MasterTermModel : public QAbstractTableModel
+class CommonTermModel : public QAbstractTableModel
 {
     Q_OBJECT
 
     public:
-    MasterTermModel(CoreData &coreData);
+    CommonTermModel(Species *species);
 
     protected:
-    // CoreData object containing the master terms
-    CoreData &coreData_;
-
-    protected:
+    // Source Species
+    Species *species_{nullptr};
     // Icon return function
     std::function<bool(std::string_view termName)> queryFunction_;
 
     public:
     // Return model data, by type, for specified term index
-    virtual QVariant getTermData(int row, MasterTermModelData::DataType dataType) const = 0;
+    virtual QVariant getTermData(int row, CommonTermModelData::DataType dataType) const = 0;
     // Set model data, by type, for specified term index
-    virtual bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) = 0;
+    virtual bool setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value) = 0;
     // Set function to return QIcon for item
     void setQueryFunction(std::function<bool(std::string_view termName)> func);
 

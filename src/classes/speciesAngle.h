@@ -83,11 +83,11 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };
 
-// MasterAngle Definition
-class MasterAngle : public SpeciesAngle
+// CommonAngle Definition
+class CommonAngle : public SpeciesAngle
 {
     public:
-    explicit MasterAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
+    explicit CommonAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
     using SpeciesIntra<SpeciesAngle, AngleFunctions>::deserialise;
 
     /*

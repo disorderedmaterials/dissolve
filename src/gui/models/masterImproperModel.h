@@ -8,8 +8,8 @@
 #include "gui/models/modelUpdater.h"
 #include "templates/optionalRef.h"
 
-// MasterImproper model
-class MasterImproperModel : public MasterTermModel
+// CommonImproper model
+class CommonImproperModel : public CommonTermModel
 {
     Q_OBJECT
 
@@ -20,11 +20,11 @@ class MasterImproperModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    explicit MasterImproperModel(CoreData &coreData);
+    explicit CommonImproperModel(Species *species);
 
     private:
     // Source term data
-    std::vector<std::shared_ptr<MasterImproper>> &sourceData_;
+    std::vector<std::shared_ptr<CommonImproper>> &sourceData_;
 
     public:
     // Refresh model data
@@ -35,9 +35,9 @@ class MasterImproperModel : public MasterTermModel
      */
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
-    bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
-    const std::shared_ptr<MasterImproper> &rawData(const QModelIndex &index) const;
+    QVariant getTermData(int row, CommonTermModelData::DataType dataType) const override;
+    bool setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value) override;
+    const std::shared_ptr<CommonImproper> &rawData(const QModelIndex &index) const;
 
     private:
     ModelUpdater modelUpdater;

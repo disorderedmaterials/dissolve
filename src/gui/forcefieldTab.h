@@ -35,10 +35,10 @@ class ForcefieldTab : public QWidget, public MainTab
     AtomTypeModel atomTypesModel_;
     PairPotentialModel pairPotentialModel_;
     PairPotentialOverrideModel pairPotentialOverrideModel_;
-    MasterBondModel masterBondsTableModel_;
-    MasterAngleModel masterAnglesTableModel_;
-    MasterTorsionModel masterTorsionsTableModel_;
-    MasterImproperModel masterImpropersTableModel_;
+    CommonBondModel masterBondsTableModel_;
+    CommonAngleModel masterAnglesTableModel_;
+    CommonTorsionModel masterTorsionsTableModel_;
+    CommonImproperModel masterImpropersTableModel_;
 
     /*
      * MainTab Reimplementations

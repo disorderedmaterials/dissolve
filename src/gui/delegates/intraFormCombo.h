@@ -52,7 +52,7 @@ QWidget *IntraFormComboDelegate<T>::createEditor(QWidget *parent, const QStyleOp
     while (items_->nextItem())
         editor->addItem(items_->currentItemText());
 
-    // Now append any MasterBonds we have
+    // Now append any CommonBonds we have
     if (!masterTerms_.empty())
         ComboNameListPopulator(editor, masterTerms_, "@", true);
 

@@ -50,18 +50,18 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
             case (DataType::IndexL):
                 return torsion.index(index.column()) + 1;
             case (DataType::Form):
-                return torsion.masterTerm()
-                           ? QString::fromStdString("@" + std::string(torsion.masterTerm()->name()))
+                return torsion.commonTerm()
+                           ? QString::fromStdString("@" + std::string(torsion.commonTerm()->name()))
                            : QString::fromStdString(TorsionFunctions::forms().keyword(torsion.interactionForm()));
             case (DataType::Parameters):
-                return torsion.masterTerm()
-                           ? QString::fromStdString(torsion.masterTerm()->interactionPotential().parametersAsString())
+                return torsion.commonTerm()
+                           ? QString::fromStdString(torsion.commonTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(torsion.interactionPotential().parametersAsString());
             case (DataType::Electrostatic14Scale):
-                return torsion.masterTerm() ? QString::number(torsion.masterTerm()->electrostatic14Scaling())
+                return torsion.commonTerm() ? QString::number(torsion.commonTerm()->electrostatic14Scaling())
                                             : QString::number(torsion.electrostatic14Scaling());
             case (DataType::VanDerWaals14Scale):
-                return torsion.masterTerm() ? QString::number(torsion.masterTerm()->vanDerWaals14Scaling())
+                return torsion.commonTerm() ? QString::number(torsion.commonTerm()->vanDerWaals14Scaling())
                                             : QString::number(torsion.vanDerWaals14Scaling());
             default:
                 return {};
@@ -101,7 +101,7 @@ Qt::ItemFlags SpeciesTorsionModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexL)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::Form && torsions_->at(index.row()).masterTerm())
+    if (index.column() > DataType::Form && torsions_->at(index.row()).commonTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -120,7 +120,7 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             try
             {
                 auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
-                torsion.detachFromMasterTerm();
+                torsion.detachFromCommonTerm();
                 torsion.setInteractionForm(tf);
             }
             catch (std::runtime_error &e)

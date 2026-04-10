@@ -295,7 +295,7 @@ void DissolveWindow::on_SpeciesReduceToMasterTermsAction_triggered(bool checked)
     if (!species)
         return;
 
-    species->reduceToMasterTerms(dissolve_.coreData());
+    species->reduceToCommonTerms(dissolve_.coreData());
 
     setModified();
     fullUpdate();

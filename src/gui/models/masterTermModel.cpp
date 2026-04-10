@@ -3,21 +3,21 @@
 
 #include "gui/models/masterTermModel.h"
 
-MasterTermModel::MasterTermModel(CoreData &coreData) : QAbstractTableModel(), coreData_(coreData) {}
+CommonTermModel::CommonTermModel(Species *species) : species_(species) {}
 
-void MasterTermModel::setQueryFunction(std::function<bool(std::string_view termName)> func)
+void CommonTermModel::setQueryFunction(std::function<bool(std::string_view termName)> func)
 {
     queryFunction_ = std::move(func);
 }
 
-int MasterTermModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 3; }
+int CommonTermModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 3; }
 
-Qt::ItemFlags MasterTermModel::flags(const QModelIndex &index) const
+Qt::ItemFlags CommonTermModel::flags(const QModelIndex &index) const
 {
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
-QVariant MasterTermModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant CommonTermModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
         return {};
@@ -25,15 +25,15 @@ QVariant MasterTermModel::headerData(int section, Qt::Orientation orientation, i
     if (orientation == Qt::Horizontal)
         switch (section)
         {
-            case (MasterTermModelData::DataType::Name):
+            case (CommonTermModelData::DataType::Name):
                 return "Name";
-            case (MasterTermModelData::DataType::Form):
+            case (CommonTermModelData::DataType::Form):
                 return "Form";
-            case (MasterTermModelData::DataType::Parameters):
+            case (CommonTermModelData::DataType::Parameters):
                 return "Parameters";
-            case (MasterTermModelData::DataType::Electrostatic14Scale):
+            case (CommonTermModelData::DataType::Electrostatic14Scale):
                 return "Elec 1-4";
-            case (MasterTermModelData::DataType::VanDerWaals14Scale):
+            case (CommonTermModelData::DataType::VanDerWaals14Scale):
                 return "vdW 1-4";
             default:
                 return {};
@@ -42,7 +42,7 @@ QVariant MasterTermModel::headerData(int section, Qt::Orientation orientation, i
     return {};
 }
 
-QVariant MasterTermModel::data(const QModelIndex &index, int role) const
+QVariant CommonTermModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return {};
@@ -50,26 +50,26 @@ QVariant MasterTermModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= rowCount())
         return {};
 
-    if (role == MasterTermModelData::Roles::Query && queryFunction_)
-        return queryFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString());
+    if (role == CommonTermModelData::Roles::Query && queryFunction_)
+        return queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString());
 
     if (role == Qt::DecorationRole && queryFunction_)
-        return QIcon(queryFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString())
+        return QIcon(queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString())
                          ? ":/general/icons/warn.svg"
                          : ":/general/icons/true.svg");
 
     if (role == Qt::DisplayRole || role == Qt::EditRole)
-        return getTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()));
+        return getTermData(index.row(), static_cast<CommonTermModelData::DataType>(index.column()));
 
     return {};
 }
 
-bool MasterTermModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool CommonTermModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role != Qt::EditRole)
         return false;
 
-    if (!setTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()), value))
+    if (!setTermData(index.row(), static_cast<CommonTermModelData::DataType>(index.column()), value))
         return false;
 
     Q_EMIT dataChanged(index, index);
@@ -77,10 +77,10 @@ bool MasterTermModel::setData(const QModelIndex &index, const QVariant &value, i
     return true;
 }
 
-QHash<int, QByteArray> MasterTermModel::roleNames() const
+QHash<int, QByteArray> CommonTermModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[Qt::DisplayRole] = "display";
-    roles[MasterTermModelData::Query] = "query";
+    roles[CommonTermModelData::Query] = "query";
     return roles;
 }

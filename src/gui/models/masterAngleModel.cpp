@@ -3,7 +3,7 @@
 
 #include "gui/models/masterAngleModel.h"
 
-MasterAngleModel::MasterAngleModel(CoreData &coreData) : MasterTermModel(coreData), sourceData_(coreData.masterAngles())
+CommonAngleModel::CommonAngleModel(Species *species) : CommonTermModel(species), sourceData_(species->commonAngles())
 {
     // Set connections
     modelUpdater.setModel(this);
@@ -11,15 +11,15 @@ MasterAngleModel::MasterAngleModel(CoreData &coreData) : MasterTermModel(coreDat
 }
 
 // Refresh model data
-void MasterAngleModel::reset()
+void CommonAngleModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-int MasterAngleModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
+int CommonAngleModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
-QVariant MasterAngleModel::getTermData(int row, MasterTermModelData::DataType dataType) const
+QVariant CommonAngleModel::getTermData(int row, CommonTermModelData::DataType dataType) const
 {
     if (row < 0 || row >= sourceData_.size())
         return {};
@@ -27,11 +27,11 @@ QVariant MasterAngleModel::getTermData(int row, MasterTermModelData::DataType da
     auto &t = sourceData_[row];
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             return QString::fromStdString(std::string(t->name()));
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             return QString::fromStdString(std::string(AngleFunctions::forms().keyword(t->interactionForm())));
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
         default:
             return {};
@@ -40,7 +40,7 @@ QVariant MasterAngleModel::getTermData(int row, MasterTermModelData::DataType da
     return {};
 }
 
-bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
+bool CommonAngleModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
 {
     if (row < 0 || row >= sourceData_.size())
         return false;
@@ -50,10 +50,10 @@ bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataTy
     beginResetModel();
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             t->setName(value.toString().toStdString());
             break;
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             try
             {
                 auto tf = AngleFunctions::forms().enumeration(value.toString().toStdString());
@@ -64,7 +64,7 @@ bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataTy
                 return false;
             }
             break;
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             if (!t->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
@@ -76,7 +76,7 @@ bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataTy
     return true;
 }
 
-const std::shared_ptr<MasterAngle> &MasterAngleModel::rawData(const QModelIndex &index) const
+const std::shared_ptr<CommonAngle> &CommonAngleModel::rawData(const QModelIndex &index) const
 {
     return sourceData_[index.row()];
 }

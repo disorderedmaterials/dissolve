@@ -17,6 +17,10 @@
 #include <vector>
 
 // Forward Declarations
+class CommonBond;
+class CommonAngle;
+class CommonTorsion;
+class CommonImproper;
 class Forcefield;
 
 // Species Definition
@@ -236,10 +240,67 @@ class Species : public Serialisable<const CoreData &>
     bool attachedAtomListsGenerated() const;
     // Generate attached atom lists for all intramolecular terms
     void generateAttachedAtomLists();
-    // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
-    void detachFromMasterTerms();
-    // Reduce intramolecular terms to master terms
-    void reduceToMasterTerms(CoreData &coreData, bool selectionOnly = false);
+    // Detach common term links for all interaction types, copying parameters to local SpeciesIntra
+    void detachFromCommonTerms();
+    // Reduce intramolecular terms to common terms
+    void reduceToCommonTerms(CoreData &coreData, bool selectionOnly = false);
+
+    /*
+     * Intramolecular Common Terms
+     */
+    private:
+    // Common bond terms
+    std::vector<std::shared_ptr<CommonBond>> commonBonds_;
+    // Common angle terms
+    std::vector<std::shared_ptr<CommonAngle>> commonAngles_;
+    // Common torsion terms
+    std::vector<std::shared_ptr<CommonTorsion>> commonTorsions_;
+    // Common improper terms
+    std::vector<std::shared_ptr<CommonImproper>> commonImpropers_;
+
+    public:
+    // Add new common Bond parameters
+    CommonBond &addCommonBond(std::string_view name, std::optional<int> insertAtIndex = {});
+    // Remove specified common Bond
+    void removeCommonBond(const std::shared_ptr<CommonBond> &bond);
+    // Return list of common Bond parameters
+    std::vector<std::shared_ptr<CommonBond>> &commonBonds();
+    const std::vector<std::shared_ptr<CommonBond>> &commonBonds() const;
+    // Return whether named common Bond parameters exist
+    OptionalReferenceWrapper<CommonBond> getCommonBond(std::string_view name);
+    OptionalReferenceWrapper<const CommonBond> getCommonBond(std::string_view name) const;
+    // Add new common Angle parameters
+    CommonAngle &addCommonAngle(std::string_view name);
+    // Remove specified common Angle
+    void removeCommonAngle(const std::shared_ptr<CommonAngle> &angle);
+    // Return list of common Angle parameters
+    std::vector<std::shared_ptr<CommonAngle>> &commonAngles();
+    const std::vector<std::shared_ptr<CommonAngle>> &commonAngles() const;
+    // Return whether named common Angle parameters exist
+    OptionalReferenceWrapper<CommonAngle> getCommonAngle(std::string_view name);
+    OptionalReferenceWrapper<const CommonAngle> getCommonAngle(std::string_view name) const;
+    // Add new common Torsion parameters
+    CommonTorsion &addCommonTorsion(std::string_view name);
+    // Remove specified common Torsion
+    void removeCommonTorsion(const std::shared_ptr<CommonTorsion> &torsion);
+    // Return list of common Torsion parameters
+    std::vector<std::shared_ptr<CommonTorsion>> &commonTorsions();
+    const std::vector<std::shared_ptr<CommonTorsion>> &commonTorsions() const;
+    // Return whether named common Torsion parameters exist
+    OptionalReferenceWrapper<CommonTorsion> getCommonTorsion(std::string_view name);
+    OptionalReferenceWrapper<const CommonTorsion> getCommonTorsion(std::string_view name) const;
+    // Add new common Improper parameters
+    CommonImproper &addCommonImproper(std::string_view name);
+    // Remove specified common Impropers
+    void removeCommonImproper(const std::shared_ptr<CommonImproper> &improper);
+    // Return list of common Improper parameters
+    std::vector<std::shared_ptr<CommonImproper>> &commonImpropers();
+    const std::vector<std::shared_ptr<CommonImproper>> &commonImpropers() const;
+    // Return whether named common Improper parameters exist
+    OptionalReferenceWrapper<CommonImproper> getCommonImproper(std::string_view name);
+    OptionalReferenceWrapper<const CommonImproper> getCommonImproper(std::string_view name) const;
+    // Clear all common terms
+    void clearCommonTerms();
 
     /*
      * Box Definition (if any)
@@ -337,25 +398,29 @@ class Species : public Serialisable<const CoreData &>
     // Species Block Keyword Enum
     enum class SpeciesKeyword
     {
-        Angle,        /* 'Angle' - Defines an Angle joining three atoms */
-        Atom,         /* 'Atom' - Specifies an Atom in the Species */
-        Bond,         /* 'Bond' - Defines a Bond joining two atoms */
-        BondType,     /* 'BondType' - Sets the type of a specific bond */
-        BoxAngles,    /* 'BoxAngles' - Specify unit cell angles for the species */
-        BoxLengths,   /* 'BoxLengths' - Specify unit cell lengths for the species */
-        Charge,       /* 'Charge' - Specifies the atomic charge for an individual atom */
-        EndSpecies,   /* 'EndSpecies' - Signals the end of the current Species */
-        Forcefield,   /* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
-        Improper,     /* 'Improper' - Define an Improper interaction between four atoms */
-        Isotopologue, /* 'Isotopologue' - Add an isotopologue to the Species */
-        NAngles,      /* 'NAngles' - Hint at the total number of angles in the Species */
-        NAtoms,       /* 'NAtoms' - Hint at the total number of atoms in the Species */
-        NBonds,       /* 'NBonds' - Hint at the total number of bonds in the Species */
-        NImpropers,   /* 'NImpropers' - Hint at the total number of impropers in the Species */
-        NTorsions,    /* 'NTorsions' - Hint at the total number of torsions in the Species */
-        Scaling14,    /* 'Scaling14' - Specify 1-4 scaling factors for torsion terms */
-        Site,         /* 'Site' - Define an analysis site within the Species */
-        Torsion       /* 'Torsion' - Define a Torsion interaction between four atoms */
+        Angle,          /* 'Angle' - Defines an Angle joining three atoms */
+        Atom,           /* 'Atom' - Specifies an Atom in the Species */
+        Bond,           /* 'Bond' - Defines a Bond joining two atoms */
+        BondType,       /* 'BondType' - Sets the type of a specific bond */
+        BoxAngles,      /* 'BoxAngles' - Specify unit cell angles for the species */
+        BoxLengths,     /* 'BoxLengths' - Specify unit cell lengths for the species */
+        Charge,         /* 'Charge' - Specifies the atomic charge for an individual atom */
+        CommonAngle,    /* 'CommonAngle' - Define a common angle (added for transition to Dissolve2) */
+        CommonBond,     /* 'CommonBond' - Define a common angle (added for transition to Dissolve2) */
+        CommonImproper, /* 'CommonImproper' - Define a common angle (added for transition to Dissolve2) */
+        CommonTorsion,  /* 'CommonTorsion' - Define a common angle (added for transition to Dissolve2) */
+        EndSpecies,     /* 'EndSpecies' - Signals the end of the current Species */
+        Forcefield,     /* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
+        Improper,       /* 'Improper' - Define an Improper interaction between four atoms */
+        Isotopologue,   /* 'Isotopologue' - Add an isotopologue to the Species */
+        NAngles,        /* 'NAngles' - Hint at the total number of angles in the Species */
+        NAtoms,         /* 'NAtoms' - Hint at the total number of atoms in the Species */
+        NBonds,         /* 'NBonds' - Hint at the total number of bonds in the Species */
+        NImpropers,     /* 'NImpropers' - Hint at the total number of impropers in the Species */
+        NTorsions,      /* 'NTorsions' - Hint at the total number of torsions in the Species */
+        Scaling14,      /* 'Scaling14' - Specify 1-4 scaling factors for torsion terms */
+        Site,           /* 'Site' - Define an analysis site within the Species */
+        Torsion         /* 'Torsion' - Define a Torsion interaction between four atoms */
     };
     // Return enum option info for SpeciesKeyword
     static EnumOptions<Species::SpeciesKeyword> keywords();

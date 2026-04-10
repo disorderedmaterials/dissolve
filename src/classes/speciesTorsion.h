@@ -107,11 +107,11 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     void deserialise(const SerialisedValue &node, CoreData &coreData);
 };
 
-// MasterTorsion Definition
-class MasterTorsion : public SpeciesTorsion
+// CommonTorsion Definition
+class CommonTorsion : public SpeciesTorsion
 {
     public:
-    explicit MasterTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
+    explicit CommonTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
     using SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise;
 
     /*

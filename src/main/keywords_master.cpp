@@ -53,176 +53,20 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
         // All OK, so process the keyword
         switch (kwd)
         {
-            case (MasterBlock::AngleKeyword):
-                // Check the functional form specified
-                if (!AngleFunctions::forms().isValid(parser.argsv(2)))
-                {
-                    Messenger::error("Functional form of angle ({}) not recognised.\n", parser.argsv(2));
-                    errorsEncountered = true;
-                    break;
-                }
-                af = AngleFunctions::forms().enumeration(parser.argsv(2));
-
-                // Create a new master angle definition
-                try
-                {
-                    auto &masterAngle = coreData.addMasterAngle(parser.argsv(1));
-                    masterAngle.setInteractionForm(af);
-
-                    // Check number of args provided
-                    if (!AngleFunctions::forms().validNArgs(af, parser.nArgs() - 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    // Set parameters
-                    if (!masterAngle.setInteractionParameters(parser, 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    Messenger::printVerbose("Defined master angle term: {:<10}  {:<12}  {}\n", masterAngle.name(),
-                                            AngleFunctions::forms().keyword(masterAngle.interactionForm()),
-                                            masterAngle.interactionPotential().parametersAsString());
-                }
-                catch (const std::runtime_error &e)
-                {
-                    Messenger::error("{}", e.what());
-                    errorsEncountered = true;
-                }
-                break;
             case (MasterBlock::BondKeyword):
-                // Check the functional form specified
-                if (!BondFunctions::forms().isValid(parser.argsv(2)))
-                {
-                    Messenger::error("Functional form of bond ({}) not recognised.\n", parser.argsv(2));
-                    errorsEncountered = true;
-                    break;
-                }
-                bf = BondFunctions::forms().enumeration(parser.argsv(2));
-
-                // Create a new master bond definition
-                try
-                {
-                    auto &masterBond = coreData.addMasterBond(parser.argsv(1));
-                    masterBond.setInteractionForm(bf);
-
-                    // Check number of args provided
-                    if (!BondFunctions::forms().validNArgs(bf, parser.nArgs() - 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    // Set parameters
-                    if (!masterBond.setInteractionParameters(parser, 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    Messenger::printVerbose("Defined master bond term: {:<10}  {:<12}  {}\n", masterBond.name(),
-                                            BondFunctions::forms().keyword(masterBond.interactionForm()),
-                                            masterBond.interactionPotential().parametersAsString());
-                }
-                catch (const std::runtime_error &e)
-                {
-                    Messenger::error("{}", e.what());
-                    errorsEncountered = true;
-                }
+            case (MasterBlock::AngleKeyword):
+            case (MasterBlock::ImproperKeyword):
+            case (MasterBlock::TorsionKeyword):
+                Messenger::error("Common terms moved to Species.\n");
+                errorsEncountered = true;
                 break;
             case (MasterBlock::EndMasterKeyword):
                 Messenger::print("Found end of Master block.\n");
                 blockDone = true;
                 break;
-            case (MasterBlock::ImproperKeyword):
-                // Check the functional form specified
-                if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
-                {
-                    Messenger::error("Functional form of improper ({}) not recognised.\n", parser.argsv(2));
-                    errorsEncountered = true;
-                    break;
-                }
-                tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
-
-                // Create a new master improper definition
-                try
-                {
-                    auto &masterImproper = coreData.addMasterImproper(parser.argsv(1));
-                    masterImproper.setInteractionForm(tf);
-
-                    // Check number of args provided
-                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    // Set parameters
-                    if (!masterImproper.setInteractionParameters(parser, 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    Messenger::printVerbose("Defined master improper term: {:<10}  {:<12}  {}\n", masterImproper.name(),
-                                            TorsionFunctions::forms().keyword(masterImproper.interactionForm()),
-                                            masterImproper.interactionPotential().parametersAsString());
-                }
-                catch (const std::runtime_error &e)
-                {
-                    Messenger::error("{}", e.what());
-                    errorsEncountered = true;
-                }
-                break;
             case (MasterBlock::Scaling14Keyword):
                 elec14Scaling = parser.argd(1);
                 vdw14Scaling = parser.argd(2);
-                break;
-            case (MasterBlock::TorsionKeyword):
-                // Check the functional form specified
-                if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
-                {
-                    Messenger::error("Functional form of torsion ({}) not recognised.\n", parser.argsv(2));
-                    errorsEncountered = true;
-                    break;
-                }
-                tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
-
-                // Create a new master torsion definition
-                try
-                {
-                    auto &masterTorsion = coreData.addMasterTorsion(parser.argsv(1));
-                    masterTorsion.setInteractionForm(tf);
-
-                    // Check number of args provided
-                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    // Set parameters
-                    if (!masterTorsion.setInteractionParameters(parser, 3))
-                    {
-                        errorsEncountered = true;
-                        break;
-                    }
-
-                    // Set scaling factors
-                    masterTorsion.set14ScalingFactors(elec14Scaling, vdw14Scaling);
-
-                    Messenger::printVerbose("Defined master torsion term: {:<10}  {:<12}  {}\n", masterTorsion.name(),
-                                            TorsionFunctions::forms().keyword(masterTorsion.interactionForm()),
-                                            masterTorsion.interactionPotential().parametersAsString());
-                }
-                catch (const std::runtime_error &e)
-                {
-                    Messenger::error("{}", e.what());
-                    errorsEncountered = true;
-                }
                 break;
             default:
                 Messenger::error("{} block keyword '{}' not accounted for.\n",

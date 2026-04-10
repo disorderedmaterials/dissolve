@@ -165,10 +165,6 @@ void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 
     root["version"] = Version::semantic();
 
-    if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
-        !coreData_.masterImpropers().empty())
-        coreData_.serialiseMaster("master", root);
-
     Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
     root["pairPotentials"] = serialisePairPotentials();
@@ -224,8 +220,6 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
     Serialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
-
-    Serialisable::optionalOn(node, "master", [this](const auto node) { coreData_.deserialiseMaster(node); });
 
     toMap(node, "species", [this](const std::string &name, const SerialisedValue &data)
           { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
@@ -339,55 +333,6 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write title comment
     if (!parser.writeLineF("# Input file written by Dissolve v{} at {}.\n", Version::info(), DissolveSys::currentTimeAndDate()))
         return false;
-
-    // Write master terms
-    if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions() || coreData_.nMasterImpropers())
-    {
-        if (!parser.writeBannerComment("Master Terms"))
-            return false;
-        if (!parser.writeLineF("\n{}\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword)))
-            return false;
-
-        for (auto &b : coreData_.masterBonds())
-            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
-                                   BondFunctions::forms().keyword(b->interactionForm()),
-                                   b->interactionPotential().parametersAsString()))
-                return false;
-
-        for (auto &a : coreData_.masterAngles())
-            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
-                                   a->name(), AngleFunctions::forms().keyword(a->interactionForm()),
-                                   a->interactionPotential().parametersAsString()))
-                return false;
-
-        auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
-        for (auto &t : coreData_.masterTorsions())
-        {
-            // Write new 1-4 scale factor line if this torsion has different values
-            if ((t->electrostatic14Scaling() != elec14Scaling || t->vanDerWaals14Scaling() != vdw14Scaling) &&
-                !parser.writeLineF("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
-                                   t->electrostatic14Scaling(), t->vanDerWaals14Scaling()))
-                return false;
-
-            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
-                                   t->name(), TorsionFunctions::forms().keyword(t->interactionForm()),
-                                   t->interactionPotential().parametersAsString()))
-                return false;
-
-            elec14Scaling = t->electrostatic14Scaling();
-            vdw14Scaling = t->vanDerWaals14Scaling();
-        }
-
-        for (auto &imp : coreData_.masterImpropers())
-            if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                   imp->name(), TorsionFunctions::forms().keyword(imp->interactionForm()),
-                                   imp->interactionPotential().parametersAsString()))
-                return false;
-
-        // Done with the master terms
-        if (!parser.writeLineF("{}\n", MasterBlock::keywords().keyword(MasterBlock::EndMasterKeyword)))
-            return false;
-    }
 
     // Write Species data
     parser.writeBannerComment("Species");

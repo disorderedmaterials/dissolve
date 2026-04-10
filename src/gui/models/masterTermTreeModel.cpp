@@ -3,12 +3,12 @@
 
 #include "gui/models/masterTermTreeModel.h"
 
-MasterTermTreeModel::MasterTermTreeModel(CoreData &coreData)
-    : bondModel_(coreData), angleModel_(coreData), torsionModel_(coreData), improperModel_(coreData)
+MasterTermTreeModel::MasterTermTreeModel(Species *species)
+    : bondModel_(species), angleModel_(species), torsionModel_(species), improperModel_(species)
 {
 }
 
-MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
+CommonTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
 {
     switch (row)
     {
@@ -53,8 +53,8 @@ void MasterTermTreeModel::prefixNames(QList<QModelIndex> indices, QString prefix
         if (!index.parent().isValid() || index.column() == 0)
             continue;
         auto &rootModel = modelForTopLevelRow(index.parent().row());
-        rootModel.setTermData(index.row(), MasterTermModelData::DataType::Name,
-                              prefix + rootModel.getTermData(index.row(), MasterTermModelData::DataType::Name).toString());
+        rootModel.setTermData(index.row(), CommonTermModelData::DataType::Name,
+                              prefix + rootModel.getTermData(index.row(), CommonTermModelData::DataType::Name).toString());
     }
 }
 
@@ -66,8 +66,8 @@ void MasterTermTreeModel::suffixNames(QList<QModelIndex> indices, QString suffix
         if (!index.parent().isValid() || index.column() == 0)
             continue;
         auto &rootModel = modelForTopLevelRow(index.parent().row());
-        rootModel.setTermData(index.row(), MasterTermModelData::DataType::Name,
-                              rootModel.getTermData(index.row(), MasterTermModelData::DataType::Name).toString() + suffix);
+        rootModel.setTermData(index.row(), CommonTermModelData::DataType::Name,
+                              rootModel.getTermData(index.row(), CommonTermModelData::DataType::Name).toString() + suffix);
     }
 }
 
@@ -157,22 +157,22 @@ QVariant MasterTermTreeModel::data(const QModelIndex &index, int role) const
                 if (role == Qt::DecorationRole)
                     return bondModel_.data(index, Qt::DecorationRole);
                 else
-                    return bondModel_.getTermData(index.row(), MasterTermModelData::DataType::Name);
+                    return bondModel_.getTermData(index.row(), CommonTermModelData::DataType::Name);
             case (1):
                 if (role == Qt::DecorationRole)
                     return angleModel_.data(index, Qt::DecorationRole);
                 else
-                    return angleModel_.getTermData(index.row(), MasterTermModelData::DataType::Name);
+                    return angleModel_.getTermData(index.row(), CommonTermModelData::DataType::Name);
             case (2):
                 if (role == Qt::DecorationRole)
                     return torsionModel_.data(index, Qt::DecorationRole);
                 else
-                    return torsionModel_.getTermData(index.row(), MasterTermModelData::DataType::Name);
+                    return torsionModel_.getTermData(index.row(), CommonTermModelData::DataType::Name);
             case (3):
                 if (role == Qt::DecorationRole)
                     return improperModel_.data(index, Qt::DecorationRole);
                 else
-                    return improperModel_.getTermData(index.row(), MasterTermModelData::DataType::Name);
+                    return improperModel_.getTermData(index.row(), CommonTermModelData::DataType::Name);
             default:
                 return {};
         }
@@ -203,19 +203,19 @@ bool MasterTermTreeModel::setData(const QModelIndex &index, const QVariant &valu
     switch (index.parent().row())
     {
         case (0):
-            if (!bondModel_.setTermData(index.row(), MasterTermModelData::DataType::Name, value))
+            if (!bondModel_.setTermData(index.row(), CommonTermModelData::DataType::Name, value))
                 return false;
             break;
         case (1):
-            if (!angleModel_.setTermData(index.row(), MasterTermModelData::DataType::Name, value))
+            if (!angleModel_.setTermData(index.row(), CommonTermModelData::DataType::Name, value))
                 return false;
             break;
         case (2):
-            if (torsionModel_.setTermData(index.row(), MasterTermModelData::DataType::Name, value))
+            if (torsionModel_.setTermData(index.row(), CommonTermModelData::DataType::Name, value))
                 return false;
             break;
         case (3):
-            if (improperModel_.setTermData(index.row(), MasterTermModelData::DataType::Name, value))
+            if (improperModel_.setTermData(index.row(), CommonTermModelData::DataType::Name, value))
                 return false;
             break;
         default:

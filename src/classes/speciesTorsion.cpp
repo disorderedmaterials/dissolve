@@ -31,7 +31,7 @@ SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -46,7 +46,7 @@ SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
 {
     assign(source.i_, source.j_, source.k_, source.l_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -60,7 +60,7 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source) noexcept
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -195,7 +195,7 @@ bool SpeciesTorsion::isSelected() const
 // Set 1-4 scaling factors
 bool SpeciesTorsion::set14ScalingFactors(double elecScale, double srScale)
 {
-    if (masterTerm_)
+    if (commonTerm_)
         return Messenger::error("Refused to set 1-4 scaling factors since master parameters are referenced.\n");
     electrostatic14Scaling_ = elecScale;
     vdw14Scaling_ = srScale;
@@ -205,7 +205,7 @@ bool SpeciesTorsion::set14ScalingFactors(double elecScale, double srScale)
 // Set electrostatic 1-4 scaling factor for the interaction
 bool SpeciesTorsion::setElectrostatic14Scaling(double scaling)
 {
-    if (masterTerm_)
+    if (commonTerm_)
         return Messenger::error("Refused to set electrostatic 1-4 scaling factor since master parameters are referenced.\n");
     electrostatic14Scaling_ = scaling;
     return true;
@@ -217,7 +217,7 @@ double SpeciesTorsion::electrostatic14Scaling() const { return electrostatic14Sc
 // Set van der Waals 1-4 scaling factor for the interaction
 bool SpeciesTorsion::setVanDerWaals14Scaling(double scaling)
 {
-    if (masterTerm_)
+    if (commonTerm_)
         return Messenger::error("Refused to set van der Waals 1-4 scaling factor since master parameters are referenced.\n");
     vdw14Scaling_ = scaling;
     return true;
@@ -543,7 +543,7 @@ void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
 // This method populates the object's members with values read from a 'torsion' TOML node
 void SpeciesTorsion::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterTorsion(form); });
+    deserialiseForm(node, [&](auto &form) { return parent_->getCommonTorsion(form); });
 
     electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
 
