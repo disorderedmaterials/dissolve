@@ -27,7 +27,7 @@ class BenzeneForcefieldTest : public ::testing::Test
         PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
         PairPotential::setRange(12.0, 1.0e-4);
 
-        // Run the graph from the Import node to set up the configuration
+        // Run the graph from the head node to set up the configuration
         ASSERT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);
         ASSERT_EQ(testGraph_.fetchHead()->versionIndex(), 0);
 

@@ -38,7 +38,7 @@ class CellsEnergyTest : public ::testing::Test
         EXPECT_TRUE(testGraph_.appendImportCoordinates(
             CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
-        // Run the graph from the Import node to set up the configuration
+        // Run the graph from the head node to set up the configuration
         EXPECT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);
         EXPECT_EQ(testGraph_.fetchHead()->versionIndex(), 0);
 

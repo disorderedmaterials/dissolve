@@ -46,7 +46,7 @@ TEST(CellsTest, Basic)
     testGraph.addPairPotentialOverride("Ar", "OW", PairPotentialOverride::PairPotentialOverrideType::Replace,
                                        {Functions1D::Form::LennardJones126, "epsilon=0.35 sigma=2.166"});
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 

@@ -32,7 +32,7 @@ TEST(PairPotentialCutoffTest, ShortRange)
     hw->setCharge(0.0);
     ow->setCharge(0.0);
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
@@ -67,7 +67,7 @@ TEST(PairPotentialCutoffTest, Coulomb)
     ASSERT_TRUE(ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 

@@ -21,7 +21,7 @@ TEST(Water1000EnergyTest, Full)
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
     PairPotential::setRange(15.0, 1.0e-4);
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
@@ -53,7 +53,7 @@ TEST(Water1000ForceTest, Full)
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
     PairPotential::setRange(15.0, 1.0e-4);
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
@@ -97,7 +97,7 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     hw->setCharge(0.0);
     ow->setCharge(0.0);
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
@@ -134,7 +134,7 @@ TEST(Water1000ForceTest, ShortRangeOnly)
     hw->setCharge(0.0);
     ow->setCharge(0.0);
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
@@ -170,7 +170,7 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
     ASSERT_TRUE(ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=3.0");
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
@@ -204,7 +204,7 @@ TEST(Water1000ForceTest, CoulombOnly)
     ASSERT_TRUE(ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
@@ -247,7 +247,7 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
     ASSERT_TRUE(hw && ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
-    // Run the graph from the Import node to set up the configuration
+    // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 

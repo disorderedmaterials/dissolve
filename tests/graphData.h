@@ -31,7 +31,7 @@ class TestGraph : public DissolveGraph
     Dissolve dissolve;
 
     private:
-    // Current top node in graph
+    // Current most recently appended node in graph
     Node *head_{nullptr};
 
     /*
