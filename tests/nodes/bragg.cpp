@@ -40,29 +40,26 @@ class BraggNodeTest : public ::testing::Test
         // Create species and configuration from MgO cif file
         auto root = testGraph_.dissolveGraph();
 
-        auto cifLoaderNode = root->createNode("CIFLoader", "CIFLoader");
-        ASSERT_TRUE(cifLoaderNode->setOption<std::string>("FilePath", "cif/1000053.cif"));
+        ASSERT_TRUE(testGraph_.appendNode("CIFLoader", "CIFLoader"));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<std::string>("FilePath", "cif/1000053.cif"));
 
-        auto cifBondingNode = root->createNode("CIFBondingOptions", "CIFBonds");
+        ASSERT_TRUE(testGraph_.appendNode("CIFBondingOptions", "CIFBonds"));
         ASSERT_TRUE(root->addEdge({"CIFLoader", "CIFContext", "CIFBonds", "CIFContext"}));
-        ASSERT_TRUE(cifBondingNode->setOption<bool>("PreventAllBonds", true));
-
-        cifConfigurationNode_ = static_cast<CIFMolecularSpeciesNode *>(root->createNode("CIFMolecularSpecies", "Crystal"));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<bool>("PreventAllBonds", true));
 
         // Create a supercell that is 5 * unitcell
-        ASSERT_TRUE(cifConfigurationNode_->setOption<Vector3i>("SupercellRepeat", supercellRepeat_));
+        ASSERT_TRUE(testGraph_.appendNode("CIFMolecularSpecies", "Crystal"));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<Vector3i>("SupercellRepeat", supercellRepeat_));
 
         ASSERT_TRUE(root->addEdge({"CIFBonds", "CIFContext", "Crystal", "CIFContext"}));
 
         // Import coordinates
-        auto cfgName = std::string(cifConfigurationNode_->name());
-        auto importCoordsNode = testGraph_.appendImportCoordinates(
-            cifConfigurationNode_,
+        ASSERT_TRUE(testGraph_.appendImportCoordinates(
             CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR),
-            true);
+            true));
 
         // Add correlation function nodes
-        auto &&[grNode, sqNode] = testGraph_.appendGRSQ(importCoordsNode, false, true);
+        auto &&[grNode, sqNode] = testGraph_.appendGRSQ(false, true);
         ASSERT_TRUE(grNode);
         ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.025));
         ASSERT_TRUE(sqNode);
@@ -76,16 +73,18 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(neutronSQNode_);
 
         // Bragg node
-        braggNode_ = static_cast<BraggNode *>(root->createNode("Bragg", "Bragg01"));
-        ASSERT_TRUE(braggNode_);
+        ASSERT_TRUE(testGraph_.appendNode("Bragg", "Bragg01"));
         ASSERT_TRUE(root->addEdge({"Crystal", "SupercellConfiguration", "Bragg01", "Configuration"}));
         ASSERT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
-        ASSERT_TRUE(braggNode_->setOption<Number>("QMax", 20.0));
-        ASSERT_TRUE(braggNode_->setOption<Function1DWrapper>("BraggQBroadening",
-                                                             {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<Number>("QMax", 20.0));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<Function1DWrapper>(
+            "BraggQBroadening", {Functions1D::Form::GaussianC2, {0.0235482, 0.0470964}}));
 
         // Set Bragg multiplicities
-        ASSERT_TRUE(braggNode_->setOption<Vector3i>("Multiplicity", braggMultiplicities));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption<Vector3i>("Multiplicity", braggMultiplicities));
+
+        braggNode_ = testGraph_.head<BraggNode>();
+        ASSERT_TRUE(braggNode_);
     }
 
     static bool testReflections(const std::vector<BraggReflection> &braggReflections,

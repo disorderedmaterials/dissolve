@@ -19,8 +19,8 @@ TEST(AngleNodeTest, Water)
     testGraph.createConfiguration("Box", {{createWater, 267}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
-    auto iterator = dynamic_cast<IterableGraph *>(testGraph.createNode("Iterator", "Iterator"));
-    ASSERT_TRUE(iterator);
+    ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));
+    auto iterator = testGraph.head<IterableGraph>();
 
     // Create a dynamic input from the graph's existing Insert node
     EXPECT_TRUE(testGraph.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));

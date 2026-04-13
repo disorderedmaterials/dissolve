@@ -13,13 +13,12 @@ TEST(BroadeningTest, ArgonBroadening)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 10000}}, 0.0213);
-    lastNode = testGraph.appendImportCoordinates(
-        lastNode,
-        CoordinateImportFileFormat("epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 10000}}, 0.0213));
+    EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
+        "epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 
     // Append GR and SQ nodes
-    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, true, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(true, true);
 
     // Set up neutron SQ
     auto neutronSQNode = testGraph.appendNeutronSQ(sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}});

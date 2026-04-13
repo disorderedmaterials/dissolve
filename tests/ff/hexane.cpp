@@ -14,15 +14,13 @@ class HexaneForcefieldTest : public ::testing::Test
     public:
     void setUp(int nMols, std::string_view referenceCoordinates)
     {
-        auto lastNode = testGraph_.createConfiguration("Box",
-                                                       {
-                                                           {createHexane, nMols},
-                                                       },
-                                                       {30.769064857500, 46.153597286200, 30.769064857500});
-        auto importNode = testGraph_.appendImportCoordinates(
-            lastNode,
-            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-        ASSERT_TRUE(importNode);
+        ASSERT_TRUE(testGraph_.createConfiguration("Box",
+                                                   {
+                                                       {createHexane, nMols},
+                                                   },
+                                                   {30.769064857500, 46.153597286200, 30.769064857500}));
+        ASSERT_TRUE(testGraph_.appendImportCoordinates(
+            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -30,12 +28,12 @@ class HexaneForcefieldTest : public ::testing::Test
         PairPotential::setChargeSource(PairPotential::ChargeSource::SpeciesAtoms);
         PairPotential::setRange(12.0, 1.0e-4);
 
-        // Run the graph from the Import node to set up the configuration
-        ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-        ASSERT_EQ(importNode->versionIndex(), 0);
+        // Run the graph from the head node to set up the configuration
+        ASSERT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+        ASSERT_EQ(testGraph_.fetchHead()->versionIndex(), 0);
 
         // Get the configuration
-        configuration_ = importNode->getOutputValue<Configuration *>("Configuration");
+        configuration_ = testGraph_.fetchHead()->getOutputValue<Configuration *>("Configuration");
     }
 
     protected:

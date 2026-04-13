@@ -34,8 +34,8 @@ class SiteRDFNodeTest : public ::testing::Test
         testGraph_.createConfiguration("Box", {{createWaterDLPoly, 267}}, 0.1);
 
         // Add iterator
-        iterator_ = dynamic_cast<IterableGraph *>(testGraph_.createNode("Iterator", "Iterator"));
-        ASSERT_TRUE(iterator_);
+        EXPECT_TRUE(testGraph_.appendNode("Iterator", "Iterator"));
+        iterator_ = testGraph_.head<IterableGraph>();
 
         // Grab the water species for convenience
         auto waterNode = testGraph_.findNode("Water");
