@@ -61,12 +61,10 @@ class TestGraph : public DissolveGraph
         return updateHead(node);
     }
     // Create species insertion node chain
-    Node *insertSpecies(const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species, double rho,
+    Node *insertSpecies(Node *cfgSourceNode, const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species, double rho,
                         Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
                         InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
-        const auto cfgSourceNode = fetchHead();
-
         // Add Species and Insert nodes
         for (auto &[speciesCreator, population] : species)
         {
@@ -85,6 +83,8 @@ class TestGraph : public DissolveGraph
             EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
             EXPECT_TRUE(addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
             EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), "Configuration", insertNodeName, "Configuration"}));
+
+            cfgSourceNode = fetchHead();
         }
 
         return fetchHead();
@@ -102,7 +102,7 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return insertSpecies(species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
+        return insertSpecies(fetchHead(), species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
     }
 
     // Create basic configuration graph, returning the last node
@@ -118,7 +118,7 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return insertSpecies(species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits, InsertNode::BoxActionStyle::None);
+        return insertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits, InsertNode::BoxActionStyle::None);
     }
     // Append an import coordinates node
     Node *appendImportCoordinates(CoordinateImportFileFormat fileFormat, bool supercell = false)
@@ -195,9 +195,10 @@ class TestGraph : public DissolveGraph
         // Set reference F(Q) data
         if (referenceData.hasFilename())
         {
-            EXPECT_TRUE(nextNode("Data1DImport", std::format("Reference-{}", name)));
-            EXPECT_TRUE(fetchHead()->setOption<std::string>("FilePath", std::string(referenceData.filename())));
-            EXPECT_TRUE(fetchHead()->setOption<Data1DImportFileFormat::Data1DImportFormat>(
+            auto data1DImportNode = createNode("Data1DImport", std::format("Reference-{}", name));
+            EXPECT_TRUE(data1DImportNode);
+            EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
+            EXPECT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
                 "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
             EXPECT_TRUE(addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
         }
