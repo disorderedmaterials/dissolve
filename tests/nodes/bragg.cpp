@@ -40,15 +40,15 @@ class BraggNodeTest : public ::testing::Test
         // Create species and configuration from MgO cif file
         auto root = testGraph_.dissolveGraph();
 
-        ASSERT_TRUE(testGraph_.nextNode("CIFLoader", "CIFLoader"));
+        ASSERT_TRUE(testGraph_.appendNode("CIFLoader", "CIFLoader"));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<std::string>("FilePath", "cif/1000053.cif"));
 
-        ASSERT_TRUE(testGraph_.nextNode("CIFBondingOptions", "CIFBonds"));
+        ASSERT_TRUE(testGraph_.appendNode("CIFBondingOptions", "CIFBonds"));
         ASSERT_TRUE(root->addEdge({"CIFLoader", "CIFContext", "CIFBonds", "CIFContext"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<bool>("PreventAllBonds", true));
 
         // Create a supercell that is 5 * unitcell
-        ASSERT_TRUE(testGraph_.nextNode("CIFMolecularSpecies", "Crystal"));
+        ASSERT_TRUE(testGraph_.appendNode("CIFMolecularSpecies", "Crystal"));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Vector3i>("SupercellRepeat", supercellRepeat_));
 
         ASSERT_TRUE(root->addEdge({"CIFBonds", "CIFContext", "Crystal", "CIFContext"}));
@@ -73,7 +73,7 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(neutronSQNode_);
 
         // Bragg node
-        ASSERT_TRUE(testGraph_.nextNode("Bragg", "Bragg01"));
+        ASSERT_TRUE(testGraph_.appendNode("Bragg", "Bragg01"));
         ASSERT_TRUE(root->addEdge({"Crystal", "SupercellConfiguration", "Bragg01", "Configuration"}));
         ASSERT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Number>("QMax", 20.0));

@@ -29,13 +29,13 @@ TEST(AtomShakeTest, Water)
     auto insertNode = testGraph.createConfiguration("Box", {{createWater, 1}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
-    ASSERT_TRUE(testGraph.nextNode("Iterator", "Iterator"));
+    ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));
     auto iterator = testGraph.head<IterableGraph>();
     auto atomicMCNode = dynamic_cast<AtomicMCNode *>(iterator->createNode("AtomicMC", "AtomicMC"));
     ASSERT_TRUE(atomicMCNode->setOption<Number>("ShakesPerAtom", 10));
 
     // Create number node to modify temperature
-    ASSERT_TRUE(testGraph.nextNode("Number", "Temperature"));
+    ASSERT_TRUE(testGraph.appendNode("Number", "Temperature"));
     ASSERT_TRUE(testGraph.fetchHead()->setOption<Number>("X", 0));
 
     // Set connections
