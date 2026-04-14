@@ -268,11 +268,9 @@ TEST(Water1000EnergyTest, Override)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
-    auto importNode = testGraph.appendImportCoordinates(
-        lastNode,
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-    ASSERT_TRUE(importNode);
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    ASSERT_TRUE(testGraph.appendImportCoordinates(
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -292,11 +290,11 @@ TEST(Water1000EnergyTest, Override)
                                        {Functions1D::Form::LennardJones126, "epsilon=0.6503 sigma=3.165492"});
 
     // Run the graph from the Import node to set up the configuration
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
     // Get the configuration and create an energy kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
@@ -310,11 +308,9 @@ TEST(Water1000ForceTest, Overrides)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
-    auto importNode = testGraph.appendImportCoordinates(
-        lastNode,
-        CoordinateImportFileFormat("dlpoly/water1000/vdw.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-    ASSERT_TRUE(importNode);
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    ASSERT_TRUE(testGraph.appendImportCoordinates(
+        CoordinateImportFileFormat("dlpoly/water1000/vdw.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -334,11 +330,11 @@ TEST(Water1000ForceTest, Overrides)
                                        {Functions1D::Form::LennardJones126, "epsilon=0.6503 sigma=3.165492"});
 
     // Run the graph from the Import node to set up the configuration
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
     // Get the configuration and create a force kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
     auto kernel = testGraph.createForceKernel(cfg);
 
     // Check consistency between production and test forces

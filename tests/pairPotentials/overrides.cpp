@@ -13,11 +13,9 @@ TEST(PairPotentialOverridesTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1);
-    auto importNode = testGraph.appendImportCoordinates(
-        lastNode,
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY));
-    ASSERT_TRUE(importNode);
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    ASSERT_TRUE(testGraph.appendImportCoordinates(
+        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -31,11 +29,11 @@ TEST(PairPotentialOverridesTest, Water)
         at->setCharge(0.0);
 
     // Run the graph from the Import node to set up the configuration
-    ASSERT_EQ(importNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(importNode->versionIndex(), 0);
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
     // Get the configuration and create an energy kernel
-    auto cfg = importNode->getOutputValue<Configuration *>("Configuration");
+    auto cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Test energy with various states of an override potential
