@@ -14,13 +14,11 @@ TEST(PhantomAtomsTest, Basic)
     TestGraph testGraph;
 
     const auto nMolecules = 100;
-    auto lastNode =
-        testGraph.createConfiguration("Box", {{createTetrahedralArgon, nMolecules}}, {20.0, 20.0, 20.0}, {90.0, 90.0, 90.0});
+    testGraph.createConfiguration("Box", {{createTetrahedralArgon, nMolecules}}, {20.0, 20.0, 20.0}, {90.0, 90.0, 90.0});
 
     // Run the graph to set up the configuration
-    ASSERT_TRUE(lastNode);
-    ASSERT_EQ(lastNode->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(lastNode->versionIndex(), 0);
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
 
     // Grab the species
     auto speciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("TetrahedralArgon"));
@@ -33,7 +31,7 @@ TEST(PhantomAtomsTest, Basic)
     EXPECT_DOUBLE_EQ(species.mass(), AtomicMass::mass(Elements::Ar));
 
     // Get the configuration
-    auto *cfg = lastNode->getOutputValue<Configuration *>("Configuration");
+    auto *cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
     ASSERT_TRUE(cfg);
 
     // Basic configuration checks
@@ -50,13 +48,12 @@ TEST(PhantomAtomsTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto lastNode = testGraph.createConfiguration("Box", {{createWaterPhantom, 1000}}, 0.1);
-    lastNode = testGraph.appendImportCoordinates(
-        lastNode,
+    testGraph.createConfiguration("Box", {{createWaterPhantom, 1000}}, 0.1);
+    testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("xyz/water1000-phantom.xyz", CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
 
     // Add correlation function nodes
-    auto &&[grNode, sqNode] = testGraph.appendGRSQ(lastNode, false, true);
+    auto &&[grNode, sqNode] = testGraph.appendGRSQ(false, true);
     ASSERT_TRUE(grNode);
     ASSERT_TRUE(grNode->setOption<Number>("BinWidth", 0.03));
     ASSERT_TRUE(sqNode);
