@@ -20,9 +20,8 @@ Dissolve &DissolveModel::dissolve()
 void DissolveModel::setDissolve(Dissolve &dissolve)
 {
     dissolve_ = &dissolve;
-    atomTypes_.setData(dissolve_->coreData().atomTypes());
+
     // commons_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
-    // TODO DISSOLVE2
     configurationModel_.setData(dissolve_->coreData().configurations());
     moduleLayersModel_.setData(dissolve_->coreData().processingLayers(), &dissolve_->coreData());
     Q_EMIT modelsUpdated();
@@ -31,7 +30,6 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 // Update models
 void DissolveModel::update()
 {
-    atomTypes_.reset();
     if (commons_)
     {
         commons_->bondModel_.reset();
@@ -43,12 +41,6 @@ void DissolveModel::update()
     moduleLayersModel_.reset();
     Q_EMIT modelsUpdated();
 }
-
-// The Atom Type Model
-AtomTypeModel *DissolveModel::atomTypesModel() { return &atomTypes_; }
-
-// The number of atom types
-int DissolveModel::nAtomTypes() { return atomTypes_.rowCount(); }
 
 // The Master Bond Model
 const CommonBondModel *DissolveModel::commonBondsModel() const

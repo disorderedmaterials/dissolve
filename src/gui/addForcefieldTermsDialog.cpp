@@ -15,9 +15,8 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     // QIcon::setThemeName("personal");
 
     auto *view = new QQuickWidget(QUrl("qrc:/dialogs/qml/AddForcefieldTermsDialog.qml"), this);
-    AtomTypeModel atModel(dissolve.coreData());
-
-    atModel.setData(dissolve.coreData().atomTypes());
+    AtomTypeModel atModel;
+    atModel.setData(sp->atomTypes());
 
     view->rootContext()->setContextProperty("atModel", QVariant::fromValue(&atModel));
     view->setMinimumSize(300, 300);

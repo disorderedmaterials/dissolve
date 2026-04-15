@@ -7,8 +7,6 @@
 #include "classes/coreData.h"
 #include "templates/algorithms.h"
 
-AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData) {}
-
 void AtomTypeModel::reset()
 {
     beginResetModel();
@@ -16,12 +14,8 @@ void AtomTypeModel::reset()
 }
 
 // Set source AtomType data
-void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
-                            OptionalReferenceWrapper<const CoreData> coreData)
+void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
 {
-    if (coreData)
-        coreData_ = coreData;
-
     beginResetModel();
     atomTypes_ = atomTypes;
     endResetModel();
@@ -144,13 +138,10 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         switch (index.column())
         {
             case (AtomTypeModelData::Name):
-                // Ensure uniqueness of name if we have a reference CoreData
-                if (coreData_)
-                    atomType->setName(DissolveSys::uniqueName(value.toString().toStdString(), coreData_->get().atomTypes(),
-                                                              [&atomType](const auto &at)
-                                                              { return atomType == at ? "" : at->name(); }));
-                else
-                    atomType->setName(value.toString().toStdString());
+                // Ensure uniqueness of name
+                atomType->setName(DissolveSys::uniqueName(value.toString().toStdString(), atomTypes_->get(),
+                                                          [&atomType](const auto &at)
+                                                          { return atomType == at ? "" : at->name(); }));
                 break;
             case (AtomTypeModelData::Element):
                 return false;
@@ -183,11 +174,9 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
 
 Qt::ItemFlags AtomTypeModel::flags(const QModelIndex &index) const
 {
-    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
     if (index.column() == AtomTypeModelData::Name)
     {
-        if (coreData_)
-            flags |= Qt::ItemIsEditable;
         if (checkedItems_)
             flags |= Qt::ItemIsUserCheckable;
     }

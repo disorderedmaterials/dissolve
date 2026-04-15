@@ -45,11 +45,6 @@ class AtomTypeModel : public QAbstractListModel
 
     public:
     AtomTypeModel() = default;
-    explicit AtomTypeModel(const CoreData &coreData);
-
-    private:
-    // Optional CoreData reference
-    OptionalReferenceWrapper<const CoreData> coreData_;
 
     private:
     ModelUpdater modelUpdater;
@@ -64,8 +59,7 @@ class AtomTypeModel : public QAbstractListModel
 
     public:
     // Set source AtomType data
-    void setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
-                 OptionalReferenceWrapper<const CoreData> coreData = std::nullopt);
+    void setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
     // Set function to return QIcon for item
     void setQueryFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func);
     // Set vector containing checked items
