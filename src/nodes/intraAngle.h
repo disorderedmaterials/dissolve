@@ -30,7 +30,8 @@ class IntraAngleNode : public Node
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Target SpeciesSite definitions
-    std::vector<const SpeciesSite *> a_, b_, c_;
+    // std::vector<const SpeciesSite *> a_, b_, c_;
+    SpeciesSites a_, b_, c_;
     // Range of A-B distance axis
     Range rangeAB_{0.0, 10.0};
     // Range of B-C distance axis
@@ -57,5 +58,5 @@ class IntraAngleNode : public Node
      */
     public:
     // Intramolecular angle histogram
-    const Data1D &intraAngleHist() const;
+    const Data1D &intraAngleData() const;
 };

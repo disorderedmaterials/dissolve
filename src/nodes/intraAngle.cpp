@@ -35,13 +35,13 @@ std::string_view IntraAngleNode::summary() const { return "Calculate angle distr
 NodeConstants::ProcessResult IntraAngleNode::process()
 {
     // Select site A
-    SiteSelector a(targetConfiguration_, a_);
+    SiteSelector a(targetConfiguration_, a_.getSpeciesSites());
 
     // Select site B
-    SiteSelector b(targetConfiguration_, b_);
+    SiteSelector b(targetConfiguration_, b_.getSpeciesSites());
 
     // Select site C
-    SiteSelector c(targetConfiguration_, c_);
+    SiteSelector c(targetConfiguration_, c_.getSpeciesSites());
 
     // Intramolecular angle histogram
     if (!intraAngleHist_)
@@ -109,4 +109,4 @@ NodeConstants::ProcessResult IntraAngleNode::process()
 }
 
 // Temporary accessors to data for testing
-const Data1D &IntraAngleNode::intraAngleHist() const { return angleABC_; }
+const Data1D &IntraAngleNode::intraAngleData() const { return angleABC_; }
