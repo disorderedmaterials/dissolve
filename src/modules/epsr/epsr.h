@@ -120,13 +120,12 @@ class EPSRModule : public Module
 
     public:
     // Create / retrieve arrays for storage of empirical potential coefficients
-    Array2D<std::vector<double>> &potentialCoefficients(GenericList &moduleData, const int nAtomTypes,
-                                                        std::optional<int> ncoeffp = std::nullopt);
+    Array2D<std::vector<double>> &potentialCoefficients(GenericList &moduleData, std::optional<int> ncoeffp = std::nullopt);
     // Generate empirical potentials from current coefficients
     bool generateEmpiricalPotentials(Dissolve &dissolve, const std::vector<const AtomType *> &atomTypes, double rho,
                                      std::optional<int> ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
     // Generate and return single empirical potential function
-    Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int nAtomTypes, int i, int j, int n);
+    Data1D generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n);
     // Calculate absolute energy of empirical potentials
     double absEnergyEP(GenericList &moduleData, const std::vector<const AtomType *> &atomTypes);
     // Truncate the supplied data

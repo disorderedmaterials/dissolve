@@ -663,7 +663,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     if (modifyPotential_ && (runCount % *modifyPotential_ == 0))
     {
         // Sum fluctuation coefficients in to the potential coefficients
-        auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
+        auto &coefficients = potentialCoefficients(moduleData, ncoeffp);
         dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                                 [&](int i, auto at1, int j, auto at2)
                                 {
@@ -749,7 +749,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
     }
     if (savePotentialCoefficients_)
     {
-        auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
+        auto &coefficients = potentialCoefficients(moduleData, ncoeffp);
 
         if (!for_each_pair_early(atomTypes,
                                  [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
