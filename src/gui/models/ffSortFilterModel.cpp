@@ -23,19 +23,22 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
     if (!ff)
         return false;
 
-    CoreData temporaryCoreData;
-    Dissolve temporaryDissolve(temporaryCoreData);
+    // CoreData temporaryCoreData;
+    // Dissolve temporaryDissolve(temporaryCoreData);
+    //
+    // Species *modifiedSpecies_ = temporaryDissolve.coreData().addSpecies();
+    // modifiedSpecies_->copyBasic(species_);
+    // // // originalAtomTypeNames_.clear();
+    //
+    // // modifiedSpecies_->clearAtomTypes();
+    // // temporaryDissolve.clearAtomTypes();
+    //
+    // ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData, Forcefield::TypeAll, true);
+    // Messenger::unMute();
+    // return temporaryDissolve.coreData().atomTypes().size() > 0;
+    // TODO DISSOLVE2
 
-    Species *modifiedSpecies_ = temporaryDissolve.coreData().addSpecies();
-    modifiedSpecies_->copyBasic(species_);
-    // // originalAtomTypeNames_.clear();
-
-    // modifiedSpecies_->clearAtomTypes();
-    // temporaryDissolve.clearAtomTypes();
-
-    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData, Forcefield::TypeAll, true);
-    Messenger::unMute();
-    return temporaryDissolve.coreData().atomTypes().size() > 0;
+    return true;
 }
 
 void ForcefieldSortFilterModel::setSpecies(const Species *species)
