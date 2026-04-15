@@ -60,23 +60,6 @@ class CoreData
     void clearAtomTypes();
 
     /*
-     * Pair Potential Overrides
-     */
-    private:
-    // Defined overrides for PairPotentials
-    std::vector<std::unique_ptr<PairPotentialOverride>> pairPotentialOverrides_;
-
-    public:
-    // Create new pair potential override
-    PairPotentialOverride *addPairPotentialOverride(
-        std::string_view matchI = "", std::string_view matchJ = "",
-        PairPotentialOverride::PairPotentialOverrideType overrideType = PairPotentialOverride::PairPotentialOverrideType::Off,
-        const InteractionPotential<Functions1D> &potential = {});
-    // Return defined overrides for PairPotentials
-    std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides();
-    const std::vector<std::unique_ptr<PairPotentialOverride>> &pairPotentialOverrides() const;
-
-    /*
      * Master Intramolecular Terms
      */
     private:

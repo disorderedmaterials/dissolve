@@ -14,44 +14,6 @@ class EnergyModuleTest : public ::testing::Test
     DissolveSystemTest systemTest;
 };
 
-/*
- * Tests against energies calculated with DL_POLY Classic 2.19
- */
-
-TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsOverrides)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000-overrides.txt",
-                                             [](Dissolve &D, CoreData &C)
-                                             {
-                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-                                                 C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                                 C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                             }));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
-    EXPECT_TRUE(
-        systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), 1770.1666370083758, 6.0e-2));
-}
-
-TEST_F(EnergyModuleTest, DLPOLYWater3000VanDerWaalsDefined)
-{
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-water3000-defined.txt",
-                                             [](Dissolve &D, CoreData &C)
-                                             {
-                                                 PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
-                                                 C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                                 C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
-                                             }));
-    systemTest.setModuleEnabled("Forces01", false);
-    ASSERT_TRUE(systemTest.dissolve().iterate(1));
-
-    auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//PairPotential");
-    EXPECT_TRUE(
-        systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), 1770.1666370083758, 6.0e-2));
-}
-
 // Tests against energies calculated with MOSCITO 4.180.
 
 // TEST_F(EnergyModuleTest, MoscitoPOETorsions)

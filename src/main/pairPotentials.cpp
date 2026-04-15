@@ -127,53 +127,7 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
 
     // Third step - apply any overrides
     Messenger::print("Applying pair potential overrides...\n");
-    for (const auto &override : coreData_.pairPotentialOverrides())
-    {
-        Messenger::print("Pair potential override between '{}' and '{}' ({}, {}, '{}') ...\n", override->matchI(),
-                         override->matchJ(), PairPotentialOverride::pairPotentialOverrideTypes().keyword(override->type()),
-                         Functions1D::forms().keyword(override->interactionPotential().form()),
-                         override->interactionPotential().parametersAsString());
-
-        // Is the override enabled?
-        if (override->type() == PairPotentialOverride::PairPotentialOverrideType::Off)
-        {
-            Messenger::print(" ... is currently 'Off'.\n");
-            continue;
-        }
-
-        // Create a function wrapper for the potential
-        Function1DWrapper overridePotential(override->interactionPotential().form(),
-                                            override->interactionPotential().parameters());
-
-        auto count = 0;
-        for (auto &&[at1, at2, pp] : pairPotentials_)
-        {
-            // Is this override a match for the atom types in the potential?
-            if ((DissolveSys::sameWildString(override->matchI(), at1->name()) &&
-                 DissolveSys::sameWildString(override->matchJ(), at2->name())) ||
-                (DissolveSys::sameWildString(override->matchJ(), at1->name()) &&
-                 DissolveSys::sameWildString(override->matchI(), at2->name())))
-            {
-                Messenger::print(" ... matched and was applied to defined potential {}-{}\n", at1->name(), at2->name());
-
-                // Apply the potential
-                switch (override->type())
-                {
-                    case (PairPotentialOverride::PairPotentialOverrideType::Off):
-                        break;
-                    case (PairPotentialOverride::PairPotentialOverrideType::Add):
-                        pp->addToReferenceShortRangePotential(overridePotential);
-                        break;
-                    case (PairPotentialOverride::PairPotentialOverrideType::Replace):
-                        pp->addToReferenceShortRangePotential(overridePotential, true);
-                        break;
-                }
-
-                ++count;
-            }
-        }
-        Messenger::print(" ... matched {} potential(s) in total.\n", count);
-    }
+    // REMOVED for Dissolve2
 
     // Fourth step - set any additional potential
     for (auto &&[at1, at2, pp] : pairPotentials_)

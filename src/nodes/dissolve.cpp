@@ -60,26 +60,29 @@ void DissolveGraph::updatePairPotential(const AtomType &i, const AtomType &j)
     auto nameI = i.name(), nameJ = j.name();
 
     // Create the potential if it doesn't already exist
-    if (!pairPotentialStore_.contains(nameI, nameJ))
+    if (!pairPotentials_.contains(nameI, nameJ))
     {
         auto interactionPotential = ShortRangeFunctions::combine(i.interactionPotential(), j.interactionPotential());
 
         if (interactionPotential.has_value())
-            pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
+            pairPotentials_.set(nameI, nameJ, {nameI, nameJ, *interactionPotential});
         else
-            pairPotentialStore_.set(nameI, nameJ, {nameI, nameJ});
+            pairPotentials_.set(nameI, nameJ, {nameI, nameJ});
 
-        auto &pot = pairPotentialStore_.get({nameI, nameJ});
+        auto &pot = pairPotentials_.get({nameI, nameJ});
         pot.setLocalChargeProduct(i.charge() * j.charge());
     }
 
     // Update the tabulated potential
-    auto &pot = pairPotentialStore_.get(nameI, nameJ);
+    auto &pot = pairPotentials_.get(nameI, nameJ);
     pot.tabulate();
 
     // Apply any relevant overrides
     applyPairPotentialOverrides(pot);
 }
+
+// Clear all pair potentials
+void DissolveGraph::clearPairPotentials() { pairPotentials_.clear(); }
 
 // Ensure that the specified Configuration has updated type indexing, cells etc.
 void DissolveGraph::updateIndexingAndCells(Configuration *cfg) const
@@ -92,11 +95,12 @@ void DissolveGraph::updateIndexingAndCells(Configuration *cfg) const
 }
 
 // Create new pair potential override
-void DissolveGraph::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
-                                             PairPotentialOverride::PairPotentialOverrideType overrideType,
-                                             const InteractionPotential<Functions1D> &potential)
+PairPotentialOverride *DissolveGraph::addPairPotentialOverride(std::string_view matchI, std::string_view matchJ,
+                                                               PairPotentialOverride::PairPotentialOverrideType overrideType,
+                                                               const InteractionPotential<Functions1D> &potential)
 {
     pairPotentialOverrides_.emplace_back(std::make_unique<PairPotentialOverride>(matchI, matchJ, overrideType, potential));
+    return pairPotentialOverrides_.back().get();
 }
 
 // Return defined pair potential overrides
@@ -118,7 +122,7 @@ std::unique_ptr<EnergyKernel> DissolveGraph::createEnergyKernel(Configuration *c
                             [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotential(*atI, *atJ); });
 
     // Generate and return kernel
-    return KernelProducer::energyKernel(cfg, PotentialMap(atomTypes, pairPotentialStore_));
+    return KernelProducer::energyKernel(cfg, PotentialMap(atomTypes, pairPotentials_));
 }
 
 // Create a force kernel suitable for the supplied Configuration
@@ -133,5 +137,25 @@ std::unique_ptr<ForceKernel> DissolveGraph::createForceKernel(Configuration *cfg
                             [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotential(*atI, *atJ); });
 
     // Generate and return kernel
-    return KernelProducer::forceKernel(cfg, PotentialMap(atomTypes, pairPotentialStore_));
+    return KernelProducer::forceKernel(cfg, PotentialMap(atomTypes, pairPotentials_));
+}
+
+/*
+ * Serialisation
+ */
+
+// Express as a serialisable value
+void DissolveGraph::serialise(std::string tag, SerialisedValue &target) const
+{
+    Graph::serialise(tag, target);
+    auto &result = target[tag];
+    Serialisable::fromVector<>(pairPotentialOverrides_, "pairPotentialOverrides", result);
+}
+
+// Read values from a serialisable value
+void DissolveGraph::deserialise(const SerialisedValue &node)
+{
+    Graph::deserialise(node);
+    Serialisable::toVector(node, "pairPotentialOverrides",
+                           [this](const auto ppOverrideNode) { addPairPotentialOverride()->deserialise(ppOverrideNode); });
 }
