@@ -271,21 +271,20 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
 }
 
 // Assign suitable AtomType to the supplied atom
-bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const
+bool Forcefield::assignAtomType(SpeciesAtom &i, bool setSpeciesAtomCharges) const
 {
     auto optRef = determineAtomType(i);
     if (!optRef)
         return false;
     const ForcefieldAtomType &assignedType = *optRef;
 
-    assignAtomType(assignedType, i, coreData, setSpeciesAtomCharges);
+    assignAtomType(assignedType, i, setSpeciesAtomCharges);
 
     return true;
 }
 
 // Assign suitable atom types to the supplied Species, returning the number of failures
-std::vector<int> Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
-                                             bool setSpeciesAtomCharges) const
+std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy, bool setSpeciesAtomCharges) const
 {
     Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
 
@@ -302,7 +301,7 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, At
         if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
             continue;
 
-        if (!assignAtomType(i, coreData, setSpeciesAtomCharges))
+        if (!assignAtomType(i, setSpeciesAtomCharges))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
             failedElements.push_back(i.userIndex());
@@ -317,8 +316,7 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, At
 }
 
 // Assign specific AtomType to the supplied atom
-void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, CoreData &coreData,
-                                bool setSpeciesAtomCharges) const
+void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, bool setSpeciesAtomCharges) const
 {
 
     // Check if an AtomType of the same name already exists - if it does, just use that one

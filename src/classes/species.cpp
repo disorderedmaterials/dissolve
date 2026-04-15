@@ -209,13 +209,13 @@ void Species::print() const
  */
 
 // Apply terms from specified Forcefield
-bool Species::applyForcefieldTerms(std::shared_ptr<Forcefield> ff, CoreData &coreData)
+bool Species::applyForcefieldTerms(std::shared_ptr<Forcefield> ff)
 {
     if (!ff)
         return Messenger::error("No forcefield supplied!\n");
 
     // Assign atom types to the species
-    if (!ff->assignAtomTypes(this, coreData, Forcefield::TypeAll, false).empty())
+    if (!ff->assignAtomTypes(this, Forcefield::TypeAll, false).empty())
         return false;
 
     // Assign intramolecular terms

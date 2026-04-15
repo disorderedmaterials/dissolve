@@ -31,7 +31,7 @@ class AddForcefieldDialogModel : public QObject
     // The Master Improper Model
     Q_PROPERTY(const CommonImproperModel *impropers READ impropers NOTIFY commonsChanged)
     // The number of atom types conflicts
-    Q_PROPERTY(int atomTypesIndicator READ atomTypesIndicator NOTIFY atomTypesIndicatorChanged);
+    // Q_PROPERTY(int atomTypesIndicator READ atomTypesIndicator NOTIFY atomTypesIndicatorChanged);
     // Whether it is safe to move to the next page
     Q_PROPERTY(bool progressionAllowed READ progressionAllowed NOTIFY progressionAllowedChanged);
     Q_PROPERTY(bool keepSpeciesAtomChargesCheck MEMBER keepSpeciesAtomChargesCheck_)
@@ -94,13 +94,9 @@ class AddForcefieldDialogModel : public QObject
     // The chosen forcefield
     Forcefield *ff_ = nullptr;
     std::unique_ptr<MasterTermTreeModel> commons_ = nullptr;
-    // Temporary Dissolve reference for creating / importing layers
-    std::unique_ptr<Dissolve> temporaryDissolve_;
-    // Temporary core data for applying Forcefield terms
-    CoreData temporaryCoreData_;
     // The destination for the forcefield
     Species *species_ = nullptr;
-    Species *modifiedSpecies_ = nullptr;
+    std::shared_ptr<Species> modifiedSpecies_;
     // Original atom type names assigned to species
     std::vector<std::string> originalAtomTypeNames_;
     // The Atom Type Model
@@ -124,7 +120,7 @@ class AddForcefieldDialogModel : public QObject
     public:
     // Instantiate the model
     AddForcefieldDialogModel();
-    ~AddForcefieldDialogModel();
+    ~AddForcefieldDialogModel() = default;
     // The current page in the wizard
     Page index();
     // Progress in the wizard
@@ -147,7 +143,6 @@ class AddForcefieldDialogModel : public QObject
     Forcefield *ff() const;
     // Update the chosen forcefield
     void setFf(Forcefield *f);
-    int atomTypesIndicator() const;
     // Does the species have selected atoms
     bool speciesHasSelection() const;
     // Can the user safely pass to the next stage?
@@ -160,8 +155,6 @@ class AddForcefieldDialogModel : public QObject
     // Add a prefix to the name of a common term
     Q_INVOKABLE void addMasterPrefix(int type, int index, QString prefix);
 
-    // Supply the main Dissolve instance
-    void setDissolve(Dissolve &Dissolve);
     // Supply the species to operate on
     void setSpecies(Species *species);
     // Apply the forcefield

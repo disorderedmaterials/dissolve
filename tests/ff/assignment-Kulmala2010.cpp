@@ -11,12 +11,11 @@ namespace UnitTest
 TEST(Kulmala2010AssignmentTest, Hydronium)
 {
     Species species("Hydronium");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/hydronium.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
 
     ASSERT_EQ(species.nBonds(), 3);
     ASSERT_EQ(species.nAngles(), 3);
@@ -31,12 +30,11 @@ TEST(Kulmala2010AssignmentTest, Hydronium)
 TEST(Kulmala2010AssignmentTest, Ammonia)
 {
     Species species("Ammonia");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/ammonia.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
 
     ASSERT_EQ(species.nBonds(), 3);
     ASSERT_EQ(species.nAngles(), 3);
@@ -51,12 +49,11 @@ TEST(Kulmala2010AssignmentTest, Ammonia)
 TEST(Kulmala2010AssignmentTest, Ammonium)
 {
     Species species("Ammonium");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/ammonium.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
 
     ASSERT_EQ(species.nBonds(), 4);
     ASSERT_EQ(species.nAngles(), 6);
@@ -71,12 +68,11 @@ TEST(Kulmala2010AssignmentTest, Ammonium)
 TEST(Kulmala2010AssignmentTest, Dimethylammonium)
 {
     Species species("Dimethylammonium");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/dimethylammonium.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
 
     ASSERT_EQ(species.nBonds(), 10);
     ASSERT_EQ(species.nAngles(), 18);
@@ -108,12 +104,11 @@ TEST(Kulmala2010AssignmentTest, Dimethylammonium)
 TEST(Kulmala2010AssignmentTest, H2SO4)
 {
     Species species("H2SO4");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/h2so4.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
 
     ASSERT_EQ(species.nBonds(), 6);
     ASSERT_EQ(species.nAngles(), 8);
@@ -133,12 +128,11 @@ TEST(Kulmala2010AssignmentTest, H2SO4)
 TEST(Kulmala2010AssignmentTest, HSO4Minus)
 {
     Species species("HSO4-");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/hso4minus.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
 
     ASSERT_EQ(species.nBonds(), 5);
     ASSERT_EQ(species.nAngles(), 7);

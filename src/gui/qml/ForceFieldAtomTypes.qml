@@ -87,7 +87,7 @@ Item {
         anchors.left: parent.left
         anchors.top: indicator.top
         fillMode: Image.PreserveAspectFit
-        source: control.dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/true.svg" : "qrc:/general/icons/warn.svg"
+        // source: control.dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/true.svg" : "qrc:/general/icons/warn.svg"
     }
     D.Text {
         id: indicator
@@ -95,7 +95,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: indicatorImage.right
         anchors.right: parent.right
-        text: control.dialogModel.atomTypesIndicator == 0 ? "There are no naming conflicts with the assigned atom types" : (control.dialogModel.atomTypesIndicator + " assigned atom types conflict with existing types")
+        // text: control.dialogModel.atomTypesIndicator == 0 ? "There are no naming conflicts with the assigned atom types" : (control.dialogModel.atomTypesIndicator + " assigned atom types conflict with existing types")
         wrapMode: Text.Wrap
     }
     Connections {

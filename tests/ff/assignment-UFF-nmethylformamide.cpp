@@ -11,12 +11,11 @@ namespace UnitTest
 TEST(UFFNMethylFormamideAssignmentTest, NMethylFormamide)
 {
     Species species("NMethylFormamide");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/n-methylformamide.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF")));
 
     ASSERT_EQ(species.nBonds(), 8);
     ASSERT_EQ(species.nAngles(), 12);

@@ -11,13 +11,12 @@ namespace UnitTest
 TEST(UFF4MOFMOF5AssignmentTest, MOF5)
 {
     Species species("MOF5");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/mof5.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.createBox({25.8320, 25.8320, 25.8320}, {90, 90, 90});
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF4MOF"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF4MOF")));
 
     ASSERT_EQ(species.nBonds(), 512);
     ASSERT_EQ(species.nAngles(), 912);

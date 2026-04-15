@@ -314,7 +314,7 @@ class Species : public Serialisable<>
      */
     public:
     // Apply terms from specified Forcefield
-    bool applyForcefieldTerms(std::shared_ptr<Forcefield> ff, CoreData &coreData);
+    bool applyForcefieldTerms(std::shared_ptr<Forcefield> ff);
     // Clear forcefield terms
     void clearForcefieldTerms(bool nullifyAtomTypes = true);
 
