@@ -23,13 +23,13 @@ XRaySQNode::XRaySQNode(Graph *parentGraph) : Node(parentGraph)
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(
         "ReferenceNormalisedTo", "Normalisation that has been applied to the reference data", referenceNormalisedTo_);
-    addOption<std::optional<double>>("ReferenceFTQMin",
+    addOption<std::optional<Number>>("ReferenceFTQMin",
                                      "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
                                      referenceFTQMin_);
-    addOption<std::optional<double>>("ReferenceFTQMax",
+    addOption<std::optional<Number>>("ReferenceFTQMax",
                                      "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
                                      referenceFTQMax_);
-    addOption<double>("ReferenceFTDeltaR", "Spacing in r to use when generating the Fourier-transformed data",
+    addOption<Number>("ReferenceFTDeltaR", "Spacing in r to use when generating the Fourier-transformed data",
                       referenceFTDeltaR_);
     addOption<WindowFunction::Form>("ReferenceWindowFunction",
                                     "Window function to apply when Fourier-transforming reference S(Q) to g(r)",

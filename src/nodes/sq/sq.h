@@ -69,4 +69,15 @@ class SQNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    /*
+     * Getters
+     */
+    public:
+    // Returns the source configuration, belonging to the input GR node
+    const Configuration *sourceConfiguration();
+    // Returns the unweighted SQ
+    const PartialSet &unweightedSQ() const;
+    // Returns the unweighted GR
+    const PartialSet &unweightedGR() const;
 };

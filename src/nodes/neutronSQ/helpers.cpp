@@ -2,7 +2,12 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/species.h"
+#include "nodes/edge.h"
 #include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/sq/sq.h"
+
+// Return neutron weights
+const NeutronWeights &NeutronSQNode::weights() const { return weights_; }
 
 // Calculate weighted g(r)
 bool NeutronSQNode::calculateWeightedGR(const NeutronWeights &weights)
@@ -86,4 +91,33 @@ bool NeutronSQNode::calculateWeightedSQ(const NeutronWeights &weights)
     }
 
     return true;
+}
+
+// Returns the unweighted SQ
+const PartialSet *NeutronSQNode::unweightedSQ() const { return unweightedSQ_; }
+
+// Returns the unweighted GR
+const PartialSet *NeutronSQNode::unweightedGR() const { return unweightedGR_; }
+
+// Returns the isotopologues
+const IsotopologueSet &NeutronSQNode::isotopologues() const { return isotopologues_; }
+
+// Returns the exchangeables
+const Exchangeables &NeutronSQNode::exchangeables() const { return exchangeables_; }
+
+// Returns the source configuration, belonging to the input SQ node
+const Configuration *NeutronSQNode::sourceConfiguration()
+{
+    auto cfgInputEdge = inputEdges().find("UnweightedSQ");
+
+    if (cfgInputEdge == inputEdges().end())
+    {
+        error("Could not find a valid input 'UnweightedSQ' associated with this node ({})", name());
+        return nullptr;
+    }
+
+    auto &cfgSourceNode = cfgInputEdge->second[0]->sourceNode();
+    auto sqNode = static_cast<SQNode *>(&cfgSourceNode);
+
+    return sqNode->sourceConfiguration();
 }

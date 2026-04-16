@@ -129,7 +129,7 @@ NodeConstants::ProcessResult XRaySQNode::process()
     representativeGR_ = weightedSQ_->total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
-        ftQMax = referenceFTQMax_.value();
+        ftQMax = referenceFTQMax_.value().asDouble();
     else if (referenceFQ_)
     {
         // Take FT max Q limit from reference data
@@ -138,7 +138,7 @@ NodeConstants::ProcessResult XRaySQNode::process()
     else
         ftQMax = weightedSQ_->total().xAxis().back();
 
-    Filters::trim(representativeGR_, referenceFTQMin_.value_or(0.0), ftQMax);
+    Filters::trim(representativeGR_, referenceFTQMin_.value_or(0.0).asDouble(), ftQMax);
     auto rMin = weightedGR_->total().xAxis().front();
     auto rMax = weightedGR_->total().xAxis().back();
     auto rho = unweightedGR_->effectiveDensity();

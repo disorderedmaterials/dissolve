@@ -52,6 +52,15 @@ void Configuration::empty()
 // Return Species populations within the Configuration
 const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
+// Return Species populations within the Configuration
+const KeyedVector<const Species *, double> Configuration::realSpeciesPopulations() const
+{
+    KeyedVector<const Species *, double> pop;
+    for (const auto &[key, value] : speciesPopulations_.vector())
+        pop.add(key, double(value));
+    return pop;
+}
+
 // Return atom type populations for this Configuration
 KeyedVector<const AtomType *, int> Configuration::atomTypePopulations() const
 {
@@ -84,6 +93,17 @@ std::vector<const AtomType *> Configuration::atomTypeVector() const
     std::transform(populations.vector().begin(), populations.vector().end(), result.begin(),
                    [](const auto &pop) { return pop.first; });
     return result;
+}
+
+// Search for AtomType by name
+std::shared_ptr<const AtomType> Configuration::findAtomType(std::string_view name) const
+{
+    const auto &atomTypes = atomTypeVector();
+    auto it = std::find_if(atomTypes.begin(), atomTypes.end(),
+                           [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
+    if (it == atomTypeVector().end())
+        return nullptr;
+    return std::shared_ptr<const AtomType>(*it);
 }
 
 // Return the total charge of the Configuration

@@ -18,6 +18,10 @@
 // Run main processing
 NodeConstants::ProcessResult NeutronSQNode::process()
 {
+    auto referenceFTQMin = std::optional<double>(referenceFTQMin_->asDouble());
+    auto referenceFTQMax = std::optional<double>(referenceFTQMax_->asDouble());
+    auto referenceFTDeltaR = referenceFTDeltaR_.asDouble();
+
     // Print argument/parameter summary
     if (referenceWindowFunction_ == WindowFunction::Form::None)
         message("No window function will be applied when calculating representative g(r) from S(Q).");
@@ -91,8 +95,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
-        auto ftQMin = referenceFTQMin_.value_or(0.0);
-        auto ftQMax = referenceFTQMax_.value_or(referenceFQ_->xAxis().back() + 1.0);
+        auto ftQMin = referenceFTQMin.value_or(0.0);
+        auto ftQMax = referenceFTQMax.value_or(referenceFQ_->xAxis().back() + 1.0);
         if (referenceWindowFunction_ == WindowFunction::Form::None)
             message("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).", name());
         else
@@ -104,7 +108,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         Filters::trim(referenceGR_, ftQMin, ftQMax);
 
         auto rho = unweightedGR_->effectiveDensity();
-        Fourier::sineFT(referenceGR_, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
+        Fourier::sineFT(referenceGR_, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR, referenceFTDeltaR, 30.0,
                         WindowFunction(referenceWindowFunction_));
 
         // Save data?
@@ -144,8 +148,8 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     // Calculate representative total g(r) from FT of calculated F(Q)
     representativeGR_ = weightedSQ_->total();
     auto ftQMax = 0.0;
-    if (referenceFTQMax_)
-        ftQMax = referenceFTQMax_.value();
+    if (referenceFTQMax)
+        ftQMax = referenceFTQMax.value();
     else if (referenceFQ_)
     {
         // Take FT max Q limit from reference data
@@ -153,7 +157,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     }
     else
         ftQMax = weightedSQ_->total().xAxis().back();
-    Filters::trim(representativeGR_, referenceFTQMin_.value_or(0.0), ftQMax);
+    Filters::trim(representativeGR_, referenceFTQMin.value_or(0.0), ftQMax);
     auto rMin = weightedGR_->total().xAxis().front();
     auto rMax = weightedGR_->total().xAxis().back();
     WindowFunction window(referenceWindowFunction_);

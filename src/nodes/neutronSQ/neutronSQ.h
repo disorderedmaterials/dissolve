@@ -45,6 +45,8 @@ class NeutronSQNode : public Node
     IsotopologueSet isotopologues_;
     // Exchangeable atom types
     Exchangeables exchangeables_;
+    // Neutron weights calculated from isotopologues and exchangeables
+    NeutronWeights weights_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) data
@@ -52,11 +54,11 @@ class NeutronSQNode : public Node
     // Reference G(r) data from FT of reference F(Q)
     Data1D referenceGR_;
     // Minimum Q value to use when Fourier-transforming the data
-    std::optional<double> referenceFTQMin_{0.5};
+    std::optional<Number> referenceFTQMin_{0.5};
     // Maximum Q value to use when Fourier-transforming the data
-    std::optional<double> referenceFTQMax_{30.0};
+    std::optional<Number> referenceFTQMax_{30.0};
     // Spacing in r to use when generating the Fourier-transformed data
-    double referenceFTDeltaR_{0.05};
+    Number referenceFTDeltaR_{0.05};
     // Normalisation to remove from reference total F(Q)
     StructureFactors::NormalisationType referenceNormalisedTo_{StructureFactors::NoNormalisation};
     // Window function to use when Fourier transforming reference total F(Q) into g(r)
@@ -74,6 +76,8 @@ class NeutronSQNode : public Node
      * Functions
      */
     public:
+    // Return neutron weights
+    const NeutronWeights &weights() const;
     // Calculate weighted g(r)
     bool calculateWeightedGR(const NeutronWeights &weights);
     // Calculate weighted S(Q)
@@ -85,4 +89,19 @@ class NeutronSQNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    /*
+     * Getters
+     */
+    public:
+    // Returns the unweighted SQ
+    const PartialSet *unweightedSQ() const;
+    // Returns the unweighted GR
+    const PartialSet *unweightedGR() const;
+    // Returns the exchangeables
+    const Exchangeables &exchangeables() const;
+    // Returns the isotopologues
+    const IsotopologueSet &isotopologues() const;
+    // Returns the source configuration, belonging to the input SQ node
+    const Configuration *sourceConfiguration();
 };

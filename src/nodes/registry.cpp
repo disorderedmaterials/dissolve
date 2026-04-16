@@ -16,6 +16,7 @@
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
 #include "nodes/energy.h"
+#include "nodes/epsr.h"
 #include "nodes/exportDLPOLYConfiguration.h"
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/exportXYZTrajectory.h"
@@ -75,7 +76,8 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
-                  {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfiguration>()},
+                  {"EPSR", makeDerivedNode<EPSRNode>()},
+                  {"ExportDLPolyConfiguration", makeDerivedNode<ExportDLPolyConfiguration>()},
                   {"ExportXYZTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
                   {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfiguration>()},
                   {"Forcefield", makeDerivedNode<ForcefieldNode>()},

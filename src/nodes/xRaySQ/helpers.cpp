@@ -8,6 +8,8 @@
 #include "io/export/data1D.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "nodes/edge.h"
+#include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 
 bool XRaySQNode::setReferenceData()
@@ -50,8 +52,8 @@ bool XRaySQNode::setReferenceData()
     }
 
     // Get Q-range and window function to use for transformation of F(Q) to G(r)
-    auto ftQMin = referenceFTQMin_.value_or(0.0);
-    auto ftQMax = referenceFTQMax_.value_or(referenceFQ_->xAxis().back() + 1.0);
+    auto ftQMin = referenceFTQMin_.value_or(0.0).asDouble();
+    auto ftQMax = referenceFTQMax_.value_or(referenceFQ_->xAxis().back() + 1.0).asDouble();
     if (referenceWindowFunction_ == WindowFunction::Form::None)
         Node::message("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).", name());
     else
@@ -69,8 +71,8 @@ bool XRaySQNode::setReferenceData()
         Node::message("[SETUP {}] Effective atomic density used in Fourier transform of reference data not yet "
                       "available, so a default of 0.1 atoms/Angstrom3 used.\n",
                       name());
-    Fourier::sineFT(referenceGR_, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
-                    WindowFunction(referenceWindowFunction_));
+    Fourier::sineFT(referenceGR_, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_.asDouble(), referenceFTDeltaR_.asDouble(),
+                    30.0, WindowFunction(referenceWindowFunction_));
 
     // Save data?
     if (saveReference_)
@@ -175,4 +177,27 @@ bool XRaySQNode::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet 
     }
 
     return true;
+}
+
+// Returns the unweighted SQ
+const PartialSet *XRaySQNode::unweightedSQ() const { return unweightedSQ_; }
+
+// Returns the unweighted GR
+const PartialSet *XRaySQNode::unweightedGR() const { return unweightedGR_; }
+
+// Returns the source configuration, belonging to the input SQ node
+const Configuration *XRaySQNode::sourceConfiguration()
+{
+    auto cfgInputEdge = inputEdges().find("UnweightedSQ");
+
+    if (cfgInputEdge == inputEdges().end())
+    {
+        error("Could not find a valid input 'UnweightedSQ' associated with this node ({})", name());
+        return nullptr;
+    }
+
+    auto &cfgSourceNode = cfgInputEdge->second[0]->sourceNode();
+    auto sqNode = static_cast<SQNode *>(&cfgSourceNode);
+
+    return sqNode->sourceConfiguration();
 }

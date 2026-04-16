@@ -13,6 +13,20 @@
 NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations,
                                const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
 {
+    initialise(speciesPopulations, isotopologues, exchangeables);
+};
+
+NeutronWeights::NeutronWeights(const KeyedVector<const Species *, double> &speciesPopulations,
+                               const IsotopologueSet &speciesIsotopologues, const Exchangeables &exchangeables)
+{
+
+    initialise(KeyedVector<const Species *, double>::toMap(speciesPopulations), speciesIsotopologues, exchangeables);
+}
+
+// Initialise the neutron weights instance
+void NeutronWeights::initialise(const std::map<const Species *, double> &speciesPopulations,
+                                const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
+{
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
 
