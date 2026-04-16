@@ -16,14 +16,14 @@ TEST(PotentialSetTest, SimpleAddition)
     Data1D x;
     const auto value = 2.0;
     x.addPoint(1, value);
-    pots.potentials()["A-A"] = x;
-    pots.potentials()["A-B"] = x;
-    pots.potentials()["A-C"] = x;
+    pots.potentials()["A//A"] = x;
+    pots.potentials()["A//B"] = x;
+    pots.potentials()["A//C"] = x;
 
     pots += pots;
-    EXPECT_EQ(4.0, pots.potentials()["A-A"].value(0));
-    EXPECT_EQ(4.0, pots.potentials()["A-B"].value(0));
-    EXPECT_EQ(4.0, pots.potentials()["A-C"].value(0));
+    EXPECT_DOUBLE_EQ(4.0, pots.potentials()["A//A"].value(0));
+    EXPECT_DOUBLE_EQ(4.0, pots.potentials()["A//B"].value(0));
+    EXPECT_DOUBLE_EQ(4.0, pots.potentials()["A//C"].value(0));
 }
 
 TEST(PotentialSetTest, Multiplication)
@@ -32,14 +32,14 @@ TEST(PotentialSetTest, Multiplication)
     Data1D x;
     const auto value = 3.0;
     x.addPoint(1, value);
-    pots.potentials()["A-A"] = x;
-    pots.potentials()["A-B"] = x;
-    pots.potentials()["A-C"] = x;
+    pots.potentials()["A//A"] = x;
+    pots.potentials()["A//B"] = x;
+    pots.potentials()["A//C"] = x;
 
     pots *= 2;
-    EXPECT_EQ(6.0, pots.potentials()["A-A"].value(0));
-    EXPECT_EQ(6.0, pots.potentials()["A-B"].value(0));
-    EXPECT_EQ(6.0, pots.potentials()["A-C"].value(0));
+    EXPECT_DOUBLE_EQ(value * 2, pots.potentials()["A//A"].value(0));
+    EXPECT_DOUBLE_EQ(value * 2, pots.potentials()["A//B"].value(0));
+    EXPECT_DOUBLE_EQ(value * 2, pots.potentials()["A//C"].value(0));
 }
 
 TEST(PotentialSetTest, ComplexAddition)
@@ -49,20 +49,20 @@ TEST(PotentialSetTest, ComplexAddition)
     Data1D x;
     const auto value = 2.0;
     x.addPoint(1, value);
-    pots.potentials()["A-A"] = x;
-    pots.potentials()["A-B"] = x;
-    pots.potentials()["A-C"] = x;
+    pots.potentials()["A//A"] = x;
+    pots.potentials()["A//B"] = x;
+    pots.potentials()["A//C"] = x;
 
-    pots2.potentials()["A-A"] = x;
-    pots2.potentials()["A-B"] = x;
-    pots2.potentials()["A-C"] = x;
-    pots2.potentials()["A-D"] = x;
+    pots2.potentials()["A//A"] = x;
+    pots2.potentials()["A//B"] = x;
+    pots2.potentials()["A//C"] = x;
+    pots2.potentials()["A//D"] = x;
 
     pots += pots2;
-    EXPECT_EQ(4.0, pots.potentials()["A-A"].value(0));
-    EXPECT_EQ(4.0, pots.potentials()["A-B"].value(0));
-    EXPECT_EQ(4.0, pots.potentials()["A-C"].value(0));
-    EXPECT_EQ(2.0, pots.potentials()["A-D"].value(0));
+    EXPECT_DOUBLE_EQ(value * 2, pots.potentials()["A//A"].value(0));
+    EXPECT_DOUBLE_EQ(value * 2, pots.potentials()["A//B"].value(0));
+    EXPECT_DOUBLE_EQ(value * 2, pots.potentials()["A//C"].value(0));
+    EXPECT_DOUBLE_EQ(value, pots.potentials()["A//D"].value(0));
 }
 
 TEST(PotentialSetTest, Averaging)
@@ -81,18 +81,17 @@ TEST(PotentialSetTest, Averaging)
     {
         PotentialSet pots;
 
-        pots.potentials()["A-A"] = x;
-        pots.potentials()["A-B"] = x;
-        pots.potentials()["A-C"] = y;
-        pots.potentials()["A-D"] = y;
+        pots.potentials()["A//A"] = x;
+        pots.potentials()["A//B"] = x;
+        pots.potentials()["A//C"] = y;
+        pots.potentials()["A//D"] = y;
 
         auto averagedPots = history.push(pots, averagingLength);
 
-        EXPECT_EQ(2.0, averagedPots.potentials()["A-A"].value(0));
-        EXPECT_EQ(2.0, averagedPots.potentials()["A-A"].value(0));
-        EXPECT_EQ(2.0, averagedPots.potentials()["A-B"].value(0));
-        EXPECT_EQ(4.0, averagedPots.potentials()["A-C"].value(0));
-        EXPECT_EQ(4.0, averagedPots.potentials()["A-D"].value(0));
+        EXPECT_DOUBLE_EQ(value, averagedPots.potentials()["A//A"].value(0));
+        EXPECT_DOUBLE_EQ(value, averagedPots.potentials()["A//B"].value(0));
+        EXPECT_DOUBLE_EQ(value2, averagedPots.potentials()["A//C"].value(0));
+        EXPECT_DOUBLE_EQ(value2, averagedPots.potentials()["A//D"].value(0));
     }
 
     // Round-trip the data via TOML
@@ -104,11 +103,10 @@ TEST(PotentialSetTest, Averaging)
 
     auto averagedPots = history.average();
 
-    EXPECT_EQ(2.0, averagedPots.potentials()["A-A"].value(0));
-    EXPECT_EQ(2.0, averagedPots.potentials()["A-A"].value(0));
-    EXPECT_EQ(2.0, averagedPots.potentials()["A-B"].value(0));
-    EXPECT_EQ(4.0, averagedPots.potentials()["A-C"].value(0));
-    EXPECT_EQ(4.0, averagedPots.potentials()["A-D"].value(0));
+    EXPECT_DOUBLE_EQ(value, averagedPots.potentials()["A//A"].value(0));
+    EXPECT_DOUBLE_EQ(value, averagedPots.potentials()["A//B"].value(0));
+    EXPECT_DOUBLE_EQ(value2, averagedPots.potentials()["A//C"].value(0));
+    EXPECT_DOUBLE_EQ(value2, averagedPots.potentials()["A//D"].value(0));
 }
 
 } // namespace UnitTest
