@@ -9,7 +9,7 @@
 MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_)
+    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
     addInput<Number>("NSteps", "Number of MD steps to perform", nSteps_);
 

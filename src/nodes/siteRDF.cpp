@@ -16,7 +16,7 @@
 SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the module", configuration_)
+    addInput<Configuration *>("Configuration", "Set target configuration for the node", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs

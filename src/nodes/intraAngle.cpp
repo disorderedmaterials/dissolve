@@ -10,7 +10,7 @@
 IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);

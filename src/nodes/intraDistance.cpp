@@ -10,7 +10,7 @@
 IntraDistanceNode::IntraDistanceNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the module", targetConfiguration_);
+    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
@@ -64,9 +64,10 @@ NodeConstants::ProcessResult IntraDistanceNode::process()
     histogramNormaliser.normaliseSumTo();
 
     // Save Distance(A-B) data?
+    /*
     if (!DataExporter::exportData(rdfAB_, exportFileAndFormat_))
         return NodeConstants::ProcessResult::Failed;
-
+    */
     return NodeConstants::ProcessResult::Success;
 }
 
