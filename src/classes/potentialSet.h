@@ -4,13 +4,13 @@
 #pragma once
 
 #include "math/data1D.h"
-#include "modules/epsrManager/epsrManager.h"
+#include "templates/doubleKeyedMap.h"
 
 // Forward Declarations
 class AtomType;
 
 // Set of Potentials
-class PotentialSet
+class PotentialSet : public Serialisable<>
 {
     public:
     PotentialSet();
@@ -22,14 +22,8 @@ class PotentialSet
     private:
     // Fingerprint for these potentials
     std::string fingerprint_;
-    struct PotentialData
-    {
-        Data1D potential;
-        double count{0};
-        const AtomType *at1, *at2;
-    };
-    // Map of named potentials to data
-    std::map<std::string, PotentialData> potentials_;
+    // Map of potentials
+    DoubleKeyedMap<Data1D> potentials_;
 
     public:
     // Reset Potentials
@@ -38,24 +32,25 @@ class PotentialSet
     void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of potentials
     std::string_view fingerprint() const;
-    // Return full map of potentials specified
-    std::map<std::string, PotentialData> &potentialMap();
-    const std::map<std::string, PotentialData> &potentialMap() const;
+    // Return full set of potentials
+    DoubleKeyedMap<Data1D> &potentials();
+    const DoubleKeyedMap<Data1D> &potentials() const;
 
     /*
      * Operators
      */
     public:
-    PotentialSet &operator+=(const double delta);
+    PotentialSet &operator+=(double delta);
     PotentialSet &operator+=(const PotentialSet &source);
-    PotentialSet &operator*=(const double factor);
+    PotentialSet operator*(double factor) const;
+    PotentialSet &operator*=(double factor);
 
     /*
      * Serialisation
      */
     public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(SerialisedValue node);
 };

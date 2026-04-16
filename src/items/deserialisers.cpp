@@ -180,7 +180,6 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<IntegerHistogram1D>(simpleDeserialise<IntegerHistogram1D>);
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
-    registerDeserialiser<PotentialSet>(simpleDeserialiseCore<PotentialSet>);
     registerDeserialiser<SampledData1D>(simpleDeserialise<SampledData1D>);
     registerDeserialiser<SampledDouble>(simpleDeserialise<SampledDouble>);
     registerDeserialiser<SampledVector>(simpleDeserialise<SampledVector>);

@@ -7,9 +7,8 @@
 #include "classes/scatteringMatrix.h"
 #include "generator/generator.h"
 #include "math/averaging.h"
-#include "module/groups.h"
+#include "math/history.h"
 #include "module/module.h"
-#include <tuple>
 
 // EPSR Manager Module
 class EPSRManagerModule : public Module
@@ -21,14 +20,13 @@ class EPSRManagerModule : public Module
     /*
      * Definition
      */
-
     private:
     // Target Module containing data to refine against
     std::vector<Module *> target_;
     // Frequency at which to apply generated perturbations to interatomic potentials
     std::optional<int> modifyPotential_{1};
-    // Vector storing atom pairs and associated potentials
-    std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> potentials_;
+    // History of potentials
+    History<PotentialSet> potentials_;
     // Potential scalings
     std::string potentialScalings_;
     // Number of historical potentials sets to combine into final potentials

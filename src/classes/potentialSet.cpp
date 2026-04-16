@@ -21,9 +21,9 @@ void PotentialSet::reset()
 // Set new fingerprint
 void PotentialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
 
-// Return full map of potentials specified
-std::map<std::string, PotentialSet::PotentialData> &PotentialSet::potentialMap() { return potentials_; }
-const std::map<std::string, PotentialSet::PotentialData> &PotentialSet::potentialMap() const { return potentials_; }
+// Return full set of potentials
+DoubleKeyedMap<Data1D> &PotentialSet::potentials() { return potentials_; }
+const DoubleKeyedMap<Data1D> &PotentialSet::potentials() const { return potentials_; }
 
 /*
  * Operators
@@ -31,28 +31,30 @@ const std::map<std::string, PotentialSet::PotentialData> &PotentialSet::potentia
 
 PotentialSet &PotentialSet::operator+=(const double delta)
 {
-    for (auto &[key, pot] : potentials_)
-        pot.potential += delta;
+    for (auto &pot : std::views::values(potentials_))
+        pot += delta;
     return (*this);
 }
 
 PotentialSet &PotentialSet::operator+=(const PotentialSet &source)
 {
-    for (auto &[key, pot] : source.potentialMap())
-    {
-        auto it = potentials_.find(key);
-        if (it != potentials_.end())
-            it->second.potential += pot.potential;
-        else
-            potentials_[key] = pot;
-    }
+    for (auto &[key, pot] : source.potentials_)
+        potentials_.map()[key] += pot;
+
     return (*this);
+}
+
+PotentialSet PotentialSet::operator*(double factor) const
+{
+    auto result = *this;
+    result *= factor;
+    return result;
 }
 
 PotentialSet &PotentialSet::operator*=(const double factor)
 {
-    for (auto &[key, pot] : potentials_)
-        pot.potential *= factor;
+    for (auto &pot : std::views::values(potentials_))
+        pot *= factor;
     return (*this);
 }
 
@@ -60,47 +62,13 @@ PotentialSet &PotentialSet::operator*=(const double factor)
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool PotentialSet::deserialise(LineParser &parser, const CoreData &coreData)
+// Express as a serialisable value
+void PotentialSet::serialise(std::string tag, SerialisedValue &target) const
 {
-    if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success)
-        return false;
+    auto &result = target[tag];
 
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    auto size = parser.argli(0);
-    for (auto n = 0; n < size; ++n)
-    {
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        PotentialData value;
-        auto key = parser.args(0);
-        value.count = parser.argi(1);
-        value.at1 = coreData.findAtomType(parser.args(2)).get();
-        value.at2 = coreData.findAtomType(parser.args(3)).get();
-
-        if (!value.potential.deserialise(parser))
-            return false;
-
-        potentials_[key] = value;
-    }
-
-    return true;
+    potentials_.serialise("potentials", result);
 }
 
-// Write data through specified LineParser
-bool PotentialSet::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("{}\n", fingerprint_))
-        return false;
-    if (!parser.writeLineF("{}\n", potentials_.size()))
-        return false;
-    for (auto &[key, value] : potentials_)
-    {
-        if (!parser.writeLineF("{} {} {} {}\n", key, value.count, value.at1->name(), value.at2->name()))
-            return false;
-        if (!value.potential.serialise(parser))
-            return false;
-    }
-    return true;
-}
+// Read values from a serialisable value
+void PotentialSet::deserialise(SerialisedValue node) { potentials_.deserialise(node["potentials"]); }

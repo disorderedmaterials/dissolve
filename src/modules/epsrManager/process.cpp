@@ -34,6 +34,7 @@ Module::ExecutionResult EPSRManagerModule::process(Dissolve &dissolve)
 
     // Loop over target data and form summed / averaged potentials
     PotentialSet newPotentials;
+    DoubleKeyedMap<double> counts;
     for (auto *module : target_)
     {
         auto *epsrModule = dynamic_cast<EPSRModule *>(module);
@@ -41,26 +42,24 @@ Module::ExecutionResult EPSRManagerModule::process(Dissolve &dissolve)
 
         for (auto &&[at1, at2, potential] : eps)
         {
-            auto key = EPSRManagerModule::pairKey(at1, at2);
-            auto keyIt = newPotentials.potentialMap().find(key);
-            if (keyIt == newPotentials.potentialMap().end())
-                newPotentials.potentialMap()[key] = {potential, 1, at1, at2};
-            else
-            {
-                Interpolator::addInterpolated(potential, newPotentials.potentialMap()[key].potential, 1.0);
-                ++newPotentials.potentialMap()[key].count;
-            }
+            newPotentials.potentials()[{at1->name(), at2->name()}] += potential;
+            counts[{at1->name(), at2->name()}] += 1.0;
         }
     }
-    for (auto &&[key, epData] : newPotentials.potentialMap())
-        epData.potential /= newPotentials.potentialMap()[key].count;
+
+    // Normalise potentials to counts
+    for (auto &&[key, potential] : newPotentials.potentials())
+        potential /= counts[key];
 
     // Does a PotentialSet already exist for this Configuration?
     auto originalPotentialsObject = moduleData.realiseIf<PotentialSet>("PotentialSet", name_, GenericItem::InRestartFileFlag);
+
     // Set restart equal to changes
     originalPotentialsObject.first = newPotentials;
+
     // Reference to the current potentials
     auto &currentPotentials = moduleData.realise<PotentialSet>("PotentialSet", name_, GenericItem::InRestartFileFlag);
+
     // Average the Potentials
     if (averagingLength_)
         Averaging::average<PotentialSet>(dissolve.processingModuleData(), "PotentialSet", name(), averagingLength_.value(),
@@ -84,16 +83,16 @@ Module::ExecutionResult EPSRManagerModule::process(Dissolve &dissolve)
 
         Messenger::print("Apply scaling factor of {} to potential(s) {}-{}...\n", scaleFactor, typeA, typeB);
         auto count = 0;
-        for (auto &&[key, epData] : currentPotentials.potentialMap())
+        for (auto &&[key, potential] : currentPotentials.potentials())
         {
+            auto parts = currentPotentials.potentials().keyPair(key);
+
             // Is this potential a match
-            if ((DissolveSys::sameWildString(typeA, epData.at1->name()) &&
-                 DissolveSys::sameWildString(typeB, epData.at2->name())) ||
-                (DissolveSys::sameWildString(typeB, epData.at1->name()) &&
-                 DissolveSys::sameWildString(typeA, epData.at2->name())))
+            if ((DissolveSys::sameWildString(typeA, parts.first) && DissolveSys::sameWildString(typeB, parts.second)) ||
+                (DissolveSys::sameWildString(typeB, parts.first) && DissolveSys::sameWildString(typeA, parts.second)))
             {
-                Messenger::print(" ... matched and scaled potential {}-{}\n", epData.at1->name(), epData.at2->name());
-                epData.potential *= scaleFactor;
+                Messenger::print(" ... matched and scaled potential {}-{}\n", parts.first, parts.second);
+                potential *= scaleFactor;
                 ++count;
             }
         }
@@ -101,13 +100,14 @@ Module::ExecutionResult EPSRManagerModule::process(Dissolve &dissolve)
     }
 
     // Adjust global potentials
-    for (auto &&[key, epData] : currentPotentials.potentialMap())
-    {
-        // Grab pointer to the relevant pair potential (if it exists)
-        auto *pp = dissolve.pairPotential(epData.at1, epData.at2);
-        if (pp)
-            pp->setAdditionalPotential(epData.potential);
-    }
+    // TODO DISSOLVE2
+    // for (auto &&[key, epData] : currentPotentials.potentials())
+    // {
+    //     // Grab pointer to the relevant pair potential (if it exists)
+    //     auto *pp = dissolve.pairPotential(epData.at1, epData.at2);
+    //     if (pp)
+    //         pp->setAdditionalPotential(epData.potential);
+    // }
 
     return ExecutionResult::Success;
 }

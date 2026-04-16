@@ -119,7 +119,6 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<IntegerHistogram1D>(simpleSerialise<IntegerHistogram1D>);
     registerSerialiser<PartialSet>(simpleSerialise<PartialSet>);
     registerSerialiser<PartialSetAccumulator>(simpleSerialise<PartialSetAccumulator>);
-    registerSerialiser<PotentialSet>(simpleSerialise<PotentialSet>);
     registerSerialiser<SampledData1D>(simpleSerialise<SampledData1D>);
     registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
     registerSerialiser<SampledVector>(simpleSerialise<SampledVector>);
