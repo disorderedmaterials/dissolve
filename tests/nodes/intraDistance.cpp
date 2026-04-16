@@ -38,21 +38,21 @@ TEST(IntraDistanceNodeTest, Water)
     ASSERT_TRUE(water);
     const Vector3 distanceRange = {0, 2, 0.01};
 
-    auto dOH1 = iterator->createNode("IntraDistance", "D(O-H1)");
+    auto dOH1 = static_cast<IntraDistanceNode *>(iterator->createNode("IntraDistance", "D(O-H1)"));
     ASSERT_TRUE(dOH1);
     ASSERT_TRUE(dOH1->setOption<SpeciesSites>("SiteA", {{water->findSite("O")}}));
     ASSERT_TRUE(dOH1->setOption<SpeciesSites>("SiteB", {{water->findSite("H1")}}));
     ASSERT_TRUE(dOH1->setOption<Vector3>("DistanceRange", distanceRange));
     ASSERT_TRUE(iterator->addEdge({"ImportConfigurationTrajectory", "Configuration", "D(O-H1)", "Configuration"}));
 
-    auto dOH2 = iterator->createNode("IntraDistance", "D(O-H2)");
+    auto dOH2 = static_cast<IntraDistanceNode *>(iterator->createNode("IntraDistance", "D(O-H2)"));
     ASSERT_TRUE(dOH2);
     ASSERT_TRUE(dOH2->setOption<SpeciesSites>("SiteA", {{water->findSite("O")}}));
     ASSERT_TRUE(dOH2->setOption<SpeciesSites>("SiteB", {{water->findSite("H2")}}));
     ASSERT_TRUE(dOH2->setOption<Vector3>("DistanceRange", distanceRange));
     ASSERT_TRUE(iterator->addEdge({"ImportConfigurationTrajectory", "Configuration", "D(O-H2)", "Configuration"}));
 
-    auto dH1H2 = iterator->createNode("IntraDistance", "D(H1-H2)");
+    auto dH1H2 = static_cast<IntraDistanceNode *>(iterator->createNode("IntraDistance", "D(H1-H2)"));
     ASSERT_TRUE(dH1H2);
     ASSERT_TRUE(dH1H2->setOption<SpeciesSites>("SiteA", {{water->findSite("H1")}}));
     ASSERT_TRUE(dH1H2->setOption<SpeciesSites>("SiteB", {{water->findSite("H2")}}));
@@ -64,13 +64,13 @@ TEST(IntraDistanceNodeTest, Water)
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        static_cast<IntraDistanceNode *>(dOH1)->rdfAB(), "D(O-H1)//NormalisedHistogram",
+        dOH1->rdfAB(), "D(O-H1)//NormalisedHistogram",
         {"dlpoly/water267-analysis/water-267-298K.01-02.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        static_cast<IntraDistanceNode *>(dOH2)->rdfAB(), "D(O-H2)//NormalisedHistogram",
+        dOH2->rdfAB(), "D(O-H2)//NormalisedHistogram",
         {"dlpoly/water267-analysis/water-267-298K.02-03.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        static_cast<IntraDistanceNode *>(dH1H2)->rdfAB(), "D(H1-H2)//NormalisedHistogram",
+        dH1H2->rdfAB(), "D(H1-H2)//NormalisedHistogram",
         {"dlpoly/water267-analysis/water-267-298K.01-03.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
 }
 

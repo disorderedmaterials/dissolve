@@ -5,11 +5,7 @@
 
 #include "classes/speciesSites.h"
 #include "io/export/data1D.h"
-#include "io/export/data2D.h"
 #include "math/histogram1D.h"
-#include "math/histogram2D.h"
-#include "math/histogram3D.h"
-#include "math/rangedVector3.h"
 #include "nodes/node.h"
 
 // IntraDistance Node

@@ -4,7 +4,6 @@
 #include "nodes/intraDistance.h"
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
-#include "analyser/dataOperator2D.h"
 #include "analyser/siteSelector.h"
 #include "math/mathFunc.h"
 
@@ -29,8 +28,6 @@ std::string_view IntraDistanceNode::summary() const { return "Calculate a site-s
 // Run main processing
 NodeConstants::ProcessResult IntraDistanceNode::process()
 {
-    // auto &processingData = dissolve.processingModuleData();
-
     // Select site A
     SiteSelector a(targetConfiguration_, a_.getSpeciesSites());
 

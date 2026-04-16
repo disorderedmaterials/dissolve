@@ -4,7 +4,6 @@
 #include "nodes/intraAngle.h"
 #include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
-#include "analyser/dataOperator2D.h"
 #include "analyser/siteSelector.h"
 #include "math/mathFunc.h"
 
