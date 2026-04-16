@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/angle.h"
+#include "nodes/intraAngle.h"
 #include "classes/speciesSites.h"
 #include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
@@ -9,10 +9,11 @@
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
+#include <vector>
 
 namespace UnitTest
 {
-TEST(AngleNodeTest, Water)
+TEST(IntraAngleNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
@@ -34,31 +35,24 @@ TEST(AngleNodeTest, Water)
     ASSERT_TRUE(iterator->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"}));
 
     // Add the analysis module to the iterator
-    auto angle = dynamic_cast<AngleNode *>(iterator->createNode("Angle"));
-    ASSERT_TRUE(angle);
+    auto intraAngle = dynamic_cast<IntraAngleNode *>(iterator->createNode("IntraAngle"));
+    ASSERT_TRUE(intraAngle);
     auto *water = testGraph.findNode("Water")->getOutputValue<const Species *>("Species");
     ASSERT_TRUE(water);
-    ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteA", {{water->findSite("O")}}));
-    ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteB", {{water->findSite("H")}}));
-    ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteC", {{water->findSite("O")}}));
-    ASSERT_TRUE(angle->setOption<RangedVector3>("RangeAB", {{0.9, 1.1, 0.01}}));
-    ASSERT_TRUE(angle->setOption<RangedVector3>("RangeBC", {{0.0, 5.0, 0.01}}));
-    ASSERT_TRUE(angle->setOption<RangedVector3>("AngleRange", {{0.0, 180.0, 1.0}}));
-    ASSERT_TRUE(angle->setOption("ExcludeSameMoleculeBC", true));
-    ASSERT_TRUE(iterator->addEdge({"ImportConfigurationTrajectory", "Configuration", "Angle", "Configuration"}));
+    ASSERT_TRUE(intraAngle->setOption<SpeciesSites>("SiteA", {{water->findSite("H1")}}));
+    ASSERT_TRUE(intraAngle->setOption<SpeciesSites>("SiteB", {{water->findSite("O")}}));
+    ASSERT_TRUE(intraAngle->setOption<SpeciesSites>("SiteC", {{water->findSite("H2")}}));
+    ASSERT_TRUE(intraAngle->setOption<Vector3>("AngleRange", {0.0, 180.0, 0.1}));
+    ASSERT_TRUE(iterator->addEdge({"ImportConfigurationTrajectory", "Configuration", "IntraAngle", "Configuration"}));
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        angle->rdfBC(), "B-C RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", Data1DImportFileFormat::Data1DImportFormat::XY},
-        2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(angle->angleABC(), "A-B-C angle",
-                                                {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
-                                                 Data1DImportFileFormat::Data1DImportFormat::XY},
-                                                6.0e-5));
+        intraAngle->intraAngleData(), "A(H1-O-H2)//Angle(ABC)",
+        {"dlpoly/water267-analysis/water-267-298K.01-02-03.ijk", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3},
+        6.0e-4));
 }
 
 } // namespace UnitTest
