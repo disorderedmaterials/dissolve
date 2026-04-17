@@ -16,12 +16,19 @@ Species::Species(std::string name) : name_(name), naturalIsotopologue_(this, "Na
 void Species::clear()
 {
     isotopologues_.clear();
+
     impropers_.clear();
     torsions_.clear();
     angles_.clear();
     bonds_.clear();
+
     atoms_.clear();
 
+    atomTypes_.clear();
+    commonBonds_.clear();
+    commonAngles_.clear();
+    commonTorsions_.clear();
+    commonImpropers_.clear();
 }
 
 // Copy basic information (atoms and intramolecular terms)
