@@ -143,14 +143,6 @@ const SpeciesAtom &Species::atom(int n) const
 const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
 
-// Set coordinates of specified atom
-void Species::setAtomCoordinates(SpeciesAtom *i, Vector3 r)
-{
-    assert(i);
-
-    i->setCoordinates(r);
-}
-
 // Set coordinates of specified atom (by index and individual coordinates)
 void Species::setAtomCoordinates(int id, double x, double y, double z) { atom(id).setCoordinates(x, y, z); }
 
@@ -332,14 +324,6 @@ int Species::simplifyAtomTypes()
     updateIsotopologues();
 
     return nModified;
-}
-
-// Set charge of specified atom
-void Species::setAtomCharge(SpeciesAtom *i, double q)
-{
-    assert(i);
-
-    i->setCharge(q);
 }
 
 // Return total charge of species from local/atomtype atomic charges

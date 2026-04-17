@@ -84,8 +84,6 @@ class Species : public Serialisable<>
     // Return a reference to the vector of atoms
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
-    // Set coordinates of specified atom
-    void setAtomCoordinates(SpeciesAtom *i, Vector3 r);
     // Set coordinates of specified atom (by index and individual coordinates)
     void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
@@ -126,8 +124,6 @@ class Species : public Serialisable<>
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters
     int simplifyAtomTypes();
-    // Set charge of specified atom
-    void setAtomCharge(SpeciesAtom *i, double q);
     // Return total charge of species from local/atomtype atomic charges
     double totalCharge(bool useAtomTypes) const;
     // Apply random noise to atoms
