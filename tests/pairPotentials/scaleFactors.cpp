@@ -56,10 +56,6 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         PairPotential::setCoulombTruncationScheme(PairPotential::NoCoulombTruncation);
 
         // Set up pair potentials
-        // auto *pp11 = std::get<2>(pairPotentials_.emplace_back(atC1_, atC1_,
-        //                                                       std::make_unique<PairPotential>(atC1_->name(), atC1_->name())))
-        //                  .get();
-        // pp11->setInteractionPotential(interactionPotential_);
         pairPotentials_.set(atC1_->name(), atC1_->name(), {atC1_->name(), atC1_->name(), interactionPotential_});
         pairPotentials_.get(atC1_->name(), atC1_->name()).setLocalChargeProduct(atC1_->charge() * atC1_->charge());
 
