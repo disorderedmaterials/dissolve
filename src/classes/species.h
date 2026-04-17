@@ -24,7 +24,7 @@ class CommonImproper;
 class Forcefield;
 
 // Species Definition
-class Species : public Serialisable<const CoreData &>
+class Species : public Serialisable<>
 {
     public:
     Species(std::string name = "Unnamed");
@@ -432,5 +432,5 @@ class Species : public Serialisable<const CoreData &>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node);
 };

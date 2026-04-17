@@ -24,8 +24,4 @@ const Species &SpeciesNode::species() const { return species_; }
 void SpeciesNode::serialiseInternal(SerialisedValue &target) const { species_.serialise("species", target); }
 
 // Deserialise any hidden content
-void SpeciesNode::deserialiseInternal(const SerialisedValue &node)
-{
-    CoreData coreData;
-    species_.deserialise(node.at("species"), coreData);
-}
+void SpeciesNode::deserialiseInternal(const SerialisedValue &node) { species_.deserialise(node.at("species")); }
