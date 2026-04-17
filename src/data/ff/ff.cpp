@@ -322,15 +322,17 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, C
 {
 
     // Check if an AtomType of the same name already exists - if it does, just use that one
-    auto at = coreData.findAtomType(ffa.name());
+    auto at = i.parent()->findAtomType(ffa.name());
     if (!at)
     {
-        at = coreData.addAtomType(i.Z());
-        at->setName(ffa.name());
+        at = i.parent()->addAtomType(i.Z(), ffa.name());
         Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
     }
     else
         Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
+
+    // Set type in the SpeciesAtom
+    i.setAtomType(at);
 
     // Copy parameters from the assigned atom type - we take only the required number for the specified shortRangeType.
     // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
@@ -343,9 +345,6 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, C
     // Set the charge on the SpeciesAtom if requested
     if (setSpeciesAtomCharges)
         i.setCharge(ffa.charge());
-
-    // Set type in the SpeciesAtom
-    i.setAtomType(at);
 }
 
 // Assign / generate bond term parameters

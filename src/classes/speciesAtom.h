@@ -21,10 +21,10 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Serialisable<CoreData &>
+class SpeciesAtom : public Serialisable<>
 {
     public:
-    SpeciesAtom() = default;
+    SpeciesAtom(Species *parent);
     ~SpeciesAtom() = default;
     SpeciesAtom(SpeciesAtom &source) = delete;
     SpeciesAtom(SpeciesAtom &&source) noexcept;
@@ -48,6 +48,8 @@ class SpeciesAtom : public Serialisable<CoreData &>
     };
 
     private:
+    // Parent Species
+    Species *parent_{nullptr};
     // Atomic element
     Elements::Element Z_{Elements::Unknown};
     // Coordinates
@@ -55,7 +57,7 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Charge (if contained in file)
     double charge_{0.0};
     // Assigned AtomType
-    std::shared_ptr<AtomType> atomType_{nullptr};
+    const AtomType *atomType_{nullptr};
     // Index in Species
     int index_{-1};
     // Whether the atom is currently selected
@@ -64,6 +66,8 @@ class SpeciesAtom : public Serialisable<CoreData &>
     Presence presence_{Presence::Physical};
 
     public:
+    // Return parent Species
+    Species *parent() const;
     // Set basic properties
     void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
     void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
@@ -80,9 +84,9 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Return charge of Atom
     double charge() const;
     // Set AtomType of Atom
-    void setAtomType(const std::shared_ptr<AtomType> &at);
+    void setAtomType(const AtomType *at);
     // Return AtomType of Atom
-    std::shared_ptr<AtomType> atomType() const;
+    const AtomType *atomType() const;
     // Set index (0->[N-1])
     void setIndex(int id);
     // Return index (0->[N-1])
@@ -216,5 +220,5 @@ class SpeciesAtom : public Serialisable<CoreData &>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData) override;
+    void deserialise(const SerialisedValue &node) override;
 };

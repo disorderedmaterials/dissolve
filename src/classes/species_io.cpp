@@ -46,7 +46,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     Messenger::print("\nParsing Species '{}'\n", name());
 
     Elements::Element Z;
-    std::shared_ptr<AtomType> at;
+    const AtomType *at;
     Isotopologue *iso;
     OptionalReferenceWrapper<SpeciesAngle> a;
     OptionalReferenceWrapper<SpeciesBond> b;
@@ -167,12 +167,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     at = nullptr;
                 else
                 {
-                    at = coreData.findAtomType(parser.argsv(6));
+                    at = findAtomType(parser.argsv(6));
                     if (!at)
                     {
                         Messenger::printVerbose("Creating AtomType '{}'...\n", parser.argsv(6));
-                        at = coreData.addAtomType(Z);
-                        at->setName(parser.argsv(6));
+                        at = addAtomType(Z, parser.argsv(6));
                     }
                 }
 
@@ -364,7 +363,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     std::string_view arg1 = DissolveSys::beforeChar(parser.argsv(n), '=');
                     std::string_view arg2 = DissolveSys::afterChar(parser.argsv(n), '=');
 
-                    at = coreData.findAtomType(arg1);
+                    at = findAtomType(arg1);
                     if (!at)
                     {
                         Messenger::error("Failed to find AtomType '{}', referred to in Isotopologue '{}', "
@@ -386,7 +385,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    iso->setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), A));
+                    iso->setAtomTypeIsotope(at, Sears91::isotope(at->Z(), A));
                 }
                 break;
             case (Species::SpeciesKeyword::NAngles):
@@ -407,9 +406,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     return Messenger::error("{} keyword must specified before the first atom definition.\n",
                                             keywords().keyword(Species::SpeciesKeyword::NAtoms));
                 atomVectorFixed = true;
-                atoms_.resize(parser.argi(1));
+                atoms_.clear();
+                atoms_.reserve(parser.argi(1));
                 for (auto i = 0; i < atoms_.size(); ++i)
-                    atoms_[i].setIndex(i);
+                    atoms_.emplace_back(this).setIndex(i);
                 break;
             case (Species::SpeciesKeyword::NBonds):
                 if (bondVectorFixed)

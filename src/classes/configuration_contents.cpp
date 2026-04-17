@@ -348,7 +348,7 @@ void Configuration::updateTypeIndexing()
     for (auto &atom : atoms_)
     {
         if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical))
-            atom.setConfigurationTypeIndex(typeMap[atom.speciesAtom()->atomType().get()]);
+            atom.setConfigurationTypeIndex(typeMap[atom.speciesAtom()->atomType()]);
         else
             atom.setConfigurationTypeIndex(AtomType::Ignore);
     }

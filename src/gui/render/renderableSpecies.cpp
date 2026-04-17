@@ -367,7 +367,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
     Matrix4 A;
 
     // Temporary SpeciesAtom
-    static SpeciesAtom j;
+    static SpeciesAtom j(nullptr);
     j.setZ(toElement);
     j.setCoordinates(toPoint);
 
@@ -416,7 +416,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vector3 fromPoint, Elem
     Matrix4 A;
 
     // Temporary SpeciesAtoms
-    static SpeciesAtom i, j;
+    static SpeciesAtom i(nullptr), j(nullptr);
     i.setZ(fromElement);
     i.setCoordinates(fromPoint);
     j.setZ(toElement);

@@ -69,7 +69,7 @@ class Species : public Serialisable<const CoreData &>
 
     public:
     // Add a new atom to the Species, returning its index
-    int addAtom(Elements::Element Z, Vector3 r, double q = 0.0, std::shared_ptr<AtomType> atomType = nullptr);
+    int addAtom(Elements::Element Z, Vector3 r, double q = 0.0, const AtomType *atomType = nullptr);
     // Remove the specified atom from the species
     void removeAtom(int index);
     // Remove set of atom indices
@@ -113,12 +113,13 @@ class Species : public Serialisable<const CoreData &>
     // Return total atomic mass of Species
     double mass() const;
     // Add new atom type to atom types
-    const std::shared_ptr<AtomType> addAtomType(Elements::Element Z, std::string_view name = "");
+    AtomType *addAtomType(Elements::Element Z, std::string_view name = "");
     // Find and return the named atom type
     AtomType *findAtomType(std::string_view name) const;
     // Return atom types in the species
     std::vector<std::shared_ptr<AtomType>> &atomTypes();
     const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
+    std::vector<const AtomType *> atomTypesRaw() const;
     // Calculate and return atom type populations
     KeyedVector<const AtomType *, int> atomTypePopulations() const;
     // Clear AtomType assignments for all atoms

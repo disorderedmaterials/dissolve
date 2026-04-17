@@ -232,15 +232,15 @@ void AddForcefieldDialogModel::finalise()
         if (typesSelectionOnly && (!original.isSelected()))
             continue;
 
-        // Copy AtomType
-        dissolve_->coreData().copyAtomType(modified, original);
+        // Copy AtomType TODO DISSOLVE2
+        // dissolve_->coreData().copyAtomType(modified, original);
 
-        // Overwrite existing parameters?
-        if (overwriteParametersCheck_)
-        {
-            original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
-            original.atomType()->setCharge(modified.atomType()->charge());
-        }
+        // Overwrite existing parameters?  TODO DISSOLVE2
+        // if (overwriteParametersCheck_)
+        // {
+        //     original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
+        //     original.atomType()->setCharge(modified.atomType()->charge());
+        // }
 
         // Copy charge on species atom
         original.setCharge(modified.charge());

@@ -20,10 +20,10 @@ class CoreData;
 /*
  * Isotopologue Definition
  */
-class Isotopologue : public Serialisable<const CoreData &>
+class Isotopologue : public Serialisable<>
 {
     public:
-    Isotopologue(std::string name = "");
+    Isotopologue(const Species *parent, std::string name = "");
     ~Isotopologue() = default;
 
     /*
@@ -36,8 +36,6 @@ class Isotopologue : public Serialisable<const CoreData &>
     std::string name_;
 
     public:
-    // Set parent Species
-    void setParent(const Species *parent);
     // Return parent Species
     const Species *parent() const;
     // Set name of Isotopologue
@@ -70,5 +68,5 @@ class Isotopologue : public Serialisable<const CoreData &>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    void deserialise(const SerialisedValue &node) override;
 };

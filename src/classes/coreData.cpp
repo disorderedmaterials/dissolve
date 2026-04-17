@@ -81,37 +81,6 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
     return *it;
 }
 
-// Remove any atom types that are unused across all species
-int CoreData::removeUnusedAtomTypes()
-{
-    // Create an atom type set over all species
-    KeyedVector<const AtomType *, int> speciesAtomTypes;
-    for (auto &sp : species_)
-        speciesAtomTypes.merge(sp->atomTypePopulations());
-
-    auto oldSize = atomTypes_.size();
-
-    atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
-                                    [&](const auto &at)
-                                    {
-                                        if (speciesAtomTypes.contains(at.get()))
-                                            return false;
-                                        else
-                                        {
-                                            Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
-                                            return true;
-                                        }
-                                    }),
-                     atomTypes_.end());
-
-    // Reassign AtomType indices (in case one or more have been added / removed)
-    auto count = 0;
-    for (const auto &at : atomTypes_)
-        at->setIndex(count++);
-
-    return oldSize - atomTypes_.size();
-}
-
 // Clear all atom types
 void CoreData::clearAtomTypes() { atomTypes_.clear(); }
 
@@ -408,29 +377,6 @@ Species *CoreData::findSpecies(std::string_view name) const
     }
 }
 
-// Copy AtomType, creating a new one if necessary
-void CoreData::copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom)
-{
-    // Check for no AtomType being set
-    if (!sourceAtom.atomType())
-    {
-        destAtom.setAtomType(nullptr);
-        return;
-    }
-
-    // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-    auto at = findAtomType(sourceAtom.atomType()->name());
-    if (!at)
-    {
-        at = addAtomType(sourceAtom.Z());
-        at->setName(sourceAtom.atomType()->name());
-        at->interactionPotential() = sourceAtom.atomType()->interactionPotential();
-        at->setCharge(sourceAtom.atomType()->charge());
-    }
-
-    destAtom.setAtomType(at);
-}
-
 // Copy intramolecular interaction parameters, adding master term if necessary
 void CoreData::copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest)
 {
@@ -501,6 +447,14 @@ Species *CoreData::copySpecies(const Species *species)
     if (species->box()->type() != Box::BoxType::NonPeriodic)
         newSpecies->createBox(species->box()->axisLengths(), species->box()->axisAngles());
 
+    // Duplicate atom types
+    for (auto &at : species->atomTypes())
+    {
+        // Create a new atom type and copy the data of the other
+        auto newAt = newSpecies->addAtomType(at->Z());
+        *newAt = *at;
+    }
+
     // Duplicate atoms
     for (auto &i : species->atoms())
     {
@@ -509,8 +463,8 @@ Species *CoreData::copySpecies(const Species *species)
         if (i.isSelected())
             newSpecies->selectAtom(id);
 
-        // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-        copyAtomType(i, newSpecies->atom(id));
+        // Find and assign the atom type
+        newSpecies->atom(id).setAtomType(newSpecies->findAtomType(i.atomType()->name()));
     }
 
     // Duplicate bonds
@@ -738,7 +692,7 @@ void CoreData::removeReferencesTo(std::shared_ptr<AtomType> data)
     {
         for (auto &atom : species->atoms())
         {
-            if (atom.atomType() == data)
+            if (atom.atomType() == data.get())
             {
                 atom.setAtomType(nullptr);
             }

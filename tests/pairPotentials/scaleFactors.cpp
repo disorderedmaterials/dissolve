@@ -15,27 +15,27 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
     PairPotentialsScaleFactorsTest()
     {
         // Set up atom types
-        atC1_ = coreData_.addAtomType(Elements::C);
+        atC1_ = species_.addAtomType(Elements::C);
         atC1_->setName("C1");
         atC1_->setCharge(-0.1);
         atC1_->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, ljParameters);
-        atC2_ = coreData_.addAtomType(Elements::C);
+        atC2_ = species_.addAtomType(Elements::C);
         atC2_->setCharge(0.1);
         atC2_->setName("C2");
         atC2_->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, ljParameters);
 
         // Create Species
-        fourSixthsBenzene_.addAtom(Elements::C, {-1.390000, 0.000000, 0.000000}, -0.2, atC1_);
-        fourSixthsBenzene_.addAtom(Elements::C, {-0.695000, 1.203775, 0.000000}, 0.2, atC2_);
-        fourSixthsBenzene_.addAtom(Elements::C, {0.695000, 1.203775, 0.000000}, 0.2, atC2_);
-        fourSixthsBenzene_.addAtom(Elements::C, {1.390000, 0.000000, 0.000000}, -0.2, atC1_);
-        fourSixthsBenzene_.addMissingBonds();
-        torsion_ = fourSixthsBenzene_.addTorsion(0, 1, 2, 3);
-        fourSixthsBenzene_.setUpScaledInteractions();
+        species_.addAtom(Elements::C, {-1.390000, 0.000000, 0.000000}, -0.2, atC1_);
+        species_.addAtom(Elements::C, {-0.695000, 1.203775, 0.000000}, 0.2, atC2_);
+        species_.addAtom(Elements::C, {0.695000, 1.203775, 0.000000}, 0.2, atC2_);
+        species_.addAtom(Elements::C, {1.390000, 0.000000, 0.000000}, -0.2, atC1_);
+        species_.addMissingBonds();
+        torsion_ = species_.addTorsion(0, 1, 2, 3);
+        species_.setUpScaledInteractions();
 
         // Create a molecule based on the species
-        molecule_.setSpecies(&fourSixthsBenzene_);
-        for (auto &&[molAtom, spAtom] : zip(molecule_.localAtoms(), fourSixthsBenzene_.atoms()))
+        molecule_.setSpecies(&species_);
+        for (auto &&[molAtom, spAtom] : zip(molecule_.localAtoms(), species_.atoms()))
         {
             molAtom.setCoordinates(spAtom.r());
             molAtom.setConfigurationTypeIndex(spAtom.atomType()->index());
@@ -56,27 +56,20 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         PairPotential::setCoulombTruncationScheme(PairPotential::NoCoulombTruncation);
 
         // Set up pair potentials
-        auto *pp11 = std::get<2>(pairPotentials_.emplace_back(atC1_, atC1_,
-                                                              std::make_unique<PairPotential>(atC1_->name(), atC1_->name())))
-                         .get();
-        pp11->setInteractionPotential(interactionPotential_);
-        pp11->setLocalChargeProduct(atC1_->charge() * atC1_->charge());
-        pp11->tabulate();
-        auto *pp12 = std::get<2>(pairPotentials_.emplace_back(atC1_, atC2_,
-                                                              std::make_unique<PairPotential>(atC1_->name(), atC2_->name())))
-                         .get();
-        pp12->setInteractionPotential(interactionPotential_);
-        pp12->setLocalChargeProduct(atC1_->charge() * atC2_->charge());
-        pp12->tabulate();
-        auto *pp22 = std::get<2>(pairPotentials_.emplace_back(atC2_, atC2_,
-                                                              std::make_unique<PairPotential>(atC2_->name(), atC2_->name())))
-                         .get();
-        pp22->setInteractionPotential(interactionPotential_);
-        pp22->setLocalChargeProduct(atC2_->charge() * atC2_->charge());
-        pp22->tabulate();
+        pairPotentials_.set(atC1_->name(), atC1_->name(), {atC1_->name(), atC1_->name(), interactionPotential_});
+        pairPotentials_.get(atC1_->name(), atC1_->name()).setLocalChargeProduct(atC1_->charge() * atC1_->charge());
+
+        pairPotentials_.set(atC1_->name(), atC2_->name(), {atC1_->name(), atC2_->name(), interactionPotential_});
+        pairPotentials_.get(atC1_->name(), atC2_->name()).setLocalChargeProduct(atC1_->charge() * atC2_->charge());
+
+        pairPotentials_.set(atC2_->name(), atC2_->name(), {atC2_->name(), atC2_->name(), interactionPotential_});
+        pairPotentials_.get(atC2_->name(), atC2_->name()).setLocalChargeProduct(atC2_->charge() * atC2_->charge());
+
+        for (auto &potential : std::views::values(pairPotentials_))
+            potential.tabulate();
 
         // Create PotentialMap
-        potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_);
+        potentialMap_ = PotentialMap(species_.atomTypesRaw(), pairPotentials_);
     }
     // Return reference energy at distance r given specified charge product and scalings
     double referenceEnergy(double r, double chargeProduct, double elecScale = 1.0, double srScale = 1.0)
@@ -140,11 +133,10 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
     // Double value test tolerance
     static constexpr auto testTolerance_ = 1.0e-8;
 
-    CoreData coreData_;
-    std::shared_ptr<AtomType> atC1_, atC2_;
-    std::vector<PairPotential::Definition> pairPotentials_;
+    AtomType *atC1_{nullptr}, *atC2_{nullptr};
+    DoubleKeyedMap<PairPotential> pairPotentials_;
     PotentialMap potentialMap_;
-    Species fourSixthsBenzene_;
+    Species species_;
     SpeciesTorsion torsion_;
     LocalMolecule molecule_;
 
@@ -157,8 +149,8 @@ TEST_F(PairPotentialsScaleFactorsTest, SpeciesEnergyWithAtomTypeCharges)
 {
     setUpPotentials(true);
 
-    auto &i = fourSixthsBenzene_.atom(0);
-    auto &j = fourSixthsBenzene_.atom(3);
+    auto &i = species_.atom(0);
+    auto &j = species_.atom(3);
 
     testScalings(&i, &j, (j.r() - i.r()).magnitude(), atC1_->charge() * atC1_->charge());
 }
@@ -167,8 +159,8 @@ TEST_F(PairPotentialsScaleFactorsTest, SpeciesEnergyWithSpeciesCharges)
 {
     setUpPotentials(false);
 
-    auto &i = fourSixthsBenzene_.atom(0);
-    auto &j = fourSixthsBenzene_.atom(3);
+    auto &i = species_.atom(0);
+    auto &j = species_.atom(3);
 
     testScalings(&i, &j, (j.r() - i.r()).magnitude(), i.charge() * j.charge());
 }
@@ -191,9 +183,8 @@ TEST_F(PairPotentialsScaleFactorsTest, MoleculeEnergyWithSpeciesCharges)
     auto &i = molecule_.localAtoms()[0];
     auto &j = molecule_.localAtoms()[3];
 
-    testScalings(i, j, (j.r() - i.r()).magnitude(), fourSixthsBenzene_.atom(0).charge() * fourSixthsBenzene_.atom(3).charge());
-    testAnalyticScalings(i, j, (j.r() - i.r()).magnitude(),
-                         fourSixthsBenzene_.atom(0).charge() * fourSixthsBenzene_.atom(3).charge());
+    testScalings(i, j, (j.r() - i.r()).magnitude(), species_.atom(0).charge() * species_.atom(3).charge());
+    testAnalyticScalings(i, j, (j.r() - i.r()).magnitude(), species_.atom(0).charge() * species_.atom(3).charge());
 }
 
 } // namespace UnitTest

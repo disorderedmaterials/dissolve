@@ -797,8 +797,8 @@ class SmallMolecules
         n2_.setName("N2");
         n2_.addAtom(Elements::N, {});
         n2_.addAtom(Elements::N, {1.2, 0.0, 0.0});
-        n2_.atom(0).setAtomType(atN_);
-        n2_.atom(1).setAtomType(atN_);
+        n2_.atom(0).setAtomType(atN_.get());
+        n2_.atom(1).setAtomType(atN_.get());
         n2_.addBond(0, 1);
         n2A15_ = n2_.addIsotopologue("N15");
         n2A15_->setAtomTypeIsotope(atN_.get(), Sears91::N_15);
@@ -807,8 +807,8 @@ class SmallMolecules
         h2_.setName("H2");
         h2_.addAtom(Elements::H, {});
         h2_.addAtom(Elements::H, {0.7, 0.0, 0.0});
-        h2_.atom(0).setAtomType(atH1_);
-        h2_.atom(1).setAtomType(atH1_);
+        h2_.atom(0).setAtomType(atH1_.get());
+        h2_.atom(1).setAtomType(atH1_.get());
         h2_.addBond(0, 1);
         d2_ = h2_.addIsotopologue("D2");
         d2_->setAtomTypeIsotope(atH1_.get(), Sears91::H_2);
@@ -818,9 +818,9 @@ class SmallMolecules
         h2o_.addAtom(Elements::H, {1.0, 0.0, 0.0});
         h2o_.addAtom(Elements::O, {});
         h2o_.addAtom(Elements::H, {cos(DissolveMath::toRadians(107.4)), sin(DissolveMath::toRadians(107.4)), 0.0});
-        h2o_.atom(0).setAtomType(atHW_);
-        h2o_.atom(1).setAtomType(atOW_);
-        h2o_.atom(2).setAtomType(atHW_);
+        h2o_.atom(0).setAtomType(atHW_.get());
+        h2o_.atom(1).setAtomType(atOW_.get());
+        h2o_.atom(2).setAtomType(atHW_.get());
         h2o_.addBond(0, 1);
         h2o_.addBond(1, 2);
         h2o_.addAngle(0, 1, 2);

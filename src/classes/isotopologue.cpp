@@ -7,14 +7,11 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue(std::string name) : name_(name) {}
+Isotopologue::Isotopologue(const Species *parent, std::string name) : parent_(parent), name_(name) {}
 
 /*
  * Basic Information
  */
-
-// Set parent Species
-void Isotopologue::setParent(const Species *parent) { parent_ = parent; }
 
 // Return parent Species
 const Species *Isotopologue::parent() const { return parent_; }
@@ -74,13 +71,14 @@ void Isotopologue::serialise(std::string tag, SerialisedValue &target) const
         result[type->name().data()] = Sears91::A(isotope);
 }
 
-void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)
+// Read values from a serialisable value
+void Isotopologue::deserialise(const SerialisedValue &node)
 {
     for (auto &[name, value] : node.as_table())
     {
         if (value.is_string())
             continue;
-        auto at = coreData.findAtomType(name);
-        setAtomTypeIsotope(at.get(), Sears91::isotope(at->Z(), value.as_integer()));
+        auto at = parent_->findAtomType(name);
+        setAtomTypeIsotope(at, Sears91::isotope(at->Z(), value.as_integer()));
     }
 }

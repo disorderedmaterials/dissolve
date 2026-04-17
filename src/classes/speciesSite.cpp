@@ -323,7 +323,7 @@ bool SpeciesSite::setDynamicElements(const std::vector<Elements::Element> &els)
 const std::vector<Elements::Element> SpeciesSite::dynamicElements() const { return dynamicElements_; }
 
 // Add target atom type for selection as sites
-bool SpeciesSite::addDynamicAtomType(const std::shared_ptr<AtomType> &at)
+bool SpeciesSite::addDynamicAtomType(const AtomType *at)
 {
     if (type_ != SiteType::Dynamic)
         return Messenger::error("Setting atom type targets for a non-dynamic site is not permitted.\n");
@@ -337,16 +337,16 @@ bool SpeciesSite::addDynamicAtomType(const std::shared_ptr<AtomType> &at)
 }
 
 // Set target atom types for selection as sites
-bool SpeciesSite::setDynamicAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types)
+bool SpeciesSite::setDynamicAtomTypes(const std::vector<const AtomType *> &types)
 {
     dynamicAtomTypes_.clear();
 
-    return std::all_of(types.begin(), types.end(), [&](const auto &at) { return addDynamicAtomType(at); }) &&
+    return std::all_of(types.begin(), types.end(), [&](const auto at) { return addDynamicAtomType(at); }) &&
            generateInstances();
 }
 
 // Return atom types for selection as sites
-const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::dynamicAtomTypes() const { return dynamicAtomTypes_; }
+const std::vector<const AtomType *> &SpeciesSite::dynamicAtomTypes() const { return dynamicAtomTypes_; }
 
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
@@ -569,7 +569,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
             case (SpeciesSite::AtomTypeKeyword):
                 for (auto n = 1; n < parser.nArgs(); ++n)
                 {
-                    auto at = coreData.findAtomType(parser.args(n));
+                    auto at = parent_->findAtomType(parser.args(n));
                     if (!at || !addDynamicAtomType(at))
                     {
                         Messenger::error("Failed to add target atom type for site '{}'.\n", name());
@@ -775,7 +775,7 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
     }
 }
 
-void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesSite::deserialise(const SerialisedValue &node)
 {
     type_ = siteTypes().deserialise(toml::find_or(node, "type", "static"));
 
@@ -788,7 +788,7 @@ void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
             toVector(node, "elements",
                      [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
             toVector(node, "atomTypes",
-                     [&, this](const auto &at) { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string()))); });
+                     [&, this](const auto &at) { addDynamicAtomType(parent_->findAtomType(std::string(at.as_string()))); });
 
             break;
         case SiteType::Fragment:

@@ -109,17 +109,17 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
             return false;
         case 1:
         {
-            auto population = species_->atomTypePopulations().vector();
             auto name = value.toString().toStdString();
-            auto it = std::find_if(population.begin(), population.end(), [&name](auto &x) { return x.first->name() == name; });
-            if (it == population.end())
+            auto it = std::find_if(species_->atomTypes().begin(), species_->atomTypes().end(),
+                                   [&name](auto &at) { return at->name() == name; });
+            if (it == species_->atomTypes().end())
             {
                 auto at = species_->addAtomType(item.Z());
                 at->setName(value.toString().toStdString());
                 item.setAtomType(at);
             }
             else
-                item.setAtomType(std::const_pointer_cast<AtomType>(it->first->shared_from_this()));
+                item.setAtomType(it->get());
         }
         break;
         case 2:

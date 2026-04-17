@@ -7,13 +7,9 @@
 #include "data/ff/library.h"
 #include "data/isotopes.h"
 
-Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false)
+Species::Species(std::string name) : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
 {
     box_ = std::make_unique<SingleImageBox>();
-
-    // Set up natural Isotopologue
-    naturalIsotopologue_.setName("Natural");
-    naturalIsotopologue_.setParent(this);
 }
 
 // Clear Data
@@ -254,6 +250,7 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
     auto &result = target[tag];
     result["name"] = name_;
 
+    Serialisable::fromVectorToTable(atomTypes_, "atomTypes", result);
     Serialisable::fromVector<>(atoms_, "atoms", result);
     Serialisable::fromVector<>(bonds_, "bonds", result);
     Serialisable::fromVector<>(angles_, "angles", result);
@@ -266,8 +263,10 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    Serialisable::toVector(node, "atoms", [this, &coreData](const SerialisedValue &atom)
-                           { atoms_.emplace_back().deserialise(atom, coreData); });
+    Serialisable::toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
+                        { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
+
+    Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
 
     Serialisable::toVector(
         node, "bonds",
@@ -304,13 +303,9 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                 .deserialise(torsion, coreData);
         });
 
-    Serialisable::toMap(node, "isotopologues",
-                        [this, &coreData](const std::string &name, const SerialisedValue &iso)
-                        {
-                            isotopologues_.emplace_back(std::make_unique<Isotopologue>())->setName(name);
-                            isotopologues_.back()->deserialise(iso, coreData);
-                        });
+    Serialisable::toMap(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
+                        { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
 
     Serialisable::toMap(node, "sites", [this, &coreData](const std::string &name, const SerialisedValue &site)
-                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site, coreData); });
+                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
 }

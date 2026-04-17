@@ -17,8 +17,7 @@ const Isotopologue *Species::naturalIsotopologue() const { return &naturalIsotop
 // Add a new Isotopologue to this species
 Isotopologue *Species::addIsotopologue(std::string_view baseName)
 {
-    auto &iso = isotopologues_.emplace_back(std::make_unique<Isotopologue>());
-    iso->setParent(this);
+    auto &iso = isotopologues_.emplace_back(std::make_unique<Isotopologue>(this));
     iso->setName(DissolveSys::uniqueName(baseName, isotopologues_, [&](const auto &i) { return iso == i ? "" : i->name(); }));
     iso->update();
 

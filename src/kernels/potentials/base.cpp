@@ -31,19 +31,13 @@ const std::vector<int> &ExternalPotential::targetAtomIndices() const { return ta
 ExternalPotentialTypes::ExternalPotentialType ExternalPotential::type() const { return type_; }
 
 // Atom types targeted by the potential
-void ExternalPotential::setTargetAtomTypes(const std::vector<std::shared_ptr<AtomType>> &targets)
-{
-    targetAtomTypes_ = targets;
-}
+void ExternalPotential::setTargetAtomTypes(const std::vector<const AtomType *> &targets) { targetAtomTypes_ = targets; }
 
 // Add target atom type
-void ExternalPotential::addTargetAtomType(std::shared_ptr<AtomType> target)
-{
-    targetAtomTypes_.emplace_back(std::move(target));
-}
+void ExternalPotential::addTargetAtomType(const AtomType *target) { targetAtomTypes_.emplace_back(target); }
 
 // Return atom types targeted by the potential
-const std::vector<std::shared_ptr<AtomType>> &ExternalPotential::targetAtomTypes() const { return targetAtomTypes_; }
+const std::vector<const AtomType *> &ExternalPotential::targetAtomTypes() const { return targetAtomTypes_; }
 
 // Species targeted by the potential
 void ExternalPotential::setTargetSpecies(const std::vector<const Species *> &targets) { targetSpecies_ = targets; }
