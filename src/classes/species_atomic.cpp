@@ -35,7 +35,7 @@ int Species::addAtom(Elements::Element Z, Vector3 r, double q, const AtomType *a
     i.set(Z, r.x, r.y, r.z, q);
     i.setIndex(atoms_.size() - 1);
     i.setAtomType(atomType);
-    ++version_;
+
     return i.index();
 }
 
@@ -73,8 +73,6 @@ void Species::removeAtom(int index)
     auto atomIt = std::find_if(atoms_.begin(), atoms_.end(), [&](const auto &p) { return i == &p; });
     atoms_.erase(atomIt);
     renumberAtoms();
-
-    ++version_;
 }
 
 // Remove set of atom indices
@@ -107,8 +105,6 @@ void Species::removeAtoms(std::vector<int> indices)
                                  { return std::find(indices.begin(), indices.end(), i.index()) != indices.end(); });
     atoms_.erase(atomIt, atoms_.end());
     renumberAtoms();
-
-    ++version_;
 }
 
 // Return the number of atoms in the species (or only those with the specified presence)
@@ -153,8 +149,6 @@ void Species::setAtomCoordinates(SpeciesAtom *i, Vector3 r)
     assert(i);
 
     i->setCoordinates(r);
-
-    ++version_;
 }
 
 // Set coordinates of specified atom (by index and individual coordinates)
@@ -172,8 +166,6 @@ void Species::transmuteAtom(int index, Elements::Element newZ)
     // Remove any existing AtomType assignment
     i.setAtomType(nullptr);
     i.setZ(newZ);
-
-    ++version_;
 }
 
 // Clear current Atom selection
@@ -348,8 +340,6 @@ void Species::setAtomCharge(SpeciesAtom *i, double q)
     assert(i);
 
     i->setCharge(q);
-
-    ++version_;
 }
 
 // Return total charge of species from local/atomtype atomic charges

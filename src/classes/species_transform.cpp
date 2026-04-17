@@ -32,8 +32,6 @@ void Species::setCentre(const Box *box, const Vector3 newCentre)
             newR = box->minimumVector(i.r(), cog) + newCentre;
             i.setCoordinates(newR);
         }
-
-    ++version_;
 }
 
 // Centre coordinates at origin
@@ -45,6 +43,4 @@ void Species::centreAtOrigin()
     centre /= atoms_.size();
     for (auto &i : atoms_)
         i.translateCoordinates(-centre);
-
-    ++version_;
 }

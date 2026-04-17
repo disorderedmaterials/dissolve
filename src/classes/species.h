@@ -40,8 +40,6 @@ class Species : public Serialisable<>
     private:
     // Name of the Species
     std::string name_;
-    // Version of the Species
-    VersionCounter version_;
 
     public:
     // Set name of the Species
@@ -52,8 +50,6 @@ class Species : public Serialisable<>
     bool checkSetUp() const;
     // Print Species information
     void print() const;
-    // Return version
-    int version() const;
 
     /*
      * Atomic Information

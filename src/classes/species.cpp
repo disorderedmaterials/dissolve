@@ -22,7 +22,6 @@ void Species::clear()
     bonds_.clear();
     atoms_.clear();
 
-    ++version_;
 }
 
 // Copy basic information (atoms and intramolecular terms)
@@ -197,9 +196,6 @@ void Species::print() const
                              improper.interactionPotential().parametersAsString());
     }
 }
-
-// Return version
-int Species::version() const { return version_; }
 
 /*
  * Forcefield
