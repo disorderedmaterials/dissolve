@@ -346,8 +346,6 @@ class Species : public Serialisable<>
     bool hasIsotopologue(const Isotopologue *iso) const;
     // Search for Isotopologue by name
     const Isotopologue *findIsotopologue(std::string_view name) const;
-    // Return index of specified Isotopologue
-    int indexOfIsotopologue(const Isotopologue *iso) const;
 
     /*
      * Sites
