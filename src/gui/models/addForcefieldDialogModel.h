@@ -4,9 +4,9 @@
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
+#include "gui/models/commonTermTreeModel.h"
 #include "gui/models/ffSortFilterModel.h"
 #include "gui/models/forcefieldModel.h"
-#include "gui/models/commonTermTreeModel.h"
 #include "main/dissolve.h"
 #include <QObject>
 #include <memory>

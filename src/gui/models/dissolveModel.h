@@ -4,8 +4,8 @@
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
-#include "gui/models/configurationModel.h"
 #include "gui/models/commonTermTreeModel.h"
+#include "gui/models/configurationModel.h"
 #include "gui/models/moduleLayersModel.h"
 #include "main/dissolve.h"
 #include "nodes/graph.h"
