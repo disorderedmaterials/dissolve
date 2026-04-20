@@ -130,15 +130,14 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     // Set model and signals for the common terms tree
     atomTypes_.setQueryFunction([this](const auto type)
                                 { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
-    // commons_->setBondQueryFunction([this](std::string_view name)
-    //                                { return dissolve_->coreData().getCommonBond(name).has_value(); });
-    // commons_->setAngleQueryFunction([this](std::string_view name)
-    //                                 { return dissolve_->coreData().getCommonAngle(name).has_value(); });
-    // commons_->setTorsionQueryFunction([this](std::string_view name)
-    //                                   { return dissolve_->coreData().getCommonTorsion(name).has_value(); });
-    // commons_->setImproperQueryFunction([this](std::string_view name)
-    //                                    { return dissolve_->coreData().getCommonImproper(name).has_value(); });
-    // TODO DISSOLVE2
+    commons_->setBondQueryFunction([this](std::string_view name, Species *sp)
+                                   { return sp->getCommonBond(name).has_value(); });
+    commons_->setAngleQueryFunction([this](std::string_view name, Species *sp)
+                                    { return sp->getCommonAngle(name).has_value(); });
+    commons_->setTorsionQueryFunction([this](std::string_view name, Species *sp)
+                                      { return sp->getCommonTorsion(name).has_value(); });
+    commons_->setImproperQueryFunction([this](std::string_view name, Species *sp)
+                                       { return sp->getCommonImproper(name).has_value(); });
 }
 
 // Supply the species to operate on

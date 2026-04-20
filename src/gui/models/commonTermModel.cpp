@@ -51,7 +51,7 @@ QVariant CommonTermModel::data(const QModelIndex &index, int role) const
         return {};
 
     if (role == CommonTermModelData::Roles::Query && queryFunction_)
-        return queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString());
+        return species_ && queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString(), species_);
 
     if (role == Qt::DecorationRole && queryFunction_)
         return QIcon(queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString())

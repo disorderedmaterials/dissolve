@@ -40,7 +40,7 @@ class CommonTermModel : public QAbstractTableModel
     // Source Species
     Species *species_{nullptr};
     // Icon return function
-    std::function<bool(std::string_view termName)> queryFunction_;
+    std::function<bool(std::string_view termName, Species* sp)> queryFunction_;
 
     public:
     // Return model data, by type, for specified term index
