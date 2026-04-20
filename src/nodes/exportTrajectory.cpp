@@ -28,5 +28,9 @@ std::string_view ExportTrajectoryNode::summary() const
 NodeConstants::ProcessResult ExportTrajectoryNode::process()
 {
     TrajectoryExportFileFormat format(filePath_, format_);
-    return NodeConstants::ProcessResult::Failed;
+    if (!format.hasFilename())
+        return NodeConstants::ProcessResult::Failed;
+    if (!format.exportData(configuration_))
+        return NodeConstants::ProcessResult::Failed;
+    return NodeConstants::ProcessResult::Success;
 }
