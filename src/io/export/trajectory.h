@@ -21,6 +21,8 @@ class TrajectoryExportFileFormat : public FileAndFormat
     TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = TrajectoryExportFormat::XYZ);
     ~TrajectoryExportFileFormat() override = default;
 
+    static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> trajectoryExportFileFormats();
+
     /*
      * Formats
      */
@@ -46,3 +48,6 @@ class TrajectoryExportFileFormat : public FileAndFormat
     // Append trajectory using current filename and format
     bool exportData(Configuration *cfg);
 };
+
+EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>
+    getEnumOptions(TrajectoryExportFileFormat::TrajectoryExportFormat);

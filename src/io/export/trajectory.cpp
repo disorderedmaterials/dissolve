@@ -11,7 +11,12 @@
 TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename, TrajectoryExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
+    formats_ = trajectoryExportFileFormats();
+}
+
+EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExportFileFormat::trajectoryExportFileFormats()
+{
+    return EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
         "TrajectoryExportFileFormat", {{TrajectoryExportFormat::XYZ, "xyz", "XYZ Trajectory"},
                                        {TrajectoryExportFormat::XYZExtended, "xyzExt", "XYZ Trajectory Extended"}});
 }
@@ -101,4 +106,10 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
     parser.closeFiles();
 
     return frameResult;
+}
+
+EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>
+getEnumOptions(TrajectoryExportFileFormat::TrajectoryExportFormat unusued_)
+{
+    return TrajectoryExportFileFormat::trajectoryExportFileFormats();
 }
