@@ -5,7 +5,7 @@
 
 CommonTermModel::CommonTermModel(Species *species) : species_(species) {}
 
-void CommonTermModel::setQueryFunction(std::function<bool(std::string_view termName)> func)
+void CommonTermModel::setQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
 {
     queryFunction_ = std::move(func);
 }
@@ -51,12 +51,14 @@ QVariant CommonTermModel::data(const QModelIndex &index, int role) const
         return {};
 
     if (role == CommonTermModelData::Roles::Query && queryFunction_)
-        return species_ && queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString(), species_);
+        return species_ &&
+               queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString(), species_);
 
     if (role == Qt::DecorationRole && queryFunction_)
-        return QIcon(queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString())
-                         ? ":/general/icons/warn.svg"
-                         : ":/general/icons/true.svg");
+        return QIcon(
+            queryFunction_(getTermData(index.row(), CommonTermModelData::DataType::Name).toString().toStdString(), species_)
+                ? ":/general/icons/warn.svg"
+                : ":/general/icons/true.svg");
 
     if (role == Qt::DisplayRole || role == Qt::EditRole)
         return getTermData(index.row(), static_cast<CommonTermModelData::DataType>(index.column()));

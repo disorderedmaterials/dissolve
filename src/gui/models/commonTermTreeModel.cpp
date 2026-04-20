@@ -25,22 +25,22 @@ CommonTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
     }
 }
 
-void MasterTermTreeModel::setBondQueryFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setBondQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
 {
     bondModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setAngleQueryFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setAngleQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
 {
     angleModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setTorsionQueryFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setTorsionQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
 {
     torsionModel_.setQueryFunction(std::move(func));
 }
 
-void MasterTermTreeModel::setImproperQueryFunction(std::function<bool(std::string_view termName)> func)
+void MasterTermTreeModel::setImproperQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func)
 {
     improperModel_.setQueryFunction(std::move(func));
 }

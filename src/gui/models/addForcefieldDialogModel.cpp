@@ -130,8 +130,7 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     // Set model and signals for the common terms tree
     atomTypes_.setQueryFunction([this](const auto type)
                                 { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
-    commons_->setBondQueryFunction([this](std::string_view name, Species *sp)
-                                   { return sp->getCommonBond(name).has_value(); });
+    commons_->setBondQueryFunction([this](std::string_view name, Species *sp) { return sp->getCommonBond(name).has_value(); });
     commons_->setAngleQueryFunction([this](std::string_view name, Species *sp)
                                     { return sp->getCommonAngle(name).has_value(); });
     commons_->setTorsionQueryFunction([this](std::string_view name, Species *sp)
