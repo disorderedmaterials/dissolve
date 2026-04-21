@@ -4,8 +4,8 @@
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
+#include "gui/models/commonTermTreeModel.h"
 #include "gui/models/configurationModel.h"
-#include "gui/models/masterTermTreeModel.h"
 #include "gui/models/moduleLayersModel.h"
 #include "main/dissolve.h"
 #include "nodes/graph.h"
@@ -19,13 +19,13 @@ class DissolveModel : public QObject
     // The Atom Type Model
     Q_PROPERTY(AtomTypeModel *atomTypesModel READ atomTypesModel NOTIFY atomTypesChanged)
     // The Master Bond Model
-    Q_PROPERTY(const MasterBondModel *masterBondsModel READ masterBondsModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonBondModel *commonBondsModel READ commonBondsModel NOTIFY commonsChanged)
     // The Master Angle Model
-    Q_PROPERTY(const MasterAngleModel *masterAnglesModel READ masterAnglesModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonAngleModel *commonAnglesModel READ commonAnglesModel NOTIFY commonsChanged)
     // The Master Torsion Model
-    Q_PROPERTY(const MasterTorsionModel *masterTorsionsModel READ masterTorsionsModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonTorsionModel *commonTorsionsModel READ commonTorsionsModel NOTIFY commonsChanged)
     // The Master Improper Model
-    Q_PROPERTY(const MasterImproperModel *masterImpropersModel READ masterImpropersModel NOTIFY mastersChanged)
+    Q_PROPERTY(const CommonImproperModel *commonImpropersModel READ commonImpropersModel NOTIFY commonsChanged)
     // The Configuration Model
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
     // The ModuleLayers Model
@@ -39,7 +39,7 @@ class DissolveModel : public QObject
     // The Atom Type Model
     AtomTypeModel atomTypes_;
     // Master terms model
-    std::unique_ptr<MasterTermTreeModel> masters_ = nullptr;
+    std::unique_ptr<MasterTermTreeModel> commons_ = nullptr;
     ConfigurationModel configurationModel_;
     ModuleLayersModel moduleLayersModel_;
 
@@ -57,7 +57,7 @@ class DissolveModel : public QObject
     // The Atom Types model has been replaced
     void atomTypesChanged();
     // The Master terms models have been replaced
-    void mastersChanged();
+    void commonsChanged();
 
     // Species model has been replaced
     void speciesChanged();
@@ -79,21 +79,21 @@ class DissolveModel : public QObject
     // The number of atom types
     int nAtomTypes();
     // The Master Bond Model
-    const MasterBondModel *masterBondsModel() const;
-    // The number of master bonds
-    int nMasterBonds();
+    const CommonBondModel *commonBondsModel() const;
+    // The number of common bonds
+    int nCommonBonds();
     // The Master Angle Model
-    const MasterAngleModel *masterAnglesModel() const;
-    // The number of master angles
-    int nMasterAngles();
+    const CommonAngleModel *commonAnglesModel() const;
+    // The number of common angles
+    int nCommonAngles();
     // The Master Torsion Model
-    const MasterTorsionModel *masterTorsionsModel() const;
-    // The number of master torsions
-    int nMasterTorsions();
+    const CommonTorsionModel *commonTorsionsModel() const;
+    // The number of common torsions
+    int nCommonTorsions();
     // The Master Improper Model
-    const MasterImproperModel *masterImpropersModel() const;
-    // The number of master impropers
-    int nMasterImpropers();
+    const CommonImproperModel *commonImpropersModel() const;
+    // The number of common impropers
+    int nCommonImpropers();
     // The Configurations Model
     ConfigurationModel *configurationsModel();
     // The ModuleLayers Model

@@ -5,13 +5,6 @@
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'OA--SA-'  Harmonic  5239.900     1.438
-  Bond  'OHA--SA-'  Harmonic  2328.300     1.634
-  Bond  'HSA--OHA-'  Harmonic  4561.100     0.949
-  Angle  'OA--SA--OA-'  Harmonic   456.970   114.760
-  Angle  'OA--SA--OHA-'  Harmonic   814.480   103.450
-  Angle  'HSA--OHA--SA-'  Harmonic   398.120   106.390
-  Torsion  'HSA--OHA--SA--OA-'  Cos3     0.000     0.000     0.000
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -26,6 +19,14 @@ Species 'HSO4-'
   Atom    4    O  -5.139403e-01  1.722867e-01  1.561603e+00  'OA-'  -6.700000e-01
   Atom    5    O  -5.138677e-01  8.163051e-01  -7.270577e-01  'OHA-'  -6.400000e-01
   Atom    6    H  3.440243e-01  1.069354e+00  -1.029737e+00  'HSA-'  3.800000e-01
+
+  CommonBond  'OA--SA-'  Harmonic  5239.900     1.438
+  CommonBond  'OHA--SA-'  Harmonic  2328.300     1.634
+  CommonBond  'HSA--OHA-'  Harmonic  4561.100     0.949
+  CommonAngle  'OA--SA--OA-'  Harmonic   456.970   114.760
+  CommonAngle  'OA--SA--OHA-'  Harmonic   814.480   103.450
+  CommonAngle  'HSA--OHA--SA-'  Harmonic   398.120   106.390
+  CommonTorsion  'HSA--OHA--SA--OA-'  Cos3     0.000     0.000     0.000
 
   # Bonds
   Bond    1    2  @OA--SA-

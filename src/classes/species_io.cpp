@@ -26,6 +26,10 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
                            {Species::SpeciesKeyword::BoxAngles, "BoxAngles", 3},
                            {Species::SpeciesKeyword::BoxLengths, "BoxLengths", 3},
                            {Species::SpeciesKeyword::Charge, "Charge", 2},
+                           {Species::SpeciesKeyword::CommonAngle, "CommonAngle", 2, OptionArguments::AnyNumber},
+                           {Species::SpeciesKeyword::CommonBond, "CommonBond", 2, OptionArguments::AnyNumber},
+                           {Species::SpeciesKeyword::CommonImproper, "CommonImproper", 2, OptionArguments::AnyNumber},
+                           {Species::SpeciesKeyword::CommonTorsion, "CommonTorsion", 2, OptionArguments::AnyNumber},
                            {Species::SpeciesKeyword::EndSpecies, "EndSpecies"},
                            {Species::SpeciesKeyword::Forcefield, "Forcefield", 1},
                            {Species::SpeciesKeyword::Improper, "Improper", 5, OptionArguments::AnyNumber},
@@ -105,22 +109,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * If only the indices were given, create an angle without a specified functional form (a
                  * Forcefield is presumably going to be specified). Otherwise, check the functional form
                  * specified - if it starts with
-                 * '@' it is a reference to master parameters
+                 * '@' it is a reference to common parameters
                  */
                 if (parser.nArgs() == 4)
                     a->get().setInteractionForm(AngleFunctions::Form::None);
                 else if (parser.argsv(4)[0] == '@')
                 {
-                    // Search through master Angle parameters to see if this name exists
-                    auto master = coreData.getMasterAngle(parser.argsv(4));
-                    if (!master)
+                    // Search through common Angle parameters to see if this name exists
+                    auto common = getCommonAngle(parser.argsv(4));
+                    if (!common)
                     {
-                        Messenger::error("No master Angle parameters named '{}' exist.\n", &parser.argsv(4)[1]);
+                        Messenger::error("No common Angle parameters named '{}' exist.\n", &parser.argsv(4)[1]);
                         errorsEncountered = true;
                         break;
                     }
 
-                    a->get().setMasterTerm(&master->get());
+                    a->get().setCommonTerm(&common->get());
                 }
                 else
                 {
@@ -194,22 +198,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * If only the indices were given, create a bond without a specified functional form (a
                  * Forcefield is presumably going to be specified). Otherwise, check the functional form
                  * specified - if it starts with
-                 * '@' it is a reference to master parameters
+                 * '@' it is a reference to common parameters
                  */
                 if (parser.nArgs() == 3)
                     b->get().setInteractionForm(BondFunctions::Form::None);
                 else if (parser.argsv(3)[0] == '@')
                 {
-                    // Search through master Bond parameters to see if this name exists
-                    auto master = coreData.getMasterBond(parser.argsv(3));
-                    if (!master)
+                    // Search through common Bond parameters to see if this name exists
+                    auto common = getCommonBond(parser.argsv(3));
+                    if (!common)
                     {
-                        Messenger::error("No master Bond parameters named '{}' exist.\n", &parser.argsv(3)[1]);
+                        Messenger::error("No common Bond parameters named '{}' exist.\n", &parser.argsv(3)[1]);
                         errorsEncountered = true;
                         break;
                     }
 
-                    b->get().setMasterTerm(&master->get());
+                    b->get().setCommonTerm(&common->get());
                 }
                 else
                 {
@@ -310,20 +314,20 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else
                     imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
 
-                // Check the functional form specified - if it starts with '@' it is a reference to master
+                // Check the functional form specified - if it starts with '@' it is a reference to common
                 // parameters
                 if (parser.argsv(5)[0] == '@')
                 {
-                    // Search through master Improper parameters to see if this name exists
-                    auto master = coreData.getMasterImproper(parser.argsv(5));
-                    if (!master)
+                    // Search through common Improper parameters to see if this name exists
+                    auto common = getCommonImproper(parser.argsv(5));
+                    if (!common)
                     {
-                        Messenger::error("No master Improper parameters named '{}' exist.\n", &parser.argsv(5)[1]);
+                        Messenger::error("No common Improper parameters named '{}' exist.\n", &parser.argsv(5)[1]);
                         errorsEncountered = true;
                         break;
                     }
 
-                    imp->get().setMasterTerm(&master->get());
+                    imp->get().setCommonTerm(&common->get());
                 }
                 else
                 {
@@ -478,22 +482,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * If only the indices were given, create an angle without a specified functional form (a
                  * Forcefield is presumably going to be specified). Otherwise, check the functional form
                  * specified - if it starts with
-                 * '@' it is a reference to master parameters
+                 * '@' it is a reference to common parameters
                  */
                 if (parser.nArgs() == 5)
                     torsion->get().setInteractionForm(TorsionFunctions::Form::None);
                 else if (parser.argsv(5)[0] == '@')
                 {
-                    // Search through master Torsion parameters to see if this name exists
-                    auto master = coreData.getMasterTorsion(parser.argsv(5));
-                    if (!master)
+                    // Search through common Torsion parameters to see if this name exists
+                    auto common = getCommonTorsion(parser.argsv(5));
+                    if (!common)
                     {
-                        Messenger::error("No master Torsion parameters named '{}' exist.\n", &parser.argsv(5)[1]);
+                        Messenger::error("No common Torsion parameters named '{}' exist.\n", &parser.argsv(5)[1]);
                         errorsEncountered = true;
                         break;
                     }
 
-                    torsion->get().setMasterTerm(&master->get());
+                    torsion->get().setCommonTerm(&common->get());
                 }
                 else
                 {
@@ -523,6 +527,170 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     // Set 1-4 scale factors
                     torsion->get().set14ScalingFactors(elec14Scaling, vdw14Scaling);
+                }
+                break;
+
+            case (Species::SpeciesKeyword::CommonAngle):
+                // Check the functional form specified
+                if (!AngleFunctions::forms().isValid(parser.argsv(2)))
+                {
+                    Messenger::error("Functional form of angle ({}) not recognised.\n", parser.argsv(2));
+                    errorsEncountered = true;
+                    break;
+                }
+                af = AngleFunctions::forms().enumeration(parser.argsv(2));
+
+                // Create a new common angle definition
+                try
+                {
+                    auto &commonAngle = addCommonAngle(parser.argsv(1));
+                    commonAngle.setInteractionForm(af);
+
+                    // Check number of args provided
+                    if (!AngleFunctions::forms().validNArgs(af, parser.nArgs() - 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    if (!commonAngle.setInteractionParameters(parser, 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    Messenger::printVerbose("Defined common angle term: {:<10}  {:<12}  {}\n", commonAngle.name(),
+                                            AngleFunctions::forms().keyword(commonAngle.interactionForm()),
+                                            commonAngle.interactionPotential().parametersAsString());
+                }
+                catch (const std::runtime_error &e)
+                {
+                    Messenger::error("{}", e.what());
+                    errorsEncountered = true;
+                }
+                break;
+            case (Species::SpeciesKeyword::CommonBond):
+                // Check the functional form specified
+                if (!BondFunctions::forms().isValid(parser.argsv(2)))
+                {
+                    Messenger::error("Functional form of bond ({}) not recognised.\n", parser.argsv(2));
+                    errorsEncountered = true;
+                    break;
+                }
+                bf = BondFunctions::forms().enumeration(parser.argsv(2));
+
+                // Create a new common bond definition
+                try
+                {
+                    auto &commonBond = addCommonBond(parser.argsv(1));
+                    commonBond.setInteractionForm(bf);
+
+                    // Check number of args provided
+                    if (!BondFunctions::forms().validNArgs(bf, parser.nArgs() - 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    if (!commonBond.setInteractionParameters(parser, 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    Messenger::printVerbose("Defined common bond term: {:<10}  {:<12}  {}\n", commonBond.name(),
+                                            BondFunctions::forms().keyword(commonBond.interactionForm()),
+                                            commonBond.interactionPotential().parametersAsString());
+                }
+                catch (const std::runtime_error &e)
+                {
+                    Messenger::error("{}", e.what());
+                    errorsEncountered = true;
+                }
+                break;
+            case (Species::SpeciesKeyword::CommonImproper):
+                // Check the functional form specified
+                if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
+                {
+                    Messenger::error("Functional form of improper ({}) not recognised.\n", parser.argsv(2));
+                    errorsEncountered = true;
+                    break;
+                }
+                tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
+
+                // Create a new common improper definition
+                try
+                {
+                    auto &commonImproper = addCommonImproper(parser.argsv(1));
+                    commonImproper.setInteractionForm(tf);
+
+                    // Check number of args provided
+                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    if (!commonImproper.setInteractionParameters(parser, 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    Messenger::printVerbose("Defined common improper term: {:<10}  {:<12}  {}\n", commonImproper.name(),
+                                            TorsionFunctions::forms().keyword(commonImproper.interactionForm()),
+                                            commonImproper.interactionPotential().parametersAsString());
+                }
+                catch (const std::runtime_error &e)
+                {
+                    Messenger::error("{}", e.what());
+                    errorsEncountered = true;
+                }
+                break;
+            case (Species::SpeciesKeyword::CommonTorsion):
+                // Check the functional form specified
+                if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
+                {
+                    Messenger::error("Functional form of torsion ({}) not recognised.\n", parser.argsv(2));
+                    errorsEncountered = true;
+                    break;
+                }
+                tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
+
+                // Create a new common torsion definition
+                try
+                {
+                    auto &commonTorsion = addCommonTorsion(parser.argsv(1));
+                    commonTorsion.setInteractionForm(tf);
+
+                    // Check number of args provided
+                    if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    if (!commonTorsion.setInteractionParameters(parser, 3))
+                    {
+                        errorsEncountered = true;
+                        break;
+                    }
+
+                    // Set scaling factors
+                    commonTorsion.set14ScalingFactors(elec14Scaling, vdw14Scaling);
+
+                    Messenger::printVerbose("Defined common torsion term: {:<10}  {:<12}  {}\n", commonTorsion.name(),
+                                            TorsionFunctions::forms().keyword(commonTorsion.interactionForm()),
+                                            commonTorsion.interactionPotential().parametersAsString());
+                }
+                catch (const std::runtime_error &e)
+                {
+                    Messenger::error("{}", e.what());
+                    errorsEncountered = true;
                 }
                 break;
             default:
@@ -569,6 +737,37 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
     }
 
+    // Write master terms
+    for (auto &b : commonBonds_)
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonBond), b->name(),
+                               BondFunctions::forms().keyword(b->interactionForm()),
+                               b->interactionPotential().parametersAsString()))
+            return false;
+
+    for (auto &a : commonAngles_)
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonAngle), a->name(),
+                               AngleFunctions::forms().keyword(a->interactionForm()),
+                               a->interactionPotential().parametersAsString()))
+            return false;
+
+    auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
+    for (auto &t : commonTorsions_)
+    {
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonTorsion), t->name(),
+                               TorsionFunctions::forms().keyword(t->interactionForm()),
+                               t->interactionPotential().parametersAsString()))
+            return false;
+
+        elec14Scaling = t->electrostatic14Scaling();
+        vdw14Scaling = t->vanDerWaals14Scaling();
+    }
+
+    for (auto &imp : commonImpropers_)
+        if (!parser.writeLineF("  {}  '{}'  {}  {}\n", keywords().keyword(SpeciesKeyword::CommonImproper), imp->name(),
+                               TorsionFunctions::forms().keyword(imp->interactionForm()),
+                               imp->interactionPotential().parametersAsString()))
+            return false;
+
     // Bonds
     std::vector<const SpeciesBond *> bondTypes[SpeciesBond::nBondTypes];
     if (!bonds_.empty())
@@ -579,11 +778,11 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (const auto &bond : bonds_)
         {
-            if (bond.masterTerm())
+            if (bond.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
-                                       bond.masterTerm()->name()))
+                                       bond.commonTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {} {}\n", newPrefix,
@@ -627,11 +826,11 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (const auto &angle : angles())
         {
-            if (angle.masterTerm())
+            if (angle.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
-                                       angle.indexJ() + 1, angle.indexK() + 1, angle.masterTerm()->name()))
+                                       angle.indexJ() + 1, angle.indexK() + 1, angle.commonTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
@@ -657,12 +856,12 @@ bool Species::write(LineParser &parser, std::string_view prefix)
 
         for (const auto &torsion : torsions())
         {
-            if (torsion.masterTerm())
+            if (torsion.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
                                        torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                       torsion.masterTerm()->name()))
+                                       torsion.commonTerm()->name()))
                     return false;
             }
             else
@@ -696,11 +895,11 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
         for (auto &imp : impropers())
         {
-            if (imp.masterTerm())
+            if (imp.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
                                        keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
-                                       imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1, imp.masterTerm()->name()))
+                                       imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1, imp.commonTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,

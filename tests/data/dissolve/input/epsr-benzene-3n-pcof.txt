@@ -7,13 +7,6 @@
 
 Master
   # Original OPLS-AA
-  Bond   CH   Harmonic  3071.056  1.08
-  Bond   CC   Harmonic  3924.592  1.40
-  Angle  HCC  Harmonic  292.8800  120.0
-  Angle  CCC  Harmonic  527.1840  120.0
-  Torsion  HCCH  Cos3  0.0  30.334  0.0
-  Torsion  HCCC  Cos3  0.0  30.334  0.0
-  Torsion  CCCC  Cos3  0.0  30.334  0.0
 EndMaster
 
 #------------------------#
@@ -34,6 +27,14 @@ Species 'Benzene'
   Atom  10  H   -0.000000    -2.390000     0.000000   HA
   Atom  11  C   -1.203775    -0.695000     0.000000   CA
   Atom  12  H   -2.069801    -1.195000     0.000000   HA
+
+  CommonBond   CH   Harmonic  3071.056  1.08
+  CommonBond   CC   Harmonic  3924.592  1.40
+  CommonAngle  HCC  Harmonic  292.8800  120.0
+  CommonAngle  CCC  Harmonic  527.1840  120.0
+  CommonTorsion  HCCH  Cos3  0.0  30.334  0.0
+  CommonTorsion  HCCC  Cos3  0.0  30.334  0.0
+  CommonTorsion  CCCC  Cos3  0.0  30.334  0.0
 
   # Intramolecular Terms
   Bond  1     2  @CH

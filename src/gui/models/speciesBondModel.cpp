@@ -49,12 +49,12 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
             case (DataType::IndexJ):
                 return bond.index(index.column()) + 1;
             case (DataType::Form):
-                return bond.masterTerm()
-                           ? QString::fromStdString("@" + std::string(bond.masterTerm()->name()))
+                return bond.commonTerm()
+                           ? QString::fromStdString("@" + std::string(bond.commonTerm()->name()))
                            : QString::fromStdString(std::string(BondFunctions::forms().keyword(bond.interactionForm())));
             case (DataType::Parameters):
-                return bond.masterTerm()
-                           ? QString::fromStdString(bond.masterTerm()->interactionPotential().parametersAsString())
+                return bond.commonTerm()
+                           ? QString::fromStdString(bond.commonTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(bond.interactionPotential().parametersAsString());
             default:
                 return {};
@@ -86,7 +86,7 @@ Qt::ItemFlags SpeciesBondModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexJ)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::Form && bonds_->at(index.row()).masterTerm())
+    if (index.column() > DataType::Form && bonds_->at(index.row()).commonTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -105,7 +105,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
             try
             {
                 auto bf = BondFunctions::forms().enumeration(value.toString().toStdString());
-                bond.detachFromMasterTerm();
+                bond.detachFromCommonTerm();
                 bond.setInteractionForm(bf);
             }
             catch (std::runtime_error &e)

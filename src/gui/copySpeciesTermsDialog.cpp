@@ -96,11 +96,11 @@ template <class I> void CopySpeciesTermsDialog::copyTerms(const std::vector<std:
 {
     for (auto [target, source] : termVector)
     {
-        if (source->masterTerm())
-            target->setMasterTerm(source->masterTerm());
+        if (source->commonTerm())
+            target->setMasterTerm(source->commonTerm());
         else
         {
-            target->detachFromMasterTerm();
+            target->detachFromCommonTerm();
             target->setInteractionFormAndParameters(source->interactionForm(), source->interactionParameters());
         }
     }

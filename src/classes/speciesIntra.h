@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include "base/lineParser.h"
 #include "base/messenger.h"
 #include "base/serialiser.h"
 #include "classes/interactionPotential.h"
-#include "templates/algorithms.h"
 #include <string>
 #include <vector>
 
@@ -19,14 +17,14 @@ class Species;
 template <class Intra, class Functions> class SpeciesIntra : public Serialisable<>
 {
     public:
-    explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form) {};
+    explicit SpeciesIntra(Species *parent, typename Functions::Form form) : parent_(parent), interactionPotential_(form) {};
     virtual ~SpeciesIntra() = default;
     SpeciesIntra(const SpeciesIntra &source) : interactionPotential_(source.interactionPotential_.form()) { (*this) = source; }
     SpeciesIntra(SpeciesIntra &&source) = delete;
     SpeciesIntra &operator=(const SpeciesIntra &source)
     {
         interactionPotential_ = source.interactionPotential_;
-        masterTerm_ = source.masterTerm_;
+        commonTerm_ = source.commonTerm_;
         attached_[0] = source.attached_[0];
         attached_[1] = source.attached_[1];
         inCycle_ = source.inCycle_;
@@ -34,6 +32,13 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         return *this;
     }
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
+
+    /*
+     * SpeciesAtom Information
+     */
+    protected:
+    // Parent species
+    Species *parent_{nullptr};
 
     /*
      * SpeciesAtom Information
@@ -48,76 +53,76 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     protected:
     // Interaction potential describing interaction
     InteractionPotential<Functions> interactionPotential_;
-    // Linked master term from which parameters should be taken (if relevant)
-    const Intra *masterTerm_{nullptr};
+    // Linked common term from which parameters should be taken (if relevant)
+    const Intra *commonTerm_{nullptr};
 
     public:
     // Set functional form of interaction
     void setInteractionForm(typename Functions::Form form)
     {
-        // Does this intramolecular interaction reference a set of master parameters?
-        if (!masterTerm_)
+        // Does this intramolecular interaction reference a set of common parameters?
+        if (!commonTerm_)
             interactionPotential_.setForm(form);
         else
-            Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+            Messenger::error("Refused to set intramolecular parameter since common parameters are referenced.\n");
     }
     // Return functional form of interaction
     typename Functions::Form interactionForm() const
     {
-        return masterTerm_ ? masterTerm_->interactionForm() : interactionPotential_.form();
+        return commonTerm_ ? commonTerm_->interactionForm() : interactionPotential_.form();
     }
     // Set interaction parameters
     bool setInteractionParameters(std::string params)
     {
-        if (masterTerm_)
-            return Messenger::error("Refused to set intramolecular parameters since master parameters are referenced.\n");
+        if (commonTerm_)
+            return Messenger::error("Refused to set intramolecular parameters since common parameters are referenced.\n");
 
         std::vector<std::string_view> terms{DissolveSys::splitString(params)};
         return interactionPotential_.parseParameters(terms);
     }
     bool setInteractionParameters(LineParser &parser, int startArg)
     {
-        if (masterTerm_)
-            return Messenger::error("Refused to set intramolecular parameters since master parameters are referenced.\n");
+        if (commonTerm_)
+            return Messenger::error("Refused to set intramolecular parameters since common parameters are referenced.\n");
 
         return interactionPotential_.parseParameters(parser, startArg);
     }
     // Set form and parameters
     void setInteractionFormAndParameters(typename Functions::Form form, const std::vector<double> &params)
     {
-        if (masterTerm_)
-            Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+        if (commonTerm_)
+            Messenger::error("Refused to set intramolecular parameter since common parameters are referenced.\n");
 
         return interactionPotential_.setFormAndParameters(form, params);
     }
     bool setInteractionFormAndParameters(typename Functions::Form form, std::string params)
     {
-        if (masterTerm_)
-            return Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+        if (commonTerm_)
+            return Messenger::error("Refused to set intramolecular parameter since common parameters are referenced.\n");
 
         return interactionPotential_.setFormAndParameters(form, params);
     }
     // Return array of parameters
     const std::vector<double> &interactionParameters() const
     {
-        return masterTerm_ ? masterTerm_->interactionPotential_.parameters() : interactionPotential_.parameters();
+        return commonTerm_ ? commonTerm_->interactionPotential_.parameters() : interactionPotential_.parameters();
     }
     // Return interaction potential
     const InteractionPotential<Functions> &interactionPotential() const { return interactionPotential_; }
-    // Set linked master from which parameters should be taken
-    void setMasterTerm(const Intra *master) { masterTerm_ = master; }
-    // Return linked master term from which parameters should be taken
-    const Intra *masterTerm() const { return masterTerm_; }
-    // Detach from master term, if we are currently referencing one
-    void detachFromMasterTerm()
+    // Set linked common from which parameters should be taken
+    void setCommonTerm(const Intra *common) { commonTerm_ = common; }
+    // Return linked common term from which parameters should be taken
+    const Intra *commonTerm() const { return commonTerm_; }
+    // Detach from common term, if we are currently referencing one
+    void detachFromCommonTerm()
     {
-        if (!masterTerm_)
+        if (!commonTerm_)
             return;
 
-        // Copy master term parameters over our own
-        interactionPotential_.setFormAndParameters(masterTerm_->interactionForm(), masterTerm_->interactionParameters());
+        // Copy common term parameters over our own
+        interactionPotential_.setFormAndParameters(commonTerm_->interactionForm(), commonTerm_->interactionParameters());
 
-        masterTerm_ = nullptr;
+        commonTerm_ = nullptr;
     }
 
     /*
@@ -149,9 +154,9 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
      * Identifying Name
      */
     public:
-    // Set identifying name (if a master term)
+    // Set identifying name (if a common term)
     virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
-    // Return identifying name (if a master term)
+    // Return identifying name (if a common term)
     virtual std::string_view name() const { return ""; };
     // Load parameters from serialisable value
     void deserialiseParameters(const SerialisedValue &node)
@@ -187,10 +192,10 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
                                      std::string form = node.as_string();
                                      if (form.find("@") == 0)
                                      {
-                                         auto master = lambda(form);
-                                         if (!master)
-                                             throw std::runtime_error("Master Term not found.");
-                                         setMasterTerm(&master->get());
+                                         auto common = lambda(form);
+                                         if (!common)
+                                             throw std::runtime_error("Common Term not found.");
+                                         setCommonTerm(&common->get());
                                      }
                                      else
                                          setInteractionForm(Functions::forms().enumeration(form));
@@ -215,8 +220,8 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     {
         auto &result = target[tag];
 
-        if (masterTerm_ != nullptr)
-            result["form"] = std::format("@{}", masterTerm_->name());
+        if (commonTerm_ != nullptr)
+            result["form"] = std::format("@{}", commonTerm_->name());
         else
             result["form"] = Functions::forms().keyword(interactionForm());
 

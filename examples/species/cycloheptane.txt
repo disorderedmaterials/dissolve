@@ -5,14 +5,6 @@
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'CT2-CT2'  Harmonic  2652.660     1.495
-  Bond  'CT2-HC'  Harmonic  2845.120     1.080
-  Angle  'CT2-CT2-CT2'  Harmonic   527.184   115.600
-  Angle  'CT2-CT2-HC'  Harmonic   292.880   109.500
-  Angle  'HC-CT2-HC'  Harmonic   276.144   107.800
-  Torsion  'CT2-CT2-CT2-CT2'  Cos3     5.439    -0.209     0.837
-  Torsion  'CT2-CT2-CT2-HC'  Cos3     0.000     0.000     1.255
-  Torsion  'HC-CT2-CT2-HC'  Cos3     0.000     0.000     1.255
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -42,6 +34,15 @@ Species 'Cycloheptane'
   Atom   19    H  4.999189e-01  2.570584e+00  2.295587e-01  'HC'  6.000000e-02
   Atom   20    H  2.327370e+00  1.185063e+00  6.126745e-01  'HC'  6.000000e-02
   Atom   21    H  1.762579e+00  8.870065e-01  -9.937944e-01  'HC'  6.000000e-02
+
+  CommonBond  'CT2-CT2'  Harmonic  2652.660     1.495
+  CommonBond  'CT2-HC'  Harmonic  2845.120     1.080
+  CommonAngle  'CT2-CT2-CT2'  Harmonic   527.184   115.600
+  CommonAngle  'CT2-CT2-HC'  Harmonic   292.880   109.500
+  CommonAngle  'HC-CT2-HC'  Harmonic   276.144   107.800
+  CommonTorsion  'CT2-CT2-CT2-CT2'  Cos3     5.439    -0.209     0.837
+  CommonTorsion  'CT2-CT2-CT2-HC'  Cos3     0.000     0.000     1.255
+  CommonTorsion  'HC-CT2-CT2-HC'  Cos3     0.000     0.000     1.255
 
   # Bonds
   Bond    1    2  @CT2-CT2

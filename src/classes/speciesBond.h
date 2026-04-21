@@ -3,24 +3,21 @@
 
 #pragma once
 
-#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/bondFunctions.h"
 #include "classes/speciesIntra.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class CoreData;
 
 // SpeciesBond Definition
 class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
-    SpeciesBond(SpeciesAtom *i, SpeciesAtom *j);
+    SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j);
     ~SpeciesBond() override = default;
     SpeciesBond(SpeciesBond &source);
     SpeciesBond(SpeciesBond &&source) noexcept;
@@ -109,14 +106,14 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node) override;
 };
 
-// MasterBond Definition
-class MasterBond : public SpeciesBond
+// CommonBond Definition
+class CommonBond : public SpeciesBond
 {
     public:
-    explicit MasterBond(std::string_view name) : SpeciesBond(), name_{name} {};
+    explicit CommonBond(std::string_view name) : SpeciesBond(), name_{name} {};
     using SpeciesIntra<SpeciesBond, BondFunctions>::deserialise;
     /*
      * Identifying Name

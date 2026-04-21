@@ -280,7 +280,7 @@ void ImportLigParGenDialog::on_ReduceToMasterTermsGroup_clicked(bool checked)
 bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) const
 {
     sp->clearAtomTypes();
-    sp->detachFromMasterTerms();
+    sp->detachFromCommonTerms();
     coreData.clearAtomTypes();
     coreData.clearMasterTerms();
 
@@ -307,7 +307,7 @@ bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) con
 
     // Reduce to master terms?
     if (ui_.ReduceToMasterTermsGroup->isChecked())
-        sp->reduceToMasterTerms(coreData);
+        sp->reduceToCommonTerms(coreData);
 
     return true;
 }

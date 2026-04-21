@@ -48,11 +48,11 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
             case (DataType::IndexK):
                 return angle.index(index.column()) + 1;
             case (DataType::Form):
-                return angle.masterTerm() ? QString::fromStdString("@" + std::string(angle.masterTerm()->name()))
+                return angle.commonTerm() ? QString::fromStdString("@" + std::string(angle.commonTerm()->name()))
                                           : QString::fromStdString(AngleFunctions::forms().keyword(angle.interactionForm()));
             case (DataType::Parameters):
-                return angle.masterTerm()
-                           ? QString::fromStdString(angle.masterTerm()->interactionPotential().parametersAsString())
+                return angle.commonTerm()
+                           ? QString::fromStdString(angle.commonTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(angle.interactionPotential().parametersAsString());
             default:
                 return {};
@@ -86,7 +86,7 @@ Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexK)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::Form && angles_->at(index.row()).masterTerm())
+    if (index.column() > DataType::Form && angles_->at(index.row()).commonTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -104,7 +104,7 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
             try
             {
                 auto af = AngleFunctions::forms().enumeration(value.toString().toStdString());
-                angle.detachFromMasterTerm();
+                angle.detachFromCommonTerm();
                 angle.setInteractionForm(af);
             }
             catch (std::runtime_error &e)

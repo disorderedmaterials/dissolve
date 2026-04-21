@@ -3,8 +3,6 @@
 #------------------------#
 
 Master
-  Bond   OH   Harmonic  4431.53  1.0
-  Angle  HOH  Harmonic  317.5656 113.24
 EndMaster
 
 #------------------------#
@@ -16,6 +14,9 @@ Species 'Water'
   Atom    1    H     0.757    0.013    0.217   'HW'
   Atom    2    O     0.015   -0.009   -0.373   'OW'
   Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  CommonBond   OH   Harmonic  4431.53  1.0
+  CommonAngle  HOH  Harmonic  317.5656 113.24
 
   # Intramolecular Terms
   Bond  1    2  @OH

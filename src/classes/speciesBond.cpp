@@ -8,9 +8,12 @@
 #include "data/atomicMasses.h"
 #include <map>
 
-SpeciesBond::SpeciesBond() : SpeciesIntra(BondFunctions::Form::None) {}
+SpeciesBond::SpeciesBond() : SpeciesIntra(nullptr, BondFunctions::Form::None) {}
 
-SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(BondFunctions::Form::None) { assign(i, j); }
+SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(parent, BondFunctions::Form::None)
+{
+    assign(i, j);
+}
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 
@@ -27,7 +30,7 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -40,7 +43,7 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -56,7 +59,7 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
     assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     // Clean source
@@ -324,7 +327,7 @@ void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 }
 
 // This method populates the object's members with values read from a 'bond' TOML node
-void SpeciesBond::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesBond::deserialise(const SerialisedValue &node)
 {
-    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterBond(form); });
+    deserialiseForm(node, [&](auto &form) { return parent_->getCommonBond(form); });
 }

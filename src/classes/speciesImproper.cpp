@@ -6,10 +6,10 @@
 #include "classes/speciesAtom.h"
 #include "classes/speciesTorsion.h"
 
-SpeciesImproper::SpeciesImproper() : SpeciesIntra(TorsionFunctions::Form::None) {}
+SpeciesImproper::SpeciesImproper() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
-SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(TorsionFunctions::Form::None)
+SpeciesImproper::SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+    : SpeciesIntra(parent, TorsionFunctions::Form::None)
 {
     assign(i, j, k, l);
 }
@@ -30,7 +30,7 @@ SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) noexcept : SpeciesInt
     // Copy data
     assign(source.i_, source.j_, source.k_, source.l_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
 
     // Reset source data
     source.i_ = nullptr;
@@ -45,7 +45,7 @@ SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
     assign(source.i_, source.j_, source.k_, source.l_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -58,7 +58,7 @@ SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source) noexcept
 
     assign(source.i_, source.j_, source.k_, source.l_);
     interactionPotential_ = source.interactionPotential_;
-    masterTerm_ = source.masterTerm_;
+    commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
 
     return *this;
@@ -234,7 +234,7 @@ void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
 }
 
 // This method populates the object's members with values read from an 'improper' TOML node
-void SpeciesImproper::deserialise(const SerialisedValue &node, CoreData &coreData)
+void SpeciesImproper::deserialise(const SerialisedValue &node)
 {
-    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterImproper(form); });
+    deserialiseForm(node, [&](auto &form) { return parent_->getCommonImproper(form); });
 }

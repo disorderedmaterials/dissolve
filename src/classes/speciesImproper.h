@@ -3,12 +3,9 @@
 
 #pragma once
 
-#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/speciesIntra.h"
 #include "classes/speciesTorsion.h"
-
-#include <map>
 #include <vector>
 
 // Forward Declarations
@@ -20,7 +17,7 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
 {
     public:
     SpeciesImproper();
-    SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesImproper() override;
     SpeciesImproper(SpeciesImproper &source);
     SpeciesImproper(SpeciesImproper &&source) noexcept;
@@ -88,14 +85,14 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node) override;
 };
 
-// MasterImproper Definition
-class MasterImproper : public SpeciesImproper
+// CommonImproper Definition
+class CommonImproper : public SpeciesImproper
 {
     public:
-    explicit MasterImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
+    explicit CommonImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
     using SpeciesIntra<SpeciesImproper, TorsionFunctions>::deserialise;
 
     /*

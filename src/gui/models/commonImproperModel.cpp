@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterImproperModel.h"
+#include "gui/models/commonImproperModel.h"
 
-MasterImproperModel::MasterImproperModel(CoreData &coreData)
-    : MasterTermModel(coreData), sourceData_(coreData.masterImpropers())
+CommonImproperModel::CommonImproperModel(Species *species) : CommonTermModel(species), sourceData_(species->commonImpropers())
 {
     // Set connections
     modelUpdater.setModel(this);
@@ -12,15 +11,15 @@ MasterImproperModel::MasterImproperModel(CoreData &coreData)
 }
 
 // Refresh model data
-void MasterImproperModel::reset()
+void CommonImproperModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-int MasterImproperModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
+int CommonImproperModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
-QVariant MasterImproperModel::getTermData(int row, MasterTermModelData::DataType dataType) const
+QVariant CommonImproperModel::getTermData(int row, CommonTermModelData::DataType dataType) const
 {
     if (row < 0 || row >= sourceData_.size())
         return {};
@@ -28,11 +27,11 @@ QVariant MasterImproperModel::getTermData(int row, MasterTermModelData::DataType
     auto &t = sourceData_[row];
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             return QString::fromStdString(std::string(t->name()));
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(t->interactionForm())));
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
         default:
             return {};
@@ -41,7 +40,7 @@ QVariant MasterImproperModel::getTermData(int row, MasterTermModelData::DataType
     return {};
 }
 
-bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
+bool CommonImproperModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
 {
     if (row < 0 || row >= sourceData_.size())
         return false;
@@ -51,10 +50,10 @@ bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dat
     beginResetModel();
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             t->setName(value.toString().toStdString());
             break;
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             try
             {
                 auto tf = TorsionFunctions::forms().enumeration(value.toString().toStdString());
@@ -65,7 +64,7 @@ bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dat
                 return false;
             }
             break;
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             if (!t->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
@@ -77,7 +76,7 @@ bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dat
     return true;
 }
 
-const std::shared_ptr<MasterImproper> &MasterImproperModel::rawData(const QModelIndex &index) const
+const std::shared_ptr<CommonImproper> &CommonImproperModel::rawData(const QModelIndex &index) const
 {
     return sourceData_[index.row()];
 }

@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "classes/speciesTorsion.h"
-#include "gui/models/masterTermModel.h"
+#include "classes/speciesImproper.h"
+#include "gui/models/commonTermModel.h"
 #include "gui/models/modelUpdater.h"
 #include "templates/optionalRef.h"
 
-// MasterTorsion model
-class MasterTorsionModel : public MasterTermModel
+// CommonImproper model
+class CommonImproperModel : public CommonTermModel
 {
     Q_OBJECT
 
@@ -20,11 +20,11 @@ class MasterTorsionModel : public MasterTermModel
     void modelsUpdated();
 
     public:
-    explicit MasterTorsionModel(CoreData &coreData);
+    explicit CommonImproperModel(Species *species);
 
     private:
     // Source term data
-    std::vector<std::shared_ptr<MasterTorsion>> &sourceData_;
+    std::vector<std::shared_ptr<CommonImproper>> &sourceData_;
 
     public:
     // Refresh model data
@@ -35,10 +35,9 @@ class MasterTorsionModel : public MasterTermModel
      */
     public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant getTermData(int row, MasterTermModelData::DataType dataType) const override;
-    bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) override;
-    const std::shared_ptr<MasterTorsion> &rawData(const QModelIndex &index) const;
+    QVariant getTermData(int row, CommonTermModelData::DataType dataType) const override;
+    bool setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value) override;
+    const std::shared_ptr<CommonImproper> &rawData(const QModelIndex &index) const;
 
     private:
     ModelUpdater modelUpdater;

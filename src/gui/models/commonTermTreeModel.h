@@ -3,16 +3,13 @@
 
 #pragma once
 
-#include "gui/models/masterAngleModel.h"
-#include "gui/models/masterBondModel.h"
-#include "gui/models/masterImproperModel.h"
-#include "gui/models/masterTorsionModel.h"
-#include "templates/optionalRef.h"
+#include "gui/models/commonAngleModel.h"
+#include "gui/models/commonBondModel.h"
+#include "gui/models/commonImproperModel.h"
+#include "gui/models/commonTorsionModel.h"
 #include <QAbstractTableModel>
 #include <QIcon>
-#include <QModelIndex>
 #include <QObject>
-#include <vector>
 
 // Master Terms Tree Model
 class MasterTermTreeModel : public QAbstractItemModel
@@ -20,23 +17,23 @@ class MasterTermTreeModel : public QAbstractItemModel
     Q_OBJECT
 
     public:
-    explicit MasterTermTreeModel(CoreData &coreData);
+    explicit MasterTermTreeModel(Species *species);
 
     public:
     // Term models
-    MasterBondModel bondModel_;
-    MasterAngleModel angleModel_;
-    MasterTorsionModel torsionModel_;
-    MasterImproperModel improperModel_;
+    CommonBondModel bondModel_;
+    CommonAngleModel angleModel_;
+    CommonTorsionModel torsionModel_;
+    CommonImproperModel improperModel_;
 
     private:
-    MasterTermModel &modelForTopLevelRow(int row);
+    CommonTermModel &modelForTopLevelRow(int row);
 
     public:
-    void setBondQueryFunction(std::function<bool(std::string_view termName)> func);
-    void setAngleQueryFunction(std::function<bool(std::string_view termName)> func);
-    void setTorsionQueryFunction(std::function<bool(std::string_view termName)> func);
-    void setImproperQueryFunction(std::function<bool(std::string_view termName)> func);
+    void setBondQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
+    void setAngleQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
+    void setTorsionQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
+    void setImproperQueryFunction(std::function<bool(std::string_view termName, Species *sp)> func);
     void prefixNames(QList<QModelIndex> indices, QString prefix);
     void suffixNames(QList<QModelIndex> indices, QString suffix);
 

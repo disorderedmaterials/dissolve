@@ -3,24 +3,21 @@
 
 #pragma once
 
-#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/angleFunctions.h"
 #include "classes/speciesIntra.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class CoreData;
 
 // SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
-    SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
+    SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     ~SpeciesAngle() override = default;
     SpeciesAngle(SpeciesAngle &source);
     SpeciesAngle(SpeciesAngle &&source) noexcept;
@@ -80,14 +77,14 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node) override;
 };
 
-// MasterAngle Definition
-class MasterAngle : public SpeciesAngle
+// CommonAngle Definition
+class CommonAngle : public SpeciesAngle
 {
     public:
-    explicit MasterAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
+    explicit CommonAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
     using SpeciesIntra<SpeciesAngle, AngleFunctions>::deserialise;
 
     /*

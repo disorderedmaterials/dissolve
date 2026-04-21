@@ -5,27 +5,6 @@
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'CA-CA'  Harmonic  3924.590     1.400
-  Bond  'CA-CNap'  Harmonic  3924.590     1.400
-  Bond  'CNap-CNap'  Harmonic  3924.590     1.400
-  Bond  'CA-HA'  Harmonic  3071.060     1.080
-  Angle  'CA-CA-CNap'  Harmonic   527.184   120.000
-  Angle  'CA-CNap-CA'  Harmonic   527.184   120.000
-  Angle  'CA-CA-CA'  Harmonic   527.184   120.000
-  Angle  'CA-CNap-CNap'  Harmonic   527.184   120.000
-  Angle  'CA-CA-HA'  Harmonic   292.880   120.000
-  Angle  'CNap-CA-HA'  Harmonic   292.880   120.000
-  Torsion  'CA-CNap-CA-CA'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CA-CNap-CA'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CA-CA-CNap'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CA-CA-CA'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CA-CNap-CNap'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CNap-CNap-CA'  Cos3     0.000    30.334     0.000
-  Torsion  'CNap-CA-CA-HA'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CA-CA-HA'  Cos3     0.000    30.334     0.000
-  Torsion  'HA-CA-CA-HA'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CNap-CA-HA'  Cos3     0.000    30.334     0.000
-  Torsion  'CNap-CNap-CA-HA'  Cos3     0.000    30.334     0.000
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -52,6 +31,28 @@ Species 'Naphthalene'
   Atom   16    H  3.197721e+00  1.716501e+00  3.552714e-15  'HA'  1.150000e-01
   Atom   17    H  8.907446e-01  2.650501e+00  3.552714e-15  'HA'  1.150000e-01
   Atom   18    H  -1.606661e+00  2.293586e+00  3.552714e-15  'HA'  1.150000e-01
+
+  CommonBond  'CA-CA'  Harmonic  3924.590     1.400
+  CommonBond  'CA-CNap'  Harmonic  3924.590     1.400
+  CommonBond  'CNap-CNap'  Harmonic  3924.590     1.400
+  CommonBond  'CA-HA'  Harmonic  3071.060     1.080
+  CommonAngle  'CA-CA-CNap'  Harmonic   527.184   120.000
+  CommonAngle  'CA-CNap-CA'  Harmonic   527.184   120.000
+  CommonAngle  'CA-CA-CA'  Harmonic   527.184   120.000
+  CommonAngle  'CA-CNap-CNap'  Harmonic   527.184   120.000
+  CommonAngle  'CA-CA-HA'  Harmonic   292.880   120.000
+  CommonAngle  'CNap-CA-HA'  Harmonic   292.880   120.000
+  CommonTorsion  'CA-CNap-CA-CA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CA-CNap-CA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CA-CA-CNap'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CA-CA-CA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CA-CNap-CNap'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CNap-CNap-CA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CNap-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'HA-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CA-CNap-CA-HA'  Cos3     0.000    30.334     0.000
+  CommonTorsion  'CNap-CNap-CA-HA'  Cos3     0.000    30.334     0.000
 
   # Bonds
   Bond    1    2  @CA-CA

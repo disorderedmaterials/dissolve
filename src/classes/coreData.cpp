@@ -18,10 +18,6 @@ void CoreData::clear()
 {
     configurations_.clear();
     species_.clear();
-    masters_.bonds.clear();
-    masters_.angles.clear();
-    masters_.torsions.clear();
-    masters_.impropers.clear();
     atomTypes_.clear();
     processingLayers_.clear();
 }
@@ -85,250 +81,6 @@ std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
 void CoreData::clearAtomTypes() { atomTypes_.clear(); }
 
 /*
- * Master Intramolecular Terms
- */
-
-// Add new master Bond parameters
-MasterBond &CoreData::addMasterBond(std::string_view name, std::optional<int> insertAtIndex)
-{
-    // Check for existence of master Bond already
-    if (getMasterBond(name))
-        Messenger::exception("Refused to add a new master Bond named '{}' since one with the same name already exists.\n",
-                             name);
-
-    auto newBond = std::make_shared<MasterBond>(name);
-    if (insertAtIndex)
-        masters_.bonds.insert(masters_.bonds.begin() + *insertAtIndex, newBond);
-    else
-        masters_.bonds.emplace_back(newBond);
-
-    return *newBond;
-}
-
-// Remove specified master Bond
-void CoreData::removeMasterBond(const std::shared_ptr<MasterBond> &bond)
-{
-    // Detach from master term
-    for (auto &species : species_)
-    {
-        for (auto &b : species->bonds())
-            if (b.masterTerm() == bond.get())
-                b.detachFromMasterTerm();
-    }
-
-    masters_.bonds.erase(std::remove(masters_.bonds.begin(), masters_.bonds.end(), bond), masters_.bonds.end());
-}
-
-// Return number of master Bond parameters in list
-int CoreData::nMasterBonds() const { return masters_.bonds.size(); }
-
-// Return list of master Bond parameters
-std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() { return masters_.bonds; }
-const std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() const { return masters_.bonds; }
-
-// Return whether named master Bond parameters exist
-OptionalReferenceWrapper<const MasterBond> CoreData::getMasterBond(std::string_view name) const
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &b : masters_.bonds)
-        if (DissolveSys::sameString(trimmedName, b->name()))
-            return *b;
-    return {};
-}
-
-// Return whether named master Bond parameters exist
-OptionalReferenceWrapper<MasterBond> CoreData::getMasterBond(std::string_view name)
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &b : masters_.bonds)
-        if (DissolveSys::sameString(trimmedName, b->name()))
-            return *b;
-    return {};
-}
-
-// Add new master Angle parameters
-MasterAngle &CoreData::addMasterAngle(std::string_view name)
-{
-    // Check for existence of master Angle already
-    if (getMasterAngle(name))
-        Messenger::exception("Refused to add a new master Angle named '{}' since one with the same name already exists.\n",
-                             name);
-
-    return *masters_.angles.emplace_back(std::make_shared<MasterAngle>(name));
-}
-
-// Remove specified master Angle
-void CoreData::removeMasterAngle(const std::shared_ptr<MasterAngle> &angle)
-{
-    // Detach from master term
-    for (auto &species : species_)
-    {
-        for (auto &a : species->angles())
-            if (a.masterTerm() == angle.get())
-                a.detachFromMasterTerm();
-    }
-
-    masters_.angles.erase(std::remove(masters_.angles.begin(), masters_.angles.end(), angle), masters_.angles.end());
-}
-
-// Return number of master Angle parameters in list
-int CoreData::nMasterAngles() const { return masters_.angles.size(); }
-
-// Return list of master Angle parameters
-std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() { return masters_.angles; }
-const std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() const { return masters_.angles; }
-
-// Return whether named master Angle parameters exist
-OptionalReferenceWrapper<MasterAngle> CoreData::getMasterAngle(std::string_view name)
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &a : masters_.angles)
-        if (DissolveSys::sameString(trimmedName, a->name()))
-            return *a;
-    return {};
-}
-
-// Return whether named master Angle parameters exist
-OptionalReferenceWrapper<const MasterAngle> CoreData::getMasterAngle(std::string_view name) const
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &a : masters_.angles)
-        if (DissolveSys::sameString(trimmedName, a->name()))
-            return *a;
-    return {};
-}
-
-// Add new master Torsion parameters
-MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
-{
-    // Check for existence of master Torsion already
-    if (getMasterTorsion(name))
-        Messenger::exception("Refused to add a new master Torsion named '{}' since one with the same name already exists.\n",
-                             name);
-
-    return *masters_.torsions.emplace_back(std::make_shared<MasterTorsion>(name));
-}
-
-// Remove specified MasterTorsion
-void CoreData::removeMasterTorsion(const std::shared_ptr<MasterTorsion> &torsion)
-{
-    // Detach from master term
-    for (auto &species : species_)
-    {
-        for (auto &t : species->torsions())
-            if (t.masterTerm() == torsion.get())
-                t.detachFromMasterTerm();
-    }
-
-    masters_.torsions.erase(std::remove(masters_.torsions.begin(), masters_.torsions.end(), torsion), masters_.torsions.end());
-}
-
-// Return number of master Torsion parameters in list
-int CoreData::nMasterTorsions() const { return masters_.torsions.size(); }
-
-// Return list of master Torsion parameters
-std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() { return masters_.torsions; }
-const std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() const { return masters_.torsions; }
-
-// Return whether named master Torsion parameters exist
-OptionalReferenceWrapper<const MasterTorsion> CoreData::getMasterTorsion(std::string_view name) const
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &t : masters_.torsions)
-        if (DissolveSys::sameString(trimmedName, t->name()))
-            return *t;
-    return {};
-}
-
-// Return whether named master Torsion parameters exist
-OptionalReferenceWrapper<MasterTorsion> CoreData::getMasterTorsion(std::string_view name)
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &t : masters_.torsions)
-        if (DissolveSys::sameString(trimmedName, t->name()))
-            return *t;
-    return {};
-}
-
-// Add new master Improper parameters
-MasterImproper &CoreData::addMasterImproper(std::string_view name)
-{
-    // Check for existence of master Improper already
-    if (getMasterImproper(name))
-        Messenger::exception("Refused to add a new master Improper named '{}' since one with the same name already exists.\n",
-                             name);
-
-    return *masters_.impropers.emplace_back(std::make_shared<MasterImproper>(name));
-}
-
-// Remove specified master Improper
-void CoreData::removeMasterImproper(const std::shared_ptr<MasterImproper> &improper)
-{
-    // Detach from master term
-    for (auto &species : species_)
-    {
-        for (auto &i : species->impropers())
-            if (i.masterTerm() == improper.get())
-                i.detachFromMasterTerm();
-    }
-
-    masters_.impropers.erase(std::remove(masters_.impropers.begin(), masters_.impropers.end(), improper),
-                             masters_.impropers.end());
-}
-
-// Return number of master Improper parameters in list
-int CoreData::nMasterImpropers() const { return masters_.impropers.size(); }
-
-// Return list of master Improper parameters
-std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() { return masters_.impropers; }
-const std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() const { return masters_.impropers; }
-
-// Return whether named master Improper parameters exist
-OptionalReferenceWrapper<const MasterImproper> CoreData::getMasterImproper(std::string_view name) const
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &i : masters_.impropers)
-        if (DissolveSys::sameString(trimmedName, i->name()))
-            return *i;
-    return {};
-}
-
-// Return whether named master Improper parameters exist
-OptionalReferenceWrapper<MasterImproper> CoreData::getMasterImproper(std::string_view name)
-{
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto &i : masters_.impropers)
-        if (DissolveSys::sameString(trimmedName, i->name()))
-            return *i;
-    return {};
-}
-
-// Clear all master terms
-void CoreData::clearMasterTerms()
-{
-    masters_.bonds.clear();
-    masters_.angles.clear();
-    masters_.torsions.clear();
-    masters_.impropers.clear();
-}
-
-/*
  * Species
  */
 
@@ -377,64 +129,6 @@ Species *CoreData::findSpecies(std::string_view name) const
     }
 }
 
-// Copy intramolecular interaction parameters, adding master term if necessary
-void CoreData::copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest)
-{
-    if (source.masterTerm())
-    {
-        auto master = getMasterBond(source.masterTerm()->name());
-        if (!master)
-            master = addMasterBond(source.masterTerm()->name());
-
-        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        dest.setMasterTerm(&master->get());
-    }
-    else
-        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-}
-void CoreData::copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest)
-{
-    if (source.masterTerm())
-    {
-        auto master = getMasterAngle(source.masterTerm()->name());
-        if (!master)
-            master = addMasterAngle(source.masterTerm()->name());
-
-        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        dest.setMasterTerm(&master->get());
-    }
-    else
-        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-}
-void CoreData::copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest)
-{
-    if (source.masterTerm())
-    {
-        auto master = getMasterTorsion(source.masterTerm()->name());
-        if (!master)
-            master = addMasterTorsion(source.masterTerm()->name());
-
-        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        dest.setMasterTerm(&master->get());
-    }
-    else
-        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-}
-void CoreData::copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest)
-{
-    if (source.masterTerm())
-    {
-        auto master = getMasterImproper(source.masterTerm()->name());
-        if (!master)
-            master = addMasterImproper(source.masterTerm()->name());
-
-        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        dest.setMasterTerm(&master->get());
-    }
-    else
-        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-}
-
 // Copy Species from supplied instance
 Species *CoreData::copySpecies(const Species *species)
 {
@@ -472,7 +166,8 @@ Species *CoreData::copySpecies(const Species *species)
     {
         // Create the bond in the new Species
         auto &newBond = newSpecies->addBond(bond.indexI(), bond.indexJ());
-        copySpeciesBond(bond, newBond);
+        // copySpeciesBond(bond, newBond);
+        // TODO DISSOLVE2
     }
 
     // Duplicate angles
@@ -480,7 +175,8 @@ Species *CoreData::copySpecies(const Species *species)
     {
         // Create the angle in the new Species
         auto &newAngle = newSpecies->addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
-        copySpeciesAngle(angle, newAngle);
+        // copySpeciesAngle(angle, newAngle);
+        // TODO DISSOLVE2
     }
 
     // Duplicate torsions
@@ -488,7 +184,8 @@ Species *CoreData::copySpecies(const Species *species)
     {
         // Create the torsion in the new Species
         auto &newTorsion = newSpecies->addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
-        copySpeciesTorsion(torsion, newTorsion);
+        // copySpeciesTorsion(torsion, newTorsion);
+        // TODO DISSOLVE2
     }
 
     // Duplicate impropers
@@ -496,7 +193,8 @@ Species *CoreData::copySpecies(const Species *species)
     {
         // Create the improper in the new Species
         auto &newImproper = newSpecies->addImproper(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
-        copySpeciesImproper(improper, newImproper);
+        // copySpeciesImproper(improper, newImproper);
+        // TODO DISSOLVE2
     }
 
     return newSpecies;
@@ -618,38 +316,6 @@ void CoreData::setInputFilename(std::string_view filename) { inputFilename_ = fi
 
 // Return the current input filename
 std::string_view CoreData::inputFilename() const { return inputFilename_; }
-
-// Express as a serialisable value
-void CoreData::Masters::serialise(std::string tag, SerialisedValue &target) const
-{
-    if (bonds.empty() && angles.empty() && torsions.empty() && impropers.empty())
-        return;
-    auto &node = target[tag];
-    Serialisable::fromVectorToTable<>(bonds, "bonds", node);
-    Serialisable::fromVectorToTable<>(angles, "angles", node);
-    Serialisable::fromVectorToTable<>(torsions, "torsions", node);
-    Serialisable::fromVectorToTable<>(impropers, "impropers", node);
-}
-
-// Read values from a serialisable value
-void CoreData::Masters::deserialise(const SerialisedValue &node)
-{
-    Serialisable::toMap(node, "bonds", [this](const std::string &name, const SerialisedValue &bond)
-                        { bonds.emplace_back(std::make_unique<MasterBond>(name))->deserialise(bond); });
-    Serialisable::toMap(node, "angles", [this](const std::string &name, const SerialisedValue &angle)
-                        { angles.emplace_back(std::make_unique<MasterAngle>(name))->deserialise(angle); });
-    Serialisable::toMap(node, "torsions", [this](const std::string &name, const SerialisedValue &torsion)
-                        { torsions.emplace_back(std::make_unique<MasterTorsion>(name))->deserialise(torsion); });
-    Serialisable::toMap(node, "impropers", [this](const std::string &name, const SerialisedValue &improper)
-                        { impropers.emplace_back(std::make_unique<MasterImproper>(name))->deserialise(improper); });
-    return;
-}
-
-// Express Master terms as serialisable value
-void CoreData::serialiseMaster(std::string tag, SerialisedValue &target) const { masters_.serialise(tag, target); }
-
-// Read Master values from serialisable value
-void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deserialise(node); }
 
 /*
  * Object Management

@@ -5,26 +5,6 @@
 #------------------------------------------------------------------------------#
 
 Master
-  Bond  'CT-CT2'  Harmonic  2652.660     1.495
-  Bond  'CT-OH'  Harmonic  2677.760     1.410
-  Bond  'CT-HC'  Harmonic  2845.120     1.080
-  Bond  'CT2-HC'  Harmonic  2845.120     1.080
-  Bond  'HO-OH'  Harmonic  4627.500     0.945
-  Angle  'CT-CT2-CT'  Harmonic   527.184   115.600
-  Angle  'CT2-CT-OH'  Harmonic   418.400   109.500
-  Angle  'CT2-CT-HC'  Harmonic   292.880   109.500
-  Angle  'HC-CT-OH'  Harmonic   292.880   109.500
-  Angle  'HC-CT-HC'  Harmonic   276.144   107.800
-  Angle  'CT-CT2-HC'  Harmonic   292.880   109.500
-  Angle  'HC-CT2-HC'  Harmonic   276.144   107.800
-  Angle  'CT-OH-HO'  Harmonic   460.240   108.500
-  Torsion  'CT-CT2-CT-OH'  Cos3     7.159    -2.092     2.774
-  Torsion  'CT-CT2-CT-HC'  Cos3     0.000     0.000     1.255
-  Torsion  'HC-CT2-CT-OH'  Cos3     0.000     0.000     1.958
-  Torsion  'HC-CT2-CT-HC'  Cos3     0.000     0.000     1.255
-  Torsion  'HC-CT-CT2-HC'  Cos3     0.000     0.000     1.255
-  Torsion  'CT2-CT-OH-HO'  Cos3    -1.490    -0.728     2.059
-  Torsion  'HC-CT-OH-HO'  Cos3     0.000     0.000     1.474
 EndMaster
 
 #------------------------------------------------------------------------------#
@@ -46,6 +26,27 @@ Species '1,3-propanediol'
   Atom   11    H  1.229270e+00  -1.344897e+00  -3.001876e-01  'HC'  6.000000e-02
   Atom   12    H  3.116849e+00  -9.885752e-02  1.959909e-02  'HO'  4.350000e-01
   Atom   13    H  -2.418796e+00  1.185696e+00  5.340260e-01  'HO'  4.350000e-01
+
+  CommonBond  'CT-CT2'  Harmonic  2652.660     1.495
+  CommonBond  'CT-OH'  Harmonic  2677.760     1.410
+  CommonBond  'CT-HC'  Harmonic  2845.120     1.080
+  CommonBond  'CT2-HC'  Harmonic  2845.120     1.080
+  CommonBond  'HO-OH'  Harmonic  4627.500     0.945
+  CommonAngle  'CT-CT2-CT'  Harmonic   527.184   115.600
+  CommonAngle  'CT2-CT-OH'  Harmonic   418.400   109.500
+  CommonAngle  'CT2-CT-HC'  Harmonic   292.880   109.500
+  CommonAngle  'HC-CT-OH'  Harmonic   292.880   109.500
+  CommonAngle  'HC-CT-HC'  Harmonic   276.144   107.800
+  CommonAngle  'CT-CT2-HC'  Harmonic   292.880   109.500
+  CommonAngle  'HC-CT2-HC'  Harmonic   276.144   107.800
+  CommonAngle  'CT-OH-HO'  Harmonic   460.240   108.500
+  CommonTorsion  'CT-CT2-CT-OH'  Cos3     7.159    -2.092     2.774
+  CommonTorsion  'CT-CT2-CT-HC'  Cos3     0.000     0.000     1.255
+  CommonTorsion  'HC-CT2-CT-OH'  Cos3     0.000     0.000     1.958
+  CommonTorsion  'HC-CT2-CT-HC'  Cos3     0.000     0.000     1.255
+  CommonTorsion  'HC-CT-CT2-HC'  Cos3     0.000     0.000     1.255
+  CommonTorsion  'CT2-CT-OH-HO'  Cos3    -1.490    -0.728     2.059
+  CommonTorsion  'HC-CT-OH-HO'  Cos3     0.000     0.000     1.474
 
   # Bonds
   Bond    1    2  @CT-CT2

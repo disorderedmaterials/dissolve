@@ -3,24 +3,21 @@
 
 #pragma once
 
-#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/speciesIntra.h"
 #include "classes/torsionFunctions.h"
-#include <map>
 #include <vector>
 
 // Forward Declarations
 class SpeciesAtom;
 class Species;
-class CoreData;
 
 // SpeciesTorsion Definition
 class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
-    SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesTorsion() override;
     SpeciesTorsion(SpeciesTorsion &source);
     SpeciesTorsion(SpeciesTorsion &&source) noexcept;
@@ -104,14 +101,14 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node) override;
 };
 
-// MasterTorsion Definition
-class MasterTorsion : public SpeciesTorsion
+// CommonTorsion Definition
+class CommonTorsion : public SpeciesTorsion
 {
     public:
-    explicit MasterTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
+    explicit CommonTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
     using SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise;
 
     /*

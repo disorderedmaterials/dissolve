@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui/models/masterBondModel.h"
+#include "gui/models/commonBondModel.h"
 
-MasterBondModel::MasterBondModel(CoreData &coreData) : MasterTermModel(coreData), sourceData_(coreData.masterBonds())
+CommonBondModel::CommonBondModel(Species *species) : CommonTermModel(species), sourceData_(species->commonBonds())
 {
     // Set connections
     modelUpdater.setModel(this);
@@ -11,15 +11,15 @@ MasterBondModel::MasterBondModel(CoreData &coreData) : MasterTermModel(coreData)
 }
 
 // Refresh model data
-void MasterBondModel::reset()
+void CommonBondModel::reset()
 {
     beginResetModel();
     endResetModel();
 }
 
-int MasterBondModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
+int CommonBondModel::rowCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : sourceData_.size(); }
 
-QVariant MasterBondModel::getTermData(int row, MasterTermModelData::DataType dataType) const
+QVariant CommonBondModel::getTermData(int row, CommonTermModelData::DataType dataType) const
 {
     if (row < 0 || row >= sourceData_.size())
         return {};
@@ -27,18 +27,18 @@ QVariant MasterBondModel::getTermData(int row, MasterTermModelData::DataType dat
     auto &t = sourceData_[row];
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             return QString::fromStdString(std::string(t->name()));
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             return QString::fromStdString(std::string(BondFunctions::forms().keyword(t->interactionForm())));
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
         default:
             return {};
     }
 }
 
-bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value)
+bool CommonBondModel::setTermData(int row, CommonTermModelData::DataType dataType, const QVariant &value)
 {
     if (row < 0 || row >= sourceData_.size())
         return false;
@@ -47,10 +47,10 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
 
     switch (dataType)
     {
-        case (MasterTermModelData::DataType::Name):
+        case (CommonTermModelData::DataType::Name):
             t->setName(value.toString().toStdString());
             break;
-        case (MasterTermModelData::DataType::Form):
+        case (CommonTermModelData::DataType::Form):
             try
             {
                 auto tf = BondFunctions::forms().enumeration(value.toString().toStdString());
@@ -61,7 +61,7 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
                 return false;
             }
             break;
-        case (MasterTermModelData::DataType::Parameters):
+        case (CommonTermModelData::DataType::Parameters):
             if (!t->setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;
@@ -74,21 +74,21 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
     return true;
 }
 
-const std::shared_ptr<MasterBond> &MasterBondModel::rawData(const QModelIndex &index) const { return sourceData_[index.row()]; }
+const std::shared_ptr<CommonBond> &CommonBondModel::rawData(const QModelIndex &index) const { return sourceData_[index.row()]; }
 
-bool MasterBondModel::insertRows(int row, int count, const QModelIndex &parent)
+bool CommonBondModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(count);
 
     beginInsertRows(parent, row, row);
-    coreData_.addMasterBond(
-        DissolveSys::uniqueName("NewBond", coreData_.masterBonds(), [](const auto &b) { return b->name(); }), row);
+    species_->addCommonBond(
+        DissolveSys::uniqueName("NewBond", species_->commonBonds(), [](const auto &b) { return b->name(); }), row);
     endInsertRows();
 
     return true;
 }
 
-bool MasterBondModel::removeRows(int row, int count, const QModelIndex &parent)
+bool CommonBondModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(count);
     if (row >= rowCount() || row < 0)
@@ -100,7 +100,7 @@ bool MasterBondModel::removeRows(int row, int count, const QModelIndex &parent)
     auto &bond = sourceData_[row];
 
     beginRemoveRows(parent, row, row);
-    coreData_.removeMasterBond(bond);
+    species_->removeCommonBond(bond);
     endRemoveRows();
 
     return true;

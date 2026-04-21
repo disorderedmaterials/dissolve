@@ -12,12 +12,12 @@ set(models_MOC_HDRS
     dissolveModel.h
     forcefieldModel.h
     isotopologueSetModel.h
-    masterAngleModel.h
-    masterBondModel.h
-    masterImproperModel.h
-    masterTermModel.h
-    masterTermTreeModel.h
-    masterTorsionModel.h
+    commonAngleModel.h
+    commonBondModel.h
+    commonImproperModel.h
+    commonTermModel.h
+    commonTermTreeModel.h
+    commonTorsionModel.h
     modifyChargesModel.h
     moduleLayerModel.h
     moduleLayersModel.h
@@ -75,12 +75,12 @@ set(models_SRCS
     forcefieldModel.cpp
     globalPotentialFilterProxy.cpp
     isotopologueSetModel.cpp
-    masterAngleModel.cpp
-    masterBondModel.cpp
-    masterImproperModel.cpp
-    masterTermModel.cpp
-    masterTermTreeModel.cpp
-    masterTorsionModel.cpp
+    commonAngleModel.cpp
+    commonBondModel.cpp
+    commonImproperModel.cpp
+    commonTermModel.cpp
+    commonTermTreeModel.cpp
+    commonTorsionModel.cpp
     modifyChargesModel.cpp
     moduleLayerModel.cpp
     moduleLayersModel.cpp

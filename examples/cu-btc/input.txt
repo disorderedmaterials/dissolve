@@ -5,31 +5,6 @@
 #==============================================================================#
 
 Master
-  Bond  'Cu-O'  Morse  D=358.8575 alpha=2.85 eq=1.94
-  Bond  'C1-O'  Morse  D=564.84 alpha=2 eq=1.26
-  Bond  'C1-C2'  Morse  D=367.5226 alpha=2 eq=1.456
-  Bond  'C2-C3'  Morse  D=502.08 alpha=2 eq=1.355
-  Bond  'C3-H'  Morse  D=485.344 alpha=1.77 eq=0.931
-  Angle  'O-Cu-O'  Harmonic  k=100.416 eq=90
-  Angle  'C1-O-Cu'  Harmonic  k=338.653 eq=127.5
-  Angle  'C2-C1-O'  Harmonic  k=456.0142 eq=116.2
-  Angle  'O-C1-O'  Harmonic  k=1213.36 eq=128.5
-  Angle  'C1-C2-C3'  Harmonic  k=290.2022 eq=119.9
-  Angle  'C2-C3-H'  Harmonic  k=309.616 eq=120
-  Angle  'C3-C2-C3'  Harmonic  k=753.12 eq=120.1
-  Angle  'C2-C3-C2'  Harmonic  k=753.12 eq=119.9
-  Angle  'O-Cu-O_1'  Harmonic  k=419.7389 eq=170.2
-  Torsion  'C1-O-Cu-O'  None  
-  Torsion  'C2-C1-O-Cu'  Cos  k=12.552 n=2 eq=0 s=-1
-  Torsion  'Cu-O-C1-O'  Cos  k=12.552 n=2 eq=0 s=-1
-  Torsion  'C3-C2-C1-O'  Cos  k=10.46 n=2 eq=0 s=-1
-  Torsion  'C1-C2-C3-H'  Cos  k=12.552 n=2 eq=0 s=-1
-  Torsion  'C3-C2-C3-H'  Cos  k=12.552 n=2 eq=0 s=-1
-  Torsion  'C1-C2-C3-C2'  Cos  k=12.552 n=2 eq=0 s=-1
-  Torsion  'C2-C3-C2-C3'  Cos  k=12.552 n=2 eq=0 s=-1
-  Improper  'C1-C2-O-O'  Cos  k=41.84 n=2 eq=0 s=-1
-  Improper  'C3-C2-C2-H'  Cos  k=1.5481 n=2 eq=0 s=-1
-  Improper  'C2-C1-C3-C3'  Cos  k=41.84 n=2 eq=0 s=-1
 EndMaster
 
 #==============================================================================#
@@ -663,6 +638,32 @@ Species 'C18 H7.96 Cu3 N2 O15'
   Atom  622  O    2.150402e+01  1.956850e+01  2.495635e+01  'O'  -6.650000e-01
   Atom  623  O    6.765102e+00  1.178955e+01  1.799638e+01  'O'  -6.650000e-01
   Atom  624  O    1.956850e+01  1.178955e+01  8.337218e+00  'O'  -6.650000e-01
+
+  CommonBond  'Cu-O'  Morse  D=358.8575 alpha=2.85 eq=1.94
+  CommonBond  'C1-O'  Morse  D=564.84 alpha=2 eq=1.26
+  CommonBond  'C1-C2'  Morse  D=367.5226 alpha=2 eq=1.456
+  CommonBond  'C2-C3'  Morse  D=502.08 alpha=2 eq=1.355
+  CommonBond  'C3-H'  Morse  D=485.344 alpha=1.77 eq=0.931
+  CommonAngle  'O-Cu-O'  Harmonic  k=100.416 eq=90
+  CommonAngle  'C1-O-Cu'  Harmonic  k=338.653 eq=127.5
+  CommonAngle  'C2-C1-O'  Harmonic  k=456.0142 eq=116.2
+  CommonAngle  'O-C1-O'  Harmonic  k=1213.36 eq=128.5
+  CommonAngle  'C1-C2-C3'  Harmonic  k=290.2022 eq=119.9
+  CommonAngle  'C2-C3-H'  Harmonic  k=309.616 eq=120
+  CommonAngle  'C3-C2-C3'  Harmonic  k=753.12 eq=120.1
+  CommonAngle  'C2-C3-C2'  Harmonic  k=753.12 eq=119.9
+  CommonAngle  'O-Cu-O_1'  Harmonic  k=419.7389 eq=170.2
+  CommonTorsion  'C1-O-Cu-O'  None  
+  CommonTorsion  'C2-C1-O-Cu'  Cos  k=12.552 n=2 eq=0 s=-1
+  CommonTorsion  'Cu-O-C1-O'  Cos  k=12.552 n=2 eq=0 s=-1
+  CommonTorsion  'C3-C2-C1-O'  Cos  k=10.46 n=2 eq=0 s=-1
+  CommonTorsion  'C1-C2-C3-H'  Cos  k=12.552 n=2 eq=0 s=-1
+  CommonTorsion  'C3-C2-C3-H'  Cos  k=12.552 n=2 eq=0 s=-1
+  CommonTorsion  'C1-C2-C3-C2'  Cos  k=12.552 n=2 eq=0 s=-1
+  CommonTorsion  'C2-C3-C2-C3'  Cos  k=12.552 n=2 eq=0 s=-1
+  CommonImproper  'C1-C2-O-O'  Cos  k=41.84 n=2 eq=0 s=-1
+  CommonImproper  'C3-C2-C2-H'  Cos  k=1.5481 n=2 eq=0 s=-1
+  CommonImproper  'C2-C1-C3-C3'  Cos  k=41.84 n=2 eq=0 s=-1
 
   # Bonds
   NBonds  768
