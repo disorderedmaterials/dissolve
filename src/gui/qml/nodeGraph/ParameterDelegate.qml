@@ -27,6 +27,9 @@ DelegateChooser {
             Layout.alignment: Qt.AlignRight
             Layout.column: 2
             Layout.row: index
+            editable: true
+            from: -1000000
+            to: 1000000
             value: param
 
             onValueModified: param = value
