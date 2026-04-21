@@ -17,14 +17,23 @@ class TempFile
         path = std::filesystem::temp_directory_path();
         path /= name ? *name : randomName() + ".dissolve.tmp";
     }
-    ~TempFile() { std::filesystem::remove(path); }
+    ~TempFile()
+    {
+        if constexpr (delete_files)
+            std::filesystem::remove(path);
+    }
 
     // Get the file name on conversion to string
     operator std::string() const { return path; }
     operator std::filesystem::path() const { return path; }
 
     private:
+    // The actual path of the temp file
     std::filesystem::path path;
+    // A compile time switch to control deleting the temp files.  Set
+    // this to false while debugging to read keep the file so you can
+    // analyse the output.
+    constexpr static bool delete_files = true;
 
     // Generate random names for files
     static std::string randomName()
