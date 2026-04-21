@@ -9,8 +9,10 @@
 #include "tests/graphData.h"
 #include "tests/tempFile.h"
 #include "tests/testData.h"
+#include <fstream>
 #include <gtest/gtest.h>
 #include <memory>
+#include <sstream>
 
 namespace UnitTest
 {
@@ -40,5 +42,45 @@ TEST(TrajectoryNodesTest, RoundTrip)
     ASSERT_TRUE(testGraph_.addEdge({"ImportConfigurationTrajectory", "Configuration", "ExportTrajectory", "Configuration"}));
 
     ASSERT_EQ(trajectoryExport->run(), NodeConstants::ProcessResult::Success);
+
+    std::ifstream reference{importFile}, actual{exportFile};
+    std::string ref, act;
+
+    // Loop through the lines of the output file and check that the
+    // trajectories are the same
+    int line;
+    // Only go through the first 801 lines, since we don't have cell
+    // information
+    while (line < 801)
+    {
+        getline(reference, ref);
+        getline(actual, act);
+        // skip reference rows
+        if (act == "801" or act == " @ 3")
+        {
+            ++line;
+            continue;
+        }
+
+        // Use stringstream to parse line
+        std::istringstream correct(ref), result(act);
+        std::string correct_name, result_name;
+
+        correct >> correct_name;
+        result >> result_name;
+        // Ensure that first letter is correct (so that "O" and "OW"
+        // are marked as the same).
+        ASSERT_EQ(correct_name[0], result_name[0]);
+
+        // Ensure that the x, y, and z are the same
+        double correct_float, result_float;
+        for (int i = 0; i < 3; ++i)
+        {
+            correct >> correct_float;
+            result >> result_float;
+            ASSERT_EQ(correct_float, result_float) << std::format("line {}, value {}", line, i);
+        }
+        ++line;
+    }
 }
 } // namespace UnitTest
