@@ -7,6 +7,7 @@
 #include "nodes/exportTrajectory.h"
 #include "nodes/importConfigurationTrajectory.h"
 #include "tests/graphData.h"
+#include "tests/tempFile.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <memory>
@@ -16,7 +17,7 @@ namespace UnitTest
 TEST(TrajectoryNodesTest, RoundTrip)
 {
     const std::string importFile = "dlpoly/water267-analysis/water-267-298K.xyz";
-    const std::string exportFile = "water-267-298K_copy.xyz";
+    auto exportFile = TempFile("water-267-298K_copy.xyz");
     auto inputFormat = TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ;
     auto exportFormat = TrajectoryExportFileFormat::TrajectoryExportFormat::XYZ;
 
