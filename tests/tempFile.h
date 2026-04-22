@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <optional>
 
 // Create a temporary file in the appropriate temp directory. Also
@@ -19,8 +20,19 @@ class TempFile
     }
     ~TempFile()
     {
+        if (out_.is_open())
+            out_.close();
         if constexpr (delete_files)
             std::filesystem::remove(path);
+    }
+
+    std::ofstream &out()
+    {
+        if (!out_.is_open())
+        {
+            out_.open(path);
+        }
+        return out_;
     }
 
     // Get the file name on conversion to string
@@ -34,6 +46,8 @@ class TempFile
     // this to false while debugging to read keep the file so you can
     // analyse the output.
     constexpr static bool delete_files = true;
+    // A local stream that can be used for writing
+    std::ofstream out_;
 
     // Generate random names for files
     static std::string randomName()

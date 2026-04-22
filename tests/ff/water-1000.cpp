@@ -14,11 +14,9 @@ TEST(Water1000EnergyTest, Full)
 {
     auto water = createWater();
     TempFile water_file("water.toml");
-    std::ofstream file(water_file);
     SerialisedValue toml;
     water->species().serialise("species", toml);
-    file << toml;
-    file.close();
+    water_file.out() << toml;
 
     // Set up the test graph
     TestGraph testGraph;
