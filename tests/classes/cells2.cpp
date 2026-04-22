@@ -34,7 +34,7 @@ class CellsPBCTest : public ::testing::Test
 
         // Add a molecule at the origin
         auto central = configuration_.addMolecule(&probe_);
-        central->atom(0)->setCoordinates(origin);
+        central->atom(0)->r() = origin;
 
         // Add surrounding molecules on a sphere with radius equal to the inscribed sphere radius
         const auto r = configuration_.box()->inscribedSphereRadius();
@@ -43,8 +43,7 @@ class CellsPBCTest : public ::testing::Test
             auto theta = DissolveMath::random() * M_PI;
             auto phi = DissolveMath::random() * 2.0 * M_PI;
             auto mol = configuration_.addMolecule(&probe_);
-            mol->atom(0)->setCoordinates(Vector3(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) +
-                                         origin);
+            mol->atom(0)->r() = Vector3(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)) + origin;
         }
 
         configuration_.updateObjectRelationships();

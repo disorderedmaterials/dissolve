@@ -75,7 +75,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve)
                                DissolveMath::randomPlusMinusOne() * stepSize_);
 
                     // Translate Atom and update its Cell position
-                    i->translateCoordinates(rDelta);
+                    i->r() += rDelta;
                     targetConfiguration_->updateAtomLocation(i);
 
                     // Calculate new energy

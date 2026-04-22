@@ -7,24 +7,6 @@
 #include "classes/speciesAtom.h"
 #include <utility>
 
-// Set coordinates
-void ConfigurationAtom::set(const Vector3 r) { r_ = r; }
-
-// Set coordinates
-void ConfigurationAtom::set(double rx, double ry, double rz) { r_.set(rx, ry, rz); }
-
-// Return coordinates
-const Vector3 &ConfigurationAtom::r() const { return r_; }
-
-// Return x-coordinate
-double ConfigurationAtom::x() const { return r_.x; }
-
-// Return y-coordinate
-double ConfigurationAtom::y() const { return r_.y; }
-
-// Return z-coordinate
-double ConfigurationAtom::z() const { return r_.z; }
-
 // Set AtomType index in parent Configuration
 void ConfigurationAtom::setConfigurationTypeIndex(int id) { configurationTypeIndex_ = id; }
 
@@ -62,22 +44,6 @@ void ConfigurationAtom::setCell(Cell *cell) { cell_ = cell; }
 
 // Return cell in which the atom exists
 Cell *ConfigurationAtom::cell() const { return cell_; }
-
-/*
- * Coordinate Manipulation
- */
-
-// Set coordinates
-void ConfigurationAtom::setCoordinates(const Vector3 &newr) { r_ = newr; }
-
-// Set coordinates
-void ConfigurationAtom::setCoordinates(double dx, double dy, double dz) { setCoordinates(Vector3(dx, dy, dz)); }
-
-// Translate coordinates
-void ConfigurationAtom::translateCoordinates(const Vector3 &delta) { setCoordinates(r_ + delta); }
-
-// Translate coordinates
-void ConfigurationAtom::translateCoordinates(double dx, double dy, double dz) { setCoordinates(r_ + Vector3(dx, dy, dz)); }
 
 /*
  * Intramolecular Information

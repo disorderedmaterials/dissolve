@@ -58,7 +58,7 @@ bool Configuration::serialise(LineParser &parser) const
         return false;
     for (const auto &i : atoms_)
     {
-        if (!parser.writeLineF("{} {} {} {}\n", i.molecule()->arrayIndex(), i.x(), i.y(), i.z()))
+        if (!parser.writeLineF("{} {} {} {}\n", i.molecule()->arrayIndex(), i.r().x, i.r().y, i.r().z))
             return false;
     }
 
@@ -154,7 +154,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, bo
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
 
-        atom(n).setCoordinates(parser.arg3d(1));
+        atom(n).r() = parser.arg3d(1);
     }
 
     // Scale box and cells according to the applied size factor

@@ -52,7 +52,7 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
                 // All good, so copy atom coordinates over into our array
                 for (auto &&[i, ri] : zip(cfg->atoms(), r))
                 {
-                    i.setCoordinates(ri);
+                    i.r() = ri;
                 }
             }
             break;

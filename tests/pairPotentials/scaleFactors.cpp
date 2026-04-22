@@ -37,7 +37,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         molecule_.setSpecies(&species_);
         for (auto &&[molAtom, spAtom] : zip(molecule_.localAtoms(), species_.atoms()))
         {
-            molAtom.setCoordinates(spAtom.r());
+            molAtom.r() = spAtom.r();
             molAtom.setConfigurationTypeIndex(spAtom.atomType()->index());
         }
 

@@ -202,7 +202,7 @@ Module::ExecutionResult ClusteringModule::process(Dissolve &dissolve)
                     if (360.0 - angle < angle)
                         angle = 360.0 - angle;
 
-                    if (minAngleDev_ <= angle <= maxAngleDev_)
+                    if (angle >= minAngleDev_ && angle <= maxAngleDev_)
                         keep = true;
                 }
                 // Add to the temp map symmetrically. Not paying attention to site indexes but I suppose this method tags donors
@@ -445,7 +445,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
                 auto mol = clusterConfig_.addMolecule(site->parent()->parent());
                 for (auto &&[molAtom, sourceAtom] : zip(mol->atoms(), site->molecule()->atoms()))
                 {
-                    molAtom->setCoordinates(sourceAtom->r());
+                    molAtom->r() = sourceAtom->r();
                     clusterConfig_.updateAtomLocation(molAtom);
                 }
             }
@@ -461,7 +461,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
                     auto mol = clusterConfig_.addMolecule(site->parent()->parent());
                     for (auto &&[molAtom, sourceAtom] : zip(mol->atoms(), site->molecule()->atoms()))
                     {
-                        molAtom->setCoordinates(sourceAtom->r());
+                        molAtom->r() = sourceAtom->r();
                         clusterConfig_.updateAtomLocation(molAtom);
                     }
                 }
@@ -475,7 +475,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
             auto mol = clusterConfig_.addMolecule(site->parent()->parent());
             for (auto &&[molAtom, sourceAtom] : zip(mol->atoms(), site->molecule()->atoms()))
             {
-                molAtom->setCoordinates(sourceAtom->r());
+                molAtom->r() = sourceAtom->r();
                 clusterConfig_.updateAtomLocation(molAtom);
             }
         }

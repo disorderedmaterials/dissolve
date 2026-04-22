@@ -77,7 +77,7 @@ bool RotateFragmentGeneratorNode::execute(const GeneratorContext &generatorConte
     for (auto index : parent->instances()[parentIndex].allIndices())
     {
         auto atom = molecule->atom(index);
-        atom->set(rotationMatrix.transform(box->minimumVector(site.origin(), atom->r())) + site.origin());
+        atom->r() = rotationMatrix.transform(box->minimumVector(site.origin(), atom->r())) + site.origin();
     }
 
     return true;

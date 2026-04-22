@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/atom.h"
 #include "classes/speciesAtom.h"
 #include "kernels/potentials/base.h"
 #include "math/vector3.h"
@@ -14,30 +15,16 @@ class Cell;
 class Molecule;
 
 // Configuration Atom
-class ConfigurationAtom
+class ConfigurationAtom : public Atom
 {
     /*
      * Properties
      */
     private:
-    // Coordinates
-    Vector3 r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
     int configurationTypeIndex_{-1};
 
     public:
-    // Set coordinates
-    void set(const Vector3 r);
-    // Set coordinates
-    void set(double rx, double ry, double rz);
-    // Return coordinates
-    const Vector3 &r() const;
-    // Return x-coordinate
-    double x() const;
-    // Return y-coordinate
-    double y() const;
-    // Return z-coordinate
-    double z() const;
     // Set AtomType index in parent Configuration
     void setConfigurationTypeIndex(int id);
     // Return AtomType index in parent Configuration
@@ -71,19 +58,6 @@ class ConfigurationAtom
     void setCell(Cell *cell);
     // Return cell in which the atom exists
     Cell *cell() const;
-
-    /*
-     * Coordinate Manipulation
-     */
-    public:
-    // Set coordinates
-    void setCoordinates(const Vector3 &newr);
-    // Set coordinates
-    void setCoordinates(double dx, double dy, double dz);
-    // Translate coordinates
-    void translateCoordinates(const Vector3 &delta);
-    // Translate coordinates
-    void translateCoordinates(double dx, double dy, double dz);
 
     /*
      * Intramolecular Information

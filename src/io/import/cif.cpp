@@ -748,7 +748,7 @@ bool CIFHandler::createSupercell()
                             mol.setSpecies(sp);
 
                             for (auto &&[coreAtom, instanceAtom] : zip(instance.localAtoms(), mol.localAtoms()))
-                                instanceAtom.setCoordinates(coreAtom.r() + tVec);
+                                instanceAtom.r() = coreAtom.r() + tVec;
                         }
                     }
                 }
@@ -762,7 +762,7 @@ bool CIFHandler::createSupercell()
             {
                 auto mol = supercellConfiguration_.addMolecule(sp);
                 for (auto &&[molAtom, instanceAtom] : zip(mol->atoms(), instance.localAtoms()))
-                    molAtom->setCoordinates(instanceAtom.r());
+                    molAtom->r() = instanceAtom.r();
             }
         }
 
@@ -1162,7 +1162,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
         auto count = 0;
         for (auto &&[matchedAtom, instanceMolAtom] : zip(matchedUnitCellAtoms, instanceMolecule.localAtoms()))
         {
-            instanceMolAtom.setCoordinates(matchedAtom->r());
+            instanceMolAtom.r() = matchedAtom->r();
             atomMask[matchedAtom->index()] = true;
         }
         auto &instanceMoleculeRootAtom = instanceMolecule.localAtoms()[rootAtomLocalIndex];
@@ -1211,7 +1211,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
         instance.setSpecies(referenceSpecies);
         for (const auto &[refSpeciesAtom, instanceSpeciesAtom] : matchMap)
         {
-            instance.localAtom(refSpeciesAtom->index()).setCoordinates(instanceSpeciesAtom->r());
+            instance.localAtom(refSpeciesAtom->index()).r() = instanceSpeciesAtom->r();
         }
 
         // Find the next available atom

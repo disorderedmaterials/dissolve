@@ -240,7 +240,7 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve)
         for (auto &&[i, v, a] : zip(atoms, velocities, accelerations))
         {
             // Propagate positions (by whole step)...
-            i.translateCoordinates(v * dT + a * 0.5 * deltaTSq);
+            i.r() += v * dT + a * 0.5 * deltaTSq;
 
             // ...velocities (by half step)...
             v += a * 0.5 * dT;
