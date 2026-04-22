@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/changeStore.h"
+#include "classes/configurationAtom.h"
 #include "main/dissolve.h"
 
 // Rationalise object relationships between atoms, molecules, and cells
@@ -37,7 +37,7 @@ void Configuration::updateAtomLocations(bool clearExistingLocations)
 }
 
 // Update Cell location of specified Atom
-void Configuration::updateAtomLocation(Atom *i)
+void Configuration::updateAtomLocation(ConfigurationAtom *i)
 {
     // Fold Atom coordinates into Box
     i->setCoordinates(box_->fold(i->r()));

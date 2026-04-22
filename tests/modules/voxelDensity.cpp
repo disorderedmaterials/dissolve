@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/voxelDensity/voxelDensity.h"
-#include "classes/atom.h"
+#include "classes/configurationAtom.h"
 #include "classes/speciesAtom.h"
 #include "data/elements.h"
 #include "keywords/double.h"

@@ -3,8 +3,8 @@
 
 #include "classes/potentialMap.h"
 #include "base/messenger.h"
-#include "classes/atom.h"
 #include "classes/atomType.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/pairPotential.h"
 #include "classes/species.h"
@@ -43,7 +43,7 @@ void PotentialMap::clear() { potentialMatrix_.clear(); }
  */
 
 // Return energy between Atoms at distance specified
-double PotentialMap::energy(const Atom &i, const Atom &j, double r) const
+double PotentialMap::energy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());
@@ -57,7 +57,8 @@ double PotentialMap::energy(const Atom &i, const Atom &j, double r) const
 }
 
 // Return energy between Atoms at distance specified, scaling electrostatic and short-range components
-double PotentialMap::energy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
+double PotentialMap::energy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
+                            double srScale) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());
@@ -99,7 +100,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 }
 
 // Return analytic energy between Atom types at distance specified
-double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r) const
+double PotentialMap::analyticEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const
 {
     assert(r >= 0.0);
 
@@ -112,7 +113,8 @@ double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r) cons
 }
 
 // Return analytic energy between Atom types at distance specified, scaling electrostatic and short-range components
-double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
+double PotentialMap::analyticEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
+                                    double srScale) const
 {
     assert(r >= 0.0);
 
@@ -125,7 +127,7 @@ double PotentialMap::analyticEnergy(const Atom &i, const Atom &j, double r, doub
 }
 
 // Return force between Atoms at distance specified
-double PotentialMap::force(const Atom &i, const Atom &j, double r) const
+double PotentialMap::force(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const
 {
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
@@ -136,7 +138,8 @@ double PotentialMap::force(const Atom &i, const Atom &j, double r) const
 }
 
 // Return force between Atoms at distance specified, scaling electrostatic and short-range components
-double PotentialMap::force(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
+double PotentialMap::force(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
+                           double srScale) const
 {
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
@@ -175,7 +178,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r,
 }
 
 // Return analytic force between Atom types at distance specified
-double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r) const
+double PotentialMap::analyticForce(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());
@@ -189,7 +192,8 @@ double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r) const
 }
 
 // Return analytic force between Atom types at distance specified, scaling electrostatic and short-range components
-double PotentialMap::analyticForce(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
+double PotentialMap::analyticForce(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
+                                   double srScale) const
 {
     assert(r >= 0.0);
     assert(i.speciesAtom() && j.speciesAtom());

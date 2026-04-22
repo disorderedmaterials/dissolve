@@ -105,7 +105,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
                     testTolerance_);
     }
     // Perform scaling tests on analytic routines
-    void testAnalyticScalings(const Atom &i, const Atom &j, double r, double refChargeProduct)
+    void testAnalyticScalings(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double refChargeProduct)
     {
         // No scaling
         EXPECT_NEAR(potentialMap_.analyticEnergy(i, j, r), referenceEnergy(r, refChargeProduct), testTolerance_);

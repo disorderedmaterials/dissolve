@@ -146,7 +146,7 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
         auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0, correctSelfEnergy = 0.0;
 
         double r;
-        Atom *i, *j;
+        ConfigurationAtom *i, *j;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
         const auto cutoff = PairPotential::range();

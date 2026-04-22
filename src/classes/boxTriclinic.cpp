@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 
 TriclinicBox::TriclinicBox(const Vector3 lengths, const Vector3 angles) : Box(Box::BoxType::Triclinic, lengths, angles) {}
 

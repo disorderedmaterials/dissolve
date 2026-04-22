@@ -2,10 +2,10 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/configurationAtom.h"
 #include "main/dissolve.h"
 #include "math/combinations.h"
 #include "math/filters.h"

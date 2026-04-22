@@ -13,8 +13,8 @@
 class Cell;
 class Molecule;
 
-// Atom Definition
-class Atom
+// Configuration Atom
+class ConfigurationAtom
 {
     /*
      * Properties
@@ -90,7 +90,7 @@ class Atom
      */
     public:
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
-    SpeciesAtom::ScaledInteractionDefinition scaling(const Atom *j) const;
+    SpeciesAtom::ScaledInteractionDefinition scaling(const ConfigurationAtom *j) const;
 
     /*
      * Targeted External Potentials

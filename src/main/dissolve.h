@@ -15,7 +15,7 @@
 #include "module/module.h"
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 class Box;
 class Cell;
 class DissolveGraph;

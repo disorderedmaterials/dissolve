@@ -3,7 +3,7 @@
 
 #include "gui/render/renderableSpeciesSite.h"
 #include "base/lineParser.h"
-#include "classes/atom.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "data/elementColours.h"

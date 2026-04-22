@@ -8,7 +8,7 @@
 #include "templates/flags.h"
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 class Box;
 class Cell;
 class Configuration;
@@ -34,15 +34,17 @@ class ForceKernel : public GeometryKernel
      */
     private:
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const;
+    void forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                          std::vector<Vector3> &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f, double elecScale,
-                          double srScale) const;
+    void forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                          std::vector<Vector3> &f, double elecScale, double srScale) const;
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const;
+    void forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                       std::vector<Vector3> &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f, double elecScale,
-                       double srScale) const;
+    void forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ, std::vector<Vector3> &f,
+                       double elecScale, double srScale) const;
     // Calculate forces between two cells
     void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, std::vector<Vector3> &f) const;
 
@@ -51,7 +53,7 @@ class ForceKernel : public GeometryKernel
      */
     private:
     // Calculate extended forces on supplied atom
-    virtual void extendedForces(const Atom &i, Vector3 &fVec) const;
+    virtual void extendedForces(const ConfigurationAtom &i, Vector3 &fVec) const;
     // Calculate extended forces on supplied molecule
     virtual void extendedForces(const Molecule &mol, std::vector<Vector3> &f) const;
 

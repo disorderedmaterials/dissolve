@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/changeStore.h"
-#include "classes/atom.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include <memory>
 #include <utility>
@@ -16,7 +16,7 @@ ChangeStore::ChangeStore() {}
  */
 
 // Add atom to watch
-void ChangeStore::add(Atom *i)
+void ChangeStore::add(ConfigurationAtom *i)
 {
     targetAtoms_.emplace_back();
     targetAtoms_.back().setAtom(std::move(i));

@@ -3,9 +3,9 @@
 
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 #include "main/dissolve.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 

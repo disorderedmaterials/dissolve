@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 
 MonoclinicBetaBox::MonoclinicBetaBox(const Vector3 lengths, double beta)
     : Box(Box::BoxType::MonoclinicBeta, lengths, {90.0, beta, 90.0})

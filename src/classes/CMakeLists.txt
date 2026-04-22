@@ -2,7 +2,6 @@ add_library(
   classes
   angleFunctions.cpp
   array3DIterator.cpp
-  atom.cpp
   atomType.cpp
   bondFunctions.cpp
   box.cpp
@@ -27,6 +26,7 @@ add_library(
   configuration_potentials.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
+  configurationAtom.cpp
   coreData.cpp
   distributor.cpp
   empiricalFormula.cpp
@@ -78,7 +78,6 @@ add_library(
   xRayWeights.cpp
   angleFunctions.h
   array3DIterator.h
-  atom.h
   atomType.h
   bondFunctions.h
   box.h
@@ -89,6 +88,7 @@ add_library(
   changeData.h
   changeStore.h
   configuration.h
+  configurationAtom.cpp
   coreData.h
   dataSource.h
   distributor.h

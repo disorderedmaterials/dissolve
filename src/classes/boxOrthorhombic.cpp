@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 
 OrthorhombicBox::OrthorhombicBox(const Vector3 lengths) : Box(Box::BoxType::Orthorhombic, lengths, {90.0, 90.0, 90.0}) {}
 

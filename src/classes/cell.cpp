@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/cell.h"
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 #include "templates/algorithms.h"
 #include <algorithm>
 
@@ -35,14 +35,14 @@ const Vector3 &Cell::centre() const { return centre_; }
  */
 
 // Return vector of contained Atoms
-std::vector<Atom *> &Cell::atoms() { return atoms_; }
-const std::vector<Atom *> &Cell::atoms() const { return atoms_; }
+std::vector<ConfigurationAtom *> &Cell::atoms() { return atoms_; }
+const std::vector<ConfigurationAtom *> &Cell::atoms() const { return atoms_; }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-void Cell::addAtom(Atom *atom)
+void Cell::addAtom(ConfigurationAtom *atom)
 {
     assert(atom);
     assert(!atom->cell());
@@ -52,7 +52,7 @@ void Cell::addAtom(Atom *atom)
 }
 
 // Remove Atom from Cell
-void Cell::removeAtom(Atom *atom)
+void Cell::removeAtom(ConfigurationAtom *atom)
 {
     auto it = std::find(atoms_.begin(), atoms_.end(), atom);
     assert(it != atoms_.end());

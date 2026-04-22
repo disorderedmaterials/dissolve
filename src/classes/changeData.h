@@ -6,7 +6,7 @@
 #include "math/vector3.h"
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 class Cell;
 
 // Change Data
@@ -21,7 +21,7 @@ class ChangeData
      */
     private:
     // Atom
-    Atom *atom_;
+    ConfigurationAtom *atom_;
     // Flag indicating whether Atom has moved
     bool moved_{false};
     // Stored coordinates of Atom
@@ -31,9 +31,9 @@ class ChangeData
 
     public:
     // Set target Atom
-    void setAtom(Atom *i);
+    void setAtom(ConfigurationAtom *i);
     // Return target Atom
-    Atom *atom();
+    ConfigurationAtom *atom();
     // Return array index of stored Atom
     int atomArrayIndex() const;
     // Update stored position, and flag as moved

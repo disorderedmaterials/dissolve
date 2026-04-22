@@ -5,9 +5,9 @@
 
 #include "base/serialiser.h"
 #include "base/version.h"
-#include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cellArray.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
 #include "generator/generator.h"
@@ -73,7 +73,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Molecule vector
     std::vector<std::shared_ptr<Molecule>> molecules_;
     // Atom vector
-    std::vector<Atom> atoms_;
+    std::vector<ConfigurationAtom> atoms_;
     // Configuration version, incremented whenever atom positions or atomic composition changes
     VersionCounter version_;
     // Flag stating whether local Atom type indices are up-to-date
@@ -81,7 +81,7 @@ class Configuration : public Serialisable<const CoreData &>
 
     private:
     // Add new Atom to Configuration
-    Atom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
+    ConfigurationAtom &addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r = Vector3());
 
     public:
     // Empty contents of Configuration
@@ -125,10 +125,10 @@ class Configuration : public Serialisable<const CoreData &>
     // Return the number of atoms in the configuration (or only those with the specified presence)
     int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
     // Return Atom array
-    std::vector<Atom> &atoms();
-    const std::vector<Atom> &atoms() const;
+    std::vector<ConfigurationAtom> &atoms();
+    const std::vector<ConfigurationAtom> &atoms() const;
     // Return nth Atom
-    Atom &atom(int n);
+    ConfigurationAtom &atom(int n);
     // Unfold molecule coordinates
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
@@ -215,7 +215,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Update Cell location of all Atoms
     void updateAtomLocations(bool clearExistingLocations = false);
     // Update Cell location of specified Atom
-    void updateAtomLocation(Atom *i);
+    void updateAtomLocation(ConfigurationAtom *i);
     // Update Cell locations of atoms within the specified Molecule
     void updateAtomLocations(const std::shared_ptr<Molecule> &mol);
     // Update Cell location of specified Atom indices

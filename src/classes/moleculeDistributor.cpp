@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/moleculeDistributor.h"
-#include "classes/atom.h"
+#include "classes/configurationAtom.h"
 
 MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,
                                          bool repeatsAllowed)

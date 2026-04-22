@@ -4,11 +4,11 @@
 #pragma once
 
 #include "base/timer.h"
-#include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/braggReflection.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
+#include "classes/configurationAtom.h"
 #include "classes/kVector.h"
 #include "classes/neutronWeights.h"
 #include "classes/species.h"

@@ -5,11 +5,11 @@
 #include <math.h>
 #include <ranges>
 
-#include "classes/atom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
+#include "classes/configurationAtom.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/combinations.h"

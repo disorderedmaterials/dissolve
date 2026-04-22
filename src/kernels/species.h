@@ -8,7 +8,7 @@
 #include "templates/flags.h"
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 class Cell;
 class Species;
 class SpeciesAtom;

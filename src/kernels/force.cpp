@@ -21,7 +21,8 @@ ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potential
  */
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const
+void ForceKernel::forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                                   std::vector<Vector3> &f) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -35,8 +36,8 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f,
-                                   double elecScale, double srScale) const
+void ForceKernel::forcesWithoutMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                                   std::vector<Vector3> &f, double elecScale, double srScale) const
 {
     auto vij = j.r() - i.r();
     auto distanceSq = vij.magnitudeSq();
@@ -50,7 +51,8 @@ void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int
 }
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f) const
+void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                                std::vector<Vector3> &f) const
 {
     auto vij = box_->minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
@@ -64,8 +66,8 @@ void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int in
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, std::vector<Vector3> &f, double elecScale,
-                                double srScale) const
+void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                                std::vector<Vector3> &f, double elecScale, double srScale) const
 {
     auto vij = box_->minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
@@ -123,7 +125,7 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
  */
 
 // Calculate extended forces on supplied atom
-void ForceKernel::extendedForces(const Atom &i, Vector3 &fVec) const { return; }
+void ForceKernel::extendedForces(const ConfigurationAtom &i, Vector3 &fVec) const { return; }
 
 // Calculate extended forces on supplied molecule
 void ForceKernel::extendedForces(const Molecule &mol, std::vector<Vector3> &f) const { return; }
