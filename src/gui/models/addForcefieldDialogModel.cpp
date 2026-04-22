@@ -124,7 +124,8 @@ void AddForcefieldDialogModel::next()
 //
 // // Set model and signals for the master terms tree
 // atomTypes_.setQueryFunction([this](const auto type)
-//     commons_->setBondQueryFunction([this](std::string_view name, Species *sp) { return sp->getCommonBond(name).has_value(); });
+//     commons_->setBondQueryFunction([this](std::string_view name, Species *sp) { return sp->getCommonBond(name).has_value();
+//     });
 // commons_->setAngleQueryFunction([this](std::string_view name, Species *sp)
 //                                 { return sp->getCommonAngle(name).has_value(); });
 // commons_->setTorsionQueryFunction([this](std::string_view name, Species *sp)
