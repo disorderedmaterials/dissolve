@@ -34,7 +34,7 @@ class ExportTrajectoryNode : public Node
     // Last read file position (as int)
     std::streampos filePosition_;
     // Target configuration
-    Configuration *configuration_;
+    Configuration *configuration_{nullptr};
 
     /*
      * Processing
