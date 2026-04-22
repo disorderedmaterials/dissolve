@@ -23,6 +23,8 @@ template <class T> class History : public Serialisable<>
     std::function<T()> initialiser_{};
 
     public:
+    // Clear all data in the history
+    void clear() { history_.clear(); }
     // Push data into the history and return current average
     T push(const T &data, int averagingLength)
     {
