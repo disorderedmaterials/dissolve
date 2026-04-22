@@ -5,11 +5,10 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/atom.h"
 #include "data/elements.h"
 #include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include <map>
-#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -21,7 +20,7 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Serialisable<>
+class SpeciesAtom : public Atom, Serialisable<>
 {
     public:
     SpeciesAtom(Species *parent);
@@ -50,12 +49,6 @@ class SpeciesAtom : public Serialisable<>
     private:
     // Parent Species
     Species *parent_{nullptr};
-    // Atomic element
-    Elements::Element Z_{Elements::Unknown};
-    // Coordinates
-    Vector3 r_{0.0, 0.0, 0.0};
-    // Charge (if contained in file)
-    double charge_{0.0};
     // Assigned AtomType
     const AtomType *atomType_{nullptr};
     // Index in Species
@@ -68,21 +61,8 @@ class SpeciesAtom : public Serialisable<>
     public:
     // Return parent Species
     Species *parent() const;
-    // Set basic properties
-    void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
-    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
-    // Set atomic element
-    void setZ(Elements::Element Z);
-    // Return atomic element
-    Elements::Element Z() const;
     // Return whether the atom is of the presence specified
     bool isPresence(SpeciesAtom::Presence presence) const;
-    // Return coordinates (read-only)
-    const Vector3 &r() const;
-    // Set charge of Atom
-    void setCharge(double charge);
-    // Return charge of Atom
-    double charge() const;
     // Set AtomType of Atom
     void setAtomType(const AtomType *at);
     // Return AtomType of Atom

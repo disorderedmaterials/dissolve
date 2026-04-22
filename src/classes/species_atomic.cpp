@@ -32,7 +32,7 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
 int Species::addAtom(Elements::Element Z, Vector3 r, double q, const AtomType *atomType)
 {
     auto &i = atoms_.emplace_back(this);
-    i.set(Z, r.x, r.y, r.z, q);
+    i.set(Z, r, q);
     i.setIndex(atoms_.size() - 1);
     i.setAtomType(atomType);
 

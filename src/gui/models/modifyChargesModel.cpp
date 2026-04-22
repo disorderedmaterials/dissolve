@@ -46,11 +46,11 @@ bool ModifyChargesModel::scale(Species *species, bool showDialogOnError = true)
 
         auto sum = 0.0;
         for (auto &atom : species->atoms())
-            sum += atom.charge();
+            sum += atom.q();
         scaleFactor = scaleTarget / sum;
     }
     for (auto &atom : species->atoms())
-        atom.setCharge(atom.charge() * scaleFactor);
+        atom.q() = atom.q() * scaleFactor;
 
     return true;
 }
@@ -61,12 +61,12 @@ void ModifyChargesModel::smooth(Species *species)
     auto sum = species->totalCharge(false), shiftVal = 0.0;
     shiftVal = (sum - targetSum) / species->nAtoms();
     for (auto &atom : species->atoms())
-        atom.setCharge(atom.charge() - shiftVal);
+        atom.q() = atom.q() - shiftVal;
 }
 
 void ModifyChargesModel::reduceSignificantFigures(Species *species)
 {
     auto significantFigures = sigFigValue();
     for (auto &atom : species->atoms())
-        atom.setCharge(std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
+        atom.q() = std::round(atom.q() * std::pow(10, significantFigures)) / std::pow(10, significantFigures);
 }

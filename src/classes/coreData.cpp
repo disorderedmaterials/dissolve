@@ -153,7 +153,7 @@ Species *CoreData::copySpecies(const Species *species)
     for (auto &i : species->atoms())
     {
         // Create the Atom in our new Species
-        auto id = newSpecies->addAtom(i.Z(), i.r(), i.charge());
+        auto id = newSpecies->addAtom(i.Z(), i.r(), i.q());
         if (i.isSelected())
             newSpecies->selectAtom(id);
 

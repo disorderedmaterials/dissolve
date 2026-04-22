@@ -342,7 +342,7 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, b
 
     // Set the charge on the SpeciesAtom if requested
     if (setSpeciesAtomCharges)
-        i.setCharge(ffa.charge());
+        i.q() = ffa.charge();
 }
 
 // Assign / generate bond term parameters
