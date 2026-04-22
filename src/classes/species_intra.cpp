@@ -29,8 +29,6 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
     // OK to add new Bond
     bonds_.emplace_back(this, i, j);
 
-    ++version_;
-
     return bonds_.back();
 }
 SpeciesBond &Species::addBond(int i, int j) { return addBond(&atom(i), &atom(j)); }
@@ -53,8 +51,6 @@ void Species::removeBond(SpeciesAtom *j, SpeciesAtom *k)
 
     // Erase the bond
     bonds_.erase(it);
-
-    ++version_;
 }
 void Species::removeBond(int i, int j) { removeBond(&atoms_[i], &atoms_[j]); }
 
@@ -150,8 +146,6 @@ void Species::removeHigherOrderIntramolecularTerms()
     angles_.clear();
     torsions_.clear();
     impropers_.clear();
-
-    ++version_;
 }
 
 // Clear and recalculate all bonds on the species
@@ -250,8 +244,6 @@ void Species::updateIntramolecularTerms()
                                                 (!hasBond(improper.k(), improper.l())));
                                     }),
                      impropers_.end());
-
-    ++version_;
 }
 
 // Add new SpeciesAngle definition
@@ -268,8 +260,6 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 
     // OK to add new angle
     angles_.emplace_back(this, i, j, k);
-
-    ++version_;
 
     return angles_.back();
 }
@@ -329,8 +319,6 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
 
     // OK to add new torsion
     torsions_.emplace_back(this, i, j, k, l);
-
-    ++version_;
 
     return torsions_.back();
 }
@@ -395,8 +383,6 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
 
     // OK to add new improper
     impropers_.emplace_back(this, i, j, k, l);
-
-    ++version_;
 
     return impropers_.back();
 }

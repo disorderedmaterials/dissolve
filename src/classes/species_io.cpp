@@ -291,7 +291,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     // Fold atoms
                     for (auto &i : atoms_)
-                        setAtomCoordinates(&i, box_->fold(i.r()));
+                        i.setCoordinates(box_->fold(i.r()));
                 }
                 updateIsotopologues();
                 Messenger::print("Found end of Species '{}'.\n", name());

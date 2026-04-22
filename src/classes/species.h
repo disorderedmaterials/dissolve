@@ -24,7 +24,7 @@ class CommonImproper;
 class Forcefield;
 
 // Species Definition
-class Species : public Serialisable<const CoreData &>
+class Species : public Serialisable<>
 {
     public:
     Species(std::string name = "Unnamed");
@@ -40,8 +40,6 @@ class Species : public Serialisable<const CoreData &>
     private:
     // Name of the Species
     std::string name_;
-    // Version of the Species
-    VersionCounter version_;
 
     public:
     // Set name of the Species
@@ -52,8 +50,6 @@ class Species : public Serialisable<const CoreData &>
     bool checkSetUp() const;
     // Print Species information
     void print() const;
-    // Return version
-    int version() const;
 
     /*
      * Atomic Information
@@ -88,8 +84,6 @@ class Species : public Serialisable<const CoreData &>
     // Return a reference to the vector of atoms
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
-    // Set coordinates of specified atom
-    void setAtomCoordinates(SpeciesAtom *i, Vector3 r);
     // Set coordinates of specified atom (by index and individual coordinates)
     void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
@@ -130,8 +124,6 @@ class Species : public Serialisable<const CoreData &>
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters
     int simplifyAtomTypes();
-    // Set charge of specified atom
-    void setAtomCharge(SpeciesAtom *i, double q);
     // Return total charge of species from local/atomtype atomic charges
     double totalCharge(bool useAtomTypes) const;
     // Apply random noise to atoms
@@ -354,8 +346,6 @@ class Species : public Serialisable<const CoreData &>
     bool hasIsotopologue(const Isotopologue *iso) const;
     // Search for Isotopologue by name
     const Isotopologue *findIsotopologue(std::string_view name) const;
-    // Return index of specified Isotopologue
-    int indexOfIsotopologue(const Isotopologue *iso) const;
 
     /*
      * Sites
@@ -432,5 +422,5 @@ class Species : public Serialisable<const CoreData &>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node);
 };

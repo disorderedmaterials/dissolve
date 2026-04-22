@@ -222,7 +222,7 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 
     toMap(node, "species", [this](const std::string &name, const SerialisedValue &data)
-          { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
+          { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data); });
 
     toMap(node, "configurations",
           [this](const std::string &name, const SerialisedValue &data)

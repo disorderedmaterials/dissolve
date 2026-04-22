@@ -46,7 +46,7 @@ RenderableSpecies::~RenderableSpecies() {}
  */
 
 // Return version of data
-int RenderableSpecies::dataVersion() { return (source_ ? source_->version() : -99); }
+int RenderableSpecies::dataVersion() { return -99; }
 
 /*
  * Transform / Limits

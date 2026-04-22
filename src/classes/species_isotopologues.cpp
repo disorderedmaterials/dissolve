@@ -67,10 +67,3 @@ const Isotopologue *Species::findIsotopologue(std::string_view name) const
 
     return nullptr;
 }
-
-// Return index of specified Isotopologue
-int Species::indexOfIsotopologue(const Isotopologue *iso) const
-{
-    auto i = std::find_if(isotopologues_.begin(), isotopologues_.end(), [iso](auto &i) { return i.get() == iso; });
-    return i - isotopologues_.begin();
-}

@@ -54,7 +54,7 @@ class Isotopologue : public Serialisable<>
     // Update current AtomType/Isotopes against parent Species
     void update();
     // Set AtomType/Isotope pair in list
-    void setAtomTypeIsotope(const AtomType *atomType, Sears91::Isotope tope);
+    void setAtomTypeIsotope(const AtomType *atomType, Sears91::Isotope isotope);
     // Return Isotope for specified AtomType
     Sears91::Isotope atomTypeIsotope(const AtomType *atomType) const;
     // Return AtomType/Isotope pairs list

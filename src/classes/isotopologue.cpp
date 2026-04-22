@@ -34,7 +34,7 @@ void Isotopologue::update()
     isotopes_.erase([&atomTypes](auto value) { return !atomTypes.contains(value); });
 
     // Add in any used atom types that are not currently in the list
-    for (const auto &[atomType, pop] : atomTypes)
+    for (const auto &atomType : std::views::keys(atomTypes))
     {
         if (!isotopes_.contains(atomType))
             isotopes_.set(atomType, Sears91::naturalIsotope(atomType->Z()));
