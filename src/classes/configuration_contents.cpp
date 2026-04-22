@@ -27,10 +27,6 @@ ConfigurationAtom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const s
     // Set the position
     newAtom.r() = r;
 
-    // Set configuration type index for pair potential lookup
-    // TODO This can be removed once the Dissolve1 unit tests have been ported over to Dissolve2
-    newAtom.setConfigurationTypeIndex(sourceAtom->atomType()->index());
-
     return newAtom;
 }
 
@@ -348,9 +344,9 @@ void Configuration::updateTypeIndexing()
     for (auto &atom : atoms_)
     {
         if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical))
-            atom.setConfigurationTypeIndex(typeMap[atom.speciesAtom()->atomType()]);
+            atom.setAtomTypeIndex(typeMap[atom.speciesAtom()->atomType()]);
         else
-            atom.setConfigurationTypeIndex(AtomType::Ignore);
+            atom.setAtomTypeIndex(AtomType::Ignore);
     }
 
     typeIndicesValid_ = true;

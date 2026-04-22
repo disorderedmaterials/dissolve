@@ -31,7 +31,7 @@ bool GRNode::calculateGRTestSerial(const Array2D<typename std::map<std::string, 
                             [&, box](auto indexI, auto &atomI, auto indexJ, auto &atomJ)
                             {
                                 if (indexI != indexJ)
-                                    fullLUT[{atomI.configurationTypeIndex(), atomJ.configurationTypeIndex()}]->second.bin(
+                                    fullLUT[{atomI.atomTypeIndex(), atomJ.atomTypeIndex()}]->second.bin(
                                         box->minimumDistance(atomI.r(), atomJ.r()));
                             });
 
@@ -66,7 +66,7 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
     // Loop over Atoms and construct arrays
     for (auto &atom : targetConfiguration_->atoms())
     {
-        m = atom.configurationTypeIndex();
+        m = atom.atomTypeIndex();
         if (m == AtomType::Ignore)
             continue;
         r[m][nr[m]++] = atom.r();
@@ -188,7 +188,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
         // quicker than working out if we need to given the absence of a 2D look-up array
         for (auto &i : atomsI)
         {
-            auto typeI = i->configurationTypeIndex();
+            auto typeI = i->atomTypeIndex();
             if (typeI == AtomType::Ignore)
                 continue;
 
@@ -196,7 +196,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
 
             for (auto &j : atomsJ)
             {
-                auto typeJ = j->configurationTypeIndex();
+                auto typeJ = j->atomTypeIndex();
                 if (typeJ == AtomType::Ignore)
                     continue;
 
@@ -231,9 +231,9 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
                           if (idx == jdx)
                               return;
                           auto &i = atomsI[idx];
-                          auto typeI = i->configurationTypeIndex();
+                          auto typeI = i->atomTypeIndex();
                           auto &j = atomsI[jdx];
-                          auto typeJ = j->configurationTypeIndex();
+                          auto typeJ = j->atomTypeIndex();
                           if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
                           {
                               // No need to perform MIM since we're in the same cell
@@ -356,11 +356,11 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
                                     if (indexI == indexJ)
                                         return;
 
-                                    auto typeI = atomI->configurationTypeIndex();
+                                    auto typeI = atomI->atomTypeIndex();
                                     if (typeI == AtomType::Ignore)
                                         return;
 
-                                    auto typeJ = atomJ->configurationTypeIndex();
+                                    auto typeJ = atomJ->atomTypeIndex();
                                     if (typeJ == AtomType::Ignore)
                                         return;
 

@@ -6,7 +6,6 @@
 #include "classes/atom.h"
 #include "classes/speciesAtom.h"
 #include "kernels/potentials/base.h"
-#include "math/vector3.h"
 #include <memory>
 #include <vector>
 
@@ -20,15 +19,7 @@ class ConfigurationAtom : public Atom
     /*
      * Properties
      */
-    private:
-    // Assigned AtomType index, local to Configuration (for partial indexing etc.)
-    int configurationTypeIndex_{-1};
-
     public:
-    // Set AtomType index in parent Configuration
-    void setConfigurationTypeIndex(int id);
-    // Return AtomType index in parent Configuration
-    int configurationTypeIndex() const;
     // Return global index of the atom
     int globalIndex() const;
 

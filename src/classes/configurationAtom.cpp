@@ -7,12 +7,6 @@
 #include "classes/speciesAtom.h"
 #include <utility>
 
-// Set AtomType index in parent Configuration
-void ConfigurationAtom::setConfigurationTypeIndex(int id) { configurationTypeIndex_ = id; }
-
-// Return AtomType index in parent Configuration
-int ConfigurationAtom::configurationTypeIndex() const { return configurationTypeIndex_; }
-
 // Return global index of the atom
 int ConfigurationAtom::globalIndex() const
 {
