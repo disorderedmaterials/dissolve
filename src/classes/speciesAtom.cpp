@@ -76,6 +76,9 @@ void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
 // Return parent Species
 Species *SpeciesAtom::parent() const { return parent_; }
 
+// Return presence of atom
+SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
+
 // Return whether the atom is of the presence specified
 bool SpeciesAtom::isPresence(SpeciesAtom::Presence presence) const
 {
@@ -113,9 +116,6 @@ void SpeciesAtom::setSelected(bool selected) { selected_ = selected; }
 
 // Return whether the atom is currently selected
 bool SpeciesAtom::isSelected() const { return selected_; }
-
-// Return presence of atom
-SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
 
 /*
  * Bond Information

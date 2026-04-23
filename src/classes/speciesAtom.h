@@ -63,6 +63,8 @@ class SpeciesAtom : public Atom, Serialisable<>
     void set(Elements::Element Z, const Vector3 &r, double q = 0.0) override;
     // Return parent Species
     Species *parent() const;
+    // Return presence of atom
+    Presence presence() const;
     // Return whether the atom is of the presence specified
     bool isPresence(SpeciesAtom::Presence presence) const;
     // Set AtomType of Atom
@@ -79,8 +81,6 @@ class SpeciesAtom : public Atom, Serialisable<>
     void setSelected(bool selected);
     // Return whether the atom is currently selected
     bool isSelected() const;
-    // Return presence of atom
-    Presence presence() const;
 
     /*
      * Intramolecular Information
