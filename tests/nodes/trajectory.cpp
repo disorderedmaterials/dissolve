@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "io/import/trajectory.h"
-#include "io/export/trajectory.h"
 #include "nodes/constants.h"
 #include "nodes/exportTrajectory.h"
 #include "nodes/importConfigurationTrajectory.h"
