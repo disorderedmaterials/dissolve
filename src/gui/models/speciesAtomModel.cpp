@@ -128,7 +128,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         {
             auto newR = item.r();
             newR.set(index.column() - 2, value.toDouble());
-            item.setCoordinates(newR);
+            item.r() = newR;
         }
         break;
         case 5:

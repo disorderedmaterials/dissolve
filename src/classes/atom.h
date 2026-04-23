@@ -12,7 +12,7 @@ class Atom
     /*
      * Properties
      */
-    private:
+    protected:
     // Coordinates
     Vector3 r_;
     // Atomic element
@@ -24,7 +24,7 @@ class Atom
 
     public:
     // Set basic properties
-    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
+    virtual void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
     // Return coordinates
     Vector3 &r();
     const Vector3 &r() const;

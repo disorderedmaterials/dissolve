@@ -33,6 +33,7 @@ int Species::addAtom(Elements::Element Z, Vector3 r, double q, const AtomType *a
 {
     auto &i = atoms_.emplace_back(this);
     i.set(Z, r, q);
+
     i.setIndex(atoms_.size() - 1);
     i.setAtomType(atomType);
 
@@ -143,9 +144,6 @@ const SpeciesAtom &Species::atom(int n) const
 const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
 
-// Set coordinates of specified atom (by index and individual coordinates)
-void Species::setAtomCoordinates(int id, double x, double y, double z) { atom(id).setCoordinates(x, y, z); }
-
 // Transmute specified SpeciesAtom
 void Species::transmuteAtom(int index, Elements::Element newZ)
 {
@@ -157,7 +155,7 @@ void Species::transmuteAtom(int index, Elements::Element newZ)
 
     // Remove any existing AtomType assignment
     i.setAtomType(nullptr);
-    i.setZ(newZ);
+    i.Z() = newZ;
 }
 
 // Clear current Atom selection
@@ -333,13 +331,12 @@ double Species::totalCharge(bool useAtomTypes) const
         return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
                                { return acc + (i.atomType() ? i.atomType()->charge() : 0.0); });
     else
-        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
-                               [](const auto acc, const auto &i) { return acc + i.charge(); });
+        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i) { return acc + i.q(); });
 }
 
 // Apply random noise to atoms
 void Species::randomiseCoordinates(double maxDisplacement)
 {
     for (auto &i : atoms_)
-        i.translateCoordinates(Vector3::randomUnit() * maxDisplacement);
+        i.r() += Vector3::randomUnit() * maxDisplacement;
 }

@@ -59,6 +59,8 @@ class SpeciesAtom : public Atom, Serialisable<>
     Presence presence_{Presence::Physical};
 
     public:
+    // Set basic properties
+    void set(Elements::Element Z, const Vector3 &r, double q = 0.0) override;
     // Return parent Species
     Species *parent() const;
     // Return whether the atom is of the presence specified
@@ -152,19 +154,6 @@ class SpeciesAtom : public Atom, Serialisable<>
     void setScaledInteractions();
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
     ScaledInteractionDefinition scaling(const SpeciesAtom *j) const;
-
-    /*
-     * Coordinate Manipulation
-     */
-    public:
-    // Set coordinate
-    void setCoordinate(int index, double value);
-    // Set coordinates
-    void setCoordinates(double x, double y, double z);
-    // Set coordinates (from Vec3)
-    void setCoordinates(const Vector3 &newr);
-    // Translate coordinates
-    void translateCoordinates(const Vector3 &delta);
 
     /*
      * Atom Environment Helpers
