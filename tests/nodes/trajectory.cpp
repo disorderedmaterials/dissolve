@@ -21,7 +21,6 @@ TEST(TrajectoryNodesTest, RoundTrip)
     const std::string importFile = "dlpoly/water267-analysis/water-267-298K.xyz";
     auto exportFile = TempFile("water-267-298K_copy.xyz");
     auto inputFormat = TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ;
-    auto exportFormat = TrajectoryExportFileFormat::TrajectoryExportFormat::XYZ;
 
     TestGraph testGraph_;
     testGraph_.createConfiguration("Box", {{createWaterDLPoly, 267}}, 0.1);
@@ -38,7 +37,7 @@ TEST(TrajectoryNodesTest, RoundTrip)
     auto trajectoryExport = dynamic_cast<ExportTrajectoryNode *>(testGraph_.createNode("ExportTrajectory"));
     ASSERT_TRUE(trajectoryExport);
     ASSERT_TRUE(trajectoryExport->setOption<std::string>("FilePath", exportFile));
-    ASSERT_TRUE(trajectoryExport->setOption<TrajectoryExportFileFormat::TrajectoryExportFormat>("FileFormat", exportFormat));
+    ASSERT_TRUE(trajectoryExport->setOption<bool>("Extended", false));
     ASSERT_TRUE(testGraph_.addEdge({"ImportConfigurationTrajectory", "Configuration", "ExportTrajectory", "Configuration"}));
 
     ASSERT_EQ(trajectoryExport->run(), NodeConstants::ProcessResult::Success);

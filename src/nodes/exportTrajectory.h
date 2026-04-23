@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "io/export/trajectory.h"
 #include "nodes/node.h"
 #include <iostream>
 
@@ -30,7 +29,7 @@ class ExportTrajectoryNode : public Node
     // File path
     std::string filePath_;
     // File format
-    TrajectoryExportFileFormat::TrajectoryExportFormat format_{TrajectoryExportFileFormat::TrajectoryExportFormat::XYZ};
+    bool extended_;
     // Last read file position (as int)
     std::streampos filePosition_;
     // Target configuration
