@@ -9,6 +9,10 @@
 // Basic Atom
 class Atom
 {
+    public:
+    Atom() = default;
+    virtual ~Atom() = default;
+
     /*
      * Properties
      */

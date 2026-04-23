@@ -24,7 +24,6 @@ class SpeciesAtom : public Atom, Serialisable<>
 {
     public:
     SpeciesAtom(Species *parent);
-    ~SpeciesAtom() = default;
     SpeciesAtom(SpeciesAtom &source) = delete;
     SpeciesAtom(SpeciesAtom &&source) noexcept;
     SpeciesAtom &operator=(const SpeciesAtom &source) = delete;
