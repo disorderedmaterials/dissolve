@@ -66,9 +66,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
 
 void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
 {
-    Z_ = Z;
-    r_ = r;
-    q_ = q;
+    Atom::set(Z, r, q);
 
     presence_ = Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
 }
