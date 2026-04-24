@@ -22,7 +22,7 @@ class TempFile
     {
         if (out_.is_open())
             out_.close();
-        if constexpr (delete_files)
+        if constexpr (deleteFiles)
             std::filesystem::remove(path);
     }
 
@@ -45,7 +45,7 @@ class TempFile
     // A compile time switch to control deleting the temp files.  Set
     // this to false while debugging to read keep the file so you can
     // analyse the output.
-    constexpr static bool delete_files = true;
+    constexpr static bool deleteFiles = true;
     // A local stream that can be used for writing
     std::ofstream out_;
 
