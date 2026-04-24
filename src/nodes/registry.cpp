@@ -21,6 +21,7 @@
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
 #include "nodes/energy.h"
+#include "nodes/exportCoordinates.h"
 #include "nodes/exportTrajectory.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr/gr.h"
@@ -81,6 +82,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
+                  {"ExportCoorinates", makeDerivedNode<ExportCoordinatesNode>()},
                   {"ExportTrajectory", makeDerivedNode<ExportTrajectoryNode>()},
                   {"Forcefield", makeDerivedNode<ForcefieldNode>()},
                   {"GR", makeDerivedNode<GRNode>()},
