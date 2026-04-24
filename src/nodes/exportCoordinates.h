@@ -28,6 +28,7 @@ class ExportCoordinatesNode : public Node
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
+    static EnumOptions<CoordinateExportFormat> formatType();
 
     /*
      * Data
@@ -53,5 +54,7 @@ class ExportCoordinatesNode : public Node
     // Export as XYZ format
     NodeConstants::ProcessResult exportXYZ(std::string path);
     // Export as DLPoly format
-    NodeConstants::ProcessResult exportDLPoly(std::string path);
+    NodeConstants::ProcessResult exportDLPOLY(std::string path);
 };
+
+EnumOptions<ExportCoordinatesNode::CoordinateExportFormat> getEnumOptions(ExportCoordinatesNode::CoordinateExportFormat);
