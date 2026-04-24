@@ -18,7 +18,7 @@ std::string_view ExportTrajectoryNode::type() const { return "ExportTrajectory";
 
 std::string_view ExportTrajectoryNode::summary() const
 {
-    return "Export configuration coordinates from sequential frames of a trajectory.";
+    return "Export configuration coordinates as sequential frames of a trajectory.";
 }
 
 NodeConstants::ProcessResult ExportTrajectoryNode::process()
