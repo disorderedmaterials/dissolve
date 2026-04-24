@@ -4,6 +4,7 @@
 #include "kernels/force.h"
 #include "nodes/dissolve.h"
 #include "tests/graphData.h"
+#include "tests/tempFile.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -12,11 +13,10 @@ namespace UnitTest
 TEST(Water1000EnergyTest, Full)
 {
     auto water = createWater();
-    std::ofstream file("water.toml");
+    TempFile water_file("water.toml");
     SerialisedValue toml;
     water->species().serialise("species", toml);
-    file << toml;
-    file.close();
+    water_file.out() << toml;
 
     // Set up the test graph
     TestGraph testGraph;

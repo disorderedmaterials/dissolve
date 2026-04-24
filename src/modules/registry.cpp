@@ -16,7 +16,6 @@
 #include "modules/epsrManager/epsrManager.h"
 #include "modules/exportCoordinates/exportCoordinates.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
-#include "modules/exportTrajectory/exportTrajectory.h"
 #include "modules/forces/forces.h"
 #include "modules/gr/gr.h"
 #include "modules/histogramCN/histogramCN.h"
@@ -60,7 +59,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ExportCoordinatesModule>(ModuleTypes::ExportCoordinates,
                                               "Export coordinates for one or more Configurations", "Export");
     registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");
-    registerProducer<ExportTrajectoryModule>(ModuleTypes::ExportTrajectory, "Export trajectory for a Configuration", "Export");
     registerProducer<ForcesModule>(ModuleTypes::Forces, "Calculate the total atomic forces within a Configuration",
                                    "Forcefield");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");

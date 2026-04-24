@@ -7,7 +7,6 @@ add_library(
   forces.cpp
   pairPotential.cpp
   species.cpp
-  trajectory.cpp
   values.cpp
   coordinates.h
   data1D.h
@@ -16,7 +15,6 @@ add_library(
   forces.h
   pairPotential.h
   species.h
-  trajectory.h
   values.h
 )
 
