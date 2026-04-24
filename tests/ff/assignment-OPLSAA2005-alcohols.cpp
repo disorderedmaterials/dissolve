@@ -11,12 +11,11 @@ namespace UnitTest
 TEST(OPLSAA2005AlcoholsAssignmentTest, Methanol)
 {
     Species species("Methanol");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/methanol.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Alcohols"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Alcohols")));
 
     ASSERT_EQ(species.nBonds(), 5);
     ASSERT_EQ(species.nAngles(), 7);

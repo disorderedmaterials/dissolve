@@ -11,12 +11,11 @@ namespace UnitTest
 TEST(PCL2019AnionsAssignmentTest, beti)
 {
     Species species("Hydronium");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/beti.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 20);
     ASSERT_EQ(species.nAngles(), 37);
@@ -33,12 +32,11 @@ TEST(PCL2019AnionsAssignmentTest, beti)
 TEST(PCL2019AnionsAssignmentTest, BF4)
 {
     Species species("BF4");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/bf4.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 4);
     ASSERT_EQ(species.nAngles(), 6);
@@ -52,12 +50,11 @@ TEST(PCL2019AnionsAssignmentTest, BF4)
 TEST(PCL2019AnionsAssignmentTest, c1SO3)
 {
     Species species("C1SO3");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/c1so3.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 7);
     ASSERT_EQ(species.nAngles(), 12);
@@ -72,12 +69,11 @@ TEST(PCL2019AnionsAssignmentTest, c1SO3)
 TEST(PCL2019AnionsAssignmentTest, c1SO4)
 {
     Species species("C1SO4");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/c1so4.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 8);
     ASSERT_EQ(species.nAngles(), 13);
@@ -92,12 +88,11 @@ TEST(PCL2019AnionsAssignmentTest, c1SO4)
 TEST(PCL2019AnionsAssignmentTest, c2SO3)
 {
     Species species("C2SO3");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/c2so3.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 10);
     ASSERT_EQ(species.nAngles(), 18);
@@ -121,12 +116,11 @@ TEST(PCL2019AnionsAssignmentTest, c2SO3)
 TEST(PCL2019AnionsAssignmentTest, c2SO4)
 {
     Species species("C2SO4");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/c2so4.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 11);
     ASSERT_EQ(species.nAngles(), 19);
@@ -151,12 +145,11 @@ TEST(PCL2019AnionsAssignmentTest, c2SO4)
 TEST(PCL2019AnionsAssignmentTest, c4fc1fsi)
 {
     Species species("C4FC1FSI");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/c4fc1fsi.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 23);
     ASSERT_EQ(species.nAngles(), 43);
@@ -173,12 +166,11 @@ TEST(PCL2019AnionsAssignmentTest, c4fc1fsi)
 TEST(PCL2019AnionsAssignmentTest, CCN3)
 {
     Species species("CCN3");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/ccn3.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 6);
     ASSERT_EQ(species.nAngles(), 6);
@@ -192,12 +184,11 @@ TEST(PCL2019AnionsAssignmentTest, CCN3)
 TEST(PCL2019AnionsAssignmentTest, dca)
 {
     Species species("DCA");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/dca.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 4);
     ASSERT_EQ(species.nAngles(), 3);
@@ -211,12 +202,11 @@ TEST(PCL2019AnionsAssignmentTest, dca)
 TEST(PCL2019AnionsAssignmentTest, fsi)
 {
     Species species("FSI");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/fsi.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 8);
     ASSERT_EQ(species.nAngles(), 13);
@@ -231,12 +221,11 @@ TEST(PCL2019AnionsAssignmentTest, fsi)
 TEST(PCL2019AnionsAssignmentTest, ntf2)
 {
     Species species("NTf2");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/ntf2.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 14);
     ASSERT_EQ(species.nAngles(), 25);
@@ -264,12 +253,11 @@ TEST(PCL2019AnionsAssignmentTest, ntf2)
 TEST(PCL2019AnionsAssignmentTest, oac)
 {
     Species species("OAc");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/oac.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 6);
     ASSERT_EQ(species.nAngles(), 9);
@@ -283,12 +271,11 @@ TEST(PCL2019AnionsAssignmentTest, oac)
 TEST(PCL2019AnionsAssignmentTest, otf)
 {
     Species species("OTf");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/otf.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 7);
     ASSERT_EQ(species.nAngles(), 12);
@@ -303,12 +290,11 @@ TEST(PCL2019AnionsAssignmentTest, otf)
 TEST(PCL2019AnionsAssignmentTest, PF6)
 {
     Species species("PF6");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/pf6.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 6);
     ASSERT_EQ(species.nAngles(), 15);
@@ -322,12 +308,11 @@ TEST(PCL2019AnionsAssignmentTest, PF6)
 TEST(PCL2019AnionsAssignmentTest, SCN)
 {
     Species species("SCN");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/scn.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 2);
     ASSERT_EQ(species.nAngles(), 1);
@@ -341,12 +326,11 @@ TEST(PCL2019AnionsAssignmentTest, SCN)
 TEST(PCL2019AnionsAssignmentTest, tfa)
 {
     Species species("TFA");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/tfa.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 6);
     ASSERT_EQ(species.nAngles(), 9);
@@ -361,12 +345,11 @@ TEST(PCL2019AnionsAssignmentTest, tfa)
 TEST(PCL2019AnionsAssignmentTest, tso)
 {
     Species species("TSO");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/tso.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
 
     ASSERT_EQ(species.nBonds(), 18);
     ASSERT_EQ(species.nAngles(), 30);

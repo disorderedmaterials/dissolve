@@ -119,10 +119,13 @@ bool EPSRModule::readPCof(Dissolve &dissolve, std::string_view filename)
             break;
     }
 
+    // Get atom types from configuration
+    auto atomTypes = targetConfiguration_->atomTypeVector();
+
     // Retrieve and zero the current potential coefficients file
     auto &potentialCoefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
         "PotentialCoefficients", name_, GenericItem::InRestartFileFlag);
-    potentialCoefficients.initialise(dissolve.coreData().nAtomTypes(), dissolve.coreData().nAtomTypes(), true);
+    potentialCoefficients.initialise(atomTypes.size(), atomTypes.size(), true);
     for (auto &n : potentialCoefficients)
     {
         n.clear();
@@ -142,13 +145,19 @@ bool EPSRModule::readPCof(Dissolve &dissolve, std::string_view filename)
             return Messenger::error("Failed to read pair potential atom types from pcof file.\n");
 
         // Find the atom types to which these coefficients relate
-        auto at1 = dissolve.coreData().findAtomType(parser.argsv(0));
-        if (!at1)
+        auto at1It = std::ranges::find_if(atomTypes, [&](const auto *atomType)
+                                          { return DissolveSys::sameString(parser.argsv(0), atomType->name()); });
+        ;
+        if (at1It == atomTypes.end())
             return Messenger::error("Unrecognised AtomType '{}' referenced in pcof file.\n", parser.argsv(0));
-        auto at2 = dissolve.coreData().findAtomType(parser.argsv(1));
-        if (!at2)
+        auto at2It = std::ranges::find_if(atomTypes, [&](const auto *atomType)
+                                          { return DissolveSys::sameString(parser.argsv(1), atomType->name()); });
+        ;
+        if (at2It == atomTypes.end())
             return Messenger::error("Unrecognised AtomType '{}' referenced in pcof file.\n", parser.argsv(1));
 
+        auto at1 = *at1It;
+        auto at2 = *at2It;
         Messenger::print("Found {}-{} potential...\n", at1->name(), at2->name());
 
         // Next line contains ??? and ??? TODO

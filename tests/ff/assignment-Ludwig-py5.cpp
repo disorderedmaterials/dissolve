@@ -12,12 +12,11 @@ namespace UnitTest
 TEST(LudwigPy5AssignmentTest, Py5)
 {
     Species species("Py5");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/py5.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Ludwig/Py5"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Ludwig/Py5")));
 
     ASSERT_EQ(species.nBonds(), 27);
     ASSERT_EQ(species.nAngles(), 48);

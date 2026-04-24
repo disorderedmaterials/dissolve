@@ -14,8 +14,6 @@ AddForcefieldDialogModel::AddForcefieldDialogModel() : ffSort_(this)
     ffSort_.setSourceModel(ffModel_.get());
 }
 
-AddForcefieldDialogModel::~AddForcefieldDialogModel() { temporaryDissolve_->clear(); }
-
 // The current page in the wizard
 AddForcefieldDialogModel::Page AddForcefieldDialogModel::index() { return index_; }
 
@@ -56,7 +54,7 @@ void AddForcefieldDialogModel::next()
             // Must have a valid forcefield
             if (!ff_)
                 return;
-            modifiedSpecies_ = temporaryDissolve_->coreData().addSpecies();
+            modifiedSpecies_ = std::make_shared<Species>();
             modifiedSpecies_->copyBasic(species_);
             originalAtomTypeNames_.clear();
 
@@ -70,18 +68,17 @@ void AddForcefieldDialogModel::next()
             {
                 case Radio::All:
                     modifiedSpecies_->clearAtomTypes();
-                    temporaryDissolve_->coreData().clearAtomTypes();
 
-                    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
-                                                      !keepSpeciesAtomChargesCheck_);
+                    assignErrs =
+                        ff_->assignAtomTypes(modifiedSpecies_.get(), Forcefield::TypeAll, !keepSpeciesAtomChargesCheck_);
                     break;
                 case Radio::Selected:
-                    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
-                                                      !keepSpeciesAtomChargesCheck_);
+                    assignErrs =
+                        ff_->assignAtomTypes(modifiedSpecies_.get(), Forcefield::TypeSelection, !keepSpeciesAtomChargesCheck_);
                     break;
                 case Radio::Empty:
-                    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
-                                                      !keepSpeciesAtomChargesCheck_);
+                    assignErrs =
+                        ff_->assignAtomTypes(modifiedSpecies_.get(), Forcefield::TypeMissing, !keepSpeciesAtomChargesCheck_);
                 default:
                     break;
             }
@@ -92,10 +89,10 @@ void AddForcefieldDialogModel::next()
                 return;
             }
 
-            for (auto &at : temporaryDissolve_->coreData().atomTypes())
+            for (auto &at : modifiedSpecies_->atomTypes())
                 originalAtomTypeNames_.emplace_back(std::string(at->name()));
 
-            atomTypes_.setData(temporaryCoreData_.atomTypes());
+            atomTypes_.setData(modifiedSpecies_->atomTypes());
             Q_EMIT atomTypesIndicatorChanged();
 
             // checkAtomTypeConflicts();
@@ -118,26 +115,24 @@ void AddForcefieldDialogModel::next()
     indexChanged();
 }
 
-// Supply the main Dissolve instance
-void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
-{
-    dissolve_ = &dissolve;
-
-    temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
-    // commons_ = std::make_unique<MasterTermTreeModel>(temporaryCoreData_);
-    // TODO DISSOLVE2
-
-    // Set model and signals for the common terms tree
-    atomTypes_.setQueryFunction([this](const auto type)
-                                { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
-    commons_->setBondQueryFunction([this](std::string_view name, Species *sp) { return sp->getCommonBond(name).has_value(); });
-    commons_->setAngleQueryFunction([this](std::string_view name, Species *sp)
-                                    { return sp->getCommonAngle(name).has_value(); });
-    commons_->setTorsionQueryFunction([this](std::string_view name, Species *sp)
-                                      { return sp->getCommonTorsion(name).has_value(); });
-    commons_->setImproperQueryFunction([this](std::string_view name, Species *sp)
-                                       { return sp->getCommonImproper(name).has_value(); });
-}
+// void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
+// {
+// TODO DISSOLVE2
+// dissolve_ = &dissolve;
+//
+// masters_ = std::make_unique<MasterTermTreeModel>(temporaryCoreData_);
+//
+// // Set model and signals for the master terms tree
+// atomTypes_.setQueryFunction([this](const auto type)
+//     commons_->setBondQueryFunction([this](std::string_view name, Species *sp) { return sp->getCommonBond(name).has_value();
+//     });
+// commons_->setAngleQueryFunction([this](std::string_view name, Species *sp)
+//                                 { return sp->getCommonAngle(name).has_value(); });
+// commons_->setTorsionQueryFunction([this](std::string_view name, Species *sp)
+//                                   { return sp->getCommonTorsion(name).has_value(); });
+// commons_->setImproperQueryFunction([this](std::string_view name, Species *sp)
+//                                    { return sp->getCommonImproper(name).has_value(); });
+// }
 
 // Supply the species to operate on
 void AddForcefieldDialogModel::setSpecies(Species *sp)
@@ -166,13 +161,6 @@ bool AddForcefieldDialogModel::progressionAllowed() const
     if (index_ == Page::SelectForcefieldPage)
         return ff_ != nullptr;
     return true;
-}
-
-// Determine whether we have any naming conflicts
-int AddForcefieldDialogModel::atomTypesIndicator() const
-{
-    return std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
-                         [&](const auto &atomType) { return dissolve_->coreData().findAtomType(atomType->name()); });
 }
 
 // Whether we are at the final page of the wizard
@@ -433,11 +421,12 @@ void AddForcefieldDialogModel::assignIntramolecularTerms(const Forcefield *ff)
             flags += Forcefield::SelectionOnlyFlag;
 
         // Try to assign terms across the species
-        if (!ff->assignIntramolecular(modifiedSpecies_, flags))
+        if (!ff->assignIntramolecular(modifiedSpecies_.get(), flags))
             return;
 
-        // Reduce to common terms?
-        if (!noMasterTerms_)
-            modifiedSpecies_->reduceToCommonTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
+        // Reduce to master terms?
+        // TODO DISSOLVE2
+        // if (!noMasterTerms_)
+        // modifiedSpecies_->reduceToCommonTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
     }
 }

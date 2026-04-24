@@ -11,12 +11,11 @@ namespace UnitTest
 TEST(OPLSAA2005AromaticsAssignmentTest, Benzene)
 {
     Species species("Benzene");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/benzene.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics")));
 
     ASSERT_EQ(species.nBonds(), 12);
     ASSERT_EQ(species.nAngles(), 18);
@@ -36,12 +35,11 @@ TEST(OPLSAA2005AromaticsAssignmentTest, Benzene)
 TEST(OPLSAA2005AromaticsAssignmentTest, Naphthalene)
 {
     Species species("Naphthalene");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/naphthalene.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics")));
 
     ASSERT_EQ(species.nBonds(), 19);
     ASSERT_EQ(species.nAngles(), 30);

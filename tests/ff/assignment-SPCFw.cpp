@@ -11,12 +11,11 @@ namespace UnitTest
 TEST(SPCFwAssignmentTest, Water)
 {
     Species species("Water");
-    CoreData removeMeCoreData_;
     DissolveSystemTest systemTest;
     SpeciesImportFileFormat importer("xyz/water.xyz");
     ASSERT_TRUE(importer.importData(&species));
     species.recalculateIntermolecularTerms(1.2);
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("SPC/Fw"), removeMeCoreData_));
+    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("SPC/Fw")));
 
     ASSERT_EQ(species.nBonds(), 2);
     ASSERT_EQ(species.nAngles(), 1);

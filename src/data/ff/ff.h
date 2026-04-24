@@ -22,7 +22,6 @@
 #include <vector>
 
 // Forward Declarations
-class CoreData;
 class Species;
 class SpeciesAtom;
 
@@ -157,7 +156,7 @@ class Forcefield
 
     protected:
     // Assign suitable AtomType to the supplied atom
-    bool assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const;
+    bool assignAtomType(SpeciesAtom &i, bool setSpeciesAtomCharges) const;
     // Assign / generate bond term parameters
     virtual bool assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const;
     // Assign / generate angle term parameters
@@ -186,10 +185,9 @@ class Forcefield
     };
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     // Returns any elements that were unassigned
-    std::vector<int> assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
-                                     bool setSpeciesAtomCharges) const;
+    std::vector<int> assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy, bool setSpeciesAtomCharges) const;
     // Assign specific AtomType to the supplied atom
-    void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const;
+    void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, bool setSpeciesAtomCharges) const;
     // Assign intramolecular parameters to the supplied Species
     bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
 

@@ -42,11 +42,12 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData,
 }
 
 // Create / retrieve arrays for storage of empirical potential coefficients
-Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(GenericList &moduleData, const int nAtomTypes,
-                                                                std::optional<int> ncoeffp)
+Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(GenericList &moduleData, std::optional<int> ncoeffp)
 {
     auto &coefficients =
         moduleData.realise<Array2D<std::vector<double>>>("PotentialCoefficients", name_, GenericItem::InRestartFileFlag);
+
+    const auto nAtomTypes = targetConfiguration_->atomTypeVector().size();
 
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
@@ -70,8 +71,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, const std::vect
                                              double sigma1, double sigma2)
 {
     // Get coefficients array
-    Array2D<std::vector<double>> &coefficients =
-        potentialCoefficients(dissolve.processingModuleData(), atomTypes.size(), ncoeffp);
+    Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve.processingModuleData(), ncoeffp);
 
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypes,
                             [&](int i, auto at1, int j, auto at2)
@@ -124,10 +124,12 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, const std::vect
 }
 
 // Generate and return single empirical potential function
-Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int nAtomTypes, int i, int j, int n)
+Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
 {
     // EPSR constants
     const auto mcoeff = 200;
+    const auto nAtomTypes = targetConfiguration_->atomTypeVector().size();
+    std::cout << std::format("EPSRMODULE::generateEmpiricalPotentialFunction() - natomtypes = {}\n", nAtomTypes);
 
     // Calculate some values if they were not provided
     auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : PairPotential::range();
@@ -135,7 +137,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int nA
     nCoeffP_ = nCoeffP_ <= 0 ? std::min(int(10.0 * rmaxpt + 0.0001), mcoeff) : nCoeffP_;
 
     // Get coefficients array
-    auto &coefficients = potentialCoefficients(dissolve.processingModuleData(), nAtomTypes);
+    auto &coefficients = potentialCoefficients(dissolve.processingModuleData());
     auto &potCoeff = coefficients[{i, j}];
 
     // Regenerate empirical potential from the stored coefficients
@@ -173,7 +175,7 @@ double EPSRModule::absEnergyEP(GenericList &moduleData, const std::vector<const 
      */
 
     // Get coefficients array
-    auto &coefficients = potentialCoefficients(moduleData, atomTypes.size());
+    auto &coefficients = potentialCoefficients(moduleData);
     if (coefficients.empty())
         return 0.0;
 

@@ -16,8 +16,6 @@
 class DissolveModel : public QObject
 {
     Q_OBJECT
-    // The Atom Type Model
-    Q_PROPERTY(AtomTypeModel *atomTypesModel READ atomTypesModel NOTIFY atomTypesChanged)
     // The Master Bond Model
     Q_PROPERTY(const CommonBondModel *commonBondsModel READ commonBondsModel NOTIFY commonsChanged)
     // The Master Angle Model
@@ -36,8 +34,6 @@ class DissolveModel : public QObject
     Q_PROPERTY(Graph *graph READ graph NOTIFY modelsUpdated)
 
     private:
-    // The Atom Type Model
-    AtomTypeModel atomTypes_;
     // Master terms model
     std::unique_ptr<MasterTermTreeModel> commons_ = nullptr;
     ConfigurationModel configurationModel_;
@@ -54,8 +50,6 @@ class DissolveModel : public QObject
     Q_SIGNALS:
     // The models might've been updated
     void modelsUpdated();
-    // The Atom Types model has been replaced
-    void atomTypesChanged();
     // The Master terms models have been replaced
     void commonsChanged();
 
@@ -74,10 +68,6 @@ class DissolveModel : public QObject
     DissolveModel() = default;
     ~DissolveModel() = default;
 
-    // The Atom Type Model
-    AtomTypeModel *atomTypesModel();
-    // The number of atom types
-    int nAtomTypes();
     // The Master Bond Model
     const CommonBondModel *commonBondsModel() const;
     // The number of common bonds
