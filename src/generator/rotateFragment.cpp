@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "generator/rotateFragment.h"
-#include "classes/atom.h"
 #include "classes/configuration.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "classes/speciesSite.h"

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/potentials/spherical.h"
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 #include "keywords/interactionPotential.h"
 #include "keywords/vec3Double.h"
 
@@ -47,13 +47,13 @@ const std::string SphericalPotential::formParametersString() const { return inte
  */
 
 // Calculate energy on specified atom
-double SphericalPotential::energy(const Atom &i, const Box *box) const
+double SphericalPotential::energy(const ConfigurationAtom &i, const Box *box) const
 {
     return potentialFunction_.y(box->minimumDistanceSquared(i.r(), origin_));
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void SphericalPotential::force(const Atom &i, const Box *box, Vector3 &f) const
+void SphericalPotential::force(const ConfigurationAtom &i, const Box *box, Vector3 &f) const
 {
     // Get normalised vector and distance
     auto v = box->minimumVector(i.r(), origin_);

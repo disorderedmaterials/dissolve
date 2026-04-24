@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/molecule.h"
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 #include "classes/species.h"
 #include "classes/speciesBond.h"
 #include "data/atomicMasses.h"
@@ -24,7 +24,7 @@ void Molecule::setSpecies(const Species *sp)
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(Atom *atom)
+void Molecule::addAtom(ConfigurationAtom *atom)
 {
     assert(atom->molecule() == nullptr);
     atoms_.push_back(atom);
@@ -37,14 +37,14 @@ void Molecule::addAtom(Atom *atom)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms vector
-std::vector<Atom *> &Molecule::atoms() { return atoms_; }
-const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
+std::vector<ConfigurationAtom *> &Molecule::atoms() { return atoms_; }
+const std::vector<ConfigurationAtom *> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
-Atom *Molecule::atom(int n) const { return atoms_[n]; }
+ConfigurationAtom *Molecule::atom(int n) const { return atoms_[n]; }
 
 // Update local atom pointers from main vector
-void Molecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
+void Molecule::updateAtoms(std::vector<ConfigurationAtom> &mainAtoms, int offset)
 {
     globalAtomOffset_ = offset;
     std::iota(atoms_.begin(), atoms_.end(), &mainAtoms[globalAtomOffset_]);
@@ -54,7 +54,7 @@ void Molecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
 int Molecule::globalAtomOffset() const { return globalAtomOffset_; }
 
 // Return global index of supplied atom
-int Molecule::globalAtomIndex(const Atom *i) const { return globalAtomOffset_ + (i - atoms_[0]); }
+int Molecule::globalAtomIndex(const ConfigurationAtom *i) const { return globalAtomOffset_ + (i - atoms_[0]); }
 
 // Sets the index of the object within the parent DynamicArray
 void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }
@@ -135,7 +135,7 @@ Vector3 Molecule::unFold(const Box *box)
 {
     Vector3 cog{0.0, 0.0, 0.0};
     traverseLocal(box,
-                  [&cog](Atom *j, Vector3 rJ)
+                  [&cog](ConfigurationAtom *j, Vector3 rJ)
                   {
                       j->setCoordinates(rJ);
                       cog += rJ;
@@ -222,7 +222,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 {
     // Loop over supplied Atoms
     Vector3 newR;
-    Atom *i;
+    ConfigurationAtom *i;
     for (const auto index : targetAtoms)
     {
         i = atom(index);

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 
 MonoclinicAlphaBox::MonoclinicAlphaBox(const Vector3 lengths, double alpha)
     : Box(Box::BoxType::MonoclinicAlpha, lengths, {alpha, 90.0, 90.0})

@@ -3,7 +3,7 @@
 
 #include "gui/render/renderableSpecies.h"
 #include "base/lineParser.h"
-#include "classes/atom.h"
+#include "classes/configurationAtom.h"
 #include "data/elementColours.h"
 #include "gui/render/renderableConfiguration.h"
 #include "gui/render/renderableGroupManager.h"

@@ -8,7 +8,7 @@
 
 // Forward Declarations
 class Configuration;
-class Atom;
+class ConfigurationAtom;
 
 // Configuration Rendering Widget
 class ConfigurationViewer : public BaseViewer
@@ -63,7 +63,7 @@ class ConfigurationViewer : public BaseViewer
 
     private:
     // Return atom at specified coordinates
-    const Atom *atomAt(int x, int y);
+    const ConfigurationAtom *atomAt(int x, int y);
 
     protected:
     // Start interaction at the specified screen coordinates

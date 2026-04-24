@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atom.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include <vector>
 
@@ -24,23 +24,23 @@ class LocalMolecule : public Molecule
 
     private:
     // Local vector of Atoms that belong to this Molecule and their original unit cell indices
-    std::vector<Atom> localAtoms_;
+    std::vector<ConfigurationAtom> localAtoms_;
 
     private:
     // Copy data from specified object
     void copyData(const LocalMolecule &object);
     // Add Atom to Molecule
-    void addAtom(Atom *i) override;
+    void addAtom(ConfigurationAtom *i) override;
     // Update local atom pointers from main vector
-    void updateAtoms(std::vector<Atom> &mainAtoms, int offset) override;
+    void updateAtoms(std::vector<ConfigurationAtom> &mainAtoms, int offset) override;
 
     public:
     // Set Species that this Molecule represents
     void setSpecies(const Species *sp) override;
     // Return nth local atom
-    Atom &localAtom(int n);
-    const Atom &localAtom(int n) const;
+    ConfigurationAtom &localAtom(int n);
+    const ConfigurationAtom &localAtom(int n) const;
     // Return local atoms
-    std::vector<Atom> &localAtoms();
-    const std::vector<Atom> &localAtoms() const;
+    std::vector<ConfigurationAtom> &localAtoms();
+    const std::vector<ConfigurationAtom> &localAtoms() const;
 };

@@ -22,10 +22,14 @@ EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potenti
  */
 
 // Return PairPotential energy between atoms
-double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r) const { return potentialMap_.energy(i, j, r); }
+double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r) const
+{
+    return potentialMap_.energy(i, j, r);
+}
 
 // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double srScale) const
+double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i, const ConfigurationAtom &j, double r, double elecScale,
+                                         double srScale) const
 {
     return potentialMap_.energy(i, j, r, elecScale, srScale);
 }
@@ -153,7 +157,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
 }
 
 // Return PairPotential energy of Atom with world
-double EnergyKernel::pairPotentialEnergy(const Atom &i) const
+double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i) const
 {
     auto &cells = configuration_->cells();
 
@@ -194,7 +198,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
     auto &cells = configuration_->cells();
 
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
-    std::map<Cell *, std::vector<const Atom *>> locationMap;
+    std::map<Cell *, std::vector<const ConfigurationAtom *>> locationMap;
     for (auto &i : mol.atoms())
         locationMap[i->cell()].push_back(i);
 
@@ -291,7 +295,7 @@ double EnergyKernel::totalExtendedEnergy() const
 }
 
 // Return energy of supplied atom from ad hoc extended terms
-double EnergyKernel::extendedEnergy(const Atom &i) const { return 0.0; }
+double EnergyKernel::extendedEnergy(const ConfigurationAtom &i) const { return 0.0; }
 
 // Return energy of supplied molecule from ad hoc extended terms
 double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
@@ -342,7 +346,7 @@ Kernel::EnergyResult EnergyKernel::totalEnergy(Flags<Kernel::CalculationFlags> f
 }
 
 // Return total energy of supplied atom
-Kernel::EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
+Kernel::EnergyResult EnergyKernel::totalEnergy(const ConfigurationAtom &i) const
 {
     return {{pairPotentialEnergy(i), 0.0}, geometryEnergy(i), extendedEnergy(i)};
 }

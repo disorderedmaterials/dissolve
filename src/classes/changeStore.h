@@ -9,7 +9,7 @@
 #include <vector>
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 class Cell;
 class Molecule;
 class Configuration;
@@ -32,7 +32,7 @@ class ChangeStore
 
     public:
     // Add atom to watch
-    void add(Atom *i);
+    void add(ConfigurationAtom *i);
     // Add molecule to watch
     void add(const std::shared_ptr<Molecule> &mol);
     // Add cell to watch

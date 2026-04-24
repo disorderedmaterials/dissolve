@@ -14,7 +14,7 @@
 #include <unordered_set>
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 
 // Clustering Module
 class ClusteringModule : public Module

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "classes/atom.h"
+#include "classes/configurationAtom.h"
 #include "data/atomicMasses.h"
 #include "io/export/data1D.h"
 #include "module/module.h"

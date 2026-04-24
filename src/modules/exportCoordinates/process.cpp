@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/lineParser.h"
-#include "classes/atom.h"
 #include "classes/atomType.h"
+#include "classes/configurationAtom.h"
 #include "main/dissolve.h"
 #include "modules/exportCoordinates/exportCoordinates.h"
 

@@ -10,7 +10,7 @@
  */
 
 // Return atom at specified coordinates
-const Atom *ConfigurationViewer::atomAt(int x, int y)
+const ConfigurationAtom *ConfigurationViewer::atomAt(int x, int y)
 {
     if (!configuration_)
         return nullptr;

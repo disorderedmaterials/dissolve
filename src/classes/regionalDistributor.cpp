@@ -3,8 +3,8 @@
 
 #include "classes/regionalDistributor.h"
 #include "base/lineParser.h"
-#include "classes/atom.h"
 #include "classes/cell.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include <algorithm>
 

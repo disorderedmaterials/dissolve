@@ -8,7 +8,7 @@
 #include "keywords/store.h"
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 class Box;
 class LineParser;
 
@@ -81,9 +81,9 @@ class ExternalPotential
      */
     public:
     // Calculate energy on specified atom
-    virtual double energy(const Atom &i, const Box *box) const;
+    virtual double energy(const ConfigurationAtom &i, const Box *box) const;
     // Calculate force on specified atom, summing in to supplied vector
-    virtual void force(const Atom &i, const Box *box, Vector3 &f) const;
+    virtual void force(const ConfigurationAtom &i, const Box *box, Vector3 &f) const;
 
     /*
      * Read / Write

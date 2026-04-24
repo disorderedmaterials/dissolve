@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/potentials/cylindrical.h"
-#include "classes/atom.h"
 #include "classes/box.h"
+#include "classes/configurationAtom.h"
 #include "keywords/interactionPotential.h"
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Labels.h"
@@ -58,7 +58,7 @@ const std::string CylindricalPotential::formParametersString() const { return in
  */
 
 // Calculate energy on specified atom
-double CylindricalPotential::energy(const Atom &i, const Box *box) const
+double CylindricalPotential::energy(const ConfigurationAtom &i, const Box *box) const
 {
     // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);
@@ -82,7 +82,7 @@ double CylindricalPotential::energy(const Atom &i, const Box *box) const
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void CylindricalPotential::force(const Atom &i, const Box *box, Vector3 &f) const
+void CylindricalPotential::force(const ConfigurationAtom &i, const Box *box, Vector3 &f) const
 {
     // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);

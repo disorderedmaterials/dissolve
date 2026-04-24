@@ -8,7 +8,7 @@
 #include "math/matrix3.h"
 
 // Forward Declarations
-class Atom;
+class ConfigurationAtom;
 class Configuration;
 class Molecule;
 class SpeciesAngle;
@@ -30,7 +30,7 @@ class GeometryKernel : public KernelBase
     // Return SpeciesBond energy using specified positions
     double bondEnergy(const SpeciesBond &b, const Vector3 &ri, const Vector3 &rj) const;
     // Calculate SpeciesBond forces
-    void bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ,
+    void bondForces(const SpeciesBond &bond, const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
                     std::vector<Vector3> &f) const;
     void bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, std::vector<Vector3> &f) const;
 
@@ -52,8 +52,8 @@ class GeometryKernel : public KernelBase
     // Calculate angle force parameters from supplied vectors
     static AngleParameters calculateAngleForceParameters(Vector3 vecji, Vector3 vecjk);
     // Calculate SpeciesAngle forces
-    void angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k, int indexK,
-                     std::vector<Vector3> &f) const;
+    void angleForces(const SpeciesAngle &angle, const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
+                     const ConfigurationAtom &k, int indexK, std::vector<Vector3> &f) const;
     void angleForces(const SpeciesAngle &angle, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                      std::vector<Vector3> &f) const;
 
@@ -88,8 +88,9 @@ class GeometryKernel : public KernelBase
     // Calculate torsion force parameters from supplied vectors
     static TorsionParameters calculateTorsionForceParameters(const Vector3 &vecji, const Vector3 &vecjk, const Vector3 &veckl);
     // Calculate SpeciesTorsion forces
-    void torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
-                       int indexK, const Atom &l, int indexL, std::vector<Vector3> &f) const;
+    void torsionForces(const SpeciesTorsion &torsion, const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j,
+                       int indexJ, const ConfigurationAtom &k, int indexK, const ConfigurationAtom &l, int indexL,
+                       std::vector<Vector3> &f) const;
     void torsionForces(const SpeciesTorsion &torsion, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                        const Vector3 &rl, std::vector<Vector3> &f) const;
 
@@ -101,8 +102,9 @@ class GeometryKernel : public KernelBase
     double improperEnergy(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                           const Vector3 &rl) const;
     // Calculate SpeciesImproper forces
-    void improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
-                        int indexK, const Atom &l, int indexL, std::vector<Vector3> &f) const;
+    void improperForces(const SpeciesImproper &improper, const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j,
+                        int indexJ, const ConfigurationAtom &k, int indexK, const ConfigurationAtom &l, int indexL,
+                        std::vector<Vector3> &f) const;
     void improperForces(const SpeciesImproper &improper, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                         const Vector3 &rl, std::vector<Vector3> &f) const;
 
@@ -113,7 +115,7 @@ class GeometryKernel : public KernelBase
     // Return geometry energy for the specified configuration
     Kernel::GeometryEnergyValue totalGeometryEnergy(const Configuration *cfg) const;
     // Return geometry energy for the specified atom
-    Kernel::GeometryEnergyValue geometryEnergy(const Atom &i) const;
+    Kernel::GeometryEnergyValue geometryEnergy(const ConfigurationAtom &i) const;
     // Return geometry energy for the specified molecule
     Kernel::GeometryEnergyValue geometryEnergy(const Molecule &mol) const;
 

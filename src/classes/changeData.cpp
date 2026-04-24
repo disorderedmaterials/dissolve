@@ -3,8 +3,8 @@
 
 #include "classes/changeData.h"
 #include "base/messenger.h"
-#include "classes/atom.h"
 #include "classes/cell.h"
+#include "classes/configurationAtom.h"
 #include <cassert>
 
 ChangeData::ChangeData() : atom_(nullptr) {}
@@ -14,7 +14,7 @@ ChangeData::ChangeData() : atom_(nullptr) {}
  */
 
 // Set target atom
-void ChangeData::setAtom(Atom *i)
+void ChangeData::setAtom(ConfigurationAtom *i)
 {
     assert(i != nullptr);
 
@@ -25,7 +25,7 @@ void ChangeData::setAtom(Atom *i)
 }
 
 // Return target Atom
-Atom *ChangeData::atom() { return atom_; }
+ConfigurationAtom *ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
 int ChangeData::atomArrayIndex() const { return atom_->globalIndex(); }

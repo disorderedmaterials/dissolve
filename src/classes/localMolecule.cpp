@@ -54,18 +54,18 @@ void LocalMolecule::setSpecies(const Species *sp)
 }
 
 // Add Atom to Molecule
-void LocalMolecule::addAtom(Atom *atom) { throw(std::runtime_error("Can't addAtom() in a LocalMolecule.\n")); }
+void LocalMolecule::addAtom(ConfigurationAtom *atom) { throw(std::runtime_error("Can't addAtom() in a LocalMolecule.\n")); }
 
 // Update local atom pointers from main vector
-void LocalMolecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
+void LocalMolecule::updateAtoms(std::vector<ConfigurationAtom> &mainAtoms, int offset)
 {
     throw(std::runtime_error("Can't updateAtoms() in a LocalMolecule.\n"));
 }
 
 // Return nth local atom
-Atom &LocalMolecule::localAtom(int n) { return localAtoms_[n]; }
-const Atom &LocalMolecule::localAtom(int n) const { return localAtoms_[n]; }
+ConfigurationAtom &LocalMolecule::localAtom(int n) { return localAtoms_[n]; }
+const ConfigurationAtom &LocalMolecule::localAtom(int n) const { return localAtoms_[n]; }
 
 // Return local atoms
-std::vector<Atom> &LocalMolecule::localAtoms() { return localAtoms_; }
-const std::vector<Atom> &LocalMolecule::localAtoms() const { return localAtoms_; };
+std::vector<ConfigurationAtom> &LocalMolecule::localAtoms() { return localAtoms_; }
+const std::vector<ConfigurationAtom> &LocalMolecule::localAtoms() const { return localAtoms_; };

@@ -15,7 +15,7 @@
  */
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r)
+ConfigurationAtom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_ptr<Molecule> &molecule, Vector3 r)
 {
     // Create new Atom object and set its source pointer
     auto &newAtom = atoms_.emplace_back();
@@ -264,12 +264,12 @@ int Configuration::nAtoms(SpeciesAtom::Presence withPresence) const
 }
 
 // Return Atom array
-std::vector<Atom> &Configuration::atoms() { return atoms_; }
+std::vector<ConfigurationAtom> &Configuration::atoms() { return atoms_; }
 
-const std::vector<Atom> &Configuration::atoms() const { return atoms_; }
+const std::vector<ConfigurationAtom> &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom
-Atom &Configuration::atom(int n)
+ConfigurationAtom &Configuration::atom(int n)
 {
     assert(n >= 0 && n < atoms_.size());
     return atoms_[n];
