@@ -50,8 +50,6 @@ class SpeciesAtom : public Atom, Serialisable<>
     Species *parent_{nullptr};
     // Assigned AtomType
     const AtomType *atomType_{nullptr};
-    // Index in Species
-    int index_{-1};
     // Whether the atom is currently selected
     bool selected_{false};
     // Presence of atom
@@ -70,10 +68,6 @@ class SpeciesAtom : public Atom, Serialisable<>
     void setAtomType(const AtomType *at);
     // Return AtomType of Atom
     const AtomType *atomType() const;
-    // Set index (0->[N-1])
-    void setIndex(int id);
-    // Return index (0->[N-1])
-    int index() const;
     // Return 'user' index (1->N)
     int userIndex() const;
     // Set whether the atom is currently selected

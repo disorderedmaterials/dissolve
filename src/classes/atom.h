@@ -23,6 +23,8 @@ class Atom
     Elements::Element Z_{Elements::Unknown};
     // Charge
     double q_{0.0};
+    // Index in parent
+    int index_{-1};
     // Atom type index in parent object
     int atomTypeIndex_{AtomType::Ignore};
 
@@ -38,6 +40,10 @@ class Atom
     // Return atomic charge
     double &q();
     double q() const;
+    // Return index
+    int index() const;
+    // Set index
+    void setIndex(int index);
     // Set index of associated atom type in parent object
     void setAtomTypeIndex(int id);
     // Return associated atom type index

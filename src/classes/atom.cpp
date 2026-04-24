@@ -23,6 +23,12 @@ Elements::Element Atom::Z() const { return Z_; }
 double &Atom::q() { return q_; };
 double Atom::q() const { return q_; }
 
+// Return index (0->[N-1])
+int Atom::index() const { return index_; };
+
+// Set index
+void Atom::setIndex(int index) { index_ = index; }
+
 // Set index of associated atom type in parent object
 void Atom::setAtomTypeIndex(int id) { atomTypeIndex_ = id; }
 

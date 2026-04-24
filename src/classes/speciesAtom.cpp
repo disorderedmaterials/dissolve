@@ -102,12 +102,6 @@ void SpeciesAtom::setAtomType(const AtomType *at)
 // Return SpeciesAtomType of SpeciesAtom
 const AtomType *SpeciesAtom::atomType() const { return atomType_; }
 
-// Set index (0->[N-1])
-void SpeciesAtom::setIndex(int id) { index_ = id; }
-
-// Return index (0->[N-1])
-int SpeciesAtom::index() const { return index_; }
-
 // Return 'user' index (1->N)
 int SpeciesAtom::userIndex() const { return index_ + 1; }
 
