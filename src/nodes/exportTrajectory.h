@@ -30,7 +30,7 @@ class ExportTrajectoryNode : public Node
     std::string filePath_;
     // File format
     bool extended_;
-    // Last read file position (as int)
+    // Last read file position
     std::streampos filePosition_;
     // Target configuration
     Configuration *configuration_{nullptr};
