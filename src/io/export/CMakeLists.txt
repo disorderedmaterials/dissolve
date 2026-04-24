@@ -1,6 +1,5 @@
 add_library(
   export
-  coordinates.cpp
   data1D.cpp
   data2D.cpp
   data3D.cpp
@@ -8,7 +7,6 @@ add_library(
   pairPotential.cpp
   species.cpp
   values.cpp
-  coordinates.h
   data1D.h
   data2D.h
   data3D.h
