@@ -31,19 +31,24 @@ class Atom
     public:
     // Set basic properties
     virtual void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
+    // Set coordinates
+    void setR(const Vector3 &r);
+    // Adjust coordinates
+    void adjustR(const Vector3 &delta);
     // Return coordinates
-    Vector3 &r();
     const Vector3 &r() const;
+    // Set atomic element
+    void setZ(Elements::Element z);
     // Return atomic element
-    Elements::Element &Z();
     Elements::Element Z() const;
+    // Set atomic charge
+    void setQ(double q);
     // Return atomic charge
-    double &q();
     double q() const;
-    // Return index
-    int index() const;
     // Set index
     void setIndex(int index);
+    // Return index
+    int index() const;
     // Set index of associated atom type in parent object
     void setAtomTypeIndex(int id);
     // Return associated atom type index

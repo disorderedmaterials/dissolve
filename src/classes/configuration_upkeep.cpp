@@ -40,7 +40,7 @@ void Configuration::updateAtomLocations(bool clearExistingLocations)
 void Configuration::updateAtomLocation(ConfigurationAtom *i)
 {
     // Fold Atom coordinates into Box
-    i->r() = box_->fold(i->r());
+    i->setR(box_->fold(i->r()));
 
     // Determine new Cell position
     auto *cell = cells_.cell(i->r());

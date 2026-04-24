@@ -623,7 +623,7 @@ bool CIFHandler::detectMolecules()
         LocalMolecule tempMol(sp);
         tempMol.unFold(cleanedUnitCellSpecies_.box());
         for (auto &&[molAtom, spAtom] : zip(tempMol.localAtoms(), sp->atoms()))
-            spAtom.r() = molAtom.r();
+            spAtom.setR(molAtom.r());
 
         // Give the species a name
         sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
@@ -748,7 +748,7 @@ bool CIFHandler::createSupercell()
                             mol.setSpecies(sp);
 
                             for (auto &&[coreAtom, instanceAtom] : zip(instance.localAtoms(), mol.localAtoms()))
-                                instanceAtom.r() = coreAtom.r() + tVec;
+                                instanceAtom.setR(coreAtom.r() + tVec);
                         }
                     }
                 }
@@ -762,7 +762,7 @@ bool CIFHandler::createSupercell()
             {
                 auto mol = supercellConfiguration_.addMolecule(sp);
                 for (auto &&[molAtom, instanceAtom] : zip(mol->atoms(), instance.localAtoms()))
-                    molAtom->r() = instanceAtom.r();
+                    molAtom->setR(instanceAtom.r());
             }
         }
 
@@ -1162,7 +1162,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
         auto count = 0;
         for (auto &&[matchedAtom, instanceMolAtom] : zip(matchedUnitCellAtoms, instanceMolecule.localAtoms()))
         {
-            instanceMolAtom.r() = matchedAtom->r();
+            instanceMolAtom.setR(matchedAtom->r());
             atomMask[matchedAtom->index()] = true;
         }
         auto &instanceMoleculeRootAtom = instanceMolecule.localAtoms()[rootAtomLocalIndex];
@@ -1171,7 +1171,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
         // This represents our full instance coordinates we will be storing (but not their final order)
         instanceMolecule.unFold(unitCellSpecies_.box());
         for (auto &&[molAtom, spAtom] : zip(instanceMolecule.localAtoms(), instanceSpecies.atoms()))
-            spAtom.r() = molAtom.r();
+            spAtom.setR(molAtom.r());
 
         /*
          * Now, we have a root match atom on the current instance and a vector of possible matching sites on the reference
@@ -1211,7 +1211,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
         instance.setSpecies(referenceSpecies);
         for (const auto &[refSpeciesAtom, instanceSpeciesAtom] : matchMap)
         {
-            instance.localAtom(refSpeciesAtom->index()).r() = instanceSpeciesAtom->r();
+            instance.localAtom(refSpeciesAtom->index()).setR(instanceSpeciesAtom->r());
         }
 
         // Find the next available atom

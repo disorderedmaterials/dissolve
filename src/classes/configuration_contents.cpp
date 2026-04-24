@@ -25,7 +25,7 @@ ConfigurationAtom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const s
     molecule->addAtom(&newAtom);
 
     // Set the position
-    newAtom.r() = r;
+    newAtom.setR(r);
 
     return newAtom;
 }
@@ -297,7 +297,7 @@ void Configuration::scaleContents(Vector3 scaleFactors)
                 box()->toFractional(r);
                 r.multiply(scaleFactors);
                 box()->toReal(r);
-                i->r() = r;
+                i->setR(r);
             }
         }
         else

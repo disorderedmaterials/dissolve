@@ -279,7 +279,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     errorsEncountered = true;
                 }
                 auto &i = atom(index);
-                i.q() = parser.argd(2);
+                i.setQ(parser.argd(2));
                 break;
             }
             case (Species::SpeciesKeyword::EndSpecies):
@@ -291,7 +291,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     // Fold atoms
                     for (auto &i : atoms_)
-                        i.r() = box_->fold(i.r());
+                        i.setR(box_->fold(i.r()));
                 }
                 updateIsotopologues();
                 Messenger::print("Found end of Species '{}'.\n", name());

@@ -128,11 +128,11 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         {
             auto newR = item.r();
             newR.set(index.column() - 2, value.toDouble());
-            item.r() = newR;
+            item.setR(newR);
         }
         break;
         case 5:
-            item.q() = value.toDouble();
+            item.setQ(value.toDouble());
             break;
     }
     Q_EMIT dataChanged(index, index);

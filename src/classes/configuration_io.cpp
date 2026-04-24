@@ -154,7 +154,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, bo
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
 
-        atom(n).r() = parser.arg3d(1);
+        atom(n).setR(parser.arg3d(1));
     }
 
     // Scale box and cells according to the applied size factor

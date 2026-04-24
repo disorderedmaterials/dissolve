@@ -46,7 +46,7 @@ TEST_F(ModifyChargesModelTest, Scale)
 
     // Set charges equal for simplicity
     for (auto &atom : species->atoms())
-        atom.q() = 1.0;
+        atom.setQ(1.0);
 
     // Test "Scale"
     model.setScaleType(ModifyChargesModel::Scale);
@@ -94,7 +94,7 @@ TEST_F(ModifyChargesModelTest, Smooth)
 
     // Set charges equal for simplicity
     for (auto &atom : species->atoms())
-        atom.q() = 1.0;
+        atom.setQ(1.0);
 
     // Target smooth value to 20
     model.updateSmoothValue(20.0);
@@ -130,7 +130,7 @@ TEST_F(ModifyChargesModelTest, ReduceSigFig)
 
     // Set charges equal for simplicity
     for (auto &atom : species->atoms())
-        atom.q() = 1.235;
+        atom.setQ(1.235);
 
     model.reduceSignificantFigures(species);
 

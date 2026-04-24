@@ -11,16 +11,25 @@ void Atom::set(Elements::Element Z, const Vector3 &r, double q)
     q_ = q;
 }
 
+// Set coordinates
+void Atom::setR(const Vector3 &r) { r_ = r; }
+
+// Adjust coordinates
+void Atom::adjustR(const Vector3 &delta) { r_ += delta; }
+
 // Return coordinates
-Vector3 &Atom::r() { return r_; }
 const Vector3 &Atom::r() const { return r_; }
 
+// Set atomic element
+void Atom::setZ(Elements::Element z) { Z_ = z; }
+
 // Return atomic element
-Elements::Element &Atom::Z() { return Z_; }
 Elements::Element Atom::Z() const { return Z_; }
 
+// Set atomic charge
+void Atom::setQ(double q) { q_ = q; }
+
 // Return atomic charge
-double &Atom::q() { return q_; };
 double Atom::q() const { return q_; }
 
 // Return index (0->[N-1])

@@ -368,8 +368,8 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
     // Temporary SpeciesAtom
     static SpeciesAtom j(nullptr);
-    j.Z() = toElement;
-    j.r() = toPoint;
+    j.setZ(toElement);
+    j.setR(toPoint);
 
     // Render based on the current drawing style
     if (displayStyle_ == LinesStyle)
@@ -417,10 +417,10 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vector3 fromPoint, Elem
 
     // Temporary SpeciesAtoms
     static SpeciesAtom i(nullptr), j(nullptr);
-    i.Z() = fromElement;
-    i.r() = fromPoint;
-    j.Z() = toElement;
-    j.r() = toPoint;
+    i.setZ(fromElement);
+    i.setR(fromPoint);
+    j.setZ(toElement);
+    j.setR(toPoint);
 
     // Render based on the current drawing style
     if (displayStyle_ == LinesStyle)

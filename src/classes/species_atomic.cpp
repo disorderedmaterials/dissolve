@@ -155,7 +155,7 @@ void Species::transmuteAtom(int index, Elements::Element newZ)
 
     // Remove any existing AtomType assignment
     i.setAtomType(nullptr);
-    i.Z() = newZ;
+    i.setZ(newZ);
 }
 
 // Clear current Atom selection
@@ -338,5 +338,5 @@ double Species::totalCharge(bool useAtomTypes) const
 void Species::randomiseCoordinates(double maxDisplacement)
 {
     for (auto &i : atoms_)
-        i.r() += Vector3::randomUnit() * maxDisplacement;
+        i.adjustR(Vector3::randomUnit() * maxDisplacement);
 }

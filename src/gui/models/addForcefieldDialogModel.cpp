@@ -231,7 +231,7 @@ void AddForcefieldDialogModel::finalise()
         // }
 
         // Copy charge on species atom
-        original.q() = modified.q();
+        original.setQ(modified.q());
     }
 
     // Copy intramolecular terms

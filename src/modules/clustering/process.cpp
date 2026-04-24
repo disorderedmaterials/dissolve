@@ -445,7 +445,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
                 auto mol = clusterConfig_.addMolecule(site->parent()->parent());
                 for (auto &&[molAtom, sourceAtom] : zip(mol->atoms(), site->molecule()->atoms()))
                 {
-                    molAtom->r() = sourceAtom->r();
+                    molAtom->setR(sourceAtom->r());
                     clusterConfig_.updateAtomLocation(molAtom);
                 }
             }
@@ -461,7 +461,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
                     auto mol = clusterConfig_.addMolecule(site->parent()->parent());
                     for (auto &&[molAtom, sourceAtom] : zip(mol->atoms(), site->molecule()->atoms()))
                     {
-                        molAtom->r() = sourceAtom->r();
+                        molAtom->setR(sourceAtom->r());
                         clusterConfig_.updateAtomLocation(molAtom);
                     }
                 }
@@ -475,7 +475,7 @@ void ClusteringModule::generateClustersConfig(Dissolve &dissolve, int displaySiz
             auto mol = clusterConfig_.addMolecule(site->parent()->parent());
             for (auto &&[molAtom, sourceAtom] : zip(mol->atoms(), site->molecule()->atoms()))
             {
-                molAtom->r() = sourceAtom->r();
+                molAtom->setR(sourceAtom->r());
                 clusterConfig_.updateAtomLocation(molAtom);
             }
         }

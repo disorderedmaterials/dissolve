@@ -345,7 +345,7 @@ NodeConstants::ProcessResult MDNode::process()
         for (auto &&[i, v, a] : zip(atoms, velocities, accelerations))
         {
             // Propagate positions (by whole step)...
-            i.r() += v * dT + a * 0.5 * deltaTSq;
+            i.adjustR(v * dT + a * 0.5 * deltaTSq);
 
             // ...velocities (by half step)...
             v += a * 0.5 * dT;
