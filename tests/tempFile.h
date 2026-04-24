@@ -13,7 +13,12 @@ namespace UnitTest
 class TempFile
 {
     public:
-    TempFile(std::optional<std::string> name = {})
+    // Create a temp file.
+    //
+    // If the name is not given, then a random name will be chosen.
+    // Adding a second parameter of `False` will cause the file to
+    // persist, which may be useful while debugging.
+    TempFile(std::optional<std::string> name = {}, bool deleteFile = true) : deleteFiles_(deleteFile)
     {
         path = std::filesystem::temp_directory_path();
         path /= name ? *name : randomName() + ".dissolve.tmp";
@@ -22,7 +27,7 @@ class TempFile
     {
         if (out_.is_open())
             out_.close();
-        if constexpr (deleteFiles)
+        if (deleteFiles_)
             std::filesystem::remove(path);
     }
 
@@ -42,10 +47,8 @@ class TempFile
     private:
     // The actual path of the temp file
     std::filesystem::path path;
-    // A compile time switch to control deleting the temp files.  Set
-    // this to false while debugging to read keep the file so you can
-    // analyse the output.
-    constexpr static bool deleteFiles = true;
+    // A switch to control deleting the temp files.
+    bool deleteFiles_ = true;
     // A local stream that can be used for writing
     std::ofstream out_;
 

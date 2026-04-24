@@ -39,6 +39,7 @@ changes
 *.DS_Store
 msvc-env
 aqtinstall.log
+justfile
 
 # Example files
 *.beat
