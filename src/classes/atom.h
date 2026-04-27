@@ -34,7 +34,7 @@ class Atom
     // Set coordinates
     void setR(const Vector3 &r);
     // Adjust coordinates
-    void adjustR(const Vector3 &delta);
+    void operator+=(const Vector3 &delta);
     // Return coordinates
     const Vector3 &r() const;
     // Set atomic element
