@@ -338,5 +338,5 @@ double Species::totalCharge(bool useAtomTypes) const
 void Species::randomiseCoordinates(double maxDisplacement)
 {
     for (auto &i : atoms_)
-        i.adjustR(Vector3::randomUnit() * maxDisplacement);
+        i += Vector3::randomUnit() * maxDisplacement;
 }

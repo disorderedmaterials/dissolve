@@ -33,8 +33,6 @@ class Atom
     virtual void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
     // Set coordinates
     void setR(const Vector3 &r);
-    // Adjust coordinates
-    void operator+=(const Vector3 &delta);
     // Return coordinates
     const Vector3 &r() const;
     // Set atomic element
@@ -53,4 +51,11 @@ class Atom
     void setAtomTypeIndex(int id);
     // Return associated atom type index
     int atomTypeIndex() const;
+
+    /*
+     * Coordinate Manipulation Operators
+     */
+    public:
+    void operator+=(const Vector3 &delta);
+    void operator-=(const Vector3 &delta);
 };

@@ -56,7 +56,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                 auto moveInitialPos = i->r();
 
                 // Translate Atom randomly according to the stepsize and update its Cell position
-                i->adjustR(Vector3::randomUnit() * stepSize);
+                *i += Vector3::randomUnit() * stepSize;
                 targetConfiguration_->updateAtomLocation(i);
 
                 // Calculate new energy

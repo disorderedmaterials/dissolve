@@ -42,5 +42,5 @@ void Species::centreAtOrigin()
         centre += i.r();
     centre /= atoms_.size();
     for (auto &i : atoms_)
-        i.adjustR(-centre);
+        i -= centre;
 }

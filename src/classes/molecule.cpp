@@ -235,12 +235,12 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 void Molecule::translate(const Vector3 &delta)
 {
     for (auto n = 0; n < nAtoms(); ++n)
-        atom(n)->adjustR(delta);
+        *atom(n) += delta;
 }
 
 // Translate specified atoms by the delta specified
 void Molecule::translate(const Vector3 &delta, const std::vector<int> &targetAtoms)
 {
     for (const auto i : targetAtoms)
-        atom(i)->adjustR(delta);
+        *atom(i) += delta;
 }

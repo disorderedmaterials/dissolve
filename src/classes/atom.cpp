@@ -14,9 +14,6 @@ void Atom::set(Elements::Element Z, const Vector3 &r, double q)
 // Set coordinates
 void Atom::setR(const Vector3 &r) { r_ = r; }
 
-// Adjust coordinates
-void Atom::adjustR(const Vector3 &delta) { r_ += delta; }
-
 // Return coordinates
 const Vector3 &Atom::r() const { return r_; }
 
@@ -43,3 +40,11 @@ void Atom::setAtomTypeIndex(int id) { atomTypeIndex_ = id; }
 
 // Return associated atom type index
 int Atom::atomTypeIndex() const { return atomTypeIndex_; }
+
+/*
+ * Coordinate Manipulation Operators
+ */
+
+void Atom::operator+=(const Vector3 &delta) { r_ += delta; }
+
+void Atom::operator-=(const Vector3 &delta) { r_ -= delta; }
