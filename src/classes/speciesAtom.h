@@ -176,8 +176,6 @@ class SpeciesAtom : public Atom, Serialisable<>
     static AtomGeometry geometry(const SpeciesAtom *i);
     // Return whether the specified SpeciesAtom exists in the specified geometry
     static bool isGeometry(const SpeciesAtom *i, AtomGeometry geom);
-    // Guess and return oxidation state for the specified SpeciesAtom
-    static int guessOxidationState(const SpeciesAtom *i);
 
     /*
      * Serialisation
