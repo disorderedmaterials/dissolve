@@ -442,6 +442,10 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
     return (nSameElement == i->nBonds() ? 0 : -osBound);
 }
 
+/*
+ * Serialisation
+ */
+
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {

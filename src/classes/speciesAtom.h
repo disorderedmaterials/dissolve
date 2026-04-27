@@ -179,6 +179,10 @@ class SpeciesAtom : public Atom, Serialisable<>
     // Guess and return oxidation state for the specified SpeciesAtom
     static int guessOxidationState(const SpeciesAtom *i);
 
+    /*
+     * Serialisation
+     */
+    public:
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
