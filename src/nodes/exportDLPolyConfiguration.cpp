@@ -30,7 +30,7 @@ NodeConstants::ProcessResult ExportDLPolyConfiguration::process()
 
     auto path = filePath_;
     if (tagWithIteration_)
-        path = std::format("{}.{}", path, dissolve().iteration());
+        path = std::format("{}.{}", path, iteration_);
 
     std::ofstream outfile(filePath_);
     std::ostream_iterator<char> out(outfile);
@@ -64,6 +64,8 @@ NodeConstants::ProcessResult ExportDLPolyConfiguration::process()
                        AtomicMass::mass(i.speciesAtom()->Z()), i.r().x, i.r().y, i.r().z);
 
     outfile.close();
+
+    ++iteration_;
 
     return NodeConstants::ProcessResult::Success;
 }

@@ -39,6 +39,8 @@ class ExportXYZConfiguration : public Node
     bool tagWithIteration_{false};
     // Target configuration
     Configuration *configuration_{nullptr};
+    // Iteration count
+    int iteration_ = 1;
 
     /*
      * Processing

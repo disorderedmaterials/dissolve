@@ -15,6 +15,7 @@ ExportXYZConfiguration::ExportXYZConfiguration(Graph *parentGraph) : Node(parent
     addOption<std::string>("FilePath", "File path", filePath_);
     addOption<bool>("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index",
                     tagWithIteration_);
+    addSerialisable("Iteration", iteration_);
 }
 
 std::string_view ExportXYZConfiguration::type() const { return "ExportCoordinates"; }
@@ -29,7 +30,7 @@ NodeConstants::ProcessResult ExportXYZConfiguration::process()
 
     auto path = filePath_;
     if (tagWithIteration_)
-        path = std::format("{}.{}", path, dissolve().iteration());
+        path = std::format("{}.{}", path, iteration_);
     std::ofstream outfile(filePath_);
     std::ostream_iterator<char> out(outfile);
 
@@ -43,6 +44,8 @@ NodeConstants::ProcessResult ExportXYZConfiguration::process()
                        i.r().z);
 
     outfile.close();
+
+    ++iteration_;
 
     return NodeConstants::ProcessResult::Success;
 }
