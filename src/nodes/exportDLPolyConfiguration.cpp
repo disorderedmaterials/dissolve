@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/exportCoordinates.h"
+#include "nodes/exportDLPolyConfiguration.h"
 #include "data/atomicMasses.h"
 #include "main/dissolve.h"
 #include "nodes/constants.h"
 #include <fstream>
 
-ExportCoordinatesNode::ExportCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
+ExportDLPolyConfiguration::ExportDLPolyConfiguration(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Configuration from which Coordinates will be exported", configuration_);
@@ -16,55 +16,22 @@ ExportCoordinatesNode::ExportCoordinatesNode(Graph *parentGraph) : Node(parentGr
     addOption<std::string>("FilePath", "File path", filePath_);
     addOption<bool>("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index",
                     tagWithIteration_);
-    addOption<CoordinateExportFormat>("Format", "Format for coordinates", format_);
 }
 
-std::string_view ExportCoordinatesNode::type() const { return "ExportCoordinates"; }
+std::string_view ExportDLPolyConfiguration::type() const { return "ExportCoordinates"; }
 
-std::string_view ExportCoordinatesNode::summary() const
+std::string_view ExportDLPolyConfiguration::summary() const
 {
-    return "Export configuration coordinates from sequential frames of a coordinates.";
+    return "Export configuration coordinates from sequential frames of a coordinates in DLPoly format.";
 }
 
-NodeConstants::ProcessResult ExportCoordinatesNode::process()
+NodeConstants::ProcessResult ExportDLPolyConfiguration::process()
 {
 
     auto path = filePath_;
     if (tagWithIteration_)
         path = std::format("{}.{}", path, dissolve().iteration());
 
-    switch (format_)
-    {
-        case CoordinateExportFormat::XYZ:
-            return exportXYZ(path);
-        case CoordinateExportFormat::DLPOLY:
-            return exportDLPOLY(path);
-        default:
-            return NodeConstants::ProcessResult::Failed;
-    }
-}
-
-NodeConstants::ProcessResult ExportCoordinatesNode::exportXYZ(std::string path)
-{
-    std::ofstream outfile(filePath_);
-    std::ostream_iterator<char> out(outfile);
-
-    // Export number of atoms and title
-    std::format_to(out, "{}\n", configuration_->nAtoms());
-    std::format_to(out, "{} @ {}\n", configuration_->name(), configuration_->version());
-
-    // Export Atoms
-    for (const auto &i : configuration_->atoms())
-        std::format_to(out, "{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i.speciesAtom()->Z()), i.r().x, i.r().y,
-                       i.r().z);
-
-    outfile.close();
-
-    return NodeConstants::ProcessResult::Success;
-}
-
-NodeConstants::ProcessResult ExportCoordinatesNode::exportDLPOLY(std::string path)
-{
     std::ofstream outfile(filePath_);
     std::ostream_iterator<char> out(outfile);
 
@@ -99,15 +66,4 @@ NodeConstants::ProcessResult ExportCoordinatesNode::exportDLPOLY(std::string pat
     outfile.close();
 
     return NodeConstants::ProcessResult::Success;
-}
-
-EnumOptions<ExportCoordinatesNode::CoordinateExportFormat> ExportCoordinatesNode::formatType()
-{
-    return EnumOptions<CoordinateExportFormat>(
-        "ExportFormat", {{CoordinateExportFormat::DLPOLY, "DLPOLY"}, {CoordinateExportFormat::XYZ, "XYZ"}});
-}
-
-EnumOptions<ExportCoordinatesNode::CoordinateExportFormat> getEnumOptions(ExportCoordinatesNode::CoordinateExportFormat)
-{
-    return ExportCoordinatesNode::formatType();
 }
