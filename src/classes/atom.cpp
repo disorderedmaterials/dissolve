@@ -62,3 +62,21 @@ int Atom::atomTypeIndex() const { return atomTypeIndex_; }
 void Atom::operator+=(const Vector3 &delta) { r_ += delta; }
 
 void Atom::operator-=(const Vector3 &delta) { r_ -= delta; }
+
+/*
+ * Serialisation
+ */
+
+// Express as a serialisable value
+void Atom::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
+}
+
+// Read values from a serialisable value
+void Atom::deserialise(const SerialisedValue &node)
+{
+    index_ = toml::find<int>(node, "index");
+
+    set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "q", 0));
+}

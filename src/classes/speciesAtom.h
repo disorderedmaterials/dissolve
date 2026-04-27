@@ -20,7 +20,7 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Atom, Serialisable<>
+class SpeciesAtom : public Atom
 {
     public:
     SpeciesAtom(Species *parent);

@@ -7,7 +7,7 @@
 #include "math/vector3.h"
 
 // Basic Atom
-class Atom
+class Atom : public Serialisable<>
 {
     public:
     Atom() = default;
@@ -71,4 +71,13 @@ class Atom
     public:
     void operator+=(const Vector3 &delta);
     void operator-=(const Vector3 &delta);
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };
