@@ -5,11 +5,10 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/atom.h"
 #include "data/elements.h"
 #include "math/vector3.h"
 #include "templates/optionalRef.h"
-#include <map>
-#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -21,11 +20,10 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Serialisable<>
+class SpeciesAtom : public Atom, Serialisable<>
 {
     public:
     SpeciesAtom(Species *parent);
-    ~SpeciesAtom() = default;
     SpeciesAtom(SpeciesAtom &source) = delete;
     SpeciesAtom(SpeciesAtom &&source) noexcept;
     SpeciesAtom &operator=(const SpeciesAtom &source) = delete;
@@ -50,55 +48,32 @@ class SpeciesAtom : public Serialisable<>
     private:
     // Parent Species
     Species *parent_{nullptr};
-    // Atomic element
-    Elements::Element Z_{Elements::Unknown};
-    // Coordinates
-    Vector3 r_{0.0, 0.0, 0.0};
-    // Charge (if contained in file)
-    double charge_{0.0};
     // Assigned AtomType
     const AtomType *atomType_{nullptr};
-    // Index in Species
-    int index_{-1};
     // Whether the atom is currently selected
     bool selected_{false};
     // Presence of atom
     Presence presence_{Presence::Physical};
 
     public:
+    // Set basic properties
+    void set(Elements::Element Z, const Vector3 &r, double q = 0.0) override;
     // Return parent Species
     Species *parent() const;
-    // Set basic properties
-    void set(Elements::Element Z, double rx, double ry, double rz, double q = 0.0);
-    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
-    // Set atomic element
-    void setZ(Elements::Element Z);
-    // Return atomic element
-    Elements::Element Z() const;
+    // Return presence of atom
+    Presence presence() const;
     // Return whether the atom is of the presence specified
     bool isPresence(SpeciesAtom::Presence presence) const;
-    // Return coordinates (read-only)
-    const Vector3 &r() const;
-    // Set charge of Atom
-    void setCharge(double charge);
-    // Return charge of Atom
-    double charge() const;
     // Set AtomType of Atom
     void setAtomType(const AtomType *at);
     // Return AtomType of Atom
     const AtomType *atomType() const;
-    // Set index (0->[N-1])
-    void setIndex(int id);
-    // Return index (0->[N-1])
-    int index() const;
     // Return 'user' index (1->N)
     int userIndex() const;
     // Set whether the atom is currently selected
     void setSelected(bool selected);
     // Return whether the atom is currently selected
     bool isSelected() const;
-    // Return presence of atom
-    Presence presence() const;
 
     /*
      * Intramolecular Information
@@ -172,19 +147,6 @@ class SpeciesAtom : public Serialisable<>
     void setScaledInteractions();
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
     ScaledInteractionDefinition scaling(const SpeciesAtom *j) const;
-
-    /*
-     * Coordinate Manipulation
-     */
-    public:
-    // Set coordinate
-    void setCoordinate(int index, double value);
-    // Set coordinates
-    void setCoordinates(double x, double y, double z);
-    // Set coordinates (from Vec3)
-    void setCoordinates(const Vector3 &newr);
-    // Translate coordinates
-    void translateCoordinates(const Vector3 &delta);
 
     /*
      * Atom Environment Helpers

@@ -137,7 +137,7 @@ Vector3 Molecule::unFold(const Box *box)
     traverseLocal(box,
                   [&cog](ConfigurationAtom *j, Vector3 rJ)
                   {
-                      j->setCoordinates(rJ);
+                      j->setR(rJ);
                       cog += rJ;
                   });
     return cog / nAtoms();
@@ -154,7 +154,7 @@ void Molecule::setCentreOfGeometry(const Box *box, const Vector3 &newCentre)
     for (auto n = 0; n < nAtoms(); ++n)
     {
         newR = box->minimumVector(atom(n)->r(), cog) + newCentre;
-        atom(n)->setCoordinates(newR);
+        atom(n)->setR(newR);
     }
 }
 
@@ -202,7 +202,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 
     // Apply transform
     for (auto &i : atoms())
-        i->setCoordinates(transformationMatrix * (i->r() - cog) + cog);
+        i->setR(transformationMatrix * (i->r() - cog) + cog);
 }
 
 // Transform molecule with supplied matrix about specified origin
@@ -213,7 +213,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 
     // Apply transform
     for (auto &i : atoms())
-        i->setCoordinates(transformationMatrix * (i->r() - origin) + origin);
+        i->setR(transformationMatrix * (i->r() - origin) + origin);
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
@@ -227,7 +227,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
     {
         i = atom(index);
         newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
-        i->setCoordinates(newR);
+        i->setR(newR);
     }
 }
 
@@ -235,12 +235,12 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 void Molecule::translate(const Vector3 &delta)
 {
     for (auto n = 0; n < nAtoms(); ++n)
-        atom(n)->translateCoordinates(delta);
+        *atom(n) += delta;
 }
 
 // Translate specified atoms by the delta specified
 void Molecule::translate(const Vector3 &delta, const std::vector<int> &targetAtoms)
 {
     for (const auto i : targetAtoms)
-        atom(i)->translateCoordinates(delta);
+        *atom(i) += delta;
 }

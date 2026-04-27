@@ -2,6 +2,7 @@ add_library(
   classes
   angleFunctions.cpp
   array3DIterator.cpp
+  atom.cpp
   atomType.cpp
   bondFunctions.cpp
   box.cpp
@@ -78,6 +79,7 @@ add_library(
   xRayWeights.cpp
   angleFunctions.h
   array3DIterator.h
+  atom.h
   atomType.h
   bondFunctions.h
   box.h

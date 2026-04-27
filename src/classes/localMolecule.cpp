@@ -10,7 +10,7 @@ LocalMolecule::LocalMolecule(const Species *copyFrom)
     setSpecies(copyFrom);
     for (auto &&[local, i] : zip(localAtoms_, copyFrom->atoms()))
     {
-        local.setCoordinates(i.r());
+        local.setR(i.r());
     }
 }
 

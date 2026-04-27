@@ -26,7 +26,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
     parent_ = source.parent_;
     Z_ = source.Z_;
     r_ = source.r_;
-    charge_ = source.charge_;
+    q_ = source.q_;
     atomType_ = source.atomType_;
     selected_ = source.selected_;
     index_ = source.index_;
@@ -50,7 +50,7 @@ void SpeciesAtom::move(SpeciesAtom &source)
     // Tidy old data
     source.Z_ = Elements::Unknown;
     source.r_ = {};
-    source.charge_ = 0.0;
+    source.q_ = 0.0;
     source.atomType_ = nullptr;
     source.selected_ = false;
     source.index_ = -1;
@@ -64,40 +64,24 @@ void SpeciesAtom::move(SpeciesAtom &source)
  * Properties
  */
 
-// Return parent Species
-Species *SpeciesAtom::parent() const { return parent_; }
-
-// Set basic properties
-void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q) { set(Z, {rx, ry, rz}, q); }
 void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
 {
-    Z_ = Z;
-    r_ = r;
-    charge_ = q;
+    Atom::set(Z, r, q);
 
     presence_ = Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
 }
 
-// Set atomic element
-void SpeciesAtom::setZ(Elements::Element Z) { Z_ = Z; }
+// Return parent Species
+Species *SpeciesAtom::parent() const { return parent_; }
 
-// Return atomic element
-Elements::Element SpeciesAtom::Z() const { return Z_; }
+// Return presence of atom
+SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
 
 // Return whether the atom is of the presence specified
 bool SpeciesAtom::isPresence(SpeciesAtom::Presence presence) const
 {
     return presence == SpeciesAtom::Presence::Any || presence_ == presence;
 }
-
-// Return coordinates
-const Vector3 &SpeciesAtom::r() const { return r_; }
-
-// Set charge of SpeciesAtom
-void SpeciesAtom::setCharge(double charge) { charge_ = charge; }
-
-// Return charge of SpeciesAtom
-double SpeciesAtom::charge() const { return charge_; }
 
 // Set AtomType of SpeciesAtom
 void SpeciesAtom::setAtomType(const AtomType *at)
@@ -116,12 +100,6 @@ void SpeciesAtom::setAtomType(const AtomType *at)
 // Return SpeciesAtomType of SpeciesAtom
 const AtomType *SpeciesAtom::atomType() const { return atomType_; }
 
-// Set index (0->[N-1])
-void SpeciesAtom::setIndex(int id) { index_ = id; }
-
-// Return index (0->[N-1])
-int SpeciesAtom::index() const { return index_; }
-
 // Return 'user' index (1->N)
 int SpeciesAtom::userIndex() const { return index_ + 1; }
 
@@ -130,9 +108,6 @@ void SpeciesAtom::setSelected(bool selected) { selected_ = selected; }
 
 // Return whether the atom is currently selected
 bool SpeciesAtom::isSelected() const { return selected_; }
-
-// Return presence of atom
-SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
 
 /*
  * Bond Information
@@ -299,28 +274,6 @@ SpeciesAtom::ScaledInteractionDefinition SpeciesAtom::scaling(const SpeciesAtom 
         return it->second;
     return {SpeciesAtom::ScaledInteraction::NotScaled, 1.0, 1.0};
 }
-
-/*
- * Coordinate Manipulation
- */
-
-// Set coordinate
-void SpeciesAtom::setCoordinate(int index, double value) { r_.set(index, value); }
-
-// Set coordinates
-void SpeciesAtom::setCoordinates(double x, double y, double z)
-{
-    r_.x = x;
-    r_.y = y;
-    r_.z = z;
-}
-
-// Set coordinates (from Vec3)
-void SpeciesAtom::setCoordinates(const Vector3 &newr) { r_ = newr; }
-
-// Translate coordinates of atom
-void SpeciesAtom::translateCoordinates(const Vector3 &delta) { r_ += delta; }
-
 /*
  * Atom Environment Helpers
  */
@@ -492,7 +445,7 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"index", userIndex()}, {"z", Z_}, {"r", r_}, {"charge", charge_}};
+    target[tag] = {{"index", userIndex()}, {"z", Z_}, {"r", r_}, {"q", q_}};
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
@@ -500,7 +453,7 @@ void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
     index_ = toml::find<int>(node, "index") - 1;
 
-    set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "charge", 0));
+    set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "q", 0));
 
     Serialisable::optionalOn(node, "type",
                              [&](const auto innerNode)

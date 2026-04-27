@@ -42,7 +42,7 @@ void ChangeData::updatePosition()
 void ChangeData::revertPosition()
 {
     // Set stored position
-    atom_->setCoordinates(r_);
+    atom_->setR(r_);
 
     // If the cell changed with the move, revert that too
     if (cell_ != atom_->cell())

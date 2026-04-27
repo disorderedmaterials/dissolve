@@ -46,7 +46,7 @@ TEST_F(ModifyChargesModelTest, Scale)
 
     // Set charges equal for simplicity
     for (auto &atom : species->atoms())
-        atom.setCharge(1.0);
+        atom.setQ(1.0);
 
     // Test "Scale"
     model.setScaleType(ModifyChargesModel::Scale);
@@ -54,7 +54,7 @@ TEST_F(ModifyChargesModelTest, Scale)
 
     auto success = model.scale(species, NO_DISPLAY);
     for (auto &atom : species->atoms())
-        ASSERT_EQ(atom.charge(), 2);
+        ASSERT_EQ(atom.q(), 2);
 
     // Test "ScaleTo" (returns false if input is zero, else we test the sum of the charges)
     model.setScaleType(ModifyChargesModel::ScaleTo);
@@ -67,7 +67,7 @@ TEST_F(ModifyChargesModelTest, Scale)
     success = model.scale(species, NO_DISPLAY);
     auto sum = 0.0;
     for (auto &atom : species->atoms())
-        sum += atom.charge();
+        sum += atom.q();
     ASSERT_EQ(sum, 10);
 }
 
@@ -94,7 +94,7 @@ TEST_F(ModifyChargesModelTest, Smooth)
 
     // Set charges equal for simplicity
     for (auto &atom : species->atoms())
-        atom.setCharge(1.0);
+        atom.setQ(1.0);
 
     // Target smooth value to 20
     model.updateSmoothValue(20.0);
@@ -102,7 +102,7 @@ TEST_F(ModifyChargesModelTest, Smooth)
 
     auto sum = 0.0;
     for (auto &atom : species->atoms())
-        sum += atom.charge();
+        sum += atom.q();
 
     ASSERT_EQ(sum, 20.0);
 }
@@ -130,12 +130,12 @@ TEST_F(ModifyChargesModelTest, ReduceSigFig)
 
     // Set charges equal for simplicity
     for (auto &atom : species->atoms())
-        atom.setCharge(1.235);
+        atom.setQ(1.235);
 
     model.reduceSignificantFigures(species);
 
     // Set charges equal for simplicity
     for (auto &atom : species->atoms())
-        ASSERT_EQ(atom.charge(), 1.24);
+        ASSERT_EQ(atom.q(), 1.24);
 }
 } // namespace UnitTest

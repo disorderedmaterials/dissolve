@@ -39,7 +39,7 @@ void Species::copyBasic(const Species *source, bool copyAtomTypes)
     name_ = source->name_;
 
     for (auto &i : source->atoms_)
-        addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr);
+        addAtom(i.Z(), i.r(), i.q(), copyAtomTypes ? i.atomType() : nullptr);
 
     for (auto &bond : source->bonds_)
         addBond(bond.indexI(), bond.indexJ());
@@ -151,7 +151,7 @@ void Species::print() const
         auto &i = atom(n);
         Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,
                          Elements::symbol(i.Z()), (i.atomType() ? i.atomType()->name() : "??"),
-                         (i.atomType() ? i.atomType()->index() : -1), i.r().x, i.r().y, i.r().z, i.charge());
+                         (i.atomType() ? i.atomType()->index() : -1), i.r().x, i.r().y, i.r().z, i.q());
     }
 
     if (nBonds() > 0)

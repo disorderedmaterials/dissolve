@@ -255,7 +255,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
             continue;
 
         // Grab localTypeIndex and array pointers for this atom
-        localTypeIndex = atoms[n].configurationTypeIndex();
+        localTypeIndex = atoms[n].atomTypeIndex();
 
         cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
         cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);

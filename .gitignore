@@ -48,6 +48,7 @@ justfile
 *.state
 
 # Test files
+**cmake_test_discovery*
 *.gr
 *.sq
 *.rewrite

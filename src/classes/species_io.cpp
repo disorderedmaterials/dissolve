@@ -279,7 +279,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     errorsEncountered = true;
                 }
                 auto &i = atom(index);
-                i.setCharge(parser.argd(2));
+                i.setQ(parser.argd(2));
                 break;
             }
             case (Species::SpeciesKeyword::EndSpecies):
@@ -291,7 +291,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     // Fold atoms
                     for (auto &i : atoms_)
-                        i.setCoordinates(box_->fold(i.r()));
+                        i.setR(box_->fold(i.r()));
                 }
                 updateIsotopologues();
                 Messenger::print("Found end of Species '{}'.\n", name());
@@ -733,7 +733,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     {
         if (!parser.writeLineF("{}{}  {:3d}  {:3}  {:12.6e}  {:12.6e}  {:12.6e}  '{}'  {:12.6e}\n", newPrefix,
                                keywords().keyword(Species::SpeciesKeyword::Atom), ++count, Elements::symbol(i.Z()), i.r().x,
-                               i.r().y, i.r().z, i.atomType() == nullptr ? "None" : i.atomType()->name(), i.charge()))
+                               i.r().y, i.r().z, i.atomType() == nullptr ? "None" : i.atomType()->name(), i.q()))
             return false;
     }
 

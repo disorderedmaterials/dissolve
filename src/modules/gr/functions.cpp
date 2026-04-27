@@ -36,7 +36,7 @@ bool GRModule::calculateGRTestSerial(Configuration *cfg,
                             [&, box](auto i, auto &atomI, auto j, auto &atomJ)
                             {
                                 if (i != j)
-                                    fullLUT[{atomI.configurationTypeIndex(), atomJ.configurationTypeIndex()}]->second.bin(
+                                    fullLUT[{atomI.atomTypeIndex(), atomJ.atomTypeIndex()}]->second.bin(
                                         box->minimumDistance(atomI.r(), atomJ.r()));
                             });
 
@@ -72,9 +72,9 @@ bool GRModule::calculateGRSimple(Configuration *cfg, const double binWidth,
     // Loop over Atoms and construct arrays
     for (auto &atom : cfg->atoms())
     {
-        if (atom.configurationTypeIndex() == AtomType::Ignore)
+        if (atom.atomTypeIndex() == AtomType::Ignore)
             continue;
-        r[atom.configurationTypeIndex()][nr[atom.configurationTypeIndex()]++] = atom.r();
+        r[atom.atomTypeIndex()][nr[atom.atomTypeIndex()]++] = atom.r();
     }
 
     Messenger::printVerbose("Ready..\n");
@@ -191,7 +191,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange,
         // quicker than working out if we need to given the absence of a 2D look-up array
         for (auto &i : atomsI)
         {
-            auto typeI = i->configurationTypeIndex();
+            auto typeI = i->atomTypeIndex();
             if (typeI == AtomType::Ignore)
                 continue;
 
@@ -199,7 +199,7 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange,
 
             for (auto &j : atomsJ)
             {
-                auto typeJ = j->configurationTypeIndex();
+                auto typeJ = j->atomTypeIndex();
                 if (typeJ == AtomType::Ignore)
                     continue;
 
@@ -236,9 +236,9 @@ bool GRModule::calculateGRCells(Configuration *cfg, const double rdfRange,
                               return;
 
                           auto &i = atomsI[idx];
-                          auto typeI = i->configurationTypeIndex();
+                          auto typeI = i->atomTypeIndex();
                           auto &j = atomsI[jdx];
-                          auto typeJ = j->configurationTypeIndex();
+                          auto typeJ = j->atomTypeIndex();
                           if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
                           {
                               // No need to perform MIM since we're in the same cell
@@ -412,11 +412,11 @@ bool GRModule::calculateGR(GenericList &processingData, Configuration *cfg, GRMo
                                     if (index == jndex)
                                         return;
 
-                                    auto typeI = i->configurationTypeIndex();
+                                    auto typeI = i->atomTypeIndex();
                                     if (typeI == AtomType::Ignore)
                                         return;
 
-                                    auto typeJ = j->configurationTypeIndex();
+                                    auto typeJ = j->atomTypeIndex();
                                     if (typeJ == AtomType::Ignore)
                                         return;
 

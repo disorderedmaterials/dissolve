@@ -84,8 +84,6 @@ class Species : public Serialisable<>
     // Return a reference to the vector of atoms
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
-    // Set coordinates of specified atom (by index and individual coordinates)
-    void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
     void transmuteAtom(int index, Elements::Element newZ);
     // Clear current atom selection

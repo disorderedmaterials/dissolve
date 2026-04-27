@@ -43,7 +43,7 @@ void AvgMolModule::updateArrays(GenericList &moduleData)
 void AvgMolModule::updateSpecies(const SampledVector &x, const SampledVector &y, const SampledVector &z)
 {
     for (auto &&[i, rx, ry, rz] : zip(averageSpecies_.atoms(), x.values(), y.values(), z.values()))
-        i.setCoordinates({rx, ry, rz});
+        i.setR({rx, ry, rz});
 }
 
 /*

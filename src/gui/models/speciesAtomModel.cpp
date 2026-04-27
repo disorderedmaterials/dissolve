@@ -57,7 +57,7 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
         case 4:
             return item.r().get(index.column() - 2);
         case 5:
-            return item.charge();
+            return item.q();
         default:
             return {};
     }
@@ -128,11 +128,11 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         {
             auto newR = item.r();
             newR.set(index.column() - 2, value.toDouble());
-            item.setCoordinates(newR);
+            item.setR(newR);
         }
         break;
         case 5:
-            item.setCharge(value.toDouble());
+            item.setQ(value.toDouble());
             break;
     }
     Q_EMIT dataChanged(index, index);

@@ -37,8 +37,8 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         molecule_.setSpecies(&species_);
         for (auto &&[molAtom, spAtom] : zip(molecule_.localAtoms(), species_.atoms()))
         {
-            molAtom.setCoordinates(spAtom.r());
-            molAtom.setConfigurationTypeIndex(spAtom.atomType()->index());
+            molAtom.setR(spAtom.r());
+            molAtom.setAtomTypeIndex(spAtom.atomType()->index());
         }
 
         // Set up the function wrapper
@@ -162,7 +162,7 @@ TEST_F(PairPotentialsScaleFactorsTest, SpeciesEnergyWithSpeciesCharges)
     auto &i = species_.atom(0);
     auto &j = species_.atom(3);
 
-    testScalings(&i, &j, (j.r() - i.r()).magnitude(), i.charge() * j.charge());
+    testScalings(&i, &j, (j.r() - i.r()).magnitude(), i.q() * j.q());
 }
 
 TEST_F(PairPotentialsScaleFactorsTest, MoleculeEnergyWithAtomTypeCharges)
@@ -183,8 +183,8 @@ TEST_F(PairPotentialsScaleFactorsTest, MoleculeEnergyWithSpeciesCharges)
     auto &i = molecule_.localAtoms()[0];
     auto &j = molecule_.localAtoms()[3];
 
-    testScalings(i, j, (j.r() - i.r()).magnitude(), species_.atom(0).charge() * species_.atom(3).charge());
-    testAnalyticScalings(i, j, (j.r() - i.r()).magnitude(), species_.atom(0).charge() * species_.atom(3).charge());
+    testScalings(i, j, (j.r() - i.r()).magnitude(), species_.atom(0).q() * species_.atom(3).q());
+    testAnalyticScalings(i, j, (j.r() - i.r()).magnitude(), species_.atom(0).q() * species_.atom(3).q());
 }
 
 } // namespace UnitTest
