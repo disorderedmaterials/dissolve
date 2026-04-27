@@ -362,10 +362,6 @@ bool SpeciesAtom::isGeometry(const SpeciesAtom *i, AtomGeometry geom) { return g
  * Serialisation
  */
 
-/*
- * Serialisation
- */
-
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
