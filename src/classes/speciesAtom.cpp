@@ -30,7 +30,6 @@ void SpeciesAtom::move(SpeciesAtom &source)
     atomType_ = source.atomType_;
     selected_ = source.selected_;
     index_ = source.index_;
-    presence_ = source.presence_;
 
     bonds_ = std::move(source.bonds_);
     angles_ = std::move(source.angles_);
@@ -64,24 +63,8 @@ void SpeciesAtom::move(SpeciesAtom &source)
  * Properties
  */
 
-void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
-{
-    Atom::set(Z, r, q);
-
-    presence_ = Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
-}
-
 // Return parent Species
 Species *SpeciesAtom::parent() const { return parent_; }
-
-// Return presence of atom
-SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
-
-// Return whether the atom is of the presence specified
-bool SpeciesAtom::isPresence(SpeciesAtom::Presence presence) const
-{
-    return presence == SpeciesAtom::Presence::Any || presence_ == presence;
-}
 
 // Set AtomType of SpeciesAtom
 void SpeciesAtom::setAtomType(const AtomType *at)

@@ -36,15 +36,6 @@ class SpeciesAtom : public Atom, Serialisable<>
     /*
      * Properties
      */
-    public:
-    // Presence
-    enum class Presence
-    {
-        Phantom = -1,
-        Physical,
-        Any
-    };
-
     private:
     // Parent Species
     Species *parent_{nullptr};
@@ -52,18 +43,10 @@ class SpeciesAtom : public Atom, Serialisable<>
     const AtomType *atomType_{nullptr};
     // Whether the atom is currently selected
     bool selected_{false};
-    // Presence of atom
-    Presence presence_{Presence::Physical};
 
     public:
-    // Set basic properties
-    void set(Elements::Element Z, const Vector3 &r, double q = 0.0) override;
     // Return parent Species
     Species *parent() const;
-    // Return presence of atom
-    Presence presence() const;
-    // Return whether the atom is of the presence specified
-    bool isPresence(SpeciesAtom::Presence presence) const;
     // Set AtomType of Atom
     void setAtomType(const AtomType *at);
     // Return AtomType of Atom
