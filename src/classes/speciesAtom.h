@@ -6,8 +6,6 @@
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "classes/atom.h"
-#include "data/elements.h"
-#include "math/vector3.h"
 #include "templates/optionalRef.h"
 #include <vector>
 

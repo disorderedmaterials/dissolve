@@ -555,7 +555,6 @@ bool CIFHandler::createCleanedUnitCell()
                 // Select all atoms that are part of the same moiety?
                 if (removeNETAByFragment_)
                 {
-                    cleanedUnitCellSpecies_.clearAtomSelection();
                     auto selection = cleanedUnitCellSpecies_.fragment(i.index());
                     std::copy(selection.begin(), selection.end(), std::back_inserter(indicesToRemove));
                 }

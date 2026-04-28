@@ -472,7 +472,6 @@ void Species::generateAttachedAtomLists()
             bond.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        clearAtomSelection();
         selection = fragment(bond.j()->index(), bond);
         bond.setAttachedAtoms(1, selection);
     }
@@ -508,7 +507,6 @@ void Species::generateAttachedAtomLists()
             angle.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        clearAtomSelection();
         selection = fragment(angle.k()->index(), *ji, jk);
 
         // Remove Atom 'j' from the list if it's there
@@ -548,7 +546,6 @@ void Species::generateAttachedAtomLists()
             torsion.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        clearAtomSelection();
         selection = fragment(torsion.k()->index(), *jk);
 
         // Remove Atom 'k' from the list

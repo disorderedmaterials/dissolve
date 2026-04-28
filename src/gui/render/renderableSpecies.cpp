@@ -240,8 +240,9 @@ const void RenderableSpecies::sendToGL(const double pixelScaling)
 // Recreate selection Primitive
 void RenderableSpecies::recreateSelectionPrimitive()
 {
-    if (selectionPrimitiveVersion_ == source_->atomSelectionVersion())
-        return;
+    // if (selectionPrimitiveVersion_ == source_->atomSelectionVersion())
+    // return;
+    // TODO DISSOLVE2
 
     // Clear existing data
     selectionAssembly_.clear();
@@ -310,7 +311,8 @@ void RenderableSpecies::recreateSelectionPrimitive()
         }
     }
 
-    selectionPrimitiveVersion_ = source_->atomSelectionVersion();
+    // TODO DISSOLVE2
+    // selectionPrimitiveVersion_ = source_->atomSelectionVersion();
 }
 
 // Clear interaction Primitive

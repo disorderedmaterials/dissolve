@@ -146,7 +146,9 @@ bool AddForcefieldDialogModel::speciesHasSelection() const
 {
     if (!species_)
         return false;
-    return !species_->selectedAtoms().empty();
+    // return !species_->selectedAtoms().empty();
+    // TODO DISSOLVE2
+    return false;
 }
 
 // The forcefield model
