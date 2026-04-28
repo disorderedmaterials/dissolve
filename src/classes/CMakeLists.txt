@@ -74,6 +74,7 @@ add_library(
   speciesSites.cpp
   speciesSiteInstance.cpp
   speciesTorsion.cpp
+  structure.cpp
   torsionFunctions.cpp
   valueStore.cpp
   xRayWeights.cpp
@@ -131,6 +132,7 @@ add_library(
   speciesSites.h
   speciesSiteInstance.h
   speciesTorsion.h
+  structure.h
   torsionFunctions.h
   valueStore.h
   xRayWeights.h
