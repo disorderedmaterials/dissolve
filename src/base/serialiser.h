@@ -70,16 +70,18 @@ template <typename... Contexts> class Serialisable
 
     // Perform an action on a child node in a table if the node exists.
     // This cuts out quite a bit of boilerplate.
-    template <typename Lambda> static void optionalOn(const SerialisedValue &node, std::string name, Lambda action)
+    template <typename Lambda> static bool optionalOn(const SerialisedValue &node, std::string name, Lambda action)
     {
         if (node.contains(name))
         {
             auto child = toml::find(node, name);
             if (!node.is_uninitialized())
                 action(child);
+            return true;
         }
-    }
 
+        return false;
+    }
     // A helper function to add elements of a vector to a node under the named heading
     template <serialisablePointer T>
     static void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node)
