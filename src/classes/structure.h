@@ -80,8 +80,8 @@ class Structure : public Serialisable<>
     std::vector<std::unique_ptr<StructureAtom>> atoms_;
 
     private:
-    // Renumber atoms so they are sequential in the list
-    void renumberAtoms();
+    // Renumber atoms so they are sequential in the vector
+    void renumberAtoms() const;
 
     public:
     // Add a new atom

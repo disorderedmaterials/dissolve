@@ -18,7 +18,7 @@ void Structure::clear()
  */
 
 // Renumber atoms so they are sequential in the list
-void Structure::renumberAtoms()
+void Structure::renumberAtoms() const
 {
     auto count = 0;
     for (auto &i : atoms_)
