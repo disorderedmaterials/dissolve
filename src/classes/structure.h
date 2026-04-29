@@ -131,23 +131,9 @@ class Structure : public Serialisable<>
     // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
     // provided
     std::vector<int> fragment(int startIndex, StructureBond *exclude = nullptr, StructureBond *excludeToo = nullptr) const;
-    // Apply random noise to atoms
-    void randomiseCoordinates(double maxDisplacement);
 
     /*
-     * Intramolecular Data
-     */
-
-    public:
-    // Add missing bonds
-    void addMissingBonds(double tolerance = 1.1, bool preventMetallic = false);
-    // Remove bonds crossing periodic boundaries
-    void removePeriodicBonds();
-    // Clear and regenerate bonds based on tolerance
-    void recalculateIntermolecularTerms(double tolerance = 1.1);
-
-    /*
-     * Box Definition (if any)
+     * Box Definition
      */
     private:
     // Periodic Box

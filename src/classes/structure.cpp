@@ -189,6 +189,22 @@ std::vector<int> Structure::fragment(int startIndex, StructureBond *exclude, Str
 }
 
 /*
+ * Box Definition
+ */
+
+// Return periodic box
+const Box *Structure::box() const { return box_.get(); }
+
+// Remove box definition and revert to single image
+void Structure::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
+
+// Create box definition with specified lengths and angles
+void Structure::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
+{
+    box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
+}
+
+/*
  * Serialisation
  */
 
