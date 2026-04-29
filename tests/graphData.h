@@ -131,7 +131,6 @@ class TestGraph : public DissolveGraph
 
         return head<ImportConfigurationCoordinatesNode>();
     }
-
     // Append GR and SQ nodes
     std::pair<GRNode *, SQNode *> appendGRSQ(bool noAveraging = false, bool noIntraBroadening = false)
     {
