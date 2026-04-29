@@ -55,10 +55,10 @@ class TestGraph : public DissolveGraph
         return node;
     }
     // Create species insertion node chain
-    Node *insertSpecies(Node *cfgSourceNode,
-                        const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species, double rho,
-                        Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
-                        InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
+    Node *createAndInsertSpecies(Node *cfgSourceNode,
+                                 const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
+                                 double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
+                                 InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
         // Add Species and Insert nodes
         for (auto &[speciesCreator, population] : species)
@@ -97,7 +97,7 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return insertSpecies(fetchHead(), species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
+        return createAndInsertSpecies(fetchHead(), species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
     }
 
     // Create basic configuration graph, returning the last node
@@ -113,8 +113,8 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return insertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
-                             InsertNode::BoxActionStyle::None);
+        return createAndInsertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
+                                      InsertNode::BoxActionStyle::None);
     }
     // Append an import coordinates node
     Node *appendImportCoordinates(CoordinateImportFileFormat fileFormat, bool supercell = false)
