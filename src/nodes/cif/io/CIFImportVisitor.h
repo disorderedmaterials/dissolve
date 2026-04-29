@@ -4,7 +4,7 @@
 #pragma once
 
 #include "CIFImportParserBaseVisitor.h"
-#include "nodes/cif/io/cif.h"
+#include "nodes/cif/io/cifContext.h"
 #include "templates/optionalRef.h"
 #include <antlr4-runtime.h>
 
@@ -12,7 +12,7 @@
 class CIFImportVisitor : CIFImportParserBaseVisitor
 {
     public:
-    CIFImportVisitor(CIFHandler::CIFTags &tags);
+    CIFImportVisitor(CIFContext::CIFTags &tags);
     ~CIFImportVisitor() override = default;
 
     /*
@@ -20,7 +20,7 @@ class CIFImportVisitor : CIFImportParserBaseVisitor
      */
     private:
     // Dictionary data storage
-    CIFHandler::CIFTags &tags_;
+    CIFContext::CIFTags &tags_;
 
     public:
     // Extract information from tree

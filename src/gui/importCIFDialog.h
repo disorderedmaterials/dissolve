@@ -7,8 +7,8 @@
 #include "gui/models/cifAssemblyModel.h"
 #include "gui/ui_importCIFDialog.h"
 #include "gui/wizard.h"
-#include "io/import/cif.h"
 #include "main/dissolve.h"
+#include "nodes/cif/io/cifContext.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -39,7 +39,7 @@ class ImportCIFDialog : public QDialog
     // Main Dissolve object
     Dissolve &dissolve_;
     // CIF Handler
-    CIFHandler cifHandler_;
+    CIFContext cifContext_;
     // NETA for moiety removal
     NETADefinition moietyNETA_;
 

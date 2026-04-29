@@ -7,14 +7,15 @@
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/bragg.h"
-#include "nodes/cifBondingOptions.h"
-#include "nodes/cifLoader.h"
-#include "nodes/cifMolecularSpecies.h"
-#include "nodes/cifPeriodicFramework.h"
-#include "nodes/cifRemoveAtomic.h"
-#include "nodes/cifRemoveWater.h"
-#include "nodes/cifStructureCleanup.h"
-#include "nodes/cifSuperMolecule.h"
+#include "nodes/cif/cifBondingOptions.h"
+#include "nodes/cif/cifMolecularSpecies.h"
+#include "nodes/cif/cifPeriodicFramework.h"
+#include "nodes/cif/cifRemoveAtomic.h"
+#include "nodes/cif/cifRemoveWater.h"
+#include "nodes/cif/cifStructureCleanup.h"
+#include "nodes/cif/cifSuperMolecule.h"
+#include "nodes/cif/importCIFStructure.h"
+#include "nodes/cif/setCIFAtomGroupActivity.h"
 #include "nodes/configuration.h"
 #include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
@@ -40,7 +41,6 @@
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
-#include "nodes/setCIFAtomGroupActivity.h"
 #include "nodes/setCell.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/siteRDF.h"
@@ -76,7 +76,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"CIFStructureCleanup", makeDerivedNode<CIFStructureCleanupNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"CIFBondingOptions", makeDerivedNode<CIFBondingOptionsNode>()},
-                  {"CIFLoader", makeDerivedNode<CIFLoaderNode>()},
+                  {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
                   {"CIFMolecularSpecies", makeDerivedNode<CIFMolecularSpeciesNode>()},
                   {"CIFPeriodicFramework", makeDerivedNode<CIFPeriodicFrameworkNode>()},
                   {"CIFRemoveAtomic", makeDerivedNode<CIFRemoveAtomicNode>()},

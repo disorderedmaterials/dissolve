@@ -3,8 +3,8 @@
 
 #include "classes/empiricalFormula.h"
 #include "io/import/species.h"
-#include "nodes/cifLoader.h"
-#include "nodes/cifMolecularSpecies.h"
+#include "nodes/cif/cifMolecularSpecies.h"
+#include "nodes/cif/importCIFStructure.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -30,7 +30,7 @@ class CIFNodeTest : public ::testing::Test
     void createGraph(std::string filename)
     {
         auto name = cifNameFromFile(filename);
-        EXPECT_TRUE(testGraph_.appendNode("CIFLoader", name));
+        EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure", name));
         testGraph_.fetchHead()->setOption("FilePath", path_ + filename);
         EXPECT_TRUE(testGraph_.appendNode("CIFBondingOptions", name + "//BondingOptions"));
         EXPECT_TRUE(testGraph_.appendNode("CIFRemoveAtomic", name + "//RemoveAtomic"));
@@ -50,11 +50,11 @@ class CIFNodeTest : public ::testing::Test
         return name;
     }
     // Retrieve CIF context by filename
-    CIFLoaderNode::CIFContext *getContextByFileName(std::string filename)
+    CIFContext *getContextByFileName(std::string filename)
     {
         auto name = cifNameFromFile(filename);
         auto node = testGraph_.findNode(name);
-        auto context = node->getOutputValue<CIFLoaderNode::CIFContext *>("CIFContext");
+        auto context = node->getOutputValue<CIFContext *>("CIFContext");
         return context;
     }
     // Test Box definition

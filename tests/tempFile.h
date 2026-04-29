@@ -41,8 +41,8 @@ class TempFile
     }
 
     // Get the file name on conversion to string
-    operator std::string() const { return path; }
-    operator std::filesystem::path() const { return path; }
+    operator std::string() const { return path.generic_string(); }
+    operator std::filesystem::path() const { return path.c_str(); }
 
     private:
     // The actual path of the temp file

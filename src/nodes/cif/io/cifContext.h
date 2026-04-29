@@ -6,6 +6,7 @@
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "classes/species.h"
+#include "classes/structure.h"
 #include "data/spaceGroups.h"
 #include "math/matrix4.h"
 #include "neta/neta.h"
@@ -17,11 +18,11 @@
 class Box;
 
 // CIF Handler
-class CIFHandler
+class CIFContext
 {
     public:
-    CIFHandler();
-    ~CIFHandler() = default;
+    CIFContext();
+    ~CIFContext() = default;
 
     /*
      * Raw Data
@@ -137,6 +138,7 @@ class CIFHandler
     // Basic unit cell
     Species unitCellSpecies_;
     Configuration unitCellConfiguration_;
+    Structure structure_;
     // Cleaned unit cell
     Species cleanedUnitCellSpecies_;
     Configuration cleanedUnitCellConfiguration_;
@@ -149,6 +151,8 @@ class CIFHandler
     private:
     // Create basic unit cell
     bool createBasicUnitCell();
+    // Create structure from basic unit cell atoms and connectivity
+    bool createStructure();
     // Create the cleaned unit cell
     bool createCleanedUnitCell();
     // Try to detect molecules in the cell contents
@@ -189,6 +193,8 @@ class CIFHandler
     const std::vector<CIFMolecularSpecies> &molecularSpecies() const;
     // Return the generated configuration
     Configuration *generatedConfiguration();
+    // Return the basic crystal structure
+    Structure *structure();
     // Finalise, copying the required species and resulting configuration to the target CoreData
     void finalise(CoreData &coreData, const Flags<OutputFlags> &flags = {}) const;
 

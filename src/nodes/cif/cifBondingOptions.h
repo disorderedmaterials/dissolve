@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "nodes/cifLoader.h"
+#include "nodes/cif/io/cifContext.h"
 #include "nodes/node.h"
 
-// CIFLoader Node
+// ImportCIFStructure Node
 class CIFBondingOptionsNode : public Node
 {
     public:
@@ -22,7 +22,7 @@ class CIFBondingOptionsNode : public Node
      */
     private:
     // CIF handler context
-    CIFLoaderNode::CIFContext *context_{nullptr};
+    CIFContext *context_{nullptr};
     // Bonding tolerance, if calculating bonding rather than using CIF definitions
     Number bondingTolerance_{1.1};
     // Whether to use CIF bonding definitions

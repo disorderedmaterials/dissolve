@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "nodes/cifLoader.h"
+#include "nodes/cif/io/cifContext.h"
 #include "nodes/node.h"
 
-// CIFLoader Node
+// ImportCIFStructure Node
 class CIFRemoveWaterNode : public Node
 {
     public:
@@ -22,7 +22,7 @@ class CIFRemoveWaterNode : public Node
      */
     private:
     // CIF handler context
-    CIFLoaderNode::CIFContext *context_{nullptr};
+    CIFContext *context_{nullptr};
     // Whether to remove water and coordinated oxygen atoms in clean-up
     bool removeWaterAndCoordinatedOxygens_{false};
 

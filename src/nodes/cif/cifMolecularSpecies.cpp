@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/cifMolecularSpecies.h"
+#include "nodes/cif/cifMolecularSpecies.h"
 #include <algorithm>
 #include <iterator>
 
 CIFMolecularSpeciesNode::CIFMolecularSpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+    addInput<CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
         ->setFlags({ParameterBase::Required});
 
     // Outputs

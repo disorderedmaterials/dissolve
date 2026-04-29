@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include "nodes/cifLoader.h"
+#include "nodes/cif/io/cifContext.h"
 #include "nodes/node.h"
 
-// CIFLoader Node
-class CIFMolecularSpeciesNode : public Node
+// ImportCIFStructure Node
+class CIFPeriodicFrameworkNode : public Node
 {
     public:
-    CIFMolecularSpeciesNode(Graph *parentGraph);
-    ~CIFMolecularSpeciesNode() override = default;
+    CIFPeriodicFrameworkNode(Graph *parentGraph);
+    ~CIFPeriodicFrameworkNode() override = default;
 
     public:
     std::string_view type() const override;
@@ -22,11 +22,13 @@ class CIFMolecularSpeciesNode : public Node
      */
     private:
     // CIF handler context
-    CIFLoaderNode::CIFContext *context_{nullptr};
+    CIFContext *context_{nullptr};
     // Supercell configuration
     Configuration *supercellConfiguration_{nullptr};
-    // Detected molecular species
-    std::vector<CIFMolecularSpecies> molecularSpecies_;
+    // Supercell species
+    std::unique_ptr<Species> supercellSpecies_;
+    // Framework species
+    const Species *frameworkSpecies_{nullptr};
     // Supercell repeat
     Vector3i supercellRepeat_{1, 1, 1};
 

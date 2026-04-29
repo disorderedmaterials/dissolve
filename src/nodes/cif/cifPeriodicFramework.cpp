@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/cifPeriodicFramework.h"
+#include "nodes/cif/cifPeriodicFramework.h"
 
 CIFPeriodicFrameworkNode::CIFPeriodicFrameworkNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+    addInput<CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
         ->setFlags({ParameterBase::Required});
 
     // Outputs

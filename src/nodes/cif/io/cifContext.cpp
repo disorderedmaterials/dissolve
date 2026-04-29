@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "nodes/cif/io/cifContext.h"
 #include "CIFImportLexer.h"
+#include "CIFImportParser.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "classes/coreData.h"
@@ -13,10 +15,9 @@
 #include "neta/neta.h"
 #include "nodes/cif/io/CIFImportErrorListeners.h"
 #include "nodes/cif/io/CIFImportVisitor.h"
-#include "nodes/cif/io/cifContext.h"
 #include "templates/algorithms.h"
 
-CIFHandler::CIFHandler()
+CIFContext::CIFContext()
 {
     unitCellConfiguration_.setName("Structural");
     unitCellSpecies_.setName("Crystal");
@@ -31,7 +32,7 @@ CIFHandler::CIFHandler()
  */
 
 // Parse supplied file into the destination objects
-bool CIFHandler::parse(std::string_view filename, CIFHandler::CIFTags &tags) const
+bool CIFContext::parse(std::string_view filename, CIFContext::CIFTags &tags) const
 {
     // Set up ANTLR input stream
     std::ifstream cifFile(std::string(filename), std::ios::in | std::ios::binary);
@@ -84,14 +85,14 @@ bool CIFHandler::parse(std::string_view filename, CIFHandler::CIFTags &tags) con
 }
 
 // Return whether the specified file parses correctly
-bool CIFHandler::validFile(std::string_view filename) const
+bool CIFContext::validFile(std::string_view filename) const
 {
     CIFTags tags;
     return parse(filename, tags);
 }
 
 // Read CIF data from specified file
-bool CIFHandler::read(std::string_view filename)
+bool CIFContext::read(std::string_view filename)
 {
     assemblies_.clear();
     bondingPairs_.clear();
@@ -209,10 +210,10 @@ bool CIFHandler::read(std::string_view filename)
 }
 
 // Return if the specified tag exists
-bool CIFHandler::hasTag(std::string tag) const { return tags_.find(tag) != tags_.end(); }
+bool CIFContext::hasTag(std::string tag) const { return tags_.find(tag) != tags_.end(); }
 
 // Return tag data string (if it exists) assuming a single datum (first in the vector)
-std::optional<std::string> CIFHandler::getTagString(std::string tag) const
+std::optional<std::string> CIFContext::getTagString(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -226,7 +227,7 @@ std::optional<std::string> CIFHandler::getTagString(std::string tag) const
 }
 
 // Return tag data strings (if it exists)
-std::vector<std::string> CIFHandler::getTagStrings(std::string tag) const
+std::vector<std::string> CIFContext::getTagStrings(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -236,7 +237,7 @@ std::vector<std::string> CIFHandler::getTagStrings(std::string tag) const
 }
 
 // Return tag data as double (if it exists) assuming a single datum (first in the vector)
-std::optional<double> CIFHandler::getTagDouble(std::string tag) const
+std::optional<double> CIFContext::getTagDouble(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -262,7 +263,7 @@ std::optional<double> CIFHandler::getTagDouble(std::string tag) const
 }
 
 // Return tag data doubles (if it exists)
-std::vector<double> CIFHandler::getTagDoubles(std::string tag) const
+std::vector<double> CIFContext::getTagDoubles(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -287,7 +288,7 @@ std::vector<double> CIFHandler::getTagDoubles(std::string tag) const
 }
 
 // Return tag data as integer (if it exists) assuming a single datum (first in the vector)
-std::optional<int> CIFHandler::getTagInt(std::string tag) const
+std::optional<int> CIFContext::getTagInt(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -317,7 +318,7 @@ std::optional<int> CIFHandler::getTagInt(std::string tag) const
  */
 
 // Set space group from index
-void CIFHandler::setSpaceGroup(SpaceGroups::SpaceGroupId sgid)
+void CIFContext::setSpaceGroup(SpaceGroups::SpaceGroupId sgid)
 {
     if (spaceGroup_ == sgid)
         return;
@@ -327,10 +328,10 @@ void CIFHandler::setSpaceGroup(SpaceGroups::SpaceGroupId sgid)
 }
 
 // Return space group information
-SpaceGroups::SpaceGroupId CIFHandler::spaceGroup() const { return spaceGroup_; }
+SpaceGroups::SpaceGroupId CIFContext::spaceGroup() const { return spaceGroup_; }
 
 // Return cell lengths
-std::optional<Vector3> CIFHandler::getCellLengths() const
+std::optional<Vector3> CIFContext::getCellLengths() const
 {
     auto a = getTagDouble("_cell_length_a");
     if (!a)
@@ -349,7 +350,7 @@ std::optional<Vector3> CIFHandler::getCellLengths() const
 }
 
 // Return cell angles
-std::optional<Vector3> CIFHandler::getCellAngles() const
+std::optional<Vector3> CIFContext::getCellAngles() const
 {
     auto alpha = getTagDouble("_cell_angle_alpha");
     if (!alpha)
@@ -368,14 +369,14 @@ std::optional<Vector3> CIFHandler::getCellAngles() const
 }
 
 // Return chemical formula
-std::string CIFHandler::chemicalFormula() const
+std::string CIFContext::chemicalFormula() const
 {
     auto it = tags_.find("_chemical_formula_sum");
     return (it != tags_.end() ? it->second.front() : "Unknown");
 }
 
 // Get (add or retrieve) named assembly
-CIFAssembly &CIFHandler::getAssembly(std::string_view name)
+CIFAssembly &CIFContext::getAssembly(std::string_view name)
 {
     auto it = std::find_if(assemblies_.begin(), assemblies_.end(), [name](const auto &a) { return a.name() == name; });
     if (it != assemblies_.end())
@@ -385,15 +386,15 @@ CIFAssembly &CIFHandler::getAssembly(std::string_view name)
 }
 
 // Return atom assemblies
-std::vector<CIFAssembly> &CIFHandler::assemblies() { return assemblies_; }
+std::vector<CIFAssembly> &CIFContext::assemblies() { return assemblies_; }
 
-const std::vector<CIFAssembly> &CIFHandler::assemblies() const { return assemblies_; }
+const std::vector<CIFAssembly> &CIFContext::assemblies() const { return assemblies_; }
 
 // Return whether any bond distances are defined
-bool CIFHandler::hasBondDistances() const { return !bondingPairs_.empty(); }
+bool CIFContext::hasBondDistances() const { return !bondingPairs_.empty(); }
 
 // Return whether a bond distance is defined for the specified label pair
-std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::string_view labelJ) const
+std::optional<double> CIFContext::bondDistance(std::string_view labelI, std::string_view labelJ) const
 {
     auto it = std::find_if(
         bondingPairs_.begin(), bondingPairs_.end(), [labelI, labelJ](const auto &bp)
@@ -408,7 +409,7 @@ std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::str
  */
 
 // Create basic unit cell
-bool CIFHandler::createBasicUnitCell()
+bool CIFContext::createBasicUnitCell()
 {
     unitCellConfiguration_.empty();
     unitCellSpecies_.clear();
@@ -492,8 +493,37 @@ bool CIFHandler::createBasicUnitCell()
     return true;
 }
 
+// Create structure from basic unit cell atoms and connectivity
+bool CIFContext::createStructure()
+{
+    // Create box for structure
+    auto box = unitCellConfiguration_.box();
+    structure_.createBox(box->axisLengths(), box->axisAngles(), box->type() == Box::BoxType::NonPeriodic);
+
+    // Add structural atoms
+    const auto &atoms = unitCellSpecies_.atoms();
+    for (const auto &atom : atoms)
+        structure_.addAtom(atom.Z(), atom.r(), atom.q());
+
+    // Iterate over newly added structure atom pairs, adding any existing bonds between them if not already present
+    auto pairs = PairIterator(structure_.nAtoms());
+    for (const auto &pair : pairs)
+    {
+        auto [i, j] = pair;
+        auto atomI = structure_.atomAt(i);
+        auto atomJ = structure_.atomAt(j);
+
+        if (!structure_.hasBond(atomI, atomJ))
+            structure_.addBond(atomI, atomJ);
+    }
+
+    Messenger::print("Created basic structure - {} structure atoms, {} structure bonds found whle parsing the CIF.\n", structure_.nAtoms(),  structure_.bonds().size());
+
+    return true;
+}
+
 // Create the cleaned unit cell
-bool CIFHandler::createCleanedUnitCell()
+bool CIFContext::createCleanedUnitCell()
 {
     cleanedUnitCellConfiguration_.empty();
     cleanedUnitCellSpecies_.clear();
@@ -576,7 +606,7 @@ bool CIFHandler::createCleanedUnitCell()
 }
 
 // Try to detect molecules in the cell contents
-bool CIFHandler::detectMolecules()
+bool CIFContext::detectMolecules()
 {
     molecularSpecies_.clear();
 
@@ -675,7 +705,7 @@ bool CIFHandler::detectMolecules()
 }
 
 // Create supercell species
-bool CIFHandler::createSupercell()
+bool CIFContext::createSupercell()
 {
     supercellConfiguration_.empty();
     supercellSpecies_.clear();
@@ -775,7 +805,7 @@ bool CIFHandler::createSupercell()
 }
 
 // Set overlap tolerance
-void CIFHandler::setOverlapTolerance(double tol)
+void CIFContext::setOverlapTolerance(double tol)
 {
     overlapTolerance_ = tol;
 
@@ -783,7 +813,7 @@ void CIFHandler::setOverlapTolerance(double tol)
 }
 
 // Set whether to use CIF bonding definitions
-void CIFHandler::setUseCIFBondingDefinitions(bool b)
+void CIFContext::setUseCIFBondingDefinitions(bool b)
 {
     if (useCIFBondingDefinitions_ == b)
         return;
@@ -794,7 +824,7 @@ void CIFHandler::setUseCIFBondingDefinitions(bool b)
 }
 
 // Set bonding tolerance
-void CIFHandler::setBondingTolerance(double tol)
+void CIFContext::setBondingTolerance(double tol)
 {
     bondingTolerance_ = tol;
 
@@ -803,7 +833,7 @@ void CIFHandler::setBondingTolerance(double tol)
 }
 
 // Whether to ignore all bonds
-void CIFHandler::setPreventAllBonds(bool b)
+void CIFContext::setPreventAllBonds(bool b)
 {
     if (preventAllBonds_ == b)
         return;
@@ -814,7 +844,7 @@ void CIFHandler::setPreventAllBonds(bool b)
 }
 
 // Set whether to prevent metallic bonding
-void CIFHandler::setPreventMetallicBonds(bool b)
+void CIFContext::setPreventMetallicBonds(bool b)
 {
     if (preventMetallicBonds_ == b)
         return;
@@ -825,7 +855,7 @@ void CIFHandler::setPreventMetallicBonds(bool b)
 }
 
 // Set whether to remove free atomic moieties in clean-up
-void CIFHandler::setRemoveAtomics(bool b)
+void CIFContext::setRemoveAtomics(bool b)
 {
     if (removeAtomics_ == b)
         return;
@@ -836,7 +866,7 @@ void CIFHandler::setRemoveAtomics(bool b)
 }
 
 // Set whether to remove water and coordinated oxygen atoms in clean-up
-void CIFHandler::setRemoveWaterAndCoordinateOxygens(bool b)
+void CIFContext::setRemoveWaterAndCoordinateOxygens(bool b)
 {
     if (removeWaterAndCoordinateOxygens_ == b)
         return;
@@ -847,7 +877,7 @@ void CIFHandler::setRemoveWaterAndCoordinateOxygens(bool b)
 }
 
 // Set whether to remove by NETA definition in clean-up
-void CIFHandler::setRemoveNETA(bool b, bool byFragment)
+void CIFContext::setRemoveNETA(bool b, bool byFragment)
 {
     if (removeNETA_ == b && removeNETAByFragment_ == byFragment)
         return;
@@ -860,10 +890,10 @@ void CIFHandler::setRemoveNETA(bool b, bool byFragment)
 }
 
 // Set NETA for moiety removal
-bool CIFHandler::setMoietyRemovalNETA(std::string_view netaDefinition) { return moietyRemovalNETA_.create(netaDefinition); }
+bool CIFContext::setMoietyRemovalNETA(std::string_view netaDefinition) { return moietyRemovalNETA_.create(netaDefinition); }
 
 // Set supercell repeat
-void CIFHandler::setSupercellRepeat(const Vector3i &repeat)
+void CIFContext::setSupercellRepeat(const Vector3i &repeat)
 {
     supercellRepeat_ = repeat;
 
@@ -871,7 +901,7 @@ void CIFHandler::setSupercellRepeat(const Vector3i &repeat)
 }
 
 // Recreate the data
-bool CIFHandler::generate(CIFGenerationStage fromStage)
+bool CIFContext::generate(CIFGenerationStage fromStage)
 {
     // Generate data starting from the specified stage, falling through to subsequent stages in the switch
 
@@ -894,25 +924,28 @@ bool CIFHandler::generate(CIFGenerationStage fromStage)
 }
 
 // Return whether the generated data is valid
-bool CIFHandler::isValid() const
+bool CIFContext::isValid() const
 {
     return !molecularSpecies_.empty() || supercellSpecies_.fragment(0).size() != supercellSpecies_.nAtoms();
 }
 
 // Return supercell species
-const Species &CIFHandler::supercellSpecies() const { return supercellSpecies_; }
+const Species &CIFContext::supercellSpecies() const { return supercellSpecies_; }
 
 // Return cleaned unit cell species
-const Species &CIFHandler::cleanedUnitCellSpecies() const { return cleanedUnitCellSpecies_; }
+const Species &CIFContext::cleanedUnitCellSpecies() const { return cleanedUnitCellSpecies_; }
 
 // Return the detected molecular species
-const std::vector<CIFMolecularSpecies> &CIFHandler::molecularSpecies() const { return molecularSpecies_; }
+const std::vector<CIFMolecularSpecies> &CIFContext::molecularSpecies() const { return molecularSpecies_; }
 
 // Return the generated configuration
-Configuration *CIFHandler::generatedConfiguration() { return &supercellConfiguration_; }
+Configuration *CIFContext::generatedConfiguration() { return &supercellConfiguration_; }
+
+// Return the basic unit cell configuration
+Structure *CIFContext::structure() { return &structure_; }
 
 // Finalise, copying the required species and resulting configuration to the target CoreData
-void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) const
+void CIFContext::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) const
 {
     Configuration *configuration;
 
@@ -1020,7 +1053,7 @@ void CIFHandler::finalise(CoreData &coreData, const Flags<OutputFlags> &flags) c
  */
 
 // Apply CIF bonding to a given species
-void CIFHandler::applyCIFBonding(Species *sp, bool preventMetallicBonding)
+void CIFContext::applyCIFBonding(Species *sp, bool preventMetallicBonding)
 {
     if (!hasBondDistances())
         return;
@@ -1051,7 +1084,7 @@ void CIFHandler::applyCIFBonding(Species *sp, bool preventMetallicBonding)
 }
 
 // Determine the best NETA definition for the supplied species
-std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFHandler::bestNETADefinition(Species *sp)
+std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFContext::bestNETADefinition(Species *sp)
 {
     // Set up the return value and bind its contents
     std::tuple<NETADefinition, std::vector<SpeciesAtom *>> result{NETADefinition(), {}};
@@ -1106,7 +1139,7 @@ std::tuple<NETADefinition, std::vector<SpeciesAtom *>> CIFHandler::bestNETADefin
 }
 
 // Get instances for the supplied species from the cleaned unit cell
-std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *referenceSpecies, std::vector<bool> &atomMask,
+std::vector<LocalMolecule> CIFContext::getSpeciesInstances(const Species *referenceSpecies, std::vector<bool> &atomMask,
                                                            const NETADefinition &neta,
                                                            const std::vector<SpeciesAtom *> &referenceRootAtoms)
 {
@@ -1222,7 +1255,7 @@ std::vector<LocalMolecule> CIFHandler::getSpeciesInstances(const Species *refere
 
 // Recursively check NETA description matches between the supplied atoms
 std::map<const SpeciesAtom *, const SpeciesAtom *>
-CIFHandler::matchAtom(const SpeciesAtom *referenceAtom, const SpeciesAtom *instanceAtom,
+CIFContext::matchAtom(const SpeciesAtom *referenceAtom, const SpeciesAtom *instanceAtom,
                       const std::map<const SpeciesAtom *, NETADefinition> &refNETA,
                       const std::map<const SpeciesAtom *, const SpeciesAtom *> &map)
 {
@@ -1293,7 +1326,7 @@ CIFHandler::matchAtom(const SpeciesAtom *referenceAtom, const SpeciesAtom *insta
 }
 
 // Calculate difference metric between the supplied species and local molecule
-std::pair<double, std::vector<int>> CIFHandler::differenceMetric(const Species *species, const LocalMolecule &molecule)
+std::pair<double, std::vector<int>> CIFContext::differenceMetric(const Species *species, const LocalMolecule &molecule)
 {
     auto difference = 0.0;
     std::vector<int> atomIndexMap(species->nAtoms(), -1);

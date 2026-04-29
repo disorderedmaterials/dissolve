@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "io/import/cif.h"
 #include "classes/empiricalFormula.h"
 #include "io/import/species.h"
+#include "nodes/cif/io/cifContext.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -67,64 +67,64 @@ TEST_F(ImportCIFTest, Parse)
 
     for (auto &cif : cifs)
     {
-        CIFHandler cifHandler;
-        ASSERT_TRUE(cifHandler.read(cifPath + cif));
+        CIFContext cifContext;
+        ASSERT_TRUE(cifContext.read(cifPath + cif));
     }
 }
 
 TEST_F(ImportCIFTest, NaCl)
 {
-    CIFHandler cifHandler;
-    ASSERT_TRUE(cifHandler.read("cif/NaCl-1000041.cif"));
-    EXPECT_TRUE(cifHandler.generate());
+    CIFContext cifContext;
+    ASSERT_TRUE(cifContext.read("cif/NaCl-1000041.cif"));
+    EXPECT_TRUE(cifContext.generate());
 
     // Check basic info
-    EXPECT_EQ(cifHandler.spaceGroup(), SpaceGroups::SpaceGroup_225);
+    EXPECT_EQ(cifContext.spaceGroup(), SpaceGroups::SpaceGroup_225);
     constexpr double A = 5.62;
-    testBox(cifHandler.generatedConfiguration(), {A, A, A}, {90, 90, 90}, 8);
+    testBox(cifContext.generatedConfiguration(), {A, A, A}, {90, 90, 90}, 8);
 
     // Calculating bonding is the default, but this gives a continuous framework...
-    EXPECT_EQ(cifHandler.molecularSpecies().size(), 0);
+    EXPECT_EQ(cifContext.molecularSpecies().size(), 0);
 
     // Get molecular species
-    cifHandler.setUseCIFBondingDefinitions(true);
-    EXPECT_EQ(cifHandler.molecularSpecies().size(), 2);
-    testMolecularSpecies(cifHandler.molecularSpecies()[0], {"Na", 4, 1});
+    cifContext.setUseCIFBondingDefinitions(true);
+    EXPECT_EQ(cifContext.molecularSpecies().size(), 2);
+    testMolecularSpecies(cifContext.molecularSpecies()[0], {"Na", 4, 1});
     std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
-    for (auto &&[instance, r2] : zip(cifHandler.molecularSpecies()[0].instances(), R))
+    for (auto &&[instance, r2] : zip(cifContext.molecularSpecies()[0].instances(), R))
         DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), r2);
-    testMolecularSpecies(cifHandler.molecularSpecies()[1], {"Cl", 4, 1});
-    for (auto &&[instance, r2] : zip(cifHandler.molecularSpecies()[1].instances(), R))
+    testMolecularSpecies(cifContext.molecularSpecies()[1], {"Cl", 4, 1});
+    for (auto &&[instance, r2] : zip(cifContext.molecularSpecies()[1].instances(), R))
         DissolveSystemTest::checkVec3(instance.localAtoms()[0].r(), (r2 - A / 2).abs());
 
     // 2x2x2 supercell
-    cifHandler.setSupercellRepeat({2, 2, 2});
-    EXPECT_TRUE(cifHandler.generate());
-    testBox(cifHandler.generatedConfiguration(), {A * 2, A * 2, A * 2}, {90, 90, 90}, 8 * 8);
+    cifContext.setSupercellRepeat({2, 2, 2});
+    EXPECT_TRUE(cifContext.generate());
+    testBox(cifContext.generatedConfiguration(), {A * 2, A * 2, A * 2}, {90, 90, 90}, 8 * 8);
 }
 
 TEST_F(ImportCIFTest, NaClO3)
 {
-    CIFHandler cifHandler;
-    ASSERT_TRUE(cifHandler.read("cif/NaClO3-1010057.cif"));
-    EXPECT_TRUE(cifHandler.generate());
+    CIFContext cifContext;
+    ASSERT_TRUE(cifContext.read("cif/NaClO3-1010057.cif"));
+    EXPECT_TRUE(cifContext.generate());
 
     // Check basic info
-    EXPECT_EQ(cifHandler.spaceGroup(), SpaceGroups::SpaceGroup_198);
+    EXPECT_EQ(cifContext.spaceGroup(), SpaceGroups::SpaceGroup_198);
     constexpr double A = 6.55;
-    testBox(cifHandler.generatedConfiguration(), {A, A, A}, {90, 90, 90}, 20);
+    testBox(cifContext.generatedConfiguration(), {A, A, A}, {90, 90, 90}, 20);
 
     // Turn off automatic bond calculation - there are no bonding defs in the CIF, so we expect species for each atomic
     // component (4 Na, 4 Cl, and 12 O)
-    cifHandler.setUseCIFBondingDefinitions(true);
-    auto &cifMols = cifHandler.molecularSpecies();
+    cifContext.setUseCIFBondingDefinitions(true);
+    auto &cifMols = cifContext.molecularSpecies();
     ASSERT_EQ(cifMols.size(), 3);
     testMolecularSpecies(cifMols[0], {"Na", 4, 1});
     testMolecularSpecies(cifMols[1], {"Cl", 4, 1});
     testMolecularSpecies(cifMols[2], {"O", 12, 1});
 
     // Calculate bonding ourselves to get the correct species
-    cifHandler.setUseCIFBondingDefinitions(false);
+    cifContext.setUseCIFBondingDefinitions(false);
     ASSERT_EQ(cifMols.size(), 2);
     testMolecularSpecies(cifMols[0], {"Na", 4, 1});
     testMolecularSpecies(cifMols[1], {"ClO3", 4, 4});
@@ -132,14 +132,14 @@ TEST_F(ImportCIFTest, NaClO3)
 
 TEST_F(ImportCIFTest, CuBTC)
 {
-    CIFHandler cifHandler;
-    ASSERT_TRUE(cifHandler.read("cif/CuBTC-7108574.cif"));
-    EXPECT_TRUE(cifHandler.generate());
+    CIFContext cifContext;
+    ASSERT_TRUE(cifContext.read("cif/CuBTC-7108574.cif"));
+    EXPECT_TRUE(cifContext.generate());
 
     // Check basic info
-    EXPECT_EQ(cifHandler.spaceGroup(), SpaceGroups::SpaceGroup_225);
+    EXPECT_EQ(cifContext.spaceGroup(), SpaceGroups::SpaceGroup_225);
     constexpr auto A = 26.3336;
-    testBox(cifHandler.generatedConfiguration(), {A, A, A}, {90, 90, 90}, 672);
+    testBox(cifContext.generatedConfiguration(), {A, A, A}, {90, 90, 90}, 672);
 
     // 16 basic formula units per unit cell
     constexpr auto N = 16;
@@ -147,66 +147,66 @@ TEST_F(ImportCIFTest, CuBTC)
     // Check basic formula (which includes bound water oxygens - with no H - at this point) and using O group
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaH = {
         {Elements::Cu, 3 * N}, {Elements::C, 18 * N}, {Elements::H, 6 * N}, {Elements::O, 15 * N}};
-    EXPECT_EQ(EmpiricalFormula::formula(cifHandler.generatedConfiguration()->atoms(),
+    EXPECT_EQ(EmpiricalFormula::formula(cifContext.generatedConfiguration()->atoms(),
                                         [](const auto &i) { return i.speciesAtom()->Z(); }),
               EmpiricalFormula::formula(cellFormulaH));
-    EXPECT_EQ(cifHandler.molecularSpecies().size(), 2);
+    EXPECT_EQ(cifContext.molecularSpecies().size(), 2);
 
     // Change active assemblies to get amine-substituted structure
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaNH2 = cellFormulaH;
     cellFormulaNH2[Elements::N] = 6 * N;
     cellFormulaNH2[Elements::H] *= 2;
-    cifHandler.getAssembly("A").getGroup("1").setActive(false);
-    cifHandler.getAssembly("B").getGroup("2").setActive(true);
-    cifHandler.getAssembly("C").getGroup("2").setActive(true);
-    EXPECT_TRUE(cifHandler.generate());
-    EXPECT_EQ(EmpiricalFormula::formula(cifHandler.generatedConfiguration()->atoms(),
+    cifContext.getAssembly("A").getGroup("1").setActive(false);
+    cifContext.getAssembly("B").getGroup("2").setActive(true);
+    cifContext.getAssembly("C").getGroup("2").setActive(true);
+    EXPECT_TRUE(cifContext.generate());
+    EXPECT_EQ(EmpiricalFormula::formula(cifContext.generatedConfiguration()->atoms(),
                                         [](const auto &i) { return i.speciesAtom()->Z(); }),
               EmpiricalFormula::formula(cellFormulaNH2));
 
     // Remove those free oxygens so we just have a framework
-    cifHandler.setRemoveAtomics(true);
-    EXPECT_EQ(cifHandler.molecularSpecies().size(), 0);
+    cifContext.setRemoveAtomics(true);
+    EXPECT_EQ(cifContext.molecularSpecies().size(), 0);
 }
 
 TEST_F(ImportCIFTest, MoleculeOrdering)
 {
-    CIFHandler cifHandler;
+    CIFContext cifContext;
     const auto cifFiles = {"cif/molecule-test-simple-ordered.cif", "cif/molecule-test-simple-unordered.cif",
                            "cif/molecule-test-simple-unordered-rotated.cif"};
     for (auto cifFile : cifFiles)
     {
         // Load the CIF file
-        ASSERT_TRUE(cifHandler.read(cifFile));
-        EXPECT_TRUE(cifHandler.generate());
+        ASSERT_TRUE(cifContext.read(cifFile));
+        EXPECT_TRUE(cifContext.generate());
 
-        EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
+        EXPECT_EQ(cifContext.molecularSpecies().size(), 1);
 
-        auto &cifMolecule = cifHandler.molecularSpecies().front();
+        auto &cifMolecule = cifContext.molecularSpecies().front();
         EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
             {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
         testMolecularSpecies(cifMolecule, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
 
-        testInstanceConsistency(cifMolecule, cifHandler.cleanedUnitCellSpecies());
+        testInstanceConsistency(cifMolecule, cifContext.cleanedUnitCellSpecies());
     }
 }
 
 TEST_F(ImportCIFTest, BigMoleculeOrdering)
 {
-    CIFHandler cifHandler;
+    CIFContext cifContext;
     const auto cifFile = "cif/Bisphen_n_arenes_1517789.cif";
 
     // Load the CIF file
-    ASSERT_TRUE(cifHandler.read(cifFile));
-    EXPECT_TRUE(cifHandler.generate());
+    ASSERT_TRUE(cifContext.read(cifFile));
+    EXPECT_TRUE(cifContext.generate());
 
-    EXPECT_EQ(cifHandler.molecularSpecies().size(), 1);
+    EXPECT_EQ(cifContext.molecularSpecies().size(), 1);
 
-    auto &cifMolecule = cifHandler.molecularSpecies().front();
+    auto &cifMolecule = cifContext.molecularSpecies().front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {{Elements::O, 6}, {Elements::C, 51}, {Elements::H, 54}};
     testMolecularSpecies(cifMolecule, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
 
-    testInstanceConsistency(cifMolecule, cifHandler.cleanedUnitCellSpecies());
+    testInstanceConsistency(cifMolecule, cifContext.cleanedUnitCellSpecies());
 }
 
 } // namespace UnitTest

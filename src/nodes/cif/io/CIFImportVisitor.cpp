@@ -6,7 +6,7 @@
 #include "base/sysFunc.h"
 #include "nodes/cif/io/CIFImportErrorListeners.h"
 
-CIFImportVisitor::CIFImportVisitor(CIFHandler::CIFTags &tags) : tags_(tags) {}
+CIFImportVisitor::CIFImportVisitor(CIFContext::CIFTags &tags) : tags_(tags) {}
 
 /*
  * Data

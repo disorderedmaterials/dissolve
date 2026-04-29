@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/setCIFAtomGroupActivity.h"
+#include "nodes/cif/setCIFAtomGroupActivity.h"
 
 SetCIFAtomGroupActivityNode::SetCIFAtomGroupActivityNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
+    addInput<CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_)
         ->setFlags({ParameterBase::Required});
 
     // Outputs
-    addOutput<CIFLoaderNode::CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
+    addOutput<CIFContext *>("CIFContext", "CIF handling context derived from parsing of CIF file", context_);
 
     // Options
     addOption<std::string>("Assembly", "CIF assembly name", assemblyName_);

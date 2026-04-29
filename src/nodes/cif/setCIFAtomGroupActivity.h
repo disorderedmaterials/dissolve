@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "nodes/cifLoader.h"
+#include "nodes/cif/io/cifContext.h"
 #include "nodes/node.h"
 
-// CIFLoader Node
+// ImportCIFStructure Node
 class SetCIFAtomGroupActivityNode : public Node
 {
     public:
@@ -22,7 +22,7 @@ class SetCIFAtomGroupActivityNode : public Node
      */
     private:
     // CIF handler context
-    CIFLoaderNode::CIFContext *context_{nullptr};
+    CIFContext *context_{nullptr};
     // Selected CIF assembly atom group name
     std::string atomGroupName_;
     // Selected CIF assembly name

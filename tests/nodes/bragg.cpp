@@ -6,7 +6,7 @@
 #include "classes/speciesSites.h"
 #include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
-#include "nodes/cifMolecularSpecies.h"
+#include "nodes/cif/cifMolecularSpecies.h"
 #include "nodes/gr/gr.h"
 #include "nodes/importConfigurationTrajectory.h"
 #include "nodes/iterableGraph.h"
@@ -40,11 +40,11 @@ class BraggNodeTest : public ::testing::Test
         // Create species and configuration from MgO cif file
         auto root = testGraph_.dissolveGraph();
 
-        ASSERT_TRUE(testGraph_.appendNode("CIFLoader", "CIFLoader"));
+        ASSERT_TRUE(testGraph_.appendNode("importCIFStructure", "importCIFStructure"));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<std::string>("FilePath", "cif/1000053.cif"));
 
         ASSERT_TRUE(testGraph_.appendNode("CIFBondingOptions", "CIFBonds"));
-        ASSERT_TRUE(root->addEdge({"CIFLoader", "CIFContext", "CIFBonds", "CIFContext"}));
+        ASSERT_TRUE(root->addEdge({"importCIFStructure", "CIFContext", "CIFBonds", "CIFContext"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<bool>("PreventAllBonds", true));
 
         // Create a supercell that is 5 * unitcell

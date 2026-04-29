@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/import/cif.h"
+#include "nodes/cif/io/cifContext.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>
 

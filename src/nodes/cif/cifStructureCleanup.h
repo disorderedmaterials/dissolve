@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "nodes/cifLoader.h"
+#include "nodes/cif/io/cifContext.h"
 #include "nodes/node.h"
 
-// CIFLoader Node
+// ImportCIFStructure Node
 class CIFStructureCleanupNode : public Node
 {
     public:
@@ -22,7 +22,7 @@ class CIFStructureCleanupNode : public Node
      */
     private:
     // CIF handler context
-    CIFLoaderNode::CIFContext *context_{nullptr};
+    CIFContext *context_{nullptr};
     // Whether to remove by NETA definition in clean-up
     bool removeNETA_{false};
     // Whether to expand NETA matches to fragments when removing in clean-up

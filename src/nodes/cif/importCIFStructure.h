@@ -3,18 +3,16 @@
 
 #pragma once
 
-#include "io/import/cif.h"
+#include "classes/structure.h"
+#include "nodes/cif/io/cifContext.h"
 #include "nodes/node.h"
 
-// CIFLoader Node
-class CIFLoaderNode : public Node
+// ImportCIFStructure Node
+class ImportCIFStructureNode : public Node
 {
     public:
-    using CIFContext = CIFHandler;
-
-    public:
-    CIFLoaderNode(Graph *parentGraph);
-    ~CIFLoaderNode() override = default;
+    ImportCIFStructureNode(Graph *parentGraph);
+    ~ImportCIFStructureNode() override = default;
 
     public:
     std::string_view type() const override;
@@ -26,6 +24,8 @@ class CIFLoaderNode : public Node
     private:
     // CIF handler context
     CIFContext context_;
+    // CIF strucutre
+    Structure *structure_;
     // Space group ID
     SpaceGroups::SpaceGroupId spaceGroup_{SpaceGroups::SpaceGroupId::NoSpaceGroup};
     // CIF filepath
