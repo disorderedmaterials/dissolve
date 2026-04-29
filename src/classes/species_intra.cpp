@@ -614,15 +614,11 @@ void generateCommonTerm(Intra &term, std::string_view termName,
 }
 
 // Reduce intramolecular terms to master terms
-void Species::reduceToCommonTerms(CoreData &coreData, bool selectionOnly)
+void Species::reduceToCommonTerms()
 {
     // Bonds
     for (auto &bond : bonds_)
     {
-        // Selection only?
-        if (selectionOnly && !bond.isSelected())
-            continue;
-
         // Construct a name for the master term based on the atom types
         std::vector<std::string_view> names = {bond.i()->atomType()->name(), bond.j()->atomType()->name()};
         std::sort(names.begin(), names.end());
@@ -634,10 +630,6 @@ void Species::reduceToCommonTerms(CoreData &coreData, bool selectionOnly)
     // Angles
     for (auto &angle : angles_)
     {
-        // Selection only?
-        if (selectionOnly && !angle.isSelected())
-            continue;
-
         // Construct a name for the master term based on the atom types
         if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
             generateCommonTerm<CommonAngle>(
@@ -658,10 +650,6 @@ void Species::reduceToCommonTerms(CoreData &coreData, bool selectionOnly)
     // Torsions
     for (auto &torsion : torsions_)
     {
-        // Selection only?
-        if (selectionOnly && !torsion.isSelected())
-            continue;
-
         // Construct a name for the master term based on the atom types
         if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
             generateCommonTerm<CommonTorsion>(
@@ -682,10 +670,6 @@ void Species::reduceToCommonTerms(CoreData &coreData, bool selectionOnly)
     // Impropers
     for (auto &improper : impropers_)
     {
-        // Selection only?
-        if (selectionOnly && !improper.isSelected())
-            continue;
-
         // Construct a name for the master term based on the atom types
         std::vector<std::string_view> jkl = {improper.j()->atomType()->name(), improper.k()->atomType()->name(),
                                              improper.l()->atomType()->name()};

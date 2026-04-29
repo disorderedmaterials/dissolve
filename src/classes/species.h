@@ -233,7 +233,7 @@ class Species : public Serialisable<>
     // Detach common term links for all interaction types, copying parameters to local SpeciesIntra
     void detachFromCommonTerms();
     // Reduce intramolecular terms to common terms
-    void reduceToCommonTerms(CoreData &coreData, bool selectionOnly = false);
+    void reduceToCommonTerms();
 
     /*
      * Intramolecular Common Terms
