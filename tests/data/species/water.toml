@@ -1,0 +1,171 @@
+
+[species]
+name = "Water"
+
+[species.atomTypes]
+
+[species.atomTypes.HW]
+z = "H"
+charge = 0.41
+form = "LJ"
+
+[species.atomTypes.HW.parameters]
+epsilon = 0.0
+sigma = 0.0
+
+[species.atomTypes.OW]
+z = "O"
+charge = -0.82
+form = "LJ"
+
+[species.atomTypes.OW.parameters]
+epsilon = 0.6503
+sigma = 3.165492
+
+
+[[species.atoms]]
+index = 1
+z = "O"
+r = [
+0.0,
+0.0,
+0.0,
+]
+q = 0.0
+type = "OW"
+[[species.atoms]]
+index = 2
+z = "H"
+r = [
+1.0,
+0.0,
+0.0,
+]
+q = 0.0
+type = "HW"
+[[species.atoms]]
+index = 3
+z = "H"
+r = [
+-0.394583,
+0.91886,
+0.0,
+]
+q = 0.0
+type = "HW"
+
+[species.commonBonds]
+
+[species.commonBonds.HW-OW]
+form = "Harmonic"
+
+[species.commonBonds.HW-OW.parameters]
+k = 4431.53
+eq = 1.0
+
+
+[[species.bonds]]
+common = "HW-OW"
+i = 1
+j = 2
+[[species.bonds]]
+common = "HW-OW"
+i = 1
+j = 3
+
+[species.commonAngles]
+
+[species.commonAngles.HW-OW-HW]
+form = "Harmonic"
+
+[species.commonAngles.HW-OW-HW.parameters]
+k = 317.5656
+eq = 113.24
+
+
+[[species.angles]]
+common = "HW-OW-HW"
+i = 2
+j = 1
+k = 3
+
+[species.isotopologues]
+
+[species.isotopologues.D2O]
+HW = 2
+OW = 0
+
+
+[species.sites]
+
+[species.sites.COM]
+originMassWeighted = true
+originAtoms = [
+0,
+1,
+2,
+]
+
+[species.sites.H2]
+originAtoms = [
+2,
+]
+
+[species.sites.H1]
+originAtoms = [
+1,
+]
+
+[species.sites.H]
+type = "Dynamic"
+element = [
+"H",
+]
+
+[species.sites.O]
+originAtoms = [
+0,
+]
+
+[species.sites.Origin]
+originAtoms = [
+0,
+]
+xAxisAtoms = [
+1,
+2,
+]
+yAxisAtoms = [
+2,
+]
+
+[species.sites.H-dyn]
+type = "Dynamic"
+element = [
+"H",
+]
+
+[species.sites.O-dyn]
+type = "Dynamic"
+element = [
+"O",
+]
+
+[species.sites.Origin-frag]
+type = "Fragment"
+description = "?O, #origin, -H(#x), -H(#x, #y)"
+
+[species.sites.O-frag]
+type = "Fragment"
+description = "?O, #origin"
+
+[species.sites.H-frag]
+type = "Fragment"
+description = "?H, #origin"
+
+[species.sites.COM-frag]
+type = "Fragment"
+originMassWeighted = true
+description = "?O, #origin, -H(#origin), -H(#origin)"
+
+

@@ -10,7 +10,7 @@ namespace UnitTest
 {
 TEST(IsotopologueSetModelTest, Basic)
 {
-    auto waterNode = createWater();
+    auto waterNode = loadTOMLSpecies("species/water.toml");
     ASSERT_TRUE(waterNode);
     auto &water = waterNode->species();
 

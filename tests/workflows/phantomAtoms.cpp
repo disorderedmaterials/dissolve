@@ -47,7 +47,7 @@ TEST(PhantomAtomsTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{createWaterPhantom, 1000}}, 0.1);
+    testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water-with-lps.toml"); }, 1000}}, 0.1);
     testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("xyz/water1000-phantom.xyz", CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
 
