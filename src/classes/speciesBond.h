@@ -103,6 +103,10 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     // Return force multiplier for specified distance
     double force(double distance) const;
 
+    /*
+     * Serialisation
+     */
+    public:
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value

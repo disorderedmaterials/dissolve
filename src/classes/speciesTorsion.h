@@ -98,6 +98,10 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     // Return force multiplier for specified angle phi (in radians)
     double force(double phi) const;
 
+    /*
+     * Serialisation
+     */
+    public:
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value

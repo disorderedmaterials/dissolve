@@ -517,10 +517,11 @@ double SpeciesTorsion::force(double phi, TorsionFunctions::Form form, const std:
 }
 
 // Return force multiplier for specified angle phi (in radians)
-double SpeciesTorsion::force(double phi) const
-{
-    return SpeciesTorsion::force(phi, interactionForm(), interactionParameters());
-}
+double SpeciesTorsion::force(double phi) const { return force(phi, interactionForm(), interactionParameters()); }
+
+/*
+ * Serialisation
+ */
 
 // Express as a serialisable value
 void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
@@ -540,10 +541,10 @@ void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
     torsion["v14"] = vdw14Scaling_;
 }
 
-// This method populates the object's members with values read from a 'torsion' TOML node
+// Read values from a serialisable value
 void SpeciesTorsion::deserialise(const SerialisedValue &node)
 {
-    deserialiseForm(node, [&](auto &form) { return parent_->getCommonTorsion(form); });
+    SpeciesIntra::deserialise(node, [&](auto &form) { return parent_->getCommonTorsion(form); });
 
     electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
 

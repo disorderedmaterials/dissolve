@@ -315,6 +315,10 @@ double SpeciesBond::force(double distance) const
                          BondFunctions::forms().keyword(bondForm));
 }
 
+/*
+ * Serialisation
+ */
+
 // Express as a serialisable value
 void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 {
@@ -326,8 +330,8 @@ void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
         bond["j"] = j_->userIndex();
 }
 
-// This method populates the object's members with values read from a 'bond' TOML node
+// Read values from a serialisable value
 void SpeciesBond::deserialise(const SerialisedValue &node)
 {
-    deserialiseForm(node, [&](auto &form) { return parent_->getCommonBond(form); });
+    SpeciesIntra::deserialise(node, [&](auto &form) { return parent_->getCommonBond(form); });
 }

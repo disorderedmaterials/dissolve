@@ -74,6 +74,10 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     // Return force multiplier for specified angle theta (in radians)
     double force(double theta) const;
 
+    /*
+     * Serialisation
+     */
+    public:
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value

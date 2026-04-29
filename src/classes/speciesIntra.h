@@ -157,10 +157,62 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     // Set identifying name (if a common term)
     virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
     // Return identifying name (if a common term)
-    virtual std::string_view name() const { return ""; };
-    // Load parameters from serialisable value
-    void deserialiseParameters(const SerialisedValue &node)
+    virtual std::string_view name() const { return ""; }
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
+        auto &result = target[tag];
+
+        if (commonTerm_)
+            result["common"] = std::format("{}", commonTerm_->name());
+        else
+        {
+            result["form"] = Functions::forms().keyword(interactionForm());
+
+            auto values = interactionPotential().parameters();
+            if (!values.empty())
+            {
+                SerialisedValue parametersNode;
+                std::vector<std::string> parameters = Functions::parameters(interactionForm());
+                if (parameters.empty())
+                    parametersNode = values;
+                else
+                    for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
+                        parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+                result["parameters"] = parametersNode;
+            }
+        }
+    }
+    // Read values from a serialisable value
+    template <typename Lambda> void deserialise(const SerialisedValue &node, Lambda lambda)
+    {
+        // Common tag - used by individual species terms (not the common terms themselves) to specify a reference
+        if (!Serialisable::optionalOn(node, "common",
+                                      [this, &lambda](const SerialisedValue &node)
+                                      {
+                                          std::string form = node.as_string();
+                                          auto common = lambda(form);
+                                          if (!common)
+                                              throw std::runtime_error("Common Term not found.");
+                                          setCommonTerm(&common->get());
+                                      }))
+            deserialise(node);
+    }
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override
+    {
+        Serialisable::optionalOn(node, "form",
+                                 [this](const SerialisedValue &node)
+                                 {
+                                     std::string form = node.as_string();
+                                     setInteractionForm(Functions::forms().enumeration(form));
+                                 });
+
         Serialisable::optionalOn(node, "parameters",
                                  [this](const auto node)
                                  {
@@ -182,60 +234,5 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
                                      }
                                      setInteractionFormAndParameters(interactionForm(), values);
                                  });
-    }
-    // Load form from serialisable value
-    template <typename Lambda> void deserialiseForm(const SerialisedValue &node, Lambda lambda)
-    {
-        Serialisable::optionalOn(node, "form",
-                                 [this, &lambda](const SerialisedValue node)
-                                 {
-                                     std::string form = node.as_string();
-                                     if (form.find("@") == 0)
-                                     {
-                                         auto common = lambda(form);
-                                         if (!common)
-                                             throw std::runtime_error("Common Term not found.");
-                                         setCommonTerm(&common->get());
-                                     }
-                                     else
-                                         setInteractionForm(Functions::forms().enumeration(form));
-                                 });
-        deserialiseParameters(node);
-    }
-
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override
-    {
-        Serialisable::optionalOn(node, "form",
-                                 [this](const auto node)
-                                 {
-                                     std::string form = node.as_string();
-                                     setInteractionForm(Functions::forms().enumeration(form));
-                                 });
-        deserialiseParameters(node);
-    }
-
-    // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
-    {
-        auto &result = target[tag];
-
-        if (commonTerm_ != nullptr)
-            result["form"] = std::format("@{}", commonTerm_->name());
-        else
-            result["form"] = Functions::forms().keyword(interactionForm());
-
-        auto values = interactionPotential().parameters();
-        if (!values.empty())
-        {
-            SerialisedValue parametersNode;
-            std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            if (parameters.empty())
-                parametersNode = values;
-            else
-                for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
-                    parametersNode[parameters[parameterIndex]] = values[parameterIndex];
-            result["parameters"] = parametersNode;
-        }
     }
 };
