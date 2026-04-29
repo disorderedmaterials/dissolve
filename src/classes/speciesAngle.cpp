@@ -312,5 +312,5 @@ void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesAngle::deserialise(const SerialisedValue &node)
 {
-    SpeciesIntra::deserialise(node, [&](auto &form) { return parent_->getCommonAngle(form); });
+    SpeciesIntra<SpeciesAngle, AngleFunctions>::deserialise(node, [&](auto &form) { return parent_->getCommonAngle(form); });
 }

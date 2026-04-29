@@ -544,7 +544,8 @@ void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesTorsion::deserialise(const SerialisedValue &node)
 {
-    SpeciesIntra::deserialise(node, [&](auto &form) { return parent_->getCommonTorsion(form); });
+    SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise(node,
+                                                                [&](auto &form) { return parent_->getCommonTorsion(form); });
 
     electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
 

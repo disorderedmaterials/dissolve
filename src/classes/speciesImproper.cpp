@@ -240,5 +240,6 @@ void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesImproper::deserialise(const SerialisedValue &node)
 {
-    SpeciesIntra::deserialise(node, [&](auto &form) { return parent_->getCommonImproper(form); });
+    SpeciesIntra<SpeciesImproper, TorsionFunctions>::deserialise(node,
+                                                                 [&](auto &form) { return parent_->getCommonImproper(form); });
 }

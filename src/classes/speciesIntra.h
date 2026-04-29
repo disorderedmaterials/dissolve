@@ -191,7 +191,8 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     // Read values from a serialisable value
     template <typename Lambda> void deserialise(const SerialisedValue &node, Lambda lambda)
     {
-        // Common tag - used by individual species terms (not the common terms themselves) to specify a reference
+        // Common tag - used by individual species terms (not the common terms themselves) to specify a reference to a common
+        // term. If it doesn't exist, serialise form and parameters as normal.
         if (!Serialisable::optionalOn(node, "common",
                                       [this, &lambda](const SerialisedValue &node)
                                       {
@@ -201,7 +202,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
                                               throw std::runtime_error("Common Term not found.");
                                           setCommonTerm(&common->get());
                                       }))
-            deserialise(node);
+            SpeciesIntra::deserialise(node);
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override
@@ -212,7 +213,6 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
                                      std::string form = node.as_string();
                                      setInteractionForm(Functions::forms().enumeration(form));
                                  });
-
         Serialisable::optionalOn(node, "parameters",
                                  [this](const auto node)
                                  {

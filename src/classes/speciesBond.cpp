@@ -333,5 +333,5 @@ void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesBond::deserialise(const SerialisedValue &node)
 {
-    SpeciesIntra::deserialise(node, [&](auto &form) { return parent_->getCommonBond(form); });
+    SpeciesIntra<SpeciesBond, BondFunctions>::deserialise(node, [&](auto &form) { return parent_->getCommonBond(form); });
 }
