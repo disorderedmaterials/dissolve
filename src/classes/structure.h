@@ -149,6 +149,8 @@ class Structure : public Serialisable<>
     void removeBox();
     // Create Box definition with specified lengths and angles
     void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
+    // Create Box definition from axes matrix
+    void createBox(const Matrix3 &axes);
 
     /*
      * Serialisation
