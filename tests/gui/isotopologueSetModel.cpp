@@ -14,7 +14,7 @@ TEST(IsotopologueSetModelTest, Basic)
     ASSERT_TRUE(waterNode);
     auto &water = waterNode->species();
 
-    auto methanolNode = createMethanol();
+    auto methanolNode = loadTOMLSpecies("species/methanol.toml");
     ASSERT_TRUE(methanolNode);
     auto &methanol = methanolNode->species();
 

@@ -1,0 +1,90 @@
+
+[species]
+name = "TetrahedralArgon"
+
+[species.atomTypes]
+
+[species.atomTypes.Ar]
+z = "Ar"
+charge = 0.0
+form = "Undefined"
+
+[species.atomTypes.Phantom]
+z = "Phantom"
+charge = 0.0
+form = "Undefined"
+
+[[species.atoms]]
+index = 1
+z = "Ar"
+r = [
+0.0,
+0.0,
+0.0,
+]
+q = 0.0
+type = "Ar"
+[[species.atoms]]
+index = 2
+z = "Phantom"
+r = [
+0.0,
+1.42,
+0.0,
+]
+q = 0.0
+type = "Phantom"
+[[species.atoms]]
+index = 3
+z = "Phantom"
+r = [
+0.0,
+0.474005,
+-1.33834,
+]
+q = 0.0
+type = "Phantom"
+[[species.atoms]]
+index = 4
+z = "Phantom"
+r = [
+1.15967,
+-0.472997,
+0.669489,
+]
+q = 0.0
+type = "Phantom"
+[[species.atoms]]
+index = 5
+z = "Phantom"
+r = [
+-1.15959,
+-0.472997,
+0.669489,
+]
+q = 0.0
+type = "Phantom"
+
+[species.commonBonds]
+
+[species.commonBonds.Ar-Phantom]
+form = "None"
+
+
+[[species.bonds]]
+common = "Ar-Phantom"
+i = 1
+j = 2
+[[species.bonds]]
+common = "Ar-Phantom"
+i = 1
+j = 3
+[[species.bonds]]
+common = "Ar-Phantom"
+i = 1
+j = 4
+[[species.bonds]]
+common = "Ar-Phantom"
+i = 1
+j = 5
+

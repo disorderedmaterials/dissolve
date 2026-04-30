@@ -90,8 +90,10 @@ TEST(GRNodeTest, WaterMethanol)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration(
-        "Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 300}, {createMethanol, 600}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box",
+                                              {{[]() { return loadTOMLSpecies("species/water.toml"); }, 300},
+                                               {[]() { return loadTOMLSpecies("species/methanol.toml"); }, 600}},
+                                              0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "epsr25/water300methanol600/watermeth.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 
@@ -265,8 +267,8 @@ TEST(GRNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(
-        testGraph.createConfiguration("Box", {{createBenzene, 200}}, 0.876, Units::DensityUnits::GramsPerCentimetreCubedUnits));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/benzene.toml"); }, 200}}, 0.876,
+                                              Units::DensityUnits::GramsPerCentimetreCubedUnits));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "epsr25/benzene200-neutron/boxbenz.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 

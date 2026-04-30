@@ -16,7 +16,7 @@ class BenzeneForcefieldTest : public ::testing::Test
     {
         ASSERT_TRUE(testGraph_.createConfiguration("Box",
                                                    {
-                                                       {createBenzene, 181},
+                                                       {[]() { return loadTOMLSpecies("species/benzene.toml"); }, 181},
                                                    },
                                                    {29.925089931, 29.925089931, 29.925089931}));
         ASSERT_TRUE(testGraph_.appendImportCoordinates(
