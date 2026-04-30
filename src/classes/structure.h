@@ -68,7 +68,7 @@ class Structure : public Serialisable<>
 {
     public:
     Structure();
-    ~Structure() = default;
+    virtual ~Structure() = default;
     // Clear Data
     void clear();
 
