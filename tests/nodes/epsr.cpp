@@ -222,7 +222,7 @@ TEST(EPSRNodeTest, Water3NX)
     ASSERT_TRUE(epsrNode->setOption("EReq", Number(6.0)));
     ASSERT_TRUE(epsrNode->setOption("Feedback", Number(0.9)));
     ASSERT_TRUE(epsrNode->setOption("QMin", Number(0.5)));
-    ASSERT_TRUE(epsrNode->setOption("QMin", Number(30.0)));
+    ASSERT_TRUE(epsrNode->setOption("QMax", Number(30.0)));
     ASSERT_TRUE(epsrNode->setOption("NPItSs", std::optional<Number>(0)));
 
     // Run graph
