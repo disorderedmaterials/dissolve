@@ -29,9 +29,9 @@ class CellsEnergyTest : public ::testing::Test
         EXPECT_TRUE(testGraph_.createConfiguration("Box",
                                                    {{[]()
                                                      {
-                                                         return createAtomic(Elements::Ar,
-                                                                             {ShortRangeFunctions::Form::LennardJones,
-                                                                              "epsilon=0.774040 sigma=3.445996"});
+                                                         return createAtomicSpecies(Elements::Ar,
+                                                                                    {ShortRangeFunctions::Form::LennardJones,
+                                                                                     "epsilon=0.774040 sigma=3.445996"});
                                                      },
                                                      nMolecules}},
                                                    lengths, angles));

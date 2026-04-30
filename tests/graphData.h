@@ -16,7 +16,6 @@
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
-#include "tests/speciesData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -86,6 +85,49 @@ class TestGraph : public DissolveGraph
     }
 
     public:
+    // Create and return atomic SpeciesNode
+    std::unique_ptr<SpeciesNode> createAtomicSpecies(Elements::Element element,
+                                                     InteractionPotential<ShortRangeFunctions> potential = {
+                                                         ShortRangeFunctions::Form::Undefined, ""})
+    {
+        // Add species node
+        auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
+        auto speciesNodePtr = speciesNodeUniquePtr.get();
+        auto species = &speciesNodePtr->species();
+        species->setName(Elements::symbol(element));
+
+        // Set up atom types
+        auto atomType = species->addAtomType(element, Elements::symbol(element));
+        atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
+        species->addAtom(element, {}, 0.0, atomType);
+
+        // Create isotopologues
+        for (auto isotope : Sears91::isotopes(element))
+        {
+            auto iso = species->addIsotopologue(std::format("{}{}", Elements::symbol(element), Sears91::A(isotope)));
+            iso->setAtomTypeIsotope(atomType, isotope);
+        }
+
+        return speciesNodeUniquePtr;
+    }
+    // Create species from TOML file
+    std::unique_ptr<SpeciesNode> loadTOMLSpecies(std::string_view path)
+    {
+        // Add species node
+        auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
+        auto speciesNodePtr = speciesNodeUniquePtr.get();
+        auto &species = speciesNodePtr->species();
+
+        SerialisedValue contents = toml::parse(std::string(path));
+        if (contents.contains("species"))
+        {
+            species.deserialise(contents["species"]);
+            auto name = contents["species"]["name"].as_string();
+            species.setName(name.str);
+        }
+
+        return speciesNodeUniquePtr;
+    }
     // Create basic configuration graph, returning the last node
     Node *createConfiguration(std::string name,
                               const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,

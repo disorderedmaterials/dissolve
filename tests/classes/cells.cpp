@@ -17,7 +17,7 @@ TEST(CellsTest, Basic)
     // Set up the test graph
     TestGraph testGraph;
     ASSERT_TRUE(testGraph.createConfiguration("Box",
-                                              {{[]() { return createAtomic(Elements::Ar); }, 1},
+                                              {{[]() { return createAtomicSpecies(Elements::Ar); }, 1},
                                                {[]() { return loadTOMLSpecies("species/water-dlpoly.toml"); }, 267}},
                                               0.1, Units::DensityUnits::AtomsPerAngstromUnits));
     ASSERT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(

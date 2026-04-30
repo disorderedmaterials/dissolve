@@ -13,7 +13,7 @@ TEST(GRNodeTest, Methods)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[] { return createAtomic(Elements::Ar); }, 5000}}, 0.0213));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[] { return createAtomicSpecies(Elements::Ar); }, 5000}}, 0.0213));
 
     // Append GR and SQ nodes
     auto sqNode = testGraph.appendGRSQ(true, true);

@@ -3,7 +3,7 @@
 
 #include "gui/models/addForcefieldDialogModel.h"
 #include "main/dissolve.h"
-#include "tests/speciesData.h"
+#include "tests/graphData.h"
 #include <QTableView>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
