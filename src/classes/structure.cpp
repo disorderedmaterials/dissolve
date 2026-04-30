@@ -13,7 +13,7 @@ Structure &Structure::operator=(const Structure &source)
     clear();
 
     for (auto &atom : source.atoms_)
-        atoms_.emplace_back(std::unique_ptr<StructureAtom>())->set(atom->Z(), atom->r(), atom->q());
+        atoms_.emplace_back(std::make_unique<StructureAtom>())->set(atom->Z(), atom->r(), atom->q());
 
     for (auto &bond : source.bonds_)
         addBond(bond->i()->index(), bond->j()->index());
