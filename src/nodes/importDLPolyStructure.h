@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "nodes/node.h"
 #include "classes/structure.h"
+#include "nodes/node.h"
 
 class ImportDLPolyStructureNode : public Node
 {
