@@ -6,6 +6,21 @@
 
 Structure::Structure() : box_(std::make_unique<SingleImageBox>()) {}
 
+Structure::Structure(const Structure &source) { *this = source; }
+
+Structure &Structure::operator=(const Structure &source)
+{
+    clear();
+
+    for (auto &atom : source.atoms_)
+        atoms_.emplace_back(std::unique_ptr<StructureAtom>())->set(atom->Z(), atom->r(), atom->q());
+
+    for (auto &bond : source.bonds_)
+        addBond(bond->i()->index(), bond->j()->index());
+
+    return *this;
+}
+
 // Clear Data
 void Structure::clear()
 {

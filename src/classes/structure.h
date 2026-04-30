@@ -69,6 +69,8 @@ class Structure : public Serialisable<>
     public:
     Structure();
     virtual ~Structure() = default;
+    Structure(const Structure &source);
+    Structure &operator=(const Structure &source);
     // Clear Data
     void clear();
 
