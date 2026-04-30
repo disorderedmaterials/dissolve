@@ -40,6 +40,7 @@
 #include "nodes/numberNode.h"
 #include "nodes/setCIFAtomGroupActivity.h"
 #include "nodes/setCell.h"
+#include "nodes/setCoordinates.h"
 #include "nodes/siteRDF.h"
 #include "nodes/species.h"
 #include "nodes/sq/sq.h"
@@ -102,8 +103,9 @@ void NodeRegistry::instantiateNodeProducers()
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
-                  {"SetCell", makeDerivedNode<SetCellNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},
+                  {"SetCell", makeDerivedNode<SetCellNode>()},
+                  {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
                   {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
                   {"SQ", makeDerivedNode<SQNode>()},
                   {"Species", makeDerivedNode<SpeciesNode>()},
