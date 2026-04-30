@@ -14,8 +14,7 @@ TEST(PairPotentialOverridesTest, Water)
     // Set up the test graph
     TestGraph testGraph;
     ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
-    ASSERT_TRUE(testGraph.appendImportCoordinates(
-        CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
+    ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPolyStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);

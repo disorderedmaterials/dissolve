@@ -186,14 +186,14 @@ class TestGraph : public DissolveGraph
         return head<ImportConfigurationCoordinatesNode>();
     }
     // Append a set coordinates node with a structure import input
-    Node *appendSetCoordinates(std::string_view importNodeType, std::string filePath)
+    Node *appendSetCoordinates(std::string_view importNodeType, std::string_view filePath)
     {
         const auto cfgSourceNode = fetchHead();
 
         EXPECT_TRUE(appendNode("SetCoordinates"));
         auto structureNode = createNode(importNodeType);
         EXPECT_TRUE(structureNode);
-        EXPECT_TRUE(structureNode->setOption<std::string>("FilePath", filePath));
+        EXPECT_TRUE(structureNode->setOption<std::string>("FilePath", std::string(filePath)));
 
         EXPECT_TRUE(addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
 
