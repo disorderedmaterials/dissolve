@@ -226,10 +226,6 @@ class Species : public Serialisable<>
     OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
-    // Detach common term links for all interaction types, copying parameters to local SpeciesIntra
-    void detachFromCommonTerms();
-    // Reduce intramolecular terms to common terms
-    void reduceToCommonTerms();
     // Finalise internal relationships related to geometry once it is defined
     void finaliseGeometry();
 
@@ -289,6 +285,10 @@ class Species : public Serialisable<>
     OptionalReferenceWrapper<const CommonImproper> getCommonImproper(std::string_view name) const;
     // Clear all common terms
     void clearCommonTerms();
+    // Detach common term links for all interaction types, copying parameters to local SpeciesIntra
+    void detachFromCommonTerms();
+    // Reduce intramolecular terms to common terms
+    void reduceToCommonTerms();
 
     /*
      * Box Definition (if any)
