@@ -78,7 +78,7 @@ inline std::unique_ptr<SpeciesNode> createTetrahedralArgon()
     species->addBond(0, 3);
     species->addBond(0, 4);
 
-    species->setUpScaledInteractions();
+    species->finaliseGeometry();
 
     return speciesNodeUniquePtr;
 }
@@ -164,7 +164,7 @@ inline std::unique_ptr<SpeciesNode> createMethanol()
     species->addAngle(5, 2, 0).setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=300.0 eq=109.5");
 
     // Create scaled interaction matrices
-    species->setUpScaledInteractions();
+    species->finaliseGeometry();
 
     // Create isotopologues
     auto D = species->addIsotopologue("Deuteriated");
@@ -244,7 +244,7 @@ inline std::unique_ptr<SpeciesNode> createBenzene()
     }
 
     // Create scaled interaction matrices
-    species->setUpScaledInteractions();
+    species->finaliseGeometry();
 
     // Create isotopologue
     auto iso = species->addIsotopologue("C6D6");
@@ -344,7 +344,7 @@ inline std::unique_ptr<SpeciesNode> createHexane()
             .setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "k1=0.0  k2=0.0  k3=1.2552");
 
     // Create scaled interaction matrices
-    species->setUpScaledInteractions();
+    species->finaliseGeometry();
 
     return speciesNodeUniquePtr;
 }

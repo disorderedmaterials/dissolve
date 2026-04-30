@@ -10,10 +10,6 @@
 #include "templates/algorithms.h"
 #include <algorithm>
 
-/*
- * Public
- */
-
 // Add new SpeciesBond definition
 SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 {
@@ -437,128 +433,8 @@ OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(int i, int 
     return getImproper(&atom(i), &atom(j), &atom(k), &atom(l));
 }
 
-// Set-up excluded / scaled interactions on atoms
-void Species::setUpScaledInteractions()
-{
-    for (auto &i : atoms_)
-        i.setScaledInteractions();
-}
-
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
-
-// Generate attached atom lists for all intramolecular terms
-void Species::generateAttachedAtomLists()
-{
-    // Bonds
-    for (auto &bond : bonds_)
-    {
-        // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        auto selection = fragment(bond.i()->index(), bond);
-
-        // If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the
-        // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
-        if (std::find(selection.begin(), selection.end(), bond.j()->index()) != selection.end())
-        {
-            Messenger::printVerbose("Bond between Atoms {}-{} is present in a cycle, so a minimal set of attached "
-                                    "atoms will be used.\n",
-                                    bond.i()->userIndex(), bond.j()->userIndex());
-            bond.setAttachedAtoms(0, bond.i()->index());
-            bond.setAttachedAtoms(1, bond.j()->index());
-            bond.setInCycle(true);
-            continue;
-        }
-        else
-            bond.setAttachedAtoms(0, selection);
-
-        // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        clearAtomSelection();
-        selection = fragment(bond.j()->index(), bond);
-        bond.setAttachedAtoms(1, selection);
-    }
-
-    // Angles - termini are 'i' and 'k'
-    for (auto &angle : angles_)
-    {
-        // Grab relevant Bonds (if they exist)
-        auto ji = angle.j()->getBond(angle.i());
-        auto jk = angle.j()->getBond(angle.k());
-
-        // Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
-        auto selection = fragment(angle.i()->index(), *ji, *jk);
-
-        // Remove Atom 'j' from the list if it's there
-        auto jit = std::find(selection.begin(), selection.end(), angle.j()->index());
-        if (jit != selection.end())
-            selection.erase(jit);
-
-        // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
-        // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
-        if (std::find(selection.begin(), selection.end(), angle.k()->index()) != selection.end())
-        {
-            Messenger::printVerbose("Angle between Atoms {}-{}-{} is present in a cycle, so a minimal set of "
-                                    "attached atoms will be used.\n",
-                                    angle.i()->userIndex(), angle.j()->userIndex(), angle.k()->userIndex());
-            angle.setAttachedAtoms(0, angle.i()->index());
-            angle.setAttachedAtoms(1, angle.k()->index());
-            angle.setInCycle(true);
-            continue;
-        }
-        else
-            angle.setAttachedAtoms(0, selection);
-
-        // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        clearAtomSelection();
-        selection = fragment(angle.k()->index(), *ji, jk);
-
-        // Remove Atom 'j' from the list if it's there
-        jit = std::find(selection.begin(), selection.end(), angle.j()->index());
-        if (jit != selection.end())
-            selection.erase(jit);
-
-        angle.setAttachedAtoms(1, selection);
-    }
-
-    // Torsions - termini are 'j' and 'k'
-    for (auto &torsion : torsions_)
-    {
-        // Grab relevant Bond (if it exists)
-        auto jk = torsion.j()->getBond(torsion.k());
-
-        // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
-        auto selection = fragment(torsion.j()->index(), *jk);
-
-        // Remove Atom 'j' from the list
-        selection.erase(std::remove(selection.begin(), selection.end(), torsion.j()->index()));
-
-        // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
-        // Atom 'i'
-        if (std::find(selection.begin(), selection.end(), torsion.k()->index()) != selection.end())
-        {
-            Messenger::printVerbose("Torsion between Atoms {}-{}-{}-{} is present in a cycle, so a minimal set of "
-                                    "attached atoms will be used.\n",
-                                    torsion.i()->userIndex(), torsion.j()->userIndex(), torsion.k()->userIndex(),
-                                    torsion.l()->userIndex());
-            torsion.setAttachedAtoms(0, torsion.i()->index());
-            torsion.setAttachedAtoms(1, torsion.l()->index());
-            torsion.setInCycle(true);
-            continue;
-        }
-        else
-            torsion.setAttachedAtoms(0, selection);
-
-        // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        clearAtomSelection();
-        selection = fragment(torsion.k()->index(), *jk);
-
-        // Remove Atom 'k' from the list
-        selection.erase(std::remove(selection.begin(), selection.end(), torsion.k()->index()));
-
-        torsion.setAttachedAtoms(1, selection);
-    }
-
-    attachedAtomListsGenerated_ = true;
-}
 
 // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
 void Species::detachFromCommonTerms()
@@ -678,6 +554,131 @@ void Species::reduceToCommonTerms()
             improper, std::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")), [&](std::string_view name)
             { return getCommonImproper(name); }, [&](auto name) -> CommonImproper & { return addCommonImproper(name); });
     }
+}
+
+// Finalise internal relationships related to geometry once it is defined
+void Species::finaliseGeometry()
+{
+    // Set-up excluded / scaled interactions on atoms arising from bonds, angles, and torsions
+    for (auto &i : atoms_)
+        i.setScaledInteractions();
+
+    // If this is a periodic species, we're done
+    if (box_->type() != Box::BoxType::NonPeriodic)
+    {
+        attachedAtomListsGenerated_ = false;
+        return;
+    }
+
+    // Generate attached atom lists for all intramolecular terms
+    // Bonds
+    for (auto &bond : bonds_)
+    {
+        // Select all Atoms attached to Atom 'i', excluding the Bond as a path
+        auto selection = fragment(bond.i()->index(), bond);
+
+        // If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the
+        // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
+        if (std::find(selection.begin(), selection.end(), bond.j()->index()) != selection.end())
+        {
+            Messenger::printVerbose("Bond between Atoms {}-{} is present in a cycle, so a minimal set of attached "
+                                    "atoms will be used.\n",
+                                    bond.i()->userIndex(), bond.j()->userIndex());
+            bond.setAttachedAtoms(0, bond.i()->index());
+            bond.setAttachedAtoms(1, bond.j()->index());
+            bond.setInCycle(true);
+            continue;
+        }
+        else
+            bond.setAttachedAtoms(0, selection);
+
+        // Select all Atoms attached to Atom 'i', excluding the Bond as a path
+        clearAtomSelection();
+        selection = fragment(bond.j()->index(), bond);
+        bond.setAttachedAtoms(1, selection);
+    }
+
+    // Angles - termini are 'i' and 'k'
+    for (auto &angle : angles_)
+    {
+        // Grab relevant Bonds (if they exist)
+        auto ji = angle.j()->getBond(angle.i());
+        auto jk = angle.j()->getBond(angle.k());
+
+        // Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
+        auto selection = fragment(angle.i()->index(), *ji, *jk);
+
+        // Remove Atom 'j' from the list if it's there
+        auto jit = std::find(selection.begin(), selection.end(), angle.j()->index());
+        if (jit != selection.end())
+            selection.erase(jit);
+
+        // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
+        // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
+        if (std::find(selection.begin(), selection.end(), angle.k()->index()) != selection.end())
+        {
+            Messenger::printVerbose("Angle between Atoms {}-{}-{} is present in a cycle, so a minimal set of "
+                                    "attached atoms will be used.\n",
+                                    angle.i()->userIndex(), angle.j()->userIndex(), angle.k()->userIndex());
+            angle.setAttachedAtoms(0, angle.i()->index());
+            angle.setAttachedAtoms(1, angle.k()->index());
+            angle.setInCycle(true);
+            continue;
+        }
+        else
+            angle.setAttachedAtoms(0, selection);
+
+        // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+        clearAtomSelection();
+        selection = fragment(angle.k()->index(), *ji, jk);
+
+        // Remove Atom 'j' from the list if it's there
+        jit = std::find(selection.begin(), selection.end(), angle.j()->index());
+        if (jit != selection.end())
+            selection.erase(jit);
+
+        angle.setAttachedAtoms(1, selection);
+    }
+
+    // Torsions - termini are 'j' and 'k'
+    for (auto &torsion : torsions_)
+    {
+        // Grab relevant Bond (if it exists)
+        auto jk = torsion.j()->getBond(torsion.k());
+
+        // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
+        auto selection = fragment(torsion.j()->index(), *jk);
+
+        // Remove Atom 'j' from the list
+        selection.erase(std::remove(selection.begin(), selection.end(), torsion.j()->index()));
+
+        // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
+        // Atom 'i'
+        if (std::find(selection.begin(), selection.end(), torsion.k()->index()) != selection.end())
+        {
+            Messenger::printVerbose("Torsion between Atoms {}-{}-{}-{} is present in a cycle, so a minimal set of "
+                                    "attached atoms will be used.\n",
+                                    torsion.i()->userIndex(), torsion.j()->userIndex(), torsion.k()->userIndex(),
+                                    torsion.l()->userIndex());
+            torsion.setAttachedAtoms(0, torsion.i()->index());
+            torsion.setAttachedAtoms(1, torsion.l()->index());
+            torsion.setInCycle(true);
+            continue;
+        }
+        else
+            torsion.setAttachedAtoms(0, selection);
+
+        // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+        clearAtomSelection();
+        selection = fragment(torsion.k()->index(), *jk);
+
+        // Remove Atom 'k' from the list
+        selection.erase(std::remove(selection.begin(), selection.end(), torsion.k()->index()));
+
+        torsion.setAttachedAtoms(1, selection);
+    }
+
+    attachedAtomListsGenerated_ = true;
 }
 
 // Return periodic box
