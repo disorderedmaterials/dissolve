@@ -15,6 +15,7 @@
 #include "nodes/insert.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/species.h"
+#include "nodes/setCoordinates.h"
 #include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include <gtest/gtest.h>
@@ -183,6 +184,22 @@ class TestGraph : public DissolveGraph
                              "ImportConfigurationCoordinates", "Configuration"}));
 
         return head<ImportConfigurationCoordinatesNode>();
+    }
+    // Append a set coordinates node with a structure import input
+    Node *appendSetCoordinates(std::string_view importNodeType, std::string filePath)
+    {
+        const auto cfgSourceNode = fetchHead();
+
+        EXPECT_TRUE(appendNode("SetCoordinates"));
+        auto structureNode = createNode(importNodeType);
+        EXPECT_TRUE(structureNode);
+        EXPECT_TRUE(structureNode->setOption<std::string>("FilePath", filePath));
+
+        EXPECT_TRUE(addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
+
+        EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), "Configuration", "SetCoordinates", "Configuration"}));
+
+        return head<SetCoordinatesNode>();
     }
     // Append GR and SQ nodes
     std::pair<GRNode *, SQNode *> appendGRSQ(bool noAveraging = false, bool noIntraBroadening = false)
