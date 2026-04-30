@@ -72,7 +72,7 @@ TEST(PhantomAtomsTest, Water)
         "NormaliseTo", StructureFactors::NormalisationType::AverageOfSquaresNormalisation));
     ASSERT_TRUE(H2Ox->setOption<StructureFactors::NormalisationType>(
         "ReferenceNormalisedTo", StructureFactors::NormalisationType::AverageOfSquaresNormalisation));
-    ASSERT_TRUE(H2Ox->setOption<std::optional<double>>("ReferenceFTQMin", 0.5));
+    ASSERT_TRUE(H2Ox->setOption<std::optional<Number>>("ReferenceFTQMin", 0.5));
 
     // Run the graph from each NeutronSQ and XRaySQ node
     ASSERT_TRUE(H2O);
