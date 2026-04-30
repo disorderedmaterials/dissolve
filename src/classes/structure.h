@@ -36,6 +36,7 @@ class StructureBond : public Serialisable<>
         i_->addBond(this);
         j_->addBond(this);
     }
+    virtual ~StructureBond() = default;
 
     private:
     StructureAtom *i_{nullptr}, *j_{nullptr};
