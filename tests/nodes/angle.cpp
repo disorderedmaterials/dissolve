@@ -16,7 +16,8 @@ TEST(AngleNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water-dlpoly.toml"); }, 267}}, 0.1);
+    testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water-dlpoly.toml"); }, 267}},
+                                  0.1);
 
     // Create iterable graph
     ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));

@@ -13,7 +13,8 @@ TEST(XRaySQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "epsr25/water1000-neutron/waterbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 

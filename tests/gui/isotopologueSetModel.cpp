@@ -10,11 +10,11 @@ namespace UnitTest
 {
 TEST(IsotopologueSetModelTest, Basic)
 {
-    auto waterNode = loadTOMLSpecies("species/water.toml");
+    auto waterNode = TestGraph::loadTOMLSpecies("species/water.toml");
     ASSERT_TRUE(waterNode);
     auto &water = waterNode->species();
 
-    auto methanolNode = loadTOMLSpecies("species/methanol.toml");
+    auto methanolNode = TestGraph::loadTOMLSpecies("species/methanol.toml");
     ASSERT_TRUE(methanolNode);
     auto &methanol = methanolNode->species();
 

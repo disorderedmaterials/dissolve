@@ -14,6 +14,7 @@
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/species.h"
 #include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include <gtest/gtest.h>
@@ -86,9 +87,9 @@ class TestGraph : public DissolveGraph
 
     public:
     // Create and return atomic SpeciesNode
-    std::unique_ptr<SpeciesNode> createAtomicSpecies(Elements::Element element,
-                                                     InteractionPotential<ShortRangeFunctions> potential = {
-                                                         ShortRangeFunctions::Form::Undefined, ""})
+    static std::unique_ptr<SpeciesNode> createAtomicSpecies(Elements::Element element,
+                                                            InteractionPotential<ShortRangeFunctions> potential = {
+                                                                ShortRangeFunctions::Form::Undefined, ""})
     {
         // Add species node
         auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
@@ -111,7 +112,7 @@ class TestGraph : public DissolveGraph
         return speciesNodeUniquePtr;
     }
     // Create species from TOML file
-    std::unique_ptr<SpeciesNode> loadTOMLSpecies(std::string_view path)
+    static std::unique_ptr<SpeciesNode> loadTOMLSpecies(std::string_view path)
     {
         // Add species node
         auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);

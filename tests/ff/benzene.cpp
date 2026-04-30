@@ -14,11 +14,12 @@ class BenzeneForcefieldTest : public ::testing::Test
     public:
     void setUp(std::string referenceCoordinates)
     {
-        ASSERT_TRUE(testGraph_.createConfiguration("Box",
-                                                   {
-                                                       {[]() { return loadTOMLSpecies("species/benzene.toml"); }, 181},
-                                                   },
-                                                   {29.925089931, 29.925089931, 29.925089931}));
+        ASSERT_TRUE(
+            testGraph_.createConfiguration("Box",
+                                           {
+                                               {[]() { return TestGraph::loadTOMLSpecies("species/benzene.toml"); }, 181},
+                                           },
+                                           {29.925089931, 29.925089931, 29.925089931}));
         ASSERT_TRUE(testGraph_.appendImportCoordinates(
             CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 

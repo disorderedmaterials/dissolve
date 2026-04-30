@@ -25,7 +25,8 @@ TEST(AtomShakeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto insertNode = testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1}}, 0.1);
+    auto insertNode =
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
     ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));

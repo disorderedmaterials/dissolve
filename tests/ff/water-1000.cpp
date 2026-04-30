@@ -14,7 +14,8 @@ TEST(Water1000EnergyTest, Full)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -46,7 +47,8 @@ TEST(Water1000ForceTest, Full)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "dlpoly/water1000/full.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -80,7 +82,8 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -117,7 +120,8 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/vdw.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -156,7 +160,8 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -190,7 +195,8 @@ TEST(Water1000ForceTest, CoulombOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -233,7 +239,8 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    EXPECT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -269,7 +276,8 @@ TEST(Water1000EnergyTest, Override)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    ASSERT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     ASSERT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 
@@ -309,7 +317,8 @@ TEST(Water1000ForceTest, Overrides)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
+    ASSERT_TRUE(
+        testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water.toml"); }, 1000}}, 0.1));
     ASSERT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/vdw.REVCON", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 

@@ -13,7 +13,8 @@ TEST(PhantomAtomsTest, Basic)
     // Construct the test graph
     TestGraph testGraph;
     const auto nMolecules = 100;
-    testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/tetrahedral-argon.toml"); }, nMolecules}},
+    testGraph.createConfiguration("Box",
+                                  {{[]() { return TestGraph::loadTOMLSpecies("species/tetrahedral-argon.toml"); }, nMolecules}},
                                   {20.0, 20.0, 20.0}, {90.0, 90.0, 90.0});
 
     // Run the graph to set up the configuration
@@ -48,7 +49,8 @@ TEST(PhantomAtomsTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water-with-lps.toml"); }, 1000}}, 0.1);
+    testGraph.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water-with-lps.toml"); }, 1000}},
+                                  0.1);
     testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("xyz/water1000-phantom.xyz", CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
 
