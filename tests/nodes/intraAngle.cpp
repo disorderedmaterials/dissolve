@@ -17,7 +17,7 @@ TEST(IntraAngleNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water.toml"); }, 267}}, 0.1);
+    testGraph.createConfiguration("Box", {{[]() { return loadTOMLSpecies("species/water-dlpoly.toml"); }, 267}}, 0.1);
 
     // Create iterable graph
     ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));
@@ -52,7 +52,7 @@ TEST(IntraAngleNodeTest, Water)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         intraAngle->intraAngleData(), "A(H1-O-H2)//Angle(ABC)",
         {"dlpoly/water267-analysis/water-267-298K.01-02-03.ijk", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3},
-        6.0e-4));
+        2.0e-4));
 }
 
 } // namespace UnitTest
