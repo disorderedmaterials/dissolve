@@ -90,7 +90,7 @@ TEST(GRNodeTest, WaterMethanol)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 300}, {"species/methanol.toml", 600}}, 0.1));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure","epsr25/water300methanol600/watermeth.ato"));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water300methanol600/watermeth.ato"));
 
     // Add correlation function nodes
     auto &&[grNode, _] = testGraph.appendGRSQ(false, true);

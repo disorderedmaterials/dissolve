@@ -54,9 +54,8 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(root->addEdge({"CIFBonds", "CIFContext", "Crystal", "CIFContext"}));
 
         // Import coordinates
-        ASSERT_TRUE(testGraph_.appendImportCoordinates(
-            CoordinateImportFileFormat("epsr25/mgo500-555/mgo.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR),
-            true));
+        ASSERT_TRUE(
+            testGraph_.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/mgo500-555/mgo.ato", "SupercellConfiguration"));
 
         // Add correlation function nodes
         auto &&[grNode, sqNode] = testGraph_.appendGRSQ(false, true);
