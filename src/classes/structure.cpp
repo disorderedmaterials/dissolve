@@ -13,7 +13,10 @@ Structure &Structure::operator=(const Structure &source)
     clear();
 
     for (auto &atom : source.atoms_)
-        atoms_.emplace_back(std::make_unique<StructureAtom>())->set(atom->Z(), atom->r(), atom->q());
+    {
+        auto &i = atoms_.emplace_back(std::make_unique<StructureAtom>());
+        i->copy(*atom);
+    }
 
     for (auto &bond : source.bonds_)
         addBond(bond->i()->index(), bond->j()->index());
@@ -40,18 +43,27 @@ void Structure::renumberAtoms() const
         i->setIndex(count++);
 }
 
-// Add a new atom to the Species, returning its index
+// Add a new atom
 StructureAtom *Structure::addAtom(Elements::Element Z, Vector3 r, double q)
 {
     auto &i = atoms_.emplace_back(std::make_unique<StructureAtom>());
-    i->set(Z, r, q);
+    i->Atom::set(Z, r, q);
+
+    i->setIndex(atoms_.size() - 1);
+
+    return i.get();
+}
+StructureAtom *Structure::addAtom(const std::string &name, Vector3 r, double q)
+{
+    auto &i = atoms_.emplace_back(std::make_unique<StructureAtom>());
+    i->set(name, r, q);
 
     i->setIndex(atoms_.size() - 1);
 
     return i.get();
 }
 
-// Remove the specified atom from the species
+// Remove the specified atom
 void Structure::removeAtom(const StructureAtom *atom)
 {
     auto bonds = atom->bonds();
@@ -83,7 +95,7 @@ void Structure::removeAtoms(const std::vector<const StructureAtom *> &atomsToRem
     renumberAtoms();
 }
 
-// Return the number of atoms in the species (or only those with the specified presence)
+// Return the number of atoms in the structure (or only those with the specified presence)
 int Structure::nAtoms(Atom::Presence withPresence) const
 {
     return withPresence == Atom::Presence::Any ? atoms_.size()

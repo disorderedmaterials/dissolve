@@ -15,10 +15,26 @@ class StructureBond;
 class StructureAtom : public Atom
 {
     private:
+    // Identifying name string
+    std::string name_;
     // Bonds to this atom
     std::vector<StructureBond *> bonds_;
 
     public:
+    // Copy the specified atom's data
+    void copy(const StructureAtom &other)
+    {
+        name_ = other.name_;
+        Z_ = other.Z_;
+        r_ = other.r_;
+        q_ = other.q_;
+    }
+    // Set with name, and assume no element for now
+    void set(const std::string &name, Vector3 r, double q = 0.0)
+    {
+        name_ = name;
+        Atom::set(Elements::Unknown, r, q);
+    }
     // Return bonds to this atom
     const std::vector<StructureBond *> &bonds() const { return bonds_; }
     // Add a bond to this atom
@@ -89,6 +105,7 @@ class Structure : public Serialisable<>
     public:
     // Add a new atom
     StructureAtom *addAtom(Elements::Element Z, Vector3 r, double q = 0.0);
+    StructureAtom *addAtom(const std::string &name, Vector3 r, double q = 0.0);
     // Remove the specified atom
     void removeAtom(const StructureAtom *atom);
     // Remove a number of atoms
