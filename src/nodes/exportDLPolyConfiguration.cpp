@@ -27,7 +27,6 @@ std::string_view ExportDLPolyConfiguration::summary() const
 
 NodeConstants::ProcessResult ExportDLPolyConfiguration::process()
 {
-
     auto path = filePath_;
     if (tagWithIteration_)
         path = std::format("{}.{}", path, iteration_);
