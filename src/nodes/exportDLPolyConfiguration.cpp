@@ -22,7 +22,7 @@ std::string_view ExportDLPolyConfiguration::type() const { return "ExportDLPolyC
 
 std::string_view ExportDLPolyConfiguration::summary() const
 {
-    return "Export configuration coordinates from sequential frames of a coordinates in DLPoly format.";
+    return "Export a configuration in DL_POLY format";
 }
 
 NodeConstants::ProcessResult ExportDLPolyConfiguration::process()
