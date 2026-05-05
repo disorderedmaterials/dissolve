@@ -48,9 +48,8 @@ TEST(PhantomAtomsTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/water-with-lps.toml", 1000}}, 0.1);
-    testGraph.appendImportCoordinates(
-        CoordinateImportFileFormat("xyz/water1000-phantom.xyz", CoordinateImportFileFormat::CoordinateImportFormat::XYZ));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water-with-lps.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/water1000-phantom.xyz"));
 
     // Add correlation function nodes
     auto &&[grNode, sqNode] = testGraph.appendGRSQ(false, true);

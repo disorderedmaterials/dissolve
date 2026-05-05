@@ -29,6 +29,7 @@
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/importConfigurationTrajectory.h"
 #include "nodes/importDLPolyStructure.h"
+#include "nodes/importXYZStructure.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/intraAngle.h"
@@ -95,6 +96,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
                   {"ImportConfigurationTrajectory", makeDerivedNode<ImportConfigurationTrajectoryNode>()},
                   {"ImportDLPolyStructure", makeDerivedNode<ImportDLPolyStructureNode>()},
+                  {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
