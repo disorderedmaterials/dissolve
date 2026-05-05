@@ -16,12 +16,6 @@ class ExportXYZConfiguration : public Node
     ExportXYZConfiguration(Graph *parentGraph);
     ~ExportXYZConfiguration() override = default;
 
-    enum class CoordinateExportFormat
-    {
-        XYZ,
-        DLPOLY
-    };
-
     /*
      * Definition
      */
