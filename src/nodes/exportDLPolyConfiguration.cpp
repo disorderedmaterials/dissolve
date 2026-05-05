@@ -18,7 +18,7 @@ ExportDLPolyConfiguration::ExportDLPolyConfiguration(Graph *parentGraph) : Node(
                     tagWithIteration_);
 }
 
-std::string_view ExportDLPolyConfiguration::type() const { return "ExportCoordinates"; }
+std::string_view ExportDLPolyConfiguration::type() const { return "ExportDLPolyConfiguration"; }
 
 std::string_view ExportDLPolyConfiguration::summary() const
 {
