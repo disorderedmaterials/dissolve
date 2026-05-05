@@ -34,7 +34,7 @@ class ExportXYZConfiguration : public Node
     // Target configuration
     Configuration *configuration_{nullptr};
     // Iteration count
-    int iteration_ = 1;
+    int iteration_{1};
 
     /*
      * Processing
