@@ -18,7 +18,7 @@ ExportXYZConfiguration::ExportXYZConfiguration(Graph *parentGraph) : Node(parent
     addSerialisable("Iteration", iteration_);
 }
 
-std::string_view ExportXYZConfiguration::type() const { return "ExportCoordinates"; }
+std::string_view ExportXYZConfiguration::type() const { return "ExportXYZConfiguration"; }
 
 std::string_view ExportXYZConfiguration::summary() const
 {
