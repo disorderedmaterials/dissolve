@@ -10,7 +10,7 @@
 ExportDLPolyConfiguration::ExportDLPolyConfiguration(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration from which Coordinates will be exported", configuration_);
+    addInput<Configuration *>("Configuration", "Configuration to be exported", configuration_);
 
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
