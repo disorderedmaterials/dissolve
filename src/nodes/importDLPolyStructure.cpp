@@ -18,6 +18,17 @@ std::string_view ImportDLPolyStructureNode::summary() const { return "Import a D
 
 NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
 {
+    // Open file and check that we're OK to proceed importing from it
+    LineParser parser;
+    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+        return error("Couldn't open file '{}' for loading coordinates data.\n", filePath_);
+
+    return read(parser, structure_);
+}
+
+// Read structure from the specified file parser
+NodeConstants::ProcessResult ImportDLPolyStructureNode::read(LineParser &parser, Structure &structure)
+{
     /*
      * Import DL_POLY coordinates information through the specified line parser.
      * We assume CONFIG or REVCON format:
@@ -32,12 +43,7 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
      *   ...
      */
 
-    structure_.clear();
-
-    // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
-        return error("Couldn't open file '{}' for loading coordinates data.\n", filePath_);
+    structure.clear();
 
     // Skip title
     if (parser.skipLines(1) != LineParser::Success)
@@ -69,7 +75,7 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
         auto m3 = parser.arg3d(0);
-        structure_.createBox(Matrix3(m1, m2, m3));
+        structure.createBox(Matrix3(m1, m2, m3));
     }
 
     // Loop over atoms (either a specified number, or until we reach the end of the file
@@ -80,10 +86,10 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
             return NodeConstants::ProcessResult::Failed;
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
-        structure_.addAtom(Elements::Unknown, parser.arg3d(0));
+        structure.addAtom(Elements::Unknown, parser.arg3d(0));
         if (parser.skipLines(keytrj) != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
-        if ((nAtoms > 0) && (structure_.nAtoms() == nAtoms))
+        if ((nAtoms > 0) && (structure.nAtoms() == nAtoms))
             break;
     }
 
