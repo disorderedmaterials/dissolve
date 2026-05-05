@@ -20,10 +20,7 @@ ExportDLPolyConfiguration::ExportDLPolyConfiguration(Graph *parentGraph) : Node(
 
 std::string_view ExportDLPolyConfiguration::type() const { return "ExportDLPolyConfiguration"; }
 
-std::string_view ExportDLPolyConfiguration::summary() const
-{
-    return "Export a configuration in DL_POLY format";
-}
+std::string_view ExportDLPolyConfiguration::summary() const { return "Export a configuration in DL_POLY format"; }
 
 NodeConstants::ProcessResult ExportDLPolyConfiguration::process()
 {
