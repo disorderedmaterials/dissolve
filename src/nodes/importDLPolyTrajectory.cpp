@@ -2,17 +2,15 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importDLPolyTrajectory.h"
+#include "nodes/importDLPolyStructure.h"
 
 ImportDLPolyTrajectoryNode::ImportDLPolyTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {
-    // Inputs
-    addInput<Configuration *>("Configuration", "Configuration to which Trajectory will be imported", configuration_);
-
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
+    addOutput<Structure>("Structure", "Imported structure", structure_);
 
     // Serialisable data
     // addSerialisable("filePosition", filePosition_);
@@ -27,16 +25,13 @@ std::string_view ImportDLPolyTrajectoryNode::summary() const
 
 NodeConstants::ProcessResult ImportDLPolyTrajectoryNode::process()
 {
-    TrajectoryImportFileFormat format(filePath_, format_);
-
-    message("Import: Reading trajectory file frame from '{}' into Configuration '{}'...\n", format.filename(),
-            configuration_->name());
+    message("Reading DL_POLY trajectory file frame from '{}'...\n", filePath_);
 
     // Open the file
     LineParser parser;
-    if ((!parser.openInput(format.filename())) || (!parser.isFileGoodForReading()))
+    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
     {
-        error("Couldn't open trajectory file '{}'.\n", format.filename());
+        error("Couldn't open trajectory file '{}'.\n", filePath_);
         return NodeConstants::ProcessResult::Failed;
     }
 
@@ -44,21 +39,5 @@ NodeConstants::ProcessResult ImportDLPolyTrajectoryNode::process()
     parser.seekg(filePosition_);
 
     // Read the frame
-    std::optional<Matrix3> unitCell;
-    if (!format.importData(parser, configuration_, unitCell))
-    {
-        error("Failed to read trajectory frame data.\n");
-        return NodeConstants::ProcessResult::Failed;
-    }
-
-    configuration_->notifyAtomicPositionsChanged();
-
-    // Store the new trajectory file position
-    filePosition_ = parser.tellg();
-
-    // Set the unit cell if one was read in
-    if (unitCell)
-        configuration_->createBox(unitCell.value());
-
-    return NodeConstants::ProcessResult::Success;
+    return ImportDLPolyStructureNode::read(parser, structure_);
 }

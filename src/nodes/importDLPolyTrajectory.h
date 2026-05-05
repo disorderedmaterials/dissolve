@@ -3,12 +3,9 @@
 
 #pragma once
 
-#include "nodes/importDLPolyStructure.h"
+#include "classes/structure.h"
 #include "nodes/node.h"
 #include <iostream>
-
-// Forward Declarations
-class Configuration;
 
 class ImportDLPolyTrajectoryNode : public Node
 {
@@ -31,8 +28,8 @@ class ImportDLPolyTrajectoryNode : public Node
     std::string filePath_;
     // Last read file position
     std::streampos filePosition_;
-    // Target configuration
-    Configuration *configuration_{nullptr};
+    // Structure
+    Structure structure_;
 
     /*
      * Processing
