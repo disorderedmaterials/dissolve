@@ -315,6 +315,10 @@ double SpeciesBond::force(double distance) const
                          BondFunctions::forms().keyword(bondForm));
 }
 
+/*
+ * Serialisation
+ */
+
 // Express as a serialisable value
 void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 {

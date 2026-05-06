@@ -3,6 +3,10 @@
 
 #include "classes/atom.h"
 
+/*
+ * Properties
+ */
+
 // Set basic properties
 void Atom::set(Elements::Element Z, const Vector3 &r, double q)
 {
@@ -22,6 +26,12 @@ void Atom::setZ(Elements::Element z) { Z_ = z; }
 
 // Return atomic element
 Elements::Element Atom::Z() const { return Z_; }
+
+// Return presence of atom
+Atom::Presence Atom::presence() const { return Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical; }
+
+// Return whether the atom is of the presence specified
+bool Atom::isPresence(Presence presenceType) const { return presenceType == Presence::Any || presence() == presenceType; }
 
 // Set atomic charge
 void Atom::setQ(double q) { q_ = q; }
@@ -48,3 +58,21 @@ int Atom::atomTypeIndex() const { return atomTypeIndex_; }
 void Atom::operator+=(const Vector3 &delta) { r_ += delta; }
 
 void Atom::operator-=(const Vector3 &delta) { r_ -= delta; }
+
+/*
+ * Serialisation
+ */
+
+// Express as a serialisable value
+void Atom::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
+}
+
+// Read values from a serialisable value
+void Atom::deserialise(const SerialisedValue &node)
+{
+    index_ = toml::find<int>(node, "index");
+
+    set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "q", 0));
+}

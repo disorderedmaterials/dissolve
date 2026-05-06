@@ -24,9 +24,6 @@ void ConfigurationAtom::setSpeciesAtom(const SpeciesAtom *spAtom) { speciesAtom_
 // Return SpeciesAtom that this Atom represents
 const SpeciesAtom *ConfigurationAtom::speciesAtom() const { return speciesAtom_; }
 
-// Return whether the atom's presence is that specified
-bool ConfigurationAtom::isPresence(SpeciesAtom::Presence presence) const { return speciesAtom_->isPresence(presence); }
-
 // Set Molecule in which this Atom exists
 void ConfigurationAtom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ = std::move(mol); }
 

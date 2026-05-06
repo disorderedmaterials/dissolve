@@ -7,7 +7,7 @@
 #include "math/vector3.h"
 
 // Basic Atom
-class Atom
+class Atom : public Serialisable<>
 {
     public:
     Atom() = default;
@@ -16,6 +16,15 @@ class Atom
     /*
      * Properties
      */
+    public:
+    // Presence
+    enum class Presence
+    {
+        Phantom = -1,
+        Physical,
+        Any
+    };
+
     protected:
     // Coordinates
     Vector3 r_;
@@ -30,7 +39,7 @@ class Atom
 
     public:
     // Set basic properties
-    virtual void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
+    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
     // Set coordinates
     void setR(const Vector3 &r);
     // Return coordinates
@@ -39,6 +48,10 @@ class Atom
     void setZ(Elements::Element z);
     // Return atomic element
     Elements::Element Z() const;
+    // Return presence of atom
+    Presence presence() const;
+    // Return whether the atom is of the presence specified
+    bool isPresence(Presence presence) const;
     // Set atomic charge
     void setQ(double q);
     // Return atomic charge
@@ -58,4 +71,13 @@ class Atom
     public:
     void operator+=(const Vector3 &delta);
     void operator-=(const Vector3 &delta);
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

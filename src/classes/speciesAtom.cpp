@@ -30,7 +30,6 @@ void SpeciesAtom::move(SpeciesAtom &source)
     atomType_ = source.atomType_;
     selected_ = source.selected_;
     index_ = source.index_;
-    presence_ = source.presence_;
 
     bonds_ = std::move(source.bonds_);
     angles_ = std::move(source.angles_);
@@ -64,24 +63,8 @@ void SpeciesAtom::move(SpeciesAtom &source)
  * Properties
  */
 
-void SpeciesAtom::set(Elements::Element Z, const Vector3 &r, double q)
-{
-    Atom::set(Z, r, q);
-
-    presence_ = Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
-}
-
 // Return parent Species
 Species *SpeciesAtom::parent() const { return parent_; }
-
-// Return presence of atom
-SpeciesAtom::Presence SpeciesAtom::presence() const { return presence_; }
-
-// Return whether the atom is of the presence specified
-bool SpeciesAtom::isPresence(SpeciesAtom::Presence presence) const
-{
-    return presence == SpeciesAtom::Presence::Any || presence_ == presence;
-}
 
 // Set AtomType of SpeciesAtom
 void SpeciesAtom::setAtomType(const AtomType *at)
@@ -375,72 +358,9 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
 // Return whether the specified SpeciesAtom exists in the specified geometry
 bool SpeciesAtom::isGeometry(const SpeciesAtom *i, AtomGeometry geom) { return geometry(i) == geom; }
 
-// Guess and return oxidation state for the specified SpeciesAtom
-int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
-{
-    /*
-     * Approximate the OS of the supplied atom by considering its local environment.
-     * We won't consider the whole molecule, and will assume the following rules in addition to the standard:
-     *   - A singly-bound Oxygen is considered to be -1 (which effectively includes it's 'R' group
-     *   - An R-group is considered to be +1
-     */
-    auto osBound = 0;
-
-    // Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments
-    // (OS == 0)
-    auto nSameElement = 0;
-
-    const auto &bonds = i->bonds();
-    for (const SpeciesBond &bond : bonds)
-    {
-        auto Z = bond.partner(i)->Z();
-        switch (Z)
-        {
-            // Group 1A - Alkali earth metals (includes Hydrogen)
-            case (Elements::H):
-            case (Elements::Li):
-            case (Elements::Na):
-            case (Elements::K):
-            case (Elements::Rb):
-            case (Elements::Cs):
-            case (Elements::Fr):
-                osBound += 1;
-                break;
-                // Group 2A - Alkaline earth metals
-            case (Elements::Be):
-            case (Elements::Mg):
-            case (Elements::Ca):
-            case (Elements::Sr):
-            case (Elements::Ba):
-            case (Elements::Ra):
-                osBound += 1;
-                break;
-                // Oxygen
-            case (Elements::O):
-                if (bond.bondType() == SpeciesBond::DoubleBond)
-                    osBound -= 2;
-                else
-                    osBound -= 1;
-                break;
-                // Halogens (F, Cl, Br, I)
-            case (Elements::F):
-            case (Elements::Cl):
-            case (Elements::Br):
-            case (Elements::I):
-                osBound -= 1;
-                break;
-            default:
-                break;
-        }
-
-        // Check for same element
-        if (Z == i->Z())
-            ++nSameElement;
-    }
-
-    // Return the negative of the bound OS, or zero if we were only bound to the same element as ourselves
-    return (nSameElement == i->nBonds() ? 0 : -osBound);
-}
+/*
+ * Serialisation
+ */
 
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const

@@ -24,8 +24,8 @@ ConfigurationAtom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const s
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
     molecule->addAtom(&newAtom);
 
-    // Set the position
-    newAtom.setR(r);
+    // Set basic data
+    newAtom.set(sourceAtom->Z(), r);
 
     return newAtom;
 }
@@ -343,7 +343,7 @@ void Configuration::updateTypeIndexing()
     // Loop over atoms
     for (auto &atom : atoms_)
     {
-        if (atom.speciesAtom()->isPresence(SpeciesAtom::Presence::Physical))
+        if (atom.isPresence(Atom::Presence::Physical))
             atom.setAtomTypeIndex(typeMap[atom.speciesAtom()->atomType()]);
         else
             atom.setAtomTypeIndex(AtomType::Ignore);

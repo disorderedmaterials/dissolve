@@ -20,7 +20,7 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Atom, Serialisable<>
+class SpeciesAtom : public Atom
 {
     public:
     SpeciesAtom(Species *parent);
@@ -36,15 +36,6 @@ class SpeciesAtom : public Atom, Serialisable<>
     /*
      * Properties
      */
-    public:
-    // Presence
-    enum class Presence
-    {
-        Phantom = -1,
-        Physical,
-        Any
-    };
-
     private:
     // Parent Species
     Species *parent_{nullptr};
@@ -52,18 +43,10 @@ class SpeciesAtom : public Atom, Serialisable<>
     const AtomType *atomType_{nullptr};
     // Whether the atom is currently selected
     bool selected_{false};
-    // Presence of atom
-    Presence presence_{Presence::Physical};
 
     public:
-    // Set basic properties
-    void set(Elements::Element Z, const Vector3 &r, double q = 0.0) override;
     // Return parent Species
     Species *parent() const;
-    // Return presence of atom
-    Presence presence() const;
-    // Return whether the atom is of the presence specified
-    bool isPresence(SpeciesAtom::Presence presence) const;
     // Set AtomType of Atom
     void setAtomType(const AtomType *at);
     // Return AtomType of Atom
@@ -176,9 +159,11 @@ class SpeciesAtom : public Atom, Serialisable<>
     static AtomGeometry geometry(const SpeciesAtom *i);
     // Return whether the specified SpeciesAtom exists in the specified geometry
     static bool isGeometry(const SpeciesAtom *i, AtomGeometry geom);
-    // Guess and return oxidation state for the specified SpeciesAtom
-    static int guessOxidationState(const SpeciesAtom *i);
 
+    /*
+     * Serialisation
+     */
+    public:
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
