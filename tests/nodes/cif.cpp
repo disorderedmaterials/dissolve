@@ -106,7 +106,7 @@ TEST_F(CIFNodeTest, Parse)
 {
     // Test files with expected number of structure atoms
     std::vector<std::pair<std::string, int>> cifs = {{"1557470.cif", 86}, {"1557599.cif", 56}, {"7705246.cif", 364},
-                                                      {"9000004.cif", 6},  {"9000095.cif", 30}, {"9000418.cif", 64}};
+                                                     {"9000004.cif", 6},  {"9000095.cif", 30}, {"9000418.cif", 64}};
 
     for (auto &[cif, nStructureAtoms] : cifs)
     {
