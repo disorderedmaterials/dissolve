@@ -84,12 +84,6 @@ EndConfiguration
 Layer  'Evolve (Atomic)'
   Frequency  1
 
-  Module  AtomShake  'AtomShake01'
-    Frequency  1
-
-    Configuration  'Bulk'
-  EndModule
-
   Module  MD  'MD01'
     Frequency  5
 

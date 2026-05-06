@@ -3,7 +3,6 @@
 
 #include "modules/registry.h"
 #include "modules/accumulate/accumulate.h"
-#include "modules/atomShake/atomShake.h"
 #include "modules/avgMol/avgMol.h"
 #include "modules/axisAngle/axisAngle.h"
 #include "modules/bragg/bragg.h"
@@ -41,7 +40,6 @@ ModuleRegistry::ModuleRegistry()
 {
     registerProducer<AccumulateModule>(ModuleTypes::Accumulate, "Accumulate partials data to form an average",
                                        "Correlation Functions");
-    registerProducer<AtomShakeModule>(ModuleTypes::AtomShake, "Perform atomic Monte Carlo on all atoms", "Evolution");
     registerProducer<AvgMolModule>(ModuleTypes::AvgMol,
                                    "Calculate average atomic positions of a species around an oriented site", "Analysis");
     registerProducer<AxisAngleModule>(ModuleTypes::AxisAngle, "Calculate distance/angle map between site axes", "Analysis");
