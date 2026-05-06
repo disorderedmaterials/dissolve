@@ -14,8 +14,8 @@
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/neutronSQ/neutronSQ.h"
-#include "nodes/species.h"
 #include "nodes/setCoordinates.h"
+#include "nodes/species.h"
 #include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include <gtest/gtest.h>
