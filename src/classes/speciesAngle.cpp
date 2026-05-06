@@ -293,6 +293,10 @@ double SpeciesAngle::force(double theta) const
                          AngleFunctions::forms().keyword(angleForm));
 }
 
+/*
+ * Serialisation
+ */
+
 // Express as a serialisable value
 void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
 {
@@ -305,8 +309,8 @@ void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
     if (k_ != nullptr)
         angle["k"] = k_->userIndex();
 }
-// This method populates the object's members with values read from an 'angle' TOML node
+// Read values from a serialisable value
 void SpeciesAngle::deserialise(const SerialisedValue &node)
 {
-    deserialiseForm(node, [&](auto &form) { return parent_->getCommonAngle(form); });
+    SpeciesIntra<SpeciesAngle, AngleFunctions>::deserialise(node, [&](auto &form) { return parent_->getCommonAngle(form); });
 }

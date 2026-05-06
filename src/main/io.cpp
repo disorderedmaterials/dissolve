@@ -176,7 +176,7 @@ void Dissolve::serialise(std::string tag, SerialisedValue &target) const
     Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 }
 
-// This method populates the object's members with values read from a 'pairPotentials' TOML node
+// Read pair potentials from a serialisable value
 void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 {
     PairPotential::setRange(toml::find_or<double>(node, "range", 15.0), toml::find_or<double>(node, "delta", 0.005));

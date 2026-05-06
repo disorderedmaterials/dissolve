@@ -218,6 +218,10 @@ double SpeciesImproper::force(double phi) const
     return SpeciesTorsion::force(phi, interactionForm(), interactionParameters());
 }
 
+/*
+ * Serialisation
+ */
+
 // Express as a serialisable value
 void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
 {
@@ -233,8 +237,9 @@ void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
         improper["l"] = l_->userIndex();
 }
 
-// This method populates the object's members with values read from an 'improper' TOML node
+// Read values from a serialisable value
 void SpeciesImproper::deserialise(const SerialisedValue &node)
 {
-    deserialiseForm(node, [&](auto &form) { return parent_->getCommonImproper(form); });
+    SpeciesIntra<SpeciesImproper, TorsionFunctions>::deserialise(node,
+                                                                 [&](auto &form) { return parent_->getCommonImproper(form); });
 }
