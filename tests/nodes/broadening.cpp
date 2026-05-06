@@ -13,8 +13,7 @@ TEST(BroadeningTest, ArgonBroadening)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(
-        testGraph.createConfiguration("Box", {{[] { return TestGraph::createAtomicSpecies(Elements::Ar); }, 10000}}, 0.0213));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 10000}}, 0.0213));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
 

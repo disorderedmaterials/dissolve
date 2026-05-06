@@ -55,16 +55,28 @@ class TestGraph : public DissolveGraph
         return node;
     }
     // Create species insertion node chain
-    Node *createAndInsertSpecies(Node *cfgSourceNode,
-                                 const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
-                                 double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
+    Node *createAndInsertSpecies(Node *cfgSourceNode, const std::vector<std::pair<std::string, int>> &species, double rho,
+                                 Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
                                  InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
         // Add Species and Insert nodes
-        for (auto &[speciesCreator, population] : species)
+        for (auto &[speciesString, population] : species)
         {
             // Create the species node and get the species pointer
-            auto speciesUnique = speciesCreator();
+            std::unique_ptr<SpeciesNode> speciesUnique;
+            if (speciesString.ends_with(".toml"))
+                speciesUnique = loadTOMLSpecies(speciesString);
+            else
+            {
+                if (speciesString.find('|') == std::string::npos)
+                    speciesUnique =
+                        createAtomicSpecies(Elements::element(speciesString), {ShortRangeFunctions::Form::Undefined});
+                else
+                    speciesUnique = createAtomicSpecies(
+                        Elements::element(DissolveSys::beforeChar(speciesString, '|')),
+                        {ShortRangeFunctions::Form::LennardJones, DissolveSys::afterChar(speciesString, '|')});
+            }
+            EXPECT_TRUE(speciesUnique);
             auto &speciesNode = speciesUnique->species();
 
             // Move the species node into the graph
@@ -130,9 +142,8 @@ class TestGraph : public DissolveGraph
         return speciesNodeUniquePtr;
     }
     // Create basic configuration graph, returning the last node
-    Node *createConfiguration(std::string name,
-                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
-                              double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
+    Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species, double rho,
+                              Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
     {
         // Create configuration and SetCell nodes
         EXPECT_TRUE(appendNode("Configuration", name));
@@ -144,8 +155,7 @@ class TestGraph : public DissolveGraph
     }
 
     // Create basic configuration graph, returning the last node
-    Node *createConfiguration(std::string name,
-                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
+    Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
                               const Vector3 &cellLengths, const Vector3 &cellAngles = {90.0, 90.0, 90.0})
     {
         // Create configuration and SetCell nodes

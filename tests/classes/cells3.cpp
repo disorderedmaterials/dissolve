@@ -26,15 +26,8 @@ class CellsEnergyTest : public ::testing::Test
     // Set up graph
     Configuration *setUp(const Vector3 &lengths, const Vector3 &angles, int nMolecules, std::string referenceCoordinates)
     {
-        EXPECT_TRUE(testGraph_.createConfiguration("Box",
-                                                   {{[]()
-                                                     {
-                                                         return TestGraph::createAtomicSpecies(
-                                                             Elements::Ar, {ShortRangeFunctions::Form::LennardJones,
-                                                                            "epsilon=0.774040 sigma=3.445996"});
-                                                     },
-                                                     nMolecules}},
-                                                   lengths, angles));
+        EXPECT_TRUE(
+            testGraph_.createConfiguration("Box", {{"Ar|epsilon=0.774040 sigma=3.445996", nMolecules}}, lengths, angles));
         EXPECT_TRUE(testGraph_.appendImportCoordinates(
             CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 

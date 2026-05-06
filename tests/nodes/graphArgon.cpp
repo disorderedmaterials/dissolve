@@ -15,7 +15,7 @@ TEST(GraphArgonTest, InitSimulation)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{[] { return TestGraph::createAtomicSpecies(Elements::Ar); }, 1000}}, 0.0213);
+    testGraph.createConfiguration("Box", {{"Ar", 1000}}, 0.0213);
 
     // Get the Insert node and run the graph
     auto insertNode = testGraph.findNode("Insert-Ar");
@@ -32,8 +32,7 @@ TEST(GraphArgonTest, AllCorrelations)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(
-        testGraph.createConfiguration("Box", {{[] { return TestGraph::createAtomicSpecies(Elements::Ar); }, 1000}}, 0.0213));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 1000}}, 0.0213));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "dissolve2/argon/Ar_bulk_step1000.xyz", CoordinateImportFileFormat::CoordinateImportFormat::XYZ)));
 

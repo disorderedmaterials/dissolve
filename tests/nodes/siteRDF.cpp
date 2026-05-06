@@ -31,8 +31,7 @@ class SiteRDFNodeTest : public ::testing::Test
     void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
     {
         // Create the water configuration
-        testGraph_.createConfiguration("Box", {{[]() { return TestGraph::loadTOMLSpecies("species/water-dlpoly.toml"); }, 267}},
-                                       0.1);
+        testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
         // Add iterator
         EXPECT_TRUE(testGraph_.appendNode("Iterator", "Iterator"));
