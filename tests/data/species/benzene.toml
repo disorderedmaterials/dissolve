@@ -1,0 +1,557 @@
+
+[species]
+name = "Benzene"
+
+[species.atomTypes]
+
+[species.atomTypes.CA]
+z = "C"
+charge = -0.115
+form = "LJGeometric"
+
+[species.atomTypes.CA.parameters]
+epsilon = 0.29288
+sigma = 3.55
+
+[species.atomTypes.HA]
+z = "H"
+charge = 0.115
+form = "LJGeometric"
+
+[species.atomTypes.HA.parameters]
+epsilon = 0.12552
+sigma = 2.42
+
+
+[[species.atoms]]
+index = 1
+z = "C"
+r = [
+-1.20378,
+0.695,
+0.0,
+]
+q = -0.115
+type = "CA"
+[[species.atoms]]
+index = 2
+z = "H"
+r = [
+-2.0698,
+1.195,
+0.0,
+]
+q = 0.115
+type = "HA"
+[[species.atoms]]
+index = 3
+z = "C"
+r = [
+-0.0,
+1.39,
+0.0,
+]
+q = -0.115
+type = "CA"
+[[species.atoms]]
+index = 4
+z = "H"
+r = [
+-0.0,
+2.39,
+0.0,
+]
+q = 0.115
+type = "HA"
+[[species.atoms]]
+index = 5
+z = "C"
+r = [
+1.20378,
+0.695,
+0.0,
+]
+q = -0.115
+type = "CA"
+[[species.atoms]]
+index = 6
+z = "H"
+r = [
+2.0698,
+1.195,
+0.0,
+]
+q = 0.115
+type = "HA"
+[[species.atoms]]
+index = 7
+z = "C"
+r = [
+1.20378,
+-0.695,
+0.0,
+]
+q = -0.115
+type = "CA"
+[[species.atoms]]
+index = 8
+z = "H"
+r = [
+2.0698,
+-1.195,
+0.0,
+]
+q = 0.115
+type = "HA"
+[[species.atoms]]
+index = 9
+z = "C"
+r = [
+-0.0,
+-1.39,
+0.0,
+]
+q = -0.115
+type = "CA"
+[[species.atoms]]
+index = 10
+z = "H"
+r = [
+-0.0,
+-2.39,
+0.0,
+]
+q = 0.115
+type = "HA"
+[[species.atoms]]
+index = 11
+z = "C"
+r = [
+-1.20378,
+-0.695,
+0.0,
+]
+q = -0.115
+type = "CA"
+[[species.atoms]]
+index = 12
+z = "H"
+r = [
+-2.0698,
+-1.195,
+0.0,
+]
+q = 0.115
+type = "HA"
+
+[species.commonBonds]
+
+[species.commonBonds.CA-HA]
+form = "Harmonic"
+
+[species.commonBonds.CA-HA.parameters]
+k = 3071.056
+eq = 1.08
+
+[species.commonBonds.CA-CA]
+form = "Harmonic"
+
+[species.commonBonds.CA-CA.parameters]
+k = 3924.592
+eq = 1.4
+
+
+
+[[species.bonds]]
+common = "CA-HA"
+i = 1
+j = 2
+[[species.bonds]]
+common = "CA-CA"
+i = 1
+j = 3
+[[species.bonds]]
+common = "CA-HA"
+i = 3
+j = 4
+[[species.bonds]]
+common = "CA-CA"
+i = 3
+j = 5
+[[species.bonds]]
+common = "CA-HA"
+i = 5
+j = 6
+[[species.bonds]]
+common = "CA-CA"
+i = 5
+j = 7
+[[species.bonds]]
+common = "CA-HA"
+i = 7
+j = 8
+[[species.bonds]]
+common = "CA-CA"
+i = 7
+j = 9
+[[species.bonds]]
+common = "CA-HA"
+i = 9
+j = 10
+[[species.bonds]]
+common = "CA-CA"
+i = 9
+j = 11
+[[species.bonds]]
+common = "CA-HA"
+i = 11
+j = 12
+[[species.bonds]]
+common = "CA-CA"
+i = 11
+j = 1
+
+[species.commonAngles]
+
+[species.commonAngles.CA-CA-HA]
+form = "Harmonic"
+
+[species.commonAngles.CA-CA-HA.parameters]
+k = 292.88
+eq = 120.0
+
+[species.commonAngles.CA-CA-CA]
+form = "Harmonic"
+
+[species.commonAngles.CA-CA-CA.parameters]
+k = 527.184
+eq = 120.0
+
+
+
+[[species.angles]]
+common = "CA-CA-HA"
+i = 2
+j = 1
+k = 3
+[[species.angles]]
+common = "CA-CA-HA"
+i = 2
+j = 1
+k = 11
+[[species.angles]]
+common = "CA-CA-CA"
+i = 11
+j = 1
+k = 3
+[[species.angles]]
+common = "CA-CA-HA"
+i = 4
+j = 3
+k = 5
+[[species.angles]]
+common = "CA-CA-HA"
+i = 4
+j = 3
+k = 1
+[[species.angles]]
+common = "CA-CA-CA"
+i = 1
+j = 3
+k = 5
+[[species.angles]]
+common = "CA-CA-HA"
+i = 6
+j = 5
+k = 7
+[[species.angles]]
+common = "CA-CA-HA"
+i = 6
+j = 5
+k = 3
+[[species.angles]]
+common = "CA-CA-CA"
+i = 3
+j = 5
+k = 7
+[[species.angles]]
+common = "CA-CA-HA"
+i = 8
+j = 7
+k = 9
+[[species.angles]]
+common = "CA-CA-HA"
+i = 8
+j = 7
+k = 5
+[[species.angles]]
+common = "CA-CA-CA"
+i = 5
+j = 7
+k = 9
+[[species.angles]]
+common = "CA-CA-HA"
+i = 10
+j = 9
+k = 11
+[[species.angles]]
+common = "CA-CA-HA"
+i = 10
+j = 9
+k = 7
+[[species.angles]]
+common = "CA-CA-CA"
+i = 7
+j = 9
+k = 11
+[[species.angles]]
+common = "CA-CA-HA"
+i = 12
+j = 11
+k = 1
+[[species.angles]]
+common = "CA-CA-HA"
+i = 12
+j = 11
+k = 9
+[[species.angles]]
+common = "CA-CA-CA"
+i = 9
+j = 11
+k = 1
+
+[species.commonTorsions]
+
+[species.commonTorsions.HA-CA-CA-HA]
+form = "Cos3"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.HA-CA-CA-HA.parameters]
+k1 = 0.0
+k2 = 30.334
+k3 = 0.0
+
+[species.commonTorsions.CA-CA-CA-HA]
+form = "Cos3"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.CA-CA-CA-HA.parameters]
+k1 = 0.0
+k2 = 30.334
+k3 = 0.0
+
+
+[species.commonTorsions.CA-CA-CA-CA]
+form = "Cos3"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.CA-CA-CA-CA.parameters]
+k1 = 0.0
+k2 = 30.334
+k3 = 0.0
+
+
+
+[[species.torsions]]
+common = "HA-CA-CA-HA"
+i = 2
+j = 1
+k = 3
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 2
+j = 1
+k = 3
+l = 5
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 1
+j = 3
+k = 5
+l = 6
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-CA"
+i = 1
+j = 3
+k = 5
+l = 7
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HA-CA-CA-HA"
+i = 4
+j = 3
+k = 5
+l = 6
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 4
+j = 3
+k = 5
+l = 7
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 3
+j = 5
+k = 7
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-CA"
+i = 3
+j = 5
+k = 7
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HA-CA-CA-HA"
+i = 6
+j = 5
+k = 7
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 6
+j = 5
+k = 7
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 5
+j = 7
+k = 9
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-CA"
+i = 5
+j = 7
+k = 9
+l = 11
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HA-CA-CA-HA"
+i = 8
+j = 7
+k = 9
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 8
+j = 7
+k = 9
+l = 11
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 7
+j = 9
+k = 11
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-CA"
+i = 7
+j = 9
+k = 11
+l = 1
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HA-CA-CA-HA"
+i = 10
+j = 9
+k = 11
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 10
+j = 9
+k = 11
+l = 1
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 9
+j = 11
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-CA"
+i = 9
+j = 11
+k = 1
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HA-CA-CA-HA"
+i = 12
+j = 11
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 12
+j = 11
+k = 1
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-HA"
+i = 11
+j = 1
+k = 3
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CA-CA-CA-CA"
+i = 11
+j = 1
+k = 3
+l = 5
+q14 = 0.5
+v14 = 0.5
+
+[species.isotopologues]
+
+[species.isotopologues.C6D6]
+CA = 0
+HA = 2
+
+

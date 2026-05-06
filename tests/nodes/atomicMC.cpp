@@ -10,7 +10,6 @@
 #include "nodes/iterableGraph.h"
 #include "nodes/numberNode.h"
 #include "tests/graphData.h"
-#include "tests/speciesData.h"
 #include "tests/testData.h"
 #include <array>
 #include <gtest/gtest.h>
@@ -26,7 +25,7 @@ TEST(AtomShakeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    auto insertNode = testGraph.createConfiguration("Box", {{createWater, 1}}, 0.1);
+    auto insertNode = testGraph.createConfiguration("Box", {{"species/water.toml", 1}}, 0.1);
 
     // Create iterable graph containing an AtomicMCNode
     ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));

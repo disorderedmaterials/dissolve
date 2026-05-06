@@ -31,7 +31,7 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
         species_.addAtom(Elements::C, {1.390000, 0.000000, 0.000000}, -0.2, atC1_);
         species_.addMissingBonds();
         torsion_ = species_.addTorsion(0, 1, 2, 3);
-        species_.setUpScaledInteractions();
+        species_.finaliseGeometry();
 
         // Create a molecule based on the species
         molecule_.setSpecies(&species_);

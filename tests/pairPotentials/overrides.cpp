@@ -13,7 +13,7 @@ TEST(PairPotentialOverridesTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{createWater, 1000}}, 0.1));
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
     ASSERT_TRUE(testGraph.appendImportCoordinates(
         CoordinateImportFileFormat("dlpoly/water1000/CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
 

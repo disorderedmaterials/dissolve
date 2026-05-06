@@ -94,7 +94,7 @@ TEST_F(SubGraphTest, Serialisation){
     //    DissolveGraph copy(d);
     //    auto serialised = root_.serialise();
     //
-    //    SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml");
+    //    SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml"
     //    UnitTest::compareToml("", serialised, contents);
     //
     //    std::cout << serialised << std::endl;

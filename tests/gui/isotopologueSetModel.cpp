@@ -3,18 +3,18 @@
 
 #include "gui/models/isotopologueSetModel.h"
 #include "classes/isotopologueSet.h"
-#include "tests/speciesData.h"
+#include "tests/graphData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
 TEST(IsotopologueSetModelTest, Basic)
 {
-    auto waterNode = createWater();
+    auto waterNode = TestGraph::loadTOMLSpecies("species/water.toml");
     ASSERT_TRUE(waterNode);
     auto &water = waterNode->species();
 
-    auto methanolNode = createMethanol();
+    auto methanolNode = TestGraph::loadTOMLSpecies("species/methanol.toml");
     ASSERT_TRUE(methanolNode);
     auto &methanol = methanolNode->species();
 

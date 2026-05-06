@@ -16,8 +16,7 @@ TEST(CellsTest, Basic)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box",
-                                              {{[]() { return createAtomic(Elements::Ar); }, 1}, {createWaterDLPoly, 267}}, 0.1,
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 1}, {"species/water-dlpoly.toml", 267}}, 0.1,
                                               Units::DensityUnits::AtomsPerAngstromUnits));
     ASSERT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "dlpoly/solvated_atom/solvated-argon-rcut5.CONFIG", CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));

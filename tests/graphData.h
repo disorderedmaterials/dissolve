@@ -14,9 +14,9 @@
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/species.h"
 #include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
-#include "tests/speciesData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -55,16 +55,28 @@ class TestGraph : public DissolveGraph
         return node;
     }
     // Create species insertion node chain
-    Node *insertSpecies(Node *cfgSourceNode,
-                        const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species, double rho,
-                        Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
-                        InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
+    Node *createAndInsertSpecies(Node *cfgSourceNode, const std::vector<std::pair<std::string, int>> &species, double rho,
+                                 Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
+                                 InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
         // Add Species and Insert nodes
-        for (auto &[speciesCreator, population] : species)
+        for (auto &[speciesString, population] : species)
         {
             // Create the species node and get the species pointer
-            auto speciesUnique = speciesCreator();
+            std::unique_ptr<SpeciesNode> speciesUnique;
+            if (speciesString.ends_with(".toml"))
+                speciesUnique = loadTOMLSpecies(speciesString);
+            else
+            {
+                if (speciesString.find('|') == std::string::npos)
+                    speciesUnique =
+                        createAtomicSpecies(Elements::element(speciesString), {ShortRangeFunctions::Form::Undefined});
+                else
+                    speciesUnique = createAtomicSpecies(
+                        Elements::element(DissolveSys::beforeChar(speciesString, '|')),
+                        {ShortRangeFunctions::Form::LennardJones, DissolveSys::afterChar(speciesString, '|')});
+            }
+            EXPECT_TRUE(speciesUnique);
             auto &speciesNode = speciesUnique->species();
 
             // Move the species node into the graph
@@ -86,10 +98,52 @@ class TestGraph : public DissolveGraph
     }
 
     public:
+    // Create and return atomic SpeciesNode
+    static std::unique_ptr<SpeciesNode> createAtomicSpecies(Elements::Element element,
+                                                            InteractionPotential<ShortRangeFunctions> potential = {
+                                                                ShortRangeFunctions::Form::Undefined, ""})
+    {
+        // Add species node
+        auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
+        auto speciesNodePtr = speciesNodeUniquePtr.get();
+        auto species = &speciesNodePtr->species();
+        species->setName(Elements::symbol(element));
+
+        // Set up atom types
+        auto atomType = species->addAtomType(element, Elements::symbol(element));
+        atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
+        species->addAtom(element, {}, 0.0, atomType);
+
+        // Create isotopologues
+        for (auto isotope : Sears91::isotopes(element))
+        {
+            auto iso = species->addIsotopologue(std::format("{}{}", Elements::symbol(element), Sears91::A(isotope)));
+            iso->setAtomTypeIsotope(atomType, isotope);
+        }
+
+        return speciesNodeUniquePtr;
+    }
+    // Create species from TOML file
+    static std::unique_ptr<SpeciesNode> loadTOMLSpecies(std::string_view path)
+    {
+        // Add species node
+        auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
+        auto speciesNodePtr = speciesNodeUniquePtr.get();
+        auto &species = speciesNodePtr->species();
+
+        SerialisedValue contents = toml::parse(std::string(path));
+        if (contents.contains("species"))
+        {
+            species.deserialise(contents["species"]);
+            auto name = contents["species"]["name"].as_string();
+            species.setName(name.str);
+        }
+
+        return speciesNodeUniquePtr;
+    }
     // Create basic configuration graph, returning the last node
-    Node *createConfiguration(std::string name,
-                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
-                              double rho, Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
+    Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species, double rho,
+                              Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
     {
         // Create configuration and SetCell nodes
         EXPECT_TRUE(appendNode("Configuration", name));
@@ -97,12 +151,11 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return insertSpecies(fetchHead(), species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
+        return createAndInsertSpecies(fetchHead(), species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
     }
 
     // Create basic configuration graph, returning the last node
-    Node *createConfiguration(std::string name,
-                              const std::vector<std::pair<std::function<std::unique_ptr<SpeciesNode>()>, int>> &species,
+    Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
                               const Vector3 &cellLengths, const Vector3 &cellAngles = {90.0, 90.0, 90.0})
     {
         // Create configuration and SetCell nodes
@@ -113,8 +166,8 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return insertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
-                             InsertNode::BoxActionStyle::None);
+        return createAndInsertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
+                                      InsertNode::BoxActionStyle::None);
     }
     // Append an import coordinates node
     Node *appendImportCoordinates(CoordinateImportFileFormat fileFormat, bool supercell = false)
@@ -131,7 +184,6 @@ class TestGraph : public DissolveGraph
 
         return head<ImportConfigurationCoordinatesNode>();
     }
-
     // Append GR and SQ nodes
     std::pair<GRNode *, SQNode *> appendGRSQ(bool noAveraging = false, bool noIntraBroadening = false)
     {

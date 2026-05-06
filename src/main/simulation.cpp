@@ -25,8 +25,6 @@ bool Dissolve::prepare()
     {
         if (!sp->checkSetUp())
             return false;
-
-        sp->setUpScaledInteractions();
     }
 
     // Store / update last-used pair potential cutoff
@@ -73,29 +71,6 @@ bool Dissolve::prepare()
     if (coreData_.nConfigurations() == 0)
         for (const auto &sp : coreData_.species())
             globalUsedSpecies.emplace(sp.get());
-
-    // Generate attached atom lists if IntraShake modules are present and enabled
-    auto intraShakeModules = coreData_.allOfType(ModuleTypes::IntraShake);
-    if (!intraShakeModules.empty())
-    {
-        Messenger::print("Generating attached atom lists for required species...");
-        for (auto *module : intraShakeModules)
-        {
-            auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().getConfiguration("Configuration");
-            for (auto &sp : coreData_.species())
-                if (cfg->speciesPopulations().contains(sp.get()) && !sp->attachedAtomListsGenerated())
-                {
-                    Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
-                                     "terms in Species '{}'...\n",
-                                     sp->name());
-                    if (sp->nAtoms() > 500)
-                        Messenger::warn("'{}' is a large molecule - this might take a while! Consider using a "
-                                        "different evolution module.\n",
-                                        sp->name());
-                    sp->generateAttachedAtomLists();
-                }
-        }
-    }
 
     // Set up all modules and return
     return coreData_.setUpProcessingLayerModules(*this);

@@ -22,7 +22,7 @@ TEST(TrajectoryNodesTest, RoundTrip)
     auto inputFormat = TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ;
 
     TestGraph testGraph_;
-    testGraph_.createConfiguration("Box", {{createWaterDLPoly, 267}}, 0.1);
+    testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
     // Create an import configuration trajectory node
     auto trajectoryImport =

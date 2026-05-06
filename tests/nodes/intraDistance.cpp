@@ -16,7 +16,7 @@ TEST(IntraDistanceNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{createWater, 267}}, 0.1);
+    testGraph.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
     // Create iterable graph
     ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));
@@ -65,13 +65,13 @@ TEST(IntraDistanceNodeTest, Water)
 
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         dOH1->rdfAB(), "D(O-H1)//NormalisedHistogram",
-        {"dlpoly/water267-analysis/water-267-298K.01-02.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
+        {"dlpoly/water267-analysis/water-267-298K.01-02.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-5));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         dOH2->rdfAB(), "D(O-H2)//NormalisedHistogram",
-        {"dlpoly/water267-analysis/water-267-298K.02-03.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
+        {"dlpoly/water267-analysis/water-267-298K.02-03.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 7.0e-5));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         dH1H2->rdfAB(), "D(H1-H2)//NormalisedHistogram",
-        {"dlpoly/water267-analysis/water-267-298K.01-03.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 6.0e-4));
+        {"dlpoly/water267-analysis/water-267-298K.01-03.ij", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 3}, 5.0e-5));
 }
 
 } // namespace UnitTest

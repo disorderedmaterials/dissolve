@@ -1,0 +1,236 @@
+
+[species]
+name = "Methanol"
+
+[species.atomTypes]
+
+[species.atomTypes.CT]
+z = "C"
+charge = -0.18
+form = "LJGeometric"
+
+[species.atomTypes.CT.parameters]
+epsilon = 0.276
+sigma = 3.55
+
+[species.atomTypes.HC]
+z = "H"
+charge = 0.06
+form = "LJGeometric"
+
+[species.atomTypes.HC.parameters]
+epsilon = 0.126
+sigma = 2.5
+
+
+[species.atomTypes.OH]
+z = "O"
+charge = -0.68
+form = "LJGeometric"
+
+[species.atomTypes.OH.parameters]
+epsilon = 0.711
+sigma = 3.12
+
+
+[species.atomTypes.HO]
+z = "H"
+charge = 0.68
+form = "LJGeometric"
+
+[species.atomTypes.HO.parameters]
+epsilon = 0.126
+sigma = 2.4
+
+
+[[species.atoms]]
+index = 1
+z = "C"
+r = [
+0.0,
+0.0,
+0.0,
+]
+q = -0.18
+type = "CT"
+[[species.atoms]]
+index = 2
+z = "H"
+r = [
+1.1187,
+0.0,
+0.0,
+]
+q = 0.06
+type = "HC"
+[[species.atoms]]
+index = 3
+z = "O"
+r = [
+-0.3683,
+1.3617,
+0.0,
+]
+q = -0.68
+type = "OH"
+[[species.atoms]]
+index = 4
+z = "H"
+r = [
+-0.3834,
+-0.5181,
+-0.9144,
+]
+q = 0.06
+type = "HC"
+[[species.atoms]]
+index = 5
+z = "H"
+r = [
+-0.3834,
+-0.5177,
+0.9146,
+]
+q = 0.06
+type = "HC"
+[[species.atoms]]
+index = 6
+z = "H"
+r = [
+-1.3318,
+1.3955,
+-0.17,
+]
+q = 0.68
+type = "HO"
+
+[species.commonBonds]
+
+[species.commonBonds.CT-HC]
+form = "Harmonic"
+
+[species.commonBonds.CT-HC.parameters]
+k = 3000.0
+eq = 1.12
+
+[species.commonBonds.CT-OH]
+form = "Harmonic"
+
+[species.commonBonds.CT-OH.parameters]
+k = 3000.0
+eq = 1.41
+
+
+[species.commonBonds.HO-OH]
+form = "Harmonic"
+
+[species.commonBonds.HO-OH.parameters]
+k = 3000.0
+eq = 0.964
+
+
+
+[[species.bonds]]
+common = "CT-HC"
+i = 1
+j = 2
+[[species.bonds]]
+common = "CT-OH"
+i = 1
+j = 3
+[[species.bonds]]
+common = "CT-HC"
+i = 1
+j = 4
+[[species.bonds]]
+common = "CT-HC"
+i = 1
+j = 5
+[[species.bonds]]
+common = "HO-OH"
+i = 3
+j = 6
+
+[species.commonAngles]
+
+[species.commonAngles.HC-CT-OH]
+form = "Harmonic"
+
+[species.commonAngles.HC-CT-OH.parameters]
+k = 300.0
+eq = 109.5
+
+[species.commonAngles.HC-CT-HC]
+form = "Harmonic"
+
+[species.commonAngles.HC-CT-HC.parameters]
+k = 300.0
+eq = 109.5
+
+
+[species.commonAngles.CT-OH-HO]
+form = "Harmonic"
+
+[species.commonAngles.CT-OH-HO.parameters]
+k = 300.0
+eq = 109.5
+
+
+
+[[species.angles]]
+common = "HC-CT-OH"
+i = 2
+j = 1
+k = 3
+[[species.angles]]
+common = "HC-CT-HC"
+i = 2
+j = 1
+k = 4
+[[species.angles]]
+common = "HC-CT-HC"
+i = 2
+j = 1
+k = 5
+[[species.angles]]
+common = "HC-CT-OH"
+i = 3
+j = 1
+k = 4
+[[species.angles]]
+common = "HC-CT-OH"
+i = 3
+j = 1
+k = 5
+[[species.angles]]
+common = "HC-CT-HC"
+i = 4
+j = 1
+k = 5
+[[species.angles]]
+common = "CT-OH-HO"
+i = 6
+j = 3
+k = 1
+
+[species.isotopologues]
+
+[species.isotopologues.Deuteriated]
+CT = 0
+HC = 2
+OH = 0
+HO = 2
+
+[species.isotopologues.MethylD-OH]
+CT = 0
+HC = 2
+OH = 0
+HO = 0
+
+[species.isotopologues.OD-MethylH]
+CT = 0
+HC = 0
+OH = 0
+HO = 2
+
+

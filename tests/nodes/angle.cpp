@@ -16,7 +16,7 @@ TEST(AngleNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{createWater, 267}}, 0.1);
+    testGraph.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
     // Create iterable graph
     ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));
@@ -39,7 +39,7 @@ TEST(AngleNodeTest, Water)
     auto *water = testGraph.findNode("Water")->getOutputValue<const Species *>("Species");
     ASSERT_TRUE(water);
     ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteA", {{water->findSite("O")}}));
-    ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteB", {{water->findSite("H")}}));
+    ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteB", {{water->findSite("H-dyn")}}));
     ASSERT_TRUE(angle->setOption<SpeciesSites>("SiteC", {{water->findSite("O")}}));
     ASSERT_TRUE(angle->setOption<RangedVector3>("RangeAB", {{0.9, 1.1, 0.01}}));
     ASSERT_TRUE(angle->setOption<RangedVector3>("RangeBC", {{0.0, 5.0, 0.01}}));
@@ -54,11 +54,11 @@ TEST(AngleNodeTest, Water)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         angle->rdfBC(), "B-C RDF",
         {"dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", Data1DImportFileFormat::Data1DImportFormat::XY},
-        2.0e-2));
+        4.0e-3));
     EXPECT_TRUE(DissolveSystemTest::checkData1D(angle->angleABC(), "A-B-C angle",
                                                 {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
                                                  Data1DImportFileFormat::Data1DImportFormat::XY},
-                                                6.0e-5));
+                                                3.0e-6));
 }
 
 } // namespace UnitTest

@@ -10,10 +10,6 @@
 #include "templates/algorithms.h"
 #include <algorithm>
 
-/*
- * Public
- */
-
 // Add new SpeciesBond definition
 SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 {
@@ -437,19 +433,24 @@ OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(int i, int 
     return getImproper(&atom(i), &atom(j), &atom(k), &atom(l));
 }
 
-// Set-up excluded / scaled interactions on atoms
-void Species::setUpScaledInteractions()
-{
-    for (auto &i : atoms_)
-        i.setScaledInteractions();
-}
-
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
 
-// Generate attached atom lists for all intramolecular terms
-void Species::generateAttachedAtomLists()
+// Finalise internal relationships related to geometry once it is defined
+void Species::finaliseGeometry()
 {
+    // Set-up excluded / scaled interactions on atoms arising from bonds, angles, and torsions
+    for (auto &i : atoms_)
+        i.setScaledInteractions();
+
+    // If this is a periodic species, we're done
+    if (box_->type() != Box::BoxType::NonPeriodic)
+    {
+        attachedAtomListsGenerated_ = false;
+        return;
+    }
+
+    // Generate attached atom lists for all intramolecular terms
     // Bonds
     for (auto &bond : bonds_)
     {
@@ -558,142 +559,6 @@ void Species::generateAttachedAtomLists()
     }
 
     attachedAtomListsGenerated_ = true;
-}
-
-// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
-void Species::detachFromCommonTerms()
-{
-    for (auto &bond : bonds_)
-        bond.detachFromCommonTerm();
-
-    for (auto &angle : angles_)
-        angle.detachFromCommonTerm();
-
-    for (auto &torsion : torsions_)
-        torsion.detachFromCommonTerm();
-
-    for (auto &improper : impropers_)
-        improper.detachFromCommonTerm();
-}
-
-template <class CommonTerm, class Intra>
-void generateCommonTerm(Intra &term, std::string_view termName,
-                        std::function<OptionalReferenceWrapper<CommonTerm>(std::string_view termName)> termGetter,
-                        std::function<CommonTerm &(std::string_view termName)> termCreator)
-{
-    // Search for an existing master term by this name, or a related one suffixed with a number
-    OptionalReferenceWrapper<CommonTerm> optCommonTerm;
-    auto index = 0;
-    while ((optCommonTerm = termGetter(index == 0 ? termName : std::format("{}_{}", termName, index))))
-    {
-        // Are the parameters the same as our local term?
-        const CommonTerm &common = optCommonTerm->get();
-        if (common.interactionForm() != term.interactionForm() ||
-            common.interactionParameters().size() != term.interactionParameters().size())
-            continue;
-        else
-            for (auto &&[localValue, masterValue] : zip(term.interactionParameters(), common.interactionParameters()))
-                if (fabs(localValue - masterValue) > 1.0e-8)
-                    optCommonTerm = std::nullopt;
-
-        // If the terms are identical, use this one (break out now)
-        if (optCommonTerm)
-            break;
-
-        ++index;
-    }
-
-    // If we no longer have a valid reference, need to create a new term
-    if (!optCommonTerm)
-    {
-        optCommonTerm = termCreator(index == 0 ? termName : std::format("{}_{}", termName, index));
-        optCommonTerm->get().setInteractionFormAndParameters(term.interactionForm(), term.interactionParameters());
-    }
-
-    term.setCommonTerm(&optCommonTerm->get());
-}
-
-// Reduce intramolecular terms to master terms
-void Species::reduceToCommonTerms(CoreData &coreData, bool selectionOnly)
-{
-    // Bonds
-    for (auto &bond : bonds_)
-    {
-        // Selection only?
-        if (selectionOnly && !bond.isSelected())
-            continue;
-
-        // Construct a name for the master term based on the atom types
-        std::vector<std::string_view> names = {bond.i()->atomType()->name(), bond.j()->atomType()->name()};
-        std::sort(names.begin(), names.end());
-        generateCommonTerm<CommonBond>(
-            bond, joinStrings(names, "-"), [&](std::string_view name) { return getCommonBond(name); },
-            [&](auto name) -> CommonBond & { return addCommonBond(name); });
-    }
-
-    // Angles
-    for (auto &angle : angles_)
-    {
-        // Selection only?
-        if (selectionOnly && !angle.isSelected())
-            continue;
-
-        // Construct a name for the master term based on the atom types
-        if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
-            generateCommonTerm<CommonAngle>(
-                angle,
-                std::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
-                            angle.k()->atomType()->name()),
-                [&](std::string_view name) { return getCommonAngle(name); },
-                [&](auto name) -> CommonAngle & { return addCommonAngle(name); });
-        else
-            generateCommonTerm<CommonAngle>(
-                angle,
-                std::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
-                            angle.i()->atomType()->name()),
-                [&](std::string_view name) { return getCommonAngle(name); },
-                [&](auto name) -> CommonAngle & { return addCommonAngle(name); });
-    }
-
-    // Torsions
-    for (auto &torsion : torsions_)
-    {
-        // Selection only?
-        if (selectionOnly && !torsion.isSelected())
-            continue;
-
-        // Construct a name for the master term based on the atom types
-        if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
-            generateCommonTerm<CommonTorsion>(
-                torsion,
-                std::format("{}-{}-{}-{}", torsion.i()->atomType()->name(), torsion.j()->atomType()->name(),
-                            torsion.k()->atomType()->name(), torsion.l()->atomType()->name()),
-                [&](std::string_view name) { return getCommonTorsion(name); },
-                [&](auto name) -> CommonTorsion & { return addCommonTorsion(name); });
-        else
-            generateCommonTerm<CommonTorsion>(
-                torsion,
-                std::format("{}-{}-{}-{}", torsion.l()->atomType()->name(), torsion.k()->atomType()->name(),
-                            torsion.j()->atomType()->name(), torsion.i()->atomType()->name()),
-                [&](std::string_view name) { return getCommonTorsion(name); },
-                [&](auto name) -> CommonTorsion & { return addCommonTorsion(name); });
-    }
-
-    // Impropers
-    for (auto &improper : impropers_)
-    {
-        // Selection only?
-        if (selectionOnly && !improper.isSelected())
-            continue;
-
-        // Construct a name for the master term based on the atom types
-        std::vector<std::string_view> jkl = {improper.j()->atomType()->name(), improper.k()->atomType()->name(),
-                                             improper.l()->atomType()->name()};
-        std::sort(jkl.begin(), jkl.end());
-        generateCommonTerm<CommonImproper>(
-            improper, std::format("{}-{}", improper.i()->atomType()->name(), joinStrings(jkl, "-")), [&](std::string_view name)
-            { return getCommonImproper(name); }, [&](auto name) -> CommonImproper & { return addCommonImproper(name); });
-    }
 }
 
 // Return periodic box
