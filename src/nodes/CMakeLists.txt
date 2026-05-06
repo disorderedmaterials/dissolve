@@ -39,19 +39,15 @@ set(ANTLR_OUTPUT_DIRS
     CACHE INTERNAL ""
 )
 
-add_library(nodes
-  ${node_sources}
-  ${node_headers}
-  ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS}
-  ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS}
+add_library(nodes ${node_sources} ${node_headers} ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS} ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS})
+
+message(
+  STATUS
+    "ANTLR generated products located in the following directories: ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS}, ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS}"
 )
 
-message(STATUS "ANTLR generated products located in the following directories: ${ANTLR_CIFImportGrammarLexer_CXX_OUTPUTS}, ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS}")
-
-target_include_directories(nodes PRIVATE
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_BINARY_DIR}/src
-  ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
-  ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
+target_include_directories(
+  nodes PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
+                ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
 )
 target_link_libraries(nodes PUBLIC base ${THREADING_LINK_LIBS})
