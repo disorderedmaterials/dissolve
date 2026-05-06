@@ -28,11 +28,7 @@ void Atom::setZ(Elements::Element z) { Z_ = z; }
 Elements::Element Atom::Z() const { return Z_; }
 
 // Return presence of atom
-Atom::Presence Atom::presence() const
-{
-    return Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
-    
-}
+Atom::Presence Atom::presence() const { return Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical; }
 
 // Return whether the atom is of the presence specified
 bool Atom::isPresence(Presence presenceType) const { return presenceType == Presence::Any || presence() == presenceType; }
