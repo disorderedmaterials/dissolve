@@ -17,8 +17,6 @@
 #include "modules/gr/gr.h"
 #include "modules/histogramCN/histogramCN.h"
 #include "modules/importTrajectory/importTrajectory.h"
-#include "modules/intraAngle/intraAngle.h"
-#include "modules/intraDistance/intraDistance.h"
 #include "modules/intraShake/intraShake.h"
 #include "modules/md/md.h"
 #include "modules/modifierOSites/modifierOSites.h"
@@ -60,9 +58,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");
-    registerProducer<IntraAngleModule>(ModuleTypes::IntraAngle, "Calculate intramolecular angle between two sites", "Analysis");
-    registerProducer<IntraDistanceModule>(ModuleTypes::IntraDistance, "Calculate intramolecular histogram between two sites",
-                                          "Analysis");
     registerProducer<IntraShakeModule>(ModuleTypes::IntraShake,
                                        "Perform Monte Carlo shakes on intramolecular terms within molecules", "Evolution");
     registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
