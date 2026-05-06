@@ -4,7 +4,7 @@
 #include "classes/structure.h"
 #include "classes/species.h"
 
-Structure::Structure() { box_ = std::make_unique<SingleImageBox>(); }
+Structure::Structure() : box_(std::make_unique<SingleImageBox>()) {}
 
 // Clear Data
 void Structure::clear()
