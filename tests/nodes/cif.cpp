@@ -104,13 +104,17 @@ class CIFNodeTest : public ::testing::Test
 
 TEST_F(CIFNodeTest, Parse)
 {
-    // Test files
-    std::vector<std::string> cifs = {"1557470.cif", "1557599.cif", "7705246.cif", "9000004.cif", "9000095.cif", "9000418.cif"};
+    // Test files with expected number of structure atoms
+    std::vector<std::pair<std::string, int>> cifs = {{"1557470.cif", 86}, {"1557599.cif", 56}, {"7705246.cif", 364},
+                                                      {"9000004.cif", 6},  {"9000095.cif", 30}, {"9000418.cif", 64}};
 
-    for (auto &cif : cifs)
+    for (auto &[cif, nStructureAtoms] : cifs)
     {
         createGraph(cif);
-        ASSERT_EQ(testGraph_.findNode(cifNameFromFile(cif))->run(), NodeConstants::ProcessResult::Success);
+        auto node = testGraph_.findNode(cifNameFromFile(cif));
+        ASSERT_EQ(node->run(), NodeConstants::ProcessResult::Success);
+        const auto structure = node->getOutputValue<Structure *>("Structure");
+        ASSERT_EQ(structure->atoms().size(), nStructureAtoms);
     }
 }
 

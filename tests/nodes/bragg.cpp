@@ -40,11 +40,11 @@ class BraggNodeTest : public ::testing::Test
         // Create species and configuration from MgO cif file
         auto root = testGraph_.dissolveGraph();
 
-        ASSERT_TRUE(testGraph_.appendNode("importCIFStructure", "importCIFStructure"));
+        ASSERT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<std::string>("FilePath", "cif/1000053.cif"));
 
         ASSERT_TRUE(testGraph_.appendNode("CIFBondingOptions", "CIFBonds"));
-        ASSERT_TRUE(root->addEdge({"importCIFStructure", "CIFContext", "CIFBonds", "CIFContext"}));
+        ASSERT_TRUE(root->addEdge({"ImportCIFStructure", "CIFContext", "CIFBonds", "CIFContext"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<bool>("PreventAllBonds", true));
 
         // Create a supercell that is 5 * unitcell
