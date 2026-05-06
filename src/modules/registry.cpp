@@ -14,7 +14,6 @@
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
-#include "modules/exportCoordinates/exportCoordinates.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 #include "modules/forces/forces.h"
 #include "modules/gr/gr.h"
@@ -56,8 +55,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
                                  "Forcefield");
     registerProducer<EPSRManagerModule>(ModuleTypes::EPSRManager, "Manage EPSR modules with more control", "Forcefield");
-    registerProducer<ExportCoordinatesModule>(ModuleTypes::ExportCoordinates,
-                                              "Export coordinates for one or more Configurations", "Export");
     registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");
     registerProducer<ForcesModule>(ModuleTypes::Forces, "Calculate the total atomic forces within a Configuration",
                                    "Forcefield");
