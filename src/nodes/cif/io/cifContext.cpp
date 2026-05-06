@@ -490,6 +490,8 @@ bool CIFContext::createBasicUnitCell()
 
     Messenger::print("Created basic crystal unit cell - {} non-overlapping atoms.\n", unitCellSpecies_.nAtoms());
 
+    createStructure();
+
     return true;
 }
 
@@ -501,23 +503,23 @@ bool CIFContext::createStructure()
     structure_.createBox(box->axisLengths(), box->axisAngles(), box->type() == Box::BoxType::NonPeriodic);
 
     // Add structural atoms
+    std::map<const SpeciesAtom *, StructureAtom *> structureAtomLookUp;
     const auto &atoms = unitCellSpecies_.atoms();
     for (const auto &atom : atoms)
-        structure_.addAtom(atom.Z(), atom.r(), atom.q());
+        structureAtomLookUp.insert_or_assign(&atom, structure_.addAtom(atom.Z(), atom.r(), atom.q()));
 
     // Iterate over newly added structure atom pairs, adding any existing bonds between them if not already present
-    auto pairs = PairIterator(structure_.nAtoms());
-    for (const auto &pair : pairs)
-    {
-        auto [i, j] = pair;
-        auto atomI = structure_.atomAt(i);
-        auto atomJ = structure_.atomAt(j);
+    for (const auto &atom : atoms)
+        for (const auto &bond : atom.bonds())
+        {
+            auto i = structureAtomLookUp[bond.get().i()];
+            auto j = structureAtomLookUp[bond.get().j()];
+            if (!structure_.hasBond(i, j))
+                structure_.addBond(i, j);
+        }
 
-        if (!structure_.hasBond(atomI, atomJ))
-            structure_.addBond(atomI, atomJ);
-    }
-
-    Messenger::print("Created basic structure - {} structure atoms, {} structure bonds found whle parsing the CIF.\n", structure_.nAtoms(),  structure_.bonds().size());
+    Messenger::print("Created basic structure - {} structure atoms, {} structure bonds found whle parsing the CIF.\n",
+                     structure_.nAtoms(), structure_.bonds().size());
 
     return true;
 }

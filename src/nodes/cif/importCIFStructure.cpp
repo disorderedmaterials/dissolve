@@ -34,6 +34,9 @@ NodeConstants::ProcessResult ImportCIFStructureNode::process()
         if (spaceGroup_ != SpaceGroups::NoSpaceGroup)
             context_.setSpaceGroup(spaceGroup_);
 
+        if (!context_.generate())
+            return NodeConstants::ProcessResult::Failed;
+
         structure_ = context_.structure();
 
         return NodeConstants::ProcessResult::Success;
