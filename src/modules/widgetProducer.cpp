@@ -4,8 +4,6 @@
 #include "modules/widgetProducer.h"
 #include "modules/accumulate/accumulate.h"
 // #include "modules/accumulate/gui/accumulateWidget.h"
-#include "modules/angle/angle.h"
-// #include "modules/angle/gui/angleWidget.h"
 #include "modules/atomShake/atomShake.h"
 // #include "modules/atomShake/gui/atomShakeWidget.h"
 #include "modules/avgMol/avgMol.h"
@@ -69,7 +67,6 @@
 ModuleWidgetProducer::ModuleWidgetProducer()
 {
     // registerProducer<AccumulateModule, AccumulateModuleWidget>();
-    // registerProducer<AngleModule, AngleModuleWidget>();
     // registerProducer<AtomShakeModule, AtomShakeModuleWidget>();
     // registerProducer<AvgMolModule, AvgMolModuleWidget>();
     // registerProducer<AxisAngleModule, AxisAngleModuleWidget>();
