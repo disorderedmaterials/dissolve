@@ -31,7 +31,7 @@ Elements::Element Atom::Z() const { return Z_; }
 Atom::Presence Atom::presence() const
 {
     return Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical;
-    ;
+    
 }
 
 // Return whether the atom is of the presence specified
