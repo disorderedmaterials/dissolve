@@ -28,40 +28,29 @@ class SiteRDFNodeTest : public ::testing::Test
 
     protected:
     // Create graph
-    void createGraph(const std::string &trajectoryFilename, TrajectoryImportFileFormat::TrajectoryImportFormat format)
+    void createGraph(const std::string &importTrajectoryNodeType, const std::string &trajectoryFilename)
     {
         // Create the water configuration
         testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
         // Add iterator
-        EXPECT_TRUE(testGraph_.appendNode("Iterator", "Iterator"));
-        iterator_ = testGraph_.head<IterableGraph>();
+        iterator_ = testGraph_.appendTrajectoryIterator(importTrajectoryNodeType, trajectoryFilename);
+        EXPECT_TRUE(iterator_);
 
         // Grab the water species for convenience
         auto waterNode = testGraph_.findNode("Water");
         ASSERT_TRUE(waterNode);
         water_ = waterNode->getOutputValue<const Species *>("Species");
         ASSERT_TRUE(waterNode);
-
-        // Create a dynamic input from the graph's existing Insert node
-        EXPECT_TRUE(testGraph_.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
-
-        // Create an import configuration trajectory node
-        trajectoryImport_ =
-            dynamic_cast<ImportConfigurationTrajectoryNode *>(iterator_->createNode("ImportConfigurationTrajectory"));
-        ASSERT_TRUE(trajectoryImport_);
-        ASSERT_TRUE(trajectoryImport_->setOption<std::string>("FilePath", trajectoryFilename));
-        ASSERT_TRUE(trajectoryImport_->setOption<TrajectoryImportFileFormat::TrajectoryImportFormat>("FileFormat", format));
-        ASSERT_TRUE(iterator_->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"}));
     }
     // Create SiteRDF node
     SiteRDFNode *createSiteRDFNode(std::pair<std::string, std::string> sites, const RangedVector3 &distanceRange,
                                    bool enableSameMolecule)
     {
         auto name = "SiteRDF//" + sites.first + "-" + sites.second;
-        auto siteRDFNode = dynamic_cast<SiteRDFNode *>(iterator_->createNode("SiteRDF", name));
+        auto siteRDFNode = testGraph_.appendNode("SiteRDF", name);
         EXPECT_TRUE(siteRDFNode);
-        EXPECT_TRUE(iterator_->addEdge({"ImportConfigurationTrajectory", "Configuration", name, "Configuration"}));
+        EXPECT_TRUE(iterator_->addEdge({"SetCoordinates", "Configuration", name, "Configuration"}));
 
         auto aSite = water_->findSite(sites.first);
         auto bSite = water_->findSite(sites.second);
@@ -73,13 +62,13 @@ class SiteRDFNodeTest : public ::testing::Test
         EXPECT_TRUE(siteRDFNode->setOption<RangedVector3>("DistanceRange", distanceRange));
         EXPECT_TRUE(siteRDFNode->setOption("ExcludeSameMolecule", enableSameMolecule));
 
-        return siteRDFNode;
+        return testGraph_.head<SiteRDFNode>();
     }
 };
 
 TEST_F(SiteRDFNodeTest, Water)
 {
-    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
+    createGraph("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
 
     auto oORDF = createSiteRDFNode({"O", "O"}, {{0.0, 20.0, 0.01}}, true);
     ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
@@ -122,7 +111,7 @@ TEST_F(SiteRDFNodeTest, Water)
 
 TEST_F(SiteRDFNodeTest, WaterNPT)
 {
-    createGraph("dlpoly/water267-npt/water-267-298K.HISf", TrajectoryImportFileFormat::TrajectoryImportFormat::DLPOLYFormatted);
+    createGraph("ImportDLPolyTrajectory", "dlpoly/water267-npt/water-267-298K.HISf");
 
     auto oORDF = createSiteRDFNode({"O", "O"}, {{0.0, 20.0, 0.01}}, true);
     ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
@@ -155,7 +144,7 @@ TEST_F(SiteRDFNodeTest, WaterNPT)
 
 TEST_F(SiteRDFNodeTest, WaterDynamic)
 {
-    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
+    createGraph("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
 
     auto oORDF = createSiteRDFNode({"O-dyn", "O-dyn"}, {{0.0, 20.0, 0.01}}, true);
     ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
@@ -182,7 +171,7 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
 
 TEST_F(SiteRDFNodeTest, WaterFragments)
 {
-    createGraph("dlpoly/water267-analysis/water-267-298K.xyz", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ);
+    createGraph("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
 
     auto oORDF = createSiteRDFNode({"O-frag", "O-frag"}, {{0.0, 20.0, 0.01}}, true);
     ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));

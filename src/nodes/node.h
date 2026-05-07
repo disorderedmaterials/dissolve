@@ -50,9 +50,9 @@ class Node : public Serialisable<>
     virtual std::string_view summary() const = 0;
 
     /*
-     * Node message
+     * Node Messagine
      */
-
+    public:
     // Enumeration for message status
     enum class MessageStatus
     {
@@ -123,6 +123,10 @@ class Node : public Serialisable<>
     protected:
     // Version index for the node, bumped whenever result outputs change
     int versionIndex_{NodeConstants::InvalidVersion};
+    // Whether the node is volatile (its version changes but is never up-to-date)
+    bool volatile_{false};
+
+    protected:
     // Perform processing
     virtual NodeConstants::ProcessResult process();
 

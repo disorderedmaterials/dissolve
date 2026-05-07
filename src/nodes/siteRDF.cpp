@@ -48,6 +48,7 @@ std::string_view SiteRDFNode::summary() const
 // Run main processing
 NodeConstants::ProcessResult SiteRDFNode::process()
 {
+    printf("SITERDF process.\n");
     // Select site A
     SiteSelector a(configuration_, a_.getSpeciesSites());
 

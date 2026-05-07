@@ -166,9 +166,12 @@ NodeConstants::ProcessResult IterableGraph::process()
         return NodeConstants::ProcessResult::Unchanged;
 
     for (i_ = 1; i_ <= N; ++i_)
+    {
+        printf("ITERABLE GRAPH %d\n", i_);
         if ((i_ > 1 && (loopBacks_->run() == NodeConstants::ProcessResult::Failed)) ||
             (Graph::process() == NodeConstants::ProcessResult::Failed))
             return NodeConstants::ProcessResult::Failed;
+    }
 
     return NodeConstants::ProcessResult::Success;
 }
