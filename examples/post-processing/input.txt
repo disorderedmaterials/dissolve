@@ -245,15 +245,3 @@ Layer  'GR / Neutron S(Q)'
     SourceSQs  'SQ'
   EndModule
 EndLayer
-
-Layer  'Analyse'
-  Frequency  1
-
-  Module  SiteRDF  'SiteRDF'
-    Frequency  1
-    Configuration  'NewConfiguration'
-    DistanceRange  0.000000e+00  1.000000e+01  5.000000e-02
-    SiteA  '2-propanol'  'COM'
-    SiteB  'Water'  'COM'
-  EndModule
-EndLayer

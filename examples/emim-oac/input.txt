@@ -457,33 +457,3 @@ Layer  'Refine (EPSR)'
     Target  '50-50'
   EndModule
 EndLayer
-
-Layer  'Analyse RDF/CN'
-  Frequency  1
-
-  Module  SiteRDF  'GR-CA'
-    Frequency  1
-    Configuration  'Bulk'
-    DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
-    SiteA  '1-ethyl-3-methylimidazolium'  'RingNN'
-    SiteB  'Acetate Anion'  'COM'
-    RangeA  0.000000e+00  7.000000e+00
-    RangeAEnabled  True
-  EndModule
-
-  Module  SiteRDF  'GR-CC'
-    Frequency  1
-    Configuration  'Bulk'
-    DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
-    SiteA  '1-ethyl-3-methylimidazolium'  'RingNN'
-    SiteB  '1-ethyl-3-methylimidazolium'  'RingNN'
-  EndModule
-
-  Module  SiteRDF  'GR-AA'
-    Frequency  1
-    Configuration  'Bulk'
-    DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
-    SiteA  'Acetate Anion'  'COM'
-    SiteB  'Acetate Anion'  'COM'
-  EndModule
-EndLayer

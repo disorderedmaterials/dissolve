@@ -112,31 +112,4 @@ Layer  'Processing'
     Averaging  20
   EndModule
 
-  # Oxygen-oxygen radial distribution function
-  Module  SiteRDF  'RDF(OW-OW)'
-    Configuration  'Bulk'
-    SiteA  Water  'O'
-    SiteB  Water  'O'
-    ExcludeSameMolecule  On
-    DistanceRange  0.0  10.0  0.01
-  EndModule
-
-  # Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
-  Module  SiteRDF  'RDF(H1-H2)'
-    Configuration  'Bulk'
-    SiteA  Water  'H1'  Water  'H2'
-    SiteB  Water  'H2'  Water  'H1'
-    ExcludeSameMolecule  On
-    DistanceRange  0.0  10.0  0.01
-  EndModule
-
-  # Hydrogen-hydrogen (O-H, 1-1) radial distribution function, excluding intramolecular correlations
-  Module  SiteRDF  'RDF(O-H1_H2)'
-    Configuration  'Bulk'
-    SiteA  Water  'O'
-    SiteB  Water  'H1'  Water  'H2'
-    ExcludeSameMolecule  On
-    DistanceRange  0.0  10.0  0.01
-  EndModule
-
 EndLayer
