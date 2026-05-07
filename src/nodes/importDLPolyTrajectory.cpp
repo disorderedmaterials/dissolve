@@ -16,11 +16,11 @@ ImportDLPolyTrajectoryNode::ImportDLPolyTrajectoryNode(Graph *parentGraph) : Nod
     // addSerialisable("filePosition", filePosition_);
 }
 
-std::string_view ImportDLPolyTrajectoryNode::type() const { return "ImportTrajectory"; }
+std::string_view ImportDLPolyTrajectoryNode::type() const { return "ImportDLPolyTrajectory"; }
 
 std::string_view ImportDLPolyTrajectoryNode::summary() const
 {
-    return "Import configuration coordinates from sequential frames of a trajectory.";
+    return "Import structures from sequential frames of a formatted DL_POLY trajectory.";
 }
 
 NodeConstants::ProcessResult ImportDLPolyTrajectoryNode::process()
@@ -38,6 +38,10 @@ NodeConstants::ProcessResult ImportDLPolyTrajectoryNode::process()
     // Seek to the next file position
     parser.seekg(filePosition_);
 
+    // Read first line:  'timestep    <stepNo>  <nAtoms>  <keytrj>  <imcon>
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return NodeConstants::ProcessResult::Failed;
+
     // Read the frame
-    return ImportDLPolyStructureNode::read(parser, structure_);
+    return ImportDLPolyStructureNode::read(parser, parser.argi(3), parser.argi(4), parser.argi(2), structure_);
 }

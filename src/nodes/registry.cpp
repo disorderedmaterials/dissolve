@@ -22,6 +22,7 @@
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/importConfigurationTrajectory.h"
 #include "nodes/importDLPolyStructure.h"
+#include "nodes/importDLPolyTrajectory.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importXYZStructure.h"
 #include "nodes/insert.h"
@@ -81,6 +82,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
                   {"ImportConfigurationTrajectory", makeDerivedNode<ImportConfigurationTrajectoryNode>()},
                   {"ImportDLPolyStructure", makeDerivedNode<ImportDLPolyStructureNode>()},
+                  {"ImportDLPolyTrajectory", makeDerivedNode<ImportDLPolyTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
                   {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},

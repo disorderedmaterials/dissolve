@@ -23,15 +23,24 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
     if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
         return error("Couldn't open file '{}' for loading coordinates data.\n", filePath_);
 
-    return read(parser, structure_);
+    // Skip title
+    if (parser.skipLines(1) != LineParser::Success)
+        return NodeConstants::ProcessResult::Failed;
+
+    // Import in keytrj, imcon, and number of atoms, and initialise arrays
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return NodeConstants::ProcessResult::Failed;
+
+    return read(parser, parser.argi(0), parser.argi(1), parser.hasArg(2) ? parser.argi(2) : 0, structure_);
 }
 
 // Read structure from the specified file parser
-NodeConstants::ProcessResult ImportDLPolyStructureNode::read(LineParser &parser, Structure &structure)
+NodeConstants::ProcessResult ImportDLPolyStructureNode::read(LineParser &parser, int keytrj, int imcon, int nAtoms,
+                                                             Structure &structure)
 {
     /*
      * Import DL_POLY coordinates information through the specified line parser.
-     * We assume CONFIG or REVCON format:
+     * We assume HISf, CONFIG or REVCON format (only the first two lines differ)
      *
      * Line 1:    Title
      * Line 2:    keytrj   imcon    natoms    []
@@ -45,17 +54,6 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::read(LineParser &parser,
 
     structure.clear();
 
-    // Skip title
-    if (parser.skipLines(1) != LineParser::Success)
-        return NodeConstants::ProcessResult::Failed;
-
-    // Import in keytrj, imcon, and number of atoms, and initialise arrays
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return NodeConstants::ProcessResult::Failed;
-
-    auto keytrj = parser.argi(0);
-    auto imcon = parser.argi(1);
-    auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
     if (nAtoms == 0)
         message(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
                 "until end of file.\n",

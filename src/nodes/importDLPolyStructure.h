@@ -37,5 +37,5 @@ class ImportDLPolyStructureNode : public Node
 
     public:
     // Read structure from the specified file parser
-    static NodeConstants::ProcessResult read(LineParser &parser, Structure &structure);
+    static NodeConstants::ProcessResult read(LineParser &parser, int keytrj, int imcon, int nAtoms, Structure &structure);
 };
