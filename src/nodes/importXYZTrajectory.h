@@ -5,12 +5,13 @@
 
 #include "classes/structure.h"
 #include "nodes/node.h"
+#include <iostream>
 
-class ImportXYZStructureNode : public Node
+class ImportXYZTrajectoryNode : public Node
 {
     public:
-    ImportXYZStructureNode(Graph *parentGraph);
-    ~ImportXYZStructureNode() override = default;
+    ImportXYZTrajectoryNode(Graph *parentGraph);
+    ~ImportXYZTrajectoryNode() override = default;
 
     /*
      * Definition
@@ -25,6 +26,8 @@ class ImportXYZStructureNode : public Node
     private:
     // File path
     std::string filePath_;
+    // Last read file position
+    std::streampos filePosition_;
     // Structure
     Structure structure_;
 
@@ -34,8 +37,4 @@ class ImportXYZStructureNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
-
-    public:
-    // Read structure from the specified file parser
-    static NodeConstants::ProcessResult read(LineParser &parser, Structure &structure);
 };

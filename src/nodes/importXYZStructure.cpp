@@ -25,6 +25,12 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
     if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
         return error("Couldn't open file '{}' for loading XYZ data.\n", filePath_);
 
+    return read(parser, structure_);
+}
+
+// Read structure from the specified file parser
+NodeConstants::ProcessResult ImportXYZStructureNode::read(LineParser &parser, Structure &structure)
+{
     // Read natoms
     if (parser.getArgsDelim() != LineParser::Success)
         return NodeConstants::ProcessResult::Failed;
@@ -34,13 +40,13 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
     if (parser.skipLines(1) != LineParser::Success)
         return NodeConstants::ProcessResult::Failed;
 
-    message("Expecting coordinates for {} atoms.\n", nAtoms);
+    printf(" NAtoms = %d\n", nAtoms);
     for (auto n = 0; n < nAtoms; ++n)
     {
         if (parser.getArgsDelim() != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
-        structure_.addAtom(Elements::element(parser.argsv(0)), parser.arg3d(1), parser.hasArg(4) ? parser.argd(4) : 0.0);
+        structure.addAtom(Elements::element(parser.argsv(0)), parser.arg3d(1), parser.hasArg(4) ? parser.argd(4) : 0.0);
     }
-
+    printf("SUCCESS\n");
     return NodeConstants::ProcessResult::Success;
 }

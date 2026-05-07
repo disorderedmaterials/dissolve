@@ -25,6 +25,7 @@
 #include "nodes/importDLPolyTrajectory.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importXYZStructure.h"
+#include "nodes/importXYZTrajectory.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/intraAngle.h"
@@ -85,6 +86,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportDLPolyTrajectory", makeDerivedNode<ImportDLPolyTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
                   {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
+                  {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
