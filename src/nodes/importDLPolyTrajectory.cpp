@@ -42,6 +42,13 @@ NodeConstants::ProcessResult ImportDLPolyTrajectoryNode::process()
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return NodeConstants::ProcessResult::Failed;
 
-    // Read the frame
-    return ImportDLPolyStructureNode::read(parser, parser.argi(3), parser.argi(4), parser.argi(2), structure_);
+    // Get the frame read result
+    auto frameResult = ImportDLPolyStructureNode::read(parser, parser.argi(3), parser.argi(4), parser.argi(2), structure_);
+    if (frameResult != NodeConstants::ProcessResult::Success)
+        return frameResult;
+
+    // Store the new trajectory file position
+    filePosition_ = parser.tellg();
+    printf("File position is now %li\n", long(filePosition_));
+    return NodeConstants::ProcessResult::Success;
 }
