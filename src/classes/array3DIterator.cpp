@@ -3,7 +3,6 @@
 
 #include "classes/array3DIterator.h"
 #include <cmath>
-#include <iostream>
 
 Array3DIterator::Array3DIterator() {}
 
@@ -25,11 +24,11 @@ int Array3DIterator::toIndex() const { return x_ + sizeX_ * y_ + sizeX_ * sizeY_
 
 bool Array3DIterator::operator<(const Array3DIterator &other) const
 {
-    if (x_ != other.x_)
-        return x_ < other.x_;
+    if (z_ != other.z_)
+        return z_ < other.z_;
     if (y_ != other.y_)
         return y_ < other.y_;
-    return z_ < other.z_;
+    return x_ < other.x_;
 }
 bool Array3DIterator::operator==(const Array3DIterator &other) const
 {
