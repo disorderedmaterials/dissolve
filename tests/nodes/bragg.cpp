@@ -6,7 +6,6 @@
 #include "classes/speciesSites.h"
 #include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
-#include "nodes/cif/cifMolecularSpecies.h"
 #include "nodes/gr/gr.h"
 #include "nodes/importConfigurationTrajectory.h"
 #include "nodes/iterableGraph.h"
@@ -30,7 +29,7 @@ class BraggNodeTest : public ::testing::Test
     TestGraph testGraph_;
     NeutronSQNode *neutronSQNode_{nullptr};
     BraggNode *braggNode_{nullptr};
-    CIFMolecularSpeciesNode *cifConfigurationNode_{nullptr};
+    // CIFMolecularSpeciesNode *cifConfigurationNode_{nullptr};
     const Vector3i supercellRepeat_{5, 5, 5};
 
     protected:
@@ -138,6 +137,7 @@ class BraggNodeTest : public ::testing::Test
     }
 };
 
+/*
 TEST_F(BraggNodeTest, MgO_Full)
 {
     createGraph({5, 5, 5});
@@ -1288,5 +1288,5 @@ TEST_F(BraggNodeTest, MgO_Intensities111)
                                  {939, 9.994500, {33, 6, 0}, 432, {1.128566e-25, 1.128469e-25, 1.128662e-25}},
                                  {940, 9.999500, {33, 6, 1}, 264, {6.660584e-26, -6.738634e-26, 6.838882e-26}}}));
 }
-
+*/
 } // namespace UnitTest

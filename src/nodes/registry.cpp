@@ -7,15 +7,7 @@
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/bragg.h"
-#include "nodes/cif/cifBondingOptions.h"
-#include "nodes/cif/cifMolecularSpecies.h"
-#include "nodes/cif/cifPeriodicFramework.h"
-#include "nodes/cif/cifRemoveAtomic.h"
-#include "nodes/cif/cifRemoveWater.h"
-#include "nodes/cif/cifStructureCleanup.h"
-#include "nodes/cif/cifSuperMolecule.h"
 #include "nodes/cif/importCIFStructure.h"
-#include "nodes/cif/setCIFAtomGroupActivity.h"
 #include "nodes/configuration.h"
 #include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
@@ -73,16 +65,8 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Angle", makeDerivedNode<AngleNode>()},
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
                   {"Bragg", makeDerivedNode<BraggNode>()},
-                  {"CIFStructureCleanup", makeDerivedNode<CIFStructureCleanupNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
-                  {"CIFBondingOptions", makeDerivedNode<CIFBondingOptionsNode>()},
                   {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
-                  {"CIFMolecularSpecies", makeDerivedNode<CIFMolecularSpeciesNode>()},
-                  {"CIFPeriodicFramework", makeDerivedNode<CIFPeriodicFrameworkNode>()},
-                  {"CIFRemoveAtomic", makeDerivedNode<CIFRemoveAtomicNode>()},
-                  {"CIFRemoveWater", makeDerivedNode<CIFRemoveWaterNode>()},
-                  {"CIFSuperMolecule", makeDerivedNode<CIFSuperMoleculeNode>()},
-                  {"SetCIFAtomGroupActivity", makeDerivedNode<SetCIFAtomGroupActivityNode>()},
                   {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
