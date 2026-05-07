@@ -27,6 +27,7 @@ ImportCIFStructureNode::ImportCIFStructureNode(Graph *parentGraph) : Node(parent
 
     // Option
     addOption<std::string>("FilePath", "File path", filePath_);
+    addOption<bool>("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
     addOption<SpaceGroups::SpaceGroupId>("SpaceGroupID", "Set space group from index", spaceGroup_);
 }
 
