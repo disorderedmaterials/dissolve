@@ -94,6 +94,7 @@ void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
         dissolve_.coreData().removeSpecies(newSpecies);
 }
 
+/* DISSOLVE 2 TODO
 void DissolveWindow::on_SpeciesCreateGrapheneAction_triggered(bool checked)
 {
     CreateGrapheneSpeciesDialog createGrapheneSpeciesDialog(this, dissolve_);
@@ -107,7 +108,7 @@ void DissolveWindow::on_SpeciesCreateGrapheneAction_triggered(bool checked)
         ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
     }
 }
-
+*/
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 {
     ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
@@ -172,7 +173,7 @@ void DissolveWindow::on_SpeciesImportLigParGenAction_triggered(bool checked)
         ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
     }
 }
-
+/* DISSOLVE 2 TODO
 void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
 {
     ImportCIFDialog importCIFDialog(this, dissolve_);
@@ -189,7 +190,7 @@ void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
             ui_.MainTabs->setCurrentTab(sp);
     }
 }
-
+*/
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab, then call its rename() function
