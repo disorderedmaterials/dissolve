@@ -40,6 +40,8 @@ NodeConstants::ProcessResult ImportXYZTrajectoryNode::process()
     // Seek to the next file position
     parser.seekg(filePosition_);
 
+    structure_.clear();
+
     // Get the frame read result
     auto frameResult = ImportXYZStructureNode::read(parser, structure_);
     if (frameResult != NodeConstants::ProcessResult::Success)
