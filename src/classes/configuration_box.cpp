@@ -4,7 +4,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
-#include "modules/energy/energy.h"
+#include "kernels/energy.h"
 
 // Create Box definition with specified lengths and angles
 void Configuration::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
