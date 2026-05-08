@@ -40,6 +40,8 @@ std::string_view ImportCIFStructureNode::summary() const
 // Run main processing
 NodeConstants::ProcessResult ImportCIFStructureNode::process()
 {
+    structure_.clear();
+
     // Read contents of CIF file
     if (read(filePath_))
     {
