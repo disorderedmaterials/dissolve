@@ -40,7 +40,6 @@ NodeConstants::ProcessResult ImportXYZStructureNode::read(LineParser &parser, St
     if (parser.skipLines(1) != LineParser::Success)
         return NodeConstants::ProcessResult::Failed;
 
-    printf(" NAtoms = %d\n", nAtoms);
     for (auto n = 0; n < nAtoms; ++n)
     {
         if (parser.getArgsDelim() != LineParser::Success)
