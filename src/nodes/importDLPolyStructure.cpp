@@ -52,8 +52,8 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
     auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
     if (nAtoms == 0)
         message(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
-                         "until end of file.\n",
-                         nAtoms, keytrj, imcon);
+                "until end of file.\n",
+                nAtoms, keytrj, imcon);
     else
         message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
 
