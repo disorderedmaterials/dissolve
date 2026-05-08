@@ -48,6 +48,6 @@ message(
 
 target_include_directories(
   nodes PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
-                ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
+               ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
 )
 target_link_libraries(nodes PUBLIC base ${THREADING_LINK_LIBS})

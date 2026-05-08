@@ -8,7 +8,6 @@
 #include "base/sysFunc.h"
 #include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
-#include "classes/species.h"
 #include "generator/add.h"
 #include "generator/box.h"
 #include "generator/coordinateSets.h"
@@ -50,9 +49,7 @@ NodeConstants::ProcessResult ImportCIFStructureNode::process()
         return NodeConstants::ProcessResult::Success;
     }
 
-    error("Failed to read contents of CIF file");
-
-    return NodeConstants::ProcessResult::Failed;
+    return error("Failed to read contents of CIF file");
 }
 
 /*
@@ -494,7 +491,9 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
                         // Create the new atom
                         auto atIt = std::find_if(atomLabelTypes_.begin(), atomLabelTypes_.end(),
                                                  [&unique](const auto at) { return unique.label() == at->name(); });
-                        structure_.addAtom(unique.Z(), r, 0.0);
+                        auto *structureAtom = structure_.addAtom(unique.Z(), r, 0.0);
+                        auto atomLabelTypeIdx = std::distance(atomLabelTypes_.begin(), atIt);
+                        structureAtom->setAtomTypeIndex(atomLabelTypeIdx);
                     }
 
     // Check that we actually generated some atoms...
@@ -543,5 +542,5 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
  * Getters
  */
 
-// Return the basic unit cell configuration
+// Return basic crystal structure
 const Structure &ImportCIFStructureNode::structure() const { return structure_; }

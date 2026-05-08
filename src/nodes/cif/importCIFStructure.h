@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "classes/configuration.h"
-#include "classes/species.h"
 #include "classes/structure.h"
 #include "data/spaceGroups.h"
 #include "math/matrix4.h"
@@ -133,6 +131,6 @@ class ImportCIFStructureNode : public Node
      * Getters
      */
     public:
-    // Return the basic crystal structure
+    // Return basic crystal structure
     const Structure &structure() const;
 };

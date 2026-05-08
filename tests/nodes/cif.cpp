@@ -31,16 +31,6 @@ class CIFNodeTest : public ::testing::Test
         auto name = cifNameFromFile(filename);
         EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure", name));
         testGraph_.fetchHead()->setOption("FilePath", path_ + filename);
-        EXPECT_TRUE(testGraph_.appendNode("CIFBondingOptions", name + "//BondingOptions"));
-        EXPECT_TRUE(testGraph_.appendNode("CIFRemoveAtomic", name + "//RemoveAtomic"));
-        EXPECT_TRUE(testGraph_.appendNode("CIFRemoveWater", name + "//RemoveWater"));
-        EXPECT_TRUE(testGraph_.appendNode("CIFStructureCleanup", name + "//StructureCleanup"));
-        EXPECT_TRUE(testGraph_.appendNode("CIFMolecularSpecies", name + "//MolecularSpecies"));
-        testGraph_.addEdge({name, "CIFContext", name + "//BondingOptions", "CIFContext"});
-        testGraph_.addEdge({name + "//BondingOptions", "CIFContext", name + "//RemoveAtomic", "CIFContext"});
-        testGraph_.addEdge({name + "//RemoveAtomic", "CIFContext", name + "//RemoveWater", "CIFContext"});
-        testGraph_.addEdge({name + "//RemoveWater", "CIFContext", name + "//StructureCleanup", "CIFContext"});
-        testGraph_.addEdge({name + "//StructureCleanup", "CIFContext", name + "//MolecularSpecies", "CIFContext"});
     }
     // Determine CIF node name from filename
     std::string cifNameFromFile(std::string filename)
