@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/md.h"
+#include "kernels/energy.h"
 #include "kernels/force.h"
 #include "math/mathFunc.h"
 #include "nodes/dissolve.h"

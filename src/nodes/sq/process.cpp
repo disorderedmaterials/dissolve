@@ -1,18 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "math/mathFunc.h"
-
-#include "classes/configuration.h"
-#include "main/dissolve.h"
 #include "math/averaging.h"
-#include "math/filters.h"
-#include "modules/bragg/bragg.h"
-#include "modules/gr/gr.h"
-#include "modules/sq/sq.h"
-#include "nodes/node.h"
 #include "nodes/sq/sq.h"
-#include "templates/algorithms.h"
 
 // Run main processing
 NodeConstants::ProcessResult SQNode::process()

@@ -2,10 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/box.h"
-#include "classes/species.h"
 #include "main/dissolve.h"
-#include "math/averaging.h"
-#include "modules/gr/gr.h"
 #include "nodes/gr/gr.h"
 
 // Run main processing

@@ -11,8 +11,6 @@
 #include "data/atomicMasses.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
-#include "modules/energy/energy.h"
-#include "modules/forces/forces.h"
 #include "nodes/graph.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
