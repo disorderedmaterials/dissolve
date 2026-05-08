@@ -51,7 +51,6 @@ EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
     addOption<Number>("GSigma2", "Width for Gaussian function in real space", gSigma2_);
     addOption<std::optional<Number>>("NCoeffP", "Number of coefficients used to define the empirical potential", nCoeffP_);
     addOption<std::optional<Number>>("NPItSs", "Number of iterations when refining fits to delta functions", nPItSs_);
-    addOption<std::string>("InpAFile", "EPSR inpa file from which to read starting coefficients from", inpaFilename_);
     addOption<std::string>("PCofFile", "EPSR pcof file from which to read empirical potential coefficients from",
                            pCofFilename_);
     addOption<Number>("PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_);
@@ -136,16 +135,6 @@ NodeConstants::ProcessResult EPSRNode::process()
                                              rminpt.asDouble(), rmaxpt.asDouble(), pSigma1_.asDouble(), pSigma2_.asDouble()))
                 return NodeConstants::ProcessResult::Failed;
         }
-    }
-
-    // If an inpa file was provided, read in the parameters from it here
-    if (!inpaFilename_.empty())
-    {
-        message("[SETUP {}] Reading fit coefficients from '{}'...\n", name(), inpaFilename_);
-
-        // Read in the coefficients / setup from the supplied file
-        if (!readFitCoefficients(inpaFilename_, targets))
-            return error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", name());
     }
 
     // Try to calculate the deltaSQ array

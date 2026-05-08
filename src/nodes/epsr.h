@@ -110,8 +110,6 @@ class EPSRNode : public Node
     Number feedback_{0.9};
     // Scattering matrix
     std::optional<ScatteringMatrix> scatteringMatrix_;
-    // EPSR 'inpa' file from which to read deltaFQ fit coefficients from
-    std::string inpaFilename_;
     // Maximum Q value over which to generate potentials from total scattering data
     Number qMax_{30.0};
     // Minimum Q value over which to generate potentials from total scattering data
@@ -248,8 +246,6 @@ class EPSRNode : public Node
     public:
     // Read data from supplied pcof file
     bool readPCof(std::string_view filename);
-    // Read Poisson coefficients from 'inpa' file
-    bool readFitCoefficients(std::string_view inpaFilename, const TargetWeights &targets);
 
     /*
      * Processing

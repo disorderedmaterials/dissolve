@@ -49,7 +49,7 @@ bool testAbsoluteEPEnergy(const std::vector<double> &coefficients, double expect
     return isOK;
 }
 
-TEST(EPSRNodeTest, Water3NInpA)
+TEST(EPSRNodeTest, Water3N)
 {
     // Set up the test graph
     TestGraph testGraph;
@@ -106,7 +106,6 @@ TEST(EPSRNodeTest, Water3NInpA)
     ASSERT_TRUE(epsrNode->setOption("ExpansionFunction", EPSRNode::PoissonExpansionFunction));
     ASSERT_TRUE(epsrNode->setOption("Feedback", Number(0.9)));
     ASSERT_TRUE(epsrNode->setOption("OverwritePotentials", true));
-    ASSERT_TRUE(epsrNode->setOption<std::string>("InpAFile", "epsr25/water1000-neutron/water.EPSR.inpa"));
     ASSERT_TRUE(epsrNode->setOption("QMin", Number(1.5)));
     ASSERT_TRUE(epsrNode->setOption("Smoothing", std::optional<Number>(0)));
     ASSERT_TRUE(epsrNode->setOption("NPItSs", std::optional<Number>(0)));
@@ -127,38 +126,6 @@ TEST(EPSRNodeTest, Water3NInpA)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         epsrNode->estimatedSQ("HW", "HW"), "EPSR01_EstimatedSQ_HW-HW",
         {"epsr25/water1000-neutron/water.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.0e-4));
-
-    // DeltaFQ Fits
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->targetProcessData(D2O).deltaFQFit, "EPSR01_DeltaFQFit_D2O",
-        {"epsr25/water1000-neutron/FQ.delfit", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 7.0e-4));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->targetProcessData(H2O).deltaFQFit, "EPSR01_DeltaFQFit_H2O",
-        {"epsr25/water1000-neutron/FQ.delfit", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 6.0e-4));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->targetProcessData(HDO).deltaFQFit, "EPSR01_DeltaFQFit_HDO",
-        {"epsr25/water1000-neutron/FQ.delfit", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 4.0e-4));
-
-    // Generated Potentials
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->additionalPotential("OW", "OW"), "Dissolve_Potential_OW-OW_Additional",
-        {"epsr25/water1000-neutron/water.EPSR.p01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->additionalPotential("OW", "HW"), "Dissolve_Potential_OW-HW_Additional",
-        {"epsr25/water1000-neutron/water.EPSR.p01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->additionalPotential("HW", "HW"), "Dissolve_Potential_HW-HW_Additional",
-        {"epsr25/water1000-neutron/water.EPSR.p01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.1e-2));
-
-    // Absolute magnitudes of EP
-    auto cfg = epsrNode->getInputValue<Configuration *>("Configuration");
-    auto &coefficients = epsrNode->potentialCoefficients(cfg->atomTypePopulations().size());
-    ASSERT_FALSE(coefficients.empty());
-    std::vector<std::tuple<int, int, double>> expectedEPMagnitudes = {{0, 0, 0.2475}, {0, 1, 0.3722}, {1, 1, 0.4567}};
-    for (auto &&[i, j, epMag] : expectedEPMagnitudes)
-    {
-        testAbsoluteEPEnergy(coefficients[{i, j}], epMag, 1.0e-4);
-    }
 }
 
 TEST(EPSRNodeTest, Water3NX)
@@ -302,7 +269,6 @@ TEST(EPSRNodeTest, Benzene)
     ASSERT_TRUE(testGraph.addEdge({std::string(importCoords->name()), "Configuration", "EPSR01", "Configuration"}));
     ASSERT_TRUE(epsrNode->setOption("EReq", Number(3.0)));
     ASSERT_TRUE(epsrNode->setOption("Feedback", Number(0.9)));
-    ASSERT_TRUE(epsrNode->setOption<std::string>("InpAFile", "epsr25/benzene200-neutron/benzene.EPSR.inpa"));
     ASSERT_TRUE(epsrNode->setOption("QMin", Number(0.05)));
     ASSERT_TRUE(epsrNode->setOption("Smoothing", std::optional<Number>(0)));
     ASSERT_TRUE(epsrNode->setOption("NPItSs", std::optional<Number>(0)));
@@ -334,38 +300,6 @@ TEST(EPSRNodeTest, Benzene)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(
         epsrNode->estimatedSQ("HA", "HA"), "EPSR01//EstimatedSQ//HA-HA",
         {"epsr25/benzene200-neutron/benzene.EPSR.q01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-2));
-
-    // DeltaFQ Fits
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->targetProcessData(C6H6).deltaFQFit, "EPSR01//DeltaFQFit//C6H6",
-        {"epsr25/benzene200-neutron/FQ.delfit", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-4));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->targetProcessData(C6D6).deltaFQFit, "EPSR01//DeltaFQFit//C6D6",
-        {"epsr25/benzene200-neutron/FQ.delfit", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 5.0e-4));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->targetProcessData(FiftyFifty).deltaFQFit, "EPSR01//DeltaFQFit//5050",
-        {"epsr25/benzene200-neutron/FQ.delfit", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 5.0e-4));
-
-    // Generated potentials
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->additionalPotential("CA", "CA"), "Dissolve//Potential_CA-CA_Additional",
-        {"epsr25/benzene200-neutron/benzene.EPSR.p01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 8.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->additionalPotential("CA", "HA"), "Dissolve//Potential_CA-HA_Additional",
-        {"epsr25/benzene200-neutron/benzene.EPSR.p01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        epsrNode->additionalPotential("HA", "HA"), "Dissolve//Potential_HA-HA_Additional",
-        {"epsr25/benzene200-neutron/benzene.EPSR.p01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 4.0e-3));
-
-    // Absolute magnitudes of EP
-    auto cfg = epsrNode->getInputValue<Configuration *>("Configuration");
-    auto &coefficients = epsrNode->potentialCoefficients(cfg->atomTypePopulations().size());
-    ASSERT_FALSE(coefficients.empty());
-    std::vector<std::tuple<int, int, double>> expectedEPMagnitudes = {{0, 0, 0.4023}, {0, 1, 0.1966}, {1, 1, 0.2491}};
-    for (auto &&[i, j, epMag] : expectedEPMagnitudes)
-    {
-        testAbsoluteEPEnergy(coefficients[{i, j}], epMag, 1.0e-4);
-    }
 }
 
 } // namespace UnitTest
