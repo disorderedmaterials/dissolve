@@ -6,6 +6,8 @@
 
 ImportXYZTrajectoryNode::ImportXYZTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {
+    volatile_ = true;
+
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
 

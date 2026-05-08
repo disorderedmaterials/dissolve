@@ -6,7 +6,7 @@
 
 ImportDLPolyTrajectoryNode::ImportDLPolyTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {
-    volatile_ = false;
+    volatile_ = true;
 
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);

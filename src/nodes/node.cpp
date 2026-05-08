@@ -82,6 +82,9 @@ void Node::setUpdateRequired()
         }
 }
 
+// Return whether the node is volatile
+bool Node::isVolatile() const { return volatile_; }
+
 // Return whether the node's data is up-to-date
 bool Node::isUpToDate() const { return upToDate_; }
 
@@ -135,7 +138,7 @@ NodeConstants::ProcessResult Node::run()
                 break;
             case (NodeConstants::ProcessResult::Success):
                 ++versionIndex_;
-                upToDate_ = !volatile_;
+                upToDate_ = true;
                 break;
             case (NodeConstants::ProcessResult::Unchanged):
                 upToDate_ = true;
