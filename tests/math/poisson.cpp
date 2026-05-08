@@ -44,8 +44,6 @@ void testReconstruction(std::string inpAFile, std::string delfitFile,
         EXPECT_TRUE(DissolveSystemTest::checkData1D(coeffMinimiser.approximation(), dataSet,
                                                     {delfitFile, Data1DImportFileFormat::Data1DImportFormat::XY, 1, column},
                                                     errorThreshold));
-        Data1DExportFileFormat exporter(dataSet + ".test");
-        exporter.exportData(coeffMinimiser.approximation());
     }
 }
 
