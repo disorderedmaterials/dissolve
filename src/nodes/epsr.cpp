@@ -51,8 +51,6 @@ EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
     addOption<Number>("GSigma2", "Width for Gaussian function in real space", gSigma2_);
     addOption<std::optional<Number>>("NCoeffP", "Number of coefficients used to define the empirical potential", nCoeffP_);
     addOption<std::optional<Number>>("NPItSs", "Number of iterations when refining fits to delta functions", nPItSs_);
-    addOption<std::string>("PCofFile", "EPSR pcof file from which to read empirical potential coefficients from",
-                           pCofFilename_);
     addOption<Number>("PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_);
     addOption<Number>("PSigma2", "Width for Poisson functions in real space", pSigma2_);
     addOption<std::optional<Number>>("RMaxPT", "Radius at which potential truncation goes to zero", rMaxPT_);
@@ -110,32 +108,6 @@ NodeConstants::ProcessResult EPSRNode::process()
     // Default to applying generated potentials - an associated EPSRManager may turn this off in its own setup stage
     applyPotentials_ = true;
     auto rho = targetConfiguration_->atomicDensity().value_or(0.1);
-
-    // If a pcof file was provided, read in the parameters from it here
-    if (!pCofFilename_.empty())
-    {
-        message("[SETUP {}] Reading potential coefficients from '{}'...\n", name(), pCofFilename_);
-
-        // Read in the coefficients / setup from the supplied file
-        if (!readPCof(pCofFilename_))
-            return error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", name());
-
-        // Set up the additional potentials - reconstruct them from the current coefficients
-        auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : PairPotential::range();
-        auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
-        if (expansionFunction_ == EPSRNode::GaussianExpansionFunction)
-        {
-            if (!generateEmpiricalPotentials(targetConfiguration_->atomTypeVector(), rho, nCoeffP_->asDouble(),
-                                             rminpt.asDouble(), rmaxpt.asDouble(), gSigma1_.asDouble(), gSigma2_.asDouble()))
-                return NodeConstants::ProcessResult::Failed;
-        }
-        else
-        {
-            if (!generateEmpiricalPotentials(targetConfiguration_->atomTypeVector(), rho, nCoeffP_->asDouble(),
-                                             rminpt.asDouble(), rmaxpt.asDouble(), pSigma1_.asDouble(), pSigma2_.asDouble()))
-                return NodeConstants::ProcessResult::Failed;
-        }
-    }
 
     // Try to calculate the deltaSQ array
     updateDeltaSQ();

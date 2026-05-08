@@ -132,8 +132,6 @@ class EPSRNode : public Node
     std::optional<Number> nPItSs_{1000};
     // Overwrite potentials each time rather than summing them
     bool overwritePotentials_{false};
-    // EPSR pcof file from which to read starting coefficients from
-    std::string pCofFilename_;
     // Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)
     Number pSigma1_{0.01};
     // Width for Poisson functions in real space
@@ -213,41 +211,6 @@ class EPSRNode : public Node
     std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> empiricalPotentials();
 
     /*
-     * EPSR File I/O
-     */
-    public:
-    // PCof File Keywords
-    enum EPSRPCofKeyword
-    {
-        AddPotTypePCofKeyword, /* addpottype - Additional potential type: Gaussian or modmorse. [Gaussian] */
-        ExpecFPCofKeyword,     /* expecf - Additional potential type: Gaussian or modmorse. [Gaussian] */
-        GaussianPCofKeyword,   /* gaussian - Select T for Gaussian representation of EP. Otherwise Poisson. [F] */
-        NCoeffPPCofKeyword,    /* ncoeffp - Number of coefficients used to define the EP. */
-        NPItSSPCofKeyword,     /* npitss - Number of steps for refining the potential. */
-        PAcceptPCofKeyword,    /* paccept - Acceptance factor for potential refinement. [0.0005] */
-        PDMaxPCofKeyword,      /* pdmax - Maximum distance of Empirical Potential. */
-        PDStepPCofKeyword,     /* pdstep - Spacing between coefficients in r. */
-        PowerPCofKeyword,      /* power - Repulsive power in Lennard-Jones potential. [12] */
-        PSigma2PCofKeyword,    /* psigma2 - Width for empirical potential functions. [0.01] */
-        QuitPCofKeyword,       /* q - Signals the end of the pcof keyword section */
-        RBroadPCofKeyword,     /* rbroad - Controls potential decay. [0.0] */
-        RChargePCofKeyword,    /* rcharge - Calculates energy due to molecular polarisation. [0.0] */
-        RefPotFacPCofKeyword,  /* refpotfac - Factor to apply to reference potential. [1.0] */
-        RepPotTypePCofKeyword, /* reppottype - Repulsive potential type: exponential or harmonic. [exponential] */
-        RMaxPtPCofKeyword,     /* rmaxpt - Radius at which potential truncation goes to 0.0. */
-        RMinFacPCofKeyword,    /* rminfac - Factor to set the minimum separation between pairs. [0.0] */
-        RMinPtPCofKeyword,     /* rminpt - Radius at which potential truncation begins. */
-        ROverlapPCofKeyword,   /* roverlap - Minimum allowed intermolecular separation between two atoms. */
-        nEPSRPCofKeywords
-    };
-    // Return enum options for EPSRPCofKeyword
-    static EnumOptions<EPSRPCofKeyword> epsrPCofKeywords();
-
-    public:
-    // Read data from supplied pcof file
-    bool readPCof(std::string_view filename);
-
-    /*
      * Processing
      */
     private:
@@ -269,4 +232,3 @@ class EPSRNode : public Node
 };
 
 EnumOptions<EPSRNode::ExpansionFunctionType> getEnumOptions(EPSRNode::ExpansionFunctionType);
-EnumOptions<EPSRNode::EPSRPCofKeyword> getEnumOptions(EPSRNode::EPSRPCofKeyword);
