@@ -43,7 +43,7 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
      * Units are:  distance = nm, velocities = nm ps-1, forces = kJ mol-1 nm-1
      */
 
-    Messenger::print(" --> Importing coordinates in Moscito (str) format...\n");
+    message(" --> Importing coordinates in Moscito (str) format...\n");
     // Read cell lengths
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return NodeConstants::ProcessResult::Failed;
@@ -53,7 +53,7 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return NodeConstants::ProcessResult::Failed;
     auto nMolecules = parser.argi(0);
-    Messenger::print(" --> Structure file contains {} molecules.\n", nMolecules);
+    message(" --> Structure file contains {} molecules.\n", nMolecules);
 
     for (auto n = 0; n < nMolecules; ++n)
     {

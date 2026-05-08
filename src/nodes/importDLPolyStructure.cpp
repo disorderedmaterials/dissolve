@@ -51,11 +51,11 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
     auto imcon = parser.argi(1);
     auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
     if (nAtoms == 0)
-        Messenger::print(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
+        message(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
                          "until end of file.\n",
                          nAtoms, keytrj, imcon);
     else
-        Messenger::print(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
+        message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
 
     // Read cell information if given
     if (imcon > 0)

@@ -36,12 +36,12 @@ NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
     if (parser.nArgs() == 3)
     {
         double boxSize = parser.argd(1);
-        Messenger::print("File has a cubic cell (side length {} Angstroms)", boxSize);
+        message("File has a cubic cell (side length {} Angstroms)", boxSize);
         structure_.createBox({boxSize, boxSize, boxSize}, {90.0, 90.0, 90.0});
     }
     else
     {
-        Messenger::print("File has a full cell specification");
+        message("File has a full cell specification");
         Vector3 lengths, angles;
         if (parser.getArgsDelim() != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
