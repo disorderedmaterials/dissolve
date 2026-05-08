@@ -47,6 +47,6 @@ NodeConstants::ProcessResult ImportXYZStructureNode::read(LineParser &parser, St
             return NodeConstants::ProcessResult::Failed;
         structure.addAtom(Elements::element(parser.argsv(0)), parser.arg3d(1), parser.hasArg(4) ? parser.argd(4) : 0.0);
     }
-    printf("SUCCESS\n");
+
     return NodeConstants::ProcessResult::Success;
 }

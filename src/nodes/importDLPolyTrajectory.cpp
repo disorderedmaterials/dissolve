@@ -51,7 +51,6 @@ NodeConstants::ProcessResult ImportDLPolyTrajectoryNode::process()
 
     // Store the new trajectory file position
     filePosition_ = parser.tellg();
-    printf("File position is now %li\n", long(filePosition_));
-    versionIndex_++;
+
     return NodeConstants::ProcessResult::Success;
 }
