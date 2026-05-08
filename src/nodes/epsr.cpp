@@ -352,9 +352,6 @@ NodeConstants::ProcessResult EPSRNode::process()
                 // Construct our fitting object
                 GaussFit coeffMinimiser(deltaFQ);
 
-                fitError =
-                    coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1, nIterations, 0.01, *fluctuationSmoothing);
-
                 if (fitCoefficients.size() != ncoeffp)
                 {
                     warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
@@ -376,9 +373,6 @@ NodeConstants::ProcessResult EPSRNode::process()
             {
                 // Construct our fitting object
                 PoissonFit coeffMinimiser(deltaFQ);
-
-                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1, pSigma2, nIterations, 0.1,
-                                                              fluctuationSmoothing);
 
                 if (fitCoefficients.size() != ncoeffp)
                 {

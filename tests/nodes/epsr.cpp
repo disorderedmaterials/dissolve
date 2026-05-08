@@ -53,7 +53,7 @@ TEST(EPSRNodeTest, Water3NInpA)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{createWater, 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{"species/water.toml", 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "epsr25/water1000-neutron/waterbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
     auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
@@ -165,7 +165,7 @@ TEST(EPSRNodeTest, Water3NX)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{createWater, 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{"species/water.toml", 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "epsr25/water1000-neutron-xray/waterbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
     auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
@@ -262,7 +262,7 @@ TEST(EPSRNodeTest, Benzene)
 {
     //  Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Liquid", {{createBenzene, 200}}, 0.876,
+    EXPECT_TRUE(testGraph.createConfiguration("Liquid", {{"species/benzene.toml", 200}}, 0.876,
                                               Units::DensityUnits::GramsPerCentimetreCubedUnits));
     EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
         "epsr25/benzene200-neutron/boxbenz.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
@@ -279,7 +279,6 @@ TEST(EPSRNodeTest, Benzene)
     ASSERT_TRUE(grNode->setOption<Function1DWrapper>("IntraBroadening", {Functions1D::Form::None}));
 
     ASSERT_TRUE(sqNode);
-    ASSERT_TRUE(sqNode->setOption("QMin", Number(0.01)));
     ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.02}}));
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 
@@ -296,9 +295,6 @@ TEST(EPSRNodeTest, Benzene)
         sqNode, "5050", {{"Benzene", "Natural", 0.5}, {"Benzene", "C6D6", 0.5}}, {},
         {"epsr25/benzene200-neutron/5050.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
     ASSERT_TRUE(FiftyFifty);
-
-    for (const auto &neutronSQ : {C6H6, C6D6, FiftyFifty})
-        ASSERT_TRUE(neutronSQ->setOption("ReferenceFTQMin", std::optional<Number>(0.3)));
 
     // Add EPSR
     auto epsrNode = static_cast<EPSRNode *>(testGraph.appendNode("EPSR", "EPSR01"));
