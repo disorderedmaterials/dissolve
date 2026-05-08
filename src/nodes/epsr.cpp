@@ -162,9 +162,9 @@ NodeConstants::ProcessResult EPSRNode::process()
     auto iterableGraph = dynamic_cast<IterableGraph *>(parentGraph());
     auto iteration = iterableGraph ? iterableGraph->currentIteration() : 0;
 
-    message("EPSR: Feedback factor is {}.\n", feedback);
+    message("Feedback factor is {}.\n", feedback);
     for (auto &[targetNode, weight] : targets)
-        message("EPSR: Weight for node data '{}' set to {}.\n", targetNode->name(), weight);
+        message("Weight for node data '{}' set to {}.\n", targetNode->name(), weight);
 
     if (targets.empty())
     {
@@ -185,35 +185,35 @@ NodeConstants::ProcessResult EPSRNode::process()
     }
 
     // Print option summary
-    message("EPSR: {} functions will be used to approximate difference data.\n",
+    message("{} functions will be used to approximate difference data.\n",
             expansionFunctionTypes().keyword(expansionFunction_));
 
-    message("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", ncoeffp, pSigma2);
+    message("Number of functions used in approximation is {}, sigma(Q) = {}.\n", ncoeffp, pSigma2);
     if (modifyPotential)
     {
-        message("EPSR: Perturbations to interatomic potentials will be generated with a frequency of {}.\n", *modifyPotential);
+        message("Perturbations to interatomic potentials will be generated with a frequency of {}.\n", *modifyPotential);
         if (applyPotentials_)
-            message("EPSR: Global pair potentials will be modified.\n");
+            message("Global pair potentials will be modified.\n");
         else
-            message("EPSR: Current potentials will not be modified.\n");
+            message("Current potentials will not be modified.\n");
     }
     else
-        warn("EPSR: Fluctuation coefficients and resulting potentials will not be modified.\n");
+        warn("Fluctuation coefficients and resulting potentials will not be modified.\n");
 
-    message("EPSR: Range for potential generation is {} < Q < {} Angstroms**-1.\n", qMin, qMax);
-    message("EPSR: Weighting factor used when applying fluctuation coefficients is {}\n", weighting);
+    message("Range for potential generation is {} < Q < {} Angstroms**-1.\n", qMin, qMax);
+    message("Weighting factor used when applying fluctuation coefficients is {}\n", weighting);
     if (fluctuationSmoothing)
-        message("EPSR: Coefficients will be smoothed (average length = 2N+1, N = {})", *fluctuationSmoothing);
+        message("Coefficients will be smoothed (average length = 2N+1, N = {})", *fluctuationSmoothing);
     if (saveDifferenceFunctions_)
-        message("EPSR: Difference functions will be saved.\n");
+        message("Difference functions will be saved.\n");
     if (saveEmpiricalPotentials_)
-        message("EPSR: Empirical potentials will be saved.\n");
+        message("Empirical potentials will be saved.\n");
     if (saveEstimatedPartials_)
-        message("EPSR: Estimated partials will be saved.\n");
+        message("Estimated partials will be saved.\n");
     if (savePotentialCoefficients_)
-        message("EPSR: Potential coefficients will be saved.\n");
+        message("Potential coefficients will be saved.\n");
     if (saveSimulatedFR_)
-        message("EPSR: Simulated F(r) (from FT of F(Q)) will be saved.\n");
+        message("Simulated F(r) (from FT of F(Q)) will be saved.\n");
     message("\n");
 
     /*
