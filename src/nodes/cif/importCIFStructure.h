@@ -33,8 +33,6 @@ class ImportCIFStructureNode : public Node
     SpaceGroups::SpaceGroupId spaceGroup_{SpaceGroups::SpaceGroupId::NoSpaceGroup};
     // CIF filepath
     std::string filePath_;
-    // Whether to prevent metallic bonding
-    bool preventMetallicBonds_{true};
 
     /*
      * CIF I/O

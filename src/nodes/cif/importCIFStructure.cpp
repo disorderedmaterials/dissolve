@@ -25,7 +25,6 @@ ImportCIFStructureNode::ImportCIFStructureNode(Graph *parentGraph) : Node(parent
 
     // Option
     addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
     addOption<SpaceGroups::SpaceGroupId>("SpaceGroupID", "Set space group from index", spaceGroup_);
 }
 
@@ -517,7 +516,7 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
         auto j = structure_.atomAt(indexJ);
 
         // Prevent metallic bonding?
-        if (preventMetallicBonds_ && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
+        if (Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
             continue;
 
         // Retrieve distance
