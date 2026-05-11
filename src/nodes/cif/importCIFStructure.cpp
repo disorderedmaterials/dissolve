@@ -11,7 +11,6 @@
 #include "generator/add.h"
 #include "generator/box.h"
 #include "generator/coordinateSets.h"
-#include "neta/neta.h"
 #include "nodes/cif/io/CIFImportErrorListeners.h"
 #include "nodes/cif/io/CIFImportVisitor.h"
 #include "templates/algorithms.h"
