@@ -41,7 +41,7 @@ class ImportCIFStructureNode : public Node
      */
 
     /*
-     * Raw Data
+     * Basic CIF Data
      */
     private:
     // Vector of enumerated data items
@@ -115,10 +115,6 @@ class ImportCIFStructureNode : public Node
     public:
     // Set overlap tolerance
     void setOverlapTolerance(double tol);
-
-    /*
-     * End CIF I/O
-     */
 
     /*
      * Processing

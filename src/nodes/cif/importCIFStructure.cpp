@@ -58,7 +58,7 @@ NodeConstants::ProcessResult ImportCIFStructureNode::process()
  */
 
 /*
- * Raw Data
+ * Basic CIF Data
  */
 
 // Parse supplied file into the destination objects
@@ -534,10 +534,6 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
                      structure_.nAtoms(), structure_.bonds().size());
     return true;
 }
-
-/*
- * End CIF I/O
- */
 
 /*
  * Getters
