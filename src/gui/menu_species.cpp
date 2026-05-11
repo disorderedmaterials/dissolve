@@ -94,7 +94,6 @@ void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
         dissolve_.coreData().removeSpecies(newSpecies);
 }
 
-/* DISSOLVE 2 TODO
 void DissolveWindow::on_SpeciesCreateGrapheneAction_triggered(bool checked)
 {
     CreateGrapheneSpeciesDialog createGrapheneSpeciesDialog(this, dissolve_);
@@ -108,7 +107,7 @@ void DissolveWindow::on_SpeciesCreateGrapheneAction_triggered(bool checked)
         ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
     }
 }
-*/
+
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
 {
     ImportSpeciesDialog importSpeciesDialog(this, dissolve_);
