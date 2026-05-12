@@ -530,7 +530,7 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
     }
 
     message("Created basic structure - {} structure atoms, {} structure bonds found whle parsing the CIF.\n",
-                     structure_.nAtoms(), structure_.bonds().size());
+            structure_.nAtoms(), structure_.bonds().size());
     return true;
 }
 
