@@ -28,6 +28,9 @@
 #include "nodes/gr/gr.h"
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/importConfigurationTrajectory.h"
+#include "nodes/importDLPolyStructure.h"
+#include "nodes/importEPSRAtoStructure.h"
+#include "nodes/importXYZStructure.h"
 #include "nodes/insert.h"
 #include "nodes/integrator.h"
 #include "nodes/intraAngle.h"
@@ -39,6 +42,7 @@
 #include "nodes/numberNode.h"
 #include "nodes/setCIFAtomGroupActivity.h"
 #include "nodes/setCell.h"
+#include "nodes/setCoordinates.h"
 #include "nodes/siteRDF.h"
 #include "nodes/species.h"
 #include "nodes/sq/sq.h"
@@ -92,6 +96,9 @@ void NodeRegistry::instantiateNodeProducers()
                   {"GR", makeDerivedNode<GRNode>()},
                   {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
                   {"ImportConfigurationTrajectory", makeDerivedNode<ImportConfigurationTrajectoryNode>()},
+                  {"ImportDLPolyStructure", makeDerivedNode<ImportDLPolyStructureNode>()},
+                  {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
+                  {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
@@ -100,8 +107,9 @@ void NodeRegistry::instantiateNodeProducers()
                   {"MD", makeDerivedNode<MDNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
-                  {"SetCell", makeDerivedNode<SetCellNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},
+                  {"SetCell", makeDerivedNode<SetCellNode>()},
+                  {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
                   {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
                   {"SQ", makeDerivedNode<SQNode>()},
                   {"Species", makeDerivedNode<SpeciesNode>()},

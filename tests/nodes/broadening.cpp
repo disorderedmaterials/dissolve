@@ -14,8 +14,7 @@ TEST(BroadeningTest, ArgonBroadening)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 10000}}, 0.0213));
-    EXPECT_TRUE(testGraph.appendImportCoordinates(CoordinateImportFileFormat(
-        "epsr25/argon10000/argonbox.ato", CoordinateImportFileFormat::CoordinateImportFormat::EPSR)));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/argon10000/argonbox.ato"));
 
     // Append GR and SQ nodes
     auto &&[grNode, sqNode] = testGraph.appendGRSQ(true, true);

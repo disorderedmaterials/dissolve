@@ -6,6 +6,24 @@
 
 Structure::Structure() : box_(std::make_unique<SingleImageBox>()) {}
 
+Structure::Structure(const Structure &source) { *this = source; }
+
+Structure &Structure::operator=(const Structure &source)
+{
+    clear();
+
+    for (auto &atom : source.atoms_)
+    {
+        auto &i = atoms_.emplace_back(std::make_unique<StructureAtom>());
+        i->copy(*atom);
+    }
+
+    for (auto &bond : source.bonds_)
+        addBond(bond->i()->index(), bond->j()->index());
+
+    return *this;
+}
+
 // Clear Data
 void Structure::clear()
 {
@@ -25,18 +43,27 @@ void Structure::renumberAtoms() const
         i->setIndex(count++);
 }
 
-// Add a new atom to the Species, returning its index
+// Add a new atom
 StructureAtom *Structure::addAtom(Elements::Element Z, Vector3 r, double q)
 {
     auto &i = atoms_.emplace_back(std::make_unique<StructureAtom>());
-    i->set(Z, r, q);
+    i->Atom::set(Z, r, q);
+
+    i->setIndex(atoms_.size() - 1);
+
+    return i.get();
+}
+StructureAtom *Structure::addAtom(const std::string &name, Vector3 r, double q)
+{
+    auto &i = atoms_.emplace_back(std::make_unique<StructureAtom>());
+    i->set(name, r, q);
 
     i->setIndex(atoms_.size() - 1);
 
     return i.get();
 }
 
-// Remove the specified atom from the species
+// Remove the specified atom
 void Structure::removeAtom(const StructureAtom *atom)
 {
     auto bonds = atom->bonds();
@@ -68,7 +95,7 @@ void Structure::removeAtoms(const std::vector<const StructureAtom *> &atomsToRem
     renumberAtoms();
 }
 
-// Return the number of atoms in the species (or only those with the specified presence)
+// Return the number of atoms in the structure (or only those with the specified presence)
 int Structure::nAtoms(Atom::Presence withPresence) const
 {
     return withPresence == Atom::Presence::Any ? atoms_.size()
@@ -202,6 +229,27 @@ void Structure::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
 void Structure::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
     box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
+}
+
+// Create Box definition from axes matrix
+void Structure::createBox(const Matrix3 &axes)
+{
+    // Calculate cell lengths
+    Vector3 lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
+
+    // Calculate cell angles
+    Vector3 vecx, vecy, vecz;
+    vecx = axes.columnAsVec3(0);
+    vecy = axes.columnAsVec3(1);
+    vecz = axes.columnAsVec3(2);
+    vecx.normalise();
+    vecy.normalise();
+    vecz.normalise();
+
+    Vector3 angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
+    angles.toDegrees();
+
+    box_ = Box::generate(lengths, angles);
 }
 
 /*

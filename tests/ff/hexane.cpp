@@ -12,15 +12,14 @@ namespace UnitTest
 class HexaneForcefieldTest : public ::testing::Test
 {
     public:
-    void setUp(int nMols, std::string_view referenceCoordinates)
+    void setUp(int nMols, const std::string &referenceCoordinates)
     {
         ASSERT_TRUE(testGraph_.createConfiguration("Box",
                                                    {
                                                        {"species/hexane.toml", nMols},
                                                    },
                                                    {30.769064857500, 46.153597286200, 30.769064857500}));
-        ASSERT_TRUE(testGraph_.appendImportCoordinates(
-            CoordinateImportFileFormat(referenceCoordinates, CoordinateImportFileFormat::CoordinateImportFormat::DLPOLY)));
+        ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPolyStructure", referenceCoordinates));
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);

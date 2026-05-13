@@ -14,6 +14,7 @@
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/setCoordinates.h"
 #include "nodes/species.h"
 #include "nodes/sq/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
@@ -169,20 +170,22 @@ class TestGraph : public DissolveGraph
         return createAndInsertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
                                       InsertNode::BoxActionStyle::None);
     }
-    // Append an import coordinates node
-    Node *appendImportCoordinates(CoordinateImportFileFormat fileFormat, bool supercell = false)
+    // Append a set coordinates node with a structure import input
+    Node *appendSetCoordinates(std::string_view importNodeType, std::string filePath,
+                               std::string sourceOutpuName = "Configuration")
     {
         const auto cfgSourceNode = fetchHead();
 
-        EXPECT_TRUE(appendNode("ImportConfigurationCoordinates"));
-        EXPECT_TRUE(fetchHead()->setOption<std::string>("FilePath", std::string(fileFormat.filename())));
-        EXPECT_TRUE(fetchHead()->setOption<CoordinateImportFileFormat::CoordinateImportFormat>(
-            "FileFormat",
-            CoordinateImportFileFormat::coordinateImportFileFormat().enumerationByIndex(fileFormat.formatIndex())));
-        EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), supercell ? "SupercellConfiguration" : "Configuration",
-                             "ImportConfigurationCoordinates", "Configuration"}));
+        EXPECT_TRUE(appendNode("SetCoordinates"));
+        auto structureNode = createNode(importNodeType);
+        EXPECT_TRUE(structureNode);
+        EXPECT_TRUE(structureNode->setOption<std::string>("FilePath", filePath));
 
-        return head<ImportConfigurationCoordinatesNode>();
+        EXPECT_TRUE(addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
+
+        EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), sourceOutpuName, "SetCoordinates", "Configuration"}));
+
+        return head<SetCoordinatesNode>();
     }
     // Append GR and SQ nodes
     std::pair<GRNode *, SQNode *> appendGRSQ(bool noAveraging = false, bool noIntraBroadening = false)
