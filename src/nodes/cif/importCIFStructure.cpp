@@ -515,10 +515,6 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
         auto i = structure_.atomAt(indexI);
         auto j = structure_.atomAt(indexJ);
 
-        // Prevent metallic bonding?
-        if (Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
-            continue;
-
         // Retrieve distance
         auto atomTypeIdxI = i->atomTypeIndex();
         auto atomTypeIdxJ = j->atomTypeIndex();
