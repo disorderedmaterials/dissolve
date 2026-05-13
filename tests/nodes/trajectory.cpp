@@ -3,8 +3,8 @@
 
 #include "io/import/trajectory.h"
 #include "nodes/constants.h"
-#include "nodes/exportTrajectory.h"
-#include "nodes/importConfigurationTrajectory.h"
+#include "nodes/exportXYZTrajectory.h"
+#include "nodes/importXYZTrajectory.h"
 #include "tests/graphData.h"
 #include "tests/tempFile.h"
 #include "tests/testData.h"
@@ -19,25 +19,25 @@ TEST(TrajectoryNodesTest, RoundTrip)
 {
     const std::string importFile = "dlpoly/water267-analysis/water-267-298K.xyz";
     auto exportFile = TempFile("water-267-298K_copy.xyz");
-    auto inputFormat = TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ;
 
     TestGraph testGraph_;
     testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
     // Create an import configuration trajectory node
     auto trajectoryImport =
-        dynamic_cast<ImportConfigurationTrajectoryNode *>(testGraph_.createNode("ImportConfigurationTrajectory"));
+        dynamic_cast<ImportXYZTrajectoryNode *>(testGraph_.createNode("ImportXYZTrajectory"));
     ASSERT_TRUE(trajectoryImport);
     ASSERT_TRUE(trajectoryImport->setOption<std::string>("FilePath", importFile));
-    ASSERT_TRUE(trajectoryImport->setOption<TrajectoryImportFileFormat::TrajectoryImportFormat>("FileFormat", inputFormat));
-    ASSERT_TRUE(testGraph_.addEdge({"Insert-Water", "Configuration", "ImportConfigurationTrajectory", "Configuration"}));
+    ASSERT_TRUE(testGraph_.createNode("SetCoordinates"));
+    ASSERT_TRUE(testGraph_.addEdge({"Insert-Water", "Configuration", "SetCoordinates", "Configuration"}));
+    ASSERT_TRUE(testGraph_.addEdge({"ImportXYZTrajectory", "Structure", "SetCoordinates", "Structure"}));
 
     // Create an export configuration trajectory node
-    auto trajectoryExport = dynamic_cast<ExportTrajectoryNode *>(testGraph_.createNode("ExportTrajectory"));
+    auto trajectoryExport = dynamic_cast<ExportXYZTrajectoryNode *>(testGraph_.createNode("ExportTrajectory"));
     ASSERT_TRUE(trajectoryExport);
     ASSERT_TRUE(trajectoryExport->setOption<std::string>("FilePath", exportFile));
     ASSERT_TRUE(trajectoryExport->setOption<bool>("Extended", false));
-    ASSERT_TRUE(testGraph_.addEdge({"ImportConfigurationTrajectory", "Configuration", "ExportTrajectory", "Configuration"}));
+    ASSERT_TRUE(testGraph_.addEdge({"SetCoordinates", "Configuration", "ExportTrajectory", "Configuration"}));
 
     ASSERT_EQ(trajectoryExport->run(), NodeConstants::ProcessResult::Success);
 

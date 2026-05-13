@@ -23,7 +23,6 @@ class SiteRDFNodeTest : public ::testing::Test
     protected:
     TestGraph testGraph_;
     IterableGraph *iterator_{nullptr};
-    ImportConfigurationTrajectoryNode *trajectoryImport_{nullptr};
     const Species *water_;
 
     protected:
