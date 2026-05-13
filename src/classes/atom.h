@@ -7,6 +7,9 @@
 #include "classes/atomType.h"
 #include "math/vector3.h"
 
+// Forward Declarations
+class Bond;
+
 // Basic Atom
 class Atom : public Serialisable<>
 {
@@ -64,6 +67,21 @@ class Atom : public Serialisable<>
     public:
     void operator+=(const Vector3 &delta);
     void operator-=(const Vector3 &delta);
+
+    /*
+     * Connectivity
+     */
+    private:
+    // Bonds to this atom
+    std::vector<Bond *> bonds_;
+
+    public:
+    // Return bonds to this atom
+    const std::vector<Bond *> &bonds() const;
+    // Add a bond to this atom
+    void addBond(Bond *bond);
+    // Remove bond from atom
+    void removeBond(Bond *bond);
 
     /*
      * Serialisation

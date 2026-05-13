@@ -4,6 +4,7 @@ add_library(
   array3DIterator.cpp
   atom.cpp
   atomType.cpp
+  bond.cpp
   bondFunctions.cpp
   box.cpp
   boxCubic.cpp
@@ -83,6 +84,7 @@ add_library(
   atom.h
   atomConstants.h
   atomType.h
+  bond.h
   bondFunctions.h
   box.h
   braggReflection.h

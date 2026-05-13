@@ -66,6 +66,19 @@ void Atom::operator+=(const Vector3 &delta) { r_ += delta; }
 void Atom::operator-=(const Vector3 &delta) { r_ -= delta; }
 
 /*
+ * Connectivity
+ */
+
+// Return bonds to this atom
+const std::vector<Bond *> &Atom::bonds() const { return bonds_; }
+
+// Add a bond to this atom
+void Atom::addBond(Bond *bond) { bonds_.push_back(bond); }
+
+// Remove bond from atom
+void Atom::removeBond(Bond *bond) { bonds_.erase(std::remove(bonds_.begin(), bonds_.end(), bond)); }
+
+/*
  * Serialisation
  */
 
