@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importDLPolyStructure.h"
+#include "nodes/importDLPOLYStructure.h"
 
-ImportDLPolyStructureNode::ImportDLPolyStructureNode(Graph *parentGraph) : Node(parentGraph)
+ImportDLPOLYStructureNode::ImportDLPOLYStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
@@ -12,11 +12,11 @@ ImportDLPolyStructureNode::ImportDLPolyStructureNode(Graph *parentGraph) : Node(
     addOutput<Structure>("Structure", "Imported structure", structure_);
 }
 
-std::string_view ImportDLPolyStructureNode::type() const { return "ImportDLPolyStructure"; }
+std::string_view ImportDLPOLYStructureNode::type() const { return "ImportDLPOLYStructure"; }
 
-std::string_view ImportDLPolyStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file."; }
+std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file."; }
 
-NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
+NodeConstants::ProcessResult ImportDLPOLYStructureNode::process()
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser;
@@ -31,11 +31,21 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return NodeConstants::ProcessResult::Failed;
 
-    return read(parser, parser.argi(0), parser.argi(1), parser.hasArg(2) ? parser.argi(2) : 0, structure_);
+    auto keytrj = parser.argi(0);
+    auto imcon = parser.argi(1);
+    auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
+    if (nAtoms == 0)
+        message(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
+                "until end of file.\n",
+                nAtoms, keytrj, imcon);
+    else
+        message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
+
+    return read(parser, keytrj, imcon, nAtoms, structure_);
 }
 
 // Read structure from the specified file parser
-NodeConstants::ProcessResult ImportDLPolyStructureNode::read(LineParser &parser, int keytrj, int imcon, int nAtoms,
+NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(LineParser &parser, int keytrj, int imcon, int nAtoms,
                                                              Structure &structure)
 {
     /*
@@ -53,13 +63,6 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::read(LineParser &parser,
      */
 
     structure.clear();
-
-    if (nAtoms == 0)
-        message(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
-                "until end of file.\n",
-                nAtoms, keytrj, imcon);
-    else
-        message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
 
     // Read cell information if given
     if (imcon > 0)

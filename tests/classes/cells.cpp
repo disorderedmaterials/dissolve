@@ -18,7 +18,7 @@ TEST(CellsTest, Basic)
     TestGraph testGraph;
     ASSERT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 1}, {"species/water-dlpoly.toml", 267}}, 0.1,
                                               Units::DensityUnits::AtomsPerAngstromUnits));
-    ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPolyStructure", "dlpoly/solvated_atom/solvated-argon-rcut5.CONFIG"));
+    ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/solvated_atom/solvated-argon-rcut5.CONFIG"));
 
     // Set all charge and short-range interaction potentials to zero
     auto arSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Ar"));

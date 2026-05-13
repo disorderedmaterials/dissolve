@@ -28,7 +28,7 @@ class CellsEnergyTest : public ::testing::Test
     {
         EXPECT_TRUE(
             testGraph_.createConfiguration("Box", {{"Ar|epsilon=0.774040 sigma=3.445996", nMolecules}}, lengths, angles));
-        EXPECT_TRUE(testGraph_.appendSetCoordinates("ImportDLPolyStructure", referenceCoordinates));
+        EXPECT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
 
         // Run the graph from the head node to set up the configuration
         EXPECT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);

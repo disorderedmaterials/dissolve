@@ -19,7 +19,7 @@ class BenzeneForcefieldTest : public ::testing::Test
                                                        {"species/benzene.toml", 181},
                                                    },
                                                    {29.925089931, 29.925089931, 29.925089931}));
-        ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPolyStructure", referenceCoordinates));
+        ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);

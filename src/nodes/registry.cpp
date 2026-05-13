@@ -14,15 +14,15 @@
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
 #include "nodes/energy.h"
-#include "nodes/exportDLPolyConfiguration.h"
+#include "nodes/exportDLPOLYConfiguration.h"
 #include "nodes/exportTrajectory.h"
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr/gr.h"
 #include "nodes/importConfigurationCoordinates.h"
 #include "nodes/importConfigurationTrajectory.h"
-#include "nodes/importDLPolyStructure.h"
-#include "nodes/importDLPolyTrajectory.h"
+#include "nodes/importDLPOLYStructure.h"
+#include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importXYZStructure.h"
 #include "nodes/importXYZTrajectory.h"
@@ -73,7 +73,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
-                  {"ExportDLPolyConfiguration", makeDerivedNode<ExportDLPolyConfiguration>()},
+                  {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfiguration>()},
                   {"ExportTrajectory", makeDerivedNode<ExportTrajectoryNode>()},
                   {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfiguration>()},
                   {"Forcefield", makeDerivedNode<ForcefieldNode>()},
@@ -82,8 +82,8 @@ void NodeRegistry::instantiateNodeProducers()
                   {"GR", makeDerivedNode<GRNode>()},
                   {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
                   {"ImportConfigurationTrajectory", makeDerivedNode<ImportConfigurationTrajectoryNode>()},
-                  {"ImportDLPolyStructure", makeDerivedNode<ImportDLPolyStructureNode>()},
-                  {"ImportDLPolyTrajectory", makeDerivedNode<ImportDLPolyTrajectoryNode>()},
+                  {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
+                  {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
                   {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()},

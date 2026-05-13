@@ -111,7 +111,7 @@ TEST_F(SiteRDFNodeTest, Water)
 
 TEST_F(SiteRDFNodeTest, WaterNPT)
 {
-    createGraph("ImportDLPolyTrajectory", "dlpoly/water267-npt/water-267-298K.HISf");
+    createGraph("ImportDLPOLYTrajectory", "dlpoly/water267-npt/water-267-298K.HISf");
 
     auto oORDF = createSiteRDFNode({"O", "O"}, {{0.0, 20.0, 0.01}}, true);
     ASSERT_TRUE(oORDF->setOption("RangeBEnabled", true));
