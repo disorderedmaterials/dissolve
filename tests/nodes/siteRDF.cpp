@@ -3,9 +3,7 @@
 
 #include "nodes/siteRDF.h"
 #include "classes/speciesSites.h"
-#include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
-#include "nodes/importConfigurationTrajectory.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
@@ -32,7 +30,7 @@ class SiteRDFNodeTest : public ::testing::Test
         // Create the water configuration
         testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
-        // Add iterator
+        // Add trajectory iterator
         iterator_ = testGraph_.appendTrajectoryIterator(importTrajectoryNodeType, trajectoryFilename);
         EXPECT_TRUE(iterator_);
 
@@ -47,9 +45,9 @@ class SiteRDFNodeTest : public ::testing::Test
                                    bool enableSameMolecule)
     {
         auto name = "SiteRDF//" + sites.first + "-" + sites.second;
-        auto siteRDFNode = testGraph_.appendNode("SiteRDF", name);
+        auto siteRDFNode = dynamic_cast<SiteRDFNode *>(iterator_->createNode("SiteRDF", name));
         EXPECT_TRUE(siteRDFNode);
-        EXPECT_TRUE(iterator_->addEdge({"SetCoordinates", "Configuration", name, "Configuration"}));
+        EXPECT_TRUE(iterator_->addEdge({testGraph_.fetchHeadName(), "Configuration", name, "Configuration"}));
 
         auto aSite = water_->findSite(sites.first);
         auto bSite = water_->findSite(sites.second);
@@ -61,7 +59,7 @@ class SiteRDFNodeTest : public ::testing::Test
         EXPECT_TRUE(siteRDFNode->setOption<RangedVector3>("DistanceRange", distanceRange));
         EXPECT_TRUE(siteRDFNode->setOption("ExcludeSameMolecule", enableSameMolecule));
 
-        return testGraph_.head<SiteRDFNode>();
+        return siteRDFNode;
     }
 };
 

@@ -19,8 +19,6 @@
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr/gr.h"
-#include "nodes/importConfigurationCoordinates.h"
-#include "nodes/importConfigurationTrajectory.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importEPSRAtoStructure.h"
@@ -74,14 +72,11 @@ void NodeRegistry::instantiateNodeProducers()
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
                   {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfiguration>()},
-                  {"ExportTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
+                  {"ExportXYZTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
                   {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfiguration>()},
                   {"Forcefield", makeDerivedNode<ForcefieldNode>()},
                   {"GR", makeDerivedNode<GRNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
-                  {"GR", makeDerivedNode<GRNode>()},
-                  {"ImportConfigurationCoordinates", makeDerivedNode<ImportConfigurationCoordinatesNode>()},
-                  {"ImportConfigurationTrajectory", makeDerivedNode<ImportConfigurationTrajectoryNode>()},
                   {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},

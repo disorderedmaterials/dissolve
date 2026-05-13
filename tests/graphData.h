@@ -11,7 +11,6 @@
 #include "nodes/bragg.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
-#include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/neutronSQ/neutronSQ.h"
@@ -44,6 +43,8 @@ class TestGraph : public DissolveGraph
     public:
     // Returns pointer to current top node in graph
     Node *fetchHead() const { return head_; }
+    // Returns the name of the current head node in the graph
+    std::string fetchHeadName() const { return head_ ? std::string(head_->name()) : "NO_NODE"; }
     // Returns reference to current top node in graph, cast to the known node type
     template <class NodeType> NodeType *head() const { return static_cast<NodeType *>(head_); }
     // Append new node to the graph
