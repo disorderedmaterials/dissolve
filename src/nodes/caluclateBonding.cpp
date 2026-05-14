@@ -6,11 +6,11 @@
 
 CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
-    // Inputss
-    addOutput<Structure>("Structure", "Structure containing atoms and connectivity", inputStructure_);
+    // Inputs
+    addOutput<Structure>("Structure", "Structure containing atoms and connectivity", structure_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Structure containing atoms without bonding", outputStructure_);
+    addOutput<Structure>("Structure", "Structure containing atoms without bonding", structure_);
 
     // Options
     addOption<Number>("BondingTolerance", "Bonding tolerance, if calculating bonding rather than using CIF definitions",
@@ -26,34 +26,31 @@ std::string_view CalculateBondingNode::summary() const { return "Calculate bondi
 // Run main processing
 NodeConstants::ProcessResult CalculateBondingNode::process()
 {
-    outputStructure_.clear();
-    outputStructure_ = inputStructure_;
-
     if (clear_)
     {
-        auto &bonds = outputStructure_.bonds();
+        auto &bonds = structure_.bonds();
         bonds.clear();
     }
 
     double r, radiusI;
-    auto box = outputStructure_.box();
-    auto nAtoms = outputStructure_.nAtoms();
+    auto box = structure_.box();
+    auto nAtoms = structure_.nAtoms();
     for (auto indexI = 0; indexI < nAtoms - 1; ++indexI)
     {
         // Get StructureAtom 'i' and its radius
-        auto i = outputStructure_.atomAt(indexI);
+        auto i = structure_.atomAt(indexI);
         radiusI = AtomicRadii::radius(i->Z());
         for (auto indexJ = indexI + 1; indexJ < nAtoms; ++indexJ)
         {
             // Get StructureAtom 'j'
-            auto j = outputStructure_.atomAt(indexJ);
+            auto j = structure_.atomAt(indexJ);
 
             // If the two atoms are both metal ions and prevent metallic bonds = true, continue
             if (preventMetallicBonds_ && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
                 continue;
 
             // If the two atoms are already bound, continue
-            if (outputStructure_.getBond(i, j))
+            if (structure_.getBond(i, j))
                 continue;
 
             // Calculate distance between atoms
@@ -61,7 +58,7 @@ NodeConstants::ProcessResult CalculateBondingNode::process()
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
             if (r <= (radiusI + AtomicRadii::radius(j->Z())) * bondingTolerance_.asDouble())
-                outputStructure_.addBond(i, j);
+                structure_.addBond(i, j);
         }
     }
 

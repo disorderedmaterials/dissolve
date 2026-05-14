@@ -21,10 +21,8 @@ class ClearBondingNode : public Node
      * Definition
      */
     private:
-    // Input structure
-    Structure inputStructure_;
-    // Output structure
-    Structure outputStructure_;
+    // Structure for which bonding will be cleared
+    Structure structure_;
 
     /*
      * Processing
