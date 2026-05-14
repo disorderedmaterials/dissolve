@@ -31,26 +31,6 @@ void Species::clear()
     commonImpropers_.clear();
 }
 
-// Copy basic information (atoms and intramolecular terms)
-void Species::copyBasic(const Species *source, bool copyAtomTypes)
-{
-    clear();
-
-    name_ = source->name_;
-
-    for (auto &i : source->atoms_)
-        addAtom(i.Z(), i.r(), i.q(), copyAtomTypes ? i.atomType() : nullptr);
-
-    for (auto &bond : source->bonds_)
-        addBond(bond.indexI(), bond.indexJ());
-    for (auto &angle : source->angles_)
-        addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
-    for (auto &torsion : source->torsions_)
-        addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
-    for (auto &improper : source->impropers_)
-        addImproper(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
-}
-
 /*
  * Basic Information
  */
