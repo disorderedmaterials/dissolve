@@ -6,20 +6,21 @@
 ClearBondingNode::ClearBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addOutput<Structure>("Structure", "Structure containing atoms and connectivity", structure_);
+    addOutput<Structure>("Structure", "Input structure", inputStructure_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Structure containing atoms without bonding", structure_);
+    addOutput<Structure>("Structure", "Modified structure", outputStructure_);
 }
 
-std::string_view ClearBondingNode::type() const { return "ClearBonds"; }
+std::string_view ClearBondingNode::type() const { return "ClearBonding"; }
 
 std::string_view ClearBondingNode::summary() const { return "Clear bonding information from a structure"; }
 
 // Run main processing
 NodeConstants::ProcessResult ClearBondingNode::process()
 {
-    auto &bonds = structure_.bonds();
-    bonds.clear();
+    outputStructure_.clear();
+    outputStructure_ = inputStructure_;
+    outputStructure_.clearBonds();
     return NodeConstants::ProcessResult::Success;
 }

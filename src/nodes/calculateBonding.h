@@ -21,8 +21,10 @@ class CalculateBondingNode : public Node
      * Definition
      */
     private:
-    // Structure for which bonding will be recalculated
-    Structure structure_;
+    // Input structure
+    Structure inputStructure_;
+    // Output structure
+    Structure outputStructure_;
     // Bonding tolerance
     Number bondingTolerance_{1.1};
     // Whether to prevent metallic bonding

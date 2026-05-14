@@ -140,6 +140,8 @@ class Structure : public Serialisable<>
     // Return the bond between the specified Atoms
     StructureBond *getBond(StructureAtom *i, StructureAtom *j);
     StructureBond *getBond(const StructureAtom *i, const StructureAtom *j) const;
+    // Clear bonds
+    void clearBonds();
 
     /*
      * Operations
