@@ -21,7 +21,7 @@
 ImportCIFStructureNode::ImportCIFStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Outputs
-    addPointerOutput<Structure>("Structure", "Structure containing atoms and connectivity", structure_);
+    addOutput<Structure>("Structure", "Structure containing atoms and connectivity", structure_);
 
     // Option
     addOption<std::string>("FilePath", "File path", filePath_);

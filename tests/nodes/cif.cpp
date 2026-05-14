@@ -101,8 +101,8 @@ TEST_F(CIFNodeTest, Parse)
         createGraph(cif);
         auto node = testGraph_.findNode(cifNameFromFile(cif));
         ASSERT_EQ(node->run(), NodeConstants::ProcessResult::Success);
-        const auto structure = node->getOutputValue<Structure *>("Structure");
-        ASSERT_EQ(structure->atoms().size(), nStructureAtoms);
+        const auto structure = node->getOutputValue<Structure>("Structure");
+        ASSERT_EQ(structure.atoms().size(), nStructureAtoms);
     }
 }
 /*

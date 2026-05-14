@@ -7,7 +7,9 @@
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
 #include "nodes/bragg.h"
+#include "nodes/calculateBonding.h"
 #include "nodes/cif/importCIFStructure.h"
+#include "nodes/clearBonding.h"
 #include "nodes/configuration.h"
 #include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
@@ -65,6 +67,8 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Angle", makeDerivedNode<AngleNode>()},
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
                   {"Bragg", makeDerivedNode<BraggNode>()},
+                  {"CalculateBonding", makeDerivedNode<CalculateBondingNode>()},
+                  {"ClearBonding", makeDerivedNode<ClearBondingNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
                   {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
