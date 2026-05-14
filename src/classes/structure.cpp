@@ -3,6 +3,7 @@
 
 #include "classes/structure.h"
 #include "classes/species.h"
+#include "templates/algorithms.h"
 
 Structure::Structure() : box_(std::make_unique<SingleImageBox>()) {}
 
@@ -184,6 +185,20 @@ StructureBond *Structure::getBond(const StructureAtom *i, const StructureAtom *j
         return {};
 
     return it->get();
+}
+
+// Clear bonds
+void Structure::clearBonds()
+{
+    auto pairs = PairIterator(atoms_.size());
+    for (const auto &pair : pairs)
+    {
+        auto [i, j] = pair;
+        if (hasBond(atomAt(i), atomAt(j)))
+            continue;
+
+        removeBond(atomAt(i), atomAt(j));
+    }
 }
 
 /*
