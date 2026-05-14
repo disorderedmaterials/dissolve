@@ -50,7 +50,7 @@ class Node : public Serialisable<>
     virtual std::string_view summary() const = 0;
 
     /*
-     * Node Messagine
+     * Node Messaging
      */
     public:
     // Enumeration for message status
