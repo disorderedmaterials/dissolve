@@ -32,14 +32,13 @@ NodeConstants::ProcessResult CalculateBondingNode::process()
     if (clear_)
         outputStructure_.clearBonds();
 
-    double r, radiusI;
     auto box = outputStructure_.box();
     auto nAtoms = outputStructure_.nAtoms();
     for (auto indexI = 0; indexI < nAtoms - 1; ++indexI)
     {
         // Get StructureAtom 'i' and its radius
         auto i = outputStructure_.atomAt(indexI);
-        radiusI = AtomicRadii::radius(i->Z());
+        auto radiusI = AtomicRadii::radius(i->Z());
         for (auto indexJ = indexI + 1; indexJ < nAtoms; ++indexJ)
         {
             // Get StructureAtom 'j'
@@ -54,7 +53,7 @@ NodeConstants::ProcessResult CalculateBondingNode::process()
                 continue;
 
             // Calculate distance between atoms
-            r = box ? box->minimumDistance(j->r(), i->r()) : (j->r() - i->r()).magnitude();
+            auto r = box ? box->minimumDistance(j->r(), i->r()) : (j->r() - i->r()).magnitude();
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
             if (r <= (radiusI + AtomicRadii::radius(j->Z())) * bondingTolerance_.asDouble())
