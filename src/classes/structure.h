@@ -108,12 +108,13 @@ class Structure : public Serialisable<>
     StructureAtom *addAtom(const std::string &name, Vector3 r, double q = 0.0);
     // Remove the specified atom
     void removeAtom(const StructureAtom *atom);
+    void removeAtom(int index);
     // Remove a number of atoms
     void removeAtoms(const std::vector<const StructureAtom *> &atoms);
     // Return the number of atoms
     int nAtoms(Atom::Presence withPresence = Atom::Presence::Any) const;
-    // Return atom at index
-    StructureAtom *atomAt(int i);
+    // Return atom at index provided
+    StructureAtom *atom(int i);
     // Return atoms
     const std::vector<std::unique_ptr<StructureAtom>> &atoms() const;
     std::vector<std::unique_ptr<StructureAtom>> &atoms();

@@ -26,7 +26,7 @@ class CalculateBondingNode : public Node
     // Output structure
     Structure outputStructure_;
     // Bonding tolerance
-    Number bondingTolerance_{1.1};
+    Number tolerance_{1.1};
     // Whether to prevent metallic bonding
     bool preventMetallicBonds_{true};
     // Whether to clear bonds before recalculating
@@ -38,4 +38,7 @@ class CalculateBondingNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    static void calculate(Structure &structure, double tolerance = 1.1, bool clearBefore = true, bool preventMetallic = false);
 };

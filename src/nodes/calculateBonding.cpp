@@ -13,8 +13,7 @@ CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGrap
     addOutput<Structure>("Structure", "Output structure", outputStructure_);
 
     // Options
-    addOption<Number>("BondingTolerance", "Bonding tolerance, if calculating bonding rather than using CIF definitions",
-                      bondingTolerance_);
+    addOption<Number>("Tolerance", "Bonding tolerance factor", tolerance_);
     addOption<bool>("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
     addOption<bool>("Clear", "Whether to clear bonds before recalculating", clear_);
 }
@@ -29,37 +28,42 @@ NodeConstants::ProcessResult CalculateBondingNode::process()
     outputStructure_.clear();
     outputStructure_ = inputStructure_;
 
-    if (clear_)
-        outputStructure_.clearBonds();
+    calculate(outputStructure_, tolerance_.asDouble(), clear_, preventMetallicBonds_);
 
-    auto box = outputStructure_.box();
-    auto nAtoms = outputStructure_.nAtoms();
+    return NodeConstants::ProcessResult::Success;
+}
+
+void CalculateBondingNode::calculate(Structure &structure, double tolerance, bool clearBefore, bool preventMetallic)
+{
+    if (clearBefore)
+        structure.clearBonds();
+
+    auto box = structure.box();
+    auto nAtoms = structure.nAtoms();
     for (auto indexI = 0; indexI < nAtoms - 1; ++indexI)
     {
         // Get StructureAtom 'i' and its radius
-        auto i = outputStructure_.atomAt(indexI);
+        auto i = structure.atom(indexI);
         auto radiusI = AtomicRadii::radius(i->Z());
         for (auto indexJ = indexI + 1; indexJ < nAtoms; ++indexJ)
         {
             // Get StructureAtom 'j'
-            auto j = outputStructure_.atomAt(indexJ);
+            auto j = structure.atom(indexJ);
 
             // If the two atoms are both metal ions and prevent metallic bonds = true, continue
-            if (preventMetallicBonds_ && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
+            if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
                 continue;
 
             // If the two atoms are already bound, continue
-            if (outputStructure_.getBond(i, j))
+            if (structure.getBond(i, j))
                 continue;
 
             // Calculate distance between atoms
             auto r = box ? box->minimumDistance(j->r(), i->r()) : (j->r() - i->r()).magnitude();
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (r <= (radiusI + AtomicRadii::radius(j->Z())) * bondingTolerance_.asDouble())
-                outputStructure_.addBond(i, j);
+            if (r <= (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
+                structure.addBond(i, j);
         }
     }
-
-    return NodeConstants::ProcessResult::Success;
 }
