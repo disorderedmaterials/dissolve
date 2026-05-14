@@ -4,8 +4,9 @@
 #include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importDLPOLYStructure.h"
 
-ImportDLPOLYTrajectoryNode::ImportDLPOLYTrajectoryNode(Graph *parentGraph) : Node(parentGraph), volatile_(true)
+ImportDLPOLYTrajectoryNode::ImportDLPOLYTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {
+    volatile_(true)
 
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
