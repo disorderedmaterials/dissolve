@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "io/import/CIFImportErrorListeners.h"
+#include "nodes/cif/io/CIFImportErrorListeners.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 

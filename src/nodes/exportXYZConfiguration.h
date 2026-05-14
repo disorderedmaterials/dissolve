@@ -5,7 +5,7 @@
 
 #include "nodes/node.h"
 #include <iostream>
-#include <strstream>
+#include <sstream>
 
 // Forward Declarations
 class Configuration;

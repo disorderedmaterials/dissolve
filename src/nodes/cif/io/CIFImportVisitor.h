@@ -4,15 +4,19 @@
 #pragma once
 
 #include "CIFImportParserBaseVisitor.h"
-#include "io/import/cif.h"
 #include "templates/optionalRef.h"
 #include <antlr4-runtime.h>
 
 // CIFImport Visitor for ANTLR
 class CIFImportVisitor : CIFImportParserBaseVisitor
 {
+
     public:
-    CIFImportVisitor(CIFHandler::CIFTags &tags);
+    // Data Types
+    using CIFTags = std::map<std::string, std::vector<std::string>>;
+
+    public:
+    CIFImportVisitor(CIFTags &tags);
     ~CIFImportVisitor() override = default;
 
     /*
@@ -20,7 +24,7 @@ class CIFImportVisitor : CIFImportParserBaseVisitor
      */
     private:
     // Dictionary data storage
-    CIFHandler::CIFTags &tags_;
+    CIFTags &tags_;
 
     public:
     // Extract information from tree

@@ -103,6 +103,9 @@ int Structure::nAtoms(Atom::Presence withPresence) const
                                                                { return i->isPresence(withPresence); });
 }
 
+// Return atom at index
+StructureAtom *Structure::atomAt(int i) { return atoms_[i].get(); }
+
 // Return atoms
 const std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() const { return atoms_; }
 std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() { return atoms_; }

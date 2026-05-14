@@ -8,7 +8,6 @@
 #include "gui/selectElementDialog.h"
 #include "gui/ui_createGrapheneSpeciesDialog.h"
 #include "gui/wizard.h"
-#include "io/import/cif.h"
 #include "main/dissolve.h"
 #include <QDialog>
 

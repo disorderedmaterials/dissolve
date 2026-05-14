@@ -6,7 +6,6 @@ set(models_MOC_HDRS
     atomTypeModel.h
     braggReflectionFilterProxy.h
     braggReflectionModel.h
-    cifAssemblyModel.h
     configurationModel.h
     dataManagerSimulationModel.h
     dissolveModel.h
@@ -63,7 +62,6 @@ set(models_SRCS
     atomTypeModel.cpp
     braggReflectionFilterProxy.cpp
     braggReflectionModel.cpp
-    cifAssemblyModel.cpp
     configurationModel.cpp
     dataManagerSimulationModel.cpp
     dissolveModel.cpp

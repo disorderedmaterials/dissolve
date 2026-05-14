@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "io/import/CIFImportVisitor.h"
+#include "nodes/cif/io/CIFImportVisitor.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
-#include "io/import/CIFImportErrorListeners.h"
+#include "nodes/cif/io/CIFImportErrorListeners.h"
 
-CIFImportVisitor::CIFImportVisitor(CIFHandler::CIFTags &tags) : tags_(tags) {}
+CIFImportVisitor::CIFImportVisitor(CIFTags &tags) : tags_(tags) {}
 
 /*
  * Data

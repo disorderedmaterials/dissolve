@@ -172,7 +172,7 @@ void DissolveWindow::on_SpeciesImportLigParGenAction_triggered(bool checked)
         ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
     }
 }
-
+/* DISSOLVE 2 TODO
 void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
 {
     ImportCIFDialog importCIFDialog(this, dissolve_);
@@ -189,7 +189,7 @@ void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
             ui_.MainTabs->setCurrentTab(sp);
     }
 }
-
+*/
 void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
 {
     // Get the current tab - make sure it is a SpeciesTab, then call its rename() function

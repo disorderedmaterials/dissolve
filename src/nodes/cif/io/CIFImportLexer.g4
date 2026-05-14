@@ -9,7 +9,7 @@ lexer grammar CIFImportLexer;
 // Add custom includes after standard ANTLR includes in both *.h and *.cpp files
 @lexer::postinclude {
     #include "base/sysFunc.h"
-    #include "io/import/CIFImportVisitor.h"
+    #include "nodes/cif/io/CIFImportVisitor.h"
 }
 
 // Directly precedes the lexer class declaration in the h file (e.g. for additional types etc.).
