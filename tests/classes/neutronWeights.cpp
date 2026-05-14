@@ -14,8 +14,8 @@ TEST(NeutronWeightsTest, Simple)
 {
     std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    auto N2node = TestGraph::loadTOMLSpecies("species/n2.toml");
-    auto &N2 = N2node->species();
+    Species N2;
+    N2.load("species/n2.toml");
     auto atN = N2.findAtomType("N");
     ASSERT_TRUE(atN);
 
@@ -40,8 +40,8 @@ TEST(NeutronWeightsTest, Water)
 {
     std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    auto H2Onode = TestGraph::loadTOMLSpecies("species/water.toml");
-    auto &H2O = H2Onode->species();
+    Species H2O;
+    H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
     auto atHW = H2O.findAtomType("HW");
@@ -65,8 +65,8 @@ TEST(NeutronWeightsTest, D2O)
 {
     std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    auto H2Onode = TestGraph::loadTOMLSpecies("species/water.toml");
-    auto &H2O = H2Onode->species();
+    Species H2O;
+    H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
     auto atHW = H2O.findAtomType("HW");
@@ -89,8 +89,8 @@ TEST(NeutronWeightsTest, NullWater)
 {
     std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    auto H2Onode = TestGraph::loadTOMLSpecies("species/water.toml");
-    auto &H2O = H2Onode->species();
+    Species H2O;
+    H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
     auto atHW = H2O.findAtomType("HW");
@@ -118,14 +118,14 @@ TEST(NeutronWeightsTest, Mix)
 {
     std::map<const Species *, double> speciesPopulations;
     IsotopologueSet isotopologues;
-    auto H2Onode = TestGraph::loadTOMLSpecies("species/water.toml");
-    auto &H2O = H2Onode->species();
+    Species H2O;
+    H2O.load("species/water.toml");
     auto atOW = H2O.findAtomType("OW");
     ASSERT_TRUE(atOW);
     auto atHW = H2O.findAtomType("HW");
     ASSERT_TRUE(atHW);
-    auto N2node = TestGraph::loadTOMLSpecies("species/n2.toml");
-    auto &N2 = N2node->species();
+    Species N2;
+    N2.load("species/n2.toml");
     auto atN = N2.findAtomType("N");
     ASSERT_TRUE(atN);
 

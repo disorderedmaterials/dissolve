@@ -25,7 +25,15 @@ TEST(EmpiricalFormulaTest, Zeroes)
 
 TEST(EmpiricalFormulaTest, Examples)
 {
-    EXPECT_EQ(EmpiricalFormula::formula(UnitTest::benzeneSpecies().atoms(), [](const auto &i) { return i.Z(); }), "C6H6");
-    EXPECT_EQ(EmpiricalFormula::formula(UnitTest::methaneSpecies().atoms(), [](const auto &i) { return i.Z(); }), "CH4");
-    EXPECT_EQ(EmpiricalFormula::formula(UnitTest::methanolSpecies().atoms(), [](const auto &i) { return i.Z(); }), "OCH4");
+    Species benzene;
+    benzene.load("species/benzene.toml");
+    EXPECT_EQ(EmpiricalFormula::formula(benzene.atoms(), [](const auto &i) { return i.Z(); }), "C6H6");
+
+    Species methane;
+    methane.load("species/methane.toml");
+    EXPECT_EQ(EmpiricalFormula::formula(methane.atoms(), [](const auto &i) { return i.Z(); }), "CH4");
+
+    Species methanol;
+    methanol.load("species/methanol.toml");
+    EXPECT_EQ(EmpiricalFormula::formula(methanol.atoms(), [](const auto &i) { return i.Z(); }), "OCH4");
 }

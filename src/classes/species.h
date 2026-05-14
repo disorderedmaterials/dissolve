@@ -419,4 +419,6 @@ class Species : public Serialisable<>
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
+    // Load from specified TOML file
+    void load(std::string_view tomlFile);
 };

@@ -4,8 +4,9 @@
 #include "math/history.h"
 #include "io/export/data1D.h"
 #include "nodes/number.h"
+#include "tests/graphData.h"
+#include "tests/testData.h"
 #include <gtest/gtest.h>
-#include <tests/testData.h>
 
 namespace UnitTest
 {
@@ -90,9 +91,11 @@ TEST(History, CustomClass)
 TEST(History, CustomClassWithInitialiser)
 {
     const auto avgLength = 3;
+    auto Arnode = TestGraph::createAtomicSpecies(Elements::Ar);
+    auto &Ar = Arnode->species();
 
     KeyedVector<const Species *, int> pop;
-    pop.add(&argonSpecies(), 100);
+    pop.add(&Ar, 100);
 
     History<PartialSet> a(
         [&]()

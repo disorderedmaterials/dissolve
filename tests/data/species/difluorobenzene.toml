@@ -1,0 +1,162 @@
+
+[species]
+name = "Difluorobenzene"
+
+[[species.atoms]]
+index = 1
+z = "C"
+r = [
+-1.399,
+0.16,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 2
+z = "C"
+r = [
+-0.561,
+1.293,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 3
+z = "C"
+r = [
+0.839,
+1.132,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 4
+z = "C"
+r = [
+1.399,
+-0.16,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 5
+z = "C"
+r = [
+0.56,
+-1.293,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 6
+z = "C"
+r = [
+-0.839,
+-1.132,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 7
+z = "F"
+r = [
+1.483,
+2.001,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 8
+z = "H"
+r = [
+2.472,
+-0.284,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 9
+z = "H"
+r = [
+0.991,
+-2.284,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 10
+z = "F"
+r = [
+-1.483,
+-2.0,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 11
+z = "H"
+r = [
+-2.472,
+0.282,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 12
+z = "H"
+r = [
+-0.99,
+2.284,
+0.0,
+]
+q = 0.0
+
+[[species.bonds]]
+form = "None"
+i = 1
+j = 2
+[[species.bonds]]
+form = "None"
+i = 1
+j = 6
+[[species.bonds]]
+form = "None"
+i = 1
+j = 11
+[[species.bonds]]
+form = "None"
+i = 2
+j = 3
+[[species.bonds]]
+form = "None"
+i = 2
+j = 12
+[[species.bonds]]
+form = "None"
+i = 3
+j = 4
+[[species.bonds]]
+form = "None"
+i = 3
+j = 7
+[[species.bonds]]
+form = "None"
+i = 4
+j = 5
+[[species.bonds]]
+form = "None"
+i = 4
+j = 8
+[[species.bonds]]
+form = "None"
+i = 5
+j = 6
+[[species.bonds]]
+form = "None"
+i = 5
+j = 9
+[[species.bonds]]
+form = "None"
+i = 6
+j = 10
+

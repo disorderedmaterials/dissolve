@@ -12,7 +12,14 @@ namespace UnitTest
 class SpeciesSiteTest : public ::testing::Test
 {
     public:
-    SpeciesSiteTest() {};
+    SpeciesSiteTest()
+    {
+        methane_.load("species/methane.toml");
+        benzene_.load("species/benzene.toml");
+    };
+
+    protected:
+    Species methane_, benzene_;
 
     void testVector(const Vector3 &u, const Vector3 &v)
     {
@@ -30,9 +37,7 @@ class SpeciesSiteTest : public ::testing::Test
 
 TEST_F(SpeciesSiteTest, StaticBasic)
 {
-    auto &methane = methaneSpecies();
-
-    SpeciesSite site(&methane, SpeciesSite::SiteType::Static);
+    SpeciesSite site(&methane_, SpeciesSite::SiteType::Static);
 
     // Add carbon atom
     EXPECT_TRUE(site.addStaticOriginAtom(0));
@@ -45,12 +50,12 @@ TEST_F(SpeciesSiteTest, StaticBasic)
     EXPECT_FALSE(site.addStaticYAxisAtom(0));
 
     // Add some hydrogen atom from their pointers
-    EXPECT_TRUE(site.addStaticOriginAtom(&methane.atom(1)));
-    EXPECT_TRUE(site.addStaticOriginAtom(&methane.atom(2)));
-    EXPECT_TRUE(site.addStaticXAxisAtom(&methane.atom(1)));
-    EXPECT_TRUE(site.addStaticXAxisAtom(&methane.atom(2)));
-    EXPECT_TRUE(site.addStaticYAxisAtom(&methane.atom(1)));
-    EXPECT_TRUE(site.addStaticYAxisAtom(&methane.atom(2)));
+    EXPECT_TRUE(site.addStaticOriginAtom(&methane_.atom(1)));
+    EXPECT_TRUE(site.addStaticOriginAtom(&methane_.atom(2)));
+    EXPECT_TRUE(site.addStaticXAxisAtom(&methane_.atom(1)));
+    EXPECT_TRUE(site.addStaticXAxisAtom(&methane_.atom(2)));
+    EXPECT_TRUE(site.addStaticYAxisAtom(&methane_.atom(1)));
+    EXPECT_TRUE(site.addStaticYAxisAtom(&methane_.atom(2)));
 
     // Add one of those again via its index
     EXPECT_FALSE(site.addStaticOriginAtom(2));
@@ -58,15 +63,13 @@ TEST_F(SpeciesSiteTest, StaticBasic)
     EXPECT_FALSE(site.addStaticYAxisAtom(2));
 
     // Set (overwrite) atoms
-    EXPECT_TRUE(site.setStaticOriginAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
-    EXPECT_TRUE(site.setStaticXAxisAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
-    EXPECT_TRUE(site.setStaticYAxisAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
+    EXPECT_TRUE(site.setStaticOriginAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2)}));
+    EXPECT_TRUE(site.setStaticXAxisAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2)}));
+    EXPECT_TRUE(site.setStaticYAxisAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2)}));
 }
 
 TEST_F(SpeciesSiteTest, StaticAxes)
 {
-    auto &methane = methaneSpecies();
-
     // Set up sites:
     // -- Central atom is the carbon (0)
     // -- H directly up along Y is 1
@@ -75,7 +78,7 @@ TEST_F(SpeciesSiteTest, StaticAxes)
     // -- Along negative X (and negative Y, positive Z) is 4
 
     // Site 1 - O(C), X=+Y, Y=-Z, Z=-X
-    SpeciesSite site1(&methane, SpeciesSite::SiteType::Static);
+    SpeciesSite site1(&methane_, SpeciesSite::SiteType::Static);
     EXPECT_TRUE(site1.addStaticOriginAtom(0));
     EXPECT_TRUE(site1.addStaticXAxisAtom(1));
     EXPECT_TRUE(site1.addStaticYAxisAtom(2));
@@ -83,24 +86,24 @@ TEST_F(SpeciesSiteTest, StaticAxes)
     // -- Generate the site from the parent species and check its info
     auto sites = site1.createFromParent();
     ASSERT_EQ(sites.size(), 1);
-    testVector(sites.front()->origin(), methane.atom(0).r());
+    testVector(sites.front()->origin(), methane_.atom(0).r());
     testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
     // -- Set origin (centre of geometry) to be all atoms rather than just the carbon (expect same result)
-    site1.setStaticOriginAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2), &methane.atom(3), &methane.atom(4)});
+    site1.setStaticOriginAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2), &methane_.atom(3), &methane_.atom(4)});
     site1.setOriginMassWeighted(false);
     sites = site1.createFromParent();
     ASSERT_EQ(sites.size(), 1);
-    testVector(sites.front()->origin(), methane.atom(0).r());
+    testVector(sites.front()->origin(), methane_.atom(0).r());
     testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
     // -- Centre of mass should also be the same
     site1.setOriginMassWeighted(true);
     sites = site1.createFromParent();
     ASSERT_EQ(sites.size(), 1);
-    testVector(sites.front()->origin(), methane.atom(0).r());
+    testVector(sites.front()->origin(), methane_.atom(0).r());
     testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
 
     // Site 2 - O(C), X=+Y, Y=+Z, Z=+X
-    SpeciesSite site2(&methane, SpeciesSite::SiteType::Static);
+    SpeciesSite site2(&methane_, SpeciesSite::SiteType::Static);
     EXPECT_TRUE(site2.addStaticOriginAtom(0));
     EXPECT_TRUE(site2.addStaticXAxisAtom(1));
     EXPECT_TRUE(site2.addStaticYAxisAtom(3));
@@ -109,39 +112,37 @@ TEST_F(SpeciesSiteTest, StaticAxes)
     // -- Generate the site from the parent species and check its info
     sites = site2.createFromParent();
     ASSERT_EQ(sites.size(), 1);
-    testVector(sites.front()->origin(), methane.atom(0).r());
+    testVector(sites.front()->origin(), methane_.atom(0).r());
     testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
     // -- Set origin (centre of geometry) to be all atoms rather than just the carbon (expect same result)
-    site2.setStaticOriginAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2), &methane.atom(3), &methane.atom(4)});
+    site2.setStaticOriginAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2), &methane_.atom(3), &methane_.atom(4)});
     site2.setOriginMassWeighted(false);
     sites = site2.createFromParent();
     ASSERT_EQ(sites.size(), 1);
-    testVector(sites.front()->origin(), methane.atom(0).r());
+    testVector(sites.front()->origin(), methane_.atom(0).r());
     testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
     // -- Centre of mass should also be the same
     site2.setOriginMassWeighted(true);
     sites = site2.createFromParent();
     ASSERT_EQ(sites.size(), 1);
-    testVector(sites.front()->origin(), methane.atom(0).r());
+    testVector(sites.front()->origin(), methane_.atom(0).r());
     testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
 }
 
 TEST_F(SpeciesSiteTest, DynamicBasic)
 {
-    auto &methane = methaneSpecies();
-
-    SpeciesSite site(&methane, SpeciesSite::SiteType::Dynamic);
+    SpeciesSite site(&methane_, SpeciesSite::SiteType::Dynamic);
 
     // Try adding atoms...
     EXPECT_FALSE(site.addStaticOriginAtom(0));
     EXPECT_FALSE(site.addStaticXAxisAtom(0));
     EXPECT_FALSE(site.addStaticYAxisAtom(0));
-    EXPECT_FALSE(site.addStaticOriginAtom(&methane.atom(1)));
-    EXPECT_FALSE(site.addStaticXAxisAtom(&methane.atom(1)));
-    EXPECT_FALSE(site.addStaticYAxisAtom(&methane.atom(1)));
-    EXPECT_FALSE(site.setStaticOriginAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
-    EXPECT_FALSE(site.setStaticXAxisAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
-    EXPECT_FALSE(site.setStaticYAxisAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
+    EXPECT_FALSE(site.addStaticOriginAtom(&methane_.atom(1)));
+    EXPECT_FALSE(site.addStaticXAxisAtom(&methane_.atom(1)));
+    EXPECT_FALSE(site.addStaticYAxisAtom(&methane_.atom(1)));
+    EXPECT_FALSE(site.setStaticOriginAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2)}));
+    EXPECT_FALSE(site.setStaticXAxisAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2)}));
+    EXPECT_FALSE(site.setStaticYAxisAtoms({&methane_.atom(0), &methane_.atom(1), &methane_.atom(2)}));
 
     // Set an element
     EXPECT_TRUE(site.addDynamicElement(Elements::C));
@@ -149,21 +150,19 @@ TEST_F(SpeciesSiteTest, DynamicBasic)
     EXPECT_TRUE(site.addDynamicElement(Elements::Zn));
     auto sites = site.createFromParent();
     ASSERT_EQ(sites.size(), 1);
-    testVector(sites.front()->origin(), methane.atom(0).r());
+    testVector(sites.front()->origin(), methane_.atom(0).r());
 
     // Set elements vector
     EXPECT_TRUE(site.setDynamicElements({Elements::H}));
     sites = site.createFromParent();
     ASSERT_EQ(sites.size(), 4);
     for (auto n = 1; n < 5; ++n)
-        testVector(sites[n - 1]->origin(), methane.atom(n).r());
+        testVector(sites[n - 1]->origin(), methane_.atom(n).r());
 }
 
 TEST_F(SpeciesSiteTest, FragmentBasic)
 {
-    auto &benzene = benzeneSpecies();
-
-    SpeciesSite site(&benzene, SpeciesSite::SiteType::Fragment);
+    SpeciesSite site(&benzene_, SpeciesSite::SiteType::Fragment);
 
     // Set the NETA definition string - no origin
     EXPECT_TRUE(site.setFragmentDefinitionString("?C"));
@@ -190,9 +189,7 @@ TEST_F(SpeciesSiteTest, FragmentBasic)
 
 TEST_F(SpeciesSiteTest, FragmentAdvanced)
 {
-    auto &benzene = benzeneSpecies();
-
-    SpeciesSite site(&benzene, SpeciesSite::SiteType::Fragment);
+    SpeciesSite site(&benzene_, SpeciesSite::SiteType::Fragment);
 
     // Set the NETA definition string
     EXPECT_TRUE(site.setFragmentDefinitionString("?C, #origin, ring(C(-H),C(-H),C(-H),C(-H),C(-H),C(-H))"));
@@ -212,9 +209,7 @@ TEST_F(SpeciesSiteTest, FragmentAdvanced)
 
 TEST_F(SpeciesSiteTest, FragmentAdvancedAxes)
 {
-    auto &benzene = benzeneSpecies();
-
-    SpeciesSite site(&benzene, SpeciesSite::SiteType::Fragment);
+    SpeciesSite site(&benzene_, SpeciesSite::SiteType::Fragment);
 
     // Set the NETA definition string
     EXPECT_TRUE(site.setFragmentDefinitionString("?C, #origin, ring(C(-H),C(-H,#x),C(-H,#x),C(-H),C(-H(#y)),C(-H))"));
