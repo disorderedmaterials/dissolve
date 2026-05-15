@@ -46,8 +46,8 @@ bool XRayWeights::setUp(const std::map<const Species *, double> &speciesPopulati
 
     // Set up weights matrices
     auto nTypes = typeFractions_.size();
-    concentrationProducts_.clear(true);
-    preFactors_.clear(true);
+    concentrationProducts_.clear();
+    preFactors_.clear();
 
     // Determine atomic concentration products and full pre-factor
     dissolve::for_each_pair(ParallelPolicies::seq, typeFractions_,

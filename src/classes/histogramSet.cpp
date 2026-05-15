@@ -17,9 +17,9 @@ void HistogramSet::initialise(const std::vector<const AtomType *> &types, double
 {
     atomTypes_ = types;
 
-    fullHistograms_.clear(triangular_);
-    boundHistograms_.clear(triangular_);
-    unboundHistograms_.clear(triangular_);
+    fullHistograms_ = DoubleKeyedMap<Histogram1D>(triangular_);
+    boundHistograms_ = DoubleKeyedMap<Histogram1D>(triangular_);
+    unboundHistograms_ = DoubleKeyedMap<Histogram1D>(triangular_);
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, atomTypes_,

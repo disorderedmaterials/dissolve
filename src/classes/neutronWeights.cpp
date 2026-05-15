@@ -69,10 +69,10 @@ void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, 
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
-    concentrationProducts_.clear(true);
-    boundCoherentProducts_.clear(true);
-    weights_.clear(true);
-    intramolecularWeights_.clear(true);
+    concentrationProducts_.clear();
+    boundCoherentProducts_.clear();
+    weights_.clear();
+    intramolecularWeights_.clear();
     boundCoherentAverageOfSquares_ = 0.0;
     boundCoherentSquareOfAverage_ = 0.0;
     double ci, cj, bi, bj;

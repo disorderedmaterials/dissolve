@@ -27,9 +27,9 @@ class XRayWeights
     // Form factor data for atom types
     std::map<const AtomType *, std::reference_wrapper<const FormFactorData>> formFactorData_;
     // Concentration product matrix (ci * cj)
-    DoubleKeyedMap<double> concentrationProducts_;
+    DoubleKeyedMap<double> concentrationProducts_{true};
     // Pre-factors matrix (ci * cj * [2-dij])
-    DoubleKeyedMap<double> preFactors_;
+    DoubleKeyedMap<double> preFactors_{true};
 
     public:
     // Set-up from supplied species populations and form factors

@@ -23,9 +23,9 @@ void PartialSet::initialise(const KeyedVector<const Species *, int> &speciesPopu
 
     triangular_ = triangular;
 
-    partials_.clear(triangular_);
-    boundPartials_.clear(triangular_);
-    unboundPartials_.clear(triangular_);
+    partials_ = DoubleKeyedMap<Data1D>(triangular_);
+    boundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
+    unboundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
 
     // Create data for partials and set tags
     dissolve::for_each_pair(
@@ -58,9 +58,9 @@ void PartialSet::initialise(const KeyedVector<const Species *, double> &realSpec
 
     triangular_ = triangular;
 
-    partials_.clear(triangular_);
-    boundPartials_.clear(triangular_);
-    unboundPartials_.clear(triangular_);
+    partials_ = DoubleKeyedMap<Data1D>(triangular_);
+    boundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
+    unboundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
 
     // Create data for partials and set tags
     dissolve::for_each_pair(
@@ -90,9 +90,9 @@ void PartialSet::initialise(const PartialSet &partialSet)
     triangular_ = partialSet.triangular_;
     rho_ = partialSet.rho_;
 
-    partials_.clear(triangular_);
-    boundPartials_.clear(triangular_);
-    unboundPartials_.clear(triangular_);
+    partials_ = DoubleKeyedMap<Data1D>(triangular_);
+    boundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
+    unboundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
 
     // Template data from source PartialSet and set tags
     dissolve::for_each_pair(
@@ -491,9 +491,9 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     }
 
     // Clear partials
-    partials_.clear(triangular_);
-    boundPartials_.clear(triangular_);
-    unboundPartials_.clear(triangular_);
+    partials_ = DoubleKeyedMap<Data1D>(triangular_);
+    boundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
+    unboundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
