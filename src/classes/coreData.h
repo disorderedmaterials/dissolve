@@ -72,8 +72,6 @@ class CoreData
     const std::vector<std::unique_ptr<Species>> &species() const;
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
-    // Copy Species
-    Species *copySpecies(const Species *species);
 
     /*
      * Configurations
