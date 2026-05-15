@@ -116,8 +116,6 @@ class Species : public Serialisable<>
     // Add new SpeciesBond definition
     SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
     SpeciesBond &addBond(int i, int j);
-    // Return number of SpeciesBonds defined
-    int nBonds() const;
     // Return vector of SpeciesBond
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
@@ -137,8 +135,6 @@ class Species : public Serialisable<>
     // Add new SpeciesAngle definition
     SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     SpeciesAngle &addAngle(int i, int j, int k);
-    // Return number of SpeciesAngle defined
-    int nAngles() const;
     // Return vector of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
     const std::vector<SpeciesAngle> &angles() const;
@@ -154,8 +150,6 @@ class Species : public Serialisable<>
     // Add new SpeciesTorsion definition
     SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     SpeciesTorsion &addTorsion(int i, int j, int k, int l);
-    // Return number of SpeciesTorsion defined
-    int nTorsions() const;
     // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
@@ -171,8 +165,6 @@ class Species : public Serialisable<>
     // Add new SpeciesImproper definition
     SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     SpeciesImproper &addImproper(int i, int j, int k, int l);
-    // Return number of SpeciesImproper defined
-    int nImpropers() const;
     // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;

@@ -29,9 +29,6 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 }
 SpeciesBond &Species::addBond(int i, int j) { return addBond(&atom(i), &atom(j)); }
 
-// Return number of SpeciesBonds defined
-int Species::nBonds() const { return bonds_.size(); }
-
 // Return vector of SpeciesBond
 std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 
@@ -189,9 +186,6 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 }
 SpeciesAngle &Species::addAngle(int i, int j, int k) { return addAngle(&atom(i), &atom(j), &atom(k)); }
 
-// Return number of SpeciesAngles defined
-int Species::nAngles() const { return angles_.size(); }
-
 // Return vector of SpeciesAngle
 std::vector<SpeciesAngle> &Species::angles() { return angles_; }
 
@@ -247,9 +241,6 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
     return torsions_.back();
 }
 SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l) { return addTorsion(&atom(i), &atom(j), &atom(k), &atom(l)); }
-
-// Return number of SpeciesTorsions defined
-int Species::nTorsions() const { return torsions_.size(); }
 
 // Return vector of SpeciesTorsions
 std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
@@ -314,9 +305,6 @@ SpeciesImproper &Species::addImproper(int i, int j, int k, int l)
 {
     return addImproper(&atom(i), &atom(j), &atom(k), &atom(l));
 }
-
-// Return number of SpeciesImproper defined
-int Species::nImpropers() const { return impropers_.size(); }
 
 // Return vector of SpeciesImproper
 std::vector<SpeciesImproper> &Species::impropers() { return impropers_; }

@@ -134,7 +134,7 @@ void Species::print() const
                          (i.atomType() ? i.atomType()->index() : -1), i.r().x, i.r().y, i.r().z, i.q());
     }
 
-    if (nBonds() > 0)
+    if (!bonds_.empty())
     {
         Messenger::print("\n  Bonds:\n");
         Messenger::print("      I     J    Form             Parameters\n");
@@ -145,7 +145,7 @@ void Species::print() const
                              bond.interactionPotential().parametersAsString());
     }
 
-    if (nAngles() > 0)
+    if (!angles_.empty())
     {
         Messenger::print("\n  Angles:\n");
         Messenger::print("      I     J     K    Form             Parameters\n");
@@ -157,7 +157,7 @@ void Species::print() const
                              angle.interactionPotential().parametersAsString());
     }
 
-    if (nTorsions() > 0)
+    if (!torsions_.empty())
     {
         Messenger::print("\n  Torsions:\n");
         Messenger::print("      I     J     K     L    Form             Parameters\n");
@@ -170,7 +170,7 @@ void Species::print() const
                              torsion.interactionPotential().parametersAsString());
     }
 
-    if (nImpropers() > 0)
+    if (!impropers_.empty())
     {
         Messenger::print("\n  Impropers:\n");
         Messenger::print("      I     J     K     L    Form             Parameters\n");

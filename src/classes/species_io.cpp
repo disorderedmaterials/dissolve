@@ -823,7 +823,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Angles
-    if (nAngles() > 0)
+    if (!angles_.empty())
     {
         if (!parser.writeLineF("\n{}# Angles\n", newPrefix))
             return false;
@@ -848,7 +848,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Torsions
-    if (nTorsions() > 0)
+    if (!torsions_.empty())
     {
         if (!parser.writeLineF("\n{}# Torsions\n", newPrefix))
             return false;
@@ -891,7 +891,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Impropers
-    if (nImpropers() > 0)
+    if (!impropers_.empty())
     {
         if (!parser.writeLineF("\n{}# Impropers\n", newPrefix))
             return false;
