@@ -143,14 +143,8 @@ class Species : public Serialisable<>
     // Return the SpeciesBond between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
     OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
-    // Add missing bonds
-    void addMissingBonds(double tolerance = 1.1, bool preventMetallic = false);
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
-    // Remove all higher order intramolecular terms
-    void removeHigherOrderIntramolecularTerms();
-    // Clear and regenerate bonds based on tolerance
-    void recalculateIntermolecularTerms(double tolerance = 1.1);
     // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
     void updateIntramolecularTerms();
     // Add new SpeciesAngle definition

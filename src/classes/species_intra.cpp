@@ -87,38 +87,6 @@ OptionalReferenceWrapper<const SpeciesBond> Species::getBond(const SpeciesAtom *
 OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j) { return getBond(&atom(i), &atom(j)); }
 OptionalReferenceWrapper<const SpeciesBond> Species::getBond(int i, int j) const { return getBond(&atom(i), &atom(j)); }
 
-// Add missing bonds
-void Species::addMissingBonds(double tolerance, bool preventMetallic)
-{
-    double r, radiusI;
-    for (auto indexI = 0; indexI < nAtoms() - 1; ++indexI)
-    {
-        // Get SpeciesAtom 'i' and its radius
-        auto &i = atom(indexI);
-        radiusI = AtomicRadii::radius(i.Z());
-        for (auto indexJ = indexI + 1; indexJ < nAtoms(); ++indexJ)
-        {
-            // Get SpeciesAtom 'j'
-            auto &j = atom(indexJ);
-
-            // If the two atoms are both metal ions and preventMetallic = true, continue
-            if (preventMetallic && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
-                continue;
-
-            // If the two atoms are already bound, continue
-            if (i.getBond(&j))
-                continue;
-
-            // Calculate distance between atoms
-            r = box_ ? box_->minimumDistance(j.r(), i.r()) : (j.r() - i.r()).magnitude();
-
-            // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (r <= (radiusI + AtomicRadii::radius(j.Z())) * tolerance)
-                addBond(&i, &j);
-        }
-    }
-}
-
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
 {
@@ -134,25 +102,6 @@ void Species::removePeriodicBonds()
                              });
     if (it != bonds_.end())
         bonds_.erase(it, bonds_.end());
-}
-
-// Remove all higher order intramolecular terms
-void Species::removeHigherOrderIntramolecularTerms()
-{
-    angles_.clear();
-    torsions_.clear();
-    impropers_.clear();
-}
-
-// Clear and recalculate all bonds on the species
-void Species::recalculateIntermolecularTerms(double tolerance)
-{
-    // Need to detach().
-    while (bonds_.size())
-        removeBond(bonds_[0].i(), bonds_[0].j());
-
-    addMissingBonds(tolerance);
-    updateIntramolecularTerms();
 }
 
 // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
