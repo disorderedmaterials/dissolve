@@ -190,15 +190,12 @@ StructureBond *Structure::getBond(const StructureAtom *i, const StructureAtom *j
 // Clear bonds
 void Structure::clearBonds()
 {
-    auto pairs = PairIterator(atoms_.size());
-    for (const auto &pair : pairs)
+    for (auto &bond : bonds_)
     {
-        auto [i, j] = pair;
-        if (!hasBond(atomAt(i), atomAt(j)))
-            continue;
-
-        removeBond(atomAt(i), atomAt(j));
+        bond->i()->removeBond(bond.get());
+        bond->j()->removeBond(bond.get());
     }
+    bonds_.clear();
 }
 
 /*
