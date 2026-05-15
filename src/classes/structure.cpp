@@ -194,7 +194,7 @@ void Structure::clearBonds()
     for (const auto &pair : pairs)
     {
         auto [i, j] = pair;
-        if (hasBond(atomAt(i), atomAt(j)))
+        if (!hasBond(atomAt(i), atomAt(j)))
             continue;
 
         removeBond(atomAt(i), atomAt(j));
