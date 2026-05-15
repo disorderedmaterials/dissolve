@@ -116,9 +116,6 @@ class Species : public Serialisable<>
     // Add new SpeciesBond definition
     SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
     SpeciesBond &addBond(int i, int j);
-    // Remove bond between specified SpeciesAtoms
-    void removeBond(SpeciesAtom *i, SpeciesAtom *j);
-    void removeBond(int i, int j);
     // Return number of SpeciesBonds defined
     int nBonds() const;
     // Return vector of SpeciesBond

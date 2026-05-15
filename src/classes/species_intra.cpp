@@ -29,27 +29,6 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 }
 SpeciesBond &Species::addBond(int i, int j) { return addBond(&atom(i), &atom(j)); }
 
-// Remove bond between specified SpeciesAtoms
-void Species::removeBond(SpeciesAtom *j, SpeciesAtom *k)
-{
-    // Find the bond
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [j, k](const auto &bond) { return bond.matches(j, k); });
-    if (it == bonds_.end())
-        return;
-
-    // Clear higher-order terms
-    angles_.clear();
-    torsions_.clear();
-    impropers_.clear();
-
-    // Detach the bond from its atoms
-    it->detach();
-
-    // Erase the bond
-    bonds_.erase(it);
-}
-void Species::removeBond(int i, int j) { removeBond(&atoms_[i], &atoms_[j]); }
-
 // Return number of SpeciesBonds defined
 int Species::nBonds() const { return bonds_.size(); }
 
