@@ -29,10 +29,11 @@ bool AvgMolModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> a
     // Copy basic atom and bond information from species
     if (targetSpecies_)
     {
-        for (const auto &i : targetSpecies_->atoms())
-            averageSpecies_.addAtom(i.Z(), i.r());
-        for (const auto &bond : targetSpecies_->bonds())
-            averageSpecies_.addBond(bond.indexI(), bond.indexJ());
+        // TODO DISSOLVE2
+        // for (const auto &i : targetSpecies_->atoms())
+        //     averageSpecies_.addAtom(i.Z(), i.r());
+        // for (const auto &bond : targetSpecies_->bonds())
+        //     averageSpecies_.addBond(bond.indexI(), bond.indexJ());
     }
 
     // Set name and object tag for average species
