@@ -90,8 +90,4 @@ class SpeciesModel : public QObject
     public Q_SLOTS:
     // Finalise the node
     void create();
-    void addBond(int i, int j);
-    void addAngle(int i, int j, int k);
-    void addTorsion(int i, int j, int k, int l);
-    void addImproper(int i, int j, int k, int l);
 };
