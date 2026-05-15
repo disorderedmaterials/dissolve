@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/empiricalFormula.h"
-#include "io/import/species.h"
 #include "nodes/cif/importCIFStructure.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
