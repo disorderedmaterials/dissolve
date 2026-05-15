@@ -378,6 +378,16 @@ class Species : public Serialisable<>
     void centreAtOrigin();
 
     /*
+     * Creation
+     */
+    public:
+    // Create atomic species
+    void createAtomic(Elements::Element Z,
+                      InteractionPotential<ShortRangeFunctions> potential = {ShortRangeFunctions::Form::Undefined, ""});
+    // Load from specified TOML file
+    void load(std::string_view tomlFile);
+
+    /*
      * Serialisation
      */
     public:
@@ -419,6 +429,4 @@ class Species : public Serialisable<>
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
-    // Load from specified TOML file
-    void load(std::string_view tomlFile);
 };

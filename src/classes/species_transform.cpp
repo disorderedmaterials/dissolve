@@ -44,3 +44,41 @@ void Species::centreAtOrigin()
     for (auto &i : atoms_)
         i -= centre;
 }
+
+/*
+ * Creation
+ */
+
+// Create atomic species
+void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeFunctions> potential)
+{
+    clear();
+
+    // Set up atom type
+    auto atomType = addAtomType(Z, Elements::symbol(Z));
+    atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
+    addAtom(Z, {}, 0.0, atomType);
+
+    // Create isotopologues
+    for (auto isotope : Sears91::isotopes(Z))
+    {
+        auto iso = addIsotopologue(std::format("{}{}", Elements::symbol(Z), Sears91::A(isotope)));
+        iso->setAtomTypeIsotope(atomType, isotope);
+    }
+}
+
+// Load from specified TOML file
+void Species::load(std::string_view tomlFile)
+{
+    clear();
+
+    SerialisedValue contents = toml::parse(std::string(tomlFile));
+    if (contents.contains("species"))
+    {
+        deserialise(contents["species"]);
+        auto name = contents["species"]["name"].as_string();
+        setName(name.str);
+    }
+
+    finaliseGeometry();
+}

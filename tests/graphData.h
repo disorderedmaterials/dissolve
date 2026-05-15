@@ -114,18 +114,7 @@ class TestGraph : public DissolveGraph
         auto speciesNodePtr = speciesNodeUniquePtr.get();
         auto species = &speciesNodePtr->species();
         species->setName(Elements::symbol(element));
-
-        // Set up atom types
-        auto atomType = species->addAtomType(element, Elements::symbol(element));
-        atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
-        species->addAtom(element, {}, 0.0, atomType);
-
-        // Create isotopologues
-        for (auto isotope : Sears91::isotopes(element))
-        {
-            auto iso = species->addIsotopologue(std::format("{}{}", Elements::symbol(element), Sears91::A(isotope)));
-            iso->setAtomTypeIsotope(atomType, isotope);
-        }
+        species->createAtomic(element, potential);
 
         return speciesNodeUniquePtr;
     }

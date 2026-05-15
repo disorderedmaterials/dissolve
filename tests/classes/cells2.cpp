@@ -19,7 +19,7 @@ class CellsPBCTest : public ::testing::Test
 
         // Set up pseudo-species
         probe_.setName("Probe");
-        probe_.addAtom(Elements::H, {0.0, 0.0, 0.0}, 0.0, probe_.addAtomType(Elements::H, "Probe"));
+        probe_.createAtomic(Elements::H);
     }
 
     protected:
