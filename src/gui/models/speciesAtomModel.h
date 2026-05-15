@@ -19,7 +19,6 @@ class SpeciesAtomModel : public QAbstractTableModel
     void atomTypeChanged();
 
     public Q_SLOTS:
-    void addAtom(QString element, double x, double y, double z, double charge);
 
     public:
     SpeciesAtomModel();

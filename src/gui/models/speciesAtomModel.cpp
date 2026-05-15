@@ -7,15 +7,6 @@ SpeciesAtomModel::SpeciesAtomModel() {}
 
 void SpeciesAtomModel::setSpecies(Species *species) { species_ = species; }
 
-void SpeciesAtomModel::addAtom(QString element, double x, double y, double z, double charge)
-{
-    auto Z = Elements::element(element.toStdString());
-    Vector3 r{x, y, z};
-    beginInsertRows({}, species_->atoms().size(), species_->atoms().size());
-    species_->addAtom(Z, r, charge);
-    endInsertRows();
-}
-
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
