@@ -66,16 +66,12 @@ class Species : public Serialisable<>
     public:
     // Return the number of atoms in the species (or only those with the specified presence)
     int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
-    // Renumber atoms so they are sequential in the list
-    void renumberAtoms();
     // Return the nth atom in the Species
     SpeciesAtom &atom(int n);
     const SpeciesAtom &atom(int n) const;
     // Return a reference to the vector of atoms
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
-    // Transmute specified atom
-    void transmuteAtom(int index, Elements::Element newZ);
     // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
     // provided
     std::vector<int> fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,

@@ -37,14 +37,6 @@ int Species::nAtoms(AtomConstants::Presence withPresence) const
                                [withPresence](const auto &i) { return i.isPresence(withPresence); });
 }
 
-// Renumber atoms so they are sequential in the list
-void Species::renumberAtoms()
-{
-    auto count = 0;
-    for (auto &i : atoms_)
-        i.setIndex(count++);
-}
-
 // Return the nth Atom in the Species
 SpeciesAtom &Species::atom(int n)
 {
@@ -63,20 +55,6 @@ const SpeciesAtom &Species::atom(int n) const
 // Return a vector of SpeciesAtoms
 const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
-
-// Transmute specified SpeciesAtom
-void Species::transmuteAtom(int index, Elements::Element newZ)
-{
-    auto &i = atoms_[index];
-
-    // Nothing to do if current element matches that supplied
-    if (i.Z() == newZ)
-        return;
-
-    // Remove any existing AtomType assignment
-    i.setAtomType(nullptr);
-    i.setZ(newZ);
-}
 
 // Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
 std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude,
