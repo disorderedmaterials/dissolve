@@ -164,7 +164,12 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (atomVectorFixed && atomIndex < atoms_.size())
                     atoms_[atomIndex].set(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
                 else
-                    atomIndex = addAtom(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                {
+                    auto &i = atoms_.emplace_back(this);
+                    i.set(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                    i.setIndex(atoms_.size() - 1);
+                    atomIndex = i.index();
+                }
 
                 // Locate the AtomType assigned to the Atom
                 if (DissolveSys::sameString("None", parser.argsv(6)))

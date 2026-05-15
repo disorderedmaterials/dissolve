@@ -64,12 +64,6 @@ class Species : public Serialisable<>
                              OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
 
     public:
-    // Add a new atom to the Species, returning its index
-    int addAtom(Elements::Element Z, Vector3 r, double q = 0.0, const AtomType *atomType = nullptr);
-    // Remove the specified atom from the species
-    void removeAtom(int index);
-    // Remove set of atom indices
-    void removeAtoms(std::vector<int> indices);
     // Return the number of atoms in the species (or only those with the specified presence)
     int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
     // Renumber atoms so they are sequential in the list
