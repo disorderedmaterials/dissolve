@@ -197,7 +197,21 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     b = bonds_[bondIndex++];
                 }
                 else
-                    b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
+                {
+                    auto i = parser.argi(1) - 1;
+                    auto j = parser.argi(2) - 1;
+                    // Check for existence of Bond already
+                    auto bondRef = getBond(&atom(i), &atom(j));
+                    if (bondRef)
+                    {
+                        Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it "
+                                        "already exists.\n",
+                                        i + 1, j + 1, name_);
+                        b = *bondRef;
+                    }
+                    else
+                        b = bonds_.emplace_back(this, &atom(i), &atom(j));
+                }
 
                 /*
                  * If only the indices were given, create a bond without a specified functional form (a

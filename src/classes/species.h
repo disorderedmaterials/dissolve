@@ -113,9 +113,6 @@ class Species : public Serialisable<>
     bool attachedAtomListsGenerated_;
 
     public:
-    // Add new SpeciesBond definition
-    SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
-    SpeciesBond &addBond(int i, int j);
     // Return vector of SpeciesBond
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;

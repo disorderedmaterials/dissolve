@@ -10,25 +10,6 @@
 #include "templates/algorithms.h"
 #include <algorithm>
 
-// Add new SpeciesBond definition
-SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
-{
-    // Check for existence of Bond already
-    auto bondRef = getBond(i, j);
-    if (bondRef)
-    {
-        Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it already exists.\n",
-                        i->userIndex(), j->userIndex(), name_);
-        return *bondRef;
-    }
-
-    // OK to add new Bond
-    bonds_.emplace_back(this, i, j);
-
-    return bonds_.back();
-}
-SpeciesBond &Species::addBond(int i, int j) { return addBond(&atom(i), &atom(j)); }
-
 // Return vector of SpeciesBond
 std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 
