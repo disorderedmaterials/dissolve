@@ -12,9 +12,9 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
     // If this is the first accumulation, initialise our maps with the "mirrored" state of the source
     if (nAccumulated_ == 0)
     {
-        partials_.clear(source.partials().mirroredAreEquivalent());
-        boundPartials_.clear(source.boundPartials().mirroredAreEquivalent());
-        unboundPartials_.clear(source.unboundPartials().mirroredAreEquivalent());
+        partials_ = DoubleKeyedMap<SampledData1D>(source.partials().mirroredAreEquivalent());
+        boundPartials_ = DoubleKeyedMap<SampledData1D>(source.boundPartials().mirroredAreEquivalent());
+        unboundPartials_ = DoubleKeyedMap<SampledData1D>(source.unboundPartials().mirroredAreEquivalent());
     }
 
     // Full partials
@@ -144,9 +144,9 @@ bool PartialSetAccumulator::deserialise(LineParser &parser)
     auto mirroredEquivalent = parser.argb(2);
 
     // Clear data
-    partials_.clear(mirroredEquivalent);
-    boundPartials_.clear(mirroredEquivalent);
-    unboundPartials_.clear(mirroredEquivalent);
+    partials_ = DoubleKeyedMap<SampledData1D>(mirroredEquivalent);
+    boundPartials_ = DoubleKeyedMap<SampledData1D>(mirroredEquivalent);
+    unboundPartials_ = DoubleKeyedMap<SampledData1D>(mirroredEquivalent);
 
     if (nAccumulated_ == 0)
         return true;

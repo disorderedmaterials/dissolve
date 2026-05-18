@@ -34,13 +34,13 @@ class NeutronWeights
     // Isotope mix
     IsotopeMix isotopeMix_;
     // Concentration product matrix (ci * cj)
-    DoubleKeyedMap<double> concentrationProducts_;
+    DoubleKeyedMap<double> concentrationProducts_{true};
     // Bound coherent product matrix (bi * bj)
-    DoubleKeyedMap<double> boundCoherentProducts_;
+    DoubleKeyedMap<double> boundCoherentProducts_{true};
     // Full scattering weights
-    DoubleKeyedMap<double> weights_;
+    DoubleKeyedMap<double> weights_{true};
     // Intramolecular scattering weights
-    DoubleKeyedMap<double> intramolecularWeights_;
+    DoubleKeyedMap<double> intramolecularWeights_{true};
     // Bound coherent average squared scattering (<b>**2)
     double boundCoherentSquareOfAverage_;
     // Bound coherent squared average scattering (<b**2>)

@@ -29,7 +29,7 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData,
 
     // Realise the DeltaSQ array
     auto deltaSQ = processingData.realise<DoubleKeyedMap<Data1D>>("DeltaSQ", name_, GenericItem::ItemFlag::NoFlags);
-    deltaSQ.clear(true);
+    deltaSQ = DoubleKeyedMap<Data1D>(true);
 
     for (auto &[key, calcSQ] : calculatedSQ)
     {

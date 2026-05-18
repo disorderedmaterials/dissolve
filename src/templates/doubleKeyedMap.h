@@ -61,11 +61,7 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable<>
 
     public:
     // Clear data
-    void clear(bool mirrored = false)
-    {
-        data_.clear();
-        mirroredAreEquivalent_ = mirrored;
-    }
+    void clear() { data_.clear(); }
     // Return whether the mirrored key pairs A-B and B-A are equivalent
     bool mirroredAreEquivalent() const { return mirroredAreEquivalent_; }
     // Set / overwrite key

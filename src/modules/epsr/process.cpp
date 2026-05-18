@@ -214,7 +214,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve)
 
     // Create storage for our summed UnweightedSQ
     auto &calculatedUnweightedSQ = moduleData.realise<DoubleKeyedMap<Data1D>>("UnweightedSQ", name_);
-    calculatedUnweightedSQ.clear(true);
+    calculatedUnweightedSQ = DoubleKeyedMap<Data1D>(true);
     dissolve::for_each_pair(
         ParallelPolicies::par, atomTypes, [&](int indexI, auto atI, int indexJ, auto atJ)
         { calculatedUnweightedSQ[{atI->name(), atJ->name()}].setTag(std::format("{}-{}", atI->name(), atJ->name())); });
