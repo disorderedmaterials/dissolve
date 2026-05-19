@@ -73,23 +73,11 @@ bool Species::checkSetUp() const
      */
     for (auto &i : atoms_)
     {
-        if ((i.nBonds() == 0) && (atoms_.size() > 1))
+        if ((i.bonds().size() == 0) && (atoms_.size() > 1))
         {
             Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n",
                              i.userIndex(), Elements::symbol(i.Z()));
             ++nErrors;
-        }
-
-        // Check each Bond for two-way consistency
-        for (const SpeciesBond &bond : i.bonds())
-        {
-            auto *partner = bond.partner(&i);
-            if (!partner->getBond(&i))
-            {
-                Messenger::error("SpeciesAtom {} references a Bond to SpeciesAtom {}, but SpeciesAtom {} does not.\n",
-                                 i.userIndex(), partner->userIndex(), partner->userIndex());
-                ++nErrors;
-            }
         }
     }
     if (nErrors > 0)

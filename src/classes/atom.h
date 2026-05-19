@@ -86,6 +86,14 @@ template <typename BondClass> class Atom : public Serialisable<>
     void addBond(BondClass *bond) { bonds_.push_back(bond); }
     // Remove bond from atom
     void removeBond(BondClass *bond) { bonds_.erase(std::remove(bonds_.begin(), bonds_.end(), bond)); }
+    // Get bond with the supplied atom (if it exists)
+    BondClass *getBondWith(const Atom *other)
+    {
+        auto it = std::ranges::find_if(bonds_, [other](const auto *bond) { return bond->i() == other || bond->j() == other; });
+        if (it != bonds_.end())
+            return *it;
+        return nullptr;
+    }
 
     /*
      * Serialisation

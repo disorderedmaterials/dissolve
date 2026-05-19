@@ -369,9 +369,9 @@ Kernel::GeometryEnergyValue GeometryKernel::geometryEnergy(const ConfigurationAt
     Kernel::GeometryEnergyValue energy;
 
     // Add energy from SpeciesAngle terms
-    energy.bondEnergy = std::accumulate(
-        spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const SpeciesBond &bond)
-        { return acc + bondEnergy(bond, mol.atom(bond.indexI())->r(), mol.atom(bond.indexJ())->r()); });
+    energy.bondEnergy =
+        std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const auto *bond)
+                        { return acc + bondEnergy(*bond, mol.atom(bond->indexI())->r(), mol.atom(bond->indexJ())->r()); });
 
     // Add energy from SpeciesAngle terms
     energy.angleEnergy =

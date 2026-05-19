@@ -74,32 +74,32 @@ void Species::updateIntramolecularTerms()
         k = jk.j();
 
         // Swap j and k over if j is terminal and has only a single bond (i.e. jk)
-        if (j->nBonds() == 1)
+        if (j->bonds().size() == 1)
             std::swap(j, k);
 
         // Loop over bonds 'ij'
-        for (SpeciesBond &ij : j->bonds())
+        for (auto *ij : j->bonds())
         {
             // Avoid 'ij' == 'jk'
-            if (&ij == &jk)
+            if (ij == &jk)
                 continue;
 
             // Get atom 'i'
-            i = ij.partner(j);
+            i = ij->partner(j);
 
             // Attempt to add angle term 'ijk' if 'i' > 'k'
             if (!hasAngle(i, j, k))
                 addAngle(i, j, k);
 
             // Loop over bonds 'kl'
-            for (SpeciesBond &kl : k->bonds())
+            for (auto kl : k->bonds())
             {
                 // Avoid 'kl' == 'jk'
-                if (&kl == &jk)
+                if (kl == &jk)
                     continue;
 
                 // Get atom 'l'
-                l = kl.partner(k);
+                l = kl->partner(k);
 
                 // Attempt to add angle term 'jkl'
                 if (!hasAngle(j, k, l))
@@ -377,9 +377,9 @@ void Species::finaliseGeometry()
     // Angles - termini are 'i' and 'k'
     for (auto &angle : angles_)
     {
-        // Grab relevant Bonds (if they exist)
-        auto ji = angle.j()->getBond(angle.i());
-        auto jk = angle.j()->getBond(angle.k());
+        // Grab relevant bonds
+        auto ji = angle.j()->getBondWith(angle.i());
+        auto jk = angle.j()->getBondWith(angle.k());
 
         // Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
         auto selection = fragment(angle.i()->index(), *ji, *jk);
@@ -405,7 +405,7 @@ void Species::finaliseGeometry()
             angle.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        selection = fragment(angle.k()->index(), *ji, jk);
+        selection = fragment(angle.k()->index(), *ji, *jk);
 
         // Remove Atom 'j' from the list if it's there
         jit = std::find(selection.begin(), selection.end(), angle.j()->index());
@@ -419,7 +419,7 @@ void Species::finaliseGeometry()
     for (auto &torsion : torsions_)
     {
         // Grab relevant Bond (if it exists)
-        auto jk = torsion.j()->getBond(torsion.k());
+        auto jk = torsion.j()->getBondWith(torsion.k());
 
         // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
         auto selection = fragment(torsion.j()->index(), *jk);

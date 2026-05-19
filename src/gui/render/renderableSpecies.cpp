@@ -146,7 +146,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         for (const auto &i : source_->atoms())
         {
             // Only draw the atom if it has no bonds, in which case draw it as a 'cross'
-            if (i.nBonds() != 0)
+            if (i.bonds().size() != 0)
                 continue;
 
             const auto r = i.r();
@@ -267,7 +267,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
             auto &colour = ElementColours::colour(i.Z());
 
             // If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
-            if (i.nBonds() == 0)
+            if (i.bonds().size() == 0)
             {
                 const auto &r = i.r();
 
@@ -281,10 +281,10 @@ void RenderableSpecies::recreateSelectionPrimitive()
             else
             {
                 // Draw all bonds from this atom
-                for (const SpeciesBond &bond : i.bonds())
+                for (const auto *bond : i.bonds())
                 {
                     const auto ri = i.r();
-                    const auto dij = (bond.partner(&i)->r() - ri) * 0.5;
+                    const auto dij = (bond->partner(&i)->r() - ri) * 0.5;
 
                     // Draw bond halves
                     lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour.data());

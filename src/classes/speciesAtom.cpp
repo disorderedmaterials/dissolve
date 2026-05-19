@@ -76,55 +76,17 @@ int SpeciesAtom::userIndex() const { return index_ + 1; }
 // Add specified SpeciesAngle to Atom
 void SpeciesAtom::addAngle(SpeciesAngle &angle) { angles_.emplace_back(angle); }
 
-// Remove angle reference
-void SpeciesAtom::removeAngle(SpeciesAngle &angle)
-{
-    angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle &a) { return &a == &angle; }));
-}
-
-// Return the number of Angles in which the Atom is involved
-int SpeciesAtom::nAngles() const { return angles_.size(); }
-
-// Return specified angle
-SpeciesAngle &SpeciesAtom::angle(int index) { return angles_.at(index); }
-
 // Return array of Angles in which the Atom is involved
 const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesAtom::angles() const { return angles_; }
 
 // Add specified SpeciesTorsion to Atom
 void SpeciesAtom::addTorsion(SpeciesTorsion &torsion) { torsions_.emplace_back(torsion); }
 
-// Remove torsion reference
-void SpeciesAtom::removeTorsion(SpeciesTorsion &torsion)
-{
-    torsions_.erase(
-        find_if(torsions_.begin(), torsions_.end(), [&torsion](const SpeciesTorsion &t) { return &t == &torsion; }));
-}
-
-// Return the number of Torsions in which the Atom is involved
-int SpeciesAtom::nTorsions() const { return torsions_.size(); }
-
-// Return specified torsion
-SpeciesTorsion &SpeciesAtom::torsion(int index) { return torsions_.at(index); }
-
 // Return array of Torsions in which the Atom is involved
 const std::vector<std::reference_wrapper<SpeciesTorsion>> &SpeciesAtom::torsions() const { return torsions_; }
 
 // Add specified SpeciesImproper to Atom
 void SpeciesAtom::addImproper(SpeciesImproper &improper) { impropers_.emplace_back(improper); }
-
-// Remove improper reference
-void SpeciesAtom::removeImproper(SpeciesImproper &improper)
-{
-    impropers_.erase(
-        find_if(impropers_.begin(), impropers_.end(), [&improper](const SpeciesImproper &i) { return &i == &improper; }));
-}
-
-// Return the number of Impropers in which the Atom is involved
-int SpeciesAtom::nImpropers() const { return impropers_.size(); }
-
-// Return specified improper
-SpeciesImproper &SpeciesAtom::improper(int index) { return impropers_.at(index); }
 
 // Return array of Impropers in which the Atom is involved
 const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::impropers() const { return impropers_; }
@@ -250,8 +212,8 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
             return AtomGeometry::Octahedral;
             // For the remaining types, take averages of bond angles about the atom
         case (2):
-            h = bonds[0].get().partner(i);
-            j = bonds[1].get().partner(i);
+            h = bonds[0]->partner(i);
+            j = bonds[1]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > 150.0)
                 return AtomGeometry::Linear;
@@ -259,15 +221,15 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
                 return AtomGeometry::Tetrahedral;
             break;
         case (3):
-            h = bonds[0].get().partner(i);
-            j = bonds[1].get().partner(i);
+            h = bonds[0]->partner(i);
+            j = bonds[1]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             largest = angle;
-            j = bonds[2].get().partner(i);
+            j = bonds[2]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
-            h = bonds[1].get().partner(i);
+            h = bonds[1]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
@@ -282,12 +244,12 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
             // Two possibilities - tetrahedral or square planar. Tetrahedral will have an
             // average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
             angle = 0.0;
-            for (auto n = 0; n < i->nBonds(); ++n)
+            for (auto n = 0; n < i->bonds().size(); ++n)
             {
-                h = bonds[n].get().partner(i);
-                for (auto m = n + 1; m < i->nBonds(); ++m)
+                h = bonds[n]->partner(i);
+                for (auto m = n + 1; m < i->bonds().size(); ++m)
                 {
-                    j = bonds[m].get().partner(i);
+                    j = bonds[m]->partner(i);
                     angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
                 }
             }

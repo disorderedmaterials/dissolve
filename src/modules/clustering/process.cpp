@@ -65,7 +65,7 @@ bool ClusteringModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSigna
                     // Find the hydrogens and add indexes to the map
                     auto &origin = s->parent()->atom(instance.originIndices()[0]);
                     for (const auto &bond : origin.bonds())
-                        for (const auto &atom : bond.get().atoms())
+                        for (const auto &atom : bond->atoms())
                         {
                             if (!atom)
                             {

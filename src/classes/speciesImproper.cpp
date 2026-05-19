@@ -13,6 +13,8 @@ SpeciesImproper::SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j
 {
 }
 
+SpeciesImproper::~SpeciesImproper() = default;
+
 /*
  * Atom Information
  */

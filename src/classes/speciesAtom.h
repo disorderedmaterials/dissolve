@@ -68,47 +68,17 @@ class SpeciesAtom : public Atom<SpeciesBond>
     std::vector<std::pair<const SpeciesAtom *, ScaledInteractionDefinition>> scaledInteractions_;
 
     public:
-    // Add bond reference
-    void addBond(SpeciesBond &b);
-    // Remove bond reference
-    void removeBond(SpeciesBond &b);
-    // Return number of bonds
-    int nBonds() const;
-    // Return specified bond
-    SpeciesBond &bond(int index);
-    // Return bonds list
-    const std::vector<std::reference_wrapper<SpeciesBond>> &bonds() const;
-    // Return whether bond to specified atom exists
-    OptionalReferenceWrapper<SpeciesBond> getBond(const SpeciesAtom *j);
     // Add specified Angle to Atom
     void addAngle(SpeciesAngle &angle);
-    // Remove angle reference
-    void removeAngle(SpeciesAngle &a);
-    // Return the number of SpeciesAngles in which the Atom is involved
-    int nAngles() const;
-    // Return specified angle
-    SpeciesAngle &angle(int index);
-    // Return array of Angles in which the Atom is involved
+    // Return angles the atom is involved in
     const std::vector<std::reference_wrapper<SpeciesAngle>> &angles() const;
     // Add specified SpeciesTorsion to Atom
     void addTorsion(SpeciesTorsion &torsion);
-    // Remove torsion reference
-    void removeTorsion(SpeciesTorsion &t);
-    // Return the number of SpeciesTorsions in which the Atom is involved
-    int nTorsions() const;
-    // Return specified torsion
-    SpeciesTorsion &torsion(int index);
-    // Return array of Torsions in which the Atom is involved
+    // Return torsions the atom is involved in
     const std::vector<std::reference_wrapper<SpeciesTorsion>> &torsions() const;
     // Add specified SpeciesImproper to Atom
     void addImproper(SpeciesImproper &improper);
-    // Remove improper reference
-    void removeImproper(SpeciesImproper &t);
-    // Return the number of SpeciesImpropers in which the Atom is involved
-    int nImpropers() const;
-    // Return specified improper
-    SpeciesImproper &improper(int index);
-    // Return array of Impropers in which the Atom is involved
+    // Return impropers the atom is involved in
     const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
     // Set all scaled intramolecular interactions
     void setScaledInteractions();

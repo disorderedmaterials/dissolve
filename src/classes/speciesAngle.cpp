@@ -14,6 +14,8 @@ SpeciesAngle::SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, Spec
 {
 }
 
+SpeciesAngle::~SpeciesAngle() = default;
+
 /*
  * Atom Information
  */

@@ -13,16 +13,16 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
     // Loop over Bonds on specified Atom
     indices.emplace_back(index);
     const auto &i = atoms_[index];
-    for (const SpeciesBond &bond : i.bonds())
+    for (const auto *bond : i.bonds())
     {
         // Is this either of the excluded bonds?
-        if (exclude && &(*exclude).get() == &bond)
+        if (exclude && &(*exclude).get() == bond)
             continue;
-        if (excludeToo && &(*excludeToo).get() == &bond)
+        if (excludeToo && &(*excludeToo).get() == bond)
             continue;
 
         // Get the partner atom in the bond and select it (if it is not selected already)
-        auto *j = bond.partner(&i);
+        auto *j = bond->partner(&i);
         if (std::find(indices.begin(), indices.end(), j->index()) == indices.end())
             getIndicesRecursive(indices, j->index(), exclude, excludeToo);
     }

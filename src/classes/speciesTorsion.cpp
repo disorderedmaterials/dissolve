@@ -14,6 +14,8 @@ SpeciesTorsion::SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, 
 {
 }
 
+SpeciesTorsion::~SpeciesTorsion() = default;
+
 /*
  * Atom Information
  */

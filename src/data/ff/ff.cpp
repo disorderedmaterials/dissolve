@@ -483,53 +483,49 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         for (auto &i : sp->atoms())
         {
             // If we don't have exactly three bonds to the central atom 'i', move on
-            if (i.nBonds() != 3)
+            if (i.bonds().size() != 3)
                 continue;
 
             // if (selectionOnly && (!i.isSelected()))
             // continue;
 
-            // Loop over combinations of bonds to the central atom
-            for (auto indexJ = 0; indexJ < i.nBonds() - 2; ++indexJ)
+            // Get SpeciesAtom 'j'
+            auto *j = i.bonds().front()->partner(&i);
+
+            // if (selectionOnly && (!j->isSelected()))
+            // continue;
+
+            for (auto indexK = 1; indexK < 2; ++indexK)
             {
-                // Get SpeciesAtom 'j'
-                auto *j = i.bond(indexJ).partner(&i);
+                // Get SpeciesAtom 'k'
+                auto *k = i.bonds()[indexK]->partner(&i);
 
-                // if (selectionOnly && (!j->isSelected()))
-                continue;
+                // if (selectionOnly && (!k->isSelected()))
+                // continue;
 
-                for (auto indexK = indexJ + 1; indexK < i.nBonds() - 1; ++indexK)
+                for (auto indexL = indexK + 1; indexL < 3; ++indexL)
                 {
-                    // Get SpeciesAtom 'k'
-                    auto *k = i.bond(indexK).partner(&i);
+                    // Get SpeciesAtom 'l'
+                    auto *l = i.bonds()[indexL]->partner(&i);
 
-                    // if (selectionOnly && (!k->isSelected()))
+                    // if (selectionOnly && (!l->isSelected()))
                     // continue;
 
-                    for (auto indexL = indexK + 1; indexL < i.nBonds(); ++indexL)
-                    {
-                        // Get SpeciesAtom 'l'
-                        auto *l = i.bond(indexL).partner(&i);
+                    // Try to assign / generate an improper term (which may legitimately not exist)
+                    if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))
+                        return false;
 
-                        // if (selectionOnly && (!l->isSelected()))
-                        // continue;
+                    if (improperTerm.form() == TorsionFunctions::Form::None)
+                        continue;
 
-                        // Try to assign / generate an improper term (which may legitimately not exist)
-                        if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))
-                            return false;
+                    // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
+                    // one.
+                    auto optImproper = sp->getImproper(&i, j, k, l);
+                    if (!optImproper)
+                        optImproper = sp->addImproper(&i, j, k, l);
+                    SpeciesImproper &improper = *optImproper;
 
-                        if (improperTerm.form() == TorsionFunctions::Form::None)
-                            continue;
-
-                        // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
-                        // one.
-                        auto optImproper = sp->getImproper(&i, j, k, l);
-                        if (!optImproper)
-                            optImproper = sp->addImproper(&i, j, k, l);
-                        SpeciesImproper &improper = *optImproper;
-
-                        improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
-                    }
+                    improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
                 }
             }
         }

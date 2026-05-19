@@ -15,6 +15,8 @@ SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j)
 {
 }
 
+SpeciesBond::~SpeciesBond() = default;
+
 /*
  * SpeciesAtom Information
  */
