@@ -18,20 +18,9 @@ TEST(AngleNodeTest, Water)
     TestGraph testGraph;
     testGraph.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
 
-    // Create iterable graph
-    ASSERT_TRUE(testGraph.appendNode("Iterator", "Iterator"));
-    auto iterator = testGraph.head<IterableGraph>();
-
-    // Create a dynamic input from the graph's existing Insert node
-    EXPECT_TRUE(testGraph.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
-
-    // Within the iterator create an ImportTrajectory node
-    auto importTrajectory = iterator->createNode("ImportConfigurationTrajectory");
-    ASSERT_TRUE(importTrajectory);
-    ASSERT_TRUE(importTrajectory->setOption<std::string>("FilePath", "dlpoly/water267-analysis/water-267-298K.xyz"));
-    ASSERT_TRUE(importTrajectory->setOption<TrajectoryImportFileFormat::TrajectoryImportFormat>(
-        "FileFormat", TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ));
-    ASSERT_TRUE(iterator->addEdge({"Inputs", "Configuration", "ImportConfigurationTrajectory", "Configuration"}));
+    // Create trajectory iterator
+    auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
+    EXPECT_TRUE(iterator);
 
     // Add the analysis module to the iterator
     auto angle = dynamic_cast<AngleNode *>(iterator->createNode("Angle"));
@@ -45,7 +34,7 @@ TEST(AngleNodeTest, Water)
     ASSERT_TRUE(angle->setOption<RangedVector3>("RangeBC", {{0.0, 5.0, 0.01}}));
     ASSERT_TRUE(angle->setOption<RangedVector3>("AngleRange", {{0.0, 180.0, 1.0}}));
     ASSERT_TRUE(angle->setOption("ExcludeSameMoleculeBC", true));
-    ASSERT_TRUE(iterator->addEdge({"ImportConfigurationTrajectory", "Configuration", "Angle", "Configuration"}));
+    ASSERT_TRUE(iterator->addEdge({testGraph.fetchHeadName(), "Configuration", "Angle", "Configuration"}));
 
     // Run from the iterator node explicitly
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));

@@ -34,4 +34,8 @@ class ImportXYZStructureNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Read structure from the specified file parser
+    static NodeConstants::ProcessResult read(LineParser &parser, Structure &structure);
 };

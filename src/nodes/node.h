@@ -50,9 +50,9 @@ class Node : public Serialisable<>
     virtual std::string_view summary() const = 0;
 
     /*
-     * Node message
+     * Node Messaging
      */
-
+    public:
     // Enumeration for message status
     enum class MessageStatus
     {
@@ -123,6 +123,10 @@ class Node : public Serialisable<>
     protected:
     // Version index for the node, bumped whenever result outputs change
     int versionIndex_{NodeConstants::InvalidVersion};
+    // Whether the node is volatile and should be marked as outdated each time its parent graph runs
+    bool volatile_{false};
+
+    protected:
     // Perform processing
     virtual NodeConstants::ProcessResult process();
 
@@ -133,6 +137,8 @@ class Node : public Serialisable<>
     void invalidate();
     // Flag that the node data needs to be updated
     virtual void setUpdateRequired();
+    // Return whether the node is volatile
+    bool isVolatile() const;
     // Return whether the node's data is up-to-date
     bool isUpToDate() const;
     // Check that all required inputs are present, and that all inputs are valid

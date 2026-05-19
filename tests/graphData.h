@@ -11,8 +11,8 @@
 #include "nodes/bragg.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
-#include "nodes/importConfigurationCoordinates.h"
 #include "nodes/insert.h"
+#include "nodes/iterableGraph.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/species.h"
@@ -26,13 +26,15 @@ namespace UnitTest
 class TestGraph : public DissolveGraph
 {
     public:
-    TestGraph() : DissolveGraph(dissolve), dissolve(coreData) { Node::echo_ = true; }
+    TestGraph() : DissolveGraph(dissolve), dissolve(coreData), currentGraph_(this) { Node::echo_ = true; }
     ~TestGraph() { exportMermaidGraph(); }
     CoreData coreData;
     Dissolve dissolve;
 
     private:
-    // Current most recently appended node in graph
+    // Current graph target
+    Graph *currentGraph_{nullptr};
+    // Most recently appended node in the current graph
     Node *head_{nullptr};
 
     /*
@@ -41,12 +43,14 @@ class TestGraph : public DissolveGraph
     public:
     // Returns pointer to current top node in graph
     Node *fetchHead() const { return head_; }
+    // Returns the name of the current head node in the graph
+    std::string fetchHeadName() const { return head_ ? std::string(head_->name()) : "NO_NODE"; }
     // Returns reference to current top node in graph, cast to the known node type
     template <class NodeType> NodeType *head() const { return static_cast<NodeType *>(head_); }
     // Append new node to the graph
     Node *appendNode(const std::string &nodeType, const std::optional<std::string> &name = {})
     {
-        auto node = name.has_value() ? createNode(nodeType, *name) : createNode(nodeType);
+        auto node = name.has_value() ? currentGraph_->createNode(nodeType, *name) : currentGraph_->createNode(nodeType);
 
         if (!node)
             return nullptr;
@@ -89,8 +93,9 @@ class TestGraph : public DissolveGraph
             EXPECT_TRUE(fetchHead()->setInput<Number>("Density", rho));
             EXPECT_TRUE(fetchHead()->setOption("BoxAction", boxActionStyle));
             EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
-            EXPECT_TRUE(addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
-            EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), "Configuration", insertNodeName, "Configuration"}));
+            EXPECT_TRUE(currentGraph_->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
+            EXPECT_TRUE(
+                currentGraph_->addEdge({std::string(cfgSourceNode->name()), "Configuration", insertNodeName, "Configuration"}));
 
             cfgSourceNode = fetchHead();
         }
@@ -142,12 +147,11 @@ class TestGraph : public DissolveGraph
         // Create configuration and SetCell nodes
         EXPECT_TRUE(appendNode("Configuration", name));
         EXPECT_TRUE(appendNode("SetCell"));
-        EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
+        EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
         return createAndInsertSpecies(fetchHead(), species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
     }
-
     // Create basic configuration graph, returning the last node
     Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
                               const Vector3 &cellLengths, const Vector3 &cellAngles = {90.0, 90.0, 90.0})
@@ -157,7 +161,7 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(appendNode("SetCell"));
         fetchHead()->setOption<Vector3>("Lengths", cellLengths);
         fetchHead()->setOption<Vector3>("Angles", cellAngles);
-        EXPECT_TRUE(addEdge({name, "Configuration", "SetCell", "Configuration"}));
+        EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
         return createAndInsertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
@@ -174,11 +178,39 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(structureNode);
         EXPECT_TRUE(structureNode->setOption<std::string>("FilePath", filePath));
 
-        EXPECT_TRUE(addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
 
-        EXPECT_TRUE(addEdge({std::string(cfgSourceNode->name()), sourceOutpuName, "SetCoordinates", "Configuration"}));
+        EXPECT_TRUE(
+            currentGraph_->addEdge({std::string(cfgSourceNode->name()), sourceOutpuName, "SetCoordinates", "Configuration"}));
 
         return head<SetCoordinatesNode>();
+    }
+    // Create a trajectory iterator subgraph
+    IterableGraph *appendTrajectoryIterator(std::string trajectoryImportNodeType, std::string filePath)
+    {
+        // Get current head node before we create the IterableGraph
+        auto oldHead = head_;
+        auto oldGraph = currentGraph_;
+
+        // Add iterator node and make it the current graph
+        currentGraph_ = dynamic_cast<IterableGraph *>(appendNode("Iterator", "Iterator"));
+        EXPECT_TRUE(currentGraph_);
+        head_ = nullptr;
+
+        // Create a dynamic input from the (assumed) "Configuration" output on the old head of the previous graph
+        EXPECT_TRUE(oldGraph->addEdge({std::string(oldHead->name()), "Configuration", "Iterator", "Configuration"}));
+
+        // Within the iterator graph create SetCoordinates and trajectory import nodes
+        auto trajectoryNode = appendNode(trajectoryImportNodeType);
+        EXPECT_TRUE(trajectoryNode);
+        EXPECT_TRUE(trajectoryNode->setOption<std::string>("FilePath", filePath));
+        EXPECT_TRUE(appendNode("SetCoordinates"));
+
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(trajectoryNode->name()), "Structure", "SetCoordinates", "Structure"}));
+
+        EXPECT_TRUE(currentGraph_->addEdge({"Inputs", "Configuration", "SetCoordinates", "Configuration"}));
+
+        return dynamic_cast<IterableGraph *>(currentGraph_);
     }
     // Append GR and SQ nodes
     std::pair<GRNode *, SQNode *> appendGRSQ(bool noAveraging = false, bool noIntraBroadening = false)
@@ -191,12 +223,12 @@ class TestGraph : public DissolveGraph
         if (noIntraBroadening)
             EXPECT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
 
-        EXPECT_TRUE(addEdge({std::string(fetchHead()->name()), "Configuration", "GR", "Configuration"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(fetchHead()->name()), "Configuration", "GR", "Configuration"}));
 
         // Create the SQ node
         auto sqNode = dynamic_cast<SQNode *>(createNode("SQ"));
         EXPECT_TRUE(sqNode);
-        EXPECT_TRUE(addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
+        EXPECT_TRUE(currentGraph_->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
         return {grNode, sqNode};
     }
@@ -233,8 +265,8 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(appendNode("NeutronSQ", name));
         EXPECT_TRUE(fetchHead()->setOption("Isotopologues", isotopologueSet));
         EXPECT_TRUE(fetchHead()->setOption("Exchangeables", exchangeables));
-        EXPECT_TRUE(addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
-        EXPECT_TRUE(addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
 
         // Set reference F(Q) data
         if (referenceData.hasFilename())
@@ -244,7 +276,7 @@ class TestGraph : public DissolveGraph
             EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
             EXPECT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
                 "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
-            EXPECT_TRUE(addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
+            EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
         }
 
         return head<NeutronSQNode>();
@@ -253,8 +285,8 @@ class TestGraph : public DissolveGraph
     XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, Data1DImportFileFormat referenceData = Data1DImportFileFormat())
     {
         EXPECT_TRUE(appendNode("XRaySQ", name));
-        EXPECT_TRUE(addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
-        EXPECT_TRUE(addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
 
         // Set reference F(Q) data
         if (referenceData.hasFilename())
@@ -264,7 +296,7 @@ class TestGraph : public DissolveGraph
             EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
             EXPECT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
                 "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
-            EXPECT_TRUE(addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
+            EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
         }
         return head<XRaySQNode>();
     }

@@ -32,6 +32,11 @@ std::string_view Graph::summary() const { return "A node which contains its own 
 // Perform processing
 NodeConstants::ProcessResult Graph::process()
 {
+    // Outdate any volatile nodes
+    for (auto &node : std::views::values(nodes_))
+        if (node->isVolatile())
+            node->setUpdateRequired();
+
     /*
      * Processing a Graph involves running any child nodes we have, but we can only detect the nodes that need to be run in
      * one of two ways. Either 1) We cycle over Edge connections to inputs on our Outputs node and pull() those in, or 2) we

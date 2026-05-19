@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/exportTrajectory.h"
+#include "nodes/exportXYZTrajectory.h"
 #include <fstream>
 
-ExportTrajectoryNode::ExportTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
+ExportXYZTrajectoryNode::ExportXYZTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Configuration from which Trajectory will be exported", configuration_);
@@ -14,14 +14,14 @@ ExportTrajectoryNode::ExportTrajectoryNode(Graph *parentGraph) : Node(parentGrap
     addOption<bool>("Extended", "Extended XYZ format", extended_);
 }
 
-std::string_view ExportTrajectoryNode::type() const { return "ExportTrajectory"; }
+std::string_view ExportXYZTrajectoryNode::type() const { return "ExportTrajectory"; }
 
-std::string_view ExportTrajectoryNode::summary() const
+std::string_view ExportXYZTrajectoryNode::summary() const
 {
     return "Export configuration coordinates as sequential frames of a trajectory.";
 }
 
-NodeConstants::ProcessResult ExportTrajectoryNode::process()
+NodeConstants::ProcessResult ExportXYZTrajectoryNode::process()
 {
     std::ofstream outfile(filePath_);
     std::ostream_iterator<char> out(outfile);

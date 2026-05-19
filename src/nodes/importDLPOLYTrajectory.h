@@ -5,12 +5,13 @@
 
 #include "classes/structure.h"
 #include "nodes/node.h"
+#include <iostream>
 
-class ImportDLPolyStructureNode : public Node
+class ImportDLPOLYTrajectoryNode : public Node
 {
     public:
-    ImportDLPolyStructureNode(Graph *parentGraph);
-    ~ImportDLPolyStructureNode() override = default;
+    ImportDLPOLYTrajectoryNode(Graph *parentGraph);
+    ~ImportDLPOLYTrajectoryNode() override = default;
 
     /*
      * Definition
@@ -25,6 +26,8 @@ class ImportDLPolyStructureNode : public Node
     private:
     // File path
     std::string filePath_;
+    // Last read file position
+    std::streampos filePosition_;
     // Structure
     Structure structure_;
 

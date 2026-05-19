@@ -3,17 +3,14 @@
 
 #pragma once
 
-#include "io/import/coordinates.h"
+#include "classes/structure.h"
 #include "nodes/node.h"
 
-// Forward Declarations
-class Configuration;
-
-class ImportConfigurationCoordinatesNode : public Node
+class ImportDLPOLYStructureNode : public Node
 {
     public:
-    ImportConfigurationCoordinatesNode(Graph *parentGraph);
-    ~ImportConfigurationCoordinatesNode() override = default;
+    ImportDLPOLYStructureNode(Graph *parentGraph);
+    ~ImportDLPOLYStructureNode() override = default;
 
     /*
      * Definition
@@ -28,10 +25,8 @@ class ImportConfigurationCoordinatesNode : public Node
     private:
     // File path
     std::string filePath_;
-    // File format
-    CoordinateImportFileFormat::CoordinateImportFormat format_{CoordinateImportFileFormat::CoordinateImportFormat::XYZ};
-    // Configuration
-    Configuration *configuration_;
+    // Structure
+    Structure structure_;
 
     /*
      * Processing
@@ -39,4 +34,8 @@ class ImportConfigurationCoordinatesNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Read structure from the specified file parser
+    static NodeConstants::ProcessResult read(LineParser &parser, int keytrj, int imcon, int nAtoms, Structure &structure);
 };

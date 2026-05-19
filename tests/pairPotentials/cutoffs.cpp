@@ -16,7 +16,7 @@ TEST(PairPotentialCutoffTest, ShortRange)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPolyStructure", "dlpoly/water1000/CONFIG"));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -53,7 +53,7 @@ TEST(PairPotentialCutoffTest, Coulomb)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPolyStructure", "dlpoly/water1000/CONFIG"));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);

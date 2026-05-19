@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importDLPolyStructure.h"
+#include "nodes/importDLPOLYStructure.h"
 
-ImportDLPolyStructureNode::ImportDLPolyStructureNode(Graph *parentGraph) : Node(parentGraph)
+ImportDLPOLYStructureNode::ImportDLPOLYStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
@@ -12,28 +12,12 @@ ImportDLPolyStructureNode::ImportDLPolyStructureNode(Graph *parentGraph) : Node(
     addOutput<Structure>("Structure", "Imported structure", structure_);
 }
 
-std::string_view ImportDLPolyStructureNode::type() const { return "ImportDLPolyStructure"; }
+std::string_view ImportDLPOLYStructureNode::type() const { return "ImportDLPOLYStructure"; }
 
-std::string_view ImportDLPolyStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file."; }
+std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file."; }
 
-NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
+NodeConstants::ProcessResult ImportDLPOLYStructureNode::process()
 {
-    /*
-     * Import DL_POLY coordinates information through the specified line parser.
-     * We assume CONFIG or REVCON format:
-     *
-     * Line 1:    Title
-     * Line 2:    keytrj   imcon    natoms    []
-     * Line 3-5:  cell matrix (if imcon > 0)
-     * Line 6:    atomtype        id
-     * Line 7:    rx   ry   rz
-     * Line 8:    vx   vy   vz      if (keytrj > 0)
-     * Line 9:    fx   fy   fz	if (keytrj > 1)
-     *   ...
-     */
-
-    structure_.clear();
-
     // Open file and check that we're OK to proceed importing from it
     LineParser parser;
     if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
@@ -57,6 +41,29 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
     else
         message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
 
+    return read(parser, keytrj, imcon, nAtoms, structure_);
+}
+
+// Read structure from the specified file parser
+NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(LineParser &parser, int keytrj, int imcon, int nAtoms,
+                                                             Structure &structure)
+{
+    /*
+     * Import DL_POLY coordinates information through the specified line parser.
+     * We assume HISf, CONFIG or REVCON format (only the first two lines differ)
+     *
+     * Line 1:    Title
+     * Line 2:    keytrj   imcon    natoms    []
+     * Line 3-5:  cell matrix (if imcon > 0)
+     * Line 6:    atomtype        id
+     * Line 7:    rx   ry   rz
+     * Line 8:    vx   vy   vz      if (keytrj > 0)
+     * Line 9:    fx   fy   fz	if (keytrj > 1)
+     *   ...
+     */
+
+    structure.clear();
+
     // Read cell information if given
     if (imcon > 0)
     {
@@ -69,7 +76,7 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
         auto m3 = parser.arg3d(0);
-        structure_.createBox(Matrix3(m1, m2, m3));
+        structure.createBox(Matrix3(m1, m2, m3));
     }
 
     // Loop over atoms (either a specified number, or until we reach the end of the file
@@ -80,10 +87,10 @@ NodeConstants::ProcessResult ImportDLPolyStructureNode::process()
             return NodeConstants::ProcessResult::Failed;
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
-        structure_.addAtom(Elements::Unknown, parser.arg3d(0));
+        structure.addAtom(Elements::Unknown, parser.arg3d(0));
         if (parser.skipLines(keytrj) != LineParser::Success)
             return NodeConstants::ProcessResult::Failed;
-        if ((nAtoms > 0) && (structure_.nAtoms() == nAtoms))
+        if ((nAtoms > 0) && (structure.nAtoms() == nAtoms))
             break;
     }
 

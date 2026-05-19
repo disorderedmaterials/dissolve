@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/exportDLPolyConfiguration.h"
+#include "nodes/exportDLPOLYConfiguration.h"
 #include "data/atomicMasses.h"
 #include "main/dissolve.h"
 #include "nodes/constants.h"
 #include <fstream>
 
-ExportDLPolyConfiguration::ExportDLPolyConfiguration(Graph *parentGraph) : Node(parentGraph)
+ExportDLPOLYConfiguration::ExportDLPOLYConfiguration(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Configuration to be exported", configuration_);
@@ -18,11 +18,11 @@ ExportDLPolyConfiguration::ExportDLPolyConfiguration(Graph *parentGraph) : Node(
                     tagWithIteration_);
 }
 
-std::string_view ExportDLPolyConfiguration::type() const { return "ExportDLPolyConfiguration"; }
+std::string_view ExportDLPOLYConfiguration::type() const { return "ExportDLPOLYConfiguration"; }
 
-std::string_view ExportDLPolyConfiguration::summary() const { return "Export a configuration in DL_POLY format"; }
+std::string_view ExportDLPOLYConfiguration::summary() const { return "Export a configuration in DL_POLY format"; }
 
-NodeConstants::ProcessResult ExportDLPolyConfiguration::process()
+NodeConstants::ProcessResult ExportDLPOLYConfiguration::process()
 {
     auto path = filePath_;
     if (tagWithIteration_)

@@ -19,7 +19,7 @@ class HexaneForcefieldTest : public ::testing::Test
                                                        {"species/hexane.toml", nMols},
                                                    },
                                                    {30.769064857500, 46.153597286200, 30.769064857500}));
-        ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPolyStructure", referenceCoordinates));
+        ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);

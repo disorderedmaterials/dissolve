@@ -70,7 +70,7 @@ class Graph : public Node
     using ReverseNodes = std::map<const Node *, std::string>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
-    private:
+    protected:
     // Map of node names to nodes
     Nodes nodes_;
     // Map of nodes to node names

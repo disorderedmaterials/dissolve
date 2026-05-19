@@ -5,15 +5,16 @@
 
 #include "nodes/node.h"
 #include <iostream>
+#include <sstream>
 
 // Forward Declarations
 class Configuration;
 
-class ExportTrajectoryNode : public Node
+class ExportDLPOLYConfiguration : public Node
 {
     public:
-    ExportTrajectoryNode(Graph *parentGraph);
-    ~ExportTrajectoryNode() override = default;
+    ExportDLPOLYConfiguration(Graph *parentGraph);
+    ~ExportDLPOLYConfiguration() override = default;
 
     /*
      * Definition
@@ -28,12 +29,12 @@ class ExportTrajectoryNode : public Node
     private:
     // File path
     std::string filePath_;
-    // File format
-    bool extended_;
-    // Last read file position
-    std::streampos filePosition_;
+    // Whether to tag (suffix) the filename with the current iteration index
+    bool tagWithIteration_{false};
     // Target configuration
     Configuration *configuration_{nullptr};
+    // Iteration count
+    int iteration_{1};
 
     /*
      * Processing

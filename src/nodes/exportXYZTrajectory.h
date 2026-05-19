@@ -3,18 +3,17 @@
 
 #pragma once
 
-#include "io/import/trajectory.h"
 #include "nodes/node.h"
 #include <iostream>
 
 // Forward Declarations
 class Configuration;
 
-class ImportConfigurationTrajectoryNode : public Node
+class ExportXYZTrajectoryNode : public Node
 {
     public:
-    ImportConfigurationTrajectoryNode(Graph *parentGraph);
-    ~ImportConfigurationTrajectoryNode() override = default;
+    ExportXYZTrajectoryNode(Graph *parentGraph);
+    ~ExportXYZTrajectoryNode() override = default;
 
     /*
      * Definition
@@ -30,11 +29,11 @@ class ImportConfigurationTrajectoryNode : public Node
     // File path
     std::string filePath_;
     // File format
-    TrajectoryImportFileFormat::TrajectoryImportFormat format_{TrajectoryImportFileFormat::TrajectoryImportFormat::XYZ};
-    // Last read file position (as int)
+    bool extended_;
+    // Last read file position
     std::streampos filePosition_;
     // Target configuration
-    Configuration *configuration_;
+    Configuration *configuration_{nullptr};
 
     /*
      * Processing

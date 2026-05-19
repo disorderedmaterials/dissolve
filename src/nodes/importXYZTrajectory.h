@@ -3,18 +3,15 @@
 
 #pragma once
 
+#include "classes/structure.h"
 #include "nodes/node.h"
 #include <iostream>
-#include <sstream>
 
-// Forward Declarations
-class Configuration;
-
-class ExportDLPolyConfiguration : public Node
+class ImportXYZTrajectoryNode : public Node
 {
     public:
-    ExportDLPolyConfiguration(Graph *parentGraph);
-    ~ExportDLPolyConfiguration() override = default;
+    ImportXYZTrajectoryNode(Graph *parentGraph);
+    ~ImportXYZTrajectoryNode() override = default;
 
     /*
      * Definition
@@ -29,12 +26,10 @@ class ExportDLPolyConfiguration : public Node
     private:
     // File path
     std::string filePath_;
-    // Whether to tag (suffix) the filename with the current iteration index
-    bool tagWithIteration_{false};
-    // Target configuration
-    Configuration *configuration_{nullptr};
-    // Iteration count
-    int iteration_{1};
+    // Last read file position
+    std::streampos filePosition_;
+    // Structure
+    Structure structure_;
 
     /*
      * Processing
