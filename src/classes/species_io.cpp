@@ -161,7 +161,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     break;
                 }
                 if (atomVectorFixed && atomIndex < atoms_.size())
+                {
                     atoms_[atomIndex].set(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                    atoms_[atomIndex].setIndex(atomIndex);
+                }
                 else
                 {
                     auto &i = atoms_.emplace_back(this);

@@ -364,8 +364,12 @@ void Species::finaliseGeometry()
     }
 
     // Set-up excluded / scaled interactions on atoms arising from bonds, angles, and torsions
+    auto index = 0;
     for (auto &i : atoms_)
+    {
         i.setScaledInteractions();
+        i.setIndex(index++);
+    }
 
     // If this is a periodic species, we're done
     if (box_->type() != Box::BoxType::NonPeriodic)
