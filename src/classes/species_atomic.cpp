@@ -7,8 +7,8 @@
 #include <numeric>
 
 // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-void Species::getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
-                                  OptionalReferenceWrapper<SpeciesBond> excludeToo) const
+void Species::getIndicesRecursive(std::vector<int> &indices, int index, const SpeciesBond *exclude,
+                                  const SpeciesBond *excludeToo) const
 {
     // Loop over Bonds on specified Atom
     indices.emplace_back(index);
@@ -16,9 +16,7 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
     for (const auto *bond : i.bonds())
     {
         // Is this either of the excluded bonds?
-        if (exclude && &(*exclude).get() == bond)
-            continue;
-        if (excludeToo && &(*excludeToo).get() == bond)
+        if (exclude == bond || excludeToo == bond)
             continue;
 
         // Get the partner atom in the bond and select it (if it is not selected already)
@@ -57,8 +55,7 @@ const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
 
 // Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
-std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude,
-                                   OptionalReferenceWrapper<SpeciesBond> excludeToo) const
+std::vector<int> Species::fragment(int startIndex, const SpeciesBond *exclude, const SpeciesBond *excludeToo) const
 {
     std::vector<int> indices;
     getIndicesRecursive(indices, startIndex, exclude, excludeToo);

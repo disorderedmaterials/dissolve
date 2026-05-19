@@ -20,7 +20,7 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Atom<SpeciesBond>
+class SpeciesAtom : public Atom<const SpeciesBond>
 {
     public:
     SpeciesAtom(Species *parent);

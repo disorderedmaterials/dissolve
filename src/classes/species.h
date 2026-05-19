@@ -60,8 +60,8 @@ class Species : public Serialisable<>
 
     private:
     // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-    void getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
-                             OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
+    void getIndicesRecursive(std::vector<int> &indices, int index, const SpeciesBond *exclude,
+                             const SpeciesBond *excludeToo) const;
 
     public:
     // Return the number of atoms in the species (or only those with the specified presence)
@@ -74,8 +74,8 @@ class Species : public Serialisable<>
     std::vector<SpeciesAtom> &atoms();
     // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
     // provided
-    std::vector<int> fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,
-                              OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
+    std::vector<int> fragment(int startIndex, const SpeciesBond *exclude = nullptr,
+                              const SpeciesBond *excludeToo = nullptr) const;
     // Return total atomic mass of Species
     double mass() const;
     // Add new atom type to atom types

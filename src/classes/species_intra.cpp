@@ -352,7 +352,7 @@ void Species::finaliseGeometry()
     for (auto &bond : bonds_)
     {
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        auto selection = fragment(bond.i()->index(), bond);
+        auto selection = fragment(bond.i()->index(), &bond);
 
         // If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
@@ -370,7 +370,7 @@ void Species::finaliseGeometry()
             bond.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        selection = fragment(bond.j()->index(), bond);
+        selection = fragment(bond.j()->index(), &bond);
         bond.setAttachedAtoms(1, selection);
     }
 
@@ -382,7 +382,7 @@ void Species::finaliseGeometry()
         auto jk = angle.j()->getBondWith(angle.k());
 
         // Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
-        auto selection = fragment(angle.i()->index(), *ji, *jk);
+        auto selection = fragment(angle.i()->index(), ji, jk);
 
         // Remove Atom 'j' from the list if it's there
         auto jit = std::find(selection.begin(), selection.end(), angle.j()->index());
@@ -405,7 +405,7 @@ void Species::finaliseGeometry()
             angle.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        selection = fragment(angle.k()->index(), *ji, *jk);
+        selection = fragment(angle.k()->index(), ji, jk);
 
         // Remove Atom 'j' from the list if it's there
         jit = std::find(selection.begin(), selection.end(), angle.j()->index());
@@ -422,7 +422,7 @@ void Species::finaliseGeometry()
         auto jk = torsion.j()->getBondWith(torsion.k());
 
         // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
-        auto selection = fragment(torsion.j()->index(), *jk);
+        auto selection = fragment(torsion.j()->index(), jk);
 
         // Remove Atom 'j' from the list
         selection.erase(std::remove(selection.begin(), selection.end(), torsion.j()->index()));
@@ -444,7 +444,7 @@ void Species::finaliseGeometry()
             torsion.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        selection = fragment(torsion.k()->index(), *jk);
+        selection = fragment(torsion.k()->index(), jk);
 
         // Remove Atom 'k' from the list
         selection.erase(std::remove(selection.begin(), selection.end(), torsion.k()->index()));
