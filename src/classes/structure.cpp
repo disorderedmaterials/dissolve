@@ -130,7 +130,10 @@ Bond<StructureAtom> *Structure::addBond(StructureAtom *i, StructureAtom *j)
     }
 
     // OK to add new Bond
-    return bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i, j)).get();
+    auto *newBond = bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i, j)).get();
+    i->addBond(newBond);
+    j->addBond(newBond);
+    return newBond;
 }
 Bond<StructureAtom> *Structure::addBond(int i, int j) { return addBond(atoms_[i].get(), atoms_[j].get()); }
 
