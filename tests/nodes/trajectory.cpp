@@ -45,7 +45,7 @@ TEST(TrajectoryNodesTest, RoundTrip)
 
     // Loop through the lines of the output file and check that the
     // trajectories are the same
-    int line;
+    int line = 0;
     // Only go through the first 801 lines, since we don't have cell
     // information
     while (line < 801)

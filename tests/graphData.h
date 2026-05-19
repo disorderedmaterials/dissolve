@@ -31,6 +31,14 @@ class TestGraph : public DissolveGraph
     CoreData coreData;
     Dissolve dissolve;
 
+    public:
+    // Container for data 1D import filename and whether or not it is a histogram
+    struct Data1DImportFileFormat
+    {
+        std::string filename = "";
+        bool histogram = false;
+    };
+
     private:
     // Current graph target
     Graph *currentGraph_{nullptr};
@@ -236,7 +244,7 @@ class TestGraph : public DissolveGraph
     NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
                                    const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
                                    const Exchangeables &exchangeables = {},
-                                   Data1DImportFileFormat referenceData = Data1DImportFileFormat())
+                                   TestGraph::Data1DImportFileFormat referenceData = {})
     {
         // Construct the isotopologue set
         IsotopologueSet isotopologueSet;
@@ -269,33 +277,31 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
 
         // Set reference F(Q) data
-        if (referenceData.hasFilename())
+        if (!referenceData.filename.empty())
         {
             auto data1DImportNode = createNode("Data1DImport", std::format("Reference-{}", name));
             EXPECT_TRUE(data1DImportNode);
-            EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
-            EXPECT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
-                "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
+            EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
+            EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
             EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
         }
 
         return head<NeutronSQNode>();
     }
     // Create an XRaySQ node with optional reference data
-    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, Data1DImportFileFormat referenceData = Data1DImportFileFormat())
+    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, TestGraph::Data1DImportFileFormat referenceData = {})
     {
         EXPECT_TRUE(appendNode("XRaySQ", name));
         EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
         EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
 
         // Set reference F(Q) data
-        if (referenceData.hasFilename())
+        if (!referenceData.filename.empty())
         {
             auto data1DImportNode = createNode("Data1DImport", std::format("Reference-{}", name));
             EXPECT_TRUE(data1DImportNode);
-            EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename())));
-            EXPECT_TRUE(data1DImportNode->setOption<Data1DImportFileFormat::Data1DImportFormat>(
-                "ImportFormat", Data1DImportFileFormat::data1DImportFormat().enumerationByIndex(referenceData.formatIndex())));
+            EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
+            EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
             EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
         }
         return head<XRaySQNode>();
