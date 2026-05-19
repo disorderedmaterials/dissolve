@@ -81,7 +81,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
 
     // Set / adjust target box volume
     adjustBoxVolume(cfg, ipop,
-                    speciesA_->nAtoms(SpeciesAtom::Presence::Physical) + speciesB_->nAtoms(SpeciesAtom::Presence::Physical),
+                    speciesA_->nAtoms(AtomConstants::Presence::Physical) + speciesB_->nAtoms(AtomConstants::Presence::Physical),
                     speciesA_->mass() + speciesB_->mass());
 
     // Get the positioningType_ type and rotation flag

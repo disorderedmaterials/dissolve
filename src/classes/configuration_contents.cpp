@@ -112,7 +112,7 @@ std::optional<double> Configuration::atomicDensity() const
     if (nAtoms() == 0)
         return {};
 
-    return nAtoms(SpeciesAtom::Presence::Physical) / box_->volume();
+    return nAtoms(AtomConstants::Presence::Physical) / box_->volume();
 }
 
 // Return the chemical density (g/cm3) of the Configuration
@@ -250,9 +250,9 @@ const std::vector<std::shared_ptr<Molecule>> &Configuration::molecules() const {
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Return the number of atoms in the configuration (or only those with the specified presence)
-int Configuration::nAtoms(SpeciesAtom::Presence withPresence) const
+int Configuration::nAtoms(AtomConstants::Presence withPresence) const
 {
-    if (withPresence == SpeciesAtom::Presence::Any)
+    if (withPresence == AtomConstants::Presence::Any)
     {
         return atoms_.size();
     }
@@ -343,10 +343,10 @@ void Configuration::updateTypeIndexing()
     // Loop over atoms
     for (auto &atom : atoms_)
     {
-        if (atom.isPresence(Atom::Presence::Physical))
+        if (atom.isPresence(AtomConstants::Presence::Physical))
             atom.setAtomTypeIndex(typeMap[atom.speciesAtom()->atomType()]);
         else
-            atom.setAtomTypeIndex(AtomType::Ignore);
+            atom.setAtomTypeIndex(AtomConstants::TypeIndex::Ignore);
     }
 
     typeIndicesValid_ = true;

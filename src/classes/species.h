@@ -75,7 +75,7 @@ class Species : public Serialisable<>
     // Remove set of atom indices
     void removeAtoms(std::vector<int> indices);
     // Return the number of atoms in the species (or only those with the specified presence)
-    int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
+    int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
     // Renumber atoms so they are sequential in the list
     void renumberAtoms();
     // Return the nth atom in the Species

@@ -27,7 +27,7 @@ TEST(PhantomAtomsTest, Basic)
 
     // Basic species checks
     EXPECT_EQ(species.nAtoms(), 5);
-    EXPECT_EQ(species.nAtoms(SpeciesAtom::Presence::Phantom), 4);
+    EXPECT_EQ(species.nAtoms(AtomConstants::Presence::Phantom), 4);
     EXPECT_DOUBLE_EQ(species.mass(), AtomicMass::mass(Elements::Ar));
 
     // Get the configuration
@@ -37,10 +37,10 @@ TEST(PhantomAtomsTest, Basic)
     // Basic configuration checks
     EXPECT_EQ(cfg->nMolecules(), nMolecules);
     EXPECT_EQ(cfg->nAtoms(), nMolecules * species.nAtoms());
-    EXPECT_EQ(cfg->nAtoms(SpeciesAtom::Presence::Phantom), nMolecules * species.nAtoms(SpeciesAtom::Presence::Phantom));
+    EXPECT_EQ(cfg->nAtoms(AtomConstants::Presence::Phantom), nMolecules * species.nAtoms(AtomConstants::Presence::Phantom));
 
     // Check density - should correspond to number density of physical atoms only
-    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * species.nAtoms(SpeciesAtom::Presence::Physical)) / cfg->box()->volume(),
+    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * species.nAtoms(AtomConstants::Presence::Physical)) / cfg->box()->volume(),
                 1.0e-5);
 }
 

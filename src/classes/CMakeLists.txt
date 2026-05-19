@@ -81,6 +81,7 @@ add_library(
   angleFunctions.h
   array3DIterator.h
   atom.h
+  atomConstants.h
   atomType.h
   bondFunctions.h
   box.h

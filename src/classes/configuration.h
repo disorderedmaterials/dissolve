@@ -123,7 +123,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Return the number of atoms in the configuration (or only those with the specified presence)
-    int nAtoms(SpeciesAtom::Presence withPresence = SpeciesAtom::Presence::Any) const;
+    int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
     // Return Atom array
     std::vector<ConfigurationAtom> &atoms();
     const std::vector<ConfigurationAtom> &atoms() const;

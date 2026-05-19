@@ -62,7 +62,7 @@ std::tuple<int, int, double> InsertNode::getPopulationTotals(int population, con
     for (auto n = 0; n < population; ++n)
     {
         const auto *molSp = molecules.localMolecule(n).species();
-        nPhysicalToBeAdded += molSp->nAtoms(SpeciesAtom::Presence::Physical);
+        nPhysicalToBeAdded += molSp->nAtoms(AtomConstants::Presence::Physical);
         nTotalAtomsToBeAdded += molSp->nAtoms();
         massToBeAdded += molSp->mass();
     }

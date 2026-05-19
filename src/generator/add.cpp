@@ -101,7 +101,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
                          box->axisAngles().x, box->axisAngles().y, box->axisAngles().z);
     }
     else
-        adjustBoxVolume(cfg, ipop, sp->nAtoms(SpeciesAtom::Presence::Physical), sp->mass());
+        adjustBoxVolume(cfg, ipop, sp->nAtoms(AtomConstants::Presence::Physical), sp->mass());
 
     // Get the positioningType_ type and rotation flag
     Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
