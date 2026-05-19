@@ -158,48 +158,6 @@ void Species::transmuteAtom(int index, Elements::Element newZ)
     i.setZ(newZ);
 }
 
-// Clear current Atom selection
-void Species::clearAtomSelection()
-{
-    for (auto &i : atoms_)
-        i.setSelected(false);
-
-    ++atomSelectionVersion_;
-}
-
-// Add Atom to selection
-void Species::selectAtom(int index)
-{
-    auto &i = atoms_[index];
-    if (!i.isSelected())
-    {
-        i.setSelected(true);
-
-        ++atomSelectionVersion_;
-    }
-}
-
-// Remove atom from selection
-void Species::deselectAtom(int index)
-{
-    auto &i = atoms_[index];
-    if (i.isSelected())
-    {
-        i.setSelected(false);
-
-        ++atomSelectionVersion_;
-    }
-}
-
-// Toggle selection state of specified atom
-void Species::toggleAtomSelection(int index)
-{
-    if (atoms_[index].isSelected())
-        deselectAtom(index);
-    else
-        selectAtom(index);
-}
-
 // Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
 std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude,
                                    OptionalReferenceWrapper<SpeciesBond> excludeToo) const
@@ -208,38 +166,6 @@ std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<Spec
     getIndicesRecursive(indices, startIndex, exclude, excludeToo);
     return indices;
 }
-
-// Return current atom selection for modification
-const std::vector<SpeciesAtom *> Species::modifiableSelectedAtoms()
-{
-    std::vector<SpeciesAtom *> selectedAtoms;
-    for (auto &i : atoms_)
-        if (i.isSelected())
-            selectedAtoms.emplace_back(&i);
-
-    return selectedAtoms;
-}
-const std::vector<const SpeciesAtom *> Species::selectedAtoms() const
-{
-    std::vector<const SpeciesAtom *> selectedAtoms;
-    for (auto &i : atoms_)
-        if (i.isSelected())
-            selectedAtoms.emplace_back(&i);
-
-    return selectedAtoms;
-}
-
-// Return whether the current selection comprises atoms of a single element
-bool Species::isSelectionSingleElement() const
-{
-    auto selection = selectedAtoms();
-    if (selection.empty())
-        return false;
-    return std::all_of(selection.begin(), selection.end(), [&](const auto *i) { return i->Z() == selection.front()->Z(); });
-}
-
-// Return version of the atom selection
-int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 
 // Return total atomic mass of Species
 double Species::mass() const

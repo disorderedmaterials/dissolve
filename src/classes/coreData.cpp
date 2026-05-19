@@ -154,8 +154,8 @@ Species *CoreData::copySpecies(const Species *species)
     {
         // Create the Atom in our new Species
         auto id = newSpecies->addAtom(i.Z(), i.r(), i.q());
-        if (i.isSelected())
-            newSpecies->selectAtom(id);
+        // if (i.isSelected())
+        // newSpecies->selectAtom(id);
 
         // Find and assign the atom type
         newSpecies->atom(id).setAtomType(newSpecies->findAtomType(i.atomType()->name()));

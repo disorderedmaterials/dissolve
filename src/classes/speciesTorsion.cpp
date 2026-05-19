@@ -181,13 +181,6 @@ bool SpeciesTorsion::matches(const SpeciesAtom *i, const SpeciesAtom *j, const S
     return (i_ == i && j_ == j && k_ == k && l_ == l) || (i_ == l && j_ == k && k_ == j && l_ == i);
 }
 
-// Return whether all atoms in the interaction are currently selected
-bool SpeciesTorsion::isSelected() const
-{
-    assert(i_ && j_ && k_ && l_);
-    return (i_->isSelected() && j_->isSelected() && k_->isSelected() && l_->isSelected());
-}
-
 /*
  * Interaction Parameters
  */

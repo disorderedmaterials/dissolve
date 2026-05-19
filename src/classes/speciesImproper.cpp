@@ -195,13 +195,6 @@ bool SpeciesImproper::matches(const SpeciesAtom *i, const SpeciesAtom *j, const 
     return false;
 }
 
-// Return whether all atoms in the interaction are currently selected
-bool SpeciesImproper::isSelected() const
-{
-    assert(i_ && j_ && k_ && l_);
-    return (i_->isSelected() && j_->isSelected() && k_->isSelected() && l_->isSelected());
-}
-
 /*
  * Interaction Parameters
  */

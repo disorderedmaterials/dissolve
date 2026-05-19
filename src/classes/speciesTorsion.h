@@ -68,8 +68,6 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     int index(int n) const;
     // Return whether SpeciesAtoms match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const;
-    // Return whether all atoms in the interaction are currently selected
-    bool isSelected() const;
 
     /*
      * Interaction Parameters

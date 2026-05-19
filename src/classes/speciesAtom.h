@@ -41,8 +41,6 @@ class SpeciesAtom : public Atom
     Species *parent_{nullptr};
     // Assigned AtomType
     const AtomType *atomType_{nullptr};
-    // Whether the atom is currently selected
-    bool selected_{false};
 
     public:
     // Return parent Species
@@ -53,10 +51,6 @@ class SpeciesAtom : public Atom
     const AtomType *atomType() const;
     // Return 'user' index (1->N)
     int userIndex() const;
-    // Set whether the atom is currently selected
-    void setSelected(bool selected);
-    // Return whether the atom is currently selected
-    bool isSelected() const;
 
     /*
      * Intramolecular Information
