@@ -376,28 +376,28 @@ Kernel::GeometryEnergyValue GeometryKernel::geometryEnergy(const ConfigurationAt
     // Add energy from SpeciesAngle terms
     energy.angleEnergy =
         std::accumulate(spAtom->angles().begin(), spAtom->angles().end(), 0.0,
-                        [this, &mol](const auto acc, const SpeciesAngle &angle)
+                        [this, &mol](const auto acc, const auto *angle)
                         {
-                            return acc + angleEnergy(angle, mol.atom(angle.indexI())->r(), mol.atom(angle.indexJ())->r(),
-                                                     mol.atom(angle.indexK())->r());
+                            return acc + angleEnergy(*angle, mol.atom(angle->indexI())->r(), mol.atom(angle->indexJ())->r(),
+                                                     mol.atom(angle->indexK())->r());
                         });
 
     // Add energy from SpeciesTorsion terms
     energy.torsionEnergy = std::accumulate(
         spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
-        [this, &mol](const auto acc, const SpeciesTorsion &torsion)
+        [this, &mol](const auto acc, const auto *torsion)
         {
-            return acc + torsionEnergy(torsion, mol.atom(torsion.indexI())->r(), mol.atom(torsion.indexJ())->r(),
-                                       mol.atom(torsion.indexK())->r(), mol.atom(torsion.indexL())->r());
+            return acc + torsionEnergy(*torsion, mol.atom(torsion->indexI())->r(), mol.atom(torsion->indexJ())->r(),
+                                       mol.atom(torsion->indexK())->r(), mol.atom(torsion->indexL())->r());
         });
 
     // Add energy from SpeciesImproper terms
     energy.improperEnergy = std::accumulate(
         spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
-        [this, &mol](const auto acc, const SpeciesImproper &improper)
+        [this, &mol](const auto acc, const auto *improper)
         {
-            return acc + improperEnergy(improper, mol.atom(improper.indexI())->r(), mol.atom(improper.indexJ())->r(),
-                                        mol.atom(improper.indexK())->r(), mol.atom(improper.indexL())->r());
+            return acc + improperEnergy(*improper, mol.atom(improper->indexI())->r(), mol.atom(improper->indexJ())->r(),
+                                        mol.atom(improper->indexK())->r(), mol.atom(improper->indexL())->r());
         });
 
     return energy;

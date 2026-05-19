@@ -336,6 +336,33 @@ bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGener
 // Finalise internal relationships related to geometry once it is defined
 void Species::finaliseGeometry()
 {
+    // From the lists of intramolecular terms, let our atoms know that they are present in them
+    for (const auto &bond : bonds_)
+    {
+        bond.i()->addBond(&bond);
+        bond.j()->addBond(&bond);
+    }
+    for (const auto &angle : angles_)
+    {
+        angle.i()->addAngle(&angle);
+        angle.j()->addAngle(&angle);
+        angle.k()->addAngle(&angle);
+    }
+    for (const auto &torsion : torsions_)
+    {
+        torsion.i()->addTorsion(&torsion);
+        torsion.j()->addTorsion(&torsion);
+        torsion.k()->addTorsion(&torsion);
+        torsion.l()->addTorsion(&torsion);
+    }
+    for (const auto &improper : impropers_)
+    {
+        improper.i()->addImproper(&improper);
+        improper.j()->addImproper(&improper);
+        improper.k()->addImproper(&improper);
+        improper.l()->addImproper(&improper);
+    }
+
     // Set-up excluded / scaled interactions on atoms arising from bonds, angles, and torsions
     for (auto &i : atoms_)
         i.setScaledInteractions();

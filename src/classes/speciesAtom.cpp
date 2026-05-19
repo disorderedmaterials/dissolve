@@ -74,22 +74,22 @@ int SpeciesAtom::userIndex() const { return index_ + 1; }
 // }
 
 // Add specified SpeciesAngle to Atom
-void SpeciesAtom::addAngle(SpeciesAngle &angle) { angles_.emplace_back(angle); }
+void SpeciesAtom::addAngle(const SpeciesAngle *angle) { angles_.emplace_back(angle); }
 
 // Return array of Angles in which the Atom is involved
-const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesAtom::angles() const { return angles_; }
+const std::vector<const SpeciesAngle *> &SpeciesAtom::angles() const { return angles_; }
 
 // Add specified SpeciesTorsion to Atom
-void SpeciesAtom::addTorsion(SpeciesTorsion &torsion) { torsions_.emplace_back(torsion); }
+void SpeciesAtom::addTorsion(const SpeciesTorsion *torsion) { torsions_.emplace_back(torsion); }
 
 // Return array of Torsions in which the Atom is involved
-const std::vector<std::reference_wrapper<SpeciesTorsion>> &SpeciesAtom::torsions() const { return torsions_; }
+const std::vector<const SpeciesTorsion *> &SpeciesAtom::torsions() const { return torsions_; }
 
 // Add specified SpeciesImproper to Atom
-void SpeciesAtom::addImproper(SpeciesImproper &improper) { impropers_.emplace_back(improper); }
+void SpeciesAtom::addImproper(const SpeciesImproper *improper) { impropers_.emplace_back(improper); }
 
 // Return array of Impropers in which the Atom is involved
-const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::impropers() const { return impropers_; }
+const std::vector<const SpeciesImproper *> &SpeciesAtom::impropers() const { return impropers_; }
 
 // Set all scaled intramolecular interactions
 void SpeciesAtom::setScaledInteractions()
@@ -116,43 +116,41 @@ void SpeciesAtom::setScaledInteractions()
         addInteractionFunction(b->partner(this), SpeciesAtom::ScaledInteraction::Excluded, 0.0, 0.0);
 
     // Angles
-    for (const auto &aRef : angles_)
+    for (const auto angle : angles_)
     {
-        auto &a = aRef.get();
-
-        if (a.i() != this)
-            addInteractionFunction(a.i(), ScaledInteraction::Excluded, 0.0, 0.0);
-        if (a.j() != this)
-            addInteractionFunction(a.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-        if (a.k() != this)
-            addInteractionFunction(a.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (angle->i() != this)
+            addInteractionFunction(angle->i(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (angle->j() != this)
+            addInteractionFunction(angle->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (angle->k() != this)
+            addInteractionFunction(angle->k(), ScaledInteraction::Excluded, 0.0, 0.0);
     }
 
     // Torsions
-    for (const auto &tRef : torsions_)
+    for (const auto torsion : torsions_)
     {
-        auto &t = tRef.get();
-
-        if (t.i() == this)
+        if (torsion->i() == this)
         {
-            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.l(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
+            addInteractionFunction(torsion->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->l(), ScaledInteraction::Scaled, torsion->electrostatic14Scaling(),
+                                   torsion->vanDerWaals14Scaling());
         }
-        else if (t.l() == this)
+        else if (torsion->l() == this)
         {
-            addInteractionFunction(t.i(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
-            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->i(), ScaledInteraction::Scaled, torsion->electrostatic14Scaling(),
+                                   torsion->vanDerWaals14Scaling());
+            addInteractionFunction(torsion->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->k(), ScaledInteraction::Excluded, 0.0, 0.0);
         }
         else
         {
-            addInteractionFunction(t.i(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.l(), ScaledInteraction::Excluded, 0.0, 0.0);
-            if (t.j() != this)
-                addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-            if (t.k() != this)
-                addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->i(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->l(), ScaledInteraction::Excluded, 0.0, 0.0);
+            if (torsion->j() != this)
+                addInteractionFunction(torsion->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            if (torsion->k() != this)
+                addInteractionFunction(torsion->k(), ScaledInteraction::Excluded, 0.0, 0.0);
         }
     }
 }

@@ -59,27 +59,27 @@ class SpeciesAtom : public Atom<const SpeciesBond>
 
     private:
     // Vector of angles which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesAngle>> angles_;
+    std::vector<const SpeciesAngle *> angles_;
     // Vector of torsions which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
+    std::vector<const SpeciesTorsion *> torsions_;
     // Vector of torsions which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
+    std::vector<const SpeciesImproper *> impropers_;
     // Vector of Atoms with scaled or excluded interactions
     std::vector<std::pair<const SpeciesAtom *, ScaledInteractionDefinition>> scaledInteractions_;
 
     public:
     // Add specified Angle to Atom
-    void addAngle(SpeciesAngle &angle);
+    void addAngle(const SpeciesAngle *angle);
     // Return angles the atom is involved in
-    const std::vector<std::reference_wrapper<SpeciesAngle>> &angles() const;
+    const std::vector<const SpeciesAngle *> &angles() const;
     // Add specified SpeciesTorsion to Atom
-    void addTorsion(SpeciesTorsion &torsion);
+    void addTorsion(const SpeciesTorsion *torsion);
     // Return torsions the atom is involved in
-    const std::vector<std::reference_wrapper<SpeciesTorsion>> &torsions() const;
+    const std::vector<const SpeciesTorsion *> &torsions() const;
     // Add specified SpeciesImproper to Atom
-    void addImproper(SpeciesImproper &improper);
+    void addImproper(const SpeciesImproper *improper);
     // Return impropers the atom is involved in
-    const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
+    const std::vector<const SpeciesImproper *> &impropers() const;
     // Set all scaled intramolecular interactions
     void setScaledInteractions();
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
