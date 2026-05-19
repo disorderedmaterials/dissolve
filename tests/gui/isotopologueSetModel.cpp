@@ -10,13 +10,11 @@ namespace UnitTest
 {
 TEST(IsotopologueSetModelTest, Basic)
 {
-    auto waterNode = TestGraph::loadTOMLSpecies("species/water.toml");
-    ASSERT_TRUE(waterNode);
-    auto &water = waterNode->species();
+    Species water;
+    water.load("species/water.toml");
 
-    auto methanolNode = TestGraph::loadTOMLSpecies("species/methanol.toml");
-    ASSERT_TRUE(methanolNode);
-    auto &methanol = methanolNode->species();
+    Species methanol;
+    methanol.load("species/methanol.toml");
 
     // Create an isotopologue set
     auto h5hSet = IsotopologueSet({{water.naturalIsotopologue(), 1.0},

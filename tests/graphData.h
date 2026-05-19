@@ -131,14 +131,7 @@ class TestGraph : public DissolveGraph
         auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
         auto speciesNodePtr = speciesNodeUniquePtr.get();
         auto &species = speciesNodePtr->species();
-
-        SerialisedValue contents = toml::parse(std::string(path));
-        if (contents.contains("species"))
-        {
-            species.deserialise(contents["species"]);
-            auto name = contents["species"]["name"].as_string();
-            species.setName(name.str);
-        }
+        species.load(path);
 
         return speciesNodeUniquePtr;
     }

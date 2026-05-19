@@ -1,0 +1,67 @@
+
+[species]
+name = "Methane"
+
+[[species.atoms]]
+index = 1
+z = "C"
+r = [
+0.0,
+0.0,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 2
+z = "H"
+r = [
+0.0,
+1.08,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 3
+z = "H"
+r = [
+0.0,
+-0.360511,
+-1.01805,
+]
+q = 0.0
+[[species.atoms]]
+index = 4
+z = "H"
+r = [
+0.881973,
+-0.359744,
+0.509026,
+]
+q = 0.0
+[[species.atoms]]
+index = 5
+z = "H"
+r = [
+-0.881973,
+-0.359744,
+0.509026,
+]
+q = 0.0
+
+[[species.bonds]]
+form = "None"
+i = 1
+j = 2
+[[species.bonds]]
+form = "None"
+i = 1
+j = 3
+[[species.bonds]]
+form = "None"
+i = 1
+j = 4
+[[species.bonds]]
+form = "None"
+i = 1
+j = 5
+
