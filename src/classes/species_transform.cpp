@@ -83,6 +83,4 @@ void Species::load(std::string_view tomlFile)
         auto name = contents["species"]["name"].as_string();
         setName(name.str);
     }
-
-    finaliseGeometry();
 }
