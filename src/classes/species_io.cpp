@@ -719,6 +719,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         errorsEncountered = true;
     }
 
+    finaliseGeometry();
+
     return (!errorsEncountered);
 }
 
