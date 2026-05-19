@@ -20,7 +20,7 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Atom
+class SpeciesAtom : public Atom<SpeciesBond>
 {
     public:
     SpeciesAtom(Species *parent);
@@ -66,8 +66,6 @@ class SpeciesAtom : public Atom
     using ScaledInteractionDefinition = std::tuple<ScaledInteraction, double, double>;
 
     private:
-    // Vector of bonds which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
     // Vector of angles which this atom participates in
     std::vector<std::reference_wrapper<SpeciesAngle>> angles_;
     // Vector of torsions which this atom participates in

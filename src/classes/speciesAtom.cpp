@@ -30,14 +30,11 @@ void SpeciesAtom::move(SpeciesAtom &source)
     atomType_ = source.atomType_;
     index_ = source.index_;
 
-    bonds_ = std::move(source.bonds_);
     angles_ = std::move(source.angles_);
     torsions_ = std::move(source.torsions_);
     impropers_ = std::move(source.impropers_);
 
     // Rewrite pointers in intramolecular terms
-    for (auto &bond : bonds_)
-        bond.get().switchAtom(&source, this);
     for (auto &angle : angles_)
         angle.get().switchAtom(&source, this);
     for (auto &torsion : torsions_)
@@ -51,7 +48,6 @@ void SpeciesAtom::move(SpeciesAtom &source)
     source.q_ = 0.0;
     source.atomType_ = nullptr;
     source.index_ = -1;
-    source.bonds_.clear();
     source.angles_.clear();
     source.torsions_.clear();
     source.impropers_.clear();
@@ -87,37 +83,37 @@ int SpeciesAtom::userIndex() const { return index_ + 1; }
 /*
  * Bond Information
  */
-
-// Add Bond reference
-void SpeciesAtom::addBond(SpeciesBond &bond)
-{
-    if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b) { return &b == &bond; }) == bonds_.end())
-        bonds_.emplace_back(bond);
-}
-
-// Remove Bond reference
-void SpeciesAtom::removeBond(SpeciesBond &b)
-{
-    bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond) { return &b == &bond; }));
-}
-
-// Return number of Bond references
-int SpeciesAtom::nBonds() const { return bonds_.size(); }
-
-// Return specified bond
-SpeciesBond &SpeciesAtom::bond(int index) { return bonds_.at(index); }
-
-// Return bonds list
-const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() const { return bonds_; }
-
-// Return whether Bond to specified Atom exists
-OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *partner)
-{
-    auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner; });
-    if (result == bonds_.end())
-        return std::nullopt;
-    return *result;
-}
+//
+// // Add Bond reference
+// void SpeciesAtom::addBond(SpeciesBond &bond)
+// {
+//     if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b) { return &b == &bond; }) == bonds_.end())
+//         bonds_.emplace_back(bond);
+// }
+//
+// // Remove Bond reference
+// void SpeciesAtom::removeBond(SpeciesBond &b)
+// {
+//     bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond) { return &b == &bond; }));
+// }
+//
+// // Return number of Bond references
+// int SpeciesAtom::nBonds() const { return bonds_.size(); }
+//
+// // Return specified bond
+// SpeciesBond &SpeciesAtom::bond(int index) { return bonds_.at(index); }
+//
+// // Return bonds list
+// const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() const { return bonds_; }
+//
+// // Return whether Bond to specified Atom exists
+// OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *partner)
+// {
+//     auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner;
+//     }); if (result == bonds_.end())
+//         return std::nullopt;
+//     return *result;
+// }
 
 // Add specified SpeciesAngle to Atom
 void SpeciesAtom::addAngle(SpeciesAngle &angle) { angles_.emplace_back(angle); }
@@ -196,8 +192,8 @@ void SpeciesAtom::setScaledInteractions()
      */
 
     // Bonds
-    for (const auto &b : bonds_)
-        addInteractionFunction(b.get().partner(this), SpeciesAtom::ScaledInteraction::Excluded, 0.0, 0.0);
+    for (const auto b : bonds_)
+        addInteractionFunction(b->partner(this), SpeciesAtom::ScaledInteraction::Excluded, 0.0, 0.0);
 
     // Angles
     for (const auto &aRef : angles_)

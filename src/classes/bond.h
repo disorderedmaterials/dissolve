@@ -5,32 +5,32 @@
 
 #include "base/serialiser.h"
 
-// Forward Declarations
-class Atom;
-
 // Bond
-class Bond : public Serialisable<>
+template <class AtomClass> class Bond : public Serialisable<>
 {
     public:
-    Bond(Atom *i, Atom *j);
+    Bond(AtomClass *i = nullptr, AtomClass *j = nullptr) : i_(i), j_(j) {}
     virtual ~Bond() = default;
 
-    private:
-    Atom *i_{nullptr}, *j_{nullptr};
+    protected:
+    AtomClass *i_{nullptr}, *j_{nullptr};
 
     public:
     // Return the involved atoms
-    Atom *i() const;
-    Atom *j() const;
+    AtomClass *i() const { return i_; }
+    AtomClass *j() const { return j_; }
     // Return the 'other' atom
-    Atom *partner(const Atom *atom) const;
+    AtomClass *partner(const AtomClass *atom) const { return (atom == i_ ? j_ : i_); }
     // Return whether the bond's atoms match those provided
-    bool isBetween(const Atom *i, const Atom *j) const;
+    bool isBetween(const AtomClass *i, const AtomClass *j) const { return (i == i_ && j == j_) || (i == j_ && j == i_); }
 
     /*
      * Serialisation
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const override
+    {
+        target[tag] = {{"i", i_->index()}, {"j", j_->index()}};
+    }
 };

@@ -10,7 +10,7 @@
 #include <vector>
 
 // StructureAtom
-class StructureAtom : public Atom
+class StructureAtom : public Atom<Bond<StructureAtom>>
 {
     private:
     // Identifying name string
@@ -77,23 +77,23 @@ class Structure : public Serialisable<>
      */
     private:
     // Connectivity within the structure
-    std::vector<std::unique_ptr<Bond>> bonds_;
+    std::vector<std::unique_ptr<Bond<StructureAtom>>> bonds_;
 
     public:
     // Add new bond between specified atoms
-    Bond *addBond(int i, int j);
-    Bond *addBond(StructureAtom *i, StructureAtom *j);
+    Bond<StructureAtom> *addBond(int i, int j);
+    Bond<StructureAtom> *addBond(StructureAtom *i, StructureAtom *j);
     // Remove bond
     void removeBond(StructureAtom *i, StructureAtom *j);
-    void removeBond(Bond *bond);
+    void removeBond(Bond<StructureAtom> *bond);
     // Return vector of defined bonds
-    std::vector<std::unique_ptr<Bond>> &bonds();
-    const std::vector<std::unique_ptr<Bond>> &bonds() const;
+    std::vector<std::unique_ptr<Bond<StructureAtom>>> &bonds();
+    const std::vector<std::unique_ptr<Bond<StructureAtom>>> &bonds() const;
     // Return whether bond between atoms exists
     bool hasBond(const StructureAtom *i, const StructureAtom *j) const;
     // Return the bond between the specified Atoms
-    Bond *getBond(StructureAtom *i, StructureAtom *j);
-    Bond *getBond(const StructureAtom *i, const StructureAtom *j) const;
+    Bond<StructureAtom> *getBond(StructureAtom *i, StructureAtom *j);
+    Bond<StructureAtom> *getBond(const StructureAtom *i, const StructureAtom *j) const;
     // Clear bonds
     void clearBonds();
 
@@ -102,12 +102,14 @@ class Structure : public Serialisable<>
      */
     private:
     // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-    void getIndicesRecursive(std::vector<int> &indices, int index, Bond *exclude, Bond *excludeToo = nullptr) const;
+    void getIndicesRecursive(std::vector<int> &indices, int index, Bond<StructureAtom> *exclude,
+                             Bond<StructureAtom> *excludeToo = nullptr) const;
 
     public:
     // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
     // provided
-    std::vector<int> fragment(int startIndex, Bond *exclude = nullptr, Bond *excludeToo = nullptr) const;
+    std::vector<int> fragment(int startIndex, Bond<StructureAtom> *exclude = nullptr,
+                              Bond<StructureAtom> *excludeToo = nullptr) const;
 
     /*
      * Box Definition

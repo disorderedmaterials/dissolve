@@ -119,7 +119,7 @@ std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() { return atoms_;
  */
 
 // Add new bond definition
-Bond *Structure::addBond(StructureAtom *i, StructureAtom *j)
+Bond<StructureAtom> *Structure::addBond(StructureAtom *i, StructureAtom *j)
 {
     // Check for existence of bond already
     auto bond = getBond(i, j);
@@ -130,9 +130,9 @@ Bond *Structure::addBond(StructureAtom *i, StructureAtom *j)
     }
 
     // OK to add new Bond
-    return bonds_.emplace_back(std::make_unique<Bond>(i, j)).get();
+    return bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i, j)).get();
 }
-Bond *Structure::addBond(int i, int j) { return addBond(atoms_[i].get(), atoms_[j].get()); }
+Bond<StructureAtom> *Structure::addBond(int i, int j) { return addBond(atoms_[i].get(), atoms_[j].get()); }
 
 // Remove bond
 void Structure::removeBond(StructureAtom *i, StructureAtom *j)
@@ -149,7 +149,7 @@ void Structure::removeBond(StructureAtom *i, StructureAtom *j)
     // Erase the bond
     bonds_.erase(it);
 }
-void Structure::removeBond(Bond *bondToRemove)
+void Structure::removeBond(Bond<StructureAtom> *bondToRemove)
 {
     auto it = std::ranges::find_if(bonds_, [bondToRemove](const auto &bond) { return bond.get() == bondToRemove; });
     if (it == bonds_.end())
@@ -163,8 +163,8 @@ void Structure::removeBond(Bond *bondToRemove)
 }
 
 // Return vector of bonds
-std::vector<std::unique_ptr<Bond>> &Structure::bonds() { return bonds_; }
-const std::vector<std::unique_ptr<Bond>> &Structure::bonds() const { return bonds_; }
+std::vector<std::unique_ptr<Bond<StructureAtom>>> &Structure::bonds() { return bonds_; }
+const std::vector<std::unique_ptr<Bond<StructureAtom>>> &Structure::bonds() const { return bonds_; }
 
 // Return whether bond between specified atoms exists
 bool Structure::hasBond(const StructureAtom *i, const StructureAtom *j) const
@@ -173,7 +173,7 @@ bool Structure::hasBond(const StructureAtom *i, const StructureAtom *j) const
 }
 
 // Return the bond between the specified atoms
-Bond *Structure::getBond(StructureAtom *i, StructureAtom *j)
+Bond<StructureAtom> *Structure::getBond(StructureAtom *i, StructureAtom *j)
 {
     auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond->isBetween(i, j); });
     if (it == bonds_.end())
@@ -181,7 +181,7 @@ Bond *Structure::getBond(StructureAtom *i, StructureAtom *j)
 
     return it->get();
 }
-Bond *Structure::getBond(const StructureAtom *i, const StructureAtom *j) const
+Bond<StructureAtom> *Structure::getBond(const StructureAtom *i, const StructureAtom *j) const
 {
     auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond->isBetween(i, j); });
     if (it == bonds_.end())
@@ -206,7 +206,8 @@ void Structure::clearBonds()
  */
 
 // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-void Structure::getIndicesRecursive(std::vector<int> &indices, int index, Bond *exclude, Bond *excludeToo) const
+void Structure::getIndicesRecursive(std::vector<int> &indices, int index, Bond<StructureAtom> *exclude,
+                                    Bond<StructureAtom> *excludeToo) const
 {
     // Loop over Bonds on specified Atom
     indices.emplace_back(index);
@@ -225,7 +226,7 @@ void Structure::getIndicesRecursive(std::vector<int> &indices, int index, Bond *
 }
 
 // Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
-std::vector<int> Structure::fragment(int startIndex, Bond *exclude, Bond *excludeToo) const
+std::vector<int> Structure::fragment(int startIndex, Bond<StructureAtom> *exclude, Bond<StructureAtom> *excludeToo) const
 {
     std::vector<int> indices;
     getIndicesRecursive(indices, startIndex, exclude, excludeToo);
@@ -291,6 +292,6 @@ void Structure::deserialise(const SerialisedValue &node)
                            {
                                auto &i = atoms_.at(toml::find<int>(bond, "i"));
                                auto &j = atoms_.at(toml::find<int>(bond, "j"));
-                               bonds_.emplace_back(std::make_unique<Bond>(i.get(), j.get()));
+                               bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i.get(), j.get()));
                            });
 }
