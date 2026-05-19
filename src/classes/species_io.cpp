@@ -97,8 +97,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     if (hasAngle(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1]))
                         return false;
-                    angles_[angleIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
-                                               &atoms_[parser.argi(3) - 1]);
+                    angles_[angleIndex] = SpeciesAngle(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                       &atoms_[parser.argi(3) - 1]);
                     a = angles_[angleIndex++];
                 }
                 else
@@ -192,7 +192,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     if (hasBond(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]))
                         return false;
-                    bonds_[bondIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]);
+                    bonds_[bondIndex] = SpeciesBond(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]);
                     b = bonds_[bondIndex++];
                 }
                 else
@@ -315,8 +315,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (hasImproper(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
                                     &atoms_[parser.argi(4) - 1]))
                         return false;
-                    impropers_[improperIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
-                                                     &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
+                    impropers_[improperIndex] = SpeciesImproper(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                                &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
                     imp = impropers_[improperIndex++];
                 }
                 else
@@ -479,8 +479,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (hasTorsion(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
                                    &atoms_[parser.argi(4) - 1]))
                         return false;
-                    torsions_[torsionIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
-                                                   &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
+                    torsions_[torsionIndex] = SpeciesTorsion(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                             &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
                     torsion = torsions_[torsionIndex++];
                 }
                 else

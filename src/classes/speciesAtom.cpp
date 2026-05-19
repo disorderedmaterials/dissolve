@@ -11,48 +11,6 @@
 
 SpeciesAtom::SpeciesAtom(Species *parent) : parent_(parent) {}
 
-SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
-
-SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
-{
-    move(source);
-
-    return *this;
-}
-
-// Move all data from source to this
-void SpeciesAtom::move(SpeciesAtom &source)
-{
-    parent_ = source.parent_;
-    Z_ = source.Z_;
-    r_ = source.r_;
-    q_ = source.q_;
-    atomType_ = source.atomType_;
-    index_ = source.index_;
-
-    angles_ = std::move(source.angles_);
-    torsions_ = std::move(source.torsions_);
-    impropers_ = std::move(source.impropers_);
-
-    // Rewrite pointers in intramolecular terms
-    for (auto &angle : angles_)
-        angle.get().switchAtom(&source, this);
-    for (auto &torsion : torsions_)
-        torsion.get().switchAtom(&source, this);
-    for (auto &improper : impropers_)
-        improper.get().switchAtom(&source, this);
-
-    // Tidy old data
-    source.Z_ = Elements::Unknown;
-    source.r_ = {};
-    source.q_ = 0.0;
-    source.atomType_ = nullptr;
-    source.index_ = -1;
-    source.angles_.clear();
-    source.torsions_.clear();
-    source.impropers_.clear();
-}
-
 /*
  * Properties
  */

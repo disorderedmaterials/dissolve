@@ -13,35 +13,11 @@ SpeciesBond::SpeciesBond() : SpeciesIntra(nullptr, BondFunctions::Form::None) {}
 SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j)
     : Bond(i, j), SpeciesIntra(parent, BondFunctions::Form::None)
 {
-    assign(i, j);
 }
 
 /*
  * SpeciesAtom Information
  */
-
-// Rewrite SpeciesAtom pointer
-void SpeciesBond::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
-{
-    assert(i_ == oldPtr || j_ == oldPtr);
-
-    if (i_ == oldPtr)
-        i_ = newPtr;
-    else
-        j_ = newPtr;
-}
-
-// Assign the two atoms in the bond
-void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
-{
-    i_ = i;
-    j_ = j;
-    assert(i_ && j_);
-
-    // Add ourself to the list of bonds on each atom
-    i_->addBond(*this);
-    j_->addBond(*this);
-}
 
 // Return vector of involved atoms
 std::vector<const SpeciesAtom *> SpeciesBond::atoms() const { return {i_, j_}; }
@@ -76,18 +52,6 @@ int SpeciesBond::index(int n) const
 bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 {
     return (i_ == i && j_ == j) || (i_ == j && j_ == i);
-}
-
-// Detach from current atoms
-void SpeciesBond::detach()
-{
-    if (i_ && j_)
-    {
-        i_->removeBond(*this);
-        j_->removeBond(*this);
-    }
-    i_ = nullptr;
-    j_ = nullptr;
 }
 
 /*

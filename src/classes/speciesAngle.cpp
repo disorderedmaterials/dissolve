@@ -10,92 +10,13 @@
 SpeciesAngle::SpeciesAngle() : SpeciesIntra(nullptr, AngleFunctions::Form::None) {}
 
 SpeciesAngle::SpeciesAngle(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
-    : SpeciesIntra(parent, AngleFunctions::Form::None)
+    : SpeciesIntra(parent, AngleFunctions::Form::None), i_(i), j_(j), k_(k)
 {
-    assign(i, j, k);
-}
-
-SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->operator=(source); }
-
-SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) noexcept : SpeciesIntra(source)
-{
-    // Detach source angle referred to by the species atoms
-    if (source.i_ && source.j_ && source.k_)
-    {
-        source.i_->removeAngle(source);
-        source.j_->removeAngle(source);
-        source.k_->removeAngle(source);
-    }
-
-    // Copy data
-    assign(source.i_, source.j_, source.k_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-
-    // Reset source data
-    source.i_ = nullptr;
-    source.j_ = nullptr;
-    source.k_ = nullptr;
-}
-
-SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
-{
-    // Copy data
-    assign(source.i_, source.j_, source.k_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    return *this;
-}
-
-SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source) noexcept
-{
-    // Detach any current atoms
-    if (i_ && j_ && k_)
-        detach();
-
-    // Copy data
-    assign(source.i_, source.j_, source.k_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    // Clean source
-    source.detach();
-
-    return *this;
 }
 
 /*
  * Atom Information
  */
-
-// Rewrite SpeciesAtom pointer
-void SpeciesAngle::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
-{
-    assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr);
-
-    if (i_ == oldPtr)
-        i_ = newPtr;
-    else if (j_ == oldPtr)
-        j_ = newPtr;
-    else
-        k_ = newPtr;
-}
-
-// Assign the three atoms in the angle
-void SpeciesAngle::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
-{
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    assert(i_ && j_ && k_);
-
-    i_->addAngle(*this);
-    j_->addAngle(*this);
-    k_->addAngle(*this);
-}
 
 // Return first SpeciesAtom
 SpeciesAtom *SpeciesAngle::i() const { return i_; }
@@ -148,20 +69,6 @@ int SpeciesAngle::index(int n) const
 bool SpeciesAngle::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const
 {
     return (j_ == j) && ((i_ == i && k_ == k) || (i_ == k && k_ == i));
-}
-
-// Detach from current atoms
-void SpeciesAngle::detach()
-{
-    if (i_ && j_ && k_)
-    {
-        i_->removeAngle(*this);
-        j_->removeAngle(*this);
-        k_->removeAngle(*this);
-    }
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
 }
 
 /*

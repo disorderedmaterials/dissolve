@@ -25,13 +25,6 @@ class SpeciesBond : public Bond<SpeciesAtom>, public SpeciesIntra<SpeciesBond, B
      * SpeciesAtom Information
      */
     public:
-    // Assign the two atoms in the bond
-    void assign(SpeciesAtom *i, SpeciesAtom *j);
-    // Set scaled intramolecular interactions on the involved atoms
-    void addScaledInteractions();
-    // Rewrite SpeciesAtom pointer
-    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
-    // Return first SpeciesAtom
     // Return vector of involved atoms
     std::vector<const SpeciesAtom *> atoms() const override;
     // Return index (in parent Species) of first SpeciesAtom
@@ -42,8 +35,6 @@ class SpeciesBond : public Bond<SpeciesAtom>, public SpeciesIntra<SpeciesBond, B
     int index(int n) const;
     // Return whether SpeciesAtoms match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j) const;
-    // Detach from current atoms
-    void detach();
 
     /*
      * Interaction Parameters

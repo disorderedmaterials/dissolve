@@ -24,14 +24,6 @@ class SpeciesAtom : public Atom<SpeciesBond>
 {
     public:
     SpeciesAtom(Species *parent);
-    SpeciesAtom(SpeciesAtom &source) = delete;
-    SpeciesAtom(SpeciesAtom &&source) noexcept;
-    SpeciesAtom &operator=(const SpeciesAtom &source) = delete;
-    SpeciesAtom &operator=(SpeciesAtom &&source) noexcept;
-
-    private:
-    // Move all data from source to this
-    void move(SpeciesAtom &source);
 
     /*
      * Properties
