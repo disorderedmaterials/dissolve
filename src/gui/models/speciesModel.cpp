@@ -65,31 +65,3 @@ void SpeciesModel::create()
     // Create a new node for next call
     node_ = std::make_unique<SpeciesNode>(graphModel_->graph());
 }
-
-void SpeciesModel::addBond(int i, int j)
-{
-    bonds_.beginInsertRows({}, node_->species().nBonds(), node_->species().nBonds() + 1);
-    node_->species().addBond(i - 1, j - 1);
-    bonds_.endInsertRows();
-}
-
-void SpeciesModel::addAngle(int i, int j, int k)
-{
-    angles_.beginInsertRows({}, node_->species().nAngles(), node_->species().nAngles() + 1);
-    node_->species().addAngle(i - 1, j - 1, k - 1);
-    angles_.endInsertRows();
-}
-
-void SpeciesModel::addTorsion(int i, int j, int k, int l)
-{
-    torsions_.beginInsertRows({}, node_->species().nTorsions(), node_->species().nTorsions() + 1);
-    node_->species().addTorsion(i - 1, j - 1, k - 1, l - 1);
-    torsions_.endInsertRows();
-}
-
-void SpeciesModel::addImproper(int i, int j, int k, int l)
-{
-    impropers_.beginInsertRows({}, node_->species().nImpropers(), node_->species().nImpropers() + 1);
-    node_->species().addImproper(i - 1, j - 1, k - 1, l - 1);
-    impropers_.endInsertRows();
-}
