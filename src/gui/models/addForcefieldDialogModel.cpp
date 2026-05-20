@@ -288,8 +288,8 @@ void AddForcefieldDialogModel::finalise()
             }
             else
             {
-                auto &improper = species_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
-                                                       modifiedImproper.indexK(), modifiedImproper.indexL());
+                // auto &improper = species_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+                // modifiedImproper.indexK(), modifiedImproper.indexL());
                 // dissolve_->coreData().copySpeciesImproper(modifiedImproper, improper);
                 // TODO DISSOLVE2
             }

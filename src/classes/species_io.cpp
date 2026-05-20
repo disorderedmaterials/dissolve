@@ -102,7 +102,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     a = angles_[angleIndex++];
                 }
                 else
-                    a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
+                    a = angles_.emplace_back(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                             &atoms_[parser.argi(3) - 1]);
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a
@@ -323,7 +324,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     imp = impropers_[improperIndex++];
                 }
                 else
-                    imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+                    imp = impropers_.emplace_back(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                  &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
 
                 // Check the functional form specified - if it starts with '@' it is a reference to common
                 // parameters
@@ -487,7 +489,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     torsion = torsions_[torsionIndex++];
                 }
                 else
-                    torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+                    torsion = torsions_.emplace_back(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                     &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a

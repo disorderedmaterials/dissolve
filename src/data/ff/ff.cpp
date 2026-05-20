@@ -521,11 +521,12 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                     // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
                     // one.
                     auto optImproper = sp->getImproper(&i, j, k, l);
-                    if (!optImproper)
-                        optImproper = sp->addImproper(&i, j, k, l);
-                    SpeciesImproper &improper = *optImproper;
+                    // if (!optImproper)
+                    // optImproper = sp->addImproper(&i, j, k, l);
+                    // SpeciesImproper &improper = *optImproper;
 
-                    improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
+                    // improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
+                    // TODO DISSOLVE2
                 }
             }
         }

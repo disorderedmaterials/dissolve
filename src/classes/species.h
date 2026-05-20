@@ -127,11 +127,6 @@ class Species : public Serialisable<>
     OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
-    // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-    void updateIntramolecularTerms();
-    // Add new SpeciesAngle definition
-    SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    SpeciesAngle &addAngle(int i, int j, int k);
     // Return vector of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
     const std::vector<SpeciesAngle> &angles() const;
@@ -144,9 +139,6 @@ class Species : public Serialisable<>
     // Return the SpeciesAngle between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesAngle> getAngle(int i, int j, int k);
     OptionalReferenceWrapper<const SpeciesAngle> getAngle(int i, int j, int k) const;
-    // Add new SpeciesTorsion definition
-    SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    SpeciesTorsion &addTorsion(int i, int j, int k, int l);
     // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
@@ -159,9 +151,6 @@ class Species : public Serialisable<>
     // Return the SpeciesTorsion between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int i, int j, int k, int l);
     OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(int i, int j, int k, int l) const;
-    // Add new SpeciesImproper definition
-    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    SpeciesImproper &addImproper(int i, int j, int k, int l);
     // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;
@@ -176,6 +165,8 @@ class Species : public Serialisable<>
     OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
+    // Determine angles and torsions from bond connectivity
+    void determineAnglesAndTorsions();
     // Finalise internal relationships related to geometry once it is defined
     void finaliseGeometry();
 
