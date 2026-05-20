@@ -28,7 +28,6 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
 
     // Copy data
     assign(source.i_, source.j_);
-    bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
     commonTerm_ = source.commonTerm_;
 
@@ -41,7 +40,6 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
 {
     // Copy data
     assign(source.i_, source.j_);
-    bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
     commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
@@ -57,7 +55,6 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
 
     // Copy data
     assign(source.i_, source.j_);
-    bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
     commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
