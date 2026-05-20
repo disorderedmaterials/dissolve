@@ -331,19 +331,3 @@ void Species::deserialise(const SerialisedValue &node)
 
     finaliseGeometry();
 }
-
-// Load from specified TOML file
-void Species::load(std::string_view tomlFile)
-{
-    clear();
-
-    SerialisedValue contents = toml::parse(std::string(tomlFile));
-    if (contents.contains("species"))
-    {
-        deserialise(contents["species"]);
-        auto name = contents["species"]["name"].as_string();
-        setName(name.str);
-    }
-
-    finaliseGeometry();
-}
