@@ -17,8 +17,6 @@ add_library(
   forces_dlpoly.cpp
   forces_moscito.cpp
   forces_simple.cpp
-  species.cpp
-  species_xyz.cpp
   trajectory.cpp
   trajectory_dlpoly.cpp
   values.cpp
@@ -27,7 +25,6 @@ add_library(
   data2D.h
   data3D.h
   forces.h
-  species.h
   trajectory.h
   values.h
 )

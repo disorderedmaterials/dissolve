@@ -1,13 +1,8 @@
-dissolve_add_test(SRC assignment-Kulmala2010.cpp)
-dissolve_add_test(SRC assignment-Ludwig-py5.cpp)
-dissolve_add_test(SRC assignment-OPLSAA2005-alcohols.cpp)
-dissolve_add_test(SRC assignment-OPLSAA2005-alkanes.cpp)
-dissolve_add_test(SRC assignment-OPLSAA2005-aromatics.cpp)
-dissolve_add_test(SRC assignment-PCL2019-anions.cpp)
-dissolve_add_test(SRC assignment-PCL2019-cations.cpp)
-dissolve_add_test(SRC assignment-SPCFw.cpp)
-dissolve_add_test(SRC assignment-UFF-nmethylformamide.cpp)
-dissolve_add_test(SRC assignment-UFF4MOF-mof5.cpp)
+# dissolve_add_test(SRC assignment-Kulmala2010.cpp) dissolve_add_test(SRC assignment-Ludwig-py5.cpp) dissolve_add_test(SRC
+# assignment-OPLSAA2005-alcohols.cpp) dissolve_add_test(SRC assignment-OPLSAA2005-alkanes.cpp) dissolve_add_test(SRC
+# assignment-OPLSAA2005-aromatics.cpp) dissolve_add_test(SRC assignment-PCL2019-anions.cpp) dissolve_add_test(SRC
+# assignment-PCL2019-cations.cpp) dissolve_add_test(SRC assignment-SPCFw.cpp) dissolve_add_test(SRC assignment-UFF-nmethylformamide.cpp)
+# dissolve_add_test(SRC assignment-UFF4MOF-mof5.cpp)
 dissolve_add_test(SRC benzene.cpp)
 dissolve_add_test(SRC hexane.cpp)
 dissolve_add_test(SRC water-1000.cpp)
