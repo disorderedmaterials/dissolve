@@ -60,39 +60,6 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     void detach();
 
     /*
-     * Bond Type
-     */
-    public:
-    // Bond Type enum
-    enum BondType
-    {
-        SingleBond,
-        DoubleBond,
-        TripleBond,
-        QuadrupleBond,
-        AromaticBond,
-        nBondTypes
-    };
-    // Convert bond type string to functional form
-    static BondType bondType(std::string_view s);
-    // Return bond type functional form text
-    static std::string_view bondType(BondType bt);
-    // Return bond order for specified bond type
-    static double bondOrder(BondType bt);
-
-    private:
-    // Bond type
-    BondType bondType_{SpeciesBond::SingleBond};
-
-    public:
-    // Set bond type
-    void setBondType(BondType type);
-    // Return bond type
-    BondType bondType() const;
-    // Return bond order for current bond type
-    double bondOrder() const;
-
-    /*
      * Interaction Parameters
      */
     public:

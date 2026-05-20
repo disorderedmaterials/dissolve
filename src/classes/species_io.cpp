@@ -60,7 +60,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     BondFunctions::Form bf;
     AngleFunctions::Form af;
     TorsionFunctions::Form tf;
-    SpeciesBond::BondType bt;
     Vector3 boxAngles(90.0, 90.0, 90.0);
     std::optional<Vector3> boxLengths;
     auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
@@ -253,16 +252,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     errorsEncountered = true;
                     break;
                 }
-
-                // Get the bond type
-                bt = SpeciesBond::bondType(parser.argsv(3));
-                if (bt == SpeciesBond::nBondTypes)
-                {
-                    Messenger::error("Unrecognised bond type '{}'.\n", parser.argsv(3));
-                    errorsEncountered = true;
-                    break;
-                }
-                b->get().setBondType(bt);
                 break;
             case (Species::SpeciesKeyword::BoxAngles):
                 boxAngles = parser.arg3d(1);
@@ -769,7 +758,6 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             return false;
 
     // Bonds
-    std::vector<const SpeciesBond *> bondTypes[SpeciesBond::nBondTypes];
     if (!bonds_.empty())
     {
         if (!parser.writeLineF("\n{}# Bonds\n", newPrefix))
@@ -790,31 +778,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                                         BondFunctions::forms().keyword(bond.interactionForm()),
                                         bond.interactionPotential().parametersAsString()))
                 return false;
-
-            // Add the bond to the reference vector based on its indicated bond type (unless it is a SingleBond,
-            // which we will ignore as this is the default)
-            if (bond.bondType() != SpeciesBond::SingleBond)
-                bondTypes[bond.bondType()].push_back(&bond);
         }
-
-        // Any bond type information to write?
-        auto bondTypeHeaderWritten = false;
-        for (auto bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
-            if (!bondTypes[bt].empty())
-            {
-                // Write header if it hasn't been written already
-                if (!bondTypeHeaderWritten)
-                {
-                    if (!parser.writeLineF("\n{}# Bond Types\n", newPrefix))
-                        return false;
-                    bondTypeHeaderWritten = true;
-                }
-                for (const auto *bond : bondTypes[bt])
-                    if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {}\n", newPrefix,
-                                           keywords().keyword(Species::SpeciesKeyword::BondType), bond->indexI() + 1,
-                                           bond->indexJ() + 1, SpeciesBond::bondType((SpeciesBond::BondType)bt)))
-                        return false;
-            }
     }
 
     // Angles
