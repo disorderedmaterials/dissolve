@@ -62,8 +62,6 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     int index(int n) const;
     // Return whether SpeciesAtom match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const;
-    // Return whether all atoms in the interaction are currently selected
-    bool isSelected() const;
 
     /*
      * Interaction Parameters

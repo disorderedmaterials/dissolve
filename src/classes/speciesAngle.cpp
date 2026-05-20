@@ -150,13 +150,6 @@ bool SpeciesAngle::matches(const SpeciesAtom *i, const SpeciesAtom *j, const Spe
     return (j_ == j) && ((i_ == i && k_ == k) || (i_ == k && k_ == i));
 }
 
-// Return whether all atoms in the interaction are currently selected
-bool SpeciesAngle::isSelected() const
-{
-    assert(i_ && j_ && k_);
-    return (i_->isSelected() && j_->isSelected() && k_->isSelected());
-}
-
 // Detach from current atoms
 void SpeciesAngle::detach()
 {

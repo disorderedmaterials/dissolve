@@ -59,8 +59,9 @@ void AddForcefieldDialogModel::next()
             originalAtomTypeNames_.clear();
 
             // Set selection status
-            for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
-                modifiedI.setSelected(targetI.isSelected());
+            // for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
+            // modifiedI.setSelected(targetI.isSelected());
+            // TODO DISSOLVE2
 
             Q_EMIT assignErrors({});
             // Determine atom types
@@ -142,12 +143,7 @@ void AddForcefieldDialogModel::setSpecies(Species *sp)
 }
 
 // Does the species have selected atoms
-bool AddForcefieldDialogModel::speciesHasSelection() const
-{
-    if (!species_)
-        return false;
-    return !species_->selectedAtoms().empty();
-}
+bool AddForcefieldDialogModel::speciesHasSelection() const { return false; }
 
 // The forcefield model
 const QAbstractItemModel *AddForcefieldDialogModel::forcefields() const { return &ffSort_; }
@@ -217,8 +213,8 @@ void AddForcefieldDialogModel::finalise()
     {
 
         // Selection only?
-        if (typesSelectionOnly && (!original.isSelected()))
-            continue;
+        // if (typesSelectionOnly && (!original.isSelected()))
+        // continue;
 
         // Copy AtomType TODO DISSOLVE2
         // dissolve_->coreData().copyAtomType(modified, original);
@@ -241,8 +237,8 @@ void AddForcefieldDialogModel::finalise()
         for (auto &originalBond : species_->bonds())
         {
             // Selection only?
-            if (intraSelectionOnly && (!originalBond.isSelected()))
-                continue;
+            // if (intraSelectionOnly && (!originalBond.isSelected()))
+            // continue;
 
             // dissolve_->coreData().copySpeciesBond(*modifiedBond, originalBond);
             // TODO DISSOLVE2
@@ -254,8 +250,8 @@ void AddForcefieldDialogModel::finalise()
         for (auto &originalAngle : species_->angles())
         {
             // Selection only?
-            if (intraSelectionOnly && (!originalAngle.isSelected()))
-                continue;
+            // if (intraSelectionOnly && (!originalAngle.isSelected()))
+            // continue;
 
             // dissolve_->coreData().copySpeciesAngle(*modifiedAngle, originalAngle);
             // TODO DISSOLVE2
@@ -266,8 +262,8 @@ void AddForcefieldDialogModel::finalise()
         for (auto &originalTorsion : species_->torsions())
         {
             // Selection only?
-            if (intraSelectionOnly && (!originalTorsion.isSelected()))
-                continue;
+            // if (intraSelectionOnly && (!originalTorsion.isSelected()))
+            // continue;
 
             // dissolve_->coreData().copySpeciesTorsion(*modifiedTorsion, originalTorsion);
             // TODO DISSOLVE2
@@ -278,8 +274,8 @@ void AddForcefieldDialogModel::finalise()
         for (auto &modifiedImproper : modifiedSpecies_->impropers())
         {
             // Selection only?
-            if (intraSelectionOnly && (!modifiedImproper.isSelected()))
-                continue;
+            // if (intraSelectionOnly && (!modifiedImproper.isSelected()))
+            // continue;
 
             // Find / create the improper in the target species
             auto optImproper = species_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),

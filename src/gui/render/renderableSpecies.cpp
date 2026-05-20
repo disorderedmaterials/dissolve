@@ -190,8 +190,8 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
             speciesAssembly_.add(atomPrimitive_, A, ElementColours::colour(i.Z()));
 
             // Is the atom selected?
-            if (i.isSelected())
-                selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack);
+            // if (i.isSelected())
+            // selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack);
         }
 
         // Draw bonds
@@ -240,8 +240,8 @@ const void RenderableSpecies::sendToGL(const double pixelScaling)
 // Recreate selection Primitive
 void RenderableSpecies::recreateSelectionPrimitive()
 {
-    if (selectionPrimitiveVersion_ == source_->atomSelectionVersion())
-        return;
+    // if (selectionPrimitiveVersion_ == source_->atomSelectionVersion())
+    // return;
 
     // Clear existing data
     selectionAssembly_.clear();
@@ -260,8 +260,8 @@ void RenderableSpecies::recreateSelectionPrimitive()
         for (const auto &i : source_->atoms())
         {
             // If not selected, continue
-            if (!i.isSelected())
-                continue;
+            // if (!i.isSelected())
+            // continue;
 
             // Get element colour
             auto &colour = ElementColours::colour(i.Z());
@@ -299,8 +299,8 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
         for (auto &i : source_->atoms())
         {
-            if (!i.isSelected())
-                continue;
+            // if (!i.isSelected())
+            // continue;
 
             A.setIdentity();
             A.setTranslation(i.r());
@@ -310,7 +310,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
         }
     }
 
-    selectionPrimitiveVersion_ = source_->atomSelectionVersion();
+    // selectionPrimitiveVersion_ = source_->atomSelectionVersion();
 }
 
 // Clear interaction Primitive

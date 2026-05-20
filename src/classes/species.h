@@ -57,8 +57,6 @@ class Species : public Serialisable<>
     private:
     // List of atoms in the Species
     std::vector<SpeciesAtom> atoms_;
-    // Version of the atom selection
-    VersionCounter atomSelectionVersion_;
     // Atom types for the species
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
@@ -86,26 +84,10 @@ class Species : public Serialisable<>
     std::vector<SpeciesAtom> &atoms();
     // Transmute specified atom
     void transmuteAtom(int index, Elements::Element newZ);
-    // Clear current atom selection
-    void clearAtomSelection();
-    // Add atom to selection
-    void selectAtom(int index);
-    // Remove atom from selection
-    void deselectAtom(int index);
-    // Toggle selection state of specified atom
-    void toggleAtomSelection(int index);
     // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
     // provided
     std::vector<int> fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,
                               OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
-    // Return current atom selection for modification
-    const std::vector<SpeciesAtom *> modifiableSelectedAtoms();
-    // Return current atom selection
-    const std::vector<const SpeciesAtom *> selectedAtoms() const;
-    // Return whether the current selection comprises atoms of a single element
-    bool isSelectionSingleElement() const;
-    // Return version of the atom selection
-    int atomSelectionVersion() const;
     // Return total atomic mass of Species
     double mass() const;
     // Add new atom type to atom types

@@ -28,7 +28,6 @@ void SpeciesAtom::move(SpeciesAtom &source)
     r_ = source.r_;
     q_ = source.q_;
     atomType_ = source.atomType_;
-    selected_ = source.selected_;
     index_ = source.index_;
 
     bonds_ = std::move(source.bonds_);
@@ -51,7 +50,6 @@ void SpeciesAtom::move(SpeciesAtom &source)
     source.r_ = {};
     source.q_ = 0.0;
     source.atomType_ = nullptr;
-    source.selected_ = false;
     source.index_ = -1;
     source.bonds_.clear();
     source.angles_.clear();
@@ -85,12 +83,6 @@ const AtomType *SpeciesAtom::atomType() const { return atomType_; }
 
 // Return 'user' index (1->N)
 int SpeciesAtom::userIndex() const { return index_ + 1; }
-
-// Set whether the atom is currently selected
-void SpeciesAtom::setSelected(bool selected) { selected_ = selected; }
-
-// Return whether the atom is currently selected
-bool SpeciesAtom::isSelected() const { return selected_; }
 
 /*
  * Bond Information

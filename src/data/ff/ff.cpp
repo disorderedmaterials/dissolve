@@ -298,8 +298,9 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStra
             continue;
 
         // -- Don't assign a type unless the atom is selected (strategy == Forcefield::TypeSelection)
-        if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
-            continue;
+        // if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
+        // continue;
+        // TODO DISSOLVE2
 
         if (!assignAtomType(i, setSpeciesAtomCharges))
         {
@@ -446,8 +447,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     // Assign bond terms
     for (auto &bond : sp->bonds())
     {
-        if (selectionOnly && (!bond.isSelected()))
-            continue;
+        // if (selectionOnly && (!bond.isSelected()))
+        // continue;
 
         if (!assignBondTermParameters(sp, bond, determineTypes))
             return false;
@@ -456,8 +457,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     // Generate angle parameters
     for (auto &angle : sp->angles())
     {
-        if (selectionOnly && (!angle.isSelected()))
-            continue;
+        // if (selectionOnly && (!angle.isSelected()))
+        // continue;
 
         if (!assignAngleTermParameters(sp, angle, determineTypes))
             return false;
@@ -466,8 +467,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     // Generate torsion parameters
     for (auto &torsion : sp->torsions())
     {
-        if (selectionOnly && (!torsion.isSelected()))
-            continue;
+        // if (selectionOnly && (!torsion.isSelected()))
+        // continue;
 
         if (!assignTorsionTermParameters(sp, torsion, determineTypes))
             return false;
@@ -485,8 +486,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
             if (i.nBonds() != 3)
                 continue;
 
-            if (selectionOnly && (!i.isSelected()))
-                continue;
+            // if (selectionOnly && (!i.isSelected()))
+            // continue;
 
             // Loop over combinations of bonds to the central atom
             for (auto indexJ = 0; indexJ < i.nBonds() - 2; ++indexJ)
@@ -494,24 +495,24 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 // Get SpeciesAtom 'j'
                 auto *j = i.bond(indexJ).partner(&i);
 
-                if (selectionOnly && (!j->isSelected()))
-                    continue;
+                // if (selectionOnly && (!j->isSelected()))
+                continue;
 
                 for (auto indexK = indexJ + 1; indexK < i.nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
                     auto *k = i.bond(indexK).partner(&i);
 
-                    if (selectionOnly && (!k->isSelected()))
-                        continue;
+                    // if (selectionOnly && (!k->isSelected()))
+                    // continue;
 
                     for (auto indexL = indexK + 1; indexL < i.nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
                         auto *l = i.bond(indexL).partner(&i);
 
-                        if (selectionOnly && (!l->isSelected()))
-                            continue;
+                        // if (selectionOnly && (!l->isSelected()))
+                        // continue;
 
                         // Try to assign / generate an improper term (which may legitimately not exist)
                         if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))

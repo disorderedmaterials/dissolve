@@ -56,8 +56,6 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     int index(int n) const;
     // Return whether SpeciesAtoms match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j) const;
-    // Return whether all atoms in the interaction are currently selected
-    bool isSelected() const;
     // Detach from current atoms
     void detach();
 

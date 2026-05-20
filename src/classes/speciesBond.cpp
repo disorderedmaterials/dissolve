@@ -139,13 +139,6 @@ bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
     return (i_ == i && j_ == j) || (i_ == j && j_ == i);
 }
 
-// Return whether all atoms in the interaction are currently selected
-bool SpeciesBond::isSelected() const
-{
-    assert(i_ && j_);
-    return (i_->isSelected() && j_->isSelected());
-}
-
 // Detach from current atoms
 void SpeciesBond::detach()
 {
