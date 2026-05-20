@@ -16,7 +16,8 @@ TEST(EPSRNodeTest, Water3N)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{"species/water.toml", 1000}}, 0.1));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato", "Bulk"));
+    EXPECT_TRUE(
+        testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato", "Configuration"));
     auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
 
     // Adjust pair potential properties
@@ -94,7 +95,8 @@ TEST(EPSRNodeTest, Water3NX)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{"species/water.toml", 1000}}, 0.1));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron-xray/waterbox.ato", "Bulk"));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron-xray/waterbox.ato",
+                                               "Configuration"));
     auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
 
     // Adjust pair potential properties
@@ -191,7 +193,8 @@ TEST(EPSRNodeTest, Benzene)
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Liquid", {{"species/benzene.toml", 200}}, 0.876,
                                               Units::DensityUnits::GramsPerCentimetreCubedUnits));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/benzene200-neutron/boxbenz.ato", "Bulk"));
+    EXPECT_TRUE(
+        testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/benzene200-neutron/boxbenz.ato", "Configuration"));
     auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
 
     // Adjust pair potential properties
