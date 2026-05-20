@@ -9,7 +9,6 @@
 #include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
-#include "modules/energy/energy.h"
 
 Configuration::Configuration() : generator_("Generator") { createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false); }
 

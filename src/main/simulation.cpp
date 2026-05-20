@@ -6,7 +6,6 @@
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "modules/intraShake/intraShake.h"
 #include <cstdio>
 
 // Set frequency with which to write various iteration data

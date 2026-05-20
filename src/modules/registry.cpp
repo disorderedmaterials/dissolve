@@ -3,8 +3,6 @@
 
 #include "modules/registry.h"
 #include "modules/accumulate/accumulate.h"
-#include "modules/angle/angle.h"
-#include "modules/atomShake/atomShake.h"
 #include "modules/avgMol/avgMol.h"
 #include "modules/axisAngle/axisAngle.h"
 #include "modules/bragg/bragg.h"
@@ -19,8 +17,6 @@
 #include "modules/gr/gr.h"
 #include "modules/histogramCN/histogramCN.h"
 #include "modules/importTrajectory/importTrajectory.h"
-#include "modules/intraAngle/intraAngle.h"
-#include "modules/intraDistance/intraDistance.h"
 #include "modules/intraShake/intraShake.h"
 #include "modules/md/md.h"
 #include "modules/modifierOSites/modifierOSites.h"
@@ -30,7 +26,6 @@
 #include "modules/orientedSDF/orientedSDF.h"
 #include "modules/qSpecies/qSpecies.h"
 #include "modules/sdf/sdf.h"
-#include "modules/siteRDF/siteRDF.h"
 #include "modules/sq/sq.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 #include "modules/test/test.h"
@@ -42,8 +37,6 @@ ModuleRegistry::ModuleRegistry()
 {
     registerProducer<AccumulateModule>(ModuleTypes::Accumulate, "Accumulate partials data to form an average",
                                        "Correlation Functions");
-    registerProducer<AngleModule>(ModuleTypes::Angle, "Calculate distance/angle maps", "Analysis");
-    registerProducer<AtomShakeModule>(ModuleTypes::AtomShake, "Perform atomic Monte Carlo on all atoms", "Evolution");
     registerProducer<AvgMolModule>(ModuleTypes::AvgMol,
                                    "Calculate average atomic positions of a species around an oriented site", "Analysis");
     registerProducer<AxisAngleModule>(ModuleTypes::AxisAngle, "Calculate distance/angle map between site axes", "Analysis");
@@ -64,9 +57,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");
-    registerProducer<IntraAngleModule>(ModuleTypes::IntraAngle, "Calculate intramolecular angle between two sites", "Analysis");
-    registerProducer<IntraDistanceModule>(ModuleTypes::IntraDistance, "Calculate intramolecular histogram between two sites",
-                                          "Analysis");
     registerProducer<IntraShakeModule>(ModuleTypes::IntraShake,
                                        "Perform Monte Carlo shakes on intramolecular terms within molecules", "Evolution");
     registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
@@ -81,7 +71,6 @@ ModuleRegistry::ModuleRegistry()
                                            "Calculate the percentage FO, BO and NBO bonded to a modifier atom", "Analysis");
     registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
-    registerProducer<SiteRDFModule>(ModuleTypes::SiteRDF, "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
                                                 "Adjust the temperature of a configuration during a simulation", "Evolution");

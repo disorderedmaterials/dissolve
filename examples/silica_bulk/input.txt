@@ -84,12 +84,6 @@ EndConfiguration
 Layer  'Evolve (Atomic)'
   Frequency  1
 
-  Module  AtomShake  'AtomShake01'
-    Frequency  1
-
-    Configuration  'Bulk'
-  EndModule
-
   Module  MD  'MD01'
     Frequency  5
 
@@ -135,22 +129,5 @@ Layer  'Refine (EPSR)'
     Frequency  1
     EReq   5.00000e+01
     Target  'NeutronSQ01'
-  EndModule
-EndLayer
-
-Layer  'Analysis'
-  Frequency  1
-
-  Module  Angle  'Angle01'
-    Frequency  1
-
-    Configuration  'Bulk'
-    RangeAB  1.200000e+00  2.100000e+00  5.000000e-02
-    RangeBC  1.200000e+00  2.100000e+00  5.000000e-02
-    AngleRange  0.000000e+00  1.800000e+02  5.000000e+00
-    SiteA  'Si'  'Si'
-    SiteB  'O'  'O'
-    SiteC  'Si'  'Si'
-    ExcludeSameSiteAC  True
   EndModule
 EndLayer
