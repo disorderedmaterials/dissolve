@@ -442,7 +442,7 @@ class DissolveSystemTest
         checkVec3Vector(vec, B, tolerance);
     }
     // Test species atom type
-    static void checkSpeciesAtomType(const Species *sp, const std::map<int, std::string> &namesById)
+    static void checkSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
     {
         for (auto &[atomIndex, atomTypeName] : namesById)
         {
@@ -465,7 +465,7 @@ class DissolveSystemTest
             EXPECT_NEAR(current, expected, tolerance);
     }
     // Test species bond term
-    void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
+    void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
                                     const InteractionPotential<BondFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 2);
@@ -476,7 +476,7 @@ class DissolveSystemTest
                                  b->get().interactionPotential(), tolerance);
     }
     // Test species angle term
-    void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
+    void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
                                     const InteractionPotential<AngleFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 3);
@@ -488,7 +488,7 @@ class DissolveSystemTest
                                  a->get().interactionPotential(), tolerance);
     }
     // Test species torsion / improper term
-    void checkSpeciesIntramolecular(const Species *sp, std::vector<int> atoms,
+    void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
                                     const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 4);

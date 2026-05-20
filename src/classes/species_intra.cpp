@@ -22,27 +22,18 @@ bool Species::hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const
 }
 bool Species::hasBond(int i, int j) const { return hasBond(&atom(i), &atom(j)); }
 
-// Return the SpeciesBond between the specified SpeciesAtoms
-OptionalReferenceWrapper<SpeciesBond> Species::getBond(SpeciesAtom *i, SpeciesAtom *j)
+// Return the SpeciesBond between the specified SpeciesAtom indices
+OptionalReferenceWrapper<SpeciesBond> Species::getBond(int indexI, int indexJ)
 {
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+
     auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond.matches(i, j); });
     if (it == bonds_.end())
         return {};
 
     return *it;
 }
-OptionalReferenceWrapper<const SpeciesBond> Species::getBond(const SpeciesAtom *i, const SpeciesAtom *j) const
-{
-    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
-    if (it == bonds_.end())
-        return {};
-
-    return *it;
-}
-
-// Return the SpeciesBond between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j) { return getBond(&atom(i), &atom(j)); }
-OptionalReferenceWrapper<const SpeciesBond> Species::getBond(int i, int j) const { return getBond(&atom(i), &atom(j)); }
 
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
@@ -72,30 +63,18 @@ bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
     return std::any_of(angles_.cbegin(), angles_.cend(), [i, j, k](const auto &angle) { return angle.matches(i, j, k); });
 }
 
-// Return the SpeciesAngle between the specified SpeciesAtoms
-OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
-{
-    auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
-    if (it == angles_.end())
-        return {};
-
-    return *it;
-}
-OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                               const SpeciesAtom *k) const
-{
-    auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
-    if (it == angles_.end())
-        return {};
-
-    return *it;
-}
-
 // Return the SpeciesAngle between the specified SpeciesAtom indic
-OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(int i, int j, int k) { return getAngle(&atom(i), &atom(j), &atom(k)); }
-OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(int i, int j, int k) const
+OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(int indexI, int indexJ, int indexK)
 {
-    return getAngle(&atom(i), &atom(j), &atom(k));
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+    auto *k = &atoms_[indexK];
+
+    auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
+    if (it == angles_.end())
+        return {};
+
+    return *it;
 }
 
 // Return vector of SpeciesTorsions
@@ -109,35 +88,20 @@ bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Species
     return std::any_of(torsions_.cbegin(), torsions_.cend(), [&](const auto &t) { return t.matches(i, j, k, l); });
 }
 
-// Return the SpeciesTorsion between the specified SpeciesAtoms
-OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    auto it =
-        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
-    if (it == torsions_.end())
-        return {};
-
-    return *it;
-}
-OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                   const SpeciesAtom *k, const SpeciesAtom *l) const
-{
-    auto it =
-        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
-    if (it == torsions_.end())
-        return {};
-
-    return *it;
-}
-
 // Return the SpeciesTorsion between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(int i, int j, int k, int l)
+OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(int indexI, int indexJ, int indexK, int indexL)
 {
-    return getTorsion(&atom(i), &atom(j), &atom(k), &atom(l));
-}
-OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(int i, int j, int k, int l) const
-{
-    return getTorsion(&atom(i), &atom(j), &atom(k), &atom(l));
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+    auto *k = &atoms_[indexK];
+    auto *l = &atoms_[indexL];
+
+    auto it =
+        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
+    if (it == torsions_.end())
+        return {};
+
+    return *it;
 }
 
 // Return vector of SpeciesImproper
@@ -152,35 +116,20 @@ bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Specie
                        [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
 }
 
-// Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
-OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    auto it = std::find_if(impropers_.begin(), impropers_.end(),
-                           [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
-    if (it == impropers_.end())
-        return {};
-
-    return *it;
-}
-OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                     const SpeciesAtom *k, const SpeciesAtom *l) const
-{
-    auto it = std::find_if(impropers_.begin(), impropers_.end(),
-                           [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
-    if (it == impropers_.end())
-        return {};
-
-    return *it;
-}
-
 // Return the SpeciesImproper between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(int i, int j, int k, int l)
+OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(int indexI, int indexJ, int indexK, int indexL)
 {
-    return getImproper(&atom(i), &atom(j), &atom(k), &atom(l));
-}
-OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(int i, int j, int k, int l) const
-{
-    return getImproper(&atom(i), &atom(j), &atom(k), &atom(l));
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+    auto *k = &atoms_[indexK];
+    auto *l = &atoms_[indexL];
+
+    auto it = std::find_if(impropers_.begin(), impropers_.end(),
+                           [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
+    if (it == impropers_.end())
+        return {};
+
+    return *it;
 }
 
 // Return whether the attached atoms lists have been created

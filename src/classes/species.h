@@ -119,12 +119,8 @@ class Species : public Serialisable<>
     // Return whether SpeciesBond between SpeciesAtoms exists
     bool hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
     bool hasBond(int i, int j) const;
-    // Return the SpeciesBond between the specified SpeciesAtoms
-    OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
-    OptionalReferenceWrapper<const SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
-    OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
+    OptionalReferenceWrapper<SpeciesBond> getBond(int indexI, int indexJ);
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
     // Return vector of SpeciesAngle
@@ -132,37 +128,22 @@ class Species : public Serialisable<>
     const std::vector<SpeciesAngle> &angles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
     bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
-    // Return the SpeciesAngle between the specified SpeciesAtoms
-    OptionalReferenceWrapper<SpeciesAngle> getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    OptionalReferenceWrapper<const SpeciesAngle> getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                          const SpeciesAtom *k) const;
     // Return the SpeciesAngle between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesAngle> getAngle(int i, int j, int k);
-    OptionalReferenceWrapper<const SpeciesAngle> getAngle(int i, int j, int k) const;
+    OptionalReferenceWrapper<SpeciesAngle> getAngle(int indexI, int indexJ, int indexK);
     // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
     bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
-    // Return the SpeciesTorsion between the specified SpeciesAtoms
-    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
-                                                              const SpeciesAtom *l) const;
     // Return the SpeciesTorsion between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int i, int j, int k, int l);
-    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(int i, int j, int k, int l) const;
+    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int indexI, int indexJ, int indexK, int indexL);
     // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists
     bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
-    // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
-    OptionalReferenceWrapper<SpeciesImproper> getImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    OptionalReferenceWrapper<const SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                const SpeciesAtom *k, const SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesImproper> getImproper(int i, int j, int k, int l);
-    OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
+    OptionalReferenceWrapper<SpeciesImproper> getImproper(int indexI, int indexJ, int indexK, int indexL);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
     // Determine angles and torsions from bond connectivity

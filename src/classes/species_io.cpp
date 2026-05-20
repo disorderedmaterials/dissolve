@@ -204,7 +204,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     auto i = parser.argi(1) - 1;
                     auto j = parser.argi(2) - 1;
                     // Check for existence of Bond already
-                    auto bondRef = getBond(&atom(i), &atom(j));
+                    auto bondRef = getBond(i, j);
                     if (bondRef)
                     {
                         Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it "
