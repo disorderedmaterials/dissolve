@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "classes/atomConstants.h"
 #include "classes/interactionPotential.h"
 #include "classes/shortRangeFunctions.h"
 #include "data/elements.h"
@@ -49,14 +50,9 @@ class AtomType : public Serialisable<>, public std::enable_shared_from_this<Atom
     // Atomic charge
     double charge_{0.0};
     // Index of this type in the master type index
-    int index_{-1};
+    int index_{AtomConstants::TypeIndex::Ignore};
 
     public:
-    // Enumeration for special type indices
-    enum SpecialTypeIndex
-    {
-        Ignore = -1
-    };
     // Return short-range interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;

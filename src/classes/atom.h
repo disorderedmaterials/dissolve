@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/atomConstants.h"
 #include "classes/atomType.h"
 #include "math/vector3.h"
 
@@ -17,14 +18,6 @@ class Atom : public Serialisable<>
      * Properties
      */
     public:
-    // Presence
-    enum class Presence
-    {
-        Phantom = -1,
-        Physical,
-        Any
-    };
-
     protected:
     // Coordinates
     Vector3 r_;
@@ -35,7 +28,7 @@ class Atom : public Serialisable<>
     // Index in parent
     int index_{-1};
     // Atom type index in parent object
-    int atomTypeIndex_{AtomType::Ignore};
+    int atomTypeIndex_{AtomConstants::TypeIndex::Ignore};
 
     public:
     // Set basic properties
@@ -49,9 +42,9 @@ class Atom : public Serialisable<>
     // Return atomic element
     Elements::Element Z() const;
     // Return presence of atom
-    Presence presence() const;
+    AtomConstants::Presence presence() const;
     // Return whether the atom is of the presence specified
-    bool isPresence(Presence presence) const;
+    bool isPresence(AtomConstants::Presence presence) const;
     // Set atomic charge
     void setQ(double q);
     // Return atomic charge

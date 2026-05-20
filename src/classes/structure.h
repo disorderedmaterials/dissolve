@@ -111,7 +111,7 @@ class Structure : public Serialisable<>
     // Remove a number of atoms
     void removeAtoms(const std::vector<const StructureAtom *> &atoms);
     // Return the number of atoms
-    int nAtoms(Atom::Presence withPresence = Atom::Presence::Any) const;
+    int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
     // Return atom at index
     StructureAtom *atomAt(int i);
     // Return atoms

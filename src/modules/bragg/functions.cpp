@@ -42,7 +42,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
     // Grab some useful values
     const auto *box = cfg->box();
     auto nTypes = cfg->atomTypePopulations().size();
-    auto nAtoms = cfg->nAtoms(SpeciesAtom::Presence::Physical);
+    auto nAtoms = cfg->nAtoms(AtomConstants::Presence::Physical);
     auto &atoms = cfg->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
@@ -180,7 +180,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
     for (n = 0; n < nAtoms; ++n)
     {
         // Skip unphysical atoms
-        if (!atoms[n].isPresence(SpeciesAtom::Presence::Physical))
+        if (!atoms[n].isPresence(AtomConstants::Presence::Physical))
             continue;
 
         // Calculate reciprocal lattice atom coordinates
@@ -251,7 +251,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, Configuration *cf
     for (n = 0; n < nAtoms; ++n)
     {
         // Skip unphysical atoms
-        if (!atoms[n].isPresence(SpeciesAtom::Presence::Physical))
+        if (!atoms[n].isPresence(AtomConstants::Presence::Physical))
             continue;
 
         // Grab localTypeIndex and array pointers for this atom

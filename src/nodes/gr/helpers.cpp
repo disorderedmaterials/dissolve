@@ -67,7 +67,7 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
     for (auto &atom : targetConfiguration_->atoms())
     {
         m = atom.atomTypeIndex();
-        if (m == AtomType::Ignore)
+        if (m == AtomConstants::TypeIndex::Ignore)
             continue;
         r[m][nr[m]++] = atom.r();
     }
@@ -189,7 +189,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
         for (auto &i : atomsI)
         {
             auto typeI = i->atomTypeIndex();
-            if (typeI == AtomType::Ignore)
+            if (typeI == AtomConstants::TypeIndex::Ignore)
                 continue;
 
             auto &rI = i->r();
@@ -197,7 +197,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
             for (auto &j : atomsJ)
             {
                 auto typeJ = j->atomTypeIndex();
-                if (typeJ == AtomType::Ignore)
+                if (typeJ == AtomConstants::TypeIndex::Ignore)
                     continue;
 
                 auto &rJ = j->r();
@@ -234,7 +234,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
                           auto typeI = i->atomTypeIndex();
                           auto &j = atomsI[jdx];
                           auto typeJ = j->atomTypeIndex();
-                          if (typeI != AtomType::Ignore && typeJ != AtomType::Ignore)
+                          if (typeI != AtomConstants::TypeIndex::Ignore && typeJ != AtomConstants::TypeIndex::Ignore)
                           {
                               // No need to perform MIM since we're in the same cell
                               fullLUT[{typeI, typeJ}]->second.bin((i->r() - j->r()).magnitude());
@@ -357,11 +357,11 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
                                         return;
 
                                     auto typeI = atomI->atomTypeIndex();
-                                    if (typeI == AtomType::Ignore)
+                                    if (typeI == AtomConstants::TypeIndex::Ignore)
                                         return;
 
                                     auto typeJ = atomJ->atomTypeIndex();
-                                    if (typeJ == AtomType::Ignore)
+                                    if (typeJ == AtomConstants::TypeIndex::Ignore)
                                         return;
 
                                     boundLUT[{typeI, typeJ}]->second.bin(box->minimumDistance(atomI->r(), atomJ->r()));

@@ -109,9 +109,9 @@ void Species::removeAtoms(std::vector<int> indices)
 }
 
 // Return the number of atoms in the species (or only those with the specified presence)
-int Species::nAtoms(SpeciesAtom::Presence withPresence) const
+int Species::nAtoms(AtomConstants::Presence withPresence) const
 {
-    return withPresence == SpeciesAtom::Presence::Any
+    return withPresence == AtomConstants::Presence::Any
                ? atoms_.size()
                : std::count_if(atoms_.begin(), atoms_.end(),
                                [withPresence](const auto &i) { return i.isPresence(withPresence); });
@@ -245,7 +245,7 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 double Species::mass() const
 {
     return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i)
-                           { return acc + (i.isPresence(SpeciesAtom::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
+                           { return acc + (i.isPresence(AtomConstants::Presence::Physical) ? AtomicMass::mass(i.Z()) : 0.0); });
 }
 
 // Add new atom type to atom types
@@ -287,7 +287,7 @@ KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
 {
     KeyedVector<const AtomType *, int> result;
     for (const auto &i : atoms_)
-        if (i.atomType() && i.isPresence((SpeciesAtom::Presence::Physical)))
+        if (i.atomType() && i.isPresence((AtomConstants::Presence::Physical)))
             result[i.atomType()] += 1;
 
     return result;

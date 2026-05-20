@@ -97,11 +97,12 @@ void Structure::removeAtoms(const std::vector<const StructureAtom *> &atomsToRem
 }
 
 // Return the number of atoms in the structure (or only those with the specified presence)
-int Structure::nAtoms(Atom::Presence withPresence) const
+int Structure::nAtoms(AtomConstants::Presence withPresence) const
 {
-    return withPresence == Atom::Presence::Any ? atoms_.size()
-                                               : std::count_if(atoms_.begin(), atoms_.end(), [withPresence](const auto &i)
-                                                               { return i->isPresence(withPresence); });
+    return withPresence == AtomConstants::Presence::Any
+               ? atoms_.size()
+               : std::count_if(atoms_.begin(), atoms_.end(),
+                               [withPresence](const auto &i) { return i->isPresence(withPresence); });
 }
 
 // Return atom at index

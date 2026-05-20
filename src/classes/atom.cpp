@@ -28,10 +28,16 @@ void Atom::setZ(Elements::Element z) { Z_ = z; }
 Elements::Element Atom::Z() const { return Z_; }
 
 // Return presence of atom
-Atom::Presence Atom::presence() const { return Z_ == Elements::Phantom ? Presence::Phantom : Presence::Physical; }
+AtomConstants::Presence Atom::presence() const
+{
+    return Z_ == Elements::Phantom ? AtomConstants::Presence::Phantom : AtomConstants::Presence::Physical;
+}
 
 // Return whether the atom is of the presence specified
-bool Atom::isPresence(Presence presenceType) const { return presenceType == Presence::Any || presence() == presenceType; }
+bool Atom::isPresence(AtomConstants::Presence presenceType) const
+{
+    return presenceType == AtomConstants::Presence::Any || presence() == presenceType;
+}
 
 // Set atomic charge
 void Atom::setQ(double q) { q_ = q; }

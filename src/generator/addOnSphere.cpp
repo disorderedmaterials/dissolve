@@ -92,7 +92,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     const auto *box = cfg->box();
 
     // Set / adjust target box volume
-    adjustBoxVolume(cfg, ipop, sp->nAtoms(SpeciesAtom::Presence::Physical) + sp->nAtoms(SpeciesAtom::Presence::Physical),
+    adjustBoxVolume(cfg, ipop, sp->nAtoms(AtomConstants::Presence::Physical) + sp->nAtoms(AtomConstants::Presence::Physical),
                     sp->mass() + sp->mass());
 
     // Get the positioningType_ type and rotation flag
