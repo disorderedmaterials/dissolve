@@ -205,38 +205,6 @@ void Structure::clearBonds()
 }
 
 /*
- * Operations
- */
-
-// Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-void Structure::getIndicesRecursive(std::vector<int> &indices, int index, Bond<StructureAtom> *exclude,
-                                    Bond<StructureAtom> *excludeToo) const
-{
-    // Loop over Bonds on specified Atom
-    indices.emplace_back(index);
-    const auto &i = atoms_[index];
-    for (const auto *bond : i->bonds())
-    {
-        // Is this either of the excluded bonds?
-        if (exclude == bond or excludeToo == bond)
-            continue;
-
-        // Get the partner atom in the bond and select it (if it is not selected already)
-        auto *j = bond->partner(i.get());
-        if (std::find(indices.begin(), indices.end(), j->index()) == indices.end())
-            getIndicesRecursive(indices, j->index(), exclude, excludeToo);
-    }
-}
-
-// Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
-std::vector<int> Structure::fragment(int startIndex, Bond<StructureAtom> *exclude, Bond<StructureAtom> *excludeToo) const
-{
-    std::vector<int> indices;
-    getIndicesRecursive(indices, startIndex, exclude, excludeToo);
-    return indices;
-}
-
-/*
  * Box Definition
  */
 

@@ -98,20 +98,6 @@ class Structure : public Serialisable<>
     void clearBonds();
 
     /*
-     * Operations
-     */
-    private:
-    // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-    void getIndicesRecursive(std::vector<int> &indices, int index, Bond<StructureAtom> *exclude,
-                             Bond<StructureAtom> *excludeToo = nullptr) const;
-
-    public:
-    // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
-    // provided
-    std::vector<int> fragment(int startIndex, Bond<StructureAtom> *exclude = nullptr,
-                              Bond<StructureAtom> *excludeToo = nullptr) const;
-
-    /*
      * Box Definition
      */
     private:

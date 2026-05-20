@@ -58,11 +58,6 @@ class Species : public Serialisable<>
     // Atom types for the species
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
-    private:
-    // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-    void getIndicesRecursive(std::vector<int> &indices, int index, const SpeciesBond *exclude,
-                             const SpeciesBond *excludeToo) const;
-
     public:
     // Return the number of atoms in the species (or only those with the specified presence)
     int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
@@ -72,10 +67,6 @@ class Species : public Serialisable<>
     // Return a reference to the vector of atoms
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
-    // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
-    // provided
-    std::vector<int> fragment(int startIndex, const SpeciesBond *exclude = nullptr,
-                              const SpeciesBond *excludeToo = nullptr) const;
     // Return total atomic mass of Species
     double mass() const;
     // Add new atom type to atom types

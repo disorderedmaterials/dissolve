@@ -98,6 +98,7 @@ add_library(
   distributor.h
   empiricalFormula.h
   exchangeables.h
+  fragment.h
   histogramSet.h
   interactionPotential.h
   isotopeMix.h
