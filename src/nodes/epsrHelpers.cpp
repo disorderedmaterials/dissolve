@@ -145,7 +145,7 @@ void EPSRNode::updateDeltaSQ(OptionalReferenceWrapper<const PartialSet> unweight
 
     // Realise the DeltaSQ array
     DoubleKeyedMap<Data1D> deltaSQ;
-    deltaSQ.clear(true);
+    deltaSQ.clear();
 
     for (auto &[key, calcSQ] : calculatedSQ)
     {
