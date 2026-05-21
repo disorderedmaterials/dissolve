@@ -294,8 +294,9 @@ void Species::deserialise(const SerialisedValue &node)
     Serialisable::toMap(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
                         { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
 
+    // We must finalise the geometry before we attempt to add sites as Fragment sites need the bond connectivity
+    finaliseGeometry();
+
     Serialisable::toMap(node, "sites", [this](const std::string &name, const SerialisedValue &site)
                         { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
-
-    finaliseGeometry();
 }
