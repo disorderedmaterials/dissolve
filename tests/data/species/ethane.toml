@@ -3,7 +3,7 @@
 name = "Ethane"
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "C"
 r = [
 0.0,
@@ -12,7 +12,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 2
+index = 1
 z = "C"
 r = [
 0.0,
@@ -21,7 +21,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 3
+index = 2
 z = "H"
 r = [
 0.0,
@@ -30,7 +30,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 4
+index = 3
 z = "H"
 r = [
 0.881973,
@@ -39,7 +39,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 5
+index = 4
 z = "H"
 r = [
 -0.881973,
@@ -48,7 +48,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 6
+index = 5
 z = "H"
 r = [
 0.0,
@@ -57,7 +57,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 7
+index = 6
 z = "H"
 r = [
 0.881973,
@@ -66,7 +66,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 8
+index = 7
 z = "H"
 r = [
 -0.881973,
@@ -77,15 +77,19 @@ q = 0.0
 
 [[species.bonds]]
 form = "None"
-i = 1
+i = 0
+j = 1
+[[species.bonds]]
+form = "None"
+i = 0
 j = 2
 [[species.bonds]]
 form = "None"
-i = 1
+i = 0
 j = 3
 [[species.bonds]]
 form = "None"
-i = 1
+i = 0
 j = 4
 [[species.bonds]]
 form = "None"
@@ -93,14 +97,10 @@ i = 1
 j = 5
 [[species.bonds]]
 form = "None"
-i = 2
+i = 1
 j = 6
 [[species.bonds]]
 form = "None"
-i = 2
+i = 1
 j = 7
-[[species.bonds]]
-form = "None"
-i = 2
-j = 8
 

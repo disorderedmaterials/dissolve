@@ -3,7 +3,7 @@
 name = "Rings"
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "C"
 r = [
 -0.208763,
@@ -12,7 +12,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 2
+index = 1
 z = "C"
 r = [
 0.045228,
@@ -21,7 +21,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 3
+index = 2
 z = "C"
 r = [
 1.30057,
@@ -30,7 +30,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 4
+index = 3
 z = "C"
 r = [
 2.36093,
@@ -39,7 +39,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 5
+index = 4
 z = "C"
 r = [
 2.11178,
@@ -48,7 +48,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 6
+index = 5
 z = "C"
 r = [
 0.805131,
@@ -57,7 +57,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 7
+index = 6
 z = "H"
 r = [
 1.46848,
@@ -66,7 +66,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 8
+index = 7
 z = "H"
 r = [
 3.37354,
@@ -75,7 +75,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 9
+index = 8
 z = "H"
 r = [
 2.93942,
@@ -84,7 +84,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 10
+index = 9
 z = "H"
 r = [
 0.596002,
@@ -93,7 +93,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 11
+index = 10
 z = "N"
 r = [
 -1.28915,
@@ -102,7 +102,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 12
+index = 11
 z = "C"
 r = [
 -1.64629,
@@ -111,7 +111,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 13
+index = 12
 z = "C"
 r = [
 -1.78568,
@@ -120,7 +120,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 14
+index = 13
 z = "H"
 r = [
 -1.6198,
@@ -129,7 +129,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 15
+index = 14
 z = "H"
 r = [
 -1.28806,
@@ -138,7 +138,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 16
+index = 15
 z = "H"
 r = [
 -2.87354,
@@ -147,7 +147,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 17
+index = 16
 z = "H"
 r = [
 -2.07593,
@@ -156,7 +156,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 18
+index = 17
 z = "H"
 r = [
 -2.21386,
@@ -167,16 +167,24 @@ q = 0.0
 
 [[species.bonds]]
 form = "None"
+i = 0
+j = 1
+[[species.bonds]]
+form = "None"
+i = 0
+j = 5
+[[species.bonds]]
+form = "None"
+i = 0
+j = 11
+[[species.bonds]]
+form = "None"
 i = 1
 j = 2
 [[species.bonds]]
 form = "None"
 i = 1
-j = 6
-[[species.bonds]]
-form = "None"
-i = 1
-j = 12
+j = 10
 [[species.bonds]]
 form = "None"
 i = 2
@@ -184,7 +192,7 @@ j = 3
 [[species.bonds]]
 form = "None"
 i = 2
-j = 11
+j = 6
 [[species.bonds]]
 form = "None"
 i = 3
@@ -204,41 +212,33 @@ j = 8
 [[species.bonds]]
 form = "None"
 i = 5
-j = 6
-[[species.bonds]]
-form = "None"
-i = 5
 j = 9
 [[species.bonds]]
 form = "None"
-i = 6
-j = 10
+i = 10
+j = 11
 [[species.bonds]]
 form = "None"
-i = 11
+i = 10
 j = 12
 [[species.bonds]]
 form = "None"
 i = 11
-j = 13
+j = 16
 [[species.bonds]]
 form = "None"
-i = 12
+i = 11
 j = 17
 [[species.bonds]]
 form = "None"
 i = 12
-j = 18
+j = 13
 [[species.bonds]]
 form = "None"
-i = 13
+i = 12
 j = 14
 [[species.bonds]]
 form = "None"
-i = 13
+i = 12
 j = 15
-[[species.bonds]]
-form = "None"
-i = 13
-j = 16
 

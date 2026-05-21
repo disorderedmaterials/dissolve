@@ -4,14 +4,10 @@ name = "Water"
 
 [species.atomTypes]
 
-[species.atomTypes.OW]
-z = "O"
-charge = -0.82
-form = "LJ"
-
-[species.atomTypes.OW.parameters]
-epsilon = 0.6503
-sigma = 3.16549
+[species.atomTypes.LP]
+z = "Phantom"
+charge = 0.0
+form = "Undefined"
 
 [species.atomTypes.HW]
 z = "H"
@@ -23,13 +19,18 @@ epsilon = 0.0
 sigma = 0.0
 
 
-[species.atomTypes.LP]
-z = "Phantom"
-charge = 0.0
-form = "Undefined"
+[species.atomTypes.OW]
+z = "O"
+charge = -0.82
+form = "LJ"
+
+[species.atomTypes.OW.parameters]
+epsilon = 0.6503
+sigma = 3.165492
+
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "O"
 r = [
 0.0,
@@ -39,7 +40,7 @@ r = [
 q = -0.82
 type = "OW"
 [[species.atoms]]
-index = 2
+index = 1
 z = "H"
 r = [
 1.0,
@@ -49,7 +50,7 @@ r = [
 q = 0.41
 type = "HW"
 [[species.atoms]]
-index = 3
+index = 2
 z = "H"
 r = [
 -0.394583,
@@ -59,7 +60,7 @@ r = [
 q = 0.41
 type = "HW"
 [[species.atoms]]
-index = 4
+index = 3
 z = "Phantom"
 r = [
 0.07352,
@@ -69,7 +70,7 @@ r = [
 q = 0.0
 type = "LP"
 [[species.atoms]]
-index = 5
+index = 4
 z = "Phantom"
 r = [
 0.090574,
@@ -81,13 +82,6 @@ type = "LP"
 
 [species.commonBonds]
 
-[species.commonBonds.HW-OW]
-form = "Harmonic"
-
-[species.commonBonds.HW-OW.parameters]
-k = 4431.53
-eq = 1.0
-
 [species.commonBonds.LP-OW]
 form = "Harmonic"
 
@@ -95,33 +89,40 @@ form = "Harmonic"
 k = 300.0
 eq = 0.995
 
+[species.commonBonds.HW-OW]
+form = "Harmonic"
+
+[species.commonBonds.HW-OW.parameters]
+k = 4431.53
+eq = 1.0
+
 
 
 [[species.bonds]]
 common = "HW-OW"
-i = 1
+i = 0
+j = 1
+[[species.bonds]]
+common = "HW-OW"
+i = 0
 j = 2
 [[species.bonds]]
-common = "HW-OW"
-i = 1
+common = "LP-OW"
+i = 0
 j = 3
 [[species.bonds]]
 common = "LP-OW"
-i = 1
+i = 0
 j = 4
-[[species.bonds]]
-common = "LP-OW"
-i = 1
-j = 5
 
 [species.commonAngles]
 
-[species.commonAngles.HW-OW-HW]
+[species.commonAngles.LP-OW-LP]
 form = "Harmonic"
 
-[species.commonAngles.HW-OW-HW.parameters]
-k = 317.566
-eq = 113.24
+[species.commonAngles.LP-OW-LP.parameters]
+k = 40.0
+eq = 109.5
 
 [species.commonAngles.HW-OW-LP]
 form = "Harmonic"
@@ -131,83 +132,54 @@ k = 40.0
 eq = 109.5
 
 
-[species.commonAngles.LP-OW-LP]
+[species.commonAngles.HW-OW-HW]
 form = "Harmonic"
 
-[species.commonAngles.LP-OW-LP.parameters]
-k = 40.0
-eq = 109.5
+[species.commonAngles.HW-OW-HW.parameters]
+k = 317.5656
+eq = 113.24
 
 
 
 [[species.angles]]
 common = "HW-OW-HW"
+i = 1
+j = 0
+k = 2
+[[species.angles]]
+common = "HW-OW-LP"
+i = 1
+j = 0
+k = 3
+[[species.angles]]
+common = "HW-OW-LP"
+i = 1
+j = 0
+k = 4
+[[species.angles]]
+common = "HW-OW-LP"
 i = 2
-j = 1
+j = 0
 k = 3
 [[species.angles]]
 common = "HW-OW-LP"
 i = 2
-j = 1
+j = 0
 k = 4
-[[species.angles]]
-common = "HW-OW-LP"
-i = 2
-j = 1
-k = 5
-[[species.angles]]
-common = "HW-OW-LP"
-i = 3
-j = 1
-k = 4
-[[species.angles]]
-common = "HW-OW-LP"
-i = 3
-j = 1
-k = 5
 [[species.angles]]
 common = "LP-OW-LP"
-i = 4
-j = 1
-k = 5
+i = 3
+j = 0
+k = 4
 
 [species.isotopologues]
 
 [species.isotopologues.D2O]
-OW = 0
 HW = 2
+OW = 0
 
 
 [species.sites]
-
-[species.sites.COM]
-originMassWeighted = true
-originAtoms = [
-0,
-1,
-2,
-]
-
-[species.sites.H2]
-originAtoms = [
-2,
-]
-
-[species.sites.H1]
-originAtoms = [
-0,
-]
-
-[species.sites.H]
-type = "Dynamic"
-element = [
-"H",
-]
-
-[species.sites.O]
-originAtoms = [
-1,
-]
 
 [species.sites.Origin]
 originAtoms = [
@@ -218,6 +190,35 @@ xAxisAtoms = [
 2,
 ]
 yAxisAtoms = [
+2,
+]
+
+[species.sites.O]
+originAtoms = [
+1,
+]
+
+[species.sites.H]
+type = "Dynamic"
+element = [
+"H",
+]
+
+[species.sites.H1]
+originAtoms = [
+0,
+]
+
+[species.sites.H2]
+originAtoms = [
+2,
+]
+
+[species.sites.COM]
+originMassWeighted = true
+originAtoms = [
+0,
+1,
 2,
 ]
 

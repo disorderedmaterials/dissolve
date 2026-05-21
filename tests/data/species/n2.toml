@@ -2,8 +2,15 @@
 [species]
 name = "N2"
 
+[species.atomTypes]
+
+[species.atomTypes.N]
+z = "N"
+charge = 0.0
+form = "Undefined"
+
 [[species.atoms]]
-index = 1
+index = 0
 z = "N"
 r = [
 0.0,
@@ -13,7 +20,7 @@ r = [
 q = 0.0
 type = "N"
 [[species.atoms]]
-index = 2
+index = 1
 z = "N"
 r = [
 1.2,
@@ -25,8 +32,8 @@ type = "N"
 
 [[species.bonds]]
 form = "None"
-i = 1
-j = 2
+i = 0
+j = 1
 
 [species.isotopologues]
 

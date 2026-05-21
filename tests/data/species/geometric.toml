@@ -3,7 +3,7 @@
 name = "Geometric"
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "P"
 r = [
 -5.824,
@@ -12,7 +12,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 2
+index = 1
 z = "P"
 r = [
 -1.824,
@@ -21,7 +21,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 3
+index = 2
 z = "F"
 r = [
 -1.824,
@@ -30,11 +30,20 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 4
+index = 3
 z = "P"
 r = [
 2.176,
 3.981,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 4
+z = "F"
+r = [
+2.176,
+4.981,
 0.0,
 ]
 q = 0.0
@@ -43,21 +52,12 @@ index = 5
 z = "F"
 r = [
 2.176,
-4.981,
-0.0,
-]
-q = 0.0
-[[species.atoms]]
-index = 6
-z = "F"
-r = [
-2.176,
 2.981,
 0.0,
 ]
 q = 0.0
 [[species.atoms]]
-index = 7
+index = 6
 z = "P"
 r = [
 6.176,
@@ -66,7 +66,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 8
+index = 7
 z = "F"
 r = [
 6.176,
@@ -75,7 +75,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 9
+index = 8
 z = "F"
 r = [
 5.241,
@@ -84,7 +84,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 10
+index = 9
 z = "F"
 r = [
 7.111,
@@ -93,7 +93,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 11
+index = 10
 z = "P"
 r = [
 -5.0,
@@ -102,7 +102,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 12
+index = 11
 z = "F"
 r = [
 -5.0,
@@ -111,7 +111,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 13
+index = 12
 z = "F"
 r = [
 -5.0,
@@ -120,7 +120,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 14
+index = 13
 z = "F"
 r = [
 -4.118,
@@ -129,7 +129,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 15
+index = 14
 z = "F"
 r = [
 -5.882,
@@ -138,11 +138,20 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 16
+index = 15
 z = "P"
 r = [
 0.0,
 0.0,
+0.0,
+]
+q = 0.0
+[[species.atoms]]
+index = 16
+z = "F"
+r = [
+0.0,
+1.2,
 0.0,
 ]
 q = 0.0
@@ -151,21 +160,12 @@ index = 17
 z = "F"
 r = [
 0.0,
-1.2,
-0.0,
-]
-q = 0.0
-[[species.atoms]]
-index = 18
-z = "F"
-r = [
-0.0,
 -1.2,
 0.0,
 ]
 q = 0.0
 [[species.atoms]]
-index = 19
+index = 18
 z = "F"
 r = [
 -1.28,
@@ -174,7 +174,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 20
+index = 19
 z = "F"
 r = [
 1.28,
@@ -183,7 +183,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 21
+index = 20
 z = "F"
 r = [
 0.0,
@@ -192,7 +192,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 22
+index = 21
 z = "F"
 r = [
 0.0,
@@ -201,7 +201,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 23
+index = 22
 z = "P"
 r = [
 4.8,
@@ -210,7 +210,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 24
+index = 23
 z = "F"
 r = [
 4.8,
@@ -219,7 +219,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 25
+index = 24
 z = "F"
 r = [
 3.865,
@@ -228,7 +228,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 26
+index = 25
 z = "F"
 r = [
 5.735,
@@ -237,7 +237,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 27
+index = 26
 z = "F"
 r = [
 4.8,
@@ -246,7 +246,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 28
+index = 27
 z = "F"
 r = [
 4.8,
@@ -255,7 +255,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 29
+index = 28
 z = "P"
 r = [
 -3.0,
@@ -264,7 +264,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 30
+index = 29
 z = "F"
 r = [
 -3.0,
@@ -273,7 +273,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 31
+index = 30
 z = "F"
 r = [
 -4.28,
@@ -282,7 +282,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 32
+index = 31
 z = "F"
 r = [
 -1.72,
@@ -291,7 +291,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 33
+index = 32
 z = "P"
 r = [
 3.0,
@@ -300,7 +300,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 34
+index = 33
 z = "F"
 r = [
 3.0,
@@ -309,7 +309,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 35
+index = 34
 z = "F"
 r = [
 3.0,
@@ -318,7 +318,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 36
+index = 35
 z = "F"
 r = [
 1.72,
@@ -327,7 +327,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 37
+index = 36
 z = "F"
 r = [
 4.28,
@@ -338,114 +338,114 @@ q = 0.0
 
 [[species.bonds]]
 form = "None"
-i = 2
-j = 3
+i = 1
+j = 2
 [[species.bonds]]
 form = "None"
-i = 4
+i = 3
+j = 4
+[[species.bonds]]
+form = "None"
+i = 3
 j = 5
 [[species.bonds]]
 form = "None"
-i = 4
-j = 6
+i = 6
+j = 7
 [[species.bonds]]
 form = "None"
-i = 7
+i = 6
 j = 8
 [[species.bonds]]
 form = "None"
-i = 7
+i = 6
 j = 9
 [[species.bonds]]
 form = "None"
-i = 7
-j = 10
+i = 10
+j = 11
 [[species.bonds]]
 form = "None"
-i = 11
+i = 10
 j = 12
 [[species.bonds]]
 form = "None"
-i = 11
+i = 10
 j = 13
 [[species.bonds]]
 form = "None"
-i = 11
+i = 10
 j = 14
 [[species.bonds]]
 form = "None"
-i = 11
-j = 15
+i = 15
+j = 16
 [[species.bonds]]
 form = "None"
-i = 16
+i = 15
 j = 17
 [[species.bonds]]
 form = "None"
-i = 16
+i = 15
 j = 18
 [[species.bonds]]
 form = "None"
-i = 16
+i = 15
 j = 19
 [[species.bonds]]
 form = "None"
-i = 16
+i = 15
 j = 20
 [[species.bonds]]
 form = "None"
-i = 16
+i = 15
 j = 21
 [[species.bonds]]
 form = "None"
-i = 16
-j = 22
+i = 22
+j = 23
 [[species.bonds]]
 form = "None"
-i = 23
+i = 22
 j = 24
 [[species.bonds]]
 form = "None"
-i = 23
+i = 22
 j = 25
 [[species.bonds]]
 form = "None"
-i = 23
+i = 22
 j = 26
 [[species.bonds]]
 form = "None"
-i = 23
+i = 22
 j = 27
 [[species.bonds]]
 form = "None"
-i = 23
-j = 28
+i = 28
+j = 29
 [[species.bonds]]
 form = "None"
-i = 29
+i = 28
 j = 30
 [[species.bonds]]
 form = "None"
-i = 29
+i = 28
 j = 31
 [[species.bonds]]
 form = "None"
-i = 29
-j = 32
+i = 32
+j = 33
 [[species.bonds]]
 form = "None"
-i = 33
+i = 32
 j = 34
 [[species.bonds]]
 form = "None"
-i = 33
+i = 32
 j = 35
 [[species.bonds]]
 form = "None"
-i = 33
+i = 32
 j = 36
-[[species.bonds]]
-form = "None"
-i = 33
-j = 37
 

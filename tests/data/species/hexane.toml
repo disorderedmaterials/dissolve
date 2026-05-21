@@ -4,15 +4,6 @@ name = "Hexane"
 
 [species.atomTypes]
 
-[species.atomTypes.CT]
-z = "C"
-charge = 0.0
-form = "LJGeometric"
-
-[species.atomTypes.CT.parameters]
-epsilon = 0.276144
-sigma = 3.5
-
 [species.atomTypes.HC]
 z = "H"
 charge = 0.0
@@ -22,9 +13,18 @@ form = "LJGeometric"
 epsilon = 0.12552
 sigma = 2.5
 
+[species.atomTypes.CT]
+z = "C"
+charge = 0.0
+form = "LJGeometric"
+
+[species.atomTypes.CT.parameters]
+epsilon = 0.276144
+sigma = 3.5
+
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "C"
 r = [
 1.39441,
@@ -34,7 +34,7 @@ r = [
 q = -0.12
 type = "CT"
 [[species.atoms]]
-index = 2
+index = 1
 z = "C"
 r = [
 2.85416,
@@ -44,7 +44,7 @@ r = [
 q = -0.18
 type = "CT"
 [[species.atoms]]
-index = 3
+index = 2
 z = "H"
 r = [
 0.827064,
@@ -54,7 +54,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 4
+index = 3
 z = "C"
 r = [
 0.467798,
@@ -64,7 +64,7 @@ r = [
 q = -0.12
 type = "CT"
 [[species.atoms]]
-index = 5
+index = 4
 z = "H"
 r = [
 1.42555,
@@ -74,7 +74,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 6
+index = 5
 z = "H"
 r = [
 2.94128,
@@ -84,7 +84,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 7
+index = 6
 z = "H"
 r = [
 3.2682,
@@ -94,7 +94,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 8
+index = 7
 z = "H"
 r = [
 3.5558,
@@ -104,7 +104,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 9
+index = 8
 z = "H"
 r = [
 0.094379,
@@ -114,7 +114,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 10
+index = 9
 z = "H"
 r = [
 1.00598,
@@ -124,7 +124,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 11
+index = 10
 z = "C"
 r = [
 -1.35069,
@@ -134,7 +134,7 @@ r = [
 q = -0.12
 type = "CT"
 [[species.atoms]]
-index = 12
+index = 11
 z = "C"
 r = [
 -2.69905,
@@ -144,7 +144,7 @@ r = [
 q = -0.18
 type = "CT"
 [[species.atoms]]
-index = 13
+index = 12
 z = "H"
 r = [
 -1.5003,
@@ -154,7 +154,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 14
+index = 13
 z = "C"
 r = [
 -0.665486,
@@ -164,7 +164,7 @@ r = [
 q = -0.12
 type = "CT"
 [[species.atoms]]
-index = 15
+index = 14
 z = "H"
 r = [
 -0.667963,
@@ -174,7 +174,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 16
+index = 15
 z = "H"
 r = [
 -2.8605,
@@ -184,7 +184,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 17
+index = 16
 z = "H"
 r = [
 -3.48226,
@@ -194,7 +194,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 18
+index = 17
 z = "H"
 r = [
 -3.06981,
@@ -204,7 +204,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 19
+index = 18
 z = "H"
 r = [
 -1.29775,
@@ -214,7 +214,7 @@ r = [
 q = 0.06
 type = "HC"
 [[species.atoms]]
-index = 20
+index = 19
 z = "H"
 r = [
 -0.24082,
@@ -226,13 +226,6 @@ type = "HC"
 
 [species.commonBonds]
 
-[species.commonBonds.CT-CT]
-form = "Harmonic"
-
-[species.commonBonds.CT-CT.parameters]
-k = 2242.624
-eq = 1.529
-
 [species.commonBonds.CT-HC]
 form = "Harmonic"
 
@@ -240,93 +233,100 @@ form = "Harmonic"
 k = 2845.12
 eq = 1.09
 
+[species.commonBonds.CT-CT]
+form = "Harmonic"
+
+[species.commonBonds.CT-CT.parameters]
+k = 2242.624
+eq = 1.529
 
 
+
 [[species.bonds]]
 common = "CT-CT"
-i = 1
-j = 2
+i = 0
+j = 1
 [[species.bonds]]
 common = "CT-CT"
-i = 1
-j = 4
+i = 0
+j = 3
 [[species.bonds]]
 common = "CT-CT"
-i = 4
-j = 14
+i = 3
+j = 13
 [[species.bonds]]
 common = "CT-CT"
-i = 11
-j = 12
+i = 10
+j = 11
 [[species.bonds]]
 common = "CT-CT"
-i = 11
-j = 14
+i = 10
+j = 13
 [[species.bonds]]
 common = "CT-HC"
-i = 1
-j = 3
+i = 0
+j = 2
+[[species.bonds]]
+common = "CT-HC"
+i = 0
+j = 4
 [[species.bonds]]
 common = "CT-HC"
 i = 1
 j = 5
 [[species.bonds]]
 common = "CT-HC"
-i = 2
+i = 1
 j = 6
 [[species.bonds]]
 common = "CT-HC"
-i = 2
+i = 1
 j = 7
 [[species.bonds]]
 common = "CT-HC"
-i = 2
+i = 3
 j = 8
 [[species.bonds]]
 common = "CT-HC"
-i = 4
+i = 3
 j = 9
 [[species.bonds]]
 common = "CT-HC"
-i = 4
-j = 10
+i = 10
+j = 12
 [[species.bonds]]
 common = "CT-HC"
-i = 11
-j = 13
+i = 10
+j = 14
 [[species.bonds]]
 common = "CT-HC"
 i = 11
 j = 15
 [[species.bonds]]
 common = "CT-HC"
-i = 12
+i = 11
 j = 16
 [[species.bonds]]
 common = "CT-HC"
-i = 12
+i = 11
 j = 17
 [[species.bonds]]
 common = "CT-HC"
-i = 12
+i = 13
 j = 18
 [[species.bonds]]
 common = "CT-HC"
-i = 14
+i = 13
 j = 19
-[[species.bonds]]
-common = "CT-HC"
-i = 14
-j = 20
 
 [species.commonAngles]
 
-[species.commonAngles.CT-CT-CT]
+[species.commonAngles.HC-CT-HC]
 form = "Harmonic"
 
-[species.commonAngles.CT-CT-CT.parameters]
-k = 488.2728
-eq = 112.7
+[species.commonAngles.HC-CT-HC.parameters]
+k = 276.144
+eq = 107.8
 
 [species.commonAngles.CT-CT-HC]
 form = "Harmonic"
@@ -336,207 +336,207 @@ k = 313.8
 eq = 110.7
 
 
-[species.commonAngles.HC-CT-HC]
+[species.commonAngles.CT-CT-CT]
 form = "Harmonic"
 
-[species.commonAngles.HC-CT-HC.parameters]
-k = 276.144
-eq = 107.8
+[species.commonAngles.CT-CT-CT.parameters]
+k = 488.2728
+eq = 112.7
 
 
 
-[[species.angles]]
-common = "CT-CT-CT"
-i = 2
-j = 1
-k = 4
-[[species.angles]]
-common = "CT-CT-CT"
-i = 4
-j = 14
-k = 11
 [[species.angles]]
 common = "CT-CT-CT"
 i = 1
-j = 4
-k = 14
+j = 0
+k = 3
 [[species.angles]]
 common = "CT-CT-CT"
-i = 12
-j = 11
-k = 14
+i = 3
+j = 13
+k = 10
+[[species.angles]]
+common = "CT-CT-CT"
+i = 0
+j = 3
+k = 13
+[[species.angles]]
+common = "CT-CT-CT"
+i = 11
+j = 10
+k = 13
+[[species.angles]]
+common = "CT-CT-HC"
+i = 1
+j = 0
+k = 2
+[[species.angles]]
+common = "CT-CT-HC"
+i = 1
+j = 0
+k = 4
 [[species.angles]]
 common = "CT-CT-HC"
 i = 2
-j = 1
+j = 0
 k = 3
 [[species.angles]]
 common = "CT-CT-HC"
-i = 2
-j = 1
-k = 5
-[[species.angles]]
-common = "CT-CT-HC"
 i = 3
-j = 1
+j = 0
 k = 4
 [[species.angles]]
 common = "CT-CT-HC"
-i = 4
+i = 0
 j = 1
 k = 5
 [[species.angles]]
 common = "CT-CT-HC"
-i = 1
-j = 2
+i = 0
+j = 1
 k = 6
 [[species.angles]]
 common = "CT-CT-HC"
-i = 1
-j = 2
+i = 0
+j = 1
 k = 7
 [[species.angles]]
 common = "CT-CT-HC"
-i = 1
-j = 2
+i = 0
+j = 3
 k = 8
 [[species.angles]]
 common = "CT-CT-HC"
-i = 1
-j = 4
+i = 0
+j = 3
 k = 9
 [[species.angles]]
 common = "CT-CT-HC"
-i = 1
-j = 4
-k = 10
+i = 8
+j = 3
+k = 13
 [[species.angles]]
 common = "CT-CT-HC"
 i = 9
-j = 4
+j = 3
+k = 13
+[[species.angles]]
+common = "CT-CT-HC"
+i = 11
+j = 10
+k = 12
+[[species.angles]]
+common = "CT-CT-HC"
+i = 11
+j = 10
+k = 14
+[[species.angles]]
+common = "CT-CT-HC"
+i = 12
+j = 10
+k = 13
+[[species.angles]]
+common = "CT-CT-HC"
+i = 13
+j = 10
 k = 14
 [[species.angles]]
 common = "CT-CT-HC"
 i = 10
-j = 4
-k = 14
-[[species.angles]]
-common = "CT-CT-HC"
-i = 12
-j = 11
-k = 13
-[[species.angles]]
-common = "CT-CT-HC"
-i = 12
 j = 11
 k = 15
 [[species.angles]]
 common = "CT-CT-HC"
-i = 13
+i = 10
 j = 11
-k = 14
-[[species.angles]]
-common = "CT-CT-HC"
-i = 14
-j = 11
-k = 15
-[[species.angles]]
-common = "CT-CT-HC"
-i = 11
-j = 12
 k = 16
 [[species.angles]]
 common = "CT-CT-HC"
-i = 11
-j = 12
+i = 10
+j = 11
 k = 17
 [[species.angles]]
 common = "CT-CT-HC"
-i = 11
-j = 12
+i = 3
+j = 13
 k = 18
 [[species.angles]]
 common = "CT-CT-HC"
-i = 4
-j = 14
-k = 19
-[[species.angles]]
-common = "CT-CT-HC"
-i = 4
-j = 14
-k = 20
-[[species.angles]]
-common = "CT-CT-HC"
-i = 11
-j = 14
-k = 19
-[[species.angles]]
-common = "CT-CT-HC"
-i = 11
-j = 14
-k = 20
-[[species.angles]]
-common = "HC-CT-HC"
 i = 3
-j = 1
-k = 5
+j = 13
+k = 19
+[[species.angles]]
+common = "CT-CT-HC"
+i = 10
+j = 13
+k = 18
+[[species.angles]]
+common = "CT-CT-HC"
+i = 10
+j = 13
+k = 19
 [[species.angles]]
 common = "HC-CT-HC"
-i = 6
-j = 2
+i = 2
+j = 0
+k = 4
+[[species.angles]]
+common = "HC-CT-HC"
+i = 5
+j = 1
+k = 6
+[[species.angles]]
+common = "HC-CT-HC"
+i = 5
+j = 1
 k = 7
 [[species.angles]]
 common = "HC-CT-HC"
 i = 6
-j = 2
-k = 8
+j = 1
+k = 7
 [[species.angles]]
 common = "HC-CT-HC"
-i = 7
-j = 2
-k = 8
+i = 18
+j = 13
+k = 19
 [[species.angles]]
 common = "HC-CT-HC"
-i = 19
-j = 14
-k = 20
+i = 8
+j = 3
+k = 9
 [[species.angles]]
 common = "HC-CT-HC"
-i = 9
-j = 4
-k = 10
+i = 12
+j = 10
+k = 14
 [[species.angles]]
 common = "HC-CT-HC"
-i = 13
+i = 15
 j = 11
-k = 15
+k = 16
 [[species.angles]]
 common = "HC-CT-HC"
-i = 16
-j = 12
+i = 15
+j = 11
 k = 17
 [[species.angles]]
 common = "HC-CT-HC"
 i = 16
-j = 12
-k = 18
-[[species.angles]]
-common = "HC-CT-HC"
-i = 17
-j = 12
-k = 18
+j = 11
+k = 17
 
 [species.commonTorsions]
 
-[species.commonTorsions.CT-CT-CT-CT]
+[species.commonTorsions.HC-CT-CT-HC]
 form = "Cos3"
 q14 = 0.5
 v14 = 0.5
 
-[species.commonTorsions.CT-CT-CT-CT.parameters]
-k1 = 5.4392
-k2 = -0.2092
-k3 = 0.8368
+[species.commonTorsions.HC-CT-CT-HC.parameters]
+k1 = 0.0
+k2 = 0.0
+k3 = 1.2552
 
 [species.commonTorsions.CT-CT-CT-HC]
 form = "Cos3"
@@ -549,376 +549,376 @@ k2 = 0.0
 k3 = 1.2552
 
 
-[species.commonTorsions.HC-CT-CT-HC]
+[species.commonTorsions.CT-CT-CT-CT]
 form = "Cos3"
 q14 = 0.5
 v14 = 0.5
 
-[species.commonTorsions.HC-CT-CT-HC.parameters]
-k1 = 0.0
-k2 = 0.0
-k3 = 1.2552
+[species.commonTorsions.CT-CT-CT-CT.parameters]
+k1 = 5.4392
+k2 = -0.2092
+k3 = 0.8368
 
 
 
 [[species.torsions]]
 common = "CT-CT-CT-CT"
-i = 12
-j = 11
-k = 14
-l = 4
+i = 11
+j = 10
+k = 13
+l = 3
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
 common = "CT-CT-CT-CT"
-i = 1
-j = 4
-k = 14
-l = 11
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-CT"
-i = 2
-j = 1
-k = 4
-l = 14
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 10
-j = 4
-k = 14
-l = 11
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 10
-j = 4
-k = 14
-l = 19
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 10
-j = 4
-k = 14
-l = 20
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 12
-j = 11
-k = 14
-l = 19
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 12
-j = 11
-k = 14
-l = 20
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 13
-j = 11
-k = 12
-l = 16
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 13
-j = 11
-k = 12
-l = 17
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 13
-j = 11
-k = 12
-l = 18
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 13
-j = 11
-k = 14
-l = 19
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 13
-j = 11
-k = 14
-l = 20
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 13
-j = 11
-k = 14
-l = 4
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 14
-j = 11
-k = 12
-l = 16
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 14
-j = 11
-k = 12
-l = 17
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 14
-j = 11
-k = 12
-l = 18
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 1
-j = 4
-k = 14
-l = 19
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 1
-j = 4
-k = 14
-l = 20
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 15
-j = 11
-k = 12
-l = 16
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 15
-j = 11
-k = 12
-l = 17
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 15
-j = 11
-k = 12
-l = 18
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 15
-j = 11
-k = 14
-l = 19
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 15
-j = 11
-k = 14
-l = 20
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 15
-j = 11
-k = 14
-l = 4
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 2
-j = 1
-k = 4
+i = 0
+j = 3
+k = 13
 l = 10
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
+common = "CT-CT-CT-CT"
+i = 1
+j = 0
+k = 3
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
 common = "CT-CT-CT-HC"
-i = 2
-j = 1
-k = 4
+i = 9
+j = 3
+k = 13
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 9
+j = 3
+k = 13
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 9
+j = 3
+k = 13
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 11
+j = 10
+k = 13
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 11
+j = 10
+k = 13
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 12
+j = 10
+k = 11
+l = 15
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 12
+j = 10
+k = 11
+l = 16
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 12
+j = 10
+k = 11
+l = 17
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 12
+j = 10
+k = 13
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 12
+j = 10
+k = 13
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 12
+j = 10
+k = 13
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 13
+j = 10
+k = 11
+l = 15
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 13
+j = 10
+k = 11
+l = 16
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 13
+j = 10
+k = 11
+l = 17
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 0
+j = 3
+k = 13
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 0
+j = 3
+k = 13
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 14
+j = 10
+k = 11
+l = 15
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 14
+j = 10
+k = 11
+l = 16
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 14
+j = 10
+k = 11
+l = 17
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 14
+j = 10
+k = 13
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 14
+j = 10
+k = 13
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 14
+j = 10
+k = 13
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 1
+j = 0
+k = 3
 l = 9
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 3
-j = 1
-k = 2
-l = 6
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 3
-j = 1
-k = 2
-l = 7
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 3
-j = 1
-k = 2
+common = "CT-CT-CT-HC"
+i = 1
+j = 0
+k = 3
 l = 8
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
 common = "HC-CT-CT-HC"
-i = 3
-j = 1
-k = 4
-l = 10
+i = 2
+j = 0
+k = 1
+l = 5
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 2
+j = 0
+k = 1
+l = 6
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 2
+j = 0
+k = 1
+l = 7
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 2
+j = 0
+k = 3
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 2
+j = 0
+k = 3
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 2
+j = 0
+k = 3
+l = 8
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
 common = "CT-CT-CT-HC"
 i = 3
-j = 1
-k = 4
-l = 14
+j = 0
+k = 1
+l = 5
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 3
+j = 0
+k = 1
+l = 6
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "CT-CT-CT-HC"
+i = 3
+j = 0
+k = 1
+l = 7
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
 common = "HC-CT-CT-HC"
-i = 3
-j = 1
-k = 4
+i = 4
+j = 0
+k = 1
+l = 5
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 4
+j = 0
+k = 1
+l = 6
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 4
+j = 0
+k = 1
+l = 7
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "HC-CT-CT-HC"
+i = 4
+j = 0
+k = 3
 l = 9
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
 common = "CT-CT-CT-HC"
 i = 4
-j = 1
-k = 2
-l = 6
+j = 0
+k = 3
+l = 13
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
-common = "CT-CT-CT-HC"
+common = "HC-CT-CT-HC"
 i = 4
-j = 1
-k = 2
-l = 7
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 4
-j = 1
-k = 2
+j = 0
+k = 3
 l = 8
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 5
-j = 1
-k = 2
-l = 6
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 5
-j = 1
-k = 2
-l = 7
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 5
-j = 1
-k = 2
-l = 8
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 5
-j = 1
-k = 4
+common = "CT-CT-CT-HC"
+i = 8
+j = 3
+k = 13
 l = 10
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 5
-j = 1
-k = 4
-l = 14
+common = "HC-CT-CT-HC"
+i = 8
+j = 3
+k = 13
+l = 18
 q14 = 0.5
 v14 = 0.5
 [[species.torsions]]
 common = "HC-CT-CT-HC"
-i = 5
-j = 1
-k = 4
-l = 9
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "CT-CT-CT-HC"
-i = 9
-j = 4
-k = 14
-l = 11
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 9
-j = 4
-k = 14
+i = 8
+j = 3
+k = 13
 l = 19
-q14 = 0.5
-v14 = 0.5
-[[species.torsions]]
-common = "HC-CT-CT-HC"
-i = 9
-j = 4
-k = 14
-l = 20
 q14 = 0.5
 v14 = 0.5
 

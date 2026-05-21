@@ -4,18 +4,18 @@ name = "TetrahedralArgon"
 
 [species.atomTypes]
 
-[species.atomTypes.Ar]
-z = "Ar"
-charge = 0.0
-form = "Undefined"
-
 [species.atomTypes.Phantom]
 z = "Phantom"
 charge = 0.0
 form = "Undefined"
 
+[species.atomTypes.Ar]
+z = "Ar"
+charge = 0.0
+form = "Undefined"
+
 [[species.atoms]]
-index = 1
+index = 0
 z = "Ar"
 r = [
 0.0,
@@ -25,7 +25,7 @@ r = [
 q = 0.0
 type = "Ar"
 [[species.atoms]]
-index = 2
+index = 1
 z = "Phantom"
 r = [
 0.0,
@@ -35,7 +35,7 @@ r = [
 q = 0.0
 type = "Phantom"
 [[species.atoms]]
-index = 3
+index = 2
 z = "Phantom"
 r = [
 0.0,
@@ -45,7 +45,7 @@ r = [
 q = 0.0
 type = "Phantom"
 [[species.atoms]]
-index = 4
+index = 3
 z = "Phantom"
 r = [
 1.15967,
@@ -55,7 +55,7 @@ r = [
 q = 0.0
 type = "Phantom"
 [[species.atoms]]
-index = 5
+index = 4
 z = "Phantom"
 r = [
 -1.15959,
@@ -73,18 +73,18 @@ form = "None"
 
 [[species.bonds]]
 common = "Ar-Phantom"
-i = 1
+i = 0
+j = 1
+[[species.bonds]]
+common = "Ar-Phantom"
+i = 0
 j = 2
 [[species.bonds]]
 common = "Ar-Phantom"
-i = 1
+i = 0
 j = 3
 [[species.bonds]]
 common = "Ar-Phantom"
-i = 1
+i = 0
 j = 4
-[[species.bonds]]
-common = "Ar-Phantom"
-i = 1
-j = 5
 
