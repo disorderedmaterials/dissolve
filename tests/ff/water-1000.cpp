@@ -4,7 +4,6 @@
 #include "kernels/force.h"
 #include "nodes/dissolve.h"
 #include "tests/graphData.h"
-#include "tests/tempFile.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
