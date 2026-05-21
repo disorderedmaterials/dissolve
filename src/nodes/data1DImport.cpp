@@ -12,7 +12,7 @@ Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("Histogram", "Whether format of imported data is histogram", histogram_);
+    addOption<bool>("Histogram", "Whether the data's x-values represent histogram bin boundaries (e.g. Gudrun mint files)", histogram_);
     addOption<std::optional<Number>>("RemoveAverageFromX", "Remove average from X values", removeAverageFromX_);
     addOption<std::optional<Number>>("XMin", "Minimum X value", xMin_);
     addOption<std::optional<Number>>("XMax", "Maximum X value", xMax_);
@@ -36,7 +36,7 @@ NodeConstants::ProcessResult Data1DImportNode::process()
     auto xMax = xMax_ ? std::make_optional<double>(xMax_->asDouble()) : std::nullopt;
     auto removeAverageFromX = removeAverageFromX_ ? std::make_optional<double>(removeAverageFromX_->asDouble()) : std::nullopt;
     auto nPointsToRemove = nPointsToRemove_.asInteger();
-    auto xCol = xColumn_.asInteger(), yCol = yColumn_.asInteger(), errorCol = errorColumn_.asInteger();
+    auto xCol = xColumn_.asInteger() - 1, yCol = yColumn_.asInteger() - 1, errorCol = errorColumn_.asInteger() - 1;
 
     // Open file and check that we're OK to proceed importing from it
     LineParser parser;
@@ -44,8 +44,33 @@ NodeConstants::ProcessResult Data1DImportNode::process()
         return error("Couldn't open file '{}' for loading Data1D data.\n", filePath_);
 
     // Import Data1D using supplied parser and current format
-    if (!importXY(parser, *data_, xCol, yCol, errorCol))
-        return NodeConstants::ProcessResult::Failed;
+    // Clear the structure, and initialise error arrays if necessary
+    data_->clear();
+    if (errorCol != -1)
+        data_->addErrors();
+
+    while (!parser.eofOrBlank())
+    {
+        if (parser.getArgsDelim() != LineParser::Success)
+            return error("Failed to read Data1D data from file.\n");
+
+        // Check columns provided
+        if ((xCol >= parser.nArgs()) || (yCol >= parser.nArgs()))
+            return error("Error reading from '{}', as one or both columns specified ({} and {}) are not present.\n",
+                         parser.inputFilename(), xCol + 1, yCol + 1);
+
+        // Are we reading errors too?
+        if (errorCol == -1)
+            data_->addPoint(parser.argd(xCol), parser.argd(yCol));
+        else
+        {
+            if (errorCol >= parser.nArgs())
+                return error("Error reading from '{}', as the error column specified ({}) is not present.\n",
+                             parser.inputFilename(), errorCol + 1);
+
+            data_->addPoint(parser.argd(xCol), parser.argd(yCol), parser.argd(errorCol));
+        }
+    }
 
     // If we have a histogram, convert bin boundaries to centre-bin values
     if (!histogram_)
@@ -73,52 +98,4 @@ NodeConstants::ProcessResult Data1DImportNode::process()
         return error("File '{}' contains no data.\n", filePath_);
 
     return NodeConstants::ProcessResult::Success;
-}
-
-// Read simple XY data using specified parser
-bool Data1DImportNode::importXY(LineParser &parser, Data1D &data, int xColumn, int yColumn, int errorColumn)
-{
-    // Get zero-indexed columns
-    const auto xCol = xColumn - 1;
-    const auto yCol = yColumn - 1;
-    const auto errorCol = errorColumn - 1;
-
-    // Clear the structure, and initialise error arrays if necessary
-    data.clear();
-    if (errorCol != -1)
-        data.addErrors();
-
-    while (!parser.eofOrBlank())
-    {
-        if (parser.getArgsDelim() != LineParser::Success)
-        {
-            error("Failed to read Data1D data from file.\n");
-            return false;
-        }
-
-        // Check columns provided
-        if ((xCol >= parser.nArgs()) || (yCol >= parser.nArgs()))
-        {
-            error("Error reading from '{}', as one or both columns specified ({} and {}) are not present.\n",
-                  parser.inputFilename(), xCol + 1, yCol + 1);
-            return false;
-        }
-
-        // Are we reading errors too?
-        if (errorCol == -1)
-            data.addPoint(parser.argd(xCol), parser.argd(yCol));
-        else
-        {
-            if (errorCol >= parser.nArgs())
-            {
-                error("Error reading from '{}', as the error column specified ({}) is not present.\n", parser.inputFilename(),
-                      errorCol + 1);
-                return false;
-            }
-
-            data.addPoint(parser.argd(xCol), parser.argd(yCol), parser.argd(errorCol));
-        }
-    }
-
-    return true;
 }

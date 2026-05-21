@@ -51,8 +51,4 @@ class Data1DImportNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
-
-    private:
-    // Read simple XY data using specified parser
-    bool importXY(LineParser &parser, Data1D &data, int xColumn, int yColumn, int errorColumn);
 };
