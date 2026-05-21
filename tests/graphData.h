@@ -35,8 +35,10 @@ class TestGraph : public DissolveGraph
     // Container for data 1D import filename and whether or not it is a histogram
     struct Data1DImportFileFormat
     {
-        std::string filename = "";
-        bool histogram = false;
+        std::string filename;
+        bool histogram;
+
+        Data1DImportFileFormat(std::string filename = "", bool histogram = false) filename(filename), histogram(histogram) {}
     };
 
     private:
