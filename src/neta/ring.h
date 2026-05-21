@@ -52,10 +52,10 @@ class NETARingNode : public NETANode
      */
     private:
     // Locate rings in which the specified atom is involved
-    void findRings(const SpeciesAtom *currentAtom, std::vector<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path,
+    void findRings(const BaseAtom *currentAtom, std::vector<SpeciesRing> &rings, std::vector<const BaseAtom *> &path,
                    const int minSize, const int maxSize) const;
 
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const override;
+    int score(const BaseAtom *i, NETAMatchedGroup &matchPath) const override;
 };

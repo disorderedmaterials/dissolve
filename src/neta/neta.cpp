@@ -21,7 +21,7 @@ NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr)
         create(definition);
 }
 
-NETADefinition::NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth, const Flags<NETACreationFlags> &flags)
+NETADefinition::NETADefinition(const BaseAtom *i, const std::optional<int> maxDepth, const Flags<NETACreationFlags> &flags)
     : rootNode_(nullptr), valid_(false)
 {
     create(i, maxDepth, flags);
@@ -99,8 +99,8 @@ bool NETADefinition::create(std::string_view definition, const Forcefield *assoc
 }
 
 // Recursively create a NETA string for the specified atom
-std::string netaString(const SpeciesAtom *i, int currentDepth, const std::optional<int> maxDepth,
-                       std::vector<const SpeciesAtom *> &path, const Flags<NETADefinition::NETACreationFlags> &flags = {})
+std::string netaString(const BaseAtom *i, int currentDepth, const std::optional<int> maxDepth,
+                       std::vector<const BaseAtom *> &path, const Flags<NETADefinition::NETACreationFlags> &flags = {})
 {
     // Add this atom to the path
     path.push_back(i);
@@ -138,9 +138,9 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
 }
 
 // Create from specified atom and its connectivity
-bool NETADefinition::create(const SpeciesAtom *i, std::optional<int> maxDepth, const Flags<NETACreationFlags> &flags)
+bool NETADefinition::create(const BaseAtom *i, std::optional<int> maxDepth, const Flags<NETACreationFlags> &flags)
 {
-    std::vector<const SpeciesAtom *> path;
+    std::vector<const BaseAtom *> path;
     definitionString_ = netaString(i, 0, maxDepth, path, flags);
     return create();
 }
@@ -164,17 +164,17 @@ const std::set<std::string> &NETADefinition::identifiers() const { return identi
  */
 
 // Return score of supplied atom for this definition
-int NETADefinition::score(const SpeciesAtom *i) const
+int NETADefinition::score(const BaseAtom *i) const
 {
     NETAMatchedGroup matchPath(i);
     return rootNode_->score(i, matchPath);
 }
 
 // Return whether the supplied atom matches the definition
-bool NETADefinition::matches(const SpeciesAtom *i) const { return score(i) != NETANode::NoMatch; }
+bool NETADefinition::matches(const BaseAtom *i) const { return score(i) != NETANode::NoMatch; }
 
 // Return the path of matched atoms, including the target atom, if the definition matches
-NETAMatchedGroup NETADefinition::matchedPath(const SpeciesAtom *i) const
+NETAMatchedGroup NETADefinition::matchedPath(const BaseAtom *i) const
 {
     NETAMatchedGroup matchPath(i);
     if (rootNode_->score(i, matchPath) == NETANode::NoMatch)

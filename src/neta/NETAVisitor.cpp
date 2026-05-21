@@ -154,10 +154,10 @@ antlrcpp::Any NETAVisitor::visitGeometryNode(NETAParser::GeometryNodeContext *co
         throw(NETAExceptions::NETASyntaxException(std::format("'{}' is not a valid comparison operator (for this context).\n",
                                                               context->EqualityOperator()->getText())));
     NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->EqualityOperator()->getText());
-    if (!SpeciesAtom::geometries().isValid(context->geometry->getText()))
+    if (!BaseAtom::geometries().isValid(context->geometry->getText()))
         throw(NETAExceptions::NETASyntaxException(
             std::format("'{}' is not a valid geometry type.\n", context->geometry->getText())));
-    SpeciesAtom::AtomGeometry geom = SpeciesAtom::geometries().enumeration(context->geometry->getText());
+    BaseAtom::AtomGeometry geom = BaseAtom::geometries().enumeration(context->geometry->getText());
 
     geometryNode->set(op, geom);
 

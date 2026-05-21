@@ -58,8 +58,8 @@ bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op,
  */
 
 // Locate rings in which the specified atom is involved
-void NETARingNode::findRings(const SpeciesAtom *currentAtom, std::vector<SpeciesRing> &rings,
-                             std::vector<const SpeciesAtom *> &path, const int minSize, const int maxSize) const
+void NETARingNode::findRings(const BaseAtom *currentAtom, std::vector<SpeciesRing> &rings, std::vector<const BaseAtom *> &path,
+                             const int minSize, const int maxSize) const
 {
     // Check whether the path is already at the maximum size - if so, return immediately.
     if (path.size() == maxSize)
@@ -102,11 +102,11 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, std::vector<Species
 }
 
 // Evaluate the node and return its score
-int NETARingNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
+int NETARingNode::score(const BaseAtom *i, NETAMatchedGroup &matchPath) const
 {
     // Generate array of rings of specified size that the atom 'i' is present in
     std::vector<SpeciesRing> rings;
-    std::vector<const SpeciesAtom *> ringPath;
+    std::vector<const BaseAtom *> ringPath;
     if (!sizeValue_)
         findRings(i, rings, ringPath, 3, 6);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::EqualTo)
@@ -136,7 +136,7 @@ int NETARingNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
             // Copy the iterator to use for forward and backward traversal around the ring
             auto forwardIt = ringAtomIt, backwardIt = ringAtomIt;
 
-            std::map<const SpeciesAtom *, std::pair<int, NETAMatchedGroup>> forwardMatches, backwardMatches;
+            std::map<const BaseAtom *, std::pair<int, NETAMatchedGroup>> forwardMatches, backwardMatches;
             auto totalAttemptedNodeMatches = 0;
 
             // Loop over defined nodes
