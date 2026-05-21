@@ -12,7 +12,8 @@ Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("Histogram", "Whether the data's x-values represent histogram bin boundaries (e.g. Gudrun mint files)", histogram_);
+    addOption<bool>("Histogram", "Whether the data's x-values represent histogram bin boundaries (e.g. Gudrun mint files)",
+                    histogram_);
     addOption<std::optional<Number>>("RemoveAverageFromX", "Remove average from X values", removeAverageFromX_);
     addOption<std::optional<Number>>("XMin", "Minimum X value", xMin_);
     addOption<std::optional<Number>>("XMax", "Maximum X value", xMax_);
@@ -73,7 +74,7 @@ NodeConstants::ProcessResult Data1DImportNode::process()
     }
 
     // If we have a histogram, convert bin boundaries to centre-bin values
-    if (!histogram_)
+    if (histogram_)
         Filters::convertBinBoundaries(*data_);
 
     // Handle any additional options
