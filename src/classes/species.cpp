@@ -238,6 +238,8 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node)
 {
+    setName(toml::find<std::string>(node, "name"));
+
     Serialisable::toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
                         { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
 

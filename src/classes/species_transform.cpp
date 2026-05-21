@@ -78,9 +78,5 @@ void Species::load(std::string_view tomlFile)
 
     SerialisedValue contents = toml::parse(std::string(tomlFile));
     if (contents.contains("species"))
-    {
         deserialise(contents["species"]);
-        auto name = contents["species"]["name"].as_string();
-        setName(name.str);
-    }
 }
