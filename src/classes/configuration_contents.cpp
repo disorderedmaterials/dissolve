@@ -52,15 +52,6 @@ void Configuration::empty()
 // Return Species populations within the Configuration
 const KeyedVector<const Species *, int> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
-// Return Species populations within the Configuration
-const KeyedVector<const Species *, double> Configuration::realSpeciesPopulations() const
-{
-    KeyedVector<const Species *, double> pop;
-    for (const auto &[key, value] : speciesPopulations_.vector())
-        pop.add(key, double(value));
-    return pop;
-}
-
 // Return atom type populations for this Configuration
 KeyedVector<const AtomType *, int> Configuration::atomTypePopulations() const
 {

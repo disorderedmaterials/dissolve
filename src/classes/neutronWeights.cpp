@@ -16,13 +16,6 @@ NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesP
     initialise(speciesPopulations, isotopologues, exchangeables);
 };
 
-NeutronWeights::NeutronWeights(const KeyedVector<const Species *, double> &speciesPopulations,
-                               const IsotopologueSet &speciesIsotopologues, const Exchangeables &exchangeables)
-{
-
-    initialise(KeyedVector<const Species *, double>::toMap(speciesPopulations), speciesIsotopologues, exchangeables);
-}
-
 // Initialise the neutron weights instance
 void NeutronWeights::initialise(const std::map<const Species *, double> &speciesPopulations,
                                 const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)

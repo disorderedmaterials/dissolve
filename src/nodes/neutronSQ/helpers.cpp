@@ -7,7 +7,10 @@
 #include "nodes/sq/sq.h"
 
 // Return neutron weights
-const NeutronWeights &NeutronSQNode::weights() const { return weights_; }
+NeutronWeights NeutronSQNode::weights() const
+{
+    return NeutronWeights(unweightedSQ_->realSpeciesPopulations(), isotopologues_, exchangeables_);
+}
 
 // Calculate weighted g(r)
 bool NeutronSQNode::calculateWeightedGR(const NeutronWeights &weights)

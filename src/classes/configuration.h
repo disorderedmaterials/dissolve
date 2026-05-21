@@ -88,8 +88,6 @@ class Configuration : public Serialisable<const CoreData &>
     void empty();
     // Return Species populations within the Configuration
     const KeyedVector<const Species *, int> &speciesPopulations() const;
-    // Return Species populations within the Configuration
-    const KeyedVector<const Species *, double> realSpeciesPopulations() const;
     // Return atom type populations for this Configuration
     KeyedVector<const AtomType *, int> atomTypePopulations() const;
     // Return atom type index map

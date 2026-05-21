@@ -379,9 +379,7 @@ NodeConstants::ProcessResult EPSRNode::process()
 
             if (targetNodeType == NeutronSQ)
             {
-                const auto weights = NeutronWeights(targetConfiguration_->realSpeciesPopulations(),
-                                                    dynamic_cast<NeutronSQNode *>(targetNode)->isotopologues(),
-                                                    dynamic_cast<NeutronSQNode *>(targetNode)->exchangeables());
+                const auto weights = dynamic_cast<NeutronSQNode *>(targetNode)->weights();
 
                 // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
                 auto refMinusIntra = trimmedReferenceData;

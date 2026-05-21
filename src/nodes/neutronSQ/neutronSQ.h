@@ -45,8 +45,6 @@ class NeutronSQNode : public Node
     IsotopologueSet isotopologues_;
     // Exchangeable atom types
     Exchangeables exchangeables_;
-    // Neutron weights calculated from isotopologues and exchangeables
-    NeutronWeights weights_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) data
@@ -77,7 +75,7 @@ class NeutronSQNode : public Node
      */
     public:
     // Return neutron weights
-    const NeutronWeights &weights() const;
+    NeutronWeights weights() const;
     // Calculate weighted g(r)
     bool calculateWeightedGR(const NeutronWeights &weights);
     // Calculate weighted S(Q)

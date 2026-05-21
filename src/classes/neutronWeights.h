@@ -17,8 +17,6 @@ class NeutronWeights
     NeutronWeights() = default;
     NeutronWeights(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues,
                    const Exchangeables &exchangeables = {});
-    NeutronWeights(const KeyedVector<const Species *, double> &speciesPopulations, const IsotopologueSet &speciesIsotopologues,
-                   const Exchangeables &exchangeables = {});
     NeutronWeights(const NeutronWeights &source);
     void operator=(const NeutronWeights &source);
 
