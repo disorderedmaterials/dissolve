@@ -18,8 +18,7 @@ class NETAConnectionNode : public NETANode
 {
     public:
     NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
-                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {},
-                       SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     ~NETAConnectionNode() override = default;
 
     /*
@@ -30,8 +29,6 @@ class NETAConnectionNode : public NETANode
     std::vector<Elements::Element> allowedElements_;
     // Array of ForcefieldAtomTypes that the current context atom may be
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> allowedAtomTypes_;
-    // Type of required connection
-    SpeciesBond::BondType bondType_;
 
     public:
     // Add element target to node

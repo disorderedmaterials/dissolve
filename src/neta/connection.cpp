@@ -9,13 +9,11 @@
 #include <utility>
 
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
-                                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
-                                       SpeciesBond::BondType bt)
+                                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
     : NETANode(parent, NETANode::NodeType::Connection)
 {
     allowedElements_ = std::move(targetElements);
     allowedAtomTypes_ = std::move(targetAtomTypes);
-    bondType_ = bt;
 
     // Modifiers
     repeatCount_ = 1;

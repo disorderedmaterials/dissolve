@@ -28,7 +28,6 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
 
     // Copy data
     assign(source.i_, source.j_);
-    bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
     commonTerm_ = source.commonTerm_;
 
@@ -41,7 +40,6 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
 {
     // Copy data
     assign(source.i_, source.j_);
-    bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
     commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
@@ -57,7 +55,6 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
 
     // Copy data
     assign(source.i_, source.j_);
-    bondType_ = source.bondType_;
     interactionPotential_ = source.interactionPotential_;
     commonTerm_ = source.commonTerm_;
     SpeciesIntra::operator=(source);
@@ -150,38 +147,6 @@ void SpeciesBond::detach()
     i_ = nullptr;
     j_ = nullptr;
 }
-
-/*
- * Bond Type
- */
-
-// Bond type keywords
-std::string_view BondTypeKeywords[] = {"Single", "Double", "Triple", "Quadruple", "Aromatic"};
-double BondTypeOrders[] = {1.0, 2.0, 3.0, 4.0, 1.5};
-
-// Convert bond type string to functional form
-SpeciesBond::BondType SpeciesBond::bondType(std::string_view s)
-{
-    for (auto n = 0; n < SpeciesBond::nBondTypes; ++n)
-        if (DissolveSys::sameString(s, BondTypeKeywords[n]))
-            return (SpeciesBond::BondType)n;
-    return SpeciesBond::nBondTypes;
-}
-
-// Return bond type functional form text
-std::string_view SpeciesBond::bondType(SpeciesBond::BondType bt) { return BondTypeKeywords[bt]; }
-
-// Return bond order for specified bond type
-double SpeciesBond::bondOrder(SpeciesBond::BondType bt) { return BondTypeOrders[bt]; }
-
-// Set bond type
-void SpeciesBond::setBondType(BondType type) { bondType_ = type; }
-
-// Return bond type
-SpeciesBond::BondType SpeciesBond::bondType() const { return bondType_; }
-
-// Return bond order for current bond type
-double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_); }
 
 /*
  * Interaction Parameters
