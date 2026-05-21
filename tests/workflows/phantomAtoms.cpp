@@ -60,8 +60,7 @@ TEST(PhantomAtomsTest, Water)
     // Add in NeutronSQ
     auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O");
     auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}});
-    auto HDO =
-        testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}));
+    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}});
 
     // Add XRaySQ
     auto H2Ox = testGraph.appendXRaySQ(sqNode, "H2Ox", {"epsr25/water1000-neutron-xray/PCCPfofq.txt", true});

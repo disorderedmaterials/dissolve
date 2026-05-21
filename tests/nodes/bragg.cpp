@@ -64,7 +64,7 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(sqNode->setOption<Number>("QDelta", 0.05));
         ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::Lorch0));
         ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.02}}));
-        neutronSQNode_ = testGraph_.appendNeutronSQ(sqNode, "NeutronSQ", {}, {}, {"epsr25/mgo500-555/mgo.EPSR.u01"});
+        neutronSQNode_ = testGraph_.appendNeutronSQ(sqNode, "NeutronSQ", {}, {"epsr25/mgo500-555/mgo.EPSR.u01"});
         ASSERT_TRUE(neutronSQNode_);
 
         // Bragg node

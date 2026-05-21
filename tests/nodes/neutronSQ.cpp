@@ -25,8 +25,7 @@ TEST(NeutronSQNodeTest, Water)
     // Add in NeutronSQ
     auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O");
     auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}});
-    auto HDO =
-        testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}));
+    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}});
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
@@ -68,11 +67,10 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
     ASSERT_TRUE(sqNode);
 
     // Add in NeutronSQ
-    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {}, {}, {"epsr25/water1000-neutron-xray/H2O.mint01", true});
-    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
+    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {}, {"epsr25/water1000-neutron-xray/H2O.mint01", true});
+    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}},
                                          {"epsr25/water1000-neutron-xray/D2O.mint01", true});
-    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
-                                         Exchangeables({"HW"}), {"epsr25/water1000-neutron-xray/HDO.mint01", true});
+    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, {"epsr25/water1000-neutron-xray/HDO.mint01", true});
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
@@ -125,7 +123,7 @@ TEST(NeutronSQNodeTest, WaterMethanol)
         {"DDD", {{"Water", "D2O", 1.0}, {"Methanol", "Deuteriated", 1.0}}}};
     std::map<std::string, NeutronSQNode *> neutronSQ;
     for (const auto &[name, isotopologues] : samples)
-        neutronSQ[name] = testGraph.appendNeutronSQ(sqNode, name, isotopologues, Exchangeables({"HW", "HO"}));
+        neutronSQ[name] = testGraph.appendNeutronSQ(sqNode, name, isotopologues);
 
     // Run the graph from each NeutronSQ node
     for (auto node : std::views::values(neutronSQ))

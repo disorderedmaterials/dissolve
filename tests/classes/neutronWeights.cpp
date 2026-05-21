@@ -110,7 +110,7 @@ TEST(NeutronWeightsTest, NullWater)
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
 
     // Making the H atomtype exchangeable should make no difference to <b>**2
-    nwts = NeutronWeights(speciesPopulations, isotopologues, Exchangeables({atHW->name()}));
+    nwts = NeutronWeights(speciesPopulations, isotopologues);
     EXPECT_NEAR(pow(Sears91::boundCoherent(Sears91::O_Natural) / 3.0, 2) / 100.0, nwts.boundCoherentSquareOfAverage(), 1.0e-6);
 }
 
@@ -124,6 +124,7 @@ TEST(NeutronWeightsTest, Mix)
     ASSERT_TRUE(atOW);
     auto atHW = H2O.findAtomType("HW");
     ASSERT_TRUE(atHW);
+
     Species N2;
     N2.load("species/n2.toml");
     auto atN = N2.findAtomType("N");

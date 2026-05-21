@@ -31,7 +31,6 @@ add_library(
   coreData.cpp
   distributor.cpp
   empiricalFormula.cpp
-  exchangeables.cpp
   fullPairIterator.cpp
   histogramSet.cpp
   isotopeMix.cpp
@@ -98,7 +97,6 @@ add_library(
   dataSource.h
   distributor.h
   empiricalFormula.h
-  exchangeables.h
   fragment.h
   histogramSet.h
   interactionPotential.h

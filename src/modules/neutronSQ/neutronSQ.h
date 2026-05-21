@@ -26,8 +26,6 @@ class NeutronSQModule : public Module
      * Definition
      */
     private:
-    // Exchangeable atom types
-    std::vector<std::shared_ptr<AtomType>> exchangeable_;
     // Isotopologues to use in weighting
     IsotopologueSet isotopologueSet_;
     // Neutron weights calculated from isotopologues and exchangeables

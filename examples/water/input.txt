@@ -180,7 +180,6 @@ Layer  'GR / Neutron S(Q)'
   Module  NeutronSQ  'HDO'
     Frequency  1
     SourceSQs  'SQ01'
-    Exchangeable  HW
     Isotopologue  'Water'  'Natural'  1
     Isotopologue  'Water'  'Deuterated'  1
     NormaliseTo  None

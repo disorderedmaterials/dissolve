@@ -37,6 +37,7 @@ sigma = 2.5
 z = "C"
 charge = -0.18
 form = "LJGeometric"
+exchangeable = true
 
 [species.atomTypes.CT.parameters]
 epsilon = 0.276

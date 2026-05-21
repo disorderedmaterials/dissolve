@@ -33,8 +33,7 @@ double IsotopeMix::population(const AtomType *atomType) const { return populatio
 double IsotopeMix::fraction(const AtomType *atomType) const { return population(atomType) / totalPopulation_; }
 
 // Create mix from Isotopologues
-void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
-                        const Exchangeables &exchangeables)
+void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues)
 {
     mix_.clear();
     populations_.clear();
@@ -69,7 +68,7 @@ void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulati
     auto exchangeableFraction = 0.0;
     for (const auto &atomType : std::views::keys(mix_))
     {
-        if (exchangeables.contains(atomType->name()))
+        if (atomType->isExchangeable())
         {
             auto frac = fraction(atomType);
             exchangeableFraction += frac;
@@ -80,8 +79,7 @@ void IsotopeMix::create(const std::map<const Species *, double> &speciesPopulati
 
     // Calculate bound coherent scattering lengths per atom type
     for (const auto &atomType : std::views::keys(mix_))
-        boundCoherent_[atomType] =
-            exchangeables.contains(atomType->name()) ? exchangeableBoundCoherent : isolatedBoundCoherent(atomType);
+        boundCoherent_[atomType] = atomType->isExchangeable() ? exchangeableBoundCoherent : isolatedBoundCoherent(atomType);
 }
 
 // Calculate and return bound coherent scattering, accounting for isotope mix and exchangeability
@@ -117,13 +115,13 @@ std::optional<std::pair<int, int>> IsotopeMix::indexOf(const AtomType *at1, cons
 }
 
 // Print AtomType populations
-void IsotopeMix::print(const Exchangeables &exchangeables) const
+void IsotopeMix::print() const
 {
     Messenger::print("  AtomType  El  Isotope  Population      Fraction           bc (fm)\n");
     Messenger::print("  -----------------------------------------------------------------\n");
     for (auto &[atomType, isotopeMix] : mix_)
     {
-        char exch = exchangeables.contains(atomType->name()) ? 'E' : ' ';
+        char exch = atomType->isExchangeable() ? 'E' : ' ';
 
         // If there are isotopes defined, print them
         if (!isotopeMix.empty())
