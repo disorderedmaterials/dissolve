@@ -18,7 +18,7 @@ TEST(EPSRNodeTest, Water3N)
     EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{"species/water.toml", 1000}}, 0.1));
     EXPECT_TRUE(
         testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato", "Configuration"));
-    auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
+    auto setCoordsName = testGraph.fetchHeadName();
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::ShiftedShortRangeTruncation);
@@ -63,7 +63,7 @@ TEST(EPSRNodeTest, Water3N)
     // Add EPSR
     auto epsrNode = static_cast<EPSRNode *>(testGraph.appendNode("EPSR", "EPSR01"));
     ASSERT_TRUE(epsrNode);
-    ASSERT_TRUE(testGraph.addEdge({std::string(importCoords->name()), "Configuration", "EPSR01", "Configuration"}));
+    ASSERT_TRUE(testGraph.addEdge({std::string(setCoordsName), "Configuration", "EPSR01", "Configuration"}));
     ASSERT_TRUE(epsrNode->setOption("EReq", Number(1.0)));
     ASSERT_TRUE(epsrNode->setOption("ExpansionFunction", EPSRNode::PoissonExpansionFunction));
     ASSERT_TRUE(epsrNode->setOption("Feedback", Number(0.9)));
@@ -97,7 +97,7 @@ TEST(EPSRNodeTest, Water3NX)
     EXPECT_TRUE(testGraph.createConfiguration("Bulk", {{"species/water.toml", 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron-xray/waterbox.ato",
                                                "Configuration"));
-    auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
+    auto setCoordsName = testGraph.fetchHeadName();
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::ShiftedShortRangeTruncation);
@@ -147,7 +147,7 @@ TEST(EPSRNodeTest, Water3NX)
     // Add EPSR
     auto epsrNode = static_cast<EPSRNode *>(testGraph.appendNode("EPSR", "EPSR01"));
     ASSERT_TRUE(epsrNode);
-    ASSERT_TRUE(testGraph.addEdge({std::string(importCoords->name()), "Configuration", "EPSR01", "Configuration"}));
+    ASSERT_TRUE(testGraph.addEdge({std::string(setCoordsName), "Configuration", "EPSR01", "Configuration"}));
     ASSERT_TRUE(epsrNode->setOption("EReq", Number(6.0)));
     ASSERT_TRUE(epsrNode->setOption("Feedback", Number(0.9)));
     ASSERT_TRUE(epsrNode->setOption("QMin", Number(0.5)));
@@ -195,7 +195,7 @@ TEST(EPSRNodeTest, Benzene)
                                               Units::DensityUnits::GramsPerCentimetreCubedUnits));
     EXPECT_TRUE(
         testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/benzene200-neutron/boxbenz.ato", "Configuration"));
-    auto importCoords = testGraph.head<ImportConfigurationCoordinatesNode>();
+    auto setCoordsName = testGraph.fetchHeadName();
 
     // Adjust pair potential properties
     PairPotential::setRange(12.0);
@@ -228,7 +228,7 @@ TEST(EPSRNodeTest, Benzene)
     // Add EPSR
     auto epsrNode = static_cast<EPSRNode *>(testGraph.appendNode("EPSR", "EPSR01"));
     ASSERT_TRUE(epsrNode);
-    ASSERT_TRUE(testGraph.addEdge({std::string(importCoords->name()), "Configuration", "EPSR01", "Configuration"}));
+    ASSERT_TRUE(testGraph.addEdge({std::string(setCoordsName), "Configuration", "EPSR01", "Configuration"}));
     ASSERT_TRUE(epsrNode->setOption("EReq", Number(3.0)));
     ASSERT_TRUE(epsrNode->setOption("Feedback", Number(0.9)));
     ASSERT_TRUE(epsrNode->setOption("QMin", Number(0.05)));
