@@ -31,26 +31,6 @@ void Species::clear()
     commonImpropers_.clear();
 }
 
-// Copy basic information (atoms and intramolecular terms)
-void Species::copyBasic(const Species *source, bool copyAtomTypes)
-{
-    clear();
-
-    name_ = source->name_;
-
-    for (auto &i : source->atoms_)
-        addAtom(i.Z(), i.r(), i.q(), copyAtomTypes ? i.atomType() : nullptr);
-
-    for (auto &bond : source->bonds_)
-        addBond(bond.indexI(), bond.indexJ());
-    for (auto &angle : source->angles_)
-        addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
-    for (auto &torsion : source->torsions_)
-        addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
-    for (auto &improper : source->impropers_)
-        addImproper(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
-}
-
 /*
  * Basic Information
  */
@@ -154,7 +134,7 @@ void Species::print() const
                          (i.atomType() ? i.atomType()->index() : -1), i.r().x, i.r().y, i.r().z, i.q());
     }
 
-    if (nBonds() > 0)
+    if (!bonds_.empty())
     {
         Messenger::print("\n  Bonds:\n");
         Messenger::print("      I     J    Form             Parameters\n");
@@ -165,7 +145,7 @@ void Species::print() const
                              bond.interactionPotential().parametersAsString());
     }
 
-    if (nAngles() > 0)
+    if (!angles_.empty())
     {
         Messenger::print("\n  Angles:\n");
         Messenger::print("      I     J     K    Form             Parameters\n");
@@ -177,7 +157,7 @@ void Species::print() const
                              angle.interactionPotential().parametersAsString());
     }
 
-    if (nTorsions() > 0)
+    if (!torsions_.empty())
     {
         Messenger::print("\n  Torsions:\n");
         Messenger::print("      I     J     K     L    Form             Parameters\n");
@@ -190,7 +170,7 @@ void Species::print() const
                              torsion.interactionPotential().parametersAsString());
     }
 
-    if (nImpropers() > 0)
+    if (!impropers_.empty())
     {
         Messenger::print("\n  Impropers:\n");
         Messenger::print("      I     J     K     L    Form             Parameters\n");

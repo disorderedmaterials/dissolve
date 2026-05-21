@@ -163,7 +163,12 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (atomVectorFixed && atomIndex < atoms_.size())
                     atoms_[atomIndex].set(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
                 else
-                    atomIndex = addAtom(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                {
+                    auto &i = atoms_.emplace_back(this);
+                    i.set(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                    i.setIndex(atoms_.size() - 1);
+                    atomIndex = i.index();
+                }
 
                 // Locate the AtomType assigned to the Atom
                 if (DissolveSys::sameString("None", parser.argsv(6)))
@@ -191,7 +196,21 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     b = bonds_[bondIndex++];
                 }
                 else
-                    b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
+                {
+                    auto i = parser.argi(1) - 1;
+                    auto j = parser.argi(2) - 1;
+                    // Check for existence of Bond already
+                    auto bondRef = getBond(&atom(i), &atom(j));
+                    if (bondRef)
+                    {
+                        Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it "
+                                        "already exists.\n",
+                                        i + 1, j + 1, name_);
+                        b = *bondRef;
+                    }
+                    else
+                        b = bonds_.emplace_back(this, &atom(i), &atom(j));
+                }
 
                 /*
                  * If only the indices were given, create a bond without a specified functional form (a
@@ -782,7 +801,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Angles
-    if (nAngles() > 0)
+    if (!angles_.empty())
     {
         if (!parser.writeLineF("\n{}# Angles\n", newPrefix))
             return false;
@@ -807,7 +826,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Torsions
-    if (nTorsions() > 0)
+    if (!torsions_.empty())
     {
         if (!parser.writeLineF("\n{}# Torsions\n", newPrefix))
             return false;
@@ -850,7 +869,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Impropers
-    if (nImpropers() > 0)
+    if (!impropers_.empty())
     {
         if (!parser.writeLineF("\n{}# Impropers\n", newPrefix))
             return false;

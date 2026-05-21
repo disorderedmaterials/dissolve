@@ -512,17 +512,18 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
         if (indexI == indexJ)
             continue;
 
-        auto i = structure_.atomAt(indexI);
-        auto j = structure_.atomAt(indexJ);
+        auto i = structure_.atom(indexI);
+        auto j = structure_.atom(indexJ);
 
         // Retrieve distance
         auto atomTypeIdxI = i->atomTypeIndex();
         auto atomTypeIdxJ = j->atomTypeIndex();
         auto r = bondDistance(atomLabelTypes_[atomTypeIdxI]->name(), atomLabelTypes_[atomTypeIdxJ]->name());
-        if (!r)
-            continue;
-        else if (!structure_.hasBond(i, j) && fabs(box->minimumDistance(i->r(), j->r()) - r.value()) < 1.0e-2)
-            structure_.addBond(i, j);
+        if (r)
+        {
+            if (!structure_.hasBond(i, j) && fabs(box->minimumDistance(i->r(), j->r()) - r.value()) < 1.0e-2)
+                structure_.addBond(i, j);
+        }
     }
 
     message("Created basic structure - {} structure atoms, {} structure bonds found whle parsing the CIF.\n",

@@ -28,86 +28,6 @@ void Species::getIndicesRecursive(std::vector<int> &indices, int index, Optional
     }
 }
 
-// Add a new atom to the Species, returning its index
-int Species::addAtom(Elements::Element Z, Vector3 r, double q, const AtomType *atomType)
-{
-    auto &i = atoms_.emplace_back(this);
-    i.set(Z, r, q);
-
-    i.setIndex(atoms_.size() - 1);
-    i.setAtomType(atomType);
-
-    return i.index();
-}
-
-// Remove the specified atom from the species
-void Species::removeAtom(int index)
-{
-    /*
-     * Note: This is a deliberately simplistic function, and is intended only for use when creating / editing basic
-     * species definitions upon which the simulation has no dependencies.
-     */
-
-    auto *i = &atoms_[index];
-
-    // Clear higher-order terms
-    angles_.clear();
-    torsions_.clear();
-    impropers_.clear();
-
-    // Detach & remove any bond terms that involve 'i'
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(),
-                             [i](auto &bond)
-                             {
-                                 if (bond.i() == i || bond.j() == i)
-                                 {
-                                     bond.detach();
-                                     return true;
-                                 }
-                                 else
-                                     return false;
-                             });
-    if (it != bonds_.end())
-        bonds_.erase(it, bonds_.end());
-
-    // Now remove the atom
-    auto atomIt = std::find_if(atoms_.begin(), atoms_.end(), [&](const auto &p) { return i == &p; });
-    atoms_.erase(atomIt);
-    renumberAtoms();
-}
-
-// Remove set of atom indices
-void Species::removeAtoms(std::vector<int> indices)
-{
-    // Clear higher-order terms
-    angles_.clear();
-    torsions_.clear();
-    impropers_.clear();
-
-    // Detach & remove any bond terms that involve any of the supplied atom
-    auto it =
-        std::remove_if(bonds_.begin(), bonds_.end(),
-                       [&indices](auto &bond)
-                       {
-                           if (std::find_if(indices.begin(), indices.end(), [&bond](const auto i)
-                                            { return (bond.i()->index() == i || bond.j()->index() == i); }) != indices.end())
-                           {
-                               bond.detach();
-                               return true;
-                           }
-                           else
-                               return false;
-                       });
-    if (it != bonds_.end())
-        bonds_.erase(it, bonds_.end());
-
-    // Now remove the atoms
-    auto atomIt = std::remove_if(atoms_.begin(), atoms_.end(), [&](const auto &i)
-                                 { return std::find(indices.begin(), indices.end(), i.index()) != indices.end(); });
-    atoms_.erase(atomIt, atoms_.end());
-    renumberAtoms();
-}
-
 // Return the number of atoms in the species (or only those with the specified presence)
 int Species::nAtoms(AtomConstants::Presence withPresence) const
 {
@@ -115,14 +35,6 @@ int Species::nAtoms(AtomConstants::Presence withPresence) const
                ? atoms_.size()
                : std::count_if(atoms_.begin(), atoms_.end(),
                                [withPresence](const auto &i) { return i.isPresence(withPresence); });
-}
-
-// Renumber atoms so they are sequential in the list
-void Species::renumberAtoms()
-{
-    auto count = 0;
-    for (auto &i : atoms_)
-        i.setIndex(count++);
 }
 
 // Return the nth Atom in the Species
@@ -143,20 +55,6 @@ const SpeciesAtom &Species::atom(int n) const
 // Return a vector of SpeciesAtoms
 const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
-
-// Transmute specified SpeciesAtom
-void Species::transmuteAtom(int index, Elements::Element newZ)
-{
-    auto &i = atoms_[index];
-
-    // Nothing to do if current element matches that supplied
-    if (i.Z() == newZ)
-        return;
-
-    // Remove any existing AtomType assignment
-    i.setAtomType(nullptr);
-    i.setZ(newZ);
-}
 
 // Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
 std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude,

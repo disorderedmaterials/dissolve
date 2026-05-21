@@ -57,7 +57,11 @@ void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeF
     // Set up atom type
     auto atomType = addAtomType(Z, Elements::symbol(Z));
     atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
-    addAtom(Z, {}, 0.0, atomType);
+
+    auto &i = atoms_.emplace_back(this);
+    i.set(Z, {}, 0.0);
+    i.setIndex(0);
+    i.setAtomType(atomType);
 
     // Create isotopologues
     for (auto isotope : Sears91::isotopes(Z))

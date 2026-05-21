@@ -55,7 +55,8 @@ void AddForcefieldDialogModel::next()
             if (!ff_)
                 return;
             modifiedSpecies_ = std::make_shared<Species>();
-            modifiedSpecies_->copyBasic(species_);
+            // modifiedSpecies_->copyBasic(species_);
+            // TODO DISSOLVE2
             originalAtomTypeNames_.clear();
 
             // Set selection status

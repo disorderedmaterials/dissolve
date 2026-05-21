@@ -77,6 +77,7 @@ void Structure::removeAtom(const StructureAtom *atom)
 
     renumberAtoms();
 }
+void Structure::removeAtom(int index) { removeAtom(atom(index)); }
 
 // Remove set of atom indices
 void Structure::removeAtoms(const std::vector<const StructureAtom *> &atomsToRemove)
@@ -106,7 +107,7 @@ int Structure::nAtoms(AtomConstants::Presence withPresence) const
 }
 
 // Return atom at index
-StructureAtom *Structure::atomAt(int i) { return atoms_[i].get(); }
+StructureAtom *Structure::atom(int i) { return atoms_[i].get(); }
 
 // Return atoms
 const std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() const { return atoms_; }

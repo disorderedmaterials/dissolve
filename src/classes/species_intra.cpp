@@ -10,49 +10,6 @@
 #include "templates/algorithms.h"
 #include <algorithm>
 
-// Add new SpeciesBond definition
-SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
-{
-    // Check for existence of Bond already
-    auto bondRef = getBond(i, j);
-    if (bondRef)
-    {
-        Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it already exists.\n",
-                        i->userIndex(), j->userIndex(), name_);
-        return *bondRef;
-    }
-
-    // OK to add new Bond
-    bonds_.emplace_back(this, i, j);
-
-    return bonds_.back();
-}
-SpeciesBond &Species::addBond(int i, int j) { return addBond(&atom(i), &atom(j)); }
-
-// Remove bond between specified SpeciesAtoms
-void Species::removeBond(SpeciesAtom *j, SpeciesAtom *k)
-{
-    // Find the bond
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [j, k](const auto &bond) { return bond.matches(j, k); });
-    if (it == bonds_.end())
-        return;
-
-    // Clear higher-order terms
-    angles_.clear();
-    torsions_.clear();
-    impropers_.clear();
-
-    // Detach the bond from its atoms
-    it->detach();
-
-    // Erase the bond
-    bonds_.erase(it);
-}
-void Species::removeBond(int i, int j) { removeBond(&atoms_[i], &atoms_[j]); }
-
-// Return number of SpeciesBonds defined
-int Species::nBonds() const { return bonds_.size(); }
-
 // Return vector of SpeciesBond
 std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 
@@ -87,38 +44,6 @@ OptionalReferenceWrapper<const SpeciesBond> Species::getBond(const SpeciesAtom *
 OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j) { return getBond(&atom(i), &atom(j)); }
 OptionalReferenceWrapper<const SpeciesBond> Species::getBond(int i, int j) const { return getBond(&atom(i), &atom(j)); }
 
-// Add missing bonds
-void Species::addMissingBonds(double tolerance, bool preventMetallic)
-{
-    double r, radiusI;
-    for (auto indexI = 0; indexI < nAtoms() - 1; ++indexI)
-    {
-        // Get SpeciesAtom 'i' and its radius
-        auto &i = atom(indexI);
-        radiusI = AtomicRadii::radius(i.Z());
-        for (auto indexJ = indexI + 1; indexJ < nAtoms(); ++indexJ)
-        {
-            // Get SpeciesAtom 'j'
-            auto &j = atom(indexJ);
-
-            // If the two atoms are both metal ions and preventMetallic = true, continue
-            if (preventMetallic && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
-                continue;
-
-            // If the two atoms are already bound, continue
-            if (i.getBond(&j))
-                continue;
-
-            // Calculate distance between atoms
-            r = box_ ? box_->minimumDistance(j.r(), i.r()) : (j.r() - i.r()).magnitude();
-
-            // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (r <= (radiusI + AtomicRadii::radius(j.Z())) * tolerance)
-                addBond(&i, &j);
-        }
-    }
-}
-
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
 {
@@ -134,25 +59,6 @@ void Species::removePeriodicBonds()
                              });
     if (it != bonds_.end())
         bonds_.erase(it, bonds_.end());
-}
-
-// Remove all higher order intramolecular terms
-void Species::removeHigherOrderIntramolecularTerms()
-{
-    angles_.clear();
-    torsions_.clear();
-    impropers_.clear();
-}
-
-// Clear and recalculate all bonds on the species
-void Species::recalculateIntermolecularTerms(double tolerance)
-{
-    // Need to detach().
-    while (bonds_.size())
-        removeBond(bonds_[0].i(), bonds_[0].j());
-
-    addMissingBonds(tolerance);
-    updateIntramolecularTerms();
 }
 
 // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
@@ -261,9 +167,6 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 }
 SpeciesAngle &Species::addAngle(int i, int j, int k) { return addAngle(&atom(i), &atom(j), &atom(k)); }
 
-// Return number of SpeciesAngles defined
-int Species::nAngles() const { return angles_.size(); }
-
 // Return vector of SpeciesAngle
 std::vector<SpeciesAngle> &Species::angles() { return angles_; }
 
@@ -319,9 +222,6 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
     return torsions_.back();
 }
 SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l) { return addTorsion(&atom(i), &atom(j), &atom(k), &atom(l)); }
-
-// Return number of SpeciesTorsions defined
-int Species::nTorsions() const { return torsions_.size(); }
 
 // Return vector of SpeciesTorsions
 std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
@@ -386,9 +286,6 @@ SpeciesImproper &Species::addImproper(int i, int j, int k, int l)
 {
     return addImproper(&atom(i), &atom(j), &atom(k), &atom(l));
 }
-
-// Return number of SpeciesImproper defined
-int Species::nImpropers() const { return impropers_.size(); }
 
 // Return vector of SpeciesImproper
 std::vector<SpeciesImproper> &Species::impropers() { return impropers_; }

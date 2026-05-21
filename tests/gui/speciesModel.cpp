@@ -11,7 +11,6 @@ namespace UnitTest
 {
 TEST(SpeciesModel, Basic)
 {
-
     // Stage 1: Simulate GUI interactions to create species
     Graph graph(nullptr);
     GraphModel graphModel;

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/coreData.h"
 #include "classes/localMolecule.h"
 #include "classes/potentialMap.h"
 #include "classes/species.h"
@@ -12,26 +11,12 @@ namespace UnitTest
 class PairPotentialsScaleFactorsTest : public ::testing::Test
 {
     public:
-    PairPotentialsScaleFactorsTest()
+    PairPotentialsScaleFactorsTest() : pairPotentials_(true)
     {
-        // Set up atom types
-        atC1_ = species_.addAtomType(Elements::C);
-        atC1_->setName("C1");
-        atC1_->setCharge(-0.1);
-        atC1_->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, ljParameters);
-        atC2_ = species_.addAtomType(Elements::C);
-        atC2_->setCharge(0.1);
-        atC2_->setName("C2");
-        atC2_->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, ljParameters);
-
         // Create Species
-        species_.addAtom(Elements::C, {-1.390000, 0.000000, 0.000000}, -0.2, atC1_);
-        species_.addAtom(Elements::C, {-0.695000, 1.203775, 0.000000}, 0.2, atC2_);
-        species_.addAtom(Elements::C, {0.695000, 1.203775, 0.000000}, 0.2, atC2_);
-        species_.addAtom(Elements::C, {1.390000, 0.000000, 0.000000}, -0.2, atC1_);
-        species_.addMissingBonds();
-        torsion_ = species_.addTorsion(0, 1, 2, 3);
-        species_.finaliseGeometry();
+        species_.load("species/ppScaleFactorTest.toml");
+        atC1_ = species_.findAtomType("C1");
+        atC2_ = species_.findAtomType("C2");
 
         // Create a molecule based on the species
         molecule_.setSpecies(&species_);
@@ -137,7 +122,6 @@ class PairPotentialsScaleFactorsTest : public ::testing::Test
     DoubleKeyedMap<PairPotential> pairPotentials_;
     PotentialMap potentialMap_;
     Species species_;
-    SpeciesTorsion torsion_;
     LocalMolecule molecule_;
 
     // Test potential function and wrapper, equivalent to the one defined in the potential map
