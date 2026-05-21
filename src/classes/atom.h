@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumOptions.h"
 #include "classes/atomConstants.h"
 #include "classes/bond.h"
 #include "data/elements.h"
@@ -28,38 +29,29 @@ class BaseAtom
 
     public:
     // Set basic properties
-    void set(Elements::Element Z, const Vector3 &r, double q = 0.0)
-    {
-        r_ = r;
-        Z_ = Z;
-        q_ = q;
-    }
+    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
     // Set coordinates
-    void setR(const Vector3 &r) { r_ = r; }
+    void setR(const Vector3 &r);
     // Return coordinates
-    const Vector3 &r() const { return r_; }
+    const Vector3 &r() const;
     // Set atomic element
-    void setZ(Elements::Element z) { Z_ = z; }
+    void setZ(Elements::Element z);
     // Return atomic element
-    Elements::Element Z() const { return Z_; }
+    Elements::Element Z() const;
     // Return presence of atom
-    bool isPresence(AtomConstants::Presence presence) const
-    {
-        return presence == AtomConstants::Presence::Any ||
-               (Z_ == Elements::Phantom ? AtomConstants::Presence::Phantom : AtomConstants::Presence::Physical) == presence;
-    }
+    bool isPresence(AtomConstants::Presence presence) const;
     // Set atomic charge
-    void setQ(double q) { q_ = q; }
+    void setQ(double q);
     // Return atomic charge
-    double q() const { return q_; }
+    double q() const;
     // Return index (0->[N-1])
-    int index() const { return index_; };
+    int index() const;
     // Set index
-    void setIndex(int index) { index_ = index; }
+    void setIndex(int index);
     // Set index of associated atom type in parent object
-    void setAtomTypeIndex(int id) { atomTypeIndex_ = id; }
+    void setAtomTypeIndex(int id);
     // Return associated atom type index
-    int atomTypeIndex() const { return atomTypeIndex_; }
+    int atomTypeIndex() const;
 
     /*
      * General Connectivity
@@ -69,6 +61,31 @@ class BaseAtom
     virtual int nBonds() const = 0;
     // Return other BaseAtoms connected to this one via bonds
     virtual std::vector<BaseAtom *> connectedAtoms() const = 0;
+
+    /*
+     * Atom Geometry
+     */
+    public:
+    // Atom Geometry enum
+    enum class AtomGeometry
+    {
+        Unknown,
+        Unbound,
+        Terminal,
+        Linear,
+        TShape,
+        TrigonalPlanar,
+        Tetrahedral,
+        SquarePlanar,
+        TrigonalBipyramidal,
+        Octahedral
+    };
+    // Return EnumOptions for AtomGeometry
+    static EnumOptions<AtomGeometry> geometries();
+    // Calculate and return the geometry of this atom
+    AtomGeometry geometry() const;
+    // Return whether the geometry of this atom matches that specified
+    bool isGeometry(AtomGeometry geom) const;
 };
 
 // Atom

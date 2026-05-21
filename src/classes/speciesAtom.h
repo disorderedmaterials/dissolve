@@ -84,35 +84,6 @@ class SpeciesAtom : public Atom<const SpeciesBond>
     ScaledInteractionDefinition scaling(const SpeciesAtom *j) const;
 
     /*
-     * Atom Environment Helpers
-     */
-    public:
-    // Atom Geometry enum
-    enum class AtomGeometry
-    {
-        Unknown,
-        Unbound,
-        Terminal,
-        Linear,
-        TShape,
-        TrigonalPlanar,
-        Tetrahedral,
-        SquarePlanar,
-        TrigonalBipyramidal,
-        Octahedral
-    };
-    // Return EnumOptions for AtomGeometry
-    static EnumOptions<AtomGeometry> geometries();
-    // Calculate and return the geometry of this atom
-    AtomGeometry geometry() const;
-    // Return whether the geometry of this atom matches that specified
-    bool isGeometry(AtomGeometry geom) const;
-    // Calculate and return the geometry of the specified SpeciesAtom
-    static AtomGeometry geometry(const SpeciesAtom *i);
-    // Return whether the specified SpeciesAtom exists in the specified geometry
-    static bool isGeometry(const SpeciesAtom *i, AtomGeometry geom);
-
-    /*
      * Serialisation
      */
     public:
