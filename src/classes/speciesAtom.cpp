@@ -271,7 +271,7 @@ bool SpeciesAtom::isGeometry(const SpeciesAtom *i, AtomGeometry geom) { return g
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"index", userIndex()}, {"z", Z_}, {"r", r_}, {"q", q_}};
+    target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }

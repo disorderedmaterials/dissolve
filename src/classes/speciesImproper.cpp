@@ -124,14 +124,14 @@ void SpeciesImproper::serialise(std::string tag, SerialisedValue &target) const
 {
     SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise(tag, target);
     auto &improper = target.at(tag);
-    if (i_ != nullptr)
-        improper["i"] = i_->userIndex();
-    if (j_ != nullptr)
-        improper["j"] = j_->userIndex();
-    if (k_ != nullptr)
-        improper["k"] = k_->userIndex();
-    if (l_ != nullptr)
-        improper["l"] = l_->userIndex();
+
+    if (i_ && j_ && k_ && l_)
+    {
+        improper["i"] = i_->index();
+        improper["j"] = j_->index();
+        improper["k"] = k_->index();
+        improper["l"] = l_->index();
+    }
 }
 
 // Read values from a serialisable value

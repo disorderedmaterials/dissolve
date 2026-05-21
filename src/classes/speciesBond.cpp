@@ -190,10 +190,12 @@ void SpeciesBond::serialise(std::string tag, SerialisedValue &target) const
 {
     SpeciesIntra<SpeciesBond, BondFunctions>::serialise(tag, target);
     auto &bond = target[tag];
-    if (i_ != nullptr)
-        bond["i"] = i_->userIndex();
-    if (j_ != nullptr)
-        bond["j"] = j_->userIndex();
+
+    if (i_ && j_)
+    {
+        bond["i"] = i_->index();
+        bond["j"] = j_->index();
+    }
 }
 
 // Read values from a serialisable value
