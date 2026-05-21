@@ -4,20 +4,16 @@
 #pragma once
 
 #include "classes/atomConstants.h"
-#include "classes/atomType.h"
+#include "classes/bond.h"
+#include "data/elements.h"
 #include "math/vector3.h"
 
-// Basic Atom
-template <typename BondClass> class Atom : public Serialisable<>
+// Base Atom
+class BaseAtom
 {
-    public:
-    Atom() = default;
-    virtual ~Atom() = default;
-
     /*
      * Properties
      */
-    public:
     protected:
     // Coordinates
     Vector3 r_;
@@ -66,6 +62,23 @@ template <typename BondClass> class Atom : public Serialisable<>
     int atomTypeIndex() const { return atomTypeIndex_; }
 
     /*
+     * General Connectivity
+     */
+    public:
+    // Return number of bonds
+    virtual int nBonds() const = 0;
+    // Return other BaseAtoms connected to this one via bonds
+    virtual std::vector<BaseAtom *> connectedAtoms() const = 0;
+};
+
+// Atom
+template <typename BondClass> class Atom : public BaseAtom, public Serialisable<>
+{
+    public:
+    Atom() = default;
+    virtual ~Atom() = default;
+
+    /*
      * Coordinate Manipulation Operators
      */
     public:
@@ -93,6 +106,16 @@ template <typename BondClass> class Atom : public Serialisable<>
         if (it != bonds_.end())
             return *it;
         return nullptr;
+    }
+    // Return number of bonds
+    int nBonds() const { return bonds_.size(); }
+    // Return indices of other BaseAtoms to which this one is connected
+    std::vector<BaseAtom *> connectedAtoms() const
+    {
+        std::vector<BaseAtom *> connections;
+        for (const auto *bond : bonds_)
+            connections.emplace_back(bond->partner(this));
+        return connections;
     }
 
     /*
