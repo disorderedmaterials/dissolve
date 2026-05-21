@@ -38,7 +38,7 @@ class TestGraph : public DissolveGraph
         std::string filename;
         bool histogram;
 
-        Data1DImportFileFormat(std::string filename = "", bool histogram = false) filename(filename), histogram(histogram) {}
+        Data1DImportFileFormat(std::string filename = "", bool histogram = false) : filename(filename), histogram(histogram) {}
     };
 
     private:
