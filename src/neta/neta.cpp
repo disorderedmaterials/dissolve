@@ -105,16 +105,16 @@ std::string netaString(const BaseAtom *i, int currentDepth, const std::optional<
     // Add this atom to the path
     path.push_back(i);
 
+    auto connectedAtoms = i->connectedAtoms();
+
     auto neta = flags.isSet(NETADefinition::NETACreationFlags::IncludeRootElement) && currentDepth == 0
-                    ? std::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->bonds().size())
-                    : std::format("nbonds={}", i->bonds().size());
+                    ? std::format("?{}, nbonds={}", Elements::symbol(i->Z()), connectedAtoms.size())
+                    : std::format("nbonds={}", connectedAtoms.size());
 
     // Add on each connected atom, provided it is not already in the path
     auto nH = 0;
-    for (auto &b : i->bonds())
+    for (auto j : connectedAtoms)
     {
-        auto j = b->partner(i);
-
         // Check for H
         if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && j->Z() == Elements::H)
         {
@@ -156,6 +156,7 @@ bool NETADefinition::isValid() const { return valid_; }
 
 // Add an identifier
 void NETADefinition::addIdentifier(std::string identifier) { identifiers_.insert(identifier); }
+
 // Return identifiers
 const std::set<std::string> &NETADefinition::identifiers() const { return identifiers_; }
 

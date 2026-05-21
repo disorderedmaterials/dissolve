@@ -5,7 +5,7 @@
 #include "classes/speciesAtom.h"
 
 NETAGeometryNode::NETAGeometryNode(NETADefinition *parent)
-    : NETANode(parent, NETANode::NodeType::Geometry), geometry_(BaseAtom::AtomGeometry::Unknown),
+    : NETANode(parent, NETANode::NodeType::Geometry), geometry_(SpeciesAtom::AtomGeometry::Unknown),
       operator_(NETANode::ComparisonOperator::EqualTo)
 {
 }
@@ -15,7 +15,7 @@ NETAGeometryNode::NETAGeometryNode(NETADefinition *parent)
  */
 
 // Set bond count requirements
-void NETAGeometryNode::set(ComparisonOperator op, BaseAtom::AtomGeometry geometry)
+void NETAGeometryNode::set(ComparisonOperator op, SpeciesAtom::AtomGeometry geometry)
 {
     geometry_ = geometry;
     operator_ = op;

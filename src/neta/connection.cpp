@@ -118,13 +118,12 @@ int NETAConnectionNode::score(const BaseAtom *i, NETAMatchedGroup &matchPath) co
 {
     // Get directly connected atoms about 'i', excluding any that have already been matched
     std::map<const BaseAtom *, std::pair<int, NETAMatchedGroup>> neighbours;
-    for (const auto *bond : i->bonds())
+    auto connectedAtoms = i->connectedAtoms();
+    for (const auto *neighbour : connectedAtoms)
     {
-        const auto *partner = bond->partner(i);
-
         // Search for this atom in the current match path
-        if (!matchPath.contains(partner) || (allowRootMatch_ && matchPath.isRoot(partner)))
-            neighbours.emplace(partner, std::pair<int, NETAMatchedGroup>(NETANode::NoMatch, matchPath));
+        if (!matchPath.contains(neighbour) || (allowRootMatch_ && matchPath.isRoot(neighbour)))
+            neighbours.emplace(neighbour, std::pair<int, NETAMatchedGroup>(NETANode::NoMatch, matchPath));
     }
 
     // Loop over neighbour atoms
