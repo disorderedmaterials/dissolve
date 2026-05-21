@@ -60,8 +60,8 @@ bool Species::checkSetUp() const
     {
         if (i.atomType() == nullptr)
         {
-            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i.userIndex(),
-                             Elements::symbol(i.Z()), name_);
+            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i.index(), Elements::symbol(i.Z()),
+                             name_);
             ++nErrors;
         }
     }
@@ -75,8 +75,8 @@ bool Species::checkSetUp() const
     {
         if ((i.bonds().size() == 0) && (atoms_.size() > 1))
         {
-            Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n",
-                             i.userIndex(), Elements::symbol(i.Z()));
+            Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n", i.index(),
+                             Elements::symbol(i.Z()));
             ++nErrors;
         }
     }

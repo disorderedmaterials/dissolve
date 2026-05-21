@@ -57,6 +57,6 @@ void SpeciesRing::print() const
 {
     std::string s = std::format("Ring({}) :", atoms_.size());
     for (const auto *atom : atoms_)
-        s += std::format(" {}({})", atom->userIndex(), Elements::symbol(atom->Z()));
+        s += std::format(" {}({})", atom->index(), Elements::symbol(atom->Z()));
     Messenger::print(s);
 }

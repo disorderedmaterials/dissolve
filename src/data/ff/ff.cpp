@@ -80,7 +80,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType>
 Forcefield::determineAtomType(const SpeciesAtom &i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
-    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.userIndex(), Elements::symbol(i.Z()));
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.index(), Elements::symbol(i.Z()));
 
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
@@ -101,8 +101,8 @@ Forcefield::determineAtomType(const SpeciesAtom &i,
     if (bestScore == -1)
         Messenger::printVerbose("  -- no suitable type found.");
     else
-        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i.userIndex(),
-                                bestType->get().index(), bestType->get().name(), bestScore);
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i.index(), bestType->get().index(),
+                                bestType->get().name(), bestScore);
 
     return bestType;
 }
@@ -261,7 +261,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
         auto optType = determineType ? determineAtomType(*i) : atomTypeByName(i->atomType()->name(), i->Z());
         if (!optType)
         {
-            Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
+            Messenger::error("Couldn't find or assign type for atom {}.\n", i->index());
             return {};
         }
         types.emplace_back(*optType);
@@ -304,8 +304,8 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStra
 
         if (!assignAtomType(i, setSpeciesAtomCharges))
         {
-            Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
-            failedElements.push_back(i.userIndex());
+            Messenger::error("No matching forcefield type for atom {} ({}).\n", i.index(), Elements::symbol(i.Z()));
+            failedElements.push_back(i.index());
         }
     }
 
@@ -325,10 +325,10 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, b
     if (!at)
     {
         at = i.parent()->addAtomType(i.Z(), ffa.name());
-        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
+        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.index(), Elements::symbol(i.Z()));
     }
     else
-        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
+        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.index(), Elements::symbol(i.Z()));
 
     // Set type in the SpeciesAtom
     i.setAtomType(at);
@@ -359,7 +359,7 @@ bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bo
 
     auto optTerm = getBondTerm(atomTypes[0], atomTypes[1]);
     if (!optTerm)
-        return Messenger::error("Failed to locate parameters for bond {}-{} ({}-{}).\n", i->userIndex(), j->userIndex(),
+        return Messenger::error("Failed to locate parameters for bond {}-{} ({}-{}).\n", i->index(), j->index(),
                                 atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName());
     const ForcefieldBondTerm &term = *optTerm;
 
@@ -382,8 +382,8 @@ bool Forcefield::assignAngleTermParameters(const Species *parent, SpeciesAngle &
 
     auto optTerm = getAngleTerm(atomTypes[0], atomTypes[1], atomTypes[2]);
     if (!optTerm)
-        return Messenger::error("Failed to locate parameters for angle {}-{}-{} ({}-{}-{}).\n", i->userIndex(), j->userIndex(),
-                                k->userIndex(), atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName(),
+        return Messenger::error("Failed to locate parameters for angle {}-{}-{} ({}-{}-{}).\n", i->index(), j->index(),
+                                k->index(), atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName(),
                                 atomTypes[2].get().equivalentName());
     const ForcefieldAngleTerm &term = *optTerm;
 
@@ -407,8 +407,8 @@ bool Forcefield::assignTorsionTermParameters(const Species *parent, SpeciesTorsi
 
     auto optTerm = getTorsionTerm(atomTypes[0], atomTypes[1], atomTypes[2], atomTypes[3]);
     if (!optTerm)
-        return Messenger::error("Failed to locate parameters for torsion {}-{}-{}-{} ({}-{}-{}-{}).\n", i->userIndex(),
-                                j->userIndex(), k->userIndex(), l->userIndex(), atomTypes[0].get().equivalentName(),
+        return Messenger::error("Failed to locate parameters for torsion {}-{}-{}-{} ({}-{}-{}-{}).\n", i->index(), j->index(),
+                                k->index(), l->index(), atomTypes[0].get().equivalentName(),
                                 atomTypes[1].get().equivalentName(), atomTypes[2].get().equivalentName(),
                                 atomTypes[3].get().equivalentName());
     const ForcefieldTorsionTerm &term = *optTerm;

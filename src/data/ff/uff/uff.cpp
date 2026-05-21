@@ -338,7 +338,7 @@ bool Forcefield_UFF::assignBondTermParameters(const Species *parent, SpeciesBond
     auto typeJ = determineTypes ? determineAtomType(*bond.j()) : atomTypeByName(bond.j()->atomType()->name());
     if (!typeI || !typeJ)
         return Messenger::error("Failed to create parameters for bond {}-{} (atom types could not be determined).\n",
-                                bond.i()->userIndex(), bond.j()->userIndex());
+                                bond.i()->index(), bond.j()->index());
 
     const ForcefieldAtomType &i = *typeI;
     const ForcefieldAtomType &j = *typeJ;
@@ -371,7 +371,7 @@ bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAng
 
     if (!typeI || !typeJ || !typeK)
         Messenger::error("Failed to create parameters for angle {}-{}-{} (atom types could not be determined).\n",
-                         angle.i()->userIndex(), angle.j()->userIndex(), angle.k()->userIndex());
+                         angle.i()->index(), angle.j()->index(), angle.k()->index());
 
     const ForcefieldAtomType &i = *typeI;
     const ForcefieldAtomType &j = *typeJ;
@@ -439,8 +439,7 @@ bool Forcefield_UFF::assignTorsionTermParameters(const Species *parent, SpeciesT
 
     if (!typeI || !typeJ || !typeK || !typeL)
         Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
-                         torsion.i()->userIndex(), torsion.j()->userIndex(), torsion.k()->userIndex(),
-                         torsion.l()->userIndex());
+                         torsion.i()->index(), torsion.j()->index(), torsion.k()->index(), torsion.l()->index());
 
     const ForcefieldAtomType &i = *typeI;
     const ForcefieldAtomType &j = *typeJ;
@@ -535,7 +534,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
 
     if (!optTypeI || !optTypeJ || !optTypeK || !optTypeL)
         Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
-                         i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex());
+                         i->index(), j->index(), k->index(), l->index());
 
     const ForcefieldAtomType &typeI = *optTypeI;
     const ForcefieldAtomType &typeJ = *optTypeJ;
