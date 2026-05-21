@@ -10,11 +10,11 @@
 // Forward Declarations
 class Configuration;
 
-class ExportXYZConfiguration : public Node
+class ExportXYZConfigurationNode : public Node
 {
     public:
-    ExportXYZConfiguration(Graph *parentGraph);
-    ~ExportXYZConfiguration() override = default;
+    ExportXYZConfigurationNode(Graph *parentGraph);
+    ~ExportXYZConfigurationNode() override = default;
 
     /*
      * Definition

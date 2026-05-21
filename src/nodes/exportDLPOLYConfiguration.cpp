@@ -7,7 +7,7 @@
 #include "nodes/constants.h"
 #include <fstream>
 
-ExportDLPOLYConfiguration::ExportDLPOLYConfiguration(Graph *parentGraph) : Node(parentGraph)
+ExportDLPOLYConfigurationNode::ExportDLPOLYConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Configuration to be exported", configuration_);
@@ -18,11 +18,11 @@ ExportDLPOLYConfiguration::ExportDLPOLYConfiguration(Graph *parentGraph) : Node(
                     tagWithIteration_);
 }
 
-std::string_view ExportDLPOLYConfiguration::type() const { return "ExportDLPOLYConfiguration"; }
+std::string_view ExportDLPOLYConfigurationNode::type() const { return "ExportDLPOLYConfiguration"; }
 
-std::string_view ExportDLPOLYConfiguration::summary() const { return "Export a configuration in DL_POLY format"; }
+std::string_view ExportDLPOLYConfigurationNode::summary() const { return "Export a configuration in DL_POLY format"; }
 
-NodeConstants::ProcessResult ExportDLPOLYConfiguration::process()
+NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
 {
     auto path = filePath_;
     if (tagWithIteration_)

@@ -6,7 +6,7 @@
 #include "nodes/constants.h"
 #include <fstream>
 
-ExportXYZConfiguration::ExportXYZConfiguration(Graph *parentGraph) : Node(parentGraph)
+ExportXYZConfigurationNode::ExportXYZConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput<Configuration *>("Configuration", "Configuration to be exported", configuration_);
@@ -18,14 +18,14 @@ ExportXYZConfiguration::ExportXYZConfiguration(Graph *parentGraph) : Node(parent
     addSerialisable("Iteration", iteration_);
 }
 
-std::string_view ExportXYZConfiguration::type() const { return "ExportXYZConfiguration"; }
+std::string_view ExportXYZConfigurationNode::type() const { return "ExportXYZConfiguration"; }
 
-std::string_view ExportXYZConfiguration::summary() const
+std::string_view ExportXYZConfigurationNode::summary() const
 {
     return "Export configuration coordinates from sequential frames of a coordinates.";
 }
 
-NodeConstants::ProcessResult ExportXYZConfiguration::process()
+NodeConstants::ProcessResult ExportXYZConfigurationNode::process()
 {
     auto path = filePath_;
     if (tagWithIteration_)
