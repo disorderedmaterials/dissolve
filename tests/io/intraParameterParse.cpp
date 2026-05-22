@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "math/mathFunc.h"

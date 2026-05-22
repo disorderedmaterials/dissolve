@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesBond.h"
+#include "classes/speciesAtom.h"
 
 // Return enum options for BondFunction
 EnumOptions<BondFunctions::Form> BondFunctions::forms()

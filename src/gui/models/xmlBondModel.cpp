@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/xmlBondModel.h"
-#include "classes/speciesAtom.h"
 
 XmlBondModel::XmlBondModel() {}
 

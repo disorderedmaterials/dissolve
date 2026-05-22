@@ -5,6 +5,7 @@
 
 #include "classes/atom.h"
 #include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "kernels/potentials/base.h"
 #include <memory>
 #include <vector>
