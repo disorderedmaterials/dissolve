@@ -97,12 +97,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     if (hasAngle(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1]))
                         return false;
-                    angles_[angleIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
-                                               &atoms_[parser.argi(3) - 1]);
+                    angles_[angleIndex] = SpeciesAngle(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                       &atoms_[parser.argi(3) - 1]);
                     a = angles_[angleIndex++];
                 }
                 else
-                    a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
+                    a = angles_.emplace_back(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                             &atoms_[parser.argi(3) - 1]);
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a
@@ -161,7 +162,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     break;
                 }
                 if (atomVectorFixed && atomIndex < atoms_.size())
+                {
                     atoms_[atomIndex].set(Z, parser.arg3d(3), parser.hasArg(7) ? parser.argd(7) : 0.0);
+                    atoms_[atomIndex].setIndex(atomIndex);
+                }
                 else
                 {
                     auto &i = atoms_.emplace_back(this);
@@ -192,7 +196,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     if (hasBond(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]))
                         return false;
-                    bonds_[bondIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]);
+                    bonds_[bondIndex] = SpeciesBond(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]);
                     b = bonds_[bondIndex++];
                 }
                 else
@@ -200,7 +204,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     auto i = parser.argi(1) - 1;
                     auto j = parser.argi(2) - 1;
                     // Check for existence of Bond already
-                    auto bondRef = getBond(&atom(i), &atom(j));
+                    auto bondRef = getBond(i, j);
                     if (bondRef)
                     {
                         Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it "
@@ -315,12 +319,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (hasImproper(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
                                     &atoms_[parser.argi(4) - 1]))
                         return false;
-                    impropers_[improperIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
-                                                     &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
+                    impropers_[improperIndex] = SpeciesImproper(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                                &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
                     imp = impropers_[improperIndex++];
                 }
                 else
-                    imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+                    imp = impropers_.emplace_back(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                  &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
 
                 // Check the functional form specified - if it starts with '@' it is a reference to common
                 // parameters
@@ -479,12 +484,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (hasTorsion(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
                                    &atoms_[parser.argi(4) - 1]))
                         return false;
-                    torsions_[torsionIndex].assign(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
-                                                   &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
+                    torsions_[torsionIndex] = SpeciesTorsion(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                             &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
                     torsion = torsions_[torsionIndex++];
                 }
                 else
-                    torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+                    torsion = torsions_.emplace_back(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
+                                                     &atoms_[parser.argi(3) - 1], &atoms_[parser.argi(4) - 1]);
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a
@@ -718,6 +724,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         Messenger::error("Unterminated Species block found.\n");
         errorsEncountered = true;
     }
+
+    finaliseGeometry();
 
     return (!errorsEncountered);
 }

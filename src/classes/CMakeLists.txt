@@ -2,7 +2,6 @@ add_library(
   classes
   angleFunctions.cpp
   array3DIterator.cpp
-  atom.cpp
   atomType.cpp
   bondFunctions.cpp
   box.cpp
@@ -83,6 +82,7 @@ add_library(
   atom.h
   atomConstants.h
   atomType.h
+  bond.h
   bondFunctions.h
   box.h
   braggReflection.h
@@ -98,6 +98,7 @@ add_library(
   distributor.h
   empiricalFormula.h
   exchangeables.h
+  fragment.h
   histogramSet.h
   interactionPotential.h
   isotopeMix.h

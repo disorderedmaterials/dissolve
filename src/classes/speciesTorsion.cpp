@@ -10,111 +10,15 @@
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
 SpeciesTorsion::SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(parent, TorsionFunctions::Form::None)
+    : SpeciesIntra(parent, TorsionFunctions::Form::None), i_(i), j_(j), k_(k), l_(l)
 {
-    assign(i, j, k, l);
 }
 
-SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) : SpeciesIntra(source) { this->operator=(source); }
-
-SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) noexcept : SpeciesIntra(source)
-{
-    // Detach source torsion referred to by the species atoms
-    if (source.i_ && source.j_ && source.k_ && source.l_)
-    {
-        source.i_->removeTorsion(source);
-        source.j_->removeTorsion(source);
-        source.k_->removeTorsion(source);
-        source.l_->removeTorsion(source);
-    }
-
-    // Copy data
-    assign(source.i_, source.j_, source.k_, source.l_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-
-    // Reset source data
-    source.i_ = nullptr;
-    source.j_ = nullptr;
-    source.k_ = nullptr;
-    source.l_ = nullptr;
-}
-
-SpeciesTorsion::~SpeciesTorsion() { detach(); }
-
-SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
-{
-    assign(source.i_, source.j_, source.k_, source.l_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    return *this;
-}
-
-SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source) noexcept
-{
-    if (i_ && j_ && k_ && l_)
-        detach();
-
-    // Copy data
-    assign(source.i_, source.j_, source.k_, source.l_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    return *this;
-}
+SpeciesTorsion::~SpeciesTorsion() = default;
 
 /*
  * Atom Information
  */
-
-// Rewrite SpeciesAtom pointer
-void SpeciesTorsion::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
-{
-    assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr || l_ == oldPtr);
-
-    if (i_ == oldPtr)
-        i_ = newPtr;
-    else if (j_ == oldPtr)
-        j_ = newPtr;
-    else if (k_ == oldPtr)
-        k_ = newPtr;
-    else
-        l_ = newPtr;
-}
-
-// Set Atoms involved in Torsion
-void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
-    assert(i_ && j_ && k_ && l_);
-
-    i_->addTorsion(*this);
-    j_->addTorsion(*this);
-    k_->addTorsion(*this);
-    l_->addTorsion(*this);
-}
-
-// Detach from current atoms
-void SpeciesTorsion::detach()
-{
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->removeTorsion(*this);
-        j_->removeTorsion(*this);
-        k_->removeTorsion(*this);
-        l_->removeTorsion(*this);
-    }
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
-}
 
 // Return first SpeciesAtom
 SpeciesAtom *SpeciesTorsion::i() const { return i_; }

@@ -5,20 +5,16 @@
 
 #include "base/serialiser.h"
 #include "classes/atom.h"
+#include "classes/bond.h"
 #include "classes/box.h"
 #include <vector>
 
-// Forward Declarations
-class StructureBond;
-
 // StructureAtom
-class StructureAtom : public Atom
+class StructureAtom : public Atom<Bond<StructureAtom>>
 {
     private:
     // Identifying name string
     std::string name_;
-    // Bonds to this atom
-    std::vector<StructureBond *> bonds_;
 
     public:
     // Copy the specified atom's data
@@ -34,49 +30,6 @@ class StructureAtom : public Atom
     {
         name_ = name;
         Atom::set(Elements::Unknown, r, q);
-    }
-    // Return bonds to this atom
-    const std::vector<StructureBond *> &bonds() const { return bonds_; }
-    // Add a bond to this atom
-    void addBond(StructureBond *bond) { bonds_.push_back(bond); }
-    // Remove bond from atom
-    void removeBond(StructureBond *bond) { bonds_.erase(std::remove(bonds_.begin(), bonds_.end(), bond)); }
-};
-
-// StructureBond
-class StructureBond : public Serialisable<>
-{
-    public:
-    StructureBond(StructureAtom *i, StructureAtom *j) : i_(i), j_(j)
-    {
-        i_->addBond(this);
-        j_->addBond(this);
-    }
-    virtual ~StructureBond() = default;
-
-    private:
-    StructureAtom *i_{nullptr}, *j_{nullptr};
-
-    public:
-    // Return the involved atoms
-    StructureAtom *i() const { return i_; }
-    StructureAtom *j() const { return j_; }
-    // Return the 'other' atom
-    StructureAtom *partner(const StructureAtom *atom) const { return (atom == i_ ? j_ : i_); }
-    // Return whether the bond's atoms match those provided
-    bool isBetween(const StructureAtom *i, const StructureAtom *j) const
-    {
-        return (i == i_ && j == j_) || (i == j_ && j == i_);
-    }
-
-    /*
-     * Serialisation
-     */
-    public:
-    // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
-    {
-        target[tag] = {{"i", i_->index()}, {"j", j_->index()}};
     }
 };
 
@@ -124,38 +77,25 @@ class Structure : public Serialisable<>
      */
     private:
     // Connectivity within the structure
-    std::vector<std::unique_ptr<StructureBond>> bonds_;
+    std::vector<std::unique_ptr<Bond<StructureAtom>>> bonds_;
 
     public:
     // Add new bond between specified atoms
-    StructureBond *addBond(int i, int j);
-    StructureBond *addBond(StructureAtom *i, StructureAtom *j);
+    Bond<StructureAtom> *addBond(int i, int j);
+    Bond<StructureAtom> *addBond(StructureAtom *i, StructureAtom *j);
     // Remove bond
     void removeBond(StructureAtom *i, StructureAtom *j);
-    void removeBond(StructureBond *bond);
+    void removeBond(Bond<StructureAtom> *bond);
     // Return vector of defined bonds
-    std::vector<std::unique_ptr<StructureBond>> &bonds();
-    const std::vector<std::unique_ptr<StructureBond>> &bonds() const;
+    std::vector<std::unique_ptr<Bond<StructureAtom>>> &bonds();
+    const std::vector<std::unique_ptr<Bond<StructureAtom>>> &bonds() const;
     // Return whether bond between atoms exists
     bool hasBond(const StructureAtom *i, const StructureAtom *j) const;
     // Return the bond between the specified Atoms
-    StructureBond *getBond(StructureAtom *i, StructureAtom *j);
-    StructureBond *getBond(const StructureAtom *i, const StructureAtom *j) const;
+    Bond<StructureAtom> *getBond(StructureAtom *i, StructureAtom *j);
+    Bond<StructureAtom> *getBond(const StructureAtom *i, const StructureAtom *j) const;
     // Clear bonds
     void clearBonds();
-
-    /*
-     * Operations
-     */
-    private:
-    // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-    void getIndicesRecursive(std::vector<int> &indices, int index, StructureBond *exclude,
-                             StructureBond *excludeToo = nullptr) const;
-
-    public:
-    // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
-    // provided
-    std::vector<int> fragment(int startIndex, StructureBond *exclude = nullptr, StructureBond *excludeToo = nullptr) const;
 
     /*
      * Box Definition

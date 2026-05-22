@@ -19,10 +19,6 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     SpeciesTorsion();
     SpeciesTorsion(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesTorsion() override;
-    SpeciesTorsion(SpeciesTorsion &source);
-    SpeciesTorsion(SpeciesTorsion &&source) noexcept;
-    SpeciesTorsion &operator=(const SpeciesTorsion &source);
-    SpeciesTorsion &operator=(SpeciesTorsion &&source) noexcept;
 
     /*
      * Atom Information
@@ -37,15 +33,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     // Fourth SpeciesAtom in interaction
     SpeciesAtom *l_{nullptr};
 
-    private:
-    // Detach from current atoms
-    void detach();
-
     public:
-    // Set Atoms involved in Torsion
-    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Rewrite SpeciesAtom pointer
-    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom

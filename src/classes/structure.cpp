@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/structure.h"
+#include "classes/bond.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 
@@ -118,7 +119,7 @@ std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() { return atoms_;
  */
 
 // Add new bond definition
-StructureBond *Structure::addBond(StructureAtom *i, StructureAtom *j)
+Bond<StructureAtom> *Structure::addBond(StructureAtom *i, StructureAtom *j)
 {
     // Check for existence of bond already
     auto bond = getBond(i, j);
@@ -129,9 +130,12 @@ StructureBond *Structure::addBond(StructureAtom *i, StructureAtom *j)
     }
 
     // OK to add new Bond
-    return bonds_.emplace_back(std::make_unique<StructureBond>(i, j)).get();
+    auto *newBond = bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i, j)).get();
+    i->addBond(newBond);
+    j->addBond(newBond);
+    return newBond;
 }
-StructureBond *Structure::addBond(int i, int j) { return addBond(atoms_[i].get(), atoms_[j].get()); }
+Bond<StructureAtom> *Structure::addBond(int i, int j) { return addBond(atoms_[i].get(), atoms_[j].get()); }
 
 // Remove bond
 void Structure::removeBond(StructureAtom *i, StructureAtom *j)
@@ -148,7 +152,7 @@ void Structure::removeBond(StructureAtom *i, StructureAtom *j)
     // Erase the bond
     bonds_.erase(it);
 }
-void Structure::removeBond(StructureBond *bondToRemove)
+void Structure::removeBond(Bond<StructureAtom> *bondToRemove)
 {
     auto it = std::ranges::find_if(bonds_, [bondToRemove](const auto &bond) { return bond.get() == bondToRemove; });
     if (it == bonds_.end())
@@ -162,8 +166,8 @@ void Structure::removeBond(StructureBond *bondToRemove)
 }
 
 // Return vector of bonds
-std::vector<std::unique_ptr<StructureBond>> &Structure::bonds() { return bonds_; }
-const std::vector<std::unique_ptr<StructureBond>> &Structure::bonds() const { return bonds_; }
+std::vector<std::unique_ptr<Bond<StructureAtom>>> &Structure::bonds() { return bonds_; }
+const std::vector<std::unique_ptr<Bond<StructureAtom>>> &Structure::bonds() const { return bonds_; }
 
 // Return whether bond between specified atoms exists
 bool Structure::hasBond(const StructureAtom *i, const StructureAtom *j) const
@@ -172,7 +176,7 @@ bool Structure::hasBond(const StructureAtom *i, const StructureAtom *j) const
 }
 
 // Return the bond between the specified atoms
-StructureBond *Structure::getBond(StructureAtom *i, StructureAtom *j)
+Bond<StructureAtom> *Structure::getBond(StructureAtom *i, StructureAtom *j)
 {
     auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond->isBetween(i, j); });
     if (it == bonds_.end())
@@ -180,7 +184,7 @@ StructureBond *Structure::getBond(StructureAtom *i, StructureAtom *j)
 
     return it->get();
 }
-StructureBond *Structure::getBond(const StructureAtom *i, const StructureAtom *j) const
+Bond<StructureAtom> *Structure::getBond(const StructureAtom *i, const StructureAtom *j) const
 {
     auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond->isBetween(i, j); });
     if (it == bonds_.end())
@@ -198,38 +202,6 @@ void Structure::clearBonds()
         bond->j()->removeBond(bond.get());
     }
     bonds_.clear();
-}
-
-/*
- * Operations
- */
-
-// Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-void Structure::getIndicesRecursive(std::vector<int> &indices, int index, StructureBond *exclude,
-                                    StructureBond *excludeToo) const
-{
-    // Loop over Bonds on specified Atom
-    indices.emplace_back(index);
-    const auto &i = atoms_[index];
-    for (const auto *bond : i->bonds())
-    {
-        // Is this either of the excluded bonds?
-        if (exclude == bond or excludeToo == bond)
-            continue;
-
-        // Get the partner atom in the bond and select it (if it is not selected already)
-        auto *j = bond->partner(i.get());
-        if (std::find(indices.begin(), indices.end(), j->index()) == indices.end())
-            getIndicesRecursive(indices, j->index(), exclude, excludeToo);
-    }
-}
-
-// Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
-std::vector<int> Structure::fragment(int startIndex, StructureBond *exclude, StructureBond *excludeToo) const
-{
-    std::vector<int> indices;
-    getIndicesRecursive(indices, startIndex, exclude, excludeToo);
-    return indices;
 }
 
 /*
@@ -291,6 +263,6 @@ void Structure::deserialise(const SerialisedValue &node)
                            {
                                auto &i = atoms_.at(toml::find<int>(bond, "i"));
                                auto &j = atoms_.at(toml::find<int>(bond, "j"));
-                               bonds_.emplace_back(std::make_unique<StructureBond>(i.get(), j.get()));
+                               bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i.get(), j.get()));
                            });
 }

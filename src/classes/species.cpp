@@ -73,23 +73,11 @@ bool Species::checkSetUp() const
      */
     for (auto &i : atoms_)
     {
-        if ((i.nBonds() == 0) && (atoms_.size() > 1))
+        if ((i.bonds().size() == 0) && (atoms_.size() > 1))
         {
             Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n",
                              i.userIndex(), Elements::symbol(i.Z()));
             ++nErrors;
-        }
-
-        // Check each Bond for two-way consistency
-        for (const SpeciesBond &bond : i.bonds())
-        {
-            auto *partner = bond.partner(&i);
-            if (!partner->getBond(&i))
-            {
-                Messenger::error("SpeciesAtom {} references a Bond to SpeciesAtom {}, but SpeciesAtom {} does not.\n",
-                                 i.userIndex(), partner->userIndex(), partner->userIndex());
-                ++nErrors;
-            }
         }
     }
     if (nErrors > 0)
@@ -306,8 +294,9 @@ void Species::deserialise(const SerialisedValue &node)
     Serialisable::toMap(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
                         { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
 
+    // We must finalise the geometry before we attempt to add sites as Fragment sites need the bond connectivity
+    finaliseGeometry();
+
     Serialisable::toMap(node, "sites", [this](const std::string &name, const SerialisedValue &site)
                         { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
-
-    finaliseGeometry();
 }

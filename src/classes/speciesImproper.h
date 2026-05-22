@@ -19,10 +19,6 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     SpeciesImproper();
     SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     ~SpeciesImproper() override;
-    SpeciesImproper(SpeciesImproper &source);
-    SpeciesImproper(SpeciesImproper &&source) noexcept;
-    SpeciesImproper &operator=(const SpeciesImproper &source);
-    SpeciesImproper &operator=(SpeciesImproper &&source) noexcept;
 
     /*
      * Atom Information
@@ -37,15 +33,7 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     // Fourth SpeciesAtom in interaction
     SpeciesAtom *l_{nullptr};
 
-    private:
-    // Detach from current atoms
-    void detach();
-
     public:
-    // Set Atoms involved in Improper
-    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Rewrite SpeciesAtom pointer
-    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom

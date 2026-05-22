@@ -106,14 +106,14 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
     path.push_back(i);
 
     auto neta = flags.isSet(NETADefinition::NETACreationFlags::IncludeRootElement) && currentDepth == 0
-                    ? std::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
-                    : std::format("nbonds={}", i->nBonds());
+                    ? std::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->bonds().size())
+                    : std::format("nbonds={}", i->bonds().size());
 
     // Add on each connected atom, provided it is not already in the path
     auto nH = 0;
     for (auto &b : i->bonds())
     {
-        auto j = b.get().partner(i);
+        auto j = b->partner(i);
 
         // Check for H
         if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && j->Z() == Elements::H)

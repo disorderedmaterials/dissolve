@@ -6,28 +6,6 @@
 #include "data/atomicMasses.h"
 #include <numeric>
 
-// Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-void Species::getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
-                                  OptionalReferenceWrapper<SpeciesBond> excludeToo) const
-{
-    // Loop over Bonds on specified Atom
-    indices.emplace_back(index);
-    const auto &i = atoms_[index];
-    for (const SpeciesBond &bond : i.bonds())
-    {
-        // Is this either of the excluded bonds?
-        if (exclude && &(*exclude).get() == &bond)
-            continue;
-        if (excludeToo && &(*excludeToo).get() == &bond)
-            continue;
-
-        // Get the partner atom in the bond and select it (if it is not selected already)
-        auto *j = bond.partner(&i);
-        if (std::find(indices.begin(), indices.end(), j->index()) == indices.end())
-            getIndicesRecursive(indices, j->index(), exclude, excludeToo);
-    }
-}
-
 // Return the number of atoms in the species (or only those with the specified presence)
 int Species::nAtoms(AtomConstants::Presence withPresence) const
 {
@@ -55,15 +33,6 @@ const SpeciesAtom &Species::atom(int n) const
 // Return a vector of SpeciesAtoms
 const std::vector<SpeciesAtom> &Species::atoms() const { return atoms_; }
 std::vector<SpeciesAtom> &Species::atoms() { return atoms_; }
-
-// Return the fragment containing the specified atom, optionally ignoring paths along the bond(s) provided
-std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude,
-                                   OptionalReferenceWrapper<SpeciesBond> excludeToo) const
-{
-    std::vector<int> indices;
-    getIndicesRecursive(indices, startIndex, exclude, excludeToo);
-    return indices;
-}
 
 // Return total atomic mass of Species
 double Species::mass() const

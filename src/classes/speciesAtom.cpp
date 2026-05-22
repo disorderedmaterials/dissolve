@@ -11,52 +11,6 @@
 
 SpeciesAtom::SpeciesAtom(Species *parent) : parent_(parent) {}
 
-SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
-
-SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
-{
-    move(source);
-
-    return *this;
-}
-
-// Move all data from source to this
-void SpeciesAtom::move(SpeciesAtom &source)
-{
-    parent_ = source.parent_;
-    Z_ = source.Z_;
-    r_ = source.r_;
-    q_ = source.q_;
-    atomType_ = source.atomType_;
-    index_ = source.index_;
-
-    bonds_ = std::move(source.bonds_);
-    angles_ = std::move(source.angles_);
-    torsions_ = std::move(source.torsions_);
-    impropers_ = std::move(source.impropers_);
-
-    // Rewrite pointers in intramolecular terms
-    for (auto &bond : bonds_)
-        bond.get().switchAtom(&source, this);
-    for (auto &angle : angles_)
-        angle.get().switchAtom(&source, this);
-    for (auto &torsion : torsions_)
-        torsion.get().switchAtom(&source, this);
-    for (auto &improper : impropers_)
-        improper.get().switchAtom(&source, this);
-
-    // Tidy old data
-    source.Z_ = Elements::Unknown;
-    source.r_ = {};
-    source.q_ = 0.0;
-    source.atomType_ = nullptr;
-    source.index_ = -1;
-    source.bonds_.clear();
-    source.angles_.clear();
-    source.torsions_.clear();
-    source.impropers_.clear();
-}
-
 /*
  * Properties
  */
@@ -87,93 +41,55 @@ int SpeciesAtom::userIndex() const { return index_ + 1; }
 /*
  * Bond Information
  */
-
-// Add Bond reference
-void SpeciesAtom::addBond(SpeciesBond &bond)
-{
-    if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b) { return &b == &bond; }) == bonds_.end())
-        bonds_.emplace_back(bond);
-}
-
-// Remove Bond reference
-void SpeciesAtom::removeBond(SpeciesBond &b)
-{
-    bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond) { return &b == &bond; }));
-}
-
-// Return number of Bond references
-int SpeciesAtom::nBonds() const { return bonds_.size(); }
-
-// Return specified bond
-SpeciesBond &SpeciesAtom::bond(int index) { return bonds_.at(index); }
-
-// Return bonds list
-const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() const { return bonds_; }
-
-// Return whether Bond to specified Atom exists
-OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *partner)
-{
-    auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner; });
-    if (result == bonds_.end())
-        return std::nullopt;
-    return *result;
-}
+//
+// // Add Bond reference
+// void SpeciesAtom::addBond(SpeciesBond &bond)
+// {
+//     if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b) { return &b == &bond; }) == bonds_.end())
+//         bonds_.emplace_back(bond);
+// }
+//
+// // Remove Bond reference
+// void SpeciesAtom::removeBond(SpeciesBond &b)
+// {
+//     bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond) { return &b == &bond; }));
+// }
+//
+// // Return number of Bond references
+// int SpeciesAtom::nBonds() const { return bonds_.size(); }
+//
+// // Return specified bond
+// SpeciesBond &SpeciesAtom::bond(int index) { return bonds_.at(index); }
+//
+// // Return bonds list
+// const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() const { return bonds_; }
+//
+// // Return whether Bond to specified Atom exists
+// OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *partner)
+// {
+//     auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner;
+//     }); if (result == bonds_.end())
+//         return std::nullopt;
+//     return *result;
+// }
 
 // Add specified SpeciesAngle to Atom
-void SpeciesAtom::addAngle(SpeciesAngle &angle) { angles_.emplace_back(angle); }
-
-// Remove angle reference
-void SpeciesAtom::removeAngle(SpeciesAngle &angle)
-{
-    angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle &a) { return &a == &angle; }));
-}
-
-// Return the number of Angles in which the Atom is involved
-int SpeciesAtom::nAngles() const { return angles_.size(); }
-
-// Return specified angle
-SpeciesAngle &SpeciesAtom::angle(int index) { return angles_.at(index); }
+void SpeciesAtom::addAngle(const SpeciesAngle *angle) { angles_.emplace_back(angle); }
 
 // Return array of Angles in which the Atom is involved
-const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesAtom::angles() const { return angles_; }
+const std::vector<const SpeciesAngle *> &SpeciesAtom::angles() const { return angles_; }
 
 // Add specified SpeciesTorsion to Atom
-void SpeciesAtom::addTorsion(SpeciesTorsion &torsion) { torsions_.emplace_back(torsion); }
-
-// Remove torsion reference
-void SpeciesAtom::removeTorsion(SpeciesTorsion &torsion)
-{
-    torsions_.erase(
-        find_if(torsions_.begin(), torsions_.end(), [&torsion](const SpeciesTorsion &t) { return &t == &torsion; }));
-}
-
-// Return the number of Torsions in which the Atom is involved
-int SpeciesAtom::nTorsions() const { return torsions_.size(); }
-
-// Return specified torsion
-SpeciesTorsion &SpeciesAtom::torsion(int index) { return torsions_.at(index); }
+void SpeciesAtom::addTorsion(const SpeciesTorsion *torsion) { torsions_.emplace_back(torsion); }
 
 // Return array of Torsions in which the Atom is involved
-const std::vector<std::reference_wrapper<SpeciesTorsion>> &SpeciesAtom::torsions() const { return torsions_; }
+const std::vector<const SpeciesTorsion *> &SpeciesAtom::torsions() const { return torsions_; }
 
 // Add specified SpeciesImproper to Atom
-void SpeciesAtom::addImproper(SpeciesImproper &improper) { impropers_.emplace_back(improper); }
-
-// Remove improper reference
-void SpeciesAtom::removeImproper(SpeciesImproper &improper)
-{
-    impropers_.erase(
-        find_if(impropers_.begin(), impropers_.end(), [&improper](const SpeciesImproper &i) { return &i == &improper; }));
-}
-
-// Return the number of Impropers in which the Atom is involved
-int SpeciesAtom::nImpropers() const { return impropers_.size(); }
-
-// Return specified improper
-SpeciesImproper &SpeciesAtom::improper(int index) { return impropers_.at(index); }
+void SpeciesAtom::addImproper(const SpeciesImproper *improper) { impropers_.emplace_back(improper); }
 
 // Return array of Impropers in which the Atom is involved
-const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::impropers() const { return impropers_; }
+const std::vector<const SpeciesImproper *> &SpeciesAtom::impropers() const { return impropers_; }
 
 // Set all scaled intramolecular interactions
 void SpeciesAtom::setScaledInteractions()
@@ -196,47 +112,45 @@ void SpeciesAtom::setScaledInteractions()
      */
 
     // Bonds
-    for (const auto &b : bonds_)
-        addInteractionFunction(b.get().partner(this), SpeciesAtom::ScaledInteraction::Excluded, 0.0, 0.0);
+    for (const auto b : bonds_)
+        addInteractionFunction(b->partner(this), SpeciesAtom::ScaledInteraction::Excluded, 0.0, 0.0);
 
     // Angles
-    for (const auto &aRef : angles_)
+    for (const auto angle : angles_)
     {
-        auto &a = aRef.get();
-
-        if (a.i() != this)
-            addInteractionFunction(a.i(), ScaledInteraction::Excluded, 0.0, 0.0);
-        if (a.j() != this)
-            addInteractionFunction(a.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-        if (a.k() != this)
-            addInteractionFunction(a.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (angle->i() != this)
+            addInteractionFunction(angle->i(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (angle->j() != this)
+            addInteractionFunction(angle->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (angle->k() != this)
+            addInteractionFunction(angle->k(), ScaledInteraction::Excluded, 0.0, 0.0);
     }
 
     // Torsions
-    for (const auto &tRef : torsions_)
+    for (const auto torsion : torsions_)
     {
-        auto &t = tRef.get();
-
-        if (t.i() == this)
+        if (torsion->i() == this)
         {
-            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.l(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
+            addInteractionFunction(torsion->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->l(), ScaledInteraction::Scaled, torsion->electrostatic14Scaling(),
+                                   torsion->vanDerWaals14Scaling());
         }
-        else if (t.l() == this)
+        else if (torsion->l() == this)
         {
-            addInteractionFunction(t.i(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
-            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->i(), ScaledInteraction::Scaled, torsion->electrostatic14Scaling(),
+                                   torsion->vanDerWaals14Scaling());
+            addInteractionFunction(torsion->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->k(), ScaledInteraction::Excluded, 0.0, 0.0);
         }
         else
         {
-            addInteractionFunction(t.i(), ScaledInteraction::Excluded, 0.0, 0.0);
-            addInteractionFunction(t.l(), ScaledInteraction::Excluded, 0.0, 0.0);
-            if (t.j() != this)
-                addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
-            if (t.k() != this)
-                addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->i(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(torsion->l(), ScaledInteraction::Excluded, 0.0, 0.0);
+            if (torsion->j() != this)
+                addInteractionFunction(torsion->j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            if (torsion->k() != this)
+                addInteractionFunction(torsion->k(), ScaledInteraction::Excluded, 0.0, 0.0);
         }
     }
 }
@@ -296,8 +210,8 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
             return AtomGeometry::Octahedral;
             // For the remaining types, take averages of bond angles about the atom
         case (2):
-            h = bonds[0].get().partner(i);
-            j = bonds[1].get().partner(i);
+            h = bonds[0]->partner(i);
+            j = bonds[1]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > 150.0)
                 return AtomGeometry::Linear;
@@ -305,15 +219,15 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
                 return AtomGeometry::Tetrahedral;
             break;
         case (3):
-            h = bonds[0].get().partner(i);
-            j = bonds[1].get().partner(i);
+            h = bonds[0]->partner(i);
+            j = bonds[1]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             largest = angle;
-            j = bonds[2].get().partner(i);
+            j = bonds[2]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
-            h = bonds[1].get().partner(i);
+            h = bonds[1]->partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
@@ -328,12 +242,12 @@ SpeciesAtom::AtomGeometry SpeciesAtom::geometry(const SpeciesAtom *i)
             // Two possibilities - tetrahedral or square planar. Tetrahedral will have an
             // average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
             angle = 0.0;
-            for (auto n = 0; n < i->nBonds(); ++n)
+            for (auto n = 0; n < i->bonds().size(); ++n)
             {
-                h = bonds[n].get().partner(i);
-                for (auto m = n + 1; m < i->nBonds(); ++m)
+                h = bonds[n]->partner(i);
+                for (auto m = n + 1; m < i->bonds().size(); ++m)
                 {
-                    j = bonds[m].get().partner(i);
+                    j = bonds[m]->partner(i);
                     angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
                 }
             }

@@ -5,8 +5,8 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/coreData.h"
+#include "classes/fragment.h"
 #include "classes/species.h"
-#include "data/atomicRadii.h"
 #include "templates/algorithms.h"
 #include <algorithm>
 
@@ -22,27 +22,18 @@ bool Species::hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const
 }
 bool Species::hasBond(int i, int j) const { return hasBond(&atom(i), &atom(j)); }
 
-// Return the SpeciesBond between the specified SpeciesAtoms
-OptionalReferenceWrapper<SpeciesBond> Species::getBond(SpeciesAtom *i, SpeciesAtom *j)
+// Return the SpeciesBond between the specified SpeciesAtom indices
+OptionalReferenceWrapper<SpeciesBond> Species::getBond(int indexI, int indexJ)
 {
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+
     auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond.matches(i, j); });
     if (it == bonds_.end())
         return {};
 
     return *it;
 }
-OptionalReferenceWrapper<const SpeciesBond> Species::getBond(const SpeciesAtom *i, const SpeciesAtom *j) const
-{
-    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
-    if (it == bonds_.end())
-        return {};
-
-    return *it;
-}
-
-// Return the SpeciesBond between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j) { return getBond(&atom(i), &atom(j)); }
-OptionalReferenceWrapper<const SpeciesBond> Species::getBond(int i, int j) const { return getBond(&atom(i), &atom(j)); }
 
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
@@ -61,112 +52,6 @@ void Species::removePeriodicBonds()
         bonds_.erase(it, bonds_.end());
 }
 
-// Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-void Species::updateIntramolecularTerms()
-{
-    SpeciesAtom *i, *j, *k, *l;
-
-    // Loop over bonds 'jk'
-    for (auto &jk : bonds_)
-    {
-        // Get atoms 'j' and 'k'
-        j = jk.i();
-        k = jk.j();
-
-        // Swap j and k over if j is terminal and has only a single bond (i.e. jk)
-        if (j->nBonds() == 1)
-            std::swap(j, k);
-
-        // Loop over bonds 'ij'
-        for (SpeciesBond &ij : j->bonds())
-        {
-            // Avoid 'ij' == 'jk'
-            if (&ij == &jk)
-                continue;
-
-            // Get atom 'i'
-            i = ij.partner(j);
-
-            // Attempt to add angle term 'ijk' if 'i' > 'k'
-            if (!hasAngle(i, j, k))
-                addAngle(i, j, k);
-
-            // Loop over bonds 'kl'
-            for (SpeciesBond &kl : k->bonds())
-            {
-                // Avoid 'kl' == 'jk'
-                if (&kl == &jk)
-                    continue;
-
-                // Get atom 'l'
-                l = kl.partner(k);
-
-                // Attempt to add angle term 'jkl'
-                if (!hasAngle(j, k, l))
-                    addAngle(j, k, l);
-
-                // If the torsion i-j-k-l doesn't already exist, add it now.
-                if (!hasTorsion(i, j, k, l))
-                    addTorsion(i, j, k, l);
-            }
-        }
-    }
-    auto atomsContains = [this](const auto *x)
-    { return std::find_if(atoms_.begin(), atoms_.end(), [&x](const auto &p) { return &p == x; }) != atoms_.end(); };
-
-    // Check existing angle terms for any that are invalid
-    angles_.erase(std::remove_if(angles_.begin(), angles_.end(),
-                                 [this, &atomsContains](const auto &angle)
-                                 {
-                                     return ((!atomsContains(angle.i())) || (!atomsContains(angle.j())) ||
-                                             (!atomsContains(angle.k()))) ||
-                                            ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
-                                 }),
-                  angles_.end());
-
-    // Remove torsions with invalid atoms or bonds
-    torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(),
-                                   [this, &atomsContains](const auto &torsion)
-                                   {
-                                       return ((!atomsContains(torsion.i())) || (!atomsContains(torsion.j())) ||
-                                               (!atomsContains(torsion.k())) || (!atomsContains(torsion.l()))) ||
-                                              ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
-                                               (!hasBond(torsion.k(), torsion.l())));
-                                   }),
-                    torsions_.end());
-
-    // Remove impropers with invalid atoms or bonds
-    impropers_.erase(std::remove_if(impropers_.begin(), impropers_.end(),
-                                    [this, &atomsContains](const auto &improper)
-                                    {
-                                        return ((!atomsContains(improper.i())) || (!atomsContains(improper.j())) ||
-                                                (!atomsContains(improper.k())) || (!atomsContains(improper.l()))) ||
-                                               ((!hasBond(improper.i(), improper.j())) ||
-                                                (!hasBond(improper.j(), improper.k())) ||
-                                                (!hasBond(improper.k(), improper.l())));
-                                    }),
-                     impropers_.end());
-}
-
-// Add new SpeciesAngle definition
-SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
-{
-    // Check for existence of Angle already
-    auto angleRef = getAngle(i, j, k);
-    if (angleRef)
-    {
-        Messenger::warn("Refused to add a new Angle between atoms {}, {} and {} in Species '{}' since it already exists.\n",
-                        i->userIndex(), j->userIndex(), k->userIndex(), name_);
-        return *angleRef;
-    }
-
-    // OK to add new angle
-    angles_.emplace_back(this, i, j, k);
-
-    return angles_.back();
-}
-SpeciesAngle &Species::addAngle(int i, int j, int k) { return addAngle(&atom(i), &atom(j), &atom(k)); }
-
 // Return vector of SpeciesAngle
 std::vector<SpeciesAngle> &Species::angles() { return angles_; }
 
@@ -178,50 +63,19 @@ bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
     return std::any_of(angles_.cbegin(), angles_.cend(), [i, j, k](const auto &angle) { return angle.matches(i, j, k); });
 }
 
-// Return the SpeciesAngle between the specified SpeciesAtoms
-OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
-{
-    auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
-    if (it == angles_.end())
-        return {};
-
-    return *it;
-}
-OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                               const SpeciesAtom *k) const
-{
-    auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
-    if (it == angles_.end())
-        return {};
-
-    return *it;
-}
-
 // Return the SpeciesAngle between the specified SpeciesAtom indic
-OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(int i, int j, int k) { return getAngle(&atom(i), &atom(j), &atom(k)); }
-OptionalReferenceWrapper<const SpeciesAngle> Species::getAngle(int i, int j, int k) const
+OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(int indexI, int indexJ, int indexK)
 {
-    return getAngle(&atom(i), &atom(j), &atom(k));
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+    auto *k = &atoms_[indexK];
+
+    auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
+    if (it == angles_.end())
+        return {};
+
+    return *it;
 }
-
-// Add new SpeciesTorsion definition
-SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    // Check for existence of Torsion already
-    if (hasTorsion(i, j, k, l))
-    {
-        Messenger::warn("Refused to add a new Torsion between atoms {}, {}, {} and {} in Species '{}' since it already "
-                        "exists.\n",
-                        i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_);
-        return *getTorsion(i, j, k, l);
-    }
-
-    // OK to add new torsion
-    torsions_.emplace_back(this, i, j, k, l);
-
-    return torsions_.back();
-}
-SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l) { return addTorsion(&atom(i), &atom(j), &atom(k), &atom(l)); }
 
 // Return vector of SpeciesTorsions
 std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
@@ -234,57 +88,20 @@ bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Species
     return std::any_of(torsions_.cbegin(), torsions_.cend(), [&](const auto &t) { return t.matches(i, j, k, l); });
 }
 
-// Return the SpeciesTorsion between the specified SpeciesAtoms
-OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    auto it =
-        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
-    if (it == torsions_.end())
-        return {};
-
-    return *it;
-}
-OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                   const SpeciesAtom *k, const SpeciesAtom *l) const
-{
-    auto it =
-        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
-    if (it == torsions_.end())
-        return {};
-
-    return *it;
-}
-
 // Return the SpeciesTorsion between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(int i, int j, int k, int l)
+OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(int indexI, int indexJ, int indexK, int indexL)
 {
-    return getTorsion(&atom(i), &atom(j), &atom(k), &atom(l));
-}
-OptionalReferenceWrapper<const SpeciesTorsion> Species::getTorsion(int i, int j, int k, int l) const
-{
-    return getTorsion(&atom(i), &atom(j), &atom(k), &atom(l));
-}
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+    auto *k = &atoms_[indexK];
+    auto *l = &atoms_[indexL];
 
-// Add new SpeciesImproper definition
-SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    // Check for existence of Improper already
-    if (hasImproper(i, j, k, l))
-    {
-        Messenger::warn("Refused to add a new Improper between atoms {}, {}, {} and {} in Species '{}' since it "
-                        "already exists.\n",
-                        i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_);
-        return *getImproper(i, j, k, l);
-    }
+    auto it =
+        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
+    if (it == torsions_.end())
+        return {};
 
-    // OK to add new improper
-    impropers_.emplace_back(this, i, j, k, l);
-
-    return impropers_.back();
-}
-SpeciesImproper &Species::addImproper(int i, int j, int k, int l)
-{
-    return addImproper(&atom(i), &atom(j), &atom(k), &atom(l));
+    return *it;
 }
 
 // Return vector of SpeciesImproper
@@ -299,46 +116,107 @@ bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Specie
                        [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
 }
 
-// Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
-OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    auto it = std::find_if(impropers_.begin(), impropers_.end(),
-                           [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
-    if (it == impropers_.end())
-        return {};
-
-    return *it;
-}
-OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                     const SpeciesAtom *k, const SpeciesAtom *l) const
-{
-    auto it = std::find_if(impropers_.begin(), impropers_.end(),
-                           [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
-    if (it == impropers_.end())
-        return {};
-
-    return *it;
-}
-
 // Return the SpeciesImproper between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(int i, int j, int k, int l)
+OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(int indexI, int indexJ, int indexK, int indexL)
 {
-    return getImproper(&atom(i), &atom(j), &atom(k), &atom(l));
-}
-OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(int i, int j, int k, int l) const
-{
-    return getImproper(&atom(i), &atom(j), &atom(k), &atom(l));
+    auto *i = &atoms_[indexI];
+    auto *j = &atoms_[indexJ];
+    auto *k = &atoms_[indexK];
+    auto *l = &atoms_[indexL];
+
+    auto it = std::find_if(impropers_.begin(), impropers_.end(),
+                           [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
+    if (it == impropers_.end())
+        return {};
+
+    return *it;
 }
 
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
 
+// Determine angles and torsions from bond connectivity
+void Species::determineAnglesAndTorsions()
+{
+    for (auto &jk : bonds_)
+    {
+        // Get atoms 'j' and 'k'
+        auto *j = jk.i();
+        auto *k = jk.j();
+
+        // Swap j and k over if j is terminal and has only a single bond (i.e. jk)
+        if (j->bonds().size() == 1)
+            std::swap(j, k);
+
+        // Loop over bonds 'ij'
+        for (auto *ij : j->bonds())
+        {
+            // Avoid 'ij' == 'jk'
+            if (ij == &jk)
+                continue;
+
+            // Get atom 'i'
+            auto *i = ij->partner(j);
+
+            // ADd angle i-j-k
+            angles_.emplace_back(this, i, j, k);
+
+            // Loop over bonds 'kl'
+            for (auto kl : k->bonds())
+            {
+                // Avoid 'kl' == 'jk'
+                if (kl == &jk)
+                    continue;
+
+                // Get atom 'l'
+                auto *l = kl->partner(k);
+
+                // Add angle j-k-l
+                angles_.emplace_back(this, j, k, l);
+
+                // Add torsion i-j-k-l
+                torsions_.emplace_back(this, i, j, k, l);
+            }
+        }
+    }
+}
 // Finalise internal relationships related to geometry once it is defined
 void Species::finaliseGeometry()
 {
+    // From the lists of intramolecular terms, let our atoms know that they are present in them
+    for (const auto &bond : bonds_)
+    {
+        bond.i()->addBond(&bond);
+        bond.j()->addBond(&bond);
+    }
+    for (const auto &angle : angles_)
+    {
+        angle.i()->addAngle(&angle);
+        angle.j()->addAngle(&angle);
+        angle.k()->addAngle(&angle);
+    }
+    for (const auto &torsion : torsions_)
+    {
+        torsion.i()->addTorsion(&torsion);
+        torsion.j()->addTorsion(&torsion);
+        torsion.k()->addTorsion(&torsion);
+        torsion.l()->addTorsion(&torsion);
+    }
+    for (const auto &improper : impropers_)
+    {
+        improper.i()->addImproper(&improper);
+        improper.j()->addImproper(&improper);
+        improper.k()->addImproper(&improper);
+        improper.l()->addImproper(&improper);
+    }
+
     // Set-up excluded / scaled interactions on atoms arising from bonds, angles, and torsions
+    auto index = 0;
     for (auto &i : atoms_)
+    {
         i.setScaledInteractions();
+        i.setIndex(index++);
+    }
 
     // If this is a periodic species, we're done
     if (box_->type() != Box::BoxType::NonPeriodic)
@@ -352,7 +230,7 @@ void Species::finaliseGeometry()
     for (auto &bond : bonds_)
     {
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        auto selection = fragment(bond.i()->index(), bond);
+        auto selection = Fragment<SpeciesAtom, SpeciesBond>::get(atoms_, bond.i()->index(), {&bond});
 
         // If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
@@ -370,19 +248,19 @@ void Species::finaliseGeometry()
             bond.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
-        selection = fragment(bond.j()->index(), bond);
+        selection = Fragment<SpeciesAtom, SpeciesBond>::get(atoms_, bond.j()->index(), {&bond});
         bond.setAttachedAtoms(1, selection);
     }
 
     // Angles - termini are 'i' and 'k'
     for (auto &angle : angles_)
     {
-        // Grab relevant Bonds (if they exist)
-        auto ji = angle.j()->getBond(angle.i());
-        auto jk = angle.j()->getBond(angle.k());
+        // Grab relevant bonds
+        auto ji = angle.j()->getBondWith(angle.i());
+        auto jk = angle.j()->getBondWith(angle.k());
 
         // Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
-        auto selection = fragment(angle.i()->index(), *ji, *jk);
+        auto selection = Fragment<SpeciesAtom, SpeciesBond>::get(atoms_, angle.i()->index(), {ji, jk});
 
         // Remove Atom 'j' from the list if it's there
         auto jit = std::find(selection.begin(), selection.end(), angle.j()->index());
@@ -405,7 +283,7 @@ void Species::finaliseGeometry()
             angle.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        selection = fragment(angle.k()->index(), *ji, jk);
+        selection = Fragment<SpeciesAtom, SpeciesBond>::get(atoms_, angle.k()->index(), {ji, jk});
 
         // Remove Atom 'j' from the list if it's there
         jit = std::find(selection.begin(), selection.end(), angle.j()->index());
@@ -419,10 +297,10 @@ void Species::finaliseGeometry()
     for (auto &torsion : torsions_)
     {
         // Grab relevant Bond (if it exists)
-        auto jk = torsion.j()->getBond(torsion.k());
+        auto jk = torsion.j()->getBondWith(torsion.k());
 
         // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
-        auto selection = fragment(torsion.j()->index(), *jk);
+        auto selection = Fragment<SpeciesAtom, SpeciesBond>::get(atoms_, torsion.j()->index(), {jk});
 
         // Remove Atom 'j' from the list
         selection.erase(std::remove(selection.begin(), selection.end(), torsion.j()->index()));
@@ -444,7 +322,7 @@ void Species::finaliseGeometry()
             torsion.setAttachedAtoms(0, selection);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-        selection = fragment(torsion.k()->index(), *jk);
+        selection = Fragment<SpeciesAtom, SpeciesBond>::get(atoms_, torsion.k()->index(), {jk});
 
         // Remove Atom 'k' from the list
         selection.erase(std::remove(selection.begin(), selection.end(), torsion.k()->index()));

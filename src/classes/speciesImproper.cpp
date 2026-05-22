@@ -9,111 +9,15 @@
 SpeciesImproper::SpeciesImproper() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 
 SpeciesImproper::SpeciesImproper(Species *parent, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(parent, TorsionFunctions::Form::None)
+    : SpeciesIntra(parent, TorsionFunctions::Form::None), i_(i), j_(j), k_(k), l_(l)
 {
-    assign(i, j, k, l);
 }
 
-SpeciesImproper::SpeciesImproper(SpeciesImproper &source) : SpeciesIntra(source) { this->operator=(source); }
-
-SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) noexcept : SpeciesIntra(source)
-{
-    // Detach source torsion referred to by the species atoms
-    if (source.i_ && source.j_ && source.k_ && source.l_)
-    {
-        source.i_->removeImproper(source);
-        source.j_->removeImproper(source);
-        source.k_->removeImproper(source);
-        source.l_->removeImproper(source);
-    }
-
-    // Copy data
-    assign(source.i_, source.j_, source.k_, source.l_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-
-    // Reset source data
-    source.i_ = nullptr;
-    source.j_ = nullptr;
-    source.k_ = nullptr;
-    source.l_ = nullptr;
-}
-
-SpeciesImproper::~SpeciesImproper() { detach(); }
-
-SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
-{
-    assign(source.i_, source.j_, source.k_, source.l_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    return *this;
-}
-
-SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source) noexcept
-{
-    if (i_ && j_ && k_ && l_)
-        detach();
-
-    assign(source.i_, source.j_, source.k_, source.l_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    return *this;
-}
+SpeciesImproper::~SpeciesImproper() = default;
 
 /*
  * Atom Information
  */
-
-// Rewrite SpeciesAtom pointer
-void SpeciesImproper::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
-{
-    assert(i_ == oldPtr || j_ == oldPtr || k_ == oldPtr || l_ == oldPtr);
-
-    if (i_ == oldPtr)
-        i_ = newPtr;
-    else if (j_ == oldPtr)
-        j_ = newPtr;
-    else if (k_ == oldPtr)
-        k_ = newPtr;
-    else
-        l_ = newPtr;
-}
-
-// Set Atoms involved in Improper
-void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
-
-    assert(i_ && j_ && k_ && l_);
-
-    i_->addImproper(*this);
-    j_->addImproper(*this);
-    k_->addImproper(*this);
-    l_->addImproper(*this);
-}
-
-// Detach from current atoms
-void SpeciesImproper::detach()
-{
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->removeImproper(*this);
-        j_->removeImproper(*this);
-        k_->removeImproper(*this);
-        l_->removeImproper(*this);
-    }
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
-}
 
 // Return first SpeciesAtom
 SpeciesAtom *SpeciesImproper::i() const { return i_; }

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "classes/bond.h"
 #include "classes/bondFunctions.h"
 #include "classes/speciesIntra.h"
 #include <vector>
@@ -13,41 +14,19 @@ class SpeciesAtom;
 class Species;
 
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
+class SpeciesBond : public Bond<SpeciesAtom>, public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
     SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j);
-    ~SpeciesBond() override = default;
-    SpeciesBond(SpeciesBond &source);
-    SpeciesBond(SpeciesBond &&source) noexcept;
-    SpeciesBond &operator=(const SpeciesBond &source);
-    SpeciesBond &operator=(SpeciesBond &&source) noexcept;
+    ~SpeciesBond() override;
 
     /*
      * SpeciesAtom Information
      */
-    private:
-    // First SpeciesAtom in interaction
-    SpeciesAtom *i_{nullptr};
-    // Second SpeciesAtom in interaction
-    SpeciesAtom *j_{nullptr};
-
     public:
-    // Assign the two atoms in the bond
-    void assign(SpeciesAtom *i, SpeciesAtom *j);
-    // Set scaled intramolecular interactions on the involved atoms
-    void addScaledInteractions();
-    // Rewrite SpeciesAtom pointer
-    void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
-    // Return first SpeciesAtom
-    SpeciesAtom *i() const;
-    // Return second SpeciesAtom
-    SpeciesAtom *j() const;
     // Return vector of involved atoms
     std::vector<const SpeciesAtom *> atoms() const override;
-    // Return the 'other' SpeciesAtom
-    SpeciesAtom *partner(const SpeciesAtom *i) const;
     // Return index (in parent Species) of first SpeciesAtom
     int indexI() const;
     // Return index (in parent Species) of second SpeciesAtom
@@ -56,8 +35,6 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     int index(int n) const;
     // Return whether SpeciesAtoms match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j) const;
-    // Detach from current atoms
-    void detach();
 
     /*
      * Interaction Parameters

@@ -59,7 +59,7 @@ void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeF
     atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
 
     auto &i = atoms_.emplace_back(this);
-    i.set(Z, {}, 0.0);
+    i.set(Z, {});
     i.setIndex(0);
     i.setAtomType(atomType);
 
@@ -83,6 +83,4 @@ void Species::load(std::string_view tomlFile)
         auto name = contents["species"]["name"].as_string();
         setName(name.str);
     }
-
-    finaliseGeometry();
 }

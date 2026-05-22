@@ -20,18 +20,10 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Atom
+class SpeciesAtom : public Atom<const SpeciesBond>
 {
     public:
     SpeciesAtom(Species *parent);
-    SpeciesAtom(SpeciesAtom &source) = delete;
-    SpeciesAtom(SpeciesAtom &&source) noexcept;
-    SpeciesAtom &operator=(const SpeciesAtom &source) = delete;
-    SpeciesAtom &operator=(SpeciesAtom &&source) noexcept;
-
-    private:
-    // Move all data from source to this
-    void move(SpeciesAtom &source);
 
     /*
      * Properties
@@ -66,60 +58,28 @@ class SpeciesAtom : public Atom
     using ScaledInteractionDefinition = std::tuple<ScaledInteraction, double, double>;
 
     private:
-    // Vector of bonds which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
     // Vector of angles which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesAngle>> angles_;
+    std::vector<const SpeciesAngle *> angles_;
     // Vector of torsions which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
+    std::vector<const SpeciesTorsion *> torsions_;
     // Vector of torsions which this atom participates in
-    std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
+    std::vector<const SpeciesImproper *> impropers_;
     // Vector of Atoms with scaled or excluded interactions
     std::vector<std::pair<const SpeciesAtom *, ScaledInteractionDefinition>> scaledInteractions_;
 
     public:
-    // Add bond reference
-    void addBond(SpeciesBond &b);
-    // Remove bond reference
-    void removeBond(SpeciesBond &b);
-    // Return number of bonds
-    int nBonds() const;
-    // Return specified bond
-    SpeciesBond &bond(int index);
-    // Return bonds list
-    const std::vector<std::reference_wrapper<SpeciesBond>> &bonds() const;
-    // Return whether bond to specified atom exists
-    OptionalReferenceWrapper<SpeciesBond> getBond(const SpeciesAtom *j);
     // Add specified Angle to Atom
-    void addAngle(SpeciesAngle &angle);
-    // Remove angle reference
-    void removeAngle(SpeciesAngle &a);
-    // Return the number of SpeciesAngles in which the Atom is involved
-    int nAngles() const;
-    // Return specified angle
-    SpeciesAngle &angle(int index);
-    // Return array of Angles in which the Atom is involved
-    const std::vector<std::reference_wrapper<SpeciesAngle>> &angles() const;
+    void addAngle(const SpeciesAngle *angle);
+    // Return angles the atom is involved in
+    const std::vector<const SpeciesAngle *> &angles() const;
     // Add specified SpeciesTorsion to Atom
-    void addTorsion(SpeciesTorsion &torsion);
-    // Remove torsion reference
-    void removeTorsion(SpeciesTorsion &t);
-    // Return the number of SpeciesTorsions in which the Atom is involved
-    int nTorsions() const;
-    // Return specified torsion
-    SpeciesTorsion &torsion(int index);
-    // Return array of Torsions in which the Atom is involved
-    const std::vector<std::reference_wrapper<SpeciesTorsion>> &torsions() const;
+    void addTorsion(const SpeciesTorsion *torsion);
+    // Return torsions the atom is involved in
+    const std::vector<const SpeciesTorsion *> &torsions() const;
     // Add specified SpeciesImproper to Atom
-    void addImproper(SpeciesImproper &improper);
-    // Remove improper reference
-    void removeImproper(SpeciesImproper &t);
-    // Return the number of SpeciesImpropers in which the Atom is involved
-    int nImpropers() const;
-    // Return specified improper
-    SpeciesImproper &improper(int index);
-    // Return array of Impropers in which the Atom is involved
-    const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
+    void addImproper(const SpeciesImproper *improper);
+    // Return impropers the atom is involved in
+    const std::vector<const SpeciesImproper *> &impropers() const;
     // Set all scaled intramolecular interactions
     void setScaledInteractions();
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom

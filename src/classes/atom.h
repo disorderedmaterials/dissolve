@@ -8,7 +8,7 @@
 #include "math/vector3.h"
 
 // Basic Atom
-class Atom : public Serialisable<>
+template <typename BondClass> class Atom : public Serialisable<>
 {
     public:
     Atom() = default;
@@ -32,45 +32,83 @@ class Atom : public Serialisable<>
 
     public:
     // Set basic properties
-    void set(Elements::Element Z, const Vector3 &r, double q = 0.0);
+    void set(Elements::Element Z, const Vector3 &r, double q = 0.0)
+    {
+        r_ = r;
+        Z_ = Z;
+        q_ = q;
+    }
     // Set coordinates
-    void setR(const Vector3 &r);
+    void setR(const Vector3 &r) { r_ = r; }
     // Return coordinates
-    const Vector3 &r() const;
+    const Vector3 &r() const { return r_; }
     // Set atomic element
-    void setZ(Elements::Element z);
+    void setZ(Elements::Element z) { Z_ = z; }
     // Return atomic element
-    Elements::Element Z() const;
+    Elements::Element Z() const { return Z_; }
     // Return presence of atom
-    AtomConstants::Presence presence() const;
-    // Return whether the atom is of the presence specified
-    bool isPresence(AtomConstants::Presence presence) const;
+    bool isPresence(AtomConstants::Presence presence) const
+    {
+        return presence == AtomConstants::Presence::Any ||
+               (Z_ == Elements::Phantom ? AtomConstants::Presence::Phantom : AtomConstants::Presence::Physical) == presence;
+    }
     // Set atomic charge
-    void setQ(double q);
+    void setQ(double q) { q_ = q; }
     // Return atomic charge
-    double q() const;
+    double q() const { return q_; }
+    // Return index (0->[N-1])
+    int index() const { return index_; };
     // Set index
-    void setIndex(int index);
-    // Return index
-    int index() const;
+    void setIndex(int index) { index_ = index; }
     // Set index of associated atom type in parent object
-    void setAtomTypeIndex(int id);
+    void setAtomTypeIndex(int id) { atomTypeIndex_ = id; }
     // Return associated atom type index
-    int atomTypeIndex() const;
+    int atomTypeIndex() const { return atomTypeIndex_; }
 
     /*
      * Coordinate Manipulation Operators
      */
     public:
-    void operator+=(const Vector3 &delta);
-    void operator-=(const Vector3 &delta);
+    void operator+=(const Vector3 &delta) { r_ += delta; }
+    void operator-=(const Vector3 &delta) { r_ -= delta; }
+
+    /*
+     * Connectivity
+     */
+    protected:
+    // Bonds to this atom
+    std::vector<BondClass *> bonds_;
+
+    public:
+    // Return bonds to this atom
+    const std::vector<BondClass *> &bonds() const { return bonds_; }
+    // Add a bond to this atom
+    void addBond(BondClass *bond) { bonds_.push_back(bond); }
+    // Remove bond from atom
+    void removeBond(BondClass *bond) { bonds_.erase(std::remove(bonds_.begin(), bonds_.end(), bond)); }
+    // Get bond with the supplied atom (if it exists)
+    BondClass *getBondWith(const Atom *other)
+    {
+        auto it = std::ranges::find_if(bonds_, [other](const auto *bond) { return bond->i() == other || bond->j() == other; });
+        if (it != bonds_.end())
+            return *it;
+        return nullptr;
+    }
 
     /*
      * Serialisation
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const
+    {
+        target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
+    }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node)
+    {
+        index_ = toml::find<int>(node, "index");
+
+        set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "q", 0));
+    }
 };

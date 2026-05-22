@@ -118,9 +118,9 @@ int NETAConnectionNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath)
 {
     // Get directly connected atoms about 'i', excluding any that have already been matched
     std::map<const SpeciesAtom *, std::pair<int, NETAMatchedGroup>> neighbours;
-    for (const SpeciesBond &bond : i->bonds())
+    for (const auto *bond : i->bonds())
     {
-        const auto *partner = bond.partner(i);
+        const auto *partner = bond->partner(i);
 
         // Search for this atom in the current match path
         if (!matchPath.contains(partner) || (allowRootMatch_ && matchPath.isRoot(partner)))

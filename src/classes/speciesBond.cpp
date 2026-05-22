@@ -10,99 +10,19 @@
 
 SpeciesBond::SpeciesBond() : SpeciesIntra(nullptr, BondFunctions::Form::None) {}
 
-SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra(parent, BondFunctions::Form::None)
+SpeciesBond::SpeciesBond(Species *parent, SpeciesAtom *i, SpeciesAtom *j)
+    : Bond(i, j), SpeciesIntra(parent, BondFunctions::Form::None)
 {
-    assign(i, j);
 }
 
-SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
-
-SpeciesBond::SpeciesBond(SpeciesBond &&source) noexcept : SpeciesIntra(source)
-{
-    // Detach source bond referred to by the species atoms
-    if (source.i_ && source.j_)
-    {
-        source.i_->removeBond(source);
-        source.j_->removeBond(source);
-    }
-
-    // Copy data
-    assign(source.i_, source.j_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-
-    // Reset source data
-    source.i_ = nullptr;
-    source.j_ = nullptr;
-}
-
-SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
-{
-    // Copy data
-    assign(source.i_, source.j_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    return *this;
-}
-
-SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source) noexcept
-{
-    // Detach any current atoms
-    if (i_ && j_)
-        detach();
-
-    // Copy data
-    assign(source.i_, source.j_);
-    interactionPotential_ = source.interactionPotential_;
-    commonTerm_ = source.commonTerm_;
-    SpeciesIntra::operator=(source);
-
-    // Clean source
-    source.detach();
-
-    return *this;
-}
+SpeciesBond::~SpeciesBond() = default;
 
 /*
  * SpeciesAtom Information
  */
 
-// Rewrite SpeciesAtom pointer
-void SpeciesBond::switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr)
-{
-    assert(i_ == oldPtr || j_ == oldPtr);
-
-    if (i_ == oldPtr)
-        i_ = newPtr;
-    else
-        j_ = newPtr;
-}
-
-// Assign the two atoms in the bond
-void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
-{
-    i_ = i;
-    j_ = j;
-    assert(i_ && j_);
-
-    // Add ourself to the list of bonds on each atom
-    i_->addBond(*this);
-    j_->addBond(*this);
-}
-
-// Return first SpeciesAtom involved in interaction
-SpeciesAtom *SpeciesBond::i() const { return i_; }
-
-// Return second SpeciesAtom involved in SpeciesBond
-SpeciesAtom *SpeciesBond::j() const { return j_; }
-
 // Return vector of involved atoms
 std::vector<const SpeciesAtom *> SpeciesBond::atoms() const { return {i_, j_}; }
-
-// Return the 'other' SpeciesAtom in the SpeciesBond
-SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ ? j_ : i_); }
 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesBond::indexI() const
@@ -134,18 +54,6 @@ int SpeciesBond::index(int n) const
 bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 {
     return (i_ == i && j_ == j) || (i_ == j && j_ == i);
-}
-
-// Detach from current atoms
-void SpeciesBond::detach()
-{
-    if (i_ && j_)
-    {
-        i_->removeBond(*this);
-        j_->removeBond(*this);
-    }
-    i_ = nullptr;
-    j_ = nullptr;
 }
 
 /*

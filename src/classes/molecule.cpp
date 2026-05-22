@@ -78,9 +78,9 @@ void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI
     auto *spI = atoms_[indexI]->speciesAtom();
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
-    for (const SpeciesBond &b : spI->bonds())
+    for (const auto *b : spI->bonds())
     {
-        auto indexJ = b.partner(spI)->index();
+        auto indexJ = b->partner(spI)->index();
         auto &j = atoms_[indexJ];
         if (flags[indexJ])
             continue;
@@ -102,9 +102,9 @@ void Molecule::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI
     auto *spI = atoms_[indexI]->speciesAtom();
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
-    for (const SpeciesBond &b : spI->bonds())
+    for (const auto b : spI->bonds())
     {
-        auto indexJ = b.partner(spI)->index();
+        auto indexJ = b->partner(spI)->index();
         auto &j = atoms_[indexJ];
         if (flags[indexJ])
             continue;

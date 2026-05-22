@@ -58,11 +58,6 @@ class Species : public Serialisable<>
     // Atom types for the species
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
-    private:
-    // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
-    void getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
-                             OptionalReferenceWrapper<SpeciesBond> excludeToo) const;
-
     public:
     // Return the number of atoms in the species (or only those with the specified presence)
     int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
@@ -72,10 +67,6 @@ class Species : public Serialisable<>
     // Return a reference to the vector of atoms
     const std::vector<SpeciesAtom> &atoms() const;
     std::vector<SpeciesAtom> &atoms();
-    // Return the fragment (vector of indices) containing the specified atom, optionally ignoring paths along the bond(s)
-    // provided
-    std::vector<int> fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,
-                              OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
     // Return total atomic mass of Species
     double mass() const;
     // Add new atom type to atom types
@@ -119,63 +110,35 @@ class Species : public Serialisable<>
     // Return whether SpeciesBond between SpeciesAtoms exists
     bool hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
     bool hasBond(int i, int j) const;
-    // Return the SpeciesBond between the specified SpeciesAtoms
-    OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
-    OptionalReferenceWrapper<const SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
-    OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
+    OptionalReferenceWrapper<SpeciesBond> getBond(int indexI, int indexJ);
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
-    // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
-    void updateIntramolecularTerms();
-    // Add new SpeciesAngle definition
-    SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    SpeciesAngle &addAngle(int i, int j, int k);
     // Return vector of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
     const std::vector<SpeciesAngle> &angles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
     bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
-    // Return the SpeciesAngle between the specified SpeciesAtoms
-    OptionalReferenceWrapper<SpeciesAngle> getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    OptionalReferenceWrapper<const SpeciesAngle> getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                          const SpeciesAtom *k) const;
     // Return the SpeciesAngle between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesAngle> getAngle(int i, int j, int k);
-    OptionalReferenceWrapper<const SpeciesAngle> getAngle(int i, int j, int k) const;
-    // Add new SpeciesTorsion definition
-    SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    SpeciesTorsion &addTorsion(int i, int j, int k, int l);
+    OptionalReferenceWrapper<SpeciesAngle> getAngle(int indexI, int indexJ, int indexK);
     // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
     bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
-    // Return the SpeciesTorsion between the specified SpeciesAtoms
-    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
-                                                              const SpeciesAtom *l) const;
     // Return the SpeciesTorsion between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int i, int j, int k, int l);
-    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(int i, int j, int k, int l) const;
-    // Add new SpeciesImproper definition
-    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    SpeciesImproper &addImproper(int i, int j, int k, int l);
+    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int indexI, int indexJ, int indexK, int indexL);
     // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists
     bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
-    // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
-    OptionalReferenceWrapper<SpeciesImproper> getImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    OptionalReferenceWrapper<const SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
-                                                                const SpeciesAtom *k, const SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesImproper> getImproper(int i, int j, int k, int l);
-    OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
+    OptionalReferenceWrapper<SpeciesImproper> getImproper(int indexI, int indexJ, int indexK, int indexL);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
+    // Determine angles and torsions from bond connectivity
+    void determineAnglesAndTorsions();
     // Finalise internal relationships related to geometry once it is defined
     void finaliseGeometry();
 

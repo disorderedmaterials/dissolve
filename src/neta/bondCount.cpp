@@ -30,5 +30,5 @@ int NETABondCountNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) 
     if (!value_)
         return NETANode::NoMatch;
 
-    return compareValues(i->nBonds(), operator_, *value_) ? 1 : NETANode::NoMatch;
+    return compareValues(i->bonds().size(), operator_, *value_) ? 1 : NETANode::NoMatch;
 }

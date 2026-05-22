@@ -14,7 +14,7 @@ class Cell;
 class Molecule;
 
 // Configuration Atom
-class ConfigurationAtom : public Atom
+class ConfigurationAtom : public Atom<SpeciesBond>
 {
     /*
      * Properties
