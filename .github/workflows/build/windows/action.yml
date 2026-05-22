@@ -172,7 +172,7 @@ runs:
       mkdir -p build && cd build
       TEMPD=$(mktemp -d)
       mkdir -p $TEMPD/bin
-      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD -DBUILD_TESTS:bool=true
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD -DBUILD_TESTS:bool=ON
       cmake --build . --config Release
       cp bin/* $TEMPD/bin
       ninja install

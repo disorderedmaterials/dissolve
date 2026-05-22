@@ -181,13 +181,11 @@ runs:
       conan install . --deployer=direct_deploy --build=missing
       mkdir -p build && cd build
 
-
-      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../ -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.osxTargetDeploymentVersion }}
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DCONAN_GSL="OFF" -DJava_JAVA_EXECUTABLE:path=${JAVA_RUNTIME} -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DQT_BASE_DIR=$QT_BASE_DIR ../ -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.osxTargetDeploymentVersion }} -DBUILD_TESTS:bool=ON
       cmake --build . --config Release
 
       # Move conan-installed deps to the build dir
       mv ../direct_deploy ./
-      ls -R direct_deploy
 
       # Copy over gsl libs so we can ship them with the bundle. Our exe is only linked to two of the four libs present, and this breaks the binary if we don't include them all in the package.
       mkdir gsl
