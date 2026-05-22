@@ -10,11 +10,11 @@
 // Forward Declarations
 class Configuration;
 
-class ExportDLPOLYConfiguration : public Node
+class ExportDLPOLYConfigurationNode : public Node
 {
     public:
-    ExportDLPOLYConfiguration(Graph *parentGraph);
-    ~ExportDLPOLYConfiguration() override = default;
+    ExportDLPOLYConfigurationNode(Graph *parentGraph);
+    ~ExportDLPOLYConfigurationNode() override = default;
 
     /*
      * Definition

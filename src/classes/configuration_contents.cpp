@@ -86,6 +86,17 @@ std::vector<const AtomType *> Configuration::atomTypeVector() const
     return result;
 }
 
+// Search for AtomType by name
+std::shared_ptr<const AtomType> Configuration::findAtomType(std::string_view name) const
+{
+    const auto &atomTypes = atomTypeVector();
+    auto it = std::find_if(atomTypes.begin(), atomTypes.end(),
+                           [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
+    if (it == atomTypeVector().end())
+        return nullptr;
+    return std::shared_ptr<const AtomType>(*it);
+}
+
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
 {

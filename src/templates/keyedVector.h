@@ -30,6 +30,15 @@ template <class KeyClass, class ValueClass> class KeyedVector
     KeyClass getKey(const KeyValuePair &pair) const { return pair.first; }
 
     public:
+    // Convert to a map
+    static inline std::map<KeyClass, ValueClass> toMap(const KeyedVector<KeyClass, ValueClass> &instance)
+    {
+        std::map<KeyClass, ValueClass> map;
+        for (const auto &[key, value] : instance)
+            map.insert({key, value});
+
+        return map;
+    }
     // Clear data
     void clear() { data_.clear(); }
     // Set / overwrite key

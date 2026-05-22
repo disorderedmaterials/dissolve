@@ -5,6 +5,9 @@
 
 #include "base/timer.h"
 #include "math/ft.h"
+#include "modules/sq/sq.h"
+#include "nodes/edge.h"
+#include "nodes/gr/gr.h"
 #include "nodes/sq/sq.h"
 #include "templates/algorithms.h"
 
@@ -60,4 +63,27 @@ bool SQNode::calculateUnweightedSQ()
             timer.totalTimeString());
 
     return true;
+}
+
+// Returns the unweighted SQ
+const PartialSet &SQNode::unweightedSQ() const { return *unweightedSQ_; }
+
+// Returns the unweighted GR
+const PartialSet &SQNode::unweightedGR() const { return *unweightedGR_; }
+
+// Returns the source configuration, belonging to the input GR node
+const Configuration *SQNode::sourceConfiguration()
+{
+    auto cfgInputEdge = inputEdges().find("UnweightedGR");
+
+    if (cfgInputEdge == inputEdges().end())
+    {
+        error("Could not find a valid input 'UnweightedGR' associated with this node ({})", name());
+        return nullptr;
+    }
+
+    auto &cfgSourceNode = cfgInputEdge->second[0]->sourceNode();
+    auto grNode = static_cast<GRNode *>(&cfgSourceNode);
+
+    return grNode->getInputValue<Configuration *>("Configuration");
 }

@@ -94,6 +94,8 @@ class Configuration : public Serialisable<const CoreData &>
     std::map<const AtomType *, int> atomTypeIndexMap() const;
     // Return used atom type vector
     std::vector<const AtomType *> atomTypeVector() const;
+    // Search for AtomType by name
+    std::shared_ptr<const AtomType> findAtomType(std::string_view name) const;
     // Return the total charge of the Configuration
     double totalCharge(bool ppIncludeCoulomb) const;
     // Return the total atomic mass present in the Configuration
