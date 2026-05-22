@@ -4,9 +4,9 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "data/elements.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
+#include "data/elements.h"
 #include "neta/matchedGroup.h"
 #include <memory>
 #include <vector>

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "data/ff/bondTerm.h"
 #include "classes/speciesAtom.h"
+#include "data/ff/bondTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <pugixml.hpp>
