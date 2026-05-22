@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "${{ inputs.osxRunner }}", windows-latest ]
+        os: [ "${{ inputs.osxRunner }}", windows-2022 ]
     runs-on: ${{ matrix.os }}
     steps:
     - name: 'Download Source Tarfiles'
