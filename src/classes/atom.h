@@ -35,7 +35,7 @@ class AtomBase
     // Return coordinates
     const Vector3 &r() const;
     // Set atomic element
-    void setZ(Elements::Element z);
+    void setZ(Elements::Element Z);
     // Return atomic element
     Elements::Element Z() const;
     // Return presence of atom

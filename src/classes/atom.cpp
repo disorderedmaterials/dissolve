@@ -23,7 +23,7 @@ void AtomBase::setR(const Vector3 &r) { r_ = r; }
 const Vector3 &AtomBase::r() const { return r_; }
 
 // Set atomic element
-void AtomBase::setZ(Elements::Element z) { Z_ = z; }
+void AtomBase::setZ(Elements::Element Z) { Z_ = Z; }
 
 // Return atomic element
 Elements::Element AtomBase::Z() const { return Z_; }
