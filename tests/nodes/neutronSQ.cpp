@@ -68,16 +68,11 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
     ASSERT_TRUE(sqNode);
 
     // Add in NeutronSQ
-    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {}, {},
-                                         Data1DImportFileFormat("epsr25/water1000-neutron-xray/H2O.mint01",
-                                                                Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {}, {}, {"epsr25/water1000-neutron-xray/H2O.mint01", true});
     auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
-                                         Data1DImportFileFormat("epsr25/water1000-neutron-xray/D2O.mint01",
-                                                                Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
-    auto HDO =
-        testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}),
-                                  Data1DImportFileFormat("epsr25/water1000-neutron-xray/HDO.mint01",
-                                                         Data1DImportFileFormat::Data1DImportFormat::GudrunMint));
+                                         {"epsr25/water1000-neutron-xray/D2O.mint01", true});
+    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
+                                         Exchangeables({"HW"}), {"epsr25/water1000-neutron-xray/HDO.mint01", true});
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);

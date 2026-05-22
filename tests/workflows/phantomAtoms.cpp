@@ -64,9 +64,7 @@ TEST(PhantomAtomsTest, Water)
         testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}));
 
     // Add XRaySQ
-    auto H2Ox = testGraph.appendXRaySQ(
-        sqNode, "H2Ox",
-        Data1DImportFileFormat("epsr25/water1000-neutron-xray/PCCPfofq.txt", Data1DImportFileFormat::Data1DImportFormat::XY));
+    auto H2Ox = testGraph.appendXRaySQ(sqNode, "H2Ox", {"epsr25/water1000-neutron-xray/PCCPfofq.txt", true});
     ASSERT_TRUE(H2Ox);
     ASSERT_TRUE(H2Ox->setOption<StructureFactors::NormalisationType>(
         "NormaliseTo", StructureFactors::NormalisationType::AverageOfSquaresNormalisation));

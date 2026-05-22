@@ -26,8 +26,8 @@ class Data1DImportNode : public Node
     private:
     // File path
     std::string filePath_;
-    // File format
-    Data1DImportFileFormat::Data1DImportFormat format_;
+    // Whether file format is histogram
+    bool histogram_;
     // Column index of data X values
     Number xColumn_{1};
     // Column index of data Y values
