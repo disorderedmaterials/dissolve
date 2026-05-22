@@ -3,11 +3,9 @@
 
 #include "nodes/epsr.h"
 #include "base/sysFunc.h"
-#include "classes/neutronWeights.h"
 #include "classes/partialSet.h"
 #include "classes/scatteringMatrix.h"
 #include "classes/xRayWeights.h"
-#include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -15,6 +13,7 @@
 #include "math/gaussFit.h"
 #include "math/mathFunc.h"
 #include "math/poissonFit.h"
+#include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/sq/sq.h"
 #include "templates/algorithms.h"
 #include <functional>

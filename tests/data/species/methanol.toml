@@ -8,6 +8,7 @@ name = "Methanol"
 z = "H"
 charge = 0.68
 form = "LJGeometric"
+exchangeable = true
 
 [species.atomTypes.HO.parameters]
 epsilon = 0.126
@@ -37,7 +38,6 @@ sigma = 2.5
 z = "C"
 charge = -0.18
 form = "LJGeometric"
-exchangeable = true
 
 [species.atomTypes.CT.parameters]
 epsilon = 0.276

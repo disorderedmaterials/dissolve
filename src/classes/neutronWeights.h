@@ -46,8 +46,7 @@ class NeutronWeights
 
     private:
     // Initialise the neutron weights instance
-    void initialise(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
-                    const Exchangeables &exchangeables);
+    void initialise(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues);
     // Calculate weighting matrices based on current AtomType / Isotope information
     void calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
                                     const IsotopologueSet &isotopologues);

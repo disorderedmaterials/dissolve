@@ -9,7 +9,7 @@
 // Return neutron weights
 NeutronWeights NeutronSQNode::weights() const
 {
-    return NeutronWeights(unweightedSQ_->realSpeciesPopulations(), isotopologues_, exchangeables_);
+    return NeutronWeights(unweightedSQ_->realSpeciesPopulations(), isotopologues_);
 }
 
 // Calculate weighted g(r)
@@ -104,9 +104,6 @@ const PartialSet *NeutronSQNode::unweightedGR() const { return unweightedGR_; }
 
 // Returns the isotopologues
 const IsotopologueSet &NeutronSQNode::isotopologues() const { return isotopologues_; }
-
-// Returns the exchangeables
-const Exchangeables &NeutronSQNode::exchangeables() const { return exchangeables_; }
 
 // Returns the source configuration, belonging to the input SQ node
 const Configuration *NeutronSQNode::sourceConfiguration()

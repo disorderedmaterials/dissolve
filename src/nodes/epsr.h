@@ -5,31 +5,21 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
-#include "classes/exchangeables.h"
-#include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
 #include "classes/scatteringMatrix.h"
-#include "data/structureFactors.h"
 #include "math/data1D.h"
 #include "math/range.h"
-#include "math/windowFunction.h"
 #include "nodes/gr/gr.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
 #include "nodes/xRaySQ/xRaySQ.h"
-#include "templates/array3D.h"
 #include <optional>
 #include <tuple>
 
 // Forward Declarations
 class AtomType;
 class PartialSet;
-/*
-class PartialSet;
-class Data1D;
-*/
 
 class EPSRNamedTargetWeights : public Serialisable<>
 {

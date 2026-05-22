@@ -92,8 +92,6 @@ class NeutronSQNode : public Node
     const PartialSet *unweightedSQ() const;
     // Returns the unweighted GR
     const PartialSet *unweightedGR() const;
-    // Returns the exchangeables
-    const Exchangeables &exchangeables() const;
     // Returns the isotopologues
     const IsotopologueSet &isotopologues() const;
     // Returns the source configuration, belonging to the input SQ node
