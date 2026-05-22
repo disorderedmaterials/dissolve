@@ -6,7 +6,7 @@
 #include "base/serialiser.h"
 
 // Forward Declarations
-class BaseAtom;
+class AtomBase;
 
 // Bond
 template <class AtomClass> class Bond : public Serialisable<>
@@ -23,9 +23,9 @@ template <class AtomClass> class Bond : public Serialisable<>
     AtomClass *i() const { return i_; }
     AtomClass *j() const { return j_; }
     // Return the 'other' atom
-    AtomClass *partner(const BaseAtom *atom) const { return (atom == i_ ? j_ : i_); }
+    AtomClass *partner(const AtomBase *atom) const { return (atom == i_ ? j_ : i_); }
     // Return whether the bond's atoms match those provided
-    bool isBetween(const BaseAtom *i, const BaseAtom *j) const { return (i == i_ && j == j_) || (i == j_ && j == i_); }
+    bool isBetween(const AtomBase *i, const AtomBase *j) const { return (i == i_ && j == j_) || (i == j_ && j == i_); }
 
     /*
      * Serialisation

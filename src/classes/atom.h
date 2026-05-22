@@ -9,8 +9,8 @@
 #include "data/elements.h"
 #include "math/vector3.h"
 
-// Base Atom
-class BaseAtom
+// Atom Base
+class AtomBase
 {
     /*
      * Properties
@@ -59,8 +59,8 @@ class BaseAtom
     public:
     // Return number of bonds
     virtual int nBonds() const = 0;
-    // Return other BaseAtoms connected to this one via bonds
-    virtual std::vector<BaseAtom *> connectedAtoms() const = 0;
+    // Return other AtomBases connected to this one via bonds
+    virtual std::vector<AtomBase *> connectedAtoms() const = 0;
 
     /*
      * Atom Geometry
@@ -89,7 +89,7 @@ class BaseAtom
 };
 
 // Atom
-template <typename BondClass> class Atom : public BaseAtom, public Serialisable<>
+template <typename BondClass> class Atom : public AtomBase, public Serialisable<>
 {
     public:
     Atom() = default;
@@ -126,10 +126,10 @@ template <typename BondClass> class Atom : public BaseAtom, public Serialisable<
     }
     // Return number of bonds
     int nBonds() const { return bonds_.size(); }
-    // Return indices of other BaseAtoms to which this one is connected
-    std::vector<BaseAtom *> connectedAtoms() const
+    // Return indices of other AtomBases to which this one is connected
+    std::vector<AtomBase *> connectedAtoms() const
     {
-        std::vector<BaseAtom *> connections;
+        std::vector<AtomBase *> connections;
         for (const auto *bond : bonds_)
             connections.emplace_back(bond->partner(this));
         return connections;

@@ -9,7 +9,7 @@
  */
 
 // Set basic properties
-void BaseAtom::set(Elements::Element Z, const Vector3 &r, double q)
+void AtomBase::set(Elements::Element Z, const Vector3 &r, double q)
 {
     r_ = r;
     Z_ = Z;
@@ -17,49 +17,49 @@ void BaseAtom::set(Elements::Element Z, const Vector3 &r, double q)
 }
 
 // Set coordinates
-void BaseAtom::setR(const Vector3 &r) { r_ = r; }
+void AtomBase::setR(const Vector3 &r) { r_ = r; }
 
 // Return coordinates
-const Vector3 &BaseAtom::r() const { return r_; }
+const Vector3 &AtomBase::r() const { return r_; }
 
 // Set atomic element
-void BaseAtom::setZ(Elements::Element z) { Z_ = z; }
+void AtomBase::setZ(Elements::Element z) { Z_ = z; }
 
 // Return atomic element
-Elements::Element BaseAtom::Z() const { return Z_; }
+Elements::Element AtomBase::Z() const { return Z_; }
 
 // Return presence of atom
-bool BaseAtom::isPresence(AtomConstants::Presence presence) const
+bool AtomBase::isPresence(AtomConstants::Presence presence) const
 {
     return presence == AtomConstants::Presence::Any ||
            (Z_ == Elements::Phantom ? AtomConstants::Presence::Phantom : AtomConstants::Presence::Physical) == presence;
 }
 
 // Set atomic charge
-void BaseAtom::setQ(double q) { q_ = q; }
+void AtomBase::setQ(double q) { q_ = q; }
 
 // Return atomic charge
-double BaseAtom::q() const { return q_; }
+double AtomBase::q() const { return q_; }
 
 // Return index (0->[N-1])
-int BaseAtom::index() const { return index_; };
+int AtomBase::index() const { return index_; };
 
 // Set index
-void BaseAtom::setIndex(int index) { index_ = index; }
+void AtomBase::setIndex(int index) { index_ = index; }
 
 // Set index of associated atom type in parent object
-void BaseAtom::setAtomTypeIndex(int id) { atomTypeIndex_ = id; }
+void AtomBase::setAtomTypeIndex(int id) { atomTypeIndex_ = id; }
 
 // Return associated atom type index
-int BaseAtom::atomTypeIndex() const { return atomTypeIndex_; }
+int AtomBase::atomTypeIndex() const { return atomTypeIndex_; }
 
 /*
  * Atom Geometry
  */
 
-EnumOptions<BaseAtom::AtomGeometry> BaseAtom::geometries()
+EnumOptions<AtomBase::AtomGeometry> AtomBase::geometries()
 {
-    return EnumOptions<BaseAtom::AtomGeometry>("AtomGeometry", {
+    return EnumOptions<AtomBase::AtomGeometry>("AtomGeometry", {
                                                                    {AtomGeometry::Unknown, "Unknown"},
                                                                    {AtomGeometry::Unbound, "Unbound"},
                                                                    {AtomGeometry::Terminal, "Terminal"},
@@ -74,7 +74,7 @@ EnumOptions<BaseAtom::AtomGeometry> BaseAtom::geometries()
 }
 
 // Calculate and return the geometry of this atom
-BaseAtom::AtomGeometry BaseAtom::geometry() const
+AtomBase::AtomGeometry AtomBase::geometry() const
 {
     auto angle = 0.0;
 
@@ -134,4 +134,4 @@ BaseAtom::AtomGeometry BaseAtom::geometry() const
 }
 
 // Return whether the geometry of this atom matches that specified
-bool BaseAtom::isGeometry(AtomGeometry geom) const { return geometry() == geom; }
+bool AtomBase::isGeometry(AtomGeometry geom) const { return geometry() == geom; }
