@@ -65,7 +65,7 @@ class NETARingAtomNode : public NETANode
      */
     public:
     // Return whether we match the specified atom
-    int matches(const BaseAtom *i, NETAMatchedGroup &matchPath) const;
+    int matches(const AtomBase *i, NETAMatchedGroup &matchPath) const;
     // Evaluate the node and return its score
-    int score(const BaseAtom *i, NETAMatchedGroup &matchPath) const override;
+    int score(const AtomBase *i, NETAMatchedGroup &matchPath) const override;
 };

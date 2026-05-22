@@ -34,5 +34,5 @@ class NETAGeometryNode : public NETANode
      */
     public:
     // Evaluate the node and return its score
-    int score(const BaseAtom *i, NETAMatchedGroup &matchPath) const override;
+    int score(const AtomBase *i, NETAMatchedGroup &matchPath) const override;
 };

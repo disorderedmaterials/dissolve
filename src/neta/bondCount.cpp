@@ -25,7 +25,7 @@ void NETABondCountNode::set(ComparisonOperator op, int value)
  */
 
 // Evaluate the node and return its score
-int NETABondCountNode::score(const BaseAtom *i, NETAMatchedGroup &matchPath) const
+int NETABondCountNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
 {
     if (!value_)
         return NETANode::NoMatch;

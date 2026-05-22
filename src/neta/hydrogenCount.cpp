@@ -26,7 +26,7 @@ void NETAHydrogenCountNode::set(ComparisonOperator op, int value)
  */
 
 // Evaluate the node and return its score
-int NETAHydrogenCountNode::score(const BaseAtom *i, NETAMatchedGroup &matchPath) const
+int NETAHydrogenCountNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
 {
     if (!value_)
         return NETANode::NoMatch;

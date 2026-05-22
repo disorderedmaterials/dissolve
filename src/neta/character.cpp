@@ -41,7 +41,7 @@ bool NETACharacterNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
  */
 
 // Evaluate the node and return its score
-int NETACharacterNode::score(const BaseAtom *i, NETAMatchedGroup &matchPath) const
+int NETACharacterNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
 {
     // Check element
     if (std::find(allowedElements_.begin(), allowedElements_.end(), i->Z()) != allowedElements_.end() && !reverseLogic_)

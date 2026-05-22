@@ -26,7 +26,7 @@ void NETAGeometryNode::set(ComparisonOperator op, SpeciesAtom::AtomGeometry geom
  */
 
 // Evaluate the node and return its score
-int NETAGeometryNode::score(const BaseAtom *i, NETAMatchedGroup &matchPath) const
+int NETAGeometryNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
 {
     auto result = i->isGeometry(geometry_);
 

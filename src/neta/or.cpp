@@ -18,7 +18,7 @@ void NETAOrNode::setAlternativeNodes(NETASequence nodes) { altNodes_ = std::move
  */
 
 // Evaluate the node and return its score
-int NETAOrNode::score(const BaseAtom *i, NETAMatchedGroup &matchPath) const
+int NETAOrNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
 {
     auto score = sequenceScore(nodes_, i, matchPath);
     if (score != NETANode::NoMatch)
