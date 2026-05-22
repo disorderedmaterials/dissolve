@@ -3,6 +3,7 @@
 
 #include "classes/speciesRing.h"
 #include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "data/elements.h"
 
 SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> &atoms) : atoms_(atoms) {};

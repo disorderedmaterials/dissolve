@@ -4,6 +4,8 @@
 #pragma once
 
 #include "base/enumOptions.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "data/elements.h"
 #include "neta/matchedGroup.h"
 #include <memory>
@@ -12,7 +14,6 @@
 // Forward Declarations
 class ForcefieldAtomType;
 class NETADefinition;
-class SpeciesAtom;
 
 // NETA Node
 class NETANode

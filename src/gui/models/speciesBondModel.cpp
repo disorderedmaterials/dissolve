@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesBondModel.h"
-#include "classes/speciesAtom.h"
 
 SpeciesBondModel::SpeciesBondModel() : bonds_(nullptr) {}
 

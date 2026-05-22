@@ -2,6 +2,7 @@ add_library(
   classes
   angleFunctions.cpp
   array3DIterator.cpp
+  atom.cpp
   atomType.cpp
   bondFunctions.cpp
   box.cpp

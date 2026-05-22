@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "math/data1D.h"
 #include "math/derivative.h"

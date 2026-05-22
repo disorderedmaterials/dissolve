@@ -3,6 +3,7 @@
 
 #include "classes/box.h"
 #include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "math/data1D.h"
 #include "math/derivative.h"

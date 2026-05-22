@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/localMolecule.h"
+#include "classes/speciesBond.h"
 
 // Forward Declarations
 class Species;

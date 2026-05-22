@@ -3,6 +3,7 @@
 
 #include "neta/matchedGroup.h"
 #include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include <algorithm>
 
 NETAMatchedGroup::NETAMatchedGroup(const SpeciesAtom *root) : root_(root) {}
