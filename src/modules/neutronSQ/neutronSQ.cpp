@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/neutronSQ/neutronSQ.h"
-#include "keywords/atomTypeVector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/fileAndFormat.h"
@@ -18,8 +17,6 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
 
     keywords_.setOrganisation("Options", "Isotopes & Normalisation",
                               "Specify isotopologues to use for specific species, and which atoms are exchangeable.");
-    keywords_.add<AtomTypeVectorKeyword>(
-        "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
     keywords_.add<IsotopologueSetKeyword>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
                                           isotopologueSet_);
     keywords_

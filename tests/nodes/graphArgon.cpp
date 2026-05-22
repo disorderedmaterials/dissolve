@@ -39,8 +39,7 @@ TEST(GraphArgonTest, AllCorrelations)
     auto &&[grNode, sqNode] = testGraph.appendGRSQ(true, true);
 
     // Set up neutron SQ
-    auto neutronSQNode =
-        testGraph.appendNeutronSQ(sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}}, {}, {"dissolve2/argon/yarnell.sq"});
+    auto neutronSQNode = testGraph.appendNeutronSQ(sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}}, {"dissolve2/argon/yarnell.sq"});
 
     // Run the Graph from the NeutronSQ node
     ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);

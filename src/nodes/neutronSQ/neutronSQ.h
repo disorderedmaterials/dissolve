@@ -3,12 +3,10 @@
 
 #pragma once
 
-#include "classes/exchangeables.h"
 #include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
 #include "data/structureFactors.h"
 #include "math/windowFunction.h"
-#include "nodes/gr/gr.h"
 #include "nodes/node.h"
 #include <optional>
 
@@ -43,8 +41,6 @@ class NeutronSQNode : public Node
     Data1D representativeGR_;
     // Isotopologues to use for constructing weights matrix
     IsotopologueSet isotopologues_;
-    // Exchangeable atom types
-    Exchangeables exchangeables_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) data
@@ -96,8 +92,6 @@ class NeutronSQNode : public Node
     const PartialSet *unweightedSQ() const;
     // Returns the unweighted GR
     const PartialSet *unweightedGR() const;
-    // Returns the exchangeables
-    const Exchangeables &exchangeables() const;
     // Returns the isotopologues
     const IsotopologueSet &isotopologues() const;
     // Returns the source configuration, belonging to the input SQ node

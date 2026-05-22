@@ -20,8 +20,6 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 
     // Options
     addOption<IsotopologueSet>("Isotopologues", "Isotopologues to use when calculating weights matrix", isotopologues_);
-    addOption<Exchangeables>("Exchangeables", "List of atom types that should be treated as fully exchangeable",
-                             exchangeables_);
     addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
                                                    normaliseTo_);
     addOption<StructureFactors::NormalisationType>(

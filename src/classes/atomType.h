@@ -30,6 +30,8 @@ class AtomType : public Serialisable<>, public std::enable_shared_from_this<Atom
     std::string name_{"XX"};
     // Associated chemical element
     Elements::Element Z_;
+    // Whether the atom type is exchangeable
+    bool exchangeable_{false};
 
     public:
     // Set name of AtomType
@@ -40,6 +42,10 @@ class AtomType : public Serialisable<>, public std::enable_shared_from_this<Atom
     void setZ(Elements::Element Z);
     // Return chemical element
     Elements::Element Z() const;
+    // Set whether the atom type is exchangeable
+    void setExchangeable(bool exchangeable);
+    // Return whether the atom type is exchangeable
+    bool isExchangeable() const;
 
     /*
      * Interaction Parameters

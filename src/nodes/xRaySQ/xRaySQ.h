@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/exchangeables.h"
 #include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
 #include "classes/xRayWeights.h"
@@ -49,8 +48,6 @@ class XRaySQNode : public Node
     Data1D representativeGR_;
     // Isotopologues to use for constructing weights matrix
     IsotopologueSet isotopologues_;
-    // Exchangeable atom types
-    Exchangeables exchangeables_;
     // Normalisation to apply to calculated total F(Q)
     StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) data

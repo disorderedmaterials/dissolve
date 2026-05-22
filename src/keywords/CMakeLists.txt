@@ -1,6 +1,5 @@
 add_library(
   keywords
-  atomTypeVector.cpp
   base.cpp
   bool.cpp
   configuration.cpp
@@ -35,7 +34,6 @@ add_library(
   vec3Integer.cpp
   vec3NodeValue.cpp
   weightedModuleVector.cpp
-  atomTypeVector.h
   base.h
   bool.h
   configuration.h

@@ -234,7 +234,6 @@ class TestGraph : public DissolveGraph
     // Create a NeutronSQ node with optional reference data
     NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
                                    const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
-                                   const Exchangeables &exchangeables = {},
                                    TestGraph::Data1DImportFileFormat referenceData = TestGraph::Data1DImportFileFormat{})
     {
         // Construct the isotopologue set
@@ -263,7 +262,6 @@ class TestGraph : public DissolveGraph
 
         EXPECT_TRUE(appendNode("NeutronSQ", name));
         EXPECT_TRUE(fetchHead()->setOption("Isotopologues", isotopologueSet));
-        EXPECT_TRUE(fetchHead()->setOption("Exchangeables", exchangeables));
         EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
         EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
 

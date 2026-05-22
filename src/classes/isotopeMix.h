@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/exchangeables.h"
 #include "data/isotopes.h"
 #include "templates/keyedVector.h"
 
@@ -36,8 +35,7 @@ class IsotopeMix
 
     public:
     // Create mix from Isotopologues
-    void create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues,
-                const Exchangeables &exchangeables);
+    void create(const std::map<const Species *, double> &speciesPopulations, const IsotopologueSet &isotopologues);
     // Return types/topes mix
     const KeyedVector<const AtomType *, std::map<Sears91::Isotope, double>> &mix() const;
     // Calculate and return full population of atom type in whole mix
@@ -49,5 +47,5 @@ class IsotopeMix
     // Return indices of AtomType pair
     std::optional<std::pair<int, int>> indexOf(const AtomType *at1, const AtomType *at2) const;
     // Print AtomType populations
-    void print(const Exchangeables &exchangeables) const;
+    void print() const;
 };

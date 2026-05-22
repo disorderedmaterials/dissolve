@@ -29,6 +29,12 @@ void AtomType::setZ(Elements::Element Z) { Z_ = Z; }
 // Return atomic element
 Elements::Element AtomType::Z() const { return Z_; }
 
+// Set whether the atom type is exchangeable
+void AtomType::setExchangeable(bool exchangeable) { exchangeable_ = exchangeable; }
+
+// Return whether the atom type is exchangeable
+bool AtomType::isExchangeable() const { return exchangeable_; }
+
 /*
  * Interaction Parameters
  */
@@ -71,6 +77,7 @@ void AtomType::serialise(std::string tag, SerialisedValue &target) const
     atomType["z"] = Z_;
     atomType["charge"] = charge_;
     atomType["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
+    atomType["exchangeable"] = exchangeable_;
 
     auto &values = interactionPotential().parameters();
     if (!values.empty())
@@ -88,6 +95,8 @@ void AtomType::deserialise(SerialisedValue node)
 {
     Z_ = toml::find<Elements::Element>(node, "z");
     charge_ = toml::find_or<double>(node, "charge", 0.0);
+    exchangeable_ = toml::find_or<bool>(node, "exchangeable", false);
+
     Serialisable::optionalOn(
         node, "form", [this](const auto node)
         { interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node.as_string()))); });

@@ -11,22 +11,22 @@
 #include "templates/algorithms.h"
 
 NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations,
-                               const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
+                               const IsotopologueSet &isotopologues)
 {
-    initialise(speciesPopulations, isotopologues, exchangeables);
+    initialise(speciesPopulations, isotopologues);
 };
 
 // Initialise the neutron weights instance
 void NeutronWeights::initialise(const std::map<const Species *, double> &speciesPopulations,
-                                const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
+                                const IsotopologueSet &isotopologues)
 {
     boundCoherentSquareOfAverage_ = 0.0;
     boundCoherentAverageOfSquares_ = 0.0;
 
     // Create the isotope mix from defined isotopologues
-    isotopeMix_.create(speciesPopulations, isotopologues, exchangeables);
+    isotopeMix_.create(speciesPopulations, isotopologues);
 
-    calculateWeightingMatrices(speciesPopulations, isotopologues, exchangeables);
+    calculateWeightingMatrices(speciesPopulations, isotopologues);
 
     Messenger::print("  Species          nMols       Isotopologue     Weight\n");
     Messenger::print("  ------------------------------------------------------\n");
@@ -47,7 +47,7 @@ void NeutronWeights::initialise(const std::map<const Species *, double> &species
 
     // Print atomtypes table
     Messenger::print("\n");
-    isotopeMix_.print(exchangeables);
+    isotopeMix_.print();
 
     Messenger::print("\nCalculated average scattering lengths: <b>**2 = {:.5f}, <b**2> = {:.5f}\n",
                      boundCoherentSquareOfAverage_, boundCoherentAverageOfSquares_);
@@ -72,7 +72,7 @@ void NeutronWeights::operator=(const NeutronWeights &source)
 
 // Calculate weighting matrices based on current AtomType / Isotope information
 void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, double> &speciesPopulations,
-                                                const IsotopologueSet &isotopologues, const Exchangeables &exchangeables)
+                                                const IsotopologueSet &isotopologues)
 {
     // Create weights matrices and calculate average scattering lengths
     // Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
@@ -128,12 +128,10 @@ void NeutronWeights::calculateWeightingMatrices(const std::map<const Species *, 
                     DoubleKeyedMapKey key{atPop1.first->name(), atPop2.first->name()};
 
                     // If an AtomType is exchangeable we use its exchanged bound coherent scattering length
-                    bi = exchangeables.contains(atPop1.first->name())
-                             ? isotopeMix_.boundCoherent(atPop1.first)
-                             : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
-                    bj = exchangeables.contains(atPop2.first->name())
-                             ? isotopeMix_.boundCoherent(atPop2.first)
-                             : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
+                    bi = atPop1.first->isExchangeable() ? isotopeMix_.boundCoherent(atPop1.first)
+                                                        : Sears91::boundCoherent(iso->atomTypeIsotope(atPop1.first));
+                    bj = atPop2.first->isExchangeable() ? isotopeMix_.boundCoherent(atPop2.first)
+                                                        : Sears91::boundCoherent(iso->atomTypeIsotope(atPop2.first));
 
                     // Convert from fm to barns
                     bi *= 0.1;

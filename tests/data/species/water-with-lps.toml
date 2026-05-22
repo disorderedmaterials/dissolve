@@ -13,6 +13,7 @@ form = "Undefined"
 z = "H"
 charge = 0.41
 form = "LJ"
+exchangeable = true
 
 [species.atomTypes.HW.parameters]
 epsilon = 0.0

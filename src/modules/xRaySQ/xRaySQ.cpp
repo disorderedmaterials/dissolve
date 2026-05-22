@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "modules/xRaySQ/xRaySQ.h"
-#include "keywords/atomTypeVector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/fileAndFormat.h"
