@@ -3,7 +3,7 @@
 name = "Diatomic"
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "N"
 r = [
 0.0,
@@ -12,7 +12,7 @@ r = [
 ]
 q = 0.0
 [[species.atoms]]
-index = 2
+index = 1
 z = "O"
 r = [
 0.0,
@@ -23,6 +23,6 @@ q = 0.0
 
 [[species.bonds]]
 form = "None"
-i = 1
-j = 2
+i = 0
+j = 1
 

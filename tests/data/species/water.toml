@@ -4,15 +4,6 @@ name = "Water"
 
 [species.atomTypes]
 
-[species.atomTypes.HW]
-z = "H"
-charge = 0.41
-form = "LJ"
-
-[species.atomTypes.HW.parameters]
-epsilon = 0.0
-sigma = 0.0
-
 [species.atomTypes.OW]
 z = "O"
 charge = -0.82
@@ -22,9 +13,18 @@ form = "LJ"
 epsilon = 0.6503
 sigma = 3.165492
 
+[species.atomTypes.HW]
+z = "H"
+charge = 0.41
+form = "LJ"
+
+[species.atomTypes.HW.parameters]
+epsilon = 0.0
+sigma = 0.0
+
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "O"
 r = [
 0.0,
@@ -34,7 +34,7 @@ r = [
 q = 0.0
 type = "OW"
 [[species.atoms]]
-index = 2
+index = 1
 z = "H"
 r = [
 1.0,
@@ -44,7 +44,7 @@ r = [
 q = 0.0
 type = "HW"
 [[species.atoms]]
-index = 3
+index = 2
 z = "H"
 r = [
 -0.394583,
@@ -66,12 +66,12 @@ eq = 1.0
 
 [[species.bonds]]
 common = "HW-OW"
-i = 1
-j = 2
+i = 0
+j = 1
 [[species.bonds]]
 common = "HW-OW"
-i = 1
-j = 3
+i = 0
+j = 2
 
 [species.commonAngles]
 
@@ -85,47 +85,22 @@ eq = 113.24
 
 [[species.angles]]
 common = "HW-OW-HW"
-i = 2
-j = 1
-k = 3
+i = 1
+j = 0
+k = 2
 
 [species.isotopologues]
 
 [species.isotopologues.D2O]
-HW = 2
 OW = 0
+HW = 2
 
 
 [species.sites]
 
-[species.sites.COM]
-originMassWeighted = true
-originAtoms = [
-0,
-1,
-2,
-]
-
-[species.sites.H2]
-originAtoms = [
-2,
-]
-
-[species.sites.H1]
-originAtoms = [
-1,
-]
-
-[species.sites.H]
-type = "Dynamic"
-element = [
-"H",
-]
-
-[species.sites.O]
-originAtoms = [
-0,
-]
+[species.sites.H-frag]
+type = "Fragment"
+description = "?H, #origin"
 
 [species.sites.Origin]
 originAtoms = [
@@ -139,11 +114,29 @@ yAxisAtoms = [
 2,
 ]
 
-[species.sites.H-dyn]
+[species.sites.COM-frag]
+type = "Fragment"
+originMassWeighted = true
+description = "?O, #origin, -H(#origin), -H(#origin)"
+
+[species.sites.Origin-frag]
+type = "Fragment"
+description = "?O, #origin, -H(#x), -H(#x, #y)"
+
+[species.sites.O]
+originAtoms = [
+0,
+]
+
+[species.sites.H]
 type = "Dynamic"
 element = [
 "H",
 ]
+
+[species.sites.O-frag]
+type = "Fragment"
+description = "?O, #origin"
 
 [species.sites.O-dyn]
 type = "Dynamic"
@@ -151,21 +144,28 @@ element = [
 "O",
 ]
 
-[species.sites.Origin-frag]
-type = "Fragment"
-description = "?O, #origin, -H(#x), -H(#x, #y)"
+[species.sites.H1]
+originAtoms = [
+1,
+]
 
-[species.sites.O-frag]
-type = "Fragment"
-description = "?O, #origin"
+[species.sites.H-dyn]
+type = "Dynamic"
+element = [
+"H",
+]
 
-[species.sites.H-frag]
-type = "Fragment"
-description = "?H, #origin"
+[species.sites.H2]
+originAtoms = [
+2,
+]
 
-[species.sites.COM-frag]
-type = "Fragment"
+[species.sites.COM]
 originMassWeighted = true
-description = "?O, #origin, -H(#origin), -H(#origin)"
+originAtoms = [
+0,
+1,
+2,
+]
 
 

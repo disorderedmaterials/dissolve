@@ -35,9 +35,6 @@ void SpeciesAtom::setAtomType(const AtomType *at)
 // Return SpeciesAtomType of SpeciesAtom
 const AtomType *SpeciesAtom::atomType() const { return atomType_; }
 
-// Return 'user' index (1->N)
-int SpeciesAtom::userIndex() const { return index_ + 1; }
-
 /*
  * Bond Information
  */
@@ -271,13 +268,13 @@ bool SpeciesAtom::isGeometry(const SpeciesAtom *i, AtomGeometry geom) { return g
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"index", userIndex()}, {"z", Z_}, {"r", r_}, {"q", q_}};
+    target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
 void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
-    index_ = toml::find<int>(node, "index") - 1;
+    index_ = toml::find<int>(node, "index");
 
     set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "q", 0));
 

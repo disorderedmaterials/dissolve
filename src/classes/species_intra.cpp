@@ -238,7 +238,7 @@ void Species::finaliseGeometry()
         {
             Messenger::printVerbose("Bond between Atoms {}-{} is present in a cycle, so a minimal set of attached "
                                     "atoms will be used.\n",
-                                    bond.i()->userIndex(), bond.j()->userIndex());
+                                    bond.i()->index(), bond.j()->index());
             bond.setAttachedAtoms(0, bond.i()->index());
             bond.setAttachedAtoms(1, bond.j()->index());
             bond.setInCycle(true);
@@ -273,7 +273,7 @@ void Species::finaliseGeometry()
         {
             Messenger::printVerbose("Angle between Atoms {}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
-                                    angle.i()->userIndex(), angle.j()->userIndex(), angle.k()->userIndex());
+                                    angle.i()->index(), angle.j()->index(), angle.k()->index());
             angle.setAttachedAtoms(0, angle.i()->index());
             angle.setAttachedAtoms(1, angle.k()->index());
             angle.setInCycle(true);
@@ -311,8 +311,7 @@ void Species::finaliseGeometry()
         {
             Messenger::printVerbose("Torsion between Atoms {}-{}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
-                                    torsion.i()->userIndex(), torsion.j()->userIndex(), torsion.k()->userIndex(),
-                                    torsion.l()->userIndex());
+                                    torsion.i()->index(), torsion.j()->index(), torsion.k()->index(), torsion.l()->index());
             torsion.setAttachedAtoms(0, torsion.i()->index());
             torsion.setAttachedAtoms(1, torsion.l()->index());
             torsion.setInCycle(true);

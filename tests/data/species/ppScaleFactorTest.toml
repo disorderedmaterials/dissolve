@@ -4,15 +4,6 @@ name = "Unnamed"
 
 [species.atomTypes]
 
-[species.atomTypes.C1]
-z = "C"
-charge = -0.1
-form = "LJ"
-
-[species.atomTypes.C1.parameters]
-epsilon = 1.0
-sigma = 3.0
-
 [species.atomTypes.C2]
 z = "C"
 charge = 0.1
@@ -22,9 +13,18 @@ form = "LJ"
 epsilon = 1.0
 sigma = 3.0
 
+[species.atomTypes.C1]
+z = "C"
+charge = -0.1
+form = "LJ"
+
+[species.atomTypes.C1.parameters]
+epsilon = 1.0
+sigma = 3.0
+
 
 [[species.atoms]]
-index = 1
+index = 0
 z = "C"
 r = [
 -1.39,
@@ -34,7 +34,7 @@ r = [
 q = -0.2
 type = "C1"
 [[species.atoms]]
-index = 2
+index = 1
 z = "C"
 r = [
 -0.695,
@@ -44,7 +44,7 @@ r = [
 q = 0.2
 type = "C2"
 [[species.atoms]]
-index = 3
+index = 2
 z = "C"
 r = [
 0.695,
@@ -54,7 +54,7 @@ r = [
 q = 0.2
 type = "C2"
 [[species.atoms]]
-index = 4
+index = 3
 z = "C"
 r = [
 1.39,
@@ -66,23 +66,23 @@ type = "C1"
 
 [[species.bonds]]
 form = "None"
+i = 0
+j = 1
+[[species.bonds]]
+form = "None"
 i = 1
 j = 2
 [[species.bonds]]
 form = "None"
 i = 2
 j = 3
-[[species.bonds]]
-form = "None"
-i = 3
-j = 4
 
 [[species.torsions]]
 form = "None"
-i = 1
-j = 2
-k = 3
-l = 4
+i = 0
+j = 1
+k = 2
+l = 3
 q14 = 0.5
 v14 = 0.5
 

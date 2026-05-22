@@ -425,14 +425,14 @@ void SpeciesTorsion::serialise(std::string tag, SerialisedValue &target) const
 {
     SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise(tag, target);
     auto &torsion = target[tag];
-    if (i_ != nullptr)
-        torsion["i"] = i_->userIndex();
-    if (j_ != nullptr)
-        torsion["j"] = j_->userIndex();
-    if (k_ != nullptr)
-        torsion["k"] = k_->userIndex();
-    if (l_ != nullptr)
-        torsion["l"] = l_->userIndex();
+
+    if (i_ && j_ && k_ && l_)
+    {
+        torsion["i"] = i_->index();
+        torsion["j"] = j_->index();
+        torsion["k"] = k_->index();
+        torsion["l"] = l_->index();
+    }
 
     torsion["q14"] = electrostatic14Scaling_;
     torsion["v14"] = vdw14Scaling_;

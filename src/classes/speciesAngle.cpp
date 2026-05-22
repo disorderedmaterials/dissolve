@@ -204,12 +204,13 @@ void SpeciesAngle::serialise(std::string tag, SerialisedValue &target) const
 {
     SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise(tag, target);
     auto &angle = target[tag];
-    if (i_ != nullptr)
-        angle["i"] = i_->userIndex();
-    if (j_ != nullptr)
-        angle["j"] = j_->userIndex();
-    if (k_ != nullptr)
-        angle["k"] = k_->userIndex();
+
+    if (i_ && j_ && k_)
+    {
+        angle["i"] = i_->index();
+        angle["j"] = j_->index();
+        angle["k"] = k_->index();
+    }
 }
 // Read values from a serialisable value
 void SpeciesAngle::deserialise(const SerialisedValue &node)
