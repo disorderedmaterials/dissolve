@@ -39,17 +39,14 @@ TEST(EPSRNodeTest, Water3N)
     ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::None));
 
     // Add in NeutronSQ
-    auto H2O = testGraph.appendNeutronSQ(
-        sqNode, "H2O", {{"Water", "Natural", 1.0}}, {},
-        {"epsr25/water1000-neutron/H2O.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {{"Water", "Natural", 1.0}}, {},
+                                         {"epsr25/water1000-neutron/H2O.mint01", true});
     ASSERT_TRUE(H2O);
-    auto D2O = testGraph.appendNeutronSQ(
-        sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
-        {"epsr25/water1000-neutron/D2O.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto D2O =
+        testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}}, {}, {"epsr25/water1000-neutron/D2O.mint01", true});
     ASSERT_TRUE(D2O);
-    auto HDO = testGraph.appendNeutronSQ(
-        sqNode, "HDO", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}),
-        {"epsr25/water1000-neutron/HDO.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto HDO = testGraph.appendNeutronSQ(sqNode, "HDO", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
+                                         Exchangeables({"HW"}), {"epsr25/water1000-neutron/HDO.mint01", true});
     ASSERT_TRUE(HDO);
 
     for (const auto &neutronSQ : {H2O, D2O, HDO})
@@ -116,20 +113,16 @@ TEST(EPSRNodeTest, Water3NX)
     ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.02}}));
 
     // Add in NeutronSQ and XRaySQ
-    auto H2Ox = testGraph.appendXRaySQ(
-        sqNode, "H2Ox", {"epsr25/water1000-neutron-xray/PCCPfofq.txt", Data1DImportFileFormat::Data1DImportFormat::XY});
+    auto H2Ox = testGraph.appendXRaySQ(sqNode, "H2Ox", {"epsr25/water1000-neutron-xray/PCCPfofq.txt"});
     ASSERT_TRUE(H2Ox);
-    auto H2O = testGraph.appendNeutronSQ(
-        sqNode, "H2O", {{"Water", "Natural", 1.0}}, {},
-        {"epsr25/water1000-neutron-xray/H2O.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {{"Water", "Natural", 1.0}}, {},
+                                         {"epsr25/water1000-neutron-xray/H2O.mint01", true});
     ASSERT_TRUE(H2O);
-    auto D2O = testGraph.appendNeutronSQ(
-        sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
-        {"epsr25/water1000-neutron-xray/D2O.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}}, {},
+                                         {"epsr25/water1000-neutron-xray/D2O.mint01", true});
     ASSERT_TRUE(D2O);
-    auto HDO = testGraph.appendNeutronSQ(
-        sqNode, "HDO", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}}, Exchangeables({"HW"}),
-        {"epsr25/water1000-neutron-xray/HDO.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto HDO = testGraph.appendNeutronSQ(sqNode, "HDO", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
+                                         Exchangeables({"HW"}), {"epsr25/water1000-neutron-xray/HDO.mint01", true});
     ASSERT_TRUE(HDO);
 
     for (const auto &neutronSQ : {H2O, D2O, HDO})
@@ -212,17 +205,14 @@ TEST(EPSRNodeTest, Benzene)
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 
     // Add in NeutronSQ
-    auto C6H6 = testGraph.appendNeutronSQ(
-        sqNode, "C6H6", {{"Benzene", "Natural", 1.0}}, {},
-        {"epsr25/benzene200-neutron/C6H6.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto C6H6 = testGraph.appendNeutronSQ(sqNode, "C6H6", {{"Benzene", "Natural", 1.0}}, {},
+                                          {"epsr25/benzene200-neutron/C6H6.mint01", true});
     ASSERT_TRUE(C6H6);
-    auto C6D6 = testGraph.appendNeutronSQ(
-        sqNode, "C6D6", {{"Benzene", "C6D6", 1.0}}, {},
-        {"epsr25/benzene200-neutron/C6D6.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto C6D6 = testGraph.appendNeutronSQ(sqNode, "C6D6", {{"Benzene", "C6D6", 1.0}}, {},
+                                          {"epsr25/benzene200-neutron/C6D6.mint01", true});
     ASSERT_TRUE(C6D6);
-    auto FiftyFifty = testGraph.appendNeutronSQ(
-        sqNode, "5050", {{"Benzene", "Natural", 0.5}, {"Benzene", "C6D6", 0.5}}, {},
-        {"epsr25/benzene200-neutron/5050.mint01", Data1DImportFileFormat::Data1DImportFormat::GudrunMint});
+    auto FiftyFifty = testGraph.appendNeutronSQ(sqNode, "5050", {{"Benzene", "Natural", 0.5}, {"Benzene", "C6D6", 0.5}}, {},
+                                                {"epsr25/benzene200-neutron/5050.mint01", true});
     ASSERT_TRUE(FiftyFifty);
 
     // Add EPSR
