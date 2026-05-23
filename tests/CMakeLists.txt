@@ -50,7 +50,6 @@ function(dissolve_add_test)
       PUBLIC models widgets render delegates
       PRIVATE Qt6::Core Qt6::Widgets Qt6::Quick3D Qt6::Qml
     )
-    endif(APPLE)
   endif(DISSOLVE_UNIT_TEST_GUI)
 
   # Register the test
