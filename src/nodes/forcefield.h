@@ -4,6 +4,7 @@
 #pragma once
 
 #include "data/ff/ff.h"
+#include "data/ff/recipe.h"
 #include "nodes/node.h"
 
 // Forcefield Node
@@ -24,16 +25,8 @@ class ForcefieldNode : public Node
      * Data
      */
     private:
-    // Forcefield object
-    std::shared_ptr<Forcefield> ff_;
-
-    /*
-     * Accessors
-     */
-    public:
-    // Access the species information (Needed for ForcefieldModel)
-    std::shared_ptr<Forcefield> &forcefield();
-    const std::shared_ptr<Forcefield> &forcefield() const;
+    // Recipe
+    ForcefieldRecipe recipe_;
 
     /*
      * Processing
@@ -42,6 +35,10 @@ class ForcefieldNode : public Node
     // Run main processing
     NodeConstants::ProcessResult process() override;
 
+    /*
+     * I/O
+     */
+    public:
     // Serialise any hidden content
     void serialiseInternal(SerialisedValue &target) const override;
     // Deserialise any hidden content
