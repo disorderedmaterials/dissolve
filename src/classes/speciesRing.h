@@ -6,13 +6,13 @@
 #include <vector>
 
 // Forward Declarations
-class SpeciesAtom;
+class AtomBase;
 
 // SpeciesRing Definition
 class SpeciesRing
 {
     public:
-    SpeciesRing(const std::vector<const SpeciesAtom *> &atoms = {});
+    SpeciesRing(const std::vector<const AtomBase *> &atoms = {});
     ~SpeciesRing() = default;
     bool operator==(const SpeciesRing &other) const;
 
@@ -21,15 +21,15 @@ class SpeciesRing
      */
     private:
     // Array of atoms in the ring, in the order in which they appear
-    std::vector<const SpeciesAtom *> atoms_;
+    std::vector<const AtomBase *> atoms_;
 
     public:
     // Set atoms in ring
-    void setAtoms(const std::vector<const SpeciesAtom *> &atoms);
+    void setAtoms(const std::vector<const AtomBase *> &atoms);
     // Return nth atom in ring
-    const SpeciesAtom *atom(int n) const;
+    const AtomBase *atom(int n) const;
     // Return array of atoms in ring
-    const std::vector<const SpeciesAtom *> &atoms() const;
+    const std::vector<const AtomBase *> &atoms() const;
     // Return size of ring (number of atoms in array)
     int size() const;
     // Print ring information

@@ -10,7 +10,7 @@
 
 // Forward Declarations
 class Forcefield;
-class SpeciesAtom;
+class AtomBase;
 
 // NETA Definition
 class NETADefinition
@@ -23,7 +23,7 @@ class NETADefinition
         IncludeRootElement /* Include the root element in NETA definition string */
     };
     explicit NETADefinition(std::string_view definition = "");
-    NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth = 1, const Flags<NETACreationFlags> &flags = {});
+    NETADefinition(const AtomBase *i, const std::optional<int> maxDepth = 1, const Flags<NETACreationFlags> &flags = {});
     ~NETADefinition() = default;
 
     /*
@@ -47,7 +47,7 @@ class NETADefinition
     // Set definition string and create definition
     bool create(std::string_view definition, const Forcefield *associatedFF = nullptr);
     // Create from specified atom and its connectivity
-    bool create(const SpeciesAtom *i, const std::optional<int> maxDepth = 1, const Flags<NETACreationFlags> &flags = {});
+    bool create(const AtomBase *i, const std::optional<int> maxDepth = 1, const Flags<NETACreationFlags> &flags = {});
     // Set generating string
     void setDefinitionString(std::string_view definition);
     // Return original generating string
@@ -64,11 +64,11 @@ class NETADefinition
      */
     public:
     // Return score of supplied atom for the definition
-    int score(const SpeciesAtom *i) const;
+    int score(const AtomBase *i) const;
     // Return whether the supplied atom matches the definition
-    bool matches(const SpeciesAtom *i) const;
+    bool matches(const AtomBase *i) const;
     // Return the path of matched atoms, including the target atom, if the definition matches
-    NETAMatchedGroup matchedPath(const SpeciesAtom *i) const;
+    NETAMatchedGroup matchedPath(const AtomBase *i) const;
 
     /*
      * Axes

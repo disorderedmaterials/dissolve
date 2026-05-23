@@ -79,7 +79,7 @@ bool NETARingAtomNode::validRepeatCount(int value) const { return compareValues(
  */
 
 // Return whether we match the specified atom
-int NETARingAtomNode::matches(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
+int NETARingAtomNode::matches(const AtomBase *i, NETAMatchedGroup &matchPath) const
 {
     // Evaluate the atom against our elements
     int atomScore = NETANode::NoMatch;
@@ -117,7 +117,7 @@ int NETARingAtomNode::matches(const SpeciesAtom *i, NETAMatchedGroup &matchPath)
 }
 
 // Evaluate the node and return its score
-int NETARingAtomNode::score(const SpeciesAtom *i, NETAMatchedGroup &availableAtoms) const
+int NETARingAtomNode::score(const AtomBase *i, NETAMatchedGroup &availableAtoms) const
 {
     throw(std::runtime_error("NETARingAtomNode was called via its score() function, but this should never be done.\n"));
 }

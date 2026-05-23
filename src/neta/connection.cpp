@@ -114,17 +114,16 @@ bool NETAConnectionNode::setFlag(std::string_view flag, bool state)
  */
 
 // Evaluate the node and return its score
-int NETAConnectionNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
+int NETAConnectionNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
 {
     // Get directly connected atoms about 'i', excluding any that have already been matched
-    std::map<const SpeciesAtom *, std::pair<int, NETAMatchedGroup>> neighbours;
-    for (const auto *bond : i->bonds())
+    std::map<const AtomBase *, std::pair<int, NETAMatchedGroup>> neighbours;
+    auto connectedAtoms = i->connectedAtoms();
+    for (const auto *neighbour : connectedAtoms)
     {
-        const auto *partner = bond->partner(i);
-
         // Search for this atom in the current match path
-        if (!matchPath.contains(partner) || (allowRootMatch_ && matchPath.isRoot(partner)))
-            neighbours.emplace(partner, std::pair<int, NETAMatchedGroup>(NETANode::NoMatch, matchPath));
+        if (!matchPath.contains(neighbour) || (allowRootMatch_ && matchPath.isRoot(neighbour)))
+            neighbours.emplace(neighbour, std::pair<int, NETAMatchedGroup>(NETANode::NoMatch, matchPath));
     }
 
     // Loop over neighbour atoms

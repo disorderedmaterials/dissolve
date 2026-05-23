@@ -6,7 +6,7 @@
 #include "classes/speciesBond.h"
 #include "data/elements.h"
 
-SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> &atoms) : atoms_(atoms) {};
+SpeciesRing::SpeciesRing(const std::vector<const AtomBase *> &atoms) : atoms_(atoms) {};
 
 bool SpeciesRing::operator==(const SpeciesRing &other) const
 {
@@ -42,13 +42,13 @@ bool SpeciesRing::operator==(const SpeciesRing &other) const
  */
 
 // Set atoms in ring
-void SpeciesRing::setAtoms(const std::vector<const SpeciesAtom *> &atoms) { atoms_ = atoms; }
+void SpeciesRing::setAtoms(const std::vector<const AtomBase *> &atoms) { atoms_ = atoms; }
 
 // Return nth atom in ring
-const SpeciesAtom *SpeciesRing::atom(int n) const { return atoms_.at(n); }
+const AtomBase *SpeciesRing::atom(int n) const { return atoms_.at(n); }
 
 // Return array of atoms in ring
-const std::vector<const SpeciesAtom *> &SpeciesRing::atoms() const { return atoms_; }
+const std::vector<const AtomBase *> &SpeciesRing::atoms() const { return atoms_; }
 
 // Return size of ring (number of atoms in array)
 int SpeciesRing::size() const { return atoms_.size(); }

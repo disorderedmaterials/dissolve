@@ -14,6 +14,7 @@
 // Forward Declarations
 class ForcefieldAtomType;
 class NETADefinition;
+class AtomBase;
 
 // NETA Node
 class NETANode
@@ -151,11 +152,11 @@ class NETANode
 
     protected:
     // Evaluate the provided sequence and return a score
-    static int sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i, NETAMatchedGroup &matchPath);
+    static int sequenceScore(const NETANode::NETASequence &sequence, const AtomBase *i, NETAMatchedGroup &matchPath);
 
     public:
     // Set node to use reverse logic
     void setReverseLogic();
     // Evaluate the node and return its score
-    virtual int score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const;
+    virtual int score(const AtomBase *i, NETAMatchedGroup &matchPath) const;
 };

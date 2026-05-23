@@ -83,5 +83,5 @@ class NETAConnectionNode : public NETANode
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const override;
+    int score(const AtomBase *i, NETAMatchedGroup &matchPath) const override;
 };
