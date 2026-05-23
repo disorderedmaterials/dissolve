@@ -404,12 +404,9 @@ bool Forcefield::assignImproperTermParameters(ForcefieldImproperTerm &improper, 
 }
 
 // Assign intramolecular parameters to the supplied Species
-bool Forcefield::assignIntramolecular(Species *sp, int flags) const
+bool Forcefield::assignIntramolecular(Species *sp) const
 {
     Messenger::print("Assigning intramolecular terms to species '{}' from forcefield '{}'...\n", sp->name(), name());
-
-    auto determineTypes = flags & Forcefield::DetermineTypesFlag;
-    auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Assign bond terms
     for (auto &bond : sp->bonds())
@@ -433,47 +430,43 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     }
 
     // Generate improper terms
-    if (flags & Forcefield::GenerateImpropersFlag)
+    // Loop over potential improper sites in the Species and see if any match terms in the forcefield
+    for (auto &i : sp->atoms())
     {
-        ForcefieldImproperTerm improperTerm;
+        // If we don't have exactly three bonds to the central atom 'i', move on
+        if (i.bonds().size() != 3)
+            continue;
 
-        // Loop over potential improper sites in the Species and see if any match terms in the forcefield
-        for (auto &i : sp->atoms())
+        // Get SpeciesAtom 'j'
+        auto *j = i.bonds().front()->partner(&i);
+
+        for (auto indexK = 1; indexK < 2; ++indexK)
         {
-            // If we don't have exactly three bonds to the central atom 'i', move on
-            if (i.bonds().size() != 3)
-                continue;
+            // Get SpeciesAtom 'k'
+            auto *k = i.bonds()[indexK]->partner(&i);
 
-            // Get SpeciesAtom 'j'
-            auto *j = i.bonds().front()->partner(&i);
-
-            for (auto indexK = 1; indexK < 2; ++indexK)
+            for (auto indexL = indexK + 1; indexL < 3; ++indexL)
             {
-                // Get SpeciesAtom 'k'
-                auto *k = i.bonds()[indexK]->partner(&i);
+                // Get SpeciesAtom 'l'
+                auto *l = i.bonds()[indexL]->partner(&i);
 
-                for (auto indexL = indexK + 1; indexL < 3; ++indexL)
-                {
-                    // Get SpeciesAtom 'l'
-                    auto *l = i.bonds()[indexL]->partner(&i);
+                // Try to assign / generate an improper term (which may legitimately not exist)
+                ForcefieldImproperTerm improperTerm;
+                if (!assignImproperTermParameters(improperTerm, &i, j, k, l))
+                    return false;
 
-                    // Try to assign / generate an improper term (which may legitimately not exist)
-                    if (!assignImproperTermParameters(improperTerm, &i, j, k, l))
-                        return false;
+                if (improperTerm.form() == TorsionFunctions::Form::None)
+                    continue;
 
-                    if (improperTerm.form() == TorsionFunctions::Form::None)
-                        continue;
+                // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
+                // one.
+                // auto optImproper = sp->getImproper(i, j, k, l);
+                // if (!optImproper)
+                // optImproper = sp->addImproper(&i, j, k, l);
+                // SpeciesImproper &improper = *optImproper;
 
-                    // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
-                    // one.
-                    // auto optImproper = sp->getImproper(i, j, k, l);
-                    // if (!optImproper)
-                    // optImproper = sp->addImproper(&i, j, k, l);
-                    // SpeciesImproper &improper = *optImproper;
-
-                    // improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
-                    // TODO DISSOLVE2
-                }
+                // improper.setInteractionFormAndParameters(improperTerm.form(), improperTerm.parameters());
+                // TODO DISSOLVE2
             }
         }
     }

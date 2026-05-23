@@ -162,20 +162,13 @@ class Forcefield
                                               SpeciesAtom *l) const;
 
     public:
-    // Intramolecular Term Assignment Flags
-    enum IntramolecularTermAssignmentFlags
-    {
-        DetermineTypesFlag = 1,    /* Attempt to determine atom types on-the-fly, rather than use those existing on the atoms */
-        GenerateImpropersFlag = 2, /* Generate improper terms where available */
-        SelectionOnlyFlag = 4      /* Only assign terms where all atoms are in the current selection */
-    };
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     // Returns any elements that were unassigned
     std::vector<int> assignAtomTypes(Species *sp) const;
     // Assign specific AtomType to the supplied atom
     void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i) const;
     // Assign intramolecular parameters to the supplied Species
-    bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
+    bool assignIntramolecular(Species *sp) const;
 
     /*
      * Pair Potential Overrides
