@@ -48,12 +48,7 @@ function(dissolve_add_test)
     target_link_libraries(
       ${TEST_NAME}
       PUBLIC models widgets render delegates
-      PRIVATE Qt6::Core Qt6::Widgets
-    )
-    if(APPLE)
-    target_link_libraries(
-      ${TEST_NAME}
-      PRIVATE OpenGL::OpenGL
+      PRIVATE Qt6::Core Qt6::Widgets Qt6::Quick3D Qt6::Qml
     )
     endif(APPLE)
   endif(DISSOLVE_UNIT_TEST_GUI)
