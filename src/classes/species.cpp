@@ -193,12 +193,9 @@ bool Species::applyForcefieldTerms(std::shared_ptr<Forcefield> ff)
     return true;
 }
 
-// Clear forcefield terms
-void Species::clearForcefieldTerms(bool nullifyAtomTypes)
+// Clear intramolecular forcefield terms
+void Species::clearIntramolecularForcefieldTerms()
 {
-    if (nullifyAtomTypes)
-        clearAtomTypes();
-
     for (auto &b : bonds_)
         b.setInteractionFormAndParameters(BondFunctions::Form::None, std::vector<double>());
 

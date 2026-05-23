@@ -210,7 +210,8 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     Dissolve dissolve(coreData);
 
     // Clear any old forcefield terms from the species, and recreate higher-order intramolecular terms
-    sp->clearForcefieldTerms();
+    sp->clearAtomTypes();
+    sp->clearIntramolecularForcefieldTerms();
     sp->updateIntramolecularTerms();
 
     // Apply new forcefield terms
@@ -252,7 +253,8 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     sp->centreAtOrigin();
 
     // Clear the forcefield terms from the species
-    sp->clearForcefieldTerms();
+    sp->clearAtomTypes();
+    sp->clearIntramolecularForcefieldTerms();
 
     // Need to update the SpeciesViewer, and signal that the data shown has been modified
     speciesViewer()->view().showAllData();
