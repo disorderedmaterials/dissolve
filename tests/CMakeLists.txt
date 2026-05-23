@@ -50,6 +50,12 @@ function(dissolve_add_test)
       PUBLIC models widgets render delegates
       PRIVATE Qt6::Core Qt6::Widgets
     )
+    if(APPLE)
+    target_link_libraries(
+      ${TEST_NAME}
+      PRIVATE OpenGL
+    )
+    endif(APPLE)
   endif(DISSOLVE_UNIT_TEST_GUI)
 
   # Register the test
