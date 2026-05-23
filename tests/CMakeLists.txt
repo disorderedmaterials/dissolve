@@ -53,7 +53,7 @@ function(dissolve_add_test)
     if(APPLE)
     target_link_libraries(
       ${TEST_NAME}
-      PRIVATE OpenGL
+      PRIVATE OpenGL::OpenGL
     )
     endif(APPLE)
   endif(DISSOLVE_UNIT_TEST_GUI)
