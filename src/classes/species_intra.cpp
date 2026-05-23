@@ -332,6 +332,21 @@ void Species::finaliseGeometry()
     attachedAtomListsGenerated_ = true;
 }
 
+// Clear intramolecular forcefield terms
+void Species::clearIntramolecularForcefieldTerms()
+{
+    for (auto &b : bonds_)
+        b.setInteractionFormAndParameters(BondFunctions::Form::None, std::vector<double>());
+
+    for (auto &a : angles_)
+        a.setInteractionFormAndParameters(AngleFunctions::Form::None, std::vector<double>());
+
+    for (auto &t : torsions_)
+        t.setInteractionFormAndParameters(TorsionFunctions::Form::None, std::vector<double>());
+
+    impropers_.clear();
+}
+
 // Return periodic box
 const Box *Species::box() const { return box_.get(); }
 

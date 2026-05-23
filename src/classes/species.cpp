@@ -173,42 +173,6 @@ void Species::print() const
 }
 
 /*
- * Forcefield
- */
-
-// Apply terms from specified Forcefield
-bool Species::applyForcefieldTerms(std::shared_ptr<Forcefield> ff)
-{
-    if (!ff)
-        return Messenger::error("No forcefield supplied!\n");
-
-    // Assign atom types to the species
-    if (!ff->assignAtomTypes(this).empty())
-        return false;
-
-    // Assign intramolecular terms
-    if (!ff->assignIntramolecular(this))
-        return false;
-
-    return true;
-}
-
-// Clear intramolecular forcefield terms
-void Species::clearIntramolecularForcefieldTerms()
-{
-    for (auto &b : bonds_)
-        b.setInteractionFormAndParameters(BondFunctions::Form::None, std::vector<double>());
-
-    for (auto &a : angles_)
-        a.setInteractionFormAndParameters(AngleFunctions::Form::None, std::vector<double>());
-
-    for (auto &t : torsions_)
-        t.setInteractionFormAndParameters(TorsionFunctions::Form::None, std::vector<double>());
-
-    impropers_.clear();
-}
-
-/*
  * Serialisation
  */
 

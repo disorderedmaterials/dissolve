@@ -141,6 +141,8 @@ class Species : public Serialisable<>
     void determineAnglesAndTorsions();
     // Finalise internal relationships related to geometry once it is defined
     void finaliseGeometry();
+    // Clear forcefield data from intramolecular terms
+    void clearIntramolecularForcefieldTerms();
 
     /*
      * Intramolecular Common Terms
@@ -217,15 +219,6 @@ class Species : public Serialisable<>
     void removeBox();
     // Create Box definition with specified lengths and angles
     void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
-
-    /*
-     * Forcefield
-     */
-    public:
-    // Apply terms from specified Forcefield
-    bool applyForcefieldTerms(std::shared_ptr<Forcefield> ff);
-    // Clear forcefield terms
-    void clearIntramolecularForcefieldTerms();
 
     /*
      * Isotopologues
