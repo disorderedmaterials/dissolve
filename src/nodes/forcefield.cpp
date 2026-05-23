@@ -8,7 +8,6 @@
 ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
 {
     // addOption<std::shared_ptr<Forcefield>>("Forcefield", "Source forcefield", recipe_.ff);
-
 }
 
 /*
