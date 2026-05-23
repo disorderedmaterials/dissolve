@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/types.h"
-#include "gui/models/addForcefieldDialogModel.h"
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/configurationModel.h"
 #include "gui/models/dataManagerSimulationModel.h"
@@ -18,7 +17,6 @@
 
 void Types::registerDissolveQmlTypes()
 {
-    qmlRegisterType<AddForcefieldDialogModel>(PROJECT, 1, 0, "AddForcefieldDialogModel");
     qmlRegisterType<DataManagerSimulationModel>(PROJECT, 1, 0, "DataManagerSimulationModel");
     qmlRegisterType<DissolveModel>(PROJECT, 1, 0, "DissolveModel");
     qmlRegisterType<SpeciesModel>(PROJECT, 1, 0, "SpeciesModel");
