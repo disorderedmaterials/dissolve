@@ -251,68 +251,6 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms) const
     return types;
 }
 
-// Assign suitable AtomType to the supplied atom
-bool Forcefield::assignAtomType(SpeciesAtom &i) const
-{
-    auto optRef = determineAtomType(i);
-    if (!optRef)
-        return false;
-    const ForcefieldAtomType &assignedType = *optRef;
-
-    assignAtomType(assignedType, i);
-
-    return true;
-}
-
-// Assign suitable atom types to the supplied Species, returning the number of failures
-std::vector<int> Forcefield::assignAtomTypes(Species *sp) const
-{
-    Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
-
-    // Loop over Species atoms
-    std::vector<int> failedElements;
-    for (auto &i : sp->atoms())
-    {
-        if (!assignAtomType(i))
-        {
-            Messenger::error("No matching forcefield type for atom {} ({}).\n", i.index(), Elements::symbol(i.Z()));
-            failedElements.push_back(i.index());
-        }
-    }
-
-    if (!failedElements.empty())
-        Messenger::error("Failed to assign atom {} to {} {}.\n", (failedElements.size() == 1 ? "type" : "types"),
-                         failedElements.size(), (failedElements.size() == 1 ? "atom" : "atoms"));
-
-    return failedElements;
-}
-
-// Assign specific AtomType to the supplied atom
-void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i) const
-{
-
-    // Check if an AtomType of the same name already exists - if it does, just use that one
-    auto at = i.parent()->findAtomType(ffa.name());
-    if (!at)
-    {
-        at = i.parent()->addAtomType(i.Z(), ffa.name());
-        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.index(), Elements::symbol(i.Z()));
-    }
-    else
-        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.index(), Elements::symbol(i.Z()));
-
-    // Set type in the SpeciesAtom
-    i.setAtomType(at);
-
-    // Copy parameters from the assigned atom type - we take only the required number for the specified shortRangeType.
-    // This is to avoid copying e.g. generator data (stored after the short range parameters) and causing issues elsewhere
-    std::vector<double> params;
-    params.insert(params.begin(), ffa.parameters().begin(),
-                  ffa.parameters().begin() + ShortRangeFunctions::forms().minArgs(shortRangeForm()).value_or(0));
-    at->interactionPotential().setFormAndParameters(shortRangeForm(), params);
-    at->setCharge(ffa.charge());
-}
-
 // Assign / generate bond term parameters
 bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bond) const
 {

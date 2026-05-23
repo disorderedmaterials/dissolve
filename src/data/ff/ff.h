@@ -79,14 +79,14 @@ class Forcefield
     // Copy existing atom type
     bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, std::string_view description,
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
-    // Determine and return atom type for specified SpeciesAtom
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom &i) const;
 
     public:
     // Create NETA definitions for all atom types from stored defs
     bool createNETADefinitions();
     // Return named short-range parameters (if they exist)
     std::optional<std::string> shortRangeParameters(std::string_view name) const;
+    // Determine and return atom type for specified SpeciesAtom
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom &i) const;
     // Return the named ForcefieldAtomType (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(std::string_view name) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
@@ -149,8 +149,6 @@ class Forcefield
     getAtomTypes(const std::vector<const SpeciesAtom *> &atoms) const;
 
     protected:
-    // Assign suitable AtomType to the supplied atom
-    bool assignAtomType(SpeciesAtom &i) const;
     // Assign / generate bond term parameters
     virtual bool assignBondTermParameters(const Species *parent, SpeciesBond &bond) const;
     // Assign / generate angle term parameters
@@ -162,11 +160,6 @@ class Forcefield
                                               SpeciesAtom *l) const;
 
     public:
-    // Assign suitable AtomTypes to the supplied Species, returning the number of failures
-    // Returns any elements that were unassigned
-    std::vector<int> assignAtomTypes(Species *sp) const;
-    // Assign specific AtomType to the supplied atom
-    void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i) const;
     // Assign intramolecular parameters to the supplied Species
     bool assignIntramolecular(Species *sp) const;
 
