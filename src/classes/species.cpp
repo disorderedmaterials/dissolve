@@ -183,7 +183,7 @@ bool Species::applyForcefieldTerms(std::shared_ptr<Forcefield> ff)
         return Messenger::error("No forcefield supplied!\n");
 
     // Assign atom types to the species
-    if (!ff->assignAtomTypes(this, Forcefield::TypeAll).empty())
+    if (!ff->assignAtomTypes(this).empty())
         return false;
 
     // Assign intramolecular terms

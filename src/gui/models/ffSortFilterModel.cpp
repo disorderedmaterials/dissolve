@@ -33,7 +33,7 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
     // // modifiedSpecies_->clearAtomTypes();
     // // temporaryDissolve.clearAtomTypes();
     //
-    // ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData, Forcefield::TypeAll, true);
+    // ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData, true);
     // Messenger::unMute();
     // return temporaryDissolve.coreData().atomTypes().size() > 0;
     // TODO DISSOLVE2

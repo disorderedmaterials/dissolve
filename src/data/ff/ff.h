@@ -162,14 +162,6 @@ class Forcefield
                                               SpeciesAtom *l) const;
 
     public:
-    // AtomType Assignment Strategy
-    enum AtomTypeAssignmentStrategy
-    {
-        TypeAll,      /* Assign atom types to all atoms, overwriting any that exist */
-        TypeMissing,  /* Assign atom types to all atoms that do not currently have a type assigned */
-        TypeSelection /* Assign atom types to the current selection, overwriting any types on the atoms that already
-                 exist */
-    };
     // Intramolecular Term Assignment Flags
     enum IntramolecularTermAssignmentFlags
     {
@@ -179,7 +171,7 @@ class Forcefield
     };
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     // Returns any elements that were unassigned
-    std::vector<int> assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy) const;
+    std::vector<int> assignAtomTypes(Species *sp) const;
     // Assign specific AtomType to the supplied atom
     void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i) const;
     // Assign intramolecular parameters to the supplied Species

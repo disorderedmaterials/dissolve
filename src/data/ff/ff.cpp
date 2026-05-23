@@ -265,7 +265,7 @@ bool Forcefield::assignAtomType(SpeciesAtom &i) const
 }
 
 // Assign suitable atom types to the supplied Species, returning the number of failures
-std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy) const
+std::vector<int> Forcefield::assignAtomTypes(Species *sp) const
 {
     Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
 
@@ -273,11 +273,6 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStra
     std::vector<int> failedElements;
     for (auto &i : sp->atoms())
     {
-        // Obey the supplied strategy:
-        // -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)
-        if ((strategy == Forcefield::TypeMissing) && i.atomType())
-            continue;
-
         if (!assignAtomType(i))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.index(), Elements::symbol(i.Z()));

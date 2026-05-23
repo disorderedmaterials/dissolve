@@ -215,7 +215,7 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     sp->updateIntramolecularTerms();
 
     // Apply new forcefield terms
-    auto assignErrs = uff->assignAtomTypes(sp, coreData, Forcefield::TypeAll, false);
+    auto assignErrs = uff->assignAtomTypes(sp, coreData);
     if (!assignErrs.empty())
     {
         QMessageBox::critical(
