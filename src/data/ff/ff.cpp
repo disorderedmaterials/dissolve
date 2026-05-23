@@ -32,10 +32,8 @@ bool Forcefield::prepare()
         return false;
 
     // Create reference vectors of atom types by element
-    atomTypesByElementPrivate_.resize(Elements::nElements);
-
     for (auto &atomType : atomTypes_)
-        atomTypesByElementPrivate_[atomType.Z()].push_back(atomType);
+        atomTypesByElement_[atomType.Z()].push_back(atomType);
 
     return true;
 }
@@ -75,28 +73,27 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
     return true;
 }
 
-// Determine and return atom type for specified SpeciesAtom from supplied Array of types
-OptionalReferenceWrapper<const ForcefieldAtomType>
-Forcefield::determineAtomType(const SpeciesAtom &i,
-                              const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
+// Determine and return atom type for specified SpeciesAtom
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom &i) const
 {
     Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.index(), Elements::symbol(i.Z()));
 
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
-    for (const auto &typeRef : atomTypes[i.Z()])
-    {
-        // Get the scoring for this type
-        auto &type = typeRef.get();
-        auto score = type.neta().score(&i);
-        Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
-        if (score > bestScore)
+    if (atomTypesByElement_.contains(i.Z()))
+        for (const auto &typeRef : atomTypesByElement_.at(i.Z()))
         {
-            bestScore = score;
-            bestType = type;
+            // Get the scoring for this type
+            auto &type = typeRef.get();
+            auto score = type.neta().score(&i);
+            Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestType = type;
+            }
         }
-    }
 
     if (bestScore == -1)
         Messenger::printVerbose("  -- no suitable type found.");
@@ -105,12 +102,6 @@ Forcefield::determineAtomType(const SpeciesAtom &i,
                                 bestType->get().name(), bestScore);
 
     return bestType;
-}
-
-// Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom &i) const
-{
-    return determineAtomType(i, atomTypesByElementPrivate_);
 }
 
 // Add short-range parameters
@@ -151,34 +142,24 @@ std::optional<std::string> Forcefield::shortRangeParameters(std::string_view nam
 }
 
 // Return the named ForcefieldAtomType (if it exists)
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(std::string_view name,
-                                                                              Elements::Element onlyZ) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(std::string_view name) const
 {
-    auto endZ = (onlyZ != Elements::Unknown ? onlyZ : Elements::nElements - 1);
-    for (int Z = onlyZ; Z <= endZ; ++Z)
-    {
-        // Go through types associated to the Element
-        auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
-                               [&name](const auto &type) { return DissolveSys::sameString(type.get().name(), name); });
-        if (it != atomTypesByElementPrivate_[Z].end())
-            return OptionalReferenceWrapper<const ForcefieldAtomType>(*it);
-    }
+    // Go through types associated to the Element
+    auto it =
+        std::ranges::find_if(atomTypes_, [&name](const auto &type) { return DissolveSys::sameString(type.name(), name); });
+    if (it != atomTypes_.end())
+        return OptionalReferenceWrapper<const ForcefieldAtomType>(*it);
 
     return {};
 }
 
 // Return the ForcefieldAtomType with specified id (if it exists)
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int id, Elements::Element onlyZ) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int id) const
 {
-    auto endZ = (onlyZ != Elements::Unknown ? onlyZ : Elements::nElements - 1);
-    for (int Z = onlyZ; Z <= endZ; ++Z)
-    {
-        // Go through types associated to the Element
-        auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
-                               [&id](const auto &type) { return type.get().index() == id; });
-        if (it != atomTypesByElementPrivate_[Z].end())
-            return OptionalReferenceWrapper<const ForcefieldAtomType>(*it);
-    }
+    // Go through types associated to the Element
+    auto it = std::ranges::find_if(atomTypes_, [&id](const auto &type) { return type.index() == id; });
+    if (it != atomTypes_.end())
+        return OptionalReferenceWrapper<const ForcefieldAtomType>(*it);
 
     return {};
 }
@@ -258,7 +239,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> types;
     for (const auto *i : atoms)
     {
-        auto optType = determineType ? determineAtomType(*i) : atomTypeByName(i->atomType()->name(), i->Z());
+        auto optType = determineAtomType(*i);
         if (!optType)
         {
             Messenger::error("Couldn't find or assign type for atom {}.\n", i->index());

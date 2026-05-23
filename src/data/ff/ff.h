@@ -66,7 +66,7 @@ class Forcefield
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
     // Atom type data, grouped by element
-    std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> atomTypesByElementPrivate_;
+    std::map<Elements::Element, std::vector<std::reference_wrapper<const ForcefieldAtomType>>> atomTypesByElement_;
 
     protected:
     // Add short-range parameters
@@ -79,10 +79,6 @@ class Forcefield
     // Copy existing atom type
     bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, std::string_view description,
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
-    // Determine and return atom type for specified SpeciesAtom from supplied Array of types
-    static OptionalReferenceWrapper<const ForcefieldAtomType>
-    determineAtomType(const SpeciesAtom &i,
-                      const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom &i) const;
 
@@ -92,11 +88,9 @@ class Forcefield
     // Return named short-range parameters (if they exist)
     std::optional<std::string> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType>
-    atomTypeByName(std::string_view name, Elements::Element onlyZ = Elements::Unknown) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(std::string_view name) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id,
-                                                                            Elements::Element onlyZ = Elements::Unknown) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id) const;
 
     /*
      * Term Data
