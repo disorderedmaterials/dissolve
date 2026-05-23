@@ -145,21 +145,21 @@ class Forcefield
      */
     private:
     // Find / determine atom type(s) for the specified atom(s)
-    std::vector<std::reference_wrapper<const ForcefieldAtomType>> getAtomTypes(const std::vector<const SpeciesAtom *> &atoms,
-                                                                               bool determineType) const;
+    std::vector<std::reference_wrapper<const ForcefieldAtomType>>
+    getAtomTypes(const std::vector<const SpeciesAtom *> &atoms) const;
 
     protected:
     // Assign suitable AtomType to the supplied atom
-    bool assignAtomType(SpeciesAtom &i, bool setSpeciesAtomCharges) const;
+    bool assignAtomType(SpeciesAtom &i) const;
     // Assign / generate bond term parameters
-    virtual bool assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const;
+    virtual bool assignBondTermParameters(const Species *parent, SpeciesBond &bond) const;
     // Assign / generate angle term parameters
-    virtual bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const;
+    virtual bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const;
     // Assign / generate torsion term parameters
-    virtual bool assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const;
+    virtual bool assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion) const;
     // Assign / generate improper term parameters
     virtual bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
-                                              SpeciesAtom *l, bool determineTypes) const;
+                                              SpeciesAtom *l) const;
 
     public:
     // AtomType Assignment Strategy
@@ -179,9 +179,9 @@ class Forcefield
     };
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     // Returns any elements that were unassigned
-    std::vector<int> assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy, bool setSpeciesAtomCharges) const;
+    std::vector<int> assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy) const;
     // Assign specific AtomType to the supplied atom
-    void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, bool setSpeciesAtomCharges) const;
+    void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i) const;
     // Assign intramolecular parameters to the supplied Species
     bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
 

@@ -35,5 +35,5 @@ class Forcefield_Zhao2010 : public Forcefield
      */
     public:
     // Assign / generate angle term parameters
-    bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const override;
+    bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const override;
 };

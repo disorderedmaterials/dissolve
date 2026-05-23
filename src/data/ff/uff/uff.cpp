@@ -332,10 +332,10 @@ double Forcefield_UFF::electronegativityCorrection(const ForcefieldAtomType &i, 
 }
 
 // Assign / generate bond term parameters
-bool Forcefield_UFF::assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const
+bool Forcefield_UFF::assignBondTermParameters(const Species *parent, SpeciesBond &bond) const
 {
-    auto typeI = determineTypes ? determineAtomType(*bond.i()) : atomTypeByName(bond.i()->atomType()->name());
-    auto typeJ = determineTypes ? determineAtomType(*bond.j()) : atomTypeByName(bond.j()->atomType()->name());
+    auto typeI = determineAtomType(*bond.i());
+    auto typeJ = determineAtomType(*bond.j());
     if (!typeI || !typeJ)
         return Messenger::error("Failed to create parameters for bond {}-{} (atom types could not be determined).\n",
                                 bond.i()->index(), bond.j()->index());
@@ -363,11 +363,11 @@ bool Forcefield_UFF::assignBondTermParameters(const Species *parent, SpeciesBond
 }
 
 // Assign / generate angle term parameters
-bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const
+bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const
 {
-    auto typeI = determineTypes ? determineAtomType(*angle.i()) : atomTypeByName(angle.i()->atomType()->name());
-    auto typeJ = determineTypes ? determineAtomType(*angle.j()) : atomTypeByName(angle.j()->atomType()->name());
-    auto typeK = determineTypes ? determineAtomType(*angle.k()) : atomTypeByName(angle.k()->atomType()->name());
+    auto typeI = determineAtomType(*angle.i());
+    auto typeJ = determineAtomType(*angle.j());
+    auto typeK = determineAtomType(*angle.k());
 
     if (!typeI || !typeJ || !typeK)
         Messenger::error("Failed to create parameters for angle {}-{}-{} (atom types could not be determined).\n",
@@ -430,12 +430,12 @@ bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAng
 }
 
 // Assign / generate torsion term parameters
-bool Forcefield_UFF::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const
+bool Forcefield_UFF::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion) const
 {
-    auto typeI = determineTypes ? determineAtomType(*torsion.i()) : atomTypeByName(torsion.i()->atomType()->name());
-    auto typeJ = determineTypes ? determineAtomType(*torsion.j()) : atomTypeByName(torsion.j()->atomType()->name());
-    auto typeK = determineTypes ? determineAtomType(*torsion.k()) : atomTypeByName(torsion.k()->atomType()->name());
-    auto typeL = determineTypes ? determineAtomType(*torsion.l()) : atomTypeByName(torsion.l()->atomType()->name());
+    auto typeI = determineAtomType(*torsion.i());
+    auto typeJ = determineAtomType(*torsion.j());
+    auto typeK = determineAtomType(*torsion.k());
+    auto typeL = determineAtomType(*torsion.l());
 
     if (!typeI || !typeJ || !typeK || !typeL)
         Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
@@ -525,12 +525,12 @@ bool Forcefield_UFF::assignTorsionTermParameters(const Species *parent, SpeciesT
 
 // Assign / generate improper term parameters
 bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j,
-                                                  SpeciesAtom *k, SpeciesAtom *l, bool determineTypes) const
+                                                  SpeciesAtom *k, SpeciesAtom *l) const
 {
-    auto optTypeI = determineTypes ? determineAtomType(*i) : atomTypeByName(i->atomType()->name());
-    auto optTypeJ = determineTypes ? determineAtomType(*j) : atomTypeByName(j->atomType()->name());
-    auto optTypeK = determineTypes ? determineAtomType(*k) : atomTypeByName(k->atomType()->name());
-    auto optTypeL = determineTypes ? determineAtomType(*l) : atomTypeByName(l->atomType()->name());
+    auto optTypeI = determineAtomType(*i);
+    auto optTypeJ = determineAtomType(*j);
+    auto optTypeK = determineAtomType(*k);
+    auto optTypeL = determineAtomType(*l);
 
     if (!optTypeI || !optTypeJ || !optTypeK || !optTypeL)
         Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",

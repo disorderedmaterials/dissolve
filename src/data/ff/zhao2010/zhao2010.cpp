@@ -102,7 +102,7 @@ ShortRangeFunctions::Form Forcefield_Zhao2010::shortRangeForm() const { return S
  */
 
 // Assign / generate angle term parameters
-bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const
+bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const
 {
     // We need an override on the angle term assignment so that we can deal with the fact that the O-Cu-O angles are described
     // as harmonic angles and we have a mix of ~180 and ~90 angles.
@@ -120,5 +120,5 @@ bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, Speci
         return true;
     }
     else
-        return Forcefield::assignAngleTermParameters(parent, angle, determineTypes);
+        return Forcefield::assignAngleTermParameters(parent, angle);
 }

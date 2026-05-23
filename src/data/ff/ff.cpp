@@ -234,7 +234,7 @@ OptionalReferenceWrapper<const ForcefieldImproperTerm> Forcefield::getImproperTe
 
 // Find / determine atom type(s) for the specified atom(s)
 std::vector<std::reference_wrapper<const ForcefieldAtomType>>
-Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool determineType) const
+Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms) const
 {
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> types;
     for (const auto *i : atoms)
@@ -252,20 +252,20 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
 }
 
 // Assign suitable AtomType to the supplied atom
-bool Forcefield::assignAtomType(SpeciesAtom &i, bool setSpeciesAtomCharges) const
+bool Forcefield::assignAtomType(SpeciesAtom &i) const
 {
     auto optRef = determineAtomType(i);
     if (!optRef)
         return false;
     const ForcefieldAtomType &assignedType = *optRef;
 
-    assignAtomType(assignedType, i, setSpeciesAtomCharges);
+    assignAtomType(assignedType, i);
 
     return true;
 }
 
 // Assign suitable atom types to the supplied Species, returning the number of failures
-std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy, bool setSpeciesAtomCharges) const
+std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStrategy strategy) const
 {
     Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
 
@@ -283,7 +283,7 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStra
         // continue;
         // TODO DISSOLVE2
 
-        if (!assignAtomType(i, setSpeciesAtomCharges))
+        if (!assignAtomType(i))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.index(), Elements::symbol(i.Z()));
             failedElements.push_back(i.index());
@@ -298,7 +298,7 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStra
 }
 
 // Assign specific AtomType to the supplied atom
-void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, bool setSpeciesAtomCharges) const
+void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i) const
 {
 
     // Check if an AtomType of the same name already exists - if it does, just use that one
@@ -321,20 +321,16 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, b
                   ffa.parameters().begin() + ShortRangeFunctions::forms().minArgs(shortRangeForm()).value_or(0));
     at->interactionPotential().setFormAndParameters(shortRangeForm(), params);
     at->setCharge(ffa.charge());
-
-    // Set the charge on the SpeciesAtom if requested
-    if (setSpeciesAtomCharges)
-        i.setQ(ffa.charge());
 }
 
 // Assign / generate bond term parameters
-bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const
+bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bond) const
 {
     // Default implementation - search term lists in the forcefield
     auto *i = bond.i();
     auto *j = bond.j();
 
-    auto atomTypes = getAtomTypes({i, j}, determineTypes);
+    auto atomTypes = getAtomTypes({i, j});
     if (atomTypes.size() != 2)
         return false;
 
@@ -350,14 +346,14 @@ bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bo
 }
 
 // Assign / generate angle term parameters
-bool Forcefield::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const
+bool Forcefield::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const
 {
     // Default implementation - search term lists in the forcefield
     auto *i = angle.i();
     auto *j = angle.j();
     auto *k = angle.k();
 
-    auto atomTypes = getAtomTypes({i, j, k}, determineTypes);
+    auto atomTypes = getAtomTypes({i, j, k});
     if (atomTypes.size() != 3)
         return false;
 
@@ -374,7 +370,7 @@ bool Forcefield::assignAngleTermParameters(const Species *parent, SpeciesAngle &
 }
 
 // Assign / generate torsion term parameters
-bool Forcefield::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const
+bool Forcefield::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion) const
 {
     // Default implementation - search term lists in the forcefield
     SpeciesAtom *i = torsion.i();
@@ -382,7 +378,7 @@ bool Forcefield::assignTorsionTermParameters(const Species *parent, SpeciesTorsi
     SpeciesAtom *k = torsion.k();
     SpeciesAtom *l = torsion.l();
 
-    auto atomTypes = getAtomTypes({i, j, k, l}, determineTypes);
+    auto atomTypes = getAtomTypes({i, j, k, l});
     if (atomTypes.size() != 4)
         return false;
 
@@ -401,9 +397,9 @@ bool Forcefield::assignTorsionTermParameters(const Species *parent, SpeciesTorsi
 
 // Assign / generate improper term parameters
 bool Forcefield::assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
-                                              SpeciesAtom *l, bool determineTypes) const
+                                              SpeciesAtom *l) const
 {
-    auto atomTypes = getAtomTypes({i, j, k, l}, determineTypes);
+    auto atomTypes = getAtomTypes({i, j, k, l});
     if (atomTypes.size() != 4)
         return false;
 
@@ -431,7 +427,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         // if (selectionOnly && (!bond.isSelected()))
         // continue;
 
-        if (!assignBondTermParameters(sp, bond, determineTypes))
+        if (!assignBondTermParameters(sp, bond))
             return false;
     }
 
@@ -441,7 +437,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         // if (selectionOnly && (!angle.isSelected()))
         // continue;
 
-        if (!assignAngleTermParameters(sp, angle, determineTypes))
+        if (!assignAngleTermParameters(sp, angle))
             return false;
     }
 
@@ -451,7 +447,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         // if (selectionOnly && (!torsion.isSelected()))
         // continue;
 
-        if (!assignTorsionTermParameters(sp, torsion, determineTypes))
+        if (!assignTorsionTermParameters(sp, torsion))
             return false;
     }
 
@@ -493,7 +489,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                     // continue;
 
                     // Try to assign / generate an improper term (which may legitimately not exist)
-                    if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))
+                    if (!assignImproperTermParameters(improperTerm, &i, j, k, l))
                         return false;
 
                     if (improperTerm.form() == TorsionFunctions::Form::None)
