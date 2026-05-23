@@ -278,11 +278,6 @@ std::vector<int> Forcefield::assignAtomTypes(Species *sp, AtomTypeAssignmentStra
         if ((strategy == Forcefield::TypeMissing) && i.atomType())
             continue;
 
-        // -- Don't assign a type unless the atom is selected (strategy == Forcefield::TypeSelection)
-        // if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
-        // continue;
-        // TODO DISSOLVE2
-
         if (!assignAtomType(i))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.index(), Elements::symbol(i.Z()));
@@ -424,9 +419,6 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     // Assign bond terms
     for (auto &bond : sp->bonds())
     {
-        // if (selectionOnly && (!bond.isSelected()))
-        // continue;
-
         if (!assignBondTermParameters(sp, bond))
             return false;
     }
@@ -434,9 +426,6 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     // Generate angle parameters
     for (auto &angle : sp->angles())
     {
-        // if (selectionOnly && (!angle.isSelected()))
-        // continue;
-
         if (!assignAngleTermParameters(sp, angle))
             return false;
     }
@@ -444,9 +433,6 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     // Generate torsion parameters
     for (auto &torsion : sp->torsions())
     {
-        // if (selectionOnly && (!torsion.isSelected()))
-        // continue;
-
         if (!assignTorsionTermParameters(sp, torsion))
             return false;
     }
@@ -463,30 +449,18 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
             if (i.bonds().size() != 3)
                 continue;
 
-            // if (selectionOnly && (!i.isSelected()))
-            // continue;
-
             // Get SpeciesAtom 'j'
             auto *j = i.bonds().front()->partner(&i);
-
-            // if (selectionOnly && (!j->isSelected()))
-            // continue;
 
             for (auto indexK = 1; indexK < 2; ++indexK)
             {
                 // Get SpeciesAtom 'k'
                 auto *k = i.bonds()[indexK]->partner(&i);
 
-                // if (selectionOnly && (!k->isSelected()))
-                // continue;
-
                 for (auto indexL = indexK + 1; indexL < 3; ++indexL)
                 {
                     // Get SpeciesAtom 'l'
                     auto *l = i.bonds()[indexL]->partner(&i);
-
-                    // if (selectionOnly && (!l->isSelected()))
-                    // continue;
 
                     // Try to assign / generate an improper term (which may legitimately not exist)
                     if (!assignImproperTermParameters(improperTerm, &i, j, k, l))
