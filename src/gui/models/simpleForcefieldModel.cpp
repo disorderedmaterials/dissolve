@@ -35,6 +35,7 @@ void SimpleForcefieldModel::create(int x, int y)
     auto name = ff_->name();
     graphModel_->emplace_back(x, y, "Forcefield", QString::fromStdString(std::string(name)));
     auto ff = dynamic_cast<ForcefieldNode *>(graphModel_->graph()->findNode(name));
-    if (ff)
-        ff->forcefield() = ff_;
+    // if (ff)
+    // ff->forcefield() = ff_;
+    // TODO DISSOLVE2
 }
