@@ -98,7 +98,7 @@ std::string_view Forcefield_Zhao2010::description() const
 ShortRangeFunctions::Form Forcefield_Zhao2010::shortRangeForm() const { return ShortRangeFunctions::Form::LennardJones; }
 
 /*
- * Term Assignment
+ * Intramolecular Term Data
  */
 
 // Assign / generate angle term parameters

@@ -31,7 +31,7 @@ class Forcefield_Zhao2010 : public Forcefield
     ShortRangeFunctions::Form shortRangeForm() const override;
 
     /*
-     * Term Assignment
+     * Intramolecular Term Data
      */
     public:
     // Assign / generate angle term parameters

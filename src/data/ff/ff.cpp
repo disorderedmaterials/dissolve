@@ -165,7 +165,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
 }
 
 /*
- * Term Data
+ * Intramolecular Term Data
  */
 
 // Add bond term
@@ -252,11 +252,13 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms) const
 }
 
 // Assign / generate bond term parameters
-bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bond) const
+bool Forcefield::assignBondTermParameters(SpeciesBond &bond, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> & ffAtomTypes) const
 {
     // Default implementation - search term lists in the forcefield
-    auto *i = bond.i();
-    auto *j = bond.j();
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffi = ffAtomTypes.size() == 2 ? ffAtomTypes[0] : determineAtomType(*bond.i());
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffj = ffAtomTypes.size() == 2 ? ffAtomTypes[1] : determineAtomType(*bond.j());
+    if (!ffi || !ffj)
+        return false;
 
     auto atomTypes = getAtomTypes({i, j});
     if (atomTypes.size() != 2)

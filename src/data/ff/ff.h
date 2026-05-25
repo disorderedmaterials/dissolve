@@ -93,7 +93,7 @@ class Forcefield
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id) const;
 
     /*
-     * Term Data
+     * Intramolecular Term Data
      */
     private:
     // Bond terms of the Forcefield
@@ -150,11 +150,11 @@ class Forcefield
 
     protected:
     // Assign / generate bond term parameters
-    virtual bool assignBondTermParameters(const Species *parent, SpeciesBond &bond) const;
+    virtual bool assignBondTermParameters(SpeciesBond &bond, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> & ffAtomTypes) const;
     // Assign / generate angle term parameters
-    virtual bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const;
+    virtual bool assignAngleTermParameters(SpeciesAngle &angle) const;
     // Assign / generate torsion term parameters
-    virtual bool assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion) const;
+    virtual bool assignTorsionTermParameters(SpeciesTorsion &torsion) const;
     // Assign / generate improper term parameters
     virtual bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
                                               SpeciesAtom *l) const;
