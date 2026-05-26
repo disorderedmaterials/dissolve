@@ -14,12 +14,14 @@ Structure &Structure::operator=(const Structure &source)
 {
     clear();
 
+    // Copy source atoms
     for (auto &atom : source.atoms_)
     {
         auto &i = atoms_.emplace_back(std::make_unique<StructureAtom>());
         i->copy(*atom);
     }
 
+    // Copy source connectivity
     for (auto &bond : source.bonds_)
         addBond(bond->i()->index(), bond->j()->index());
 
@@ -118,6 +120,10 @@ const StructureAtom *Structure::atom(int i) const { return atoms_[i].get(); }
 // Return atoms
 const std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() const { return atoms_; }
 std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() { return atoms_; }
+
+// Return molecular species coordinates
+const std::vector<std::vector<Vector3>> &Structure::instances() const { return instances_; }
+std::vector<std::vector<Vector3>> &Structure::instances() { return instances_; }
 
 /*
  * Connectivity

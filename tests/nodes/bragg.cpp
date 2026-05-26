@@ -27,7 +27,6 @@ class BraggNodeTest : public ::testing::Test
     TestGraph testGraph_;
     NeutronSQNode *neutronSQNode_{nullptr};
     BraggNode *braggNode_{nullptr};
-    // CIFMolecularSpeciesNode *cifConfigurationNode_{nullptr};
     const Vector3i supercellRepeat_{5, 5, 5};
 
     protected:
@@ -40,15 +39,15 @@ class BraggNodeTest : public ::testing::Test
         ASSERT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<std::string>("FilePath", "cif/1000053.cif"));
 
-        ASSERT_TRUE(testGraph_.appendNode("CIFBondingOptions", "CIFBonds"));
-        ASSERT_TRUE(root->addEdge({"ImportCIFStructure", "CIFContext", "CIFBonds", "CIFContext"}));
+        ASSERT_TRUE(testGraph_.appendNode("CalculateBonds"));
+        ASSERT_TRUE(root->addEdge({"ImportCIFStructure", "Structure", "CalculateBonds", "Structure"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<bool>("PreventAllBonds", true));
 
         // Create a supercell that is 5 * unitcell
-        ASSERT_TRUE(testGraph_.appendNode("CIFMolecularSpecies", "Crystal"));
-        ASSERT_TRUE(testGraph_.fetchHead()->setOption<Vector3i>("SupercellRepeat", supercellRepeat_));
+        ASSERT_TRUE(testGraph_.appendNode("DetectMolecules"));
+        // ASSERT_TRUE(testGraph_.fetchHead()->setOption<Vector3i>("SupercellRepeat", supercellRepeat_));
 
-        ASSERT_TRUE(root->addEdge({"CIFBonds", "CIFContext", "Crystal", "CIFContext"}));
+        ASSERT_TRUE(root->addEdge({"CalculateBonds", "Structure", "DetectMolecules", "Structure"}));
 
         // Import coordinates
         ASSERT_TRUE(
@@ -69,7 +68,7 @@ class BraggNodeTest : public ::testing::Test
 
         // Bragg node
         ASSERT_TRUE(testGraph_.appendNode("Bragg", "Bragg01"));
-        ASSERT_TRUE(root->addEdge({"Crystal", "SupercellConfiguration", "Bragg01", "Configuration"}));
+        ASSERT_TRUE(root->addEdge({"DetectMolecules", "Structures", "Bragg01", "Configuration"}));
         ASSERT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Number>("QMax", 20.0));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Function1DWrapper>(
