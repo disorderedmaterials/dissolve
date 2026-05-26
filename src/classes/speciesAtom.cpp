@@ -35,6 +35,9 @@ void SpeciesAtom::setAtomType(const AtomType *at)
 // Return SpeciesAtomType of SpeciesAtom
 const AtomType *SpeciesAtom::atomType() const { return atomType_; }
 
+// Return associated atom type index
+int SpeciesAtom::atomTypeIndex() const { return atomType_->index(); }
+
 /*
  * Bond Information
  */

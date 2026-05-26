@@ -41,6 +41,8 @@ class SpeciesAtom : public Atom<const SpeciesBond>
     void setAtomType(const AtomType *at);
     // Return AtomType of Atom
     const AtomType *atomType() const;
+    // Return associated atom type index
+    int atomTypeIndex() const override;
 
     /*
      * Intramolecular Information

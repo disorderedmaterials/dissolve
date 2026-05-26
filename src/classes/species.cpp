@@ -243,6 +243,10 @@ void Species::deserialise(const SerialisedValue &node)
     Serialisable::toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
                         { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
 
+    int idx = 0;
+    for (auto &a : atomTypes_)
+        a->setIndex(idx++);
+
     Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
 
     Serialisable::toMap(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
