@@ -61,27 +61,75 @@ bool ForcefieldRecipe::apply(Species &species) const
     // Assign intramolecular terms
     Messenger::print("Assigning intramolecular terms to species '{}' from forcefield '{}'...\n", species.name(), ff->name());
 
-    // Assign bond terms
+    // Get bond terms
+    auto nBondsFailed = 0;
     for (auto &bond : species.bonds())
     {
-        if (!ff->assignBondTermParameters(bond, {ffaMap.at(bond.i()), ffaMap.at(bond.j())}))
-            return false;
+        auto ffi = ffaMap.at(bond.i());
+        auto ffj = ffaMap.at(bond.j());
+
+        auto optBondTerm = ff->getBondTerm( ffi, ffj, bond);
+        if (!optBondTerm)
+        {
+            Messenger::error("Failed to locate parameters for bond {}-{} ({}-{}).\n", bond.i()->index(), bond.j()->index(),
+                                    ffi.get().equivalentName(), ffj.get().equivalentName());
+            ++nBondsFailed;
+            continue;
+        }
+        
+        const auto &term = *optBondTerm;
+        bond.setInteractionFormAndParameters(term.form(), term.parameters());
     }
 
-    // Generate angle parameters
+    // Get angle terms
+    auto nAnglesFailed = 0;
     for (auto &angle : species.angles())
     {
-        if (!ff->assignAngleTermParameters(angle, {ffaMap.at(angle.i()), ffaMap.at(angle.j()), ffaMap.at(angle.k())}))
-            return false;
+        auto ffi = ffaMap.at(angle.i());
+        auto ffj = ffaMap.at(angle.j());
+        auto ffk = ffaMap.at(angle.k());
+
+        auto optAngleTerm = ff->getAngleTerm( ffi, ffj, ffk, angle);
+        if (!optAngleTerm)
+        {
+            Messenger::error("Failed to locate parameters for angle {}-{}-{} ({}-{}-{}).\n", angle.i()->index(),
+                                    angle.j()->index(), angle.k()->index(), ffi.get().equivalentName(),
+                                    ffj.get().equivalentName(), ffk.get().equivalentName());
+            
+            ++nAnglesFailed;
+            continue;
+        }
+        
+        const auto &term = *optAngleTerm;
+        angle.setInteractionFormAndParameters(term.form(), term.parameters());
     }
 
-    // Generate torsion parameters
+    // Get torsion terms
+    auto nTorsionsFailed = 0;
     for (auto &torsion : species.torsions())
     {
-        if (!ff->assignTorsionTermParameters(
-                torsion, {ffaMap.at(torsion.i()), ffaMap.at(torsion.j()), ffaMap.at(torsion.k()), ffaMap.at(torsion.l())}))
-            return false;
+        auto ffi = ffaMap.at(torsion.i());
+        auto ffj = ffaMap.at(torsion.j());
+        auto ffk = ffaMap.at(torsion.k());
+        auto ffl = ffaMap.at(torsion.l());
+
+        auto optTorsionTerm = ff->getTorsionTerm( ffi, ffj, ffk, ffl, torsion);
+        if (!optTorsionTerm)
+        {
+            Messenger::error("Failed to locate parameters for torsion {}-{}-{} ({}-{}-{}).\n", torsion.i()->index(),
+                                    torsion.j()->index(), torsion.k()->index(), ffi.get().equivalentName(),
+                                    ffj.get().equivalentName(), ffk.get().equivalentName());
+            
+            ++nTorsionsFailed;
+            continue;
+        }
+        
+        const auto &term = *optTorsionTerm;
+        torsion.setInteractionFormAndParameters(term.form(), term.parameters());
     }
+
+    if (nBondsFailed > 0 || nAnglesFailed > 0 || nTorsionsFailed > 0)
+        return false;
 
     // Generate improper terms
     // Loop over potential improper sites in the Species and see if any match terms in the forcefield
