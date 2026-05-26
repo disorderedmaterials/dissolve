@@ -2155,14 +2155,15 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldImproperTerm>
-OPLSAA2005BaseForcefield::getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
-                                          const ForcefieldAtomType &l) const
+std::optional<ForcefieldImproperTerm> OPLSAA2005BaseForcefield::getImproperTerm(const ForcefieldAtomType &i,
+                                                                                const ForcefieldAtomType &j,
+                                                                                const ForcefieldAtomType &k,
+                                                                                const ForcefieldAtomType &l) const
 {
     static std::vector<ForcefieldImproperTerm> improperTerms = {
         //	i	j	k	l	Form    Parameters
         {"CM", "*", "*", "*", TorsionFunctions::Form::Cos3, "k1=0.0 k2=30.0 k3=0.0"},
         {"CA", "*", "*", "*", TorsionFunctions::Form::Cos3, "k1=0.0 k2=2.2 k3=0.0"}};
 
-    return Forcefield::termMatch_(improperTerms, i, j, k, l);
+    return termMatch_(improperTerms, i, j, k, l);
 }

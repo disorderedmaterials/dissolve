@@ -34,11 +34,15 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
 
     /*
-     * SpeciesAtom Information
+     * Parent Species
      */
     protected:
     // Parent species
     Species *parent_{nullptr};
+
+    public:
+    // Return parent species
+    Species *parent() const { return parent_; }
 
     /*
      * SpeciesAtom Information

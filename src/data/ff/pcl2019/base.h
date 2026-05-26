@@ -45,8 +45,7 @@ class PCL2019BaseForcefield : public Forcefield
                                                                          const ForcefieldAtomType &k,
                                                                          const ForcefieldAtomType &l) const override;
     // Return improper term for the supplied atom type quartet (if it exists)
-    OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i,
-                                                                           const ForcefieldAtomType &j,
-                                                                           const ForcefieldAtomType &k,
-                                                                           const ForcefieldAtomType &l) const override;
+    std::optional<ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                          const ForcefieldAtomType &k,
+                                                          const ForcefieldAtomType &l) const override;
 };

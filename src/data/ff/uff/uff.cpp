@@ -332,16 +332,20 @@ double Forcefield_UFF::electronegativityCorrection(const ForcefieldAtomType &i, 
 }
 
 // Assign / generate bond term parameters
-bool Forcefield_UFF::assignBondTermParameters(const Species *parent, SpeciesBond &bond) const
+bool Forcefield_UFF::assignBondTermParameters(
+    SpeciesBond &bond, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
 {
-    auto typeI = determineAtomType(*bond.i());
-    auto typeJ = determineAtomType(*bond.j());
-    if (!typeI || !typeJ)
+    // Default implementation - search term lists in the forcefield
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
+        ffAtomTypes.size() == 2 ? ffAtomTypes[0] : determineAtomType(*bond.i());
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
+        ffAtomTypes.size() == 2 ? ffAtomTypes[1] : determineAtomType(*bond.j());
+    if (!(ffi && !ffj))
         return Messenger::error("Failed to create parameters for bond {}-{} (atom types could not be determined).\n",
                                 bond.i()->index(), bond.j()->index());
 
-    const ForcefieldAtomType &i = *typeI;
-    const ForcefieldAtomType &j = *typeJ;
+    const ForcefieldAtomType &i = *ffi;
+    const ForcefieldAtomType &j = *ffj;
 
     const auto rBO = bondOrderCorrection(i, j);
     const auto rEN = electronegativityCorrection(i, j);
@@ -363,19 +367,22 @@ bool Forcefield_UFF::assignBondTermParameters(const Species *parent, SpeciesBond
 }
 
 // Assign / generate angle term parameters
-bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const
+bool Forcefield_UFF::assignAngleTermParameters(
+    SpeciesAngle &angle, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
 {
-    auto typeI = determineAtomType(*angle.i());
-    auto typeJ = determineAtomType(*angle.j());
-    auto typeK = determineAtomType(*angle.k());
-
-    if (!typeI || !typeJ || !typeK)
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
+        ffAtomTypes.size() == 3 ? ffAtomTypes[0] : determineAtomType(*angle.i());
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
+        ffAtomTypes.size() == 3 ? ffAtomTypes[1] : determineAtomType(*angle.j());
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffk =
+        ffAtomTypes.size() == 3 ? ffAtomTypes[2] : determineAtomType(*angle.k());
+    if (!(ffi && ffj && ffk))
         Messenger::error("Failed to create parameters for angle {}-{}-{} (atom types could not be determined).\n",
                          angle.i()->index(), angle.j()->index(), angle.k()->index());
 
-    const ForcefieldAtomType &i = *typeI;
-    const ForcefieldAtomType &j = *typeJ;
-    const ForcefieldAtomType &k = *typeK;
+    const ForcefieldAtomType &i = *ffi;
+    const ForcefieldAtomType &j = *ffj;
+    const ForcefieldAtomType &k = *ffk;
 
     // Get bond order and electronegativity corrections for the two bonds
     const auto rBOij = bondOrderCorrection(i, j);
@@ -430,21 +437,25 @@ bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAng
 }
 
 // Assign / generate torsion term parameters
-bool Forcefield_UFF::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion) const
+bool Forcefield_UFF::assignTorsionTermParameters(
+    SpeciesTorsion &torsion, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
 {
-    auto typeI = determineAtomType(*torsion.i());
-    auto typeJ = determineAtomType(*torsion.j());
-    auto typeK = determineAtomType(*torsion.k());
-    auto typeL = determineAtomType(*torsion.l());
-
-    if (!typeI || !typeJ || !typeK || !typeL)
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
+        ffAtomTypes.size() == 4 ? ffAtomTypes[0] : determineAtomType(*torsion.i());
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
+        ffAtomTypes.size() == 4 ? ffAtomTypes[1] : determineAtomType(*torsion.j());
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffk =
+        ffAtomTypes.size() == 4 ? ffAtomTypes[2] : determineAtomType(*torsion.k());
+    OptionalReferenceWrapper<const ForcefieldAtomType> ffl =
+        ffAtomTypes.size() == 4 ? ffAtomTypes[2] : determineAtomType(*torsion.k());
+    if (!(ffi && ffj && ffk && ffl))
         Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
                          torsion.i()->index(), torsion.j()->index(), torsion.k()->index(), torsion.l()->index());
 
-    const ForcefieldAtomType &i = *typeI;
-    const ForcefieldAtomType &j = *typeJ;
-    const ForcefieldAtomType &k = *typeK;
-    const ForcefieldAtomType &l = *typeL;
+    const ForcefieldAtomType &i = *ffi;
+    const ForcefieldAtomType &j = *ffj;
+    const ForcefieldAtomType &k = *ffk;
+    const ForcefieldAtomType &l = *ffl;
 
     /*
      * There are seven cases to consider, listed in decreasing complexity:
@@ -524,23 +535,10 @@ bool Forcefield_UFF::assignTorsionTermParameters(const Species *parent, SpeciesT
 }
 
 // Assign / generate improper term parameters
-bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j,
-                                                  SpeciesAtom *k, SpeciesAtom *l) const
+std::optional<ForcefieldImproperTerm> Forcefield_UFF::getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                      const ForcefieldAtomType &k,
+                                                                      const ForcefieldAtomType &l) const
 {
-    auto optTypeI = determineAtomType(*i);
-    auto optTypeJ = determineAtomType(*j);
-    auto optTypeK = determineAtomType(*k);
-    auto optTypeL = determineAtomType(*l);
-
-    if (!optTypeI || !optTypeJ || !optTypeK || !optTypeL)
-        Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
-                         i->index(), j->index(), k->index(), l->index());
-
-    const ForcefieldAtomType &typeI = *optTypeI;
-    const ForcefieldAtomType &typeJ = *optTypeJ;
-    const ForcefieldAtomType &typeK = *optTypeK;
-    const ForcefieldAtomType &typeL = *optTypeL;
-
     /*
      * We have XXX cases for the central atom
      * a) 'i' is C_2 or C_R (or C_amR), and may also be bound to O_2
@@ -555,48 +553,48 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
      */
 
     // Get information on our central atom 'i'
-    const auto groupI = Elements::group(i->Z());
+    const auto groupI = Elements::group(i.Z());
 
-    if (typeI.name() == "C_2" || typeI.name() == "C_R" || typeI.name() == "C_amR")
+    if (i.name() == "C_2" || i.name() == "C_R" || i.name() == "C_amR")
     {
         // If an O_2 is present, set barrier to 50 kcal/mol, otherwise 6 kcal/mol
-        improper = {typeI.name(),
-                    typeJ.name(),
-                    typeK.name(),
-                    typeL.name(),
-                    TorsionFunctions::Form::FourierN,
-                    std::format("k={} C1={} C2={} C3={}",
-                                4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0),
-                                1.0, -1.0, 0.0)};
+        return ForcefieldImproperTerm{
+            i.name(),
+            j.name(),
+            k.name(),
+            l.name(),
+            TorsionFunctions::Form::FourierN,
+            std::format("k={} C1={} C2={} C3={}",
+                        4.184 * (j.name() == "O_2" || k.name() == "O_2" || l.name() == "O_2" ? 50.0 : 6.0), 1.0, -1.0, 0.0)};
     }
-    else if (typeI.name() == "N_2" || typeI.name() == "N_R" || typeI.name() == "N_amR")
-        improper = {typeI.name(),
-                    typeJ.name(),
-                    typeK.name(),
-                    typeL.name(),
-                    TorsionFunctions::Form::FourierN,
-                    std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, 1.0, -1.0, 0.0)};
+    else if (i.name() == "N_2" || i.name() == "N_R" || i.name() == "N_amR")
+        return ForcefieldImproperTerm{i.name(),
+                                      j.name(),
+                                      k.name(),
+                                      l.name(),
+                                      TorsionFunctions::Form::FourierN,
+                                      std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, 1.0, -1.0, 0.0)};
     else if (groupI == 15)
     {
         // Determine equilibrium angle
         auto phi = 90.0;
-        if (typeI.name() == "P_3+3")
+        if (i.name() == "P_3+3")
             phi = 84.4339;
-        else if (typeI.name() == "As3+3")
+        else if (i.name() == "As3+3")
             phi = 86.9735;
-        else if (typeI.name() == "Sb3+3")
+        else if (i.name() == "Sb3+3")
             phi = 87.7047;
         phi = DissolveMath::toRadians(phi);
-        improper = {
-            typeI.name(),
-            typeJ.name(),
-            typeK.name(),
-            typeL.name(),
+        return ForcefieldImproperTerm{
+            i.name(),
+            j.name(),
+            k.name(),
+            l.name(),
             TorsionFunctions::Form::FourierN,
             std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0)};
     }
     else
-        improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), TorsionFunctions::Form::None};
+        return ForcefieldImproperTerm{i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::None};
 
-    return true;
+    return {};
 }

@@ -78,12 +78,19 @@ class Forcefield_UFF : public Forcefield
 
     protected:
     // Assign / generate bond term parameters
-    bool assignBondTermParameters(const Species *parent, SpeciesBond &bond) const override;
+    bool
+    assignBondTermParameters(SpeciesBond &bond,
+                             const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const override;
     // Assign / generate angle term parameters
-    bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const override;
+    bool
+    assignAngleTermParameters(SpeciesAngle &angle,
+                              const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const override;
     // Assign / generate torsion term parameters
-    bool assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion) const override;
+    bool assignTorsionTermParameters(
+        SpeciesTorsion &torsion,
+        const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const override;
     // Assign / generate improper term parameters
-    bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
-                                      SpeciesAtom *l) const override;
+    std::optional<ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                          const ForcefieldAtomType &k,
+                                                          const ForcefieldAtomType &l) const override;
 };

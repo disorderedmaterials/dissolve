@@ -352,10 +352,10 @@ OptionalReferenceWrapper<const ForcefieldTorsionTerm> PCL2019BaseForcefield::get
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldImproperTerm> PCL2019BaseForcefield::getImproperTerm(const ForcefieldAtomType &i,
-                                                                                              const ForcefieldAtomType &j,
-                                                                                              const ForcefieldAtomType &k,
-                                                                                              const ForcefieldAtomType &l) const
+std::optional<ForcefieldImproperTerm> PCL2019BaseForcefield::getImproperTerm(const ForcefieldAtomType &i,
+                                                                             const ForcefieldAtomType &j,
+                                                                             const ForcefieldAtomType &k,
+                                                                             const ForcefieldAtomType &l) const
 {
     // Improper terms from the original forcefield file have the central atom as the third one.
     // Presented here, the original third atom is placed first.
@@ -382,5 +382,5 @@ OptionalReferenceWrapper<const ForcefieldImproperTerm> PCL2019BaseForcefield::ge
         // tosylate aromatics AMBER JACS 117 (1995) 5179
         {"CA", "CA", "CA", "SO", TorsionFunctions::Form::Cos4, "k1=0.0000 k2=9.2048 k3=0.0000 k4=0.0000"}};
 
-    return Forcefield::termMatch_(improperTerms, i, j, k, l);
+    return termMatch_(improperTerms, i, j, k, l);
 }

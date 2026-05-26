@@ -102,7 +102,8 @@ ShortRangeFunctions::Form Forcefield_Zhao2010::shortRangeForm() const { return S
  */
 
 // Assign / generate angle term parameters
-bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle) const
+bool Forcefield_Zhao2010::assignAngleTermParameters(
+    SpeciesAngle &angle, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
 {
     // We need an override on the angle term assignment so that we can deal with the fact that the O-Cu-O angles are described
     // as harmonic angles and we have a mix of ~180 and ~90 angles.
@@ -111,7 +112,7 @@ bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, Speci
     if (angle.i()->Z() == Elements::O && angle.j()->Z() == Elements::Cu && angle.k()->Z() == Elements::O)
     {
         // Determine the geometry
-        auto theta = parent->box()->angleInDegrees(angle.i()->r(), angle.j()->r(), angle.k()->r());
+        auto theta = angle.parent()->box()->angleInDegrees(angle.i()->r(), angle.j()->r(), angle.k()->r());
         if (theta > 135.0)
             angle.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, std::vector<double>{419.7389, 170.2});
         else
@@ -120,5 +121,5 @@ bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, Speci
         return true;
     }
     else
-        return Forcefield::assignAngleTermParameters(parent, angle);
+        return Forcefield::assignAngleTermParameters(angle, ffAtomTypes);
 }

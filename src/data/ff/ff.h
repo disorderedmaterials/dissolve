@@ -135,33 +135,23 @@ class Forcefield
                                                                                  const ForcefieldAtomType &k,
                                                                                  const ForcefieldAtomType &l) const;
     // Return improper term for the supplied atom type quartet (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i,
-                                                                                   const ForcefieldAtomType &j,
-                                                                                   const ForcefieldAtomType &k,
-                                                                                   const ForcefieldAtomType &l) const;
-
-    /*
-     * Term Assignment
-     */
-    private:
-    // Find / determine atom type(s) for the specified atom(s)
-    std::vector<std::reference_wrapper<const ForcefieldAtomType>>
-    getAtomTypes(const std::vector<const SpeciesAtom *> &atoms) const;
-
-    protected:
-    // Assign / generate bond term parameters
-    virtual bool assignBondTermParameters(SpeciesBond &bond, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> & ffAtomTypes) const;
-    // Assign / generate angle term parameters
-    virtual bool assignAngleTermParameters(SpeciesAngle &angle) const;
-    // Assign / generate torsion term parameters
-    virtual bool assignTorsionTermParameters(SpeciesTorsion &torsion) const;
-    // Assign / generate improper term parameters
-    virtual bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
-                                              SpeciesAtom *l) const;
+    virtual std::optional<ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                  const ForcefieldAtomType &k,
+                                                                  const ForcefieldAtomType &l) const;
 
     public:
-    // Assign intramolecular parameters to the supplied Species
-    bool assignIntramolecular(Species *sp) const;
+    // Assign / generate bond term parameters
+    virtual bool
+    assignBondTermParameters(SpeciesBond &bond,
+                             const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const;
+    // Assign / generate angle term parameters
+    virtual bool
+    assignAngleTermParameters(SpeciesAngle &angle,
+                              const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const;
+    // Assign / generate torsion term parameters
+    virtual bool
+    assignTorsionTermParameters(SpeciesTorsion &torsion,
+                                const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const;
 
     /*
      * Pair Potential Overrides

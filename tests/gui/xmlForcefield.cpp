@@ -274,7 +274,7 @@ TEST_F(XmlFFTest, XmlTree)
     // Test the impropers
     auto improper = xmlFF->getImproperTerm((*carbon).get(), (*oxygen).get(), (*hydrogen2).get(), (*hydrogen3).get());
     ASSERT_TRUE(improper);
-    EXPECT_EQ((*improper).get().parameters()[0], 0);
+    EXPECT_EQ(improper->parameters()[0], 0);
 }
 
 } // namespace UnitTest

@@ -109,6 +109,16 @@ std::vector<SpeciesImproper> &Species::impropers() { return impropers_; }
 
 const std::vector<SpeciesImproper> &Species::impropers() const { return impropers_; }
 
+// Add a new improper term between the specified atoms
+SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+{
+    auto optImproper = getImproper(i->index(), j->index(), k->index(), l->index());
+    if (optImproper)
+        return *optImproper;
+
+    return impropers_.emplace_back(this, i, j, k, l);
+}
+
 // Return whether SpeciesImproper between SpeciesAtoms exists
 bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
 {
