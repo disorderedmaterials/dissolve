@@ -95,7 +95,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Create a new angle definition between the specified atoms
                 if (angleVectorFixed && angleIndex < angles_.size())
                 {
-                    if (hasAngle(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1]))
+                    if (getAngle(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1]))
                         return false;
                     angles_[angleIndex] = SpeciesAngle(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
                                                        &atoms_[parser.argi(3) - 1]);
@@ -194,7 +194,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Create a new bond definition between the specified atoms
                 if (bondVectorFixed && bondIndex < bonds_.size())
                 {
-                    if (hasBond(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]))
+                    if (getBond(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]))
                         return false;
                     bonds_[bondIndex] = SpeciesBond(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]);
                     b = bonds_[bondIndex++];
@@ -204,7 +204,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     auto i = parser.argi(1) - 1;
                     auto j = parser.argi(2) - 1;
                     // Check for existence of Bond already
-                    auto bondRef = getBond(i, j);
+                    auto bondRef = getBond(&atoms_[i], &atoms_[j]);
                     if (bondRef)
                     {
                         Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it "
@@ -266,7 +266,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::SpeciesKeyword::BondType):
                 // Find the specified bond
-                b = getBond(parser.argi(1) - 1, parser.argi(2) - 1);
+                b = getBond(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1]);
                 if (!b)
                 {
                     Messenger::error("Tried to set the bond type of bond between atoms {} and {}, but this bond "
@@ -316,7 +316,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Create a new improper definition
                 if (improperVectorFixed && improperIndex < impropers_.size())
                 {
-                    if (hasImproper(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
+                    if (getImproper(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
                                     &atoms_[parser.argi(4) - 1]))
                         return false;
                     impropers_[improperIndex] = SpeciesImproper(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
@@ -481,7 +481,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Create a new angle definition between the specified atoms
                 if (torsionVectorFixed && torsionIndex < torsions_.size())
                 {
-                    if (hasTorsion(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
+                    if (getTorsion(&atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1], &atoms_[parser.argi(3) - 1],
                                    &atoms_[parser.argi(4) - 1]))
                         return false;
                     torsions_[torsionIndex] = SpeciesTorsion(this, &atoms_[parser.argi(1) - 1], &atoms_[parser.argi(2) - 1],
