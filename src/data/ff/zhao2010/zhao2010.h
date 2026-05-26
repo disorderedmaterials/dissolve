@@ -34,8 +34,7 @@ class Forcefield_Zhao2010 : public Forcefield
      * Intramolecular Term Data
      */
     public:
-    // Assign / generate angle term parameters
-    bool
-    assignAngleTermParameters(SpeciesAngle &angle,
-                              const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const override;
+    // Return angle term for the supplied atom type trio (if it exists)
+    std::optional<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                     const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const override;
 };

@@ -6,6 +6,13 @@
 #include "data/ff/ff.h"
 
 ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
+                                             std::string_view typeL, TorsionFunctions::Form form,
+                                             const std::vector<double> &parameters)
+    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), typeL_(typeL), form_(form), parameters_(parameters)
+{
+}
+
+ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                                std::string_view typeL, TorsionFunctions::Form form,
                                                std::string_view parameterString)
     : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), typeL_(typeL), form_(form)

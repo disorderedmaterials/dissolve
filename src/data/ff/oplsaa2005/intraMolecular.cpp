@@ -16,8 +16,8 @@
  */
 
 // Return bond term for the supplied atom type pair (if it exists)
-OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::getBondTerm(const ForcefieldAtomType &i,
-                                                                                         const ForcefieldAtomType &j) const
+std::optional<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::getBondTerm(const ForcefieldAtomType &i,
+                                                                                         const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const
 {
     static const std::vector<ForcefieldBondTerm> bondTerms = {
         //	i	j	Type (Harmonic)			k	eq
@@ -380,9 +380,10 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::getAngleTerm(const ForcefieldAtomType &i,
+std::optional<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::getAngleTerm(const ForcefieldAtomType &i,
                                                                                            const ForcefieldAtomType &j,
-                                                                                           const ForcefieldAtomType &k) const
+                                                                                           const ForcefieldAtomType &k,
+                                                                                           OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
     static const std::vector<ForcefieldAngleTerm> angleTerms = {
         //	i	j	k	Type (Harmonic)			k	eq
@@ -1396,9 +1397,9 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldTorsionTerm>
+std::optional<const ForcefieldTorsionTerm>
 OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
-                                         const ForcefieldAtomType &l) const
+                                         const ForcefieldAtomType &l, OptionalReferenceWrapper<SpeciesTorsion> torsion) const
 {
     static std::vector<ForcefieldTorsionTerm> torsionTerms = {
         //	i	j	k	l	Type (CosineForm)		k		n	eq	s

@@ -13,9 +13,13 @@ class ForcefieldAtomType;
 class ForcefieldTorsionTerm
 {
     public:
-    ForcefieldTorsionTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
-                          std::string_view typeL = "", TorsionFunctions::Form form = TorsionFunctions::Form::None,
-                          std::string_view parameterString = "", double q14Scale = 0.5, double vdw14Scale = 0.5);
+    ForcefieldTorsionTerm() = default;
+    ForcefieldTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
+                      std::string_view typeL , TorsionFunctions::Form form,
+                      const std::vector<double> &parameters , double q14Scale = 0.5, double vdw14Scale = 0.5);
+    ForcefieldTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
+                          std::string_view typeL , TorsionFunctions::Form form,
+                          std::string_view parameterString , double q14Scale = 0.5, double vdw14Scale = 0.5);
     ~ForcefieldTorsionTerm() = default;
 
     /*

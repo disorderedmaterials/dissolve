@@ -77,19 +77,18 @@ class Forcefield_UFF : public Forcefield
     double electronegativityCorrection(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
 
     protected:
-    // Assign / generate bond term parameters
-    bool
-    assignBondTermParameters(SpeciesBond &bond,
-                             const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const override;
-    // Assign / generate angle term parameters
-    bool
-    assignAngleTermParameters(SpeciesAngle &angle,
-                              const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const override;
-    // Assign / generate torsion term parameters
-    bool assignTorsionTermParameters(
-        SpeciesTorsion &torsion,
-        const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const override;
-    // Assign / generate improper term parameters
+    // Return bond term for the supplied atom type pair (if it exists)
+    std::optional<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
+                                                                           const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const override;
+    // Return angle term for the supplied atom type trio (if it exists)
+    std::optional<const ForcefieldAngleTerm>
+    getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const override;
+    // Return torsion term for the supplied atom type quartet (if it exists)
+    std::optional<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i,
+                                                                                 const ForcefieldAtomType &j,
+                                                                                 const ForcefieldAtomType &k,
+                                                                                 const ForcefieldAtomType &l,
+                                                                                 OptionalReferenceWrapper<SpeciesTorsion> torsion) const override;    // Assign / generate improper term parameters
     std::optional<ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
                                                           const ForcefieldAtomType &k,
                                                           const ForcefieldAtomType &l) const override;

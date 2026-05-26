@@ -124,34 +124,21 @@ class Forcefield
 
     public:
     // Return bond term for the supplied atom type pair (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
-                                                                           const ForcefieldAtomType &j) const;
+    virtual std::optional<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
+                                                                           const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const;
     // Return angle term for the supplied atom type trio (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAngleTerm>
-    getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const;
+    virtual std::optional<const ForcefieldAngleTerm>
+    getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const;
     // Return torsion term for the supplied atom type quartet (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i,
+    virtual std::optional<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i,
                                                                                  const ForcefieldAtomType &j,
                                                                                  const ForcefieldAtomType &k,
-                                                                                 const ForcefieldAtomType &l) const;
+                                                                                 const ForcefieldAtomType &l,
+                                                                                 OptionalReferenceWrapper<SpeciesTorsion> torsion) const;
     // Return improper term for the supplied atom type quartet (if it exists)
     virtual std::optional<ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
                                                                   const ForcefieldAtomType &k,
                                                                   const ForcefieldAtomType &l) const;
-
-    public:
-    // Assign / generate bond term parameters
-    virtual bool
-    assignBondTermParameters(SpeciesBond &bond,
-                             const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const;
-    // Assign / generate angle term parameters
-    virtual bool
-    assignAngleTermParameters(SpeciesAngle &angle,
-                              const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const;
-    // Assign / generate torsion term parameters
-    virtual bool
-    assignTorsionTermParameters(SpeciesTorsion &torsion,
-                                const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const;
 
     /*
      * Pair Potential Overrides

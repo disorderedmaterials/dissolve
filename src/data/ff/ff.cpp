@@ -197,24 +197,25 @@ void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ,
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
-OptionalReferenceWrapper<const ForcefieldBondTerm> Forcefield::getBondTerm(const ForcefieldAtomType &i,
-                                                                           const ForcefieldAtomType &j) const
+std::optional<const ForcefieldBondTerm> Forcefield::getBondTerm(const ForcefieldAtomType &i,
+                                                                           const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const
 {
     return termMatch_(bondTerms_, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-OptionalReferenceWrapper<const ForcefieldAngleTerm>
-Forcefield::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const
+std::optional<const ForcefieldAngleTerm>
+Forcefield::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
     return termMatch_(angleTerms_, i, j, k);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldTorsionTerm> Forcefield::getTorsionTerm(const ForcefieldAtomType &i,
+std::optional<const ForcefieldTorsionTerm> Forcefield::getTorsionTerm(const ForcefieldAtomType &i,
                                                                                  const ForcefieldAtomType &j,
                                                                                  const ForcefieldAtomType &k,
-                                                                                 const ForcefieldAtomType &l) const
+                                                                                 const ForcefieldAtomType &l,
+                                                                                 OptionalReferenceWrapper<SpeciesTorsion> torsion) const
 {
     return termMatch_(torsionTerms_, i, j, k, l);
 }
@@ -225,83 +226,6 @@ std::optional<ForcefieldImproperTerm> Forcefield::getImproperTerm(const Forcefie
                                                                   const ForcefieldAtomType &l) const
 {
     return termMatch_(improperTerms_, i, j, k, l);
-}
-
-// Assign / generate bond term parameters
-bool Forcefield::assignBondTermParameters(
-    SpeciesBond &bond, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
-{
-    // Default implementation - search term lists in the forcefield
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
-        ffAtomTypes.size() == 2 ? ffAtomTypes[0] : determineAtomType(*bond.i());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
-        ffAtomTypes.size() == 2 ? ffAtomTypes[1] : determineAtomType(*bond.j());
-    if (!(ffi && !ffj))
-        return false;
-
-    auto optTerm = getBondTerm(*ffi, *ffj);
-    if (!optTerm)
-        return Messenger::error("Failed to locate parameters for bond {}-{} ({}-{}).\n", bond.i()->index(), bond.j()->index(),
-                                ffi->get().equivalentName(), ffj->get().equivalentName());
-
-    const ForcefieldBondTerm &term = *optTerm;
-    bond.setInteractionFormAndParameters(term.form(), term.parameters());
-
-    return true;
-}
-
-// Assign / generate angle term parameters
-bool Forcefield::assignAngleTermParameters(
-    SpeciesAngle &angle, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
-{
-    // Default implementation - search term lists in the forcefield
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
-        ffAtomTypes.size() == 3 ? ffAtomTypes[0] : determineAtomType(*angle.i());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
-        ffAtomTypes.size() == 3 ? ffAtomTypes[1] : determineAtomType(*angle.j());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffk =
-        ffAtomTypes.size() == 3 ? ffAtomTypes[2] : determineAtomType(*angle.k());
-    if (!(ffi && ffj && ffk))
-        return false;
-
-    auto optTerm = getAngleTerm(*ffi, *ffj, *ffk);
-    if (!optTerm)
-        return Messenger::error("Failed to locate parameters for angle {}-{}-{} ({}-{}-{}).\n", angle.i()->index(),
-                                angle.j()->index(), angle.k()->index(), ffi->get().equivalentName(),
-                                ffj->get().equivalentName(), ffk->get().equivalentName());
-
-    const ForcefieldAngleTerm &term = *optTerm;
-    angle.setInteractionFormAndParameters(term.form(), term.parameters());
-
-    return true;
-}
-
-// Assign / generate torsion term parameters
-bool Forcefield::assignTorsionTermParameters(
-    SpeciesTorsion &torsion, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
-{
-    // Default implementation - search term lists in the forcefield
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[0] : determineAtomType(*torsion.i());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[1] : determineAtomType(*torsion.j());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffk =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[2] : determineAtomType(*torsion.k());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffl =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[2] : determineAtomType(*torsion.k());
-    if (!(ffi && ffj && ffk && ffl))
-        return false;
-
-    auto optTerm = getTorsionTerm(*ffi, *ffj, *ffk, *ffl);
-    if (!optTerm)
-        return Messenger::error("Failed to locate parameters for torsion {}-{}-{}-{} ({}-{}-{}-{}).\n", torsion.i()->index(),
-                                torsion.j()->index(), torsion.k()->index(), torsion.l()->index(), ffi->get().equivalentName(),
-                                ffj->get().equivalentName(), ffk->get().equivalentName(), ffl->get().equivalentName());
-
-    const ForcefieldTorsionTerm &term = *optTerm;
-    torsion.setInteractionFormAndParameters(term.form(), term.parameters());
-
-    return true;
 }
 
 // Return available pair potential overrides

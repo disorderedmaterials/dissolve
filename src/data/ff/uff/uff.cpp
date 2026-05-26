@@ -332,21 +332,9 @@ double Forcefield_UFF::electronegativityCorrection(const ForcefieldAtomType &i, 
 }
 
 // Assign / generate bond term parameters
-bool Forcefield_UFF::assignBondTermParameters(
-    SpeciesBond &bond, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
+std::optional<const ForcefieldBondTerm> Forcefield_UFF::getBondTerm(const ForcefieldAtomType &i,
+                                                                       const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const
 {
-    // Default implementation - search term lists in the forcefield
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
-        ffAtomTypes.size() == 2 ? ffAtomTypes[0] : determineAtomType(*bond.i());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
-        ffAtomTypes.size() == 2 ? ffAtomTypes[1] : determineAtomType(*bond.j());
-    if (!(ffi && !ffj))
-        return Messenger::error("Failed to create parameters for bond {}-{} (atom types could not be determined).\n",
-                                bond.i()->index(), bond.j()->index());
-
-    const ForcefieldAtomType &i = *ffi;
-    const ForcefieldAtomType &j = *ffj;
-
     const auto rBO = bondOrderCorrection(i, j);
     const auto rEN = electronegativityCorrection(i, j);
 
@@ -361,9 +349,7 @@ bool Forcefield_UFF::assignBondTermParameters(
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
     // Convert force constant from kcal to kJ
-    bond.setInteractionFormAndParameters(BondFunctions::Form::Harmonic, std::vector<double>{k * 4.184, rij});
-
-    return true;
+    return ForcefieldBondTerm(i.name(), j.name(), BondFunctions::Form::Harmonic, std::vector<double>{k * 4.184, rij});
 }
 
 // Assign / generate angle term parameters

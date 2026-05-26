@@ -7,6 +7,13 @@
 
 ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                              std::string_view typeL, TorsionFunctions::Form form,
+                                             const std::vector<double> &parameters, double q14Scale, double vdw14Scale)
+    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), typeL_(typeL), form_(form), parameters_(parameters), q14Scale_(q14Scale), vdw14Scale_(vdw14Scale)
+{
+}
+
+ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
+                                             std::string_view typeL, TorsionFunctions::Form form,
                                              std::string_view parameterString, double q14Scale, double vdw14Scale)
     : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), typeL_(typeL), form_(form), q14Scale_(q14Scale), vdw14Scale_(vdw14Scale)
 {
