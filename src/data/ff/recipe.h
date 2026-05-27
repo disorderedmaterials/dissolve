@@ -23,7 +23,7 @@ struct ForcefieldRecipe
 
     public:
     // Forcefield to apply
-    std::shared_ptr<Forcefield> ff;
+    Forcefield *ff{nullptr};
     // Whether to reduce similar intramolecular definitions to common terms
     CommonTermRecipe commonTerms{CommonTermRecipe::AddAndReuse};
 

@@ -7,7 +7,8 @@
 
 ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
 {
-    // addOption<std::shared_ptr<Forcefield>>("Forcefield", "Source forcefield", recipe_.ff);
+    addOption<Forcefield *>("Forcefield", "Source forcefield", recipe_.ff);
+    addOutput("Recipe", "Recipe for the forcefield when applying to a species", recipe_);
 }
 
 /*
@@ -34,5 +35,5 @@ void ForcefieldNode::serialiseInternal(SerialisedValue &target) const { target["
 // Deserialise any hidden content
 void ForcefieldNode::deserialiseInternal(const SerialisedValue &node)
 {
-    recipe_.ff = ForcefieldLibrary::forcefield(std::string_view(node.at("forcefield").as_string()));
+    recipe_.ff = ForcefieldLibrary::forcefield(std::string_view(node.at("forcefield").as_string())).get();
 }
