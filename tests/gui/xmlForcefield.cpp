@@ -254,22 +254,22 @@ TEST_F(XmlFFTest, XmlTree)
     ASSERT_FALSE(nonexistent);
 
     // Test the bonds
-    auto bond = xmlFF->getBondTerm((*oxygen).get(), (*carbon).get());
+    auto bond = xmlFF->getBondTerm((*oxygen).get(), (*carbon).get(), {});
     ASSERT_TRUE(bond);
-    EXPECT_DOUBLE_EQ((*bond).get().parameters()[0], 2677.76000000);
-    EXPECT_DOUBLE_EQ((*bond).get().parameters()[1], 1.41000);
+    EXPECT_DOUBLE_EQ(bond->parameters()[0], 2677.76000000);
+    EXPECT_DOUBLE_EQ(bond->parameters()[1], 1.41000);
 
     // Test the angles
-    auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
+    auto angle = xmlFF->getAngleTerm((*oxygen).get(), (*carbon).get(), (*hydrogen2).get(), {});
     ASSERT_TRUE(angle);
-    EXPECT_EQ((*angle).get().parameters()[0], 292.88000);
-    EXPECT_EQ((*angle).get().parameters()[1], DissolveMath::toDegrees(1.911136));
+    EXPECT_EQ(angle->parameters()[0], 292.88000);
+    EXPECT_EQ(angle->parameters()[1], DissolveMath::toDegrees(1.911136));
 
     // Test the torsions
-    auto torsion = xmlFF->getTorsionTerm((*hydrogen5).get(), (*oxygen).get(), (*carbon).get(), (*hydrogen2).get());
+    auto torsion = xmlFF->getTorsionTerm((*hydrogen5).get(), (*oxygen).get(), (*carbon).get(), (*hydrogen2).get(), {});
     ASSERT_TRUE(torsion);
-    EXPECT_EQ((*torsion).get().parameters()[0], 0);
-    EXPECT_EQ((*torsion).get().parameters()[2], 0.736384);
+    EXPECT_EQ(torsion->parameters()[0], 0);
+    EXPECT_EQ(torsion->parameters()[2], 0.736384);
 
     // Test the impropers
     auto improper = xmlFF->getImproperTerm((*carbon).get(), (*oxygen).get(), (*hydrogen2).get(), (*hydrogen3).get());

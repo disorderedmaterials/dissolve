@@ -17,7 +17,8 @@
 
 // Return bond term for the supplied atom type pair (if it exists)
 std::optional<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::getBondTerm(const ForcefieldAtomType &i,
-                                                                                         const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const
+                                                                              const ForcefieldAtomType &j,
+                                                                              OptionalReferenceWrapper<SpeciesBond> bond) const
 {
     static const std::vector<ForcefieldBondTerm> bondTerms = {
         //	i	j	Type (Harmonic)			k	eq
@@ -380,10 +381,9 @@ std::optional<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::getBondTerm(co
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-std::optional<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::getAngleTerm(const ForcefieldAtomType &i,
-                                                                                           const ForcefieldAtomType &j,
-                                                                                           const ForcefieldAtomType &k,
-                                                                                           OptionalReferenceWrapper<SpeciesAngle> angle) const
+std::optional<const ForcefieldAngleTerm>
+OPLSAA2005BaseForcefield::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
+                                       OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
     static const std::vector<ForcefieldAngleTerm> angleTerms = {
         //	i	j	k	Type (Harmonic)			k	eq

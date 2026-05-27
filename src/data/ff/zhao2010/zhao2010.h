@@ -36,5 +36,6 @@ class Forcefield_Zhao2010 : public Forcefield
     public:
     // Return angle term for the supplied atom type trio (if it exists)
     std::optional<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
-                                                                     const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const override;
+                                                          const ForcefieldAtomType &k,
+                                                          OptionalReferenceWrapper<SpeciesAngle> angle) const override;
 };

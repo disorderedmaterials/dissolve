@@ -102,8 +102,10 @@ ShortRangeFunctions::Form Forcefield_Zhao2010::shortRangeForm() const { return S
  */
 
 // Return angle term for the supplied atom type trio (if it exists)
-std::optional<const ForcefieldAngleTerm> Forcefield_Zhao2010::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
-                                                                 const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const
+std::optional<const ForcefieldAngleTerm> Forcefield_Zhao2010::getAngleTerm(const ForcefieldAtomType &i,
+                                                                           const ForcefieldAtomType &j,
+                                                                           const ForcefieldAtomType &k,
+                                                                           OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
     // We need an override on the angle term assignment so that we can deal with the fact that the O-Cu-O angles are described
     // as harmonic angles and we have a mix of ~180 and ~90 angles.

@@ -13,12 +13,10 @@ class ForcefieldImproperTerm
 {
     public:
     ForcefieldImproperTerm() = default;
-    ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                      std::string_view typeL , TorsionFunctions::Form form,
-                      const std::vector<double> &parameters);
-    ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                          std::string_view typeL , TorsionFunctions::Form form,
-                          std::string_view parameterString);
+    ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
+                           TorsionFunctions::Form form, const std::vector<double> &parameters);
+    ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
+                           TorsionFunctions::Form form, std::string_view parameterString);
     ~ForcefieldImproperTerm() = default;
 
     /*

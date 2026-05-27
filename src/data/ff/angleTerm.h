@@ -13,10 +13,10 @@ class ForcefieldAngleTerm
 {
     public:
     ForcefieldAngleTerm() = default;
-    ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                    AngleFunctions::Form form, const std::vector<double> &parameters);
-    ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                        AngleFunctions::Form form, std::string_view parameterString);
+    ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, AngleFunctions::Form form,
+                        const std::vector<double> &parameters);
+    ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, AngleFunctions::Form form,
+                        std::string_view parameterString);
     ~ForcefieldAngleTerm() = default;
 
     /*

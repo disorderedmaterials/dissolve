@@ -197,25 +197,24 @@ void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ,
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
-std::optional<const ForcefieldBondTerm> Forcefield::getBondTerm(const ForcefieldAtomType &i,
-                                                                           const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const
+std::optional<const ForcefieldBondTerm> Forcefield::getBondTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                OptionalReferenceWrapper<SpeciesBond> bond) const
 {
     return termMatch_(bondTerms_, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-std::optional<const ForcefieldAngleTerm>
-Forcefield::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const
+std::optional<const ForcefieldAngleTerm> Forcefield::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                  const ForcefieldAtomType &k,
+                                                                  OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
     return termMatch_(angleTerms_, i, j, k);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-std::optional<const ForcefieldTorsionTerm> Forcefield::getTorsionTerm(const ForcefieldAtomType &i,
-                                                                                 const ForcefieldAtomType &j,
-                                                                                 const ForcefieldAtomType &k,
-                                                                                 const ForcefieldAtomType &l,
-                                                                                 OptionalReferenceWrapper<SpeciesTorsion> torsion) const
+std::optional<const ForcefieldTorsionTerm> Forcefield::getTorsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                      const ForcefieldAtomType &k, const ForcefieldAtomType &l,
+                                                                      OptionalReferenceWrapper<SpeciesTorsion> torsion) const
 {
     return termMatch_(torsionTerms_, i, j, k, l);
 }

@@ -15,7 +15,8 @@
 
 // Return bond term for the supplied atom type pair (if it exists)
 std::optional<const ForcefieldBondTerm> PCL2019BaseForcefield::getBondTerm(const ForcefieldAtomType &i,
-                                                                                      const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const
+                                                                           const ForcefieldAtomType &j,
+                                                                           OptionalReferenceWrapper<SpeciesBond> bond) const
 {
     static const std::vector<ForcefieldBondTerm> bondTerms = {
         //	i	j	Type (Harmonic)			k	eq
@@ -99,8 +100,10 @@ std::optional<const ForcefieldBondTerm> PCL2019BaseForcefield::getBondTerm(const
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-std::optional<const ForcefieldAngleTerm>
-PCL2019BaseForcefield::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k, OptionalReferenceWrapper<SpeciesAngle> angle) const
+std::optional<const ForcefieldAngleTerm> PCL2019BaseForcefield::getAngleTerm(const ForcefieldAtomType &i,
+                                                                             const ForcefieldAtomType &j,
+                                                                             const ForcefieldAtomType &k,
+                                                                             OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
     static const std::vector<ForcefieldAngleTerm> angleTerms = {
         //	i	j	k	Type (Harmonic)			k	eq
@@ -214,10 +217,9 @@ PCL2019BaseForcefield::getAngleTerm(const ForcefieldAtomType &i, const Forcefiel
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-std::optional<const ForcefieldTorsionTerm> PCL2019BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i,
-                                                                                            const ForcefieldAtomType &j,
-                                                                                            const ForcefieldAtomType &k,
-                                                                                            const ForcefieldAtomType &l, OptionalReferenceWrapper<SpeciesTorsion> torsion) const
+std::optional<const ForcefieldTorsionTerm>
+PCL2019BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
+                                      const ForcefieldAtomType &l, OptionalReferenceWrapper<SpeciesTorsion> torsion) const
 {
     static std::vector<ForcefieldTorsionTerm> torsionTerms = {
         //	i	j	k	l	Type (CosineForm)		k		n	eq	s
@@ -270,9 +272,9 @@ std::optional<const ForcefieldTorsionTerm> PCL2019BaseForcefield::getTorsionTerm
         {"CT", "NA", "CR", "CT", TorsionFunctions::Form::Cos4, "k1=0.0000 k2=19.4600 k3=0.0000 k4=0.0000"},
         {"NA", "CR", "CT", "HC", TorsionFunctions::Form::Cos4, "k1=0.0000 k2=0.0000 k3=0.0000 k4=0.0000"},
         // benzylimidazolium AMBER wildcards
-        {"NA", "CT", "CA", "CA", TorsionFunctions::Form::None},
-        {"CA", "CT", "NA", "CR", TorsionFunctions::Form::None},
-        {"CA", "CT", "NA", "CW", TorsionFunctions::Form::None},
+        {"NA", "CT", "CA", "CA", TorsionFunctions::Form::None, ""},
+        {"CA", "CT", "NA", "CR", TorsionFunctions::Form::None, ""},
+        {"CA", "CT", "NA", "CW", TorsionFunctions::Form::None, ""},
         // fluoroalkyl JPCA 105 (2001) 4118; JPCA 106 (2002) 10116
         {"F*", "CF", "CT", "HC", TorsionFunctions::Form::Cos4, "k1=0.0000 k2=0.0000 k3=1.2134 k4=0.0000"},
         {"F*", "CF", "CT", "CT", TorsionFunctions::Form::Cos4, "k1=0.0000 k2=0.0000 k3=1.9372 k4=0.0000"},

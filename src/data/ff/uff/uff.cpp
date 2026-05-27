@@ -332,8 +332,8 @@ double Forcefield_UFF::electronegativityCorrection(const ForcefieldAtomType &i, 
 }
 
 // Assign / generate bond term parameters
-std::optional<const ForcefieldBondTerm> Forcefield_UFF::getBondTerm(const ForcefieldAtomType &i,
-                                                                       const ForcefieldAtomType &j, OptionalReferenceWrapper<SpeciesBond> bond) const
+std::optional<const ForcefieldBondTerm> Forcefield_UFF::getBondTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                    OptionalReferenceWrapper<SpeciesBond> bond) const
 {
     const auto rBO = bondOrderCorrection(i, j);
     const auto rEN = electronegativityCorrection(i, j);
@@ -352,24 +352,11 @@ std::optional<const ForcefieldBondTerm> Forcefield_UFF::getBondTerm(const Forcef
     return ForcefieldBondTerm(i.name(), j.name(), BondFunctions::Form::Harmonic, std::vector<double>{k * 4.184, rij});
 }
 
-// Assign / generate angle term parameters
-bool Forcefield_UFF::assignAngleTermParameters(
-    SpeciesAngle &angle, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
+// Return angle term for the supplied atom type trio (if it exists)
+std::optional<const ForcefieldAngleTerm> Forcefield_UFF::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                      const ForcefieldAtomType &k,
+                                                                      OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
-        ffAtomTypes.size() == 3 ? ffAtomTypes[0] : determineAtomType(*angle.i());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
-        ffAtomTypes.size() == 3 ? ffAtomTypes[1] : determineAtomType(*angle.j());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffk =
-        ffAtomTypes.size() == 3 ? ffAtomTypes[2] : determineAtomType(*angle.k());
-    if (!(ffi && ffj && ffk))
-        Messenger::error("Failed to create parameters for angle {}-{}-{} (atom types could not be determined).\n",
-                         angle.i()->index(), angle.j()->index(), angle.k()->index());
-
-    const ForcefieldAtomType &i = *ffi;
-    const ForcefieldAtomType &j = *ffj;
-    const ForcefieldAtomType &k = *ffk;
-
     // Get bond order and electronegativity corrections for the two bonds
     const auto rBOij = bondOrderCorrection(i, j);
     const auto rBOjk = bondOrderCorrection(j, k);
@@ -397,16 +384,17 @@ bool Forcefield_UFF::assignAngleTermParameters(
     // except linear ('1') and tetrahedral cases where the equilibrium angle is 90 degrees
     const auto geom = j.name().back();
     if (geom == '1')
-        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine, std::vector<double>{4.184 * kijk, 1.0, 0.0, 1.0});
+        return ForcefieldAngleTerm(i.name(), j.name(), k.name(), AngleFunctions::Form::Cosine,
+                                   std::vector<double>{4.184 * kijk, 1.0, 0.0, 1.0});
     else if (geom == '2')
-        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine,
-                                              std::vector<double>{4.184 * kijk / 9.0, 3.0, 0.0, -1.0});
+        return ForcefieldAngleTerm(i.name(), j.name(), k.name(), AngleFunctions::Form::Cosine,
+                                   std::vector<double>{4.184 * kijk / 9.0, 3.0, 0.0, -1.0});
     else if (geom == '3' && fabs(90.0 - j.parameter(UFFAtomTypeData::Theta)) < 0.1)
-        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine,
-                                              std::vector<double>{4.184 * kijk / 4.0, 2.0, 0.0, 1.0});
+        return ForcefieldAngleTerm(i.name(), j.name(), k.name(), AngleFunctions::Form::Cosine,
+                                   std::vector<double>{4.184 * kijk / 4.0, 2.0, 0.0, 1.0});
     else if (geom == '4' || geom == '6')
-        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cosine,
-                                              std::vector<double>{4.184 * kijk / 16.0, 4.0, 0.0, -1.0});
+        return ForcefieldAngleTerm(i.name(), j.name(), k.name(), AngleFunctions::Form::Cosine,
+                                   std::vector<double>{4.184 * kijk / 16.0, 4.0, 0.0, -1.0});
     else
     {
         // General nonlinear case:  U(theta) = kijk * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
@@ -414,35 +402,18 @@ bool Forcefield_UFF::assignAngleTermParameters(
         const auto c1 = -4.0 * c2 * cosTheta;
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
-        angle.setInteractionFormAndParameters(AngleFunctions::Form::Cos2, std::vector<double>{kijk * 4.184, c0, c1, c2});
-
-        return true;
+        return ForcefieldAngleTerm(i.name(), j.name(), k.name(), AngleFunctions::Form::Cos2,
+                                   std::vector<double>{kijk * 4.184, c0, c1, c2});
     }
 
-    return true;
+    return {};
 }
 
-// Assign / generate torsion term parameters
-bool Forcefield_UFF::assignTorsionTermParameters(
-    SpeciesTorsion &torsion, const std::vector<std::reference_wrapper<const ForcefieldAtomType>> &ffAtomTypes) const
+// Return torsion term for the supplied atom type quartet (if it exists)
+std::optional<const ForcefieldTorsionTerm>
+Forcefield_UFF::getTorsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
+                               const ForcefieldAtomType &l, OptionalReferenceWrapper<SpeciesTorsion> torsion) const
 {
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffi =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[0] : determineAtomType(*torsion.i());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffj =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[1] : determineAtomType(*torsion.j());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffk =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[2] : determineAtomType(*torsion.k());
-    OptionalReferenceWrapper<const ForcefieldAtomType> ffl =
-        ffAtomTypes.size() == 4 ? ffAtomTypes[2] : determineAtomType(*torsion.k());
-    if (!(ffi && ffj && ffk && ffl))
-        Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
-                         torsion.i()->index(), torsion.j()->index(), torsion.k()->index(), torsion.l()->index());
-
-    const ForcefieldAtomType &i = *ffi;
-    const ForcefieldAtomType &j = *ffj;
-    const ForcefieldAtomType &k = *ffk;
-    const ForcefieldAtomType &l = *ffl;
-
     /*
      * There are seven cases to consider, listed in decreasing complexity:
      *  a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
@@ -469,16 +440,16 @@ bool Forcefield_UFF::assignTorsionTermParameters(
         // V value is 2.0 kcal for oxygen, 6.8 kcal otherwise
         auto vj = j.Z() == Elements::O ? 2.0 : 6.8;
         auto vk = k.Z() == Elements::O ? 2.0 : 6.8;
-        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine,
-                                                std::vector<double>{4.184 * sqrt(vj * vk), 2.0, 90.0});
+        return ForcefieldTorsionTerm(i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::UFFCosine,
+                                     std::vector<double>{4.184 * sqrt(vj * vk), 2.0, 90.0});
     }
     else if ((groupK == 16 && geomK == '3' && groupJ != 16 && geomJ == '2') ||
              (groupK != 16 && geomK == '2' && groupJ == 16 && geomJ == '3'))
     {
         // Case b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
         // Use eq 17, but since the bond order is 1 (single bond) ln term in eq 17 is zero...
-        torsion.setInteractionFormAndParameters(
-            TorsionFunctions::Form::UFFCosine,
+        return ForcefieldTorsionTerm(
+            i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::UFFCosine,
             std::vector<double>{4.184 * 5.0 * sqrt(j.parameter(UFFAtomTypeData::U) * k.parameter(UFFAtomTypeData::U)) *
                                     (1.0 + 4.18 * log(bondOrder(j, k))),
                                 2.0, 90.0});
@@ -486,16 +457,16 @@ bool Forcefield_UFF::assignTorsionTermParameters(
     else if (geomJ == '3' && geomK == '3')
     {
         // Case d) j and k are both sp3 centres
-        torsion.setInteractionFormAndParameters(
-            TorsionFunctions::Form::UFFCosine,
+        return ForcefieldTorsionTerm(
+            i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::UFFCosine,
             std::vector<double>{4.184 * sqrt(j.parameter(UFFAtomTypeData::V) * k.parameter(UFFAtomTypeData::V)), 3.0, 180.0});
     }
     else if (geomJ == '2' && geomK == '2')
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        torsion.setInteractionFormAndParameters(
-            TorsionFunctions::Form::UFFCosine,
+        return ForcefieldTorsionTerm(
+            i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::UFFCosine,
             std::vector<double>{4.184 * 5.0 * sqrt(j.parameter(UFFAtomTypeData::U) * k.parameter(UFFAtomTypeData::U)) *
                                     (1.0 + 4.18 * log(bondOrder(j, k))),
                                 2.0, 180.0});
@@ -503,21 +474,23 @@ bool Forcefield_UFF::assignTorsionTermParameters(
     else if ((geomJ == '3' && geomK == '2') || (geomK == '3' && geomJ == '2'))
     {
         // Case f) j is sp2 and k is sp3 (or vice versa)
-        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{4.184, 6.0, 0.0});
+        return ForcefieldTorsionTerm(i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::UFFCosine,
+                                     std::vector<double>{4.184, 6.0, 0.0});
     }
     else if ((geomJ == '3' && geomK == '2' && geomL == '2') || (geomJ == '2' && geomK == '3' && geomI == '2'))
     {
         // Case c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
-        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine,
-                                                std::vector<double>{4.184 * 2.0, 3.0, 180.0});
+        return ForcefieldTorsionTerm(i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::UFFCosine,
+                                     std::vector<double>{4.184 * 2.0, 3.0, 180.0});
     }
     else
     {
         // Case g) everything else
-        torsion.setInteractionFormAndParameters(TorsionFunctions::Form::UFFCosine, std::vector<double>{0.0, 1.0, 0.0});
+        return ForcefieldTorsionTerm(i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::UFFCosine,
+                                     std::vector<double>{0.0, 1.0, 0.0});
     }
 
-    return true;
+    return {};
 }
 
 // Assign / generate improper term parameters
@@ -580,7 +553,7 @@ std::optional<ForcefieldImproperTerm> Forcefield_UFF::getImproperTerm(const Forc
             std::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0)};
     }
     else
-        return ForcefieldImproperTerm{i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::None};
+        return ForcefieldImproperTerm{i.name(), j.name(), k.name(), l.name(), TorsionFunctions::Form::None, ""};
 
     return {};
 }
