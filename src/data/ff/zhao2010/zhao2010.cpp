@@ -98,27 +98,32 @@ std::string_view Forcefield_Zhao2010::description() const
 ShortRangeFunctions::Form Forcefield_Zhao2010::shortRangeForm() const { return ShortRangeFunctions::Form::LennardJones; }
 
 /*
- * Term Assignment
+ * Intramolecular Term Data
  */
 
-// Assign / generate angle term parameters
-bool Forcefield_Zhao2010::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const
+// Return angle term for the supplied atom type trio (if it exists)
+std::optional<const ForcefieldAngleTerm> Forcefield_Zhao2010::getAngleTerm(const ForcefieldAtomType &i,
+                                                                           const ForcefieldAtomType &j,
+                                                                           const ForcefieldAtomType &k,
+                                                                           OptionalReferenceWrapper<SpeciesAngle> angle) const
 {
     // We need an override on the angle term assignment so that we can deal with the fact that the O-Cu-O angles are described
     // as harmonic angles and we have a mix of ~180 and ~90 angles.
 
     // Is this an O-Cu-O angle?
-    if (angle.i()->Z() == Elements::O && angle.j()->Z() == Elements::Cu && angle.k()->Z() == Elements::O)
+    if (angle)
     {
-        // Determine the geometry
-        auto theta = parent->box()->angleInDegrees(angle.i()->r(), angle.j()->r(), angle.k()->r());
-        if (theta > 135.0)
-            angle.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, std::vector<double>{419.7389, 170.2});
-        else
-            angle.setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, std::vector<double>{100.416, 90.0});
-
-        return true;
+        auto &a = angle->get();
+        if (a.i()->Z() == Elements::O && a.j()->Z() == Elements::Cu && a.k()->Z() == Elements::O)
+        {
+            // Determine the geometry
+            auto theta = a.parent()->box()->angleInDegrees(a.i()->r(), a.j()->r(), a.k()->r());
+            if (theta > 135.0)
+                return ForcefieldAngleTerm{i.name(), j.name(), k.name(), AngleFunctions::Form::Harmonic, {419.7389, 170.2}};
+            else
+                return ForcefieldAngleTerm{i.name(), j.name(), k.name(), AngleFunctions::Form::Harmonic, {100.416, 90.0}};
+        }
     }
-    else
-        return Forcefield::assignAngleTermParameters(parent, angle, determineTypes);
+
+    return Forcefield::getAngleTerm(i, j, k, angle);
 }

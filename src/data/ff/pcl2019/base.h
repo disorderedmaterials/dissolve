@@ -30,23 +30,22 @@ class PCL2019BaseForcefield : public Forcefield
     OptionalReferenceWrapper<const ForcefieldAtomType> oplsAtomTypeById(int id) const;
 
     /*
-     * Term Data
+     * Intramolecular Term Data
      */
     public:
     // Return bond term for the supplied atom type pair (if it exists)
-    OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
-                                                                   const ForcefieldAtomType &j) const override;
+    std::optional<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                        OptionalReferenceWrapper<SpeciesBond> bond) const override;
     // Return angle term for the supplied atom type trio (if it exists)
-    OptionalReferenceWrapper<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
-                                                                     const ForcefieldAtomType &k) const override;
+    std::optional<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                          const ForcefieldAtomType &k,
+                                                          OptionalReferenceWrapper<SpeciesAngle> angle) const override;
     // Return torsion term for the supplied atom type quartet (if it exists)
-    OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i,
-                                                                         const ForcefieldAtomType &j,
-                                                                         const ForcefieldAtomType &k,
-                                                                         const ForcefieldAtomType &l) const override;
+    std::optional<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                              const ForcefieldAtomType &k, const ForcefieldAtomType &l,
+                                                              OptionalReferenceWrapper<SpeciesTorsion> torsion) const override;
     // Return improper term for the supplied atom type quartet (if it exists)
-    OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i,
-                                                                           const ForcefieldAtomType &j,
-                                                                           const ForcefieldAtomType &k,
-                                                                           const ForcefieldAtomType &l) const override;
+    std::optional<ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                          const ForcefieldAtomType &k,
+                                                          const ForcefieldAtomType &l) const override;
 };

@@ -31,9 +31,11 @@ class Forcefield_Zhao2010 : public Forcefield
     ShortRangeFunctions::Form shortRangeForm() const override;
 
     /*
-     * Term Assignment
+     * Intramolecular Term Data
      */
     public:
-    // Assign / generate angle term parameters
-    bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const override;
+    // Return angle term for the supplied atom type trio (if it exists)
+    std::optional<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                          const ForcefieldAtomType &k,
+                                                          OptionalReferenceWrapper<SpeciesAngle> angle) const override;
 };

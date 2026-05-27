@@ -107,40 +107,37 @@ class Species : public Serialisable<>
     // Return vector of SpeciesBond
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
-    // Return whether SpeciesBond between SpeciesAtoms exists
-    bool hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
-    bool hasBond(int i, int j) const;
-    // Return the SpeciesBond between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesBond> getBond(int indexI, int indexJ);
+    // Return the SpeciesBond between the specified SpeciesAtom indices, if it exists
+    OptionalReferenceWrapper<SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j);
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
     // Return vector of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
     const std::vector<SpeciesAngle> &angles() const;
-    // Return whether SpeciesAngle between SpeciesAtoms exists
-    bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
-    // Return the SpeciesAngle between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesAngle> getAngle(int indexI, int indexJ, int indexK);
+    // Return the SpeciesAngle between the specified SpeciesAtom indices, if it exists
+    OptionalReferenceWrapper<SpeciesAngle> getAngle(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k);
     // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
-    // Return whether SpeciesTorsion between SpeciesAtoms exists
-    bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
-    // Return the SpeciesTorsion between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(int indexI, int indexJ, int indexK, int indexL);
+    // Return the SpeciesTorsion between the specified SpeciesAtom indices, if it exists
+    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
+                                                        const SpeciesAtom *l);
     // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;
-    // Return whether SpeciesImproper between SpeciesAtoms exists
-    bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
-    // Return the SpeciesImproper between the specified SpeciesAtom indices
-    OptionalReferenceWrapper<SpeciesImproper> getImproper(int indexI, int indexJ, int indexK, int indexL);
+    // Add a new improper term between the specified atoms
+    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    // Return the SpeciesImproper between the specified SpeciesAtom indices, if it exists
+    OptionalReferenceWrapper<SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
+                                                          const SpeciesAtom *l);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
     // Determine angles and torsions from bond connectivity
     void determineAnglesAndTorsions();
     // Finalise internal relationships related to geometry once it is defined
     void finaliseGeometry();
+    // Clear forcefield data from intramolecular terms
+    void clearIntramolecularForcefieldTerms();
 
     /*
      * Intramolecular Common Terms
@@ -217,15 +214,6 @@ class Species : public Serialisable<>
     void removeBox();
     // Create Box definition with specified lengths and angles
     void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
-
-    /*
-     * Forcefield
-     */
-    public:
-    // Apply terms from specified Forcefield
-    bool applyForcefieldTerms(std::shared_ptr<Forcefield> ff);
-    // Clear forcefield terms
-    void clearForcefieldTerms(bool nullifyAtomTypes = true);
 
     /*
      * Isotopologues

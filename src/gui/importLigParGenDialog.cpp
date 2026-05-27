@@ -291,7 +291,8 @@ bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) con
         if (!optType)
             return Messenger::error("No associated type {}{} is present in the forcefield.\n", Elements::symbol(i.Z()),
                                     classID);
-        importedForcefield_->assignAtomType(*optType, i, coreData, true);
+        importedForcefield_->assignAtomType(*optType, i, coreData);
+        i.setCharge(optType->q());
     }
 
     // Assign intramolecular terms based on the assigned element/classId atom types

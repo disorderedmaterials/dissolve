@@ -15,19 +15,9 @@ std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 
 const std::vector<SpeciesBond> &Species::bonds() const { return bonds_; }
 
-// Return whether SpeciesBond between specified SpeciesAtoms exists
-bool Species::hasBond(const SpeciesAtom *i, const SpeciesAtom *j) const
+// Return the SpeciesBond between the specified SpeciesAtoms, if it exists
+OptionalReferenceWrapper<SpeciesBond> Species::getBond(const SpeciesAtom *i, const SpeciesAtom *j)
 {
-    return std::any_of(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
-}
-bool Species::hasBond(int i, int j) const { return hasBond(&atom(i), &atom(j)); }
-
-// Return the SpeciesBond between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesBond> Species::getBond(int indexI, int indexJ)
-{
-    auto *i = &atoms_[indexI];
-    auto *j = &atoms_[indexJ];
-
     auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond.matches(i, j); });
     if (it == bonds_.end())
         return {};
@@ -57,19 +47,9 @@ std::vector<SpeciesAngle> &Species::angles() { return angles_; }
 
 const std::vector<SpeciesAngle> &Species::angles() const { return angles_; }
 
-// Return whether SpeciesAngle between SpeciesAtoms exists
-bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
+// Return the SpeciesAngle between the specified SpeciesAtoms, if it exists
+OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k)
 {
-    return std::any_of(angles_.cbegin(), angles_.cend(), [i, j, k](const auto &angle) { return angle.matches(i, j, k); });
-}
-
-// Return the SpeciesAngle between the specified SpeciesAtom indic
-OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(int indexI, int indexJ, int indexK)
-{
-    auto *i = &atoms_[indexI];
-    auto *j = &atoms_[indexJ];
-    auto *k = &atoms_[indexK];
-
     auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
     if (it == angles_.end())
         return {};
@@ -82,20 +62,10 @@ std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
 
 const std::vector<SpeciesTorsion> &Species::torsions() const { return torsions_; }
 
-// Return whether SpeciesTorsion between SpeciesAtoms exists
-bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
+// Return the SpeciesTorsion between the specified SpeciesAtoms, if it exists
+OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
+                                                             const SpeciesAtom *l)
 {
-    return std::any_of(torsions_.cbegin(), torsions_.cend(), [&](const auto &t) { return t.matches(i, j, k, l); });
-}
-
-// Return the SpeciesTorsion between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(int indexI, int indexJ, int indexK, int indexL)
-{
-    auto *i = &atoms_[indexI];
-    auto *j = &atoms_[indexJ];
-    auto *k = &atoms_[indexK];
-    auto *l = &atoms_[indexL];
-
     auto it =
         std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
     if (it == torsions_.end())
@@ -109,21 +79,20 @@ std::vector<SpeciesImproper> &Species::impropers() { return impropers_; }
 
 const std::vector<SpeciesImproper> &Species::impropers() const { return impropers_; }
 
-// Return whether SpeciesImproper between SpeciesAtoms exists
-bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
+// Add a new improper term between the specified atoms
+SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
-    return std::any_of(impropers_.cbegin(), impropers_.cend(),
-                       [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
+    auto optImproper = getImproper(i, j, k, l);
+    if (optImproper)
+        return *optImproper;
+
+    return impropers_.emplace_back(this, i, j, k, l);
 }
 
-// Return the SpeciesImproper between the specified SpeciesAtom indices
-OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(int indexI, int indexJ, int indexK, int indexL)
+// Return the SpeciesImproper between the specified SpeciesAtoms, if it exists
+OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
+                                                               const SpeciesAtom *l)
 {
-    auto *i = &atoms_[indexI];
-    auto *j = &atoms_[indexJ];
-    auto *k = &atoms_[indexK];
-    auto *l = &atoms_[indexL];
-
     auto it = std::find_if(impropers_.begin(), impropers_.end(),
                            [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
     if (it == impropers_.end())
@@ -330,6 +299,21 @@ void Species::finaliseGeometry()
     }
 
     attachedAtomListsGenerated_ = true;
+}
+
+// Clear intramolecular forcefield terms
+void Species::clearIntramolecularForcefieldTerms()
+{
+    for (auto &b : bonds_)
+        b.setInteractionFormAndParameters(BondFunctions::Form::None, std::vector<double>());
+
+    for (auto &a : angles_)
+        a.setInteractionFormAndParameters(AngleFunctions::Form::None, std::vector<double>());
+
+    for (auto &t : torsions_)
+        t.setInteractionFormAndParameters(TorsionFunctions::Form::None, std::vector<double>());
+
+    impropers_.clear();
 }
 
 // Return periodic box

@@ -6,15 +6,17 @@
 #include "classes/speciesBond.h"
 
 // Forward Declarations
-class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Bond Term
 class ForcefieldBondTerm
 {
     public:
-    ForcefieldBondTerm(std::string_view typeI = "", std::string_view typeJ = "",
-                       BondFunctions::Form form = BondFunctions::Form::None, std::string_view parameterString = "");
+    ForcefieldBondTerm() = default;
+    ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
+                       const std::vector<double> &parameters);
+    ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
+                       std::string_view parameterString);
     ~ForcefieldBondTerm() = default;
 
     /*
