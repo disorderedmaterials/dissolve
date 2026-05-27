@@ -21,7 +21,7 @@ class CommonBond;
 class CommonAngle;
 class CommonTorsion;
 class CommonImproper;
-class Forcefield;
+class Structure;
 
 // Species Definition
 class Species : public Serialisable<>
@@ -287,6 +287,8 @@ class Species : public Serialisable<>
                       InteractionPotential<ShortRangeFunctions> potential = {ShortRangeFunctions::Form::Undefined, ""});
     // Load from specified TOML file
     void load(std::string_view tomlFile);
+    // Create from structure and forcefield
+    void create(const Structure &structure);
 
     /*
      * Serialisation

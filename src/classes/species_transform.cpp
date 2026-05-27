@@ -3,6 +3,7 @@
 
 #include "classes/box.h"
 #include "classes/species.h"
+#include "classes/structure.h"
 
 // Calculate and return centre of geometry
 Vector3 Species::centreOfGeometry(const Box *box) const
@@ -79,4 +80,28 @@ void Species::load(std::string_view tomlFile)
     SerialisedValue contents = toml::parse(std::string(tomlFile));
     if (contents.contains("species"))
         deserialise(contents["species"]);
+}
+
+// Create from structure and forcefield
+void Species::create(const Structure &structure)
+{
+    clear();
+
+    // Copy atoms
+    atoms_.reserve(structure.atoms().size());
+    for (auto &atom : structure.atoms())
+    {
+        auto &i = atoms_.emplace_back(this);
+        i.set(atom->Z(), atom->r(), atom->q());
+        i.setIndex(atoms_.size() - 1);
+    }
+
+    // Copy bonds
+    bonds_.reserve(structure.bonds().size());
+    for (auto &bond : structure.bonds())
+        bonds_.emplace_back(this, &atoms_[bond->i()->index()], &atoms_[bond->j()->index()]);
+
+    // Perform rest of setup
+    determineAnglesAndTorsions();
+    finaliseGeometry();
 }
