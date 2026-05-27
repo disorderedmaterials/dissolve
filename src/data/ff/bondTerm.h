@@ -6,7 +6,6 @@
 #include "classes/speciesBond.h"
 
 // Forward Declarations
-class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Bond Term

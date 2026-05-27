@@ -6,7 +6,6 @@
 #include "classes/speciesImproper.h"
 
 // Forward Declarations
-class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Improper Term

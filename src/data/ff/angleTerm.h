@@ -6,7 +6,6 @@
 #include "classes/speciesAngle.h"
 
 // Forward Declarations
-class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Angle Term

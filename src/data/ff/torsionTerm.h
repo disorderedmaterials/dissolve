@@ -6,7 +6,6 @@
 #include "classes/speciesTorsion.h"
 
 // Forward Declarations
-class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Torsion Term
