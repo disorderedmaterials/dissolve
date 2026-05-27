@@ -26,10 +26,12 @@ namespace UnitTest
 class TestGraph : public DissolveGraph
 {
     public:
-    TestGraph() : dissolve(coreData), currentGraph_(this) { Node::echo_ = true; }
+    TestGraph() : currentGraph_(this)
+    {
+        Node::echo_ = true;
+        PairPotential::setChargeSource(PairPotential::ChargeSource::Automatic);
+    }
     ~TestGraph() { exportMermaidGraph(); }
-    CoreData coreData;
-    Dissolve dissolve;
 
     public:
     // Container for data 1D import filename and whether or not it is a histogram
