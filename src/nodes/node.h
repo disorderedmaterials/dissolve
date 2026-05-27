@@ -319,7 +319,7 @@ class Node : public Serialisable<>
     // Return the current iteration count
     virtual int iteration() const;
     // Access a pair potential
-    virtual PairPotential *pairPotential(const AtomType *at1, const AtomType *at2) const;
+    virtual PairPotential &pairPotential(const AtomType *at1, const AtomType *at2);
     // Return the DissolveGraph reference
     virtual DissolveGraph *dissolveGraph();
 

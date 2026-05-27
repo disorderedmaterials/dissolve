@@ -309,10 +309,7 @@ void Node::setParent(Graph *graph) { parentGraph_ = graph; }
 int Node::iteration() const { return parentGraph_->iteration(); }
 
 // Access a pair potential
-PairPotential *Node::pairPotential(const AtomType *at1, const AtomType *at2) const
-{
-    return parentGraph_->pairPotential(at1, at2);
-}
+PairPotential &Node::pairPotential(const AtomType *at1, const AtomType *at2) { return parentGraph_->pairPotential(at1, at2); }
 
 // Return the DissolveGraph reference
 DissolveGraph *Node::dissolveGraph() { return parentGraph_->dissolveGraph(); }

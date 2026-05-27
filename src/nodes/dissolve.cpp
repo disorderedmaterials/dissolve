@@ -23,9 +23,9 @@ std::string_view DissolveGraph::summary() const { return "Parent node of all sim
 int DissolveGraph::iteration() const { return iteration_; }
 
 // Access a pair potential
-PairPotential *DissolveGraph::pairPotential(const AtomType *at1, const AtomType *at2) const
+PairPotential &DissolveGraph::pairPotential(const AtomType *at1, const AtomType *at2)
 {
-    return dissolve_.pairPotential(at1, at2);
+    return pairPotentials_.get(at1->name(), at2->name());
 }
 
 // Return the DissolveGraph reference
