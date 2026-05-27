@@ -68,15 +68,15 @@ bool ForcefieldRecipe::apply(Species &species) const
         auto ffi = ffaMap.at(bond.i());
         auto ffj = ffaMap.at(bond.j());
 
-        auto optBondTerm = ff->getBondTerm( ffi, ffj, bond);
+        auto optBondTerm = ff->getBondTerm(ffi, ffj, bond);
         if (!optBondTerm)
         {
             Messenger::error("Failed to locate parameters for bond {}-{} ({}-{}).\n", bond.i()->index(), bond.j()->index(),
-                                    ffi.get().equivalentName(), ffj.get().equivalentName());
+                             ffi.get().equivalentName(), ffj.get().equivalentName());
             ++nBondsFailed;
             continue;
         }
-        
+
         const auto &term = *optBondTerm;
         bond.setInteractionFormAndParameters(term.form(), term.parameters());
     }
@@ -89,17 +89,17 @@ bool ForcefieldRecipe::apply(Species &species) const
         auto ffj = ffaMap.at(angle.j());
         auto ffk = ffaMap.at(angle.k());
 
-        auto optAngleTerm = ff->getAngleTerm( ffi, ffj, ffk, angle);
+        auto optAngleTerm = ff->getAngleTerm(ffi, ffj, ffk, angle);
         if (!optAngleTerm)
         {
             Messenger::error("Failed to locate parameters for angle {}-{}-{} ({}-{}-{}).\n", angle.i()->index(),
-                                    angle.j()->index(), angle.k()->index(), ffi.get().equivalentName(),
-                                    ffj.get().equivalentName(), ffk.get().equivalentName());
-            
+                             angle.j()->index(), angle.k()->index(), ffi.get().equivalentName(), ffj.get().equivalentName(),
+                             ffk.get().equivalentName());
+
             ++nAnglesFailed;
             continue;
         }
-        
+
         const auto &term = *optAngleTerm;
         angle.setInteractionFormAndParameters(term.form(), term.parameters());
     }
@@ -113,17 +113,17 @@ bool ForcefieldRecipe::apply(Species &species) const
         auto ffk = ffaMap.at(torsion.k());
         auto ffl = ffaMap.at(torsion.l());
 
-        auto optTorsionTerm = ff->getTorsionTerm( ffi, ffj, ffk, ffl, torsion);
+        auto optTorsionTerm = ff->getTorsionTerm(ffi, ffj, ffk, ffl, torsion);
         if (!optTorsionTerm)
         {
             Messenger::error("Failed to locate parameters for torsion {}-{}-{} ({}-{}-{}).\n", torsion.i()->index(),
-                                    torsion.j()->index(), torsion.k()->index(), ffi.get().equivalentName(),
-                                    ffj.get().equivalentName(), ffk.get().equivalentName());
-            
+                             torsion.j()->index(), torsion.k()->index(), ffi.get().equivalentName(), ffj.get().equivalentName(),
+                             ffk.get().equivalentName());
+
             ++nTorsionsFailed;
             continue;
         }
-        
+
         const auto &term = *optTorsionTerm;
         torsion.setInteractionFormAndParameters(term.form(), term.parameters());
     }
