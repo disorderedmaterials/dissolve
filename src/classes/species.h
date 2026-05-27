@@ -287,7 +287,7 @@ class Species : public Serialisable<>
                       InteractionPotential<ShortRangeFunctions> potential = {ShortRangeFunctions::Form::Undefined, ""});
     // Load from specified TOML file
     void load(std::string_view tomlFile);
-    // Create from structure and forcefield
+    // Create from structure
     void create(const Structure &structure);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
