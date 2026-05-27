@@ -725,7 +725,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         errorsEncountered = true;
     }
 
-    finaliseGeometry();
+    finaliseIntramolecularData();
 
     return (!errorsEncountered);
 }
