@@ -9,7 +9,7 @@
 SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
     addInput("Structure", "Structure of the species", structure_);
-    addInput("Recipe", "Forcefield recipe to apply tothe species", recipe_);
+    addInput("Recipe", "Forcefield recipe to apply to the species", recipe_);
 
     addPointerOutput<const Species>("Species", "Created species", species_);
 }
