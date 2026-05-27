@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <memory>
-
 // Forward Declarations
 class Forcefield;
 class Species;

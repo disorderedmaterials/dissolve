@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "forcefield.h"
+#include "nodes/forcefield.h"
 #include "data/ff/library.h"
 #include <toml11/toml.hpp>
 
@@ -23,7 +23,7 @@ std::string_view ForcefieldNode::summary() const { return "Set up a forcefield t
  * Processing
  */
 
-NodeConstants::ProcessResult ForcefieldNode::process() { return NodeConstants::ProcessResult::Unchanged; }
+NodeConstants::ProcessResult ForcefieldNode::process() { return NodeConstants::ProcessResult::Success; }
 
 /*
  * I/O
