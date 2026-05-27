@@ -6,109 +6,6 @@
 #include "classes/species.h"
 #include "classes/structure.h"
 
-// Calculate and return centre of geometry
-Vector3 Species::centreOfGeometry(const Box *box) const
-{
-    if (atoms_.size() == 0)
-        return Vector3();
-
-    // Calculate center relative to first atom in molecule
-    auto cog = atoms_.front().r();
-    for (const auto &i : atoms_)
-        cog += box->minimumImage(i.r(), cog);
-
-    return (cog / atoms_.size());
-}
-
-// Set centre of geometry of species
-void Species::setCentre(const Box *box, const Vector3 newCentre)
-{
-    // Calculate Molecule centre of geometry
-    Vector3 newR;
-    const auto cog = centreOfGeometry(box);
-
-    // Apply transform
-    for (int n = 0; n < atoms_.size(); ++n)
-        for (auto &i : atoms_)
-        {
-            newR = box->minimumVector(i.r(), cog) + newCentre;
-            i.setR(newR);
-        }
-}
-
-// Centre coordinates at origin
-void Species::centreAtOrigin()
-{
-    Vector3 centre;
-    for (const auto &i : atoms_)
-        centre += i.r();
-    centre /= atoms_.size();
-    for (auto &i : atoms_)
-        i -= centre;
-}
-
-/*
- * Creation
- */
-
-// Create atomic species
-void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeFunctions> potential)
-{
-    clear();
-
-    // Set up atom type
-    auto atomType = addAtomType(Z, Elements::symbol(Z));
-    atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
-
-    auto &i = atoms_.emplace_back(this);
-    i.set(Z, {});
-    i.setIndex(0);
-    i.setAtomType(atomType);
-
-    // Create isotopologues
-    for (auto isotope : Sears91::isotopes(Z))
-    {
-        auto iso = addIsotopologue(std::format("{}{}", Elements::symbol(Z), Sears91::A(isotope)));
-        iso->setAtomTypeIsotope(atomType, isotope);
-    }
-}
-
-// Load from specified TOML file
-void Species::load(std::string_view tomlFile)
-{
-    clear();
-
-    SerialisedValue contents = toml::parse(std::string(tomlFile));
-    if (contents.contains("species"))
-        deserialise(contents["species"]);
-}
-
-// Create from structure and forcefield
-void Species::create(const Structure &structure)
-{
-    clear();
-
-    // Copy atoms
-    atoms_.reserve(structure.atoms().size());
-    for (auto &atom : structure.atoms())
-    {
-        auto &i = atoms_.emplace_back(this);
-        i.set(atom->Z(), atom->r(), atom->q());
-        i.setIndex(atoms_.size() - 1);
-    }
-
-    // Copy bonds
-    bonds_.reserve(structure.bonds().size());
-    for (auto &bond : structure.bonds())
-        bonds_.emplace_back(this, &atoms_[bond->i()->index()], &atoms_[bond->j()->index()]);
-
-    // Perform rest of setup
-    finaliseIntramolecularData();
-}
-
-// Return whether the attached atoms lists have been created
-bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
-
 // Finalise all relationships between intramolecular data
 void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
 {
@@ -141,8 +38,9 @@ void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
                 // Get atom 'i'
                 auto *i = ij->partner(j);
 
-                // ADd angle i-j-k
-                angles_.emplace_back(this, i, j, k);
+                // Add angle i-j-k
+                if (!getAngle(i, j, k))
+                    angles_.emplace_back(this, i, j, k);
 
                 // Loop over bonds 'kl'
                 for (auto kl : k->bonds())
@@ -155,10 +53,12 @@ void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
                     auto *l = kl->partner(k);
 
                     // Add angle j-k-l
-                    angles_.emplace_back(this, j, k, l);
+                    if (!getAngle(j, k, l))
+                        angles_.emplace_back(this, j, k, l);
 
                     // Add torsion i-j-k-l
-                    torsions_.emplace_back(this, i, j, k, l);
+                    if (!getTorsion(i, j, k, l))
+                        torsions_.emplace_back(this, i, j, k, l);
                 }
             }
         }
@@ -306,3 +206,106 @@ void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
 
     attachedAtomListsGenerated_ = true;
 }
+
+// Calculate and return centre of geometry
+Vector3 Species::centreOfGeometry(const Box *box) const
+{
+    if (atoms_.size() == 0)
+        return Vector3();
+
+    // Calculate center relative to first atom in molecule
+    auto cog = atoms_.front().r();
+    for (const auto &i : atoms_)
+        cog += box->minimumImage(i.r(), cog);
+
+    return (cog / atoms_.size());
+}
+
+// Set centre of geometry of species
+void Species::setCentre(const Box *box, const Vector3 newCentre)
+{
+    // Calculate Molecule centre of geometry
+    Vector3 newR;
+    const auto cog = centreOfGeometry(box);
+
+    // Apply transform
+    for (int n = 0; n < atoms_.size(); ++n)
+        for (auto &i : atoms_)
+        {
+            newR = box->minimumVector(i.r(), cog) + newCentre;
+            i.setR(newR);
+        }
+}
+
+// Centre coordinates at origin
+void Species::centreAtOrigin()
+{
+    Vector3 centre;
+    for (const auto &i : atoms_)
+        centre += i.r();
+    centre /= atoms_.size();
+    for (auto &i : atoms_)
+        i -= centre;
+}
+
+/*
+ * Creation
+ */
+
+// Create atomic species
+void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeFunctions> potential)
+{
+    clear();
+
+    // Set up atom type
+    auto atomType = addAtomType(Z, Elements::symbol(Z));
+    atomType->interactionPotential().setFormAndParameters(potential.form(), potential.parameters());
+
+    auto &i = atoms_.emplace_back(this);
+    i.set(Z, {});
+    i.setIndex(0);
+    i.setAtomType(atomType);
+
+    // Create isotopologues
+    for (auto isotope : Sears91::isotopes(Z))
+    {
+        auto iso = addIsotopologue(std::format("{}{}", Elements::symbol(Z), Sears91::A(isotope)));
+        iso->setAtomTypeIsotope(atomType, isotope);
+    }
+}
+
+// Load from specified TOML file
+void Species::load(std::string_view tomlFile)
+{
+    clear();
+
+    SerialisedValue contents = toml::parse(std::string(tomlFile));
+    if (contents.contains("species"))
+        deserialise(contents["species"]);
+}
+
+// Create from structure and forcefield
+void Species::create(const Structure &structure)
+{
+    clear();
+
+    // Copy atoms
+    atoms_.reserve(structure.atoms().size());
+    for (auto &atom : structure.atoms())
+    {
+        auto &i = atoms_.emplace_back(this);
+        i.set(atom->Z(), atom->r(), atom->q());
+        i.setIndex(atoms_.size() - 1);
+    }
+
+    // Copy bonds
+    bonds_.reserve(structure.bonds().size());
+    for (auto &bond : structure.bonds())
+        bonds_.emplace_back(this, &atoms_[bond->i()->index()], &atoms_[bond->j()->index()]);
+
+    // Perform rest of setup
+    finaliseIntramolecularData();
+}
+
+// Return whether the attached atoms lists have been created
+bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
