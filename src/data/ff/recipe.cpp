@@ -169,27 +169,11 @@ bool ForcefieldRecipe::apply(Species &species) const
         }
     }
 
-    // FROM AddForcefieldDialogModel
-    // Detach any MasterTerm references, and delete the MasterTerms
-    // modifiedSpecies_->detachFromCommonTerms();
-    // temporaryCoreData_.clearMasterTerms();
+    // Re-assign common terms?
+    if (commonTerms != CommonTermRecipe::None)
+        species.reduceToCommonTerms();
+
     // TODO DISSOLVE2
-
-    // Assign intramolecular terms
-    // if (intramolecularRadio_ != Radio::None)
-    // {
-    //
-    //     // Try to assign terms across the species
-    //     if (!ff->assignIntramolecular(modifiedSpecies_.get()))
-    //         return;
-    //
-    //     // Reduce to master terms?
-    //     // TODO DISSOLVE2
-    //     // if (!noMasterTerms_)
-    //     // modifiedSpecies_->reduceToCommonTerms(temporaryCoreData_, intramolecularRadio_ == Radio::Selected);
-    // }
-
-    // FROM AddFOrcefieldDialogModel
     // auto &currentOverrides = dissolve_->coreData().pairPotentialOverrides();
     // for (const auto &ffOverride : ff_->pairPotentialOverrides())
     // {
