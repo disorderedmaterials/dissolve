@@ -4,6 +4,8 @@
 #pragma once
 
 #include "classes/species.h"
+#include "classes/structure.h"
+#include "nodes/forcefield.h"
 #include "nodes/node.h"
 
 // Species Node
@@ -26,8 +28,10 @@ class SpeciesNode : public Node
     private:
     // Species object
     Species species_;
-    // Atom Types owned by the node
-    std::vector<std::shared_ptr<AtomType>> atomTypes_;
+    // Structure source for the species (optional)
+    std::optional<Structure> structure_;
+    // Forcefield recipe for the species (optional)
+    std::optional<ForcefieldRecipe> recipe_;
 
     /*
      * Accessors
