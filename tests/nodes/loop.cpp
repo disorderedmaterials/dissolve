@@ -14,7 +14,7 @@ namespace UnitTest
 class IterableGraphTest : public ::testing::Test
 {
     public:
-    IterableGraphTest() : dissolve_(coreData_) {}
+    IterableGraphTest() {}
 
     // Create a graph for testing
     void createGraph()
@@ -65,8 +65,6 @@ class IterableGraphTest : public ::testing::Test
 
     protected:
     // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
-    CoreData coreData_;
-    Dissolve dissolve_;
     DissolveGraph root_;
     NumberNode *i_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr};

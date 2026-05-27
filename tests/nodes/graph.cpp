@@ -13,7 +13,7 @@ namespace UnitTest
 class GraphCoreTest : public ::testing::Test
 {
     public:
-    GraphCoreTest() : dissolve_(coreData_) {}
+    GraphCoreTest() {}
 
     // Create a graph for testing
     void createGraph()
@@ -59,8 +59,6 @@ class GraphCoreTest : public ::testing::Test
 
     protected:
     // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
-    CoreData coreData_;
-    Dissolve dissolve_;
     DissolveGraph root_;
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
 };
