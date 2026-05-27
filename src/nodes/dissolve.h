@@ -39,8 +39,10 @@ class DissolveGraph : public Graph
     Dissolve &dissolve_;
 
     public:
-    // Return dissolve
-    Dissolve &dissolve() const;
+    // Return the current iteration count
+    int iteration() const override;
+    // Access a pair potential
+    PairPotential *pairPotential(const AtomType *at1, const AtomType *at2) const override;
     // Return the DissolveGraph reference
     DissolveGraph *dissolveGraph() override;
 

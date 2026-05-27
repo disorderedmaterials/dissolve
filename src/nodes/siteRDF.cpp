@@ -114,7 +114,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
             sumN += Integrator::sum(dataCN, ranges[i]);
             if (sumNInst)
             {
-                sumNInst->addPoint(dissolve().iteration(), sumN.value());
+                sumNInst->addPoint(iteration(), sumN.value());
                 if (exportInstantaneous_)
                 {
                     Data1DExportFileFormat exportFormat(std::format("{}_Sum{}.txt", name(), rangeName));
