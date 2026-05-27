@@ -31,6 +31,7 @@ void Structure::clear()
 {
     bonds_.clear();
     atoms_.clear();
+    box_ = std::make_unique<SingleImageBox>();
 }
 
 /*
