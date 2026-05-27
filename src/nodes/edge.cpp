@@ -114,14 +114,23 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
 
     // Check that types are compatible
     if (!targetInput->acceptsOutput(sourceOutput.get()))
+    {
+        Messenger::error("Source output ({}@{}) and target input ({}@{}) edge types are not compatible - {} vs {}.\n",
+                         definition.sourceOutput, sourceNode->name(), definition.targetInput, targetNode->name(),
+                         sourceOutput->storedDataType().name(), targetInput->storedDataType().name());
         return {};
+    }
 
     // Create the edge
     auto edge = std::make_unique<EdgeConstructor>(*sourceNode, *sourceOutput, *targetNode, *targetInput);
 
     // Notify nodes about the new edge
     if (!sourceNode->linkEdge(edge.get()) || !targetNode->linkEdge(edge.get()))
+    {
+        Messenger::error("Failed to link edge between source output {}@{} and target input {}@{}.\n", definition.sourceOutput,
+                         sourceNode->name(), definition.targetInput, targetNode->name());
         return {};
+    }
 
     return edge;
 }
