@@ -469,7 +469,7 @@ class DissolveSystemTest
                                     const InteractionPotential<BondFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 2);
-        const auto &b = sp->getBond(&sp->atoms()[0], &sp->atoms()[1]);
+        const auto &b = sp->getBond(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]]);
         if (!b)
             throw(std::runtime_error(std::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
         checkIntramolecularTerms(std::format("bond {}", joinStrings(atoms, "-")), expectedParams,
@@ -480,7 +480,7 @@ class DissolveSystemTest
                                     const InteractionPotential<AngleFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 3);
-        const auto &a = sp->getAngle(&sp->atoms()[0], &sp->atoms()[1], &sp->atoms()[2]);
+        const auto &a = sp->getAngle(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]]);
         if (!a)
             throw(
                 std::runtime_error(std::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
@@ -492,8 +492,10 @@ class DissolveSystemTest
                                     const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance = 1.0e-6)
     {
         ASSERT_TRUE(atoms.size() == 4);
-        const auto &t = sp->getTorsion(&sp->atoms()[0], &sp->atoms()[1], &sp->atoms()[2], &sp->atoms()[3]);
-        const auto &i = sp->getImproper(&sp->atoms()[0], &sp->atoms()[1], &sp->atoms()[2], &sp->atoms()[3]);
+        const auto &t =
+            sp->getTorsion(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]], &sp->atoms()[atoms[3]]);
+        const auto &i =
+            sp->getImproper(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]], &sp->atoms()[atoms[3]]);
         if (!t && !i)
             throw(std::runtime_error(
                 std::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
