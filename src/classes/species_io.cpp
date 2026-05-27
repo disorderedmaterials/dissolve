@@ -725,7 +725,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         errorsEncountered = true;
     }
 
-    finaliseIntramolecularData();
+    finaliseIntramolecularData(false);
 
     return (!errorsEncountered);
 }

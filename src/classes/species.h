@@ -279,7 +279,7 @@ class Species : public Serialisable<>
 
     private:
     // Finalise all relationships between intramolecular data
-    void finaliseIntramolecularData();
+    void finaliseIntramolecularData(bool recalculateAnglesAndTorsions = true);
 
     public:
     // Create atomic species

@@ -110,7 +110,7 @@ void Species::create(const Structure &structure)
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
 
 // Finalise all relationships between intramolecular data
-void Species::finaliseIntramolecularData()
+void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
 {
     // Set bond pointers in individual atoms
     for (const auto &bond : bonds_)
@@ -120,47 +120,48 @@ void Species::finaliseIntramolecularData()
     }
 
     // Determine angles and torsions from bond connectivity
-    for (auto &jk : bonds_)
-    {
-        // Get atoms 'j' and 'k'
-        auto *j = jk.i();
-        auto *k = jk.j();
-
-        // Swap j and k over if j is terminal and has only a single bond (i.e. jk)
-        if (j->bonds().size() == 1)
-            std::swap(j, k);
-
-        // Loop over bonds 'ij'
-        for (auto *ij : j->bonds())
+    if (recalculateAnglesAndTorsions)
+        for (auto &jk : bonds_)
         {
-            // Avoid 'ij' == 'jk'
-            if (ij == &jk)
-                continue;
+            // Get atoms 'j' and 'k'
+            auto *j = jk.i();
+            auto *k = jk.j();
 
-            // Get atom 'i'
-            auto *i = ij->partner(j);
+            // Swap j and k over if j is terminal and has only a single bond (i.e. jk)
+            if (j->bonds().size() == 1)
+                std::swap(j, k);
 
-            // ADd angle i-j-k
-            angles_.emplace_back(this, i, j, k);
-
-            // Loop over bonds 'kl'
-            for (auto kl : k->bonds())
+            // Loop over bonds 'ij'
+            for (auto *ij : j->bonds())
             {
-                // Avoid 'kl' == 'jk'
-                if (kl == &jk)
+                // Avoid 'ij' == 'jk'
+                if (ij == &jk)
                     continue;
 
-                // Get atom 'l'
-                auto *l = kl->partner(k);
+                // Get atom 'i'
+                auto *i = ij->partner(j);
 
-                // Add angle j-k-l
-                angles_.emplace_back(this, j, k, l);
+                // ADd angle i-j-k
+                angles_.emplace_back(this, i, j, k);
 
-                // Add torsion i-j-k-l
-                torsions_.emplace_back(this, i, j, k, l);
+                // Loop over bonds 'kl'
+                for (auto kl : k->bonds())
+                {
+                    // Avoid 'kl' == 'jk'
+                    if (kl == &jk)
+                        continue;
+
+                    // Get atom 'l'
+                    auto *l = kl->partner(k);
+
+                    // Add angle j-k-l
+                    angles_.emplace_back(this, j, k, l);
+
+                    // Add torsion i-j-k-l
+                    torsions_.emplace_back(this, i, j, k, l);
+                }
             }
         }
-    }
 
     // Set angle, torsion, and improper data in atoms
     for (const auto &angle : angles_)
