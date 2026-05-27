@@ -222,7 +222,11 @@ NodeConstants::ProcessResult Edge::pull()
 
         // Copy the parameter data over
         if (!targetInput_.assign(&sourceOutput_))
+        {
+            Messenger::error("Failed to assign value from {}@{} to {}@{}.\n", sourceOutput_.name(), sourceNode_.name(),
+                             targetInput_.name(), targetNode_.name());
             return NodeConstants::ProcessResult::Failed;
+        }
 
         // All succeeded, so update version index
         sourceNodeVersionIndex_ = sourceNode_.versionIndex();
