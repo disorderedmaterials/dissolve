@@ -7,7 +7,7 @@
 CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addOutput<Structure>("Structure", "Input structure", inputStructure_);
+    addInput<Structure>("Structure", "Input structure", inputStructure_);
 
     // Outputs
     addOutput<Structure>("Structure", "Output structure", outputStructure_);
