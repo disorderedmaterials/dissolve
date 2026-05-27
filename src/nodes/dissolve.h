@@ -37,6 +37,8 @@ class DissolveGraph : public Graph
     private:
     // Dissolve reference
     Dissolve &dissolve_;
+    // Current Iteration
+    int iteration_;
 
     public:
     // Return the current iteration count
