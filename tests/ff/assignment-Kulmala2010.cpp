@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,17 +10,18 @@ namespace UnitTest
 {
 TEST(Kulmala2010AssignmentTest, Hydronium)
 {
-    Species species("Hydronium");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/hydronium.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield(
+        "Hydronium", "ImportXYZStructure", "xyz/hydronium.xyz", ForcefieldLibrary::forcefield("Kulmala2010"));
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.nBonds(), 3);
-    ASSERT_EQ(species.nAngles(), 3);
-    ASSERT_EQ(species.nTorsions(), 0);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_EQ(species.bonds().size(), 3);
+    ASSERT_EQ(species.angles().size(), 3);
+    ASSERT_EQ(species.torsions().size(), 0);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "OW+"}, {1, "HW+"}, {2, "HW+"}, {3, "HW+"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4030 eq=0.969"});
@@ -29,17 +30,18 @@ TEST(Kulmala2010AssignmentTest, Hydronium)
 
 TEST(Kulmala2010AssignmentTest, Ammonia)
 {
-    Species species("Ammonia");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/ammonia.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Ammonia", "ImportXYZStructure", "xyz/ammonia.xyz",
+                                                                          ForcefieldLibrary::forcefield("Kulmala2010"));
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.nBonds(), 3);
-    ASSERT_EQ(species.nAngles(), 3);
-    ASSERT_EQ(species.nTorsions(), 0);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_EQ(species.bonds().size(), 3);
+    ASSERT_EQ(species.angles().size(), 3);
+    ASSERT_EQ(species.torsions().size(), 0);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "NH"}, {1, "HN"}, {2, "HN"}, {3, "HN"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=3864 eq=1.003"});
@@ -48,17 +50,18 @@ TEST(Kulmala2010AssignmentTest, Ammonia)
 
 TEST(Kulmala2010AssignmentTest, Ammonium)
 {
-    Species species("Ammonium");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/ammonium.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Ammonium", "ImportXYZStructure", "xyz/ammonium.xyz",
+                                                                          ForcefieldLibrary::forcefield("Kulmala2010"));
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.nBonds(), 4);
-    ASSERT_EQ(species.nAngles(), 6);
-    ASSERT_EQ(species.nTorsions(), 0);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_EQ(species.bonds().size(), 4);
+    ASSERT_EQ(species.angles().size(), 6);
+    ASSERT_EQ(species.torsions().size(), 0);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "NH+"}, {1, "HN+"}, {2, "HN+"}, {3, "HN+"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=3660.3 eq=1.013"});
@@ -67,17 +70,18 @@ TEST(Kulmala2010AssignmentTest, Ammonium)
 
 TEST(Kulmala2010AssignmentTest, Dimethylammonium)
 {
-    Species species("Dimethylammonium");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/dimethylammonium.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield(
+        "Dimethylammonium", "ImportXYZStructure", "xyz/dimethylammonium.xyz", ForcefieldLibrary::forcefield("Kulmala2010"));
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.nBonds(), 10);
-    ASSERT_EQ(species.nAngles(), 18);
-    ASSERT_EQ(species.nTorsions(), 18);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_EQ(species.bonds().size(), 10);
+    ASSERT_EQ(species.angles().size(), 18);
+    ASSERT_EQ(species.torsions().size(), 18);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "NDM"},
                                                {1, "HDM"},
@@ -103,17 +107,18 @@ TEST(Kulmala2010AssignmentTest, Dimethylammonium)
 
 TEST(Kulmala2010AssignmentTest, H2SO4)
 {
-    Species species("H2SO4");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/h2so4.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("H2SO4", "ImportXYZStructure", "xyz/h2so4.xyz",
+                                                                          ForcefieldLibrary::forcefield("Kulmala2010"));
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.nBonds(), 6);
-    ASSERT_EQ(species.nAngles(), 8);
-    ASSERT_EQ(species.nTorsions(), 6);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_EQ(species.bonds().size(), 6);
+    ASSERT_EQ(species.angles().size(), 8);
+    ASSERT_EQ(species.torsions().size(), 6);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species,
                                     {{0, "SA"}, {1, "OA"}, {2, "OA"}, {3, "OHA"}, {4, "OHA"}, {5, "HSA"}, {6, "HSA"}});
@@ -127,17 +132,18 @@ TEST(Kulmala2010AssignmentTest, H2SO4)
 
 TEST(Kulmala2010AssignmentTest, HSO4Minus)
 {
-    Species species("HSO4-");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/hso4minus.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Kulmala2010")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("HSO4-", "ImportXYZStructure", "xyz/hso4minus.xyz",
+                                                                          ForcefieldLibrary::forcefield("Kulmala2010"));
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
 
-    ASSERT_EQ(species.nBonds(), 5);
-    ASSERT_EQ(species.nAngles(), 7);
-    ASSERT_EQ(species.nTorsions(), 3);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_EQ(species.bonds().size(), 5);
+    ASSERT_EQ(species.angles().size(), 7);
+    ASSERT_EQ(species.torsions().size(), 3);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "SA-"}, {1, "OA-"}, {2, "OA-"}, {3, "OA-"}, {4, "OHA-"}, {5, "HSA-"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=5239.9 eq=1.438"});
