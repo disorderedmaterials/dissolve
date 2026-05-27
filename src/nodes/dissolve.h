@@ -17,7 +17,7 @@ class PotentialMap;
 class DissolveGraph : public Graph
 {
     public:
-    DissolveGraph(Dissolve &dissolve);
+    DissolveGraph();
     ~DissolveGraph() = default;
 
     /*
@@ -35,8 +35,6 @@ class DissolveGraph : public Graph
      * Data
      */
     private:
-    // Dissolve reference
-    Dissolve &dissolve_;
     // Current Iteration
     int iteration_;
 

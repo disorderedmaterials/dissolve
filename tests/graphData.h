@@ -26,7 +26,7 @@ namespace UnitTest
 class TestGraph : public DissolveGraph
 {
     public:
-    TestGraph() : DissolveGraph(dissolve), dissolve(coreData), currentGraph_(this) { Node::echo_ = true; }
+    TestGraph() : dissolve(coreData), currentGraph_(this) { Node::echo_ = true; }
     ~TestGraph() { exportMermaidGraph(); }
     CoreData coreData;
     Dissolve dissolve;

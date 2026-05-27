@@ -12,7 +12,7 @@ namespace UnitTest
 class SubGraphTest : public ::testing::Test
 {
     public:
-    SubGraphTest() : dissolve_(coreData_), root_(dissolve_) {}
+    SubGraphTest() : dissolve_(coreData_) {}
 
     // Create a graph for testing (no edges)
     void createGraph()

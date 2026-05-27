@@ -13,7 +13,7 @@ namespace UnitTest
 class GraphCoreTest : public ::testing::Test
 {
     public:
-    GraphCoreTest() : dissolve_(coreData_), root_(dissolve_) {}
+    GraphCoreTest() : dissolve_(coreData_) {}
 
     // Create a graph for testing
     void createGraph()
@@ -71,7 +71,7 @@ TEST_F(GraphCoreTest, Serialisation)
 
     CoreData cd;
     Dissolve d(cd);
-    DissolveGraph copy(d);
+    DissolveGraph copy;
     auto serialised = root_.into_toml();
 
     SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml");

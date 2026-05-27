@@ -4,7 +4,7 @@
 #include "nodes/dissolve.h"
 #include "kernels/producer.h"
 
-DissolveGraph::DissolveGraph(Dissolve &dissolve) : Graph(nullptr), dissolve_(dissolve) {}
+DissolveGraph::DissolveGraph() : Graph(nullptr) {}
 
 /*
  * Definitions (Virtuals)
