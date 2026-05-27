@@ -340,7 +340,10 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     {
         // If the stored data types are the same then we can just do a straight assignment
         if (storedDataType_ == other->storedDataType())
+        {
             setData(other->get<DataClass>());
+            return true;
+        }
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
             // If we represent a std::vector container we can conditionally check for a single data item being passed
@@ -349,19 +352,32 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
                 data_.push_back(other->get<typename DataClass::value_type>());
 
                 updateAfterSet();
+
+                return true;
             }
             else
                 return false;
         }
-
-        // If we are a pointer type, getting a nullptr is disallowed
-        if constexpr (std::is_pointer<DataClass>())
+        else if constexpr (is_instance_of_v<DataClass, std::optional>)
         {
+            // Optional arguments can of course accept the base class (i.e. with no std::optional container)
+            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            {
+                setData(other->get<typename DataClass::value_type>());
+
+                return true;
+            }
+            else
+                return false;
+        }
+        else if constexpr (std::is_pointer<DataClass>())
+        {
+            // If we are a pointer type, getting a nullptr is disallowed
             if (data_ == nullptr)
                 return false;
         }
 
-        return true;
+        return false;
     }
     // Return whether this parameter accepts the output type of the other
     bool acceptsOutput(ParameterBase *other) const override
@@ -374,7 +390,11 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
                 return true;
         }
-
+        else if constexpr (is_instance_of_v<DataClass, std::optional>)
+        {
+            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+                return true;
+        }
         return false;
     }
     // Invalidate the vector data (instances of std::vector only)
