@@ -317,7 +317,7 @@ class Node : public Serialisable<>
     // Returns the node parent graph
     Graph *parentGraph() const;
     // Return the current iteration count
-    virtual int iteration() const;
+    int iteration() const;
     // Access a pair potential
     virtual PairPotential &pairPotential(const AtomType *at1, const AtomType *at2);
     // Return the DissolveGraph reference
@@ -329,6 +329,8 @@ class Node : public Serialisable<>
     private:
     // Accumulated timing information (in seconds)
     SampledDouble timing_;
+    // Current iteration number
+    int iteration_ = 0;
 
     public:
     // Clear any local data

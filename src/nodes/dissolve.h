@@ -34,13 +34,7 @@ class DissolveGraph : public Graph
     /*
      * Data
      */
-    private:
-    // Current Iteration
-    int iteration_;
-
     public:
-    // Return the current iteration count
-    int iteration() const override;
     // Access a pair potential
     PairPotential &pairPotential(const AtomType *at1, const AtomType *at2) override;
     // Return the DissolveGraph reference

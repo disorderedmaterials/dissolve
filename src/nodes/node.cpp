@@ -306,7 +306,7 @@ Graph *Node::parentGraph() const { return parentGraph_; }
 void Node::setParent(Graph *graph) { parentGraph_ = graph; }
 
 // Return the current iteration count
-int Node::iteration() const { return parentGraph_->iteration(); }
+int Node::iteration() const { return iteration_; }
 
 // Access a pair potential
 PairPotential &Node::pairPotential(const AtomType *at1, const AtomType *at2) { return parentGraph_->pairPotential(at1, at2); }

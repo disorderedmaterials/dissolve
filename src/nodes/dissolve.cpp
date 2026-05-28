@@ -19,9 +19,6 @@ std::string_view DissolveGraph::type() const { return "Dissolve"; }
 // Return short summary of the node's purpose
 std::string_view DissolveGraph::summary() const { return "Parent node of all simulations"; }
 
-// Return the current iteration count
-int DissolveGraph::iteration() const { return iteration_; }
-
 // Access a pair potential
 PairPotential &DissolveGraph::pairPotential(const AtomType *at1, const AtomType *at2)
 {
