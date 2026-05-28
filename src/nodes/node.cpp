@@ -305,8 +305,11 @@ Graph *Node::parentGraph() const { return parentGraph_; }
 // This is private so that only designated friend classes can do this.
 void Node::setParent(Graph *graph) { parentGraph_ = graph; }
 
-// Return the Dissolve reference
-Dissolve &Node::dissolve() const { return parentGraph_->dissolve(); }
+// Return the current iteration count
+int Node::iteration() const { return iteration_; }
+
+// Access a pair potential
+PairPotential &Node::pairPotential(const AtomType *at1, const AtomType *at2) { return parentGraph_->pairPotential(at1, at2); }
 
 // Return the DissolveGraph reference
 DissolveGraph *Node::dissolveGraph() { return parentGraph_->dissolveGraph(); }

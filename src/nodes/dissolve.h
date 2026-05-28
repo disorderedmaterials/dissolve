@@ -17,7 +17,7 @@ class PotentialMap;
 class DissolveGraph : public Graph
 {
     public:
-    DissolveGraph(Dissolve &dissolve);
+    DissolveGraph();
     ~DissolveGraph() = default;
 
     /*
@@ -34,13 +34,9 @@ class DissolveGraph : public Graph
     /*
      * Data
      */
-    private:
-    // Dissolve reference
-    Dissolve &dissolve_;
-
     public:
-    // Return dissolve
-    Dissolve &dissolve() const;
+    // Access a pair potential
+    PairPotential &pairPotential(const AtomType *at1, const AtomType *at2) override;
     // Return the DissolveGraph reference
     DissolveGraph *dissolveGraph() override;
 

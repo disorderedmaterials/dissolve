@@ -21,6 +21,7 @@
 class Graph;
 class Edge;
 class DissolveGraph;
+class PairPotential;
 
 // Node Base
 class Node : public Serialisable<>
@@ -315,8 +316,10 @@ class Node : public Serialisable<>
     void markIncomingEdgesForPull(const ParameterBase *toParameter) const;
     // Returns the node parent graph
     Graph *parentGraph() const;
-    // Return the Dissolve reference
-    virtual Dissolve &dissolve() const;
+    // Return the current iteration count
+    int iteration() const;
+    // Access a pair potential
+    virtual PairPotential &pairPotential(const AtomType *at1, const AtomType *at2);
     // Return the DissolveGraph reference
     virtual DissolveGraph *dissolveGraph();
 
@@ -326,6 +329,8 @@ class Node : public Serialisable<>
     private:
     // Accumulated timing information (in seconds)
     SampledDouble timing_;
+    // Current iteration number
+    int iteration_ = 0;
 
     public:
     // Clear any local data

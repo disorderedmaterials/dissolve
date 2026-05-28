@@ -230,9 +230,8 @@ bool EPSRNode::generateEmpiricalPotentials(const std::vector<const AtomType *> &
                                 if (applyPotentials_)
                                 {
                                     // Grab pointer to the relevant pair potential (if it exists)
-                                    auto *pp = dissolve().pairPotential(at1, at2);
-                                    if (pp)
-                                        pp->setAdditionalPotential(ep);
+                                    auto pp = pairPotential(at1, at2);
+                                    pp.setAdditionalPotential(ep);
                                 }
                             });
 

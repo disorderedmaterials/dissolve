@@ -10,7 +10,7 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
     // Set core simulation variables
     restartFileFrequency_ = 10;
 
-    graphNode_ = std::make_unique<DissolveGraph>(*this);
+    graphNode_ = std::make_unique<DissolveGraph>();
 
     // Clear everything
     clear();
@@ -50,7 +50,7 @@ void Dissolve::clear()
     nIterationsPerformed_ = 0;
 
     // Graph
-    graphNode_ = std::make_unique<DissolveGraph>(*this);
+    graphNode_ = std::make_unique<DissolveGraph>();
 
     // I/O
     setInputFilename("");

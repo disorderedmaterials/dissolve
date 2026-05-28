@@ -4,7 +4,7 @@
 #include "nodes/dissolve.h"
 #include "kernels/producer.h"
 
-DissolveGraph::DissolveGraph(Dissolve &dissolve) : Graph(nullptr), dissolve_(dissolve) {}
+DissolveGraph::DissolveGraph() : Graph(nullptr) {}
 
 /*
  * Definitions (Virtuals)
@@ -19,8 +19,11 @@ std::string_view DissolveGraph::type() const { return "Dissolve"; }
 // Return short summary of the node's purpose
 std::string_view DissolveGraph::summary() const { return "Parent node of all simulations"; }
 
-// Return dissolve
-Dissolve &DissolveGraph::dissolve() const { return dissolve_; }
+// Access a pair potential
+PairPotential &DissolveGraph::pairPotential(const AtomType *at1, const AtomType *at2)
+{
+    return pairPotentials_.get(at1->name(), at2->name());
+}
 
 // Return the DissolveGraph reference
 DissolveGraph *DissolveGraph::dissolveGraph() { return this; }
