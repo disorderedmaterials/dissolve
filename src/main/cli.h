@@ -20,6 +20,8 @@ class CLIOptions
     private:
     // Input file to load
     std::optional<std::filesystem::path> inputFile_;
+    // Node to run
+    std::optional<std::string> node_;
     // Number of iterations to perform
     int nIterations_{0};
     // Frequency at which to write restart file
@@ -47,6 +49,8 @@ class CLIOptions
     int parse(int args, char **argv, bool isGUI = false);
     // Return input file to load
     std::optional<std::filesystem::path> inputFile() const;
+    // Return the node to run
+    std::optional<std::string> node() const;
     // Return number of iterations to perform
     int nIterations() const;
     // Return frequency at which to write restart file
