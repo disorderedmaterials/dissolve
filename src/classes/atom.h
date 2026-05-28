@@ -51,7 +51,7 @@ class AtomBase
     // Set index of associated atom type in parent object
     void setAtomTypeIndex(int id);
     // Return associated atom type index
-    virtual int atomTypeIndex() const;
+    int atomTypeIndex() const;
 
     /*
      * General Connectivity

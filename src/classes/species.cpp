@@ -246,6 +246,7 @@ void Species::deserialise(const SerialisedValue &node)
                             at->deserialise(data);
                             at->setIndex(atomTypes_.size() - 1);
                         });
+
     Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
 
     Serialisable::toMap(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
