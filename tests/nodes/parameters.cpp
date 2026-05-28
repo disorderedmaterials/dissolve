@@ -9,6 +9,66 @@
 
 namespace UnitTest
 {
+TEST(ParametersTest, NumberToOptionalNumber)
+{
+    TestGraph testGraph;
+
+    // Create a couple of TestNodes
+    auto *a = dynamic_cast<TestNode *>(testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestA"));
+    ASSERT_TRUE(a);
+    auto numberOutput = a->findOutput("Number");
+    ASSERT_TRUE(numberOutput);
+    auto *b = testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestB");
+    ASSERT_TRUE(b);
+    auto optionalNumberImput = b->findInput("OptionalNumber");
+    ASSERT_TRUE(optionalNumberImput);
+
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph.addEdge({"TestA", "Number", "TestB", "OptionalNumber"}));
+
+    // Set number value input (shared with output)
+    ASSERT_TRUE(a->setInput<Number>("Number", 1.234));
+
+    // Run b
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(b->versionIndex(), 0);
+
+    // Check optional value
+    auto optional = b->getInputValue<std::optional<Number>>("OptionalNumber");
+    ASSERT_TRUE(optional.has_value());
+    EXPECT_DOUBLE_EQ(1.234, optional->asDouble());
+}
+
+TEST(ParametersTest, OptionalNumberToNumber)
+{
+    TestGraph testGraph;
+
+    // Create a couple of TestNodes
+    auto *a = dynamic_cast<TestNode *>(testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestA"));
+    ASSERT_TRUE(a);
+    auto optionalNumberOutput = a->findOutput("OptionalNumber");
+    ASSERT_TRUE(optionalNumberOutput);
+    auto *b = testGraph.addNode(std::make_unique<TestNode>(&testGraph), "TestB");
+    ASSERT_TRUE(b);
+    auto numberImput = b->findInput("Number");
+    ASSERT_TRUE(numberImput);
+
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph.addEdge({"TestA", "OptionalNumber", "TestB", "Number"}));
+
+    // Run b - should fail as there is no optional value to pull along the edge
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Failed);
+    EXPECT_EQ(b->versionIndex(), NodeConstants::InvalidVersion);
+
+    // Set number value input (shared with output)
+    ASSERT_TRUE(a->setInput<std::optional<Number>>("OptionalNumber", 1.234));
+
+    // Run again and check value
+    EXPECT_EQ(b->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(b->versionIndex(), 0);
+    EXPECT_DOUBLE_EQ(1.234, b->getInputValue<Number>("Number").asDouble());
+}
+
 TEST(ParametersTest, OptionalPointerOutput)
 {
     TestGraph testGraph;

@@ -8,11 +8,15 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput<Configuration *>("ConfigurationInput", "A configuration input", configurationInput_);
     addInput("CreateConfiguration", "Whether to create the optional configuration on run", createConfiguration_);
+    addInput("Number", "A single number", number_);
+    addInput("OptionalNumber", "A single number", optionalNumber_);
     addInput("NumberVector", "A vector of numbers", numberVector_);
 
     // Outputs
     addOptionalPointerOutput<Configuration>("OptionalConfiguration", "An optional Configuration", optionalConfiguration_);
+    addOutput("Number", "A single number", number_);
     addOutput("NumberVector", "A vector of numbers", numberVector_);
+    addOutput("OptionalNumber", "An optional number", optionalNumber_);
 }
 
 /*
