@@ -11,8 +11,6 @@
 #include <map>
 #include <vector>
 
-using ParserErrorMessage = std::string;
-
 // The type we use for the nodes of our serialisation tree
 using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
 

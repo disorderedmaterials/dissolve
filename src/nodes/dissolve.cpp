@@ -19,7 +19,7 @@ std::string_view DissolveGraph::type() const { return "Dissolve"; }
 // Return short summary of the node's purpose
 std::string_view DissolveGraph::summary() const { return "Parent node of all simulations"; }
 
-std::optional<ParserErrorMessage> DissolveGraph::loadFile(std::filesystem::path name)
+std::optional<std::string> DissolveGraph::loadFile(std::filesystem::path name)
 {
     auto contents = toml::parse(name);
     try

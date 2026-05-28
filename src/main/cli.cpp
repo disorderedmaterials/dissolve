@@ -32,6 +32,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
     app.add_flag_callback(
            "-v,--verbose", []() { Messenger::setVerbose(true); }, "Print lots of additional output, useful for debugging")
         ->group("Basic Control");
+    app.add_flag("-m, --mermaid", exportMermaid_, "Export graph as a mermaid diagram and exit")->group("Basic Control");
 
     // Input Files
     app.add_flag("-i,--ignore-restart", ignoreRestartFile_, "Ignore restart file (if it exists)")->group("Input Files");
@@ -56,10 +57,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
 
     // Add GUI-specific options - if this is not the GUI, make the input file and node into required parameters
     if (!isGUI)
-    {
         inputFileOption->required();
-        nodeOption->required();
-    }
 
     // Tweak formatting
     app.get_formatter()->label("TEXT", "<filename>");
@@ -103,3 +101,6 @@ bool CLIOptions::ignoreRestartFile() const { return ignoreRestartFile_; }
 
 // Return whether to prevent writing of the restart file
 bool CLIOptions::noRestartFile() const { return noRestartFile_; };
+
+// Return whether to simply export the graph as mermaid and quit
+bool CLIOptions::exportMermaid() const { return exportMermaid_; };

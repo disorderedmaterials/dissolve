@@ -38,6 +38,8 @@ class CLIOptions
     bool ignoreRestartFile_{false};
     // Whether to prevent writing of the restart file
     bool noRestartFile_{false};
+    // Whether to simply export the nodes in mermaid form
+    bool exportMermaid_{false};
 
     public:
     // Parse Result enum
@@ -67,4 +69,6 @@ class CLIOptions
     bool ignoreRestartFile() const;
     // Return whether to prevent writing of the restart file
     bool noRestartFile() const;
+    // Return whether to simply export the graph as mermaid and quit
+    bool exportMermaid() const;
 };

@@ -21,6 +21,10 @@ int main(int args, char **argv)
     if (options.parse(args, argv) != CLIOptions::Success)
         return 1;
 
+    // Turn off default output when exporting mermaid
+    if (options.exportMermaid())
+        Messenger::mute();
+
     // Initialise random seed
     if (options.randomSeed())
         DissolveMath::setRandomSeed(*options.randomSeed());
@@ -38,6 +42,12 @@ int main(int args, char **argv)
     {
         Messenger::error("{}", *err);
         return 1;
+    }
+
+    if (options.exportMermaid())
+    {
+        std::cout << dissolve << std::endl;
+        return 0;
     }
 
     // Save input file to new output filename and quit?
