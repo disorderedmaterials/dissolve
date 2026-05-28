@@ -4,7 +4,6 @@
 #include "classes/species.h"
 #include "classes/atomType.h"
 #include "data/ff/ff.h"
-#include "data/ff/library.h"
 #include "data/isotopes.h"
 
 Species::Species(std::string name) : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
@@ -240,13 +239,13 @@ void Species::deserialise(const SerialisedValue &node)
 {
     setName(toml::find<std::string>(node, "name"));
 
-Serialisable::toMap(node, "atomTypes",
-                    [this](const std::string &name, const auto &data)
-                    {
-                        auto &at = atomTypes_.emplace_back(std::make_shared<AtomType>(name));
-                        at->deserialise(data);
-                        at->setIndex(atomTypes_.size() - 1);
-                    });
+    Serialisable::toMap(node, "atomTypes",
+                        [this](const std::string &name, const auto &data)
+                        {
+                            auto &at = atomTypes_.emplace_back(std::make_shared<AtomType>(name));
+                            at->deserialise(data);
+                            at->setIndex(atomTypes_.size() - 1);
+                        });
     Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
 
     Serialisable::toMap(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
