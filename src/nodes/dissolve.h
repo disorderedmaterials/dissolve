@@ -35,6 +35,8 @@ class DissolveGraph : public Graph
      * Data
      */
     public:
+    // Load the dissolve simulation from a file
+    std::optional<std::string> loadFile(std::string name);
     // Access a pair potential
     PairPotential &pairPotential(const AtomType *at1, const AtomType *at2) override;
     // Return the DissolveGraph reference

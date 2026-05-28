@@ -10,20 +10,6 @@
 #include <fstream>
 #include <toml11/toml/exception.hpp>
 
-std::optional<toml::type_error> load_file(DissolveGraph &dissolve, std::string name)
-{
-    auto contents = toml::parse(name);
-    try
-    {
-        dissolve.deserialise(contents);
-    }
-    catch (toml::type_error e)
-    {
-        return e;
-    }
-    return {};
-}
-
 int main(int args, char **argv)
 {
 
@@ -48,10 +34,9 @@ int main(int args, char **argv)
 
     // Load input file
     Messenger::banner("Parse Input File");
-    auto err = load_file(dissolve, options.inputFile().value());
-    if (err)
+    if (auto err = dissolve.loadFile(options.inputFile().value()))
     {
-        Messenger::error("{} at {} on line ", err->what(), err->location().file_name(), err->location().line_str());
+        Messenger::error("{}", *err);
         return 1;
     }
 
@@ -82,10 +67,9 @@ int main(int args, char **argv)
         if (options.writeInputAndReload())
         {
             Messenger::banner("Reload Input File");
-            auto err = load_file(dissolve, options.inputFile().value());
-            if (err)
+            if (auto err = dissolve.loadFile(options.inputFile().value()))
             {
-                Messenger::error("{} at {} on line ", err->what(), err->location().file_name(), err->location().line_str());
+                Messenger::error("{}", *err);
                 return 1;
             }
         }

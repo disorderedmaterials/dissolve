@@ -19,6 +19,20 @@ std::string_view DissolveGraph::type() const { return "Dissolve"; }
 // Return short summary of the node's purpose
 std::string_view DissolveGraph::summary() const { return "Parent node of all simulations"; }
 
+std::optional<std::string> DissolveGraph::loadFile(std::string name)
+{
+    auto contents = toml::parse(name);
+    try
+    {
+        deserialise(contents);
+    }
+    catch (toml::type_error err)
+    {
+        return std::format("{} at {} on line ", err.what(), err.location().file_name(), err.location().line_str());
+    }
+    return {};
+}
+
 // Access a pair potential
 PairPotential &DissolveGraph::pairPotential(const AtomType *at1, const AtomType *at2)
 {
