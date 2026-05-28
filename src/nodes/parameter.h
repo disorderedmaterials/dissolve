@@ -388,6 +388,17 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             }
         }
 
+        // Data types can be set from a std::optional containing the same type
+        if (typeid(std::optional<DataClass>) == other->storedDataType())
+        {
+            auto otherData = other->get<std::optional<DataClass>>();
+            if (otherData.has_value())
+            {
+                setData(*otherData);
+                return true;
+            }
+        }
+
         // General case - if the stored data types are the same then we can just do a straight assignment
         if (storedDataType_ == other->storedDataType())
         {
@@ -402,17 +413,26 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     {
         if (storedDataType_ == other->storedDataType())
             return true;
-        else if constexpr (is_instance_of_v<DataClass, std::vector>)
+
+        // Normal data types can be set from optional values
+        if (typeid(std::optional<DataClass>) == other->storedDataType())
+            return true;
+
+        // Vectors can accept a single value of the contained type
+        if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
             // If we represent a std::vector container we can accept a single data item
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
                 return true;
         }
-        else if constexpr (is_instance_of_v<DataClass, std::optional>)
+
+        // Optionals can accept non-optional data
+        if constexpr (is_instance_of_v<DataClass, std::optional>)
         {
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
                 return true;
         }
+
         return false;
     }
     // Invalidate the vector data (instances of std::vector only)
