@@ -53,6 +53,7 @@ bool ForcefieldRecipe::apply(Species &species) const
         params.insert(params.begin(), ffa.parameters().begin(),
                       ffa.parameters().begin() + ShortRangeFunctions::forms().minArgs(shortRangeForm).value_or(0));
         at->interactionPotential().setFormAndParameters(shortRangeForm, params);
+        at->setCharge(ffa.charge());
     }
 
     if (nAtomTypesFailed > 0)
