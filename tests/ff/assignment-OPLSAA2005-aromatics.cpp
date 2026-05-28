@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,17 +10,19 @@ namespace UnitTest
 {
 TEST(OPLSAA2005AromaticsAssignmentTest, Benzene)
 {
-    Species species("Benzene");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/benzene.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield(
+        "Benzene", "ImportXYZStructure", "xyz/benzene.xyz", ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"));
 
-    ASSERT_EQ(species.nBonds(), 12);
-    ASSERT_EQ(species.nAngles(), 18);
-    ASSERT_EQ(species.nTorsions(), 24);
-    ASSERT_EQ(species.nImpropers(), 6);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 12);
+    ASSERT_EQ(species.angles().size(), 18);
+    ASSERT_EQ(species.torsions().size(), 24);
+    ASSERT_EQ(species.impropers().size(), 6);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CA"}, {1, "HA"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=3071.06 eq=1.08"});
@@ -34,17 +36,19 @@ TEST(OPLSAA2005AromaticsAssignmentTest, Benzene)
 
 TEST(OPLSAA2005AromaticsAssignmentTest, Naphthalene)
 {
-    Species species("Naphthalene");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/naphthalene.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield(
+        "Naphthalene", "ImportXYZStructure", "xyz/naphthalene.xyz", ForcefieldLibrary::forcefield("OPLSAA2005/Aromatics"));
 
-    ASSERT_EQ(species.nBonds(), 19);
-    ASSERT_EQ(species.nAngles(), 30);
-    ASSERT_EQ(species.nTorsions(), 44);
-    ASSERT_EQ(species.nImpropers(), 10);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 19);
+    ASSERT_EQ(species.angles().size(), 30);
+    ASSERT_EQ(species.torsions().size(), 44);
+    ASSERT_EQ(species.impropers().size(), 10);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CA"},
                                                {1, "CA"},

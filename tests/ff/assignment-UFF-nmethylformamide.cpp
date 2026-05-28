@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,17 +10,19 @@ namespace UnitTest
 {
 TEST(UFFNMethylFormamideAssignmentTest, NMethylFormamide)
 {
-    Species species("NMethylFormamide");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/n-methylformamide.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield(
+        "NMethylFormamide", "ImportXYZStructure", "xyz/n-methylformamide.xyz", ForcefieldLibrary::forcefield("UFF"));
 
-    ASSERT_EQ(species.nBonds(), 8);
-    ASSERT_EQ(species.nAngles(), 12);
-    ASSERT_EQ(species.nTorsions(), 10);
-    ASSERT_EQ(species.nImpropers(), 2);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 8);
+    ASSERT_EQ(species.angles().size(), 12);
+    ASSERT_EQ(species.torsions().size(), 10);
+    ASSERT_EQ(species.impropers().size(), 2);
 
     systemTest.checkSpeciesAtomType(
         &species, {{0, "H_"}, {1, "C_amR"}, {2, "N_amR"}, {3, "O_2"}, {4, "C_3"}, {5, "H_"}, {6, "H_"}, {7, "H_"}, {8, "H_"}});

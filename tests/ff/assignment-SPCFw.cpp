@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,17 +10,19 @@ namespace UnitTest
 {
 TEST(SPCFwAssignmentTest, Water)
 {
-    Species species("Water");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/water.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms(1.2);
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("SPC/Fw")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Water", "ImportXYZStructure", "xyz/water.xyz",
+                                                                          ForcefieldLibrary::forcefield("SPC/Fw"));
 
-    ASSERT_EQ(species.nBonds(), 2);
-    ASSERT_EQ(species.nAngles(), 1);
-    ASSERT_EQ(species.nTorsions(), 0);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 2);
+    ASSERT_EQ(species.angles().size(), 1);
+    ASSERT_EQ(species.torsions().size(), 0);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "OW"}, {1, "HW"}, {2, "HW"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"});
