@@ -3,10 +3,12 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "classes/pairPotential.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include "templates/doubleKeyedMap.h"
+#include <filesystem>
 
 // Forward declarations
 class EnergyKernel;
@@ -36,7 +38,7 @@ class DissolveGraph : public Graph
      */
     public:
     // Load the dissolve simulation from a file
-    std::optional<std::string> loadFile(std::string name);
+    std::optional<ParserErrorMessage> loadFile(std::filesystem::path name);
     // Access a pair potential
     PairPotential &pairPotential(const AtomType *at1, const AtomType *at2) override;
     // Return the DissolveGraph reference
