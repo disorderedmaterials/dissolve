@@ -240,13 +240,13 @@ void Species::deserialise(const SerialisedValue &node)
 {
     setName(toml::find<std::string>(node, "name"));
 
-    Serialisable::toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
-                        { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
-
-    int idx = 0;
-    for (auto &a : atomTypes_)
-        a->setIndex(idx++);
-
+Serialisable::toMap(node, "atomTypes",
+                    [this](const std::string &name, const auto &data)
+                    {
+                        auto &at = atomTypes_.emplace_back(std::make_shared<AtomType>(name));
+                        at->deserialise(data);
+                        at->setIndex(atomTypes_.size() - 1);
+                    });
     Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
 
     Serialisable::toMap(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
