@@ -338,17 +338,17 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override
     {
-        // If we are a pointer type, getting a nullptr is disallowed
         if constexpr (std::is_pointer<DataClass>())
         {
+            // If we are a pointer type, getting a nullptr is disallowed
             setData(other->get<DataClass>());
 
             return data_ != nullptr;
         }
-
-        // If we represent a std::vector container we can conditionally check for a single data item being passed
-        if constexpr (is_instance_of_v<DataClass, std::vector>)
+        else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
+            // If we represent a std::vector container we can conditionally check for a single data item being passed
+
             // Vector to vector
             if (storedDataType_ == other->storedDataType())
             {
@@ -367,10 +367,10 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
                 return true;
             }
         }
-
-        // Optional arguments can be set from the base class (i.e. with no std::optional container) as well as std::optional
-        if constexpr (is_instance_of_v<DataClass, std::optional>)
+        else if constexpr (is_instance_of_v<DataClass, std::optional>)
         {
+            // Optional arguments can be set from the base class (i.e. with no std::optional container) as well as std::optional
+
             // Optional to optional
             if (storedDataType_ == other->storedDataType())
             {
@@ -387,10 +387,10 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
                 return true;
             }
         }
-
-        // Data types can be set from a std::optional containing the same type
-        if (typeid(std::optional<DataClass>) == other->storedDataType())
+        else if (typeid(std::optional<DataClass>) == other->storedDataType())
         {
+            // Data types can be set from a std::optional containing the same type
+
             auto otherData = other->get<std::optional<DataClass>>();
             if (otherData.has_value())
             {
@@ -417,18 +417,15 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         // Normal data types can be set from optional values
         if (typeid(std::optional<DataClass>) == other->storedDataType())
             return true;
-
-        // Vectors can accept a single value of the contained type
-        if constexpr (is_instance_of_v<DataClass, std::vector>)
+        else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
-            // If we represent a std::vector container we can accept a single data item
+            // Vectors can accept a single value of the contained type
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
                 return true;
         }
-
-        // Optionals can accept non-optional data
-        if constexpr (is_instance_of_v<DataClass, std::optional>)
+        else if constexpr (is_instance_of_v<DataClass, std::optional>)
         {
+            // Optionals can accept non-optional data
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
                 return true;
         }
