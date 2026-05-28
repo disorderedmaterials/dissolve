@@ -41,21 +41,17 @@ int main(int args, char **argv)
     }
 
     // Save input file to new output filename and quit?
-    if (options.writeInputFilename() || options.toTomlFile())
+    if (options.writeInputFilename())
     {
         // This should be options.writeInputFilename().or_else(options.totomlFile.value())
         // but that will require C++23
-        std::string filename =
-            options.writeInputFilename() ? options.writeInputFilename().value() : options.toTomlFile().value();
+        auto filename = options.writeInputFilename().value();
         Messenger::print("Saving input file to '{}'...\n", filename);
         bool result;
 
         auto toml = dissolve.into_toml();
         std::ofstream outfile;
-        if (options.writeInputFilename())
-            outfile.open(options.writeInputFilename().value());
-        else
-            outfile.open(options.toTomlFile().value());
+        outfile.open(options.writeInputFilename().value());
         outfile << toml;
         outfile.close();
         result = true;
