@@ -46,7 +46,7 @@ int main(int args, char **argv)
         // This should be options.writeInputFilename().or_else(options.totomlFile.value())
         // but that will require C++23
         auto filename = options.writeInputFilename().value();
-        Messenger::print("Saving input file to '{}'...\n", filename);
+        Messenger::print("Saving input file to '{}'...\n", filename.string());
         bool result;
 
         auto toml = dissolve.into_toml();
@@ -57,7 +57,7 @@ int main(int args, char **argv)
         result = true;
 
         if (!result)
-            Messenger::error("Failed to save input file to '{}'.\n", filename);
+            Messenger::error("Failed to save input file to '{}'.\n", filename.string());
 
         // Reload the written file and continue?
         if (options.writeInputAndReload())

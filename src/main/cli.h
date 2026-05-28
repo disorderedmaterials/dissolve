@@ -58,9 +58,9 @@ class CLIOptions
     // Return seed for random number generator
     std::optional<int> randomSeed() const;
     // Return restart file to load, overriding default
-    std::optional<std::string> restartFilename() const;
+    std::optional<std::filesystem::path> restartFilename() const;
     // Return new input file to write (after reading supplied file)
-    std::optional<std::string> writeInputFilename() const;
+    std::optional<std::filesystem::path> writeInputFilename() const;
     // Return whether to reload the file written to writeInputFilename_ and continue
     bool writeInputAndReload() const;
     // Return whether to ignore restart file if it exists

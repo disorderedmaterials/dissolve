@@ -90,10 +90,10 @@ int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }
 std::optional<int> CLIOptions::randomSeed() const { return randomSeed_; }
 
 // Return restart file to load, overriding default
-std::optional<std::string> CLIOptions::restartFilename() const { return restartFilename_; }
+std::optional<std::filesystem::path> CLIOptions::restartFilename() const { return restartFilename_; }
 
 // Return new input file to write (after reading supplied file)
-std::optional<std::string> CLIOptions::writeInputFilename() const { return writeInputFilename_; }
+std::optional<std::filesystem::path> CLIOptions::writeInputFilename() const { return writeInputFilename_; }
 
 // Return whether to reload the file written to writeInputFilename_ and continue
 bool CLIOptions::writeInputAndReload() const { return writeInputAndReload_; }
