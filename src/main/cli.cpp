@@ -69,7 +69,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
 }
 
 // Return input file to load
-std::optional<std::string> CLIOptions::inputFile() const { return inputFile_; }
+std::optional<std::filesystem::path> CLIOptions::inputFile() const { return inputFile_; }
 
 // Return number of iterations to perform
 int CLIOptions::nIterations() const { return nIterations_; }

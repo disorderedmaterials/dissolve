@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <optional>
 #include <string>
 
@@ -18,7 +19,7 @@ class CLIOptions
      */
     private:
     // Input file to load
-    std::optional<std::string> inputFile_;
+    std::optional<std::filesystem::path> inputFile_;
     // Number of iterations to perform
     int nIterations_{0};
     // Frequency at which to write restart file
@@ -26,9 +27,9 @@ class CLIOptions
     // Seed for random number generator
     std::optional<int> randomSeed_;
     // Restart file to load, overriding default
-    std::optional<std::string> restartFilename_;
+    std::optional<std::filesystem::path> restartFilename_;
     // New input file to write (after reading supplied file)
-    std::optional<std::string> writeInputFilename_;
+    std::optional<std::filesystem::path> writeInputFilename_;
     // Whether to reload the file written to writeInputFilename_ and continue
     bool writeInputAndReload_{false};
     // Whether to ignore restart file (if it exists)
@@ -45,7 +46,7 @@ class CLIOptions
     // Parse supplied options
     int parse(int args, char **argv, bool isGUI = false);
     // Return input file to load
-    std::optional<std::string> inputFile() const;
+    std::optional<std::filesystem::path> inputFile() const;
     // Return number of iterations to perform
     int nIterations() const;
     // Return frequency at which to write restart file
