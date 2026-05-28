@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "main/dissolve.h"
+#include "classes/pairPotential.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include "templates/doubleKeyedMap.h"

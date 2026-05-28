@@ -3,17 +3,32 @@
 
 #include "base/messenger.h"
 #include "main/cli.h"
-#include "main/dissolve.h"
 #include "main/version.h"
 #include "math/mathFunc.h"
+#include "nodes/dissolve.h"
 #include <format>
+#include <fstream>
+#include <toml11/toml/exception.hpp>
+
+std::optional<toml::type_error> load_file(DissolveGraph &dissolve, std::string name)
+{
+    auto contents = toml::parse(name);
+    try
+    {
+        dissolve.deserialise(contents);
+    }
+    catch (toml::type_error e)
+    {
+        return e;
+    }
+    return {};
+}
 
 int main(int args, char **argv)
 {
 
     // Instantiate main classes
-    CoreData coreData;
-    Dissolve dissolve(coreData);
+    DissolveGraph dissolve;
 
     // Parse CLI options
     CLIOptions options;
@@ -33,8 +48,12 @@ int main(int args, char **argv)
 
     // Load input file
     Messenger::banner("Parse Input File");
-    if (!dissolve.loadInput(options.inputFile().value()))
+    auto err = load_file(dissolve, options.inputFile().value());
+    if (err)
+    {
+        Messenger::error("{} at {} on line ", err->what(), err->location().file_name(), err->location().line_str());
         return 1;
+    }
 
     // Save input file to new output filename and quit?
     if (options.writeInputFilename() || options.toTomlFile())
@@ -46,16 +65,15 @@ int main(int args, char **argv)
         Messenger::print("Saving input file to '{}'...\n", filename);
         bool result;
 
+        auto toml = dissolve.into_toml();
+        std::ofstream outfile;
         if (options.writeInputFilename())
-            result = dissolve.saveInput(options.writeInputFilename().value());
+            outfile.open(options.writeInputFilename().value());
         else
-        {
-            auto toml = dissolve.into_toml();
-            std::ofstream outfile(options.toTomlFile().value());
-            outfile << toml;
-            outfile.close();
-            result = true;
-        }
+            outfile.open(options.toTomlFile().value());
+        outfile << toml;
+        outfile.close();
+        result = true;
 
         if (!result)
             Messenger::error("Failed to save input file to '{}'.\n", filename);
@@ -63,75 +81,66 @@ int main(int args, char **argv)
         // Reload the written file and continue?
         if (options.writeInputAndReload())
         {
-            dissolve.clear();
             Messenger::banner("Reload Input File");
-            if (!dissolve.loadInput(options.writeInputFilename().value()))
+            auto err = load_file(dissolve, options.inputFile().value());
+            if (err)
+            {
+                Messenger::error("{} at {} on line ", err->what(), err->location().file_name(), err->location().line_str());
                 return 1;
+            }
         }
         else
             return result ? 0 : 1;
     }
 
     // Load restart file if it exists
-    Messenger::banner("Parse Restart File");
-    if (options.ignoreRestartFile())
-        Messenger::print("Restart file (if it exists) will be ignored.\n");
-    else
-    {
-        // We may have been provided the name of a restart file to read in...
-        auto restartFile{options.restartFilename().value_or(std::string(dissolve.restartFilename()))};
+    // Messenger::banner("Parse Restart File");
+    // if (options.ignoreRestartFile())
+    //     Messenger::print("Restart file (if it exists) will be ignored.\n");
+    // else
+    // {
+    //     // We may have been provided the name of a restart file to read in...
+    //     auto restartFile{options.restartFilename().value_or(std::string(dissolve.restartFilename()))};
 
-        if (DissolveSys::fileExists(restartFile))
-        {
-            Messenger::print("Restart file '{}' exists and will be loaded.\n", restartFile);
-            if (!dissolve.loadRestart(restartFile))
-            {
-                Messenger::error("Restart file contained errors.\n");
-                return 1;
-            }
-        }
-        else
-        {
-            // If a restart file was specifically provided, raise an error. Otherwise just print a message
-            if (options.restartFilename())
-            {
-                Messenger::error("Specified restart file '{}' does not exist.\n", restartFile);
-                return 1;
-            }
+    //     if (DissolveSys::fileExists(restartFile))
+    //     {
+    //         Messenger::print("Restart file '{}' exists and will be loaded.\n", restartFile);
+    //         if (!dissolve.loadRestart(restartFile))
+    //         {
+    //             Messenger::error("Restart file contained errors.\n");
+    //             return 1;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         // If a restart file was specifically provided, raise an error. Otherwise just print a message
+    //         if (options.restartFilename())
+    //         {
+    //             Messenger::error("Specified restart file '{}' does not exist.\n", restartFile);
+    //             return 1;
+    //         }
 
-            Messenger::print("Default restart file '{}' does not exist.\n", restartFile);
-        }
-    }
+    //         Messenger::print("Default restart file '{}' does not exist.\n", restartFile);
+    //     }
+    // }
 
     // If we're just checking the input and restart files, exit now
     if (!options.nIterations())
         return 0;
 
-    // Prepare for run
-    if (!dissolve.prepare())
-        return 1;
-
-    // Set restart file frequency
-    dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
-
-    if (dissolve.restartFileFrequency() <= 0)
-        Messenger::print("Restart file will not be written.\n");
-    else if (dissolve.restartFileFrequency() == 1)
-        Messenger::print("Restart file will be written after every iteration.\n", dissolve.restartFileFrequency());
-    else
-        Messenger::print("Restart file will be written after every {} iterations.\n", dissolve.restartFileFrequency());
-
     // Run main simulation
     auto result = true;
     if (options.nIterations() > 0)
-    {
-        result = dissolve.iterate(options.nIterations());
-
-        dissolve.printTiming();
-    }
-
-    // Clear all data
-    dissolve.clear();
+        for (int loop = 0; loop < options.nIterations(); ++loop)
+            switch (dissolve.run())
+            {
+                case NodeConstants::ProcessResult::Failed:
+                    result = 0;
+                    break;
+                case NodeConstants::ProcessResult::Unchanged:
+                case NodeConstants::ProcessResult::Success:
+                    break;
+            }
 
     if (result)
         Messenger::print("Dissolve is done.\n");
