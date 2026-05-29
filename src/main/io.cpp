@@ -186,7 +186,6 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     PairPotential::setShortRangeTruncationScheme(PairPotential::shortRangeTruncationSchemes().deserialise(
         toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted")));
 
-
     useCombinationRules_ = toml::find_or<bool>(node, "useCombinationRules", true);
     // if (!useCombinationRules_)
     // {

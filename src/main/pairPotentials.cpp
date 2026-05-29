@@ -110,7 +110,8 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     //                             {
     //                                 // Combine the atom type parameters into potential function parameters
     //                                 auto optPotential =
-    //                                     ShortRangeFunctions::combine(at1->interactionPotential(), at2->interactionPotential());
+    //                                     ShortRangeFunctions::combine(at1->interactionPotential(),
+    //                                     at2->interactionPotential());
     //                                 if (optPotential)
     //                                     pot->setInteractionPotential(*optPotential);
     //                                 else
