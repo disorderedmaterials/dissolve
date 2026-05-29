@@ -55,8 +55,6 @@ class AtomType : public Serialisable<>, public std::enable_shared_from_this<Atom
     InteractionPotential<ShortRangeFunctions> interactionPotential_;
     // Atomic charge
     double charge_{0.0};
-    // Index of this type in the master type index
-    int index_{AtomConstants::TypeIndex::Ignore};
 
     public:
     // Return short-range interaction potential
@@ -66,10 +64,6 @@ class AtomType : public Serialisable<>, public std::enable_shared_from_this<Atom
     void setCharge(double q);
     // Return atomic charge
     double charge() const;
-    // Set index of this type in the master type index
-    void setIndex(int id);
-    // Return index of this type in the master type index
-    int index() const;
     // Return whether our parameters are the same as those provided
     bool sameParametersAs(const AtomType *other, bool checkCharge = false) const;
 
