@@ -1,0 +1,639 @@
+
+[species]
+name = "NTf2"
+
+[species.atomTypes]
+
+[species.atomTypes.C]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.S]
+z = "S"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.N]
+z = "N"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.F]
+z = "F"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.O]
+z = "O"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[[species.atoms]]
+index = 0
+z = "C"
+r = [
+2.4921,
+0.3796,
+-0.0662,
+]
+q = 0.0
+type = "C"
+[[species.atoms]]
+index = 1
+z = "S"
+r = [
+1.1449,
+-0.8304,
+0.1205,
+]
+q = 0.0
+type = "S"
+[[species.atoms]]
+index = 2
+z = "N"
+r = [
+0.0001,
+-0.0,
+0.8148,
+]
+q = 0.0
+type = "N"
+[[species.atoms]]
+index = 3
+z = "S"
+r = [
+-1.1448,
+0.8303,
+0.1206,
+]
+q = 0.0
+type = "S"
+[[species.atoms]]
+index = 4
+z = "C"
+r = [
+-2.4921,
+-0.3796,
+-0.0661,
+]
+q = 0.0
+type = "C"
+[[species.atoms]]
+index = 5
+z = "F"
+r = [
+2.1321,
+1.3966,
+-0.8122,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 6
+z = "F"
+r = [
+2.8798,
+0.8421,
+1.1017,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 7
+z = "F"
+r = [
+3.5276,
+-0.2044,
+-0.6363,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 8
+z = "O"
+r = [
+0.8757,
+-1.269,
+-1.2148,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 9
+z = "O"
+r = [
+1.6699,
+-1.7748,
+1.0571,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 10
+z = "O"
+r = [
+-1.6699,
+1.775,
+1.0569,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 11
+z = "O"
+r = [
+-0.8757,
+1.2687,
+-1.2148,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 12
+z = "F"
+r = [
+-3.5274,
+0.2043,
+-0.6367,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 13
+z = "F"
+r = [
+-2.88,
+-0.8419,
+1.1019,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 14
+z = "F"
+r = [
+-2.1321,
+-1.3966,
+-0.812,
+]
+q = 0.0
+type = "F"
+
+[species.commonBonds]
+
+[species.commonBonds.C-S]
+form = "None"
+
+[species.commonBonds.C-F]
+form = "None"
+
+[species.commonBonds.N-S]
+form = "None"
+
+[species.commonBonds.O-S]
+form = "None"
+
+
+[[species.bonds]]
+common = "C-S"
+i = 0
+j = 1
+[[species.bonds]]
+common = "C-F"
+i = 0
+j = 5
+[[species.bonds]]
+common = "C-F"
+i = 0
+j = 6
+[[species.bonds]]
+common = "C-F"
+i = 0
+j = 7
+[[species.bonds]]
+common = "N-S"
+i = 1
+j = 2
+[[species.bonds]]
+common = "O-S"
+i = 1
+j = 8
+[[species.bonds]]
+common = "O-S"
+i = 1
+j = 9
+[[species.bonds]]
+common = "N-S"
+i = 2
+j = 3
+[[species.bonds]]
+common = "C-S"
+i = 3
+j = 4
+[[species.bonds]]
+common = "O-S"
+i = 3
+j = 10
+[[species.bonds]]
+common = "O-S"
+i = 3
+j = 11
+[[species.bonds]]
+common = "C-F"
+i = 4
+j = 12
+[[species.bonds]]
+common = "C-F"
+i = 4
+j = 13
+[[species.bonds]]
+common = "C-F"
+i = 4
+j = 14
+
+[species.commonAngles]
+
+[species.commonAngles.F-C-S]
+form = "None"
+
+[species.commonAngles.F-C-F]
+form = "None"
+
+[species.commonAngles.C-S-N]
+form = "None"
+
+[species.commonAngles.C-S-O]
+form = "None"
+
+[species.commonAngles.N-S-O]
+form = "None"
+
+[species.commonAngles.O-S-O]
+form = "None"
+
+[species.commonAngles.S-N-S]
+form = "None"
+
+
+[[species.angles]]
+common = "F-C-S"
+i = 5
+j = 0
+k = 1
+[[species.angles]]
+common = "F-C-S"
+i = 6
+j = 0
+k = 1
+[[species.angles]]
+common = "F-C-F"
+i = 6
+j = 0
+k = 5
+[[species.angles]]
+common = "F-C-S"
+i = 7
+j = 0
+k = 1
+[[species.angles]]
+common = "F-C-F"
+i = 7
+j = 0
+k = 5
+[[species.angles]]
+common = "F-C-F"
+i = 7
+j = 0
+k = 6
+[[species.angles]]
+common = "C-S-N"
+i = 0
+j = 1
+k = 2
+[[species.angles]]
+common = "C-S-O"
+i = 0
+j = 1
+k = 8
+[[species.angles]]
+common = "N-S-O"
+i = 8
+j = 1
+k = 2
+[[species.angles]]
+common = "C-S-O"
+i = 0
+j = 1
+k = 9
+[[species.angles]]
+common = "N-S-O"
+i = 9
+j = 1
+k = 2
+[[species.angles]]
+common = "O-S-O"
+i = 9
+j = 1
+k = 8
+[[species.angles]]
+common = "S-N-S"
+i = 1
+j = 2
+k = 3
+[[species.angles]]
+common = "C-S-N"
+i = 2
+j = 3
+k = 4
+[[species.angles]]
+common = "N-S-O"
+i = 2
+j = 3
+k = 10
+[[species.angles]]
+common = "C-S-O"
+i = 10
+j = 3
+k = 4
+[[species.angles]]
+common = "N-S-O"
+i = 2
+j = 3
+k = 11
+[[species.angles]]
+common = "C-S-O"
+i = 11
+j = 3
+k = 4
+[[species.angles]]
+common = "O-S-O"
+i = 11
+j = 3
+k = 10
+[[species.angles]]
+common = "F-C-S"
+i = 3
+j = 4
+k = 12
+[[species.angles]]
+common = "F-C-S"
+i = 3
+j = 4
+k = 13
+[[species.angles]]
+common = "F-C-F"
+i = 13
+j = 4
+k = 12
+[[species.angles]]
+common = "F-C-S"
+i = 3
+j = 4
+k = 14
+[[species.angles]]
+common = "F-C-F"
+i = 14
+j = 4
+k = 12
+[[species.angles]]
+common = "F-C-F"
+i = 14
+j = 4
+k = 13
+
+[species.commonTorsions]
+
+[species.commonTorsions.F-C-S-N]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.F-C-S-N.parameters]
+k = 2.0401
+n = 3.0
+eq = 0.0
+s = 1.0
+
+[species.commonTorsions.F-C-S-O]
+form = "None"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.C-S-N-S]
+form = "CosN"
+parameters = [
+23.7647,
+6.2081,
+-2.3684,
+-0.0298,
+0.6905,
+1.0165,
+]
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.O-S-N-S]
+form = "None"
+q14 = 0.5
+v14 = 0.5
+
+
+[[species.torsions]]
+common = "F-C-S-N"
+i = 5
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "F-C-S-N"
+i = 6
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "F-C-S-N"
+i = 7
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 5
+j = 0
+k = 1
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 6
+j = 0
+k = 1
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 7
+j = 0
+k = 1
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 5
+j = 0
+k = 1
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 6
+j = 0
+k = 1
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 7
+j = 0
+k = 1
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "C-S-N-S"
+i = 0
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 8
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 9
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "C-S-N-S"
+i = 1
+j = 2
+k = 3
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 1
+j = 2
+k = 3
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 1
+j = 2
+k = 3
+l = 11
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "F-C-S-N"
+i = 2
+j = 3
+k = 4
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 10
+j = 3
+k = 4
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 11
+j = 3
+k = 4
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "F-C-S-N"
+i = 2
+j = 3
+k = 4
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 10
+j = 3
+k = 4
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 11
+j = 3
+k = 4
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "F-C-S-N"
+i = 2
+j = 3
+k = 4
+l = 14
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 10
+j = 3
+k = 4
+l = 14
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 11
+j = 3
+k = 4
+l = 14
+q14 = 0.5
+v14 = 0.5
+

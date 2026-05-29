@@ -1,0 +1,563 @@
+
+[species]
+name = "NTf2"
+
+[species.atomTypes]
+
+[species.atomTypes.C]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.S]
+z = "S"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.N]
+z = "N"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.F]
+z = "F"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.O]
+z = "O"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[[species.atoms]]
+index = 0
+z = "C"
+r = [
+2.4921,
+0.3796,
+-0.0662,
+]
+q = 0.0
+type = "C"
+[[species.atoms]]
+index = 1
+z = "S"
+r = [
+1.1449,
+-0.8304,
+0.1205,
+]
+q = 0.0
+type = "S"
+[[species.atoms]]
+index = 2
+z = "N"
+r = [
+0.0001,
+-0.0,
+0.8148,
+]
+q = 0.0
+type = "N"
+[[species.atoms]]
+index = 3
+z = "S"
+r = [
+-1.1448,
+0.8303,
+0.1206,
+]
+q = 0.0
+type = "S"
+[[species.atoms]]
+index = 4
+z = "C"
+r = [
+-2.4921,
+-0.3796,
+-0.0661,
+]
+q = 0.0
+type = "C"
+[[species.atoms]]
+index = 5
+z = "F"
+r = [
+2.1321,
+1.3966,
+-0.8122,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 6
+z = "F"
+r = [
+2.8798,
+0.8421,
+1.1017,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 7
+z = "F"
+r = [
+3.5276,
+-0.2044,
+-0.6363,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 8
+z = "O"
+r = [
+0.8757,
+-1.269,
+-1.2148,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 9
+z = "O"
+r = [
+1.6699,
+-1.7748,
+1.0571,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 10
+z = "O"
+r = [
+-1.6699,
+1.775,
+1.0569,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 11
+z = "O"
+r = [
+-0.8757,
+1.2687,
+-1.2148,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 12
+z = "F"
+r = [
+-3.5274,
+0.2043,
+-0.6367,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 13
+z = "F"
+r = [
+-2.88,
+-0.8419,
+1.1019,
+]
+q = 0.0
+type = "F"
+[[species.atoms]]
+index = 14
+z = "F"
+r = [
+-2.1321,
+-1.3966,
+-0.812,
+]
+q = 0.0
+type = "F"
+
+[[species.bonds]]
+form = "None"
+i = 0
+j = 1
+[[species.bonds]]
+form = "None"
+i = 0
+j = 5
+[[species.bonds]]
+form = "None"
+i = 0
+j = 6
+[[species.bonds]]
+form = "None"
+i = 0
+j = 7
+[[species.bonds]]
+form = "None"
+i = 1
+j = 2
+[[species.bonds]]
+form = "None"
+i = 1
+j = 8
+[[species.bonds]]
+form = "None"
+i = 1
+j = 9
+[[species.bonds]]
+form = "None"
+i = 2
+j = 3
+[[species.bonds]]
+form = "None"
+i = 3
+j = 4
+[[species.bonds]]
+form = "None"
+i = 3
+j = 10
+[[species.bonds]]
+form = "None"
+i = 3
+j = 11
+[[species.bonds]]
+form = "None"
+i = 4
+j = 12
+[[species.bonds]]
+form = "None"
+i = 4
+j = 13
+[[species.bonds]]
+form = "None"
+i = 4
+j = 14
+
+[[species.angles]]
+form = "None"
+i = 5
+j = 0
+k = 1
+[[species.angles]]
+form = "None"
+i = 6
+j = 0
+k = 1
+[[species.angles]]
+form = "None"
+i = 6
+j = 0
+k = 5
+[[species.angles]]
+form = "None"
+i = 7
+j = 0
+k = 1
+[[species.angles]]
+form = "None"
+i = 7
+j = 0
+k = 5
+[[species.angles]]
+form = "None"
+i = 7
+j = 0
+k = 6
+[[species.angles]]
+form = "None"
+i = 0
+j = 1
+k = 2
+[[species.angles]]
+form = "None"
+i = 0
+j = 1
+k = 8
+[[species.angles]]
+form = "None"
+i = 8
+j = 1
+k = 2
+[[species.angles]]
+form = "None"
+i = 0
+j = 1
+k = 9
+[[species.angles]]
+form = "None"
+i = 9
+j = 1
+k = 2
+[[species.angles]]
+form = "None"
+i = 9
+j = 1
+k = 8
+[[species.angles]]
+form = "None"
+i = 1
+j = 2
+k = 3
+[[species.angles]]
+form = "None"
+i = 2
+j = 3
+k = 4
+[[species.angles]]
+form = "None"
+i = 2
+j = 3
+k = 10
+[[species.angles]]
+form = "None"
+i = 10
+j = 3
+k = 4
+[[species.angles]]
+form = "None"
+i = 2
+j = 3
+k = 11
+[[species.angles]]
+form = "None"
+i = 11
+j = 3
+k = 4
+[[species.angles]]
+form = "None"
+i = 11
+j = 3
+k = 10
+[[species.angles]]
+form = "None"
+i = 3
+j = 4
+k = 12
+[[species.angles]]
+form = "None"
+i = 3
+j = 4
+k = 13
+[[species.angles]]
+form = "None"
+i = 13
+j = 4
+k = 12
+[[species.angles]]
+form = "None"
+i = 3
+j = 4
+k = 14
+[[species.angles]]
+form = "None"
+i = 14
+j = 4
+k = 12
+[[species.angles]]
+form = "None"
+i = 14
+j = 4
+k = 13
+
+[[species.torsions]]
+form = "None"
+i = 5
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 6
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 7
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 5
+j = 0
+k = 1
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 6
+j = 0
+k = 1
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 7
+j = 0
+k = 1
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 5
+j = 0
+k = 1
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 6
+j = 0
+k = 1
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 7
+j = 0
+k = 1
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 0
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 8
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 9
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 1
+j = 2
+k = 3
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 1
+j = 2
+k = 3
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 1
+j = 2
+k = 3
+l = 11
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 2
+j = 3
+k = 4
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 10
+j = 3
+k = 4
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 11
+j = 3
+k = 4
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 2
+j = 3
+k = 4
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 10
+j = 3
+k = 4
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 11
+j = 3
+k = 4
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 2
+j = 3
+k = 4
+l = 14
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 10
+j = 3
+k = 4
+l = 14
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+form = "None"
+i = 11
+j = 3
+k = 4
+l = 14
+q14 = 0.5
+v14 = 0.5
+

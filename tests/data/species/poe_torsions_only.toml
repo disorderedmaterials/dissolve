@@ -1,0 +1,203 @@
+
+[species]
+name = "POE"
+
+[species.atomTypes]
+
+[species.atomTypes.C3]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.O]
+z = "O"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.C2]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[[species.atoms]]
+index = 0
+z = "C"
+r = [
+0.0,
+0.0,
+0.0,
+]
+q = 0.0
+type = "C3"
+[[species.atoms]]
+index = 1
+z = "O"
+r = [
+0.0,
+0.0,
+1.4,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 2
+z = "C"
+r = [
+0.0,
+-1.31994,
+1.86664,
+]
+q = 0.0
+type = "C2"
+[[species.atoms]]
+index = 3
+z = "C"
+r = [
+0.0,
+-1.31994,
+3.37664,
+]
+q = 0.0
+type = "C2"
+[[species.atoms]]
+index = 4
+z = "O"
+r = [
+0.0,
+-2.63989,
+3.84328,
+]
+q = 0.0
+type = "O"
+[[species.atoms]]
+index = 5
+z = "C"
+r = [
+0.0,
+-2.63989,
+4.93328,
+]
+q = 0.0
+type = "C3"
+
+[species.commonBonds]
+
+[species.commonBonds.CC]
+form = "None"
+
+[species.commonBonds.CO]
+form = "None"
+
+
+[[species.bonds]]
+common = "CO"
+i = 0
+j = 1
+[[species.bonds]]
+common = "CO"
+i = 1
+j = 2
+[[species.bonds]]
+common = "CC"
+i = 2
+j = 3
+[[species.bonds]]
+common = "CO"
+i = 3
+j = 4
+[[species.bonds]]
+common = "CO"
+i = 4
+j = 5
+
+[species.commonAngles]
+
+[species.commonAngles.CCO]
+form = "None"
+
+[species.commonAngles.COC]
+form = "None"
+
+
+[[species.angles]]
+common = "COC"
+i = 0
+j = 1
+k = 2
+[[species.angles]]
+common = "CCO"
+i = 1
+j = 2
+k = 3
+[[species.angles]]
+common = "CCO"
+i = 2
+j = 3
+k = 4
+[[species.angles]]
+common = "COC"
+i = 3
+j = 4
+k = 5
+
+[species.commonTorsions]
+
+[species.commonTorsions.XCCX]
+form = "CosNC"
+parameters = [
+-7.75967,
+7.58526,
+6.70523,
+8.40071,
+0.63221,
+0.11063,
+0.35962,
+0.01683,
+]
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.XOCX]
+form = "CosNC"
+parameters = [
+-0.2539,
+-5.15997,
+-0.69711,
+5.35013,
+0.80312,
+0.28307,
+0.09526,
+-0.05797,
+]
+q14 = 0.5
+v14 = 0.5
+
+
+[[species.torsions]]
+common = "XOCX"
+i = 0
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "XCCX"
+i = 1
+j = 2
+k = 3
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "XOCX"
+i = 2
+j = 3
+k = 4
+l = 5
+q14 = 0.5
+v14 = 0.5
+
