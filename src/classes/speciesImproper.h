@@ -46,18 +46,9 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     std::vector<const SpeciesAtom *> atoms() const override;
     // Return whether the improper uses the specified SpeciesAtom
     bool uses(SpeciesAtom *spAtom) const;
-    // Return index (in parent Species) of first SpeciesAtom
-    int indexI() const;
-    // Return index (in parent Species) of second SpeciesAtom
-    int indexJ() const;
-    // Return index (in parent Species) of third SpeciesAtom
-    int indexK() const;
-    // Return index (in parent Species) of fourth SpeciesAtom
-    int indexL() const;
-    // Return index (in parent Species) of nth SpeciesAtom in interaction
-    int index(int n) const;
     // Return whether SpeciesAtoms match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const;
+
     /*
      * Interaction Parameters
      */

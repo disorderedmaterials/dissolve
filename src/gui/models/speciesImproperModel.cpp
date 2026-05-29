@@ -45,10 +45,13 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
         switch (index.column())
         {
             case (DataType::IndexI):
+                return improper.i()->index() + 1;
             case (DataType::IndexJ):
+                return improper.j()->index() + 1;
             case (DataType::IndexK):
+                return improper.k()->index() + 1;
             case (DataType::IndexL):
-                return improper.index(index.column()) + 1;
+                return improper.l()->index() + 1;
             case (DataType::Form):
                 return improper.commonTerm()
                            ? QString::fromStdString("@" + std::string(improper.commonTerm()->name()))

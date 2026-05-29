@@ -208,8 +208,8 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
             // Bond energy
             for (const auto &bond : molN->species()->bonds())
             {
-                r = targetConfiguration_->box()->minimumDistance(molN->atom(bond.indexI())->r(),
-                                                                 molN->atom(bond.indexJ())->r());
+                r = targetConfiguration_->box()->minimumDistance(molN->atom(bond.i()->index())->r(),
+                                                                 molN->atom(bond.j()->index())->r());
                 correctIntraEnergy += bond.energy(r);
             }
 
@@ -217,23 +217,24 @@ Module::ExecutionResult EnergyModule::process(Dissolve &dissolve)
             for (const auto &angle : molN->species()->angles())
             {
                 correctIntraEnergy += angle.energy(targetConfiguration_->box()->angleInRadians(
-                    molN->atom(angle.indexI())->r(), molN->atom(angle.indexJ())->r(), molN->atom(angle.indexK())->r()));
+                    molN->atom(angle.i()->index())->r(), molN->atom(angle.j()->index())->r(),
+                    molN->atom(angle.k()->index())->r()));
             }
 
             // Torsion energy
             for (const auto &torsion : molN->species()->torsions())
             {
                 correctIntraEnergy += torsion.energy(targetConfiguration_->box()->torsionInRadians(
-                    molN->atom(torsion.indexI())->r(), molN->atom(torsion.indexJ())->r(), molN->atom(torsion.indexK())->r(),
-                    molN->atom(torsion.indexL())->r()));
+                    molN->atom(torsion.i()->index())->r(), molN->atom(torsion.j()->index())->r(),
+                    molN->atom(torsion.k()->index())->r(), molN->atom(torsion.l()->index())->r()));
             }
 
             // Improper energy
             for (const auto &imp : molN->species()->impropers())
             {
                 correctIntraEnergy += imp.energy(targetConfiguration_->box()->torsionInRadians(
-                    molN->atom(imp.indexI())->r(), molN->atom(imp.indexJ())->r(), molN->atom(imp.indexK())->r(),
-                    molN->atom(imp.indexL())->r()));
+                    molN->atom(imp.i()->index())->r(), molN->atom(imp.j()->index())->r(), molN->atom(imp.k()->index())->r(),
+                    molN->atom(imp.l()->index())->r()));
             }
         }
 

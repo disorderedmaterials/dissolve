@@ -108,8 +108,8 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve)
                 for (const auto &bond : mol->species()->bonds())
                 {
                     // Get Atom pointers
-                    auto i = mol->atom(bond.indexI());
-                    auto j = mol->atom(bond.indexJ());
+                    auto i = mol->atom(bond.i()->index());
+                    auto j = mol->atom(bond.j()->index());
 
                     // Select random terminus
                     auto terminus = DissolveMath::random() > 0.5 ? 1 : 0;
@@ -152,9 +152,9 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve)
                 for (const auto &angle : mol->species()->angles())
                 {
                     // Get Atom pointers
-                    auto i = mol->atom(angle.indexI());
-                    auto j = mol->atom(angle.indexJ());
-                    auto k = mol->atom(angle.indexK());
+                    auto i = mol->atom(angle.i()->index());
+                    auto j = mol->atom(angle.j()->index());
+                    auto k = mol->atom(angle.k()->index());
 
                     // Select random terminus
                     auto terminus = DissolveMath::random() > 0.5 ? 1 : 0;
@@ -204,8 +204,8 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve)
                         continue;
 
                     // Get Atom pointers
-                    auto j = mol->atom(torsion.indexJ());
-                    auto k = mol->atom(torsion.indexK());
+                    auto j = mol->atom(torsion.j()->index());
+                    auto k = mol->atom(torsion.k()->index());
 
                     // Select random terminus
                     auto terminus = DissolveMath::random() > 0.5 ? 1 : 0;

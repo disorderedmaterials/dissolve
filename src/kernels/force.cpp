@@ -316,26 +316,27 @@ void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::ve
         {
             // Bond forces
             for (const auto &bond : molN->species()->bonds())
-                bondForces(bond, *molN->atom(bond.indexI()), offsetN + bond.indexI(), *molN->atom(bond.indexJ()),
-                           offsetN + bond.indexJ(), geometryForceVector);
+                bondForces(bond, *molN->atom(bond.i()->index()), offsetN + bond.i()->index(), *molN->atom(bond.j()->index()),
+                           offsetN + bond.j()->index(), geometryForceVector);
 
             // Angle forces
             for (const auto &angle : molN->species()->angles())
-                angleForces(angle, *molN->atom(angle.indexI()), offsetN + angle.indexI(), *molN->atom(angle.indexJ()),
-                            offsetN + angle.indexJ(), *molN->atom(angle.indexK()), offsetN + angle.indexK(),
-                            geometryForceVector);
+                angleForces(angle, *molN->atom(angle.i()->index()), offsetN + angle.i()->index(),
+                            *molN->atom(angle.j()->index()), offsetN + angle.j()->index(), *molN->atom(angle.k()->index()),
+                            offsetN + angle.k()->index(), geometryForceVector);
 
             // Torsion forces
             for (const auto &torsion : molN->species()->torsions())
-                torsionForces(torsion, *molN->atom(torsion.indexI()), offsetN + torsion.indexI(), *molN->atom(torsion.indexJ()),
-                              offsetN + torsion.indexJ(), *molN->atom(torsion.indexK()), offsetN + torsion.indexK(),
-                              *molN->atom(torsion.indexL()), offsetN + torsion.indexL(), geometryForceVector);
+                torsionForces(torsion, *molN->atom(torsion.i()->index()), offsetN + torsion.i()->index(),
+                              *molN->atom(torsion.j()->index()), offsetN + torsion.j()->index(),
+                              *molN->atom(torsion.k()->index()), offsetN + torsion.k()->index(),
+                              *molN->atom(torsion.l()->index()), offsetN + torsion.l()->index(), geometryForceVector);
 
             // Improper forces
             for (const auto &imp : molN->species()->impropers())
-                improperForces(imp, *molN->atom(imp.indexI()), offsetN + imp.indexI(), *molN->atom(imp.indexJ()),
-                               offsetN + imp.indexJ(), *molN->atom(imp.indexK()), offsetN + imp.indexK(),
-                               *molN->atom(imp.indexL()), offsetN + imp.indexL(), geometryForceVector);
+                improperForces(imp, *molN->atom(imp.i()->index()), offsetN + imp.i()->index(), *molN->atom(imp.j()->index()),
+                               offsetN + imp.j()->index(), *molN->atom(imp.k()->index()), offsetN + imp.k()->index(),
+                               *molN->atom(imp.l()->index()), offsetN + imp.l()->index(), geometryForceVector);
         }
     }
 

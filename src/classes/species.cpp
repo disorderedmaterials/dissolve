@@ -127,7 +127,7 @@ void Species::print() const
         Messenger::print("      I     J    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------\n");
         for (const auto &bond : bonds_)
-            Messenger::print("   {:4d}  {:4d}    {}{:<12}  {}\n", bond.indexI() + 1, bond.indexJ() + 1,
+            Messenger::print("   {:4d}  {:4d}    {}{:<12}  {}\n", bond.i()->index() + 1, bond.j()->index() + 1,
                              bond.commonTerm() ? '@' : ' ', BondFunctions::forms().keyword(bond.interactionForm()),
                              bond.interactionPotential().parametersAsString());
     }
@@ -138,8 +138,8 @@ void Species::print() const
         Messenger::print("      I     J     K    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------\n");
         for (const auto &angle : angles_)
-            Messenger::print("   {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", angle.indexI() + 1, angle.indexJ() + 1,
-                             angle.indexK() + 1, angle.commonTerm() ? '@' : ' ',
+            Messenger::print("   {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", angle.i()->index() + 1, angle.j()->index() + 1,
+                             angle.k()->index() + 1, angle.commonTerm() ? '@' : ' ',
                              AngleFunctions::forms().keyword(angle.interactionForm()),
                              angle.interactionPotential().parametersAsString());
     }
@@ -151,9 +151,9 @@ void Species::print() const
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Torsions
         for (const auto &torsion : torsions())
-            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", torsion.indexI() + 1, torsion.indexJ() + 1,
-                             torsion.indexK() + 1, torsion.indexL() + 1, torsion.commonTerm() ? '@' : ' ',
-                             TorsionFunctions::forms().keyword(torsion.interactionForm()),
+            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", torsion.i()->index() + 1,
+                             torsion.j()->index() + 1, torsion.k()->index() + 1, torsion.l()->index() + 1,
+                             torsion.commonTerm() ? '@' : ' ', TorsionFunctions::forms().keyword(torsion.interactionForm()),
                              torsion.interactionPotential().parametersAsString());
     }
 
@@ -164,9 +164,9 @@ void Species::print() const
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Impropers
         for (auto &improper : impropers())
-            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", improper.indexI() + 1, improper.indexJ() + 1,
-                             improper.indexK() + 1, improper.indexL() + 1, improper.commonTerm() ? '@' : ' ',
-                             TorsionFunctions::forms().keyword(improper.interactionForm()),
+            Messenger::print("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}  {}\n", improper.i()->index() + 1,
+                             improper.j()->index() + 1, improper.k()->index() + 1, improper.l()->index() + 1,
+                             improper.commonTerm() ? '@' : ' ', TorsionFunctions::forms().keyword(improper.interactionForm()),
                              improper.interactionPotential().parametersAsString());
     }
 }

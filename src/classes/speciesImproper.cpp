@@ -40,50 +40,6 @@ bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
     return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom));
 }
 
-// Return index (in parent Species) of first SpeciesAtom
-int SpeciesImproper::indexI() const
-{
-    assert(i_);
-    return i_->index();
-}
-
-// Return index (in parent Species) of second (central) SpeciesAtom
-int SpeciesImproper::indexJ() const
-{
-    assert(j_);
-    return j_->index();
-}
-
-// Return index (in parent Species) of third SpeciesAtom
-int SpeciesImproper::indexK() const
-{
-    assert(k_);
-    return k_->index();
-}
-
-// Return index (in parent Species) of fourth SpeciesAtom
-int SpeciesImproper::indexL() const
-{
-    assert(l_);
-    return l_->index();
-}
-
-// Return index (in parent Species) of nth SpeciesAtom in interaction
-int SpeciesImproper::index(int n) const
-{
-    if (n == 0)
-        return indexI();
-    else if (n == 1)
-        return indexJ();
-    else if (n == 2)
-        return indexK();
-    else if (n == 3)
-        return indexL();
-
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesImproper::index(int). Returning 0...\n", n);
-    return 0;
-}
-
 // Return whether Atoms in Improper match those specified
 bool SpeciesImproper::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const
 {

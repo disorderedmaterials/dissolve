@@ -24,32 +24,6 @@ SpeciesBond::~SpeciesBond() = default;
 // Return vector of involved atoms
 std::vector<const SpeciesAtom *> SpeciesBond::atoms() const { return {i_, j_}; }
 
-// Return index (in parent Species) of first SpeciesAtom
-int SpeciesBond::indexI() const
-{
-    assert(i_);
-    return i_->index();
-}
-
-// Return index (in parent Species) of second SpeciesAtom
-int SpeciesBond::indexJ() const
-{
-    assert(j_);
-    return j_->index();
-}
-
-// Return index (in parent Species) of nth SpeciesAtom in interaction
-int SpeciesBond::index(int n) const
-{
-    if (n == 0)
-        return indexI();
-    else if (n == 1)
-        return indexJ();
-
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n", n);
-    return 0;
-}
-
 // Return whether SpeciesAtoms in Angle match those specified
 bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 {

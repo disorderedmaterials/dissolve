@@ -35,50 +35,6 @@ SpeciesAtom *SpeciesTorsion::l() const { return l_; }
 // Return vector of involved atoms
 std::vector<const SpeciesAtom *> SpeciesTorsion::atoms() const { return {i_, j_, k_, l_}; }
 
-// Return index (in parent Species) of first SpeciesAtom
-int SpeciesTorsion::indexI() const
-{
-    assert(i_);
-    return i_->index();
-}
-
-// Return index (in parent Species) of second (central) SpeciesAtom
-int SpeciesTorsion::indexJ() const
-{
-    assert(j_);
-    return j_->index();
-}
-
-// Return index (in parent Species) of third SpeciesAtom
-int SpeciesTorsion::indexK() const
-{
-    assert(k_);
-    return k_->index();
-}
-
-// Return index (in parent Species) of fourth SpeciesAtom
-int SpeciesTorsion::indexL() const
-{
-    assert(l_);
-    return l_->index();
-}
-
-// Return index (in parent Species) of nth SpeciesAtom in interaction
-int SpeciesTorsion::index(int n) const
-{
-    if (n == 0)
-        return indexI();
-    else if (n == 1)
-        return indexJ();
-    else if (n == 2)
-        return indexK();
-    else if (n == 3)
-        return indexL();
-
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesTorsion::index(int). Returning 0...\n", n);
-    return 0;
-}
-
 // Return whether Atoms in Torsion match those specified
 bool SpeciesTorsion::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const
 {

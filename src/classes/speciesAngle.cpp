@@ -32,41 +32,6 @@ SpeciesAtom *SpeciesAngle::k() const { return k_; }
 // Return vector of involved atoms
 std::vector<const SpeciesAtom *> SpeciesAngle::atoms() const { return {i_, j_, k_}; }
 
-// Return index (in parent Species) of first SpeciesAtom
-int SpeciesAngle::indexI() const
-{
-    assert(i_);
-    return i_->index();
-}
-
-// Return index (in parent Species) of second (central) SpeciesAtom
-int SpeciesAngle::indexJ() const
-{
-    assert(j_);
-    return j_->index();
-}
-
-// Return index (in parent Species) of third SpeciesAtom
-int SpeciesAngle::indexK() const
-{
-    assert(k_);
-    return k_->index();
-}
-
-// Return index (in parent Species) of nth SpeciesAtom in interaction
-int SpeciesAngle::index(int n) const
-{
-    if (n == 0)
-        return indexI();
-    else if (n == 1)
-        return indexJ();
-    else if (n == 2)
-        return indexK();
-
-    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n", n);
-    return 0;
-}
-
 // Return whether Atoms in Angle match those specified
 bool SpeciesAngle::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const
 {
