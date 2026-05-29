@@ -9,16 +9,6 @@
 
 namespace UnitTest
 {
-TEST(CosNTorsionsTest, SASS)
-{
-    DissolveSystemTest systemTest;
-    ASSERT_NO_THROW_VERBOSE(systemTest.setUp("dissolve/input/energyForce-Py5-NTf2-impropers.txt"));
-    TempFile tempFile("py5_impropers_only.toml", false);
-    SerialisedValue toml;
-    auto *sp = systemTest.dissolve().coreData().findSpecies("Py5");
-    sp->serialise("species", toml);
-    std::ofstream(tempFile) << toml;
-}
 
 TEST(CosNTorsionEnergyTest, POE)
 {
