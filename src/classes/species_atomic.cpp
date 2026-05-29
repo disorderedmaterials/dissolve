@@ -51,7 +51,6 @@ AtomType *Species::addAtomType(Elements::Element Z, std::string_view name)
     // Create atom type and set data
     auto newAtomType = std::make_shared<AtomType>(Z, uniqueName);
     atomTypes_.push_back(newAtomType);
-    newAtomType->setIndex(atomTypes_.size() - 1);
 
     return newAtomType.get();
 }

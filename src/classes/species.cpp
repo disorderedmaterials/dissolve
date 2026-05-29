@@ -118,7 +118,7 @@ void Species::print() const
         auto &i = atom(n);
         Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,
                          Elements::symbol(i.Z()), (i.atomType() ? i.atomType()->name() : "??"),
-                         (i.atomType() ? i.atomType()->index() : -1), i.r().x, i.r().y, i.r().z, i.q());
+                         (i.atomType() ? i.atomTypeIndex() : -1), i.r().x, i.r().y, i.r().z, i.q());
     }
 
     if (!bonds_.empty())
@@ -203,9 +203,7 @@ void Species::deserialise(const SerialisedValue &node)
     Serialisable::toMap(node, "atomTypes",
                         [this](const std::string &name, const auto &data)
                         {
-                            auto &at = atomTypes_.emplace_back(std::make_shared<AtomType>(name));
-                            at->deserialise(data);
-                            at->setIndex(atomTypes_.size() - 1);
+                            atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data);
                         });
 
     Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
