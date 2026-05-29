@@ -14,7 +14,7 @@ TEST(CosNTorsionEnergyTest, POE)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/poe_torsions_only.toml", 64}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/poe_torsions_only.toml", 64}}, {22.98582, 22.98582, 22.98582}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/poe64_torsions/torsions-final.str"));
 
     // Adjust pair potential properties
@@ -39,7 +39,7 @@ TEST(CosNTorsionForcesTest, POE)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/poe_torsions_only.toml", 64}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/poe_torsions_only.toml", 64}}, {22.98582, 22.98582, 22.98582}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/poe64_torsions/torsions-final.str"));
 
     // Adjust pair potential properties
@@ -68,7 +68,7 @@ TEST(CosNTorsionEnergyTest, Py4OHNTf2)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration(
-        "Box", {{"species/py4oh_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, 0.1));
+        "Box", {{"species/py4oh_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_torsions/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
@@ -94,7 +94,7 @@ TEST(CosNTorsionForcesTest, Py4OHNTf2)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration(
-        "Box", {{"species/py4oh_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, 0.1));
+        "Box", {{"species/py4oh_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_torsions/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
@@ -123,7 +123,7 @@ TEST(CosNImproperEnergyTest, Py4OHNTf2)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration(
-        "Box", {{"species/py4oh_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, 0.1));
+        "Box", {{"species/py4oh_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_impropers/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
@@ -149,7 +149,7 @@ TEST(CosNImproperForcesTest, Py4OHNTf2)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration(
-        "Box", {{"species/py4oh_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, 0.1));
+        "Box", {{"species/py4oh_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_impropers/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
@@ -178,7 +178,7 @@ TEST(CosNTorsionEnergyTest, Py5NTf2)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration(
-        "Box", {{"species/py5_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, 0.1));
+        "Box", {{"species/py5_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_torsions/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
@@ -204,7 +204,7 @@ TEST(CosNTorsionForcesTest, Py5NTf2)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration(
-        "Box", {{"species/py5_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, 0.1));
+        "Box", {{"species/py5_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_torsions/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
@@ -232,8 +232,8 @@ TEST(CosNImproperEnergyTest, Py5NTf2)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(
-        testGraph.createConfiguration("Box", {{"species/py5_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration(
+        "Box", {{"species/py5_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_impropers/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
@@ -258,8 +258,8 @@ TEST(CosNImproperForcesTest, Py5NTf2)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(
-        testGraph.createConfiguration("Box", {{"species/py5_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration(
+        "Box", {{"species/py5_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_impropers/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
