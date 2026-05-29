@@ -338,39 +338,94 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override
     {
-        // If the stored data types are the same then we can just do a straight assignment
-        if (storedDataType_ == other->storedDataType())
+        if constexpr (std::is_pointer<DataClass>())
+        {
+            // If we are a pointer type, getting a nullptr is disallowed
             setData(other->get<DataClass>());
+
+            return data_ != nullptr;
+        }
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
             // If we represent a std::vector container we can conditionally check for a single data item being passed
+
+            // Vector to vector
+            if (storedDataType_ == other->storedDataType())
+            {
+                setData(other->get<DataClass>());
+
+                return true;
+            }
+
+            // Single value to vector
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
             {
                 data_.push_back(other->get<typename DataClass::value_type>());
 
                 updateAfterSet();
+
+                return true;
             }
-            else
-                return false;
         }
-
-        // If we are a pointer type, getting a nullptr is disallowed
-        if constexpr (std::is_pointer<DataClass>())
+        else if constexpr (is_instance_of_v<DataClass, std::optional>)
         {
-            if (data_ == nullptr)
-                return false;
+            // Optional arguments can be set from the base class (i.e. with no std::optional container) as well as std::optional
+
+            // Optional to optional
+            if (storedDataType_ == other->storedDataType())
+            {
+                setData(other->get<DataClass>());
+
+                return true;
+            }
+
+            // Base type into std::optional
+            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            {
+                setData(other->get<typename DataClass::value_type>());
+
+                return true;
+            }
+        }
+        else if (typeid(std::optional<DataClass>) == other->storedDataType())
+        {
+            // Data types can be set from a std::optional containing the same type
+
+            auto otherData = other->get<std::optional<DataClass>>();
+            if (otherData.has_value())
+            {
+                setData(*otherData);
+                return true;
+            }
         }
 
-        return true;
+        // General case - if the stored data types are the same then we can just do a straight assignment
+        if (storedDataType_ == other->storedDataType())
+        {
+            setData(other->get<DataClass>());
+            return true;
+        }
+
+        return false;
     }
     // Return whether this parameter accepts the output type of the other
     bool acceptsOutput(ParameterBase *other) const override
     {
         if (storedDataType_ == other->storedDataType())
             return true;
+
+        // Normal data types can be set from optional values
+        if (typeid(std::optional<DataClass>) == other->storedDataType())
+            return true;
         else if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
-            // If we represent a std::vector container we can accept a single data item
+            // Vectors can accept a single value of the contained type
+            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+                return true;
+        }
+        else if constexpr (is_instance_of_v<DataClass, std::optional>)
+        {
+            // Optionals can accept non-optional data
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
                 return true;
         }
