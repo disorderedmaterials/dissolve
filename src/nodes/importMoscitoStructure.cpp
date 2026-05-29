@@ -12,7 +12,7 @@ ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Nod
     addOutput<Structure>("Structure", "Imported structure", structure_);
 }
 
-std::string_view ImportMoscitoStructureNode::type() const { return "ImportXYZStructure"; }
+std::string_view ImportMoscitoStructureNode::type() const { return "ImportMoscitoStructure"; }
 
 std::string_view ImportMoscitoStructureNode::summary() const { return "Import a Moscito file."; }
 

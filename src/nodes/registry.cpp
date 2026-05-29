@@ -25,6 +25,7 @@
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importEPSRAtoStructure.h"
+#include "nodes/importMoscitoStructure.h"
 #include "nodes/importXYZStructure.h"
 #include "nodes/importXYZTrajectory.h"
 #include "nodes/insert.h"
@@ -86,6 +87,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
+                  {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
                   {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},
