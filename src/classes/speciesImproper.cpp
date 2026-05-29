@@ -34,12 +34,6 @@ SpeciesAtom *SpeciesImproper::l() const { return l_; }
 // Return vector of involved atoms
 std::vector<const SpeciesAtom *> SpeciesImproper::atoms() const { return {i_, j_, k_, l_}; }
 
-// Return whether the improper uses the specified SpeciesAtom
-bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
-{
-    return ((i_ == spAtom) || (j_ == spAtom) || (k_ == spAtom) || (l_ == spAtom));
-}
-
 // Return whether Atoms in Improper match those specified
 bool SpeciesImproper::matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const
 {

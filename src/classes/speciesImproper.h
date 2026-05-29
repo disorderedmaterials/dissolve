@@ -44,8 +44,6 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     SpeciesAtom *l() const;
     // Return vector of involved atoms
     std::vector<const SpeciesAtom *> atoms() const override;
-    // Return whether the improper uses the specified SpeciesAtom
-    bool uses(SpeciesAtom *spAtom) const;
     // Return whether SpeciesAtoms match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k, const SpeciesAtom *l) const;
 
