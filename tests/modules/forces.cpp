@@ -4,7 +4,6 @@
 #include "io/import/forces.h"
 #include "classes/configuration.h"
 #include "main/dissolve.h"
-#include "modules/forces/forces.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>

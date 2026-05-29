@@ -12,7 +12,6 @@
 #include "keywords/nodeValue.h"
 #include "keywords/species.h"
 #include "math/mathFunc.h"
-#include "modules/md/md.h"
 
 CoordinateSetsGeneratorNode::CoordinateSetsGeneratorNode(const Species *sp)
     : GeneratorNode(NodeType::CoordinateSets), species_(sp)
@@ -162,8 +161,9 @@ bool CoordinateSetsGeneratorNode::execute(const GeneratorContext &generatorConte
     for (auto n = 0; n < nSets_.asInteger(); ++n)
     {
         // Evolve our coordinates
-        r = MDModule::evolve(generatorContext.potentialMap(), species_, temperature_.asDouble(), nSteps_.asInteger(),
-                             deltaT_.asDouble(), r, velocities);
+        // r = MDModule::evolve(generatorContext.potentialMap(), species_, temperature_.asDouble(), nSteps_.asInteger(),
+        //                      deltaT_.asDouble(), r, velocities);
+        // TODO DISSOLVE2
 
         // Store a new set
         addSet() = r;

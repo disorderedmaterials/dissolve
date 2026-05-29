@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "modules/energy/energy.h"
+// #include "modules/energy/energy.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
