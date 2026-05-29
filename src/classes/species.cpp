@@ -259,4 +259,7 @@ void Species::deserialise(const SerialisedValue &node)
 
     Serialisable::toMap(node, "sites", [this](const std::string &name, const SerialisedValue &site)
                         { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
+
+    // Always update type indexing after deserialisation
+    updateTypeIndexing();
 }

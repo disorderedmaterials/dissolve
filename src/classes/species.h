@@ -57,6 +57,8 @@ class Species : public Serialisable<>
     std::vector<SpeciesAtom> atoms_;
     // Atom types for the species
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
+    // Flag stating whether local Atom type indices are up-to-date
+    bool typeIndicesValid_{false};
 
     public:
     // Return the number of atoms in the species (or only those with the specified presence)
@@ -79,14 +81,16 @@ class Species : public Serialisable<>
     std::vector<const AtomType *> atomTypesRaw() const;
     // Calculate and return atom type populations
     KeyedVector<const AtomType *, int> atomTypePopulations() const;
+    // Return atom type index map
+    std::map<const AtomType *, int> atomTypeIndexMap() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters
     int simplifyAtomTypes();
     // Return total charge of species from local/atomtype atomic charges
     double totalCharge(bool useAtomTypes) const;
-    // Apply random noise to atoms
-    void randomiseCoordinates(double maxDisplacement);
+    // Update type indices per Atom
+    void updateTypeIndexing();
 
     /*
      * Intramolecular Data
@@ -269,6 +273,8 @@ class Species : public Serialisable<>
     void setCentre(const Box *box, const Vector3 newCentre);
     // Centre coordinates at origin
     void centreAtOrigin();
+    // Apply random noise to atoms
+    void randomiseCoordinates(double maxDisplacement);
 
     /*
      * Creation

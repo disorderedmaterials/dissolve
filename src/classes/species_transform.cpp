@@ -248,6 +248,13 @@ void Species::centreAtOrigin()
         i -= centre;
 }
 
+// Apply random noise to atoms
+void Species::randomiseCoordinates(double maxDisplacement)
+{
+    for (auto &i : atoms_)
+        i += Vector3::randomUnit() * maxDisplacement;
+}
+
 /*
  * Creation
  */
