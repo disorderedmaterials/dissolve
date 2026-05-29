@@ -3,6 +3,7 @@
 
 #include "gui/models/speciesAngleModel.h"
 #include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 
 SpeciesAngleModel::SpeciesAngleModel() : angles_(nullptr) {}
 
