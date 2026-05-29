@@ -18,67 +18,8 @@ void CoreData::clear()
 {
     configurations_.clear();
     species_.clear();
-    atomTypes_.clear();
     processingLayers_.clear();
 }
-
-/*
- * Atom Types
- */
-
-// Add new AtomType
-std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
-{
-    auto newAtomType = std::make_shared<AtomType>();
-    atomTypes_.push_back(newAtomType);
-
-    // Create a suitable unique name
-    newAtomType->setName(DissolveSys::uniqueName(Elements::symbol(Z), atomTypes_,
-                                                 [&](const auto &at) { return newAtomType == at ? "" : at->name(); }));
-
-    // Set data
-    newAtomType->setZ(Z);
-    newAtomType->setIndex(nAtomTypes() - 1);
-
-    return newAtomType;
-}
-
-// Remove specified AtomType
-void CoreData::removeAtomType(std::shared_ptr<AtomType> &at)
-{
-    removeReferencesTo(at);
-
-    atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at), atomTypes_.end());
-
-    // Reassign AtomType indices
-    auto count = 0;
-    for (const auto &at : atomTypes_)
-        at->setIndex(count++);
-}
-
-// Return number of AtomTypes in list
-int CoreData::nAtomTypes() const { return atomTypes_.size(); }
-
-// Return core AtomTypes list
-std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() { return atomTypes_; }
-
-const std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() const { return atomTypes_; }
-
-// Return nth AtomType in list
-std::shared_ptr<AtomType> CoreData::atomType(int n) { return atomTypes_[n]; }
-
-// Search for AtomType by name
-std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
-{
-    auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(),
-                           [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
-    if (it == atomTypes_.end())
-        return nullptr;
-    return *it;
-}
-
-// Clear all atom types
-void CoreData::clearAtomTypes() { atomTypes_.clear(); }
 
 /*
  * Species
