@@ -36,12 +36,7 @@ bool ForcefieldRecipe::apply(Species &species) const
         auto &ffa = optFFAtomType->get();
         auto at = i.parent()->findAtomType(ffa.name());
         if (!at)
-        {
             at = i.parent()->addAtomType(i.Z(), ffa.name());
-            Messenger::print("Adding atom type '{}' for atom {} ({}).\n", at->name(), i.index(), Elements::symbol(i.Z()));
-        }
-        else
-            Messenger::print("Re-using atom type '{}' for atom {} ({}).\n", at->name(), i.index(), Elements::symbol(i.Z()));
 
         // Set type in the SpeciesAtom
         i.setAtomType(at);
