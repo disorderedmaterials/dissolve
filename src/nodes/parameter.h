@@ -406,7 +406,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         else if (typeid(std::optional<DataClass>) == other->storedDataType())
         {
             // Data types can be set from a std::optional containing the same type
-
             auto otherData = other->get<std::optional<DataClass>>();
             if (otherData.has_value())
             {
