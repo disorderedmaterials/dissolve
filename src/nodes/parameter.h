@@ -413,6 +413,19 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
                 return true;
             }
         }
+        else if constexpr (is_instance_of_v<DataClass, std::variant>)
+        {
+            // Variants can be set from any matching type
+            printf("TRYING TO SET THE VARIANT...\n");
+            if (put_into(other, data_))
+            {
+                printf("DID IT!\n");
+                updateAfterSet();
+                return true;
+            }
+            else
+                printf("NO SETTING THAT!\n");
+        }
 
         // General case - if the stored data types are the same then we can just do a straight assignment
         if (storedDataType_ == other->storedDataType())
@@ -443,6 +456,17 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             // Optionals can accept non-optional data
             if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
                 return true;
+        }
+        else if constexpr (is_instance_of_v<DataClass, std::variant>)
+        {
+            printf("CHECKING VARIANT TYPE.....\n");
+            if (is_one_of(other->storedDataType(), data_))
+            {
+                printf("TIS A MATCH!!!!!\n");
+                return true;
+            }
+            else
+                printf("NOPE.\n");
         }
 
         return false;
