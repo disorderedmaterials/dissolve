@@ -113,7 +113,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Check that types are compatible
-    if (!targetInput->acceptsOutput(sourceOutput.get()))
+    if (!targetInput->acceptsDataFromSource(sourceOutput.get()))
     {
         Messenger::error("Source output ({}@{}) and target input ({}@{}) edge types are not compatible - {} vs {}.\n",
                          definition.sourceOutput, sourceNode->name(), definition.targetInput, targetNode->name(),

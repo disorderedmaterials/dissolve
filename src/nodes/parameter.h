@@ -23,7 +23,7 @@ template <typename T> class Parameter;
 template <typename T> class SerialisableParameter;
 
 // Return whether the type_index provided matches one of the supplied variant's allowed types
-template <class... Ts> bool is_one_of(std::type_index id, const std::variant<Ts...> &x)
+template <class... Ts> bool is_variant_alternative(std::type_index id, const std::variant<Ts...> &x)
 {
     return ((id == typeid(Ts)) || ...);
 };
@@ -118,10 +118,12 @@ class ParameterBase : public Serialisable<>
     void clearDataInParent() const;
     // Mark edges for re-pull in parent node
     void markIncomingEdgesForPull() const;
+    // Return whether this datatype accepts the specified one
+    virtual bool acceptsDataFromSource(ParameterBase *source) = 0;
+    // Return whether this datatype provides the specified one
+    virtual bool providesDataType(std::type_index id) = 0;
     // Assign the value of another parameter to this one
     virtual bool assign(ParameterBase *other) = 0;
-    // Return whether this parameter accepts the output type of the other
-    virtual bool acceptsOutput(ParameterBase *other) const = 0;
     // The type's representation as a raw int (only valid for int and enum)
     virtual int getAsInt() const { return -1; }
     // Set type's representation as a raw int (only valid for int and enum)
@@ -351,9 +353,62 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             return true;
         return false;
     }
+    // Return whether this datatype accepts data from the specified source
+    bool acceptsDataFromSource(ParameterBase *source) override
+    {
+        auto id = source->storedDataType();
+
+        // Optionals and vectors
+        if constexpr (is_instance_of_v<DataClass, std::optional> || is_instance_of_v<DataClass, std::vector>)
+        {
+            // Can be set from another identical DataClass or a plain object of the value_type
+            return id == storedDataType_ || id == typeid(typename DataClass::value_type);
+        }
+
+        // Vectors
+        if constexpr (is_instance_of_v<DataClass, std::vector>)
+        {
+            // Vectors can be set from another identical DataClass or a single object of the value_type
+            return id == storedDataType_ || id == typeid(typename DataClass::value_type);
+        }
+
+        // Variants
+        if constexpr (is_instance_of_v<DataClass, std::variant>)
+        {
+            // Variants can be set from another identical type or any type which matches one of our alternatives
+            return id == storedDataType_ || is_variant_alternative(id, data_);
+        }
+
+        // Normal data types can be set from several different types of object
+        return source->providesDataType(storedDataType_);
+    }
+    // Return whether this datatype provides the specified one
+    bool providesDataType(std::type_index id) override
+    {
+        if (id == storedDataType_)
+            return true;
+
+        // Optionals
+        if constexpr (is_instance_of_v<DataClass, std::optional>)
+        {
+            // Optionals provide the value_type
+            return id == typeid(typename DataClass::value_type);
+        }
+
+        // Variants
+        if constexpr (is_instance_of_v<DataClass, std::variant>)
+        {
+            // Variants might_ contain the correct data - we only return here if it is a possibility
+            return is_variant_alternative(id, data_);
+        }
+
+        return false;
+    }
     // Assign the value of another parameter to this one.
     bool assign(ParameterBase *other) override
     {
+        std::cout << std::format("Assign source output {} ({}) to target input {} ({})\n", name_, storedDataType_.name(),
+                                 other->name(), other->storedDataType().name());
         if constexpr (std::is_pointer<DataClass>())
         {
             // If we are a pointer type, getting a nullptr is disallowed
@@ -432,41 +487,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         {
             setData(other->get<DataClass>());
             return true;
-        }
-
-        return false;
-    }
-    // Return whether this parameter accepts the output type of the other
-    bool acceptsOutput(ParameterBase *other) const override
-    {
-        if (storedDataType_ == other->storedDataType())
-            return true;
-
-        // Normal data types can be set from optional values
-        if (typeid(std::optional<DataClass>) == other->storedDataType())
-            return true;
-        else if constexpr (is_instance_of_v<DataClass, std::vector>)
-        {
-            // Vectors can accept a single value of the contained type
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
-                return true;
-        }
-        else if constexpr (is_instance_of_v<DataClass, std::optional>)
-        {
-            // Optionals can accept non-optional data
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
-                return true;
-        }
-        else if constexpr (is_instance_of_v<DataClass, std::variant>)
-        {
-            printf("CHECKING VARIANT TYPE.....\n");
-            if (is_one_of(other->storedDataType(), data_))
-            {
-                printf("TIS A MATCH!!!!!\n");
-                return true;
-            }
-            else
-                printf("NOPE.\n");
         }
 
         return false;
