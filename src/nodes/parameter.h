@@ -22,6 +22,12 @@ class ParameterBase;
 template <typename T> class Parameter;
 template <typename T> class SerialisableParameter;
 
+// Return whether the type_index provided matches one of the supplied variant's allowed types
+template <class... Ts> bool is_one_of(std::type_index id, const std::variant<Ts...> &x)
+{
+    return ((id == typeid(Ts)) || ...);
+};
+
 // Parameter Proxy
 template <class T> class ParameterProxy
 {
@@ -207,6 +213,16 @@ std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view
     return std::make_shared<SerialisableParameter<DataClass>>(parent, name, description, value);
 }
 }; // namespace ParameterFactory
+
+// Put the data of the supplied parameter into the supplied variant
+template <class... Ts> bool put_into(ParameterBase *other, std::variant<Ts...> &x)
+{
+    return ((other->storedDataType() == typeid(Ts)
+             ? (std::cout << std::format("{} matches {}\n", other->storedDataType().name(), typeid(Ts).name()),
+                x = other->get<Ts>()),
+             true : false) ||
+            ...);
+};
 
 // Primary type for a Parameter to a specific DataClass
 template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
