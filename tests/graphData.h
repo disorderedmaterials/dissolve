@@ -73,7 +73,8 @@ class TestGraph : public DissolveGraph
         return node;
     }
     // Create species insertion node chain
-    Node *createAndInsertSpecies(Node *cfgSourceNode, const std::vector<std::pair<std::string, int>> &species, double rho,
+    Node *createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSourceOutput,
+                                 const std::vector<std::pair<std::string, int>> &species, double rho,
                                  Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
                                  InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume)
     {
@@ -108,9 +109,13 @@ class TestGraph : public DissolveGraph
             EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
             EXPECT_TRUE(currentGraph_->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
             EXPECT_TRUE(
-                currentGraph_->addEdge({std::string(cfgSourceNode->name()), "Configuration", insertNodeName, "Configuration"}));
+                currentGraph_->addEdge({std::string(cfgSourceNode->name()), cfgSourceOutput, insertNodeName, "Configuration"}));
 
             cfgSourceNode = fetchHead();
+
+            // After the first InsertNode addition the source output name reverts to "Configuration" (it may previously have
+            // been Output from SetCell)
+            cfgSourceOutput = "Configuration";
         }
 
         return fetchHead();
@@ -184,13 +189,12 @@ class TestGraph : public DissolveGraph
     Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species, double rho,
                               Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits)
     {
-        // Create configuration and SetCell nodes
+        // Create configuration
         EXPECT_TRUE(appendNode("Configuration", name));
-        EXPECT_TRUE(appendNode("SetCell"));
-        EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetCell", "Configuration"}));
 
         // Add Species and Insert nodes
-        return createAndInsertSpecies(fetchHead(), species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
+        return createAndInsertSpecies(fetchHead(), "Configuration", species, rho, rhoUnits,
+                                      InsertNode::BoxActionStyle::AddVolume);
     }
     // Create basic configuration graph, returning the last node
     Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
@@ -201,10 +205,10 @@ class TestGraph : public DissolveGraph
         EXPECT_TRUE(appendNode("SetCell"));
         fetchHead()->setOption<Vector3>("Lengths", cellLengths);
         fetchHead()->setOption<Vector3>("Angles", cellAngles);
-        EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetCell", "Configuration"}));
+        EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetCell", "Input"}));
 
         // Add Species and Insert nodes
-        return createAndInsertSpecies(fetchHead(), species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
+        return createAndInsertSpecies(fetchHead(), "Output", species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
                                       InsertNode::BoxActionStyle::None);
     }
     // Append a set coordinates node with a structure import input

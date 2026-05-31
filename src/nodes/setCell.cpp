@@ -6,11 +6,11 @@
 SetCellNode::SetCellNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration for the calculation", targetConfiguration_)
+    addInput<CellContainingVariant>("Input", "Target configuration for the calculation", inputVariant_)
         ->setFlags({ParameterBase::Required});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Target configuration for the cell definition", targetConfiguration_);
+    addOutput<CellContainingVariant>("Output", "Target configuration for the cell definition", outputVariant_);
 
     // Options
     addOption<Vector3>("Lengths", "Side lengths (A, B, C) of the cell (Angstroms)", lengths_);
@@ -24,10 +24,21 @@ std::string_view SetCellNode::summary() const { return "Define / overwrite a tar
 
 NodeConstants::ProcessResult SetCellNode::process()
 {
-    targetConfiguration_->createBoxAndCells(lengths_, angles_, nonPeriodic_);
+    // Copy the input to the output and work on the output
+    outputVariant_ = inputVariant_;
 
-    if (!targetConfiguration_->box())
-        return NodeConstants::ProcessResult::Failed;
+    std::visit(
+        [&](auto &&arg)
+        {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, Configuration *>)
+                arg->createBoxAndCells(lengths_, angles_, nonPeriodic_);
+            else if constexpr (std::is_same_v<T, Structure>)
+                arg.createBox(lengths_, angles_, nonPeriodic_);
+            else
+                static_assert(false, "Visitor doesn't cater for all possible types.");
+        },
+        outputVariant_);
 
     return NodeConstants::ProcessResult::Success;
 }

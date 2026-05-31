@@ -5,14 +5,16 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/structure.h"
 #include "nodes/node.h"
-#include <memory>
 
 class SetCellNode : public Node
 {
     public:
     SetCellNode(Graph *parentGraph);
     ~SetCellNode() override = default;
+
+    using CellContainingVariant = std::variant<Configuration *, Structure>;
 
     /*
      * Definition
@@ -25,8 +27,8 @@ class SetCellNode : public Node
      * Data
      */
     private:
-    // Configuration object
-    Configuration *targetConfiguration_{nullptr};
+    // Cell-containing input and output
+    CellContainingVariant inputVariant_, outputVariant_;
     // Box side length dimensions
     Vector3 lengths_{1.0, 1.0, 1.0};
     // Box angles
