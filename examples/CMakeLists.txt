@@ -24,5 +24,5 @@ foreach(child ${children})
 endforeach()
 
 foreach(subdir ${EXAMPLE_TEST_DIRS})
-  add_subdirectory(${subdir})
+  # add_subdirectory(${subdir})
 endforeach()

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <optional>
 #include <string>
 
@@ -18,7 +19,9 @@ class CLIOptions
      */
     private:
     // Input file to load
-    std::optional<std::string> inputFile_;
+    std::optional<std::filesystem::path> inputFile_;
+    // Node to run
+    std::optional<std::string> node_;
     // Number of iterations to perform
     int nIterations_{0};
     // Frequency at which to write restart file
@@ -26,17 +29,17 @@ class CLIOptions
     // Seed for random number generator
     std::optional<int> randomSeed_;
     // Restart file to load, overriding default
-    std::optional<std::string> restartFilename_;
+    std::optional<std::filesystem::path> restartFilename_;
     // New input file to write (after reading supplied file)
-    std::optional<std::string> writeInputFilename_;
+    std::optional<std::filesystem::path> writeInputFilename_;
     // Whether to reload the file written to writeInputFilename_ and continue
     bool writeInputAndReload_{false};
     // Whether to ignore restart file (if it exists)
     bool ignoreRestartFile_{false};
     // Whether to prevent writing of the restart file
     bool noRestartFile_{false};
-    // File for TOML conversion
-    std::optional<std::string> toTomlFile_;
+    // Whether to simply export the nodes in mermaid form
+    bool exportMermaid_{false};
 
     public:
     // Parse Result enum
@@ -47,7 +50,9 @@ class CLIOptions
     // Parse supplied options
     int parse(int args, char **argv, bool isGUI = false);
     // Return input file to load
-    std::optional<std::string> inputFile() const;
+    std::optional<std::filesystem::path> inputFile() const;
+    // Return the node to run
+    std::optional<std::string> node() const;
     // Return number of iterations to perform
     int nIterations() const;
     // Return frequency at which to write restart file
@@ -55,15 +60,15 @@ class CLIOptions
     // Return seed for random number generator
     std::optional<int> randomSeed() const;
     // Return restart file to load, overriding default
-    std::optional<std::string> restartFilename() const;
+    std::optional<std::filesystem::path> restartFilename() const;
     // Return new input file to write (after reading supplied file)
-    std::optional<std::string> writeInputFilename() const;
+    std::optional<std::filesystem::path> writeInputFilename() const;
     // Return whether to reload the file written to writeInputFilename_ and continue
     bool writeInputAndReload() const;
     // Return whether to ignore restart file if it exists
     bool ignoreRestartFile() const;
     // Return whether to prevent writing of the restart file
     bool noRestartFile() const;
-    // Return output destination for TOML conversion
-    std::optional<std::string> toTomlFile() const;
+    // Return whether to simply export the graph as mermaid and quit
+    bool exportMermaid() const;
 };
