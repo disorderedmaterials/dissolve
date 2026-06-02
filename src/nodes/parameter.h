@@ -225,7 +225,7 @@ template <class... Ts> bool emplace_into_variant(ParameterBase *source, std::var
 }
 
 // Emplace the variant contents into the destination parameter
-template <class... Ts> int emplace_variant_into(std::variant<Ts...> &source, ParameterBase *destination)
+template <class... Ts> bool emplace_variant_into(std::variant<Ts...> &source, ParameterBase *destination)
 {
     auto result = false;
     ((result = (destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(source)), true : result)) ||
