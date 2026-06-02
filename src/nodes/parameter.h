@@ -467,6 +467,14 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         }
         else if constexpr (is_instance_of_v<DataClass, std::variant>)
         {
+            // Variant to variant
+            if (storedDataType_ == source->storedDataType())
+            {
+                setData(source->get<DataClass>());
+
+                return true;
+            }
+
             // Variants can be set from any matching type
             if (emplace_into_variant(source, data_))
             {
