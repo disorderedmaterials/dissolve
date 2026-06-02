@@ -22,12 +22,6 @@ class ParameterBase;
 template <typename T> class Parameter;
 template <typename T> class SerialisableParameter;
 
-// Return whether the type_index provided matches one of the supplied variant's allowed types
-template <class... Ts> bool is_variant_alternative(std::type_index id, const std::variant<Ts...> &x)
-{
-    return ((id == typeid(Ts)) || ...);
-};
-
 // Parameter Proxy
 template <class T> class ParameterProxy
 {
@@ -218,30 +212,24 @@ std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view
 }
 }; // namespace ParameterFactory
 
-// Put the data of the supplied parameter into the supplied variant
-template <class... Ts> bool emplace(ParameterBase *other, std::variant<Ts...> &x)
+// Return whether the type_index provided matches one of the supplied variant's allowed types
+template <class... Ts> bool is_variant_alternative(std::type_index id, const std::variant<Ts...> &x)
 {
-    return ((other->storedDataType() == typeid(Ts)
-             ? (std::cout << std::format("{} matches {}\n", other->storedDataType().name(), typeid(Ts).name()),
-                x = other->get<Ts>()),
-             true : false) ||
-            ...);
+    return ((id == typeid(Ts)) || ...);
+};
+
+// Put the data of the source parameter into the destination variant
+template <class... Ts> bool emplace_into_variant(ParameterBase *source, std::variant<Ts...> &destination)
+{
+    return ((source->storedDataType() == typeid(Ts) ? (destination = source->get<Ts>()), true : false) || ...);
 }
 
-// Return the alternative index matching the type specified (if any)
-template <class... Ts> int alternative_index(std::type_index id, std::variant<Ts...> &x)
-{
-    auto index = -1;
-    auto result = -1;
-    ((result = (id == typeid(Ts)) ? index : result, ++result) || ...);
-    return result;
-}
-
-// Return the alternative index matching the type specified (if any)
-template <class... Ts> int emplace_into(std::variant<Ts...> &x, ParameterBase *destination)
+// Emplace the variant contents into the destination parameter
+template <class... Ts> int emplace_variant_into(std::variant<Ts...> &source, ParameterBase *destination)
 {
     auto result = false;
-    ((result = (destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(x)), true : result)) || ...);
+    ((result = (destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(source)), true : result)) ||
+     ...);
     return result;
 }
 
@@ -480,7 +468,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         else if constexpr (is_instance_of_v<DataClass, std::variant>)
         {
             // Variants can be set from any matching type
-            if (emplace(source, data_))
+            if (emplace_into_variant(source, data_))
             {
                 updateAfterSet();
                 return true;
@@ -520,8 +508,9 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             // Check that we actually contain a valid value
             // TODO
 
-            // Check that our stored alternative is a match for the destination type
-            if (emplace_into(data_, destination))
+            // The possibility for a match between the parameters has already been checkwd by the Edge, so here we must just
+            // try to emplace the variant's data into the destination parameter.
+            if (emplace_variant_into(data_, destination))
             {
                 // TODO
                 // destination->updateAfterSet();
