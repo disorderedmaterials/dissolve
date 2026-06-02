@@ -33,6 +33,7 @@ add_library(
   ff.cpp
   improperTerm.cpp
   library.cpp
+  recipe.cpp
   torsionTerm.cpp
   angleTerm.h
   atomType.h
@@ -40,6 +41,7 @@ add_library(
   ff.h
   improperTerm.h
   library.h
+  recipe.h
   torsionTerm.h
 )
 

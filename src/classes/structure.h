@@ -24,6 +24,7 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
         Z_ = other.Z_;
         r_ = other.r_;
         q_ = other.q_;
+        index_ = other.index_;
     }
     // Set with name, and assume no element for now
     void set(const std::string &name, Vector3 r, double q = 0.0)

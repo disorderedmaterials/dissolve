@@ -217,7 +217,7 @@ void Species::clearCommonTerms()
     commonImpropers_.clear();
 }
 
-// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
+// Detach common term links for all interaction types, copying parameters to local SpeciesIntra
 void Species::detachFromCommonTerms()
 {
     for (auto &bond : bonds_)
@@ -238,7 +238,7 @@ void generateCommonTerm(Intra &term, std::string_view termName,
                         std::function<OptionalReferenceWrapper<CommonTerm>(std::string_view termName)> termGetter,
                         std::function<CommonTerm &(std::string_view termName)> termCreator)
 {
-    // Search for an existing master term by this name, or a related one suffixed with a number
+    // Search for an existing common term by this name, or a related one suffixed with a number
     OptionalReferenceWrapper<CommonTerm> optCommonTerm;
     auto index = 0;
     while ((optCommonTerm = termGetter(index == 0 ? termName : std::format("{}_{}", termName, index))))
@@ -270,13 +270,13 @@ void generateCommonTerm(Intra &term, std::string_view termName,
     term.setCommonTerm(&optCommonTerm->get());
 }
 
-// Reduce intramolecular terms to master terms
+// Reduce intramolecular terms to common terms
 void Species::reduceToCommonTerms()
 {
     // Bonds
     for (auto &bond : bonds_)
     {
-        // Construct a name for the master term based on the atom types
+        // Construct a name for the common term based on the atom types
         std::vector<std::string_view> names = {bond.i()->atomType()->name(), bond.j()->atomType()->name()};
         std::sort(names.begin(), names.end());
         generateCommonTerm<CommonBond>(
@@ -287,7 +287,7 @@ void Species::reduceToCommonTerms()
     // Angles
     for (auto &angle : angles_)
     {
-        // Construct a name for the master term based on the atom types
+        // Construct a name for the common term based on the atom types
         if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
             generateCommonTerm<CommonAngle>(
                 angle,
@@ -307,7 +307,7 @@ void Species::reduceToCommonTerms()
     // Torsions
     for (auto &torsion : torsions_)
     {
-        // Construct a name for the master term based on the atom types
+        // Construct a name for the common term based on the atom types
         if (torsion.i()->atomType()->name() < torsion.l()->atomType()->name())
             generateCommonTerm<CommonTorsion>(
                 torsion,
@@ -327,7 +327,7 @@ void Species::reduceToCommonTerms()
     // Impropers
     for (auto &improper : impropers_)
     {
-        // Construct a name for the master term based on the atom types
+        // Construct a name for the common term based on the atom types
         std::vector<std::string_view> jkl = {improper.j()->atomType()->name(), improper.k()->atomType()->name(),
                                              improper.l()->atomType()->name()};
         std::sort(jkl.begin(), jkl.end());

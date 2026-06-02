@@ -21,7 +21,7 @@ class CommonBond;
 class CommonAngle;
 class CommonTorsion;
 class CommonImproper;
-class Forcefield;
+class Structure;
 
 // Species Definition
 class Species : public Serialisable<>
@@ -100,8 +100,6 @@ class Species : public Serialisable<>
     std::vector<SpeciesTorsion> torsions_;
     // Array of impropers between atoms in the Species
     std::vector<SpeciesImproper> impropers_;
-    // Whether the attached atoms lists have been created
-    bool attachedAtomListsGenerated_;
 
     public:
     // Return vector of SpeciesBond
@@ -130,12 +128,6 @@ class Species : public Serialisable<>
     // Return the SpeciesImproper between the specified SpeciesAtom indices, if it exists
     OptionalReferenceWrapper<SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
                                                           const SpeciesAtom *l);
-    // Return whether the attached atoms lists have been created
-    bool attachedAtomListsGenerated() const;
-    // Determine angles and torsions from bond connectivity
-    void determineAnglesAndTorsions();
-    // Finalise internal relationships related to geometry once it is defined
-    void finaliseGeometry();
     // Clear forcefield data from intramolecular terms
     void clearIntramolecularForcefieldTerms();
 
@@ -281,12 +273,24 @@ class Species : public Serialisable<>
     /*
      * Creation
      */
+    private:
+    // Whether the attached atoms lists have been created
+    bool attachedAtomListsGenerated_{false};
+
+    private:
+    // Finalise all relationships between intramolecular data
+    void finaliseIntramolecularData(bool recalculateAnglesAndTorsions = true);
+
     public:
     // Create atomic species
     void createAtomic(Elements::Element Z,
                       InteractionPotential<ShortRangeFunctions> potential = {ShortRangeFunctions::Form::Undefined, ""});
     // Load from specified TOML file
     void load(std::string_view tomlFile);
+    // Create from structure
+    void create(const Structure &structure);
+    // Return whether the attached atoms lists have been created
+    bool attachedAtomListsGenerated() const;
 
     /*
      * Serialisation
