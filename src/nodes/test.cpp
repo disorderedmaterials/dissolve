@@ -6,17 +6,20 @@
 TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("ConfigurationInput", "A configuration input", configurationInput_);
+    addInput<Configuration *>("Configuration", "A configuration input", configuration_);
     addInput("CreateConfiguration", "Whether to create the optional configuration on run", createConfiguration_);
     addInput("Number", "A single number", number_);
-    addInput("OptionalNumber", "A single number", optionalNumber_);
     addInput("NumberVector", "A vector of numbers", numberVector_);
+    addInput("OptionalNumber", "A single number", optionalNumber_);
+    addInput("Variant", "A variant", variant_);
 
     // Outputs
+    addOutput<Configuration *>("Configuration", "A configuration output", configuration_);
     addOptionalPointerOutput<Configuration>("OptionalConfiguration", "An optional Configuration", optionalConfiguration_);
     addOutput("Number", "A single number", number_);
     addOutput("NumberVector", "A vector of numbers", numberVector_);
     addOutput("OptionalNumber", "An optional number", optionalNumber_);
+    addOutput("Variant", "A variant", variant_);
 }
 
 /*
@@ -35,6 +38,16 @@ std::string_view TestNode::summary() const { return "A node to allow unit testin
 
 // Return the optional Configuration
 const std::optional<Configuration> &TestNode::optionalConfiguration() const { return optionalConfiguration_; }
+
+// Set the variant
+void TestNode::setVariant(std::variant<Structure, Number, std::string, Configuration *> value)
+{
+    variant_ = value;
+    setUpdateRequired();
+}
+
+// Return the variant
+TestNode::TestVariant TestNode::variant() { return variant_; }
 
 /*
  * Processing & Validity

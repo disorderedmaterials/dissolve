@@ -75,11 +75,11 @@ TEST_F(ParametersTest, OptionalPointerOutput)
 {
     auto createOptA = a_->findInput("CreateConfiguration");
     ASSERT_TRUE(createOptA);
-    auto configInputB = b_->findInput("ConfigurationInput");
+    auto configInputB = b_->findInput("Configuration");
     ASSERT_TRUE(configInputB);
 
     // Create an edge between nodes
-    ASSERT_TRUE(testGraph_.addEdge({"TestA", "OptionalConfiguration", "TestB", "ConfigurationInput"}));
+    ASSERT_TRUE(testGraph_.addEdge({"TestA", "OptionalConfiguration", "TestB", "Configuration"}));
 
     // Inputs to TestB should be valid (there is no optional data yet, but the Edge definitions are correct)
     EXPECT_TRUE(b_->inputsAreValid());
@@ -224,6 +224,140 @@ TEST_F(ParametersTest, VectorInputOutput)
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), std::vector<Number>());
     EXPECT_EQ(numbersB->get<std::vector<Number>>().size(), 0);
     EXPECT_EQ(numbersA->get<std::vector<Number>>(), numbersB->get<std::vector<Number>>());
+}
+
+TEST_F(ParametersTest, VariantToVariant)
+{
+    auto variantOutput = a_->findOutput("Variant");
+    ASSERT_TRUE(variantOutput);
+    auto variantInput = b_->findInput("Variant");
+    ASSERT_TRUE(variantInput);
+
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph_.addEdge({"TestA", "Variant", "TestB", "Variant"}));
+
+    // Set variant on A
+    a_->setVariant(Number(5.0));
+
+    // Run the graph from B
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(a_->versionIndex(), 0);
+    EXPECT_EQ(b_->versionIndex(), 0);
+    ASSERT_NO_THROW(std::get<Number>(b_->variant()));
+    EXPECT_EQ(std::get<Number>(b_->variant()), std::get<Number>(a_->variant()));
+
+    // Set the variant on A to a different type
+    a_->setVariant(Structure());
+
+    // Run the graph from B
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(a_->versionIndex(), 1);
+    EXPECT_EQ(b_->versionIndex(), 1);
+    ASSERT_NO_THROW(std::get<Structure>(b_->variant()));
+}
+
+TEST_F(ParametersTest, VariantToOther)
+{
+    auto variantOutput = a_->findOutput("Variant");
+    ASSERT_TRUE(variantOutput);
+    auto numberInput = b_->findInput("Number");
+    ASSERT_TRUE(numberInput);
+
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph_.addEdge({"TestA", "Variant", "TestB", "Number"}));
+
+    // Set variant on A
+    a_->setVariant(Number(5.0));
+
+    // Run the graph from B
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(a_->versionIndex(), 0);
+    EXPECT_EQ(b_->versionIndex(), 0);
+    ASSERT_NO_THROW(std::get<Number>(a_->variant()));
+    EXPECT_EQ(numberInput->get<Number>(), std::get<Number>(a_->variant()));
+}
+
+TEST_F(ParametersTest, OtherToVariant)
+{
+    auto numberOutput = a_->findOutput("Number");
+    ASSERT_TRUE(numberOutput);
+    auto variantInput = b_->findInput("Variant");
+    ASSERT_TRUE(variantInput);
+
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph_.addEdge({"TestA", "Number", "TestB", "Variant"}));
+
+    // Set value on A
+    numberOutput->set<Number>(Number(5.0));
+
+    // Run the graph from B
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(a_->versionIndex(), 0);
+    EXPECT_EQ(b_->versionIndex(), 0);
+    ASSERT_NO_THROW(std::get<Number>(b_->variant()));
+    EXPECT_EQ(numberOutput->get<Number>(), std::get<Number>(b_->variant()));
+}
+
+TEST_F(ParametersTest, VariantToPointer)
+{
+    auto variantOutput = a_->findOutput("Variant");
+    ASSERT_TRUE(variantOutput);
+    auto configurationInput = b_->findInput("Configuration");
+    ASSERT_TRUE(configurationInput);
+
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph_.addEdge({"TestA", "Variant", "TestB", "Configuration"}));
+
+    // Set variant on A
+    Configuration cfg;
+    a_->setVariant(&cfg);
+
+    // Run the graph from B
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(a_->versionIndex(), 0);
+    EXPECT_EQ(b_->versionIndex(), 0);
+    ASSERT_NO_THROW(std::get<Configuration *>(a_->variant()));
+    EXPECT_EQ(configurationInput->get<Configuration *>(), &cfg);
+}
+
+TEST_F(ParametersTest, PointerToVariant)
+{
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph_.addEdge({"TestA", "Configuration", "TestB", "Variant"}));
+
+    // Run the graph from B - should fail as the pointer in A doesn't exist yet
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Failed);
+    EXPECT_EQ(a_->versionIndex(), 0);
+    EXPECT_EQ(b_->versionIndex(), NodeConstants::InvalidVersion);
+
+    // Now set the configuration input and run again
+    Configuration cfg;
+    a_->setInput("Configuration", &cfg);
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(a_->versionIndex(), 1);
+    EXPECT_EQ(b_->versionIndex(), 0);
+    ASSERT_NO_THROW(std::get<Configuration *>(b_->variant()));
+    EXPECT_EQ(std::get<Configuration *>(b_->variant()), &cfg);
+}
+
+TEST_F(ParametersTest, OptionalPointerToVariant)
+{
+    // Create an edge between nodes
+    ASSERT_TRUE(testGraph_.addEdge({"TestA", "OptionalConfiguration", "TestB", "Variant"}));
+
+    // Run the graph from B - should fail as the optional hasn't been created so there is no pointer to return
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Failed);
+    EXPECT_EQ(a_->versionIndex(), 0);
+    EXPECT_EQ(b_->versionIndex(), NodeConstants::InvalidVersion);
+
+    // Now set the configuration input and run again
+    a_->setInput("CreateConfiguration", true);
+    EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(a_->versionIndex(), 1);
+    EXPECT_EQ(b_->versionIndex(), 0);
+    ASSERT_NO_THROW(std::get<Configuration *>(b_->variant()));
+    ASSERT_TRUE(a_->optionalConfiguration().has_value());
+    EXPECT_EQ(std::get<Configuration *>(b_->variant()), &a_->optionalConfiguration().value());
 }
 
 } // namespace UnitTest

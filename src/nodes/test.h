@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/configuration.h"
+#include "classes/structure.h"
 #include "nodes/node.h"
 
 // Test Node
@@ -27,7 +28,7 @@ class TestNode : public Node
      */
     private:
     // Configuration pointer input
-    Configuration *configurationInput_{nullptr};
+    Configuration *configuration_{nullptr};
     // Optional configuration output
     std::optional<Configuration> optionalConfiguration_;
     // Whether our processing loop creates a valid optional Configuration data
@@ -38,10 +39,17 @@ class TestNode : public Node
     std::vector<Number> numberVector_;
     // Optional number
     std::optional<Number> optionalNumber_;
+    // Variant
+    using TestVariant = std::variant<Structure, Number, std::string, Configuration *>;
+    TestVariant variant_;
 
     public:
     // Return the optional Configuration
     const std::optional<Configuration> &optionalConfiguration() const;
+    // Set the variant
+    void setVariant(TestVariant value);
+    // Return the variant
+    TestVariant variant();
 
     /*
      * Processing & Validity
