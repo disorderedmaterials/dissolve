@@ -217,7 +217,7 @@ std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view
 }; // namespace ParameterFactory
 
 // Put the data of the supplied parameter into the supplied variant
-template <class... Ts> bool put_into(ParameterBase *other, std::variant<Ts...> &x)
+template <class... Ts> bool emplace(ParameterBase *other, std::variant<Ts...> &x)
 {
     return ((other->storedDataType() == typeid(Ts)
              ? (std::cout << std::format("{} matches {}\n", other->storedDataType().name(), typeid(Ts).name()),
@@ -472,7 +472,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         {
             // Variants can be set from any matching type
             printf("TRYING TO SET THE VARIANT...\n");
-            if (put_into(other, data_))
+            if (emplace(other, data_))
             {
                 printf("DID IT!\n");
                 updateAfterSet();
