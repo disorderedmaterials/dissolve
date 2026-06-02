@@ -427,29 +427,29 @@ Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
         // Bond energy
         for (const auto &bond : molN->species()->bonds())
             geometryEnergy.bondEnergy +=
-                bond.energy(box_->minimumDistance(molN->atom(bond.indexI())->r(), molN->atom(bond.indexJ())->r()));
+                bond.energy(box_->minimumDistance(molN->atom(bond.i()->index())->r(), molN->atom(bond.j()->index())->r()));
 
         // Angle energy
         for (const auto &angle : molN->species()->angles())
         {
             geometryEnergy.angleEnergy += angle.energy(box_->angleInRadians(
-                molN->atom(angle.indexI())->r(), molN->atom(angle.indexJ())->r(), molN->atom(angle.indexK())->r()));
+                molN->atom(angle.i()->index())->r(), molN->atom(angle.j()->index())->r(), molN->atom(angle.k()->index())->r()));
         }
 
         // Torsion energy
         for (const auto &torsion : molN->species()->torsions())
         {
-            geometryEnergy.torsionEnergy +=
-                torsion.energy(box_->torsionInRadians(molN->atom(torsion.indexI())->r(), molN->atom(torsion.indexJ())->r(),
-                                                      molN->atom(torsion.indexK())->r(), molN->atom(torsion.indexL())->r()));
+            geometryEnergy.torsionEnergy += torsion.energy(
+                box_->torsionInRadians(molN->atom(torsion.i()->index())->r(), molN->atom(torsion.j()->index())->r(),
+                                       molN->atom(torsion.k()->index())->r(), molN->atom(torsion.l()->index())->r()));
         }
 
         // Improper energy
         for (const auto &imp : molN->species()->impropers())
         {
             geometryEnergy.improperEnergy +=
-                imp.energy(box_->torsionInRadians(molN->atom(imp.indexI())->r(), molN->atom(imp.indexJ())->r(),
-                                                  molN->atom(imp.indexK())->r(), molN->atom(imp.indexL())->r()));
+                imp.energy(box_->torsionInRadians(molN->atom(imp.i()->index())->r(), molN->atom(imp.j()->index())->r(),
+                                                  molN->atom(imp.k()->index())->r(), molN->atom(imp.l()->index())->r()));
         }
     }
 

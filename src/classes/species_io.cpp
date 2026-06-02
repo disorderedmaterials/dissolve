@@ -796,13 +796,13 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             if (bond.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  @{}\n", newPrefix,
-                                       keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
-                                       bond.commonTerm()->name()))
+                                       keywords().keyword(Species::SpeciesKeyword::Bond), bond.i()->index() + 1,
+                                       bond.j()->index() + 1, bond.commonTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {} {}\n", newPrefix,
-                                        keywords().keyword(Species::SpeciesKeyword::Bond), bond.indexI() + 1, bond.indexJ() + 1,
-                                        BondFunctions::forms().keyword(bond.interactionForm()),
+                                        keywords().keyword(Species::SpeciesKeyword::Bond), bond.i()->index() + 1,
+                                        bond.j()->index() + 1, BondFunctions::forms().keyword(bond.interactionForm()),
                                         bond.interactionPotential().parametersAsString()))
                 return false;
         }
@@ -820,13 +820,13 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             if (angle.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
-                                       keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
-                                       angle.indexJ() + 1, angle.indexK() + 1, angle.commonTerm()->name()))
+                                       keywords().keyword(Species::SpeciesKeyword::Angle), angle.i()->index() + 1,
+                                       angle.j()->index() + 1, angle.k()->index() + 1, angle.commonTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
-                                        keywords().keyword(Species::SpeciesKeyword::Angle), angle.indexI() + 1,
-                                        angle.indexJ() + 1, angle.indexK() + 1,
+                                        keywords().keyword(Species::SpeciesKeyword::Angle), angle.i()->index() + 1,
+                                        angle.j()->index() + 1, angle.k()->index() + 1,
                                         AngleFunctions::forms().keyword(angle.interactionForm()),
                                         angle.interactionPotential().parametersAsString()))
                 return false;
@@ -850,8 +850,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             if (torsion.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
-                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.i()->index() + 1,
+                                       torsion.j()->index() + 1, torsion.k()->index() + 1, torsion.l()->index() + 1,
                                        torsion.commonTerm()->name()))
                     return false;
             }
@@ -864,8 +864,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                     return false;
 
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
-                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                       torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                       keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.i()->index() + 1,
+                                       torsion.j()->index() + 1, torsion.k()->index() + 1, torsion.l()->index() + 1,
                                        TorsionFunctions::forms().keyword(torsion.interactionForm()),
                                        torsion.interactionPotential().parametersAsString()))
                     return false;
@@ -889,13 +889,14 @@ bool Species::write(LineParser &parser, std::string_view prefix)
             if (imp.commonTerm())
             {
                 if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  @{}\n", newPrefix,
-                                       keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
-                                       imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1, imp.commonTerm()->name()))
+                                       keywords().keyword(Species::SpeciesKeyword::Improper), imp.i()->index() + 1,
+                                       imp.j()->index() + 1, imp.k()->index() + 1, imp.l()->index() + 1,
+                                       imp.commonTerm()->name()))
                     return false;
             }
             else if (!parser.writeLineF("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
-                                        keywords().keyword(Species::SpeciesKeyword::Improper), imp.indexI() + 1,
-                                        imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
+                                        keywords().keyword(Species::SpeciesKeyword::Improper), imp.i()->index() + 1,
+                                        imp.j()->index() + 1, imp.k()->index() + 1, imp.l()->index() + 1,
                                         TorsionFunctions::forms().keyword(imp.interactionForm()),
                                         imp.interactionPotential().parametersAsString()))
                 return false;

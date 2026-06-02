@@ -46,8 +46,9 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
         switch (index.column())
         {
             case (DataType::IndexI):
+                return bond.i()->index() + 1;
             case (DataType::IndexJ):
-                return bond.index(index.column()) + 1;
+                return bond.j()->index() + 1;
             case (DataType::Form):
                 return bond.commonTerm()
                            ? QString::fromStdString("@" + std::string(bond.commonTerm()->name()))

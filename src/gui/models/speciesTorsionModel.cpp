@@ -45,10 +45,13 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
         switch (index.column())
         {
             case (DataType::IndexI):
+                return torsion.i()->index() + 1;
             case (DataType::IndexJ):
+                return torsion.j()->index() + 1;
             case (DataType::IndexK):
+                return torsion.k()->index() + 1;
             case (DataType::IndexL):
-                return torsion.index(index.column()) + 1;
+                return torsion.l()->index() + 1;
             case (DataType::Form):
                 return torsion.commonTerm()
                            ? QString::fromStdString("@" + std::string(torsion.commonTerm()->name()))

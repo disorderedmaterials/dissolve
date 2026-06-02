@@ -27,12 +27,6 @@ class SpeciesBond : public Bond<SpeciesAtom>, public SpeciesIntra<SpeciesBond, B
     public:
     // Return vector of involved atoms
     std::vector<const SpeciesAtom *> atoms() const override;
-    // Return index (in parent Species) of first SpeciesAtom
-    int indexI() const;
-    // Return index (in parent Species) of second SpeciesAtom
-    int indexJ() const;
-    // Return index (in parent Species) of nth SpeciesAtom
-    int index(int n) const;
     // Return whether SpeciesAtoms match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j) const;
 

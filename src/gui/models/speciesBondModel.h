@@ -6,7 +6,6 @@
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include <QAbstractTableModel>
-#include <QModelIndex>
 
 class SpeciesBondModel : public QAbstractTableModel
 {

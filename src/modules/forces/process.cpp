@@ -147,25 +147,25 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
             for (const auto &bond : molN->species()->bonds())
             {
                 // Grab pointers to atoms involved in bond
-                auto *i = molN->atom(bond.indexI());
-                auto *j = molN->atom(bond.indexJ());
+                auto *i = molN->atom(bond.i()->index());
+                auto *j = molN->atom(bond.j()->index());
 
                 // Determine final forces
                 auto vecij = box->minimumVector(i->r(), j->r());
                 auto r = vecij.magAndNormalise();
                 vecij *= bond.force(r);
 
-                fIntra[offsetN + bond.indexI()] -= vecij;
-                fIntra[offsetN + bond.indexJ()] += vecij;
+                fIntra[offsetN + bond.i()->index()] -= vecij;
+                fIntra[offsetN + bond.j()->index()] += vecij;
             }
 
             // Angle forces
             for (const auto &angle : molN->species()->angles())
             {
                 // Grab pointers to atoms involved in angle
-                auto *i = molN->atom(angle.indexI());
-                auto *j = molN->atom(angle.indexJ());
-                auto *k = molN->atom(angle.indexK());
+                auto *i = molN->atom(angle.i()->index());
+                auto *j = molN->atom(angle.j()->index());
+                auto *k = molN->atom(angle.k()->index());
 
                 // Get vectors 'j-i' and 'j-k'
                 auto vecji = box->minimumVector(j->r(), i->r());
@@ -182,19 +182,19 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
                 forcek *= force / magjk;
 
                 // Store forces
-                fIntra[offsetN + angle.indexI()] += forcei;
-                fIntra[offsetN + angle.indexJ()] -= forcei + forcek;
-                fIntra[offsetN + angle.indexK()] += forcek;
+                fIntra[offsetN + angle.i()->index()] += forcei;
+                fIntra[offsetN + angle.j()->index()] -= forcei + forcek;
+                fIntra[offsetN + angle.k()->index()] += forcek;
             }
 
             // Torsion forces
             for (const auto &torsion : molN->species()->torsions())
             {
                 // Grab pointers to atoms involved in angle
-                auto *i = molN->atom(torsion.indexI());
-                auto *j = molN->atom(torsion.indexJ());
-                auto *k = molN->atom(torsion.indexK());
-                auto *l = molN->atom(torsion.indexL());
+                auto *i = molN->atom(torsion.i()->index());
+                auto *j = molN->atom(torsion.j()->index());
+                auto *k = molN->atom(torsion.k()->index());
+                auto *l = molN->atom(torsion.l()->index());
 
                 // Calculate vectors, ensuring we account for minimum image
                 auto vecji = box->minimumVector(i->r(), j->r());
@@ -206,11 +206,11 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
                 auto du_dphi = torsion.force(tp.phi);
 
                 // Sum forces on Atoms
-                fIntra[offsetN + torsion.indexI()].add(du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(0)),
-                                                       du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(1)),
-                                                       du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(2)));
+                fIntra[offsetN + torsion.i()->index()].add(du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(0)),
+                                                           du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(1)),
+                                                           du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(2)));
 
-                fIntra[offsetN + torsion.indexJ()].add(
+                fIntra[offsetN + torsion.j()->index()].add(
                     du_dphi * (tp.dcos_dxpj.dp(-tp.dxpj_dij.columnAsVec3(0) - tp.dxpj_dkj.columnAsVec3(0)) -
                                tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(0))),
                     du_dphi * (tp.dcos_dxpj.dp(-tp.dxpj_dij.columnAsVec3(1) - tp.dxpj_dkj.columnAsVec3(1)) -
@@ -218,7 +218,7 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
                     du_dphi * (tp.dcos_dxpj.dp(-tp.dxpj_dij.columnAsVec3(2) - tp.dxpj_dkj.columnAsVec3(2)) -
                                tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(2))));
 
-                fIntra[offsetN + torsion.indexK()].add(
+                fIntra[offsetN + torsion.k()->index()].add(
                     du_dphi * (tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(0) - tp.dxpk_dlk.columnAsVec3(0)) +
                                tp.dcos_dxpj.dp(tp.dxpj_dkj.columnAsVec3(0))),
                     du_dphi * (tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(1) - tp.dxpk_dlk.columnAsVec3(1)) +
@@ -226,19 +226,19 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
                     du_dphi * (tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(2) - tp.dxpk_dlk.columnAsVec3(2)) +
                                tp.dcos_dxpj.dp(tp.dxpj_dkj.columnAsVec3(2))));
 
-                fIntra[offsetN + torsion.indexL()].add(du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(0)),
-                                                       du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(1)),
-                                                       du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(2)));
+                fIntra[offsetN + torsion.l()->index()].add(du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(0)),
+                                                           du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(1)),
+                                                           du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(2)));
             }
 
             // Improper forces
             for (const auto &imp : molN->species()->impropers())
             {
                 // Grab pointers to atoms involved in angle
-                auto *i = molN->atom(imp.indexI());
-                auto *j = molN->atom(imp.indexJ());
-                auto *k = molN->atom(imp.indexK());
-                auto *l = molN->atom(imp.indexL());
+                auto *i = molN->atom(imp.i()->index());
+                auto *j = molN->atom(imp.j()->index());
+                auto *k = molN->atom(imp.k()->index());
+                auto *l = molN->atom(imp.l()->index());
 
                 // Calculate vectors, ensuring we account for minimum image
                 auto vecji = box->minimumVector(i->r(), j->r());
@@ -250,11 +250,11 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
                 auto du_dphi = imp.force(tp.phi);
 
                 // Sum forces on Atoms
-                fIntra[offsetN + imp.indexI()].add(du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(0)),
-                                                   du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(1)),
-                                                   du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(2)));
+                fIntra[offsetN + imp.i()->index()].add(du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(0)),
+                                                       du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(1)),
+                                                       du_dphi * tp.dcos_dxpj.dp(tp.dxpj_dij.columnAsVec3(2)));
 
-                fIntra[offsetN + imp.indexJ()].add(
+                fIntra[offsetN + imp.j()->index()].add(
                     du_dphi * (tp.dcos_dxpj.dp(-tp.dxpj_dij.columnAsVec3(0) - tp.dxpj_dkj.columnAsVec3(0)) -
                                tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(0))),
                     du_dphi * (tp.dcos_dxpj.dp(-tp.dxpj_dij.columnAsVec3(1) - tp.dxpj_dkj.columnAsVec3(1)) -
@@ -262,7 +262,7 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
                     du_dphi * (tp.dcos_dxpj.dp(-tp.dxpj_dij.columnAsVec3(2) - tp.dxpj_dkj.columnAsVec3(2)) -
                                tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(2))));
 
-                fIntra[offsetN + imp.indexK()].add(
+                fIntra[offsetN + imp.k()->index()].add(
                     du_dphi * (tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(0) - tp.dxpk_dlk.columnAsVec3(0)) +
                                tp.dcos_dxpj.dp(tp.dxpj_dkj.columnAsVec3(0))),
                     du_dphi * (tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(1) - tp.dxpk_dlk.columnAsVec3(1)) +
@@ -270,9 +270,9 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve)
                     du_dphi * (tp.dcos_dxpk.dp(tp.dxpk_dkj.columnAsVec3(2) - tp.dxpk_dlk.columnAsVec3(2)) +
                                tp.dcos_dxpj.dp(tp.dxpj_dkj.columnAsVec3(2))));
 
-                fIntra[offsetN + imp.indexL()].add(du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(0)),
-                                                   du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(1)),
-                                                   du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(2)));
+                fIntra[offsetN + imp.l()->index()].add(du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(0)),
+                                                       du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(1)),
+                                                       du_dphi * tp.dcos_dxpk.dp(tp.dxpk_dlk.columnAsVec3(2)));
             }
         }
         timer.stop();

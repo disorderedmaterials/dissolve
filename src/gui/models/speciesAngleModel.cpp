@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesAngleModel.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 
 SpeciesAngleModel::SpeciesAngleModel() : angles_(nullptr) {}
 
@@ -44,9 +46,11 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
         switch (index.column())
         {
             case (DataType::IndexI):
+                return angle.i()->index() + 1;
             case (DataType::IndexJ):
+                return angle.j()->index() + 1;
             case (DataType::IndexK):
-                return angle.index(index.column()) + 1;
+                return angle.k()->index() + 1;
             case (DataType::Form):
                 return angle.commonTerm() ? QString::fromStdString("@" + std::string(angle.commonTerm()->name()))
                                           : QString::fromStdString(AngleFunctions::forms().keyword(angle.interactionForm()));

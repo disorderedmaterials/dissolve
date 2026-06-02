@@ -40,14 +40,6 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     SpeciesAtom *k() const;
     // Return vector of involved atoms
     std::vector<const SpeciesAtom *> atoms() const override;
-    // Return index (in parent Species) of first SpeciesAtom
-    int indexI() const;
-    // Return index (in parent Species) of second (central) SpeciesAtom
-    int indexJ() const;
-    // Return index (in parent Species) of third SpeciesAtom
-    int indexK() const;
-    // Return index (in parent Species) of nth SpeciesAtom
-    int index(int n) const;
     // Return whether SpeciesAtom match those specified
     bool matches(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k) const;
 
