@@ -119,7 +119,7 @@ class ParameterBase : public Serialisable<>
     // Assign the value of another parameter to this one
     virtual bool assignDataFromSource(ParameterBase *source) = 0;
     // Assign the value of this parameter to the target one
-    virtual bool assignTo(ParameterBase *destination) = 0;
+    virtual bool assignDataTo(ParameterBase *destination) = 0;
     // The type's representation as a raw int (only valid for int and enum)
     virtual int getAsInt() const { return -1; }
     // Set type's representation as a raw int (only valid for int and enum)
@@ -227,10 +227,23 @@ template <class... Ts> bool emplace_into_variant(ParameterBase *source, std::var
 // Emplace the variant contents into the destination parameter
 template <class... Ts> bool emplace_variant_into(std::variant<Ts...> &source, ParameterBase *destination)
 {
-    auto result = false;
-    ((result = (destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(source)), true : result)) ||
-     ...);
-    return result;
+    return ((destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(source)), true : false) || ...);
+}
+
+// Check for null pointer in variant, ignoring other types
+template <class... Ts> bool variant_has_null_pointer(std::variant<Ts...> &variant)
+{
+    return std::visit(
+        [](auto &&arg) -> bool
+        {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_pointer_v<T>)
+            {
+                return arg == nullptr;
+            }
+            return false;
+        },
+        variant);
 }
 
 // Primary type for a Parameter to a specific DataClass
@@ -472,12 +485,20 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             {
                 setData(source->get<DataClass>());
 
+                // If the variant now contains a pointer type we need to check for nullptr
+                if (variant_has_null_pointer(data_))
+                    return false;
+
                 return true;
             }
 
             // Variants can be set from any matching type
             if (emplace_into_variant(source, data_))
             {
+                // If the variant now contains a pointer type we need to check for nullptr
+                if (variant_has_null_pointer(data_))
+                    return false;
+
                 updateAfterSet();
                 return true;
             }
@@ -499,7 +520,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         {
             // Try setting from the source parameter so we have it's full DataClass information - this is necessary for types
             // like std::variant where we need to know the stored alternative.
-            if (source->assignTo(this))
+            if (source->assignDataTo(this))
             {
                 updateAfterSet();
                 return true;
@@ -509,7 +530,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         return false;
     }
     // Assign the value of this parameter to the target one
-    bool assignTo(ParameterBase *destination) override
+    bool assignDataTo(ParameterBase *destination) override
     {
         if constexpr (is_instance_of_v<DataClass, std::variant>)
         {
