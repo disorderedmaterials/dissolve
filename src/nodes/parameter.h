@@ -123,7 +123,9 @@ class ParameterBase : public Serialisable<>
     // Return whether this datatype provides the specified one
     virtual bool providesDataType(std::type_index id) = 0;
     // Assign the value of another parameter to this one
-    virtual bool assign(ParameterBase *other) = 0;
+    virtual bool assignDataFromSource(ParameterBase *source) = 0;
+    // Assign the value of this parameter to the target one
+    virtual bool assignTo(ParameterBase *destination) = 0;
     // The type's representation as a raw int (only valid for int and enum)
     virtual int getAsInt() const { return -1; }
     // Set type's representation as a raw int (only valid for int and enum)
@@ -224,7 +226,24 @@ template <class... Ts> bool emplace(ParameterBase *other, std::variant<Ts...> &x
                 x = other->get<Ts>()),
              true : false) ||
             ...);
-};
+}
+
+// Return the alternative index matching the type specified (if any)
+template <class... Ts> int alternative_index(std::type_index id, std::variant<Ts...> &x)
+{
+    auto index = -1;
+    auto result = -1;
+    ((result = (id == typeid(Ts)) ? index : result, ++result) || ...);
+    return result;
+}
+
+// Return the alternative index matching the type specified (if any)
+template <class... Ts> int emplace_into(std::variant<Ts...> &x, ParameterBase *destination)
+{
+    auto result = false;
+    ((result = (destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(x)), true : result)) || ...);
+    return result;
+}
 
 // Primary type for a Parameter to a specific DataClass
 template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
@@ -306,9 +325,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             data_ = value;
         else if constexpr (std::is_enum_v<DataClass>)
             data_ = static_cast<DataClass>(value);
-        else
-            Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
-        return;
+
+        Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
     }
 
     /*
@@ -404,34 +422,25 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
         return false;
     }
-    // Assign the value of another parameter to this one.
-    bool assign(ParameterBase *other) override
+    // Assign the value of another parameter to this one
+    bool assignDataFromSource(ParameterBase *source) override
     {
-        std::cout << std::format("Assign source output {} ({}) to target input {} ({})\n", name_, storedDataType_.name(),
-                                 other->name(), other->storedDataType().name());
-        if constexpr (std::is_pointer<DataClass>())
-        {
-            // If we are a pointer type, getting a nullptr is disallowed
-            setData(other->get<DataClass>());
-
-            return data_ != nullptr;
-        }
-        else if constexpr (is_instance_of_v<DataClass, std::vector>)
+        if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
             // If we represent a std::vector container we can conditionally check for a single data item being passed
 
             // Vector to vector
-            if (storedDataType_ == other->storedDataType())
+            if (storedDataType_ == source->storedDataType())
             {
-                setData(other->get<DataClass>());
+                setData(source->get<DataClass>());
 
                 return true;
             }
 
             // Single value to vector
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            if (std::type_index(typeid(typename DataClass::value_type)) == source->storedDataType())
             {
-                data_.push_back(other->get<typename DataClass::value_type>());
+                data_.push_back(source->get<typename DataClass::value_type>());
 
                 updateAfterSet();
 
@@ -443,25 +452,25 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             // Optional arguments can be set from the base class (i.e. with no std::optional container) as well as std::optional
 
             // Optional to optional
-            if (storedDataType_ == other->storedDataType())
+            if (storedDataType_ == source->storedDataType())
             {
-                setData(other->get<DataClass>());
+                setData(source->get<DataClass>());
 
                 return true;
             }
 
             // Base type into std::optional
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            if (std::type_index(typeid(typename DataClass::value_type)) == source->storedDataType())
             {
-                setData(other->get<typename DataClass::value_type>());
+                setData(source->get<typename DataClass::value_type>());
 
                 return true;
             }
         }
-        else if (typeid(std::optional<DataClass>) == other->storedDataType())
+        else if (typeid(std::optional<DataClass>) == source->storedDataType())
         {
             // Data types can be set from a std::optional containing the same type
-            auto otherData = other->get<std::optional<DataClass>>();
+            auto otherData = source->get<std::optional<DataClass>>();
             if (otherData.has_value())
             {
                 setData(*otherData);
@@ -471,21 +480,59 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         else if constexpr (is_instance_of_v<DataClass, std::variant>)
         {
             // Variants can be set from any matching type
-            printf("TRYING TO SET THE VARIANT...\n");
-            if (emplace(other, data_))
+            if (emplace(source, data_))
             {
-                printf("DID IT!\n");
                 updateAfterSet();
                 return true;
             }
-            else
-                printf("NO SETTING THAT!\n");
+        }
+        else if (storedDataType_ == source->storedDataType())
+        {
+            // General case - if the stored data types are the same then we can just do a straight assignment
+            setData(source->get<DataClass>());
+
+            // If we are a pointer type, getting a nullptr is disallowed
+            if constexpr (std::is_pointer<DataClass>())
+            {
+                return data_ != nullptr;
+            }
+
+            return true;
+        }
+        else
+        {
+            // Try setting from the source parameter so we have it's full DataClass information - this is necessary for types
+            // like std::variant where we need to know the stored alternative.
+            if (source->assignTo(this))
+            {
+                updateAfterSet();
+                return true;
+            }
         }
 
-        // General case - if the stored data types are the same then we can just do a straight assignment
-        if (storedDataType_ == other->storedDataType())
+        return false;
+    }
+    // Assign the value of this parameter to the target one
+    bool assignTo(ParameterBase *destination) override
+    {
+        if constexpr (is_instance_of_v<DataClass, std::variant>)
         {
-            setData(other->get<DataClass>());
+            // Check that we actually contain a valid value
+            // TODO
+
+            // Check that our stored alternative is a match for the destination type
+            if (emplace_into(data_, destination))
+            {
+                // TODO
+                // destination->updateAfterSet();
+                return true;
+            }
+        }
+        else if (storedDataType_ == destination->storedDataType())
+        {
+            // General case - if the stored data types are the same then we can just do a straight assignment
+            destination->set<DataClass>(data_);
+
             return true;
         }
 

@@ -221,7 +221,7 @@ NodeConstants::ProcessResult Edge::pull()
         }
 
         // Copy the parameter data over
-        if (!targetInput_.assign(&sourceOutput_))
+        if (!targetInput_.assignDataFromSource(&sourceOutput_))
         {
             Messenger::error("Failed to assign value from {}@{} to {}@{}.\n", sourceOutput_.name(), sourceNode_.name(),
                              targetInput_.name(), targetNode_.name());
@@ -241,7 +241,7 @@ NodeConstants::ProcessResult Edge::pull()
 NodeConstants::ProcessResult LoopEdge::pull()
 {
     // Copy the parameter data over
-    if (!analogue().assign(&sourceOutput_))
+    if (!analogue().assignDataFromSource(&sourceOutput_))
         return NodeConstants::ProcessResult::Failed;
 
     sourceNode().setUpdateRequired();

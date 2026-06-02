@@ -127,11 +127,11 @@ TEST(ParametersTest, VectorParameter)
     number1->set(Number{1.0});
 
     // Assign the number node to the vector
-    EXPECT_TRUE(numbersA->assign(number1.get()));
+    EXPECT_TRUE(numbersA->assignDataFromSource(number1.get()));
 
     // Assign another number
     number1->set(Number{4.0});
-    EXPECT_TRUE(numbersA->assign(number1.get()));
+    EXPECT_TRUE(numbersA->assignDataFromSource(number1.get()));
 
     // Check vector contents
     ASSERT_EQ(numbersA->get<std::vector<Number>>().size(), 5);
