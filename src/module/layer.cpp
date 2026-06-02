@@ -5,7 +5,6 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "module/module.h"
-#include "modules/energy/energy.h"
 #include "modules/registry.h"
 
 /*
@@ -72,11 +71,12 @@ bool ModuleLayer::canRun(GenericList &processingModuleData) const
 
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::EnergyStability))
     {
-        if (EnergyModule::nUnstable(processingModuleData, cfgs) != 0)
-        {
-            Messenger::print("One or more configurations have unstable energy, so the layer will not run.\n");
-            return false;
-        }
+        // if (EnergyModule::nUnstable(processingModuleData, cfgs) != 0)
+        // {
+        //     Messenger::print("One or more configurations have unstable energy, so the layer will not run.\n");
+        //     return false;
+        // }
+        // TODO DISSOLVE2
     }
 
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))

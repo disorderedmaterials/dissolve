@@ -4,20 +4,19 @@
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "math/data1D.h"
-#include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
 
 // Run set-up stage
 bool EPSRManagerModule::setUp(Dissolve &dissolve, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Notify targeted EPSR modules that they should not apply potentials
-    for (auto *module : target_)
-    {
-        auto *epsrModule = dynamic_cast<EPSRModule *>(module);
-        Messenger::print("EPSRManager: Notifying '{}' that it should not apply generated potentials.\n", epsrModule->name());
-        epsrModule->setApplyPotentials(false);
-    }
-
+    // for (auto *module : target_)
+    // {
+    //     auto *epsrModule = dynamic_cast<EPSRModule *>(module);
+    //     Messenger::print("EPSRManager: Notifying '{}' that it should not apply generated potentials.\n", epsrModule->name());
+    //     epsrModule->setApplyPotentials(false);
+    // }
+    // TODO DISSOLVE2
     return true;
 }
 
@@ -37,14 +36,15 @@ Module::ExecutionResult EPSRManagerModule::process(Dissolve &dissolve)
     DoubleKeyedMap<double> counts;
     for (auto *module : target_)
     {
-        auto *epsrModule = dynamic_cast<EPSRModule *>(module);
-        auto eps = epsrModule->empiricalPotentials();
-
-        for (auto &&[at1, at2, potential] : eps)
-        {
-            newPotentials.potentials()[{at1->name(), at2->name()}] += potential;
-            counts[{at1->name(), at2->name()}] += 1.0;
-        }
+        // auto *epsrModule = dynamic_cast<EPSRModule *>(module);
+        // auto eps = epsrModule->empiricalPotentials();
+        //
+        // for (auto &&[at1, at2, potential] : eps)
+        // {
+        //     newPotentials.potentials()[{at1->name(), at2->name()}] += potential;
+        //     counts[{at1->name(), at2->name()}] += 1.0;
+        // }
+        // TODO DISSOLVE2
     }
 
     // Normalise potentials to counts

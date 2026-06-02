@@ -9,16 +9,11 @@
 #include "modules/clustering/clustering.h"
 #include "modules/compare/compare.h"
 #include "modules/dAngle/dAngle.h"
-#include "modules/energy/energy.h"
-#include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
-#include "modules/forces/forces.h"
 #include "modules/gr/gr.h"
 #include "modules/histogramCN/histogramCN.h"
 #include "modules/importTrajectory/importTrajectory.h"
-#include "modules/intraShake/intraShake.h"
-#include "modules/md/md.h"
 #include "modules/modifierOSites/modifierOSites.h"
 #include "modules/molShake/molShake.h"
 #include "modules/moleculeTorsion/moleculeTorsion.h"
@@ -44,22 +39,14 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ClusteringModule>(ModuleTypes::Clustering, "Analyse clustering between sites", "Analysis");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
     registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
-    registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
-    registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
-                                 "Forcefield");
     registerProducer<EPSRManagerModule>(ModuleTypes::EPSRManager, "Manage EPSR modules with more control", "Forcefield");
     registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");
-    registerProducer<ForcesModule>(ModuleTypes::Forces, "Calculate the total atomic forces within a Configuration",
-                                   "Forcefield");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
     registerProducer<HistogramCNModule>(ModuleTypes::HistogramCN, "Produce a histogram of Coordination numbers between sites",
                                         "Analysis");
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");
-    registerProducer<IntraShakeModule>(ModuleTypes::IntraShake,
-                                       "Perform Monte Carlo shakes on intramolecular terms within molecules", "Evolution");
-    registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
     registerProducer<MoleculeTorsionModule>(ModuleTypes::MoleculeTorsion,
                                             "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
