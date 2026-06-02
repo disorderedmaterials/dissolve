@@ -51,7 +51,6 @@ AtomType *Species::addAtomType(Elements::Element Z, std::string_view name)
     // Create atom type and set data
     auto newAtomType = std::make_shared<AtomType>(Z, uniqueName);
     atomTypes_.push_back(newAtomType);
-    newAtomType->setIndex(atomTypes_.size() - 1);
 
     return newAtomType.get();
 }
@@ -84,6 +83,18 @@ KeyedVector<const AtomType *, int> Species::atomTypePopulations() const
             result[i.atomType()] += 1;
 
     return result;
+}
+
+// Return atom type index map
+std::map<const AtomType *, int> Species::atomTypeIndexMap() const
+{
+    auto populations = atomTypePopulations();
+
+    std::map<const AtomType *, int> typeMap;
+    for (auto n = 0; n < populations.size(); ++n)
+        typeMap[populations.key(n)] = n;
+
+    return typeMap;
 }
 
 // Clear AtomType assignments for all atoms
@@ -127,9 +138,24 @@ double Species::totalCharge(bool useAtomTypes) const
         return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i) { return acc + i.q(); });
 }
 
-// Apply random noise to atoms
-void Species::randomiseCoordinates(double maxDisplacement)
+// Update type indices per Atom
+void Species::updateTypeIndexing()
 {
-    for (auto &i : atoms_)
-        i += Vector3::randomUnit() * maxDisplacement;
+    // Are we currently up-to-date
+    if (typeIndicesValid_)
+        return;
+
+    // Get the atom type index map
+    auto typeMap = atomTypeIndexMap();
+
+    // Loop over atoms
+    for (auto &atom : atoms_)
+    {
+        if (atom.isPresence(AtomConstants::Presence::Physical))
+            atom.setAtomTypeIndex(typeMap[atom.atomType()]);
+        else
+            atom.setAtomTypeIndex(AtomConstants::TypeIndex::Ignore);
+    }
+
+    typeIndicesValid_ = true;
 }

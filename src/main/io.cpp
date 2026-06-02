@@ -139,7 +139,6 @@ SerialisedValue Dissolve::serialisePairPotentials() const
         {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(PairPotential::coulombTruncationScheme())},
         {"shortRangeTruncation",
          PairPotential::shortRangeTruncationSchemes().serialise(PairPotential::shortRangeTruncationScheme())}};
-    Serialisable::fromVectorToTable(coreData_.atomTypes(), "atomTypes", pairPotentials);
     if (!useCombinationRules_)
     {
         pairPotentials["useCombinationRules"] = false;
@@ -187,25 +186,23 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
     PairPotential::setShortRangeTruncationScheme(PairPotential::shortRangeTruncationSchemes().deserialise(
         toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted")));
 
-    toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
-          { coreData().atomTypes().emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
-
     useCombinationRules_ = toml::find_or<bool>(node, "useCombinationRules", true);
-    if (!useCombinationRules_)
-    {
-        Serialisable::toVector(
-            node, "potentials",
-            [&](const SerialisedValue &potData)
-            {
-                // Get atom types
-                auto at1 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeI"));
-                auto at2 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeJ"));
-                if (!at1 || !at2)
-                    throw(toml::type_error("Non-existent atom type(s) used in pair potential.", potData.location()));
-                auto *pot = addPairPotential(at1, at2);
-                pot->deserialise(potData);
-            });
-    }
+    // if (!useCombinationRules_)
+    // {
+    //     Serialisable::toVector(
+    //         node, "potentials",
+    //         [&](const SerialisedValue &potData)
+    //         {
+    //             // Get atom types
+    //             auto at1 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeI"));
+    //             auto at2 = coreData_.findAtomType(toml::find<std::string>(potData, "atomTypeJ"));
+    //             if (!at1 || !at2)
+    //                 throw(toml::type_error("Non-existent atom type(s) used in pair potential.", potData.location()));
+    //             auto *pot = addPairPotential(at1, at2);
+    //             pot->deserialise(potData);
+    //         });
+    // }
+    // TODO DISSOLVE2
 }
 
 // Read values from a serialisable value
@@ -353,13 +350,13 @@ bool Dissolve::saveInput(std::string_view filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (const auto &atomType : coreData_.atomTypes())
-        if (!parser.writeLineF("  {}  {}  {}  {:12.6e}  {}  {}\n",
-                               PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
-                               atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
-                               ShortRangeFunctions::forms().keyword(atomType->interactionPotential().form()),
-                               atomType->interactionPotential().parametersAsString()))
-            return false;
+    // for (const auto &atomType : coreData_.atomTypes())
+    //     if (!parser.writeLineF("  {}  {}  {}  {:12.6e}  {}  {}\n",
+    //                            PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
+    //                            atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
+    //                            ShortRangeFunctions::forms().keyword(atomType->interactionPotential().form()),
+    //                            atomType->interactionPotential().parametersAsString()))
+    //         return false;
 
     // Pair potentials (if we are not using combination rules)
     if (!useCombinationRules_)

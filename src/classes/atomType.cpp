@@ -49,12 +49,6 @@ void AtomType::setCharge(double q) { charge_ = q; }
 // Return atomic charge
 double AtomType::charge() const { return charge_; }
 
-// Set index of this type in the main type index
-void AtomType::setIndex(int id) { index_ = id; }
-
-// Return index of this type in the main type index
-int AtomType::index() const { return index_; }
-
 // Return whether our parameters are the same as those provided
 bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge) const
 {

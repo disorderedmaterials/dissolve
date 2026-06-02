@@ -30,30 +30,6 @@ class CoreData
     void clear();
 
     /*
-     * Atom Types
-     */
-    private:
-    // Core AtomTypes list
-    std::vector<std::shared_ptr<AtomType>> atomTypes_;
-
-    public:
-    // Add new AtomType
-    std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
-    // Remove specified AtomType
-    void removeAtomType(std::shared_ptr<AtomType> &at);
-    // Return number of AtomTypes in list
-    int nAtomTypes() const;
-    // Return core AtomTypes list
-    std::vector<std::shared_ptr<AtomType>> &atomTypes();
-    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
-    // Return nth AtomType in list
-    std::shared_ptr<AtomType> atomType(int n);
-    // Search for AtomType by name
-    std::shared_ptr<AtomType> findAtomType(std::string_view name) const;
-    // Clear all atom types
-    void clearAtomTypes();
-
-    /*
      * Species
      */
     private:

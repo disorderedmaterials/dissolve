@@ -80,7 +80,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
+    auto *pp = potentialMatrix_[{i->atomTypeIndex(), j->atomTypeIndex()}];
     return pp->energy(r) + (PairPotential::includeCoulombPotential() ? 0 : pp->analyticCoulombEnergy(i->q() * j->q(), r));
 }
 
@@ -92,7 +92,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
+    auto *pp = potentialMatrix_[{i->atomTypeIndex(), j->atomTypeIndex()}];
     return PairPotential::includeCoulombPotential()
                ? pp->energy(r, elecScale, srScale)
                : pp->energy(r) * srScale + pp->analyticCoulombEnergy(i->q() * j->q(), r) * elecScale;
@@ -156,7 +156,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r)
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
+    auto *pp = potentialMatrix_[{i->atomTypeIndex(), j->atomTypeIndex()}];
     return PairPotential::includeCoulombPotential() ? pp->force(r)
                                                     : pp->force(r) + pp->analyticCoulombForce(i->q() * j->q(), r);
 }
@@ -169,7 +169,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r,
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
+    auto *pp = potentialMatrix_[{i->atomTypeIndex(), j->atomTypeIndex()}];
     return PairPotential::includeCoulombPotential()
                ? pp->force(r, elecScale, srScale)
                : pp->force(r) * srScale + pp->analyticCoulombForce(i->q() * j->q(), r) * elecScale;

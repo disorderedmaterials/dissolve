@@ -122,80 +122,83 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
             break;
             case (PairPotentialsBlock::PairPotentialKeyword):
             {
-                // Check atom types
-                if (!coreData.findAtomType(parser.argsv(1)) || !coreData.findAtomType(parser.argsv(2)))
-                {
-                    Messenger::error("Unrecognised atom type(s) '{}' / '{}' referenced in PairPotential.\n", parser.argsv(1),
-                                     parser.argsv(2));
-                    errorsEncountered = true;
-                    break;
-                }
-
-                // Check / set interaction potential
-                if (!Functions1D::forms().isValid(parser.argsv(3)))
-                {
-                    Functions1D::forms().errorAndPrintValid(parser.argsv(3));
-                    errorsEncountered = true;
-                    break;
-                }
-                InteractionPotential<Functions1D> potential(Functions1D::forms().enumeration(parser.argsv(3)));
-                if (!potential.parseParameters(parser, 4))
-                {
-                    errorsEncountered = true;
-                    break;
-                }
-
-                pot =
-                    dissolve->addPairPotential(coreData.findAtomType(parser.argsv(1)), coreData.findAtomType(parser.argsv(2)));
-                pot->setInteractionPotential(potential);
+                // // Check atom types
+                // if (!coreData.findAtomType(parser.argsv(1)) || !coreData.findAtomType(parser.argsv(2)))
+                // {
+                //     Messenger::error("Unrecognised atom type(s) '{}' / '{}' referenced in PairPotential.\n", parser.argsv(1),
+                //                      parser.argsv(2));
+                //     errorsEncountered = true;
+                //     break;
+                // }
+                //
+                // // Check / set interaction potential
+                // if (!Functions1D::forms().isValid(parser.argsv(3)))
+                // {
+                //     Functions1D::forms().errorAndPrintValid(parser.argsv(3));
+                //     errorsEncountered = true;
+                //     break;
+                // }
+                // InteractionPotential<Functions1D> potential(Functions1D::forms().enumeration(parser.argsv(3)));
+                // if (!potential.parseParameters(parser, 4))
+                // {
+                //     errorsEncountered = true;
+                //     break;
+                // }
+                //
+                // pot =
+                //     dissolve->addPairPotential(coreData.findAtomType(parser.argsv(1)),
+                //     coreData.findAtomType(parser.argsv(2)));
+                // pot->setInteractionPotential(potential);
+                // TODO DISSOLVE2
             }
             break;
             case (PairPotentialsBlock::ParametersKeyword):
-                // Sanity check element
-                Z = Elements::element(parser.argsv(2));
-                if (Z == Elements::Unknown)
-                {
-                    Messenger::error("Unknown element '{}' given for atom type '{}' in PairPotentials block.\n",
-                                     parser.argsv(2), parser.argsv(1));
-                    errorsEncountered = true;
-                    break;
-                }
-
-                // Find / create AtomType and check element...
-                at1 = coreData.findAtomType(parser.argsv(1));
-                if (!at1)
-                {
-                    Messenger::warn("Unknown atom type '{}' referenced in PairPotentials block - creating "
-                                    "it now...\n",
-                                    parser.argsv(1));
-                    at1 = coreData.addAtomType(Z);
-                    at1->setName(parser.argsv(1));
-                }
-                else if (Z != at1->Z())
-                {
-                    Messenger::error("Element '{}' does not match that for the existing atom type '{}' in "
-                                     "PairPotentials block.\n",
-                                     parser.argsv(2), parser.argsv(1));
-                    errorsEncountered = true;
-                    break;
-                }
-
-                // Set charge value
-                at1->setCharge(parser.argd(3));
-
-                // Get short-range type
-                if (!ShortRangeFunctions::forms().isValid(parser.argsv(4)))
-                {
-                    ShortRangeFunctions::forms().errorAndPrintValid(parser.argsv(4));
-                    errorsEncountered = true;
-                    break;
-                }
-                at1->interactionPotential().setForm(ShortRangeFunctions::forms().enumeration(parser.argsv(4)));
-                if (!at1->interactionPotential().parseParameters(parser, 5))
-                {
-                    errorsEncountered = true;
-                    break;
-                }
+                // // Sanity check element
+                // Z = Elements::element(parser.argsv(2));
+                // if (Z == Elements::Unknown)
+                // {
+                //     Messenger::error("Unknown element '{}' given for atom type '{}' in PairPotentials block.\n",
+                //                      parser.argsv(2), parser.argsv(1));
+                //     errorsEncountered = true;
+                //     break;
+                // }
+                //
+                // // Find / create AtomType and check element...
+                // at1 = coreData.findAtomType(parser.argsv(1));
+                // if (!at1)
+                // {
+                //     Messenger::warn("Unknown atom type '{}' referenced in PairPotentials block - creating "
+                //                     "it now...\n",
+                //                     parser.argsv(1));
+                //     at1 = coreData.addAtomType(Z);
+                //     at1->setName(parser.argsv(1));
+                // }
+                // else if (Z != at1->Z())
+                // {
+                //     Messenger::error("Element '{}' does not match that for the existing atom type '{}' in "
+                //                      "PairPotentials block.\n",
+                //                      parser.argsv(2), parser.argsv(1));
+                //     errorsEncountered = true;
+                //     break;
+                // }
+                //
+                // // Set charge value
+                // at1->setCharge(parser.argd(3));
+                //
+                // // Get short-range type
+                // if (!ShortRangeFunctions::forms().isValid(parser.argsv(4)))
+                // {
+                //     ShortRangeFunctions::forms().errorAndPrintValid(parser.argsv(4));
+                //     errorsEncountered = true;
+                //     break;
+                // }
+                // at1->interactionPotential().setForm(ShortRangeFunctions::forms().enumeration(parser.argsv(4)));
+                // if (!at1->interactionPotential().parseParameters(parser, 5))
+                // {
+                //     errorsEncountered = true;
+                //     break;
+                // }
+                // TODO DISSOLVE2
                 break;
             case (PairPotentialsBlock::RangeKeyword):
                 PairPotential::setRange(parser.argd(1));
