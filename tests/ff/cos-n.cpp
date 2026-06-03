@@ -18,7 +18,7 @@ TEST(CosNTorsionEnergyTest, POE)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/poe64_torsions/torsions-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -43,7 +43,7 @@ TEST(CosNTorsionForcesTest, POE)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/poe64_torsions/torsions-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -72,7 +72,7 @@ TEST(CosNTorsionEnergyTest, Py4OHNTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_torsions/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -98,7 +98,7 @@ TEST(CosNTorsionForcesTest, Py4OHNTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_torsions/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -127,7 +127,7 @@ TEST(CosNImproperEnergyTest, Py4OHNTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_impropers/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -153,7 +153,7 @@ TEST(CosNImproperForcesTest, Py4OHNTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_impropers/py4oh-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -182,7 +182,7 @@ TEST(CosNTorsionEnergyTest, Py5NTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_torsions/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -208,7 +208,7 @@ TEST(CosNTorsionForcesTest, Py5NTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_torsions/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -237,7 +237,7 @@ TEST(CosNImproperEnergyTest, Py5NTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_impropers/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
@@ -263,7 +263,7 @@ TEST(CosNImproperForcesTest, Py5NTf2)
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_impropers/py5-ntf2-final.str"));
 
     // Adjust pair potential properties
-    PairPotential::setRange(11.09, 1.0e-4);
+    PairPotential::setRange(9.0, 5.0e-3);
 
     // Run the graph from the head node to set up the configuration
     ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
