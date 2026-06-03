@@ -112,6 +112,8 @@ class ParameterBase : public Serialisable<>
     void clearDataInParent() const;
     // Mark edges for re-pull in parent node
     void markIncomingEdgesForPull() const;
+    // Perform any updates after a successful setData()
+    void updateAfterSet() const;
     // Return whether this datatype accepts the specified one
     virtual bool acceptsDataFromSource(ParameterBase *source) = 0;
     // Return whether this datatype provides the specified one
@@ -124,7 +126,6 @@ class ParameterBase : public Serialisable<>
     virtual int getAsInt() const { return -1; }
     // Set type's representation as a raw int (only valid for int and enum)
     virtual void setFromInt(int value) { return; }
-
     // Get the parameter's value
     template <typename DataClass> DataClass get()
     {
@@ -351,19 +352,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Parameter proxy data (if a ParameterLink)
     std::shared_ptr<ParameterProxy<DataClass>> proxyData_;
 
-    private:
-    // Perform any updates after a successful setData()
-    void updateAfterSet() const
-    {
-        // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
-        if (!flags_.isSet(NoUpdate))
-            setParentUpdateRequired();
-
-        // Setting some parameters forces any local data to be cleared
-        if (flags_.isSet(ClearData))
-            clearDataInParent();
-    }
-
     public:
     // Return whether the contained data is an instance of std::vector
     bool isVector() const override
@@ -541,8 +529,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             // try to emplace the variant's data into the destination parameter.
             if (emplace_variant_into(data_, destination))
             {
-                // TODO
-                // destination->updateAfterSet();
+                destination->updateAfterSet();
+
                 return true;
             }
         }
