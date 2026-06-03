@@ -197,7 +197,7 @@ std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view
 template <class... Ts> class VariantParameterData
 {
     public:
-    // Varaint data
+    // Variant data
     std::variant<std::monostate, Ts...> data;
 
     // Return whether the type_index provided matches one of the supplied variant's allowed types

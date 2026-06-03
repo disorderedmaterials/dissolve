@@ -40,14 +40,18 @@ class TestNode : public Node
     // Optional number
     std::optional<Number> optionalNumber_;
     // Variant
-    using TestVariant = std::variant<Structure, Number, std::string, Configuration *>;
+    using TestVariant = VariantParameterData<Structure, Number, std::string, Configuration *>;
     TestVariant variant_;
 
     public:
     // Return the optional Configuration
     const std::optional<Configuration> &optionalConfiguration() const;
     // Set the variant
-    void setVariant(TestVariant value);
+    template <class T> void setVariant(T value)
+    {
+        variant_.data = value;
+        setUpdateRequired();
+    }
     // Return the variant
     TestVariant variant();
 

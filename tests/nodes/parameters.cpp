@@ -243,8 +243,8 @@ TEST_F(ParametersTest, VariantToVariant)
     EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(a_->versionIndex(), 0);
     EXPECT_EQ(b_->versionIndex(), 0);
-    ASSERT_NO_THROW(std::get<Number>(b_->variant()));
-    EXPECT_EQ(std::get<Number>(b_->variant()), std::get<Number>(a_->variant()));
+    ASSERT_NO_THROW(std::get<Number>(b_->variant().data));
+    EXPECT_EQ(std::get<Number>(b_->variant().data), std::get<Number>(a_->variant().data));
 
     // Set the variant on A to a different type
     a_->setVariant(Structure());
@@ -253,7 +253,7 @@ TEST_F(ParametersTest, VariantToVariant)
     EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(a_->versionIndex(), 1);
     EXPECT_EQ(b_->versionIndex(), 1);
-    ASSERT_NO_THROW(std::get<Structure>(b_->variant()));
+    ASSERT_NO_THROW(std::get<Structure>(b_->variant().data));
 }
 
 TEST_F(ParametersTest, VariantToOther)
@@ -273,8 +273,8 @@ TEST_F(ParametersTest, VariantToOther)
     EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(a_->versionIndex(), 0);
     EXPECT_EQ(b_->versionIndex(), 0);
-    ASSERT_NO_THROW(std::get<Number>(a_->variant()));
-    EXPECT_EQ(numberInput->get<Number>(), std::get<Number>(a_->variant()));
+    ASSERT_NO_THROW(std::get<Number>(a_->variant().data));
+    EXPECT_EQ(numberInput->get<Number>(), std::get<Number>(a_->variant().data));
 }
 
 TEST_F(ParametersTest, OtherToVariant)
@@ -294,8 +294,8 @@ TEST_F(ParametersTest, OtherToVariant)
     EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(a_->versionIndex(), 0);
     EXPECT_EQ(b_->versionIndex(), 0);
-    ASSERT_NO_THROW(std::get<Number>(b_->variant()));
-    EXPECT_EQ(numberOutput->get<Number>(), std::get<Number>(b_->variant()));
+    ASSERT_NO_THROW(std::get<Number>(b_->variant().data));
+    EXPECT_EQ(numberOutput->get<Number>(), std::get<Number>(b_->variant().data));
 }
 
 TEST_F(ParametersTest, VariantToPointer)
@@ -316,7 +316,7 @@ TEST_F(ParametersTest, VariantToPointer)
     EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(a_->versionIndex(), 0);
     EXPECT_EQ(b_->versionIndex(), 0);
-    ASSERT_NO_THROW(std::get<Configuration *>(a_->variant()));
+    ASSERT_NO_THROW(std::get<Configuration *>(a_->variant().data));
     EXPECT_EQ(configurationInput->get<Configuration *>(), &cfg);
 }
 
@@ -336,8 +336,8 @@ TEST_F(ParametersTest, PointerToVariant)
     EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(a_->versionIndex(), 1);
     EXPECT_EQ(b_->versionIndex(), 0);
-    ASSERT_NO_THROW(std::get<Configuration *>(b_->variant()));
-    EXPECT_EQ(std::get<Configuration *>(b_->variant()), &cfg);
+    ASSERT_NO_THROW(std::get<Configuration *>(b_->variant().data));
+    EXPECT_EQ(std::get<Configuration *>(b_->variant().data), &cfg);
 }
 
 TEST_F(ParametersTest, OptionalPointerToVariant)
@@ -355,9 +355,9 @@ TEST_F(ParametersTest, OptionalPointerToVariant)
     EXPECT_EQ(b_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(a_->versionIndex(), 1);
     EXPECT_EQ(b_->versionIndex(), 0);
-    ASSERT_NO_THROW(std::get<Configuration *>(b_->variant()));
+    ASSERT_NO_THROW(std::get<Configuration *>(b_->variant().data));
     ASSERT_TRUE(a_->optionalConfiguration().has_value());
-    EXPECT_EQ(std::get<Configuration *>(b_->variant()), &a_->optionalConfiguration().value());
+    EXPECT_EQ(std::get<Configuration *>(b_->variant().data), &a_->optionalConfiguration().value());
 }
 
 } // namespace UnitTest

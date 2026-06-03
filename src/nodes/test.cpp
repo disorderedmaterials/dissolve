@@ -39,13 +39,6 @@ std::string_view TestNode::summary() const { return "A node to allow unit testin
 // Return the optional Configuration
 const std::optional<Configuration> &TestNode::optionalConfiguration() const { return optionalConfiguration_; }
 
-// Set the variant
-void TestNode::setVariant(std::variant<Structure, Number, std::string, Configuration *> value)
-{
-    variant_ = value;
-    setUpdateRequired();
-}
-
 // Return the variant
 TestNode::TestVariant TestNode::variant() { return variant_; }
 
