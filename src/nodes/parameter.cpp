@@ -4,10 +4,8 @@
 #include "nodes/parameter.h"
 #include "nodes/node.h"
 
-ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType,
-                             std::type_index contextDataType)
-    : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType),
-      contextDataType_(contextDataType)
+ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType)
+    : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType)
 {
 }
 
