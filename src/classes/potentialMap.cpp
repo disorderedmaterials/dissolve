@@ -15,24 +15,9 @@ PotentialMap::PotentialMap(const std::vector<const AtomType *> &atomTypes, const
     nTypes_ = atomTypes.size();
     potentialMatrix_.initialise(nTypes_, nTypes_, true);
 
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, atomTypes,
-        [&](int i, const auto &atI, int j, const auto &atJ)
-        {
-            // Store PairPotential pointer
-            if (i == j)
-            {
-                Messenger::print("Linking self-interaction PairPotential for '{}' (index {},{} in matrix).\n", atI->name(), i,
-                                 j);
-                potentialMatrix_[{i, j}] = &pairPotentials.get({atI->name(), atJ->name()});
-            }
-            else
-            {
-                Messenger::print("Linking PairPotential between '{}' and '{}' (indices {},{} and {},{} in matrix).\n",
-                                 atI->name(), atJ->name(), i, j, j, i);
-                potentialMatrix_[{i, j}] = &pairPotentials.get({atI->name(), atJ->name()});
-            }
-        });
+    // Store PairPotential pointers
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes, [&](int i, const auto &atI, int j, const auto &atJ)
+                            { potentialMatrix_[{i, j}] = &pairPotentials.get({atI->name(), atJ->name()}); });
 }
 
 // Clear all data

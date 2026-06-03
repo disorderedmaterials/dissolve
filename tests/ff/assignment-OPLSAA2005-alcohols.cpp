@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,17 +10,19 @@ namespace UnitTest
 {
 TEST(OPLSAA2005AlcoholsAssignmentTest, Methanol)
 {
-    Species species("Methanol");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/methanol.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Alcohols")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Methanol", "ImportXYZStructure", "xyz/methanol.xyz",
+                                                                          ForcefieldLibrary::forcefield("OPLSAA2005/Alcohols"));
 
-    ASSERT_EQ(species.nBonds(), 5);
-    ASSERT_EQ(species.nAngles(), 7);
-    ASSERT_EQ(species.nTorsions(), 3);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 5);
+    ASSERT_EQ(species.angles().size(), 7);
+    ASSERT_EQ(species.torsions().size(), 3);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CT"}, {1, "OH"}, {2, "HO"}, {3, "HC"}, {4, "HC"}, {5, "HC"}});
     systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2677.76 eq=1.41"});

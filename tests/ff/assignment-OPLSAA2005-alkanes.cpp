@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,17 +10,19 @@ namespace UnitTest
 {
 TEST(OPLSAA2005AlkanesAssignmentTest, Heptane)
 {
-    Species species("Heptane");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/heptane.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Alkanes")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Heptane", "ImportXYZStructure", "xyz/heptane.xyz",
+                                                                          ForcefieldLibrary::forcefield("OPLSAA2005/Alkanes"));
 
-    ASSERT_EQ(species.nBonds(), 16);
-    ASSERT_EQ(species.nAngles(), 30);
-    ASSERT_EQ(species.nTorsions(), 36);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 16);
+    ASSERT_EQ(species.angles().size(), 30);
+    ASSERT_EQ(species.torsions().size(), 36);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CT3"},
                                                {1, "CT2"},
@@ -51,17 +53,19 @@ TEST(OPLSAA2005AlkanesAssignmentTest, Heptane)
 
 TEST(OPLSAA2005AlkanesAssignmentTest, Cycloheptane)
 {
-    Species species("Cycloheptane");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/cycloheptane.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("OPLSAA2005/Alkanes")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield(
+        "Cycloheptane", "ImportXYZStructure", "xyz/cycloheptane.xyz", ForcefieldLibrary::forcefield("OPLSAA2005/Alkanes"));
 
-    ASSERT_EQ(species.nBonds(), 21);
-    ASSERT_EQ(species.nAngles(), 42);
-    ASSERT_EQ(species.nTorsions(), 63);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 21);
+    ASSERT_EQ(species.angles().size(), 42);
+    ASSERT_EQ(species.torsions().size(), 63);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species,
                                     {{0, "CT2"}, {1, "CT2"}, {2, "CT2"}, {3, "CT2"}, {4, "CT2"}, {5, "CT2"}, {6, "CT2"},

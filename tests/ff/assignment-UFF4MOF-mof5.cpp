@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,18 +10,20 @@ namespace UnitTest
 {
 TEST(UFF4MOFMOF5AssignmentTest, MOF5)
 {
-    Species species("MOF5");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/mof5.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.createBox({25.8320, 25.8320, 25.8320}, {90, 90, 90});
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("UFF4MOF")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("MOF5", "ImportXYZStructure", "xyz/mof5.xyz",
+                                                                          ForcefieldLibrary::forcefield("UFF4MOF"));
 
-    ASSERT_EQ(species.nBonds(), 512);
-    ASSERT_EQ(species.nAngles(), 912);
-    ASSERT_EQ(species.nTorsions(), 1536);
-    ASSERT_EQ(species.nImpropers(), 192);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    species.createBox({25.8320, 25.8320, 25.8320}, {90, 90, 90});
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 512);
+    ASSERT_EQ(species.angles().size(), 912);
+    ASSERT_EQ(species.torsions().size(), 1536);
+    ASSERT_EQ(species.impropers().size(), 192);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "Zn3f2"},
                                                {1, "Zn3f2"},

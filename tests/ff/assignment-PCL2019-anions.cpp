@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -10,17 +10,19 @@ namespace UnitTest
 {
 TEST(PCL2019AnionsAssignmentTest, beti)
 {
-    Species species("Hydronium");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/beti.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Hydronium", "ImportXYZStructure", "xyz/beti.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 20);
-    ASSERT_EQ(species.nAngles(), 37);
-    ASSERT_EQ(species.nTorsions(), 42);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 20);
+    ASSERT_EQ(species.angles().size(), 37);
+    ASSERT_EQ(species.torsions().size(), 42);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species,
                                     {{0, "C1F"}, {1, "CEF"}, {2, "F1"},  {3, "F1"},   {4, "SBT"},  {5, "NBT"},  {6, "OBT"},
@@ -31,17 +33,19 @@ TEST(PCL2019AnionsAssignmentTest, beti)
 
 TEST(PCL2019AnionsAssignmentTest, BF4)
 {
-    Species species("BF4");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/bf4.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("BF4", "ImportXYZStructure", "xyz/bf4.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 4);
-    ASSERT_EQ(species.nAngles(), 6);
-    ASSERT_EQ(species.nTorsions(), 0);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 4);
+    ASSERT_EQ(species.angles().size(), 6);
+    ASSERT_EQ(species.torsions().size(), 0);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "B"}, {1, "FB"}, {2, "FB"}, {3, "FB"}, {4, "FB"}});
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
@@ -49,17 +53,19 @@ TEST(PCL2019AnionsAssignmentTest, BF4)
 
 TEST(PCL2019AnionsAssignmentTest, c1SO3)
 {
-    Species species("C1SO3");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/c1so3.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("C1SO3", "ImportXYZStructure", "xyz/c1so3.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 7);
-    ASSERT_EQ(species.nAngles(), 12);
-    ASSERT_EQ(species.nTorsions(), 9);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 7);
+    ASSERT_EQ(species.angles().size(), 12);
+    ASSERT_EQ(species.torsions().size(), 9);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(
         &species, {{0, "SO"}, {1, "OS3"}, {2, "OS3"}, {3, "OS3"}, {4, "CS3"}, {5, "HS3"}, {6, "HS3"}, {7, "HS3"}});
@@ -68,17 +74,19 @@ TEST(PCL2019AnionsAssignmentTest, c1SO3)
 
 TEST(PCL2019AnionsAssignmentTest, c1SO4)
 {
-    Species species("C1SO4");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/c1so4.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("C1SO4", "ImportXYZStructure", "xyz/c1so4.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 8);
-    ASSERT_EQ(species.nAngles(), 13);
-    ASSERT_EQ(species.nTorsions(), 6);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 8);
+    ASSERT_EQ(species.angles().size(), 13);
+    ASSERT_EQ(species.torsions().size(), 6);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(
         &species, {{0, "HS4"}, {1, "CS4"}, {2, "OC4"}, {3, "HS4"}, {4, "HS4"}, {5, "SO"}, {6, "OS4"}, {7, "OS4"}, {8, "OS4"}});
@@ -87,17 +95,19 @@ TEST(PCL2019AnionsAssignmentTest, c1SO4)
 
 TEST(PCL2019AnionsAssignmentTest, c2SO3)
 {
-    Species species("C2SO3");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/c2so3.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("C2SO3", "ImportXYZStructure", "xyz/c2so3.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 10);
-    ASSERT_EQ(species.nAngles(), 18);
-    ASSERT_EQ(species.nTorsions(), 18);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 10);
+    ASSERT_EQ(species.angles().size(), 18);
+    ASSERT_EQ(species.torsions().size(), 18);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "SO"},
                                                {1, "OS3"},
@@ -115,17 +125,19 @@ TEST(PCL2019AnionsAssignmentTest, c2SO3)
 
 TEST(PCL2019AnionsAssignmentTest, c2SO4)
 {
-    Species species("C2SO4");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/c2so4.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("C2SO4", "ImportXYZStructure", "xyz/c2so4.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 11);
-    ASSERT_EQ(species.nAngles(), 19);
-    ASSERT_EQ(species.nTorsions(), 15);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 11);
+    ASSERT_EQ(species.angles().size(), 19);
+    ASSERT_EQ(species.torsions().size(), 15);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CT3"},
                                                {1, "CS4"},
@@ -144,17 +156,19 @@ TEST(PCL2019AnionsAssignmentTest, c2SO4)
 
 TEST(PCL2019AnionsAssignmentTest, c4fc1fsi)
 {
-    Species species("C4FC1FSI");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/c4fc1fsi.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("C4FC1FSI", "ImportXYZStructure", "xyz/c4fc1fsi.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 23);
-    ASSERT_EQ(species.nAngles(), 43);
-    ASSERT_EQ(species.nTorsions(), 51);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 23);
+    ASSERT_EQ(species.angles().size(), 43);
+    ASSERT_EQ(species.torsions().size(), 51);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CBT"},  {1, "F1"},  {2, "F1"},  {3, "F1"},   {4, "SBT"},  {5, "NBT"},
                                                {6, "OBT"},  {7, "OBT"}, {8, "SBT"}, {9, "OBT"},  {10, "OBT"}, {11, "C1F"},
@@ -165,17 +179,19 @@ TEST(PCL2019AnionsAssignmentTest, c4fc1fsi)
 
 TEST(PCL2019AnionsAssignmentTest, CCN3)
 {
-    Species species("CCN3");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/ccn3.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("CCN3", "ImportXYZStructure", "xyz/ccn3.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 6);
-    ASSERT_EQ(species.nAngles(), 6);
-    ASSERT_EQ(species.nTorsions(), 6);
-    ASSERT_EQ(species.nImpropers(), 1);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 6);
+    ASSERT_EQ(species.angles().size(), 6);
+    ASSERT_EQ(species.torsions().size(), 6);
+    ASSERT_EQ(species.impropers().size(), 1);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "C3A"}, {1, "CN"}, {2, "CN"}, {3, "CN"}, {4, "NC"}});
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
@@ -183,17 +199,19 @@ TEST(PCL2019AnionsAssignmentTest, CCN3)
 
 TEST(PCL2019AnionsAssignmentTest, dca)
 {
-    Species species("DCA");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/dca.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("DCA", "ImportXYZStructure", "xyz/dca.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 4);
-    ASSERT_EQ(species.nAngles(), 3);
-    ASSERT_EQ(species.nTorsions(), 2);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 4);
+    ASSERT_EQ(species.angles().size(), 3);
+    ASSERT_EQ(species.torsions().size(), 2);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "N3A"}, {1, "CZA"}, {2, "NZA"}, {3, "CZA"}, {4, "NZA"}});
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
@@ -201,17 +219,19 @@ TEST(PCL2019AnionsAssignmentTest, dca)
 
 TEST(PCL2019AnionsAssignmentTest, fsi)
 {
-    Species species("FSI");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/fsi.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("FSI", "ImportXYZStructure", "xyz/fsi.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 8);
-    ASSERT_EQ(species.nAngles(), 13);
-    ASSERT_EQ(species.nTorsions(), 6);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 8);
+    ASSERT_EQ(species.angles().size(), 13);
+    ASSERT_EQ(species.torsions().size(), 6);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(
         &species, {{0, "FSI"}, {1, "SBT"}, {2, "NBT"}, {3, "OBT"}, {4, "OBT"}, {5, "SBT"}, {6, "OBT"}, {7, "OBT"}, {8, "FSI"}});
@@ -220,17 +240,19 @@ TEST(PCL2019AnionsAssignmentTest, fsi)
 
 TEST(PCL2019AnionsAssignmentTest, ntf2)
 {
-    Species species("NTf2");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/ntf2.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("NTf2", "ImportXYZStructure", "xyz/ntf2.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 14);
-    ASSERT_EQ(species.nAngles(), 25);
-    ASSERT_EQ(species.nTorsions(), 24);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 14);
+    ASSERT_EQ(species.angles().size(), 25);
+    ASSERT_EQ(species.torsions().size(), 24);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CBT"},
                                                {1, "F1"},
@@ -252,17 +274,19 @@ TEST(PCL2019AnionsAssignmentTest, ntf2)
 
 TEST(PCL2019AnionsAssignmentTest, oac)
 {
-    Species species("OAc");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/oac.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("OAc", "ImportXYZStructure", "xyz/oac.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 6);
-    ASSERT_EQ(species.nAngles(), 9);
-    ASSERT_EQ(species.nTorsions(), 6);
-    ASSERT_EQ(species.nImpropers(), 1);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 6);
+    ASSERT_EQ(species.angles().size(), 9);
+    ASSERT_EQ(species.torsions().size(), 6);
+    ASSERT_EQ(species.impropers().size(), 1);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CTA"}, {1, "HC"}, {2, "HC"}, {3, "HC"}, {4, "CO2"}, {5, "O2"}, {6, "O2"}});
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
@@ -270,17 +294,19 @@ TEST(PCL2019AnionsAssignmentTest, oac)
 
 TEST(PCL2019AnionsAssignmentTest, otf)
 {
-    Species species("OTf");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/otf.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("OTf", "ImportXYZStructure", "xyz/otf.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 7);
-    ASSERT_EQ(species.nAngles(), 12);
-    ASSERT_EQ(species.nTorsions(), 9);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 7);
+    ASSERT_EQ(species.angles().size(), 12);
+    ASSERT_EQ(species.torsions().size(), 9);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(
         &species, {{0, "CBT"}, {1, "F1"}, {2, "F1"}, {3, "F1"}, {4, "SBT"}, {5, "OTF"}, {6, "OTF"}, {7, "OTF"}});
@@ -289,17 +315,19 @@ TEST(PCL2019AnionsAssignmentTest, otf)
 
 TEST(PCL2019AnionsAssignmentTest, PF6)
 {
-    Species species("PF6");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/pf6.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("PF6", "ImportXYZStructure", "xyz/pf6.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 6);
-    ASSERT_EQ(species.nAngles(), 15);
-    ASSERT_EQ(species.nTorsions(), 0);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 6);
+    ASSERT_EQ(species.angles().size(), 15);
+    ASSERT_EQ(species.torsions().size(), 0);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "P"}, {1, "FP"}, {2, "FP"}, {3, "FP"}, {4, "FP"}, {5, "FP"}, {6, "FP"}});
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
@@ -307,17 +335,19 @@ TEST(PCL2019AnionsAssignmentTest, PF6)
 
 TEST(PCL2019AnionsAssignmentTest, SCN)
 {
-    Species species("SCN");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/scn.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("SCN", "ImportXYZStructure", "xyz/scn.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 2);
-    ASSERT_EQ(species.nAngles(), 1);
-    ASSERT_EQ(species.nTorsions(), 0);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 2);
+    ASSERT_EQ(species.angles().size(), 1);
+    ASSERT_EQ(species.torsions().size(), 0);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "SK"}, {1, "CK"}, {2, "NK"}});
     EXPECT_NEAR(species.totalCharge(true), -1, 1.0e-6);
@@ -325,17 +355,19 @@ TEST(PCL2019AnionsAssignmentTest, SCN)
 
 TEST(PCL2019AnionsAssignmentTest, tfa)
 {
-    Species species("TFA");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/tfa.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("TFA", "ImportXYZStructure", "xyz/tfa.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 6);
-    ASSERT_EQ(species.nAngles(), 9);
-    ASSERT_EQ(species.nTorsions(), 6);
-    ASSERT_EQ(species.nImpropers(), 0);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 6);
+    ASSERT_EQ(species.angles().size(), 9);
+    ASSERT_EQ(species.torsions().size(), 6);
+    ASSERT_EQ(species.impropers().size(), 0);
 
     systemTest.checkSpeciesAtomType(&species,
                                     {{0, "CFA"}, {1, "FFA"}, {2, "FFA"}, {3, "FFA"}, {4, "CO2"}, {5, "O2F"}, {6, "O2F"}});
@@ -344,17 +376,19 @@ TEST(PCL2019AnionsAssignmentTest, tfa)
 
 TEST(PCL2019AnionsAssignmentTest, tso)
 {
-    Species species("TSO");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/tso.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("PCL2019/Anions")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("TSO", "ImportXYZStructure", "xyz/tso.xyz",
+                                                                          ForcefieldLibrary::forcefield("PCL2019/Anions"));
 
-    ASSERT_EQ(species.nBonds(), 18);
-    ASSERT_EQ(species.nAngles(), 30);
-    ASSERT_EQ(species.nTorsions(), 36);
-    ASSERT_EQ(species.nImpropers(), 6);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 18);
+    ASSERT_EQ(species.angles().size(), 30);
+    ASSERT_EQ(species.torsions().size(), 36);
+    ASSERT_EQ(species.impropers().size(), 6);
 
     systemTest.checkSpeciesAtomType(&species, {{0, "CATS"},
                                                {1, "CAOS"},

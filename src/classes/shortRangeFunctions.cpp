@@ -43,10 +43,7 @@ ShortRangeFunctions::combine(const InteractionPotential<ShortRangeFunctions> &sr
                              const InteractionPotential<ShortRangeFunctions> &srJ)
 {
     if (srI.form() == Form::Undefined || srJ.form() == Form::Undefined)
-    {
-        Messenger::error("Can't combine parameters since one or both short range functions are undefined.\n");
         return {};
-    }
 
     // Equivalent functional forms?
     if (srI.form() == srJ.form())

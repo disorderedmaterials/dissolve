@@ -11,6 +11,7 @@
 #include "nodes/bragg.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
+#include "nodes/forcefield.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/neutronSQ/neutronSQ.h"
@@ -97,7 +98,7 @@ class TestGraph : public DissolveGraph
             auto &speciesNode = speciesUnique->species();
 
             // Move the species node into the graph
-            addNode(std::move(speciesUnique), speciesNode.name());
+            currentGraph_->addNode(std::move(speciesUnique), speciesNode.name());
 
             auto insertNodeName = std::format("Insert-{}", speciesNode.name());
             EXPECT_TRUE(appendNode("Insert", insertNodeName));
@@ -140,6 +141,44 @@ class TestGraph : public DissolveGraph
         species.load(path);
 
         return speciesNodeUniquePtr;
+    }
+    // Create a species node with structure and forcefield data sources
+    SpeciesNode *createSpeciesFromStructureAndForcefield(std::string name, std::string structureNodeType,
+                                                         std::string structureFilePath, std::shared_ptr<Forcefield> ff,
+                                                         bool calculateBonding = true)
+    {
+        // Add species node
+        auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
+        EXPECT_TRUE(speciesNodeUniquePtr);
+        auto speciesNodePtr = speciesNodeUniquePtr.get();
+        EXPECT_TRUE(speciesNodePtr);
+        auto &species = speciesNodePtr->species();
+        species.setName(name);
+        currentGraph_->addNode(std::move(speciesNodeUniquePtr), name);
+
+        // Create structure import node
+        auto structureNode = createNode(structureNodeType);
+        EXPECT_TRUE(structureNode);
+        structureNode->setOption<std::string>("FilePath", structureFilePath);
+
+        // Create rebonding node?
+        if (calculateBonding)
+        {
+            auto calculateBondingNode = createNode("CalculateBonding");
+            EXPECT_TRUE(calculateBondingNode);
+            EXPECT_TRUE(currentGraph_->addEdge({structureNodeType, "Structure", "CalculateBonding", "Structure"}));
+            EXPECT_TRUE(currentGraph_->addEdge({"CalculateBonding", "Structure", name, "Structure"}));
+        }
+        else
+            EXPECT_TRUE(currentGraph_->addEdge({structureNodeType, "Structure", name, "Structure"}));
+
+        // Create forcefield node
+        auto forcefieldNode = dynamic_cast<ForcefieldNode *>(createNode("Forcefield"));
+        EXPECT_TRUE(forcefieldNode);
+        EXPECT_TRUE(forcefieldNode->setOption<Forcefield *>("Forcefield", ff.get()));
+        EXPECT_TRUE(currentGraph_->addEdge({"Forcefield", "Recipe", name, "Recipe"}));
+
+        return speciesNodePtr;
     }
     // Create basic configuration graph, returning the last node
     Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species, double rho,

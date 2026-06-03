@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "io/import/species.h"
+#include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
@@ -11,17 +11,19 @@ namespace UnitTest
 {
 TEST(LudwigPy5AssignmentTest, Py5)
 {
-    Species species("Py5");
     DissolveSystemTest systemTest;
-    SpeciesImportFileFormat importer("xyz/py5.xyz");
-    ASSERT_TRUE(importer.importData(&species));
-    species.recalculateIntermolecularTerms();
-    ASSERT_TRUE(species.applyForcefieldTerms(ForcefieldLibrary::forcefield("Ludwig/Py5")));
+    TestGraph testGraph;
+    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Py5", "ImportXYZStructure", "xyz/py5.xyz",
+                                                                          ForcefieldLibrary::forcefield("Ludwig/Py5"));
 
-    ASSERT_EQ(species.nBonds(), 27);
-    ASSERT_EQ(species.nAngles(), 48);
-    ASSERT_EQ(species.nTorsions(), 66);
-    ASSERT_EQ(species.nImpropers(), 6);
+    ASSERT_TRUE(speciesNode);
+    auto &species = speciesNode->species();
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(species.bonds().size(), 27);
+    ASSERT_EQ(species.angles().size(), 48);
+    ASSERT_EQ(species.torsions().size(), 66);
+    ASSERT_EQ(species.impropers().size(), 6);
 
     systemTest.checkSpeciesAtomType(
         &species, {{0, "nc"},    {1, "ca_o"},  {2, "ca_m"},  {3, "ca_p"},  {4, "ca_m"},  {5, "ca_o"},  {6, "ha_o"},

@@ -1,0 +1,1626 @@
+
+[species]
+name = "Py4OH"
+
+[species.atomTypes]
+
+[species.atomTypes.nc]
+z = "N"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ca_o]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ca_m]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ca_p]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ha_o]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ha_m]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ha_p]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ct_1]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ct_2]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.hc_1]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ct_3]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.hc_2]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ct_4]
+z = "C"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.hc_3]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.oh]
+z = "O"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.hc_4]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.ho]
+z = "H"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[[species.atoms]]
+index = 0
+z = "N"
+r = [
+0.1088,
+0.0484,
+0.0628,
+]
+q = 0.0
+type = "nc"
+[[species.atoms]]
+index = 1
+z = "C"
+r = [
+0.1022,
+0.0506,
+1.4006,
+]
+q = 0.0
+type = "ca_o"
+[[species.atoms]]
+index = 2
+z = "C"
+r = [
+1.2731,
+0.0563,
+2.1191,
+]
+q = 0.0
+type = "ca_m"
+[[species.atoms]]
+index = 3
+z = "C"
+r = [
+2.479,
+0.0597,
+1.4313,
+]
+q = 0.0
+type = "ca_p"
+[[species.atoms]]
+index = 4
+z = "C"
+r = [
+2.4718,
+0.0563,
+0.0429,
+]
+q = 0.0
+type = "ca_m"
+[[species.atoms]]
+index = 5
+z = "C"
+r = [
+1.264,
+0.0506,
+-0.6118,
+]
+q = 0.0
+type = "ca_o"
+[[species.atoms]]
+index = 6
+z = "H"
+r = [
+-0.86,
+0.0501,
+1.8738,
+]
+q = 0.0
+type = "ha_o"
+[[species.atoms]]
+index = 7
+z = "H"
+r = [
+1.2359,
+0.0618,
+3.1912,
+]
+q = 0.0
+type = "ha_m"
+[[species.atoms]]
+index = 8
+z = "H"
+r = [
+3.4093,
+0.0672,
+1.9684,
+]
+q = 0.0
+type = "ha_p"
+[[species.atoms]]
+index = 9
+z = "H"
+r = [
+3.3816,
+0.0618,
+-0.5253,
+]
+q = 0.0
+type = "ha_m"
+[[species.atoms]]
+index = 10
+z = "H"
+r = [
+1.1928,
+0.0501,
+-1.6817,
+]
+q = 0.0
+type = "ha_o"
+[[species.atoms]]
+index = 11
+z = "C"
+r = [
+-1.1827,
+0.0043,
+-0.6829,
+]
+q = 0.0
+type = "ct_1"
+[[species.atoms]]
+index = 12
+z = "C"
+r = [
+-1.6411,
+-1.4276,
+-0.9475,
+]
+q = 0.0
+type = "ct_2"
+[[species.atoms]]
+index = 13
+z = "H"
+r = [
+-1.9037,
+0.5501,
+-0.0919,
+]
+q = 0.0
+type = "hc_1"
+[[species.atoms]]
+index = 14
+z = "H"
+r = [
+-1.0314,
+0.5501,
+-1.6027,
+]
+q = 0.0
+type = "hc_1"
+[[species.atoms]]
+index = 15
+z = "C"
+r = [
+-2.9667,
+-1.4367,
+-1.7128,
+]
+q = 0.0
+type = "ct_3"
+[[species.atoms]]
+index = 16
+z = "H"
+r = [
+-0.8758,
+-1.9516,
+-1.5144,
+]
+q = 0.0
+type = "hc_2"
+[[species.atoms]]
+index = 17
+z = "H"
+r = [
+-1.7495,
+-1.9516,
+-0.0013,
+]
+q = 0.0
+type = "hc_2"
+[[species.atoms]]
+index = 18
+z = "C"
+r = [
+-3.4661,
+-2.8444,
+-2.0011,
+]
+q = 0.0
+type = "ct_4"
+[[species.atoms]]
+index = 19
+z = "H"
+r = [
+-3.7319,
+-0.9134,
+-1.1469,
+]
+q = 0.0
+type = "hc_3"
+[[species.atoms]]
+index = 20
+z = "H"
+r = [
+-2.8591,
+-0.9134,
+-2.6585,
+]
+q = 0.0
+type = "hc_3"
+[[species.atoms]]
+index = 21
+z = "O"
+r = [
+-4.6707,
+-2.7104,
+-2.6966,
+]
+q = 0.0
+type = "oh"
+[[species.atoms]]
+index = 22
+z = "H"
+r = [
+-2.7344,
+-3.3887,
+-2.5946,
+]
+q = 0.0
+type = "hc_4"
+[[species.atoms]]
+index = 23
+z = "H"
+r = [
+-3.6142,
+-3.3887,
+-1.0708,
+]
+q = 0.0
+type = "hc_4"
+[[species.atoms]]
+index = 24
+z = "H"
+r = [
+-5.0394,
+-3.5569,
+-2.9095,
+]
+q = 0.0
+type = "ho"
+
+[species.commonBonds]
+
+[species.commonBonds.ca_o-nc]
+form = "None"
+
+[species.commonBonds.ct_1-nc]
+form = "None"
+
+[species.commonBonds.ca_m-ca_o]
+form = "None"
+
+[species.commonBonds.ca_o-ha_o]
+form = "None"
+
+[species.commonBonds.ca_m-ca_p]
+form = "None"
+
+[species.commonBonds.ca_m-ha_m]
+form = "None"
+
+[species.commonBonds.ca_p-ha_p]
+form = "None"
+
+[species.commonBonds.ct_1-ct_2]
+form = "None"
+
+[species.commonBonds.ct_1-hc_1]
+form = "None"
+
+[species.commonBonds.ct_2-ct_3]
+form = "None"
+
+[species.commonBonds.ct_2-hc_2]
+form = "None"
+
+[species.commonBonds.ct_3-ct_4]
+form = "None"
+
+[species.commonBonds.ct_3-hc_3]
+form = "None"
+
+[species.commonBonds.ct_4-oh]
+form = "None"
+
+[species.commonBonds.ct_4-hc_4]
+form = "None"
+
+[species.commonBonds.ho-oh]
+form = "None"
+
+
+[[species.bonds]]
+common = "ca_o-nc"
+i = 0
+j = 1
+[[species.bonds]]
+common = "ca_o-nc"
+i = 0
+j = 5
+[[species.bonds]]
+common = "ct_1-nc"
+i = 0
+j = 11
+[[species.bonds]]
+common = "ca_m-ca_o"
+i = 1
+j = 2
+[[species.bonds]]
+common = "ca_o-ha_o"
+i = 1
+j = 6
+[[species.bonds]]
+common = "ca_m-ca_p"
+i = 2
+j = 3
+[[species.bonds]]
+common = "ca_m-ha_m"
+i = 2
+j = 7
+[[species.bonds]]
+common = "ca_m-ca_p"
+i = 3
+j = 4
+[[species.bonds]]
+common = "ca_p-ha_p"
+i = 3
+j = 8
+[[species.bonds]]
+common = "ca_m-ca_o"
+i = 4
+j = 5
+[[species.bonds]]
+common = "ca_m-ha_m"
+i = 4
+j = 9
+[[species.bonds]]
+common = "ca_o-ha_o"
+i = 5
+j = 10
+[[species.bonds]]
+common = "ct_1-ct_2"
+i = 11
+j = 12
+[[species.bonds]]
+common = "ct_1-hc_1"
+i = 11
+j = 13
+[[species.bonds]]
+common = "ct_1-hc_1"
+i = 11
+j = 14
+[[species.bonds]]
+common = "ct_2-ct_3"
+i = 12
+j = 15
+[[species.bonds]]
+common = "ct_2-hc_2"
+i = 12
+j = 16
+[[species.bonds]]
+common = "ct_2-hc_2"
+i = 12
+j = 17
+[[species.bonds]]
+common = "ct_3-ct_4"
+i = 15
+j = 18
+[[species.bonds]]
+common = "ct_3-hc_3"
+i = 15
+j = 19
+[[species.bonds]]
+common = "ct_3-hc_3"
+i = 15
+j = 20
+[[species.bonds]]
+common = "ct_4-oh"
+i = 18
+j = 21
+[[species.bonds]]
+common = "ct_4-hc_4"
+i = 18
+j = 22
+[[species.bonds]]
+common = "ct_4-hc_4"
+i = 18
+j = 23
+[[species.bonds]]
+common = "ho-oh"
+i = 21
+j = 24
+
+[species.commonAngles]
+
+[species.commonAngles.ca_o-nc-ca_o]
+form = "None"
+
+[species.commonAngles.ca_o-nc-ct_1]
+form = "None"
+
+[species.commonAngles.ca_m-ca_o-nc]
+form = "None"
+
+[species.commonAngles.ha_o-ca_o-nc]
+form = "None"
+
+[species.commonAngles.ca_m-ca_o-ha_o]
+form = "None"
+
+[species.commonAngles.ca_o-ca_m-ca_p]
+form = "None"
+
+[species.commonAngles.ca_o-ca_m-ha_m]
+form = "None"
+
+[species.commonAngles.ca_p-ca_m-ha_m]
+form = "None"
+
+[species.commonAngles.ca_m-ca_p-ca_m]
+form = "None"
+
+[species.commonAngles.ca_m-ca_p-ha_p]
+form = "None"
+
+[species.commonAngles.ct_2-ct_1-nc]
+form = "None"
+
+[species.commonAngles.hc_1-ct_1-nc]
+form = "None"
+
+[species.commonAngles.ct_2-ct_1-hc_1]
+form = "None"
+
+[species.commonAngles.hc_1-ct_1-hc_1]
+form = "None"
+
+[species.commonAngles.ct_1-ct_2-ct_3]
+form = "None"
+
+[species.commonAngles.ct_1-ct_2-hc_2]
+form = "None"
+
+[species.commonAngles.ct_3-ct_2-hc_2]
+form = "None"
+
+[species.commonAngles.hc_2-ct_2-hc_2]
+form = "None"
+
+[species.commonAngles.ct_2-ct_3-ct_4]
+form = "None"
+
+[species.commonAngles.ct_2-ct_3-hc_3]
+form = "None"
+
+[species.commonAngles.ct_4-ct_3-hc_3]
+form = "None"
+
+[species.commonAngles.hc_3-ct_3-hc_3]
+form = "None"
+
+[species.commonAngles.ct_3-ct_4-oh]
+form = "None"
+
+[species.commonAngles.ct_3-ct_4-hc_4]
+form = "None"
+
+[species.commonAngles.hc_4-ct_4-oh]
+form = "None"
+
+[species.commonAngles.hc_4-ct_4-hc_4]
+form = "None"
+
+[species.commonAngles.ct_4-oh-ho]
+form = "None"
+
+
+[[species.angles]]
+common = "ca_o-nc-ca_o"
+i = 5
+j = 0
+k = 1
+[[species.angles]]
+common = "ca_o-nc-ct_1"
+i = 11
+j = 0
+k = 1
+[[species.angles]]
+common = "ca_o-nc-ct_1"
+i = 11
+j = 0
+k = 5
+[[species.angles]]
+common = "ca_m-ca_o-nc"
+i = 0
+j = 1
+k = 2
+[[species.angles]]
+common = "ha_o-ca_o-nc"
+i = 0
+j = 1
+k = 6
+[[species.angles]]
+common = "ca_m-ca_o-ha_o"
+i = 6
+j = 1
+k = 2
+[[species.angles]]
+common = "ca_o-ca_m-ca_p"
+i = 1
+j = 2
+k = 3
+[[species.angles]]
+common = "ca_o-ca_m-ha_m"
+i = 1
+j = 2
+k = 7
+[[species.angles]]
+common = "ca_p-ca_m-ha_m"
+i = 7
+j = 2
+k = 3
+[[species.angles]]
+common = "ca_m-ca_p-ca_m"
+i = 2
+j = 3
+k = 4
+[[species.angles]]
+common = "ca_m-ca_p-ha_p"
+i = 2
+j = 3
+k = 8
+[[species.angles]]
+common = "ca_m-ca_p-ha_p"
+i = 8
+j = 3
+k = 4
+[[species.angles]]
+common = "ca_m-ca_o-nc"
+i = 0
+j = 5
+k = 4
+[[species.angles]]
+common = "ca_o-ca_m-ca_p"
+i = 3
+j = 4
+k = 5
+[[species.angles]]
+common = "ca_p-ca_m-ha_m"
+i = 3
+j = 4
+k = 9
+[[species.angles]]
+common = "ca_o-ca_m-ha_m"
+i = 9
+j = 4
+k = 5
+[[species.angles]]
+common = "ha_o-ca_o-nc"
+i = 0
+j = 5
+k = 10
+[[species.angles]]
+common = "ca_m-ca_o-ha_o"
+i = 4
+j = 5
+k = 10
+[[species.angles]]
+common = "ct_2-ct_1-nc"
+i = 0
+j = 11
+k = 12
+[[species.angles]]
+common = "hc_1-ct_1-nc"
+i = 0
+j = 11
+k = 13
+[[species.angles]]
+common = "ct_2-ct_1-hc_1"
+i = 13
+j = 11
+k = 12
+[[species.angles]]
+common = "hc_1-ct_1-nc"
+i = 0
+j = 11
+k = 14
+[[species.angles]]
+common = "ct_2-ct_1-hc_1"
+i = 14
+j = 11
+k = 12
+[[species.angles]]
+common = "hc_1-ct_1-hc_1"
+i = 14
+j = 11
+k = 13
+[[species.angles]]
+common = "ct_1-ct_2-ct_3"
+i = 11
+j = 12
+k = 15
+[[species.angles]]
+common = "ct_1-ct_2-hc_2"
+i = 11
+j = 12
+k = 16
+[[species.angles]]
+common = "ct_3-ct_2-hc_2"
+i = 16
+j = 12
+k = 15
+[[species.angles]]
+common = "ct_1-ct_2-hc_2"
+i = 11
+j = 12
+k = 17
+[[species.angles]]
+common = "ct_3-ct_2-hc_2"
+i = 17
+j = 12
+k = 15
+[[species.angles]]
+common = "hc_2-ct_2-hc_2"
+i = 17
+j = 12
+k = 16
+[[species.angles]]
+common = "ct_2-ct_3-ct_4"
+i = 12
+j = 15
+k = 18
+[[species.angles]]
+common = "ct_2-ct_3-hc_3"
+i = 12
+j = 15
+k = 19
+[[species.angles]]
+common = "ct_4-ct_3-hc_3"
+i = 19
+j = 15
+k = 18
+[[species.angles]]
+common = "ct_2-ct_3-hc_3"
+i = 12
+j = 15
+k = 20
+[[species.angles]]
+common = "ct_4-ct_3-hc_3"
+i = 20
+j = 15
+k = 18
+[[species.angles]]
+common = "hc_3-ct_3-hc_3"
+i = 20
+j = 15
+k = 19
+[[species.angles]]
+common = "ct_3-ct_4-oh"
+i = 15
+j = 18
+k = 21
+[[species.angles]]
+common = "ct_3-ct_4-hc_4"
+i = 15
+j = 18
+k = 22
+[[species.angles]]
+common = "hc_4-ct_4-oh"
+i = 22
+j = 18
+k = 21
+[[species.angles]]
+common = "ct_3-ct_4-hc_4"
+i = 15
+j = 18
+k = 23
+[[species.angles]]
+common = "hc_4-ct_4-oh"
+i = 23
+j = 18
+k = 21
+[[species.angles]]
+common = "hc_4-ct_4-hc_4"
+i = 23
+j = 18
+k = 22
+[[species.angles]]
+common = "ct_4-oh-ho"
+i = 18
+j = 21
+k = 24
+
+[species.commonTorsions]
+
+[species.commonTorsions.ca_m-ca_o-nc-ca_o]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_m-ca_o-nc-ca_o.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+[species.commonTorsions.ca_m-ca_o-nc-ct_1]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_m-ca_o-nc-ct_1.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ca_o-nc-ca_o-ha_o]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_o-nc-ca_o-ha_o.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ct_1-nc-ca_o-ha_o]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ct_1-nc-ca_o-ha_o.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ca_p-ca_m-ca_o-nc]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_p-ca_m-ca_o-nc.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ca_p-ca_m-ca_o-ha_o]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_p-ca_m-ca_o-ha_o.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ha_m-ca_m-ca_o-nc]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ha_m-ca_m-ca_o-nc.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ha_m-ca_m-ca_o-ha_o]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ha_m-ca_m-ca_o-ha_o.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ca_m-ca_p-ca_m-ca_o]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_m-ca_p-ca_m-ca_o.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ca_m-ca_p-ca_m-ha_m]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_m-ca_p-ca_m-ha_m.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ca_o-ca_m-ca_p-ha_p]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_o-ca_m-ca_p-ha_p.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ha_m-ca_m-ca_p-ha_p]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ha_m-ca_m-ca_p-ha_p.parameters]
+k = 15.178
+n = 2.0
+eq = 180.0
+s = 1.0
+
+
+[species.commonTorsions.ca_o-nc-ct_1-ct_2]
+form = "CosN"
+parameters = [
+0.0,
+-0.3579,
+0.0,
+-0.4037,
+]
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_o-nc-ct_1-hc_1]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ca_o-nc-ct_1-hc_1.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.ct_3-ct_2-ct_1-nc]
+form = "CosN"
+parameters = [
+-3.7014,
+0.0,
+6.9923,
+]
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ct_3-ct_2-ct_1-hc_1]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ct_3-ct_2-ct_1-hc_1.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.hc_2-ct_2-ct_1-nc]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_2-ct_2-ct_1-nc.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.hc_1-ct_1-ct_2-hc_2]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_1-ct_1-ct_2-hc_2.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.ct_1-ct_2-ct_3-ct_4]
+form = "CosN"
+parameters = [
+-0.2825,
+0.6065,
+4.6858,
+0.7018,
+0.4468,
+0.4564,
+]
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ct_4-ct_3-ct_2-hc_2]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ct_4-ct_3-ct_2-hc_2.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.ct_1-ct_2-ct_3-hc_3]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ct_1-ct_2-ct_3-hc_3.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.hc_2-ct_2-ct_3-hc_3]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_2-ct_2-ct_3-hc_3.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.ct_2-ct_3-ct_4-oh]
+form = "CosN"
+parameters = [
+-2.3748,
+0.0,
+6.8089,
+0.9531,
+]
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_3-ct_3-ct_4-oh]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_3-ct_3-ct_4-oh.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.ct_2-ct_3-ct_4-hc_4]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.ct_2-ct_3-ct_4-hc_4.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.hc_3-ct_3-ct_4-hc_4]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_3-ct_3-ct_4-hc_4.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+[species.commonTorsions.ct_3-ct_4-oh-ho]
+form = "CosN"
+parameters = [
+-3.5552,
+0.5886,
+2.5272,
+0.1504,
+]
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_4-ct_4-oh-ho]
+form = "Cos"
+q14 = 0.5
+v14 = 0.5
+
+[species.commonTorsions.hc_4-ct_4-oh-ho.parameters]
+k = 0.0
+n = 3.0
+eq = 0.0
+s = 1.0
+
+
+
+[[species.torsions]]
+common = "ca_m-ca_o-nc-ca_o"
+i = 5
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_m-ca_o-nc-ct_1"
+i = 11
+j = 0
+k = 1
+l = 2
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ca_o-ha_o"
+i = 5
+j = 0
+k = 1
+l = 6
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_1-nc-ca_o-ha_o"
+i = 11
+j = 0
+k = 1
+l = 6
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_p-ca_m-ca_o-nc"
+i = 0
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_p-ca_m-ca_o-ha_o"
+i = 6
+j = 1
+k = 2
+l = 3
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ha_m-ca_m-ca_o-nc"
+i = 0
+j = 1
+k = 2
+l = 7
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ha_m-ca_m-ca_o-ha_o"
+i = 6
+j = 1
+k = 2
+l = 7
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_m-ca_p-ca_m-ca_o"
+i = 1
+j = 2
+k = 3
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_m-ca_p-ca_m-ha_m"
+i = 7
+j = 2
+k = 3
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-ca_m-ca_p-ha_p"
+i = 1
+j = 2
+k = 3
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ha_m-ca_m-ca_p-ha_p"
+i = 7
+j = 2
+k = 3
+l = 8
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_m-ca_o-nc-ca_o"
+i = 1
+j = 0
+k = 5
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_m-ca_o-nc-ct_1"
+i = 11
+j = 0
+k = 5
+l = 4
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_m-ca_p-ca_m-ca_o"
+i = 2
+j = 3
+k = 4
+l = 5
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-ca_m-ca_p-ha_p"
+i = 8
+j = 3
+k = 4
+l = 5
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_p-ca_m-ca_o-nc"
+i = 3
+j = 4
+k = 5
+l = 0
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_m-ca_p-ca_m-ha_m"
+i = 2
+j = 3
+k = 4
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ha_m-ca_m-ca_p-ha_p"
+i = 8
+j = 3
+k = 4
+l = 9
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ha_m-ca_m-ca_o-nc"
+i = 9
+j = 4
+k = 5
+l = 0
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ca_o-ha_o"
+i = 1
+j = 0
+k = 5
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_1-nc-ca_o-ha_o"
+i = 11
+j = 0
+k = 5
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_p-ca_m-ca_o-ha_o"
+i = 3
+j = 4
+k = 5
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ha_m-ca_m-ca_o-ha_o"
+i = 9
+j = 4
+k = 5
+l = 10
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ct_1-ct_2"
+i = 1
+j = 0
+k = 11
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ct_1-ct_2"
+i = 5
+j = 0
+k = 11
+l = 12
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ct_1-hc_1"
+i = 1
+j = 0
+k = 11
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ct_1-hc_1"
+i = 5
+j = 0
+k = 11
+l = 13
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ct_1-hc_1"
+i = 1
+j = 0
+k = 11
+l = 14
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ca_o-nc-ct_1-hc_1"
+i = 5
+j = 0
+k = 11
+l = 14
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_3-ct_2-ct_1-nc"
+i = 0
+j = 11
+k = 12
+l = 15
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_3-ct_2-ct_1-hc_1"
+i = 13
+j = 11
+k = 12
+l = 15
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_3-ct_2-ct_1-hc_1"
+i = 14
+j = 11
+k = 12
+l = 15
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_2-ct_2-ct_1-nc"
+i = 0
+j = 11
+k = 12
+l = 16
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_1-ct_1-ct_2-hc_2"
+i = 13
+j = 11
+k = 12
+l = 16
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_1-ct_1-ct_2-hc_2"
+i = 14
+j = 11
+k = 12
+l = 16
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_2-ct_2-ct_1-nc"
+i = 0
+j = 11
+k = 12
+l = 17
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_1-ct_1-ct_2-hc_2"
+i = 13
+j = 11
+k = 12
+l = 17
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_1-ct_1-ct_2-hc_2"
+i = 14
+j = 11
+k = 12
+l = 17
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_1-ct_2-ct_3-ct_4"
+i = 11
+j = 12
+k = 15
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_4-ct_3-ct_2-hc_2"
+i = 16
+j = 12
+k = 15
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_4-ct_3-ct_2-hc_2"
+i = 17
+j = 12
+k = 15
+l = 18
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_1-ct_2-ct_3-hc_3"
+i = 11
+j = 12
+k = 15
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_2-ct_2-ct_3-hc_3"
+i = 16
+j = 12
+k = 15
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_2-ct_2-ct_3-hc_3"
+i = 17
+j = 12
+k = 15
+l = 19
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_1-ct_2-ct_3-hc_3"
+i = 11
+j = 12
+k = 15
+l = 20
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_2-ct_2-ct_3-hc_3"
+i = 16
+j = 12
+k = 15
+l = 20
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_2-ct_2-ct_3-hc_3"
+i = 17
+j = 12
+k = 15
+l = 20
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_2-ct_3-ct_4-oh"
+i = 12
+j = 15
+k = 18
+l = 21
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_3-ct_3-ct_4-oh"
+i = 19
+j = 15
+k = 18
+l = 21
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_3-ct_3-ct_4-oh"
+i = 20
+j = 15
+k = 18
+l = 21
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_2-ct_3-ct_4-hc_4"
+i = 12
+j = 15
+k = 18
+l = 22
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_3-ct_3-ct_4-hc_4"
+i = 19
+j = 15
+k = 18
+l = 22
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_3-ct_3-ct_4-hc_4"
+i = 20
+j = 15
+k = 18
+l = 22
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_2-ct_3-ct_4-hc_4"
+i = 12
+j = 15
+k = 18
+l = 23
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_3-ct_3-ct_4-hc_4"
+i = 19
+j = 15
+k = 18
+l = 23
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_3-ct_3-ct_4-hc_4"
+i = 20
+j = 15
+k = 18
+l = 23
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "ct_3-ct_4-oh-ho"
+i = 15
+j = 18
+k = 21
+l = 24
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_4-ct_4-oh-ho"
+i = 22
+j = 18
+k = 21
+l = 24
+q14 = 0.5
+v14 = 0.5
+[[species.torsions]]
+common = "hc_4-ct_4-oh-ho"
+i = 23
+j = 18
+k = 21
+l = 24
+q14 = 0.5
+v14 = 0.5
+
