@@ -14,7 +14,7 @@ class SetCellNode : public Node
     SetCellNode(Graph *parentGraph);
     ~SetCellNode() override = default;
 
-    using CellContainingVariant = std::variant<Configuration *, Structure>;
+    using CellContainingVariant = VariantParameterData<Configuration *, Structure>;
 
     /*
      * Definition

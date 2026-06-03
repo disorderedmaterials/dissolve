@@ -193,39 +193,43 @@ std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view
 }
 }; // namespace ParameterFactory
 
-// Return whether the type_index provided matches one of the supplied variant's allowed types
-template <class... Ts> bool is_variant_alternative(std::type_index id, const std::variant<Ts...> &x)
+// Parameter Data based on std::variant
+template <class... Ts> class VariantParameterData
 {
-    return ((id == typeid(Ts)) || ...);
-};
+    public:
+    // Varaint data
+    std::variant<std::monostate, Ts...> data;
 
-// Put the data of the source parameter into the destination variant
-template <class... Ts> bool emplace_into_variant(ParameterBase *source, std::variant<Ts...> &destination)
-{
-    return ((source->storedDataType() == typeid(Ts) ? (destination = source->get<Ts>()), true : false) || ...);
-}
-
-// Emplace the variant contents into the destination parameter
-template <class... Ts> bool emplace_variant_into(std::variant<Ts...> &source, ParameterBase *destination)
-{
-    return ((destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(source)), true : false) || ...);
-}
-
-// Check for null pointer in variant, ignoring other types
-template <class... Ts> bool variant_has_null_pointer(std::variant<Ts...> &variant)
-{
-    return std::visit(
-        [](auto &&arg) -> bool
-        {
-            using T = std::decay_t<decltype(arg)>;
-            if constexpr (std::is_pointer_v<T>)
+    // Return whether the type_index provided matches one of the supplied variant's allowed types
+    bool isAlternative(std::type_index id) const { return ((id == typeid(Ts)) || ...); };
+    // Emplace the data of the source parameter into the variant
+    bool emplaceFrom(ParameterBase *source)
+    {
+        return ((source->storedDataType() == typeid(Ts) ? (data = source->get<Ts>()), true : false) || ...);
+    }
+    // Emplace the variant contents into the destination parameter
+    bool emplaceInto(ParameterBase *destination) const
+    {
+        return ((destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(data)), true : false) || ...);
+    }
+    // Return whether the variant is empty
+    bool isEmpty() const { return data.index() == 0; }
+    // Check for null pointer in variant, ignoring other types
+    bool hasNullPointer()
+    {
+        return std::visit(
+            [](auto &&arg) -> bool
             {
-                return arg == nullptr;
-            }
-            return false;
-        },
-        variant);
-}
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::is_pointer_v<T>)
+                {
+                    return arg == nullptr;
+                }
+                return false;
+            },
+            data);
+    }
+};
 
 // Primary type for a Parameter to a specific DataClass
 template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
@@ -346,10 +350,10 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         }
 
         // Variants
-        if constexpr (is_instance_of_v<DataClass, std::variant>)
+        if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
         {
             // Variants can be set from another identical type or any type which matches one of our alternatives
-            return id == storedDataType_ || is_variant_alternative(id, data_);
+            return id == storedDataType_ || data_.isAlternative(id);
         }
 
         // Normal data types can be set from several different types of object
@@ -369,10 +373,10 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         }
 
         // Variants
-        if constexpr (is_instance_of_v<DataClass, std::variant>)
+        if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
         {
             // Variants might_ contain the correct data - we only return here if it is a possibility
-            return is_variant_alternative(id, data_);
+            return data_.isAlternative(id);
         }
 
         return false;
@@ -432,7 +436,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
                 return true;
             }
         }
-        else if constexpr (is_instance_of_v<DataClass, std::variant>)
+        else if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
         {
             // Variant to variant
             if (storedDataType_ == source->storedDataType())
@@ -440,17 +444,17 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
                 setData(source->get<DataClass>());
 
                 // If the variant now contains a pointer type we need to check for nullptr
-                if (variant_has_null_pointer(data_))
+                if (data_.hasNullPointer())
                     return false;
 
                 return true;
             }
 
             // Variants can be set from any matching type
-            if (emplace_into_variant(source, data_))
+            if (data_.emplaceFrom(source))
             {
                 // If the variant now contains a pointer type we need to check for nullptr
-                if (variant_has_null_pointer(data_))
+                if (data_.hasNullPointer())
                     return false;
 
                 updateAfterSet();
@@ -486,14 +490,15 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Assign the value of this parameter to the target one
     bool assignDataTo(ParameterBase *destination) override
     {
-        if constexpr (is_instance_of_v<DataClass, std::variant>)
+        if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
         {
             // Check that we actually contain a valid value
-            // TODO
+            if (data_.isEmpty())
+                return false;
 
             // The possibility for a match between the parameters has already been checkwd by the Edge, so here we must just
             // try to emplace the variant's data into the destination parameter.
-            if (emplace_variant_into(data_, destination))
+            if (data_.emplaceInto(destination))
             {
                 destination->updateAfterSet();
 
