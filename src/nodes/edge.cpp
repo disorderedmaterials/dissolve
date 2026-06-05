@@ -113,7 +113,7 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Check that types are compatible
-    if (!targetInput->acceptsOutput(sourceOutput.get()))
+    if (!targetInput->acceptsDataFromSource(sourceOutput.get()))
     {
         Messenger::error("Source output ({}@{}) and target input ({}@{}) edge types are not compatible - {} vs {}.\n",
                          definition.sourceOutput, sourceNode->name(), definition.targetInput, targetNode->name(),
@@ -221,7 +221,7 @@ NodeConstants::ProcessResult Edge::pull()
         }
 
         // Copy the parameter data over
-        if (!targetInput_.assign(&sourceOutput_))
+        if (!targetInput_.assignDataFromSource(&sourceOutput_))
         {
             Messenger::error("Failed to assign value from {}@{} to {}@{}.\n", sourceOutput_.name(), sourceNode_.name(),
                              targetInput_.name(), targetNode_.name());
@@ -241,7 +241,7 @@ NodeConstants::ProcessResult Edge::pull()
 NodeConstants::ProcessResult LoopEdge::pull()
 {
     // Copy the parameter data over
-    if (!analogue().assign(&sourceOutput_))
+    if (!analogue().assignDataFromSource(&sourceOutput_))
         return NodeConstants::ProcessResult::Failed;
 
     sourceNode().setUpdateRequired();

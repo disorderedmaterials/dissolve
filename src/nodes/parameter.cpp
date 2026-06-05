@@ -4,10 +4,8 @@
 #include "nodes/parameter.h"
 #include "nodes/node.h"
 
-ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType,
-                             std::type_index contextDataType)
-    : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType),
-      contextDataType_(contextDataType)
+ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType)
+    : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType)
 {
 }
 
@@ -51,3 +49,15 @@ void ParameterBase::clearDataInParent() const { parent_->clearData(); }
 
 // Mark edges for re-pull in parent node
 void ParameterBase::markIncomingEdgesForPull() const { parent_->markIncomingEdgesForPull(this); }
+
+// Perform any updates after a successful setData()
+void ParameterBase::updateAfterSet() const
+{
+    // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
+    if (!flags_.isSet(NoUpdate))
+        setParentUpdateRequired();
+
+    // Setting some parameters forces any local data to be cleared
+    if (flags_.isSet(ClearData))
+        clearDataInParent();
+}

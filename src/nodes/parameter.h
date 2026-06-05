@@ -42,8 +42,7 @@ struct ParameterLink
 class ParameterBase : public Serialisable<>
 {
     public:
-    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType,
-                  std::type_index contextDataType);
+    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
     virtual ~ParameterBase() = default;
 
     // Parameter Flags
@@ -75,8 +74,6 @@ class ParameterBase : public Serialisable<>
     std::string description_;
     // Stored data type in the parameter
     std::type_index storedDataType_;
-    // Stored data type of the context
-    std::type_index contextDataType_;
     // Flags for the parameter
     Flags<ParameterBase::ParameterFlags> flags_;
 
@@ -112,15 +109,20 @@ class ParameterBase : public Serialisable<>
     void clearDataInParent() const;
     // Mark edges for re-pull in parent node
     void markIncomingEdgesForPull() const;
+    // Perform any updates after a successful setData()
+    void updateAfterSet() const;
+    // Return whether this datatype accepts the specified one
+    virtual bool acceptsDataFromSource(ParameterBase *source) = 0;
+    // Return whether this datatype provides the specified one
+    virtual bool providesDataType(std::type_index id) = 0;
     // Assign the value of another parameter to this one
-    virtual bool assign(ParameterBase *other) = 0;
-    // Return whether this parameter accepts the output type of the other
-    virtual bool acceptsOutput(ParameterBase *other) const = 0;
+    virtual bool assignDataFromSource(ParameterBase *source) = 0;
+    // Assign the value of this parameter to the target one
+    virtual bool assignDataTo(ParameterBase *destination) = 0;
     // The type's representation as a raw int (only valid for int and enum)
     virtual int getAsInt() const { return -1; }
     // Set type's representation as a raw int (only valid for int and enum)
     virtual void setFromInt(int value) { return; }
-
     // Get the parameter's value
     template <typename DataClass> DataClass get()
     {
@@ -133,21 +135,6 @@ class ParameterBase : public Serialisable<>
         auto cast = dynamic_cast<Parameter<DataClass> *>(this);
         if (!cast)
             throw(std::runtime_error(std::format("ParameterBase::get() failed to cast, name = {}.\n", name_)));
-        return cast->getData();
-    }
-    // Get the parameter's context
-    template <typename DataClass> Context<DataClass>::type context()
-    {
-        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
-        if (std::type_index(typeid(typename Context<DataClass>::type)) != contextDataType_)
-            throw(std::runtime_error(std::format("ParameterBase::context() called with wrong type ({} vs {}), name = {}\n",
-                                                 std::type_index(typeid(typename Context<DataClass>::type)).name(),
-                                                 contextDataType_.name(), name_)));
-
-        // Upcast to Parameter<T> (common base of all parameter types)
-        auto cast = dynamic_cast<Parameter<DataClass> *>(this);
-        if (!cast)
-            throw(std::runtime_error(std::format("ParameterBase::context() failed to cast, name = {}.\n", name_)));
         return cast->getData();
     }
     // Set the parameter's value
@@ -182,23 +169,21 @@ class ParameterBase : public Serialisable<>
 namespace ParameterFactory
 {
 template <typename DataClass>
-std::shared_ptr<ParameterBase> create(Node *parent, std::string_view name, std::string_view description, DataClass &value,
-                                      typename Context<DataClass>::type context = {})
+std::shared_ptr<ParameterBase> create(Node *parent, std::string_view name, std::string_view description, DataClass &value)
 {
-    return std::make_shared<Parameter<DataClass>>(parent, name, description, value, context);
+    return std::make_shared<Parameter<DataClass>>(parent, name, description, value);
 }
 template <typename DataClass>
 std::shared_ptr<ParameterBase> createPointer(Node *parent, std::string_view name, std::string_view description,
-                                             DataClass &fromObject, typename Context<DataClass>::type context = {})
+                                             DataClass &fromObject)
 {
-    return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromObject, context);
+    return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromObject);
 }
 template <typename DataClass>
 std::shared_ptr<ParameterBase> createPointer(Node *parent, std::string_view name, std::string_view description,
-                                             std::optional<DataClass> &fromOptional,
-                                             typename Context<DataClass>::type context = {})
+                                             std::optional<DataClass> &fromOptional)
 {
-    return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromOptional, context);
+    return std::make_shared<Parameter<DataClass *>>(parent, name, description, fromOptional);
 }
 template <typename DataClass>
 std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view name, std::string_view description,
@@ -208,49 +193,75 @@ std::shared_ptr<ParameterBase> createSerialisable(Node *parent, std::string_view
 }
 }; // namespace ParameterFactory
 
+// Parameter Data based on std::variant
+template <class... Ts> class VariantParameterData
+{
+    public:
+    // Variant data
+    std::variant<std::monostate, Ts...> data;
+
+    // Return whether the type_index provided matches one of the supplied variant's allowed types
+    bool isAlternative(std::type_index id) const { return ((id == typeid(Ts)) || ...); };
+    // Emplace the data of the source parameter into the variant
+    bool emplaceFrom(ParameterBase *source)
+    {
+        return ((source->storedDataType() == typeid(Ts) ? (data = source->get<Ts>()), true : false) || ...);
+    }
+    // Emplace the variant contents into the destination parameter
+    bool emplaceInto(ParameterBase *destination) const
+    {
+        return ((destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(data)), true : false) || ...);
+    }
+    // Return whether the variant is empty
+    bool isEmpty() const { return data.index() == 0; }
+    // Check for null pointer in variant, ignoring other types
+    bool hasNullPointer()
+    {
+        return std::visit(
+            [](auto &&arg) -> bool
+            {
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::is_pointer_v<T>)
+                {
+                    return arg == nullptr;
+                }
+                return false;
+            },
+            data);
+    }
+};
+
 // Primary type for a Parameter to a specific DataClass
 template <typename DataClass> class Parameter : public ParameterBase, public std::enable_shared_from_this<Parameter<DataClass>>
 {
     public:
-    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
-              typename Context<DataClass>::type context)
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         requires(is_instance_of_v<DataClass, std::vector>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)),
-                        std::type_index(typeid(typename Context<DataClass>::type))),
-          data_(value), default_(value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
-    Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value,
-              typename Context<DataClass>::type context)
+    Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value)
         requires(std::is_pointer_v<DataClass>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)),
-                        std::type_index(typeid(typename Context<DataClass>::type))),
-          data_(localPointer_), default_(nullptr), dataGetter_([&]() { return &value; }),
-          dataSetter_([](const DataClass &value) { return false; }), context_(context)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
+          dataGetter_([&]() { return &value; }), dataSetter_([](const DataClass &value) { return false; })
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
-              std::optional<std::remove_pointer_t<DataClass>> &targetData, typename Context<DataClass>::type context)
+              std::optional<std::remove_pointer_t<DataClass>> &targetData)
         requires(std::is_pointer_v<DataClass>)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)),
-                        std::type_index(typeid(typename Context<DataClass>::type))),
-          data_(localPointer_), default_(nullptr),
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
           dataGetter_([&]() { return targetData.has_value() ? &targetData.value() : nullptr; }),
-          dataSetter_([](const DataClass &value) { return false; }), context_(context)
+          dataSetter_([](const DataClass &value) { return false; })
     {
     }
-    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
-              typename Context<DataClass>::type context)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)),
-                        std::type_index(typeid(typename Context<DataClass>::type))),
-          data_(value), default_(value), context_(context)
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description,
               std::shared_ptr<ParameterProxy<DataClass>> &proxy)
-        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)),
-                        std::type_index(typeid(typename Context<DataClass>::type))),
-          data_(proxy->data), default_(proxy->data), context_{}
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(proxy->data),
+          default_(proxy->data)
     {
         // Store the proxy data smart pointer to preserve the lifetime of the data
         proxyData_ = proxy;
@@ -288,9 +299,8 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             data_ = value;
         else if constexpr (std::is_enum_v<DataClass>)
             data_ = static_cast<DataClass>(value);
-        else
-            Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
-        return;
+
+        Messenger::exception("Tried to extract int value from non integral type {}", storedDataType_.name());
     }
 
     /*
@@ -299,8 +309,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     protected:
     // Reference to target data
     DataClass &data_;
-    // Reference to target context
-    Context<DataClass>::type context_;
     // Specialised container for local pointer referencing, if relevant
     std::conditional_t<std::is_pointer_v<DataClass>, DataClass, bool> localPointer_;
     // Getter for target data, defaulting so simple return of data_ reference member
@@ -314,19 +322,6 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Parameter proxy data (if a ParameterLink)
     std::shared_ptr<ParameterProxy<DataClass>> proxyData_;
 
-    private:
-    // Perform any updates after a successful setData()
-    void updateAfterSet() const
-    {
-        // Changing parameters always flags an update as being required, unless the NoUpdate flag is set
-        if (!flags_.isSet(NoUpdate))
-            setParentUpdateRequired();
-
-        // Setting some parameters forces any local data to be cleared
-        if (flags_.isSet(ClearData))
-            clearDataInParent();
-    }
-
     public:
     // Return whether the contained data is an instance of std::vector
     bool isVector() const override
@@ -335,32 +330,76 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             return true;
         return false;
     }
-    // Assign the value of another parameter to this one.
-    bool assign(ParameterBase *other) override
+    // Return whether this datatype accepts data from the specified source
+    bool acceptsDataFromSource(ParameterBase *source) override
     {
-        if constexpr (std::is_pointer<DataClass>())
-        {
-            // If we are a pointer type, getting a nullptr is disallowed
-            setData(other->get<DataClass>());
+        auto id = source->storedDataType();
 
-            return data_ != nullptr;
+        // Optionals and vectors
+        if constexpr (is_instance_of_v<DataClass, std::optional> || is_instance_of_v<DataClass, std::vector>)
+        {
+            // Can be set from another identical DataClass or a plain object of the value_type
+            return id == storedDataType_ || id == typeid(typename DataClass::value_type);
         }
-        else if constexpr (is_instance_of_v<DataClass, std::vector>)
+
+        // Vectors
+        if constexpr (is_instance_of_v<DataClass, std::vector>)
+        {
+            // Vectors can be set from another identical DataClass or a single object of the value_type
+            return id == storedDataType_ || id == typeid(typename DataClass::value_type);
+        }
+
+        // Variants
+        if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
+        {
+            // Variants can be set from another identical type or any type which matches one of our alternatives
+            return id == storedDataType_ || data_.isAlternative(id);
+        }
+
+        // Normal data types can be set from several different types of object
+        return source->providesDataType(storedDataType_);
+    }
+    // Return whether this datatype provides the specified one
+    bool providesDataType(std::type_index id) override
+    {
+        if (id == storedDataType_)
+            return true;
+
+        // Optionals
+        if constexpr (is_instance_of_v<DataClass, std::optional>)
+        {
+            // Optionals provide the value_type
+            return id == typeid(typename DataClass::value_type);
+        }
+
+        // Variants
+        if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
+        {
+            // Variants might_ contain the correct data - we only return here if it is a possibility
+            return data_.isAlternative(id);
+        }
+
+        return false;
+    }
+    // Assign the value of another parameter to this one
+    bool assignDataFromSource(ParameterBase *source) override
+    {
+        if constexpr (is_instance_of_v<DataClass, std::vector>)
         {
             // If we represent a std::vector container we can conditionally check for a single data item being passed
 
             // Vector to vector
-            if (storedDataType_ == other->storedDataType())
+            if (storedDataType_ == source->storedDataType())
             {
-                setData(other->get<DataClass>());
+                setData(source->get<DataClass>());
 
                 return true;
             }
 
             // Single value to vector
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            if (std::type_index(typeid(typename DataClass::value_type)) == source->storedDataType())
             {
-                data_.push_back(other->get<typename DataClass::value_type>());
+                data_.push_back(source->get<typename DataClass::value_type>());
 
                 updateAfterSet();
 
@@ -372,62 +411,106 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
             // Optional arguments can be set from the base class (i.e. with no std::optional container) as well as std::optional
 
             // Optional to optional
-            if (storedDataType_ == other->storedDataType())
+            if (storedDataType_ == source->storedDataType())
             {
-                setData(other->get<DataClass>());
+                setData(source->get<DataClass>());
 
                 return true;
             }
 
             // Base type into std::optional
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            if (std::type_index(typeid(typename DataClass::value_type)) == source->storedDataType())
             {
-                setData(other->get<typename DataClass::value_type>());
+                setData(source->get<typename DataClass::value_type>());
 
                 return true;
             }
         }
-        else if (typeid(std::optional<DataClass>) == other->storedDataType())
+        else if (typeid(std::optional<DataClass>) == source->storedDataType())
         {
             // Data types can be set from a std::optional containing the same type
-
-            auto otherData = other->get<std::optional<DataClass>>();
+            auto otherData = source->get<std::optional<DataClass>>();
             if (otherData.has_value())
             {
                 setData(*otherData);
                 return true;
             }
         }
-
-        // General case - if the stored data types are the same then we can just do a straight assignment
-        if (storedDataType_ == other->storedDataType())
+        else if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
         {
-            setData(other->get<DataClass>());
+            // Variant to variant
+            if (storedDataType_ == source->storedDataType())
+            {
+                setData(source->get<DataClass>());
+
+                // If the variant now contains a pointer type we need to check for nullptr
+                if (data_.hasNullPointer())
+                    return false;
+
+                return true;
+            }
+
+            // Variants can be set from any matching type
+            if (data_.emplaceFrom(source))
+            {
+                // If the variant now contains a pointer type we need to check for nullptr
+                if (data_.hasNullPointer())
+                    return false;
+
+                updateAfterSet();
+                return true;
+            }
+        }
+        else if (storedDataType_ == source->storedDataType())
+        {
+            // General case - if the stored data types are the same then we can just do a straight assignment
+            setData(source->get<DataClass>());
+
+            // If we are a pointer type, getting a nullptr is disallowed
+            if constexpr (std::is_pointer<DataClass>())
+            {
+                return data_ != nullptr;
+            }
+
             return true;
+        }
+        else
+        {
+            // Try setting from the source parameter so we have it's full DataClass information - this is necessary for types
+            // like std::variant where we need to know the stored alternative.
+            if (source->assignDataTo(this))
+            {
+                updateAfterSet();
+                return true;
+            }
         }
 
         return false;
     }
-    // Return whether this parameter accepts the output type of the other
-    bool acceptsOutput(ParameterBase *other) const override
+    // Assign the value of this parameter to the target one
+    bool assignDataTo(ParameterBase *destination) override
     {
-        if (storedDataType_ == other->storedDataType())
-            return true;
+        if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
+        {
+            // Check that we actually contain a valid value
+            if (data_.isEmpty())
+                return false;
 
-        // Normal data types can be set from optional values
-        if (typeid(std::optional<DataClass>) == other->storedDataType())
-            return true;
-        else if constexpr (is_instance_of_v<DataClass, std::vector>)
-        {
-            // Vectors can accept a single value of the contained type
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
+            // The possibility for a match between the parameters has already been checkwd by the Edge, so here we must just
+            // try to emplace the variant's data into the destination parameter.
+            if (data_.emplaceInto(destination))
+            {
+                destination->updateAfterSet();
+
                 return true;
+            }
         }
-        else if constexpr (is_instance_of_v<DataClass, std::optional>)
+        else if (storedDataType_ == destination->storedDataType())
         {
-            // Optionals can accept non-optional data
-            if (std::type_index(typeid(typename DataClass::value_type)) == other->storedDataType())
-                return true;
+            // General case - if the stored data types are the same then we can just do a straight assignment
+            destination->set<DataClass>(data_);
+
+            return true;
         }
 
         return false;
@@ -479,7 +562,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
     public:
     SerialisableParameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
                           typename Context<DataClass>::type context = {})
-        : Parameter<DataClass>(parent, name, description, value, context)
+        : Parameter<DataClass>(parent, name, description, value)
     {
     }
     // Helper templates for handling serialisation
