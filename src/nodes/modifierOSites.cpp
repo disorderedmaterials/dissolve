@@ -1,0 +1,182 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#include "nodes/modifierOSites.h"
+#include "analyser/dataOperator1D.h"
+#include "analyser/siteFilter.h"
+#include "analyser/siteSelector.h"
+#include "math/integrator.h"
+
+ModifierOSitesNode::ModifierOSitesNode(Graph *parentGraph) : Node(parentGraph)
+{
+    // Inputs
+    addInput("Configuration", "Set target configuration for the module", configuration_)->setFlags({ParameterBase::Required});
+
+    // Options
+    addOption("Modifier", "Set the modifier site(s) for which the distribution of oxygens should be calculated",
+              modifierSpeciesSites_);
+    addOption("BondingOxygen", "Set the site(s) 'BO' which are to represent the bonding oxygen", bridgingOxygenSpeciesSites_);
+    addOption("NetworkFormer",
+              "Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated",
+              networkFormerSpeciesSites_);
+    addOption("DistanceRange", "Distance range (min, max) over which to calculate from the central site", distanceRange_);
+    addOption("ModifierDistanceRange", "Distance range (min, max) over which to calculate from the central site",
+              modifierDistanceRange_);
+}
+
+std::string_view ModifierOSitesNode::type() const { return "ModifierOSites"; }
+
+std::string_view ModifierOSitesNode::summary() const
+{
+    return "Calculate the percentage FO, BO and NBO bonded to a modifier atom";
+}
+
+/*
+ * Data
+ */
+
+// Clear any local data
+void ModifierOSitesNode::clearData()
+{
+    modifierHistogram_.reset();
+    modifiers_.clear();
+    oxygenSitesHistogram_.reset();
+    oxygenSites_.clear();
+    histMFO_.reset();
+    distancesMFO_.clear();
+    histMNBO_.reset();
+    distancesMNBO_.clear();
+    histMBO_.reset();
+    distancesMBO_.clear();
+    histMOtherO_.reset();
+    distancesMOtherO_.clear();
+}
+
+/*
+ * Processing
+ */
+
+// Run main processing
+NodeConstants::ProcessResult ModifierOSitesNode::process()
+{
+    // Select all potential bridging oxygen sites - we will determine which actually are
+    // involved in NF-BO-NF interactions once we have the available NF sites
+    SiteSelector allOxygenSites(configuration_, bridgingOxygenSpeciesSites_.getSpeciesSites());
+
+    // Select all NF centres
+    const SiteSelector NF(configuration_, networkFormerSpeciesSites_.getSpeciesSites());
+
+    // Select all modifier centres
+    const SiteSelector modifier(configuration_, modifierSpeciesSites_.getSpeciesSites());
+
+    // Filter the oxygen sites into those surrounded by up to two NF sites
+    SiteFilter ofilter(configuration_, allOxygenSites.sites());
+    auto &&[filteredOSites, neighbourMap] = ofilter.filterBySiteProximity(NF.sites(), distanceRange_, 0, 2);
+
+    SiteFilter mfilter(configuration_, modifier.sites());
+    auto &&[filteredMSites, mNeighbourMapO] =
+        mfilter.filterBySiteProximity(allOxygenSites.sites(), modifierDistanceRange_, 0, 99);
+
+    // Initialise data storage if required
+    if (!oxygenSitesHistogram_)
+        oxygenSitesHistogram_.emplace().initialise();
+    if (!modifierHistogram_)
+        modifierHistogram_.emplace().initialise();
+    if (!histMFO_)
+        histMFO_.emplace().initialise(distanceRange_.minimum(), modifierDistanceRange_.maximum(), 0.05);
+    if (!histMNBO_)
+        histMNBO_.emplace().initialise(distanceRange_.minimum(), modifierDistanceRange_.maximum(), 0.05);
+    if (!histMBO_)
+        histMBO_.emplace().initialise(distanceRange_.minimum(), modifierDistanceRange_.maximum(), 0.05);
+    if (!histMOtherO_)
+        histMOtherO_.emplace().initialise(distanceRange_.minimum(), distanceRange_.maximum(), 0.05);
+
+    // Create an ordered set of references to histograms with increasing oxygen bond patterns
+    std::vector<std::reference_wrapper<Histogram1D>> histogramsMO = {*histMFO_, *histMNBO_, *histMBO_, *histMOtherO_};
+
+    // Clear the temporary bins
+    modifierHistogram_->zeroBins();
+    oxygenSitesHistogram_->zeroBins();
+    histMFO_->zeroBins();
+    histMNBO_->zeroBins();
+    histMBO_->zeroBins();
+    histMOtherO_->zeroBins();
+
+    // For each modifier site, bin the number of neighbour oxygens, then for each of those oxygen bin its type
+    std::map<const Site *, int> qSpecies;
+    std::map<int, int> oxygenSites;
+    for (const auto &[siteM, nearO] : mNeighbourMapO)
+    {
+        modifierHistogram_->bin(nearO.size());
+        for (auto &&[oSite, index] : nearO)
+        {
+            oxygenSitesHistogram_->bin(neighbourMap[oSite].size());
+
+            int size = neighbourMap[oSite].size();
+            histogramsMO[std::min(size, 3)].get().bin(configuration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
+        }
+    }
+
+    // Accumulate histogram averages
+    oxygenSitesHistogram_->accumulate();
+    modifierHistogram_->accumulate();
+    histMFO_->accumulate();
+    histMNBO_->accumulate();
+    histMBO_->accumulate();
+    histMOtherO_->accumulate();
+
+    // Averaged values for OSites
+    oxygenSites_ = oxygenSitesHistogram_->accumulatedData();
+    auto sum = Integrator::absSum(oxygenSitesHistogram_->data());
+    oxygenSites_ /= sum;
+
+    // Average values for total O sites
+    modifiers_ = modifierHistogram_->accumulatedData();
+    auto totalOSites = Integrator::absSum(modifierHistogram_->data());
+    modifiers_ /= totalOSites;
+
+    // Normalise HistMFO
+    distancesMFO_ = histMFO_->accumulatedData();
+    DataOperator1D histMFONormaliser(distancesMFO_);
+    // Normalise by value
+    histMFONormaliser.normaliseSumTo();
+
+    // Normalise HistMNBO
+    distancesMNBO_ = histMNBO_->accumulatedData();
+    DataOperator1D histMNBONormaliser(distancesMNBO_);
+    // Normalise by value
+    histMNBONormaliser.normaliseSumTo();
+
+    // Normalise HistMBO
+    distancesMBO_ = histMBO_->accumulatedData();
+    DataOperator1D histMBONormaliser(distancesMBO_);
+    // Normalise by value
+    histMBONormaliser.normaliseSumTo();
+
+    // Normalise HistMOtherO
+    distancesMOtherO_ = histMOtherO_->accumulatedData();
+    DataOperator1D histMOtherONormaliser(distancesMOtherO_);
+    // Normalise by value
+    histMOtherONormaliser.normaliseSumTo();
+
+    // // Save data?
+    // if (!DataExporter::exportData(accumulatedData, exportFileAndFormatOType_))
+    //     return ExecutionResult::Failed;
+    //
+    // if (!DataExporter::exportData(accumulatedModifierData, exportFileAndFormatTotalOSites_))
+    //     return ExecutionResult::Failed;
+    //
+    // if (!DataExporter::exportData(dataNormalisedHistMFO, exportFileAndFormatFOLength_))
+    //     return ExecutionResult::Failed;
+    //
+    // if (!DataExporter::exportData(dataNormalisedHistMNBO, exportFileAndFormatNBOLength_))
+    //     return ExecutionResult::Failed;
+    //
+    // if (!DataExporter::exportData(dataNormalisedHistMBO, exportFileAndFormatBOLength_))
+    //     return ExecutionResult::Failed;
+    //
+    // if (!DataExporter::exportData(dataNormalisedHistMOtherO, exportFileAndFormatOtherOLength_))
+    //     return ExecutionResult::Failed;
+
+    return NodeConstants::ProcessResult::Success;
+}
