@@ -43,20 +43,24 @@ void ModifierOSitesNode::clearData()
     oxygenSitesHistogram_.reset();
     oxygenSites_.clear();
     histMFO_.reset();
-    distancesMFO_.clear();
+    distanceMFO_.clear();
     histMNBO_.reset();
-    distancesMNBO_.clear();
+    distanceMNBO_.clear();
     histMBO_.reset();
-    distancesMBO_.clear();
+    distanceMBO_.clear();
     histMOtherO_.reset();
-    distancesMOtherO_.clear();
+    distanceMOtherO_.clear();
 }
 
 // Temporary accessors to data for testing
 const IntegerHistogram1D &ModifierOSitesNode::oxygenSitesHistogram() const { return *oxygenSitesHistogram_; }
 const Data1D &ModifierOSitesNode::oxygenSites() const { return oxygenSites_; }
 const IntegerHistogram1D &ModifierOSitesNode::totalOxygensHistogram() const { return *totalOxygensHistogram_; }
-const Data1D ModifierOSitesNode::totalOxygens() const { return totalOxygens_; }
+const Data1D &ModifierOSitesNode::totalOxygens() const { return totalOxygens_; }
+const Data1D &ModifierOSitesNode::distanceMFO() const { return distanceMFO_; }
+const Data1D &ModifierOSitesNode::distanceMNBO() const { return distanceMNBO_; }
+const Data1D &ModifierOSitesNode::distanceMBO() const { return distanceMBO_; }
+const Data1D &ModifierOSitesNode::distanceMOtherO() const { return distanceMOtherO_; }
 
 /*
  * Processing
@@ -142,26 +146,26 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
     totalOxygens_ /= totalOSites;
 
     // Normalise HistMFO
-    distancesMFO_ = histMFO_->accumulatedData();
-    DataOperator1D histMFONormaliser(distancesMFO_);
+    distanceMFO_ = histMFO_->accumulatedData();
+    DataOperator1D histMFONormaliser(distanceMFO_);
     // Normalise by value
     histMFONormaliser.normaliseSumTo();
 
     // Normalise HistMNBO
-    distancesMNBO_ = histMNBO_->accumulatedData();
-    DataOperator1D histMNBONormaliser(distancesMNBO_);
+    distanceMNBO_ = histMNBO_->accumulatedData();
+    DataOperator1D histMNBONormaliser(distanceMNBO_);
     // Normalise by value
     histMNBONormaliser.normaliseSumTo();
 
     // Normalise HistMBO
-    distancesMBO_ = histMBO_->accumulatedData();
-    DataOperator1D histMBONormaliser(distancesMBO_);
+    distanceMBO_ = histMBO_->accumulatedData();
+    DataOperator1D histMBONormaliser(distanceMBO_);
     // Normalise by value
     histMBONormaliser.normaliseSumTo();
 
     // Normalise HistMOtherO
-    distancesMOtherO_ = histMOtherO_->accumulatedData();
-    DataOperator1D histMOtherONormaliser(distancesMOtherO_);
+    distanceMOtherO_ = histMOtherO_->accumulatedData();
+    DataOperator1D histMOtherONormaliser(distanceMOtherO_);
     // Normalise by value
     histMOtherONormaliser.normaliseSumTo();
 

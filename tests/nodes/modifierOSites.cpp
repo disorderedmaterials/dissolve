@@ -60,4 +60,38 @@ TEST(ModifierOSitesNodeTest, Simple)
     EXPECT_DOUBLE_EQ(oTotal.value(0), 1.0);
 }
 
+TEST(ModifierOSitesNodeTest, Simple2)
+{
+    // Set up the test graph
+    TestGraph testGraph;
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"Si", 5}, {"O", 9}, {"P", 10}}, {30.0, 30.0, 30.0}));
+    ASSERT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/modifierOSites2.xyz"));
+
+    // Grab species pointers
+    auto *Si = testGraph.findNode("Si")->getOutputValue<const Species *>("Species");
+    ASSERT_TRUE(Si);
+    auto *O = testGraph.findNode("O")->getOutputValue<const Species *>("Species");
+    ASSERT_TRUE(O);
+    auto *P = testGraph.findNode("P")->getOutputValue<const Species *>("Species");
+    ASSERT_TRUE(P);
+
+    // Add the analysis module to the iterator
+    auto modOS = dynamic_cast<ModifierOSitesNode *>(testGraph.createNode("ModifierOSites"));
+    ASSERT_TRUE(modOS);
+    ASSERT_TRUE(modOS->setOption<SpeciesSites>("Modifier", {{P->findSite("Origin")}}));
+    ASSERT_TRUE(modOS->setOption<SpeciesSites>("BondingOxygen", {{O->findSite("Origin")}}));
+    ASSERT_TRUE(modOS->setOption<SpeciesSites>("NetworkFormer", {{Si->findSite("Origin")}}));
+    ASSERT_TRUE(modOS->setOption<Range>("DistanceRange", {0.0, 2.1}));
+    ASSERT_TRUE(modOS->setOption<Range>("ModifierDistanceRange", {0.0, 3.1}));
+    ASSERT_TRUE(testGraph.addEdge({testGraph.fetchHeadName(), "Configuration", "ModifierOSites", "Configuration"}));
+
+    // Run from the modifier O sites node explicitly
+    ASSERT_EQ(modOS->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(modOS->versionIndex(), 0);
+
+    auto &distanceMFO = modOS->distanceMFO();
+    Interpolator distanceMFOInterpolator(distanceMFO);
+    EXPECT_DOUBLE_EQ(distanceMFOInterpolator.y(1.005), 0.5);
+    EXPECT_DOUBLE_EQ(distanceMFOInterpolator.y(2.005), 0.5);
+}
 } // namespace UnitTest

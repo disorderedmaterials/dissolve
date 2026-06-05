@@ -45,16 +45,16 @@ class ModifierOSitesNode : public Node
     Data1D oxygenSites_;
     // Modifier - Free Oxygens
     std::optional<Histogram1D> histMFO_;
-    Data1D distancesMFO_;
+    Data1D distanceMFO_;
     // Modifier - Non-Bridging Oxygens
     std::optional<Histogram1D> histMNBO_;
-    Data1D distancesMNBO_;
+    Data1D distanceMNBO_;
     // Modifier - Bridging Oxygens
     std::optional<Histogram1D> histMBO_;
-    Data1D distancesMBO_;
+    Data1D distanceMBO_;
     // Modifier - Other Oxygens
     std::optional<Histogram1D> histMOtherO_;
-    Data1D distancesMOtherO_;
+    Data1D distanceMOtherO_;
 
     public:
     // Clear any local data
@@ -63,7 +63,11 @@ class ModifierOSitesNode : public Node
     const IntegerHistogram1D &oxygenSitesHistogram() const;
     const Data1D &oxygenSites() const;
     const IntegerHistogram1D &totalOxygensHistogram() const;
-    const Data1D totalOxygens() const;
+    const Data1D &totalOxygens() const;
+    const Data1D &distanceMFO() const;
+    const Data1D &distanceMNBO() const;
+    const Data1D &distanceMBO() const;
+    const Data1D &distanceMOtherO() const;
 
     /*
      * Processing
