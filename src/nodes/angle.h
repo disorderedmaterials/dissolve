@@ -44,6 +44,11 @@ class AngleNode : public Node
     bool symmetric_{false};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_, c_;
+
+    /*
+     * Data
+     */
+    private:
     // RDF(A-B)
     std::optional<Histogram1D> distanceHistogramAB_;
     Data1D rdfAB_;
@@ -66,12 +71,12 @@ class AngleNode : public Node
     Data1DExportFileFormat exportFileAndFormatAB_, exportFileAndFormatBC_, exportFileAndFormatAngle_;
     Data2DExportFileFormat exportFileAndFormatDAngleAB_, exportFileAndFormatDAngleBC_;
 
-    /*
-     * Data
-     */
     public:
     // Clear any local data
     void clearData() override;
+    // Temporary accessors to data for testing
+    const Data1D &rdfBC() const;
+    const Data1D &angleABC() const;
 
     /*
      * Processing
@@ -79,9 +84,4 @@ class AngleNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
-
-    public:
-    // Temporary accessors to data for testing
-    const Data1D &rdfBC() const;
-    const Data1D &angleABC() const;
 };
