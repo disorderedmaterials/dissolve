@@ -279,6 +279,10 @@ void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeF
         auto iso = addIsotopologue(std::format("{}{}", Elements::symbol(Z), Sears91::A(isotope)));
         iso->setAtomTypeIsotope(atomType, isotope);
     }
+
+    // Add a central site
+    auto *site = addSite("Origin");
+    site->addStaticOriginAtom(0);
 }
 
 // Load from specified TOML file
