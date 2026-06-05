@@ -73,3 +73,5 @@ bool Site::hasAxes() const { return hasAxes_; }
 
 // Return local axes
 const Matrix3 &Site::axes() const { return axes_; }
+
+EnumOptions<Site::SiteAxis> getEnumOptions(Site::SiteAxis) { return Site::siteAxis(); }
