@@ -38,8 +38,8 @@ std::string_view ModifierOSitesNode::summary() const
 // Clear any local data
 void ModifierOSitesNode::clearData()
 {
-    modifierHistogram_.reset();
-    modifiers_.clear();
+    totalOxygensHistogram_.reset();
+    totalOxygens_.clear();
     oxygenSitesHistogram_.reset();
     oxygenSites_.clear();
     histMFO_.reset();
@@ -51,6 +51,12 @@ void ModifierOSitesNode::clearData()
     histMOtherO_.reset();
     distancesMOtherO_.clear();
 }
+
+// Temporary accessors to data for testing
+const IntegerHistogram1D &ModifierOSitesNode::oxygenSitesHistogram() const { return *oxygenSitesHistogram_; }
+const Data1D &ModifierOSitesNode::oxygenSites() const { return oxygenSites_; }
+const IntegerHistogram1D &ModifierOSitesNode::totalOxygensHistogram() const { return *totalOxygensHistogram_; }
+const Data1D ModifierOSitesNode::totalOxygens() const { return totalOxygens_; }
 
 /*
  * Processing
@@ -80,8 +86,8 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
     // Initialise data storage if required
     if (!oxygenSitesHistogram_)
         oxygenSitesHistogram_.emplace().initialise();
-    if (!modifierHistogram_)
-        modifierHistogram_.emplace().initialise();
+    if (!totalOxygensHistogram_)
+        totalOxygensHistogram_.emplace().initialise();
     if (!histMFO_)
         histMFO_.emplace().initialise(distanceRange_.minimum(), modifierDistanceRange_.maximum(), 0.05);
     if (!histMNBO_)
@@ -95,7 +101,7 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
     std::vector<std::reference_wrapper<Histogram1D>> histogramsMO = {*histMFO_, *histMNBO_, *histMBO_, *histMOtherO_};
 
     // Clear the temporary bins
-    modifierHistogram_->zeroBins();
+    totalOxygensHistogram_->zeroBins();
     oxygenSitesHistogram_->zeroBins();
     histMFO_->zeroBins();
     histMNBO_->zeroBins();
@@ -107,7 +113,7 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
     std::map<int, int> oxygenSites;
     for (const auto &[siteM, nearO] : mNeighbourMapO)
     {
-        modifierHistogram_->bin(nearO.size());
+        totalOxygensHistogram_->bin(nearO.size());
         for (auto &&[oSite, index] : nearO)
         {
             oxygenSitesHistogram_->bin(neighbourMap[oSite].size());
@@ -119,7 +125,7 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
 
     // Accumulate histogram averages
     oxygenSitesHistogram_->accumulate();
-    modifierHistogram_->accumulate();
+    totalOxygensHistogram_->accumulate();
     histMFO_->accumulate();
     histMNBO_->accumulate();
     histMBO_->accumulate();
@@ -131,9 +137,9 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
     oxygenSites_ /= sum;
 
     // Average values for total O sites
-    modifiers_ = modifierHistogram_->accumulatedData();
-    auto totalOSites = Integrator::absSum(modifierHistogram_->data());
-    modifiers_ /= totalOSites;
+    totalOxygens_ = totalOxygensHistogram_->accumulatedData();
+    auto totalOSites = Integrator::absSum(totalOxygensHistogram_->data());
+    totalOxygens_ /= totalOSites;
 
     // Normalise HistMFO
     distancesMFO_ = histMFO_->accumulatedData();

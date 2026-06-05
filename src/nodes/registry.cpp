@@ -35,6 +35,7 @@
 #include "nodes/intraDistance.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/md.h"
+#include "nodes/modifierOSites.h"
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
@@ -98,6 +99,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
                   {"Iterator", makeDerivedNode<IterableGraph>()},
                   {"MD", makeDerivedNode<MDNode>()},
+                  {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},

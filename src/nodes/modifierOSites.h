@@ -38,8 +38,8 @@ class ModifierOSitesNode : public Node
      */
     private:
     // Total O Sites histogram
-    std::optional<IntegerHistogram1D> modifierHistogram_;
-    Data1D modifiers_;
+    std::optional<IntegerHistogram1D> totalOxygensHistogram_;
+    Data1D totalOxygens_;
     // Modifier to oxygen type sites histogram
     std::optional<IntegerHistogram1D> oxygenSitesHistogram_;
     Data1D oxygenSites_;
@@ -60,7 +60,10 @@ class ModifierOSitesNode : public Node
     // Clear any local data
     void clearData() override;
     // Temporary accessors to data for testing
-    const Data1D &rdfBC() const;
+    const IntegerHistogram1D &oxygenSitesHistogram() const;
+    const Data1D &oxygenSites() const;
+    const IntegerHistogram1D &totalOxygensHistogram() const;
+    const Data1D totalOxygens() const;
 
     /*
      * Processing

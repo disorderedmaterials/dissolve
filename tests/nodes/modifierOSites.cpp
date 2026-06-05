@@ -8,7 +8,7 @@
 
 namespace UnitTest
 {
-TEST(ModifierOSitesNodeTest, Water)
+TEST(ModifierOSitesNodeTest, Simple)
 {
     // Set up the test graph
     TestGraph testGraph;
@@ -37,14 +37,27 @@ TEST(ModifierOSitesNodeTest, Water)
     ASSERT_EQ(modOS->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(modOS->versionIndex(), 0);
 
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        modOS->rdfBC(), "B-C RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", Data1DImportFileFormat::Data1DImportFormat::XY},
-        4.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(modOS->angleABC(), "A-B-C angle",
-                                                {"dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm",
-                                                 Data1DImportFileFormat::Data1DImportFormat::XY},
-                                                3.0e-6));
+    auto &oTypesHisto = modOS->oxygenSitesHistogram();
+    auto &oTypes = modOS->oxygenSites();
+    ASSERT_EQ(oTypesHisto.averages().size(), 3);
+    ASSERT_EQ(oTypes.nValues(), 3);
+    EXPECT_EQ(oTypesHisto.averages().at(0), 2);
+    EXPECT_DOUBLE_EQ(oTypes.xAxis(0), 0.0);
+    EXPECT_DOUBLE_EQ(oTypes.value(0), 2.0 / 8.0);
+    EXPECT_EQ(oTypesHisto.averages().at(1), 3);
+    EXPECT_DOUBLE_EQ(oTypes.xAxis(1), 1.0);
+    EXPECT_DOUBLE_EQ(oTypes.value(1), 3.0 / 8.0);
+    EXPECT_EQ(oTypesHisto.averages().at(2), 3);
+    EXPECT_DOUBLE_EQ(oTypes.xAxis(2), 2.0);
+    EXPECT_DOUBLE_EQ(oTypes.value(2), 3.0 / 8.0);
+
+    auto &oTotalHisto = modOS->totalOxygensHistogram();
+    auto &oTotal = modOS->totalOxygens();
+    ASSERT_EQ(oTotalHisto.averages().size(), 1);
+    ASSERT_EQ(oTotal.nValues(), 1);
+    EXPECT_EQ(oTotalHisto.averages().at(1), 8);
+    EXPECT_DOUBLE_EQ(oTotal.xAxis(0), 1.0);
+    EXPECT_DOUBLE_EQ(oTotal.value(0), 1.0);
 }
 
 } // namespace UnitTest
