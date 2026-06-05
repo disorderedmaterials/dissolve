@@ -12,7 +12,6 @@
 #include "modules/epsrManager/epsrManager.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 #include "modules/gr/gr.h"
-#include "modules/histogramCN/histogramCN.h"
 #include "modules/importTrajectory/importTrajectory.h"
 #include "modules/modifierOSites/modifierOSites.h"
 #include "modules/molShake/molShake.h"
@@ -42,8 +41,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<EPSRManagerModule>(ModuleTypes::EPSRManager, "Manage EPSR modules with more control", "Forcefield");
     registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
-    registerProducer<HistogramCNModule>(ModuleTypes::HistogramCN, "Produce a histogram of Coordination numbers between sites",
-                                        "Analysis");
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");
