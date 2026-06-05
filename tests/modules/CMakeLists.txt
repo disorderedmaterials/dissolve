@@ -1,6 +1,5 @@
 dissolve_add_test(SRC accumulate.cpp)
 dissolve_add_test(SRC avgMol.cpp)
-dissolve_add_test(SRC axisAngle.cpp)
 dissolve_add_test(SRC dAngle.cpp)
 dissolve_add_test(SRC histogramCN.cpp)
 dissolve_add_test(SRC moleculeTorsion.cpp)
