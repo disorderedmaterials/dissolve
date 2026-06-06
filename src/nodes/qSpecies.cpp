@@ -7,8 +7,6 @@
 #include "analyser/siteSelector.h"
 #include "main/dissolve.h"
 #include "math/integerHistogram1D.h"
-#include "math/integrator.h"
-#include "modules/qSpecies/qSpecies.h"
 
 QSpeciesNode::QSpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
