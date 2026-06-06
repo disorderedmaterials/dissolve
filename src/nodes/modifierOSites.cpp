@@ -16,8 +16,7 @@ ModifierOSitesNode::ModifierOSitesNode(Graph *parentGraph) : Node(parentGraph)
     addOption("Modifier", "Set the modifier site(s) for which the distribution of oxygens should be calculated",
               modifierSpeciesSites_);
     addOption("BondingOxygen", "Set the site(s) 'BO' which are to represent the bonding oxygen", bridgingOxygenSpeciesSites_);
-    addOption("NetworkFormer",
-              "Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated",
+    addOption("NetworkFormer", "Set the site(s) 'NF' for which the distribution around the modifier sites should be calculated",
               networkFormerSpeciesSites_);
     addOption("DistanceRange", "Distance range (min, max) over which to calculate from the central site", distanceRange_);
     addOption("ModifierDistanceRange", "Distance range (min, max) over which to calculate from the central site",

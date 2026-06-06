@@ -91,7 +91,19 @@ TEST(ModifierOSitesNodeTest, Simple2)
 
     auto &distanceMFO = modOS->distanceMFO();
     Interpolator distanceMFOInterpolator(distanceMFO);
-    EXPECT_DOUBLE_EQ(distanceMFOInterpolator.y(1.005), 0.5);
-    EXPECT_DOUBLE_EQ(distanceMFOInterpolator.y(2.005), 0.5);
+    EXPECT_NEAR(distanceMFOInterpolator.y(1.025), 0.5, 1.0e-8);
+    EXPECT_NEAR(distanceMFOInterpolator.y(2.025), 0.5, 1.0e-8);
+
+    auto &distanceMNBO = modOS->distanceMNBO();
+    Interpolator distanceMNBOInterpolator(distanceMNBO);
+    EXPECT_NEAR(distanceMNBOInterpolator.y(1.525), 0.125, 1.0e-8);
+    EXPECT_NEAR(distanceMNBOInterpolator.y(2.025), 0.5, 1.0e-8);
+    EXPECT_NEAR(distanceMNBOInterpolator.y(2.225), 0.25, 1.0e-8);
+    EXPECT_NEAR(distanceMNBOInterpolator.y(3.025), 0.125, 1.0e-8);
+
+    auto &distanceMBO = modOS->distanceMBO();
+    Interpolator distanceMBOInterpolator(distanceMBO);
+    EXPECT_NEAR(distanceMBOInterpolator.y(1.025), 1.0 / 3.0, 1.0e-8);
+    EXPECT_NEAR(distanceMBOInterpolator.y(2.025), 2.0 / 3.0, 1.0e-8);
 }
 } // namespace UnitTest
