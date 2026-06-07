@@ -360,6 +360,22 @@ class DissolveSystemTest
 
         return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
+    // Test Data3D against external file data
+    [[nodiscard]] static bool checkData3D(const Data3D &data, std::string_view name, Data3DImportFileFormat externalFileFormat,
+                                          double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        Data3D compare;
+        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(compare))
+            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType, data.values().linearArray(), compare.values().linearArray()).error;
+        auto notOK = std::isnan(error) || error > tolerance;
+        Messenger::print("Data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name, error,
+                         externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
+        return !notOK;
+    }
     // Test Data3D
     [[nodiscard]] static bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
                                           std::string_view nameB, double tolerance = 5.0e-3,
