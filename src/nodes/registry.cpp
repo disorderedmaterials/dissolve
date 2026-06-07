@@ -39,6 +39,7 @@
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
+#include "nodes/orientedSDF.h"
 #include "nodes/sdf.h"
 #include "nodes/setCell.h"
 #include "nodes/setCoordinates.h"
@@ -104,6 +105,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},
+                  {"OrientedSDF", makeDerivedNode<OrientedSDFNode>()},
                   {"SDF", makeDerivedNode<SDFNode>()},
                   {"SetCell", makeDerivedNode<SetCellNode>()},
                   {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
