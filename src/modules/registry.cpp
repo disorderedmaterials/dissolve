@@ -16,9 +16,7 @@
 #include "modules/molShake/molShake.h"
 #include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/neutronSQ.h"
-#include "modules/orientedSDF/orientedSDF.h"
 #include "modules/qSpecies/qSpecies.h"
-#include "modules/sdf/sdf.h"
 #include "modules/sq/sq.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 #include "modules/test/test.h"
@@ -46,13 +44,9 @@ ModuleRegistry::ModuleRegistry()
                                             "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
-    registerProducer<OrientedSDFModule>(
-        ModuleTypes::OrientedSDF,
-        "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation", "Analysis");
     registerProducer<ModifierOSitesModule>(ModuleTypes::ModifierOSites,
                                            "Calculate the percentage FO, BO and NBO bonded to a modifier atom", "Analysis");
     registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
-    registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
                                                 "Adjust the temperature of a configuration during a simulation", "Evolution");
