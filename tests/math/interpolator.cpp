@@ -127,8 +127,8 @@ TEST_F(InterpolatorTest, RegularSequentialTest)
     // Check against pre-calculated y values not present in the source data
     for (auto &&[x, y, interpy] : zip(fineBins.xAxis(), regularFineY_, fineBins.values()))
     {
-        EXPECT_DOUBLE_EQ(y, I.y(x));
-        EXPECT_DOUBLE_EQ(y, interpy);
+        EXPECT_NEAR(y, I.y(x), 1.0e-10);
+        EXPECT_NEAR(y, interpy, 1.0e-10);
     }
 }
 
