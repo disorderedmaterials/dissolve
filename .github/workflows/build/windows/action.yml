@@ -183,7 +183,6 @@ runs:
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
-      df -mh .
       Qt6_DIR="${RUNNER_TEMP}\qt\${{ inputs.qtVersion }}\msvc2019_64"
       ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ inputs.antlrVersion }}-complete.jar"
       export PATH="${Qt6_DIR}\bin;$PATH"
@@ -194,10 +193,25 @@ runs:
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
       cd build
 
-      # Run windeployqt on the main Dissolve-GUI-QML binary to pull in library requirements
-      ${Qt6_DIR}/bin/windeployqt.exe bin/Dissolve-GUI-QML.exe
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD -DBUILD_TESTS:bool=ON
       cmake --build . --config Release
+
+      # Run windeployqt on the main Dissolve-GUI-QML binary to pull in Qt library requirements
+      ${Qt6_DIR}/bin/windeployqt.exe bin/Dissolve-GUI-QML.exe
+
+      # Assemble external library requirements
+      export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
+      export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
+      export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
+      cp -v ${DeployDir}\install\bin\* ./bin
+      cp -v ${FreetypeDir}\freetype.dll ./bin
+      cp -v ${FTGLDir}\ftgl.dll ./bin
+      cp -v ${DeployDir}\direct_deploy\onetbb\bin\tbb12.dll ./bin
+      cp -v ${DeployDir}\direct_deploy\onetbb\bin\tbbmalloc.dll ./bin
+      cp -v ${DeployDir}\direct_deploy\onetbb\bin\tbbmalloc_proxy.dll ./bin
+      cp -v ${DeployDir}\direct_deploy\onetbb\bin\tbbbind_2_5.dll ./bin
+      cp -v ${DeployDir}\direct_deploy\antlr4-cppruntime\bin\antlr4-runtime.dll ./bin
+
       ctest --output-on-failure
 
   - name: Upload Raw Build Artifacts
