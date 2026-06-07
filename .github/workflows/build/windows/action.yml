@@ -193,9 +193,6 @@ runs:
       JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
       cd build
 
-      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD -DBUILD_TESTS:bool=ON
-      cmake --build . --config Release
-
       # Run windeployqt on the main Dissolve-GUI-QML binary to pull in Qt library requirements
       ${Qt6_DIR}/bin/windeployqt.exe bin/Dissolve-GUI-QML.exe
 
@@ -212,6 +209,11 @@ runs:
       cp -v ${DeployDir}\direct_deploy\onetbb\bin\tbbbind_2_5.dll ./bin
       cp -v ${DeployDir}\direct_deploy\antlr4-cppruntime\bin\antlr4-runtime.dll ./bin
 
+      # Build the test binaries
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD -DBUILD_TESTS:bool=ON
+      cmake --build . --config Release
+
+      # Run the tests
       ctest --output-on-failure
 
   - name: Upload Raw Build Artifacts
