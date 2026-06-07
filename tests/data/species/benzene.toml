@@ -571,3 +571,16 @@ yAxisAtoms = [
 2,
 ]
 
+[species.sites.Ring]
+originAtoms = [
+0,
+6,
+]
+xAxisAtoms = [
+6,
+]
+yAxisAtoms = [
+11,
+9,
+]
+
