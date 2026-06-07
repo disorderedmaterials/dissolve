@@ -198,7 +198,7 @@ runs:
       set -ex
       cd build
 
-      ctest
+      ctest --output-on-failure
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
