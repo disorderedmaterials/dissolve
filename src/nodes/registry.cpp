@@ -53,6 +53,7 @@
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
+#include "nodes/voxelDensity.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include <memory>
 #include <ranges>
@@ -123,7 +124,8 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Subtract", makeDerivedNode<SubtractNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
                   {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
-                  {"XRaySQ", makeDerivedNode<XRaySQNode>()}};
+                  {"XRaySQ", makeDerivedNode<XRaySQNode>()},
+                  {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}};
 }
 
 // Check whether the supplied node type is known
