@@ -12,9 +12,6 @@ HistogramCNNode::HistogramCNNode(Graph *parentGraph) : Node(parentGraph)
     addInput<Configuration *>("Configuration", "Target configuration for the calculation", configuration_)
         ->setFlags({ParameterBase::Required});
 
-    // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
-
     // Options
     addOption("SiteA", "Set the site(s) 'A' which are to represent the reference origin", a_);
     addOption("SiteB", "Set the site(s) 'B' for which the coordination number around the origin sites should be calculated",
