@@ -45,8 +45,8 @@ class VoxelDensityNode : public Node
     Configuration *configuration_{nullptr};
     // Target property for analysis
     VoxelDensityNode::TargetPropertyType targetProperty_{TargetPropertyType::Mass};
-    // Requested ideal side length of a single analysis voxel (angstroms)
-    double idealVoxelSideLength_{1.0};
+    // Requested side length of a single voxel (Angstroms)
+    Number requestedVoxelSideLength_{1.0};
     // Number of analysis points along each axis of the unit cell
     Vector3i nAxisVoxels_{1, 1, 1};
     // Voxel volume (cubic angstroms)
@@ -65,6 +65,10 @@ class VoxelDensityNode : public Node
     public:
     // Clear any local data
     void clearData() override;
+    // Temporary accessors to data for testing
+    const Array3D<double> &voxels() const;
+    const Histogram1D &histogram() const;
+    const Data1D &values() const;
 
     /*
      * Processing

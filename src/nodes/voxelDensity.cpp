@@ -13,7 +13,7 @@ VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
 
     // Options
     addOption("BinRange", "Range (min, max, delta) of voxel axis", binRange_);
-    addOption("VoxelSideLength", "Requested side length of a single analysis voxel (Angstroms)", idealVoxelSideLength_);
+    addOption("VoxelSideLength", "Requested side length of a single analysis voxel (Angstroms)", requestedVoxelSideLength_);
     addOption("TargetProperty", "Target property for analysis", targetProperty_);
 }
 
@@ -49,6 +49,12 @@ void VoxelDensityNode::clearData()
     values_.clear();
 }
 
+// Temporary accessors to data for testing
+const Array3D<double> &VoxelDensityNode::voxels() const { return *voxels_; }
+const Histogram1D &VoxelDensityNode::histogram() const { return *histogram_; };
+const Data1D &VoxelDensityNode::values() const { return values_; };
+
+
 /*
  * Processing
  */
@@ -62,7 +68,7 @@ double VoxelDensityNode::voxelVolume() const { return voxelVolume_; }
 // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
 double VoxelDensityNode::voxelSideLength(const double axisLength) const
 {
-    return axisLength / round(axisLength / idealVoxelSideLength_);
+    return axisLength / round(axisLength / requestedVoxelSideLength_.asDouble());
 }
 
 // Add value to array
