@@ -25,7 +25,7 @@ DAngleNode::DAngleNode(Graph *parentGraph) : Node(parentGraph)
 
 std::string_view DAngleNode::type() const { return "DAngle"; }
 
-std::string_view DAngleNode::summary() const { return "Calculate details of a specific angle A-B-C"; }
+std::string_view DAngleNode::summary() const { return "Calculate distance-angle map (A-B)...C"; }
 
 /*
  * Data
