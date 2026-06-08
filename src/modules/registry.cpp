@@ -14,7 +14,6 @@
 #include "modules/importTrajectory/importTrajectory.h"
 #include "modules/modifierOSites/modifierOSites.h"
 #include "modules/molShake/molShake.h"
-#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/orientedSDF.h"
 #include "modules/qSpecies/qSpecies.h"
@@ -42,8 +41,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");
-    registerProducer<MoleculeTorsionModule>(ModuleTypes::MoleculeTorsion,
-                                            "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
     registerProducer<OrientedSDFModule>(
