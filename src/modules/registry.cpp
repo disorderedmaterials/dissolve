@@ -16,7 +16,6 @@
 #include "modules/molShake/molShake.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/orientedSDF.h"
-#include "modules/qSpecies/qSpecies.h"
 #include "modules/sdf/sdf.h"
 #include "modules/sq/sq.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
@@ -48,7 +47,6 @@ ModuleRegistry::ModuleRegistry()
         "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation", "Analysis");
     registerProducer<ModifierOSitesModule>(ModuleTypes::ModifierOSites,
                                            "Calculate the percentage FO, BO and NBO bonded to a modifier atom", "Analysis");
-    registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
