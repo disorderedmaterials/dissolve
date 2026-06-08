@@ -36,10 +36,13 @@
 #include "nodes/intraDistance.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/md.h"
+#include "nodes/modifierOSites.h"
+#include "nodes/moleculeTorsion.h"
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
 #include "nodes/orientedSDF.h"
+#include "nodes/qSpecies.h"
 #include "nodes/sdf.h"
 #include "nodes/setCell.h"
 #include "nodes/setCoordinates.h"
@@ -102,10 +105,13 @@ void NodeRegistry::instantiateNodeProducers()
                   {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
                   {"Iterator", makeDerivedNode<IterableGraph>()},
                   {"MD", makeDerivedNode<MDNode>()},
+                  {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
+                  {"MoleculeTorsion", makeDerivedNode<MoleculeTorsionNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},
                   {"OrientedSDF", makeDerivedNode<OrientedSDFNode>()},
+                  {"QSpecies", makeDerivedNode<QSpeciesNode>()},
                   {"SDF", makeDerivedNode<SDFNode>()},
                   {"SetCell", makeDerivedNode<SetCellNode>()},
                   {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},

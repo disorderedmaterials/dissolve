@@ -12,11 +12,8 @@
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 #include "modules/gr/gr.h"
 #include "modules/importTrajectory/importTrajectory.h"
-#include "modules/modifierOSites/modifierOSites.h"
 #include "modules/molShake/molShake.h"
-#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/neutronSQ.h"
-#include "modules/qSpecies/qSpecies.h"
 #include "modules/sq/sq.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 #include "modules/test/test.h"
@@ -40,13 +37,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");
-    registerProducer<MoleculeTorsionModule>(ModuleTypes::MoleculeTorsion,
-                                            "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
-    registerProducer<ModifierOSitesModule>(ModuleTypes::ModifierOSites,
-                                           "Calculate the percentage FO, BO and NBO bonded to a modifier atom", "Analysis");
-    registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
                                                 "Adjust the temperature of a configuration during a simulation", "Evolution");

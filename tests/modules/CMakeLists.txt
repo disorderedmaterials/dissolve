@@ -1,7 +1,4 @@
 dissolve_add_test(SRC accumulate.cpp)
 dissolve_add_test(SRC avgMol.cpp)
 dissolve_add_test(SRC dAngle.cpp)
-dissolve_add_test(SRC moleculeTorsion.cpp)
-dissolve_add_test(SRC qSpecies.cpp)
 dissolve_add_test(SRC voxelDensity.cpp)
-dissolve_add_test(SRC modifierOSites.cpp)
