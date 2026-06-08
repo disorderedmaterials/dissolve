@@ -12,9 +12,6 @@ AxisAngleNode::AxisAngleNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput("Configuration", "Target configuration for the calculation", configuration_)->setFlags({ParameterBase::Required});
 
-    // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
-
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B...C", a_);
     addOption("AxisA", "Axis to use from site A", axisA_);
