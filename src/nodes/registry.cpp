@@ -22,6 +22,7 @@
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr/gr.h"
+#include "nodes/histogramCN.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importEPSRAtoStructure.h"
@@ -85,6 +86,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Forcefield", makeDerivedNode<ForcefieldNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
                   {"GR", makeDerivedNode<GRNode>()},
+                  {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
                   {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
