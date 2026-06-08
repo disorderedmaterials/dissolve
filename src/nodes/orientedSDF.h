@@ -3,25 +3,29 @@
 
 #pragma once
 
-#include "classes/site.h"
-#include "io/export/data3D.h"
-#include "module/module.h"
+#include "classes/speciesSites.h"
+#include "math/histogram3D.h"
+#include "nodes/node.h"
 
-// CalculateSDF Module
-class OrientedSDFModule : public Module
+// OrientedSDF
+class OrientedSDFNode : public Node
 {
     public:
-    OrientedSDFModule();
-    ~OrientedSDFModule() override = default;
+    OrientedSDFNode(Graph *parentGraph);
+    ~OrientedSDFNode() override = default;
+
+    public:
+    std::string_view type() const override;
+    std::string_view summary() const override;
 
     /*
      * Definition
      */
     private:
     // Target configuration
-    Configuration *targetConfiguration_{nullptr};
+    Configuration *configuration_{nullptr};
     // Target SpeciesSite definitions
-    std::vector<const SpeciesSite *> a_, b_;
+    SpeciesSites a_, b_;
     // Axes to use for sites
     Site::SiteAxis axisA_{Site::SiteAxis::XAxis}, axisB_{Site::SiteAxis::XAxis};
     // Whether to exclude correlations between sites on the same molecule
@@ -33,16 +37,28 @@ class OrientedSDFModule : public Module
     // Range along Z axis
     Vector3 rangeZ_{-10.0, 10.0, 0.5};
     // Axis angle range requirement to permit binning into SDF
-    Range axisAngleRange_{-15.0, 15.0};
+    Range angleRange_{-15.0, 15.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
-    // Export file and format for SDF
-    Data3DExportFileFormat sdfFileAndFormat_;
+
+    /*
+     * Data
+     */
+    private:
+    // OrientedSDF
+    std::optional<Histogram3D> histogram_;
+    Data3D sdf_;
+
+    public:
+    // Clear any local data
+    void clearData() override;
+    // Temporary accessors to data for testing
+    const Data3D &sdf() const;
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(Dissolve &dissolve) override;
+    NodeConstants::ProcessResult process() override;
 };

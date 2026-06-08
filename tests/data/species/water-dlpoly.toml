@@ -163,4 +163,15 @@ yAxisAtoms = [
 2,
 ]
 
+[species.sites.HMidpoint]
+originAtoms = [
+0,
+2,
+]
+xAxisAtoms = [
+2,
+]
+yAxisAtoms = [
+1,
+]
 
