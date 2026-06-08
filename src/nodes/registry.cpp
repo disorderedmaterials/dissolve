@@ -6,6 +6,7 @@
 #include "nodes/add.h"
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
+#include "nodes/axisAngle.h"
 #include "nodes/bragg.h"
 #include "nodes/calculateBonding.h"
 #include "nodes/cif/importCIFStructure.h"
@@ -36,9 +37,11 @@
 #include "nodes/iterableGraph.h"
 #include "nodes/md.h"
 #include "nodes/modifierOSites.h"
+#include "nodes/moleculeTorsion.h"
 #include "nodes/multiply.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 #include "nodes/numberNode.h"
+#include "nodes/qSpecies.h"
 #include "nodes/setCell.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/siteRDF.h"
@@ -69,6 +72,7 @@ void NodeRegistry::instantiateNodeProducers()
 
     producers_ = {{"Add", makeDerivedNode<AddNode>()},
                   {"Angle", makeDerivedNode<AngleNode>()},
+                  {"AxisAngle", makeDerivedNode<AxisAngleNode>()},
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
                   {"Bragg", makeDerivedNode<BraggNode>()},
                   {"CalculateBonding", makeDerivedNode<CalculateBondingNode>()},
@@ -100,9 +104,11 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Iterator", makeDerivedNode<IterableGraph>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
+                  {"MoleculeTorsion", makeDerivedNode<MoleculeTorsionNode>()},
                   {"Multiply", makeDerivedNode<MultiplyNode>()},
                   {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
                   {"Number", makeDerivedNode<NumberNode>()},
+                  {"QSpecies", makeDerivedNode<QSpeciesNode>()},
                   {"SetCell", makeDerivedNode<SetCellNode>()},
                   {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
                   {"SiteRDF", makeDerivedNode<SiteRDFNode>()},

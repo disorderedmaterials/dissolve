@@ -168,22 +168,6 @@ Layer  'Evolve (Standard)'
 
 EndLayer
 
-Layer  'Analysis'
-  Frequency  1
-
-  Module  AxisAngle  'AxisAngle01'
-    Frequency  1
-
-    Configuration  'Bulk'
-    AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
-    SiteA  'Benzene'  'COG'
-    AxisA  Z
-    SiteB  'Benzene'  'COG'
-    AxisB  Z
-    ExcludeSameMolecule  True
-  EndModule
-EndLayer
-
 Layer  'RDF / Neutron S(Q)'
   Frequency  1
 

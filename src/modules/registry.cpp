@@ -4,7 +4,6 @@
 #include "modules/registry.h"
 #include "modules/accumulate/accumulate.h"
 #include "modules/avgMol/avgMol.h"
-#include "modules/axisAngle/axisAngle.h"
 #include "modules/bragg/bragg.h"
 #include "modules/clustering/clustering.h"
 #include "modules/compare/compare.h"
@@ -14,10 +13,8 @@
 #include "modules/gr/gr.h"
 #include "modules/importTrajectory/importTrajectory.h"
 #include "modules/molShake/molShake.h"
-#include "modules/moleculeTorsion/moleculeTorsion.h"
 #include "modules/neutronSQ/neutronSQ.h"
 #include "modules/orientedSDF/orientedSDF.h"
-#include "modules/qSpecies/qSpecies.h"
 #include "modules/sdf/sdf.h"
 #include "modules/sq/sq.h"
 #include "modules/temperatureSchedule/temperatureSchedule.h"
@@ -32,7 +29,6 @@ ModuleRegistry::ModuleRegistry()
                                        "Correlation Functions");
     registerProducer<AvgMolModule>(ModuleTypes::AvgMol,
                                    "Calculate average atomic positions of a species around an oriented site", "Analysis");
-    registerProducer<AxisAngleModule>(ModuleTypes::AxisAngle, "Calculate distance/angle map between site axes", "Analysis");
     registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
     registerProducer<ClusteringModule>(ModuleTypes::Clustering, "Analyse clustering between sites", "Analysis");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
@@ -43,14 +39,11 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");
-    registerProducer<MoleculeTorsionModule>(ModuleTypes::MoleculeTorsion,
-                                            "Calculate a specific torsion distribution in a molecule type", "Analysis");
     registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
     registerProducer<OrientedSDFModule>(
         ModuleTypes::OrientedSDF,
         "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation", "Analysis");
-    registerProducer<QSpeciesModule>(ModuleTypes::QSpecies, "Calculate QSpecies of a network former", "Analysis");
     registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
     registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TemperatureScheduleModule>(ModuleTypes::TemperatureSchedule,
