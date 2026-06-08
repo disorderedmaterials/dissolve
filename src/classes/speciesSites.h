@@ -21,7 +21,7 @@ class SpeciesSites : public Serialisable<>, ResolvableContext
      * Data
      */
     private:
-    // Isotopologue mixtures for individual Species
+    // Target sites
     ResolvableKeyedVector<const Species *, ResolvableKeyedVector<const SpeciesSite *, double>> sites_;
 
     public:

@@ -554,4 +554,20 @@ v14 = 0.5
 HA = 2
 CA = 0
 
+[species.sites.COG]
+originAtoms = [
+0,
+2,
+4,
+6,
+8,
+10,
+]
+xAxisAtoms = [
+3,
+]
+yAxisAtoms = [
+1,
+2,
+]
 
