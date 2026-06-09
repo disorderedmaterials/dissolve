@@ -27,6 +27,10 @@ class ConfigurationNode : public Node
     // Configuration object
     Configuration configuration_;
 
+    public:
+    // Return configuration object
+    const Configuration &configuration() const;
+
     /*
      * Processing
      */

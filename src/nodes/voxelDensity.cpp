@@ -12,7 +12,7 @@ VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
     addInput("Configuration", "Set target configuration for the module", configuration_)->setFlags({ParameterBase::Required});
 
     // Options
-    addOption("BinRange", "Range (min, max, delta) of voxel axis", binRange_);
+    addOption("Range", "Range (min, max, delta) of binned property data", binRange_);
     addOption("VoxelSideLength", "Requested side length of a single analysis voxel (Angstroms)", requestedVoxelSideLength_);
     addOption("TargetProperty", "Target property for analysis", targetProperty_);
 }
