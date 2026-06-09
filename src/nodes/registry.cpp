@@ -57,6 +57,7 @@
 #include "nodes/species.h"
 #include "nodes/sq/sq.h"
 #include "nodes/subtract.h"
+#include "nodes/supercellConfiguration.h"
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
 #include "nodes/voxelDensity.h"
@@ -135,6 +136,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"SQ", makeDerivedNode<SQNode>()},
                   {"Species", makeDerivedNode<SpeciesNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
+                  {"SupercellConfiguration", makeDerivedNode<SupercellConfigurationNode>()},
                   {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
                   {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
                   {"XRaySQ", makeDerivedNode<XRaySQNode>()},
