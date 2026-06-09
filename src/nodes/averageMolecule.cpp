@@ -32,6 +32,9 @@ void AverageMoleculeNode::clearData()
     structure_.clear();
 }
 
+// Temporary accessors to data for testing
+const Structure &AverageMoleculeNode::structure() const { return structure_; }
+
 /*
  * Processing
  */
