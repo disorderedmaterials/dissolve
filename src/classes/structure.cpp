@@ -110,6 +110,7 @@ int Structure::nAtoms(AtomConstants::Presence withPresence) const
 
 // Return atom at index
 StructureAtom *Structure::atom(int i) { return atoms_[i].get(); }
+const StructureAtom *Structure::atom(int i) const { return atoms_[i].get(); }
 
 // Return atoms
 const std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() const { return atoms_; }

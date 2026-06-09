@@ -1,0 +1,88 @@
+
+[species]
+name = "BeNDy"
+
+[species.atomTypes]
+
+[species.atomTypes.Be]
+z = "Be"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.N]
+z = "N"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[species.atomTypes.Dy]
+z = "Dy"
+charge = 0.0
+form = "Undefined"
+exchangeable = false
+
+[[species.atoms]]
+index = 0
+z = "Be"
+r = [
+1.0,
+0.0,
+0.0,
+]
+q = 0.0
+type = "Be"
+[[species.atoms]]
+index = 1
+z = "N"
+r = [
+0.0,
+0.0,
+0.0,
+]
+q = 0.0
+type = "N"
+[[species.atoms]]
+index = 2
+z = "Dy"
+r = [
+1.0,
+1.0,
+1.0,
+]
+q = 0.0
+type = "Dy"
+
+[[species.bonds]]
+form = "Harmonic"
+i = 0
+j = 1
+
+[species.bonds.parameters]
+k = 1.0
+eq = 100.0
+
+[[species.bonds]]
+form = "Harmonic"
+i = 1
+j = 2
+
+[species.bonds.parameters]
+k = 1.0
+eq = 100.0
+
+
+[species.sites]
+
+[species.sites.Origin]
+originAtoms = [
+1,
+]
+xAxisAtoms = [
+0,
+]
+yAxisAtoms = [
+2,
+]
+
+
