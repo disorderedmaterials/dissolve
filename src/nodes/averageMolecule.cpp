@@ -77,7 +77,6 @@ NodeConstants::ProcessResult AverageMoleculeNode::process()
     for (auto n = 0; n < stack->nSites(); ++n)
     {
         const auto &s = stack->site(n);
-        assert(s.molecule()->species() == targetSpecies_);
 
         // Get axes and take inverse
         auto inverseAxes = s.axes();
