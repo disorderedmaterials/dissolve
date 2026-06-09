@@ -54,7 +54,6 @@ const Array3D<double> &VoxelDensityNode::voxels() const { return *voxels_; }
 const Histogram1D &VoxelDensityNode::histogram() const { return *histogram_; };
 const Data1D &VoxelDensityNode::values() const { return values_; };
 
-
 /*
  * Processing
  */
