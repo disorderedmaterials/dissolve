@@ -16,7 +16,6 @@
 #include "modules/temperatureSchedule/temperatureSchedule.h"
 #include "modules/test/test.h"
 #include "modules/tr/tr.h"
-#include "modules/voxelDensity/voxelDensity.h"
 #include "modules/xRaySQ/xRaySQ.h"
 
 ModuleRegistry::ModuleRegistry()
@@ -39,9 +38,6 @@ ModuleRegistry::ModuleRegistry()
                                                 "Adjust the temperature of a configuration during a simulation", "Evolution");
     registerProducer<TestModule>(ModuleTypes::Test, "Development Module");
     registerProducer<TRModule>(ModuleTypes::TR, "Calculate the partial and total t(r)", "Correlation Functions");
-    registerProducer<VoxelDensityModule>(
-        ModuleTypes::VoxelDensity,
-        "Describe distribution of atomic number, mass, and scattering length density across unit cell voxels", "Analysis");
     registerProducer<XRaySQModule>(ModuleTypes::XRaySQ, "Calculate x-ray-weighted S(Q)", "Correlation Functions");
 }
 
