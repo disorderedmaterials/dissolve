@@ -7,7 +7,6 @@
 #include "modules/bragg/bragg.h"
 #include "modules/clustering/clustering.h"
 #include "modules/compare/compare.h"
-#include "modules/dAngle/dAngle.h"
 #include "modules/epsrManager/epsrManager.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 #include "modules/gr/gr.h"
@@ -30,7 +29,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
     registerProducer<ClusteringModule>(ModuleTypes::Clustering, "Analyse clustering between sites", "Analysis");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
-    registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
     registerProducer<EPSRManagerModule>(ModuleTypes::EPSRManager, "Manage EPSR modules with more control", "Forcefield");
     registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
