@@ -13,6 +13,7 @@
 #include "nodes/cif/importCIFStructure.h"
 #include "nodes/clearBonding.h"
 #include "nodes/configuration.h"
+#include "nodes/dAngle.h"
 #include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
 #include "nodes/dotProduct.h"
@@ -83,6 +84,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ClearBonding", makeDerivedNode<ClearBondingNode>()},
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
+                  {"DAngle", makeDerivedNode<DAngleNode>()},
                   {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
