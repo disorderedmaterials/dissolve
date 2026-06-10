@@ -8,13 +8,11 @@
 #include "classes/structure.h"
 #include "nodes/node.h"
 
-class SetCellNode : public Node
+class SetBoxNode : public Node
 {
     public:
-    SetCellNode(Graph *parentGraph);
-    ~SetCellNode() override = default;
-
-    using CellContainingVariant = VariantParameterData<Configuration *, Structure>;
+    SetBoxNode(Graph *parentGraph);
+    ~SetBoxNode() override = default;
 
     /*
      * Definition
@@ -27,13 +25,15 @@ class SetCellNode : public Node
      * Data
      */
     private:
-    // Cell-containing input and output
-    CellContainingVariant inputVariant_, outputVariant_;
+    // Typedef for allowed Box-containing objects
+    using BoxContainingVariant = VariantParameterData<Configuration *, Structure>;
+    // Box-containing input and output
+    BoxContainingVariant inputVariant_, outputVariant_;
     // Box side length dimensions
-    Vector3 lengths_{1.0, 1.0, 1.0};
+    Vector3 lengths_{20.0, 20.0, 20.0};
     // Box angles
     Vector3 angles_{90, 90, 90};
-    // Box type
+    // Whether the box should be nonperiodic
     bool nonPeriodic_{false};
 
     /*
