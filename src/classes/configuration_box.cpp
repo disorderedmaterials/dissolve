@@ -9,7 +9,7 @@
 // Create Box definition with specified lengths and angles
 void Configuration::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
-    box_ = Box::generate(nonPeriodic, lengths, angles);
+    box_ = Box::generate(lengths, angles, nonPeriodic);
 
     cells_.clear();
 }

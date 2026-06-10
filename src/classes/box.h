@@ -22,7 +22,6 @@ class Box : public Serialisable<>
     // Box Type Enum
     enum class BoxType
     {
-        NonPeriodic,     /* Non-periodic system - cubic box, but no minimum image calculation */
         Cubic,           /* Cubic box with A == B == C, alphe == beta == gamma == 90 */
         Orthorhombic,    /* Orthorhombic box with A != B != C, alphe == beta == gamma = 90 */
         MonoclinicAlpha, /* Monoclinic box with A != B != C, alpha != 90, and beta == gamma == 90 */
@@ -115,18 +114,21 @@ class Box : public Serialisable<>
     // direction
     inline void wrap(Vector3 &rFrac) const
     {
-        if (rFrac.x < -0.5)
-            rFrac.x += 1.0;
-        else if (rFrac.x > 0.5)
-            rFrac.x -= 1.0;
-        if (rFrac.y < -0.5)
-            rFrac.y += 1.0;
-        else if (rFrac.y > 0.5)
-            rFrac.y -= 1.0;
-        if (rFrac.z < -0.5)
-            rFrac.z += 1.0;
-        else if (rFrac.z > 0.5)
-            rFrac.z -= 1.0;
+        if (type_ != BoxType::SingleImage)
+        {
+            if (rFrac.x < -0.5)
+                rFrac.x += 1.0;
+            else if (rFrac.x > 0.5)
+                rFrac.x -= 1.0;
+            if (rFrac.y < -0.5)
+                rFrac.y += 1.0;
+            else if (rFrac.y > 0.5)
+                rFrac.y -= 1.0;
+            if (rFrac.z < -0.5)
+                rFrac.z += 1.0;
+            else if (rFrac.z > 0.5)
+                rFrac.z -= 1.0;
+        }
     }
 
     public:
@@ -159,8 +161,16 @@ class Box : public Serialisable<>
      */
     public:
     // Generate a suitable Box given the supplied relative lengths, angles, and volume
-    static std::unique_ptr<Box> generate(bool nonPeriodic, Vector3 lengths, Vector3 angles);
+    static std::unique_ptr<Box> generate(Vector3 lengths, std::optional<Vector3> angles = {}, bool nonPeriodic = false);
     static std::unique_ptr<Box> generate(Vector3 lengths, Vector3 angles);
+    // Generate Boxes of a given type
+    static std::unique_ptr<Box> singleImage();
+    static std::unique_ptr<Box> cubic(double length);
+    static std::unique_ptr<Box> orthorhombic(Vector3 lengths);
+    static std::unique_ptr<Box> monoclinicAlpha(Vector3 lengths, double alpha);
+    static std::unique_ptr<Box> monoclinicBeta(Vector3 lengths, double beta);
+    static std::unique_ptr<Box> monoclinicGamma(Vector3 lengths, double gamma);
+    static std::unique_ptr<Box> triclinic(Vector3 lengths, Vector3 angles);
     // Return radius of largest possible inscribed sphere for box
     double inscribedSphereRadius() const;
     // Return random coordinate inside Box

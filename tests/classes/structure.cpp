@@ -53,6 +53,7 @@ TEST(StructureTest, Molecule2)
     s.addAtom(Elements::C, {1.241877e+00, 5.832093e-01, -3.044739e-02});
     CalculateBondingNode::calculate(s);
 
+    std::cout << "Type: " << (int)s.box()->type() << std::endl;
     EXPECT_EQ(s.bonds().size(), 3);
     s.removeAtom(1);
     EXPECT_EQ(s.bonds().size(), 1);

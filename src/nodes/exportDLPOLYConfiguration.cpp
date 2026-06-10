@@ -35,7 +35,7 @@ NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
     std::format_to(out, "{} @ {}\n", configuration_->name(), configuration_->version());
 
     // Export keytrj and imcon
-    if (configuration_->box()->type() == Box::BoxType::NonPeriodic)
+    if (configuration_->box()->type() == Box::BoxType::SingleImage)
         std::format_to(out, "{:10d}{:10d}\n", 0, 0);
     else if (configuration_->box()->type() == Box::BoxType::Cubic)
         std::format_to(out, "{:10d}{:10d}\n", 0, 1);
@@ -45,7 +45,7 @@ NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
         std::format_to(out, "{:10d}{:10d}\n", 0, 3);
 
     // Export Cell
-    if (configuration_->box()->type() != Box::BoxType::NonPeriodic)
+    if (configuration_->box()->type() != Box::BoxType::SingleImage)
     {
         Matrix3 axes = configuration_->box()->axes();
         std::format_to(out, "{:20.12f}{:20.12f}{:20.12f}\n", axes[0], axes[1], axes[2]);

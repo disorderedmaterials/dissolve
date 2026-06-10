@@ -63,7 +63,7 @@ void RenderableSpecies::transformValues()
         return;
 
     // For periodic systems use the box - otherwise, loop over Atoms seeking extreme x, y, and z values
-    if (source_->box()->type() != Box::BoxType::NonPeriodic)
+    if (source_->box()->type() != Box::BoxType::SingleImage)
     {
         // Minimum corresponds to lower left corner of the box at {0,0,0}
         limitsMin_.zero();
@@ -158,7 +158,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        auto periodic = source_->box()->type() != Box::BoxType::NonPeriodic;
+        auto periodic = source_->box()->type() != Box::BoxType::SingleImage;
         for (const auto &bond : source_->bonds())
         {
             // Determine half delta i-j for bond
@@ -195,7 +195,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        auto periodic = source_->box()->type() != Box::BoxType::NonPeriodic;
+        auto periodic = source_->box()->type() != Box::BoxType::SingleImage;
         for (const auto &bond : source_->bonds())
         {
             if (periodic)
@@ -210,7 +210,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
     }
 
     // Add unit cell
-    if (source_->box()->type() != Box::BoxType::NonPeriodic)
+    if (source_->box()->type() != Box::BoxType::SingleImage)
     {
         A.setIdentity();
         A = source_->box()->axes();

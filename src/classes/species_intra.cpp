@@ -27,7 +27,7 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(const SpeciesAtom *i, con
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
 {
-    if (box_->type() == Box::BoxType::NonPeriodic)
+    if (box_->type() == Box::BoxType::SingleImage)
         return;
 
     auto it = std::remove_if(bonds_.begin(), bonds_.end(),
@@ -127,10 +127,10 @@ void Species::clearIntramolecularForcefieldTerms()
 const Box *Species::box() const { return box_.get(); }
 
 // Remove Box definition and revert to single image
-void Species::removeBox() { box_ = std::make_unique<Box>(Box::BoxType::SingleImage, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}); }
+void Species::removeBox() { box_ = Box::singleImage(); }
 
 // Create Box definition with specified lengths and angles
 void Species::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
-    box_ = Box::generate(nonPeriodic, lengths, angles);
+    box_ = Box::generate(lengths, angles, nonPeriodic);
 }

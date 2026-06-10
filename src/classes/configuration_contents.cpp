@@ -300,7 +300,7 @@ void Configuration::scaleContents(Vector3 scaleFactors)
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position
-        if (mol->species()->box()->type() != Box::BoxType::NonPeriodic)
+        if (mol->species()->box()->type() != Box::BoxType::SingleImage)
         {
             for (auto &i : mol->atoms())
             {

@@ -13,7 +13,7 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
       rc_(1.0 / lengths.z), alpha_(angles.x), beta_(angles.y), gamma_(angles.z)
 {
     // Set periodicity flags
-    periodic_ = {type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic};
+    periodic_ = {type_ != BoxType::SingleImage, type_ != BoxType::SingleImage, type_ != BoxType::SingleImage};
 
     // Construct axes matrix
     axes_.setIdentity();
@@ -76,7 +76,7 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::NonPeriodic, "NonPeriodic"},
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::SingleImage, "SingleImage"},
                                                  {Box::BoxType::Cubic, "Cubic"},
                                                  {Box::BoxType::Orthorhombic, "Orthorhombic"},
                                                  {Box::BoxType::MonoclinicAlpha, "MonoclinicAlpha"},
@@ -282,9 +282,11 @@ double Box::torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &
  */
 
 // Generate a suitable Box given the supplied relative lengths, angles
-std::unique_ptr<Box> Box::generate(bool nonPeriodic, Vector3 lengths, Vector3 angles)
+std::unique_ptr<Box> Box::generate(Vector3 lengths, std::optional<Vector3> angles, bool nonPeriodic)
 {
-    return nonPeriodic ? std::make_unique<Box>(Box::BoxType::NonPeriodic, lengths, angles) : Box::generate(lengths, angles);
+    if (!angles)
+        angles = {90.0, 90.0, 90.0};
+    return nonPeriodic ? std::make_unique<Box>(Box::BoxType::SingleImage, lengths, *angles) : Box::generate(lengths, *angles);
 }
 std::unique_ptr<Box> Box::generate(Vector3 lengths, Vector3 angles)
 {
@@ -388,11 +390,14 @@ void Box::toReal(Vector3 &r) const
     switch (type_)
     {
         case BoxType::Cubic:
-        case BoxType::NonPeriodic:
-        case BoxType::Orthorhombic:
             r.x *= a_;
             r.y *= a_;
             r.z *= a_;
+            break;
+        case BoxType::Orthorhombic:
+            r.x *= a_;
+            r.y *= b_;
+            r.z *= c_;
             break;
         case BoxType::MonoclinicAlpha:
             r.x *= axesArray_[0];
@@ -419,5 +424,116 @@ void Box::toReal(Vector3 &r) const
             r.y += r.z * axesArray_[7];
             r.z *= axesArray_[8];
             break;
+        case BoxType::SingleImage:
+            break; // Single Image performs no conversion
     }
+}
+
+// Convert specified real-space coordinates to fractional coordinates
+void Box::toFractional(Vector3 &r) const
+{
+    switch (type_)
+    {
+        case BoxType::Cubic:
+            r.x *= ra_;
+            r.y *= ra_;
+            r.z *= ra_;
+            break;
+        case BoxType::Orthorhombic:
+            r.x *= ra_;
+            r.y *= rb_;
+            r.z *= rc_;
+            break;
+        case BoxType::MonoclinicAlpha:
+            r.x *= inverseAxesArray_[0];
+            r.y *= inverseAxesArray_[4];
+            r.y += r.z * inverseAxesArray_[7];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::MonoclinicBeta:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.z * inverseAxesArray_[6];
+            r.y *= inverseAxesArray_[4];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::MonoclinicGamma:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.y * inverseAxesArray_[3];
+            r.y *= inverseAxesArray_[4];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::Triclinic:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
+            r.y *= inverseAxesArray_[4];
+            r.y += r.z * inverseAxesArray_[7];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::SingleImage:
+            break; // Single Image performs no conversion
+    }
+}
+
+// Return minimum image coordinates of r1 with respect to r2
+Vector3 Box::minimumImage(const Vector3 &r1, const Vector3 &r2) const
+{
+    Vector3 v21 = r1 - r2;
+
+    toFractional(v21);
+    wrap(v21);
+    toReal(v21);
+    v21 += r2;
+
+    return v21;
+}
+
+// Return minimum image vector from r1 to r2
+Vector3 Box::minimumVector(const Vector3 &r1, const Vector3 &r2) const
+{
+    Vector3 v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    return v12;
+}
+
+// Return minimum image distance from r1 to r2
+double Box::minimumDistance(const Vector3 &r1, const Vector3 &r2) const { return minimumVector(r1, r2).magnitude(); }
+
+// Return minimum image squared distance from r1 to r2
+double Box::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const { return minimumVector(r1, r2).magnitudeSq(); }
+
+std::unique_ptr<Box> Box::singleImage()
+{
+    return std::make_unique<Box>(Box::BoxType::SingleImage, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0});
+}
+
+std::unique_ptr<Box> Box::cubic(double length)
+{
+    return std::make_unique<Box>(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0});
+}
+
+std::unique_ptr<Box> Box::orthorhombic(const Vector3 lengths)
+{
+    return std::make_unique<Box>(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0});
+}
+
+std::unique_ptr<Box> Box::monoclinicAlpha(const Vector3 lengths, double alpha)
+{
+    return std::make_unique<Box>(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
+}
+
+std::unique_ptr<Box> Box::monoclinicBeta(const Vector3 lengths, double beta)
+{
+    return std::make_unique<Box>(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
+}
+
+std::unique_ptr<Box> Box::monoclinicGamma(const Vector3 lengths, double gamma)
+{
+    return std::make_unique<Box>(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
+}
+
+std::unique_ptr<Box> Box::triclinic(const Vector3 lengths, const Vector3 angles)
+{
+    return std::make_unique<Box>(Box::BoxType::Triclinic, lengths, angles);
 }
