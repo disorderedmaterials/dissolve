@@ -12,14 +12,26 @@ TEST(UFF4MOFMOF5AssignmentTest, MOF5)
 {
     DissolveSystemTest systemTest;
     TestGraph testGraph;
-    auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("MOF5", "ImportXYZStructure", "xyz/mof5.xyz",
-                                                                          ForcefieldLibrary::forcefield("UFF4MOF"));
-
+    auto *importNode = testGraph.createNode("ImportXYZStructure");
+    ASSERT_TRUE(importNode);
+    ASSERT_TRUE(importNode->setOption<std::string>("FilePath", "xyz/mof5.xyz"));
+    auto *setBox = testGraph.createNode("SetBox");
+    ASSERT_TRUE(setBox);
+    ASSERT_TRUE(setBox->setOption("Lengths", Vector3(25.8320, 25.8320, 25.8320)));
+    ASSERT_TRUE(testGraph.addEdge({"ImportXYZStructure", "Structure", "SetBox", "Input"}));
+    auto *speciesNode = dynamic_cast<SpeciesNode *>(testGraph.createNode("Species", "MOF5"));
     ASSERT_TRUE(speciesNode);
-    auto &species = speciesNode->species();
-    species.createBox({25.8320, 25.8320, 25.8320}, {90, 90, 90});
-    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+    auto *ffNode = testGraph.createNode("Forcefield");
+    ASSERT_TRUE(ffNode);
+    ASSERT_TRUE(ffNode->setOption("Forcefield", ForcefieldLibrary::forcefield("UFF4MOF").get()));
+    ASSERT_TRUE(testGraph.addEdge({"SetBox", "Output", "MOF5", "Structure"}));
+    ASSERT_TRUE(testGraph.addEdge({"Forcefield", "Recipe", "MOF5", "Recipe"}));
 
+    // Run from the species node
+    ASSERT_EQ(speciesNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(speciesNode->versionIndex(), 0);
+
+    auto &species = speciesNode->species();
     ASSERT_EQ(species.bonds().size(), 512);
     ASSERT_EQ(species.angles().size(), 912);
     ASSERT_EQ(species.torsions().size(), 1536);
