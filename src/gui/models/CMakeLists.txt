@@ -6,7 +6,6 @@ set(models_MOC_HDRS
     braggReflectionFilterProxy.h
     braggReflectionModel.h
     configurationModel.h
-    dataManagerSimulationModel.h
     dissolveModel.h
     forcefieldModel.h
     isotopologueSetModel.h
@@ -61,7 +60,6 @@ set(models_SRCS
     braggReflectionFilterProxy.cpp
     braggReflectionModel.cpp
     configurationModel.cpp
-    dataManagerSimulationModel.cpp
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
     dissolveModelImageProvider.h
@@ -120,7 +118,6 @@ qt6_wrap_cpp(
   atomTypeFilterProxy.h
   atomTypeModel.h
   braggReflectionModel.h
-  dataManagerSimulationModel.h
   expressionVariableVectorModel.h
   forcefieldModel.h
   isotopologueSetModel.h
