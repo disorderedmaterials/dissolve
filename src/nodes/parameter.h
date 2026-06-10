@@ -210,7 +210,13 @@ template <class... Ts> class VariantParameterData
     // Emplace the variant contents into the destination parameter
     bool emplaceInto(ParameterBase *destination) const
     {
-        return ((destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(data)), true : false) || ...);
+        // Double-fold - check first for straight assignment of an alternative, then for std::optional of the same.
+        return ((destination->storedDataType() == typeid(Ts) ? destination->set<Ts>(std::get<Ts>(data)), true : false) ||
+                ...) ||
+               ((destination->storedDataType() == typeid(std::optional<Ts>)
+                 ? destination->set<std::optional<Ts>>(std::get<Ts>(data)),
+                 true : false) ||
+                ...);
     }
     // Return whether the variant is empty
     bool isEmpty() const { return data.index() == 0; }
@@ -333,31 +339,18 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Return whether this datatype accepts data from the specified source
     bool acceptsDataFromSource(ParameterBase *source) override
     {
-        auto id = source->storedDataType();
+        if (source->providesDataType(storedDataType_))
+            return true;
 
-        // Optionals and vectors
+        // Optionals and vectors also accept single value_type
         if constexpr (is_instance_of_v<DataClass, std::optional> || is_instance_of_v<DataClass, std::vector>)
-        {
-            // Can be set from another identical DataClass or a plain object of the value_type
-            return id == storedDataType_ || id == typeid(typename DataClass::value_type);
-        }
+            return source->providesDataType(typeid(typename DataClass::value_type));
 
-        // Vectors
-        if constexpr (is_instance_of_v<DataClass, std::vector>)
-        {
-            // Vectors can be set from another identical DataClass or a single object of the value_type
-            return id == storedDataType_ || id == typeid(typename DataClass::value_type);
-        }
-
-        // Variants
+        // Variants accept multiple data types
         if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
-        {
-            // Variants can be set from another identical type or any type which matches one of our alternatives
-            return id == storedDataType_ || data_.isAlternative(id);
-        }
+            return data_.isAlternative(source->storedDataType());
 
-        // Normal data types can be set from several different types of object
-        return source->providesDataType(storedDataType_);
+        return false;
     }
     // Return whether this datatype provides the specified one
     bool providesDataType(std::type_index id) override
@@ -365,19 +358,13 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         if (id == storedDataType_)
             return true;
 
-        // Optionals
+        // Optionals can provide the plain value_type
         if constexpr (is_instance_of_v<DataClass, std::optional>)
-        {
-            // Optionals provide the value_type
             return id == typeid(typename DataClass::value_type);
-        }
 
-        // Variants
+        // A Variant might contain the right data as one of its alternatives
         if constexpr (is_instance_of_v<DataClass, VariantParameterData>)
-        {
-            // Variants might_ contain the correct data - we only return here if it is a possibility
             return data_.isAlternative(id);
-        }
 
         return false;
     }
@@ -409,6 +396,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         else if constexpr (is_instance_of_v<DataClass, std::optional>)
         {
             // Optional arguments can be set from the base class (i.e. with no std::optional container) as well as std::optional
+            // or a variant containing the correct data type
 
             // Optional to optional
             if (storedDataType_ == source->storedDataType())
@@ -425,6 +413,10 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 
                 return true;
             }
+
+            // Variant
+            if (source->providesDataType(typeid(typename DataClass::value_type)))
+                return source->assignDataTo(this);
         }
         else if (typeid(std::optional<DataClass>) == source->storedDataType())
         {
