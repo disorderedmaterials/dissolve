@@ -33,7 +33,7 @@ class Box : public Serialisable<>
     // Return enum options for BoxType
     static EnumOptions<BoxType> boxTypes();
     Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles);
-    virtual ~Box() = default;
+    ~Box() = default;
     Box &operator=(const Box &source) = default;
 
     /*
@@ -98,11 +98,11 @@ class Box : public Serialisable<>
      */
     public:
     // Convert specified fractional coordinates to real-space coordinates
-    inline virtual void toReal(Vector3 &r) const = 0;
+    inline void toReal(Vector3 &r) const = 0;
     // Return specified fractional coordinates converted to real-space coordinates
     Vector3 getReal(Vector3 r) const;
     // Convert specified real-space coordinates to fractional coordinates
-    inline virtual void toFractional(Vector3 &r) const = 0;
+    inline void toFractional(Vector3 &r) const = 0;
     // Return specified real coordinates converted to fractional coordinates
     Vector3 getFractional(Vector3 r) const;
 
@@ -130,13 +130,13 @@ class Box : public Serialisable<>
 
     public:
     // Return minimum image coordinates of r1 with respect to r2
-    virtual Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const = 0;
+    Vector3 minimumImage(const Vector3 &r1, const Vector3 &r2) const;
     // Return minimum image vector from r1 to r2
-    virtual Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const = 0;
+    Vector3 minimumVector(const Vector3 &r1, const Vector3 &r2) const;
     // Return minimum image distance from r1 to r2
-    virtual double minimumDistance(const Vector3 &r1, const Vector3 &r2) const = 0;
+    double minimumDistance(const Vector3 &r1, const Vector3 &r2) const;
     // Return minimum image squared distance from r1 to r2
-    virtual double minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const = 0;
+    double minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const;
 
     /*
      * Geometry
