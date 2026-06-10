@@ -69,6 +69,7 @@ class Structure : public Serialisable<>
     int nAtoms(AtomConstants::Presence withPresence = AtomConstants::Presence::Any) const;
     // Return atom at index provided
     StructureAtom *atom(int i);
+    const StructureAtom *atom(int i) const;
     // Return atoms
     const std::vector<std::unique_ptr<StructureAtom>> &atoms() const;
     std::vector<std::unique_ptr<StructureAtom>> &atoms();

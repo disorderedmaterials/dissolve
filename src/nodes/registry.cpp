@@ -6,6 +6,7 @@
 #include "nodes/add.h"
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"
+#include "nodes/averageMolecule.h"
 #include "nodes/axisAngle.h"
 #include "nodes/bragg.h"
 #include "nodes/calculateBonding.h"
@@ -77,6 +78,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Angle", makeDerivedNode<AngleNode>()},
                   {"AxisAngle", makeDerivedNode<AxisAngleNode>()},
                   {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
+                  {"AverageMolecule", makeDerivedNode<AverageMoleculeNode>()},
                   {"Bragg", makeDerivedNode<BraggNode>()},
                   {"CalculateBonding", makeDerivedNode<CalculateBondingNode>()},
                   {"ClearBonding", makeDerivedNode<ClearBondingNode>()},

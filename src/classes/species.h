@@ -297,6 +297,8 @@ class Species : public Serialisable<>
     void create(const Structure &structure);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
+    // Return as a Structure
+    Structure asStructure() const;
 
     /*
      * Serialisation
