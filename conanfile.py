@@ -7,6 +7,7 @@ class DissolveRecipe(ConanFile):
     name = "Dissolve"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeToolchain", "CMakeDeps"
+    deployers = "direct_deploy"
     options = {
         "msvc_dev": [True, False],
         "tests": [True, False],
