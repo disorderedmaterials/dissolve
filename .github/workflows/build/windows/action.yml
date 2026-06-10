@@ -200,7 +200,7 @@ runs:
       export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
       export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
       export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
-      cp -v ${DEPLOY_DIR}/install/bin/* ./bin
+      #cp -v ${DEPLOY_DIR}/install/bin/* ./bin
       cp -v ${FREETYPE_DIR}/freetype.dll ./bin
       cp -v ${FTGL_DIR}/ftgl.dll ./bin
       cp -v ${DeployDir}/direct_deploy/onetbb/bin/tbb12.dll ./bin
