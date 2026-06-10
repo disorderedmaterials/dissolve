@@ -8,7 +8,7 @@
 
 Species::Species(std::string name) : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
 {
-    box_ = std::make_unique<SingleImageBox>();
+    box_ = std::make_unique<Box>(Box::BoxType::SingleImage, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0});
 }
 
 // Clear Data

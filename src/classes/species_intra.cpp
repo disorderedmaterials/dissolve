@@ -127,10 +127,10 @@ void Species::clearIntramolecularForcefieldTerms()
 const Box *Species::box() const { return box_.get(); }
 
 // Remove Box definition and revert to single image
-void Species::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
+void Species::removeBox() { box_ = std::make_unique<Box>(Box::BoxType::SingleImage, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}); }
 
 // Create Box definition with specified lengths and angles
 void Species::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
-    box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
+    box_ = Box::generate(nonPeriodic, lengths, angles);
 }

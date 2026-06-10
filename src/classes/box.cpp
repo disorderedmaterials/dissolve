@@ -282,29 +282,17 @@ double Box::torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &
  */
 
 // Generate a suitable Box given the supplied relative lengths, angles
+std::unique_ptr<Box> Box::generate(bool nonPeriodic, Vector3 lengths, Vector3 angles)
+{
+    return nonPeriodic ? std::make_unique<Box>(Box::BoxType::NonPeriodic, lengths, angles) : Box::generate(lengths, angles);
+}
 std::unique_ptr<Box> Box::generate(Vector3 lengths, Vector3 angles)
 {
     auto boxType = type(lengths, angles);
     if (!boxType)
         Messenger::exception("Suitable box type couldn't be determined, so no Box can be generated.");
 
-    switch (*boxType)
-    {
-        case (BoxType::Cubic):
-            return std::make_unique<CubicBox>(lengths.x);
-        case (BoxType::Orthorhombic):
-            return std::make_unique<OrthorhombicBox>(lengths);
-        case (BoxType::MonoclinicAlpha):
-            return std::make_unique<MonoclinicAlphaBox>(lengths, angles.x);
-        case (BoxType::MonoclinicBeta):
-            return std::make_unique<MonoclinicBetaBox>(lengths, angles.y);
-        case (BoxType::MonoclinicGamma):
-            return std::make_unique<MonoclinicGammaBox>(lengths, angles.z);
-        case (BoxType::Triclinic):
-            return std::make_unique<TriclinicBox>(lengths, angles);
-        default:
-            Messenger::exception("Unrecognised box type encountered - generation failed.");
-    }
+    return std::make_unique<Box>(*boxType, lengths, angles);
 }
 
 // Return radius of largest possible inscribed sphere for box
@@ -393,4 +381,43 @@ void Box::serialise(std::string tag, SerialisedValue &target) const
     box["lengths"] = {a_, b_, c_};
     box["angles"] = {alpha_, beta_, gamma_};
     box["nonPeriodic"] = {!std::get<0>(periodic_), !std::get<1>(periodic_), !std::get<2>(periodic_)};
+}
+
+void Box::toReal(Vector3 &r) const
+{
+    switch (type_)
+    {
+        case BoxType::Cubic:
+        case BoxType::NonPeriodic:
+        case BoxType::Orthorhombic:
+            r.x *= a_;
+            r.y *= a_;
+            r.z *= a_;
+            break;
+        case BoxType::MonoclinicAlpha:
+            r.x *= axesArray_[0];
+            r.y *= axesArray_[4];
+            r.y += r.z * axesArray_[7];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::MonoclinicBeta:
+            r.x *= axesArray_[0];
+            r.x += r.z * axesArray_[6];
+            r.y *= axesArray_[4];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::MonoclinicGamma:
+            r.x *= axesArray_[0];
+            r.x += r.y * axesArray_[3];
+            r.y *= axesArray_[4];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::Triclinic:
+            r.x *= axesArray_[0];
+            r.x += r.y * axesArray_[3] + r.z * axesArray_[6];
+            r.y *= axesArray_[4];
+            r.y += r.z * axesArray_[7];
+            r.z *= axesArray_[8];
+            break;
+    }
 }

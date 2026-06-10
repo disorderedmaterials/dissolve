@@ -6,7 +6,7 @@
 #include "classes/species.h"
 #include "templates/algorithms.h"
 
-Structure::Structure() : box_(std::make_unique<SingleImageBox>()) {}
+Structure::Structure() : box_(std::make_unique<Box>(Box::BoxType::SingleImage, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0})) {}
 
 Structure::Structure(const Structure &source) { *this = source; }
 
