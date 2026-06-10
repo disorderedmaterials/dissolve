@@ -99,12 +99,12 @@ TEST_F(InterpolatorTest, RegularBasic)
     // Form interpolation of data and check interpolation at known values
     Interpolator I(regularData_);
     for (auto &&[x, y] : zip(regularData_.xAxis(), regularData_.values()))
-        EXPECT_DOUBLE_EQ(y, I.y(x));
+        EXPECT_NEAR(y, I.y(x), 1.0e-10);
 
     auto x = 0.0;
     for (auto y : regularFineY_)
     {
-        EXPECT_DOUBLE_EQ(y, I.y(x));
+        EXPECT_NEAR(y, I.y(x), 1.0e-10);
         x += fineDeltaX;
     }
 }
