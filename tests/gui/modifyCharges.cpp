@@ -1,37 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "classes/species.h"
 #include "gui/models/modifyChargesModel.h"
-#include "main/dissolve.h"
-#include <QTableView>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include <QDebug>
 
 #define NO_DISPLAY false
 
 namespace UnitTest
 {
-
-class ModifyChargesModelTest : public ::testing::Test
+TEST(ModifyChargesModelTest, Scale)
 {
-    public:
-    ModifyChargesModelTest() = default;
-
-    protected:
-    void SetUp() override {};
-};
-
-TEST_F(ModifyChargesModelTest, Scale)
-{
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
-    auto species = dissolve.coreData().findSpecies("benzene");
-    ASSERT_NE(species, nullptr);
+    Species benzene;
+    ASSERT_NO_THROW(benzene.load("species/benzene.toml"));
 
     ModifyChargesModel model;
 
@@ -45,15 +27,15 @@ TEST_F(ModifyChargesModelTest, Scale)
     ASSERT_EQ(updatedValue, 2.0);
 
     // Set charges equal for simplicity
-    for (auto &atom : species->atoms())
+    for (auto &atom : benzene.atoms())
         atom.setQ(1.0);
 
     // Test "Scale"
     model.setScaleType(ModifyChargesModel::Scale);
     ASSERT_EQ(model.getScaleType(), ModifyChargesModel::Scale);
 
-    auto success = model.scale(species, NO_DISPLAY);
-    for (auto &atom : species->atoms())
+    EXPECT_TRUE(model.scale(&benzene, NO_DISPLAY));
+    for (auto &atom : benzene.atoms())
         ASSERT_EQ(atom.q(), 2);
 
     // Test "ScaleTo" (returns false if input is zero, else we test the sum of the charges)
@@ -61,25 +43,20 @@ TEST_F(ModifyChargesModelTest, Scale)
     ASSERT_EQ(model.getScaleType(), ModifyChargesModel::ScaleTo);
 
     model.updateScaleValue(0.0);
-    ASSERT_FALSE(model.scale(species, NO_DISPLAY));
+    ASSERT_FALSE(model.scale(&benzene, NO_DISPLAY));
 
     model.updateScaleValue(10.0);
-    success = model.scale(species, NO_DISPLAY);
+    EXPECT_TRUE(model.scale(&benzene, NO_DISPLAY));
     auto sum = 0.0;
-    for (auto &atom : species->atoms())
+    for (auto &atom : benzene.atoms())
         sum += atom.q();
     ASSERT_EQ(sum, 10);
 }
 
-TEST_F(ModifyChargesModelTest, Smooth)
+TEST(ModifyChargesModelTest, Smooth)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
-    auto species = dissolve.coreData().findSpecies("benzene");
-    ASSERT_NE(species, nullptr);
+    Species benzene;
+    ASSERT_NO_THROW(benzene.load("species/benzene.toml"));
 
     ModifyChargesModel model;
 
@@ -93,29 +70,24 @@ TEST_F(ModifyChargesModelTest, Smooth)
     ASSERT_EQ(updatedValue, 2.0);
 
     // Set charges equal for simplicity
-    for (auto &atom : species->atoms())
+    for (auto &atom : benzene.atoms())
         atom.setQ(1.0);
 
     // Target smooth value to 20
     model.updateSmoothValue(20.0);
-    model.smooth(species);
+    model.smooth(&benzene);
 
     auto sum = 0.0;
-    for (auto &atom : species->atoms())
+    for (auto &atom : benzene.atoms())
         sum += atom.q();
 
     ASSERT_EQ(sum, 20.0);
 }
 
-TEST_F(ModifyChargesModelTest, ReduceSigFig)
+TEST(ModifyChargesModelTest, ReduceSigFig)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
-    auto species = dissolve.coreData().findSpecies("benzene");
-    ASSERT_NE(species, nullptr);
+    Species benzene;
+    ASSERT_NO_THROW(benzene.load("species/benzene.toml"));
 
     ModifyChargesModel model;
 
@@ -129,13 +101,13 @@ TEST_F(ModifyChargesModelTest, ReduceSigFig)
     ASSERT_EQ(updatedValue, 2.0);
 
     // Set charges equal for simplicity
-    for (auto &atom : species->atoms())
+    for (auto &atom : benzene.atoms())
         atom.setQ(1.235);
 
-    model.reduceSignificantFigures(species);
+    model.reduceSignificantFigures(&benzene);
 
     // Set charges equal for simplicity
-    for (auto &atom : species->atoms())
+    for (auto &atom : benzene.atoms())
         ASSERT_EQ(atom.q(), 1.24);
 }
 } // namespace UnitTest
