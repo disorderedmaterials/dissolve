@@ -6,7 +6,7 @@
 #include "base/context.h"
 #include "base/messenger.h"
 #include "base/serialiser.h"
-#include "module/module.h"
+#include "math/sampledDouble.h"
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include "nodes/serialisableData.h"

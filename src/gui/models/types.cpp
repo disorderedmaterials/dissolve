@@ -6,7 +6,6 @@
 #include "gui/models/configurationModel.h"
 #include "gui/models/dissolveModel.h"
 #include "gui/models/modifyChargesModel.h"
-#include "gui/models/moduleLayersModel.h"
 #include "gui/models/nodeGraph/graphModel.h"
 #include "gui/models/simpleForcefieldModel.h"
 #include "gui/models/sortFilterProxy.h"
@@ -19,7 +18,6 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<DissolveModel>(PROJECT, 1, 0, "DissolveModel");
     qmlRegisterType<SpeciesModel>(PROJECT, 1, 0, "SpeciesModel");
     qmlRegisterType<ConfigurationModel>(PROJECT, 1, 0, "ConfigurationModel");
-    qmlRegisterType<ModuleLayersModel>(PROJECT, 1, 0, "ModuleLayersModel");
     qmlRegisterType<AtomTypeModel>(PROJECT, 1, 0, "AtomTypeModel");
     qmlRegisterType<CommonAngleModel>(PROJECT, 1, 0, "CommonAngleModel");
     qmlRegisterType<CommonBondModel>(PROJECT, 1, 0, "CommonBondModel");

@@ -8,7 +8,6 @@
 #include "classes/pairPotentialOverride.h"
 #include "classes/species.h"
 #include "data/elements.h"
-#include "module/types.h"
 #include "templates/optionalRef.h"
 #include <list>
 #include <memory>
@@ -74,49 +73,6 @@ class CoreData
     Configuration *findConfigurationByNiceName(std::string_view name) const;
 
     /*
-     * Layers and Modules
-     */
-    private:
-    // List of defined processing layers
-    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
-
-    public:
-    // Return vector of all existing Modules
-    const std::vector<Module *> moduleInstances() const;
-    // Search for any instance of any module with the specified unique name
-    Module *findModule(std::string_view uniqueName) const;
-    // Search for and return any instance(s) of the specified Module type
-    std::vector<Module *> allOfType(ModuleTypes::ModuleType type) const;
-    std::vector<Module *> allOfType(std::vector<ModuleTypes::ModuleType> types) const;
-    template <class M> std::vector<M *> allOfType() const
-    {
-        std::vector<M *> results;
-
-        for (auto *module : moduleInstances())
-        {
-            M *castModule = dynamic_cast<M *>(module);
-            if (castModule)
-                results.push_back(castModule);
-        }
-
-        return results;
-    }
-
-    // Add new processing layer
-    ModuleLayer *addProcessingLayer();
-    // Remove processing layer
-    void removeProcessingLayer(ModuleLayer *layer);
-    // Find named processing layer
-    ModuleLayer *findProcessingLayer(std::string_view name) const;
-    // Return number of processing layers
-    int nProcessingLayers() const;
-    // Return current processing layers
-    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
-    const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
-    // Run the set-up stages of all modules in all layers
-    bool setUpProcessingLayerModules(Dissolve &dissolve);
-
-    /*
      * Input Filename
      */
     private:
@@ -128,16 +84,4 @@ class CoreData
     void setInputFilename(std::string_view filename);
     // Return the current input filename
     std::string_view inputFilename() const;
-
-    /*
-     * Object Management
-     */
-    public:
-    // Remove all references to the specified data
-    void removeReferencesTo(Configuration *data);
-    void removeReferencesTo(Isotopologue *data);
-    void removeReferencesTo(Module *data);
-    void removeReferencesTo(Species *data);
-    void removeReferencesTo(SpeciesSite *data);
-    void removeReferencesTo(std::shared_ptr<AtomType> data);
 };

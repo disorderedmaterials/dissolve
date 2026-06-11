@@ -294,8 +294,6 @@ set(BASIC_LINK_LIBS
     classes
     kernels
     potentials
-    module
-    moduleregistry
     io
     export
     import

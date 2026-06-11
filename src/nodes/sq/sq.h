@@ -8,7 +8,6 @@
 #include "math/function1D.h"
 #include "math/history.h"
 #include "math/windowFunction.h"
-#include "module/module.h"
 #include "nodes/graph.h"
 #include "nodes/node.h"
 #include "nodes/parameter.h"

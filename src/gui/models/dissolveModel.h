@@ -6,7 +6,6 @@
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/commonTermTreeModel.h"
 #include "gui/models/configurationModel.h"
-#include "gui/models/moduleLayersModel.h"
 #include "main/dissolve.h"
 #include "nodes/graph.h"
 #include "templates/optionalRef.h"
@@ -26,8 +25,6 @@ class DissolveModel : public QObject
     Q_PROPERTY(const CommonImproperModel *commonImpropersModel READ commonImpropersModel NOTIFY commonsChanged)
     // The Configuration Model
     Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
-    // The ModuleLayers Model
-    Q_PROPERTY(const ModuleLayersModel *moduleLayersModel READ moduleLayersModel NOTIFY moduleLayersChanged)
     // File to load
     Q_PROPERTY(QUrl file READ fileName WRITE loadInput NOTIFY modelsUpdated)
     // The main graph
@@ -37,7 +34,6 @@ class DissolveModel : public QObject
     // Master terms model
     std::unique_ptr<MasterTermTreeModel> commons_ = nullptr;
     ConfigurationModel configurationModel_;
-    ModuleLayersModel moduleLayersModel_;
 
     public:
     // Getter for filename
@@ -86,8 +82,6 @@ class DissolveModel : public QObject
     int nCommonImpropers();
     // The Configurations Model
     ConfigurationModel *configurationsModel();
-    // The ModuleLayers Model
-    ModuleLayersModel *moduleLayersModel();
 
     /*
      * Data

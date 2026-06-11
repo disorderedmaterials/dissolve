@@ -214,8 +214,6 @@ class KeywordStore
     std::vector<Configuration *> getVectorConfiguration(std::string_view name) const;
     // Retrieve a Species by keyword name
     const Species *getSpecies(std::string_view name) const;
-    // Retrieve a vector of Modules by keyword name
-    const std::vector<Module *> &getVectorModule(std::string_view name) const;
     // Retrieve an Integer by keyword name
     int getInt(std::string_view name) const;
     // Get specified keyword data, casting as necessary

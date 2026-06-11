@@ -90,9 +90,6 @@ int main(int args, char **argv)
             // Prepare for run
             if (!dissolve.prepare())
                 return 1;
-
-            // Run main simulation
-            dissolve.iterate(options.nIterations());
         }
     }
 

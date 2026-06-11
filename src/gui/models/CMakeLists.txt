@@ -16,10 +16,6 @@ set(models_MOC_HDRS
     commonTermTreeModel.h
     commonTorsionModel.h
     modifyChargesModel.h
-    moduleLayerModel.h
-    moduleLayersModel.h
-    moduleModel.h
-    modulePaletteModel.h
     nodePaletteModel.h
     pairPotentialModel.h
     pairPotentialOverrideModel.h
@@ -41,7 +37,6 @@ set(models_MOC_HDRS
     speciesImproperModel.h
     speciesIsoModel.h
     speciesTorsionModel.h
-    weightedModuleModel.h
     xmlAngleModel.h
     xmlAtomModel.h
     xmlBondModel.h
@@ -76,10 +71,6 @@ set(models_SRCS
     commonTermTreeModel.cpp
     commonTorsionModel.cpp
     modifyChargesModel.cpp
-    moduleLayerModel.cpp
-    moduleLayersModel.cpp
-    moduleModel.cpp
-    modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp
     pairPotentialOverrideModel.cpp
@@ -103,7 +94,6 @@ set(models_SRCS
     speciesSiteFilterProxy.cpp
     speciesSiteModel.cpp
     speciesTorsionModel.cpp
-    weightedModuleModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -133,7 +123,6 @@ qt6_wrap_cpp(
   speciesModel.h
   speciesSiteModel.h
   speciesTorsionModel.h
-  weightedModuleModel.h
   xmlAngleModel.h
   xmlAtomModel.h
   xmlBondModel.h

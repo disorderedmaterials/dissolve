@@ -12,7 +12,6 @@
 #include "classes/siteStack.h"
 #include "generator/generator.h"
 #include "kernels/potentials/base.h"
-#include "module/layer.h"
 #include <map>
 #include <memory>
 #include <vector>

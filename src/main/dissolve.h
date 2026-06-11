@@ -8,11 +8,9 @@
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "classes/pairPotential.h"
-#include "classes/pairPotentialOverride.h"
 #include "classes/potentialMap.h"
-#include "data/elements.h"
-#include "module/layer.h"
-#include "module/module.h"
+#include "items/list.h"
+#include "math/sampledDouble.h"
 
 // Forward Declarations
 class ConfigurationAtom;
@@ -129,16 +127,6 @@ class Dissolve : public Serialisable<>
     int restartFileFrequency() const;
     // Prepare for main simulation
     bool prepare();
-    // Iterate main simulation
-    bool iterate(int nIterations = -1);
-    // Reset current simulation step
-    void resetIterationCounter();
-    // Return current simulation step
-    int iteration() const;
-    // Estimate time in seconds required to perform next n steps (if possible to determine)
-    std::optional<double> estimateRequiredTime(int nIterations);
-    // Print timing information
-    void printTiming();
 
     /*
      * Serialisation
@@ -172,10 +160,6 @@ class Dissolve : public Serialisable<>
     SerialisedValue serialisePairPotentials() const;
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
-    // Load restart file
-    bool loadRestart(std::string_view filename);
-    // Save restart file
-    bool saveRestart(std::string_view filename);
     // Return whether an input filename has been set
     bool hasInputFilename() const;
     // Set current input filename

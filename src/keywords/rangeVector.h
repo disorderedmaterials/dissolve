@@ -5,7 +5,6 @@
 
 #include "keywords/base.h"
 #include "math/range.h"
-#include "module/module.h"
 
 // Module Vector Keyword
 class RangeVectorKeyword : public KeywordBase
