@@ -4,6 +4,7 @@
 #include "classes/structure.h"
 #include "classes/bond.h"
 #include "classes/species.h"
+#include "data/atomicMasses.h"
 #include "templates/algorithms.h"
 
 Structure::Structure() : box_(Box::none()) {}
@@ -250,6 +251,188 @@ void Structure::createBox(const Matrix3 &axes)
     angles.toDegrees();
 
     box_ = Box::generate(lengths, angles);
+}
+
+/*
+ * Manipulations
+ */
+
+// Recursive function for general manipulation
+void Structure::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ManipulationFunction action)
+{
+    if (flags[indexI])
+        return;
+
+    // Set the flag for indexI and get some necessary values
+    flags[indexI] = true;
+    auto rI = atoms_[indexI]->r();
+    auto *strAtI = atoms_[indexI].get();
+
+    // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
+    for (const auto *b : strAtI->bonds())
+    {
+        auto indexJ = b->partner(strAtI)->index();
+        auto &j = atoms_[indexJ];
+        if (flags[indexJ])
+            continue;
+
+        action(j.get(), box->minimumImage(j->r(), rI));
+
+        // Recurse into bound neighbours
+        recurseLocal(flags, box, indexJ, action);
+    }
+}
+void Structure::recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ConstManipulationFunction action) const
+{
+    if (flags[indexI])
+        return;
+
+    // Set the flag for indexI and get some necessary values
+    flags[indexI] = true;
+    auto rI = atoms_[indexI]->r();
+    auto *strAtI = atoms_[indexI].get();
+
+    // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
+    for (const auto b : strAtI->bonds())
+    {
+        auto indexJ = b->partner(strAtI)->index();
+        auto &j = atoms_[indexJ];
+        if (flags[indexJ])
+            continue;
+
+        action(j.get(), box->minimumImage(j->r(), rI));
+
+        // Recurse into bound neighbours
+        recurseLocal(flags, box, indexJ, action);
+    }
+}
+
+// General manipulation function working on reassembled molecule
+void Structure::traverseLocal(const Box *box, ManipulationFunction action)
+{
+    std::vector<bool> flags(atoms_.size(), false);
+    action(atoms_[0].get(), atoms_[0]->r());
+    recurseLocal(flags, box, 0, action);
+}
+void Structure::traverseLocal(const Box *box, ConstManipulationFunction action) const
+{
+    std::vector<bool> flags(atoms_.size(), false);
+    action(atoms_[0].get(), atoms_[0]->r());
+    recurseLocal(flags, box, 0, action);
+}
+
+// Un-fold molecule so it is not cut by box boundaries
+Vector3 Structure::unFold()
+{
+    Vector3 cog{0.0, 0.0, 0.0};
+    traverseLocal(box_.get(),
+                  [&cog](StructureAtom *j, Vector3 rJ)
+                  {
+                      j->setR(rJ);
+                      cog += rJ;
+                  });
+    return cog / nAtoms();
+}
+
+// Set centre of geometry of molecule
+void Structure::setCentreOfGeometry(const Vector3 &newCentre)
+{
+    // Calculate Molecule centre of geometry
+    Vector3 newR;
+    const auto cog = centreOfGeometry();
+
+    // Apply transform
+    for (auto n = 0; n < nAtoms(); ++n)
+    {
+        newR = box_->minimumVector(atom(n)->r(), cog) + newCentre;
+        atom(n)->setR(newR);
+    }
+}
+
+// Calculate and return centre of geometry
+Vector3 Structure::centreOfGeometry() const
+{
+    if (nAtoms() == 0)
+        return {};
+
+    Vector3 cog{0.0, 0.0, 0.0};
+    traverseLocal(box_.get(), [&cog](auto *j, auto rJ) { cog += rJ; });
+
+    return cog / nAtoms();
+}
+
+// Calculate and return centre of geometry over supplied atom indices
+Vector3 Structure::centreOfGeometry(const std::vector<int> &indices) const
+{
+    const auto ref = atoms_[indices.front()]->r();
+    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
+                           [&](const auto &acc, const auto idx) { return acc + box_->minimumImage(atoms_[idx]->r(), ref); }) /
+           indices.size();
+}
+
+// Calculate and return centre of mass over supplied atom indices
+Vector3 Structure::centreOfMass(const std::vector<int> &indices) const
+{
+    auto mass = AtomicMass::mass(atoms_[indices.front()]->Z());
+    const auto ref = atoms_[indices.front()]->r();
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vector3, double>(ref * mass, mass),
+                                [&](const auto &acc, const auto idx)
+                                {
+                                    auto mass = AtomicMass::mass(atoms_[idx]->Z());
+                                    return std::pair<Vector3, double>(
+                                        acc.first + box_->minimumImage(atoms_[idx]->r(), ref) * mass, acc.second + mass);
+                                });
+    return sums.first / sums.second;
+}
+
+// Transform molecule with supplied matrix, using centre of geometry as the origin
+void Structure::transform(const Matrix3 &transformationMatrix)
+{
+    // Unfold and get Molecule centre of geometry
+    const auto cog = unFold();
+
+    // Apply transform
+    for (auto &i : atoms())
+        i->setR(transformationMatrix * (i->r() - cog) + cog);
+}
+
+// Transform molecule with supplied matrix about specified origin
+void Structure::transform(const Matrix3 &transformationMatrix, const Vector3 &origin)
+{
+    // Unfold
+    unFold();
+
+    // Apply transform
+    for (auto &i : atoms())
+        i->setR(transformationMatrix * (i->r() - origin) + origin);
+}
+
+// Transform selected atoms with supplied matrix, around specified origin
+void Structure::transform(const Matrix3 &transformationMatrix, const Vector3 &origin, const std::vector<int> &targetAtoms)
+{
+    // Loop over supplied Atoms
+    Vector3 newR;
+    StructureAtom *i;
+    for (const auto index : targetAtoms)
+    {
+        i = atom(index);
+        newR = transformationMatrix * box_->minimumVector(origin, i->r()) + origin;
+        i->setR(newR);
+    }
+}
+
+// Translate whole molecule by the delta specified
+void Structure::translate(const Vector3 &delta)
+{
+    for (auto n = 0; n < nAtoms(); ++n)
+        *atom(n) += delta;
+}
+
+// Translate specified atoms by the delta specified
+void Structure::translate(const Vector3 &delta, const std::vector<int> &targetAtoms)
+{
+    for (const auto i : targetAtoms)
+        *atom(i) += delta;
 }
 
 /*

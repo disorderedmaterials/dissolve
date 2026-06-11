@@ -70,6 +70,8 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             }
         }
 
+        detectedMolStructure.unFold();
+
         // Find instances of this fragment. For large fragments that represent > 50% of the remaining atoms we don't even
         // attempt to create a NETA definition etc. For cases such as framework species this will speed up detection no end.
         if (fragmentIndices.size() * 2 > inputStructure_.nAtoms())
@@ -226,6 +228,8 @@ std::vector<std::vector<Vector3>> DetectMoleculesNode::getInstances(const Struct
             instanceMolAtom->setR(matchedAtom->r());
             atomMask[matchedAtom->index()] = true;
         }
+
+        instanceStructure.unFold();
 
         /*
          * Now, we have a root match atom on the current instance and a vector of possible matching sites on the reference

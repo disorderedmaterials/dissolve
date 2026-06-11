@@ -7,6 +7,7 @@
 #include "classes/atom.h"
 #include "classes/bond.h"
 #include "classes/box.h"
+#include "math/vector3.h"
 #include <vector>
 
 // StructureAtom
@@ -126,6 +127,42 @@ class Structure : public Serialisable<>
     void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
     // Create Box definition from axes matrix
     void createBox(const Matrix3 &axes);
+
+    /*
+     * Manipulations
+     */
+    private:
+    // Typedef for manipulation functions
+    using ManipulationFunction = std::function<void(StructureAtom *j, Vector3 rJ)>;
+    using ConstManipulationFunction = std::function<void(const StructureAtom *j, Vector3 rJ)>;
+    // Recursive function for general manipulation
+    void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ManipulationFunction action);
+    void recurseLocal(std::vector<bool> &flags, const Box *box, int indexI, ConstManipulationFunction action) const;
+    // General manipulation function working on reassembled molecule
+    void traverseLocal(const Box *box, ManipulationFunction action);
+    void traverseLocal(const Box *box, ConstManipulationFunction action) const;
+
+    public:
+    // Un-fold molecule so it is not cut by box boundaries, returning the centre of geometry
+    Vector3 unFold();
+    // Set centre of geometry
+    void setCentreOfGeometry(const Vector3 &newCentre);
+    // Calculate and return centre of geometry
+    Vector3 centreOfGeometry() const;
+    // Calculate and return centre of geometry over supplied atom indices
+    Vector3 centreOfGeometry(const std::vector<int> &indices) const;
+    // Calculate and return centre of mass over supplied atom indices
+    Vector3 centreOfMass(const std::vector<int> &indices) const;
+    // Transform molecule with supplied matrix, using centre of geometry as the origin
+    void transform(const Matrix3 &transformationMatrix);
+    // Transform molecule with supplied matrix about specified origin
+    void transform(const Matrix3 &transformationMatrix, const Vector3 &origin);
+    // Transform selected atoms with supplied matrix, around specified origin
+    void transform(const Matrix3 &transformationMatrix, const Vector3 &origin, const std::vector<int> &targetAtoms);
+    // Translate whole molecule by the delta specified
+    void translate(const Vector3 &delta);
+    // Translate specified atoms by the delta specified
+    void translate(const Vector3 &delta, const std::vector<int> &targetAtoms);
 
     /*
      * Serialisation
