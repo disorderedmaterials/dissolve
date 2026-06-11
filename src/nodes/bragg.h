@@ -3,21 +3,13 @@
 
 #pragma once
 
-#include "base/timer.h"
 #include "classes/box.h"
 #include "classes/braggReflection.h"
-#include "classes/cell.h"
 #include "classes/configuration.h"
-#include "classes/configurationAtom.h"
 #include "classes/kVector.h"
-#include "classes/neutronWeights.h"
-#include "classes/species.h"
 #include "main/dissolve.h"
-#include "math/averaging.h"
 #include "math/history.h"
 #include "nodes/node.h"
-#include "templates/algorithms.h"
-#include "templates/array3D.h"
 
 // Bragg Module
 class BraggNode : public Node
@@ -37,8 +29,6 @@ class BraggNode : public Node
     Configuration *targetConfiguration_{nullptr};
     // Number of historical data sets to combine into final reflection data
     std::optional<Number> averagingLength_{5};
-    // Weighting scheme to use when averaging reflection data
-    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Bragg intensity scaling factor accounting for number of repeat units in Configuration
     Vector3i multiplicity_{1, 1, 1};
     // Resolution (bin width) in Q space to use when calculating Bragg reflections

@@ -31,8 +31,6 @@ BraggNode::BraggNode(Graph *parentGraph)
     addOption<std::optional<Number>>("Averaging", "Number of historical data sets to combine into final reflection data",
                                      averagingLength_)
         ->setFlags({ParameterBase::ClearData});
-    addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging reflection data",
-                                          averagingScheme_);
     addOption<Function1DWrapper>("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)",
                                  braggQBroadening_);
     addOption<bool>("SaveReflections", "Whether to save Bragg reflection data to disk", saveReflections_);
@@ -79,8 +77,7 @@ NodeConstants::ProcessResult BraggNode::process()
     message("Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n", qMin, qMax, qDelta);
     message("Multiplicity is ({} {} {}).\n", multiplicity_.x, multiplicity_.y, multiplicity_.z);
     if (averagingLength_)
-        message("Reflections will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asInteger(),
-                Averaging::averagingSchemes().keyword(averagingScheme_));
+        message("Reflections will be averaged over {} sets.\n", averagingLength_.value().asInteger());
     else
         message("No averaging of reflections will be performed.\n");
     message("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity_.x, multiplicity_.y,

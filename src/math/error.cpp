@@ -11,7 +11,7 @@
 namespace Error
 {
 
-// Return enum option info for AveragingScheme
+// Return enum option info for ErrorTypes
 EnumOptions<ErrorType> errorTypes()
 {
     return EnumOptions<ErrorType>("ErrorType", {{RMSEError, "RMSE"},

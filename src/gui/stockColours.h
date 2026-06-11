@@ -28,7 +28,7 @@ class StockColours
         GoldStockColour,
         nStockColours
     };
-    // Return enum options for AveragingScheme
+    // Return enum options for StockColours
     static EnumOptions<StockColours::StockColour> stockColours();
     // Return stock colour (as QColor)
     static QColor stockColour(StockColour colour);
