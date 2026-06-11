@@ -18,13 +18,16 @@ TEST(UFF4MOFMOF5AssignmentTest, MOF5)
     auto *setBox = testGraph.createNode("SetBox");
     ASSERT_TRUE(setBox);
     ASSERT_TRUE(setBox->setOption("Lengths", Vector3(25.8320, 25.8320, 25.8320)));
-    ASSERT_TRUE(testGraph.addEdge({"ImportXYZStructure", "Structure", "SetBox", "Input"}));
+    auto *calculateBondingNode = testGraph.createNode("CalculateBonding");
+    EXPECT_TRUE(calculateBondingNode);
     auto *speciesNode = dynamic_cast<SpeciesNode *>(testGraph.createNode("Species", "MOF5"));
     ASSERT_TRUE(speciesNode);
     auto *ffNode = testGraph.createNode("Forcefield");
     ASSERT_TRUE(ffNode);
     ASSERT_TRUE(ffNode->setOption("Forcefield", ForcefieldLibrary::forcefield("UFF4MOF").get()));
-    ASSERT_TRUE(testGraph.addEdge({"SetBox", "Output", "MOF5", "Structure"}));
+    ASSERT_TRUE(testGraph.addEdge({"ImportXYZStructure", "Structure", "SetBox", "Input"}));
+    ASSERT_TRUE(testGraph.addEdge({"SetBox", "Output", "CalculateBonding", "Structure"}));
+    ASSERT_TRUE(testGraph.addEdge({"CalculateBonding", "Structure", "MOF5", "Structure"}));
     ASSERT_TRUE(testGraph.addEdge({"Forcefield", "Recipe", "MOF5", "Recipe"}));
 
     // Run from the species node
