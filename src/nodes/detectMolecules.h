@@ -46,8 +46,8 @@ class DetectMoleculesNode : public Node
     std::tuple<NETADefinition, std::vector<StructureAtom *>> bestNETADefinition(const Structure &structure);
     // Get instances for the supplied species from the cleaned unit cell
     std::vector<std::vector<Vector3>> getInstances(const Structure &referenceStructure, std::vector<bool> &atomMask,
-                                                          const NETADefinition &neta,
-                                                          const std::vector<StructureAtom *> &referenceRootAtoms);
+                                                   const NETADefinition &neta,
+                                                   const std::vector<StructureAtom *> &referenceRootAtoms);
     // Recursively check NETA description matches between the supplied atoms
     std::map<const StructureAtom *, const StructureAtom *>
     matchAtom(const StructureAtom *referenceAtom, const StructureAtom *instanceAtom,
