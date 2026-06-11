@@ -23,6 +23,10 @@ Structure &Structure::operator=(const Structure &source)
     for (auto &bond : source.bonds_)
         addBond(bond->i()->index(), bond->j()->index());
 
+    // Copy source box
+    if (source.box_)
+        createBox(source.box_->axisLengths(), source.box_->axisAngles(), source.box_->type() == Box::BoxType::NonPeriodic);
+
     return *this;
 }
 
