@@ -290,8 +290,10 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimple)
 
     EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
     testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph.appendNode("CalculateBonding"));
     ASSERT_TRUE(testGraph.appendNode("DetectMolecules", "DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
+    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
+    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
@@ -316,8 +318,10 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnordered)
 
     EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
     testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph.appendNode("CalculateBonding"));
     ASSERT_TRUE(testGraph.appendNode("DetectMolecules", "DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
+    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
+    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
@@ -342,8 +346,10 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnorderedRotated)
 
     EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
     testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph.appendNode("CalculateBonding"));
     ASSERT_TRUE(testGraph.appendNode("DetectMolecules", "DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
+    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
+    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
