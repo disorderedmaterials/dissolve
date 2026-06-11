@@ -71,6 +71,5 @@ class Site
     // Return local axes
     const Matrix3 &axes() const;
 };
-// Return enum option info for Site::SiteAxis
-// EnumOptions<Site::SiteAxis> siteAxes();
+
 EnumOptions<Site::SiteAxis> getEnumOptions(Site::SiteAxis);
