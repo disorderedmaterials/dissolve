@@ -35,7 +35,7 @@ class VoxelDensityNodeTest : public ::testing::Test
 
 TEST_F(VoxelDensityNodeTest, Helium)
 {
-    setUp("He", 512, 1.0, "dissolve/input/voxelDensity-helium.xyz");
+    setUp("He", 512, 1.0, "xyz/voxelDensity-helium.xyz");
 
     const auto binWidth = 0.05;
     auto runCount = 0;
