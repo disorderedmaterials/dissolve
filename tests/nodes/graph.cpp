@@ -72,7 +72,7 @@ TEST_F(GraphCoreTest, Serialisation)
     DissolveGraph copy;
     auto serialised = root_.into_toml();
 
-    SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml");
+    SerialisedValue contents = toml::parse("graph/simple_addition_graph.toml");
     UnitTest::compareToml("", serialised, contents);
 
     std::cout << serialised << std::endl;
