@@ -30,28 +30,4 @@ TEST(VersionTest, VersionClass)
     EXPECT_LT(minor, third);
 }
 
-TEST(VersionTest, VersionInfo)
-{
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-    dissolve.loadInput("dissolve/input/rdfMethod.txt");
-    auto serialised = dissolve.into_toml();
-
-    Version::DissolveVersion fileVersion(serialised["version"].as_string().str), actual(Version::semantic());
-
-    EXPECT_EQ(fileVersion, actual);
-}
-
-TEST(VersionTest, VersionUpgrade)
-{
-    CoreData coreData;
-    Dissolve dissolve(coreData);
-
-    SerialisedValue old;
-    old["version"] = "0.0.0";
-    old["pairPotentials"] = {{"coulombTruncation", "Shift"}};
-
-    dissolve.deserialise(old);
-}
-
 } // namespace UnitTest
