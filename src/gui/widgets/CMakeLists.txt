@@ -9,8 +9,8 @@ add_library(
   elementSelector.h
   exponentialSpin.cpp
   exponentialSpin.h
-  gradientBar.cpp
-  gradientBar.h
+  # gradientBar.cpp
+  # gradientBar.h
   integerSpin.cpp
   integerSpin.h
   noControls.cpp
