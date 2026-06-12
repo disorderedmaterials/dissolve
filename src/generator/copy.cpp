@@ -50,7 +50,7 @@ bool CopyGeneratorNode::execute(const GeneratorContext &generatorContext)
         return Messenger::error("Context configuration for copy must be empty.\n");
 
     // Copy the source box
-    cfg->createBox(source_->box()->axes());
+    cfg->createBox(source_->box().axes());
 
     // Pre-determine array sizes
     auto nAtoms = source_->nAtoms();

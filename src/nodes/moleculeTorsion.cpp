@@ -53,14 +53,14 @@ NodeConstants::ProcessResult MoleculeTorsionNode::process()
     histogram_->zeroBins();
 
     // Loop over molecules in the Configuration
-    const auto *box = configuration_->box();
+    const auto &box = configuration_->box();
     for (const auto &mol : configuration_->molecules())
     {
         if (mol->species() != species_)
             continue;
 
-        histogram_->bin(box->torsionInDegrees(mol->atom(i_.asInteger())->r(), mol->atom(j_.asInteger())->r(),
-                                              mol->atom(k_.asInteger())->r(), mol->atom(l_.asInteger())->r()));
+        histogram_->bin(box.torsionInDegrees(mol->atom(i_.asInteger())->r(), mol->atom(j_.asInteger())->r(),
+                                             mol->atom(k_.asInteger())->r(), mol->atom(l_.asInteger())->r()));
     }
 
     // Accumulate histogram

@@ -303,7 +303,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                     // Fold atoms
                     for (auto &i : atoms_)
-                        i.setR(box_->fold(i.r()));
+                        i.setR(box_.fold(i.r()));
                 }
                 updateIsotopologues();
                 Messenger::print("Found end of Species '{}'.\n", name());
@@ -904,13 +904,13 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Box
-    if (box_->type() != Box::BoxType::None)
+    if (box_.type() != Box::BoxType::None)
     {
         if (!parser.writeLineF("{}{}  {}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::BoxAngles),
-                               box_->axisAngles().x, box_->axisAngles().y, box_->axisAngles().z))
+                               box_.axisAngles().x, box_.axisAngles().y, box_.axisAngles().z))
             return false;
         if (!parser.writeLineF("{}{}  {}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::BoxLengths),
-                               box_->axisLengths().x, box_->axisLengths().y, box_->axisLengths().z))
+                               box_.axisLengths().x, box_.axisLengths().y, box_.axisLengths().z))
             return false;
     }
 

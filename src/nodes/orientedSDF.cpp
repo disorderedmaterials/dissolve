@@ -80,7 +80,7 @@ NodeConstants::ProcessResult OrientedSDFNode::process()
                 axisAngle = 180.0 - axisAngle;
             if (angleRange_.contains(axisAngle))
             {
-                auto vBA = configuration_->box()->minimumVector(siteA->origin(), siteB->origin());
+                auto vBA = configuration_->box().minimumVector(siteA->origin(), siteB->origin());
                 vBA = siteA->axes().transposeMultiply(vBA);
                 histogram_->bin(vBA);
             }

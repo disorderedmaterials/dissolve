@@ -5,10 +5,11 @@
 #include "math/vector3.h"
 #include <benchmark/benchmark.h>
 #include <cmath>
+#include <stdexcept>
 
 namespace Benchmarks
 {
-std::unique_ptr<Box> createTestBox(Box::BoxType boxType)
+Box createTestBox(Box::BoxType boxType)
 {
     if (boxType == Box::BoxType::Cubic)
     {
@@ -32,17 +33,17 @@ std::unique_ptr<Box> createTestBox(Box::BoxType boxType)
         return Box::triclinic(lengths, angles);
     }
     else
-        return nullptr;
+        throw std::runtime_error("Invalid box type");
 }
 
 static void BM_Box_MinimumImage(benchmark::State &state, Box::BoxType t)
 {
     auto box = createTestBox(t);
-    Vector3 p1 = box->randomCoordinate();
-    Vector3 p2 = box->randomCoordinate();
+    Vector3 p1 = box.randomCoordinate();
+    Vector3 p2 = box.randomCoordinate();
     for (auto _ : state)
     {
-        auto dist = box->minimumImage(p1, p2);
+        auto dist = box.minimumImage(p1, p2);
         benchmark::DoNotOptimize(dist);
     }
 }
@@ -50,11 +51,11 @@ static void BM_Box_MinimumImage(benchmark::State &state, Box::BoxType t)
 static void BM_Box_MinimumDistance(benchmark::State &state, Box::BoxType t)
 {
     auto box = createTestBox(t);
-    Vector3 p1 = box->randomCoordinate();
-    Vector3 p2 = box->randomCoordinate();
+    Vector3 p1 = box.randomCoordinate();
+    Vector3 p2 = box.randomCoordinate();
     for (auto _ : state)
     {
-        auto dist = box->minimumDistance(p1, p2);
+        auto dist = box.minimumDistance(p1, p2);
         benchmark::DoNotOptimize(dist);
     }
 }
@@ -62,11 +63,11 @@ static void BM_Box_MinimumDistance(benchmark::State &state, Box::BoxType t)
 static void BM_Box_MinimumDistanceSquared(benchmark::State &state, Box::BoxType t)
 {
     auto box = createTestBox(t);
-    Vector3 p1 = box->randomCoordinate();
-    Vector3 p2 = box->randomCoordinate();
+    Vector3 p1 = box.randomCoordinate();
+    Vector3 p2 = box.randomCoordinate();
     for (auto _ : state)
     {
-        auto dist = box->minimumDistanceSquared(p1, p2);
+        auto dist = box.minimumDistanceSquared(p1, p2);
         benchmark::DoNotOptimize(dist);
     }
 }
@@ -74,11 +75,11 @@ static void BM_Box_MinimumDistanceSquared(benchmark::State &state, Box::BoxType 
 static void BM_Box_MinimumVector(benchmark::State &state, Box::BoxType t)
 {
     auto box = createTestBox(t);
-    Vector3 p1 = box->randomCoordinate();
-    Vector3 p2 = box->randomCoordinate();
+    Vector3 p1 = box.randomCoordinate();
+    Vector3 p2 = box.randomCoordinate();
     for (auto _ : state)
     {
-        auto dist = box->minimumVector(p1, p2);
+        auto dist = box.minimumVector(p1, p2);
         benchmark::DoNotOptimize(dist);
     }
 }
@@ -88,7 +89,7 @@ static void BM_Box_RandomCoordinate(benchmark::State &state, Box::BoxType t)
     auto box = createTestBox(t);
     for (auto _ : state)
     {
-        auto r = box->randomCoordinate();
+        auto r = box.randomCoordinate();
         benchmark::DoNotOptimize(r);
     }
 }
@@ -96,10 +97,10 @@ static void BM_Box_RandomCoordinate(benchmark::State &state, Box::BoxType t)
 static void BM_Box_Fold(benchmark::State &state, Box::BoxType t)
 {
     auto box = createTestBox(t);
-    Vector3 p1 = box->randomCoordinate();
+    Vector3 p1 = box.randomCoordinate();
     for (auto _ : state)
     {
-        auto r = box->fold(p1);
+        auto r = box.fold(p1);
         benchmark::DoNotOptimize(r);
     }
 }
@@ -107,10 +108,10 @@ static void BM_Box_Fold(benchmark::State &state, Box::BoxType t)
 static void BM_Box_FoldFrac(benchmark::State &state, Box::BoxType t)
 {
     auto box = createTestBox(t);
-    Vector3 p1 = box->randomCoordinate();
+    Vector3 p1 = box.randomCoordinate();
     for (auto _ : state)
     {
-        auto r = box->foldFrac(p1);
+        auto r = box.foldFrac(p1);
         benchmark::DoNotOptimize(r);
     }
 }

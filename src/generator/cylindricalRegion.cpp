@@ -19,11 +19,11 @@ CylindricalRegionVoxelKernel::CylindricalRegionVoxelKernel(Vector3 originFrac, d
 bool CylindricalRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vector3 &r) const
 {
     auto l0 = originFrac_;
-    cfg->box()->toReal(l0);
+    cfg->box().toReal(l0);
     const auto l1 = l0 + vector_;
     const auto denominator = (l1 - l0).magnitude();
 
-    auto p0 = cfg->box()->minimumImage(r, l0);
+    auto p0 = cfg->box().minimumImage(r, l0);
     auto num = ((p0 - l0) * (p0 - l1)).magnitude();
 
     // Check distance vs cylinder radius

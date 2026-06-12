@@ -16,7 +16,7 @@ bool GeneralRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vect
 {
     // If any atom in the Configuration is less than some tolerance value to this coordinate, invalidate the voxel
     return !std::any_of(cfg->atoms().begin(), cfg->atoms().end(),
-                        [&](const auto &i) { return cfg->box()->minimumDistanceSquared(i.r(), r) <= toleranceSquared_; });
+                        [&](const auto &i) { return cfg->box().minimumDistanceSquared(i.r(), r) <= toleranceSquared_; });
 }
 
 /*

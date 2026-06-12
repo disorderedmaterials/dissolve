@@ -20,13 +20,13 @@ SiteFilter::filterBySiteProximity(const Analyser::SiteVector &otherSites, Range 
     Analyser::SiteVector filteredSites, neighbours;
     filteredSites.reserve(targetSites_.size());
     Analyser::SiteMap filteredSiteMap;
-    const auto *box = configuration_->box();
+    const auto &box = configuration_->box();
     for (auto &&[site, index] : targetSites_)
     {
         neighbours.clear();
         for (auto &&[nbr, nbrIndex] : otherSites)
         {
-            if (range.contains(box->minimumDistance(site->origin(), nbr->origin())))
+            if (range.contains(box.minimumDistance(site->origin(), nbr->origin())))
                 neighbours.emplace_back(nbr, nbrIndex);
 
             // Check current count against maximum value

@@ -49,12 +49,12 @@ class CIFNodeTest : public ::testing::Test
     {
         ASSERT_TRUE(cfg);
         EXPECT_EQ(cfg->nAtoms(), nAtoms);
-        EXPECT_NEAR(cfg->box()->axisLengths().x, lengths.x, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisLengths().y, lengths.y, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisLengths().z, lengths.z, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisAngles().x, angles.x, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisAngles().y, angles.y, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisAngles().z, angles.z, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisLengths().x, lengths.x, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisLengths().y, lengths.y, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisLengths().z, lengths.z, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisAngles().x, angles.x, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisAngles().y, angles.y, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisAngles().z, angles.z, 1.0e-6);
     }
     // Test molecular species information provided
     void testMolecularSpecies(const CIFMolecularSpecies &molSp, const MolecularSpeciesInfo &info)

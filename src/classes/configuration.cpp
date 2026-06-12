@@ -10,7 +10,7 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 
-Configuration::Configuration() : generator_("Generator") { createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false); }
+Configuration::Configuration() : generator_("Generator"), box_(Box::BoxType::Cubic, {1.0, 1.0, 1.0}, {90.0, 90.0, 90.0}) {}
 
 Configuration::~Configuration() { clear(); }
 
@@ -60,7 +60,7 @@ bool Configuration::generate(const GeneratorContext &generatorContext)
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_);
+    cells_.generate(box_, requestedCellDivisionLength_);
 
     // Make sure all objects know about each other
     updateObjectRelationships();

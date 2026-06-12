@@ -58,11 +58,11 @@ bool TransmuteGeneratorNode::execute(const GeneratorContext &generatorContext)
     }
 
     // Perform the magic
-    const auto *box = generatorContext.configuration()->box();
+    const auto &box = generatorContext.configuration()->box();
     for (const auto &mol : targets)
     {
         auto newMol = generatorContext.configuration()->addMolecule(targetSpecies_);
-        newMol->setCentreOfGeometry(box, mol->centreOfGeometry(box));
+        newMol->setCentreOfGeometry(&box, mol->centreOfGeometry(&box));
     }
 
     // Remove the old molecules

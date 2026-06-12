@@ -25,14 +25,14 @@
 bool GRNode::calculateGRTestSerial(const Array2D<typename std::map<std::string, Histogram1D>::iterator> &fullLUT)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
-    const auto *box = targetConfiguration_->box();
+    const auto &box = targetConfiguration_->box();
 
     dissolve::for_each_pair(ParallelPolicies::seq, targetConfiguration_->atoms(),
-                            [&, box](auto indexI, auto &atomI, auto indexJ, auto &atomJ)
+                            [&](auto indexI, auto &atomI, auto indexJ, auto &atomJ)
                             {
                                 if (indexI != indexJ)
                                     fullLUT[{atomI.atomTypeIndex(), atomJ.atomTypeIndex()}]->second.bin(
-                                        box->minimumDistance(atomI.r(), atomJ.r()));
+                                        box.minimumDistance(atomI.r(), atomJ.r()));
                             });
 
     return true;
@@ -47,7 +47,7 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
     // Construct local arrays of atom type positions
     auto nTypes = typePopulations.size();
     message("Constructing local partial working arrays for {} types.\n", nTypes);
-    const auto *box = targetConfiguration_->box();
+    const auto &box = targetConfiguration_->box();
     std::vector<Vector3 *> r(nTypes);
     std::vector<int> maxr(nTypes), nr(nTypes);
     std::vector<int *> binss(nTypes);
@@ -89,14 +89,14 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
         bins = binss[typeI];
         PairIterator pairs(maxr[typeI]);
         std::for_each(pairs.begin(), pairs.end(),
-                      [box, bins, rbin, ri, nPoints, &histogram](auto it)
+                      [&box, bins, rbin, ri, nPoints, &histogram](auto it)
                       {
                           auto [i, j] = it;
                           auto centre = ri[i];
                           auto other = ri[j];
                           if (i == j)
                               return;
-                          bins[j] = box->minimumDistance(centre, other) * rbin;
+                          bins[j] = box.minimumDistance(centre, other) * rbin;
                           if (bins[j] < nPoints)
                               ++histogram[bins[j]];
                       });
@@ -127,7 +127,7 @@ bool GRNode::calculateGRSimple(const Array2D<typename std::map<std::string, Hist
             {
                 centre = ri[i];
                 for (j = 0; j < maxr[typeJ]; ++j)
-                    bins[j] = box->minimumDistance(centre, rj[j]) * rbin;
+                    bins[j] = box.minimumDistance(centre, rj[j]) * rbin;
                 for (j = 0; j < maxr[typeJ]; ++j)
                     if (bins[j] < nPoints)
                         ++histogram[bins[j]];
@@ -171,7 +171,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
     {
         // auto &histograms = combinableHistograms.local().histograms_;
         auto &histograms = combinableHistograms.local();
-        const auto *box = targetConfiguration_->box();
+        const auto &box = targetConfiguration_->box();
         auto &cellArray = targetConfiguration_->cells();
         auto [n, m] = comb.nthCombination(idx);
         auto *cellI = cellArray.cell(n);
@@ -201,7 +201,7 @@ bool GRNode::calculateGRCells(double grRange, const Array2D<typename std::map<st
                     continue;
 
                 auto &rJ = j->r();
-                auto distance = box->minimumDistance(rJ, rI);
+                auto distance = box.minimumDistance(rJ, rI);
                 histograms[{typeI, typeJ}].bin(distance);
             }
         }
@@ -341,7 +341,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
      * Calculate intramolecular partials
      */
 
-    const auto *box = targetConfiguration_->box();
+    const auto &box = targetConfiguration_->box();
     timer.start();
 
     // Loop over molecules
@@ -350,7 +350,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
         const auto &atoms = mol->atoms();
 
         dissolve::for_each_pair(ParallelPolicies::seq, atoms,
-                                [&, box](auto indexI, auto &atomI, auto indexJ, auto &atomJ)
+                                [&](auto indexI, auto &atomI, auto indexJ, auto &atomJ)
                                 {
                                     // Ignore atom on itself
                                     if (indexI == indexJ)
@@ -364,7 +364,7 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
                                     if (typeJ == AtomConstants::TypeIndex::Ignore)
                                         return;
 
-                                    boundLUT[{typeI, typeJ}]->second.bin(box->minimumDistance(atomI->r(), atomJ->r()));
+                                    boundLUT[{typeI, typeJ}]->second.bin(box.minimumDistance(atomI->r(), atomJ->r()));
                                 });
     }
 
@@ -398,11 +398,11 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
             DoubleKeyedMapKey key(popI.first->name(), popJ.first->name());
 
             // Calculate RDFs from histogram data
-            calculateRDF(rawGR_->partials().get(key), histograms_->fullHistograms().get(key), box->volume(), popI.second,
+            calculateRDF(rawGR_->partials().get(key), histograms_->fullHistograms().get(key), box.volume(), popI.second,
                          popJ.second, indexI == indexJ ? 2.0 : 1.0);
-            calculateRDF(rawGR_->boundPartials().get(key), histograms_->boundHistograms().get(key), box->volume(), popI.second,
+            calculateRDF(rawGR_->boundPartials().get(key), histograms_->boundHistograms().get(key), box.volume(), popI.second,
                          popJ.second, indexI == indexJ ? 2.0 : 1.0);
-            calculateRDF(rawGR_->unboundPartials().get(key), histograms_->unboundHistograms().get(key), box->volume(),
+            calculateRDF(rawGR_->unboundPartials().get(key), histograms_->unboundHistograms().get(key), box.volume(),
                          popI.second, popJ.second, indexI == indexJ ? 2.0 : 1.0);
         },
         true);

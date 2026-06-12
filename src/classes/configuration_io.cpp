@@ -18,11 +18,11 @@ bool Configuration::serialise(LineParser &parser) const
         return false;
 
     // Write unit cell (box) lengths and angles
-    const auto lengths = box()->axisLengths();
-    const auto angles = box()->axisAngles();
+    const auto lengths = box().axisLengths();
+    const auto angles = box().axisAngles();
     if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}  {}\n", lengths.x, lengths.y, lengths.z,
                            appliedSizeFactor_.value_or(defaultSizeFactor_), requestedSizeFactor_.value_or(defaultSizeFactor_),
-                           DissolveSys::btoa(box()->type() == Box::BoxType::None)))
+                           DissolveSys::btoa(box().type() == Box::BoxType::None)))
         return false;
     if (!parser.writeLineF("{:12e} {:12e} {:12e}\n", angles.x, angles.y, angles.z))
         return false;

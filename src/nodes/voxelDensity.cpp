@@ -89,7 +89,7 @@ NodeConstants::ProcessResult VoxelDensityNode::process()
     if (!voxels_)
     {
         // Define voxels
-        const double boxX = unitCell->axisLengths().x, boxY = unitCell->axisLengths().y, boxZ = unitCell->axisLengths().z;
+        const double boxX = unitCell.axisLengths().x, boxY = unitCell.axisLengths().y, boxZ = unitCell.axisLengths().z;
         voxelVolume_ = voxelSideLength(boxX) * voxelSideLength(boxY) * voxelSideLength(boxZ);
         nAxisVoxels_.x = int(round(boxX / voxelSideLength(boxX)));
         nAxisVoxels_.y = int(round(boxY / voxelSideLength(boxY)));
@@ -108,15 +108,15 @@ NodeConstants::ProcessResult VoxelDensityNode::process()
     {
         case TargetPropertyType::Mass:
             for (const auto atom : configuration_->atoms())
-                addValue(foldedCoordinates(atom.r(), unitCell), AtomicMass::mass(atom.speciesAtom()->Z()));
+                addValue(foldedCoordinates(atom.r(), &unitCell), AtomicMass::mass(atom.speciesAtom()->Z()));
             break;
         case TargetPropertyType::AtomicNumber:
             for (const auto atom : configuration_->atoms())
-                addValue(foldedCoordinates(atom.r(), unitCell), atom.speciesAtom()->Z());
+                addValue(foldedCoordinates(atom.r(), &unitCell), atom.speciesAtom()->Z());
             break;
         case TargetPropertyType::ScatteringLengthDensity:
             for (const auto atom : configuration_->atoms())
-                addValue(foldedCoordinates(atom.r(), unitCell),
+                addValue(foldedCoordinates(atom.r(), &unitCell),
                          Sears91::boundCoherent(Sears91::naturalIsotope(atom.speciesAtom()->Z())));
             break;
         default:

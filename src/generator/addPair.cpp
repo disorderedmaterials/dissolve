@@ -101,7 +101,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
     // Now we add the molecules
     Vector3 newCentre;
     Matrix3 transform;
-    const auto *box = cfg->box();
+    const auto &box = cfg->box();
     cfg->atoms().reserve(cfg->atoms().size() + ipop * (speciesA_->nAtoms() + speciesB_->nAtoms()));
 
     // Add all molecule pairs
@@ -122,13 +122,13 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         switch (positioningType_)
         {
             case (AddGeneratorNodeBase::PositioningType::Random):
-                newCentre = box->getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
+                newCentre = box.getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
                 break;
             case (AddGeneratorNodeBase::PositioningType::Region):
                 newCentre = region_->region().randomCoordinate();
                 break;
             case (AddGeneratorNodeBase::PositioningType::Central):
-                newCentre = box->getReal({0.5, 0.5, 0.5});
+                newCentre = box.getReal({0.5, 0.5, 0.5});
                 break;
             case (AddGeneratorNodeBase::PositioningType::Current):
                 break;
@@ -138,7 +138,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         }
 
         // Move the molecule pair
-        auto ref = (molA->centreOfGeometry(box) + molB->centreOfGeometry(box)) * 0.5;
+        auto ref = (molA->centreOfGeometry(&box) + molB->centreOfGeometry(&box)) * 0.5;
         molA->translate(newCentre - ref);
         molB->translate(newCentre - ref);
 
@@ -146,8 +146,8 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         if (rotate_)
         {
             transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
-            molA->transform(box, transform, newCentre);
-            molB->transform(box, transform, newCentre);
+            molA->transform(&box, transform, newCentre);
+            molB->transform(&box, transform, newCentre);
         }
     }
 

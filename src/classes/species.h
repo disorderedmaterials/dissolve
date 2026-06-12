@@ -201,7 +201,7 @@ class Species : public Serialisable<>
      */
     private:
     // Periodic Box
-    std::unique_ptr<Box> box_;
+    Box box_;
 
     public:
     // Return periodic box

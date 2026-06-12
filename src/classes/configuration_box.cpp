@@ -41,7 +41,7 @@ void Configuration::createBox(const Matrix3 axes)
 void Configuration::createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
     createBox(lengths, angles, nonPeriodic);
-    cells_.generate(box_.get(), requestedCellDivisionLength_);
+    cells_.generate(box_, requestedCellDivisionLength_);
 }
 
 // Create Box definition from axes matrix, and initialise cell array
@@ -51,23 +51,23 @@ void Configuration::createBoxAndCells(const Matrix3 axes)
     cells_.clear();
 
     createBox(axes);
-    cells_.generate(box_.get(), requestedCellDivisionLength_);
+    cells_.generate(box_, requestedCellDivisionLength_);
 }
 
 // Update cell array, and reassign atoms to cells
 void Configuration::updateCells()
 {
-    cells_.generate(box_.get(), requestedCellDivisionLength_);
+    cells_.generate(box_, requestedCellDivisionLength_);
     updateAtomLocations(true);
 }
 
 // Return Box
-const Box *Configuration::box() const { return box_.get(); }
+const Box &Configuration::box() const { return box_; }
 
 // Scale Box lengths (and associated Cells) by specified factors
 void Configuration::scaleBox(Vector3 scaleFactors)
 {
-    box_->scale(scaleFactors);
+    box_.scale(scaleFactors);
     cells_.scale(scaleFactors);
 
     ++version_;

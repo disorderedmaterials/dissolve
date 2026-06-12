@@ -3,10 +3,7 @@
 
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "math/data1D.h"
-#include "math/interpolator.h"
 #include "math/mathFunc.h"
-#include <algorithm>
 
 Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     : type_(boxType), a_(lengths.x), b_(lengths.y), c_(lengths.z), ra_(1.0 / lengths.x), rb_(1.0 / lengths.y),
@@ -67,6 +64,27 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     reciprocalAxes_.columnMultiply(1, 2.0 * M_PI / volume_);
     reciprocalAxes_.columnMultiply(2, 2.0 * M_PI / volume_);
     reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
+}
+
+Box::Box(const Box &other)
+{
+    type_ = other.type_;
+    a_ = other.a_;
+    b_ = other.b_;
+    c_ = other.c_;
+    ra_ = other.ra_;
+    rb_ = other.rb_;
+    rc_ = other.rc_;
+    alpha_ = other.alpha_;
+    beta_ = other.beta_;
+    gamma_ = other.gamma_;
+    axes_ = other.axes_;
+    axesArray_ = other.axesArray_;
+    inverseAxes_ = other.inverseAxes_;
+    inverseAxesArray_ = other.inverseAxesArray_;
+    reciprocalAxes_ = other.reciprocalAxes_;
+    volume_ = other.volume_;
+    reciprocalVolume_ = other.reciprocalVolume_;
 }
 
 /*
@@ -282,19 +300,19 @@ double Box::torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &
  */
 
 // Generate a suitable Box given the supplied relative lengths, angles
-std::unique_ptr<Box> Box::generate(Vector3 lengths, std::optional<Vector3> angles, bool nonPeriodic)
+Box Box::generate(Vector3 lengths, std::optional<Vector3> angles, bool nonPeriodic)
 {
     if (!angles)
         angles = {90.0, 90.0, 90.0};
-    return nonPeriodic ? std::make_unique<Box>(Box::BoxType::None, lengths, *angles) : Box::generate(lengths, *angles);
+    return nonPeriodic ? Box(Box::BoxType::None, lengths, *angles) : Box::generate(lengths, *angles);
 }
-std::unique_ptr<Box> Box::generate(Vector3 lengths, Vector3 angles)
+Box Box::generate(Vector3 lengths, Vector3 angles)
 {
     auto boxType = type(lengths, angles);
     if (!boxType)
         Messenger::exception("Suitable box type couldn't be determined, so no Box can be generated.");
 
-    return std::make_unique<Box>(*boxType, lengths, angles);
+    return Box(*boxType, lengths, angles);
 }
 
 // Return radius of largest possible inscribed sphere for box
@@ -503,37 +521,25 @@ double Box::minimumDistance(const Vector3 &r1, const Vector3 &r2) const { return
 // Return minimum image squared distance from r1 to r2
 double Box::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const { return minimumVector(r1, r2).magnitudeSq(); }
 
-std::unique_ptr<Box> Box::singleImage()
+Box Box::singleImage() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }
+
+Box Box::cubic(double length) { return Box(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0}); }
+
+Box Box::orthorhombic(const Vector3 lengths) { return Box(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0}); }
+
+Box Box::monoclinicAlpha(const Vector3 lengths, double alpha)
 {
-    return std::make_unique<Box>(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0});
+    return Box(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
 }
 
-std::unique_ptr<Box> Box::cubic(double length)
+Box Box::monoclinicBeta(const Vector3 lengths, double beta)
 {
-    return std::make_unique<Box>(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0});
+    return Box(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
 }
 
-std::unique_ptr<Box> Box::orthorhombic(const Vector3 lengths)
+Box Box::monoclinicGamma(const Vector3 lengths, double gamma)
 {
-    return std::make_unique<Box>(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0});
+    return Box(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
 }
 
-std::unique_ptr<Box> Box::monoclinicAlpha(const Vector3 lengths, double alpha)
-{
-    return std::make_unique<Box>(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
-}
-
-std::unique_ptr<Box> Box::monoclinicBeta(const Vector3 lengths, double beta)
-{
-    return std::make_unique<Box>(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
-}
-
-std::unique_ptr<Box> Box::monoclinicGamma(const Vector3 lengths, double gamma)
-{
-    return std::make_unique<Box>(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
-}
-
-std::unique_ptr<Box> Box::triclinic(const Vector3 lengths, const Vector3 angles)
-{
-    return std::make_unique<Box>(Box::BoxType::Triclinic, lengths, angles);
-}
+Box Box::triclinic(const Vector3 lengths, const Vector3 angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }

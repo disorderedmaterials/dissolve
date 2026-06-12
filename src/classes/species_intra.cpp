@@ -27,14 +27,14 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(const SpeciesAtom *i, con
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
 {
-    if (box_->type() == Box::BoxType::None)
+    if (box_.type() == Box::BoxType::None)
         return;
 
     auto it = std::remove_if(bonds_.begin(), bonds_.end(),
                              [&](const auto &b)
                              {
                                  // Check the literal vs the minimum image distance between the involved atoms 'i' and 'j'
-                                 return fabs(box_->minimumDistance(b.i()->r(), b.j()->r()) -
+                                 return fabs(box_.minimumDistance(b.i()->r(), b.j()->r()) -
                                              (b.j()->r() - b.i()->r()).magnitude()) > 1.0e-3;
                              });
     if (it != bonds_.end())
@@ -124,7 +124,7 @@ void Species::clearIntramolecularForcefieldTerms()
 }
 
 // Return periodic box
-const Box *Species::box() const { return box_.get(); }
+const Box *Species::box() const { return &box_; }
 
 // Remove Box definition and revert to single image
 void Species::removeBox() { box_ = Box::singleImage(); }

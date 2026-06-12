@@ -12,7 +12,7 @@ Region::Region() : box_(nullptr) {}
 bool Region::generate(const Configuration *cfg, double voxelSize, bool invert,
                       const std::function<std::shared_ptr<VoxelKernel>(void)> &kernelGenerator)
 {
-    box_ = cfg->box();
+    box_ = &cfg->box();
 
     // Set fractional voxel sizes
     for (auto n = 0; n < 3; ++n)

@@ -8,7 +8,7 @@
 
 Structure::Structure() : box_(Box::singleImage()) {}
 
-Structure::Structure(const Structure &source) { *this = source; }
+Structure::Structure(const Structure &source) : box_(source.box_) { *this = source; }
 
 Structure &Structure::operator=(const Structure &source)
 {
@@ -24,8 +24,7 @@ Structure &Structure::operator=(const Structure &source)
         addBond(bond->i()->index(), bond->j()->index());
 
     // Copy source box
-    if (source.box_)
-        createBox(source.box_->axisLengths(), source.box_->axisAngles(), source.box_->type() == Box::BoxType::None);
+    createBox(source.box_.axisLengths(), source.box_.axisAngles(), source.box_.type() == Box::BoxType::None);
 
     return *this;
 }
@@ -215,7 +214,7 @@ void Structure::clearBonds()
  */
 
 // Return periodic box
-const Box *Structure::box() const { return box_.get(); }
+const Box *Structure::box() const { return &box_; }
 
 // Remove box definition and revert to single image
 void Structure::removeBox() { box_ = Box::singleImage(); }

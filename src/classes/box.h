@@ -33,6 +33,7 @@ class Box : public Serialisable<>
     // Return enum options for BoxType
     static EnumOptions<BoxType> boxTypes();
     Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles);
+    Box(const Box &other);
     ~Box() = default;
     Box &operator=(const Box &source) = default;
 
@@ -161,16 +162,16 @@ class Box : public Serialisable<>
      */
     public:
     // Generate a suitable Box given the supplied relative lengths, angles, and volume
-    static std::unique_ptr<Box> generate(Vector3 lengths, std::optional<Vector3> angles = {}, bool nonPeriodic = false);
-    static std::unique_ptr<Box> generate(Vector3 lengths, Vector3 angles);
+    static Box generate(Vector3 lengths, std::optional<Vector3> angles = {}, bool nonPeriodic = false);
+    static Box generate(Vector3 lengths, Vector3 angles);
     // Generate Boxes of a given type
-    static std::unique_ptr<Box> singleImage();
-    static std::unique_ptr<Box> cubic(double length);
-    static std::unique_ptr<Box> orthorhombic(Vector3 lengths);
-    static std::unique_ptr<Box> monoclinicAlpha(Vector3 lengths, double alpha);
-    static std::unique_ptr<Box> monoclinicBeta(Vector3 lengths, double beta);
-    static std::unique_ptr<Box> monoclinicGamma(Vector3 lengths, double gamma);
-    static std::unique_ptr<Box> triclinic(Vector3 lengths, Vector3 angles);
+    static Box singleImage();
+    static Box cubic(double length);
+    static Box orthorhombic(Vector3 lengths);
+    static Box monoclinicAlpha(Vector3 lengths, double alpha);
+    static Box monoclinicBeta(Vector3 lengths, double beta);
+    static Box monoclinicGamma(Vector3 lengths, double gamma);
+    static Box triclinic(Vector3 lengths, Vector3 angles);
     // Return radius of largest possible inscribed sphere for box
     double inscribedSphereRadius() const;
     // Return random coordinate inside Box

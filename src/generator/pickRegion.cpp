@@ -46,7 +46,7 @@ bool PickRegionGeneratorNode::execute(const GeneratorContext &generatorContext)
 
     // Loop over all molecules in supplied Configuration
     for (const auto &mol : moleculePool(generatorContext.configuration()))
-        if (region.validCoordinate(mol->centreOfGeometry(generatorContext.configuration()->box())))
+        if (region.validCoordinate(mol->centreOfGeometry(&generatorContext.configuration()->box())))
             pickedMolecules_.push_back(mol);
 
     Messenger::print("[PickRegion] Total molecules picked = {}.\n", pickedMolecules_.size());

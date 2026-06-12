@@ -59,7 +59,7 @@ NodeConstants::ProcessResult IntraAngleNode::process()
             if (siteB == siteA)
                 continue;
 
-            if (!rangeAB_.contains(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin())))
+            if (!rangeAB_.contains(targetConfiguration_->box().minimumDistance(siteA->origin(), siteB->origin())))
                 continue;
 
             for (const auto &[siteC, indexC] : c.sites())
@@ -74,10 +74,10 @@ NodeConstants::ProcessResult IntraAngleNode::process()
                 if (siteC == siteB)
                     continue;
 
-                if (!rangeBC_.contains(targetConfiguration_->box()->minimumDistance(siteB->origin(), siteC->origin())))
+                if (!rangeBC_.contains(targetConfiguration_->box().minimumDistance(siteB->origin(), siteC->origin())))
                     continue;
 
-                auto angle = targetConfiguration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
+                auto angle = targetConfiguration_->box().angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
                 intraAngleHist_->bin(angle);

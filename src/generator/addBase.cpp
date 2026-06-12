@@ -94,7 +94,7 @@ void AddGeneratorNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int 
                          GeneratorNode::nodeTypes().keyword(type_));
 
         // Get current cell volume
-        auto currentVolume = cfg->box()->volume();
+        auto currentVolume = cfg->box().volume();
 
         Messenger::print("[{}] Density for new molecule(s) is {} {}.\n", GeneratorNode::nodeTypes().keyword(type_), rho,
                          Units::densityUnits().keyword(rhoUnits));
@@ -108,7 +108,7 @@ void AddGeneratorNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int 
             Messenger::print("[{}] Current box is empty, so new volume will be set to exact ly {} cubic Angstroms.\n",
                              GeneratorNode::nodeTypes().keyword(type_), requiredVolume);
 
-        auto scaleFactors = cfg->box()->scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
+        auto scaleFactors = cfg->box().scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
 
         // Scale existing contents
         cfg->scaleContents(scaleFactors);
@@ -117,7 +117,7 @@ void AddGeneratorNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int 
         cfg->scaleBox(scaleFactors);
 
         Messenger::print("[{}] New box volume is {:e} cubic Angstroms - scale factors were ({},{},{}).\n",
-                         GeneratorNode::nodeTypes().keyword(type_), cfg->box()->volume(), scaleFactors.x, scaleFactors.y,
+                         GeneratorNode::nodeTypes().keyword(type_), cfg->box().volume(), scaleFactors.x, scaleFactors.y,
                          scaleFactors.z);
     }
     else if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::ScaleVolume)
@@ -140,7 +140,7 @@ void AddGeneratorNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int 
         if (cfg->nAtoms() > 0)
             requiredVolume += existingRequiredVolume;
 
-        auto scaleFactors = cfg->box()->scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
+        auto scaleFactors = cfg->box().scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
 
         // Scale existing contents
         cfg->scaleContents(scaleFactors);
@@ -150,7 +150,7 @@ void AddGeneratorNodeBase::adjustBoxVolume(Configuration *cfg, int nCopies, int 
 
         Messenger::print("[{}] Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n",
                          GeneratorNode::nodeTypes().keyword(type_), scaleFactors.x, scaleFactors.y, scaleFactors.z,
-                         cfg->box()->volume());
+                         cfg->box().volume());
     }
     else if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
     {

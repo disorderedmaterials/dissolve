@@ -81,7 +81,7 @@ void InsertNode::addVolume(int nAtomsToAdd, double massToAdd) const
     Messenger::print(" ... Current box volume will be increased to accommodate volume of new species.\n");
 
     // Get current cell volume
-    auto currentVolume = configuration_->box()->volume();
+    auto currentVolume = configuration_->box().volume();
 
     Messenger::print(" ... Density for new molecule(s) is {} {}.\n", density_.asDouble(),
                      Units::densityUnits().keyword(densityUnits_));
@@ -94,7 +94,7 @@ void InsertNode::addVolume(int nAtomsToAdd, double massToAdd) const
         Messenger::print(" ... Current box is empty, so new volume will be set to exact ly {} cubic Angstroms.\n",
                          requiredVolume);
 
-    auto scaleFactors = configuration_->box()->scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
+    auto scaleFactors = configuration_->box().scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
 
     // Scale existing contents
     configuration_->scaleContents(scaleFactors);
@@ -103,7 +103,7 @@ void InsertNode::addVolume(int nAtomsToAdd, double massToAdd) const
     configuration_->scaleBox(scaleFactors);
 
     Messenger::print(" ... New box volume is {:e} cubic Angstroms - scale factors were ({},{},{}).\n",
-                     configuration_->box()->volume(), scaleFactors.x, scaleFactors.y, scaleFactors.z);
+                     configuration_->box().volume(), scaleFactors.x, scaleFactors.y, scaleFactors.z);
 }
 
 // Scale the configuration's box volume to accommodate specified atoms / mass
@@ -131,7 +131,7 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
     if (configuration_->nAtoms() > 0)
         requiredVolume += existingRequiredVolume;
 
-    auto scaleFactors = configuration_->box()->scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
+    auto scaleFactors = configuration_->box().scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
 
     // Scale existing contents
     configuration_->scaleContents(scaleFactors);
@@ -140,7 +140,7 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
     configuration_->scaleBox(scaleFactors);
 
     Messenger::print(" ... Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n", scaleFactors.x,
-                     scaleFactors.y, scaleFactors.z, configuration_->box()->volume());
+                     scaleFactors.y, scaleFactors.z, configuration_->box().volume());
 }
 
 /*
@@ -181,7 +181,7 @@ NodeConstants::ProcessResult InsertNode::process()
     }
 
     Matrix3 transform;
-    const auto *box = configuration_->box();
+    const auto &box = configuration_->box();
     configuration_->atoms().reserve(configuration_->atoms().size() + nAnyAtoms);
     for (auto n = 0; n < ipop; ++n)
     {
@@ -189,14 +189,14 @@ NodeConstants::ProcessResult InsertNode::process()
         auto mol = configuration_->copyMolecule(targetMoleculeSet.localMolecule(n));
 
         // Randomise position of Molecule over the whole box
-        auto newCentre = box->getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
-        mol->setCentreOfGeometry(box, newCentre);
+        auto newCentre = box.getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
+        mol->setCentreOfGeometry(&box, newCentre);
 
         // Generate and apply a random rotation matrix
         if (rotate_)
         {
             transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
-            mol->transform(box, transform);
+            mol->transform(&box, transform);
         }
     }
 

@@ -48,7 +48,7 @@ NodeConstants::ProcessResult IntraDistanceNode::process()
                 continue;
             if (siteB == siteA)
                 continue;
-            histAB_->bin(targetConfiguration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+            histAB_->bin(targetConfiguration_->box().minimumDistance(siteA->origin(), siteB->origin()));
         }
     }
 

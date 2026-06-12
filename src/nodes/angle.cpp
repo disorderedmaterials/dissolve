@@ -109,7 +109,7 @@ NodeConstants::ProcessResult AngleNode::process()
                 continue;
 
             // Get A-B distance and check against defined range
-            auto distAB = configuration_->box()->minimumDistance(siteA->origin(), siteB->origin());
+            auto distAB = configuration_->box().minimumDistance(siteA->origin(), siteB->origin());
             ++nBAvailable;
             if (distAB < rangeAB_.value().x || distAB > rangeAB_.value().y)
                 continue;
@@ -128,7 +128,7 @@ NodeConstants::ProcessResult AngleNode::process()
                     continue;
 
                 // Get B-C distance and check against defined range
-                auto distBC = configuration_->box()->minimumDistance(siteB->origin(), siteC->origin());
+                auto distBC = configuration_->box().minimumDistance(siteB->origin(), siteC->origin());
                 ++nCAvailable;
                 if (distBC < rangeBC_.value().x || distBC > rangeBC_.value().y)
                     continue;
@@ -136,7 +136,7 @@ NodeConstants::ProcessResult AngleNode::process()
                 ++nCCumulative;
 
                 // Calculate angle and do final binning
-                auto angle = configuration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
+                auto angle = configuration_->box().angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
 
@@ -163,7 +163,7 @@ NodeConstants::ProcessResult AngleNode::process()
     // Normalise by A site population
     normaliserAB_.divide(double(nACumulative) / nASelections);
     // Normalise by B site population density
-    normaliserAB_.divide((double(nBCumulative) / nBSelections) / configuration_->box()->volume());
+    normaliserAB_.divide((double(nBCumulative) / nBSelections) / configuration_->box().volume());
     // Normalise by spherical shell
     normaliserAB_.normaliseBySphericalShell();
 
@@ -175,7 +175,7 @@ NodeConstants::ProcessResult AngleNode::process()
     // Normalise by B site population
     normaliserBC_.divide(double(nBCumulative) / nBSelections);
     // Normalise by C site population density
-    normaliserBC_.divide((double(nCAvailable) / nCSelections) / configuration_->box()->volume());
+    normaliserBC_.divide((double(nCAvailable) / nCSelections) / configuration_->box().volume());
     // Normalise by spherical shell
     normaliserBC_.normaliseBySphericalShell();
 
@@ -202,7 +202,7 @@ NodeConstants::ProcessResult AngleNode::process()
     // Normalise by C site population
     normaliserDAngleAB.divide(double(nCCumulative) / nCSelections);
     // Normalise by B site population density
-    normaliserDAngleAB.divide((double(nBAvailable) / nBSelections) / configuration_->box()->volume());
+    normaliserDAngleAB.divide((double(nBAvailable) / nBSelections) / configuration_->box().volume());
     // Normalise by spherical shell
     normaliserDAngleAB.normaliseBySphericalShell();
 
@@ -220,7 +220,7 @@ NodeConstants::ProcessResult AngleNode::process()
     // Normalise by B site population
     normaliserDAngleBC.divide(double(nBCumulative) / nBSelections);
     // Normalise by C site population density
-    normaliserDAngleBC.divide((double(nCAvailable) / nCSelections) / configuration_->box()->volume());
+    normaliserDAngleBC.divide((double(nCAvailable) / nCSelections) / configuration_->box().volume());
     // Normalise by spherical shell
     normaliserDAngleBC.normaliseBySphericalShell();
 

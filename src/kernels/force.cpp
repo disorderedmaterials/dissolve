@@ -12,7 +12,7 @@
 #include <iterator>
 
 ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap)
-    : GeometryKernel(cfg->box(), potentialMap), configuration_(cfg)
+    : GeometryKernel(&cfg->box(), potentialMap), configuration_(cfg)
 {
 }
 

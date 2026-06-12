@@ -135,67 +135,67 @@ void testPBC(const Box &box, const Vector3 origin, int nPoints = 100)
 TEST(BoxTest, Cubic)
 {
     auto box = Box::cubic(10.0);
-    testBasicOperations(*box);
-    testPBC(*box, {1.0, 2.4, 5.2131});
-    testScaling(*box);
+    testBasicOperations(box);
+    testPBC(box, {1.0, 2.4, 5.2131});
+    testScaling(box);
 }
 
 TEST(BoxTest, Orthorhombic)
 {
     auto box1 = Box::orthorhombic({10.0, 20.0, 30.0});
-    ASSERT_EQ(box1->type(), Box::BoxType::Orthorhombic);
-    testBasicOperations(*box1);
-    testPBC(*box1, {9.4, 13.0491, 1.325});
-    testScaling(*box1);
+    ASSERT_EQ(box1.type(), Box::BoxType::Orthorhombic);
+    testBasicOperations(box1);
+    testPBC(box1, {9.4, 13.0491, 1.325});
+    testScaling(box1);
     auto box2 = Box::orthorhombic({15.0, 2.0, 88.0});
-    ASSERT_EQ(box2->type(), Box::BoxType::Orthorhombic);
-    testBasicOperations(*box2);
-    testPBC(*box2, {9.4, 13.0491, 1.325});
-    testScaling(*box2);
+    ASSERT_EQ(box2.type(), Box::BoxType::Orthorhombic);
+    testBasicOperations(box2);
+    testPBC(box2, {9.4, 13.0491, 1.325});
+    testScaling(box2);
 }
 
 TEST(BoxTest, Monoclinic)
 {
     auto box1 = Box::monoclinicAlpha({30.0, 30.0, 30.0}, 66.0);
-    testBasicOperations(*box1);
-    testPBC(*box1, {3.4, 4.902, 15.875});
-    testScaling(*box1);
+    testBasicOperations(box1);
+    testPBC(box1, {3.4, 4.902, 15.875});
+    testScaling(box1);
     auto box2 = Box::monoclinicAlpha({10.0, 20.0, 30.0}, 120.0);
-    testBasicOperations(*box2);
-    testPBC(*box2, {3.4, 4.902, 15.875});
-    testScaling(*box2);
+    testBasicOperations(box2);
+    testPBC(box2, {3.4, 4.902, 15.875});
+    testScaling(box2);
     auto box3 = Box::monoclinicBeta({30.0, 30.0, 30.0}, 66.0);
-    testBasicOperations(*box3);
-    testPBC(*box3, {3.4, 4.902, 15.875});
-    testScaling(*box3);
+    testBasicOperations(box3);
+    testPBC(box3, {3.4, 4.902, 15.875});
+    testScaling(box3);
     auto box4 = Box::monoclinicBeta({10.0, 20.0, 30.0}, 120.0);
-    testBasicOperations(*box4);
-    testPBC(*box4, {3.4, 4.902, 15.875});
-    testScaling(*box4);
+    testBasicOperations(box4);
+    testPBC(box4, {3.4, 4.902, 15.875});
+    testScaling(box4);
     auto box5 = Box::monoclinicGamma({30.0, 30.0, 30.0}, 66.0);
-    testBasicOperations(*box5);
-    testPBC(*box5, {3.4, 4.902, 15.875});
-    testScaling(*box5);
+    testBasicOperations(box5);
+    testPBC(box5, {3.4, 4.902, 15.875});
+    testScaling(box5);
     auto box6 = Box::monoclinicGamma({10.0, 20.0, 30.0}, 120.0);
-    testBasicOperations(*box6);
-    testPBC(*box6, {3.4, 4.902, 15.875});
-    testScaling(*box6);
+    testBasicOperations(box6);
+    testPBC(box6, {3.4, 4.902, 15.875});
+    testScaling(box6);
 }
 
 TEST(BoxTest, Triclinic)
 {
     auto box1 = Box::triclinic({30.0, 30.0, 30.0}, {66.0, 33.0, 77.0});
-    testBasicOperations(*box1);
-    testPBC(*box1, {14.8, 8.77, 0.01});
-    testScaling(*box1);
+    testBasicOperations(box1);
+    testPBC(box1, {14.8, 8.77, 0.01});
+    testScaling(box1);
     auto box2 = Box::triclinic({10.0, 20.0, 30.0}, {85.0, 80.0, 90.0});
-    testBasicOperations(*box2);
-    testPBC(*box2, {14.8, 8.77, 0.01});
-    testScaling(*box2);
+    testBasicOperations(box2);
+    testPBC(box2, {14.8, 8.77, 0.01});
+    testScaling(box2);
     auto box3 = Box::triclinic({27.0, 25.5, 31.2311}, {89.0, 120.0, 70.0});
-    testBasicOperations(*box3);
-    testPBC(*box3, {14.8, 8.77, 0.01});
-    testScaling(*box3);
+    testBasicOperations(box3);
+    testPBC(box3, {14.8, 8.77, 0.01});
+    testScaling(box3);
 }
 
 } // namespace UnitTest

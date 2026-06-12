@@ -122,7 +122,7 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
             oxygenSitesHistogram_->bin(neighbourMap[oSite].size());
 
             int size = neighbourMap[oSite].size();
-            histogramsMO[std::min(size, 3)].get().bin(configuration_->box()->minimumDistance(siteM->origin(), oSite->origin()));
+            histogramsMO[std::min(size, 3)].get().bin(configuration_->box().minimumDistance(siteM->origin(), oSite->origin()));
         }
     }
 

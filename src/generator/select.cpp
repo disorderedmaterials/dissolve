@@ -228,7 +228,7 @@ bool SelectGeneratorNode::execute(const GeneratorContext &generatorContext)
             if (distanceRef)
             {
                 if (!inclusiveDistanceRange_.contains(
-                        generatorContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->get().origin())))
+                        generatorContext.configuration()->box().minimumDistance(site.origin(), distanceRef->get().origin())))
                     continue;
             }
 

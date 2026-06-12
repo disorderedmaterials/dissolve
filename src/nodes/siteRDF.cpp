@@ -71,7 +71,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
                            {
                                if (excludeSameMolecule_ && (siteB->molecule() == siteA->molecule()))
                                    continue;
-                               hist.bin(configuration_->box()->minimumDistance(siteA->origin(), siteB->origin()));
+                               hist.bin(configuration_->box().minimumDistance(siteA->origin(), siteB->origin()));
                            }
                        });
 
@@ -89,7 +89,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
     normaliserRDF.divide(double(a.sites().size()));
 
     // Normalise by B site population density
-    normaliserRDF.divide(double(b.sites().size()) / configuration_->box()->volume());
+    normaliserRDF.divide(double(b.sites().size()) / configuration_->box().volume());
 
     // Normalise by spherical shell
     normaliserRDF.normaliseBySphericalShell();

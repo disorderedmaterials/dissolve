@@ -94,7 +94,7 @@ void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
     }
 
     // If this is a periodic species, we're done
-    if (box_->type() != Box::BoxType::None)
+    if (box_.type() != Box::BoxType::None)
     {
         attachedAtomListsGenerated_ = false;
         return;

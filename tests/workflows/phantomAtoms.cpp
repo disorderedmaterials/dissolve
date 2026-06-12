@@ -40,7 +40,7 @@ TEST(PhantomAtomsTest, Basic)
     EXPECT_EQ(cfg->nAtoms(AtomConstants::Presence::Phantom), nMolecules * species.nAtoms(AtomConstants::Presence::Phantom));
 
     // Check density - should correspond to number density of physical atoms only
-    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * species.nAtoms(AtomConstants::Presence::Physical)) / cfg->box()->volume(),
+    EXPECT_NEAR(*cfg->atomicDensity(), (nMolecules * species.nAtoms(AtomConstants::Presence::Physical)) / cfg->box().volume(),
                 1.0e-5);
 }
 

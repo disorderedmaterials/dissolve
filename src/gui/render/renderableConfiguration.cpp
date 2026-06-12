@@ -59,7 +59,7 @@ void RenderableConfiguration::transformValues()
     limitsMin_.zero();
 
     // Transform extreme upper right corner from unit to real space to get maxima
-    limitsMax_ = source_->box()->getReal(Vector3(1.0, 1.0, 1.0));
+    limitsMax_ = source_->box().getReal(Vector3(1.0, 1.0, 1.0));
 
     positiveLimitsMin_ = limitsMin_;
     positiveLimitsMax_ = limitsMax_;
@@ -89,7 +89,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
     unitCellAssembly_.clear();
 
     // Grab the Configuration's Box and CellArray
-    const auto *box = source_->box();
+    const auto &box = source_->box();
 
     // Render according to the current displayStyle
     if (displayStyle_ == LinesStyle)
@@ -130,7 +130,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
                     // Determine half delta i-j for bond
                     const auto dij =
-                        (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()) ? box->minimumVector(ri, rj)
+                        (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()) ? box.minimumVector(ri, rj)
                                                                                             : rj - ri) *
                         0.5;
 
@@ -169,7 +169,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
                 if (source_->cells().minimumImageRequired(*i.cell(), *partner->cell()))
                     configurationAssembly_.createCylinderBond(
-                        bondPrimitive_, i.r(), partner->r(), box->minimumVector(i.r(), partner->r()),
+                        bondPrimitive_, i.r(), partner->r(), box.minimumVector(i.r(), partner->r()),
                         ElementColours::colour(i.speciesAtom()->Z()), ElementColours::colour(partner->speciesAtom()->Z()), true,
                         spheresBondRadius_);
                 else
@@ -182,7 +182,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
     // Add unit cell
     A.setIdentity();
-    A = source_->box()->axes();
+    A = source_->box().axes();
     unitCellAssembly_.add(unitCellPrimitive_, A, colourBlack);
 }
 
