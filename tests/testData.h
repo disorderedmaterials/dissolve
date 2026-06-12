@@ -8,7 +8,6 @@
 #include "data/elements.h"
 #include "io/import/data1D.h"
 #include "io/import/data3D.h"
-#include "io/import/forces.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "main/dissolve.h"
@@ -449,14 +448,6 @@ class DissolveSystemTest
         for (auto n = 0; n < A.size(); ++n)
             checkVec3(A[n], B[n], tolerance);
     }
-    // Test Vec3 vector data (by tag and external data)
-    void checkVec3Vector(std::string_view tag, ForceImportFileFormat externalForces, double tolerance)
-    {
-        auto &vec = dissolve_.processingModuleData().value<std::vector<Vector3>>(tag);
-        std::vector<Vector3> B(vec.size());
-        ASSERT_TRUE(externalForces.importData(B));
-        checkVec3Vector(vec, B, tolerance);
-    }
     // Test species atom type
     static void checkSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
     {
@@ -647,23 +638,6 @@ void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vect
             EXPECT_NEAR(geometryProductionForce.y, geometryTestForce.y, geomMaxDeviation);
             EXPECT_NEAR(geometryProductionForce.z, geometryTestForce.z, geomMaxDeviation);
         }
-}
-
-// Check supplied forces against external reference values
-void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
-                                    ForceImportFileFormat format, double maxDeviation = 1.0e-3)
-{
-    // Load external reference forces
-    std::vector<Vector3> referenceForces(ppForces.size());
-    ASSERT_TRUE(format.importData(referenceForces));
-
-    for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
-    {
-        auto calculatedForce = ppForce + geometryForce;
-        EXPECT_NEAR(calculatedForce.x, referenceForce.x, maxDeviation);
-        EXPECT_NEAR(calculatedForce.y, referenceForce.y, maxDeviation);
-        EXPECT_NEAR(calculatedForce.z, referenceForce.z, maxDeviation);
-    }
 }
 
 // Check consistency of supplied forces
