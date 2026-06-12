@@ -25,7 +25,7 @@ Structure &Structure::operator=(const Structure &source)
 
     // Copy source box
     if (source.box_)
-        createBox(source.box_->axisLengths(), source.box_->axisAngles(), source.box_->type() == Box::BoxType::SingleImage);
+        createBox(source.box_->axisLengths(), source.box_->axisAngles(), source.box_->type() == Box::BoxType::None);
 
     return *this;
 }

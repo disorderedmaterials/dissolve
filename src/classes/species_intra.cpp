@@ -27,7 +27,7 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(const SpeciesAtom *i, con
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
 {
-    if (box_->type() == Box::BoxType::SingleImage)
+    if (box_->type() == Box::BoxType::None)
         return;
 
     auto it = std::remove_if(bonds_.begin(), bonds_.end(),

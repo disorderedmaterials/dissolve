@@ -904,7 +904,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     }
 
     // Box
-    if (box_->type() != Box::BoxType::SingleImage)
+    if (box_->type() != Box::BoxType::None)
     {
         if (!parser.writeLineF("{}{}  {}  {}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::BoxAngles),
                                box_->axisAngles().x, box_->axisAngles().y, box_->axisAngles().z))

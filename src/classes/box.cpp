@@ -13,7 +13,7 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
       rc_(1.0 / lengths.z), alpha_(angles.x), beta_(angles.y), gamma_(angles.z)
 {
     // Set periodicity flags
-    periodic_ = {type_ != BoxType::SingleImage, type_ != BoxType::SingleImage, type_ != BoxType::SingleImage};
+    periodic_ = {type_ != BoxType::None, type_ != BoxType::None, type_ != BoxType::None};
 
     // Construct axes matrix
     axes_.setIdentity();
@@ -76,7 +76,7 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::SingleImage, "SingleImage"},
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::None, "None"},
                                                  {Box::BoxType::Cubic, "Cubic"},
                                                  {Box::BoxType::Orthorhombic, "Orthorhombic"},
                                                  {Box::BoxType::MonoclinicAlpha, "MonoclinicAlpha"},
@@ -286,7 +286,7 @@ std::unique_ptr<Box> Box::generate(Vector3 lengths, std::optional<Vector3> angle
 {
     if (!angles)
         angles = {90.0, 90.0, 90.0};
-    return nonPeriodic ? std::make_unique<Box>(Box::BoxType::SingleImage, lengths, *angles) : Box::generate(lengths, *angles);
+    return nonPeriodic ? std::make_unique<Box>(Box::BoxType::None, lengths, *angles) : Box::generate(lengths, *angles);
 }
 std::unique_ptr<Box> Box::generate(Vector3 lengths, Vector3 angles)
 {
@@ -424,7 +424,7 @@ void Box::toReal(Vector3 &r) const
             r.y += r.z * axesArray_[7];
             r.z *= axesArray_[8];
             break;
-        case BoxType::SingleImage:
+        case BoxType::None:
             break; // Single Image performs no conversion
     }
 }
@@ -469,7 +469,7 @@ void Box::toFractional(Vector3 &r) const
             r.y += r.z * inverseAxesArray_[7];
             r.z *= inverseAxesArray_[8];
             break;
-        case BoxType::SingleImage:
+        case BoxType::None:
             break; // Single Image performs no conversion
     }
 }
@@ -505,7 +505,7 @@ double Box::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const {
 
 std::unique_ptr<Box> Box::singleImage()
 {
-    return std::make_unique<Box>(Box::BoxType::SingleImage, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0});
+    return std::make_unique<Box>(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0});
 }
 
 std::unique_ptr<Box> Box::cubic(double length)

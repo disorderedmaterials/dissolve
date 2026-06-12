@@ -28,7 +28,7 @@ class Box : public Serialisable<>
         MonoclinicBeta,  /* Monoclinic box with A != B != C, beta != 90, and alpha == gamma == 90 */
         MonoclinicGamma, /* Monoclinic box with A != B != C, gamma != 90, and alpha == beta == 90 */
         Triclinic,       /* Triclinic box with A != B != C, alpha != beta != gamma != 90 */
-        SingleImage      /* Box with only one item */
+        None             /* Box without periodicity */
     };
     // Return enum options for BoxType
     static EnumOptions<BoxType> boxTypes();
@@ -114,7 +114,7 @@ class Box : public Serialisable<>
     // direction
     inline void wrap(Vector3 &rFrac) const
     {
-        if (type_ != BoxType::SingleImage)
+        if (type_ != BoxType::None)
         {
             if (rFrac.x < -0.5)
                 rFrac.x += 1.0;

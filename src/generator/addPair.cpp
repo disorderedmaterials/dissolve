@@ -51,7 +51,7 @@ bool AddPairGeneratorNode::prepare(const GeneratorContext &generatorContext)
         return Messenger::error("Can't set periodic box when using AddPair.\n");
 
     // Can't do this for periodic species
-    if (speciesA_->box()->type() != Box::BoxType::SingleImage || speciesB_->box()->type() != Box::BoxType::SingleImage)
+    if (speciesA_->box()->type() != Box::BoxType::None || speciesB_->box()->type() != Box::BoxType::None)
         return Messenger::error("Can't use periodic species in AddPair.\n");
 
     return prepareBase(generatorContext);

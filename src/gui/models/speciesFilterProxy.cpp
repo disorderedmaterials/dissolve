@@ -24,9 +24,9 @@ bool SpeciesFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent) co
 
     const auto *sp = sourceModel()->data(sourceModel()->index(row, 0, parent), Qt::UserRole).value<const Species *>();
 
-    if (filterFlags_.isSet(SpeciesFilterProxy::HasPeriodicBox) && sp->box()->type() == Box::BoxType::SingleImage)
+    if (filterFlags_.isSet(SpeciesFilterProxy::HasPeriodicBox) && sp->box()->type() == Box::BoxType::None)
         return false;
-    else if (filterFlags_.isSet(SpeciesFilterProxy::NoPeriodicBox) && sp->box()->type() != Box::BoxType::SingleImage)
+    else if (filterFlags_.isSet(SpeciesFilterProxy::NoPeriodicBox) && sp->box()->type() != Box::BoxType::None)
         return false;
 
     return true;

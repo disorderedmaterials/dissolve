@@ -60,7 +60,7 @@ bool AddGeneratorNode::prepare(const GeneratorContext &generatorContext)
     // Check for a periodic species in the case of boxAction_ == Set
     if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
     {
-        if (species_->box()->type() == Box::BoxType::SingleImage)
+        if (species_->box()->type() == Box::BoxType::None)
             return Messenger::error("Target species '{}' is not periodic!.\n", species_->name());
 
         if (population_.asInteger() != 1)
