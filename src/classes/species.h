@@ -205,7 +205,7 @@ class Species : public Serialisable<>
 
     public:
     // Return periodic box
-    const Box *box() const;
+    const Box &box() const;
     // Remove Box definition and revert to single image
     void removeBox();
     // Create Box definition with specified lengths and angles
@@ -268,9 +268,9 @@ class Species : public Serialisable<>
      */
     public:
     // Calculate and return centre of geometry
-    Vector3 centreOfGeometry(const Box *box) const;
+    Vector3 centreOfGeometry(const Box &box) const;
     // Set centre of geometry
-    void setCentre(const Box *box, const Vector3 newCentre);
+    void setCentre(const Box &box, const Vector3 newCentre);
     // Centre coordinates at origin
     void centreAtOrigin();
     // Apply random noise to atoms

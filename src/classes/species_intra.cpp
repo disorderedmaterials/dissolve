@@ -124,7 +124,7 @@ void Species::clearIntramolecularForcefieldTerms()
 }
 
 // Return periodic box
-const Box *Species::box() const { return &box_; }
+const Box &Species::box() const { return box_; }
 
 // Remove Box definition and revert to single image
 void Species::removeBox() { box_ = Box::none(); }

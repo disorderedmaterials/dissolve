@@ -92,7 +92,7 @@ void SpeciesKernel::pairPotentialForces(std::vector<Vector3> &forces) const
             return;
 
         // Determine final forces
-        auto vecij = box_->minimumVector(i.r(), j.r());
+        auto vecij = box_.minimumVector(i.r(), j.r());
         auto magSq = vecij.magnitudeSq();
         if (magSq > cutoffDistanceSquared_)
             return;
@@ -134,7 +134,7 @@ void SpeciesKernel::pairPotentialForces(std::vector<Vector3> &forces, const std:
             return;
 
         // Determine final forces
-        auto vecij = box_->minimumVector(r[indexI], r[indexJ]);
+        auto vecij = box_.minimumVector(r[indexI], r[indexJ]);
         auto magSq = vecij.magnitudeSq();
         if (magSq > cutoffDistanceSquared_)
             return;

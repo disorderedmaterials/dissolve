@@ -286,7 +286,7 @@ ConfigurationAtom &Configuration::atom(int n)
 void Configuration::unFoldMolecules()
 {
     for (auto &mol : molecules_)
-        mol->unFold(&box_);
+        mol->unFold(box_);
 }
 
 // Scale contents of the box by the specified factors along each axis
@@ -300,7 +300,7 @@ void Configuration::scaleContents(Vector3 scaleFactors)
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position
-        if (mol->species()->box()->type() != Box::BoxType::None)
+        if (mol->species()->box().type() != Box::BoxType::None)
         {
             for (auto &i : mol->atoms())
             {

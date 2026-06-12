@@ -16,7 +16,7 @@ class Box;
 class KernelBase
 {
     public:
-    KernelBase(const Box *box, const PotentialMap &potentialMap);
+    KernelBase(const Box &box, const PotentialMap &potentialMap);
     ~KernelBase() = default;
 
     protected:
@@ -25,5 +25,5 @@ class KernelBase
     // Squared cutoff distance to use in calculation
     double cutoffDistanceSquared_;
     // Periodic Box
-    const Box *box_;
+    const Box &box_;
 };

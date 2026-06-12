@@ -23,7 +23,7 @@ class Site
     Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
          std::shared_ptr<const Molecule> molecule = {}, const Matrix3 &axes = {}, const Vector3 &origin = {});
     Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-         const SpeciesSiteInstance &instance, const Box *box);
+         const SpeciesSiteInstance &instance, const Box &box);
     ~Site() = default;
     Site &operator=(const Site &source) = default;
     Site(const Site &source) = default;

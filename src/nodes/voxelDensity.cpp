@@ -78,7 +78,7 @@ void VoxelDensityNode::addValue(const Vector3 &coords, double value)
 }
 
 // Return atomic coordinates folded into unit cell
-Vector3 VoxelDensityNode::foldedCoordinates(const Vector3 &r, const Box *unitCell) { return unitCell->foldFrac(r); }
+Vector3 VoxelDensityNode::foldedCoordinates(const Vector3 &r, const Box &unitCell) { return unitCell.foldFrac(r); }
 
 // Run main processing
 NodeConstants::ProcessResult VoxelDensityNode::process()
@@ -108,15 +108,15 @@ NodeConstants::ProcessResult VoxelDensityNode::process()
     {
         case TargetPropertyType::Mass:
             for (const auto atom : configuration_->atoms())
-                addValue(foldedCoordinates(atom.r(), &unitCell), AtomicMass::mass(atom.speciesAtom()->Z()));
+                addValue(foldedCoordinates(atom.r(), unitCell), AtomicMass::mass(atom.speciesAtom()->Z()));
             break;
         case TargetPropertyType::AtomicNumber:
             for (const auto atom : configuration_->atoms())
-                addValue(foldedCoordinates(atom.r(), &unitCell), atom.speciesAtom()->Z());
+                addValue(foldedCoordinates(atom.r(), unitCell), atom.speciesAtom()->Z());
             break;
         case TargetPropertyType::ScatteringLengthDensity:
             for (const auto atom : configuration_->atoms())
-                addValue(foldedCoordinates(atom.r(), &unitCell),
+                addValue(foldedCoordinates(atom.r(), unitCell),
                          Sears91::boundCoherent(Sears91::naturalIsotope(atom.speciesAtom()->Z())));
             break;
         default:

@@ -69,7 +69,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         auto index = 0;
         for (const auto &instance : instances)
         {
-            sites_.emplace_back(speciesSite_, index++, molecule, instance, &box);
+            sites_.emplace_back(speciesSite_, index++, molecule, instance, box);
         }
     }
     return true;

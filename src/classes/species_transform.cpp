@@ -208,7 +208,7 @@ void Species::finaliseIntramolecularData(bool recalculateAnglesAndTorsions)
 }
 
 // Calculate and return centre of geometry
-Vector3 Species::centreOfGeometry(const Box *box) const
+Vector3 Species::centreOfGeometry(const Box &box) const
 {
     if (atoms_.size() == 0)
         return Vector3();
@@ -216,13 +216,13 @@ Vector3 Species::centreOfGeometry(const Box *box) const
     // Calculate center relative to first atom in molecule
     auto cog = atoms_.front().r();
     for (const auto &i : atoms_)
-        cog += box->minimumImage(i.r(), cog);
+        cog += box.minimumImage(i.r(), cog);
 
     return (cog / atoms_.size());
 }
 
 // Set centre of geometry of species
-void Species::setCentre(const Box *box, const Vector3 newCentre)
+void Species::setCentre(const Box &box, const Vector3 newCentre)
 {
     // Calculate Molecule centre of geometry
     Vector3 newR;
@@ -232,7 +232,7 @@ void Species::setCentre(const Box *box, const Vector3 newCentre)
     for (int n = 0; n < atoms_.size(); ++n)
         for (auto &i : atoms_)
         {
-            newR = box->minimumVector(i.r(), cog) + newCentre;
+            newR = box.minimumVector(i.r(), cog) + newCentre;
             i.setR(newR);
         }
 }

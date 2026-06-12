@@ -33,7 +33,7 @@ bool RegionalGlobalPotentialGeneratorNode::execute(const GeneratorContext &gener
     auto *cfg = generatorContext.configuration();
 
     auto pot = std::make_unique<RegionalPotential>();
-    pot->setUp(&cfg->box(), voxelSize_,
+    pot->setUp(cfg->box(), voxelSize_,
                [&]()
                {
                    return std::make_shared<RegionalPotentialVoxelKernel>(expression_.asString(), getParametersInScope(),

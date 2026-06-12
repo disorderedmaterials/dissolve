@@ -173,7 +173,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
         rLocal *= r;
 
         // Generate a working site from the molecule
-        Site site(speciesSite_, {}, mol, siteInstance, &box);
+        Site site(speciesSite_, {}, mol, siteInstance, box);
 
         // Locate the site on the sphere
         mol->translate((sphereCentre + rLocal) - site.origin());
@@ -189,7 +189,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
             Matrix3 source = site.axes();
             source.invert();
 
-            mol->transform(&box, target * source, sphereCentre + rLocal);
+            mol->transform(box, target * source, sphereCentre + rLocal);
         }
     }
 

@@ -214,7 +214,7 @@ void Structure::clearBonds()
  */
 
 // Return periodic box
-const Box *Structure::box() const { return &box_; }
+const Box &Structure::box() const { return box_; }
 
 // Remove box definition and revert to single image
 void Structure::removeBox() { box_ = Box::none(); }

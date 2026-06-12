@@ -10,7 +10,7 @@
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
 
-GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap) : KernelBase(box, potentialMap) {}
+GeometryKernel::GeometryKernel(const Box &box, const PotentialMap &potentialMap) : KernelBase(box, potentialMap) {}
 
 /*
  * Bond Terms
@@ -19,14 +19,14 @@ GeometryKernel::GeometryKernel(const Box *box, const PotentialMap &potentialMap)
 // Return SpeciesBond energy at Atoms specified
 double GeometryKernel::bondEnergy(const SpeciesBond &b, const Vector3 &ri, const Vector3 &rj) const
 {
-    return b.energy(box_->minimumDistance(ri, rj));
+    return b.energy(box_.minimumDistance(ri, rj));
 }
 
 // Calculate SpeciesBond forces
 void GeometryKernel::bondForces(const SpeciesBond &bond, const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j,
                                 int indexJ, std::vector<Vector3> &f) const
 {
-    auto vecji = box_->minimumVector(i.r(), j.r());
+    auto vecji = box_.minimumVector(i.r(), j.r());
 
     // Get distance and normalise vector ready for force calculation
     auto distance = vecji.magAndNormalise();
@@ -42,7 +42,7 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const ConfigurationAtom
 // Calculate SpeciesBond forces
 void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, const Vector3 &rj, std::vector<Vector3> &f) const
 {
-    auto vecji = box_->minimumVector(ri, rj);
+    auto vecji = box_.minimumVector(ri, rj);
 
     // Get distance and normalise vector ready for force calculation
     const auto distance = vecji.magAndNormalise();
@@ -62,7 +62,7 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Vector3 &ri, cons
 // Return SpeciesAngle energy at Atoms specified
 double GeometryKernel::angleEnergy(const SpeciesAngle &a, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk) const
 {
-    return a.energy(box_->angleInRadians(ri, rj, rk));
+    return a.energy(box_.angleInRadians(ri, rj, rk));
 }
 
 // Calculate angle force parameters from supplied vectors, storing results in supplied variables
@@ -86,8 +86,8 @@ GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Ve
 void GeometryKernel::angleForces(const SpeciesAngle &angle, const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j,
                                  int indexJ, const ConfigurationAtom &k, int indexK, std::vector<Vector3> &f) const
 {
-    auto vecji = box_->minimumVector(j.r(), i.r());
-    auto vecjk = box_->minimumVector(j.r(), k.r());
+    auto vecji = box_.minimumVector(j.r(), i.r());
+    auto vecjk = box_.minimumVector(j.r(), k.r());
 
     auto angleParameters = calculateAngleForceParameters(vecji, vecjk);
     const auto force = angle.force(angleParameters.theta);
@@ -173,7 +173,7 @@ void GeometryKernel::addTorsionForceL(double du_dphi, int index, GeometryKernel:
 double GeometryKernel::torsionEnergy(const SpeciesTorsion &t, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                                      const Vector3 &rl) const
 {
-    return t.energy(box_->torsionInRadians(ri, rj, rk, rl));
+    return t.energy(box_.torsionInRadians(ri, rj, rk, rl));
 }
 
 // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
@@ -223,9 +223,9 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Configur
                                    const ConfigurationAtom &j, int indexJ, const ConfigurationAtom &k, int indexK,
                                    const ConfigurationAtom &l, int indexL, std::vector<Vector3> &f) const
 {
-    auto vecji = box_->minimumVector(i.r(), j.r());
-    auto vecjk = box_->minimumVector(k.r(), j.r());
-    auto veckl = box_->minimumVector(l.r(), k.r());
+    auto vecji = box_.minimumVector(i.r(), j.r());
+    auto vecjk = box_.minimumVector(k.r(), j.r());
+    auto veckl = box_.minimumVector(l.r(), k.r());
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
 
@@ -242,9 +242,9 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Configur
 void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                                    const Vector3 &rl, std::vector<Vector3> &f) const
 {
-    auto vecji = box_->minimumVector(ri, rj);
-    auto vecjk = box_->minimumVector(rk, rj);
-    auto veckl = box_->minimumVector(rl, rk);
+    auto vecji = box_.minimumVector(ri, rj);
+    auto vecjk = box_.minimumVector(rk, rj);
+    auto veckl = box_.minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(torsionParameters.phi);
@@ -264,7 +264,7 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Vector3 
 double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                                       const Vector3 &rl) const
 {
-    return imp.energy(box_->torsionInRadians(ri, rj, rk, rl));
+    return imp.energy(box_.torsionInRadians(ri, rj, rk, rl));
 }
 
 // Calculate SpeciesImproper forces
@@ -272,9 +272,9 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Confi
                                     const ConfigurationAtom &j, int indexJ, const ConfigurationAtom &k, int indexK,
                                     const ConfigurationAtom &l, int indexL, std::vector<Vector3> &f) const
 {
-    auto vecji = box_->minimumVector(i.r(), j.r());
-    auto vecjk = box_->minimumVector(k.r(), j.r());
-    auto veckl = box_->minimumVector(l.r(), k.r());
+    auto vecji = box_.minimumVector(i.r(), j.r());
+    auto vecjk = box_.minimumVector(k.r(), j.r());
+    auto veckl = box_.minimumVector(l.r(), k.r());
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
     const auto du_dphi = improper.force(torsionParameters.phi);
@@ -290,9 +290,9 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Confi
 void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vector3 &ri, const Vector3 &rj, const Vector3 &rk,
                                     const Vector3 &rl, std::vector<Vector3> &f) const
 {
-    auto vecji = box_->minimumVector(ri, rj);
-    auto vecjk = box_->minimumVector(rk, rj);
-    auto veckl = box_->minimumVector(rl, rk);
+    auto vecji = box_.minimumVector(ri, rj);
+    auto vecjk = box_.minimumVector(rk, rj);
+    auto veckl = box_.minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionForceParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(torsionParameters.phi);

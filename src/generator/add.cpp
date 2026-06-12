@@ -60,7 +60,7 @@ bool AddGeneratorNode::prepare(const GeneratorContext &generatorContext)
     // Check for a periodic species in the case of boxAction_ == Set
     if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
     {
-        if (species_->box()->type() == Box::BoxType::None)
+        if (species_->box().type() == Box::BoxType::None)
             return Messenger::error("Target species '{}' is not periodic!.\n", species_->name());
 
         if (population_.asInteger() != 1)
@@ -92,7 +92,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     {
         Messenger::print("[Add}] Box geometry will be set from the species box definition.\n");
 
-        cfg->createBox(sp->box()->axisLengths(), sp->box()->axisAngles());
+        cfg->createBox(sp->box().axisLengths(), sp->box().axisAngles());
         const auto &box = cfg->box();
 
         Messenger::print("[Add] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
@@ -153,15 +153,15 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
             case (AddGeneratorNodeBase::PositioningType::Random):
                 fr.set(DissolveMath::random(), DissolveMath::random(), DissolveMath::random());
                 newCentre = box.getReal(fr);
-                mol->setCentreOfGeometry(&box, newCentre);
+                mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddGeneratorNodeBase::PositioningType::Region):
-                mol->setCentreOfGeometry(&box, region_->region().randomCoordinate());
+                mol->setCentreOfGeometry(box, region_->region().randomCoordinate());
                 break;
             case (AddGeneratorNodeBase::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);
                 newCentre = box.getReal(fr);
-                mol->setCentreOfGeometry(&box, newCentre);
+                mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddGeneratorNodeBase::PositioningType::Current):
                 break;
@@ -173,7 +173,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
         if (rotate_)
         {
             transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
-            mol->transform(&box, transform);
+            mol->transform(box, transform);
         }
     }
 

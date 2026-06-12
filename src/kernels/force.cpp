@@ -12,7 +12,7 @@
 #include <iterator>
 
 ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap)
-    : GeometryKernel(&cfg->box(), potentialMap), configuration_(cfg)
+    : GeometryKernel(cfg->box(), potentialMap), configuration_(cfg)
 {
 }
 
@@ -54,7 +54,7 @@ void ForceKernel::forcesWithoutMim(const ConfigurationAtom &i, int indexI, const
 void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
                                 std::vector<Vector3> &f) const
 {
-    auto vij = box_->minimumVector(i.r(), j.r());
+    auto vij = box_.minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
         return;
@@ -69,7 +69,7 @@ void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const Co
 void ForceKernel::forcesWithMim(const ConfigurationAtom &i, int indexI, const ConfigurationAtom &j, int indexJ,
                                 std::vector<Vector3> &f, double elecScale, double srScale) const
 {
-    auto vij = box_->minimumVector(i.r(), j.r());
+    auto vij = box_.minimumVector(i.r(), j.r());
     auto distanceSq = vij.magnitudeSq();
     if (distanceSq > cutoffDistanceSquared_)
         return;
@@ -263,7 +263,7 @@ void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::ve
                         continue;
 
                     // Determine final forces
-                    auto vij = box_->minimumVector(i->r(), j->r());
+                    auto vij = box_.minimumVector(i->r(), j->r());
                     auto magjisq = vij.magnitudeSq();
                     if (magjisq > cutoffDistanceSquared_)
                         continue;
@@ -297,7 +297,7 @@ void ForceKernel::totalForcesSimple(std::vector<Vector3> &ppForceVector, std::ve
                         auto *j = molM->atom(jj);
 
                         // Determine final forces
-                        auto vij = box_->minimumVector(i->r(), j->r());
+                        auto vij = box_.minimumVector(i->r(), j->r());
                         auto magjisq = vij.magnitudeSq();
                         if (magjisq > cutoffDistanceSquared_)
                             continue;

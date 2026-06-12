@@ -190,13 +190,13 @@ NodeConstants::ProcessResult InsertNode::process()
 
         // Randomise position of Molecule over the whole box
         auto newCentre = box.getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
-        mol->setCentreOfGeometry(&box, newCentre);
+        mol->setCentreOfGeometry(box, newCentre);
 
         // Generate and apply a random rotation matrix
         if (rotate_)
         {
             transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
-            mol->transform(&box, transform);
+            mol->transform(box, transform);
         }
     }
 

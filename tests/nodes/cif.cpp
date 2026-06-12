@@ -67,7 +67,7 @@ class CIFNodeTest : public ::testing::Test
     void testInstanceConsistency(const CIFMolecularSpecies &molSp, const Species &referenceCoordinates)
     {
         // Get the box from the reference species
-        const auto *box = referenceCoordinates.box();
+        const auto &box = referenceCoordinates.box();
 
         // Loop over instances and ensure their stored atoms overlap exactly with one in the reference system
         for (const auto &instance : molSp.instances())
@@ -78,7 +78,7 @@ class CIFNodeTest : public ::testing::Test
                 auto instanceR = instanceAtom.r();
                 auto spAtomIt = std::find_if(referenceCoordinates.atoms().begin(), referenceCoordinates.atoms().end(),
                                              [box, instanceR](const auto &refAtom)
-                                             { return box->minimumDistance(refAtom.r(), instanceR) < 0.01; });
+                                             { return box.minimumDistance(refAtom.r(), instanceR) < 0.01; });
                 std::cout << std::format("{}  {} {} {}", Elements::symbol(speciesAtom.Z()), instanceAtom.r().x,
                                          instanceAtom.r().y, instanceAtom.r().z)
                           << std::endl;

@@ -51,7 +51,7 @@ bool AddPairGeneratorNode::prepare(const GeneratorContext &generatorContext)
         return Messenger::error("Can't set periodic box when using AddPair.\n");
 
     // Can't do this for periodic species
-    if (speciesA_->box()->type() != Box::BoxType::None || speciesB_->box()->type() != Box::BoxType::None)
+    if (speciesA_->box().type() != Box::BoxType::None || speciesB_->box().type() != Box::BoxType::None)
         return Messenger::error("Can't use periodic species in AddPair.\n");
 
     return prepareBase(generatorContext);
@@ -138,7 +138,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         }
 
         // Move the molecule pair
-        auto ref = (molA->centreOfGeometry(&box) + molB->centreOfGeometry(&box)) * 0.5;
+        auto ref = (molA->centreOfGeometry(box) + molB->centreOfGeometry(box)) * 0.5;
         molA->translate(newCentre - ref);
         molB->translate(newCentre - ref);
 
@@ -146,8 +146,8 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         if (rotate_)
         {
             transform.createRotationXY(DissolveMath::randomPlusMinusOne() * 180.0, DissolveMath::randomPlusMinusOne() * 180.0);
-            molA->transform(&box, transform, newCentre);
-            molB->transform(&box, transform, newCentre);
+            molA->transform(box, transform, newCentre);
+            molB->transform(box, transform, newCentre);
         }
     }
 
