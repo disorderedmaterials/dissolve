@@ -4,7 +4,6 @@
 #include "base/units.h"
 #include "classes/isotopologueSet.h"
 #include "data/structureFactors.h"
-#include "io/import/data1D.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>

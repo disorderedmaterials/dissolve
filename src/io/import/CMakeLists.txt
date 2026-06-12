@@ -1,9 +1,5 @@
 add_library(
   import
-  data1D.cpp
-  data1D_histo.cpp
-  data1D_mint.cpp
-  data1D_xy.cpp
   data2D.cpp
   data2D_cartesian.cpp
   data3D.cpp
@@ -12,7 +8,6 @@ add_library(
   forces_dlpoly.cpp
   forces_moscito.cpp
   forces_simple.cpp
-  data1D.h
   data2D.h
   data3D.h
   forces.h

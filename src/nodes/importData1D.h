@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "io/import/data1D.h"
 #include "nodes/node.h"
-#include <memory>
 
 class ImportData1DNode : public Node
 {
