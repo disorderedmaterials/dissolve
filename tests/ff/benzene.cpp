@@ -20,6 +20,8 @@ class BenzeneForcefieldTest : public ::testing::Test
                                                    },
                                                    {29.925089931, 29.925089931, 29.925089931}));
         ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
+        importNode_ = testGraph_.findNode("ImportDLPOLYStructure");
+        ASSERT_TRUE(importNode_);
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -32,11 +34,20 @@ class BenzeneForcefieldTest : public ::testing::Test
 
         // Get the configuration
         configuration_ = testGraph_.fetchHead()->getOutputValue<Configuration *>("Configuration");
+
+        // Get the species atom types
+        auto benzeneNode = dynamic_cast<SpeciesNode *>(testGraph_.findNode("Benzene"));
+        ASSERT_TRUE(benzeneNode);
+        CA_ = benzeneNode->species().findAtomType("CA");
+        HA_ = benzeneNode->species().findAtomType("HA");
+        ASSERT_TRUE(CA_ && HA_);
     }
 
     protected:
     TestGraph testGraph_;
     Configuration *configuration_{nullptr};
+    AtomType *CA_{nullptr}, *HA_{nullptr};
+    Node *importNode_{nullptr};
 };
 
 TEST_F(BenzeneForcefieldTest, Energies)
@@ -59,11 +70,9 @@ TEST_F(BenzeneForcefieldTest, Energies)
     EXPECT_NEAR(1862.134, productionEnergy.geometry.torsionEnergy, 6.0e-5);
 }
 
-TEST_F(BenzeneForcefieldTest, Forces)
+TEST_F(BenzeneForcefieldTest, ForcesFull)
 {
     setUp("dlpoly/benzene181/benzene181-full.REVCON");
-    auto importNode = testGraph_.findNode("ImportDLPOLYStructure");
-    ASSERT_TRUE(importNode);
 
     // Create a force kernel
     auto kernel = testGraph_.createForceKernel(configuration_);
@@ -74,6 +83,65 @@ TEST_F(BenzeneForcefieldTest, Forces)
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 0.12);
+                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.12);
+}
+
+TEST_F(BenzeneForcefieldTest, ForcesIntra)
+{
+    setUp("dlpoly/benzene181/benzene181-intra.REVCON");
+
+    // Create a force kernel
+    auto kernel = testGraph_.createForceKernel(configuration_);
+
+    // Check consistency between production and test forces
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    std::vector<Vector3> zeroForces(pairPotentialForces.size());
+
+    // Check agreement with external reference total forces
+    checkReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
+                                   0.12);
+}
+
+TEST_F(BenzeneForcefieldTest, ForcesVDW)
+{
+    setUp("dlpoly/benzene181/benzene181-vdw.REVCON");
+
+    // Remove charges from atom types
+    CA_->setCharge(0.0);
+    HA_->setCharge(0.0);
+
+    // Create a force kernel
+    auto kernel = testGraph_.createForceKernel(configuration_);
+
+    // Check consistency between production and test forces
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    std::vector<Vector3> zeroForces(pairPotentialForces.size());
+
+    // Check agreement with external reference total forces
+    checkReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
+                                   0.12);
+}
+
+TEST_F(BenzeneForcefieldTest, ForcesElectrostatics)
+{
+    setUp("dlpoly/benzene181/benzene181-elec.REVCON");
+
+    // Remove short range from atom types
+    CA_->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+    HA_->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
+
+    // Create a force kernel
+    auto kernel = testGraph_.createForceKernel(configuration_);
+
+    // Check consistency between production and test forces
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    std::vector<Vector3> zeroForces(pairPotentialForces.size());
+
+    // Check agreement with external reference total forces
+    checkReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
+                                   0.12);
 }
 } // namespace UnitTest

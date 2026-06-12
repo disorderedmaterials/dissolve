@@ -187,7 +187,7 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
     PairPotential::setRange(15.0, 1.0e-4);
 
-    // Remove charges from atom types
+    // Remove short range from atom types
     auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto ow = waterNode->species().findAtomType("OW");
@@ -222,7 +222,7 @@ TEST(Water1000ForceTest, CoulombOnly)
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
     PairPotential::setRange(15.0, 1.0e-4);
 
-    // Remove charges from atom types
+    // Remove short range from atom types
     auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
     ASSERT_TRUE(waterNode);
     auto ow = waterNode->species().findAtomType("OW");
