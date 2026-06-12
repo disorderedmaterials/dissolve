@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "math/mathFunc.h"
-
 #include "base/timer.h"
 #include "math/ft.h"
-#include "modules/sq/sq.h"
+#include "math/mathFunc.h"
 #include "nodes/edge.h"
 #include "nodes/gr/gr.h"
 #include "nodes/sq/sq.h"

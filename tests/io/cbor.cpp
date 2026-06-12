@@ -88,21 +88,21 @@ TEST_F(CBORTest, BasicTable)
 
 TEST_F(CBORTest, ComplexFile)
 {
-    SerialisedValue value = toml::parse("dissolve/input/simple_addition_graph.toml");
+    SerialisedValue value = toml::parse("graph/simple_addition_graph.toml");
     basic_test(value);
 }
 
 TEST_F(CBORTest, CBORCompare)
 {
-    SerialisedValue tomlFile = toml::parse("dissolve/input/simple_addition_graph.toml");
-    std::ifstream infile("dissolve/input/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
+    SerialisedValue tomlFile = toml::parse("graph/simple_addition_graph.toml");
+    std::ifstream infile("cbor/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
     SerialisedValue cborFile = CBOR::from(std::move(infile));
     compare_toml("", tomlFile, cborFile);
 }
 
 TEST_F(CBORTest, CBORExtractSimple)
 {
-    std::ifstream infile("dissolve/input/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
+    std::ifstream infile("cbor/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
     auto type = CBOR::extract(std::move(infile), {"type"});
     EXPECT_TRUE(type.is_string());
     EXPECT_EQ(type.as_string(), "Dissolve");
@@ -111,7 +111,7 @@ TEST_F(CBORTest, CBORExtractSimple)
 
 TEST_F(CBORTest, CBORExtractComplex)
 {
-    std::ifstream infile("dissolve/input/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
+    std::ifstream infile("cbor/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
     auto type = CBOR::extract(std::move(infile), {"edges", 1, "sourceNode"});
     EXPECT_TRUE(type.is_string());
     EXPECT_EQ(type.as_string(), "y");

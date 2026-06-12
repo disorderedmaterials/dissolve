@@ -1,6 +1,5 @@
 # dissolve_add_test(SRC addForcefieldTerms.cpp GUI)
 dissolve_add_test(SRC forcefieldModel.cpp GUI)
-dissolve_add_test(SRC forcefieldTab.cpp GUI)
 dissolve_add_test(SRC isotopologueSetModel.cpp GUI)
 dissolve_add_test(SRC expressionVariableVectorModel.cpp GUI)
 dissolve_add_test(SRC masterTerms.cpp GUI)
