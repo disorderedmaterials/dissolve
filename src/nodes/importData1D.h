@@ -51,4 +51,8 @@ class ImportData1DNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Read data specified
+    static bool read(Data1D &data, std::string filePath, int xColumn, int yColumn, int errorColumn, bool histogram);
 };
