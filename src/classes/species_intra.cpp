@@ -127,7 +127,7 @@ void Species::clearIntramolecularForcefieldTerms()
 const Box *Species::box() const { return &box_; }
 
 // Remove Box definition and revert to single image
-void Species::removeBox() { box_ = Box::singleImage(); }
+void Species::removeBox() { box_ = Box::none(); }
 
 // Create Box definition with specified lengths and angles
 void Species::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)

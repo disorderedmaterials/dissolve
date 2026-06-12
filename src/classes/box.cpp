@@ -521,7 +521,7 @@ double Box::minimumDistance(const Vector3 &r1, const Vector3 &r2) const { return
 // Return minimum image squared distance from r1 to r2
 double Box::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const { return minimumVector(r1, r2).magnitudeSq(); }
 
-Box Box::singleImage() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }
+Box Box::none() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }
 
 Box Box::cubic(double length) { return Box(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0}); }
 

@@ -7,9 +7,9 @@
 #include "data/isotopes.h"
 
 Species::Species(std::string name)
-    : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false), box_(Box::singleImage())
+    : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false), box_(Box::none())
 {
-    box_ = Box::singleImage();
+    box_ = Box::none();
 }
 
 // Clear Data

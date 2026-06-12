@@ -6,7 +6,7 @@
 #include "classes/species.h"
 #include "templates/algorithms.h"
 
-Structure::Structure() : box_(Box::singleImage()) {}
+Structure::Structure() : box_(Box::none()) {}
 
 Structure::Structure(const Structure &source) : box_(source.box_) { *this = source; }
 
@@ -34,7 +34,7 @@ void Structure::clear()
 {
     bonds_.clear();
     atoms_.clear();
-    box_ = Box::singleImage();
+    box_ = Box::none();
 }
 
 /*
@@ -217,7 +217,7 @@ void Structure::clearBonds()
 const Box *Structure::box() const { return &box_; }
 
 // Remove box definition and revert to single image
-void Structure::removeBox() { box_ = Box::singleImage(); }
+void Structure::removeBox() { box_ = Box::none(); }
 
 // Create box definition with specified lengths and angles
 void Structure::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)

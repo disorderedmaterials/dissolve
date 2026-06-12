@@ -165,7 +165,7 @@ class Box : public Serialisable<>
     static Box generate(Vector3 lengths, std::optional<Vector3> angles = {}, bool nonPeriodic = false);
     static Box generate(Vector3 lengths, Vector3 angles);
     // Generate Boxes of a given type
-    static Box singleImage();
+    static Box none();
     static Box cubic(double length);
     static Box orthorhombic(Vector3 lengths);
     static Box monoclinicAlpha(Vector3 lengths, double alpha);
