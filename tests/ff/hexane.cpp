@@ -20,6 +20,8 @@ class HexaneForcefieldTest : public ::testing::Test
                                                    },
                                                    {30.769064857500, 46.153597286200, 30.769064857500}));
         ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
+        importNode_ = testGraph_.findNode("ImportDLPOLYStructure");
+        ASSERT_TRUE(importNode_);
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -38,6 +40,7 @@ class HexaneForcefieldTest : public ::testing::Test
     protected:
     TestGraph testGraph_;
     Configuration *configuration_{nullptr};
+    Node *importNode_{nullptr};
 };
 
 TEST_F(HexaneForcefieldTest, Energies1)
@@ -73,7 +76,7 @@ TEST_F(HexaneForcefieldTest, Forces1)
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/hexane1/REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 3.0e-2);
+                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
 }
 
 TEST_F(HexaneForcefieldTest, Energies2)
@@ -109,7 +112,7 @@ TEST_F(HexaneForcefieldTest, Forces2)
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/hexane2/REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 3.0e-2);
+                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
 }
 
 TEST_F(HexaneForcefieldTest, Energies200)
@@ -132,7 +135,7 @@ TEST_F(HexaneForcefieldTest, Energies200)
     EXPECT_NEAR(2173.978, productionEnergy.geometry.torsionEnergy, 5.0e-4);
 }
 
-TEST_F(HexaneForcefieldTest, Forces200)
+TEST_F(HexaneForcefieldTest, Forces200Full)
 {
     setUp(200, "dlpoly/hexane200/full.REVCON");
 
@@ -142,18 +145,43 @@ TEST_F(HexaneForcefieldTest, Forces200)
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
     checkForceConsistency(kernel, pairPotentialForces, geometryForces);
-    std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/hexane200/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.2);
+                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.2);
+}
+
+TEST_F(HexaneForcefieldTest, Forces200Bound)
+{
+    setUp(200, "dlpoly/hexane200/bound.REVCON");
+
+    // Create a force kernel
+    auto kernel = testGraph_.createForceKernel(configuration_);
+
+    // Check consistency between production and test forces
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total bound forces only
-    checkReferenceForceConsistency(zeroForces, geometryForces,
-                                   {"dlpoly/hexane200/bound.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.0e-7);
+    checkReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
+                                   1.0e-7);
+}
+
+TEST_F(HexaneForcefieldTest, Forces200Unbound)
+{
+    setUp(200, "dlpoly/hexane200/unbound.REVCON");
+
+    // Create a force kernel
+    auto kernel = testGraph_.createForceKernel(configuration_);
+
+    // Check consistency between production and test forces
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total pair potential forces only
-    checkReferenceForceConsistency(pairPotentialForces, zeroForces,
-                                   {"dlpoly/hexane200/unbound.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.2);
+    checkReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
+                                   0.2);
 }
 } // namespace UnitTest

@@ -62,6 +62,8 @@ TEST_F(BenzeneForcefieldTest, Energies)
 TEST_F(BenzeneForcefieldTest, Forces)
 {
     setUp("dlpoly/benzene181/benzene181-full.REVCON");
+    auto importNode = testGraph_.findNode("ImportDLPOLYStructure");
+    ASSERT_TRUE(importNode);
 
     // Create a force kernel
     auto kernel = testGraph_.createForceKernel(configuration_);
@@ -71,8 +73,7 @@ TEST_F(BenzeneForcefieldTest, Forces)
     checkForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(
-        pairPotentialForces, geometryForces,
-        {"dlpoly/benzene181/benzene181-full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.12);
+    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 0.12);
 }
 } // namespace UnitTest
