@@ -75,7 +75,6 @@ add_library(
   speciesTorsion.cpp
   structure.cpp
   torsionFunctions.cpp
-  valueStore.cpp
   xRayWeights.cpp
   angleFunctions.h
   array3DIterator.h
@@ -135,7 +134,6 @@ add_library(
   speciesTorsion.h
   structure.h
   torsionFunctions.h
-  valueStore.h
   xRayWeights.h
 )
 

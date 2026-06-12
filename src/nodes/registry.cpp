@@ -46,7 +46,7 @@
 #include "nodes/orientedSDF.h"
 #include "nodes/qSpecies.h"
 #include "nodes/sdf.h"
-#include "nodes/setCell.h"
+#include "nodes/setBox.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/siteRDF.h"
 #include "nodes/species.h"
@@ -118,7 +118,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"OrientedSDF", makeDerivedNode<OrientedSDFNode>()},
                   {"QSpecies", makeDerivedNode<QSpeciesNode>()},
                   {"SDF", makeDerivedNode<SDFNode>()},
-                  {"SetCell", makeDerivedNode<SetCellNode>()},
+                  {"SetBox", makeDerivedNode<SetBoxNode>()},
                   {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
                   {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
                   {"SQ", makeDerivedNode<SQNode>()},

@@ -112,7 +112,7 @@ class TestGraph : public DissolveGraph
             cfgSourceNode = fetchHead();
 
             // After the first InsertNode addition the source output name reverts to "Configuration" (it may previously have
-            // been Output from SetCell)
+            // been Output from SetBox)
             cfgSourceOutput = "Configuration";
         }
 
@@ -198,12 +198,12 @@ class TestGraph : public DissolveGraph
     Node *createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
                               const Vector3 &cellLengths, const Vector3 &cellAngles = {90.0, 90.0, 90.0})
     {
-        // Create configuration and SetCell nodes
+        // Create configuration and SetBox nodes
         EXPECT_TRUE(appendNode("Configuration", name));
-        EXPECT_TRUE(appendNode("SetCell"));
+        EXPECT_TRUE(appendNode("SetBox"));
         fetchHead()->setOption<Vector3>("Lengths", cellLengths);
         fetchHead()->setOption<Vector3>("Angles", cellAngles);
-        EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetCell", "Input"}));
+        EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetBox", "Input"}));
 
         // Add Species and Insert nodes
         return createAndInsertSpecies(fetchHead(), "Output", species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,

@@ -1,28 +1,36 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/setCell.h"
+#include "nodes/setBox.h"
 
-SetCellNode::SetCellNode(Graph *parentGraph) : Node(parentGraph)
+SetBoxNode::SetBoxNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<CellContainingVariant>("Input", "Target configuration for the calculation", inputVariant_)
+    addInput<BoxContainingVariant>("Input", "Object containing box to modify", inputVariant_)
         ->setFlags({ParameterBase::Required});
 
     // Outputs
-    addOutput<CellContainingVariant>("Output", "Target configuration for the cell definition", outputVariant_);
+    addOutput<BoxContainingVariant>("Output", "Object", outputVariant_);
 
     // Options
-    addOption<Vector3>("Lengths", "Side lengths (A, B, C) of the cell (Angstroms)", lengths_);
-    addOption<Vector3>("Angles", "Cell angles (alpha, beta, gamma) of the cell (degrees)", angles_);
-    addOption<bool>("NonPeriodic", "Whether the cell should be defined as non-periodic", nonPeriodic_);
+    addOption<Vector3>("Lengths", "Side lengths (A, B, C) of the box (Angstroms)", lengths_);
+    addOption<Vector3>("Angles", "Cell angles (alpha, beta, gamma) of the box (degrees)", angles_);
+    addOption<bool>("NonPeriodic", "Whether the box should be defined as non-periodic", nonPeriodic_);
 }
 
-std::string_view SetCellNode::type() const { return "SetCell"; }
+/*
+ * Definition
+ */
 
-std::string_view SetCellNode::summary() const { return "Define / overwrite a target configuration's unit cell."; }
+std::string_view SetBoxNode::type() const { return "SetBox"; }
 
-NodeConstants::ProcessResult SetCellNode::process()
+std::string_view SetBoxNode::summary() const { return "Set the periodic box definition on an object."; }
+
+/*
+ * Processing
+ */
+
+NodeConstants::ProcessResult SetBoxNode::process()
 {
     // Copy the input to the output and work on the output
     outputVariant_ = inputVariant_;

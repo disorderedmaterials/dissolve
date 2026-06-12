@@ -12,12 +12,10 @@ add_library(
   forces_dlpoly.cpp
   forces_moscito.cpp
   forces_simple.cpp
-  values.cpp
   data1D.h
   data2D.h
   data3D.h
   forces.h
-  values.h
 )
 
 target_include_directories(import PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
