@@ -26,8 +26,6 @@ add_library(
   generalRegion.h
   generator.cpp
   generator.h
-  importCoordinates.cpp
-  importCoordinates.h
   iterateSelection.cpp
   iterateSelection.h
   node.cpp

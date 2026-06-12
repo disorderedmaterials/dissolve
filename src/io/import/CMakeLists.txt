@@ -1,10 +1,5 @@
 add_library(
   import
-  coordinates.cpp
-  coordinates_dlpoly.cpp
-  coordinates_epsr.cpp
-  coordinates_moscito.cpp
-  coordinates_xyz.cpp
   data1D.cpp
   data1D_histo.cpp
   data1D_mint.cpp
@@ -17,15 +12,11 @@ add_library(
   forces_dlpoly.cpp
   forces_moscito.cpp
   forces_simple.cpp
-  trajectory.cpp
-  trajectory_dlpoly.cpp
   values.cpp
-  coordinates.h
   data1D.h
   data2D.h
   data3D.h
   forces.h
-  trajectory.h
   values.h
 )
 
