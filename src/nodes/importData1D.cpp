@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/data1DImport.h"
+#include "nodes/importData1D.h"
 #include "base/lineParser.h"
-#include "io/import/data1D.h"
 #include "math/data1D.h"
 #include "math/filters.h"
 #include "nodes/dissolve.h"
 
-Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
+ImportData1DNode::ImportData1DNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
@@ -26,11 +25,11 @@ Data1DImportNode::Data1DImportNode(Graph *parentGraph) : Node(parentGraph)
     addOutput<std::optional<Data1D>>("Data", "Imported data", data_);
 }
 
-std::string_view Data1DImportNode::type() const { return "Data1DImport"; }
+std::string_view ImportData1DNode::type() const { return "Data1DImport"; }
 
-std::string_view Data1DImportNode::summary() const { return "Import 1D data."; }
+std::string_view ImportData1DNode::summary() const { return "Import 1D data."; }
 
-NodeConstants::ProcessResult Data1DImportNode::process()
+NodeConstants::ProcessResult ImportData1DNode::process()
 {
     data_.emplace();
     auto xMin = xMin_ ? std::make_optional<double>(xMin_->asDouble()) : std::nullopt;

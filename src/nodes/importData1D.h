@@ -7,11 +7,11 @@
 #include "nodes/node.h"
 #include <memory>
 
-class Data1DImportNode : public Node
+class ImportData1DNode : public Node
 {
     public:
-    Data1DImportNode(Graph *parentGraph);
-    ~Data1DImportNode() override = default;
+    ImportData1DNode(Graph *parentGraph);
+    ~ImportData1DNode() override = default;
 
     /*
      * Definition

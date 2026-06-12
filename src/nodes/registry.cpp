@@ -14,7 +14,6 @@
 #include "nodes/clearBonding.h"
 #include "nodes/configuration.h"
 #include "nodes/dAngle.h"
-#include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
@@ -28,6 +27,7 @@
 #include "nodes/histogramCN.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
+#include "nodes/importData1D.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importMoscitoStructure.h"
 #include "nodes/importXYZStructure.h"
@@ -86,7 +86,6 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
                   {"DAngle", makeDerivedNode<DAngleNode>()},
-                  {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
@@ -98,6 +97,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Graph", makeDerivedNode<Graph>()},
                   {"GR", makeDerivedNode<GRNode>()},
                   {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
+                  {"ImportData1D", makeDerivedNode<ImportData1DNode>()},
                   {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},

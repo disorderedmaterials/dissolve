@@ -311,7 +311,7 @@ class TestGraph : public DissolveGraph
         // Set reference F(Q) data
         if (!referenceData.filename.empty())
         {
-            auto data1DImportNode = createNode("Data1DImport", std::format("Reference-{}", name));
+            auto data1DImportNode = createNode("ImportData1D", std::format("Reference-{}", name));
             EXPECT_TRUE(data1DImportNode);
             EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
             EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
@@ -331,7 +331,7 @@ class TestGraph : public DissolveGraph
         // Set reference F(Q) data
         if (!referenceData.filename.empty())
         {
-            auto data1DImportNode = createNode("Data1DImport", std::format("Reference-{}", name));
+            auto data1DImportNode = createNode("ImportData1D", std::format("Reference-{}", name));
             EXPECT_TRUE(data1DImportNode);
             EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
             EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
