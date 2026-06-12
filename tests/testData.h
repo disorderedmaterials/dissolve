@@ -5,8 +5,6 @@
 
 #include "classes/coreData.h"
 #include "classes/species.h"
-#include "data/elements.h"
-#include "io/import/data1D.h"
 #include "io/import/data3D.h"
 #include "io/import/forces.h"
 #include "kernels/energy.h"
@@ -20,6 +18,7 @@
 #include "math/sampledVector.h"
 #include "nodes/energy.h"
 #include "nodes/graph.h"
+#include "nodes/importData1D.h"
 #include "nodes/serialisableData.h"
 #include "nodes/species.h"
 #include <gtest/gtest.h>
@@ -304,22 +303,6 @@ class DissolveSystemTest
 
         return checkDouble(quantity, A.value(), B, threshold);
     }
-    // Test Data1D against external file data
-    [[nodiscard]] static bool checkData1D(const Data1D &data, std::string_view name, Data1DImportFileFormat externalFileFormat,
-                                          double tolerance = 5.0e-3,
-                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
-    {
-        Data1D compare;
-        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(compare))
-            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
-
-        // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType, data, compare).error;
-        auto notOK = std::isnan(error) || error > tolerance;
-        Messenger::print("Data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name, error,
-                         externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
-        return !notOK;
-    }
     // Test Data1D
     [[nodiscard]] static bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
                                           std::string_view nameB, double tolerance = 5.0e-3,
@@ -332,33 +315,18 @@ class DissolveSystemTest
                          nameB, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
-    // Test Data1D (by tag and external file data)
-    [[nodiscard]] bool checkData1D(std::string_view tagA, Data1DImportFileFormat externalFileFormat, double tolerance = 5.0e-3,
-                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    [[nodiscard]] static bool checkData1D(const Data1D &dataA, std::string_view nameA, std::string filePath, int xColumn,
+                                          int yColumn, double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
-        auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
-        if (!optDataA)
-            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
-
         Data1D dataB;
-        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
-            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+        if (!ImportData1DNode::read(dataB, filePath, xColumn, yColumn))
+        {
+            std::cout << std::format("Failed to read data from '{}'\n", filePath);
+            return false;
+        }
 
-        return checkData1D(optDataA->get(), tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
-    }
-    // Test Data1D (by tags)
-    [[nodiscard]] bool checkData1D(std::string_view tagA, std::string_view tagB, double tolerance = 5.0e-3,
-                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
-    {
-        auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
-        if (!optDataA)
-            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
-
-        auto optDataB = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagB);
-        if (!optDataB)
-            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagB)));
-
-        return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
+        return checkData1D(dataA, nameA, dataB, filePath, tolerance, errorType);
     }
     // Test Data3D against external file data
     [[nodiscard]] static bool checkData3D(const Data3D &data, std::string_view name, Data3DImportFileFormat externalFileFormat,

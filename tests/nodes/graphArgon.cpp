@@ -48,14 +48,14 @@ TEST(GraphArgonTest, AllCorrelations)
     // Check total unweighted SQ
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     ASSERT_TRUE(unweightedSQ);
-    ASSERT_TRUE(
-        DissolveSystemTest::checkData1D(unweightedSQ->total(), "UnweightedSQ", {"dissolve2/argon/SQ01-UnweightedSQ-total.sq"}));
+    ASSERT_TRUE(DissolveSystemTest::checkData1D(unweightedSQ->total(), "UnweightedSQ",
+                                                "dissolve2/argon/SQ01-UnweightedSQ-total.sq", 1, 2));
 
     // Check neutron weighted SQ
     auto weightedSQ = neutronSQNode->getOutputValue<PartialSet *>("WeightedSQ");
     ASSERT_TRUE(weightedSQ);
     ASSERT_TRUE(DissolveSystemTest::checkData1D(weightedSQ->total(), "WeightedSQ",
-                                                {"dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq"}, 0.025));
+                                                "dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq", 1, 2, 0.025));
 }
 
 } // namespace UnitTest

@@ -19,7 +19,7 @@ ImportData1DNode::ImportData1DNode(Graph *parentGraph) : Node(parentGraph)
     addOption<Number>("NPointsToRemove", "Number of points to remove", nPointsToRemove_);
     addOption<Number>("XColumn", "Column index of data X values", xColumn_);
     addOption<Number>("YColumn", "Column index of data Y values", yColumn_);
-    addOption<Number>("ErrorColumn", "Column index of data error values", errorColumn_);
+    addOption<std::optional<Number>>("ErrorColumn", "Column index of data error values", errorColumn_);
 
     // Outputs
     addOutput<std::optional<Data1D>>("Data", "Imported data", data_);
@@ -31,34 +31,33 @@ std::string_view ImportData1DNode::summary() const { return "Import 1D data."; }
 
 NodeConstants::ProcessResult ImportData1DNode::process()
 {
-    auto xMin = xMin_ ? std::make_optional<double>(xMin_->asDouble()) : std::nullopt;
-    auto xMax = xMax_ ? std::make_optional<double>(xMax_->asDouble()) : std::nullopt;
-    auto removeAverageFromX = removeAverageFromX_ ? std::make_optional<double>(removeAverageFromX_->asDouble()) : std::nullopt;
-    auto nPointsToRemove = nPointsToRemove_.asInteger();
-    auto xCol = xColumn_.asInteger() - 1, yCol = yColumn_.asInteger() - 1, errorCol = errorColumn_.asInteger() - 1;
-
     // Clear the structure, and initialise error arrays if necessary
     data_.emplace();
-    if (errorCol != -1)
+    if (errorColumn_)
         data_->addErrors();
 
     // Parse the file
-    if (!read(*data_, filePath_, xCol, yCol, errorCol, histogram_))
+    if (!read(*data_, filePath_, xColumn_.asInteger(), yColumn_.asInteger(), errorColumn_.value_or(Number(0)).asInteger(),
+              histogram_))
         return error("Failed to read Data1D from file '{}'\n", filePath_);
 
     // Handle any additional options
     // -- Remove points from the start of the data?
-    for (auto n = 0; n < nPointsToRemove; ++n)
+    for (auto n = 0; n < nPointsToRemove_.asInteger(); ++n)
         data_->removeFirstPoint();
     // -- Trim range?
-    if (xMin || xMax)
-        Filters::trim(*data_, xMin.value_or(data_->xAxis().front() - 1.0), xMax.value_or(data_->xAxis().back() + 1.0));
-
-    // -- Subtract average level from data?
-    if (removeAverageFromX)
+    if (xMin_ || xMax_)
     {
-        double level = Filters::subtractAverage(*data_, removeAverageFromX.value());
-        message("Removed average level of {} from data, forming average over x >= {}.\n", level, removeAverageFromX.value());
+        auto xMin = xMin_ ? xMin_->asDouble() : data_->xAxis().front() - 1.0;
+        auto xMax = xMax_ ? xMax_->asDouble() : data_->xAxis().back() + 1.0;
+        Filters::trim(*data_, xMin, xMax);
+    }
+    // -- Subtract average level from data?
+    if (removeAverageFromX_)
+    {
+        double level = Filters::subtractAverage(*data_, removeAverageFromX_->asDouble());
+        message("Removed average level of {} from data, forming average over x >= {}.\n", level,
+                removeAverageFromX_->asDouble());
     }
 
     // Validity check on number of points in loaded file
@@ -73,6 +72,11 @@ bool ImportData1DNode::read(Data1D &data, std::string filePath, int xColumn, int
 {
     // Clear the data
     data.clear();
+
+    // Convert human-indexed columns into zero-indexed ones
+    --xColumn;
+    --yColumn;
+    --errorColumn;
 
     // Open file and check that we're OK to proceed importing from it
     LineParser parser;

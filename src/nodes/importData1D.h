@@ -33,7 +33,7 @@ class ImportData1DNode : public Node
     // Column index of data Y values
     Number yColumn_{2};
     // Column index of data error values
-    Number errorColumn_{0};
+    std::optional<Number> errorColumn_;
     // Remove average from X
     std::optional<Number> removeAverageFromX_;
     // Minimum X value
@@ -54,5 +54,6 @@ class ImportData1DNode : public Node
 
     public:
     // Read data specified
-    static bool read(Data1D &data, std::string filePath, int xColumn, int yColumn, int errorColumn, bool histogram);
+    static bool read(Data1D &data, std::string filePath, int xColumn = 1, int yColumn = 2, int errorColumn = 0,
+                     bool histogram = false);
 };

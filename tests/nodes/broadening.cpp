@@ -45,8 +45,8 @@ TEST(BroadeningTest, ArgonBroadening)
         auto weightedSQ = neutronSQNode->getOutputValue<PartialSet *>("WeightedSQ");
         ASSERT_TRUE(weightedSQ);
         EXPECT_TRUE(DissolveSystemTest::checkData1D(
-            weightedSQ->total(), std::format("{} {}", Functions1D::forms().keyword(form), joinStrings(parameters)),
-            {dataFile, Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 3.0e-3));
+            weightedSQ->total(), std::format("{} {}", Functions1D::forms().keyword(form), joinStrings(parameters)), dataFile, 1,
+            2, 3.0e-3));
     }
 }
 
