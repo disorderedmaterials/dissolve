@@ -100,7 +100,7 @@ TEST_F(BenzeneForcefieldTest, ForcesIntra)
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                   0.12);
+                                   1.0e-2);
 }
 
 TEST_F(BenzeneForcefieldTest, ForcesVDW)
@@ -142,6 +142,6 @@ TEST_F(BenzeneForcefieldTest, ForcesElectrostatics)
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                   0.12);
+                                   3.0e-4);
 }
 } // namespace UnitTest
