@@ -42,6 +42,11 @@ class TestNode : public Node
     // Variant
     using TestVariant = VariantParameterData<Structure, Number, std::string, Configuration *>;
     TestVariant variant_;
+    // Test string
+    char char_;
+    char *charPtr_;
+    std::string message_;
+    std::vector<char> messageParts_;
 
     public:
     // Return the optional Configuration
@@ -58,6 +63,9 @@ class TestNode : public Node
     /*
      * Processing & Validity
      */
+    private:
+    void registerDynamicOutputs() override;
+
     public:
     // Perform processing
     NodeConstants::ProcessResult process() override;
