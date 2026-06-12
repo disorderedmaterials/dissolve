@@ -12,6 +12,9 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addInput("NumberVector", "A vector of numbers", numberVector_);
     addInput("OptionalNumber", "A single number", optionalNumber_);
     addInput("Variant", "A variant", variant_);
+    addInput("Message", "A message", message_);
+    addInput("Char", "A character", char_);
+    addInput("CharPtr", "A character", charPtr_);
 
     // Outputs
     addOutput("Configuration", "A configuration output", configuration_);
@@ -42,6 +45,13 @@ TestNode::TestVariant TestNode::variant() { return variant_; }
  * Processing
  */
 
+// Register dynamic outputs
+void TestNode::registerDynamicOutputs()
+{
+    registerDynamicOutput<char>(messageParts_, "Individual character from a message", std::string("Message-Part"));
+    registerDynamicPointerOutput<char>(messageParts_, "Individual character from a message", std::string("Message-Ptr-Part"));
+}
+
 // Perform processing
 NodeConstants::ProcessResult TestNode::process()
 {
@@ -53,6 +63,10 @@ NodeConstants::ProcessResult TestNode::process()
     }
     else
         optionalConfiguration_ = std::nullopt;
+
+    // Standard dynamic outputs
+    messageParts_.clear();
+    messageParts_.insert(messageParts_.end(), message_.begin(), message_.end());
 
     return NodeConstants::ProcessResult::Success;
 }
