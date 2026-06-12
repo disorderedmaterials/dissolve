@@ -5,7 +5,6 @@
 
 #include "generator/node.h"
 #include "generator/nodeValue.h"
-#include "io/import/coordinates.h"
 #include <vector>
 
 // Forward Declarations
@@ -47,8 +46,6 @@ class CoordinateSetsGeneratorNode : public GeneratorNode
     CoordinateSetSource source_{CoordinateSetSource::MD};
     // Whether to force recreation of the coordinate sets
     bool force_{false};
-    // File / format of coordinate sets file, if provided
-    CoordinateImportFileFormat fileSource_;
     // Number of sets to generate
     NodeValue nSets_{100};
     // Number of MD steps to run between sets

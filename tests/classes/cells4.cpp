@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "io/import/coordinates.h"
 #include "kernels/producer.h"
-#include "templates/algorithms.h"
 #include "tests/graphData.h"
 #include <gtest/gtest.h>
 

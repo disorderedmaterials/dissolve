@@ -3,7 +3,6 @@
 
 #include "nodes/angle.h"
 #include "classes/speciesSites.h"
-#include "io/import/trajectory.h"
 #include "math/rangedVector3.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"

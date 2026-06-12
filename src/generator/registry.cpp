@@ -12,7 +12,6 @@
 #include "generator/cylindricalGlobalPotential.h"
 #include "generator/cylindricalRegion.h"
 #include "generator/generalRegion.h"
-#include "generator/importCoordinates.h"
 #include "generator/parameters.h"
 #include "generator/pick.h"
 #include "generator/pickProximity.h"
@@ -40,8 +39,6 @@ GeneratorNodeRegistry::GeneratorNodeRegistry()
     registerProducer<CoordinateSetsGeneratorNode>(GeneratorNode::NodeType::CoordinateSets,
                                                   "Generate coordinate sets for a species", "Build");
     registerProducer<CopyGeneratorNode>(GeneratorNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
-    registerProducer<ImportCoordinatesGeneratorNode>(GeneratorNode::NodeType::ImportCoordinates,
-                                                     "Import coordinates into a configuration", "Build");
     registerProducer<RemoveGeneratorNode>(GeneratorNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
     registerProducer<SizeFactorGeneratorNode>(GeneratorNode::NodeType::SizeFactor,
                                               "Scale a configuration's contents with a size factor", "Build");

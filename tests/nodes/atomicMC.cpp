@@ -2,20 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/atomicMC/atomicMC.h"
-#include "io/import/coordinates.h"
-#include "io/import/data1D.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/numberNode.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
-#include <array>
 #include <gtest/gtest.h>
-#include <map>
-#include <tuple>
-#include <variant>
 #include <vector>
 
 namespace UnitTest

@@ -3,7 +3,6 @@
 
 #include "nodes/intraDistance.h"
 #include "classes/speciesSites.h"
-#include "io/import/trajectory.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"

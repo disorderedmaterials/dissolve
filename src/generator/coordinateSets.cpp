@@ -23,7 +23,6 @@ CoordinateSetsGeneratorNode::CoordinateSetsGeneratorNode(const Species *sp)
     keywords_.add<BoolKeyword>("Force", "Force generation of coordinates, even if existing sets exist", force_);
 
     keywords_.setOrganisation("Options", "Source Data (if using file)");
-    keywords_.add<FileAndFormatKeyword>("File", "File / format for coordinate sets to read in", fileSource_, "EndFile");
 
     keywords_.setOrganisation("Options", "Generation (if using MD)");
     keywords_.add<NodeValueKeyword>("NSets", "Number of coordinate sets to generate", nSets_, this);
@@ -82,29 +81,6 @@ bool CoordinateSetsGeneratorNode::prepare(const GeneratorContext &generatorConte
     // Clear existing sets?
     if (force_)
         sets_.clear();
-
-    // If a file source is selected, load its contents now
-    if (source_ == CoordinateSetSource::File && sets_.empty())
-    {
-        // Check import file format
-        if (!fileSource_.hasFilename())
-            return Messenger::error("A suitable coordinate file and format must be supplied.\n");
-
-        // Open the specified file
-        LineParser parser;
-        if ((!parser.openInput(fileSource_.filename())) || (!parser.isFileGoodForReading()))
-            return Messenger::error("Couldn't open coordinate sets file '{}'.\n", fileSource_.filename());
-
-        // Read in as many coordinate sets as exists in the file
-        while (!parser.eofOrBlank())
-        {
-            auto &coordSet = addSet();
-            if (!fileSource_.importData(parser, coordSet))
-                return Messenger::error("Failed to read coordinate set {} from file.\n", sets_.size());
-        }
-
-        Messenger::print("{} coordinate sets read in for Species '{}'.\n", sets_.size(), name());
-    }
 
     return true;
 }
