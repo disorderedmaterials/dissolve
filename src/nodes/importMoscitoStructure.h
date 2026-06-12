@@ -27,6 +27,8 @@ class ImportMoscitoStructureNode : public Node
     std::string filePath_;
     // Structure
     Structure structure_;
+    // Forces
+    std::vector<Vector3> forces_;
 
     /*
      * Processing
