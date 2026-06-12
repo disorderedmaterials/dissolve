@@ -46,6 +46,8 @@ TEST(Water1000ForceTest, Full)
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/full.REVCON"));
+    auto importNode = testGraph.findNode("ImportDLPOLYStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -65,12 +67,37 @@ TEST(Water1000ForceTest, Full)
 
     // Check agreement with external reference total forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.9);
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
+}
 
-    // Check agreement with external reference geometric forces
+TEST(Water1000ForceTest, Intra)
+{
+    // Set up the test graph
+    TestGraph testGraph;
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/intra.REVCON"));
+    auto importNode = testGraph.findNode("ImportDLPOLYStructure");
+    ASSERT_TRUE(importNode);
+
+    // Adjust pair potential properties
+    PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
+    PairPotential::setRange(15.0, 1.0e-4);
+
+    // Run the graph from the head node to set up the configuration
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph.fetchHead()->versionIndex(), 0);
+
+    // Get the configuration and create a force kernel
+    auto cfg = testGraph.fetchHead()->getOutputValue<Configuration *>("Configuration");
+    auto kernel = testGraph.createForceKernel(cfg);
+
+    // Check consistency between production and test forces
+    std::vector<Vector3> pairPotentialForces, geometryForces;
+    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+
+    // Check agreement with external reference total forces
     std::vector<Vector3> noPP(geometryForces.size());
-    checkReferenceForceConsistency(noPP, geometryForces,
-                                   {"dlpoly/water1000/intra.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.9);
+    checkReferenceForceConsistency(noPP, geometryForces, importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
 }
 
 TEST(Water1000EnergyTest, ShortRangeOnly)
@@ -115,6 +142,8 @@ TEST(Water1000ForceTest, ShortRangeOnly)
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/vdw.REVCON"));
+    auto importNode = testGraph.findNode("ImportDLPOLYStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -144,7 +173,7 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 
     // Check agreement with external reference forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/vdw.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.6e-1);
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 
 TEST(Water1000EnergyTest, ShiftedCoulombOnly)
@@ -185,7 +214,9 @@ TEST(Water1000ForceTest, CoulombOnly)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/coulomb.REVCON"));
+    auto importNode = testGraph.findNode("ImportDLPOLYStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
@@ -210,16 +241,9 @@ TEST(Water1000ForceTest, CoulombOnly)
     std::vector<Vector3> pairPotentialForces, geometryForces;
     checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
 
-    // A single atom pair in the simulation sits at "exactly" 15.0 Angstroms apart. Dissolve includes the forces from this pair,
-    // but DL_POLY does not, hence the adjustments made to the forces on two atoms here.
-    Vector3 forceDiff(17.451528090645297, 43.419091624640259, -92.653925158222137);
-    pairPotentialForces[1183] -= forceDiff;
-    pairPotentialForces[1904] += forceDiff;
-
     // Check agreement with external reference forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/coulomb.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
-                                   1.6e-1);
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 
 TEST(Water1000ForceTest, ShiftedCoulombOnly)
@@ -227,7 +251,9 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
     // Set up the test graph
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
-    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
+    EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/shifted.REVCON"));
+    auto importNode = testGraph.findNode("ImportDLPOLYStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setRange(15.0, 1.0e-4);
@@ -254,8 +280,7 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
 
     // Check agreement with external reference forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/shifted.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
-                                   1.6e-1);
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 TEST(Water1000EnergyTest, Override)
 {
@@ -302,6 +327,8 @@ TEST(Water1000ForceTest, Overrides)
     TestGraph testGraph;
     ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/vdw.REVCON"));
+    auto importNode = testGraph.findNode("ImportDLPOLYStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -334,6 +361,6 @@ TEST(Water1000ForceTest, Overrides)
 
     // Check agreement with external reference forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   {"dlpoly/water1000/vdw.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.6e-1);
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 } // namespace UnitTest

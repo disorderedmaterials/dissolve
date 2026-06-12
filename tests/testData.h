@@ -666,4 +666,19 @@ void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const 
     }
 }
 
+// Check consistency of supplied forces
+void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
+                                    const std::vector<Vector3> &referenceForces, double maxDeviation = 1.0e-3)
+{
+    ASSERT_TRUE(ppForces.size() == geomForces.size());
+    ASSERT_TRUE(ppForces.size() == referenceForces.size());
+
+    for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
+    {
+        auto calculatedForce = ppForce + geometryForce;
+        EXPECT_NEAR(calculatedForce.x, referenceForce.x, maxDeviation);
+        EXPECT_NEAR(calculatedForce.y, referenceForce.y, maxDeviation);
+        EXPECT_NEAR(calculatedForce.z, referenceForce.z, maxDeviation);
+    }
+}
 } // namespace UnitTest
