@@ -23,6 +23,10 @@ Structure &Structure::operator=(const Structure &source)
     for (auto &bond : source.bonds_)
         addBond(bond->i()->index(), bond->j()->index());
 
+    // Copy source box
+    if (source.box_)
+        createBox(source.box_->axisLengths(), source.box_->axisAngles(), source.box_->type() == Box::BoxType::NonPeriodic);
+
     return *this;
 }
 
@@ -219,7 +223,7 @@ void Structure::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
 // Create box definition with specified lengths and angles
 void Structure::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
-    box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
+    box_ = nonPeriodic ? std::make_unique<SingleImageBox>() : Box::generate(lengths, angles);
 }
 
 // Create Box definition from axes matrix
