@@ -19,14 +19,12 @@ add_library(
   forces_simple.cpp
   trajectory.cpp
   trajectory_dlpoly.cpp
-  values.cpp
   coordinates.h
   data1D.h
   data2D.h
   data3D.h
   forces.h
   trajectory.h
-  values.h
 )
 
 target_include_directories(import PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
