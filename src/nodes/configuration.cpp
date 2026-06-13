@@ -13,6 +13,6 @@ std::string_view ConfigurationNode::type() const { return "Configuration"; }
 std::string_view ConfigurationNode::summary() const { return "Produce an empty atomic configuration."; }
 
 // Return configuration object
-const Configuration &ConfigurationNode::configuration() const { return configuration_; }
+Configuration &ConfigurationNode::configuration() { return configuration_; }
 
 NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }
