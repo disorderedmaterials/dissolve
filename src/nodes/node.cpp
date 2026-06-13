@@ -43,7 +43,7 @@ bool Node::hasMessages(MessageStatus status) const
 void Node::setEcho(bool status) { echo_ = status; }
 
 // Print latest message
-void Node::echo() const { std::cout << messages_.back().second << std::endl; }
+void Node::echo() const { std::cout << messages_.back().second; }
 
 /*
  * Processing & Validity
