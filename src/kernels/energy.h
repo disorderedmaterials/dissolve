@@ -72,7 +72,7 @@ class EnergyKernel : public GeometryKernel
     Kernel::PairPotentialEnergyValue totalPairPotentialEnergy(bool includeInter = true, bool includeIntra = true) const;
     // Return total interatomic PairPotential energy from summation of molecules
     Kernel::PairPotentialEnergyValue totalMoleculePairPotentialEnergy(bool includeInter = true, bool includeIntra = true) const;
-    // Return total energy of supplied atom
+    // Return total energy
     Kernel::EnergyResult totalEnergy(Flags<Kernel::CalculationFlags> flags = {}) const;
     // Return total energy of supplied atom
     Kernel::EnergyResult totalEnergy(const ConfigurationAtom &i) const;
