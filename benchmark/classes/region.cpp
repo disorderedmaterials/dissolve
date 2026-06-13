@@ -17,9 +17,9 @@ class RandomVoxelKernel : public VoxelKernel
     bool isVoxelValid(const Configuration *cfg, const Vector3 &r) const override { return DissolveMath::random() > 0.5; }
 };
 
-template <SpeciesType speciesType, SpeciesPopulation population> static void BM_Region_Generate(benchmark::State &state)
+template <SystemType systemType> static void BM_Region_Generate(benchmark::State &state)
 {
-    Problem<speciesType, population> problemDef;
+    GraphProblem<systemType> problemDef;
     auto *cfg = problemDef.configuration();
     for (auto _ : state)
     {
@@ -28,7 +28,7 @@ template <SpeciesType speciesType, SpeciesPopulation population> static void BM_
     }
 }
 
-BENCHMARK_TEMPLATE(BM_Region_Generate, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
+BENCHMARK_TEMPLATE(BM_Region_Generate, SystemType::Water1000);
 } // namespace Benchmarks
 
 BENCHMARK_MAIN();

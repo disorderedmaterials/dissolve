@@ -26,7 +26,7 @@ template <SystemType systemType> static void BM_SiteRDFNode(benchmark::State &st
     }
 }
 
-BENCHMARK_TEMPLATE(BM_SiteRDFNode, SystemType::ArgonCubic)->Unit(benchmark::kMicrosecond);;
+BENCHMARK_TEMPLATE(BM_SiteRDFNode, SystemType::ArgonCubic)->Unit(benchmark::kMicrosecond);
 BENCHMARK_TEMPLATE(BM_SiteRDFNode, SystemType::Water1000)->Unit(benchmark::kMicrosecond);
 
 } // namespace Benchmarks

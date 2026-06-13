@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/angle.h"
-#include "common/problems.h"
 #include "classes/speciesSites.h"
+#include "common/problems.h"
 #include <benchmark/benchmark.h>
 
 namespace Benchmarks
@@ -18,7 +18,7 @@ template <SystemType systemType> static void BM_AngleNode(benchmark::State &stat
     angleNode->setOption("SiteA", SpeciesSites{{problemDef.species()->findSite("Origin")}});
     angleNode->setOption("SiteB", SpeciesSites{{problemDef.species()->findSite("Origin")}});
     angleNode->setOption("SiteC", SpeciesSites{{problemDef.species()->findSite("Origin")}});
-    
+
     angleNode->setOption("ExcludeSameMoleculeAB", true);
     angleNode->setOption("ExcludeSameMoleculeBC", true);
     angleNode->setOption("ExcludeSameSiteAC", true);
