@@ -89,7 +89,7 @@ template <SpeciesType speciesType, SpeciesPopulation population> class Problem
     Configuration *configuration() { return coreData_.configurations().front().get(); }
 };
 
-template <SystemType systemType> class GraphProblem
+template <SystemType systemType> class GraphProblem : public DissolveGraph
 {
     public:
     GraphProblem()
@@ -109,7 +109,7 @@ template <SystemType systemType> class GraphProblem
         Messenger::setQuiet(true);
 
         // Create the species node
-        auto *speciesNode = dynamic_cast<SpeciesNode *>(graph_.createNode("Species"));
+        auto *speciesNode = dynamic_cast<SpeciesNode *>(createNode("Species"));
         species_ = &speciesNode->species();
 
         if (speciesString.ends_with(".toml"))
@@ -124,22 +124,22 @@ template <SystemType systemType> class GraphProblem
         }
 
         // Add an Insert node for the Species
-        auto *insertNode = dynamic_cast<InsertNode *>(graph_.createNode("Insert"));
+        auto *insertNode = dynamic_cast<InsertNode *>(createNode("Insert"));
         insertNode->setInput<Number>("Population", speciePopulation);
         insertNode->setInput<Number>("Density", 0.1);
-        graph_.addEdge({"Species", "Species", "Insert", "Species"});
+        addEdge({"Species", "Species", "Insert", "Species"});
 
         // Create a configuration node
-        auto *configurationNode = dynamic_cast<ConfigurationNode *>(graph_.createNode("Configuration"));
+        auto *configurationNode = dynamic_cast<ConfigurationNode *>(createNode("Configuration"));
         configuration_ = &configurationNode->configuration();
-        graph_.addEdge({"Configuration", "Configuration", "Insert", "Configuration"});
+        addEdge({"Configuration", "Configuration", "Insert", "Configuration"});
 
         // Add SetCoordinatesand ImportDLPOLYStructure
-        auto *setCoordinatesnNode = dynamic_cast<SetCoordinatesNode *>(graph_.createNode("SetCoordinates"));
-        auto *importStructureNode = dynamic_cast<ImportDLPOLYStructureNode *>(graph_.createNode("ImportDLPOLYStructure"));
+        auto *setCoordinatesnNode = dynamic_cast<SetCoordinatesNode *>(createNode("SetCoordinates"));
+        auto *importStructureNode = dynamic_cast<ImportDLPOLYStructureNode *>(createNode("ImportDLPOLYStructure"));
         importStructureNode->setOption<std::string>("FilePath", referenceCoordinates);
-        graph_.addEdge({"ImportDLPOLYStructure", "Structure", "SetCoordinates", "Structure"});
-        graph_.addEdge({"Configuration", "Configuration", "SetCoordinates", "Configuration"});
+        addEdge({"ImportDLPOLYStructure", "Structure", "SetCoordinates", "Structure"});
+        addEdge({"Configuration", "Configuration", "SetCoordinates", "Configuration"});
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
@@ -147,7 +147,6 @@ template <SystemType systemType> class GraphProblem
     }
 
     private:
-    DissolveGraph graph_;
     Configuration *configuration_{nullptr};
     Species *species_{nullptr};
 

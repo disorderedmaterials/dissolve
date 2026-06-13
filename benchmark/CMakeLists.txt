@@ -41,5 +41,6 @@ configure_file(benchmarkConfig.h.in benchmarkConfig.h @ONLY)
 
 # Add benchmark subdirectories
 add_subdirectory(classes)
+add_subdirectory(ff)
 add_subdirectory(math)
 add_subdirectory(modules)
