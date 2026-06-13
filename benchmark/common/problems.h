@@ -96,13 +96,14 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
     {
         // System Types
         static std::map<SystemType, std::tuple<std::string, int, std::string>> systemTypes = {
-            {SystemType::ArgonCubic, {"Ar|epsilon=0.774040 sigma=3.445996", 6755, "dlpoly/argon/cubic/big_argon.CONFIG"}},
+            {SystemType::ArgonCubic,
+             {"Ar|epsilon=0.774040 sigma=3.445996", 6755, "tests/data/dlpoly/argon/cubic/big_argon.CONFIG"}},
             {SystemType::ArgonMonoclinic,
-             {"Ar|epsilon=0.774040 sigma=3.445996", 6802, "dlpoly/argon/monoclinic/big_argon.CONFIG"}},
+             {"Ar|epsilon=0.774040 sigma=3.445996", 6802, "tests/data/dlpoly/argon/monoclinic/big_argon.CONFIG"}},
             {SystemType::ArgonTriclinic,
-             {"Ar|epsilon=0.774040 sigma=3.445996", 6528, "dlpoly/argon/triclinic/big_argon.CONFIG"}},
-            {SystemType::Water1000, {"species/water.toml", 1000, "dlpoly/water1000/full.REVCON"}},
-            {SystemType::Hexane200, {"species/hexane.toml", 200, "dlpoly/hexane200/full.REVCON"}}};
+             {"Ar|epsilon=0.774040 sigma=3.445996", 6528, "tests/data/dlpoly/argon/triclinic/big_argon.CONFIG"}},
+            {SystemType::Water1000, {"tests/data/species/water.toml", 1000, "tests/data/dlpoly/water1000/full.REVCON"}},
+            {SystemType::Hexane200, {"tests/data/species/hexane.toml", 200, "tests/data/dlpoly/hexane200/full.REVCON"}}};
 
         auto &[speciesString, speciePopulation, referenceCoordinates] = systemTypes[systemType];
 
