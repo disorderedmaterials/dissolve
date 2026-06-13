@@ -13,7 +13,7 @@ template <SystemType systemType, GRNode::PartialsMethod method> static void BM_G
 {
     GraphProblem<systemType> problemDef;
 
-    // Create and set upa a GR node
+    // Create and set up a GR node
     auto *grNode = problemDef.createNode("GR");
     problemDef.addEdge({"SetCoordinates", "Configuration", "GR", "Configuration"});
     grNode->setOption("Method", method);
