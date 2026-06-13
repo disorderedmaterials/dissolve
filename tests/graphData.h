@@ -27,7 +27,7 @@ class TestGraph : public DissolveGraph
     public:
     TestGraph() : currentGraph_(this)
     {
-        Node::echo_ = true;
+        setEcho(true);
         PairPotential::setChargeSource(PairPotential::ChargeSource::Automatic);
     }
     ~TestGraph() { exportMermaidGraph(); }

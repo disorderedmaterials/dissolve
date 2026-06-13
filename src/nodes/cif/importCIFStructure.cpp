@@ -464,9 +464,7 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
         return false;
 
     // Configuration
-    echo_ = false;
     structure_.createBox(cellLengths.value(), cellAngles.value(), false);
-    echo_ = true;
 
     const auto &box = structure_.box();
 
