@@ -1,162 +1,50 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-// #include "modules/energy/energy.h"
+#include "kernels/energy.h"
 #include "common/problems.h"
 #include <benchmark/benchmark.h>
 
 namespace Benchmarks
 {
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// std::unique_ptr<EnergyKernel> createEnergyKernel(Problem<speciesType, population> &problemDef)
-// {
-//     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
-//     auto *cfg = problemDef.configuration();
-//     return KernelProducer::energyKernel(cfg, potentialMap);
-// }
-
-template <SystemType systemType>
-static void BM_CalculateEnergy_AtomicWorldEnergy(benchmark::State &state)
+// Single atom energy in different box shapes
+template <SystemType systemType> static void BM_CalculateEnergy_AtomicWorldEnergy(benchmark::State &state)
 {
     GraphProblem<systemType> problemDef;
-    auto energyKernel = createEnergyKernel(problemDef);
+    auto energyKernel = problemDef.createEnergyKernel(problemDef.configuration());
     auto &i = problemDef.configuration()->atom(0);
     for (auto _ : state)
         energyKernel->totalEnergy(i);
 }
-//
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_SpeciesInterAtomicEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     auto &usedSpecies = problemDef.configuration()->speciesPopulations();
-//     auto *species = usedSpecies.back().first;
-//     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
-//     for (auto _ : state)
-//         EnergyModule::pairPotentialEnergy(species, potentialMap);
-// }
-//
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_MoleculeEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     auto energyKernel = createEnergyKernel(problemDef);
-//     const auto mol = problemDef.configuration()->molecules().front();
-//     for (auto _ : state)
-//     {
-//         double molecularEnergy = energyKernel->totalEnergy(*mol).total();
-//         benchmark::DoNotOptimize(molecularEnergy);
-//     }
-// }
-//
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_MoleculeBondEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     const auto &mol = problemDef.configuration()->molecules().front();
-//     const auto &bond = mol->species()->bonds().back();
-//     for (auto _ : state)
-//     {
-//         double energy = bond.energy(1.0);
-//         benchmark::DoNotOptimize(energy);
-//     }
-// }
-//
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_MoleculeTorsionEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     const auto &mol = problemDef.configuration()->molecules().front();
-//     const auto &torsion = mol->species()->torsions().front();
-//     for (auto _ : state)
-//     {
-//         double energy = torsion.energy(109.5);
-//         benchmark::DoNotOptimize(energy);
-//     }
-// }
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_MoleculeAngleEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     const auto &mol = problemDef.configuration()->molecules().front();
-//     const auto &angle = mol->species()->angles().front();
-//     for (auto _ : state)
-//     {
-//         double energy = angle.energy(109.5);
-//         benchmark::DoNotOptimize(energy);
-//     }
-// }
-//
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_TotalIntraMolecularEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
-//     for (auto _ : state)
-//         EnergyModule::intraMolecularEnergy(problemDef.configuration(), potentialMap);
-// }
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_TotalInterAtomicEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
-//     for (auto _ : state)
-//         EnergyModule::pairPotentialEnergy(problemDef.configuration(), potentialMap);
-// }
-//
-// template <SpeciesType speciesType, SpeciesPopulation population>
-// static void BM_CalculateEnergy_TotalInterMolecularEnergy(benchmark::State &state)
-// {
-//     Problem<speciesType, population> problemDef;
-//     const PotentialMap &potentialMap = problemDef.dissolve().potentialMap();
-//     for (auto _ : state)
-//         EnergyModule::interMolecularEnergy(problemDef.configuration(), potentialMap);
-// }
-
-// Small molecule
-
-// Benchmark energy calculation of single atom with world
 BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, SystemType::ArgonCubic);
-// // Benchmark energy of single species
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_SpeciesInterAtomicEnergy, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
-// // Benchmarking individual molecule calculations
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, SpeciesType::SmallMolecule, SpeciesPopulation::Small);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, SpeciesType::SmallMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond);
-// // Benchmark energy calculations of the whole system
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, SpeciesType::SmallMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, SpeciesType::SmallMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, SpeciesType::SmallMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond);
-//
-// // Medium molecule
-//
-// // Benchmark energy calculation of single atom with world
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
-// // Benchmark energy of single species
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_SpeciesInterAtomicEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
-// // Benchmarking individual molecule calculations
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeBondEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeAngleEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeTorsionEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_MoleculeEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Medium)
-//     ->Unit(benchmark::kMillisecond);
-//
-// // Benchmark energy calculations of the whole system
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalIntraMolecularEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond);
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterMolecularEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond)
-//     ->Iterations(5);
-//
-// BENCHMARK_TEMPLATE(BM_CalculateEnergy_TotalInterAtomicEnergy, SpeciesType::MediumMolecule, SpeciesPopulation::Small)
-//     ->Unit(benchmark::kMillisecond)
-//     ->Iterations(5);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, SystemType::ArgonMonoclinic);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_AtomicWorldEnergy, SystemType::ArgonTriclinic);
+
+// Geometric energies
+template <SystemType systemType> static void BM_CalculateEnergy_GeometryEnergy(benchmark::State &state)
+{
+    GraphProblem<systemType> problemDef;
+    auto energyKernel = problemDef.createEnergyKernel(problemDef.configuration());
+    for (auto _ : state)
+        energyKernel->totalEnergy({Kernel::CalculationFlags::ExcludeInterMolecularPairPotential,
+                                   Kernel::CalculationFlags::ExcludeIntraMolecularPairPotential});
+}
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_GeometryEnergy, SystemType::Water1000);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_GeometryEnergy, SystemType::Hexane200);
+
+// Pair potential energies
+template <SystemType systemType> static void BM_CalculateEnergy_PairPotentialEnergy(benchmark::State &state)
+{
+    GraphProblem<systemType> problemDef;
+    auto energyKernel = problemDef.createEnergyKernel(problemDef.configuration());
+    for (auto _ : state)
+        energyKernel->totalEnergy({Kernel::CalculationFlags::ExcludeGeometric});
+}
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_PairPotentialEnergy, SystemType::ArgonCubic);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_PairPotentialEnergy, SystemType::ArgonMonoclinic);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_PairPotentialEnergy, SystemType::ArgonTriclinic);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_PairPotentialEnergy, SystemType::Water1000);
+BENCHMARK_TEMPLATE(BM_CalculateEnergy_PairPotentialEnergy, SystemType::Hexane200);
 } // namespace Benchmarks
 
 BENCHMARK_MAIN();

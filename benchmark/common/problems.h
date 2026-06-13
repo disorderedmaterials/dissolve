@@ -101,12 +101,10 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
              {"Ar|epsilon=0.774040 sigma=3.445996", 6802, "dlpoly/argon/monoclinic/big_argon.CONFIG"}},
             {SystemType::ArgonTriclinic,
              {"Ar|epsilon=0.774040 sigma=3.445996", 6528, "dlpoly/argon/triclinic/big_argon.CONFIG"}},
-            {SystemType::Water1000, {"species/water.toml", 1000, "dlpoly/water1000/full.CONFIG"}},
+            {SystemType::Water1000, {"species/water.toml", 1000, "dlpoly/water1000/full.REVCON"}},
             {SystemType::Hexane200, {"species/hexane.toml", 200, "dlpoly/hexane200/full.REVCON"}}};
 
         auto &[speciesString, speciePopulation, referenceCoordinates] = systemTypes[systemType];
-
-        Messenger::setQuiet(true);
 
         // Create the species node
         auto *speciesNode = dynamic_cast<SpeciesNode *>(createNode("Species"));
@@ -134,16 +132,24 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
         configuration_ = &configurationNode->configuration();
         addEdge({"Configuration", "Configuration", "Insert", "Configuration"});
 
-        // Add SetCoordinatesand ImportDLPOLYStructure
-        auto *setCoordinatesnNode = dynamic_cast<SetCoordinatesNode *>(createNode("SetCoordinates"));
+        // Add SetCoordinates and ImportDLPOLYStructure
+        auto *setCoordinatesNode = dynamic_cast<SetCoordinatesNode *>(createNode("SetCoordinates"));
         auto *importStructureNode = dynamic_cast<ImportDLPOLYStructureNode *>(createNode("ImportDLPOLYStructure"));
         importStructureNode->setOption<std::string>("FilePath", referenceCoordinates);
         addEdge({"ImportDLPOLYStructure", "Structure", "SetCoordinates", "Structure"});
-        addEdge({"Configuration", "Configuration", "SetCoordinates", "Configuration"});
+        addEdge({"Insert", "Configuration", "SetCoordinates", "Configuration"});
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
         PairPotential::setRange(std::min(configuration_->box()->inscribedSphereRadius(), 15.0));
+
+        // Set echo for all nodes
+        Messenger::setQuiet(true);
+        setEcho(false);
+
+        // Run the graph from the SetCoordinates node
+        if (setCoordinatesNode->run() != NodeConstants::ProcessResult::Success)
+            throw(std::runtime_error("Failed to construct problem graph.\n"));
     }
 
     private:
@@ -151,5 +157,7 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
     Species *species_{nullptr};
 
     public:
+    Configuration *configuration() { return configuration_; }
+    Species *species() { return species_; };
 };
 } // namespace Benchmarks
