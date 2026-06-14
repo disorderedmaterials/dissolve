@@ -9,8 +9,6 @@ add_library(
   braggReflection.cpp
   cell.cpp
   cellArray.cpp
-  changeData.cpp
-  changeStore.cpp
   configuration.cpp
   configuration_box.cpp
   configuration_contents.cpp
@@ -75,8 +73,6 @@ add_library(
   braggReflection.h
   cell.h
   cellArray.h
-  changeData.h
-  changeStore.h
   configuration.h
   configurationAtom.cpp
   coreData.h

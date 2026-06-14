@@ -3,7 +3,6 @@
 
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/changeStore.h"
 #include "classes/configurationAtom.h"
 #include "main/dissolve.h"
 
