@@ -28,6 +28,7 @@
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importDLPUtilsPDens.h"
+#include "nodes/importDLPUtilsSurface.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importMoscitoStructure.h"
 #include "nodes/importXYData.h"
@@ -101,6 +102,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportDLPUtilsPDens", makeDerivedNode<ImportDLPUtilsPDensNode>()},
+                  {"ImportDLPUtilsSurface", makeDerivedNode<ImportDLPUtilsSurfaceNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
                   {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
                   {"ImportXYData", makeDerivedNode<ImportXYDataNode>()},
