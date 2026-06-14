@@ -76,7 +76,6 @@ add_library(
   configuration.h
   configurationAtom.cpp
   coreData.h
-  dataSource.h
   empiricalFormula.h
   fragment.h
   histogramSet.h
