@@ -179,6 +179,43 @@ runs:
       mkdir -p install
       cp -r $TEMPD/* install/
 
+  - name: Test
+    if: ${{ inputs.cacheOnly == 'false' }}
+    shell: bash
+    run: |
+      Qt6_DIR="${RUNNER_TEMP}\qt\${{ inputs.qtVersion }}\msvc2019_64"
+      ANTLR_EXE="${RUNNER_TEMP}\antlr-${{ inputs.antlrVersion }}-complete.jar"
+      export PATH="${Qt6_DIR}\bin;$PATH"
+      INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
+      LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
+      INCLUDE="${RUNNER_TEMP}\ftgl-latest\src;$INCLUDE"
+      LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
+      JAVA_EXE="${JAVA_HOME_21_X64}\bin\java.exe"
+      cd build
+
+      # Run windeployqt on the main Dissolve-GUI-QML binary to pull in Qt library requirements
+      ${Qt6_DIR}/bin/windeployqt.exe bin/Dissolve-GUI-QML.exe
+
+      # Assemble external library requirements
+      export DEPLOY_DIR="${GITHUB_WORKSPACE}\build"
+      export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
+      export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
+      #cp -v ${DEPLOY_DIR}/install/bin/* ./bin
+      cp -v ${FREETYPE_DIR}/freetype.dll ./bin
+      cp -v ${FTGL_DIR}/ftgl.dll ./bin
+      cp -v ${DEPLOY_DIR}/direct_deploy/onetbb/bin/tbb12.dll ./bin
+      cp -v ${DEPLOY_DIR}/direct_deploy/onetbb/bin/tbbmalloc.dll ./bin
+      cp -v ${DEPLOY_DIR}/direct_deploy/onetbb/bin/tbbmalloc_proxy.dll ./bin
+      cp -v ${DEPLOY_DIR}/direct_deploy/onetbb/bin/tbbbind_2_5.dll ./bin
+      cp -v ${DEPLOY_DIR}/direct_deploy/antlr4-cppruntime/bin/antlr4-runtime.dll ./bin
+
+      # Build the test binaries
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DANTLR_EXECUTABLE:string=$ANTLR_EXE -DJava_JAVA_EXECUTABLE:string=$JAVA_EXE -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true -DCMAKE_INSTALL_PREFIX:PATH=$TEMPD -DBUILD_TESTS:bool=ON
+      cmake --build . --config Release
+
+      # Run the tests
+      ctest --output-on-failure
+
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v4
