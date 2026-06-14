@@ -5,7 +5,6 @@
 
 #include "base/serialiser.h"
 #include "io/fileAndFormat.h"
-#include "io/import/data2D.h"
 #include "items/list.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
