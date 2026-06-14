@@ -7,13 +7,6 @@
 #include "classes/speciesAtom.h"
 #include <utility>
 
-// Return global index of the atom
-int ConfigurationAtom::globalIndex() const
-{
-    assert(molecule_);
-    return molecule_->globalAtomIndex(this);
-}
-
 /*
  * Location
  */

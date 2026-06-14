@@ -28,7 +28,7 @@ void ChangeData::setAtom(ConfigurationAtom *i)
 ConfigurationAtom *ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
-int ChangeData::atomArrayIndex() const { return atom_->globalIndex(); }
+int ChangeData::atomArrayIndex() const { return atom_->index(); }
 
 // Update local position, and flag as moved
 void ChangeData::updatePosition()
