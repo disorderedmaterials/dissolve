@@ -243,11 +243,101 @@ void Box::scale(Vector3 scaleFactors)
  * Coordinate Conversion
  */
 
+// Convert specified fractional coordinates to real-space coordinates
+inline void Box::toReal(Vector3 &r) const
+{
+    switch (type_)
+    {
+        case BoxType::Cubic:
+            r.x *= a_;
+            r.y *= a_;
+            r.z *= a_;
+            break;
+        case BoxType::Orthorhombic:
+            r.x *= a_;
+            r.y *= b_;
+            r.z *= c_;
+            break;
+        case BoxType::MonoclinicAlpha:
+            r.x *= axesArray_[0];
+            r.y *= axesArray_[4];
+            r.y += r.z * axesArray_[7];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::MonoclinicBeta:
+            r.x *= axesArray_[0];
+            r.x += r.z * axesArray_[6];
+            r.y *= axesArray_[4];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::MonoclinicGamma:
+            r.x *= axesArray_[0];
+            r.x += r.y * axesArray_[3];
+            r.y *= axesArray_[4];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::Triclinic:
+            r.x *= axesArray_[0];
+            r.x += r.y * axesArray_[3] + r.z * axesArray_[6];
+            r.y *= axesArray_[4];
+            r.y += r.z * axesArray_[7];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::None:
+            break; // Single Image performs no conversion
+    }
+}
+
 // Return specified fractional coordinates converted to real-space coordinates
 Vector3 Box::getReal(Vector3 r) const
 {
     toReal(r);
     return r;
+}
+
+// Convert specified real-space coordinates to fractional coordinates
+inline void Box::toFractional(Vector3 &r) const
+{
+    switch (type_)
+    {
+        case BoxType::Cubic:
+            r.x *= ra_;
+            r.y *= ra_;
+            r.z *= ra_;
+            break;
+        case BoxType::Orthorhombic:
+            r.x *= ra_;
+            r.y *= rb_;
+            r.z *= rc_;
+            break;
+        case BoxType::MonoclinicAlpha:
+            r.x *= inverseAxesArray_[0];
+            r.y *= inverseAxesArray_[4];
+            r.y += r.z * inverseAxesArray_[7];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::MonoclinicBeta:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.z * inverseAxesArray_[6];
+            r.y *= inverseAxesArray_[4];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::MonoclinicGamma:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.y * inverseAxesArray_[3];
+            r.y *= inverseAxesArray_[4];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::Triclinic:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
+            r.y *= inverseAxesArray_[4];
+            r.y += r.z * inverseAxesArray_[7];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::None:
+            break; // Single Image performs no conversion
+    }
 }
 
 // Return specified real coordinates converted to fractional coordinates
@@ -315,6 +405,30 @@ Box Box::generate(Vector3 lengths, Vector3 angles)
 
     return Box(*boxType, lengths, angles);
 }
+
+// Generate Boxes of a given type
+Box Box::none() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }
+
+Box Box::cubic(double length) { return Box(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0}); }
+
+Box Box::orthorhombic(const Vector3 lengths) { return Box(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0}); }
+
+Box Box::monoclinicAlpha(const Vector3 lengths, double alpha)
+{
+    return Box(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
+}
+
+Box Box::monoclinicBeta(const Vector3 lengths, double beta)
+{
+    return Box(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
+}
+
+Box Box::monoclinicGamma(const Vector3 lengths, double gamma)
+{
+    return Box(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
+}
+
+Box Box::triclinic(const Vector3 lengths, const Vector3 angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }
 
 // Return radius of largest possible inscribed sphere for box
 double Box::inscribedSphereRadius() const
@@ -396,100 +510,6 @@ Vector3 Box::scaleFactors(double requestedVolume, const std::array<bool, 3> &sca
 }
 
 /*
- * Coordinate Conversion
- */
-
-// Convert specified fractional coordinates to real-space coordinates
-inline void Box::toReal(Vector3 &r) const
-{
-    switch (type_)
-    {
-        case BoxType::Cubic:
-            r.x *= a_;
-            r.y *= a_;
-            r.z *= a_;
-            break;
-        case BoxType::Orthorhombic:
-            r.x *= a_;
-            r.y *= b_;
-            r.z *= c_;
-            break;
-        case BoxType::MonoclinicAlpha:
-            r.x *= axesArray_[0];
-            r.y *= axesArray_[4];
-            r.y += r.z * axesArray_[7];
-            r.z *= axesArray_[8];
-            break;
-        case BoxType::MonoclinicBeta:
-            r.x *= axesArray_[0];
-            r.x += r.z * axesArray_[6];
-            r.y *= axesArray_[4];
-            r.z *= axesArray_[8];
-            break;
-        case BoxType::MonoclinicGamma:
-            r.x *= axesArray_[0];
-            r.x += r.y * axesArray_[3];
-            r.y *= axesArray_[4];
-            r.z *= axesArray_[8];
-            break;
-        case BoxType::Triclinic:
-            r.x *= axesArray_[0];
-            r.x += r.y * axesArray_[3] + r.z * axesArray_[6];
-            r.y *= axesArray_[4];
-            r.y += r.z * axesArray_[7];
-            r.z *= axesArray_[8];
-            break;
-        case BoxType::None:
-            break; // Single Image performs no conversion
-    }
-}
-
-// Convert specified real-space coordinates to fractional coordinates
-inline void Box::toFractional(Vector3 &r) const
-{
-    switch (type_)
-    {
-        case BoxType::Cubic:
-            r.x *= ra_;
-            r.y *= ra_;
-            r.z *= ra_;
-            break;
-        case BoxType::Orthorhombic:
-            r.x *= ra_;
-            r.y *= rb_;
-            r.z *= rc_;
-            break;
-        case BoxType::MonoclinicAlpha:
-            r.x *= inverseAxesArray_[0];
-            r.y *= inverseAxesArray_[4];
-            r.y += r.z * inverseAxesArray_[7];
-            r.z *= inverseAxesArray_[8];
-            break;
-        case BoxType::MonoclinicBeta:
-            r.x *= inverseAxesArray_[0];
-            r.x += r.z * inverseAxesArray_[6];
-            r.y *= inverseAxesArray_[4];
-            r.z *= inverseAxesArray_[8];
-            break;
-        case BoxType::MonoclinicGamma:
-            r.x *= inverseAxesArray_[0];
-            r.x += r.y * inverseAxesArray_[3];
-            r.y *= inverseAxesArray_[4];
-            r.z *= inverseAxesArray_[8];
-            break;
-        case BoxType::Triclinic:
-            r.x *= inverseAxesArray_[0];
-            r.x += r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
-            r.y *= inverseAxesArray_[4];
-            r.y += r.z * inverseAxesArray_[7];
-            r.z *= inverseAxesArray_[8];
-            break;
-        case BoxType::None:
-            break; // Single Image performs no conversion
-    }
-}
-
-/*
  * Minimum Image Calculation
  */
 
@@ -541,29 +561,6 @@ double Box::minimumDistance(const Vector3 &r1, const Vector3 &r2) const { return
 
 // Return minimum image squared distance from r1 to r2
 double Box::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const { return minimumVector(r1, r2).magnitudeSq(); }
-
-Box Box::none() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }
-
-Box Box::cubic(double length) { return Box(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0}); }
-
-Box Box::orthorhombic(const Vector3 lengths) { return Box(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0}); }
-
-Box Box::monoclinicAlpha(const Vector3 lengths, double alpha)
-{
-    return Box(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
-}
-
-Box Box::monoclinicBeta(const Vector3 lengths, double beta)
-{
-    return Box(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
-}
-
-Box Box::monoclinicGamma(const Vector3 lengths, double gamma)
-{
-    return Box(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
-}
-
-Box Box::triclinic(const Vector3 lengths, const Vector3 angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }
 
 /*
  * Serialisation
