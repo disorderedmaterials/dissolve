@@ -149,11 +149,11 @@ class Box : public Serialisable<>
     // Generate Boxes of a given type
     static Box none();
     static Box cubic(double length);
-    static Box orthorhombic(Vector3 lengths);
-    static Box monoclinicAlpha(Vector3 lengths, double alpha);
-    static Box monoclinicBeta(Vector3 lengths, double beta);
-    static Box monoclinicGamma(Vector3 lengths, double gamma);
-    static Box triclinic(Vector3 lengths, Vector3 angles);
+    static Box orthorhombic(const Vector3 &lengths);
+    static Box monoclinicAlpha(const Vector3 &lengths, double alpha);
+    static Box monoclinicBeta(const Vector3 &lengths, double beta);
+    static Box monoclinicGamma(const Vector3 &lengths, double gamma);
+    static Box triclinic(const Vector3 &lengths, const Vector3 &angles);
     // Return radius of largest possible inscribed sphere for box
     double inscribedSphereRadius() const;
     // Return random coordinate inside Box

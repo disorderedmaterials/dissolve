@@ -411,24 +411,24 @@ Box Box::none() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 
 
 Box Box::cubic(double length) { return Box(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0}); }
 
-Box Box::orthorhombic(const Vector3 lengths) { return Box(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0}); }
+Box Box::orthorhombic(const Vector3 &lengths) { return Box(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0}); }
 
-Box Box::monoclinicAlpha(const Vector3 lengths, double alpha)
+Box Box::monoclinicAlpha(const Vector3 &lengths, double alpha)
 {
     return Box(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
 }
 
-Box Box::monoclinicBeta(const Vector3 lengths, double beta)
+Box Box::monoclinicBeta(const Vector3 &lengths, double beta)
 {
     return Box(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
 }
 
-Box Box::monoclinicGamma(const Vector3 lengths, double gamma)
+Box Box::monoclinicGamma(const Vector3 &lengths, double gamma)
 {
     return Box(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
 }
 
-Box Box::triclinic(const Vector3 lengths, const Vector3 angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }
+Box Box::triclinic(const Vector3 &lengths, const Vector3 &angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }
 
 // Return radius of largest possible inscribed sphere for box
 double Box::inscribedSphereRadius() const
