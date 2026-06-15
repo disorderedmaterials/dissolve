@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/orientedSDF.h"
+#include "nodes/importDLPUtilsPDens.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
@@ -39,8 +40,9 @@ TEST(OrientedSDFNodeTest, Benzene)
     ASSERT_TRUE(iterator->setOption<Number>("N", 80));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
-    EXPECT_TRUE(DissolveSystemTest::checkData3D(
-        osdf->sdf(), "SDF",
-        {"dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", Data3DImportFileFormat::Data3DImportFormat::PDens}, 0.09));
+    Data3D referenceData;
+    EXPECT_TRUE(ImportDLPUtilsPDensNode::read(referenceData, "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10"));
+    EXPECT_TRUE(DissolveSystemTest::checkData3D(osdf->sdf(), "SDF", referenceData,
+                                                "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", 0.09));
 }
 } // namespace UnitTest

@@ -5,7 +5,6 @@
 
 #include "classes/coreData.h"
 #include "classes/species.h"
-#include "io/import/data3D.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "main/dissolve.h"
@@ -327,22 +326,6 @@ class DissolveSystemTest
 
         return checkData1D(dataA, nameA, dataB, filePath, tolerance, errorType);
     }
-    // Test Data3D against external file data
-    [[nodiscard]] static bool checkData3D(const Data3D &data, std::string_view name, Data3DImportFileFormat externalFileFormat,
-                                          double tolerance = 5.0e-3,
-                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
-    {
-        Data3D compare;
-        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(compare))
-            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
-
-        // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType, data.values().linearArray(), compare.values().linearArray()).error;
-        auto notOK = std::isnan(error) || error > tolerance;
-        Messenger::print("Data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", name, error,
-                         externalFileFormat.filename(), notOK ? "NOT OK" : "OK", tolerance);
-        return !notOK;
-    }
     // Test Data3D
     [[nodiscard]] static bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
                                           std::string_view nameB, double tolerance = 5.0e-3,
@@ -355,34 +338,6 @@ class DissolveSystemTest
                          nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
 
         return !notOK;
-    }
-    // Test Data3D (by tag and external file data)
-    [[nodiscard]] bool checkData3D(std::string_view tagA, Data3DImportFileFormat externalFileFormat, double tolerance = 5.0e-3,
-                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
-    {
-        auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
-        if (!optDataA)
-            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
-
-        Data3D dataB;
-        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
-            throw(std::runtime_error(std::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
-
-        return checkData3D(*optDataA, tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
-    }
-    // Test Data3D (by tags)
-    [[nodiscard]] bool checkData3D(std::string_view tagA, std::string_view tagB, double tolerance = 5.0e-3,
-                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
-    {
-        auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
-        if (!optDataA)
-            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagA)));
-
-        auto optDataB = dissolve_.processingModuleData().search<const Data3D>(tagB);
-        if (!optDataB)
-            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tagB)));
-
-        return checkData3D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
     // Test SampledVector data
     [[nodiscard]] bool checkSampledVector(std::string_view tag, const std::vector<double> &referenceData,
