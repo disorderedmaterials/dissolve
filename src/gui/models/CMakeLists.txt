@@ -20,7 +20,6 @@ set(models_MOC_HDRS
     moduleLayersModel.h
     moduleModel.h
     modulePaletteModel.h
-    nodePaletteModel.h
     pairPotentialModel.h
     pairPotentialOverrideModel.h
     rangeVectorModel.h
@@ -77,7 +76,6 @@ set(models_SRCS
     moduleLayersModel.cpp
     moduleModel.cpp
     modulePaletteModel.cpp
-    nodePaletteModel.cpp
     pairPotentialModel.cpp
     pairPotentialOverrideModel.cpp
     rangeVectorModel.cpp

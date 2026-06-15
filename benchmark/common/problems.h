@@ -52,12 +52,12 @@ template <SpeciesType speciesType, SpeciesPopulation population> class Problem
         auto *cfg = coreData_.configurations().front().get();
 
         // Set the population of the test species in a predefined Parameters node in the generator
-        auto populationParameter = cfg->generator().rootSequence().parameterExists("Population");
-        populationParameter->setValue(populationSizes[population]);
+        // auto populationParameter = cfg->generator().rootSequence().parameterExists("Population");
+        // populationParameter->setValue(populationSizes[population]);
 
         // Generate the configuration and set the pair potential range accordingly
-        cfg->generate({dissolve_});
-        PairPotential::setRange(std::min(cfg->box()->inscribedSphereRadius(), 15.0));
+        // cfg->generate({dissolve_});
+        // PairPotential::setRange(std::min(cfg->box()->inscribedSphereRadius(), 15.0));
 
         // Prepare the simulation
         dissolve_.prepare();

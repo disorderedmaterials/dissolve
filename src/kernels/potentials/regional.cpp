@@ -26,7 +26,7 @@ RegionalPotentialVoxelKernel::RegionalPotentialVoxelKernel(std::string_view expr
     zFrac_ = expression_.addLocalVariable("zFrac");
 
     // Set the expression
-    expression_.set(expressionString, std::move(parameters));
+    expression_.create(expressionString, parameters);
 
     // Set limits
     minimumValue_ = minimumValue;

@@ -301,7 +301,6 @@ set(BASIC_LINK_LIBS
     import
     neta
     analyser
-    generator
     keywords
     expression
     items

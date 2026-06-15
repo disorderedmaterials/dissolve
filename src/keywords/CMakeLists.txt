@@ -8,7 +8,6 @@ add_library(
   double.cpp
   elementVector.cpp
   expression.cpp
-  expressionVariableVector.cpp
   fileAndFormat.cpp
   function1D.cpp
   integer.cpp
@@ -28,7 +27,6 @@ add_library(
   store.cpp
   vec3Double.cpp
   vec3Integer.cpp
-  vec3NodeValue.cpp
   weightedModuleVector.cpp
   base.h
   bool.h
@@ -40,7 +38,6 @@ add_library(
   elementVector.h
   enumOptions.h
   expression.h
-  expressionVariableVector.h
   fileAndFormat.h
   function1D.h
   integer.h
@@ -63,7 +60,6 @@ add_library(
   vec3Double.h
   vec3Integer.h
   vec3Labels.h
-  vec3NodeValue.h
   weightedModuleVector.h
 )
 

@@ -5,6 +5,7 @@
 
 #include "classes/interactionPotential.h"
 #include "classes/region.h"
+#include "expression/expression.h"
 #include "kernels/potentials/base.h"
 
 // Regional Potential Voxel Kernel
@@ -19,7 +20,7 @@ class RegionalPotentialVoxelKernel
     // Local variables, set when checking voxels
     std::shared_ptr<ExpressionVariable> x_, y_, z_, xFrac_, yFrac_, zFrac_;
     // Expression describing region
-    NodeValue expression_;
+    Expression expression_;
     // Minimum threshold value for function
     double minimumValue_{0.0};
     // Maximum threshold value for function

@@ -10,7 +10,7 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 
-Configuration::Configuration() : { createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false); }
+Configuration::Configuration() { createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false); }
 
 Configuration::~Configuration() { clear(); }
 

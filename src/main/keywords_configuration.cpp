@@ -60,11 +60,6 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 blockDone = true;
                 break;
             case (ConfigurationBlock::GeneratorKeyword):
-                if (!cfg->generator().deserialise(parser, dissolve->coreData()))
-                {
-                    Messenger::error("Errors while reading generator procedure for Configuration.\n");
-                    errorsEncountered = true;
-                }
                 break;
             case (ConfigurationBlock::SizeFactorKeyword):
                 Messenger::warn("The 'SizeFactor' keyword will be deprecated in a future version.\n");

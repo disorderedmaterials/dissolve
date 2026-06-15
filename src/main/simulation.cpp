@@ -42,34 +42,35 @@ bool Dissolve::prepare()
     if (!updatePairPotentials())
         return false;
 
-    // Check Configurations
-    std::set<const Species *> globalUsedSpecies;
-    for (auto &cfg : coreData_.configurations())
-    {
-        // If the configuration is empty, initialise it now
-        if (cfg->nMolecules() == 0)
-        {
-            if (!cfg->initialiseContent({*this}))
-                return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
-        }
-        else if (newPairPotentialRange)
-            cfg->updateCells();
-
-        // Check Box extent against pair potential range
-        auto maxPPRange = cfg->box()->inscribedSphereRadius();
-        if (PairPotential::range() > maxPPRange)
-            return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance ({}).\n",
-                                    PairPotential::range(), maxPPRange);
-
-        // Update species usage for the next check
-        for (auto &[sp, pop] : cfg->speciesPopulations())
-            globalUsedSpecies.emplace(sp);
-    }
-
+    // // Check Configurations
+    // std::set<const Species *> globalUsedSpecies;
+    // for (auto &cfg : coreData_.configurations())
+    // {
+    //     // If the configuration is empty, initialise it now
+    //     if (cfg->nMolecules() == 0)
+    //     {
+    //         if (!cfg->initialiseContent({*this}))
+    //             return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
+    //     }
+    //     else if (newPairPotentialRange)
+    //         cfg->updateCells();
+    //
+    //     // Check Box extent against pair potential range
+    //     auto maxPPRange = cfg->box()->inscribedSphereRadius();
+    //     if (PairPotential::range() > maxPPRange)
+    //         return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance
+    //         ({}).\n",
+    //                                 PairPotential::range(), maxPPRange);
+    //
+    //     // Update species usage for the next check
+    //     for (auto &[sp, pop] : cfg->speciesPopulations())
+    //         globalUsedSpecies.emplace(sp);
+    // }
     // If we have no configurations, check all species regardless
-    if (coreData_.nConfigurations() == 0)
-        for (const auto &sp : coreData_.species())
-            globalUsedSpecies.emplace(sp.get());
+    // if (coreData_.nConfigurations() == 0)
+    // for (const auto &sp : coreData_.species())
+    // globalUsedSpecies.emplace(sp.get());
+    // TODO DISSOLVE2
 
     // Set up all modules and return
     return coreData_.setUpProcessingLayerModules(*this);
