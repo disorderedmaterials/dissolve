@@ -111,26 +111,8 @@ class Box : public Serialisable<>
      * Minimum Image Calculation
      */
     protected:
-    // Wrap fractional coordinate into Box assuming it can be no more than half a fractional Box length away in any one
-    // direction
-    inline void wrap(Vector3 &rFrac) const
-    {
-        if (type_ != BoxType::None)
-        {
-            if (rFrac.x < -0.5)
-                rFrac.x += 1.0;
-            else if (rFrac.x > 0.5)
-                rFrac.x -= 1.0;
-            if (rFrac.y < -0.5)
-                rFrac.y += 1.0;
-            else if (rFrac.y > 0.5)
-                rFrac.y -= 1.0;
-            if (rFrac.z < -0.5)
-                rFrac.z += 1.0;
-            else if (rFrac.z > 0.5)
-                rFrac.z -= 1.0;
-        }
-    }
+    // Wrap fractional coordinate into Box assuming it can be no more than half a fractional Box length away in any direction
+    void wrap(Vector3 &rFrac) const;
 
     public:
     // Return minimum image coordinates of r1 with respect to r2
