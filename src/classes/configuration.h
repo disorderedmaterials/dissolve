@@ -10,7 +10,6 @@
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
-#include "generator/generator.h"
 #include "kernels/potentials/base.h"
 #include "module/layer.h"
 #include <map>
@@ -42,8 +41,6 @@ class Configuration : public Serialisable<const CoreData &>
     private:
     // Name of the Configuration
     std::string name_;
-    // Generator for the Configuration
-    Generator generator_;
     // Temperature of this configuration (K)
     static constexpr double defaultTemperature_ = 300.0;
     double temperature_{defaultTemperature_};
@@ -53,12 +50,6 @@ class Configuration : public Serialisable<const CoreData &>
     void setName(std::string_view name);
     // Return name of the Configuration
     std::string_view name() const;
-    // Return the generator for the Configuration
-    Generator &generator();
-    // Create the Configuration according to its generator
-    bool generate(const GeneratorContext &generatorContext);
-    // Initialise (generate or load) the basic contents of the Configuration
-    bool initialiseContent(const GeneratorContext &generatorContext);
     // Set configuration temperature
     void setTemperature(double t);
     // Return configuration temperature

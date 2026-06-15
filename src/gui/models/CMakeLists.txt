@@ -23,8 +23,6 @@ set(models_MOC_HDRS
     nodePaletteModel.h
     pairPotentialModel.h
     pairPotentialOverrideModel.h
-    generatorModel.h
-    generatorNodeModel.h
     rangeVectorModel.h
     renderableGroupManagerModel.h
     simpleForcefieldModel.h
@@ -63,7 +61,6 @@ set(models_SRCS
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
     dissolveModelImageProvider.h
-    expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
     ffSortFilterModel.cpp
     forcefieldModel.cpp
@@ -83,10 +80,6 @@ set(models_SRCS
     nodePaletteModel.cpp
     pairPotentialModel.cpp
     pairPotentialOverrideModel.cpp
-    generatorModel.cpp
-    generatorModelMimeData.cpp
-    generatorModelMimeData.h
-    generatorNodeModel.cpp
     rangeVectorModel.cpp
     renderableGroupManagerModel.cpp
     simpleForcefieldModel.cpp
@@ -118,7 +111,6 @@ qt6_wrap_cpp(
   atomTypeFilterProxy.h
   atomTypeModel.h
   braggReflectionModel.h
-  expressionVariableVectorModel.h
   forcefieldModel.h
   isotopologueSetModel.h
   pairPotentialModel.h

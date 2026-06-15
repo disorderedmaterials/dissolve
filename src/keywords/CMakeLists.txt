@@ -15,13 +15,9 @@ add_library(
   isotopologueSet.cpp
   layer.cpp
   moduleVector.cpp
-  nodeBranch.cpp
-  nodeUnderlay.cpp
-  nodeValue.cpp
   optionalDouble.cpp
   optionalInt.cpp
   organiser.cpp
-  generator.cpp
   range.cpp
   rangeVector.cpp
   species.cpp
@@ -53,16 +49,9 @@ add_library(
   layer.h
   module.h
   moduleVector.h
-  node.h
-  nodeBranch.h
-  nodeUnderlay.h
-  nodeValue.h
-  nodeValueEnumOptions.h
-  nodeVector.h
   optionalDouble.h
   optionalInt.h
   organiser.h
-  generator.h
   range.h
   species.h
   speciesSite.h

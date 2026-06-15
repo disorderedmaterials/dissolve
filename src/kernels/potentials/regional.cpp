@@ -6,8 +6,6 @@
 #include "classes/configurationAtom.h"
 #include "expression/variable.h"
 #include "kernels/potentials/types.h"
-#include "keywords/double.h"
-#include "keywords/nodeValue.h"
 #include "templates/algorithms.h"
 
 /*
