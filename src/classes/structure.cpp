@@ -6,9 +6,9 @@
 #include "classes/species.h"
 #include "templates/algorithms.h"
 
-Structure::Structure() : box_(std::make_unique<SingleImageBox>()) {}
+Structure::Structure() : box_(Box::none()) {}
 
-Structure::Structure(const Structure &source) { *this = source; }
+Structure::Structure(const Structure &source) : box_(source.box_) { *this = source; }
 
 Structure &Structure::operator=(const Structure &source)
 {
@@ -24,8 +24,7 @@ Structure &Structure::operator=(const Structure &source)
         addBond(bond->i()->index(), bond->j()->index());
 
     // Copy source box
-    if (source.box_)
-        createBox(source.box_->axisLengths(), source.box_->axisAngles(), source.box_->type() == Box::BoxType::NonPeriodic);
+    createBox(source.box_.axisLengths(), source.box_.axisAngles(), source.box_.type() == Box::BoxType::None);
 
     return *this;
 }
@@ -35,7 +34,7 @@ void Structure::clear()
 {
     bonds_.clear();
     atoms_.clear();
-    box_ = std::make_unique<SingleImageBox>();
+    box_ = Box::none();
 }
 
 /*
@@ -215,15 +214,15 @@ void Structure::clearBonds()
  */
 
 // Return periodic box
-const Box *Structure::box() const { return box_.get(); }
+const Box &Structure::box() const { return box_; }
 
 // Remove box definition and revert to single image
-void Structure::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
+void Structure::removeBox() { box_ = Box::none(); }
 
 // Create box definition with specified lengths and angles
 void Structure::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
-    box_ = nonPeriodic ? std::make_unique<SingleImageBox>() : Box::generate(lengths, angles);
+    box_ = Box::generate(lengths, angles, nonPeriodic);
 }
 
 // Create Box definition from axes matrix

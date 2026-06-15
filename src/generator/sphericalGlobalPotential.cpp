@@ -33,7 +33,7 @@ bool SphericalGlobalPotentialGeneratorNode::execute(const GeneratorContext &gene
     // Set origin
     Vector3 origin{origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()};
     if (originIsFractional_)
-        cfg->box()->toReal(origin);
+        cfg->box().toReal(origin);
     pot->setOrigin(origin);
 
     cfg->addGlobalPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));

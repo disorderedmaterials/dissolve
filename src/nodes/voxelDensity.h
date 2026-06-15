@@ -77,7 +77,7 @@ class VoxelDensityNode : public Node
     // Add value to array
     void addValue(const Vector3 &coords, double value);
     // Return atomic coordinates folded into unit cell
-    Vector3 foldedCoordinates(const Vector3 &r, const Box *unitCell);
+    Vector3 foldedCoordinates(const Vector3 &r, const Box &unitCell);
     // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
     double voxelSideLength(double axisLength) const;
     // Run main processing

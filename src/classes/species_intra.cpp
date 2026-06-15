@@ -27,14 +27,14 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(const SpeciesAtom *i, con
 // Remove bonds crossing periodic boundaries
 void Species::removePeriodicBonds()
 {
-    if (box_->type() == Box::BoxType::NonPeriodic)
+    if (box_.type() == Box::BoxType::None)
         return;
 
     auto it = std::remove_if(bonds_.begin(), bonds_.end(),
                              [&](const auto &b)
                              {
                                  // Check the literal vs the minimum image distance between the involved atoms 'i' and 'j'
-                                 return fabs(box_->minimumDistance(b.i()->r(), b.j()->r()) -
+                                 return fabs(box_.minimumDistance(b.i()->r(), b.j()->r()) -
                                              (b.j()->r() - b.i()->r()).magnitude()) > 1.0e-3;
                              });
     if (it != bonds_.end())
@@ -124,13 +124,13 @@ void Species::clearIntramolecularForcefieldTerms()
 }
 
 // Return periodic box
-const Box *Species::box() const { return box_.get(); }
+const Box &Species::box() const { return box_; }
 
 // Remove Box definition and revert to single image
-void Species::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
+void Species::removeBox() { box_ = Box::none(); }
 
 // Create Box definition with specified lengths and angles
 void Species::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
 {
-    box_ = nonPeriodic ? std::make_unique<NonPeriodicBox>() : Box::generate(lengths, angles);
+    box_ = Box::generate(lengths, angles, nonPeriodic);
 }

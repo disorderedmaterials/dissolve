@@ -6,14 +6,6 @@ add_library(
   atomType.cpp
   bondFunctions.cpp
   box.cpp
-  boxCubic.cpp
-  boxMonoclinicAlpha.cpp
-  boxMonoclinicBeta.cpp
-  boxMonoclinicGamma.cpp
-  boxNonPeriodic.cpp
-  boxOrthorhombic.cpp
-  boxSingleImage.cpp
-  boxTriclinic.cpp
   braggReflection.cpp
   cell.cpp
   cellArray.cpp

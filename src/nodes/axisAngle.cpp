@@ -77,7 +77,7 @@ NodeConstants::ProcessResult AxisAngleNode::process()
             if (excludeSameMolecule_ && (siteA->molecule() == siteB->molecule()))
                 continue;
 
-            auto distanceAB = configuration_->box()->minimumDistance(siteA->origin(), siteB->origin());
+            auto distanceAB = configuration_->box().minimumDistance(siteA->origin(), siteB->origin());
             auto axisAngle = siteA->axes().columnAsVec3(axisA_).angleInDegrees(siteB->axes().columnAsVec3(axisB_));
             if (symmetric_ && axisAngle > 90.0)
                 axisAngle = 180.0 - axisAngle;
@@ -102,7 +102,7 @@ NodeConstants::ProcessResult AxisAngleNode::process()
     // Normalise by A site population
     rdfNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density
-    rdfNormaliser.divide(double(b.sites().size()) / configuration_->box()->volume());
+    rdfNormaliser.divide(double(b.sites().size()) / configuration_->box().volume());
     // Normalise by spherical shell
     rdfNormaliser.normaliseBySphericalShell();
 
@@ -127,7 +127,7 @@ NodeConstants::ProcessResult AxisAngleNode::process()
     // Normalise by A site population
     dAxisAngleNormaliser.divide(double(a.sites().size()));
     // Normalise by B site population density
-    dAxisAngleNormaliser.divide(double(b.sites().size()) / configuration_->box()->volume());
+    dAxisAngleNormaliser.divide(double(b.sites().size()) / configuration_->box().volume());
     // Normalise by spherical shell
     dAxisAngleNormaliser.normaliseBySphericalShell();
 

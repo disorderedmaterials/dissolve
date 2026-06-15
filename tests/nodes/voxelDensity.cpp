@@ -103,11 +103,11 @@ TEST_F(VoxelDensityNodeTest, Water)
         // Get box volume
         auto *configurationNode = dynamic_cast<ConfigurationNode *>(testGraph_.findNode("Box"));
         ASSERT_TRUE(configurationNode);
-        auto *box = configurationNode->configuration().box();
+        const auto &box = configurationNode->configuration().box();
 
         // Check for peak value in resulting data
         auto values = voxelDensity_->values();
-        EXPECT_NEAR(values.value(((267 * expectedValue / box->volume()) - range.x) / range.z), 1, 1.0e-6);
+        EXPECT_NEAR(values.value(((267 * expectedValue / box.volume()) - range.x) / range.z), 1, 1.0e-6);
     }
 }
 

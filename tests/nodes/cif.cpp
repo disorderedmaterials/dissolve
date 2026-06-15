@@ -49,12 +49,12 @@ class CIFNodeTest : public ::testing::Test
     {
         ASSERT_TRUE(cfg);
         EXPECT_EQ(cfg->nAtoms(), nAtoms);
-        EXPECT_NEAR(cfg->box()->axisLengths().x, lengths.x, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisLengths().y, lengths.y, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisLengths().z, lengths.z, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisAngles().x, angles.x, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisAngles().y, angles.y, 1.0e-6);
-        EXPECT_NEAR(cfg->box()->axisAngles().z, angles.z, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisLengths().x, lengths.x, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisLengths().y, lengths.y, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisLengths().z, lengths.z, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisAngles().x, angles.x, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisAngles().y, angles.y, 1.0e-6);
+        EXPECT_NEAR(cfg->box().axisAngles().z, angles.z, 1.0e-6);
     }
     // Test molecular species information provided
     void testMolecularSpecies(const CIFMolecularSpecies &molSp, const MolecularSpeciesInfo &info)
@@ -67,7 +67,7 @@ class CIFNodeTest : public ::testing::Test
     void testInstanceConsistency(const CIFMolecularSpecies &molSp, const Species &referenceCoordinates)
     {
         // Get the box from the reference species
-        const auto *box = referenceCoordinates.box();
+        const auto &box = referenceCoordinates.box();
 
         // Loop over instances and ensure their stored atoms overlap exactly with one in the reference system
         for (const auto &instance : molSp.instances())
@@ -78,7 +78,7 @@ class CIFNodeTest : public ::testing::Test
                 auto instanceR = instanceAtom.r();
                 auto spAtomIt = std::find_if(referenceCoordinates.atoms().begin(), referenceCoordinates.atoms().end(),
                                              [box, instanceR](const auto &refAtom)
-                                             { return box->minimumDistance(refAtom.r(), instanceR) < 0.01; });
+                                             { return box.minimumDistance(refAtom.r(), instanceR) < 0.01; });
                 std::cout << std::format("{}  {} {} {}", Elements::symbol(speciesAtom.Z()), instanceAtom.r().x,
                                          instanceAtom.r().y, instanceAtom.r().z)
                           << std::endl;

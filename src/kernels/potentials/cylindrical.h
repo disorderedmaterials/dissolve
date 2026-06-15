@@ -45,7 +45,7 @@ class CylindricalPotential : public ExternalPotential
      */
     public:
     // Calculate energy on specified atom
-    double energy(const ConfigurationAtom &i, const Box *box) const override;
+    double energy(const ConfigurationAtom &i, const Box &box) const override;
     // Calculate force on specified atom, summing in to supplied vector
-    void force(const ConfigurationAtom &i, const Box *box, Vector3 &f) const override;
+    void force(const ConfigurationAtom &i, const Box &box, Vector3 &f) const override;
 };

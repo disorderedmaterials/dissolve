@@ -96,7 +96,7 @@ NodeConstants::ProcessResult BraggNode::process()
     message("\n");
 
     // Store unit cell information
-    const auto unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
+    const auto unitCellVolume = targetConfiguration_->box().volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Calculate Bragg vectors and intensities for the current Configuration
     if (!calculateBraggTerms())
@@ -243,17 +243,17 @@ bool BraggNode::calculateBraggTerms()
     Vector3i braggMaximumHKL;
 
     // Grab some useful values
-    const auto *box = targetConfiguration_->box();
+    const auto &box = targetConfiguration_->box();
     auto nTypes = targetConfiguration_->atomTypePopulations().size();
     auto nAtoms = targetConfiguration_->nAtoms(AtomConstants::Presence::Physical);
     auto &atoms = targetConfiguration_->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
-    auto rAxes = box->reciprocalAxes();
+    auto rAxes = box.reciprocalAxes();
     rAxes.columnMultiply(0, multiplicity_.x);
     rAxes.columnMultiply(1, multiplicity_.y);
     rAxes.columnMultiply(2, multiplicity_.z);
-    auto rLengths = box->reciprocalAxisLengths();
+    auto rLengths = box.reciprocalAxisLengths();
     rLengths.x *= multiplicity_.x;
     rLengths.y *= multiplicity_.y;
     rLengths.z *= multiplicity_.z;

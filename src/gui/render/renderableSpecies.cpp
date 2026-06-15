@@ -63,13 +63,13 @@ void RenderableSpecies::transformValues()
         return;
 
     // For periodic systems use the box - otherwise, loop over Atoms seeking extreme x, y, and z values
-    if (source_->box()->type() != Box::BoxType::NonPeriodic)
+    if (source_->box().type() != Box::BoxType::None)
     {
         // Minimum corresponds to lower left corner of the box at {0,0,0}
         limitsMin_.zero();
 
         // Transform extreme upper right corner from unit to real space to get maxima
-        limitsMax_ = source_->box()->getReal(Vector3(1.0, 1.0, 1.0));
+        limitsMax_ = source_->box().getReal(Vector3(1.0, 1.0, 1.0));
     }
     else if (source_->nAtoms() > 0)
     {
@@ -158,13 +158,13 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        auto periodic = source_->box()->type() != Box::BoxType::NonPeriodic;
+        auto periodic = source_->box().type() != Box::BoxType::None;
         for (const auto &bond : source_->bonds())
         {
             // Determine half delta i-j for bond
             const auto ri = bond.i()->r();
             const auto rj = bond.j()->r();
-            const auto dij = (periodic ? source_->box()->minimumVector(ri, rj) : (rj - ri)) * 0.5;
+            const auto dij = (periodic ? source_->box().minimumVector(ri, rj) : (rj - ri)) * 0.5;
 
             // Draw bond halves
             lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
@@ -195,12 +195,12 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        auto periodic = source_->box()->type() != Box::BoxType::NonPeriodic;
+        auto periodic = source_->box().type() != Box::BoxType::None;
         for (const auto &bond : source_->bonds())
         {
             if (periodic)
                 speciesAssembly_.createCylinderBond(
-                    bondPrimitive_, bond.i()->r(), bond.j()->r(), source_->box()->minimumVector(bond.i()->r(), bond.j()->r()),
+                    bondPrimitive_, bond.i()->r(), bond.j()->r(), source_->box().minimumVector(bond.i()->r(), bond.j()->r()),
                     ElementColours::colour(bond.j()->Z()), ElementColours::colour(bond.i()->Z()), true, spheresBondRadius_);
             else
                 speciesAssembly_.createCylinderBond(bondPrimitive_, bond.i()->r(), bond.j()->r(), bond.j()->r() - bond.i()->r(),
@@ -210,10 +210,10 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
     }
 
     // Add unit cell
-    if (source_->box()->type() != Box::BoxType::NonPeriodic)
+    if (source_->box().type() != Box::BoxType::None)
     {
         A.setIdentity();
-        A = source_->box()->axes();
+        A = source_->box().axes();
         unitCellAssembly_.add(unitCellPrimitive_, A, colourBlack);
     }
 }

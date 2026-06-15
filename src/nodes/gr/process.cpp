@@ -53,7 +53,7 @@ NodeConstants::ProcessResult GRNode::process()
     }
 
     // Check range
-    auto grRange = targetConfiguration_->box()->inscribedSphereRadius();
+    auto grRange = targetConfiguration_->box().inscribedSphereRadius();
     if (!requestedRange_)
         message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", targetConfiguration_->name(), grRange);
     else

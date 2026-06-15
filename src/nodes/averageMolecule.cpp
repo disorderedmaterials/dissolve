@@ -67,7 +67,7 @@ NodeConstants::ProcessResult AverageMoleculeNode::process()
     }
 
     // Grab Box pointer
-    const auto *box = configuration_->box();
+    const auto &box = configuration_->box();
 
     // Get the site stack
     const auto *stack = configuration_->siteStack(targetSite_);
@@ -85,7 +85,7 @@ NodeConstants::ProcessResult AverageMoleculeNode::process()
         // Loop over atoms, taking delta position with origin, and rotating into local axes
         for (auto &&[i, x, y, z] : zip(s.molecule()->atoms(), rx, ry, rz))
         {
-            auto r = inverseAxes * box->minimumVector(s.origin(), i->r());
+            auto r = inverseAxes * box.minimumVector(s.origin(), i->r());
             x = r.x;
             y = r.y;
             z = r.z;

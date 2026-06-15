@@ -31,13 +31,13 @@ class RegionalPotentialVoxelKernel
 
     private:
     // Set voxel position variables
-    void setVoxelPosition(const Box *box, Vector3 r) const;
+    void setVoxelPosition(const Box &box, Vector3 r) const;
     // Return current value of function, applying any threshold penalty
     double functionValue() const;
 
     public:
     // Calculate and store energy and force for the specified voxel centre
-    void energyAndForce(const Box *box, const Vector3 &r, double &energy, Vector3 &force) const;
+    void energyAndForce(const Box &box, const Vector3 &r, double &energy, Vector3 &force) const;
 };
 
 // Regional Potential
@@ -65,11 +65,11 @@ class RegionalPotential : public ExternalPotential
         return kernelGenerator;
     }
     // Return voxel coordinates of supplied atom
-    std::tuple<int, int, int> voxelIndices(const ConfigurationAtom &i, const Box *box) const;
+    std::tuple<int, int, int> voxelIndices(const ConfigurationAtom &i, const Box &box) const;
 
     public:
     // Set up potential for supplied box
-    bool setUp(const Box *box, double voxelSize,
+    bool setUp(const Box &box, double voxelSize,
                const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator);
     // Return functional form of the potential, as a string
     const std::string formString() const override;
@@ -81,7 +81,7 @@ class RegionalPotential : public ExternalPotential
      */
     public:
     // Calculate energy on specified atom
-    double energy(const ConfigurationAtom &i, const Box *box) const override;
+    double energy(const ConfigurationAtom &i, const Box &box) const override;
     // Calculate force on specified atom, summing in to supplied vector
-    void force(const ConfigurationAtom &i, const Box *box, Vector3 &f) const override;
+    void force(const ConfigurationAtom &i, const Box &box, Vector3 &f) const override;
 };

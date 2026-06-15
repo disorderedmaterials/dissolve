@@ -89,7 +89,7 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     }
 
     auto *cfg = generatorContext.configuration();
-    const auto *box = cfg->box();
+    const auto &box = cfg->box();
 
     // Set / adjust target box volume
     adjustBoxVolume(cfg, ipop, sp->nAtoms(AtomConstants::Presence::Physical) + sp->nAtoms(AtomConstants::Presence::Physical),
@@ -114,13 +114,13 @@ bool AddOnSphereGeneratorNode::execute(const GeneratorContext &generatorContext)
     switch (positioningType_)
     {
         case (AddGeneratorNode::PositioningType::Random):
-            sphereCentre = box->getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
+            sphereCentre = box.getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
             break;
         case (AddGeneratorNode::PositioningType::Region):
             sphereCentre = region_->region().randomCoordinate();
             break;
         case (AddGeneratorNode::PositioningType::Central):
-            sphereCentre = box->getReal({0.5, 0.5, 0.5});
+            sphereCentre = box.getReal({0.5, 0.5, 0.5});
             break;
         case (AddGeneratorNode::PositioningType::Current):
             break;

@@ -68,7 +68,7 @@ NodeConstants::ProcessResult SDFNode::process()
             if (siteB == siteA)
                 continue;
 
-            auto vBA = configuration_->box()->minimumVector(siteA->origin(), siteB->origin());
+            auto vBA = configuration_->box().minimumVector(siteA->origin(), siteB->origin());
             vBA = siteA->axes().transposeMultiply(vBA);
             histogram_->bin(vBA);
         }

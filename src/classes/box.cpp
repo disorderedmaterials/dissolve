@@ -3,17 +3,14 @@
 
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "math/data1D.h"
-#include "math/interpolator.h"
 #include "math/mathFunc.h"
-#include <algorithm>
 
 Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     : type_(boxType), a_(lengths.x), b_(lengths.y), c_(lengths.z), ra_(1.0 / lengths.x), rb_(1.0 / lengths.y),
       rc_(1.0 / lengths.z), alpha_(angles.x), beta_(angles.y), gamma_(angles.z)
 {
     // Set periodicity flags
-    periodic_ = {type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic, type_ != BoxType::NonPeriodic};
+    periodic_ = {type_ != BoxType::None, type_ != BoxType::None, type_ != BoxType::None};
 
     // Construct axes matrix
     axes_.setIdentity();
@@ -69,6 +66,27 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
 
+Box::Box(const Box &other)
+{
+    type_ = other.type_;
+    a_ = other.a_;
+    b_ = other.b_;
+    c_ = other.c_;
+    ra_ = other.ra_;
+    rb_ = other.rb_;
+    rc_ = other.rc_;
+    alpha_ = other.alpha_;
+    beta_ = other.beta_;
+    gamma_ = other.gamma_;
+    axes_ = other.axes_;
+    axesArray_ = other.axesArray_;
+    inverseAxes_ = other.inverseAxes_;
+    inverseAxesArray_ = other.inverseAxesArray_;
+    reciprocalAxes_ = other.reciprocalAxes_;
+    volume_ = other.volume_;
+    reciprocalVolume_ = other.reciprocalVolume_;
+}
+
 /*
  * Basic Definition
  */
@@ -76,7 +94,7 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::NonPeriodic, "NonPeriodic"},
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::BoxType::None, "None"},
                                                  {Box::BoxType::Cubic, "Cubic"},
                                                  {Box::BoxType::Orthorhombic, "Orthorhombic"},
                                                  {Box::BoxType::MonoclinicAlpha, "MonoclinicAlpha"},
@@ -282,29 +300,19 @@ double Box::torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &
  */
 
 // Generate a suitable Box given the supplied relative lengths, angles
-std::unique_ptr<Box> Box::generate(Vector3 lengths, Vector3 angles)
+Box Box::generate(Vector3 lengths, std::optional<Vector3> angles, bool nonPeriodic)
+{
+    if (!angles)
+        angles = {90.0, 90.0, 90.0};
+    return nonPeriodic ? Box(Box::BoxType::None, lengths, *angles) : Box::generate(lengths, *angles);
+}
+Box Box::generate(Vector3 lengths, Vector3 angles)
 {
     auto boxType = type(lengths, angles);
     if (!boxType)
         Messenger::exception("Suitable box type couldn't be determined, so no Box can be generated.");
 
-    switch (*boxType)
-    {
-        case (BoxType::Cubic):
-            return std::make_unique<CubicBox>(lengths.x);
-        case (BoxType::Orthorhombic):
-            return std::make_unique<OrthorhombicBox>(lengths);
-        case (BoxType::MonoclinicAlpha):
-            return std::make_unique<MonoclinicAlphaBox>(lengths, angles.x);
-        case (BoxType::MonoclinicBeta):
-            return std::make_unique<MonoclinicBetaBox>(lengths, angles.y);
-        case (BoxType::MonoclinicGamma):
-            return std::make_unique<MonoclinicGammaBox>(lengths, angles.z);
-        case (BoxType::Triclinic):
-            return std::make_unique<TriclinicBox>(lengths, angles);
-        default:
-            Messenger::exception("Unrecognised box type encountered - generation failed.");
-    }
+    return Box(*boxType, lengths, angles);
 }
 
 // Return radius of largest possible inscribed sphere for box
@@ -394,3 +402,144 @@ void Box::serialise(std::string tag, SerialisedValue &target) const
     box["angles"] = {alpha_, beta_, gamma_};
     box["nonPeriodic"] = {!std::get<0>(periodic_), !std::get<1>(periodic_), !std::get<2>(periodic_)};
 }
+
+void Box::toReal(Vector3 &r) const
+{
+    switch (type_)
+    {
+        case BoxType::Cubic:
+            r.x *= a_;
+            r.y *= a_;
+            r.z *= a_;
+            break;
+        case BoxType::Orthorhombic:
+            r.x *= a_;
+            r.y *= b_;
+            r.z *= c_;
+            break;
+        case BoxType::MonoclinicAlpha:
+            r.x *= axesArray_[0];
+            r.y *= axesArray_[4];
+            r.y += r.z * axesArray_[7];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::MonoclinicBeta:
+            r.x *= axesArray_[0];
+            r.x += r.z * axesArray_[6];
+            r.y *= axesArray_[4];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::MonoclinicGamma:
+            r.x *= axesArray_[0];
+            r.x += r.y * axesArray_[3];
+            r.y *= axesArray_[4];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::Triclinic:
+            r.x *= axesArray_[0];
+            r.x += r.y * axesArray_[3] + r.z * axesArray_[6];
+            r.y *= axesArray_[4];
+            r.y += r.z * axesArray_[7];
+            r.z *= axesArray_[8];
+            break;
+        case BoxType::None:
+            break; // Single Image performs no conversion
+    }
+}
+
+// Convert specified real-space coordinates to fractional coordinates
+void Box::toFractional(Vector3 &r) const
+{
+    switch (type_)
+    {
+        case BoxType::Cubic:
+            r.x *= ra_;
+            r.y *= ra_;
+            r.z *= ra_;
+            break;
+        case BoxType::Orthorhombic:
+            r.x *= ra_;
+            r.y *= rb_;
+            r.z *= rc_;
+            break;
+        case BoxType::MonoclinicAlpha:
+            r.x *= inverseAxesArray_[0];
+            r.y *= inverseAxesArray_[4];
+            r.y += r.z * inverseAxesArray_[7];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::MonoclinicBeta:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.z * inverseAxesArray_[6];
+            r.y *= inverseAxesArray_[4];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::MonoclinicGamma:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.y * inverseAxesArray_[3];
+            r.y *= inverseAxesArray_[4];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::Triclinic:
+            r.x *= inverseAxesArray_[0];
+            r.x += r.y * inverseAxesArray_[3] + r.z * inverseAxesArray_[6];
+            r.y *= inverseAxesArray_[4];
+            r.y += r.z * inverseAxesArray_[7];
+            r.z *= inverseAxesArray_[8];
+            break;
+        case BoxType::None:
+            break; // Single Image performs no conversion
+    }
+}
+
+// Return minimum image coordinates of r1 with respect to r2
+Vector3 Box::minimumImage(const Vector3 &r1, const Vector3 &r2) const
+{
+    Vector3 v21 = r1 - r2;
+
+    toFractional(v21);
+    wrap(v21);
+    toReal(v21);
+    v21 += r2;
+
+    return v21;
+}
+
+// Return minimum image vector from r1 to r2
+Vector3 Box::minimumVector(const Vector3 &r1, const Vector3 &r2) const
+{
+    Vector3 v12 = r2 - r1;
+    toFractional(v12);
+    wrap(v12);
+    toReal(v12);
+    return v12;
+}
+
+// Return minimum image distance from r1 to r2
+double Box::minimumDistance(const Vector3 &r1, const Vector3 &r2) const { return minimumVector(r1, r2).magnitude(); }
+
+// Return minimum image squared distance from r1 to r2
+double Box::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const { return minimumVector(r1, r2).magnitudeSq(); }
+
+Box Box::none() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }
+
+Box Box::cubic(double length) { return Box(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0}); }
+
+Box Box::orthorhombic(const Vector3 lengths) { return Box(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0}); }
+
+Box Box::monoclinicAlpha(const Vector3 lengths, double alpha)
+{
+    return Box(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
+}
+
+Box Box::monoclinicBeta(const Vector3 lengths, double beta)
+{
+    return Box(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
+}
+
+Box Box::monoclinicGamma(const Vector3 lengths, double gamma)
+{
+    return Box(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
+}
+
+Box Box::triclinic(const Vector3 lengths, const Vector3 angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }

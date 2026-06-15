@@ -40,13 +40,13 @@ bool BoxGeneratorNode::execute(const GeneratorContext &generatorContext)
                                                 {angles_.x.asDouble(), angles_.y.asDouble(), angles_.z.asDouble()},
                                                 nonPeriodic_);
 
-    auto *box = generatorContext.configuration()->box();
-    Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", box->volume(), box->reciprocalVolume());
-    auto lengths = box->axisLengths();
-    auto angles = box->axisAngles();
+    const auto &box = generatorContext.configuration()->box();
+    Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", box.volume(), box.reciprocalVolume());
+    auto lengths = box.axisLengths();
+    auto angles = box.axisAngles();
     Messenger::print(
         "[Box] Type is {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = {:10.4e} gamma = {:10.4e}\n",
-        Box::boxTypes().keyword(box->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y, angles.z);
+        Box::boxTypes().keyword(box.type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y, angles.z);
 
     return true;
 }

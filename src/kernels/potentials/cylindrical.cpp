@@ -58,10 +58,10 @@ const std::string CylindricalPotential::formParametersString() const { return in
  */
 
 // Calculate energy on specified atom
-double CylindricalPotential::energy(const ConfigurationAtom &i, const Box *box) const
+double CylindricalPotential::energy(const ConfigurationAtom &i, const Box &box) const
 {
     // Vector between the position of the atom and the origin
-    auto v = box->minimumVector(i.r(), origin_);
+    auto v = box.minimumVector(i.r(), origin_);
 
     // See: A Programmers Geometry, Bowyer and Woodwark, Butterworths (pub.), 1983, p99
 
@@ -82,10 +82,10 @@ double CylindricalPotential::energy(const ConfigurationAtom &i, const Box *box) 
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void CylindricalPotential::force(const ConfigurationAtom &i, const Box *box, Vector3 &f) const
+void CylindricalPotential::force(const ConfigurationAtom &i, const Box &box, Vector3 &f) const
 {
     // Vector between the position of the atom and the origin
-    auto v = box->minimumVector(i.r(), origin_);
+    auto v = box.minimumVector(i.r(), origin_);
 
     // See: A Programmers Geometry, Bowyer and Woodwark, Butterworths (pub.), 1983, p99
 

@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "classes/potentialMap.h"
 
-KernelBase::KernelBase(const Box *box, const PotentialMap &potentialMap) : potentialMap_(potentialMap), box_(box)
+KernelBase::KernelBase(const Box &box, const PotentialMap &potentialMap) : potentialMap_(potentialMap), box_(box)
 {
     cutoffDistanceSquared_ = PairPotential::range() * PairPotential::range();
 }
