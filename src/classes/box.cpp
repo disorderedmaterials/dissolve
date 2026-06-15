@@ -394,16 +394,12 @@ Vector3 Box::scaleFactors(double requestedVolume, const std::array<bool, 3> &sca
     return {scaleX ? ratio : 1.0, scaleY ? ratio : 1.0, scaleZ ? ratio : 1.0};
 }
 
-// Express as a serialisable value
-void Box::serialise(std::string tag, SerialisedValue &target) const
-{
-    auto &box = target[tag];
-    box["lengths"] = {a_, b_, c_};
-    box["angles"] = {alpha_, beta_, gamma_};
-    box["nonPeriodic"] = {!std::get<0>(periodic_), !std::get<1>(periodic_), !std::get<2>(periodic_)};
-}
+/*
+ * Coordinate Conversion
+ */
 
-void Box::toReal(Vector3 &r) const
+// Convert specified fractional coordinates to real-space coordinates
+inline void Box::toReal(Vector3 &r) const
 {
     switch (type_)
     {
@@ -448,7 +444,7 @@ void Box::toReal(Vector3 &r) const
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-void Box::toFractional(Vector3 &r) const
+inline void Box::toFractional(Vector3 &r) const
 {
     switch (type_)
     {
@@ -567,3 +563,16 @@ Box Box::monoclinicGamma(const Vector3 lengths, double gamma)
 }
 
 Box Box::triclinic(const Vector3 lengths, const Vector3 angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }
+
+/*
+ * Serialisation
+ */
+
+// Express as a serialisable value
+void Box::serialise(std::string tag, SerialisedValue &target) const
+{
+    auto &box = target[tag];
+    box["lengths"] = {a_, b_, c_};
+    box["angles"] = {alpha_, beta_, gamma_};
+    box["nonPeriodic"] = {!std::get<0>(periodic_), !std::get<1>(periodic_), !std::get<2>(periodic_)};
+}

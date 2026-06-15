@@ -99,11 +99,11 @@ class Box : public Serialisable<>
      */
     public:
     // Convert specified fractional coordinates to real-space coordinates
-    inline void toReal(Vector3 &r) const;
+    void toReal(Vector3 &r) const;
     // Return specified fractional coordinates converted to real-space coordinates
     Vector3 getReal(Vector3 r) const;
     // Convert specified real-space coordinates to fractional coordinates
-    inline void toFractional(Vector3 &r) const;
+    void toFractional(Vector3 &r) const;
     // Return specified real coordinates converted to fractional coordinates
     Vector3 getFractional(Vector3 r) const;
 
