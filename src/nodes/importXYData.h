@@ -5,11 +5,11 @@
 
 #include "nodes/node.h"
 
-class ImportData1DNode : public Node
+class ImportXYDataNode : public Node
 {
     public:
-    ImportData1DNode(Graph *parentGraph);
-    ~ImportData1DNode() override = default;
+    ImportXYDataNode(Graph *parentGraph);
+    ~ImportXYDataNode() override = default;
 
     /*
      * Definition

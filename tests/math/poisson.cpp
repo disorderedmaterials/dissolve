@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/poissonFit.h"
-#include "nodes/importData1D.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -50,7 +49,7 @@ TEST(Poisson, WaterInpA)
 {
     // Prepare a dummy dataset with the correct x axis for the Poisson reconstruction
     Data1D dummyData;
-    ASSERT_TRUE(ImportData1DNode::read(dummyData, "epsr25/water1000-neutron/FQ.delfit", 1, 2, 0, true));
+    ASSERT_TRUE(ImportXYDataNode::read(dummyData, "epsr25/water1000-neutron/FQ.delfit", 1, 2, 0, true));
     dummyData.zero();
 
     // Set targets
@@ -64,7 +63,7 @@ TEST(Poisson, BenzeneInpA)
 {
     // Prepare a dummy dataset with the correct x axis for the Poisson reconstruction
     Data1D dummyData;
-    ASSERT_TRUE(ImportData1DNode::read(dummyData, "epsr25/benzene200-neutron/FQ.delfit", 1, 2, 0, true));
+    ASSERT_TRUE(ImportXYDataNode::read(dummyData, "epsr25/benzene200-neutron/FQ.delfit", 1, 2, 0, true));
     dummyData.zero();
 
     // Set targets

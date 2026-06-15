@@ -27,9 +27,9 @@
 #include "nodes/histogramCN.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
-#include "nodes/importData1D.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importMoscitoStructure.h"
+#include "nodes/importXYData.h"
 #include "nodes/importXYZStructure.h"
 #include "nodes/importXYZTrajectory.h"
 #include "nodes/insert.h"
@@ -97,11 +97,11 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Graph", makeDerivedNode<Graph>()},
                   {"GR", makeDerivedNode<GRNode>()},
                   {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
-                  {"ImportData1D", makeDerivedNode<ImportData1DNode>()},
                   {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
                   {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
+                  {"ImportXYData", makeDerivedNode<ImportXYDataNode>()},
                   {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},

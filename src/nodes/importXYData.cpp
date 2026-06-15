@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/importData1D.h"
+#include "nodes/importXYData.h"
 #include "base/lineParser.h"
 #include "math/data1D.h"
 #include "math/filters.h"
-#include "nodes/dissolve.h"
 
-ImportData1DNode::ImportData1DNode(Graph *parentGraph) : Node(parentGraph)
+ImportXYDataNode::ImportXYDataNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
     addOption<std::string>("FilePath", "File path", filePath_);
@@ -25,11 +24,11 @@ ImportData1DNode::ImportData1DNode(Graph *parentGraph) : Node(parentGraph)
     addOutput<std::optional<Data1D>>("Data", "Imported data", data_);
 }
 
-std::string_view ImportData1DNode::type() const { return "Data1DImport"; }
+std::string_view ImportXYDataNode::type() const { return "Data1DImport"; }
 
-std::string_view ImportData1DNode::summary() const { return "Import 1D data."; }
+std::string_view ImportXYDataNode::summary() const { return "Import 1D data."; }
 
-NodeConstants::ProcessResult ImportData1DNode::process()
+NodeConstants::ProcessResult ImportXYDataNode::process()
 {
     // Clear the structure, and initialise error arrays if necessary
     data_.emplace();
@@ -68,7 +67,7 @@ NodeConstants::ProcessResult ImportData1DNode::process()
 }
 
 // Read data specified
-bool ImportData1DNode::read(Data1D &data, std::string filePath, int xColumn, int yColumn, int errorColumn, bool histogram)
+bool ImportXYDataNode::read(Data1D &data, std::string filePath, int xColumn, int yColumn, int errorColumn, bool histogram)
 {
     // Clear the data
     data.clear();

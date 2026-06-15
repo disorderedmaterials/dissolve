@@ -18,7 +18,7 @@
 #include "math/sampledVector.h"
 #include "nodes/energy.h"
 #include "nodes/graph.h"
-#include "nodes/importData1D.h"
+#include "nodes/importXYData.h"
 #include "nodes/serialisableData.h"
 #include "nodes/species.h"
 #include <gtest/gtest.h>
@@ -320,7 +320,7 @@ class DissolveSystemTest
                                           Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
         Data1D dataB;
-        if (!ImportData1DNode::read(dataB, filePath, xColumn, yColumn))
+        if (!ImportXYDataNode::read(dataB, filePath, xColumn, yColumn))
         {
             std::cout << std::format("Failed to read data from '{}'\n", filePath);
             return false;
