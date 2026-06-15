@@ -83,6 +83,7 @@ Box::Box(const Box &other)
     inverseAxes_ = other.inverseAxes_;
     inverseAxesArray_ = other.inverseAxesArray_;
     reciprocalAxes_ = other.reciprocalAxes_;
+    periodic_ = other.periodic_;
     volume_ = other.volume_;
     reciprocalVolume_ = other.reciprocalVolume_;
 }
