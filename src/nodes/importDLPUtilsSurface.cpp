@@ -13,9 +13,9 @@ ImportDLPUtilsSurfaceNode::ImportDLPUtilsSurfaceNode(Graph *parentGraph) : Node(
     addOutput<std::optional<Data2D>>("Data", "Imported data", data_);
 }
 
-std::string_view ImportDLPUtilsSurfaceNode::type() const { return "ImportDLPUtilsSurf2D"; }
+std::string_view ImportDLPUtilsSurfaceNode::type() const { return "ImportDLPUtilsSurface"; }
 
-std::string_view ImportDLPUtilsSurfaceNode::summary() const { return "Import 1D data."; }
+std::string_view ImportDLPUtilsSurfaceNode::summary() const { return "Import DLPUtils 2D surface data (.surf)"; }
 
 NodeConstants::ProcessResult ImportDLPUtilsSurfaceNode::process()
 {
