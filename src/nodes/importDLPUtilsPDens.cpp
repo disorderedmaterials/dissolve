@@ -1,12 +1,35 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "nodes/importDLPUtilsPDens.h"
 #include "base/lineParser.h"
-#include "io/import/data3D.h"
-#include "math/data3D.h"
 
-// Read pdens data from specified file
-bool Data3DImportFileFormat::importPDens(LineParser &parser, Data3D &data)
+ImportDLPUtilsPDensNode::ImportDLPUtilsPDensNode(Graph *parentGraph) : Node(parentGraph)
+{
+    // Options
+    addOption<std::string>("FilePath", "File path", filePath_);
+
+    // Outputs
+    addOutput<std::optional<Data3D>>("Data", "Imported data", data_);
+}
+
+std::string_view ImportDLPUtilsPDensNode::type() const { return "ImportDLPUtilsPDens"; }
+
+std::string_view ImportDLPUtilsPDensNode::summary() const { return "Import DLPUtils 3D pdens data"; }
+
+NodeConstants::ProcessResult ImportDLPUtilsPDensNode::process()
+{
+    // Create the data
+    data_.emplace();
+
+    if (!read(*data_, filePath_))
+        return error("Failed to read DLPUtils Surface data from file '{}'.\n", filePath_);
+
+    return NodeConstants::ProcessResult::Success;
+}
+
+// Read data specified
+bool ImportDLPUtilsPDensNode::read(Data3D &data, std::string filePath)
 {
     /*
      * PDens format is the following:
@@ -17,6 +40,12 @@ bool Data3DImportFileFormat::importPDens(LineParser &parser, Data3D &data)
      * Line 4 : loop order (e.g. 'zyx')
      * Line 5+: data (N = gridx*gridy*gridz)
      */
+    data.clear();
+
+    // Open file and check that we're OK to proceed importing from it
+    LineParser parser;
+    if ((!parser.openInput(filePath)) || (!parser.isFileGoodForReading()))
+        return false;
 
     // Get array dimensioos
     if (parser.getArgsDelim() != LineParser::Success)

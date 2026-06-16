@@ -27,6 +27,7 @@
 #include "nodes/histogramCN.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
+#include "nodes/importDLPUtilsPDens.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importMoscitoStructure.h"
 #include "nodes/importXYData.h"
@@ -99,6 +100,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
                   {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
+                  {"ImportDLPUtilsPDens", makeDerivedNode<ImportDLPUtilsPDensNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
                   {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
                   {"ImportXYData", makeDerivedNode<ImportXYDataNode>()},
