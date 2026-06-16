@@ -27,6 +27,8 @@ class ImportDLPOLYStructureNode : public Node
     std::string filePath_;
     // Structure
     Structure structure_;
+    // Forces
+    std::vector<Vector3> forces_;
 
     /*
      * Processing
@@ -37,5 +39,6 @@ class ImportDLPOLYStructureNode : public Node
 
     public:
     // Read structure from the specified file parser
-    static NodeConstants::ProcessResult read(LineParser &parser, int keytrj, int imcon, int nAtoms, Structure &structure);
+    static NodeConstants::ProcessResult read(LineParser &parser, int keytrj, int imcon, int nAtoms, Structure &structure,
+                                             OptionalReferenceWrapper<std::vector<Vector3>> forces = {});
 };

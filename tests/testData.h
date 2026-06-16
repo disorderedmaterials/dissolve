@@ -8,7 +8,6 @@
 #include "data/elements.h"
 #include "io/import/data1D.h"
 #include "io/import/data3D.h"
-#include "io/import/forces.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "main/dissolve.h"
@@ -449,14 +448,6 @@ class DissolveSystemTest
         for (auto n = 0; n < A.size(); ++n)
             checkVec3(A[n], B[n], tolerance);
     }
-    // Test Vec3 vector data (by tag and external data)
-    void checkVec3Vector(std::string_view tag, ForceImportFileFormat externalForces, double tolerance)
-    {
-        auto &vec = dissolve_.processingModuleData().value<std::vector<Vector3>>(tag);
-        std::vector<Vector3> B(vec.size());
-        ASSERT_TRUE(externalForces.importData(B));
-        checkVec3Vector(vec, B, tolerance);
-    }
     // Test species atom type
     static void checkSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
     {
@@ -649,13 +640,12 @@ void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vect
         }
 }
 
-// Check supplied forces against external reference values
+// Check consistency of supplied forces
 void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
-                                    ForceImportFileFormat format, double maxDeviation = 1.0e-3)
+                                    const std::vector<Vector3> &referenceForces, double maxDeviation = 1.0e-3)
 {
-    // Load external reference forces
-    std::vector<Vector3> referenceForces(ppForces.size());
-    ASSERT_TRUE(format.importData(referenceForces));
+    ASSERT_TRUE(ppForces.size() == geomForces.size());
+    ASSERT_TRUE(ppForces.size() == referenceForces.size());
 
     for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
     {
@@ -665,5 +655,4 @@ void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const 
         EXPECT_NEAR(calculatedForce.z, referenceForce.z, maxDeviation);
     }
 }
-
 } // namespace UnitTest

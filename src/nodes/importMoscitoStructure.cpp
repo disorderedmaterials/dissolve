@@ -10,6 +10,7 @@ ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Nod
 
     // Outputs
     addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Forces", "Atomic forces (if present)", forces_);
 }
 
 std::string_view ImportMoscitoStructureNode::type() const { return "ImportMoscitoStructure"; }
@@ -18,13 +19,6 @@ std::string_view ImportMoscitoStructureNode::summary() const { return "Import a 
 
 NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
 {
-    structure_.clear();
-
-    // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
-        return error("Couldn't open file '{}' for loading XYZ data.\n", filePath_);
-
     /*
      * Import Moscito coordinate information through the specified line parser.
      * Structure file format is as follows (see http://139.30.122.11/MOSCITO/manual4.pdf):
@@ -42,6 +36,15 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
      *
      * Units are:  distance = nm, velocities = nm ps-1, forces = kJ mol-1 nm-1
      */
+
+    // Clear storage objects
+    structure_.clear();
+    forces_.clear();
+
+    // Open file and check that we're OK to proceed importing from it
+    LineParser parser;
+    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+        return error("Couldn't open file '{}' for loading Moscito data.\n", filePath_);
 
     message(" --> Importing coordinates in Moscito (str) format...\n");
     // Read cell lengths
@@ -78,13 +81,30 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
             // Coordinates are in fixed format (15.8e) with *no spacing between values*
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return NodeConstants::ProcessResult::Failed;
-            std::string coords{parser.line()};
-            structure_.addAtom(name, {std::stof(coords.substr(0, 15)) * 10.0, std::stof(coords.substr(15, 15)) * 10.0,
-                                      std::stof(coords.substr(30)) * 10.0});
+            std::string line{parser.line()};
+            structure_.addAtom(name, {std::stof(line.substr(0, 15)) * 10.0, std::stof(line.substr(15, 15)) * 10.0,
+                                      std::stof(line.substr(30)) * 10.0});
 
-            // Skip velocity and force lines
-            if (parser.skipLines(2) != LineParser::Success)
+            // Skip velocity line
+            if (parser.skipLines(1) != LineParser::Success)
                 return NodeConstants::ProcessResult::Failed;
+
+            /*
+             * Read forces (in kJ mol-1 nm-1)
+             * Our internal units are 10 J mol-1 Angstrom-1:
+             *
+             *          kJ mol-1  =>  10 J mol-1   =   F * 100.0
+             *              nm-1  =>  Angstroms-1  =   F / 10.0
+             *
+             * Final conversion factor =  * 10.0
+             *
+             * Note: Forces are in fixed format (15.8e) with *no spacing between values*
+             */
+            if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
+                return NodeConstants::ProcessResult::Failed;
+            line = parser.line();
+            forces_.emplace_back(std::stof(line.substr(0, 15)) * 10.0, std::stof(line.substr(15, 15)) * 10.0,
+                                 std::stof(line.substr(30)) * 10.0);
         }
     }
 
