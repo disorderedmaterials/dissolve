@@ -36,10 +36,8 @@ function(dissolve_add_benchmark)
 
 endfunction()
 
-set(DISSOLVE_BENCHMARK_INPUT_FILE_PATH \"benchmark/common/\")
-configure_file(benchmarkConfig.h.in benchmarkConfig.h @ONLY)
-
 # Add benchmark subdirectories
 add_subdirectory(classes)
+add_subdirectory(ff)
 add_subdirectory(math)
-add_subdirectory(modules)
+add_subdirectory(nodes)

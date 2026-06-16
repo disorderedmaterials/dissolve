@@ -337,7 +337,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::totalMoleculePairPotentialEnergy(
     return {molecularEnergy.interMolecular * 0.5, molecularEnergy.intraMolecular};
 }
 
-// Return total energy of supplied atom
+// Return total energy
 Kernel::EnergyResult EnergyKernel::totalEnergy(Flags<Kernel::CalculationFlags> flags) const
 {
     return {totalPairPotentialEnergy(flags.isNotSet(Kernel::ExcludeInterMolecularPairPotential),

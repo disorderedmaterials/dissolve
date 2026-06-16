@@ -53,6 +53,10 @@ class Node : public Serialisable<>
     /*
      * Node Messaging
      */
+    private:
+    // Whether to echo latest message to stdout
+    static bool echo_;
+
     public:
     // Enumeration for message status
     enum class MessageStatus
@@ -63,8 +67,6 @@ class Node : public Serialisable<>
     };
 
     using MessageStore = std::vector<std::pair<MessageStatus, std::string>>;
-    // Print latest message
-    static bool echo_;
 
     protected:
     // Message store vector
@@ -98,7 +100,7 @@ class Node : public Serialisable<>
     // Get all nodes that lead into this node
     std::set<const Node *> allAncestors() const;
     // Print latest message
-    void echo();
+    void echo() const;
 
     public:
     // Get specific ancestors
@@ -113,6 +115,8 @@ class Node : public Serialisable<>
     const MessageStore &messages() const;
     // Returns true if message with given status exists
     bool hasMessages(MessageStatus status) const;
+    // Set echo status for all nodes
+    static void setEcho(bool status);
 
     /*
      * Processing & Validity

@@ -12,15 +12,16 @@
 
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Inputs
     addInput<Configuration *>("Configuration", "Target configuration to insert into", configuration_);
     addOutput<Configuration *>("Configuration", "Modified configuration", configuration_);
     addInput<const Species *>("Species", "Species to add - all resulting molecules will have identical geometry", species_);
     addInput<const MoleculeSet *>("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
-
     addInput<Number>("Population", "Population of the target to add", population_);
     addInput<Number>("Density", "Density at which to add the target", density_);
-    addOption<Units::DensityUnits>("DensityUnits", "Units of target density", densityUnits_);
 
+    // Options
+    addOption<Units::DensityUnits>("DensityUnits", "Units of target density", densityUnits_);
     addOption("BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_);
     addOption("ScaleA", "Scale box length A when modifying volume", scaleA_);
     addOption("ScaleB", "Scale box length B when modifying volume", scaleB_);
@@ -46,7 +47,7 @@ EnumOptions<InsertNode::BoxActionStyle> getEnumOptions(InsertNode::BoxActionStyl
  * Definition
  */
 
-std::string_view InsertNode::type() const { return "InsertRandom"; };
+std::string_view InsertNode::type() const { return "Insert"; };
 
 std::string_view InsertNode::summary() const { return "Insert molecules randomly into a configuration"; };
 
@@ -78,21 +79,20 @@ void InsertNode::addVolume(int nAtomsToAdd, double massToAdd) const
                               ? nAtomsToAdd / density_.asDouble()
                               : (massToAdd / DissolveMath::Avogadro) / (density_.asDouble() / 1.0E24);
 
-    Messenger::print(" ... Current box volume will be increased to accommodate volume of new species.\n");
+    Messenger::print("Current box volume will be increased to accommodate volume of new species.\n");
 
     // Get current cell volume
     auto currentVolume = configuration_->box().volume();
 
-    Messenger::print(" ... Density for new molecule(s) is {} {}.\n", density_.asDouble(),
+    Messenger::print("Density for new molecule(s) is {} {}.\n", density_.asDouble(),
                      Units::densityUnits().keyword(densityUnits_));
-    Messenger::print(" ... Required volume for new molecule(s) is {} cubic Angstroms.\n", requiredVolume);
+    Messenger::print("Required volume for new molecule(s) is {} cubic Angstroms.\n", requiredVolume);
 
     // If the current box has no atoms in it, absorb the current volume rather than adding to it
     if (configuration_->nAtoms() > 0)
         requiredVolume += currentVolume;
     else
-        Messenger::print(" ... Current box is empty, so new volume will be set to exact ly {} cubic Angstroms.\n",
-                         requiredVolume);
+        Messenger::print("Current box is empty, so new volume will be set to exactly {} cubic Angstroms.\n", requiredVolume);
 
     auto scaleFactors = configuration_->box().scaleFactors(requiredVolume, {scaleA_, scaleB_, scaleC_});
 
@@ -102,7 +102,7 @@ void InsertNode::addVolume(int nAtomsToAdd, double massToAdd) const
     // Scale the current Box so there is enough space for our new species
     configuration_->scaleBox(scaleFactors);
 
-    Messenger::print(" ... New box volume is {:e} cubic Angstroms - scale factors were ({},{},{}).\n",
+    Messenger::print("New box volume is {:e} cubic Angstroms - scale factors were ({},{},{}).\n",
                      configuration_->box().volume(), scaleFactors.x, scaleFactors.y, scaleFactors.z);
 }
 
@@ -114,7 +114,7 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
                               ? nAtomsToAdd / density_.asDouble()
                               : (massToAdd / DissolveMath::Avogadro) / (density_.asDouble() / 1.0E24);
 
-    Messenger::print(" ... Box volume will be set to give supplied density.\n");
+    Messenger::print("Box volume will be set to give supplied density.\n");
 
     // Get volume required to hold current cell contents at the requested density
     auto existingRequiredVolume = 0.0;
@@ -122,10 +122,9 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
         existingRequiredVolume = configuration_->nAtoms() / density_.asDouble();
     else
         existingRequiredVolume = configuration_->atomicMass() / (density_.asDouble() / 1.0E24);
-    Messenger::print(" ... Existing contents requires volume of {} cubic Angstroms at specified density.\n",
-                     existingRequiredVolume);
+    Messenger::print("Existing contents requires volume of {} cubic Angstroms at specified density.\n", existingRequiredVolume);
 
-    Messenger::print(" ... Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
+    Messenger::print("Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
     // Add on required volume for existing box contents
     if (configuration_->nAtoms() > 0)
@@ -139,8 +138,8 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
     // Scale the current Box so there is enough space for our new species
     configuration_->scaleBox(scaleFactors);
 
-    Messenger::print(" ... Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n", scaleFactors.x,
-                     scaleFactors.y, scaleFactors.z, configuration_->box().volume());
+    Messenger::print("Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n", scaleFactors.x, scaleFactors.y,
+                     scaleFactors.z, configuration_->box().volume());
 }
 
 /*
@@ -159,7 +158,7 @@ NodeConstants::ProcessResult InsertNode::process()
     auto ipop = population_.asInteger();
     if (ipop <= 0)
     {
-        Messenger::warn("[InsertRandom] Population is zero so nothing will be added.\n");
+        warn("Population is zero so nothing will be added.\n");
         return NodeConstants::ProcessResult::Unchanged;
     }
 
@@ -170,7 +169,7 @@ NodeConstants::ProcessResult InsertNode::process()
     switch (boxAction_)
     {
         case (InsertNode::BoxActionStyle::None):
-            Messenger::print(" ... Current box geometry / volume will remain as-is.\n");
+            message("Current box geometry / volume will remain as-is.\n");
             break;
         case (InsertNode::BoxActionStyle::AddVolume):
             addVolume(nPhysicalAtoms, massToBeAdded);
@@ -200,8 +199,8 @@ NodeConstants::ProcessResult InsertNode::process()
         }
     }
 
-    Messenger::print("[InsertRandom] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n",
-                     configuration_->atomicDensity().value_or(0.0), configuration_->chemicalDensity().value_or(0.0));
+    message("New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n", configuration_->atomicDensity().value_or(0.0),
+            configuration_->chemicalDensity().value_or(0.0));
 
     // We've added new content to the box, so Need to update our object relationships
     configuration_->updateObjectRelationships();

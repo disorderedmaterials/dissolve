@@ -39,8 +39,11 @@ bool Node::hasMessages(MessageStatus status) const
     return std::any_of(messages_.cbegin(), messages_.cend(), [status](const auto &msg) { return msg.first == status; });
 }
 
+// Set echo status for all nodes
+void Node::setEcho(bool status) { echo_ = status; }
+
 // Print latest message
-void Node::echo() { std::cout << messages_.back().second << std::endl; }
+void Node::echo() const { std::cout << messages_.back().second; }
 
 /*
  * Processing & Validity
