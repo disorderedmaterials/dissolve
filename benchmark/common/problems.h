@@ -43,7 +43,7 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
             {SystemType::Water1000, {"tests/data/species/water.toml", 1000, "tests/data/dlpoly/water1000/full.REVCON"}},
             {SystemType::Hexane200, {"tests/data/species/hexane.toml", 200, "tests/data/dlpoly/hexane200/full.REVCON"}}};
 
-        auto &[speciesString, speciePopulation, referenceCoordinates] = systemTypes[systemType];
+        auto &[speciesString, speciesPopulation, referenceCoordinates] = systemTypes[systemType];
 
         // Create the species node
         auto *speciesNode = dynamic_cast<SpeciesNode *>(createNode("Species"));
