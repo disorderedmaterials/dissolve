@@ -5,4 +5,3 @@ target_link_libraries(io PRIVATE base)
 
 # Subdirectories
 add_subdirectory(export)
-add_subdirectory(import)
