@@ -4,7 +4,6 @@
 #pragma once
 
 #include "math/range.h"
-#include "module/module.h"
 #include "templates/optionalRef.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>

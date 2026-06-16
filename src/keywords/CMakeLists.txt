@@ -13,8 +13,6 @@ add_library(
   function1D.cpp
   integer.cpp
   isotopologueSet.cpp
-  layer.cpp
-  moduleVector.cpp
   nodeBranch.cpp
   nodeUnderlay.cpp
   nodeValue.cpp
@@ -33,7 +31,6 @@ add_library(
   vec3Double.cpp
   vec3Integer.cpp
   vec3NodeValue.cpp
-  weightedModuleVector.cpp
   base.h
   bool.h
   configuration.h
@@ -50,9 +47,6 @@ add_library(
   integer.h
   interactionPotential.h
   isotopologueSet.h
-  layer.h
-  module.h
-  moduleVector.h
   node.h
   nodeBranch.h
   nodeUnderlay.h
@@ -75,7 +69,6 @@ add_library(
   vec3Integer.h
   vec3Labels.h
   vec3NodeValue.h
-  weightedModuleVector.h
 )
 
 target_include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)

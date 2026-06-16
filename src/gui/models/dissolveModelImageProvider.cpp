@@ -3,7 +3,6 @@
 
 #include "gui/models/dissolveModelImageProvider.h"
 #include "gui/models/dissolveModel.h"
-#include "gui/models/moduleLayerModel.h"
 
 DissolveModelImageProvider::DissolveModelImageProvider(DissolveModel *dissolveModel)
     : QQuickImageProvider(QQmlImageProviderBase::Image)
@@ -21,35 +20,35 @@ QImage DissolveModelImageProvider::requestImage(const QString &id, QSize *size, 
     // Set size to defaultImage for now
     *size = defaultImage.size();
 
-    if (id.startsWith(QString("moduleLayer/")))
-    {
-        // Split the id
-        auto parts = id.split("/");
-        if (parts.size() != 3)
-            return defaultImage;
-
-        // Row of moduleLayer in the ModuleLayersModel
-        auto moduleLayerRow = parts[1].toInt();
-        // Row of the module in the ModuleLayerModel belonging to the parent ModuleLayersModel
-        auto moduleRow = parts[2].toInt();
-
-        auto moduleLayerIndex = dissolveModel_->moduleLayersModel()->index(moduleLayerRow, 0);
-        if (!moduleLayerIndex.isValid())
-            return defaultImage;
-
-        // Get the ModuleLayerModel belonging to the parent ModuleLayersModel
-        auto moduleLayerModel =
-            dissolveModel_->moduleLayersModel()->data(moduleLayerIndex, Qt::UserRole + 1).value<ModuleLayerModel *>();
-
-        auto moduleIndex = moduleLayerModel->index(moduleRow, 0);
-        if (!moduleIndex.isValid())
-            return defaultImage;
-
-        // Update the size to the correct image
-        *size = appliedSize;
-
-        // Get the icon as a QImage
-        return moduleLayerModel->data(moduleIndex, Qt::DecorationRole).value<QIcon>().pixmap(QSize(appliedSize)).toImage();
-    }
+    // if (id.startsWith(QString("moduleLayer/")))
+    // {
+    //     // Split the id
+    //     auto parts = id.split("/");
+    //     if (parts.size() != 3)
+    //         return defaultImage;
+    //
+    //     // Row of moduleLayer in the ModuleLayersModel
+    //     auto moduleLayerRow = parts[1].toInt();
+    //     // Row of the module in the ModuleLayerModel belonging to the parent ModuleLayersModel
+    //     auto moduleRow = parts[2].toInt();
+    //
+    //     auto moduleLayerIndex = dissolveModel_->moduleLayersModel()->index(moduleLayerRow, 0);
+    //     if (!moduleLayerIndex.isValid())
+    //         return defaultImage;
+    //
+    //     // Get the ModuleLayerModel belonging to the parent ModuleLayersModel
+    //     auto moduleLayerModel =
+    //         dissolveModel_->moduleLayersModel()->data(moduleLayerIndex, Qt::UserRole + 1).value<ModuleLayerModel *>();
+    //
+    //     auto moduleIndex = moduleLayerModel->index(moduleRow, 0);
+    //     if (!moduleIndex.isValid())
+    //         return defaultImage;
+    //
+    //     // Update the size to the correct image
+    //     *size = appliedSize;
+    //
+    //     // Get the icon as a QImage
+    //     return moduleLayerModel->data(moduleIndex, Qt::DecorationRole).value<QIcon>().pixmap(QSize(appliedSize)).toImage();
+    // }
     return defaultImage;
 }

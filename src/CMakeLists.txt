@@ -10,14 +10,11 @@ add_subdirectory(keywords)
 add_subdirectory(io)
 add_subdirectory(main)
 add_subdirectory(math)
-add_subdirectory(module)
 add_subdirectory(neta)
 
 if(GUI)
   add_subdirectory(gui)
   add_subdirectory(gui-qml)
 endif(GUI)
-
-add_subdirectory(modules)
 
 add_subdirectory(nodes)

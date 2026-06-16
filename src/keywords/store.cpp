@@ -11,8 +11,6 @@
 #include "keywords/double.h"
 #include "keywords/function1D.h"
 #include "keywords/integer.h"
-#include "keywords/module.h"
-#include "keywords/moduleVector.h"
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/nodeVector.h"
@@ -202,16 +200,6 @@ bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectGenera
 {
     return getKeyword<NodeVectorKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const std::vector<Module *> value)
-{
-    getKeyword<ModuleVectorKeyword>(name, find(name))->data() = value;
-    return true;
-}
-bool KeywordStore::set(std::string_view name, const Module *value)
-{
-    getKeyword<ModuleKeywordBase>(name, find(name))->setData(value);
-    return true;
-}
 bool KeywordStore::set(std::string_view name, Configuration *value)
 {
     getKeyword<ConfigurationKeyword>(name, find(name))->data() = value;
@@ -277,12 +265,6 @@ std::vector<Configuration *> KeywordStore::getVectorConfiguration(std::string_vi
 
 // Retrieve an Integer by keyword name
 int KeywordStore::getInt(std::string_view name) const { return getKeyword<IntegerKeyword>(name, find(name))->data(); }
-
-// Retrieve a vector of Modules by keyword name
-const std::vector<Module *> &KeywordStore::getVectorModule(std::string_view name) const
-{
-    return getKeyword<ModuleVectorKeyword>(name, find(name))->data();
-}
 
 // Turn first character of keyword label to lower case to match
 // convention with the rest of the file format.

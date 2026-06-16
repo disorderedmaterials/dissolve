@@ -9,7 +9,6 @@
 #include "main/dissolve.h"
 #include "math/combinations.h"
 #include "math/filters.h"
-#include "module/group.h"
 #include "nodes/dissolve.h"
 #include "nodes/gr/gr.h"
 #include "templates/algorithms.h"

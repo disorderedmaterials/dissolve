@@ -61,15 +61,6 @@ bool Dissolve::loadInput(LineParser &parser)
                     errorsEncountered = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):
-                // Check to see if a processing layer with this name already exists...
-                if (coreData_.findProcessingLayer(parser.argsv(1)))
-                    Messenger::error("Redefinition of processing layer '{}'.\n", parser.argsv(1));
-
-                layer = coreData_.addProcessingLayer();
-                layer->setName(parser.argsv(1));
-                Messenger::print("\n--> Created processing layer '{}'\n", layer->name());
-                if (!LayerBlock::parse(parser, this, layer))
-                    errorsEncountered = true;
                 break;
             case (BlockKeywords::MasterBlockKeyword):
                 if (!MasterBlock::parse(parser, coreData_))
@@ -171,8 +162,6 @@ void Dissolve::serialise(std::string tag, SerialisedValue &target) const
     graphNode_->serialise("graph", root);
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
-
-    Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 }
 
 // Read pair potentials from a serialisable value
@@ -227,14 +216,6 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
               auto *cfg = coreData_.addConfiguration();
               cfg->setName(name);
               cfg->deserialise(data, coreData_);
-          });
-
-    toMap(node, "layers",
-          [this](const std::string &name, const SerialisedValue &data)
-          {
-              auto *layer = coreData_.addProcessingLayer();
-              layer->setName(name);
-              layer->deserialise(data, coreData_);
           });
 }
 
@@ -425,234 +406,6 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
         if (!parser.writeLineF("{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::EndConfigurationKeyword)))
-            return false;
-    }
-
-    // Write processing layers
-    if (!parser.writeBannerComment("Processing Layers"))
-        return false;
-    for (auto &layer : coreData_.processingLayers())
-    {
-        if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
-                               layer->name()))
-            return false;
-
-        // Write frequency and disabled lines
-        if (!parser.writeLineF("  Frequency  {}\n", layer->frequency()))
-            return false;
-        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled) && (!parser.writeLineF("  Disabled\n")))
-            return false;
-        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::EnergyStability) &&
-            (!parser.writeLineF("  {}\n", LayerBlock::keywords().keyword(LayerBlock::RequireEnergyStabilityKeyword))))
-            return false;
-        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::SizeFactors) &&
-            (!parser.writeLineF("  {}\n", LayerBlock::keywords().keyword(LayerBlock::RequireNoSizeFactorsKeyword))))
-            return false;
-
-        for (auto &module : layer->modules())
-        {
-            if (!parser.writeLineF("\n  {}  {}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-                                   ModuleTypes::moduleType(module->type()), module->name()))
-                return false;
-
-            // Write frequency and disabled keywords
-            if (!parser.writeLineF("    Frequency  {}\n", module->frequency()))
-                return false;
-            if (module->isDisabled() && (!parser.writeLineF("    Disabled\n")))
-                return false;
-
-            // Write keyword options
-            if (!module->keywords().serialise(parser, "    ", true))
-                return false;
-
-            if (!parser.writeLineF("  {}\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword)))
-                return false;
-        }
-
-        if (!parser.writeLineF("{}\n", LayerBlock::keywords().keyword(LayerBlock::EndLayerKeyword)))
-            return false;
-    }
-
-    parser.closeFiles();
-
-    return true;
-}
-
-// Load restart file
-bool Dissolve::loadRestart(std::string_view filename)
-{
-    // Open file and check that we're OK to proceed reading from it
-    LineParser parser;
-    if (!parser.openInput(filename))
-        return false;
-
-    // Peek the first line and see if can determine a version
-    if (parser.readNextLine(LineParser::KeepComments) != LineParser::Success)
-        return false;
-    GenericList::setBaseDataVersionFromString(parser.line());
-    parser.rewind();
-
-    // Variables
-    Configuration *cfg;
-    Module *module;
-    auto error = false;
-
-    while (!parser.eofOrBlank())
-    {
-        if (parser.getArgsDelim() != LineParser::Success)
-            break;
-
-        // First argument indicates the type of data
-        if (DissolveSys::sameString(parser.argsv(0), "Keyword"))
-        {
-            // Let the user know what we are doing
-            Messenger::print("Reading keyword '{}' into Module '{}'...\n", parser.argsv(2), parser.argsv(1));
-
-            // Find the referenced Module
-            auto *module = coreData_.findModule(parser.argsv(1));
-            if (!module)
-            {
-                Messenger::error("No Module named '{}' exists.\n", parser.argsv(1));
-                error = true;
-                break;
-            }
-
-            // Does the Module have a keyword by this name?
-            auto result = module->keywords().deserialise(parser, coreData_, 2);
-            if (result == KeywordBase::ParseResult::Unrecognised)
-            {
-                Messenger::error("Module '{}' has no keyword '{}'.\n", module->name(), parser.argsv(2));
-                error = true;
-                break;
-            }
-            else if (result == KeywordBase::ParseResult::Failed)
-            {
-                Messenger::error("Failed to read keyword data '{}' from restart file.\n", parser.argsv(2));
-                error = true;
-                break;
-            }
-        }
-        else if (DissolveSys::sameString(parser.argsv(0), "Processing"))
-        {
-            // Let the user know what we are doing
-            Messenger::print("Reading item '{}' ({}) into processing module data...\n", parser.argsv(1), parser.argsv(2));
-
-            // Realise the item in the list
-            processingModuleData_.deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
-                                              parser.hasArg(4) ? parser.argi(4) : 0);
-        }
-        else if (DissolveSys::startsWith(parser.argsv(0), "Configuration"))
-        {
-            // Let the user know what we are doing
-            Messenger::print("Reading Configuration '{}'...\n", parser.argsv(1));
-
-            // Find the named Configuration
-            cfg = coreData_.findConfiguration(parser.argsv(1));
-            if (!cfg)
-            {
-                Messenger::error("No Configuration named '{}' exists.\n", parser.argsv(1));
-                error = true;
-                break;
-            }
-            else if (!cfg->deserialise(parser, coreData_,
-                                       DissolveSys::sameString(parser.argsv(0), "ConfigurationWithPotentials")))
-                error = true;
-        }
-        else if (DissolveSys::sameString(parser.argsv(0), "Timing"))
-        {
-            // Let the user know what we are doing
-            Messenger::print("Reading timing information for Module '{}'...\n", parser.argsv(1));
-
-            module = coreData().findModule(parser.argsv(1));
-            if (!module)
-            {
-                Messenger::warn("Timing information for Module '{}' found, but no Module with this unique name "
-                                "exists...\n",
-                                parser.argsv(1));
-                if (!SampledDouble().deserialise(parser))
-                    error = true;
-            }
-            else if (!module->readProcessTimes(parser))
-                error = true;
-        }
-        else
-        {
-            Messenger::error("Unrecognised '{}' entry in restart file.\n", parser.argsv(0));
-            error = true;
-        }
-
-        // Error encountered?
-        if (error)
-            break;
-    }
-
-    if (!error)
-        Messenger::print("Finished reading restart file.\n");
-
-    // Set current iteration number
-    iteration_ = processingModuleData_.valueOr<int>("Iteration", "Dissolve", 0);
-
-    // Error encountered?
-    if (error)
-        Messenger::error("Errors encountered while loading restart file.\n");
-
-    // Done
-    parser.closeFiles();
-
-    return (!error);
-}
-
-// Save restart file
-bool Dissolve::saveRestart(std::string_view filename)
-{
-    // Open file
-    LineParser parser;
-
-    if (!parser.openOutput(filename, true) || (!parser.isFileGoodForWriting()))
-    {
-        Messenger::error("Couldn't open restart file '{}'.\n", filename);
-        return false;
-    }
-
-    // Write title comment
-    if (!parser.writeLineF("# Restart file written by Dissolve v{} at {}.\n", Version::info(),
-                           DissolveSys::currentTimeAndDate()))
-        return false;
-
-    // Module Keyword Data
-    for (const auto *module : coreData_.moduleInstances())
-    {
-        for (const auto &section : module->keywords().sections())
-            for (const auto &group : section.groups())
-                for (const auto &[keyword, keywordType] : group.keywords())
-                    if (keywordType == KeywordBase::KeywordType::Restartable &&
-                        !keyword->serialise(parser, std::format("Keyword  {}  {}  ", module->name(), keyword->name())))
-                        return false;
-    }
-
-    // Processing Module Data
-    if (!processingModuleData_.serialiseAll(parser, "Processing"))
-        return false;
-
-    // Configurations
-    for (const auto &cfg : coreData_.configurations())
-    {
-        if (!parser.writeLineF("{}  '{}'\n",
-                               (cfg->globalPotentials().empty() && cfg->targetedPotentials().empty())
-                                   ? "Configuration"
-                                   : "ConfigurationWithPotentials",
-                               cfg->name()))
-            return false;
-        if (!cfg->serialise(parser))
-            return false;
-    }
-
-    // Module timing information
-    for (const auto *module : coreData_.moduleInstances())
-    {
-        if (!parser.writeLineF("Timing  {}\n", module->name()))
-            return false;
-        if (!module->processTimes().serialise(parser))
             return false;
     }
 
