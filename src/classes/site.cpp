@@ -23,7 +23,7 @@ Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::s
 }
 
 Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
-           const SpeciesSiteInstance &instance, const Box *box)
+           const SpeciesSiteInstance &instance, const Box &box)
     : parent_(parent), uniqueSiteIndex_(uniqueSiteIndex), molecule_(std::move(molecule))
 {
     origin_ = parent_->originMassWeighted() ? molecule_->centreOfMass(box, instance.originIndices())
@@ -32,13 +32,13 @@ Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::s
     if (parent_->hasAxes())
     {
         // Get vector from site origin to x-axis reference point and normalise it
-        auto x = box->minimumVector(origin_, molecule_->centreOfGeometry(box, instance.xAxisIndices()));
+        auto x = box.minimumVector(origin_, molecule_->centreOfGeometry(box, instance.xAxisIndices()));
         x.normalise();
 
         axes_.setColumn(0, x);
 
         // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-        auto y = box->minimumVector(origin_, molecule_->centreOfGeometry(box, instance.yAxisIndices()));
+        auto y = box.minimumVector(origin_, molecule_->centreOfGeometry(box, instance.yAxisIndices()));
         y.orthogonalise(x);
         y.normalise();
 

@@ -104,11 +104,11 @@ class Structure : public Serialisable<>
      */
     private:
     // Periodic Box
-    std::unique_ptr<Box> box_;
+    Box box_;
 
     public:
     // Return periodic box
-    const Box *box() const;
+    const Box &box() const;
     // Remove Box definition and revert to single image
     void removeBox();
     // Create Box definition with specified lengths and angles

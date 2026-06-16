@@ -468,7 +468,7 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
     structure_.createBox(cellLengths.value(), cellAngles.value(), false);
     echo_ = true;
 
-    auto *box = structure_.box();
+    const auto &box = structure_.box();
 
     // -- Generate atoms
     auto symmetryGenerators = SpaceGroups::symmetryOperators(spaceGroup_);
@@ -480,12 +480,12 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
                     {
                         // Generate folded atomic position in real space
                         auto r = generator * unique.rFrac();
-                        box->toReal(r);
-                        r = box->fold(r);
+                        box.toReal(r);
+                        r = box.fold(r);
 
                         // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
                         if (std::any_of(structure_.atoms().begin(), structure_.atoms().end(), [&, r, box](const auto &j)
-                                        { return box->minimumDistance(r, j->r()) < overlapTolerance_; }))
+                                        { return box.minimumDistance(r, j->r()) < overlapTolerance_; }))
                             continue;
 
                         // Create the new atom
@@ -521,7 +521,7 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
         auto r = bondDistance(atomLabelTypes_[atomTypeIdxI]->name(), atomLabelTypes_[atomTypeIdxJ]->name());
         if (r)
         {
-            if (!structure_.hasBond(i, j) && fabs(box->minimumDistance(i->r(), j->r()) - r.value()) < 1.0e-2)
+            if (!structure_.hasBond(i, j) && fabs(box.minimumDistance(i->r(), j->r()) - r.value()) < 1.0e-2)
                 structure_.addBond(i, j);
         }
     }

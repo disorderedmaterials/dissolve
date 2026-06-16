@@ -51,7 +51,7 @@ bool AddPairGeneratorNode::prepare(const GeneratorContext &generatorContext)
         return Messenger::error("Can't set periodic box when using AddPair.\n");
 
     // Can't do this for periodic species
-    if (speciesA_->box()->type() != Box::BoxType::NonPeriodic || speciesB_->box()->type() != Box::BoxType::NonPeriodic)
+    if (speciesA_->box().type() != Box::BoxType::None || speciesB_->box().type() != Box::BoxType::None)
         return Messenger::error("Can't use periodic species in AddPair.\n");
 
     return prepareBase(generatorContext);
@@ -101,7 +101,7 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
     // Now we add the molecules
     Vector3 newCentre;
     Matrix3 transform;
-    const auto *box = cfg->box();
+    const auto &box = cfg->box();
     cfg->atoms().reserve(cfg->atoms().size() + ipop * (speciesA_->nAtoms() + speciesB_->nAtoms()));
 
     // Add all molecule pairs
@@ -122,13 +122,13 @@ bool AddPairGeneratorNode::execute(const GeneratorContext &generatorContext)
         switch (positioningType_)
         {
             case (AddGeneratorNodeBase::PositioningType::Random):
-                newCentre = box->getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
+                newCentre = box.getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});
                 break;
             case (AddGeneratorNodeBase::PositioningType::Region):
                 newCentre = region_->region().randomCoordinate();
                 break;
             case (AddGeneratorNodeBase::PositioningType::Central):
-                newCentre = box->getReal({0.5, 0.5, 0.5});
+                newCentre = box.getReal({0.5, 0.5, 0.5});
                 break;
             case (AddGeneratorNodeBase::PositioningType::Current):
                 break;

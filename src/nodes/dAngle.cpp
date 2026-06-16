@@ -97,8 +97,8 @@ NodeConstants::ProcessResult DAngleNode::process()
                 ++nCCumulative;
                 ++nCAvailable;
 
-                auto distanceBC = configuration_->box()->minimumDistance(siteB->origin(), siteC->origin());
-                auto angle = configuration_->box()->angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
+                auto distanceBC = configuration_->box().minimumDistance(siteB->origin(), siteC->origin());
+                auto angle = configuration_->box().angleInDegrees(siteA->origin(), siteB->origin(), siteC->origin());
                 if (symmetric_ && angle > 90.0)
                     angle = 180.0 - angle;
 
@@ -124,7 +124,7 @@ NodeConstants::ProcessResult DAngleNode::process()
     // Normalise by B site population
     rBCNormaliser.divide(double(nBCumulative) / nBSelections);
     // Normalise by C site population density
-    rBCNormaliser.divide((double(nCAvailable) / nCSelections) / configuration_->box()->volume());
+    rBCNormaliser.divide((double(nCAvailable) / nCSelections) / configuration_->box().volume());
     // Normalise by spherical shell
     rBCNormaliser.normaliseBySphericalShell();
 
@@ -149,7 +149,7 @@ NodeConstants::ProcessResult DAngleNode::process()
     // Normalise by A site population
     dAngleNormaliser.divide(double(nACumulative) / nASelections);
     // Normalise by B site population density
-    dAngleNormaliser.divide((double(nBAvailable) / nBSelections) / configuration_->box()->volume());
+    dAngleNormaliser.divide((double(nBAvailable) / nBSelections) / configuration_->box().volume());
     // Normalise by spherical shell
     dAngleNormaliser.normaliseBySphericalShell();
 

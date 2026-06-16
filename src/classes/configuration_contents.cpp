@@ -123,7 +123,7 @@ std::optional<double> Configuration::atomicDensity() const
     if (nAtoms() == 0)
         return {};
 
-    return nAtoms(AtomConstants::Presence::Physical) / box_->volume();
+    return nAtoms(AtomConstants::Presence::Physical) / box_.volume();
 }
 
 // Return the chemical density (g/cm3) of the Configuration
@@ -132,7 +132,7 @@ std::optional<double> Configuration::chemicalDensity() const
     if (nAtoms() == 0)
         return {};
 
-    return atomicMass() / (box_->volume() / 1.0E24);
+    return atomicMass() / (box_.volume() / 1.0E24);
 }
 
 // Return version (atomic positions and composition)
@@ -286,7 +286,7 @@ ConfigurationAtom &Configuration::atom(int n)
 void Configuration::unFoldMolecules()
 {
     for (auto &mol : molecules_)
-        mol->unFold(box_.get());
+        mol->unFold(box_);
 }
 
 // Scale contents of the box by the specified factors along each axis
@@ -300,14 +300,14 @@ void Configuration::scaleContents(Vector3 scaleFactors)
     for (auto &mol : molecules_)
     {
         // If the related species has a periodic box, scale atom positions rather than COG position
-        if (mol->species()->box()->type() != Box::BoxType::NonPeriodic)
+        if (mol->species()->box().type() != Box::BoxType::None)
         {
             for (auto &i : mol->atoms())
             {
                 r = i->r();
-                box()->toFractional(r);
+                box().toFractional(r);
                 r.multiply(scaleFactors);
-                box()->toReal(r);
+                box().toReal(r);
                 i->setR(r);
             }
         }
@@ -320,7 +320,7 @@ void Configuration::scaleContents(Vector3 scaleFactors)
             oldCog /= mol->nAtoms();
 
             // Scale centre of geometry by supplied factor
-            newCog = box()->fold(oldCog);
+            newCog = box().fold(oldCog);
             newCog.multiply(scaleFactors);
 
             // Can now just translate the molecule

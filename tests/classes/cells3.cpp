@@ -44,7 +44,7 @@ class CellsEnergyTest : public ::testing::Test
     // Calculate tabulated energy directly (without using Cells)
     double tabulatedEnergyNoCells(Configuration *cfg, const PairPotential &pairPotential, double cutoffSq)
     {
-        auto *box = cfg->box();
+        auto &box = cfg->box();
         auto energy = 0.0;
         dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
@@ -54,7 +54,7 @@ class CellsEnergyTest : public ::testing::Test
                                     auto ii = molI->atom(0);
                                     auto jj = molJ->atom(0);
 
-                                    auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
+                                    auto rSq = box.minimumDistanceSquared(ii->r(), jj->r());
                                     if (rSq <= cutoffSq)
                                         energy += pairPotential.energy(sqrt(rSq));
                                 });
@@ -63,7 +63,7 @@ class CellsEnergyTest : public ::testing::Test
     // Calculate analytic energy directly (without using Cells)
     double analyticEnergyNoCells(Configuration *cfg, const PairPotential &pairPotential, double cutoffSq)
     {
-        auto *box = cfg->box();
+        auto &box = cfg->box();
         auto energy = 0.0;
         dissolve::for_each_pair(ParallelPolicies::seq, cfg->molecules(),
                                 [&](int i, const auto &molI, int j, const auto &molJ)
@@ -73,7 +73,7 @@ class CellsEnergyTest : public ::testing::Test
                                     auto ii = molI->atom(0);
                                     auto jj = molJ->atom(0);
 
-                                    auto rSq = box->minimumDistanceSquared(ii->r(), jj->r());
+                                    auto rSq = box.minimumDistanceSquared(ii->r(), jj->r());
                                     if (rSq <= cutoffSq)
                                         energy += pairPotential.analyticEnergy(sqrt(rSq), 0.0, 1.0);
                                 });

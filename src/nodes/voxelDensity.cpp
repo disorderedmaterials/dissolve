@@ -78,7 +78,7 @@ void VoxelDensityNode::addValue(const Vector3 &coords, double value)
 }
 
 // Return atomic coordinates folded into unit cell
-Vector3 VoxelDensityNode::foldedCoordinates(const Vector3 &r, const Box *unitCell) { return unitCell->foldFrac(r); }
+Vector3 VoxelDensityNode::foldedCoordinates(const Vector3 &r, const Box &unitCell) { return unitCell.foldFrac(r); }
 
 // Run main processing
 NodeConstants::ProcessResult VoxelDensityNode::process()
@@ -89,7 +89,7 @@ NodeConstants::ProcessResult VoxelDensityNode::process()
     if (!voxels_)
     {
         // Define voxels
-        const double boxX = unitCell->axisLengths().x, boxY = unitCell->axisLengths().y, boxZ = unitCell->axisLengths().z;
+        const double boxX = unitCell.axisLengths().x, boxY = unitCell.axisLengths().y, boxZ = unitCell.axisLengths().z;
         voxelVolume_ = voxelSideLength(boxX) * voxelSideLength(boxY) * voxelSideLength(boxZ);
         nAxisVoxels_.x = int(round(boxX / voxelSideLength(boxX)));
         nAxisVoxels_.y = int(round(boxY / voxelSideLength(boxY)));

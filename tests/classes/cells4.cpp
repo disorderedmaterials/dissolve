@@ -37,20 +37,20 @@ class CellsMIMTest : public ::testing::Test
     // Count number of atoms within range of a target atom in the box without using cells
     int atomsWithRangeNoCells(Configuration *cfg, int fromIndex, double cutoff)
     {
-        auto *box = cfg->box();
+        auto &box = cfg->box();
         const auto &i = cfg->atom(fromIndex);
         return std::count_if(cfg->atoms().begin(), cfg->atoms().end(),
                              [&](const auto &j)
                              {
                                  if (&i == &j)
                                      return false;
-                                 return (box->minimumDistance(i.r(), j.r()) <= cutoff);
+                                 return (box.minimumDistance(i.r(), j.r()) <= cutoff);
                              });
     }
     // Count number of atoms within range of a target atom in the box using cells
     int atomsWithRangeWithCells(Configuration *cfg, int fromIndex, double cutoff)
     {
-        auto *box = cfg->box();
+        auto &box = cfg->box();
         const auto &i = cfg->atom(fromIndex);
         const auto *iCell = i.cell();
         auto count = 0;
@@ -64,7 +64,7 @@ class CellsMIMTest : public ::testing::Test
                                        {
                                            if (&i == j)
                                                return false;
-                                           return (box->minimumDistance(i.r(), j->r()) <= cutoff);
+                                           return (box.minimumDistance(i.r(), j->r()) <= cutoff);
                                        });
             }
         }
@@ -81,7 +81,7 @@ TEST_F(CellsMIMTest, Cubic)
     cfg->cells().generate(cfg->box(), 7.0);
     cfg->updateAtomLocations(true);
 
-    auto cutoff = cfg->box()->inscribedSphereRadius();
+    auto cutoff = cfg->box().inscribedSphereRadius();
     for (auto id = 0; id < cfg->nAtoms(); ++id)
         EXPECT_EQ(atomsWithRangeNoCells(cfg, id, cutoff), atomsWithRangeWithCells(cfg, id, cutoff));
 }
@@ -95,7 +95,7 @@ TEST_F(CellsMIMTest, Monoclinic)
     cfg->cells().generate(cfg->box(), 7.0);
     cfg->updateAtomLocations(true);
 
-    auto cutoff = cfg->box()->inscribedSphereRadius();
+    auto cutoff = cfg->box().inscribedSphereRadius();
     for (auto id = 0; id < cfg->nAtoms(); ++id)
         EXPECT_EQ(atomsWithRangeNoCells(cfg, id, cutoff), atomsWithRangeWithCells(cfg, id, cutoff));
 }
@@ -109,7 +109,7 @@ TEST_F(CellsMIMTest, TriclinicBox)
     cfg->cells().generate(cfg->box(), 7.0);
     cfg->updateAtomLocations(true);
 
-    auto cutoff = cfg->box()->inscribedSphereRadius();
+    auto cutoff = cfg->box().inscribedSphereRadius();
     for (auto id = 0; id < cfg->nAtoms(); ++id)
         EXPECT_EQ(atomsWithRangeNoCells(cfg, id, cutoff), atomsWithRangeWithCells(cfg, id, cutoff));
 }

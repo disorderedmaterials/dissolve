@@ -448,7 +448,7 @@ Vector3 SpeciesSite::centreOfGeometry(const std::vector<int> &indices) const
 {
     const auto ref = parent_->atom(indices.front()).r();
     return std::accumulate(std::next(indices.begin()), indices.end(), ref, [&ref, this](const auto &acc, const auto idx)
-                           { return acc + parent_->box()->minimumImage(parent_->atom(idx).r(), ref); }) /
+                           { return acc + parent_->box().minimumImage(parent_->atom(idx).r(), ref); }) /
            indices.size();
 }
 
@@ -457,14 +457,14 @@ Vector3 SpeciesSite::centreOfMass(const std::vector<int> &indices) const
 {
     auto mass = AtomicMass::mass(parent_->atom(indices.front()).Z());
     const auto ref = parent_->atom(indices.front()).r();
-    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vector3, double>(ref * mass, mass),
-                                [&ref, this](const auto &acc, const auto idx)
-                                {
-                                    auto mass = AtomicMass::mass(parent_->atom(idx).Z());
-                                    return std::pair<Vector3, double>(
-                                        acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass,
-                                        acc.second + mass);
-                                });
+    auto sums =
+        std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vector3, double>(ref * mass, mass),
+                        [&ref, this](const auto &acc, const auto idx)
+                        {
+                            auto mass = AtomicMass::mass(parent_->atom(idx).Z());
+                            return std::pair<Vector3, double>(
+                                acc.first + parent_->box().minimumImage(parent_->atom(idx).r(), ref) * mass, acc.second + mass);
+                        });
     return sums.first / sums.second;
 }
 
@@ -482,11 +482,11 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
         if (hasAxes())
         {
             // Get vector from site origin to x-axis reference point and normalise it
-            auto x = parent_->box()->minimumVector(origin, centreOfGeometry(instance.xAxisIndices()));
+            auto x = parent_->box().minimumVector(origin, centreOfGeometry(instance.xAxisIndices()));
             x.normalise();
 
             // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-            auto y = parent_->box()->minimumVector(origin, centreOfGeometry(instance.yAxisIndices()));
+            auto y = parent_->box().minimumVector(origin, centreOfGeometry(instance.yAxisIndices()));
             y.orthogonalise(x);
             y.normalise();
 

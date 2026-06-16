@@ -59,7 +59,7 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
                 continue;
 
             // Calculate distance between atoms
-            auto r = box ? box->minimumDistance(j->r(), i->r()) : (j->r() - i->r()).magnitude();
+            auto r = box.minimumDistance(j->r(), i->r());
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
             if (r <= (radiusI + AtomicRadii::radius(j->Z())) * tolerance)

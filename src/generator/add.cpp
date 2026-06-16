@@ -60,7 +60,7 @@ bool AddGeneratorNode::prepare(const GeneratorContext &generatorContext)
     // Check for a periodic species in the case of boxAction_ == Set
     if (boxAction_ == AddGeneratorNodeBase::BoxActionStyle::Set)
     {
-        if (species_->box()->type() == Box::BoxType::NonPeriodic)
+        if (species_->box().type() == Box::BoxType::None)
             return Messenger::error("Target species '{}' is not periodic!.\n", species_->name());
 
         if (population_.asInteger() != 1)
@@ -92,13 +92,13 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
     {
         Messenger::print("[Add}] Box geometry will be set from the species box definition.\n");
 
-        cfg->createBox(sp->box()->axisLengths(), sp->box()->axisAngles());
-        auto *box = cfg->box();
+        cfg->createBox(sp->box().axisLengths(), sp->box().axisAngles());
+        const auto &box = cfg->box();
 
         Messenger::print("[Add] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
                          "{:10.4e} gamma = {:10.4e}\n",
-                         Box::boxTypes().keyword(box->type()), box->axisLengths().x, box->axisLengths().y, box->axisLengths().z,
-                         box->axisAngles().x, box->axisAngles().y, box->axisAngles().z);
+                         Box::boxTypes().keyword(box.type()), box.axisLengths().x, box.axisLengths().y, box.axisLengths().z,
+                         box.axisAngles().x, box.axisAngles().y, box.axisAngles().z);
     }
     else
         adjustBoxVolume(cfg, ipop, sp->nAtoms(AtomConstants::Presence::Physical), sp->mass());
@@ -129,7 +129,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
         hasCoordinateSets = true;
     }
     Matrix3 transform;
-    const auto *box = cfg->box();
+    const auto &box = cfg->box();
     cfg->atoms().reserve(cfg->atoms().size() + ipop * sp->nAtoms());
     for (auto n = 0; n < ipop; ++n)
     {
@@ -152,7 +152,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
         {
             case (AddGeneratorNodeBase::PositioningType::Random):
                 fr.set(DissolveMath::random(), DissolveMath::random(), DissolveMath::random());
-                newCentre = box->getReal(fr);
+                newCentre = box.getReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddGeneratorNodeBase::PositioningType::Region):
@@ -160,7 +160,7 @@ bool AddGeneratorNode::execute(const GeneratorContext &generatorContext)
                 break;
             case (AddGeneratorNodeBase::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);
-                newCentre = box->getReal(fr);
+                newCentre = box.getReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddGeneratorNodeBase::PositioningType::Current):

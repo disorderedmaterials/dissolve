@@ -36,7 +36,7 @@ bool CylindricalGlobalPotentialGeneratorNode::execute(const GeneratorContext &ge
     // Set origin
     Vector3 origin{origin_.x.asDouble(), origin_.y.asDouble(), origin_.z.asDouble()};
     if (originIsFractional_)
-        cfg->box()->toReal(origin);
+        cfg->box().toReal(origin);
     pot->setOrigin(origin);
 
     // Set directional vector

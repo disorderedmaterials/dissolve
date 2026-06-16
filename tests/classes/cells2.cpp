@@ -37,7 +37,7 @@ class CellsPBCTest : public ::testing::Test
         central->atom(0)->setR(origin);
 
         // Add surrounding molecules on a sphere with radius equal to the inscribed sphere radius
-        const auto r = configuration_.box()->inscribedSphereRadius();
+        const auto r = configuration_.box().inscribedSphereRadius();
         for (auto n = 0; n < nMolecules; ++n)
         {
             auto theta = DissolveMath::random() * M_PI;
@@ -51,8 +51,8 @@ class CellsPBCTest : public ::testing::Test
 
     void testCells()
     {
-        auto *box = configuration_.box();
-        const auto r = configuration_.box()->inscribedSphereRadius();
+        auto &box = configuration_.box();
+        const auto r = configuration_.box().inscribedSphereRadius();
 
         // Get reference atom in the central molecule
         const auto &central = configuration_.molecules().front();
@@ -63,7 +63,7 @@ class CellsPBCTest : public ::testing::Test
             const auto &mol = configuration_.molecule(n);
 
             auto jj = mol->atom(0);
-            EXPECT_NEAR(box->minimumDistance(ii->r(), jj->r()), r, 1.0e-6);
+            EXPECT_NEAR(box.minimumDistance(ii->r(), jj->r()), r, 1.0e-6);
 
             // Range check between the central and surrounding atom should always succeed
             EXPECT_TRUE(configuration_.cells().withinMinimumImageRange(ii->cell(), jj->cell(), r));
@@ -92,7 +92,7 @@ class CellsPBCTest : public ::testing::Test
 TEST_F(CellsPBCTest, Cubic)
 {
     createConfiguration({100, 100, 100}, {90, 90, 90}, {0, 0, 0});
-    ASSERT_TRUE(configuration_.box()->type() == Box::BoxType::Cubic);
+    ASSERT_TRUE(configuration_.box().type() == Box::BoxType::Cubic);
     testCells();
     testNeighbours();
 };
@@ -100,7 +100,7 @@ TEST_F(CellsPBCTest, Cubic)
 TEST_F(CellsPBCTest, MonoclinicAlpha)
 {
     createConfiguration({100, 100, 100}, {100, 90, 90}, {0, 0, 0});
-    ASSERT_TRUE(configuration_.box()->type() == Box::BoxType::MonoclinicAlpha);
+    ASSERT_TRUE(configuration_.box().type() == Box::BoxType::MonoclinicAlpha);
     testCells();
     testNeighbours();
 };
@@ -108,7 +108,7 @@ TEST_F(CellsPBCTest, MonoclinicAlpha)
 TEST_F(CellsPBCTest, MonoclinicBeta)
 {
     createConfiguration({100, 100, 100}, {90, 110, 90}, {0, 0, 0});
-    ASSERT_TRUE(configuration_.box()->type() == Box::BoxType::MonoclinicBeta);
+    ASSERT_TRUE(configuration_.box().type() == Box::BoxType::MonoclinicBeta);
     testCells();
     testNeighbours();
 };
@@ -116,7 +116,7 @@ TEST_F(CellsPBCTest, MonoclinicBeta)
 TEST_F(CellsPBCTest, MonoclinicGamma)
 {
     createConfiguration({100, 100, 100}, {90, 90, 120}, {0, 0, 0});
-    ASSERT_TRUE(configuration_.box()->type() == Box::BoxType::MonoclinicGamma);
+    ASSERT_TRUE(configuration_.box().type() == Box::BoxType::MonoclinicGamma);
     testCells();
     testNeighbours();
 };

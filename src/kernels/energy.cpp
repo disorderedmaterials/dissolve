@@ -99,7 +99,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
             for (const auto &jj : otherAtoms)
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-                auto rSq = box_->minimumDistanceSquared(rI, jj->r());
+                auto rSq = box_.minimumDistanceSquared(rI, jj->r());
                 if (rSq > cutoffDistanceSquared_)
                     continue;
 
@@ -169,25 +169,26 @@ double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i) const
                                       {
                                           auto mimRequired = neighbour.requiresMIM;
                                           auto &nbrCellAtoms = neighbour.cell.atoms();
-                                          return std::accumulate(
-                                              nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
-                                              [&i, mimRequired, this](const auto innerAcc, const auto *j)
-                                              {
-                                                  auto &jj = *j;
+                                          return std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
+                                                                 [&i, mimRequired, this](const auto innerAcc, const auto *j)
+                                                                 {
+                                                                     auto &jj = *j;
 
-                                                  // Calculate rSquared distance between atoms, and check it against
-                                                  // the stored cutoff distance
-                                                  auto rSq = mimRequired ? box_->minimumDistanceSquared(i.r(), jj.r())
-                                                                         : (i.r() - jj.r()).magnitudeSq();
-                                                  if (rSq > cutoffDistanceSquared_)
-                                                      return innerAcc;
+                                                                     // Calculate rSquared distance between atoms, and check it
+                                                                     // against the stored cutoff distance
+                                                                     auto rSq = mimRequired
+                                                                                    ? box_.minimumDistanceSquared(i.r(), jj.r())
+                                                                                    : (i.r() - jj.r()).magnitudeSq();
+                                                                     if (rSq > cutoffDistanceSquared_)
+                                                                         return innerAcc;
 
-                                                  // Check for atoms in the same species
-                                                  if (i.molecule().get() != jj.molecule().get())
-                                                      return innerAcc + pairPotentialEnergy(i, jj, sqrt(rSq));
+                                                                     // Check for atoms in the same species
+                                                                     if (i.molecule().get() != jj.molecule().get())
+                                                                         return innerAcc +
+                                                                                pairPotentialEnergy(i, jj, sqrt(rSq));
 
-                                                  return innerAcc;
-                                              });
+                                                                     return innerAcc;
+                                                                 });
                                       });
 }
 
@@ -239,7 +240,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
                                                                  // Calculate rSquared distance between atoms, and check it
                                                                  // against the stored cutoff distance
                                                                  auto rSq = mimRequired
-                                                                                ? box_->minimumDistanceSquared(ii.r(), jj.r())
+                                                                                ? box_.minimumDistanceSquared(ii.r(), jj.r())
                                                                                 : (ii.r() - jj.r()).magnitudeSq();
                                                                  if (rSq > cutoffDistanceSquared_)
                                                                      return innerAcc;
@@ -264,7 +265,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
                                         return;
                                     const auto &ii = *mol.atom(i);
                                     const auto &jj = *mol.atom(j);
-                                    auto rSq = box_->minimumDistanceSquared(ii.r(), jj.r());
+                                    auto rSq = box_.minimumDistanceSquared(ii.r(), jj.r());
 
                                     if (rSq <= cutoffDistanceSquared_)
                                     {
@@ -387,7 +388,7 @@ Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
                 auto j = molN->atom(jj);
 
                 // Get interatomic distance
-                auto r = box_->minimumDistance(i->r(), j->r());
+                auto r = box_.minimumDistance(i->r(), j->r());
                 if (r > cutoff)
                     continue;
 
@@ -415,7 +416,7 @@ Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
                     auto j = molM->atom(jj);
 
                     // Get interatomic distance and check cutoff
-                    auto r = box_->minimumDistance(i->r(), j->r());
+                    auto r = box_.minimumDistance(i->r(), j->r());
                     if (r > cutoff)
                         continue;
 
@@ -427,12 +428,12 @@ Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
         // Bond energy
         for (const auto &bond : molN->species()->bonds())
             geometryEnergy.bondEnergy +=
-                bond.energy(box_->minimumDistance(molN->atom(bond.i()->index())->r(), molN->atom(bond.j()->index())->r()));
+                bond.energy(box_.minimumDistance(molN->atom(bond.i()->index())->r(), molN->atom(bond.j()->index())->r()));
 
         // Angle energy
         for (const auto &angle : molN->species()->angles())
         {
-            geometryEnergy.angleEnergy += angle.energy(box_->angleInRadians(
+            geometryEnergy.angleEnergy += angle.energy(box_.angleInRadians(
                 molN->atom(angle.i()->index())->r(), molN->atom(angle.j()->index())->r(), molN->atom(angle.k()->index())->r()));
         }
 
@@ -440,16 +441,16 @@ Kernel::EnergyResult EnergyKernel::totalEnergySimple() const
         for (const auto &torsion : molN->species()->torsions())
         {
             geometryEnergy.torsionEnergy += torsion.energy(
-                box_->torsionInRadians(molN->atom(torsion.i()->index())->r(), molN->atom(torsion.j()->index())->r(),
-                                       molN->atom(torsion.k()->index())->r(), molN->atom(torsion.l()->index())->r()));
+                box_.torsionInRadians(molN->atom(torsion.i()->index())->r(), molN->atom(torsion.j()->index())->r(),
+                                      molN->atom(torsion.k()->index())->r(), molN->atom(torsion.l()->index())->r()));
         }
 
         // Improper energy
         for (const auto &imp : molN->species()->impropers())
         {
             geometryEnergy.improperEnergy +=
-                imp.energy(box_->torsionInRadians(molN->atom(imp.i()->index())->r(), molN->atom(imp.j()->index())->r(),
-                                                  molN->atom(imp.k()->index())->r(), molN->atom(imp.l()->index())->r()));
+                imp.energy(box_.torsionInRadians(molN->atom(imp.i()->index())->r(), molN->atom(imp.j()->index())->r(),
+                                                 molN->atom(imp.k()->index())->r(), molN->atom(imp.l()->index())->r()));
         }
     }
 

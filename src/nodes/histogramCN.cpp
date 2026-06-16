@@ -60,7 +60,7 @@ NodeConstants::ProcessResult HistogramCNNode::process()
         {
             if (siteB == siteA)
                 continue;
-            if (!distanceRange_.contains(configuration_->box()->minimumDistance(siteB->origin(), siteA->origin())))
+            if (!distanceRange_.contains(configuration_->box().minimumDistance(siteB->origin(), siteA->origin())))
                 continue;
             ++nSelected;
         }

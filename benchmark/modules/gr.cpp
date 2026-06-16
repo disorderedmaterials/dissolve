@@ -16,7 +16,7 @@ static void BM_CalculateGR(benchmark::State &state)
     GRNode grNode(nullptr);
     grNode.setOption<Configuration *>("Configurations", problemDef.configuration());
 
-    double rdfRange = problemDef.configuration()->box()->inscribedSphereRadius();
+    double rdfRange = problemDef.configuration()->box().inscribedSphereRadius();
     bool upToDate = false;
     // for (auto _ : state)
     // {

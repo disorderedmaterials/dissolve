@@ -6,9 +6,10 @@
 #include "data/ff/ff.h"
 #include "data/isotopes.h"
 
-Species::Species(std::string name) : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false)
+Species::Species(std::string name)
+    : name_(name), naturalIsotopologue_(this, "Natural"), attachedAtomListsGenerated_(false), box_(Box::none())
 {
-    box_ = std::make_unique<SingleImageBox>();
+    box_ = Box::none();
 }
 
 // Clear Data

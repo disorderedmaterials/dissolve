@@ -38,12 +38,12 @@ RegionalPotentialVoxelKernel::RegionalPotentialVoxelKernel(std::string_view expr
 }
 
 // Set voxel position variables
-void RegionalPotentialVoxelKernel::setVoxelPosition(const Box *box, Vector3 r) const
+void RegionalPotentialVoxelKernel::setVoxelPosition(const Box &box, Vector3 r) const
 {
     x_->setValue(r.x);
     y_->setValue(r.y);
     z_->setValue(r.z);
-    box->toFractional(r);
+    box.toFractional(r);
     xFrac_->setValue(r.x);
     yFrac_->setValue(r.y);
     zFrac_->setValue(r.z);
@@ -59,7 +59,7 @@ double RegionalPotentialVoxelKernel::functionValue() const
 }
 
 // Calculate and store energy and force for the specified voxel centre
-void RegionalPotentialVoxelKernel::energyAndForce(const Box *box, const Vector3 &r, double &energy, Vector3 &force) const
+void RegionalPotentialVoxelKernel::energyAndForce(const Box &box, const Vector3 &r, double &energy, Vector3 &force) const
 {
     // Energy at the centre of the voxel
     setVoxelPosition(box, r);
@@ -99,13 +99,13 @@ const std::string RegionalPotential::formString() const { return "Expression"; }
 const std::string RegionalPotential::formParametersString() const { return "N/A"; }
 
 // Set up potential for supplied box
-bool RegionalPotential::setUp(const Box *box, double voxelSize,
+bool RegionalPotential::setUp(const Box &box, double voxelSize,
                               const std::function<std::shared_ptr<RegionalPotentialVoxelKernel>(void)> &kernelGenerator)
 {
     // Set fractional voxel sizes
     Vector3i nVoxels;
     for (auto n = 0; n < 3; ++n)
-        nVoxels.set(n, std::max(int(box->axisLength(n) / voxelSize), 1));
+        nVoxels.set(n, std::max(int(box.axisLength(n) / voxelSize), 1));
     voxelSizeFrac_.set(1.0 / nVoxels.x, 1.0 / nVoxels.y, 1.0 / nVoxels.z);
 
     // Initialise 3D maps
@@ -116,7 +116,7 @@ bool RegionalPotential::setUp(const Box *box, double voxelSize,
     auto voxelCombinable = createCombinableVoxelKernel(kernelGenerator);
     auto voxelFunction = [&](auto triplet, auto x, auto y, auto z)
     {
-        auto r = box->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y, (z + 0.5) * voxelSizeFrac_.z});
+        auto r = box.getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y, (z + 0.5) * voxelSizeFrac_.z});
         voxelCombinable.local()->energyAndForce(box, r, energyVoxels_[triplet], forceVoxels_[triplet]);
     };
 
@@ -130,20 +130,20 @@ bool RegionalPotential::setUp(const Box *box, double voxelSize,
  * Potential Calculation
  */
 
-std::tuple<int, int, int> RegionalPotential::voxelIndices(const ConfigurationAtom &i, const Box *box) const
+std::tuple<int, int, int> RegionalPotential::voxelIndices(const ConfigurationAtom &i, const Box &box) const
 {
-    auto r = box->getFractional(i.r());
+    auto r = box.getFractional(i.r());
     return {r.x / voxelSizeFrac_.x, r.y / voxelSizeFrac_.y, r.z / voxelSizeFrac_.z};
 }
 
 // Calculate energy on specified atom
-double RegionalPotential::energy(const ConfigurationAtom &i, const Box *box) const
+double RegionalPotential::energy(const ConfigurationAtom &i, const Box &box) const
 {
     return energyVoxels_[voxelIndices(i, box)];
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void RegionalPotential::force(const ConfigurationAtom &i, const Box *box, Vector3 &f) const
+void RegionalPotential::force(const ConfigurationAtom &i, const Box &box, Vector3 &f) const
 {
     f = forceVoxels_[voxelIndices(i, box)];
 }

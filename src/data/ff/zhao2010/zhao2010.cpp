@@ -117,7 +117,7 @@ std::optional<const ForcefieldAngleTerm> Forcefield_Zhao2010::getAngleTerm(const
         if (a.i()->Z() == Elements::O && a.j()->Z() == Elements::Cu && a.k()->Z() == Elements::O)
         {
             // Determine the geometry
-            auto theta = a.parent()->box()->angleInDegrees(a.i()->r(), a.j()->r(), a.k()->r());
+            auto theta = a.parent()->box().angleInDegrees(a.i()->r(), a.j()->r(), a.k()->r());
             if (theta > 135.0)
                 return ForcefieldAngleTerm{i.name(), j.name(), k.name(), AngleFunctions::Form::Harmonic, {419.7389, 170.2}};
             else

@@ -50,11 +50,11 @@ TEST(AtomShakeTest, Water)
 
     // Check the geometry of the molecule
     auto cfg = insertNode->getOutputValue<Configuration *>("Configuration");
-    auto *box = cfg->box();
+    auto &box = cfg->box();
     auto &atoms = cfg->atoms();
-    auto rMin01 = box->minimumDistance(atoms[0].r(), atoms[1].r());
-    auto rMin02 = box->minimumDistance(atoms[0].r(), atoms[2].r());
-    auto angle102 = box->angleInDegrees(atoms[1].r(), atoms[0].r(), atoms[2].r());
+    auto rMin01 = box.minimumDistance(atoms[0].r(), atoms[1].r());
+    auto rMin02 = box.minimumDistance(atoms[0].r(), atoms[2].r());
+    auto angle102 = box.angleInDegrees(atoms[1].r(), atoms[0].r(), atoms[2].r());
     EXPECT_NEAR(rMin01, 1.0, 1.0e-4);
     EXPECT_NEAR(rMin02, 1.0, 1.0e-4);
     EXPECT_NEAR(angle102, 113.24, 1.7e-3);

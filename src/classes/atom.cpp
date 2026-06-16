@@ -95,16 +95,16 @@ AtomBase::AtomGeometry AtomBase::geometry() const
             return AtomGeometry::Octahedral;
             // For the remaining types, take averages of bond angles about the atom
         case (2):
-            angle = NonPeriodicBox::literalAngleInDegrees(neighbours[0]->r(), r_, neighbours[1]->r());
+            angle = Box::literalAngleInDegrees(neighbours[0]->r(), r_, neighbours[1]->r());
             if (angle > 150.0)
                 return AtomGeometry::Linear;
             else
                 return AtomGeometry::Tetrahedral;
             break;
         case (3):
-            angle = NonPeriodicBox::literalAngleInDegrees(neighbours[0]->r(), r_, neighbours[1]->r());
-            angle = std::max(angle, NonPeriodicBox::literalAngleInDegrees(neighbours[0]->r(), r_, neighbours[2]->r()));
-            angle = std::max(angle, NonPeriodicBox::literalAngleInDegrees(neighbours[1]->r(), r_, neighbours[2]->r()));
+            angle = Box::literalAngleInDegrees(neighbours[0]->r(), r_, neighbours[1]->r());
+            angle = std::max(angle, Box::literalAngleInDegrees(neighbours[0]->r(), r_, neighbours[2]->r()));
+            angle = std::max(angle, Box::literalAngleInDegrees(neighbours[1]->r(), r_, neighbours[2]->r()));
             if (angle > 150.0)
                 return AtomGeometry::TShape;
             else if (angle > 115.0 && angle < 125.0)
@@ -120,7 +120,7 @@ AtomBase::AtomGeometry AtomBase::geometry() const
             {
                 for (auto m = n + 1; m < neighbours.size(); ++m)
                 {
-                    angle += NonPeriodicBox::literalAngleInDegrees(neighbours[n]->r(), r_, neighbours[m]->r());
+                    angle += Box::literalAngleInDegrees(neighbours[n]->r(), r_, neighbours[m]->r());
                 }
             }
             angle /= 6.0;

@@ -41,6 +41,8 @@ TEST(CosNTorsionForcesTest, POE)
     TestGraph testGraph;
     EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/poe_torsions_only.toml", 64}}, {22.98582, 22.98582, 22.98582}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/poe64_torsions/torsions-final.str"));
+    auto importNode = testGraph.findNode("ImportMoscitoStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setRange(9.0, 5.0e-3);
@@ -58,9 +60,8 @@ TEST(CosNTorsionForcesTest, POE)
     checkForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(
-        pairPotentialForces, geometryForces,
-        {"moscito/poe64_torsions/torsions-final.str", ForceImportFileFormat::ForceImportFormat::Moscito}, 6.0e-2);
+    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.0e-2);
 }
 
 TEST(CosNTorsionEnergyTest, Py4OHNTf2)
@@ -96,6 +97,8 @@ TEST(CosNTorsionForcesTest, Py4OHNTf2)
     EXPECT_TRUE(testGraph.createConfiguration(
         "Box", {{"species/py4oh_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_torsions/py4oh-ntf2-final.str"));
+    auto importNode = testGraph.findNode("ImportMoscitoStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setRange(9.0, 5.0e-3);
@@ -113,9 +116,8 @@ TEST(CosNTorsionForcesTest, Py4OHNTf2)
     checkForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(
-        pairPotentialForces, geometryForces,
-        {"moscito/py4oh_torsions/py4oh-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito}, 9.0e-3);
+    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-3);
 }
 
 TEST(CosNImproperEnergyTest, Py4OHNTf2)
@@ -151,6 +153,8 @@ TEST(CosNImproperForcesTest, Py4OHNTf2)
     EXPECT_TRUE(testGraph.createConfiguration(
         "Box", {{"species/py4oh_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py4oh_impropers/py4oh-ntf2-final.str"));
+    auto importNode = testGraph.findNode("ImportMoscitoStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setRange(9.0, 5.0e-3);
@@ -168,9 +172,8 @@ TEST(CosNImproperForcesTest, Py4OHNTf2)
     checkForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(
-        pairPotentialForces, geometryForces,
-        {"moscito/py4oh_impropers/py4oh-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito}, 7.0e-2);
+    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 7.0e-2);
 }
 
 TEST(CosNTorsionEnergyTest, Py5NTf2)
@@ -206,6 +209,8 @@ TEST(CosNTorsionForcesTest, Py5NTf2)
     EXPECT_TRUE(testGraph.createConfiguration(
         "Box", {{"species/py5_torsions_only.toml", 1}, {"species/ntf2_torsions_only.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_torsions/py5-ntf2-final.str"));
+    auto importNode = testGraph.findNode("ImportMoscitoStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setRange(9.0, 5.0e-3);
@@ -223,9 +228,8 @@ TEST(CosNTorsionForcesTest, Py5NTf2)
     checkForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(
-        pairPotentialForces, geometryForces,
-        {"moscito/py5_torsions/py5-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito}, 9.0e-2);
+    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-2);
 }
 
 TEST(CosNImproperEnergyTest, Py5NTf2)
@@ -261,6 +265,8 @@ TEST(CosNImproperForcesTest, Py5NTf2)
     EXPECT_TRUE(testGraph.createConfiguration(
         "Box", {{"species/py5_impropers_only.toml", 1}, {"species/ntf2_no_terms.toml", 1}}, {20.0, 20.0, 20.0}));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportMoscitoStructure", "moscito/py5_impropers/py5-ntf2-final.str"));
+    auto importNode = testGraph.findNode("ImportMoscitoStructure");
+    ASSERT_TRUE(importNode);
 
     // Adjust pair potential properties
     PairPotential::setRange(9.0, 5.0e-3);
@@ -278,9 +284,8 @@ TEST(CosNImproperForcesTest, Py5NTf2)
     checkForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(
-        pairPotentialForces, geometryForces,
-        {"moscito/py5_impropers/py5-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito}, 4.0e-3);
+    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 4.0e-3);
 }
 
 } // namespace UnitTest

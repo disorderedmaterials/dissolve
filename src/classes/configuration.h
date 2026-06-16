@@ -149,7 +149,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Size factor currently applied to Box / Cells
     std::optional<double> appliedSizeFactor_;
     // Periodic Box
-    std::unique_ptr<Box> box_{nullptr};
+    Box box_;
     // Requested side length for individual Cell
     static constexpr double defaultCellDivisionLength_ = 7.0;
     double requestedCellDivisionLength_{defaultCellDivisionLength_};
@@ -168,7 +168,7 @@ class Configuration : public Serialisable<const CoreData &>
     // Update cell array, and reassign atoms to cells
     void updateCells();
     // Return Box
-    const Box *box() const;
+    const Box &box() const;
     // Scale Box lengths (and associated Cells) by specified factors
     void scaleBox(Vector3 scaleFactors);
     // Set requested size factor for Box

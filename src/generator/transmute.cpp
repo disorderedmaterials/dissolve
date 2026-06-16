@@ -58,7 +58,7 @@ bool TransmuteGeneratorNode::execute(const GeneratorContext &generatorContext)
     }
 
     // Perform the magic
-    const auto *box = generatorContext.configuration()->box();
+    const auto &box = generatorContext.configuration()->box();
     for (const auto &mol : targets)
     {
         auto newMol = generatorContext.configuration()->addMolecule(targetSpecies_);

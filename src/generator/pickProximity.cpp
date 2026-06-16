@@ -52,7 +52,7 @@ bool PickProximityGeneratorNode::execute(const GeneratorContext &generatorContex
     else
         Messenger::print("[PickProximity] Allowed coordination count is N >= {}.\n", nMin);
 
-    const auto *box = generatorContext.configuration()->box();
+    const auto &box = generatorContext.configuration()->box();
 
     // Loop over all target molecules
     for (const auto &molI : moleculePool(generatorContext.configuration()))
@@ -72,7 +72,7 @@ bool PickProximityGeneratorNode::execute(const GeneratorContext &generatorContex
                 auto jCog = molJ->centreOfGeometry(box);
 
                 // Calculate i-j minimum distance
-                auto r = box->minimumDistance(iCog, jCog);
+                auto r = box.minimumDistance(iCog, jCog);
 
                 // Check distance criteria
                 if (r >= rMin && (!maxDistance_.has_value() || r <= maxDistance_.value()))

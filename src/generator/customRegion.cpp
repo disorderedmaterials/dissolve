@@ -38,7 +38,7 @@ bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vecto
     x_->setValue(r.x);
     y_->setValue(r.y);
     z_->setValue(r.z);
-    auto rFrac = cfg->box()->getFractional(r);
+    auto rFrac = cfg->box().getFractional(r);
     xFrac_->setValue(rFrac.x);
     yFrac_->setValue(rFrac.y);
     zFrac_->setValue(rFrac.z);
