@@ -34,7 +34,6 @@ TEST(EPSRNodeTest, Water3N)
     ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::AutoMethod));
 
     ASSERT_TRUE(sqNode);
-    ASSERT_TRUE(sqNode->setOption<Averaging::AveragingScheme>("AveragingScheme", Averaging::LinearAveraging));
     ASSERT_TRUE(sqNode->setOption<Function1DWrapper>("QBroadening", {Functions1D::Form::OmegaDependentGaussian, {0.02}}));
     ASSERT_TRUE(sqNode->setOption("WindowFunction", WindowFunction::Form::None));
 

@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/registry.h"
-#include "math/averaging.h"
 #include "nodes/add.h"
 #include "nodes/angle.h"
 #include "nodes/atomicMC/atomicMC.h"

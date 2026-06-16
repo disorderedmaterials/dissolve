@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/partialSet.h"
-#include "math/averaging.h"
 #include "math/function1D.h"
 #include "math/history.h"
 #include "math/windowFunction.h"
@@ -38,8 +37,6 @@ class SQNode : public Node
     History<PartialSet> unweightedSQHistory_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_;
-    // Weighting scheme to use when averaging partials
-    Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Broadening function to apply to Bragg S(Q)
     Function1DWrapper braggQBroadening_;
     // Broadening function to apply to S(Q)

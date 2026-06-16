@@ -4,7 +4,6 @@
 #include "enumRegistry.h"
 #include "data/structureFactors.h"
 #include "gui/models/nodeGraph/enumOptionsModel.h"
-#include "math/averaging.h"
 #include "math/windowFunction.h"
 #include "nodes/gr/gr.h"
 #include "nodes/md.h"
@@ -38,6 +37,5 @@ void EnumRegistry::instantiateOptions()
     options_ = {{typeid(StructureFactors::NormalisationType), wrap(StructureFactors::normalisationTypes())},
                 {typeid(GRNode::PartialsMethod), wrap(GRNode::partialsMethods())},
                 {typeid(MDNode::TimestepType), wrap(MDNode::timestepType())},
-                {typeid(WindowFunction::Form), wrap(WindowFunction::forms())},
-                {typeid(Averaging::AveragingScheme), wrap(Averaging::averagingSchemes())}};
+                {typeid(WindowFunction::Form), wrap(WindowFunction::forms())}};
 }

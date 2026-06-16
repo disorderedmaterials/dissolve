@@ -1,7 +1,5 @@
 add_library(
   math
-  averaging.cpp
-  averaging.h
   combinations.cpp
   combinations.h
   cuboid.cpp

@@ -29,8 +29,6 @@ SQNode::SQNode(Graph *parentGraph)
         "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_);
     addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
                                      averagingLength_);
-    addOption<Averaging::AveragingScheme>("AveragingScheme", "Weighting scheme to use when averaging partials",
-                                          averagingScheme_);
     addOption<bool>("Save", "Whether to save partials to disk after calculation", save_);
 
     // Serialisables

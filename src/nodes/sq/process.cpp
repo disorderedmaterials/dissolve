@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "math/averaging.h"
 #include "nodes/sq/sq.h"
 
 // Run main processing
@@ -24,8 +23,7 @@ NodeConstants::ProcessResult SQNode::process()
         message("SQ: Window function to be applied in Fourier transforms is {}.",
                 WindowFunction::forms().keyword(windowFunction_));
     if (averagingLength_)
-        message("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value().asDouble(),
-                Averaging::averagingSchemes().keyword(averagingScheme_));
+        message("SQ: Partials will be averaged over {} sets.\n", averagingLength_.value().asDouble());
     else
         message("SQ: No averaging of partials will be performed.\n");
     if (qBroadening_.form() == Functions1D::Form::None)
