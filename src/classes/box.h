@@ -99,11 +99,11 @@ class Box : public Serialisable<>
      */
     public:
     // Convert specified fractional coordinates to real-space coordinates
-    inline void toReal(Vector3 &r) const;
+    void toReal(Vector3 &r) const;
     // Return specified fractional coordinates converted to real-space coordinates
     Vector3 getReal(Vector3 r) const;
     // Convert specified real-space coordinates to fractional coordinates
-    inline void toFractional(Vector3 &r) const;
+    void toFractional(Vector3 &r) const;
     // Return specified real coordinates converted to fractional coordinates
     Vector3 getFractional(Vector3 r) const;
 
@@ -111,26 +111,8 @@ class Box : public Serialisable<>
      * Minimum Image Calculation
      */
     protected:
-    // Wrap fractional coordinate into Box assuming it can be no more than half a fractional Box length away in any one
-    // direction
-    inline void wrap(Vector3 &rFrac) const
-    {
-        if (type_ != BoxType::None)
-        {
-            if (rFrac.x < -0.5)
-                rFrac.x += 1.0;
-            else if (rFrac.x > 0.5)
-                rFrac.x -= 1.0;
-            if (rFrac.y < -0.5)
-                rFrac.y += 1.0;
-            else if (rFrac.y > 0.5)
-                rFrac.y -= 1.0;
-            if (rFrac.z < -0.5)
-                rFrac.z += 1.0;
-            else if (rFrac.z > 0.5)
-                rFrac.z -= 1.0;
-        }
-    }
+    // Wrap fractional coordinate into Box assuming it can be no more than half a fractional Box length away in any direction
+    void wrap(Vector3 &rFrac) const;
 
     public:
     // Return minimum image coordinates of r1 with respect to r2
@@ -167,11 +149,11 @@ class Box : public Serialisable<>
     // Generate Boxes of a given type
     static Box none();
     static Box cubic(double length);
-    static Box orthorhombic(Vector3 lengths);
-    static Box monoclinicAlpha(Vector3 lengths, double alpha);
-    static Box monoclinicBeta(Vector3 lengths, double beta);
-    static Box monoclinicGamma(Vector3 lengths, double gamma);
-    static Box triclinic(Vector3 lengths, Vector3 angles);
+    static Box orthorhombic(const Vector3 &lengths);
+    static Box monoclinicAlpha(const Vector3 &lengths, double alpha);
+    static Box monoclinicBeta(const Vector3 &lengths, double beta);
+    static Box monoclinicGamma(const Vector3 &lengths, double gamma);
+    static Box triclinic(const Vector3 &lengths, const Vector3 &angles);
     // Return radius of largest possible inscribed sphere for box
     double inscribedSphereRadius() const;
     // Return random coordinate inside Box
