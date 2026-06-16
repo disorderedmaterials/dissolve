@@ -3,15 +3,13 @@
 
 #pragma once
 
-#include "io/import/data1D.h"
 #include "nodes/node.h"
-#include <memory>
 
-class Data1DImportNode : public Node
+class ImportXYDataNode : public Node
 {
     public:
-    Data1DImportNode(Graph *parentGraph);
-    ~Data1DImportNode() override = default;
+    ImportXYDataNode(Graph *parentGraph);
+    ~ImportXYDataNode() override = default;
 
     /*
      * Definition
@@ -33,7 +31,7 @@ class Data1DImportNode : public Node
     // Column index of data Y values
     Number yColumn_{2};
     // Column index of data error values
-    Number errorColumn_{0};
+    std::optional<Number> errorColumn_;
     // Remove average from X
     std::optional<Number> removeAverageFromX_;
     // Minimum X value
@@ -51,4 +49,9 @@ class Data1DImportNode : public Node
     private:
     // Run main processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Read data specified
+    static bool read(Data1D &data, std::string filePath, int xColumn = 1, int yColumn = 2, int errorColumn = 0,
+                     bool histogram = false);
 };

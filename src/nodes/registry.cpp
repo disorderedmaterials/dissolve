@@ -14,7 +14,6 @@
 #include "nodes/clearBonding.h"
 #include "nodes/configuration.h"
 #include "nodes/dAngle.h"
-#include "nodes/data1DImport.h"
 #include "nodes/derivative.h"
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
@@ -30,6 +29,7 @@
 #include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importMoscitoStructure.h"
+#include "nodes/importXYData.h"
 #include "nodes/importXYZStructure.h"
 #include "nodes/importXYZTrajectory.h"
 #include "nodes/insert.h"
@@ -86,7 +86,6 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Configuration", makeDerivedNode<ConfigurationNode>()},
                   {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
                   {"DAngle", makeDerivedNode<DAngleNode>()},
-                  {"Data1DImport", makeDerivedNode<Data1DImportNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
@@ -102,6 +101,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
                   {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
                   {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
+                  {"ImportXYData", makeDerivedNode<ImportXYDataNode>()},
                   {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()},
                   {"Insert", makeDerivedNode<InsertNode>()},

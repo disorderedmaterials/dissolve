@@ -83,21 +83,16 @@ TEST_F(SiteRDFNodeTest, Water)
     ASSERT_EQ(iterator_->run(), NodeConstants::ProcessResult::Success);
 
     // O-O RDF
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        9.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(oORDF->dataRDF(), "RDF(OW-OW)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.aardf1_02_02", 1, 2, 9.0e-3));
 
     // H1-H2 RDF, excluding intramolecular
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        h1H2RDF->dataRDF(), "RDF(H1-H2)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        5.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(h1H2RDF->dataRDF(), "RDF(H1-H2)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.aardf1_01_03", 1, 2, 5.0e-3));
 
     // COM-COM RDF
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.rdf11", 1, 2, 5.0e-4));
 
     // Coordination numbers
     auto &[cNA, cNAData] = comCOMRDF->sumN("A");
@@ -124,19 +119,16 @@ TEST_F(SiteRDFNodeTest, WaterNPT)
     ASSERT_EQ(iterator_->run(), NodeConstants::ProcessResult::Success);
 
     // O-O RDF
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
-        {"dlpoly/water267-npt/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.1e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(oORDF->dataRDF(), "RDF(OW-OW)//RDF",
+                                                "dlpoly/water267-npt/water-267-298K.aardf1_02_02", 1, 2, 2.1e-2));
 
     // H1-H2 RDF, excluding intramolecular interactions
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        h1H2RDF->dataRDF(), "RDF(H1-H2)//RDF",
-        {"dlpoly/water267-npt/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.0e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(h1H2RDF->dataRDF(), "RDF(H1-H2)//RDF",
+                                                "dlpoly/water267-npt/water-267-298K.aardf1_01_03", 1, 2, 1.0e-2));
 
     // COM-COM RDF
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
-        {"dlpoly/water267-npt/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 4.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
+                                                "dlpoly/water267-npt/water-267-298K.rdf11", 1, 2, 4.0e-3));
 }
 
 TEST_F(SiteRDFNodeTest, WaterDynamic)
@@ -154,16 +146,12 @@ TEST_F(SiteRDFNodeTest, WaterDynamic)
     ASSERT_EQ(iterator_->run(), NodeConstants::ProcessResult::Success);
 
     // O-O RDF
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        9.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(oORDF->dataRDF(), "RDF(OW-OW)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.aardf1_02_02", 1, 2, 9.0e-3));
 
     // H1-H2 RDF, excluding intramolecular interactions
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        hHRDF->dataRDF(), "RDF(H-H)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        3.0e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(hHRDF->dataRDF(), "RDF(H-H)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.aardf1_HHsum", 1, 2, 3.0e-3));
 }
 
 TEST_F(SiteRDFNodeTest, WaterFragments)
@@ -186,21 +174,16 @@ TEST_F(SiteRDFNodeTest, WaterFragments)
     ASSERT_EQ(iterator_->run(), NodeConstants::ProcessResult::Success);
 
     // O-O RDF
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        oORDF->dataRDF(), "RDF(OW-OW)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_02_02", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        1.0e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(oORDF->dataRDF(), "RDF(OW-OW)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.aardf1_02_02", 1, 2, 1.0e-2));
 
     // H1-H2 RDF, excluding intramolecular
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        hHRDF->dataRDF(), "RDF(H-H)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.aardf1_01_03", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2},
-        1.0e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(hHRDF->dataRDF(), "RDF(H-H)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.aardf1_01_03", 1, 2, 1.0e-2));
 
     // COM-COM RDF
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
-        {"dlpoly/water267-analysis/water-267-298K.rdf11", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-4));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(comCOMRDF->dataRDF(), "RDF(COM-COM)//RDF",
+                                                "dlpoly/water267-analysis/water-267-298K.rdf11", 1, 2, 5.0e-4));
 
     // Coordination numbers
     auto &[cNA, cNAData] = comCOMRDF->sumN("A");

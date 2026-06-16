@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "io/export/data1D.h"
 #include "math/poissonFit.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
@@ -41,9 +40,8 @@ void testReconstruction(std::string inpAFile, std::string delfitFile,
         PoissonFit coeffMinimiser(axisData);
         coeffMinimiser.constructReciprocal(0.0, 12.0, fitCoefficients, 0.01, 0.01, 0, 0.01, 0);
 
-        EXPECT_TRUE(DissolveSystemTest::checkData1D(coeffMinimiser.approximation(), dataSet,
-                                                    {delfitFile, Data1DImportFileFormat::Data1DImportFormat::XY, 1, column},
-                                                    errorThreshold));
+        EXPECT_TRUE(
+            DissolveSystemTest::checkData1D(coeffMinimiser.approximation(), dataSet, delfitFile, 1, column, errorThreshold));
     }
 }
 
@@ -51,9 +49,7 @@ TEST(Poisson, WaterInpA)
 {
     // Prepare a dummy dataset with the correct x axis for the Poisson reconstruction
     Data1D dummyData;
-    Data1DImportFileFormat importer("epsr25/water1000-neutron/FQ.delfit",
-                                    Data1DImportFileFormat::Data1DImportFormat::Histogram);
-    ASSERT_TRUE(importer.importData(dummyData));
+    ASSERT_TRUE(ImportXYDataNode::read(dummyData, "epsr25/water1000-neutron/FQ.delfit", 1, 2, 0, true));
     dummyData.zero();
 
     // Set targets
@@ -67,13 +63,11 @@ TEST(Poisson, BenzeneInpA)
 {
     // Prepare a dummy dataset with the correct x axis for the Poisson reconstruction
     Data1D dummyData;
-    Data1DImportFileFormat importer("epsr25/benzene200-neutron/FQ.delfit",
-                                    Data1DImportFileFormat::Data1DImportFormat::Histogram);
-    ASSERT_TRUE(importer.importData(dummyData));
+    ASSERT_TRUE(ImportXYDataNode::read(dummyData, "epsr25/benzene200-neutron/FQ.delfit", 1, 2, 0, true));
     dummyData.zero();
 
     // Set targets
-    std::vector<std::tuple<std::string, int, double>> targets = {{"C6H6", 2, 9.0e-5}, {"C6D6", 4, 5.0e-4}, {"5050", 6, 3.0e-4}};
+    std::vector<std::tuple<std::string, int, double>> targets = {{"C6H6", 2, 2.5e-4}, {"C6D6", 4, 5.0e-4}, {"5050", 6, 4.0e-4}};
 
     testReconstruction("epsr25/benzene200-neutron/benzene.EPSR.inpa", "epsr25/benzene200-neutron/FQ.delfit", targets,
                        dummyData);

@@ -8,7 +8,6 @@
 #include "classes/xRayWeights.h"
 #include "data/formFactors.h"
 #include "data/structureFactors.h"
-#include "io/import/data1D.h"
 #include "math/windowFunction.h"
 #include "nodes/gr/gr.h"
 #include "nodes/node.h"
