@@ -62,7 +62,7 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
 
         // Add an Insert node for the Species
         auto *insertNode = dynamic_cast<InsertNode *>(createNode("Insert"));
-        insertNode->setInput<Number>("Population", speciePopulation);
+        insertNode->setInput<Number>("Population", speciesPopulation);
         insertNode->setInput<Number>("Density", 0.1);
         addEdge({"Species", "Species", "Insert", "Species"});
 
