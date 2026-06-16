@@ -64,10 +64,13 @@ void testBasicOperations(Box &box)
     // Determine central coordinate from full axes matrix
     auto centroid = box.axes() * Vector3(0.5, 0.5, 0.5);
 
-    // For each corner, determine correct coordinates from full axes matrix, then test optimised imaging / vector functions
+    // For each corner, determine correct coordinates from full axes matrix, then test optimised imaging / vector functions.
+    // If we sit perfectly on the corner vertex we risk numerical errors breaking the tests, so step inside by a small delta.
+    const auto delta = 1.0e-5;
     for (auto n = 0; n < 8; ++n)
     {
-        auto corner = box.axes() * Vector3((n & 1) ? 1.0 : 0.0, (n & 2) ? 1.0 : 0.0, (n & 4) ? 1.0 : 0.0);
+        auto corner =
+            box.axes() * Vector3((n & 1) ? 1.0 - delta : delta, (n & 2) ? 1.0 - delta : delta, (n & 4) ? 1.0 - delta : delta);
 
         // Calculate manual minimum image vector
         auto mimCorner = manualMim(box, corner, centroid);

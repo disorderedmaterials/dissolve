@@ -22,7 +22,7 @@ set(models_MOC_HDRS
     generatorModel.h
     generatorNodeModel.h
     rangeVectorModel.h
-    renderableGroupManagerModel.h
+    # renderableGroupManagerModel.h
     simpleForcefieldModel.h
     sitesFilterProxy.h
     sitesModel.h
@@ -79,7 +79,7 @@ set(models_SRCS
     generatorModelMimeData.h
     generatorNodeModel.cpp
     rangeVectorModel.cpp
-    renderableGroupManagerModel.cpp
+    # renderableGroupManagerModel.cpp
     simpleForcefieldModel.cpp
     sitesFilterProxy.cpp
     sitesModel.cpp
