@@ -298,7 +298,6 @@ set(BASIC_LINK_LIBS
     moduleregistry
     io
     export
-    import
     neta
     analyser
     generator
