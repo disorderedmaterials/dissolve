@@ -21,6 +21,7 @@
 #include "nodes/exportDLPOLYConfiguration.h"
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/exportXYZTrajectory.h"
+#include "nodes/exportXYData.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr/gr.h"
 #include "nodes/histogramCN.h"
@@ -94,6 +95,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfigurationNode>()},
                   {"ExportXYZTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
                   {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfigurationNode>()},
+                  {"ExportXYData", makeDerivedNode<ExportXYDataNode>()},
                   {"Forcefield", makeDerivedNode<ForcefieldNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
                   {"GR", makeDerivedNode<GRNode>()},
