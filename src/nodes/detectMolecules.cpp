@@ -62,11 +62,9 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             const auto fragmentAtom = inputStructure_.atom(fragAtomIndex);
             for (auto bond : fragmentAtom->bonds())
             {
-                // Exclude index i > index j so we don't duplicate bonds
-                if (bond->i()->index() > bond->j()->index())
-                    continue;
-                // Add a bond between the new atoms in the detected structure
-                detectedMolStructure.addBond(originalIndexMap[bond->i()->index()], originalIndexMap[bond->j()->index()]);
+                // Add a bond between the new atoms in the detected structure (as long as it doesn't already exist)
+                if (!detectedMolStructure.hasBond(originalIndexMap[bond->i()->index()], originalIndexMap[bond->j()->index()]))
+                    detectedMolStructure.addBond(originalIndexMap[bond->i()->index()], originalIndexMap[bond->j()->index()]);
             }
         }
 
