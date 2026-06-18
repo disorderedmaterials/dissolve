@@ -207,16 +207,14 @@ std::vector<std::vector<Vector3>> DetectMoleculesNode::getInstances(const Struct
         Structure instanceStructure;
         instanceStructure.createBox(referenceStructure.box().axisLengths(), referenceStructure.box().axisAngles());
         StructureAtom *rootAtom = nullptr;
-        // -- Create species atoms from those matched in the unit cell by the NETA description.
+        // -- Create structure atoms from those matched in the unit cell by the NETA description.
         for (auto &matchedAtom : matchedUnitCellAtoms)
         {
-            auto idx = instanceStructure.addAtom(matchedAtom->Z(), matchedAtom->r(), 0.0);
+            auto *newAtom = instanceStructure.addAtom(matchedAtom->Z(), matchedAtom->r(), 0.0);
 
-            // need a map of structure atom to index inside structure
-
-            // Store the index of the root atom in match in our instance species when we find it
+            // Store the structure atom which corresponds to the root atom (when we find it)
             if (matchedAtom == atom.get())
-                rootAtom = atom.get();
+                rootAtom = newAtom;
         }
         // -- Store the local root atom so we can access its coordinates for the origin translation
         auto &instanceStructureRootAtom = rootAtom;
