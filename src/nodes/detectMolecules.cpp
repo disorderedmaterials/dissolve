@@ -43,7 +43,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
 
         // Create a new structure for the detected fragment
         auto &detectedMolStructure = detectedStructures_.emplace_back();
-        detectedMolStructure.createBox(inputStructure_.box()->axes());
+        detectedMolStructure.createBox(inputStructure_.box().axes());
 
         // Copy fragment atoms, forming a map of the original indices to the new atom in the structure
         std::map<int, StructureAtom *> originalIndexMap;
@@ -205,7 +205,7 @@ std::vector<std::vector<Vector3>> DetectMoleculesNode::getInstances(const Struct
         // the selected fragment atoms, reassembled into a molecule (i.e. unfolded) and with bonding applied / calculated.
         // We need to copy the unit cell from the crystal so we detect bonds properly.
         Structure instanceStructure;
-        instanceStructure.createBox(referenceStructure.box()->axisLengths(), referenceStructure.box()->axisAngles());
+        instanceStructure.createBox(referenceStructure.box().axisLengths(), referenceStructure.box().axisAngles());
         StructureAtom *rootAtom = nullptr;
         // -- Create species atoms from those matched in the unit cell by the NETA description.
         for (auto &matchedAtom : matchedUnitCellAtoms)
