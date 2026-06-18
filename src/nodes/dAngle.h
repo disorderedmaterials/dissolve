@@ -56,6 +56,7 @@ class DAngleNode : public Node
     // Temporary accessors to data for testing
     const Data1D &rdfBC() const;
     const Data1D &angle() const;
+    const Histogram2D &distanceAngleMap() const;
     const Data2D &dAngle() const;
 
     /*

@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/dAngle.h"
+#include "analyser/dataOperator2D.h"
+#include "nodes/importDLPUtilsSurface.h"
 #include "nodes/iterableGraph.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
@@ -41,6 +43,16 @@ TEST(DAngleNodeTest, Water)
     EXPECT_TRUE(DissolveSystemTest::checkData1D(dAngle->angle(), "Angle Distributions",
                                                 "dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm", 1, 2,
                                                 3.0e-6));
+
+    // Test DAngle map - the reference data have not been normalised to account for sin(y) or the spherical shell (RDF) density.
+    Data2D referenceData;
+    EXPECT_TRUE(
+        ImportDLPUtilsSurfaceNode::read(referenceData, "dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.surf"));
+    auto data = dAngle->distanceAngleMap().accumulatedData();
+    DataOperator2D dAngleNormaliser(data);
+    dAngleNormaliser.divide(267.0);
+    EXPECT_TRUE(DissolveSystemTest::checkData2D(data, "Distance-Angle Map", referenceData,
+                                                "water-267-298K.dahist1_02_1_01_02.surf", 3.0e-3));
 }
 
 } // namespace UnitTest

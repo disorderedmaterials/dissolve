@@ -8,6 +8,7 @@
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "main/dissolve.h"
+#include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/error.h"
 #include "math/mathFunc.h"
@@ -252,6 +253,19 @@ class DissolveSystemTest
         }
 
         return checkData1D(dataA, nameA, dataB, filePath, tolerance, errorType);
+    }
+    // Test Data2D
+    [[nodiscard]] static bool checkData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB,
+                                          std::string_view nameB, double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
+        auto notOK = std::isnan(error) || error > tolerance;
+        Messenger::print("Data '{}' has error of {:7.3f} with data '{}' and is {} (threshold is {:6.3e})\n\n", nameA, error,
+                         nameB, notOK ? "NOT OK" : "OK", tolerance);
+
+        return !notOK;
     }
     // Test Data3D
     [[nodiscard]] static bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,

@@ -296,7 +296,6 @@ set(BASIC_LINK_LIBS
     potentials
     io
     export
-    import
     neta
     analyser
     generator

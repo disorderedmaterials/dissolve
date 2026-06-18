@@ -37,6 +37,7 @@ void DAngleNode::clearData() {}
 // Temporary accessors to data for testing
 const Data1D &DAngleNode::rdfBC() const { return rdfBC_; }
 const Data1D &DAngleNode::angle() const { return angle_; }
+const Histogram2D &DAngleNode::distanceAngleMap() const { return *distanceAngleMap_; }
 const Data2D &DAngleNode::dAngle() const { return dAngle_; }
 
 /*
