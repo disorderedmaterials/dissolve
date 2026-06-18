@@ -31,7 +31,7 @@ void RestraintPotentialGeneratorNode::restrainMoleculeAtoms(Configuration *cfg, 
     {
         auto pot = std::make_unique<SphericalPotential>();
         pot->setPotential(potential_);
-        pot->setTargetAtomIndices({i->globalIndex()});
+        pot->setTargetAtomIndices({i->index()});
         pot->setOrigin(i->r());
         cfg->addTargetedPotential(std::unique_ptr<ExternalPotential>(std::move(pot)));
     }

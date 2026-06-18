@@ -18,13 +18,6 @@ class Molecule;
 class ConfigurationAtom : public Atom<SpeciesBond>
 {
     /*
-     * Properties
-     */
-    public:
-    // Return global index of the atom
-    int globalIndex() const;
-
-    /*
      * Location
      */
     private:

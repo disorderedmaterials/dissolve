@@ -10,12 +10,16 @@
 // Rationalise object relationships between atoms, molecules, and cells
 void Configuration::updateObjectRelationships()
 {
-    int offset = 0;
+    auto offset = 0;
     for (auto &m : molecules_)
     {
         m->updateAtoms(atoms_, offset);
         offset += m->nAtoms();
     }
+
+    // Set indixes of all atoms
+    for (auto index = 0; index < atoms_.size(); ++index)
+        atoms_[index].setIndex(index);
 
     // If we have a CellArray update the atom locations
     if (cells_.nCells() != 0)

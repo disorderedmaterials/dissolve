@@ -167,7 +167,7 @@ void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<V
                                             return;
                                         // Check for atoms in the same molecule
                                         if (i->molecule() != j->molecule())
-                                            forcesWithoutMim(*i, i->globalIndex(), *j, j->globalIndex(), fLocal);
+                                            forcesWithoutMim(*i, i->index(), *j, j->index(), fLocal);
                                     });
 
             // Interatomic interactions between atoms in this cell and its neighbours
