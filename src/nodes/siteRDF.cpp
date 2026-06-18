@@ -2,14 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/siteRDF.h"
-#include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
-#include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/histogram1D.h"
 #include "math/integrator.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
+#include "nodes/exportXYData.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 
@@ -117,8 +116,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
                 sumNInst->addPoint(iteration(), sumN.value());
                 if (exportInstantaneous_)
                 {
-                    Data1DExportFileFormat exportFormat(std::format("{}_Sum{}.txt", name(), rangeName));
-                    if (!DataExporter::exportData(*sumNInst, exportFormat))
+                    if (!ExportXYDataNode::write(*sumNInst, std::format("{}_Sum{}.txt", name(), rangeName)))
                     {
                         error("Failed to write instantaneous coordination number data for range {}.\n", rangeNames[i]);
                         return NodeConstants::ProcessResult::Failed;

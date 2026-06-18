@@ -5,7 +5,6 @@
 
 #include "analyser/siteSelector.h"
 #include "classes/speciesSites.h"
-#include "io/export/data1D.h"
 #include "math/histogram1D.h"
 #include "math/range.h"
 #include "math/rangedVector3.h"
@@ -55,8 +54,6 @@ class SiteRDFNode : public Node
     bool instantaneous_{false};
     // Whether to export instantaneous coordination numbers to disk
     bool exportInstantaneous_{false};
-    // Export target
-    Data1DExportFileFormat exportFileAndFormat_;
 
     public:
     // Return whether specified coordination number range is enabled

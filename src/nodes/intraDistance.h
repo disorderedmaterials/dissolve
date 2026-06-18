@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/speciesSites.h"
-#include "io/export/data1D.h"
 #include "math/histogram1D.h"
 #include "nodes/node.h"
 
@@ -32,8 +31,6 @@ class IntraDistanceNode : public Node
     // r(AB)
     std::optional<Histogram1D> histAB_;
     Data1D rdfAB_;
-    // Export target
-    Data1DExportFileFormat exportFileAndFormat_;
 
     /*
      * Processing

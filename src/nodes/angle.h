@@ -4,8 +4,6 @@
 #pragma once
 
 #include "classes/speciesSites.h"
-#include "io/export/data1D.h"
-#include "io/export/data2D.h"
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
 #include "math/histogram3D.h"
@@ -67,9 +65,6 @@ class AngleNode : public Node
     // DDAngle(A-B-C)
     std::optional<Histogram3D> dDAngleHistogramABC_;
     Data3D dDAngleABC_;
-    // Export targets
-    Data1DExportFileFormat exportFileAndFormatAB_, exportFileAndFormatBC_, exportFileAndFormatAngle_;
-    Data2DExportFileFormat exportFileAndFormatDAngleAB_, exportFileAndFormatDAngleBC_;
 
     public:
     // Clear any local data

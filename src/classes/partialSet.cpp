@@ -7,9 +7,9 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "io/export/data1D.h"
 #include "items/deserialisers.h"
 #include "math/interpolator.h"
+#include "nodes/exportXYData.h"
 #include "templates/algorithms.h"
 #include <filesystem>
 
@@ -311,15 +311,15 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
         triangular_);
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
-    if (!Data1DExportFileFormat(std::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
+    if (!ExportXYDataNode::write(total_, std::format("{}-{}-total.{}", prefix, tag, suffix)))
         return false;
 
     Messenger::printVerbose("Writing bound total file '{}'...\n", boundTotal_.tag());
-    if (!Data1DExportFileFormat(std::format("{}-{}-bound.{}", prefix, tag, suffix)).exportData(boundTotal_))
+    if (!ExportXYDataNode::write(boundTotal_, std::format("{}-{}-bound.{}", prefix, tag, suffix)))
         return false;
 
     Messenger::printVerbose("Writing unbound total file '{}'...\n", unboundTotal_.tag());
-    if (!Data1DExportFileFormat(std::format("{}-{}-unbound.{}", prefix, tag, suffix)).exportData(unboundTotal_))
+    if (!ExportXYDataNode::write(unboundTotal_, std::format("{}-{}-unbound.{}", prefix, tag, suffix)))
         return false;
 
     return true;

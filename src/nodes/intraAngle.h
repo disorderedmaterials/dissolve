@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/speciesSites.h"
-#include "io/export/data1D.h"
 #include "math/histogram1D.h"
 #include "nodes/node.h"
 
@@ -38,8 +37,6 @@ class IntraAngleNode : public Node
     Data1D angleABC_;
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
-    // Export target
-    Data1DExportFileFormat exportFileAndFormat_;
 
     /*
      * Processing
