@@ -28,6 +28,9 @@ Structure &Structure::operator=(const Structure &source)
     // Copy source box
     createBox(source.box_.axisLengths(), source.box_.axisAngles(), source.box_.type() == Box::BoxType::None);
 
+    // Copy instances
+    instances_ = source.instances_;
+
     return *this;
 }
 
