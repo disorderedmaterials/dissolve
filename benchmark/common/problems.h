@@ -80,7 +80,7 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
-        PairPotential::setRange(std::min(configuration_->box()->inscribedSphereRadius(), 15.0));
+        PairPotential::setRange(std::min(configuration_->box().inscribedSphereRadius(), 15.0));
 
         // Set echo for all nodes
         Messenger::setQuiet(true);

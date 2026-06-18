@@ -20,8 +20,6 @@ template <SystemType systemType, GRNode::PartialsMethod method> static void BM_G
     grNode->setOption("Averaging", std::optional<Number>(0));
     grNode->setOption("IntraBroadening", Function1DWrapper());
 
-    double rdfRange = problemDef.configuration()->box()->inscribedSphereRadius();
-    bool upToDate = false;
     for (auto _ : state)
     {
         grNode->run();
