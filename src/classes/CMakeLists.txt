@@ -9,9 +9,6 @@ add_library(
   braggReflection.cpp
   cell.cpp
   cellArray.cpp
-  cellDistributor.cpp
-  changeData.cpp
-  changeStore.cpp
   configuration.cpp
   configuration_box.cpp
   configuration_contents.cpp
@@ -21,7 +18,6 @@ add_library(
   configuration_upkeep.cpp
   configurationAtom.cpp
   coreData.cpp
-  distributor.cpp
   empiricalFormula.cpp
   fullPairIterator.cpp
   histogramSet.cpp
@@ -31,7 +27,6 @@ add_library(
   kVector.cpp
   localMolecule.cpp
   molecule.cpp
-  moleculeDistributor.cpp
   moleculeSet.cpp
   neutronWeights.cpp
   pairPotential.cpp
@@ -42,7 +37,6 @@ add_library(
   partialSet.cpp
   partialSetAccumulator.cpp
   region.cpp
-  regionalDistributor.cpp
   scatteringMatrix.cpp
   shortRangeFunctions.cpp
   site.cpp
@@ -79,14 +73,9 @@ add_library(
   braggReflection.h
   cell.h
   cellArray.h
-  cellDistributor.h
-  changeData.h
-  changeStore.h
   configuration.h
   configurationAtom.cpp
   coreData.h
-  dataSource.h
-  distributor.h
   empiricalFormula.h
   fragment.h
   histogramSet.h
@@ -97,7 +86,6 @@ add_library(
   kVector.h
   localMolecule.h
   molecule.h
-  moleculeDistributor.h
   moleculeSet.h
   neutronWeights.h
   pairPotential.h
@@ -107,7 +95,6 @@ add_library(
   partialSetAccumulator.h
   potentialSet.h
   region.h
-  regionalDistributor.h
   scatteringMatrix.h
   shortRangeFunctions.h
   site.h
