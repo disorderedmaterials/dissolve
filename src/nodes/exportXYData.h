@@ -36,5 +36,5 @@ class ExportXYDataNode : public Node
 
     public:
     // Write data specified
-    static bool write(Data1D &data, std::string filePath);
+    static bool write(const Data1D &data, const std::string &filePath);
 };

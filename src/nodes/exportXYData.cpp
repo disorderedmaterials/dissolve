@@ -28,7 +28,7 @@ NodeConstants::ProcessResult ExportXYDataNode::process()
 }
 
 // Write data specified
-bool ExportXYDataNode::write(Data1D &data, std::string filePath)
+bool ExportXYDataNode::write(const Data1D &data, const std::string &filePath)
 {
     // Open the file
     LineParser parser;
