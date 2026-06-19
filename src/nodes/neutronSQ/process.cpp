@@ -10,7 +10,7 @@
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
-#include "nodes/exportXYData.h"
+#include "nodes/exportData.h"
 #include "nodes/gr/gr.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 
@@ -113,9 +113,9 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         // Save data?
         if (saveReference_)
         {
-            if (!ExportXYDataNode::write(*referenceFQ_, std::format("{}-ReferenceData.q", name())))
+            if (!ExportDataNode::write(*referenceFQ_, std::format("{}-ReferenceData.q", name())))
                 return NodeConstants::ProcessResult::Failed;
-            if (!ExportXYDataNode::write(referenceGR_, std::format("{}-ReferenceData.r", name())))
+            if (!ExportDataNode::write(referenceGR_, std::format("{}-ReferenceData.r", name())))
                 return NodeConstants::ProcessResult::Failed;
         }
     }
@@ -163,7 +163,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     // Save data if requested
     if (saveRepresentativeGR_)
     {
-        if (!ExportXYDataNode::write(representativeGR_, std::format("{}-weighted-total.gr.broad", name())))
+        if (!ExportDataNode::write(representativeGR_, std::format("{}-weighted-total.gr.broad", name())))
             return NodeConstants::ProcessResult::Failed;
     }
 

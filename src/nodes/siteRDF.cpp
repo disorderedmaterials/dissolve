@@ -8,7 +8,7 @@
 #include "math/integrator.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
-#include "nodes/exportXYData.h"
+#include "nodes/exportData.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 
@@ -116,7 +116,7 @@ NodeConstants::ProcessResult SiteRDFNode::process()
                 sumNInst->addPoint(iteration(), sumN.value());
                 if (exportInstantaneous_)
                 {
-                    if (!ExportXYDataNode::write(*sumNInst, std::format("{}_Sum{}.txt", name(), rangeName)))
+                    if (!ExportDataNode::write(*sumNInst, std::format("{}_Sum{}.txt", name(), rangeName)))
                     {
                         error("Failed to write instantaneous coordination number data for range {}.\n", rangeNames[i]);
                         return NodeConstants::ProcessResult::Failed;

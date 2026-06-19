@@ -19,7 +19,7 @@
 #include "nodes/energy.h"
 #include "nodes/epsr.h"
 #include "nodes/exportDLPOLYConfiguration.h"
-#include "nodes/exportXYData.h"
+#include "nodes/exportData.h"
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/forcefield.h"
@@ -92,10 +92,10 @@ void NodeRegistry::instantiateNodeProducers()
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
                   {"EPSR", makeDerivedNode<EPSRNode>()},
+                  {"ExportData", makeDerivedNode<ExportDataNode>()},
                   {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfigurationNode>()},
                   {"ExportXYZTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
                   {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfigurationNode>()},
-                  {"ExportXYData", makeDerivedNode<ExportXYDataNode>()},
                   {"Forcefield", makeDerivedNode<ForcefieldNode>()},
                   {"Graph", makeDerivedNode<Graph>()},
                   {"GR", makeDerivedNode<GRNode>()},

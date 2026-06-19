@@ -9,7 +9,7 @@
 #include "classes/species.h"
 #include "items/deserialisers.h"
 #include "math/interpolator.h"
-#include "nodes/exportXYData.h"
+#include "nodes/exportData.h"
 #include "templates/algorithms.h"
 #include <filesystem>
 
@@ -311,15 +311,15 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
         triangular_);
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
-    if (!ExportXYDataNode::write(total_, std::format("{}-{}-total.{}", prefix, tag, suffix)))
+    if (!ExportDataNode::write(total_, std::format("{}-{}-total.{}", prefix, tag, suffix)))
         return false;
 
     Messenger::printVerbose("Writing bound total file '{}'...\n", boundTotal_.tag());
-    if (!ExportXYDataNode::write(boundTotal_, std::format("{}-{}-bound.{}", prefix, tag, suffix)))
+    if (!ExportDataNode::write(boundTotal_, std::format("{}-{}-bound.{}", prefix, tag, suffix)))
         return false;
 
     Messenger::printVerbose("Writing unbound total file '{}'...\n", unboundTotal_.tag());
-    if (!ExportXYDataNode::write(unboundTotal_, std::format("{}-{}-unbound.{}", prefix, tag, suffix)))
+    if (!ExportDataNode::write(unboundTotal_, std::format("{}-{}-unbound.{}", prefix, tag, suffix)))
         return false;
 
     return true;

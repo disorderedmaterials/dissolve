@@ -9,7 +9,7 @@
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
-#include "nodes/exportXYData.h"
+#include "nodes/exportData.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include "templates/algorithms.h"
 
@@ -96,14 +96,14 @@ NodeConstants::ProcessResult XRaySQNode::process()
                 {
                     Data1D atomicData = unweightedSQ_->partials().get(key);
                     atomicData.values() = weights_.formFactor(popI.first, atomicData.xAxis());
-                    if (!ExportXYDataNode::write(atomicData, std::format("{}-{}.form", name(), popI.first->name())))
+                    if (!ExportDataNode::write(atomicData, std::format("{}-{}.form", name(), popI.first->name())))
                         return false;
                 }
 
                 Data1D ffData = unweightedSQ_->partials().get(key);
                 ffData.values() = weights_.weight(popI.first, popJ.first, ffData.xAxis());
-                if (!ExportXYDataNode::write(ffData,
-                                             std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name())))
+                if (!ExportDataNode::write(ffData,
+                                           std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name())))
                     return false;
 
                 return EarlyReturn<bool>::Continue;
@@ -147,7 +147,7 @@ NodeConstants::ProcessResult XRaySQNode::process()
     // Save data if requested
     if (saveRepresentativeGR_)
     {
-        if (!ExportXYDataNode::write(representativeGR_, std::format("{}-weighted-total.gr.broad", name())))
+        if (!ExportDataNode::write(representativeGR_, std::format("{}-weighted-total.gr.broad", name())))
             return NodeConstants::ProcessResult::Failed;
     }
 

@@ -3,13 +3,15 @@
 
 #pragma once
 
+#include "math/data2D.h"
+#include "math/data3D.h"
 #include "nodes/node.h"
 
-class ExportXYDataNode : public Node
+class ExportDataNode : public Node
 {
     public:
-    ExportXYDataNode(Graph *parentGraph);
-    ~ExportXYDataNode() override = default;
+    ExportDataNode(Graph *parentGraph);
+    ~ExportDataNode() override = default;
 
     /*
      * Definition
@@ -21,9 +23,13 @@ class ExportXYDataNode : public Node
     /*
      * Data
      */
+    public:
+    // Typedef for allowed data objects
+    using DataContainingVariant = VariantParameterData<Data1D, Data2D, Data3D>;
+
     private:
     // Data to export
-    std::optional<Data1D> data_;
+    DataContainingVariant data_;
     // File path
     std::string filePath_;
 
@@ -35,6 +41,8 @@ class ExportXYDataNode : public Node
     NodeConstants::ProcessResult process() override;
 
     public:
-    // Write data specified
+    // Write data
     static bool write(const Data1D &data, const std::string &filePath);
+    static bool write(const Data2D &data, const std::string &filePath);
+    static bool write(const Data3D &data, const std::string &filePath);
 };
