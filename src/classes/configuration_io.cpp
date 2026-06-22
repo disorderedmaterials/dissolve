@@ -8,7 +8,6 @@
 #include "classes/coreData.h"
 #include "classes/pairPotential.h"
 #include "classes/species.h"
-#include "kernels/potentials/producer.h"
 #include <algorithm>
 
 // Write through specified LineParser
@@ -61,24 +60,6 @@ bool Configuration::serialise(LineParser &parser) const
         if (!parser.writeLineF("{} {} {} {}\n", i.molecule()->arrayIndex(), i.r().x, i.r().y, i.r().z))
             return false;
     }
-
-    // If there are no defined external potentials we are done
-    if (globalPotentials_.empty() && targetedPotentials_.empty())
-        return true;
-
-    // Write global potentials
-    if (!parser.writeLineF("{}  # nGlobalPotentials\n", globalPotentials_.size()))
-        return false;
-    for (auto &pot : globalPotentials_)
-        if (!pot->serialise(parser, ""))
-            return false;
-
-    // Write targeted potentials
-    if (!parser.writeLineF("{}  # nTargetedPotentials\n", targetedPotentials_.size()))
-        return false;
-    for (auto &pot : targetedPotentials_)
-        if (!pot->serialise(parser, ""))
-            return false;
 
     return true;
 }

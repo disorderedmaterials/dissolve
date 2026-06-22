@@ -13,7 +13,6 @@ add_library(
   configuration_box.cpp
   configuration_contents.cpp
   configuration_io.cpp
-  configuration_potentials.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
   configurationAtom.cpp

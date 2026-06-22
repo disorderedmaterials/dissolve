@@ -4,7 +4,6 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/species.h"
-#include "kernels/producer.h"
 #include "main/dissolve.h"
 #include <cstdio>
 
