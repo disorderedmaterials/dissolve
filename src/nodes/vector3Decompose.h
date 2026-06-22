@@ -5,26 +5,26 @@
 
 #include "math/vector3.h"
 #include "nodes/node.h"
+#include "nodes/number.h"
 
-// Vec3Assembly Node
-class Vec3AssemblyNode : public Node
+class Vector3DecomposeNode : public Node
 {
     public:
-    Vec3AssemblyNode(Graph *parentGraph);
-    ~Vec3AssemblyNode() override = default;
+    Vector3DecomposeNode(Graph *parentGraph);
+    ~Vector3DecomposeNode() override = default;
 
     /*
      * Definition
      */
     private:
-    // Input x
-    double x_;
-    // Input y
-    double y_;
-    // Input z
-    double z_;
-    // Output vector
-    Vector3 outputVector_;
+    // Input vector
+    Vector3 inputVector_;
+    // Output x
+    Number x_;
+    // Output y
+    Number y_;
+    // Output z
+    Number z_;
 
     public:
     std::string_view type() const override;

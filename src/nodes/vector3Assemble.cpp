@@ -1,6 +1,9 @@
-#include "vec3Assembly.h"
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
 
-Vec3AssemblyNode::Vec3AssemblyNode(Graph *parentGraph) : Node(parentGraph)
+#include "nodes/vector3Assemble.h"
+
+Vector3AssembleNode::Vector3AssembleNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addSerialisableInput<double>("X", "The x value of the assembled vector", x_);
@@ -15,16 +18,16 @@ Vec3AssemblyNode::Vec3AssemblyNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
-std::string_view Vec3AssemblyNode::type() const { return "Vector3Assembly"; }
+std::string_view Vector3AssembleNode::type() const { return "Vector3Assemble"; }
 
-std::string_view Vec3AssemblyNode::summary() const { return "Assemble a 3-vector from x, y, and z values"; }
+std::string_view Vector3AssembleNode::summary() const { return "Assemble a 3-vector from x, y, and z values"; }
 
 /*
  * Processing
  */
 
 // Run main processing
-NodeConstants::ProcessResult Vec3AssemblyNode::process()
+NodeConstants::ProcessResult Vector3AssembleNode::process()
 {
     outputVector_.set(x_, y_, z_);
 

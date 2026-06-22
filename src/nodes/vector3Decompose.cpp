@@ -1,6 +1,9 @@
-#include "vec3Decomposition.h"
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
 
-Vec3DecompositionNode::Vec3DecompositionNode(Graph *parentGraph) : Node(parentGraph)
+#include "nodes/vector3Decompose.h"
+
+Vector3DecomposeNode::Vector3DecomposeNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addSerialisableInput<Vector3>("V", "The 3-dimensional vector to be decomposed", inputVector_);
@@ -15,16 +18,16 @@ Vec3DecompositionNode::Vec3DecompositionNode(Graph *parentGraph) : Node(parentGr
  * Definition
  */
 
-std::string_view Vec3DecompositionNode::type() const { return "Vector3Decomposition"; }
+std::string_view Vector3DecomposeNode::type() const { return "Vector3Decompose"; }
 
-std::string_view Vec3DecompositionNode::summary() const { return "Decompose a 3-vector into x, y, and z components"; }
+std::string_view Vector3DecomposeNode::summary() const { return "Decompose a 3-vector into x, y, and z components"; }
 
 /*
  * Processing
  */
 
 // Run main processing
-NodeConstants::ProcessResult Vec3DecompositionNode::process()
+NodeConstants::ProcessResult Vector3DecomposeNode::process()
 {
     x_ = inputVector_.x;
     y_ = inputVector_.y;
