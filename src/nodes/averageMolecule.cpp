@@ -12,6 +12,10 @@ AverageMoleculeNode::AverageMoleculeNode(Graph *parentGraph) : Node(parentGraph)
         ->setFlags({ParameterBase::Required});
 }
 
+/*
+ * Definition
+ */
+
 std::string_view AverageMoleculeNode::type() const { return "AverageMolecule"; }
 
 std::string_view AverageMoleculeNode::summary() const

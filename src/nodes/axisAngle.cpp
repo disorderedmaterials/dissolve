@@ -17,14 +17,16 @@ AxisAngleNode::AxisAngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("AxisA", "Axis to use from site A", axisA_);
     addOption("SiteB", "Specify site(s) which represent 'B' in the interaction A-B...C", b_);
     addOption("AxisB", "Axis to use from site B", axisB_);
-
     addOption("DistanceRange", "Range (min, max, binwidth) of distance binning", distanceRange_);
     addOption("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_);
-
     addOption("ExcludeSameMolecule", "Whether to exclude correlations between B and C sites on the same molecule",
               excludeSameMolecule_);
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 }
+
+/*
+ * Definition
+ */
 
 std::string_view AxisAngleNode::type() const { return "AxisAngle"; }
 
@@ -130,18 +132,6 @@ NodeConstants::ProcessResult AxisAngleNode::process()
     dAxisAngleNormaliser.divide(double(b.sites().size()) / configuration_->box().volume());
     // Normalise by spherical shell
     dAxisAngleNormaliser.normaliseBySphericalShell();
-
-    // // Save RDF(A-B) data?
-    // if (!DataExporter::exportData(rABNormalised, exportFileAndFormatRDF_))
-    //     return ExecutionResult::Failed;
-    //
-    // // Save AxisAngle(A-B) data?
-    // if (!DataExporter::exportData(aABNormalised, exportFileAndFormatAxisAngle_))
-    //     return ExecutionResult::Failed;
-    //
-    // // Save DAxisAngle(A-B) data?
-    // if (!DataExporter::exportData(dAxisAngleNormalised, exportFileAndFormatDAxisAngle_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

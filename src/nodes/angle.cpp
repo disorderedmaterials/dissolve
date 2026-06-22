@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/angle.h"
-#include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/dataOperator2D.h"
 #include "analyser/siteSelector.h"
@@ -32,6 +31,10 @@ AngleNode::AngleNode(Graph *parentGraph) : Node(parentGraph)
               excludeSameSiteAC_);
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 }
+
+/*
+ * Definition
+ */
 
 std::string_view AngleNode::type() const { return "Angle"; }
 

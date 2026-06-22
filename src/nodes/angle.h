@@ -16,12 +16,15 @@ class AngleNode : public Node
     AngleNode(Graph *parentGraph);
     ~AngleNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -42,11 +45,6 @@ class AngleNode : public Node
     bool symmetric_{false};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_, c_;
-
-    /*
-     * Data
-     */
-    private:
     // RDF(A-B)
     std::optional<Histogram1D> distanceHistogramAB_;
     Data1D rdfAB_;
@@ -76,7 +74,7 @@ class AngleNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

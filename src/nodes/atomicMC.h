@@ -7,7 +7,6 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// AtomicMC Node
 class AtomicMCNode : public Node
 {
     public:

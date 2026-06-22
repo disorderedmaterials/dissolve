@@ -37,7 +37,7 @@ std::string_view AtomicMCNode::type() const { return "AtomicMC"; }
 
 std::string_view AtomicMCNode::summary() const
 {
-    return "Perform a Monte Carlo trial move on every atom in the target configuration.";
+    return "Perform a Monte Carlo trial move on every atom in the target configuration";
 }
 
 /*
