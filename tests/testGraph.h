@@ -46,6 +46,9 @@ class TestGraph : public DissolveGraph
     std::string fetchHeadName() const;
     // Returns reference to current top node in graph, cast to the known node type
     template <class NodeType> NodeType *head() const { return static_cast<NodeType *>(head_); }
+    // Run the graph in a piecewise manner - initially from a specific node, then from the last node - in order to emplace a set
+    // of dynamic edges that we expect to exist at run time
+    NodeConstants::ProcessResult runDynamic(Node *startNode, std::vector<EdgeDefinition> edges) const;
     // Append new node to the graph
     Node *appendNode(const std::string &nodeType, const std::optional<std::string> &name = {});
     // Create species insertion node chain

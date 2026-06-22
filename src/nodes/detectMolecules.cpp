@@ -1,0 +1,278 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#include "nodes/detectMolecules.h"
+#include "classes/empiricalFormula.h"
+#include "classes/fragment.h"
+#include "classes/molecule.h"
+#include "classes/species.h"
+#include <algorithm>
+#include <format>
+#include <iostream>
+
+DetectMoleculesNode::DetectMoleculesNode(Graph *parentGraph) : Node(parentGraph)
+{
+    // Inputs
+    addInput<Structure>("Structure", "Input structure", inputStructure_);
+}
+
+/*
+ * Definition
+ */
+
+std::string_view DetectMoleculesNode::type() const { return "DetectMolecules"; }
+
+std::string_view DetectMoleculesNode::summary() const { return "Detect molecular instances within a structure"; }
+
+/*
+ * Processing
+ */
+
+// Run main processing
+NodeConstants::ProcessResult DetectMoleculesNode::process()
+{
+    detectedStructures_.clear();
+
+    // Unfold structure
+    inputStructure_.unFold();
+
+    // Return all discovered molecular fragment index vectors
+    auto fragmentMap = findMolecularFragments();
+
+    // Check for a single, bound framework fragment
+    if (fragmentMap.contains(inputStructure_.nAtoms()))
+        return error(
+            "Can't create molecular definitions since this unit cell appears to be a continuous framework/network. Consider "
+            "adjusting the bonding options in order to generate molecular fragments.\n");
+
+    for (auto &[_, fragments] : fragmentMap)
+        for (auto &[neta, fragment] : fragments)
+        {
+            // Make a const copy of the current fragment for later reference
+            const auto currentFragment = fragment;
+
+            // Create a provisional structure for the detected fragment
+            Structure detectedStructure;
+            detectedStructure.createBox(inputStructure_.box().axes());
+            std::vector<std::vector<Vector3>> instances;
+
+            if (!neta.has_value())
+            {
+                // Add instances
+                auto &instanceAtoms = instances.emplace_back();
+                for (auto &fragmentAtomIndex : currentFragment)
+                    instanceAtoms.push_back(inputStructure_.atom(fragmentAtomIndex)->r());
+
+                break;
+            }
+            else
+            {
+                // Iterate over all structural atoms, matching their unit cell atoms by NETA
+                fragments.erase(
+                    std::remove_if(fragments.begin(), fragments.end(),
+                                   [this, &instances, &neta, &currentFragment](auto &pair) -> bool
+                                   {
+                                       auto &[_, fragmentAtomIndices] = pair;
+
+                                       for (const auto &fragmentAtomIndex : fragmentAtomIndices)
+                                       {
+                                           auto matchedUnitCellAtoms =
+                                               neta->matchedPath(this->inputStructure_.atom(fragmentAtomIndex)).set();
+
+                                           if (!matchedUnitCellAtoms.empty())
+                                           {
+                                               //  Add instances
+                                               auto &instanceAtoms = instances.emplace_back();
+                                               for (const auto &matchedUnitCellAtom : matchedUnitCellAtoms)
+                                                   instanceAtoms.push_back(matchedUnitCellAtom->r());
+
+                                               return true;
+                                           }
+                                       }
+
+                                       return false;
+                                   }),
+                    fragments.end());
+            }
+
+            if (!instances.empty())
+                detectedStructures_.emplace_back(copyStructureAtomsAndBonds(detectedStructure, currentFragment)).instances() =
+                    instances;
+        }
+
+    message("Detected {} distinct fragment structures:\n\n", detectedStructures_.size());
+    message("   ID     N  Species Formula\n");
+    auto count = 1;
+    for (const auto &structure : detectedStructures_)
+        message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(),
+                EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); }));
+    message("");
+
+    /*
+     * Dynamic outputs
+     */
+
+    // Register dynamic outputs
+    for (int i = 0; i < detectedStructures_.size(); i++)
+    {
+        auto val = detectedStructures_[i];
+        auto paramName = std::string("DetectedMolecule" + std::format("-{}", i));
+
+        // Check if output already exists - do not add if it does
+        if (outputs_.find(paramName) != outputs_.end())
+            continue;
+
+        addOutput(paramName, "Detected molecular structure", detectedStructures_[i]);
+    }
+
+    return NodeConstants::ProcessResult::Success;
+}
+
+/*
+ * Helpers
+ */
+
+// Copy atom and bond information from one structure to another
+Structure &DetectMoleculesNode::copyStructureAtomsAndBonds(Structure &target, const std::vector<int> fragmentAtomIndices) const
+{
+    // Copy fragment atoms, forming a map of the original indices to the new atom in the structure
+    std::map<int, StructureAtom *> originalIndexMap;
+    for (auto fragAtomIndex : fragmentAtomIndices)
+    {
+        const auto fragmentAtom = inputStructure_.atom(fragAtomIndex);
+        originalIndexMap[fragAtomIndex] = target.addAtom(fragmentAtom->Z(), fragmentAtom->r(), fragmentAtom->q());
+        std::cout << std::format("New atom added to structure: {}  {}\n", fragAtomIndex, Elements::symbol(fragmentAtom->Z()));
+    }
+
+    // Copy bond information - since our fragment is by definition a bound fragment, we copy all bonds on each atom
+    for (auto fragAtomIndex : fragmentAtomIndices)
+    {
+        const auto fragmentAtom = inputStructure_.atom(fragAtomIndex);
+        for (auto bond : fragmentAtom->bonds())
+        {
+            // Add a bond between the new atoms in the detected structure (as long as it doesn't already exist)
+            if (!target.hasBond(originalIndexMap[bond->i()->index()], originalIndexMap[bond->j()->index()]))
+                target.addBond(originalIndexMap[bond->i()->index()], originalIndexMap[bond->j()->index()]);
+        }
+    }
+
+    return target;
+}
+
+// Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
+std::vector<const StructureAtom *> DetectMoleculesNode::getFragmentAtoms(const std::vector<int> &fragmentIndices) const
+{
+    std::vector<const StructureAtom *> fragmentAtoms;
+    for (const auto &fragmentAtomIndex : fragmentIndices)
+        fragmentAtoms.push_back(inputStructure_.atom(int(fragmentAtomIndex)));
+
+    return fragmentAtoms;
+}
+
+// Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
+std::vector<const StructureAtom *> DetectMoleculesNode::getFragmentAtoms(const NETAFragmentVector &fragmentIndices) const
+{
+    std::vector<int> indices;
+    std::size_t newSize = 0;
+    for (const auto &v : fragmentIndices)
+        ++newSize;
+    indices.reserve(newSize);
+    for (const auto &[_, v] : fragmentIndices)
+        indices.insert(indices.end(), v.begin(), v.end());
+
+    return getFragmentAtoms(indices);
+}
+
+// Find all molecular fragments
+std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::findMolecularFragments() const
+{
+    std::map<int, NETAFragmentVector> map;
+
+    std::set<int> alreadyInFragment;
+
+    for (int i = 0; i < inputStructure_.nAtoms(); i++)
+    {
+        auto fragmentIndices = Fragment<StructureAtom, Bond<StructureAtom>>::get(inputStructure_.atoms(), i);
+
+        // If any indices already within a fragment, continue
+        std::set<int> fragmentIndicesSet(fragmentIndices.begin(), fragmentIndices.end());
+        const int nNewIndices = fragmentIndicesSet.size();
+        fragmentIndicesSet.merge(std::set<int>(alreadyInFragment.begin(), alreadyInFragment.end()));
+        if (fragmentIndicesSet.size() != (alreadyInFragment.size() + nNewIndices))
+            continue;
+
+        // Register the current fragment indices
+        for (auto &idx : fragmentIndices)
+            alreadyInFragment.insert(idx);
+
+        // Map fragment size to fragment indices
+        const int size = fragmentIndices.size();
+        if (!map.contains(size))
+            map.emplace(size, NETAFragmentVector{});
+
+        auto &targetFragments = map[size];
+        targetFragments.push_back(
+            {(size * 2 > inputStructure_.nAtoms()) ? std::optional<NETADefinition>{} : bestNETADefintion(fragmentIndices),
+             fragmentIndices});
+    }
+
+    return map;
+}
+
+// Determine best NETA definition for index atoms within a fragment
+NETADefinition DetectMoleculesNode::bestNETADefintion(const std::vector<int> &fragmentIndices) const
+{
+    // Find the best NETA definition for this fragment
+    NETADefinition bestNETA;
+    std::vector<const StructureAtom *> rootAtoms;
+
+    for (const auto &idx : fragmentIndices)
+    {
+        auto fragmentAtom = inputStructure_.atom(idx);
+
+        // Maintain a set of atoms matched by any NETA description we generate
+        std::set<const StructureAtom *> alreadyMatched;
+
+        // Skip this atom?
+        if (alreadyMatched.find(fragmentAtom) != alreadyMatched.end())
+            continue;
+
+        // Create a NETA definition with this atom as the root
+        NETADefinition neta;
+        neta.create(static_cast<const AtomBase *>(fragmentAtom), std::nullopt,
+                    Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
+                                                             NETADefinition::NETACreationFlags::IncludeRootElement));
+
+        // Apply this match over the whole fragment
+        std::vector<const StructureAtom *> currentRootAtoms;
+        for (auto idx : fragmentIndices)
+        {
+            auto fragmentAtom = inputStructure_.atom(idx);
+
+            if (neta.matches(fragmentAtom))
+            {
+                currentRootAtoms.push_back(fragmentAtom);
+                alreadyMatched.insert(fragmentAtom);
+            }
+        }
+
+        // Is this a better description?
+        auto better = false;
+        if (rootAtoms.empty() || currentRootAtoms.size() < rootAtoms.size())
+            better = true;
+        else if (currentRootAtoms.size() == rootAtoms.size())
+        {
+            // Replace the current match if there are more bonds on the current atom.
+            if (fragmentAtom->nBonds() > rootAtoms.front()->nBonds())
+                better = true;
+        }
+
+        if (better)
+        {
+            bestNETA = neta;
+            rootAtoms = currentRootAtoms;
+        }
+    }
+
+    return bestNETA;
+}
