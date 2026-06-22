@@ -71,6 +71,14 @@ template <typename T> class Parser
     parser_output<T> parse(std::string_view input) const { return lambda_(input); };
     // Parse a string and, if possible, return the value and the remainder
     parser_output<T> operator()(std::string_view input) const { return lambda_(input); }
+    // Parse a string and enforce that it parsed the entire input
+    std::optional<T> exact(std::string_view input) const
+    {
+        auto result = lambda_(input);
+        if (result && std::get<1>(*result) == "")
+            return std::get<0>(*result);
+        return {};
+    }
 
     // Create a new parser that takes the output of the old parser and
     // passes it through a function

@@ -18,10 +18,9 @@ template <typename T> void test_parser(std::string_view input, Parser<T> parser,
 }
 template <typename T> void test_exact(std::string_view input, Parser<T> parser, T expected)
 {
-    auto result = parser(input);
+    auto result = parser.exact(input);
     ASSERT_TRUE(result);
-    EXPECT_EQ(std::get<1>(*result), "");
-    EXPECT_EQ(std::get<0>(*result), expected);
+    EXPECT_EQ(*result, expected);
 }
 
 TEST(ApplicativeTest, BasicStrings)
