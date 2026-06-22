@@ -34,6 +34,24 @@ std::string_view EnergyNode::type() const { return "Energy"; }
 std::string_view EnergyNode::summary() const { return "Calculate total energy of a configuration"; }
 
 /*
+ * Data
+ */
+
+// Clear any local data
+void EnergyNode::clearData()
+{
+    totalEnergyHistory_.clear();
+    totalPairPotentialHistory_.clear();
+    totalMoleculePPHistory_.clear();
+    totalGeometryHistory_.clear();
+    totalCohesiveHistory.clear();
+    bondHistory_.clear();
+    angleHistory_.clear();
+    torsionHistory_.clear();
+    improperHistory_.clear();
+}
+
+/*
  * Processing
  */
 

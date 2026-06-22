@@ -45,6 +45,10 @@ class EnergyNode : public Node
         EnergyUnstable = 1
     };
 
+    public:
+    // Clear any local data
+    void clearData() override;
+
     /*
      * Processing
      */
