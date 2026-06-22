@@ -17,7 +17,7 @@ std::string_view OutputsNode::type() const { return "Outputs"; }
 std::string_view OutputsNode::summary() const { return "Maps local inputs to graph outputs"; }
 
 /*
- * Processing & Validity
+ * Processing
  */
 
 // Perform processing

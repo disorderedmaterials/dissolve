@@ -23,6 +23,10 @@ ModifierOSitesNode::ModifierOSitesNode(Graph *parentGraph) : Node(parentGraph)
               modifierDistanceRange_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ModifierOSitesNode::type() const { return "ModifierOSites"; }
 
 std::string_view ModifierOSitesNode::summary() const
@@ -167,25 +171,6 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
     DataOperator1D histMOtherONormaliser(distanceMOtherO_);
     // Normalise by value
     histMOtherONormaliser.normaliseSumTo();
-
-    // // Save data?
-    // if (!DataExporter::exportData(accumulatedData, exportFileAndFormatOType_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(accumulatedModifierData, exportFileAndFormatTotalOSites_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMFO, exportFileAndFormatFOLength_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMNBO, exportFileAndFormatNBOLength_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMBO, exportFileAndFormatBOLength_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMOtherO, exportFileAndFormatOtherOLength_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

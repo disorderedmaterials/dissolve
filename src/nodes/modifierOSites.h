@@ -9,19 +9,21 @@
 #include "math/range.h"
 #include "nodes/node.h"
 
-// ModifierOSites Node
 class ModifierOSitesNode : public Node
 {
     public:
     ModifierOSitesNode(Graph *parentGraph);
     ~ModifierOSitesNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -32,11 +34,6 @@ class ModifierOSitesNode : public Node
     bool excludeSameMolecule_{false};
     // Distance range for calculation
     Range distanceRange_{0.0, 2.5}, modifierDistanceRange_{0.0, 2.0};
-
-    /*
-     * Data
-     */
-    private:
     // Total O Sites histogram
     std::optional<IntegerHistogram1D> totalOxygensHistogram_;
     Data1D totalOxygens_;
@@ -72,7 +69,7 @@ class ModifierOSitesNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

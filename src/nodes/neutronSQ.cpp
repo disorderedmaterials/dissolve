@@ -60,11 +60,19 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 
 std::string_view NeutronSQNode::type() const { return "NeutronSQ"; }
 
-std::string_view NeutronSQNode::summary() const { return "Calculate neutron-weighted S(Q) and G(r)"; }
+std::string_view NeutronSQNode::summary() const { return "Calculate neutron-weighted S(Q) and G(r) from unweighted S(Q)"; }
 
 /*
  * Data
  */
+
+// Clear any local data
+void NeutronSQNode::clearData()
+{
+    weightedGR_.reset();
+    weightedSQ_.reset();
+    representativeGR_.clear();
+}
 
 // Return neutron weights
 NeutronWeights NeutronSQNode::weights() const

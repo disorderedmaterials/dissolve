@@ -10,9 +10,6 @@
 #include "nodes/node.h"
 #include <optional>
 
-// Forward Declarations
-class PartialSet;
-
 class NeutronSQNode : public Node
 {
     public:
@@ -68,6 +65,8 @@ class NeutronSQNode : public Node
     bool saveSQ_{false};
 
     public:
+    // Clear any local data
+    void clearData() override;
     // Return neutron weights
     NeutronWeights weights() const;
     // Returns the unweighted SQ

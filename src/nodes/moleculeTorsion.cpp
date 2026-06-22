@@ -18,6 +18,10 @@ MoleculeTorsionNode::MoleculeTorsionNode(Graph *parentGraph) : Node(parentGraph)
     addOption("L", "Index of atom l in the torsion i-j-k-l", l_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view MoleculeTorsionNode::type() const { return "MoleculeTorsion"; };
 
 std::string_view MoleculeTorsionNode::summary() const
@@ -73,10 +77,6 @@ NodeConstants::ProcessResult MoleculeTorsionNode::process()
     DataOperator1D histogramNormaliser(frequency_);
     // Normalise by value
     histogramNormaliser.normaliseSumTo();
-
-    // // Save phi(ijkl) data?
-    // if (!DataExporter::exportData(dataNormalisedHisto, exportFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

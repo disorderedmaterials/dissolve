@@ -6,13 +6,15 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// Multiply Node
 class MultiplyNode : public Node
 {
     public:
     MultiplyNode(Graph *parentGraph);
     ~MultiplyNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     // Return type of the node
     std::string_view type() const override;
@@ -20,7 +22,7 @@ class MultiplyNode : public Node
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Factor X
@@ -33,7 +35,7 @@ class MultiplyNode : public Node
     /*
      * Processing
      */
-    public:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

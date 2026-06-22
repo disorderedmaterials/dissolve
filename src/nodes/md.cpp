@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/md.h"
+#include "data/atomicMasses.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "math/mathFunc.h"
@@ -13,9 +14,6 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
     addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
     addInput<Number>("NSteps", "Number of MD steps to perform", nSteps_);
-
-    // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
 
     // Options
     addOption<MDNode::TimestepType>("Timestep", "Timestep type to use in calculation", timestepType_);
@@ -38,15 +36,26 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
                     "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
                     intramolecularForcesOnly_);
 
+    // Outputs
+    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+
     // Serialisables
     addSerialisable("velocities", velocities_);
 }
+
+/*
+ * Definition
+ */
 
 std::string_view MDNode::type() const { return "MD"; }
 
 std::string_view MDNode::summary() const { return "Run a short molecular dynamics simulation."; }
 
 EnumOptions<MDNode::TimestepType> getEnumOptions(MDNode::TimestepType) { return MDNode::timestepType(); }
+
+/*
+ * Processing
+ */
 
 // Return enum options for TimestepType
 EnumOptions<MDNode::TimestepType> MDNode::timestepType()

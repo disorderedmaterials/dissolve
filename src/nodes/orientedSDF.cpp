@@ -100,9 +100,5 @@ NodeConstants::ProcessResult OrientedSDFNode::process()
     // Normalise by grid
     normaliserOrientedSDF.normaliseByGrid();
 
-    // // Save OrientedSDF data?
-    // if (!DataExporter::exportData(dataOrientedSDF, sdfFileAndFormat_))
-    //     return ExecutionResult::Failed;
-
     return NodeConstants::ProcessResult::Success;
 }

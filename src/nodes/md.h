@@ -5,34 +5,27 @@
 
 #include "base/enumOptions.h"
 #include "base/lineParser.h"
-#include "base/timer.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "data/atomicMasses.h"
 #include "main/dissolve.h"
-#include "math/mathFunc.h"
-#include "nodes/graph.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
-#include "nodes/parameter.h"
 
-// Forward Declarations
-class PotentialMap;
-class Species;
-
-// Molecular Dynamics Node
 class MDNode : public Node
 {
     public:
     MDNode(Graph *parentGraph);
     ~MDNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     public:
     // Timestep Type
@@ -76,27 +69,24 @@ class MDNode : public Node
     std::optional<std::vector<Vector3>> velocities_;
 
     /*
-     * Functions
+     * Processing
      */
     private:
-    // Cap forces in Configuration
+    // Cap forces
     static int capForces(double maxForceSq, std::vector<Vector3> &fInter, std::vector<Vector3> &fIntra);
     // Determine timestep to use
     static std::optional<double> determineTimeStep(TimestepType timestepType, double requestedTimeStep,
                                                    const std::vector<Vector3> &fInter, const std::vector<Vector3> &fIntra);
+
+    protected:
+    // Run main processing
+    NodeConstants::ProcessResult process() override;
 
     public:
     // Evolve Species coordinates, returning new coordinates
     static std::vector<Vector3> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
                                        double temperature, int nSteps, double maxDeltaT, const std::vector<Vector3> &rInit,
                                        std::vector<Vector3> &velocities);
-
-    /*
-     * Processing
-     */
-    public:
-    // Run main processing
-    NodeConstants::ProcessResult process() override;
 };
 
 EnumOptions<MDNode::TimestepType> getEnumOptions(MDNode::TimestepType);
