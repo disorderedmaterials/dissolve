@@ -57,14 +57,6 @@ class NeutronSQNode : public Node
     StructureFactors::NormalisationType referenceNormalisedTo_{StructureFactors::NoNormalisation};
     // Window function to use when Fourier transforming reference total F(Q) into g(r)
     WindowFunction::Form referenceWindowFunction_{WindowFunction::Form::Lorch0};
-    // Save weighted g(r) and G(r)
-    bool saveGR_{false};
-    // Save the reference data and its Fourier transform
-    bool saveReference_{false};
-    // Save representative G(r), obtained from Fourier transform of the calculated F(Q)
-    bool saveRepresentativeGR_{false};
-    // Save weighted partial and total structure factors
-    bool saveSQ_{false};
 
     public:
     // Clear any local data

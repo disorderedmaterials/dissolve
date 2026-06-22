@@ -42,11 +42,6 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addOption<WindowFunction::Form>("ReferenceWindowFunction",
                                     "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
                                     referenceWindowFunction_);
-    addOption<bool>("SaveGR", "Save weighted g(r) and G(r)", saveGR_);
-    addOption<bool>("SaveReference", "Save the reference data and its Fourier transform", saveReference_);
-    addOption<bool>("SaveRepresentativeGR", "Save representative G(r), obtained from Fourier transform of the calculated F(Q)",
-                    saveRepresentativeGR_);
-    addOption<bool>("SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
 
     // Serialisables
     addSerialisable("weightedGR", weightedGR_);
@@ -215,12 +210,6 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         message("NeutronSQ: Total F(Q) will be normalised to <b**2>");
     else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
         message("NeutronSQ: Total F(Q) will be normalised to <b>**2");
-    if (saveSQ_)
-        message("NeutronSQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
-    if (saveGR_)
-        message("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");
-    if (saveRepresentativeGR_)
-        message("NeutronSQ: Representative G(r) will be saved.\n");
     message("\n");
 
     // Set up the weighted SQ storage if needed
@@ -291,38 +280,13 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         auto rho = unweightedGR_->effectiveDensity();
         Fourier::sineFT(referenceGR_, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR, referenceFTDeltaR, 30.0,
                         WindowFunction(referenceWindowFunction_));
-
-        // Save data?
-        if (saveReference_)
-        {
-            if (!ExportDataNode::write(*referenceFQ_, std::format("{}-ReferenceData.q", name())))
-                return NodeConstants::ProcessResult::Failed;
-            if (!ExportDataNode::write(referenceGR_, std::format("{}-ReferenceData.r", name())))
-                return NodeConstants::ProcessResult::Failed;
-        }
     }
-
-    /*
-     * Transform UnweightedSQ from provided SQ data into WeightedSQ.
-     */
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(weights);
 
-    // Save data if requested
-    if (saveSQ_ && !weightedSQ_->save(name(), "WeightedSQ", "sq", "Q, 1/Angstroms"))
-        return NodeConstants::ProcessResult::Failed;
-
-    /*
-     * Transform UnweightedGR into WeightedGR.
-     */
-
     // Calculate weighted g(r)
     calculateWeightedGR(weights);
-
-    // Save data if requested
-    if (saveGR_ && !weightedGR_->save(name(), "WeightedGR", "gr", "r, Angstroms"))
-        return NodeConstants::ProcessResult::Failed;
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     representativeGR_ = weightedSQ_->total();
@@ -341,13 +305,6 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     auto rMax = weightedGR_->total().xAxis().back();
     WindowFunction window(referenceWindowFunction_);
     Fourier::sineFT(representativeGR_, 1.0 / (2.0 * M_PI * M_PI * unweightedGR_->effectiveDensity()), rMin, 0.05, rMax, window);
-
-    // Save data if requested
-    if (saveRepresentativeGR_)
-    {
-        if (!ExportDataNode::write(representativeGR_, std::format("{}-weighted-total.gr.broad", name())))
-            return NodeConstants::ProcessResult::Failed;
-    }
 
     return NodeConstants::ProcessResult::Success;
 }
