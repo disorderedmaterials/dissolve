@@ -2,6 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importXYZStructure.h"
+#include "base/parserLibrary.h"
+#include <fstream>
+#include <iostream>
 
 ImportXYZStructureNode::ImportXYZStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -31,32 +34,35 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
 {
     structure_.clear();
 
-    // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile{filePath_};
+    if (!infile)
         return error("Couldn't open file '{}' for loading XYZ data.\n", filePath_);
+    std::ostringstream oss{};
+    oss << infile.rdbuf();
+    return read(oss.view(), structure_);
 
-    return read(parser, structure_);
+    // // Open file and check that we're OK to proceed importing from it
+    // LineParser parser;
+    // if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+    //     return error("Couldn't open file '{}' for loading XYZ data.\n", filePath_);
+
+    // return read(parser, structure_);
 }
 
 // Read structure from the specified file parser
-NodeConstants::ProcessResult ImportXYZStructureNode::read(LineParser &parser, Structure &structure)
+NodeConstants::ProcessResult ImportXYZStructureNode::read(std::string_view input, Structure &structure)
 {
-    // Read natoms
-    if (parser.getArgsDelim() != LineParser::Success)
-        return NodeConstants::ProcessResult::Failed;
-    auto nAtoms = parser.argi(0);
+    using namespace parsers;
+    auto xyz = (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom())).parse(input);
 
-    // Skip title
-    if (parser.skipLines(1) != LineParser::Success)
+    if (!xyz)
         return NodeConstants::ProcessResult::Failed;
+    auto rest = std::get<1>(*xyz);
+    auto &[nAtoms, atoms] = std::get<0>(*xyz);
 
-    for (auto n = 0; n < nAtoms; ++n)
-    {
-        if (parser.getArgsDelim() != LineParser::Success)
-            return NodeConstants::ProcessResult::Failed;
-        structure.addAtom(Elements::element(parser.argsv(0)), parser.arg3d(1), parser.hasArg(4) ? parser.argd(4) : 0.0);
-    }
+    for (auto &[elem, v, q] : atoms)
+        structure.addAtom(Elements::element(elem), v, q.value_or(0.0));
+    assert(nAtoms == atoms.size());
 
     return NodeConstants::ProcessResult::Success;
 }

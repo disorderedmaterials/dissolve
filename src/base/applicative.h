@@ -389,18 +389,22 @@ Parser<std::string_view> digits();
 // A parser that accepts and amount of whitespace
 Parser<std::string_view> spaces();
 
-// A parse that accepts any amount of visible characters
+// A parser that accepts any amount of visible characters
 Parser<std::string_view> graphs();
-// A parse that accepts any amount of alphanumeric characters
+// A parser that accepts any amount of alphanumeric characters
 Parser<std::string_view> alphanums();
-// A parse that accepts any amount of letters
+// A parser that accepts any amount of letters
 Parser<std::string_view> alphas();
-// A parse that accepts any amount of upper case letters
+// A parser that accepts any amount of upper case letters
 Parser<std::string_view> uppers();
-// A parse that accepts any amount of lower case letters
+// A parser that accepts any amount of lower case letters
 Parser<std::string_view> lowers();
-// A parse that accepts any amount of punctuation case letters
+// A parser that accepts any amount of punctuation case letters
 Parser<std::string_view> punctuations();
+// A parser that continues until a newline
+Parser<std::string_view> inlines();
+// A parser that matches newline characters
+Parser<std::string_view> newlines();
 
 // A quick wrapper for easily making parses from strings
 Parser<std::string_view> operator""_p(const char *text, size_t size);

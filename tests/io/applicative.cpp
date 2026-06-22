@@ -99,4 +99,39 @@ TEST(ApplicativeTest, Vector) { test_exact("1 2.5 -3e-1", vector3(), Vector3(1, 
 
 TEST(ApplicativeTest, StructureAtom) { test_exact("HW 1 2.5 -3e-4 5", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5}); }
 
+TEST(ApplicativeTest, XYZStructure)
+{
+
+    std::ifstream infile{"xyz/c2so3.xyz"};
+    ASSERT_TRUE(infile);
+    std::ostringstream oss{};
+    oss << infile.rdbuf();
+    auto xyz = (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom())).parse(oss.view());
+    // auto xyz = (maybe(spaces()) >> natural() ).parse(oss.view());
+
+    ASSERT_TRUE(xyz);
+    auto &[value, rest] = *xyz;
+    ASSERT_EQ(rest, "");
+    auto &terms = std::get<1>(value);
+    EXPECT_EQ(terms.size(), std::get<0>(value));
+
+    std::vector<std::tuple<std::string_view, Vector3>> expected{
+
+        {"S", {0.010001, 0.000000, -0.000012}},   {"O", {1.465001, 0.000000, -0.000012}},
+        {"O", {-0.475688, -1.371543, -0.000012}}, {"O", {-0.475688, 0.685772, 1.187779}},
+        {"C", {-0.588181, 0.844607, -1.462914}},  {"C", {-0.079239, 0.124469, -2.712002}},
+        {"H", {-1.678181, 0.844607, -1.462914}},  {"H", {-0.225364, 1.872451, -1.463546}},
+        {"H", {-0.442057, -0.903375, -2.712634}}, {"H", {-0.443088, 0.638209, -3.601825}},
+        {"H", {1.000760, 0.124469, -2.713254}},
+
+    };
+    int index = 0;
+    for (auto &[elem, r] : expected)
+    {
+        EXPECT_EQ(elem, std::get<0>(terms[index]));
+        EXPECT_EQ(r, std::get<1>(terms[index]));
+        ++index;
+    }
+}
+
 } // namespace UnitTest

@@ -47,7 +47,7 @@ double nat2dbl(std::optional<std::string_view> minus, std::string_view front, st
 // A parser that accepts a real, floating point number
 Parser<double> real()
 {
-    auto result = maybe("-"_p) & digits() & maybe("." >> digits()) & maybe(("e"_p | "E"_p) >> maybe("-"_p) & digits());
+    auto result = maybe("-"_p) & digits() & maybe("." >> digits()) & maybe(("e"_p | "E"_p) >> maybe("-"_p | "+"_p) & digits());
     return result.apply(nat2dbl);
 }
 
@@ -59,7 +59,7 @@ Parser<Vector3> vector3()
 
 parsers::Parser<std::tuple<std::string_view, Vector3, std::optional<double>>> structureAtom()
 {
-    auto parser = alphas() & spaces() >> vector3() << spaces() & maybe(real());
+    auto parser = alphas() & spaces() >> vector3() << spaces() & maybe(real() << spaces());
     return parser;
 }
 
