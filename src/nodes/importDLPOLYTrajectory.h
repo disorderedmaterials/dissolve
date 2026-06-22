@@ -5,7 +5,6 @@
 
 #include "classes/structure.h"
 #include "nodes/node.h"
-#include <iostream>
 
 class ImportDLPOLYTrajectoryNode : public Node
 {
@@ -34,7 +33,7 @@ class ImportDLPOLYTrajectoryNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

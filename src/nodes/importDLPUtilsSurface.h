@@ -31,7 +31,7 @@ class ImportDLPUtilsSurfaceNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 

@@ -24,10 +24,19 @@ ImportXYDataNode::ImportXYDataNode(Graph *parentGraph) : Node(parentGraph)
     addOutput<std::optional<Data1D>>("Data", "Imported data", data_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ImportXYDataNode::type() const { return "Data1DImport"; }
 
-std::string_view ImportXYDataNode::summary() const { return "Import 1D data."; }
+std::string_view ImportXYDataNode::summary() const { return "Import 1D data"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ImportXYDataNode::process()
 {
     // Clear the structure, and initialise error arrays if necessary

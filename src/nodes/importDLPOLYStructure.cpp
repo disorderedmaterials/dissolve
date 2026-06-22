@@ -13,10 +13,19 @@ ImportDLPOLYStructureNode::ImportDLPOLYStructureNode(Graph *parentGraph) : Node(
     addOutput("Forces", "Atomic forces (if present)", forces_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ImportDLPOLYStructureNode::type() const { return "ImportDLPOLYStructure"; }
 
-std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file."; }
+std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ImportDLPOLYStructureNode::process()
 {
     // Open file and check that we're OK to proceed importing from it

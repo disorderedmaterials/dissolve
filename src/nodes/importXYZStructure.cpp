@@ -12,10 +12,19 @@ ImportXYZStructureNode::ImportXYZStructureNode(Graph *parentGraph) : Node(parent
     addOutput<Structure>("Structure", "Imported structure", structure_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ImportXYZStructureNode::type() const { return "ImportXYZStructure"; }
 
-std::string_view ImportXYZStructureNode::summary() const { return "Import an XYZ file."; }
+std::string_view ImportXYZStructureNode::summary() const { return "Import an XYZ file"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ImportXYZStructureNode::process()
 {
     structure_.clear();

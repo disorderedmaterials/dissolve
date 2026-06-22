@@ -18,13 +18,22 @@ ImportXYZTrajectoryNode::ImportXYZTrajectoryNode(Graph *parentGraph) : Node(pare
     // addSerialisable("filePosition", filePosition_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ImportXYZTrajectoryNode::type() const { return "ImportXYZTrajectory"; }
 
 std::string_view ImportXYZTrajectoryNode::summary() const
 {
-    return "Import structures from sequential frames of an XYZ trajectory.";
+    return "Import structures from sequential frames of an XYZ trajectory";
 }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ImportXYZTrajectoryNode::process()
 {
     message("Reading XYZ trajectory file frame from '{}'...\n", filePath_);

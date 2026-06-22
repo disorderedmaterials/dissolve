@@ -13,10 +13,19 @@ ImportDLPUtilsPDensNode::ImportDLPUtilsPDensNode(Graph *parentGraph) : Node(pare
     addOutput<std::optional<Data3D>>("Data", "Imported data", data_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ImportDLPUtilsPDensNode::type() const { return "ImportDLPUtilsPDens"; }
 
 std::string_view ImportDLPUtilsPDensNode::summary() const { return "Import DLPUtils 3D pdens data"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ImportDLPUtilsPDensNode::process()
 {
     // Create the data

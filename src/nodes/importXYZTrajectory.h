@@ -5,7 +5,6 @@
 
 #include "classes/structure.h"
 #include "nodes/node.h"
-#include <iostream>
 
 class ImportXYZTrajectoryNode : public Node
 {
@@ -34,7 +33,7 @@ class ImportXYZTrajectoryNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

@@ -13,10 +13,19 @@ ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Nod
     addOutput("Forces", "Atomic forces (if present)", forces_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ImportMoscitoStructureNode::type() const { return "ImportMoscitoStructure"; }
 
-std::string_view ImportMoscitoStructureNode::summary() const { return "Import a Moscito file."; }
+std::string_view ImportMoscitoStructureNode::summary() const { return "Import a Moscito file"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
 {
     /*

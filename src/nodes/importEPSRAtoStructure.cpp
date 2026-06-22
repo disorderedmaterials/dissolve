@@ -12,10 +12,19 @@ ImportEPSRAtoStructureNode::ImportEPSRAtoStructureNode(Graph *parentGraph) : Nod
     addOutput<Structure>("Structure", "Imported structure", structure_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ImportEPSRAtoStructureNode::type() const { return "ImportEPSRAtoStructure"; }
 
-std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an EPSR ato file."; }
+std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an EPSR ato file"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
 {
     structure_.clear();
