@@ -15,7 +15,7 @@
 #include "nodes/neutronSQ.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/species.h"
-#include "nodes/sq/sq.h"
+#include "nodes/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include <gtest/gtest.h>
 

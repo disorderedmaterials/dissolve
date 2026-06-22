@@ -54,7 +54,7 @@
 #include "nodes/setCoordinates.h"
 #include "nodes/siteRDF.h"
 #include "nodes/species.h"
-#include "nodes/sq/sq.h"
+#include "nodes/sq.h"
 #include "nodes/subtract.h"
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"

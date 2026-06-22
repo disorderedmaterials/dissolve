@@ -8,7 +8,7 @@
 #include "math/filters.h"
 #include "math/ft.h"
 #include "nodes/edge.h"
-#include "nodes/sq/sq.h"
+#include "nodes/sq.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 
 bool XRaySQNode::setReferenceData()

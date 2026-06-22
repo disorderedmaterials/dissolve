@@ -9,7 +9,7 @@
 #include "math/ft.h"
 #include "nodes/edge.h"
 #include "nodes/exportData.h"
-#include "nodes/sq/sq.h"
+#include "nodes/sq.h"
 
 NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 {

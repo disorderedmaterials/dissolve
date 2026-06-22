@@ -14,7 +14,7 @@
 #include "math/mathFunc.h"
 #include "math/poissonFit.h"
 #include "nodes/neutronSQ.h"
-#include "nodes/sq/sq.h"
+#include "nodes/sq.h"
 #include "templates/algorithms.h"
 #include <functional>
 
