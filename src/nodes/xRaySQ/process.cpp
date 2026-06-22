@@ -6,10 +6,10 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/xRayWeights.h"
-#include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "nodes/exportData.h"
 #include "nodes/xRaySQ/xRaySQ.h"
 #include "templates/algorithms.h"
 
@@ -86,30 +86,28 @@ NodeConstants::ProcessResult XRaySQNode::process()
             for (auto &[atomType, _] : resolvableSpecies.raw()->atomTypePopulations())
                 typeVector[atomType] = 1;
 
-        auto result = for_each_pair_early(typeVector,
-                                          [&](int indexI, auto &popI, int indexJ, auto &popJ) -> EarlyReturn<bool>
-                                          {
-                                              DoubleKeyedMapKey key{popI.first->name(), popJ.first->name()};
+        auto result = for_each_pair_early(
+            typeVector,
+            [&](int indexI, auto &popI, int indexJ, auto &popJ) -> EarlyReturn<bool>
+            {
+                DoubleKeyedMapKey key{popI.first->name(), popJ.first->name()};
 
-                                              if (indexI == indexJ)
-                                              {
-                                                  Data1D atomicData = unweightedSQ_->partials().get(key);
-                                                  atomicData.values() = weights_.formFactor(popI.first, atomicData.xAxis());
-                                                  Data1DExportFileFormat exportFormat(
-                                                      std::format("{}-{}.form", name(), popI.first->name()));
-                                                  if (!exportFormat.exportData(atomicData))
-                                                      return false;
-                                              }
+                if (indexI == indexJ)
+                {
+                    Data1D atomicData = unweightedSQ_->partials().get(key);
+                    atomicData.values() = weights_.formFactor(popI.first, atomicData.xAxis());
+                    if (!ExportDataNode::write(atomicData, std::format("{}-{}.form", name(), popI.first->name())))
+                        return false;
+                }
 
-                                              Data1D ffData = unweightedSQ_->partials().get(key);
-                                              ffData.values() = weights_.weight(popI.first, popJ.first, ffData.xAxis());
-                                              Data1DExportFileFormat exportFormat(
-                                                  std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name()));
-                                              if (!exportFormat.exportData(ffData))
-                                                  return false;
+                Data1D ffData = unweightedSQ_->partials().get(key);
+                ffData.values() = weights_.weight(popI.first, popJ.first, ffData.xAxis());
+                if (!ExportDataNode::write(ffData,
+                                           std::format("{}-{}-{}.form", name(), popI.first->name(), popJ.first->name())))
+                    return false;
 
-                                              return EarlyReturn<bool>::Continue;
-                                          });
+                return EarlyReturn<bool>::Continue;
+            });
 
         if (!result.value_or(true))
         {
@@ -149,8 +147,7 @@ NodeConstants::ProcessResult XRaySQNode::process()
     // Save data if requested
     if (saveRepresentativeGR_)
     {
-        Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name()));
-        if (!exportFormat.exportData(representativeGR_))
+        if (!ExportDataNode::write(representativeGR_, std::format("{}-weighted-total.gr.broad", name())))
             return NodeConstants::ProcessResult::Failed;
     }
 

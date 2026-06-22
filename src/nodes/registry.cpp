@@ -18,7 +18,10 @@
 #include "nodes/edge.h"
 #include "nodes/energy.h"
 #include "nodes/epsr.h"
+#include "nodes/exportBlockData.h"
 #include "nodes/exportDLPOLYConfiguration.h"
+#include "nodes/exportDLPUtilsPDensData.h"
+#include "nodes/exportData.h"
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/forcefield.h"
@@ -91,6 +94,9 @@ void NodeRegistry::instantiateNodeProducers()
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
                   {"EPSR", makeDerivedNode<EPSRNode>()},
+                  {"ExportBlockData", makeDerivedNode<ExportBlockDataNode>()},
+                  {"ExportData", makeDerivedNode<ExportDataNode>()},
+                  {"ExportDLPUtilsPDensData", makeDerivedNode<ExportDLPUtilsPDensDataNode>()},
                   {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfigurationNode>()},
                   {"ExportXYZTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
                   {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfigurationNode>()},

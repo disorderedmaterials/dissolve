@@ -4,7 +4,7 @@
 #include "classes/partialSetAccumulator.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "io/export/data1D.h"
+#include "nodes/exportData.h"
 #include <format>
 
 void PartialSetAccumulator::operator+=(const PartialSet &source)
@@ -100,9 +100,7 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
         parser.closeFiles();
     }
 
-    Data1DExportFileFormat exportFormat(std::format("{}-{}-total.{}", prefix, tag, suffix));
-    Messenger::printVerbose("Writing total file '{}'...\n", exportFormat.filename());
-    return exportFormat.exportData(total_);
+    return ExportDataNode::write(total_, std::format("{}-{}-total.{}", prefix, tag, suffix));
 }
 
 /*

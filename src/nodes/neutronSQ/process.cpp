@@ -7,13 +7,12 @@
 #include "classes/configuration.h"
 #include "classes/neutronWeights.h"
 #include "classes/species.h"
-#include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "nodes/exportData.h"
 #include "nodes/gr/gr.h"
 #include "nodes/neutronSQ/neutronSQ.h"
-#include "nodes/sq/sq.h"
 
 // Run main processing
 NodeConstants::ProcessResult NeutronSQNode::process()
@@ -114,11 +113,9 @@ NodeConstants::ProcessResult NeutronSQNode::process()
         // Save data?
         if (saveReference_)
         {
-            Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
-            if (!exportFormat.exportData(*referenceFQ_))
+            if (!ExportDataNode::write(*referenceFQ_, std::format("{}-ReferenceData.q", name())))
                 return NodeConstants::ProcessResult::Failed;
-            Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
-            if (!exportFormatFT.exportData(referenceGR_))
+            if (!ExportDataNode::write(referenceGR_, std::format("{}-ReferenceData.r", name())))
                 return NodeConstants::ProcessResult::Failed;
         }
     }
@@ -166,8 +163,7 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     // Save data if requested
     if (saveRepresentativeGR_)
     {
-        Data1DExportFileFormat exportFormat(std::format("{}-weighted-total.gr.broad", name()));
-        if (!exportFormat.exportData(representativeGR_))
+        if (!ExportDataNode::write(representativeGR_, std::format("{}-weighted-total.gr.broad", name())))
             return NodeConstants::ProcessResult::Failed;
     }
 

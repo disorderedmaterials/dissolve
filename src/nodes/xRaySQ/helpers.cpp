@@ -5,7 +5,6 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/xRayWeights.h"
-#include "io/export/data1D.h"
 #include "math/filters.h"
 #include "math/ft.h"
 #include "nodes/edge.h"
@@ -73,17 +72,6 @@ bool XRaySQNode::setReferenceData()
                       name());
     Fourier::sineFT(referenceGR_, 1.0 / (2.0 * M_PI * M_PI * rho), referenceFTDeltaR_.asDouble(), referenceFTDeltaR_.asDouble(),
                     30.0, WindowFunction(referenceWindowFunction_));
-
-    // Save data?
-    if (saveReference_)
-    {
-        Data1DExportFileFormat exportFormat(std::format("{}-ReferenceData.q", name()));
-        if (!exportFormat.exportData(*referenceFQ_))
-            return false;
-        Data1DExportFileFormat exportFormatFT(std::format("{}-ReferenceData.r", name()));
-        if (!exportFormatFT.exportData(referenceGR_))
-            return false;
-    }
 
     return true;
 }

@@ -7,7 +7,6 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "keywords/bool.h"
-#include "keywords/fileAndFormat.h"
 #include "keywords/node.h"
 #include "keywords/nodeValue.h"
 #include "keywords/species.h"

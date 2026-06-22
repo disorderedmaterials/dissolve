@@ -8,7 +8,6 @@ add_library(
   elementVector.cpp
   expression.cpp
   expressionVariableVector.cpp
-  fileAndFormat.cpp
   function1D.cpp
   integer.cpp
   isotopologueSet.cpp
@@ -39,7 +38,6 @@ add_library(
   enumOptions.h
   expression.h
   expressionVariableVector.h
-  fileAndFormat.h
   function1D.h
   integer.h
   interactionPotential.h

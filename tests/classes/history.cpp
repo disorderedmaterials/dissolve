@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/history.h"
-#include "io/export/data1D.h"
 #include "nodes/number.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
