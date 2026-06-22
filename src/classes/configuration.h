@@ -10,7 +10,6 @@
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
-#include "kernels/potentials/base.h"
 #include <map>
 #include <memory>
 #include <vector>
@@ -176,27 +175,6 @@ class Configuration : public Serialisable<const CoreData &>
     const CellArray &cells() const;
     // Scale Box, Cells, and Molecule geometric centres according to current size factor
     void applySizeFactor(const EnergyKernel *kernel);
-
-    /*
-     * External Potentials
-     */
-    private:
-    // Defined global potentials
-    std::vector<std::unique_ptr<ExternalPotential>> globalPotentials_;
-    // Defined targeted potentials
-    std::vector<std::unique_ptr<ExternalPotential>> targetedPotentials_;
-
-    public:
-    // Add global potential
-    void addGlobalPotential(std::unique_ptr<ExternalPotential> potential);
-    // Return vector of defined global potentials
-    const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials() const;
-    // Add targeted potential
-    void addTargetedPotential(std::unique_ptr<ExternalPotential> potential);
-    // Return vector of defined targeted potentials
-    const std::vector<std::unique_ptr<ExternalPotential>> &targetedPotentials() const;
-    // Link targeted potentials to atoms
-    void linkTargetedPotentials();
 
     /*
      * Upkeep
