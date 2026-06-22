@@ -52,6 +52,8 @@ class Structure : public Serialisable<>
     private:
     // Atoms in the structure
     std::vector<std::unique_ptr<StructureAtom>> atoms_;
+    // Positional instances of the root structure
+    std::vector<std::vector<Vector3>> instances_;
 
     private:
     // Renumber atoms so they are sequential in the vector
@@ -74,6 +76,9 @@ class Structure : public Serialisable<>
     // Return atoms
     const std::vector<std::unique_ptr<StructureAtom>> &atoms() const;
     std::vector<std::unique_ptr<StructureAtom>> &atoms();
+    // Return positional instances of the root structure
+    const std::vector<std::vector<Vector3>> &instances() const;
+    std::vector<std::vector<Vector3>> &instances();
 
     /*
      * Connectivity
