@@ -14,10 +14,6 @@ class Vec3DecompositionNode : public Node
     Vec3DecompositionNode(Graph *parentGraph);
     ~Vec3DecompositionNode() override = default;
 
-    public:
-    std::string_view type() const override;
-    std::string_view summary() const override;
-
     /*
      * Definition
      */
@@ -31,10 +27,14 @@ class Vec3DecompositionNode : public Node
     // Output z
     Number z_;
 
+    public:
+    std::string_view type() const override;
+    std::string_view summary() const override;
+
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

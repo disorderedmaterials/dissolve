@@ -17,15 +17,6 @@ class TestNode : public Node
     /*
      * Definition
      */
-    public:
-    // Return type of the node
-    std::string_view type() const override;
-    // Return short summary of the node's purpose
-    std::string_view summary() const override;
-
-    /*
-     * Data
-     */
     private:
     // Configuration pointer input
     Configuration *configuration_{nullptr};
@@ -44,6 +35,10 @@ class TestNode : public Node
     TestVariant variant_;
 
     public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
     // Return the optional Configuration
     const std::optional<Configuration> &optionalConfiguration() const;
     // Set the variant
@@ -56,9 +51,9 @@ class TestNode : public Node
     TestVariant variant();
 
     /*
-     * Processing & Validity
+     * Processing
      */
-    public:
+    protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
 };

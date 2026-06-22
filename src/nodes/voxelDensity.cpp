@@ -17,16 +17,16 @@ VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
     addOption("TargetProperty", "Target property for analysis", targetProperty_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view VoxelDensityNode::type() const { return "VoxelDensity"; }
 
 std::string_view VoxelDensityNode::summary() const
 {
     return "Describe distribution of atomic number, mass, and scattering length density across unit cell voxels";
 }
-
-/*
- * Definition
- */
 
 // Return enum option info for TargetPropertyType
 EnumOptions<VoxelDensityNode::TargetPropertyType> VoxelDensityNode::targetPropertyTypes()
@@ -35,6 +35,10 @@ EnumOptions<VoxelDensityNode::TargetPropertyType> VoxelDensityNode::targetProper
         "TargetPropertyType", {{TargetPropertyType::Mass, "Mass"},
                                {TargetPropertyType::AtomicNumber, "AtomicNumber"},
                                {TargetPropertyType::ScatteringLengthDensity, "ScatteringLengthDensity"}});
+}
+EnumOptions<VoxelDensityNode::TargetPropertyType> getEnumOptions(VoxelDensityNode::TargetPropertyType)
+{
+    return VoxelDensityNode::targetPropertyTypes();
 }
 
 /*
@@ -57,12 +61,6 @@ const Data1D &VoxelDensityNode::values() const { return values_; };
 /*
  * Processing
  */
-
-// Target property for analysis
-VoxelDensityNode::TargetPropertyType VoxelDensityNode::getCurrentProperty() const { return targetProperty_; }
-
-// Voxel volume (cubic angstroms)
-double VoxelDensityNode::voxelVolume() const { return voxelVolume_; }
 
 // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
 double VoxelDensityNode::voxelSideLength(const double axisLength) const
@@ -132,9 +130,4 @@ NodeConstants::ProcessResult VoxelDensityNode::process()
     values_ = histogram_->accumulatedData();
 
     return NodeConstants::ProcessResult::Success;
-}
-
-EnumOptions<VoxelDensityNode::TargetPropertyType> getEnumOptions(VoxelDensityNode::TargetPropertyType)
-{
-    return VoxelDensityNode::targetPropertyTypes();
 }

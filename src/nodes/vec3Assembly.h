@@ -13,10 +13,6 @@ class Vec3AssemblyNode : public Node
     Vec3AssemblyNode(Graph *parentGraph);
     ~Vec3AssemblyNode() override = default;
 
-    public:
-    std::string_view type() const override;
-    std::string_view summary() const override;
-
     /*
      * Definition
      */
@@ -30,10 +26,14 @@ class Vec3AssemblyNode : public Node
     // Output vector
     Vector3 outputVector_;
 
+    public:
+    std::string_view type() const override;
+    std::string_view summary() const override;
+
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

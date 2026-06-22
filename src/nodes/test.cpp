@@ -23,7 +23,7 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 }
 
 /*
- * Definition (Virtuals)
+ * Definition
  */
 
 // Return type of the node
@@ -32,10 +32,6 @@ std::string_view TestNode::type() const { return "Test"; }
 // Return short summary of the node's purpose
 std::string_view TestNode::summary() const { return "A node to allow unit testing of various graph features"; }
 
-/*
- * Data
- */
-
 // Return the optional Configuration
 const std::optional<Configuration> &TestNode::optionalConfiguration() const { return optionalConfiguration_; }
 
@@ -43,10 +39,10 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 TestNode::TestVariant TestNode::variant() { return variant_; }
 
 /*
- * Processing & Validity
+ * Processing
  */
 
-// Perform processing
+// Run main processing
 NodeConstants::ProcessResult TestNode::process()
 {
     if (createConfiguration_)
