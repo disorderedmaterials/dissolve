@@ -18,8 +18,10 @@ SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view SpeciesNode::type() const { return "Species"; }
 
+// Return short summary of the node's purpose
 std::string_view SpeciesNode::summary() const { return "Produce a species"; }
 
 /*

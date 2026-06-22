@@ -24,8 +24,10 @@ OrientedSDFNode::OrientedSDFNode(Graph *parentGraph) : Node(parentGraph)
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 }
 
+// Return type of the node
 std::string_view OrientedSDFNode::type() const { return "OrientedSDF"; }
 
+// Return short summary of the node's purpose
 std::string_view OrientedSDFNode::summary() const
 {
     return "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation";

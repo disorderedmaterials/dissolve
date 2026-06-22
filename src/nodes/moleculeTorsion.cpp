@@ -22,8 +22,10 @@ MoleculeTorsionNode::MoleculeTorsionNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view MoleculeTorsionNode::type() const { return "MoleculeTorsion"; };
 
+// Return short summary of the node's purpose
 std::string_view MoleculeTorsionNode::summary() const
 {
     return "Calculate a specific torsion distribution in a molecule type";

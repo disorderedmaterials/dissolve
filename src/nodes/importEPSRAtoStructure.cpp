@@ -16,8 +16,10 @@ ImportEPSRAtoStructureNode::ImportEPSRAtoStructureNode(Graph *parentGraph) : Nod
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportEPSRAtoStructureNode::type() const { return "ImportEPSRAtoStructure"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an EPSR ato file"; }
 
 /*

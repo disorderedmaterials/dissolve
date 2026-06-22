@@ -22,8 +22,10 @@ ExportDLPOLYConfigurationNode::ExportDLPOLYConfigurationNode(Graph *parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view ExportDLPOLYConfigurationNode::type() const { return "ExportDLPOLYConfiguration"; }
 
+// Return short summary of the node's purpose
 std::string_view ExportDLPOLYConfigurationNode::summary() const { return "Export a configuration in DL_POLY format"; }
 
 /*

@@ -25,8 +25,10 @@ QSpeciesNode::QSpeciesNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view QSpeciesNode::type() const { return "QSpecies"; }
 
+// Return short summary of the node's purpose
 std::string_view QSpeciesNode::summary() const { return "Calculate QSpecies of a network former"; }
 
 /*

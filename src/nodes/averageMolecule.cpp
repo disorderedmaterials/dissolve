@@ -16,8 +16,10 @@ AverageMoleculeNode::AverageMoleculeNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view AverageMoleculeNode::type() const { return "AverageMolecule"; }
 
+// Return short summary of the node's purpose
 std::string_view AverageMoleculeNode::summary() const
 {
     return "Calculate average atomic positions of a molecule type around an oriented site";

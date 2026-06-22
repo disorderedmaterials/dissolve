@@ -30,8 +30,10 @@ IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view IntraAngleNode::type() const { return "IntraAngle"; }
 
+// Return short summary of the node's purpose
 std::string_view IntraAngleNode::summary() const
 {
     return "Calculate angle distributions between sites within the same molecule";

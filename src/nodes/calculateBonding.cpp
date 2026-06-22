@@ -22,8 +22,10 @@ CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGrap
  * Definition
  */
 
+// Return type of the node
 std::string_view CalculateBondingNode::type() const { return "CalculateBonding"; }
 
+// Return short summary of the node's purpose
 std::string_view CalculateBondingNode::summary() const { return "Calculate bonding within a structure"; }
 
 /*

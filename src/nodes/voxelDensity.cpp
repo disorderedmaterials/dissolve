@@ -21,8 +21,10 @@ VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view VoxelDensityNode::type() const { return "VoxelDensity"; }
 
+// Return short summary of the node's purpose
 std::string_view VoxelDensityNode::summary() const
 {
     return "Describe distribution of atomic number, mass, and scattering length density across unit cell voxels";

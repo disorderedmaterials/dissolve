@@ -25,8 +25,10 @@ IntraDistanceNode::IntraDistanceNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view IntraDistanceNode::type() const { return "IntraDistance"; }
 
+// Return short summary of the node's purpose
 std::string_view IntraDistanceNode::summary() const
 {
     return "Calculate a site-site distance histogram between sites within the same molecule";

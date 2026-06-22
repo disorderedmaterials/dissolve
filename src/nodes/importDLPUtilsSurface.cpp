@@ -17,8 +17,10 @@ ImportDLPUtilsSurfaceNode::ImportDLPUtilsSurfaceNode(Graph *parentGraph) : Node(
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportDLPUtilsSurfaceNode::type() const { return "ImportDLPUtilsSurface"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportDLPUtilsSurfaceNode::summary() const { return "Import DLPUtils 2D surface data (.surf)"; }
 
 /*

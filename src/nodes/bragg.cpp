@@ -43,8 +43,10 @@ BraggNode::BraggNode(Graph *parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view BraggNode::type() const { return "Bragg"; }
 
+// Return short summary of the node's purpose
 std::string_view BraggNode::summary() const { return "Calculates Bragg reflections over a specified Q-range."; }
 
 /*

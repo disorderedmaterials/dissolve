@@ -17,8 +17,10 @@ ImportDLPOLYStructureNode::ImportDLPOLYStructureNode(Graph *parentGraph) : Node(
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportDLPOLYStructureNode::type() const { return "ImportDLPOLYStructure"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file"; }
 
 /*

@@ -28,8 +28,10 @@ EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view EnergyNode::type() const { return "Energy"; }
 
+// Return short summary of the node's purpose
 std::string_view EnergyNode::summary() const { return "Calculate total energy of a configuration"; }
 
 /*

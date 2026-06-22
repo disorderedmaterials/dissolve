@@ -17,8 +17,10 @@ ImportDLPUtilsPDensNode::ImportDLPUtilsPDensNode(Graph *parentGraph) : Node(pare
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportDLPUtilsPDensNode::type() const { return "ImportDLPUtilsPDens"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportDLPUtilsPDensNode::summary() const { return "Import DLPUtils 3D pdens data"; }
 
 /*

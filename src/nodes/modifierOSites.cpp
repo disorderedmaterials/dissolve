@@ -27,8 +27,10 @@ ModifierOSitesNode::ModifierOSitesNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view ModifierOSitesNode::type() const { return "ModifierOSites"; }
 
+// Return short summary of the node's purpose
 std::string_view ModifierOSitesNode::summary() const
 {
     return "Calculate the percentage FO, BO and NBO bonded to a modifier atom";

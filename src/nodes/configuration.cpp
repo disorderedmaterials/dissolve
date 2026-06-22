@@ -13,8 +13,10 @@ ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view ConfigurationNode::type() const { return "Configuration"; }
 
+// Return short summary of the node's purpose
 std::string_view ConfigurationNode::summary() const { return "A Configuration."; }
 
 /*

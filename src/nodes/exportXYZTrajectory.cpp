@@ -18,8 +18,10 @@ ExportXYZTrajectoryNode::ExportXYZTrajectoryNode(Graph *parentGraph) : Node(pare
  * Definition
  */
 
+// Return type of the node
 std::string_view ExportXYZTrajectoryNode::type() const { return "ExportTrajectory"; }
 
+// Return short summary of the node's purpose
 std::string_view ExportXYZTrajectoryNode::summary() const
 {
     return "Export configuration coordinates as sequential frames of a trajectory.";

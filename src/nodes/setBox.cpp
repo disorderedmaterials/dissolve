@@ -22,8 +22,10 @@ SetBoxNode::SetBoxNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view SetBoxNode::type() const { return "SetBox"; }
 
+// Return short summary of the node's purpose
 std::string_view SetBoxNode::summary() const { return "Set the periodic box definition on an object."; }
 
 /*

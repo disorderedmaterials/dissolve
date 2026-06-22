@@ -23,8 +23,10 @@ HistogramCNNode::HistogramCNNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view HistogramCNNode::type() const { return "HistogramCN"; }
 
+// Return short summary of the node's purpose
 std::string_view HistogramCNNode::summary() const { return "Produce a histogram of coordination numbers between sites"; }
 
 /*

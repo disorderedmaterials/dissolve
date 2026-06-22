@@ -47,8 +47,10 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view MDNode::type() const { return "MD"; }
 
+// Return short summary of the node's purpose
 std::string_view MDNode::summary() const { return "Run a short molecular dynamics simulation."; }
 
 EnumOptions<MDNode::TimestepType> getEnumOptions(MDNode::TimestepType) { return MDNode::timestepType(); }

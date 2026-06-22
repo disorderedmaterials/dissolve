@@ -58,8 +58,10 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view NeutronSQNode::type() const { return "NeutronSQ"; }
 
+// Return short summary of the node's purpose
 std::string_view NeutronSQNode::summary() const { return "Calculate neutron-weighted S(Q) and G(r) from unweighted S(Q)"; }
 
 /*

@@ -53,8 +53,10 @@ XRaySQNode::XRaySQNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view XRaySQNode::type() const { return "XRaySQ"; }
 
+// Return short summary of the node's purpose
 std::string_view XRaySQNode::summary() const { return "Calculate x-ray-weighted S(Q) and G(r)."; }
 
 /*

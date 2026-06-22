@@ -17,8 +17,10 @@ ExportDataNode::ExportDataNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view ExportDataNode::type() const { return "ExportData"; }
 
+// Return short summary of the node's purpose
 std::string_view ExportDataNode::summary() const { return "Export data in a simple multi-column format"; }
 
 /*

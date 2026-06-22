@@ -32,8 +32,10 @@ ImportCIFStructureNode::ImportCIFStructureNode(Graph *parentGraph) : Node(parent
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportCIFStructureNode::type() const { return "ImportCIFStructure"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportCIFStructureNode::summary() const
 {
     return "Load and parse a Crystallographic Information File (CIF) to a structure";

@@ -22,8 +22,10 @@ ImportXYZTrajectoryNode::ImportXYZTrajectoryNode(Graph *parentGraph) : Node(pare
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportXYZTrajectoryNode::type() const { return "ImportXYZTrajectory"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportXYZTrajectoryNode::summary() const
 {
     return "Import structures from sequential frames of an XYZ trajectory";

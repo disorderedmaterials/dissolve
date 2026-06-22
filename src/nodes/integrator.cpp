@@ -16,8 +16,10 @@ Integrator1DNode::Integrator1DNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view Integrator1DNode::type() const { return "Integrator"; }
 
+// Return short summary of the node's purpose
 std::string_view Integrator1DNode::summary() const { return "Computes the integral for a 1D data series"; }
 
 /*

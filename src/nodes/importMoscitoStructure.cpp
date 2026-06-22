@@ -17,8 +17,10 @@ ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Nod
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportMoscitoStructureNode::type() const { return "ImportMoscitoStructure"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportMoscitoStructureNode::summary() const { return "Import a Moscito file"; }
 
 /*

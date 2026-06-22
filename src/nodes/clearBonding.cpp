@@ -16,8 +16,10 @@ ClearBondingNode::ClearBondingNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view ClearBondingNode::type() const { return "ClearBonding"; }
 
+// Return short summary of the node's purpose
 std::string_view ClearBondingNode::summary() const { return "Clear bonding information from a structure"; }
 
 /*

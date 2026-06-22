@@ -18,8 +18,10 @@ Vector3AssembleNode::Vector3AssembleNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view Vector3AssembleNode::type() const { return "Vector3Assemble"; }
 
+// Return short summary of the node's purpose
 std::string_view Vector3AssembleNode::summary() const { return "Assemble a 3-vector from x, y, and z values"; }
 
 /*

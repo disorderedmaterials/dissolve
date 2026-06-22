@@ -15,8 +15,10 @@ ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view ForcefieldNode::type() const { return "Forcefield"; }
 
+// Return short summary of the node's purpose
 std::string_view ForcefieldNode::summary() const { return "Set up a forcefield to apply to a species"; }
 
 /*

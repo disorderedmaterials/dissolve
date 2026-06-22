@@ -53,8 +53,10 @@ EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
     addOption<bool>("OverwritePotentials", "Overwrite potentials each time rather than summing them", overwritePotentials_);
 }
 
+// Return type of the node
 std::string_view EPSRNode::type() const { return "EPSR"; }
 
+// Return short summary of the node's purpose
 std::string_view EPSRNode::summary() const { return "Refine interatomic potentials according to the methodology of Soper"; }
 
 // Perform processing

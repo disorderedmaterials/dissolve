@@ -18,8 +18,10 @@ Vector3DecomposeNode::Vector3DecomposeNode(Graph *parentGraph) : Node(parentGrap
  * Definition
  */
 
+// Return type of the node
 std::string_view Vector3DecomposeNode::type() const { return "Vector3Decompose"; }
 
+// Return short summary of the node's purpose
 std::string_view Vector3DecomposeNode::summary() const { return "Decompose a 3-vector into x, y, and z components"; }
 
 /*

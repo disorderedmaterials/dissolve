@@ -45,8 +45,10 @@ SQNode::SQNode(Graph *parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view SQNode::type() const { return "SQ"; }
 
+// Return short summary of the node's purpose
 std::string_view SQNode::summary() const { return "Calculate unweighted structure factors from input G(r)"; }
 
 /*

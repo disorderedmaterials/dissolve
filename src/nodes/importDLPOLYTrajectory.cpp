@@ -22,8 +22,10 @@ ImportDLPOLYTrajectoryNode::ImportDLPOLYTrajectoryNode(Graph *parentGraph) : Nod
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportDLPOLYTrajectoryNode::type() const { return "ImportDLPOLYTrajectory"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportDLPOLYTrajectoryNode::summary() const
 {
     return "Import structures from sequential frames of a formatted DL_POLY trajectory";

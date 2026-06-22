@@ -17,8 +17,10 @@ SetCoordinatesNode::SetCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view SetCoordinatesNode::type() const { return "SetCoordinates"; }
 
+// Return short summary of the node's purpose
 std::string_view SetCoordinatesNode::summary() const { return "Set coordinates of a configuration from a source structure"; }
 
 /*

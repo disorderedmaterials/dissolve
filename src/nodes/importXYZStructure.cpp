@@ -16,8 +16,10 @@ ImportXYZStructureNode::ImportXYZStructureNode(Graph *parentGraph) : Node(parent
  * Definition
  */
 
+// Return type of the node
 std::string_view ImportXYZStructureNode::type() const { return "ImportXYZStructure"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportXYZStructureNode::summary() const { return "Import an XYZ file"; }
 
 /*

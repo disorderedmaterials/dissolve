@@ -12,8 +12,10 @@ SubtractNode::SubtractNode(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
+// Return type of the node
 std::string_view SubtractNode::type() const { return "Subtract"; }
 
+// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view SubtractNode::summary() const { return "Performs the subtraction X - Y"; }
 

@@ -33,8 +33,10 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view AtomicMCNode::type() const { return "AtomicMC"; }
 
+// Return short summary of the node's purpose
 std::string_view AtomicMCNode::summary() const
 {
     return "Perform a Monte Carlo trial move on every atom in the target configuration";

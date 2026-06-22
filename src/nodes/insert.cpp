@@ -33,8 +33,10 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view InsertNode::type() const { return "Insert"; };
 
+// Return short summary of the node's purpose
 std::string_view InsertNode::summary() const { return "Insert molecules randomly into a configuration"; };
 
 /*

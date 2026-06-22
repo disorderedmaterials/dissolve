@@ -41,8 +41,10 @@ SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view SiteRDFNode::type() const { return "SiteRDF"; }
 
+// Return short summary of the node's purpose
 std::string_view SiteRDFNode::summary() const
 {
     return "Calculate a site-site radial distribution function and associated coordination numbers";

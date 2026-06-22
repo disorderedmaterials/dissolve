@@ -24,8 +24,10 @@ SDFNode::SDFNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view SDFNode::type() const { return "SDF"; }
 
+// Return short summary of the node's purpose
 std::string_view SDFNode::summary() const { return "Calculate spatial density functions around oriented sites"; }
 
 /*

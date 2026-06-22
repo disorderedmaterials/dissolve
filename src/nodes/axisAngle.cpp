@@ -28,8 +28,10 @@ AxisAngleNode::AxisAngleNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view AxisAngleNode::type() const { return "AxisAngle"; }
 
+// Return short summary of the node's purpose
 std::string_view AxisAngleNode::summary() const { return "Calculate distance/angle map between site axes"; }
 
 /*

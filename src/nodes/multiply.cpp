@@ -15,8 +15,10 @@ MultiplyNode::MultiplyNode(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
+// Return type of the node
 std::string_view MultiplyNode::type() const { return "Multiply"; }
 
+// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view MultiplyNode::summary() const { return "Performs multiplication of factors X and Y"; }
 

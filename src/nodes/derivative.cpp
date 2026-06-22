@@ -11,8 +11,10 @@ DerivativeNode::DerivativeNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view DerivativeNode::type() const { return "Derivative"; }
 
+// Return short summary of the node's purpose
 std::string_view DerivativeNode::summary() const { return "Computes the derivative of a 1D data series"; }
 
 /*

@@ -27,7 +27,9 @@ class Vector3DecomposeNode : public Node
     Number z_;
 
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*

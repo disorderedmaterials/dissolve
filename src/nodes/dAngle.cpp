@@ -27,8 +27,10 @@ DAngleNode::DAngleNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view DAngleNode::type() const { return "DAngle"; }
 
+// Return short summary of the node's purpose
 std::string_view DAngleNode::summary() const { return "Calculate distance-angle map (A-B)...C"; }
 
 /*

@@ -16,6 +16,7 @@ class ImportDLPOLYTrajectoryNode : public Node
      * Definition
      */
     public:
+    // Return type of the node
     std::string_view type() const override;
     std::string_view summary() const override;
 

@@ -36,8 +36,10 @@ AngleNode::AngleNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view AngleNode::type() const { return "Angle"; }
 
+// Return short summary of the node's purpose
 std::string_view AngleNode::summary() const { return "Calculate details of a specific angle A-B-C"; }
 
 /*
