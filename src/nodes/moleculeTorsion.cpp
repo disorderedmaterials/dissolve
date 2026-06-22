@@ -47,7 +47,7 @@ const Data1D &MoleculeTorsionNode::frequency() const { return frequency_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult MoleculeTorsionNode::process()
 {
     // Initialise histograms if required

@@ -25,7 +25,7 @@ std::string_view SetCoordinatesNode::summary() const { return "Set coordinates o
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SetCoordinatesNode::process()
 {
     // Check sizes

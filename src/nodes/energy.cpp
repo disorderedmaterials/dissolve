@@ -36,7 +36,7 @@ std::string_view EnergyNode::summary() const { return "Calculate total energy of
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult EnergyNode::process()
 {
     message("\n");

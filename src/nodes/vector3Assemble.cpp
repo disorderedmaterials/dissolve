@@ -26,7 +26,7 @@ std::string_view Vector3AssembleNode::summary() const { return "Assemble a 3-vec
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult Vector3AssembleNode::process()
 {
     outputVector_.set(x_, y_, z_);

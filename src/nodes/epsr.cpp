@@ -57,7 +57,7 @@ std::string_view EPSRNode::type() const { return "EPSR"; }
 
 std::string_view EPSRNode::summary() const { return "Refine interatomic potentials according to the methodology of Soper"; }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult EPSRNode::process()
 {
     std::string testDataName;

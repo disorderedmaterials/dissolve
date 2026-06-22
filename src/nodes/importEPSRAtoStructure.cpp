@@ -24,7 +24,7 @@ std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
 {
     structure_.clear();

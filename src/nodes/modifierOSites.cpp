@@ -69,7 +69,7 @@ const Data1D &ModifierOSitesNode::distanceMOtherO() const { return distanceMOthe
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ModifierOSitesNode::process()
 {
     // Select all potential bridging oxygen sites - we will determine which actually are

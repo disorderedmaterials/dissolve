@@ -33,7 +33,7 @@ std::string_view ImportXYZTrajectoryNode::summary() const
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportXYZTrajectoryNode::process()
 {
     message("Reading XYZ trajectory file frame from '{}'...\n", filePath_);

@@ -22,7 +22,7 @@ std::string_view DotProductNode::summary() const { return "Compute the dot produ
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult DotProductNode::process()
 {
     dotProduct_ = u_.dp(v_);

@@ -47,7 +47,7 @@ void IntraDistanceNode::clearData()
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult IntraDistanceNode::process()
 {
     // Select site A

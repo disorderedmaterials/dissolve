@@ -24,7 +24,7 @@ std::string_view ClearBondingNode::summary() const { return "Clear bonding infor
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ClearBondingNode::process()
 {
     outputStructure_ = inputStructure_;

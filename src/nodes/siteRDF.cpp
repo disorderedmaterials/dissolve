@@ -52,7 +52,7 @@ std::string_view SiteRDFNode::summary() const
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SiteRDFNode::process()
 {
     // Select site A

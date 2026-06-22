@@ -24,7 +24,7 @@ std::string_view ImportXYZStructureNode::summary() const { return "Import an XYZ
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportXYZStructureNode::process()
 {
     structure_.clear();

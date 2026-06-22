@@ -46,7 +46,7 @@ const Data3D &SDFNode::sdf() const { return sdf_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SDFNode::process()
 {
     // Select site A

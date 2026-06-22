@@ -79,7 +79,7 @@ class MDNode : public Node
                                                    const std::vector<Vector3> &fInter, const std::vector<Vector3> &fIntra);
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 
     public:

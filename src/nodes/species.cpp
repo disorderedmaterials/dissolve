@@ -34,7 +34,7 @@ const Species &SpeciesNode::species() const { return species_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SpeciesNode::process()
 {
     if (structure_ && recipe_)

@@ -64,7 +64,7 @@ const Data1D &AngleNode::angleABC() const { return angleABC_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult AngleNode::process()
 {
     // Select site A

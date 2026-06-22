@@ -51,7 +51,7 @@ const Data1D &AxisAngleNode::axisAngle() const { return axisAngle_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult AxisAngleNode::process()
 {
     // Select site A

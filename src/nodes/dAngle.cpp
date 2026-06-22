@@ -56,7 +56,7 @@ const Data2D &DAngleNode::dAngle() const { return dAngle_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult DAngleNode::process()
 {
     // Select site A

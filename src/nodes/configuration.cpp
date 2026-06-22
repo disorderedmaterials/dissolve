@@ -28,5 +28,5 @@ Configuration &ConfigurationNode::configuration() { return configuration_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }

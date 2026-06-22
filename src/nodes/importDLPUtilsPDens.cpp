@@ -25,7 +25,7 @@ std::string_view ImportDLPUtilsPDensNode::summary() const { return "Import DLPUt
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportDLPUtilsPDensNode::process()
 {
     // Create the data

@@ -30,7 +30,7 @@ class ForcefieldNode : public Node
      * Processing
      */
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 
     /*

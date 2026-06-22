@@ -90,7 +90,7 @@ class GRNode : public Node
     bool calculateUnweightedGR();
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };
 

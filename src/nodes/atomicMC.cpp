@@ -44,7 +44,7 @@ std::string_view AtomicMCNode::summary() const
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult AtomicMCNode::process()
 {
     // Get numeric input data

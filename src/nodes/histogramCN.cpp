@@ -41,7 +41,7 @@ const Data1D &HistogramCNNode::cn() const { return cn_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult HistogramCNNode::process()
 {
     // Select site A

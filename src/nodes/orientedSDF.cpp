@@ -49,7 +49,7 @@ const Data3D &OrientedSDFNode::sdf() const { return sdf_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult OrientedSDFNode::process()
 {
     // Select site A

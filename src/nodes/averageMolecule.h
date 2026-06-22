@@ -49,6 +49,6 @@ class AverageMoleculeNode : public Node
     void updateStructure();
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

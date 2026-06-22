@@ -86,6 +86,6 @@ class XRaySQNode : public Node
                              StructureFactors::NormalisationType normalisation);
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

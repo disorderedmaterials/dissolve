@@ -45,7 +45,7 @@ EnumOptions<Integrator1DNode::IntegratorMethod> getEnumOptions(Integrator1DNode:
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult Integrator1DNode::process()
 {
     switch (method_)

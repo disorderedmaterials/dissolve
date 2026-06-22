@@ -194,7 +194,7 @@ bool NeutronSQNode::calculateWeightedSQ(const NeutronWeights &weights)
     return true;
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult NeutronSQNode::process()
 {
     auto referenceFTQMin = std::optional<double>(referenceFTQMin_->asDouble());

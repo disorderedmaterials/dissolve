@@ -117,7 +117,7 @@ std::optional<double> MDNode::determineTimeStep(TimestepType timestepType, doubl
     return deltaT > requestedTimeStep ? requestedTimeStep : deltaT;
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult MDNode::process()
 {
     // Get numeric input data

@@ -25,7 +25,7 @@ std::string_view ExportDataNode::summary() const { return "Export data in a simp
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ExportDataNode::process()
 {
     return std::visit(

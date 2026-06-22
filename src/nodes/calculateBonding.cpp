@@ -30,7 +30,7 @@ std::string_view CalculateBondingNode::summary() const { return "Calculate bondi
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult CalculateBondingNode::process()
 {
     outputStructure_.clear();

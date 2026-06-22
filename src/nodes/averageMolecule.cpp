@@ -50,7 +50,7 @@ void AverageMoleculeNode::updateStructure()
         i->setR({rx, ry, rz});
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult AverageMoleculeNode::process()
 {
     // Get parent Species of site

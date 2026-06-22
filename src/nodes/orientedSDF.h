@@ -57,6 +57,6 @@ class OrientedSDFNode : public Node
      * Processing
      */
     private:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

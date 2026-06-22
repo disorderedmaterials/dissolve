@@ -141,7 +141,7 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
                      scaleFactors.z, configuration_->box().volume());
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult InsertNode::process()
 {
     // Get target MoleculeSet

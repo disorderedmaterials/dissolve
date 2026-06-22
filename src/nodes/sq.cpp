@@ -80,7 +80,7 @@ const Configuration *SQNode::sourceConfiguration()
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SQNode::process()
 {
     auto qMin = qMin_.asDouble(), qDelta = qDelta_.asDouble(), qMax = qMax_.asDouble();

@@ -512,7 +512,7 @@ bool GRNode::calculateUnweightedGR()
     return true;
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult GRNode::process()
 {
     // Print argument/parameter summary

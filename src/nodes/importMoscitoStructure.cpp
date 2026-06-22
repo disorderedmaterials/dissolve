@@ -25,7 +25,7 @@ std::string_view ImportMoscitoStructureNode::summary() const { return "Import a 
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
 {
     /*

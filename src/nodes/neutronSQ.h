@@ -88,6 +88,6 @@ class NeutronSQNode : public Node
     bool calculateWeightedSQ(const NeutronWeights &weights);
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

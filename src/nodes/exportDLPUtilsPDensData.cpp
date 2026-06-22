@@ -25,7 +25,7 @@ std::string_view ExportDLPUtilsPDensDataNode::summary() const { return "Export 3
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ExportDLPUtilsPDensDataNode::process()
 {
     return write(data_, filePath_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;

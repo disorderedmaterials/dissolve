@@ -49,7 +49,7 @@ const Data1D &QSpeciesNode::qSpecies() const { return qSpecies_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult QSpeciesNode::process()
 {
     // Initialise storage if required

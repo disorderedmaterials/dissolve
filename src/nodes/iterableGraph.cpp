@@ -167,7 +167,7 @@ bool IterableGraph::removeEdge(const EdgeDefinition &definition)
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult IterableGraph::process()
 {
     const auto N = nIterations_.asInteger();

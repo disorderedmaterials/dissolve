@@ -68,6 +68,6 @@ class BraggNode : public Node
     bool reBinReflections();
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

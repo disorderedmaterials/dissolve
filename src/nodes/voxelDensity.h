@@ -78,7 +78,7 @@ class VoxelDensityNode : public Node
     double voxelSideLength(double axisLength) const;
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };
 

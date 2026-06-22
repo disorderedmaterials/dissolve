@@ -21,7 +21,7 @@ std::string_view SubtractNode::summary() const { return "Performs the subtractio
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SubtractNode::process()
 {
     result_ = x_ - y_;

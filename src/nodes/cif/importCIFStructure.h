@@ -85,6 +85,6 @@ class ImportCIFStructureNode : public Node
     bool createStructure();
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

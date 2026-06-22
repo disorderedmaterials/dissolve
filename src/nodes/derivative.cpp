@@ -19,7 +19,7 @@ std::string_view DerivativeNode::summary() const { return "Computes the derivati
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult DerivativeNode::process()
 {
     derivative_ = Derivative::derivative(inputData_);

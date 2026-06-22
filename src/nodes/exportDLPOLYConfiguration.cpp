@@ -30,7 +30,7 @@ std::string_view ExportDLPOLYConfigurationNode::summary() const { return "Export
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
 {
     auto path = filePath_;

@@ -36,7 +36,7 @@ std::string_view ImportXYDataNode::summary() const { return "Import 1D data"; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportXYDataNode::process()
 {
     // Clear the structure, and initialise error arrays if necessary

@@ -25,7 +25,7 @@ std::string_view ImportDLPUtilsSurfaceNode::summary() const { return "Import DLP
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportDLPUtilsSurfaceNode::process()
 {
     // Create the data

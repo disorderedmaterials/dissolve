@@ -199,7 +199,7 @@ class EPSRNode : public Node
     std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> empiricalPotentials();
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };
 

@@ -52,7 +52,7 @@ void IntraAngleNode::clearData()
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult IntraAngleNode::process()
 {
     // Select site A

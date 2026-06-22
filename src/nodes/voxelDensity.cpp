@@ -78,7 +78,7 @@ void VoxelDensityNode::addValue(const Vector3 &coords, double value)
 // Return atomic coordinates folded into unit cell
 Vector3 VoxelDensityNode::foldedCoordinates(const Vector3 &r, const Box &unitCell) { return unitCell.foldFrac(r); }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult VoxelDensityNode::process()
 {
     auto unitCell = configuration_->box();

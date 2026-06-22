@@ -33,7 +33,7 @@ std::string_view ExportXYZConfigurationNode::summary() const
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ExportXYZConfigurationNode::process()
 {
     auto path = filePath_;

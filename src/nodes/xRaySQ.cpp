@@ -245,7 +245,7 @@ bool XRaySQNode::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet 
     return true;
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult XRaySQNode::process()
 {
     // Print argument/parameter summary

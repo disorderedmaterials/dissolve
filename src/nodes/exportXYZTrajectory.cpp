@@ -29,7 +29,7 @@ std::string_view ExportXYZTrajectoryNode::summary() const
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ExportXYZTrajectoryNode::process()
 {
     std::ofstream outfile(filePath_);

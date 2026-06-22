@@ -438,7 +438,7 @@ bool BraggNode::reBinReflections()
     return true;
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult BraggNode::process()
 {
     auto qMin = qMin_.asDouble();

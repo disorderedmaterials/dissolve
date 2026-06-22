@@ -26,7 +26,7 @@ std::string_view Vector3DecomposeNode::summary() const { return "Decompose a 3-v
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult Vector3DecomposeNode::process()
 {
     x_ = inputVector_.x;

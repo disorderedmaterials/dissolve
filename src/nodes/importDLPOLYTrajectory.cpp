@@ -33,7 +33,7 @@ std::string_view ImportDLPOLYTrajectoryNode::summary() const
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportDLPOLYTrajectoryNode::process()
 {
     message("Reading DL_POLY trajectory file frame from '{}'...\n", filePath_);

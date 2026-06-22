@@ -42,7 +42,7 @@ TestNode::TestVariant TestNode::variant() { return variant_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult TestNode::process()
 {
     if (createConfiguration_)

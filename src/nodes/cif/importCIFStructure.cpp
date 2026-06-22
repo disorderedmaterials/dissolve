@@ -497,7 +497,7 @@ bool ImportCIFStructureNode::createStructure()
     return true;
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportCIFStructureNode::process()
 {
     structure_.clear();

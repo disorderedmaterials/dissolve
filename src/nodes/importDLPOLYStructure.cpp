@@ -25,7 +25,7 @@ std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a D
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ImportDLPOLYStructureNode::process()
 {
     // Open file and check that we're OK to proceed importing from it

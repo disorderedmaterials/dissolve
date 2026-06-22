@@ -72,6 +72,6 @@ class InsertNode : public Node
     std::tuple<int, int, double> getPopulationTotals(int population, const MoleculeSet &molecules) const;
 
     protected:
-    // Run main processing
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };
