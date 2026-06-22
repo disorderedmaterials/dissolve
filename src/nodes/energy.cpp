@@ -2,9 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/energy.h"
-#include "base/sysFunc.h"
-#include "kernels/producer.h"
-#include "main/dissolve.h"
+#include "base/timer.h"
+#include "kernels/energy.h"
 #include "math/regression.h"
 #include "nodes/dissolve.h"
 
@@ -26,12 +25,16 @@ EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
 }
 
 /*
- * Node
+ * Definition
  */
 
 std::string_view EnergyNode::type() const { return "Energy"; }
 
 std::string_view EnergyNode::summary() const { return "Calculate total energy of a configuration"; }
+
+/*
+ * Processing
+ */
 
 // Run main processing
 NodeConstants::ProcessResult EnergyNode::process()

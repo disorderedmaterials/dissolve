@@ -11,6 +11,7 @@
 #include "nodes/epsr.h"
 #include "nodes/neutronSQ.h"
 #include "nodes/sq.h"
+#include "nodes/xRaySQ.h"
 #include "templates/algorithms.h"
 
 // Return enum option info for ExpansionFunctionType

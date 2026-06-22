@@ -5,7 +5,6 @@
 #include "base/sysFunc.h"
 #include "classes/partialSet.h"
 #include "classes/scatteringMatrix.h"
-#include "classes/xRayWeights.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -15,19 +14,16 @@
 #include "math/poissonFit.h"
 #include "nodes/neutronSQ.h"
 #include "nodes/sq.h"
+#include "nodes/xRaySQ.h"
 #include "templates/algorithms.h"
 #include <functional>
 
 EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
 {
-    /*
-     * Inputs
-     */
+    // Inputs
     addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_);
 
-    /*
-     * Options
-     */
+    // Options
     addOption<std::vector<std::string>>("Targets", "Add specified Node (and it's Reference data) as a refinement target",
                                         targetNames_);
     addOption<EPSRNamedTargetWeights>(
@@ -39,11 +35,8 @@ EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
         "ModifyPotential", "Frequency at which to apply generated perturbations to interatomic potentials", modifyPotential_);
     addOption<Number>("QMin", "Minimum Q value over which to generate potentials from total scattering data", qMin_);
     addOption<Number>("QMax", "Maximum Q value over which to generate potentials from total scattering data", qMax_);
-
     addOption<Number>("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_);
-
     addOption<std::vector<Range>>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
-
     addOption<ExpansionFunctionType>("ExpansionFunction", "Form of expansion function to use when fitting difference data",
                                      expansionFunction_);
     addOption<Number>("GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_);
@@ -57,17 +50,7 @@ EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
         "RMinPT", "Radius at which potential truncation begins (or Auto for 2 Angstroms under rmaxpt)", rMinPT_);
     addOption<std::optional<Number>>(
         "Smoothing", "Smoothing to apply to fluctuation coefficients before summation into potential", fluctuationSmoothing_);
-
     addOption<bool>("OverwritePotentials", "Overwrite potentials each time rather than summing them", overwritePotentials_);
-    /*
-        keywords_.add<bool>("SaveDifferenceFunctions", "Whether to save difference function and fit",
-                                   saveDifferenceFunctions_);
-        keywords_.add<bool>("SaveEmpiricalPotentials", "Whether to save empirical potentials", saveEmpiricalPotentials_);
-        keywords_.add<bool>("SaveEstimatedPartials", "Whether to save estimated partials", saveEstimatedPartials_);
-        keywords_.add<bool>("SavePCof", "Whether to save potential coefficients", savePotentialCoefficients_);
-        keywords_.add<bool>("SaveSimulatedFR", "Whether to save simulated F(r) (Fourier transform of calculated F(Q))",
-                                   saveSimulatedFR_);
-    */
 }
 
 std::string_view EPSRNode::type() const { return "EPSR"; }
@@ -130,8 +113,8 @@ NodeConstants::ProcessResult EPSRNode::process()
     auto fluctuationSmoothing = std::optional<int>(fluctuationSmoothing_.value_or(0).asInteger());
     auto modifyPotential = std::optional<int>(modifyPotential_.value_or(0).asInteger());
 
-    auto iterableGraph = dynamic_cast<IterableGraph *>(parentGraph());
-    auto iteration = iterableGraph ? iterableGraph->currentIteration() : 0;
+    // TODO DISSOLVE2
+    auto iteration = 0;
 
     message("Feedback factor is {}.\n", feedback);
     for (auto &[targetNode, weight] : targets)
@@ -175,16 +158,6 @@ NodeConstants::ProcessResult EPSRNode::process()
     message("Weighting factor used when applying fluctuation coefficients is {}\n", weighting);
     if (fluctuationSmoothing)
         message("Coefficients will be smoothed (average length = 2N+1, N = {})", *fluctuationSmoothing);
-    if (saveDifferenceFunctions_)
-        message("Difference functions will be saved.\n");
-    if (saveEmpiricalPotentials_)
-        message("Empirical potentials will be saved.\n");
-    if (saveEstimatedPartials_)
-        message("Estimated partials will be saved.\n");
-    if (savePotentialCoefficients_)
-        message("Potential coefficients will be saved.\n");
-    if (saveSimulatedFR_)
-        message("Simulated F(r) (from FT of F(Q)) will be saved.\n");
     message("\n");
 
     /*
@@ -454,28 +427,6 @@ NodeConstants::ProcessResult EPSRNode::process()
                                                                       calculatedUnweightedSQ[{at1->name(), at2->name()}],
                                                                       1.0 / targets.size());
                                     });
-
-            /*
-             * Save Data
-             */
-            /*
-            if (saveDifferenceFunctions_)
-            {
-                Data1DExportFileFormat exportDiffFormat(std::format("{}-Diff.q", targetNode->name()));
-                if (!exportDiffFormat.exportData(differenceData))
-                    return NodeConstants::ProcessResult::Failed;
-
-                Data1DExportFileFormat exportDeltaSQFormat(std::format("{}-DiffFit.q", targetNode->name()));
-                if (!exportDeltaSQFormat.exportData(deltaFQFit))
-                    return NodeConstants::ProcessResult::Failed;
-            }
-            if (saveSimulatedFR_)
-            {
-                Data1DExportFileFormat exportFormat(std::format("{}-SimulatedFR.r", targetNode->name()));
-                if (!exportFormat.exportData(simulatedFR))
-                    return NodeConstants::ProcessResult::Failed;
-            }
-                    */
         }
 
     // Finalise and store the total r-factor
@@ -531,18 +482,6 @@ NodeConstants::ProcessResult EPSRNode::process()
     estimatedSQ = scatteringMatrix_->generateEstimatedPartials();
     updateDeltaSQ(unweightedSQ, calculatedUnweightedSQ, estimatedSQ);
 
-    // Save data?
-    /*
-    if (saveEstimatedPartials_)
-    {
-        for (auto &[key, data] : estimatedSQ)
-        {
-            Data1DExportFileFormat exportFormat(std::format("{}-EstSQ-{}.txt", name(), data.tag()));
-            if (!exportFormat.exportData(data))
-                return NodeConstants::ProcessResult::Failed;
-        }
-    }
-    */
     /*
      * Calculate estimated g(r) from estimated S(Q)
      */
@@ -683,50 +622,6 @@ NodeConstants::ProcessResult EPSRNode::process()
     }
     else
         energabs = absEnergyEP(atomTypes);
-
-    // Save data?
-    /*
-    if (saveEmpiricalPotentials_)
-    {
-        if (!for_each_pair_early(atomTypes,
-                                 [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-                                 {
-                                     // Grab pointer to the relevant pair potential
-                                     PairPotential *pp = dissolve.pairPotential(at1, at2);
-
-                                     Data1DExportFileFormat exportFormat(
-                                         std::format("{}-EP-{}-{}.txt", name(), at1->name(), at2->name()));
-                                     if (!exportFormat.exportData(pp->additionalPotential()))
-                                         return false;
-                                     return EarlyReturn<bool>::Continue;
-                                 })
-                 .value_or(true))
-            return NodeConstants::ProcessResult::Failed;
-    }
-    if (savePotentialCoefficients_)
-    {
-        auto &coefficients = potentialCoefficients(moduleData, nAtomTypes, ncoeffp);
-
-        if (!for_each_pair_early(atomTypes,
-                                 [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-                                 {
-                                     // Grab reference to coefficients
-                                     auto &potCoeff = coefficients[{i, j}];
-
-                                     LineParser fileParser;
-                                     if (!fileParser.openOutput(
-                                             std::format("{}-PCof-{}-{}.txt", name(), at1->name(), at2->name())))
-                                         return false;
-                                     for (auto n : potCoeff)
-                                         if (!fileParser.writeLineF("{}\n", n))
-                                             return false;
-                                     fileParser.closeFiles();
-                                     return EarlyReturn<bool>::Continue;
-                                 })
-                 .value_or(true))
-            return NodeConstants::ProcessResult::Failed;
-    }
-    */
 
     if (!phiArray_)
         phiArray_.emplace();
