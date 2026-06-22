@@ -296,7 +296,6 @@ set(BASIC_LINK_LIBS
     potentials
     neta
     analyser
-    generator
     keywords
     expression
     items
