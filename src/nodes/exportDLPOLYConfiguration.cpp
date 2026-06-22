@@ -18,10 +18,19 @@ ExportDLPOLYConfigurationNode::ExportDLPOLYConfigurationNode(Graph *parentGraph)
                     tagWithIteration_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ExportDLPOLYConfigurationNode::type() const { return "ExportDLPOLYConfiguration"; }
 
 std::string_view ExportDLPOLYConfigurationNode::summary() const { return "Export a configuration in DL_POLY format"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
 {
     auto path = filePath_;

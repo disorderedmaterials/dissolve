@@ -13,6 +13,10 @@ ExportDLPUtilsPDensDataNode::ExportDLPUtilsPDensDataNode(Graph *parentGraph) : N
     addOption<std::string>("FilePath", "Destination file path", filePath_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ExportDLPUtilsPDensDataNode::type() const { return "ExportPDensData"; }
 
 std::string_view ExportDLPUtilsPDensDataNode::summary() const { return "Export 3D data in DLPUtils PDens format"; }
@@ -21,6 +25,7 @@ std::string_view ExportDLPUtilsPDensDataNode::summary() const { return "Export 3
  * Processing
  */
 
+// Run main processing
 NodeConstants::ProcessResult ExportDLPUtilsPDensDataNode::process()
 {
     return write(data_, filePath_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;

@@ -18,6 +18,10 @@ ExportXYZConfigurationNode::ExportXYZConfigurationNode(Graph *parentGraph) : Nod
     addSerialisable("Iteration", iteration_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ExportXYZConfigurationNode::type() const { return "ExportXYZConfiguration"; }
 
 std::string_view ExportXYZConfigurationNode::summary() const
@@ -25,6 +29,11 @@ std::string_view ExportXYZConfigurationNode::summary() const
     return "Export configuration coordinates from sequential frames of a coordinates.";
 }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult ExportXYZConfigurationNode::process()
 {
     auto path = filePath_;

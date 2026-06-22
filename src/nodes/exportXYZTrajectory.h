@@ -4,7 +4,6 @@
 #pragma once
 
 #include "nodes/node.h"
-#include <iostream>
 
 // Forward Declarations
 class Configuration;
@@ -38,7 +37,7 @@ class ExportXYZTrajectoryNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

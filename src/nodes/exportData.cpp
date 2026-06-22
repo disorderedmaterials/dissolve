@@ -13,6 +13,10 @@ ExportDataNode::ExportDataNode(Graph *parentGraph) : Node(parentGraph)
     addOption<std::string>("FilePath", "Destination file path", filePath_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view ExportDataNode::type() const { return "ExportData"; }
 
 std::string_view ExportDataNode::summary() const { return "Export data in a simple multi-column format"; }
@@ -21,6 +25,7 @@ std::string_view ExportDataNode::summary() const { return "Export data in a simp
  * Processing
  */
 
+// Run main processing
 NodeConstants::ProcessResult ExportDataNode::process()
 {
     return std::visit(
