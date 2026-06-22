@@ -6,19 +6,21 @@
 #include "math/data1D.h"
 #include "nodes/node.h"
 
-// Derivative1D Node
 class DerivativeNode : public Node
 {
     public:
     DerivativeNode(Graph *parentGraph);
     ~DerivativeNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Input vector
@@ -29,7 +31,7 @@ class DerivativeNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

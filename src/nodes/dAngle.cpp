@@ -23,6 +23,10 @@ DAngleNode::DAngleNode(Graph *parentGraph) : Node(parentGraph)
               excludeSameMolecule_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view DAngleNode::type() const { return "DAngle"; }
 
 std::string_view DAngleNode::summary() const { return "Calculate distance-angle map (A-B)...C"; }
@@ -32,7 +36,15 @@ std::string_view DAngleNode::summary() const { return "Calculate distance-angle 
  */
 
 // Clear any local data
-void DAngleNode::clearData() {}
+void DAngleNode::clearData()
+{
+    distanceHistogramBC_.reset();
+    rdfBC_.clear();
+    angleHistogram_.reset();
+    angle_.clear();
+    distanceAngleMap_.reset();
+    dAngle_.clear();
+}
 
 // Temporary accessors to data for testing
 const Data1D &DAngleNode::rdfBC() const { return rdfBC_; }
@@ -153,18 +165,6 @@ NodeConstants::ProcessResult DAngleNode::process()
     dAngleNormaliser.divide((double(nBAvailable) / nBSelections) / configuration_->box().volume());
     // Normalise by spherical shell
     dAngleNormaliser.normaliseBySphericalShell();
-
-    // // Save RDF(A-B) data?
-    // if (!DataExporter::exportData(rBCNormalised, exportFileAndFormatRDF_))
-    //     return ExecutionResult::Failed;
-    //
-    // // Save Angle(A-B-C) data?
-    // if (!DataExporter::exportData(aABCNormalised, exportFileAndFormatAngle_))
-    //     return ExecutionResult::Failed;
-    //
-    // // Save DAngle(A-(B-C)) data?
-    // if (!DataExporter::exportData(dAngleNormalised, exportFileAndFormatDAngle_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

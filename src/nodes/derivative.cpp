@@ -7,10 +7,19 @@ DerivativeNode::DerivativeNode(Graph *parentGraph) : Node(parentGraph)
     addOutput<Data1D>("Result", "The elementwise derivative of the input", derivative_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view DerivativeNode::type() const { return "Derivative"; }
 
 std::string_view DerivativeNode::summary() const { return "Computes the derivative of a 1D data series"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult DerivativeNode::process()
 {
     derivative_ = Derivative::derivative(inputData_);

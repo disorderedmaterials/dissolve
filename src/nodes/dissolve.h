@@ -39,8 +39,6 @@ class DissolveGraph : public Graph
     public:
     // Load the dissolve simulation from a file
     std::optional<std::string> loadFile(std::filesystem::path name);
-    // Access a pair potential
-    PairPotential &pairPotential(const AtomType *at1, const AtomType *at2) override;
     // Return the DissolveGraph reference
     DissolveGraph *dissolveGraph() override;
 
@@ -62,6 +60,8 @@ class DissolveGraph : public Graph
     public:
     // Clear all pair potentials
     void clearPairPotentials();
+    // Access a pair potential
+    PairPotential &pairPotential(const AtomType *at1, const AtomType *at2) override;
     // Ensure that the specified Configuration has updated type indexing, cells etc.
     void updateIndexingAndCells(Configuration *cfg) const;
     // Create new pair potential override

@@ -15,12 +15,15 @@ class DAngleNode : public Node
     DAngleNode(Graph *parentGraph);
     ~DAngleNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -35,11 +38,6 @@ class DAngleNode : public Node
     bool symmetric_{false};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_, c_;
-
-    /*
-     * Data
-     */
-    private:
     // Distance histogram B-C
     std::optional<Histogram1D> distanceHistogramBC_;
     Data1D rdfBC_;
@@ -62,7 +60,7 @@ class DAngleNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
