@@ -48,7 +48,7 @@ class EnergyNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
 };
