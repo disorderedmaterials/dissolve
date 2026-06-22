@@ -119,7 +119,7 @@ class Node : public Serialisable<>
     static void setEcho(bool status);
 
     /*
-     * Processing & Validity
+     * Processing
      */
     private:
     // Whether the node's data is up-to-date

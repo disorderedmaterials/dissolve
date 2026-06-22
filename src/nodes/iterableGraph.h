@@ -75,7 +75,7 @@ class IterableGraph : public Graph
     bool removeEdge(const EdgeDefinition &definition) override;
 
     /*
-     * Processing & Validity
+     * Processing
      */
     protected:
     // Perform processing

@@ -17,7 +17,7 @@ std::string_view LoopBacksNode::type() const { return "LoopBacks"; }
 std::string_view LoopBacksNode::summary() const { return "Maps feedback from internal node outputs to graph inputs"; }
 
 /*
- * Processing & Validity
+ * Processing
  */
 
 // Perform processing
