@@ -23,10 +23,11 @@ std::string_view ForcefieldNode::summary() const { return "Set up a forcefield t
  * Processing
  */
 
+// Run main processing
 NodeConstants::ProcessResult ForcefieldNode::process() { return NodeConstants::ProcessResult::Success; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Serialise any hidden content

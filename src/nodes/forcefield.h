@@ -6,7 +6,6 @@
 #include "data/ff/recipe.h"
 #include "nodes/node.h"
 
-// Forcefield Node
 class ForcefieldNode : public Node
 {
     public:
@@ -30,14 +29,14 @@ class ForcefieldNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 
     /*
-     * I/O
+     * Serialisation
      */
-    public:
+    protected:
     // Serialise any hidden content
     void serialiseInternal(SerialisedValue &target) const override;
     // Deserialise any hidden content
