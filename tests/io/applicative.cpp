@@ -96,4 +96,7 @@ TEST(ApplicativeTest, BasicParser)
 }
 
 TEST(ApplicativeTest, Vector) { test_exact("1 2.5 -3e-1", vector3(), Vector3(1, 2.5, -3e-1)); }
+
+TEST(ApplicativeTest, StructureAtom) { test_exact("HW 1 2.5 -3e-4 5", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5}); }
+
 } // namespace UnitTest
