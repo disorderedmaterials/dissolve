@@ -9,7 +9,7 @@
 #include "data/formFactors.h"
 #include "data/structureFactors.h"
 #include "math/windowFunction.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/node.h"
 #include <optional>
 

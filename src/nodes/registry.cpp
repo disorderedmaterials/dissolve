@@ -25,7 +25,7 @@
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/forcefield.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/histogramCN.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"

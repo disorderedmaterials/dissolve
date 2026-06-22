@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "benchmark/benchmark.h"
 #include "common/problems.h"
 #include "nodes/number.h"

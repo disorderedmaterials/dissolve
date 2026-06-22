@@ -9,7 +9,7 @@
 #include "classes/scatteringMatrix.h"
 #include "math/data1D.h"
 #include "math/range.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/node.h"
 #include "nodes/number.h"

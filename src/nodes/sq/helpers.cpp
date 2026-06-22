@@ -5,7 +5,7 @@
 #include "math/ft.h"
 #include "math/mathFunc.h"
 #include "nodes/edge.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/sq/sq.h"
 #include "templates/algorithms.h"
 

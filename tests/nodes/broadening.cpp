@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/windowFunction.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>

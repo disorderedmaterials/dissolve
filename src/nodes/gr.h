@@ -8,7 +8,6 @@
 #include "classes/histogramSet.h"
 #include "classes/partialSet.h"
 #include "classes/species.h"
-#include "items/list.h"
 #include "math/function1D.h"
 #include "math/history.h"
 #include "nodes/node.h"
@@ -21,13 +20,17 @@ class GRNode : public Node
     GRNode(Graph *parentGraph);
     ~GRNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
+    public:
     // Partial Calculation Method enum
     enum class PartialsMethod
     {
@@ -69,7 +72,7 @@ class GRNode : public Node
     std::optional<HistogramSet> histograms_;
 
     /*
-     * Functions
+     * Processing
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
@@ -81,17 +84,12 @@ class GRNode : public Node
     // Calculate RDF from raw histogram
     void calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
                       double multiplier);
-
-    public:
     // Calculate raw partials
     bool calculateRawGR(const double grRange, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     bool calculateUnweightedGR();
 
-    /*
-     * Processing
-     */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

@@ -11,7 +11,7 @@
 #include "math/filters.h"
 #include "math/ft.h"
 #include "nodes/exportData.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/neutronSQ/neutronSQ.h"
 
 // Run main processing
