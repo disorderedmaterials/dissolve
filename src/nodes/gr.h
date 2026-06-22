@@ -64,12 +64,12 @@ class GRNode : public Node
     PartialsMethod partialsMethod_{PartialsMethod::AutoMethod};
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
-    // Whether to save partials and total functions to disk
-    bool save_{false};
-    // Whether to save raw partials and total functions to disk
-    bool saveRaw_{false};
     // Histograms for RDF calculation
     std::optional<HistogramSet> histograms_;
+
+    public:
+    // Clear any local data
+    void clearData() override;
 
     /*
      * Processing

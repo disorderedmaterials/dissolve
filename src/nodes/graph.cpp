@@ -26,7 +26,7 @@ std::string_view Graph::type() const { return "Graph"; }
 std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
 
 /*
- * Processing & Validity
+ * Processing
  */
 
 // Perform processing

@@ -39,8 +39,6 @@ GRNode::GRNode(Graph *parentGraph)
                                      averagingLength_);
     addOption<Function1DWrapper>("IntraBroadening", "Type of broadening to apply to intramolecular g(r)", intraBroadening_);
     addOption<std::optional<Number>>("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)", nSmooths_);
-    addOption<bool>("Save", "Whether to save partials and total functions to disk", save_);
-    addOption<bool>("SaveRaw", "Whether to save raw simulation partial and total functions to disk", saveRaw_);
     addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
                                       partialsMethod_);
 
@@ -66,7 +64,19 @@ EnumOptions<GRNode::PartialsMethod> getEnumOptions(GRNode::PartialsMethod) { ret
 
 std::string_view GRNode::type() const { return "GR"; }
 
-std::string_view GRNode::summary() const { return "Calculate radial distribution functions between all atom types."; }
+std::string_view GRNode::summary() const { return "Calculate radial distribution functions between all atom types"; }
+
+/*
+ * Data
+ */
+
+// Clear any local data
+void GRNode::clearData()
+{
+    rawGR_.reset();
+    rawGRHistory_.clear();
+    unweightedGR_.reset();
+}
 
 /*
  * Processing
@@ -319,10 +329,6 @@ void GRNode::calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVo
     }
 }
 
-/*
- * Public Functions
- */
-
 // Calculate raw partials
 bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
 {
@@ -525,8 +531,6 @@ NodeConstants::ProcessResult GRNode::process()
         message("Broadening to be applied to intramolecular g(r) is {} ({}).",
                 Functions1D::forms().keyword(intraBroadening_.form()), intraBroadening_.parameterSummary());
     message("Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
-    message("Save data is {}.\n", DissolveSys::onOff(save_));
-    message("Save raw simulation g(r) is {}.\n", DissolveSys::onOff(saveRaw_));
     if (nSmooths_)
         message("Degree of smoothing to apply to calculated partial g(r) is {}.\n", nSmooths_.value().asInteger());
     message("\n");

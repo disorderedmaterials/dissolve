@@ -33,7 +33,7 @@ class Graph : public Node
     std::string_view summary() const override;
 
     /*
-     * Processing & Validity
+     * Processing
      */
     protected:
     // Perform processing
