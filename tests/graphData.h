@@ -12,7 +12,7 @@
 #include "nodes/forcefield.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/neutronSQ.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/species.h"
 #include "nodes/sq/sq.h"

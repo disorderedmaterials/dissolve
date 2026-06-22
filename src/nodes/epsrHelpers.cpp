@@ -9,7 +9,7 @@
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/epsr.h"
-#include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/neutronSQ.h"
 #include "nodes/sq/sq.h"
 #include "templates/algorithms.h"
 

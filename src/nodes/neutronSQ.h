@@ -12,21 +12,22 @@
 
 // Forward Declarations
 class PartialSet;
-class Data1D;
 
-// Neutron SQ Node
 class NeutronSQNode : public Node
 {
     public:
     NeutronSQNode(Graph *parentGraph);
     ~NeutronSQNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Unweighted S(Q)
@@ -66,28 +67,9 @@ class NeutronSQNode : public Node
     // Save weighted partial and total structure factors
     bool saveSQ_{false};
 
-    /*
-     * Functions
-     */
     public:
     // Return neutron weights
     NeutronWeights weights() const;
-    // Calculate weighted g(r)
-    bool calculateWeightedGR(const NeutronWeights &weights);
-    // Calculate weighted S(Q)
-    bool calculateWeightedSQ(const NeutronWeights &weights);
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    NodeConstants::ProcessResult process() override;
-
-    /*
-     * Getters
-     */
-    public:
     // Returns the unweighted SQ
     const PartialSet *unweightedSQ() const;
     // Returns the unweighted GR
@@ -96,4 +78,17 @@ class NeutronSQNode : public Node
     const IsotopologueSet &isotopologues() const;
     // Returns the source configuration, belonging to the input SQ node
     const Configuration *sourceConfiguration();
+
+    /*
+     * Processing
+     */
+    private:
+    // Calculate weighted g(r)
+    bool calculateWeightedGR(const NeutronWeights &weights);
+    // Calculate weighted S(Q)
+    bool calculateWeightedSQ(const NeutronWeights &weights);
+
+    protected:
+    // Run main processing
+    NodeConstants::ProcessResult process() override;
 };

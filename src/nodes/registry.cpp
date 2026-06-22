@@ -45,7 +45,7 @@
 #include "nodes/modifierOSites.h"
 #include "nodes/moleculeTorsion.h"
 #include "nodes/multiply.h"
-#include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/neutronSQ.h"
 #include "nodes/numberNode.h"
 #include "nodes/orientedSDF.h"
 #include "nodes/qSpecies.h"

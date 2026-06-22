@@ -13,7 +13,7 @@
 #include "math/gaussFit.h"
 #include "math/mathFunc.h"
 #include "math/poissonFit.h"
-#include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/neutronSQ.h"
 #include "nodes/sq/sq.h"
 #include "templates/algorithms.h"
 #include <functional>
