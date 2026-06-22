@@ -16,12 +16,15 @@ class QSpeciesNode : public Node
     QSpeciesNode(Graph *parentGraph);
     ~QSpeciesNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -32,11 +35,6 @@ class QSpeciesNode : public Node
     bool excludeSameMolecule_{false};
     // Distance range for calculation
     Range distanceRange_{0.0, 2.5};
-
-    /*
-     * Data
-     */
-    private:
     // Q species histogram
     std::optional<IntegerHistogram1D> qSpeciesHistogram_;
     Data1D qSpecies_;
@@ -53,7 +51,7 @@ class QSpeciesNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

@@ -37,12 +37,20 @@ SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
               instantaneous_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view SiteRDFNode::type() const { return "SiteRDF"; }
 
 std::string_view SiteRDFNode::summary() const
 {
     return "Calculate a site-site radial distribution function and associated coordination numbers";
 }
+
+/*
+ * Processing
+ */
 
 // Run main processing
 NodeConstants::ProcessResult SiteRDFNode::process()

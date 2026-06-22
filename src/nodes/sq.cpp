@@ -35,7 +35,6 @@ SQNode::SQNode(Graph *parentGraph)
         "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_);
     addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
                                      averagingLength_);
-    addOption<bool>("Save", "Whether to save partials to disk after calculation", save_);
 
     // Serialisables
     addSerialisable("unweightedSQ", unweightedSQ_);
@@ -102,7 +101,6 @@ NodeConstants::ProcessResult SQNode::process()
     else
         message("Broadening to be applied in calculated S(Q) is {} ({}).", Functions1D::forms().keyword(qBroadening_.form()),
                 qBroadening_.parameterSummary());
-    message("Save data is {}.\n", DissolveSys::onOff(save_));
 
     // Set up unweighted SQ storage if we need to
     if (!unweightedSQ_)
@@ -155,10 +153,6 @@ NodeConstants::ProcessResult SQNode::process()
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
     if (averagingLength_)
         (*unweightedSQ_) = unweightedSQHistory_.push(*unweightedSQ_, averagingLength_.value().asInteger());
-
-    // Save data if requested
-    if (save_ && !unweightedSQ_->save(name(), "UnweightedSQ", "sq", "Q, 1/Angstroms"))
-        return NodeConstants::ProcessResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

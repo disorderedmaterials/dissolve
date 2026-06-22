@@ -13,10 +13,19 @@ SetCoordinatesNode::SetCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
     addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view SetCoordinatesNode::type() const { return "SetCoordinates"; }
 
-std::string_view SetCoordinatesNode::summary() const { return "Set coordinates of a configuration from a source structure."; }
+std::string_view SetCoordinatesNode::summary() const { return "Set coordinates of a configuration from a source structure"; }
 
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult SetCoordinatesNode::process()
 {
     // Check sizes

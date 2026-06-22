@@ -30,6 +30,7 @@ std::string_view SetBoxNode::summary() const { return "Set the periodic box defi
  * Processing
  */
 
+// Run main processing
 NodeConstants::ProcessResult SetBoxNode::process()
 {
     // Copy the input to the output and work on the output

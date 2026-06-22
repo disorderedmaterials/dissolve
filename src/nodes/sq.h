@@ -42,8 +42,6 @@ class SQNode : public Node
     Number qMax_{30.0};
     // Minimum Q for calculated S(Q)
     Number qMin_{0.05};
-    // Whether to save partials to disk after calculation
-    bool save_{false};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 

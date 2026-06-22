@@ -14,10 +14,27 @@ SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
     addPointerOutput<const Species>("Species", "Created species", species_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view SpeciesNode::type() const { return "Species"; }
 
 std::string_view SpeciesNode::summary() const { return "Produce a species"; }
 
+/*
+ * Data
+ */
+
+// Return the species object
+Species &SpeciesNode::species() { return species_; }
+const Species &SpeciesNode::species() const { return species_; }
+
+/*
+ * Processing
+ */
+
+// Run main processing
 NodeConstants::ProcessResult SpeciesNode::process()
 {
     if (structure_ && recipe_)
@@ -29,8 +46,9 @@ NodeConstants::ProcessResult SpeciesNode::process()
     return NodeConstants::ProcessResult::Unchanged;
 }
 
-Species &SpeciesNode::species() { return species_; }
-const Species &SpeciesNode::species() const { return species_; }
+/*
+ * Serialisation
+ */
 
 // Serialise any hidden content
 void SpeciesNode::serialiseInternal(SerialisedValue &target) const { species_.serialise("species", target); }

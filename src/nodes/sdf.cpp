@@ -20,6 +20,10 @@ SDFNode::SDFNode(Graph *parentGraph) : Node(parentGraph)
               excludeSameMolecule_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view SDFNode::type() const { return "SDF"; }
 
 std::string_view SDFNode::summary() const { return "Calculate spatial density functions around oriented sites"; }
@@ -86,10 +90,6 @@ NodeConstants::ProcessResult SDFNode::process()
     normaliserSDF.divide(double(a.sites().size()));
     // Normalise by grid
     normaliserSDF.normaliseByGrid();
-
-    // // Save SDF data?
-    // if (!DataExporter::exportData(dataSDF, sdfFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

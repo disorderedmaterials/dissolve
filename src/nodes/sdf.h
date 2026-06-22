@@ -14,12 +14,15 @@ class SDFNode : public Node
     SDFNode(Graph *parentGraph);
     ~SDFNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -34,11 +37,6 @@ class SDFNode : public Node
     Vector3 rangeY_{-10.0, 10.0, 0.5};
     // Range along Z axis
     Vector3 rangeZ_{-10.0, 10.0, 0.5};
-
-    /*
-     * Data
-     */
-    private:
     // SDF
     std::optional<Histogram3D> histogram_;
     Data3D sdf_;
@@ -52,7 +50,7 @@ class SDFNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
