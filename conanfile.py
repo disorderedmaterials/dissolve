@@ -7,12 +7,6 @@ class DissolveRecipe(ConanFile):
     name = "Dissolve"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeToolchain", "CMakeDeps"
-    options = {
-        "msvc_dev": [True, False],
-    }
-    default_options = {
-        "msvc_dev": False,
-    }
     def configure(self):
         self.options["puxixml"].header_only = False
         self.options["antlr4-cppruntime"].shared = True
