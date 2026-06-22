@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/histogramCN.h"
-#include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/siteSelector.h"
 
@@ -19,6 +18,10 @@ HistogramCNNode::HistogramCNNode(Graph *parentGraph) : Node(parentGraph)
     addOption("RangeAB", "Distance range (min, max) over which to calculate coordination number from central site",
               distanceRange_);
 }
+
+/*
+ * Definition
+ */
 
 std::string_view HistogramCNNode::type() const { return "HistogramCN"; }
 
@@ -77,10 +80,6 @@ NodeConstants::ProcessResult HistogramCNNode::process()
     DataOperator1D normaliserCN(cn_);
     // Normalise by value
     normaliserCN.normaliseSumTo();
-
-    // Save CN data?
-    // if (!DataExporter::exportData(dataCN, exportFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }
