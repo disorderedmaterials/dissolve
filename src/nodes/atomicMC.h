@@ -30,8 +30,6 @@ class AtomicMCNode : public Node
     Configuration *targetConfiguration_{nullptr};
     // Temperature (K)
     Number temperature_{300};
-    // Interatomic cutoff distance to use for energy calculation
-    std::optional<double> cutoffDistance_;
     // Number of shakes to attempt per atom
     Number nShakesPerAtom_{1};
     // Step size in Angstroms to use in Monte Carlo moves
