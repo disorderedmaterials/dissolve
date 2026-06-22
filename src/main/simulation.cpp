@@ -46,13 +46,7 @@ bool Dissolve::prepare()
     std::set<const Species *> globalUsedSpecies;
     for (auto &cfg : coreData_.configurations())
     {
-        // If the configuration is empty, initialise it now
-        if (cfg->nMolecules() == 0)
-        {
-            if (!cfg->initialiseContent({*this}))
-                return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
-        }
-        else if (newPairPotentialRange)
+        if (newPairPotentialRange)
             cfg->updateCells();
 
         // Check Box extent against pair potential range

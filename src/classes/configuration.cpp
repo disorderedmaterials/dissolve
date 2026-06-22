@@ -10,7 +10,7 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 
-Configuration::Configuration() : generator_("Generator"), box_(Box::BoxType::Cubic, {1.0, 1.0, 1.0}, {90.0, 90.0, 90.0}) {}
+Configuration::Configuration() : box_(Box::BoxType::Cubic, {1.0, 1.0, 1.0}, {90.0, 90.0, 90.0}) {}
 
 Configuration::~Configuration() { clear(); }
 
@@ -30,7 +30,6 @@ void Configuration::clear()
 
     // Reset definition
     temperature_ = 300.0;
-    generator_.clear();
 }
 
 /*
@@ -42,68 +41,6 @@ void Configuration::setName(std::string_view name) { name_ = DissolveSys::niceNa
 
 // Return name of the Configuration
 std::string_view Configuration::name() const { return name_; }
-
-// Return the current generator
-Generator &Configuration::generator() { return generator_; }
-
-// Create the Configuration according to its generator
-bool Configuration::generate(const GeneratorContext &generatorContext)
-{
-    // Empty the current contents
-    empty();
-
-    // Generate the contents
-    Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", name_);
-    auto result = generator_.execute({generatorContext, this});
-    if (!result)
-        return Messenger::error("Failed to generate Configuration '{}'.\n", name_);
-    Messenger::print("\n");
-
-    // Set-up Cells for the Box
-    cells_.generate(box_, requestedCellDivisionLength_);
-
-    // Make sure all objects know about each other
-    updateObjectRelationships();
-
-    // Link targeted potentials to atoms
-    linkTargetedPotentials();
-
-    ++version_;
-
-    // Sanity check the contents - if we have zero atoms then there's a problem!
-    if (nAtoms() == 0)
-        return Messenger::error("Generated contents for Configuration '{}' contains no atoms!\n", name());
-
-    return true;
-}
-
-// Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(const GeneratorContext &generatorContext)
-{
-    // Clear existing content
-    empty();
-
-    appliedSizeFactor_ = std::nullopt;
-    requestedSizeFactor_ = defaultSizeFactor_;
-
-    // Run the generator Generator
-    if (!generate(generatorContext))
-        return false;
-
-    updateAtomLocations(true);
-
-    // If there are still no atoms, complain.
-    if (nAtoms() == 0)
-        return false;
-
-    // Create cell array
-    updateCells();
-
-    // Apply size factor scaling if required
-    // applySizeFactor(generatorContext.potentialMap());
-
-    return true;
-}
 
 // Set configuration temperature
 void Configuration::setTemperature(double t) { temperature_ = t; }
@@ -122,8 +59,6 @@ void Configuration::serialise(std::string tag, SerialisedValue &target) const
         configuration["sizeFactor"] = requestedSizeFactor_.value();
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
-
-    generator_.serialise("generator", configuration);
 }
 
 // Read values from a serialisable value
@@ -132,5 +67,4 @@ void Configuration::deserialise(const SerialisedValue &node, const CoreData &dat
     setTemperature(toml::find_or<double>(node, "temperature", defaultTemperature_));
     requestedSizeFactor_ = toml::find_or<double>(node, "sizeFactor", defaultSizeFactor_);
     requestedCellDivisionLength_ = toml::find_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
-    generator_.deserialise(node.at("generator"), data);
 }

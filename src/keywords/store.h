@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "generator/nodeValue.h"
 #include "keywords/base.h"
 #include "keywords/enumOptions.h"
 #include "keywords/organiser.h"
@@ -168,15 +167,12 @@ class KeywordStore
     bool set(std::string_view name, const int value);
     bool set(std::string_view name, const std::string value);
     bool set(std::string_view name, const Function1DWrapper value);
-    bool set(std::string_view name, const NodeValueProxy value);
     bool set(std::string_view name, const Vector3 value);
     bool set(std::string_view name, const Vector3i value);
-    bool set(std::string_view name, const Vector3NodeValue value);
     bool set(std::string_view name, const Range value);
     bool set(std::string_view name, const std::vector<const SpeciesSite *> value);
     bool set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value);
     bool set(std::string_view name, const std::shared_ptr<SelectGeneratorNode> value);
-    bool set(std::string_view name, const ConstNodeVector<SelectGeneratorNode> value);
     bool set(std::string_view name, const std::vector<Module *> value);
     bool set(std::string_view name, const Module *value);
     bool set(std::string_view name, Configuration *value);

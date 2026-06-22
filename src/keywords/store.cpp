@@ -3,24 +3,18 @@
 
 #include "keywords/store.h"
 #include "base/lineParser.h"
-#include "generator/regionBase.h"
-#include "generator/select.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/configurationVector.h"
 #include "keywords/double.h"
 #include "keywords/function1D.h"
 #include "keywords/integer.h"
-#include "keywords/node.h"
-#include "keywords/nodeValue.h"
-#include "keywords/nodeVector.h"
 #include "keywords/range.h"
 #include "keywords/species.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/stdString.h"
 #include "keywords/vec3Double.h"
 #include "keywords/vec3Integer.h"
-#include "keywords/vec3NodeValue.h"
 
 /*
  * Keyword Data
@@ -188,18 +182,6 @@ bool KeywordStore::set(std::string_view name, const std::vector<const SpeciesSit
     getKeyword<SpeciesSiteVectorKeyword>(name, find(name))->data() = value;
     return true;
 }
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionGeneratorNodeBase> value)
-{
-    return getKeyword<NodeKeyword<RegionGeneratorNodeBase>>(name, find(name))->setData(value);
-}
-bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectGeneratorNode> value)
-{
-    return getKeyword<NodeKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
-}
-bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectGeneratorNode> value)
-{
-    return getKeyword<NodeVectorKeyword<SelectGeneratorNode>>(name, find(name))->setData(value);
-}
 bool KeywordStore::set(std::string_view name, Configuration *value)
 {
     getKeyword<ConfigurationKeyword>(name, find(name))->data() = value;
@@ -224,10 +206,6 @@ bool KeywordStore::set(std::string_view name, const Function1DWrapper value)
 {
     return getKeyword<Function1DKeyword>(name, find(name))->setData(value);
 }
-bool KeywordStore::set(std::string_view name, const NodeValueProxy value)
-{
-    return getKeyword<NodeValueKeyword>(name, find(name))->setData(value);
-}
 bool KeywordStore::set(std::string_view name, const Vector3i value)
 {
     return getKeyword<Vec3IntegerKeyword>(name, find(name))->setData(value);
@@ -235,10 +213,6 @@ bool KeywordStore::set(std::string_view name, const Vector3i value)
 bool KeywordStore::set(std::string_view name, const Vector3 value)
 {
     return getKeyword<Vec3DoubleKeyword>(name, find(name))->setData(value);
-}
-bool KeywordStore::set(std::string_view name, const Vector3NodeValue value)
-{
-    return getKeyword<Vec3NodeValueKeyword>(name, find(name))->setData(value);
 }
 bool KeywordStore::set(std::string_view name, const Range value)
 {

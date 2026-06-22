@@ -3,13 +3,11 @@ add_library(
   base.cpp
   cylindrical.cpp
   producer.cpp
-  regional.cpp
   spherical.cpp
   types.cpp
   base.h
   cylindrical.h
   producer.h
-  regional.h
   spherical.h
   types.h
 )
