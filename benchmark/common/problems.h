@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "benchmarkConfig.h"
 #include "classes/box.h"
 #include "classes/coreData.h"
 #include "expression/variable.h"
