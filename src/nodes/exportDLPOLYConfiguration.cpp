@@ -10,12 +10,11 @@
 ExportDLPOLYConfigurationNode::ExportDLPOLYConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration to be exported", configuration_);
+    addInput("Configuration", "Configuration to be exported", configuration_);
 
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index",
-                    tagWithIteration_);
+    addOption("FilePath", "File path", filePath_);
+    addOption("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index", tagWithIteration_);
 }
 
 /*

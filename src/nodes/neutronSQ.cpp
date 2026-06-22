@@ -14,34 +14,28 @@
 NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<PartialSet *>("UnweightedSQ", "Unweighted partial S(Q)", unweightedSQ_);
-    addInput<PartialSet *>("UnweightedGR", "Unweighted partials g(r)", unweightedGR_);
-    addInput<std::optional<Data1D>>("ReferenceData", "Reference F(Q) data", referenceFQ_);
+    addInput("UnweightedSQ", "Unweighted partial S(Q)", unweightedSQ_);
+    addInput("UnweightedGR", "Unweighted partials g(r)", unweightedGR_);
+    addInput("ReferenceData", "Reference F(Q) data", referenceFQ_);
 
     // Outputs
     addOptionalPointerOutput<PartialSet>("WeightedSQ", "Weighted partial structure factors for target configuration",
                                          weightedSQ_);
     addOptionalPointerOutput<PartialSet>(
         "WeightedGR", "Weighted partial radial distribution functions for target configuration", weightedGR_);
-    addOutput<Data1D>("ReferenceGR", "Fourier transform of reference data", referenceGR_);
+    addOutput("ReferenceGR", "Fourier transform of reference data", referenceGR_);
 
     // Options
-    addOption<IsotopologueSet>("Isotopologues", "Isotopologues to use when calculating weights matrix", isotopologues_);
-    addOption<StructureFactors::NormalisationType>("NormaliseTo", "Normalisation to apply to total weighted F(Q)",
-                                                   normaliseTo_);
-    addOption<StructureFactors::NormalisationType>(
-        "ReferenceNormalisedTo", "Normalisation that has been applied to the reference data", referenceNormalisedTo_);
-    addOption<std::optional<Number>>("ReferenceFTQMin",
-                                     "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
-                                     referenceFTQMin_);
-    addOption<std::optional<Number>>("ReferenceFTQMax",
-                                     "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
-                                     referenceFTQMax_);
-    addOption<Number>("ReferenceFTDeltaR", "Spacing in r to use when generating the Fourier-transformed data",
-                      referenceFTDeltaR_);
-    addOption<WindowFunction::Form>("ReferenceWindowFunction",
-                                    "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
-                                    referenceWindowFunction_);
+    addOption("Isotopologues", "Isotopologues to use when calculating weights matrix", isotopologues_);
+    addOption("NormaliseTo", "Normalisation to apply to total weighted F(Q)", normaliseTo_);
+    addOption("ReferenceNormalisedTo", "Normalisation that has been applied to the reference data", referenceNormalisedTo_);
+    addOption("ReferenceFTQMin", "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
+              referenceFTQMin_);
+    addOption("ReferenceFTQMax", "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
+              referenceFTQMax_);
+    addOption("ReferenceFTDeltaR", "Spacing in r to use when generating the Fourier-transformed data", referenceFTDeltaR_);
+    addOption("ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
+              referenceWindowFunction_);
 
     // Serialisables
     addSerialisable("weightedGR", weightedGR_);

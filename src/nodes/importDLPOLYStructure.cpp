@@ -6,10 +6,10 @@
 ImportDLPOLYStructureNode::ImportDLPOLYStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Structure", "Imported structure", structure_);
     addOutput("Forces", "Atomic forces (if present)", forces_);
 }
 

@@ -8,8 +8,7 @@
 HistogramCNNode::HistogramCNNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration for the calculation", configuration_)
-        ->setFlags({ParameterBase::Required});
+    addInput("Configuration", "Target configuration for the calculation", configuration_)->setFlags({ParameterBase::Required});
 
     // Options
     addOption("SiteA", "Set the site(s) 'A' which are to represent the reference origin", a_);

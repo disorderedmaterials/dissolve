@@ -5,8 +5,8 @@
 
 NumberNode::NumberNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOption<Number>("X", "A number", x_);
-    addOutput<Number>("X", "A number", x_);
+    addOption("X", "A number", x_);
+    addOutput("X", "A number", x_);
 }
 
 /*

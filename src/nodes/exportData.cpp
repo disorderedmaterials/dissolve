@@ -10,7 +10,7 @@ ExportDataNode::ExportDataNode(Graph *parentGraph) : Node(parentGraph)
     addInput("Data", "Data to export", data_);
 
     // Options
-    addOption<std::string>("FilePath", "Destination file path", filePath_);
+    addOption("FilePath", "Destination file path", filePath_);
 }
 
 /*

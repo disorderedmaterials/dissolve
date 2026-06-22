@@ -6,10 +6,10 @@
 ImportXYZStructureNode::ImportXYZStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Structure", "Imported structure", structure_);
 }
 
 /*

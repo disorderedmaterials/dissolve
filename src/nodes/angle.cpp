@@ -10,11 +10,10 @@
 AngleNode::AngleNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration for the calculation", configuration_)
-        ->setFlags({ParameterBase::Required});
+    addInput("Configuration", "Target configuration for the calculation", configuration_)->setFlags({ParameterBase::Required});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);

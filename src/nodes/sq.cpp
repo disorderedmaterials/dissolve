@@ -19,22 +19,20 @@ SQNode::SQNode(Graph *parentGraph)
                              })
 {
     // Inputs
-    addInput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_)
+    addInput("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
     addOptionalPointerOutput<PartialSet>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
-    addOutput<PartialSet *>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
+    addOutput("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Options
-    addOption<Number>("QMin", "Minimum Q for calculated S(Q)", qMin_);
-    addOption<Number>("QMax", "Maximum Q for calculated S(Q)", qMax_);
-    addOption<Number>("QDelta", "Step size in Q for S(Q) calculation", qDelta_);
-    addOption<Function1DWrapper>("QBroadening", "Instrument broadening function to apply when calculating S(Q)", qBroadening_);
-    addOption<WindowFunction::Form>(
-        "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_);
-    addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
-                                     averagingLength_);
+    addOption("QMin", "Minimum Q for calculated S(Q)", qMin_);
+    addOption("QMax", "Maximum Q for calculated S(Q)", qMax_);
+    addOption("QDelta", "Step size in Q for S(Q) calculation", qDelta_);
+    addOption("QBroadening", "Instrument broadening function to apply when calculating S(Q)", qBroadening_);
+    addOption("WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_);
+    addOption("Averaging", "Number of historical partial sets to combine into final partials", averagingLength_);
 
     // Serialisables
     addSerialisable("unweightedSQ", unweightedSQ_);

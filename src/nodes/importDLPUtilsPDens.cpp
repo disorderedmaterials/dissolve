@@ -7,10 +7,10 @@
 ImportDLPUtilsPDensNode::ImportDLPUtilsPDensNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<std::optional<Data3D>>("Data", "Imported data", data_);
+    addOutput("Data", "Imported data", data_);
 }
 
 /*

@@ -6,11 +6,11 @@
 SetCoordinatesNode::SetCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration to modify", configuration_);
+    addInput("Configuration", "Configuration to modify", configuration_);
     addInput("Structure", "Structure to apply", structure_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 }
 
 /*

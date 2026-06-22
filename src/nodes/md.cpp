@@ -11,33 +11,31 @@
 MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_)
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-    addInput<Number>("NSteps", "Number of MD steps to perform", nSteps_);
+    addInput("NSteps", "Number of MD steps to perform", nSteps_);
 
     // Options
-    addOption<MDNode::TimestepType>("Timestep", "Timestep type to use in calculation", timestepType_);
-    addOption<Number>("DeltaT", "Fixed timestep (ps) to use in MD simulation", fixedTimestep_);
-    addOption<bool>("RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation",
-                    randomVelocities_);
+    addOption("Timestep", "Timestep type to use in calculation", timestepType_);
+    addOption("DeltaT", "Fixed timestep (ps) to use in MD simulation", fixedTimestep_);
+    addOption("RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation",
+              randomVelocities_);
 
-    addOption<std::vector<const Species *>>("RestrictToSpecies", "Restrict the calculation to the specified Species",
-                                            restrictToSpecies_);
-    addOption<bool>("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable", onlyWhenEnergyStable_);
+    addOption("RestrictToSpecies", "Restrict the calculation to the specified Species", restrictToSpecies_);
+    addOption("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable", onlyWhenEnergyStable_);
 
-    addOption<std::optional<Number>>("EnergyFrequency", "Frequency at which to calculate total system energy",
-                                     energyFrequency_);
-    addOption<std::optional<Number>>("OutputFrequency", "Frequency at which to output step information", outputFrequency_);
-    addOption<std::optional<Number>>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_);
+    addOption("EnergyFrequency", "Frequency at which to calculate total system energy", energyFrequency_);
+    addOption("OutputFrequency", "Frequency at which to output step information", outputFrequency_);
+    addOption("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_);
 
-    addOption<bool>("CapForces", "Control whether atomic forces are capped every step", capForces_);
-    addOption<Number>("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_);
-    addOption<bool>("IntraOnly",
-                    "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
-                    intramolecularForcesOnly_);
+    addOption("CapForces", "Control whether atomic forces are capped every step", capForces_);
+    addOption("CapForcesAt", "Set cap on allowable force (kJ/mol) per atom", capForcesAt_);
+    addOption("IntraOnly",
+              "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
+              intramolecularForcesOnly_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", targetConfiguration_);
 
     // Serialisables
     addSerialisable("velocities", velocities_);

@@ -4,7 +4,7 @@ SubtractNode::SubtractNode(Graph *parentGraph) : Node(parentGraph)
 {
     addSerialisableInput<Number>("X", "First operand to the subtraction", x_);
     addSerialisableInput<Number>("Y", "Second operand to the subtraction, subtracted from X", y_);
-    addOutput<Number>("Result", "The difference of the operands", result_);
+    addOutput("Result", "The difference of the operands", result_);
 }
 
 /*

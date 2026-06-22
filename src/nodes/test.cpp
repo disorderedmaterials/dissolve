@@ -6,7 +6,7 @@
 TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "A configuration input", configuration_);
+    addInput("Configuration", "A configuration input", configuration_);
     addInput("CreateConfiguration", "Whether to create the optional configuration on run", createConfiguration_);
     addInput("Number", "A single number", number_);
     addInput("NumberVector", "A vector of numbers", numberVector_);
@@ -14,7 +14,7 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addInput("Variant", "A variant", variant_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "A configuration output", configuration_);
+    addOutput("Configuration", "A configuration output", configuration_);
     addOptionalPointerOutput<Configuration>("OptionalConfiguration", "An optional Configuration", optionalConfiguration_);
     addOutput("Number", "A single number", number_);
     addOutput("NumberVector", "A vector of numbers", numberVector_);

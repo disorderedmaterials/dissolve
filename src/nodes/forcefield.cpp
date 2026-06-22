@@ -7,7 +7,7 @@
 
 ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOption<Forcefield *>("Forcefield", "Source forcefield", recipe_.ff);
+    addOption("Forcefield", "Source forcefield", recipe_.ff);
     addOutput("Recipe", "Recipe for the forcefield when applying to a species", recipe_);
 }
 

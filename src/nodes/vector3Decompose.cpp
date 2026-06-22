@@ -9,9 +9,9 @@ Vector3DecomposeNode::Vector3DecomposeNode(Graph *parentGraph) : Node(parentGrap
     addSerialisableInput<Vector3>("V", "The 3-dimensional vector to be decomposed", inputVector_);
 
     // Outputs
-    addOutput<Number>("X", "The x component of the vector", x_);
-    addOutput<Number>("Y", "The y component of the vector", y_);
-    addOutput<Number>("Z", "The z component of the vector", z_);
+    addOutput("X", "The x component of the vector", x_);
+    addOutput("Y", "The y component of the vector", y_);
+    addOutput("Z", "The z component of the vector", z_);
 }
 
 /*

@@ -16,24 +16,22 @@ BraggNode::BraggNode(Graph *parentGraph)
                              })
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_)
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-    addInput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
+    addInput("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
 
     // Outputs
-    addOutput<PartialSet *>("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
+    addOutput("UnweightedSQ", "Unweighted partials for target configuration", unweightedSQ_);
 
     // Options
-    addOption<Number>("QMin", "Minimum Q value for Bragg calculation", qMin_);
-    addOption<Number>("QMax", "Maximum Q value for Bragg calculation", qMax_);
-    addOption<Number>("QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections", qDelta_);
-    addOption<Vector3i>("Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration",
-                        multiplicity_);
-    addOption<std::optional<Number>>("Averaging", "Number of historical data sets to combine into final reflection data",
-                                     averagingLength_)
+    addOption("QMin", "Minimum Q value for Bragg calculation", qMin_);
+    addOption("QMax", "Maximum Q value for Bragg calculation", qMax_);
+    addOption("QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections", qDelta_);
+    addOption("Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration",
+              multiplicity_);
+    addOption("Averaging", "Number of historical data sets to combine into final reflection data", averagingLength_)
         ->setFlags({ParameterBase::ClearData});
-    addOption<Function1DWrapper>("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)",
-                                 braggQBroadening_);
+    addOption("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)", braggQBroadening_);
 
     // Serialisables
     addSerialisable("weightedGR", braggReflections_);

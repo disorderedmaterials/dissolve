@@ -10,18 +10,17 @@
 EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration to calculate energy for", targetConfiguration_)
+    addInput("Configuration", "Configuration to calculate energy for", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", targetConfiguration_);
 
     // Options
-    addOption<double>("StabilityThreshold",
-                      "Threshold value at which energy is deemed stable over the defined windowing period",
-                      stabilityThreshold_);
-    addOption<int>("StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)",
-                   stabilityWindow_);
+    addOption("StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period",
+              stabilityThreshold_);
+    addOption("StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)",
+              stabilityWindow_);
 }
 
 /*

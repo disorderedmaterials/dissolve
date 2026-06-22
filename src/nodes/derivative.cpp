@@ -3,8 +3,8 @@
 
 DerivativeNode::DerivativeNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
-    addOutput<Data1D>("Result", "The elementwise derivative of the input", derivative_);
+    addInput("Data1D", "Input 1D data series", inputData_);
+    addOutput("Result", "The elementwise derivative of the input", derivative_);
 }
 
 /*

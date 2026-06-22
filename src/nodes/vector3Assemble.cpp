@@ -11,7 +11,7 @@ Vector3AssembleNode::Vector3AssembleNode(Graph *parentGraph) : Node(parentGraph)
     addSerialisableInput<double>("Z", "The z value of the assembled vector", z_);
 
     // Outputs
-    addOutput<Vector3>("V", "The assembled vector", outputVector_);
+    addOutput("V", "The assembled vector", outputVector_);
 }
 
 /*

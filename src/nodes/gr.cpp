@@ -25,7 +25,7 @@ GRNode::GRNode(Graph *parentGraph)
                              })
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_)
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
@@ -33,14 +33,12 @@ GRNode::GRNode(Graph *parentGraph)
     addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
 
     // Options
-    addOption<Number>("BinWidth", "Bin width (spacing in r) to use", binWidth_);
-    addOption<std::optional<Number>>("Range", "Maximum r to calculate g(r) out to", requestedRange_);
-    addOption<std::optional<Number>>("Averaging", "Number of historical partial sets to combine into final partials",
-                                     averagingLength_);
-    addOption<Function1DWrapper>("IntraBroadening", "Type of broadening to apply to intramolecular g(r)", intraBroadening_);
-    addOption<std::optional<Number>>("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)", nSmooths_);
-    addOption<GRNode::PartialsMethod>("Method", "Calculation method for partial radial distribution functions",
-                                      partialsMethod_);
+    addOption("BinWidth", "Bin width (spacing in r) to use", binWidth_);
+    addOption("Range", "Maximum r to calculate g(r) out to", requestedRange_);
+    addOption("Averaging", "Number of historical partial sets to combine into final partials", averagingLength_);
+    addOption("IntraBroadening", "Type of broadening to apply to intramolecular g(r)", intraBroadening_);
+    addOption("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)", nSmooths_);
+    addOption("Method", "Calculation method for partial radial distribution functions", partialsMethod_);
 
     // Serialisables
     addSerialisable("rawGR", rawGR_);

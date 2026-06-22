@@ -13,15 +13,15 @@
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration to insert into", configuration_);
-    addOutput<Configuration *>("Configuration", "Modified configuration", configuration_);
-    addInput<const Species *>("Species", "Species to add - all resulting molecules will have identical geometry", species_);
-    addInput<const MoleculeSet *>("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
-    addInput<Number>("Population", "Population of the target to add", population_);
-    addInput<Number>("Density", "Density at which to add the target", density_);
+    addInput("Configuration", "Target configuration to insert into", configuration_);
+    addOutput("Configuration", "Modified configuration", configuration_);
+    addInput("Species", "Species to add - all resulting molecules will have identical geometry", species_);
+    addInput("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
+    addInput("Population", "Population of the target to add", population_);
+    addInput("Density", "Density at which to add the target", density_);
 
     // Options
-    addOption<Units::DensityUnits>("DensityUnits", "Units of target density", densityUnits_);
+    addOption("DensityUnits", "Units of target density", densityUnits_);
     addOption("BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_);
     addOption("ScaleA", "Scale box length A when modifying volume", scaleA_);
     addOption("ScaleB", "Scale box length B when modifying volume", scaleB_);

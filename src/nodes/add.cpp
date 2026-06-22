@@ -10,7 +10,7 @@ AddNode::AddNode(Graph *parentGraph) : Node(parentGraph)
     addSerialisableInput<Number>("Y", "Second operand to the addition", y_);
 
     // Outputs
-    addOutput<Number>("Result", "The sum of the operands", result_);
+    addOutput("Result", "The sum of the operands", result_);
 }
 
 /*

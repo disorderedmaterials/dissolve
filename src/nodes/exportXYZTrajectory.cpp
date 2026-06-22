@@ -7,11 +7,11 @@
 ExportXYZTrajectoryNode::ExportXYZTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration from which Trajectory will be exported", configuration_);
+    addInput("Configuration", "Configuration from which Trajectory will be exported", configuration_);
 
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("Extended", "Extended XYZ format", extended_);
+    addOption("FilePath", "File path", filePath_);
+    addOption("Extended", "Extended XYZ format", extended_);
 }
 
 /*

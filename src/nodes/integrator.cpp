@@ -3,13 +3,13 @@
 Integrator1DNode::Integrator1DNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
+    addInput("Data1D", "Input 1D data series", inputData_);
 
     // Options
     addOption("Method", "Method to use for integration", method_);
 
     // Outputs
-    addOutput<Number>("Result", "The integration of the input data series", integral_);
+    addOutput("Result", "The integration of the input data series", integral_);
 }
 
 /*

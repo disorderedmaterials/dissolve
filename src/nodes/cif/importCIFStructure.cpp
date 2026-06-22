@@ -21,11 +21,11 @@
 ImportCIFStructureNode::ImportCIFStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Outputs
-    addOutput<Structure>("Structure", "Structure containing atoms and connectivity", structure_);
+    addOutput("Structure", "Structure containing atoms and connectivity", structure_);
 
     // Option
-    addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<SpaceGroups::SpaceGroupId>("SpaceGroupID", "Set space group from index", spaceGroup_);
+    addOption("FilePath", "File path", filePath_);
+    addOption("SpaceGroupID", "Set space group from index", spaceGroup_);
 }
 
 /*

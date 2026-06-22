@@ -21,36 +21,32 @@
 EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_);
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
 
     // Options
-    addOption<std::vector<std::string>>("Targets", "Add specified Node (and it's Reference data) as a refinement target",
-                                        targetNames_);
-    addOption<EPSRNamedTargetWeights>(
-        "TargetWeights", "Set relative weighting for specific node targets as they enter into the scattering matrix",
-        namedWeights_);
-    addOption<Number>("EReq", "Limit of magnitude of additional potential for any one pair potential", eReq_);
-    addOption<Number>("Feedback", "Confidence factor", feedback_);
-    addOption<std::optional<Number>>(
-        "ModifyPotential", "Frequency at which to apply generated perturbations to interatomic potentials", modifyPotential_);
-    addOption<Number>("QMin", "Minimum Q value over which to generate potentials from total scattering data", qMin_);
-    addOption<Number>("QMax", "Maximum Q value over which to generate potentials from total scattering data", qMax_);
-    addOption<Number>("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_);
-    addOption<std::vector<Range>>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
-    addOption<ExpansionFunctionType>("ExpansionFunction", "Form of expansion function to use when fitting difference data",
-                                     expansionFunction_);
-    addOption<Number>("GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_);
-    addOption<Number>("GSigma2", "Width for Gaussian function in real space", gSigma2_);
-    addOption<std::optional<Number>>("NCoeffP", "Number of coefficients used to define the empirical potential", nCoeffP_);
-    addOption<std::optional<Number>>("NPItSs", "Number of iterations when refining fits to delta functions", nPItSs_);
-    addOption<Number>("PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_);
-    addOption<Number>("PSigma2", "Width for Poisson functions in real space", pSigma2_);
-    addOption<std::optional<Number>>("RMaxPT", "Radius at which potential truncation goes to zero", rMaxPT_);
-    addOption<std::optional<Number>>(
-        "RMinPT", "Radius at which potential truncation begins (or Auto for 2 Angstroms under rmaxpt)", rMinPT_);
-    addOption<std::optional<Number>>(
-        "Smoothing", "Smoothing to apply to fluctuation coefficients before summation into potential", fluctuationSmoothing_);
-    addOption<bool>("OverwritePotentials", "Overwrite potentials each time rather than summing them", overwritePotentials_);
+    addOption("Targets", "Add specified Node (and it's Reference data) as a refinement target", targetNames_);
+    addOption("TargetWeights", "Set relative weighting for specific node targets as they enter into the scattering matrix",
+              namedWeights_);
+    addOption("EReq", "Limit of magnitude of additional potential for any one pair potential", eReq_);
+    addOption("Feedback", "Confidence factor", feedback_);
+    addOption("ModifyPotential", "Frequency at which to apply generated perturbations to interatomic potentials",
+              modifyPotential_);
+    addOption("QMin", "Minimum Q value over which to generate potentials from total scattering data", qMin_);
+    addOption("QMax", "Maximum Q value over which to generate potentials from total scattering data", qMax_);
+    addOption("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_);
+    addOption("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
+    addOption("ExpansionFunction", "Form of expansion function to use when fitting difference data", expansionFunction_);
+    addOption("GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_);
+    addOption("GSigma2", "Width for Gaussian function in real space", gSigma2_);
+    addOption("NCoeffP", "Number of coefficients used to define the empirical potential", nCoeffP_);
+    addOption("NPItSs", "Number of iterations when refining fits to delta functions", nPItSs_);
+    addOption("PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_);
+    addOption("PSigma2", "Width for Poisson functions in real space", pSigma2_);
+    addOption("RMaxPT", "Radius at which potential truncation goes to zero", rMaxPT_);
+    addOption("RMinPT", "Radius at which potential truncation begins (or Auto for 2 Angstroms under rmaxpt)", rMinPT_);
+    addOption("Smoothing", "Smoothing to apply to fluctuation coefficients before summation into potential",
+              fluctuationSmoothing_);
+    addOption("OverwritePotentials", "Overwrite potentials each time rather than summing them", overwritePotentials_);
 }
 
 // Return type of the node

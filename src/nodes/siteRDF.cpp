@@ -15,11 +15,11 @@
 SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", configuration_)
+    addInput("Configuration", "Set target configuration for the node", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", a_);

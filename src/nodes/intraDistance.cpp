@@ -10,15 +10,15 @@
 IntraDistanceNode::IntraDistanceNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_);
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
     addOption("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C", b_);
-    addOption<Vector3>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_);
+    addOption("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", targetConfiguration_);
 }
 
 /*

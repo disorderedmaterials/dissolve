@@ -7,15 +7,15 @@
 CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Structure>("Structure", "Input structure", inputStructure_);
+    addInput("Structure", "Input structure", inputStructure_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Output structure", outputStructure_);
+    addOutput("Structure", "Output structure", outputStructure_);
 
     // Options
-    addOption<Number>("Tolerance", "Bonding tolerance factor", tolerance_);
-    addOption<bool>("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
-    addOption<bool>("Clear", "Whether to clear bonds before recalculating", clear_);
+    addOption("Tolerance", "Bonding tolerance factor", tolerance_);
+    addOption("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
+    addOption("Clear", "Whether to clear bonds before recalculating", clear_);
 }
 
 /*
