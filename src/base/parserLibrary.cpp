@@ -50,4 +50,10 @@ Parser<double> real()
     auto result = maybe("-"_p) & digits() & maybe("." >> digits()) & maybe(("e"_p | "E"_p) >> maybe("-"_p) & digits());
     return result.apply(nat2dbl);
 }
+
+Parser<Vector3> vector3()
+{
+    return (real() & spaces() >> real() & spaces() >> real())
+        .apply([](double x, double y, double z) { return Vector3(x, y, z); });
+}
 } // namespace parsers

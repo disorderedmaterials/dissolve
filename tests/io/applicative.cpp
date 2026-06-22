@@ -94,4 +94,6 @@ TEST(ApplicativeTest, BasicParser)
 
     test_exact("\"Foo\"", "\"" >> alphas() << "\"", "Foo"sv);
 }
+
+TEST(ApplicativeTest, Vector) { test_exact("1 2.5 -3e-1", vector3(), Vector3(1, 2.5, -3e-1)); }
 } // namespace UnitTest
