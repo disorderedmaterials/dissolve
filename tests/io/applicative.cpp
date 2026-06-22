@@ -3,17 +3,27 @@
 
 #include "base/applicative.h"
 #include <gtest/gtest.h>
+#include <string_view>
 
 namespace UnitTest
 {
 
 using namespace parsers;
+using namespace std::literals;
 
 template <typename T> void test_parser(std::string_view input, Parser<T> parser, parser_output<T> expected)
 {
     auto result = parser(input);
-    ASSERT_EQ(result, expected);
+    EXPECT_EQ(result, expected);
 }
+template <typename T> void test_exact(std::string_view input, Parser<T> parser, T expected)
+{
+    auto result = parser(input);
+    ASSERT_TRUE(result);
+    EXPECT_EQ(std::get<1>(*result), "");
+    EXPECT_EQ(std::get<0>(*result), expected);
+}
+
 TEST(ApplicativeTest, BasicStrings)
 {
     test_parser("Foo", "Fo"_p, {{"Fo", "o"}});
@@ -21,24 +31,24 @@ TEST(ApplicativeTest, BasicStrings)
 }
 TEST(ApplicativeTest, Ignoring)
 {
-    test_parser("Foobar", "Foo"_p << "bar"_p, {{"Foo", ""}});
-    test_parser("Foobar", "Foo" >> "bar"_p, {{"bar", ""}});
+    test_exact("Foobar", "Foo"_p << "bar"_p, "Foo"sv);
+    test_exact("Foobar", "Foo" >> "bar"_p, "bar"sv);
 }
 TEST(ApplicativeTest, Joining)
 {
-    test_parser("Foobar", "Foo"_p & "bar", {{{"Foo", "bar"}, ""}});
+    test_exact("Foobar", "Foo"_p & "bar", {"Foo", "bar"});
     test_parser("Foobar", (pure(1) & pure(2)) & (pure(3) & pure(4)), {{{1, 2, 3, 4}, "Foobar"}});
-    test_parser("Foobar", ("Fo"_p & "ob") & ("a" & "r"_p), {{{"Fo", "ob", "a", "r"}, ""}});
-    test_parser("Foobar", ("Fo"_p & "ob") & "ar", {{{"Fo", "ob", "ar"}, ""}});
-    test_parser("Foobar", "Fo" & ("ob"_p & "ar"), {{{"Fo", "ob", "ar"}, ""}});
+    test_exact("Foobar", ("Fo"_p & "ob") & ("a" & "r"_p), {"Fo", "ob", "a", "r"});
+    test_exact("Foobar", ("Fo"_p & "ob") & "ar", {"Fo", "ob", "ar"});
+    test_exact("Foobar", "Fo" & ("ob"_p & "ar"), {"Fo", "ob", "ar"});
     test_parser("Foobar", (pure(1) & pure(2)) & pure(3), {{{1, 2, 3}, "Foobar"}});
     test_parser("Foobar", pure(1) & (pure(2) & pure(3)), {{{1, 2, 3}, "Foobar"}});
 }
 
 TEST(ApplicativeTest, Choices)
 {
-    test_parser("Foo", "Foo"_p | "Bar", {{"Foo", ""}});
-    test_parser("Bar", "Foo"_p | "Bar", {{"Bar", ""}});
+    test_exact("Foo", "Foo"_p | "Bar", "Foo"sv);
+    test_exact("Bar", "Foo"_p | "Bar", "Bar"sv);
     test_parser("Quux", "Foo"_p | "Bar", {});
 }
 
@@ -46,32 +56,32 @@ TEST(ApplicativeTest, NaturalNumbers)
 {
     test_parser("123foo", natural(), {{123, "foo"}});
     auto triplet = natural() & "," >> natural() & "," >> natural();
-    test_parser("123,456,789", triplet, {{{123, 456, 789}, ""}});
+    test_exact("123,456,789", triplet, {123, 456, 789});
     auto vecsum = triplet.apply([](const auto x, const auto y, const auto z) -> int { return x + y + z; });
-    test_parser("123,456,789", vecsum, {{123 + 456 + 789, ""}});
+    test_exact("123,456,789", vecsum, 123 + 456 + 789);
 }
 
 TEST(ApplicativeTest, Optionals)
 {
-    test_parser("123,456", maybe(natural() << ",") & natural(), {{{{123}, 456}, ""}});
-    test_parser("456", maybe(natural() << ",") & natural(), {{{std::nullopt, 456}, ""}});
-    test_parser("-456", integer(), {{-456, ""}});
-    test_parser("456", integer(), {{456, ""}});
+    test_exact("123,456", maybe(natural() << ",") & natural(), {{123}, 456});
+    test_exact("456", maybe(natural() << ",") & natural(), {std::nullopt, 456});
+    test_exact("-456", integer(), -456);
+    test_exact("456", integer(), 456);
 }
 
 TEST(ApplicativeTest, MultipleTerms)
 {
     // Parse multiple terms
-    test_parser("123, 456,   789,012", some(integer() << maybe(","_p << maybe(spaces()))), {{{123, 456, 789, 12}, ""}});
+    test_exact("123, 456,   789,012", some(integer() << maybe(","_p << maybe(spaces()))), {123, 456, 789, 12});
     // Completely fail the parse if no copies are present
     test_parser("789", some(integer() << ","), {});
 }
 
 TEST(ApplicativeTest, RealNumbers)
 {
-    test_parser("-12.0543", real(), {{-12.0543, ""}});
-    test_parser("1.02E-3", real(), {{1.02e-3, ""}});
-    test_parser("-71.2e3", real(), {{-71.2e3, ""}});
+    test_exact("-12.0543", real(), -12.0543);
+    test_exact("1.02E-3", real(), 1.02e-3);
+    test_exact("-71.2e3", real(), -71.2e3);
 }
 
 TEST(ApplicativeTest, BasicParser)
@@ -81,6 +91,6 @@ TEST(ApplicativeTest, BasicParser)
     test_parser("1qaz.QAZ foo", digits() & lowers() & punctuations() & uppers() & spaces(),
                 {{{"1", "qaz", ".", "QAZ", " "}, "foo"}});
 
-    test_parser("\"Foo\"", "\"" >> alphas() << "\"", {{"Foo", ""}});
+    test_exact("\"Foo\"", "\"" >> alphas() << "\"", "Foo"sv);
 }
 } // namespace UnitTest
