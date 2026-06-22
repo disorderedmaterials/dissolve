@@ -359,4 +359,70 @@ TEST_F(ParametersTest, OptionalPointerToVariant)
     EXPECT_EQ(std::get<Configuration *>(b_->variant().data), &a_->optionalConfiguration().value());
 }
 
+TEST_F(ParametersTest, DynamicOutput)
+{
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "Sender"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverA"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverB"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverC"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverD"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverE"));
+
+    auto sender = testGraph_.findNode("Sender");
+    ASSERT_TRUE(sender->setInput("Message", std::string("hello")));
+    ASSERT_EQ(testGraph_.runDynamic(sender,
+                                    {
+                                        {"Sender", "Message-Part-0", "RecieverA", "Char"},
+                                        {"Sender", "Message-Part-1", "RecieverB", "Char"},
+                                        {"Sender", "Message-Part-2", "RecieverC", "Char"},
+                                        {"Sender", "Message-Part-3", "RecieverD", "Char"},
+                                        {"Sender", "Message-Part-4", "RecieverE", "Char"},
+
+                                    }),
+              NodeConstants::ProcessResult::Success);
+
+    std::vector<char> chars;
+    for (const auto &which : {"A", "B", "C", "D", "E"})
+    {
+        auto node = testGraph_.findNode("Reciever" + std::string(which));
+        chars.push_back(node->findInput("Char")->get<char>());
+    }
+
+    std::string message(chars.begin(), chars.end());
+    ASSERT_EQ(message, "hello");
+}
+
+TEST_F(ParametersTest, DynamicPointerOutput)
+{
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "Sender"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverA"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverB"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverC"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverD"));
+    ASSERT_TRUE(testGraph_.addNode(std::make_unique<TestNode>(&testGraph_), "RecieverE"));
+
+    auto sender = testGraph_.findNode("Sender");
+    ASSERT_TRUE(sender->setInput("Message", std::string("hello")));
+    ASSERT_EQ(testGraph_.runDynamic(sender,
+                                    {
+                                        {"Sender", "Message-Ptr-Part-0", "RecieverA", "CharPtr"},
+                                        {"Sender", "Message-Ptr-Part-1", "RecieverB", "CharPtr"},
+                                        {"Sender", "Message-Ptr-Part-2", "RecieverC", "CharPtr"},
+                                        {"Sender", "Message-Ptr-Part-3", "RecieverD", "CharPtr"},
+                                        {"Sender", "Message-Ptr-Part-4", "RecieverE", "CharPtr"},
+
+                                    }),
+              NodeConstants::ProcessResult::Success);
+
+    std::vector<char> chars;
+    for (const auto &which : {"A", "B", "C", "D", "E"})
+    {
+        auto node = testGraph_.findNode("Reciever" + std::string(which));
+        chars.push_back(*node->findInput("CharPtr")->get<char *>());
+    }
+
+    std::string message(chars.begin(), chars.end());
+    ASSERT_EQ(message, "hello");
+}
+
 } // namespace UnitTest
