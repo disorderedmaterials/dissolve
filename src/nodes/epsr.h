@@ -13,7 +13,7 @@
 #include "nodes/iterableGraph.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
-#include "nodes/xRaySQ/xRaySQ.h"
+#include "nodes/xRaySQ.h"
 #include <optional>
 #include <tuple>
 

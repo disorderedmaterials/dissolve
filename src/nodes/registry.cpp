@@ -59,7 +59,7 @@
 #include "nodes/vec3Assembly.h"
 #include "nodes/vec3Decomposition.h"
 #include "nodes/voxelDensity.h"
-#include "nodes/xRaySQ/xRaySQ.h"
+#include "nodes/xRaySQ.h"
 #include <memory>
 #include <ranges>
 

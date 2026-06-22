@@ -10,13 +10,14 @@
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/forcefield.h"
+#include "nodes/gr.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/neutronSQ.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/species.h"
 #include "nodes/sq.h"
-#include "nodes/xRaySQ/xRaySQ.h"
+#include "nodes/xRaySQ.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
