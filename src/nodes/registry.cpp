@@ -4,7 +4,7 @@
 #include "nodes/registry.h"
 #include "nodes/add.h"
 #include "nodes/angle.h"
-#include "nodes/atomicMC/atomicMC.h"
+#include "nodes/atomicMC.h"
 #include "nodes/averageMolecule.h"
 #include "nodes/axisAngle.h"
 #include "nodes/bragg.h"

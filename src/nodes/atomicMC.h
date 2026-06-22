@@ -4,10 +4,8 @@
 #pragma once
 
 #include "classes/configuration.h"
-#include "nodes/graph.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
-#include "nodes/parameter.h"
 
 // AtomicMC Node
 class AtomicMCNode : public Node
@@ -16,12 +14,15 @@ class AtomicMCNode : public Node
     AtomicMCNode(Graph *parentGraph);
     ~AtomicMCNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configurations
@@ -44,7 +45,7 @@ class AtomicMCNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
