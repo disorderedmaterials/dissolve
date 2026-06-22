@@ -2,46 +2,67 @@
 
 Integrator1DNode::Integrator1DNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Inputs
     addInput<Data1D>("Data1D", "Input 1D data series", inputData_);
-    addInput<std::string_view>("Method", "Method to use for integration", type_);
+
+    // Options
+    addOption("Method", "Method to use for integration", method_);
+
+    // Outputs
     addOutput<Number>("Result", "The integration of the input data series", integral_);
 }
 
-// Return enum options for form
-EnumOptions<Integrator1DNode::Method> Integrator1DNode::types()
-{
-    return EnumOptions<Integrator1DNode::Method>("Integrator1DNode",
-                                                 {
-                                                     {Integrator1DNode::Method::Trapezoidal, "Trapezoidal"},
-                                                     {Integrator1DNode::Method::AbsoluteTrapezoidal, "AbsoluteTrapezoidal"},
-                                                     {Integrator1DNode::Method::Sum, "Sum"},
-                                                     {Integrator1DNode::Method::AbsoluteSum, "AbsoluteSum"},
-                                                     {Integrator1DNode::Method::SumOfSquares, "SumOfSquares"},
-                                                 });
-}
+/*
+ * Definition
+ */
 
 std::string_view Integrator1DNode::type() const { return "Integrator"; }
 
 std::string_view Integrator1DNode::summary() const { return "Computes the integral for a 1D data series"; }
 
+/*
+ * Data
+ */
+
+// Return enum options for form
+EnumOptions<Integrator1DNode::IntegratorMethod> Integrator1DNode::integratorMethods()
+{
+    return EnumOptions<Integrator1DNode::IntegratorMethod>(
+        "IntegratorMethod", {
+                                {Integrator1DNode::IntegratorMethod::Trapezoidal, "Trapezoidal"},
+                                {Integrator1DNode::IntegratorMethod::AbsoluteTrapezoidal, "AbsoluteTrapezoidal"},
+                                {Integrator1DNode::IntegratorMethod::Sum, "Sum"},
+                                {Integrator1DNode::IntegratorMethod::AbsoluteSum, "AbsoluteSum"},
+                                {Integrator1DNode::IntegratorMethod::SumOfSquares, "SumOfSquares"},
+                            });
+}
+EnumOptions<Integrator1DNode::IntegratorMethod> getEnumOptions(Integrator1DNode::IntegratorMethod)
+{
+    return Integrator1DNode::integratorMethods();
+}
+
+/*
+ * Processing
+ */
+
 // Run main processing
 NodeConstants::ProcessResult Integrator1DNode::process()
 {
-    switch (types().enumeration(type_))
+    switch (method_)
     {
-        case Method::Trapezoidal:
+        case (IntegratorMethod::Trapezoidal):
             integral_ = Integrator::trapezoid(inputData_);
             break;
-        case Method::AbsoluteTrapezoidal:
+        case (IntegratorMethod::AbsoluteTrapezoidal):
             integral_ = Integrator::absTrapezoid(inputData_);
             break;
-        case Method::Sum:
+        case (IntegratorMethod::Sum):
             integral_ = Integrator::sum(inputData_);
             break;
-        case Method::AbsoluteSum:
+        case (IntegratorMethod::AbsoluteSum):
             integral_ = Integrator::absSum(inputData_);
             break;
-        case Method::SumOfSquares:
+        case (IntegratorMethod::SumOfSquares):
             integral_ = Integrator::sumOfSquares(inputData_);
             break;
         default:

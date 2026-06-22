@@ -7,19 +7,21 @@
 #include "math/histogram1D.h"
 #include "nodes/node.h"
 
-// IntraDistance Node
 class IntraDistanceNode : public Node
 {
     public:
     IntraDistanceNode(Graph *parentGraph);
     ~IntraDistanceNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -32,17 +34,16 @@ class IntraDistanceNode : public Node
     std::optional<Histogram1D> histAB_;
     Data1D rdfAB_;
 
+    public:
+    // Clear any local data
+    void clearData() override;
+    // Temporary accessors to data for testing
+    const Data1D &rdfAB() const;
+
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
-
-    /*
-     * Getters
-     */
-    public:
-    // Distance histogram AB
-    const Data1D &rdfAB() const;
 };

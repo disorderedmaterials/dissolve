@@ -21,9 +21,31 @@ IntraDistanceNode::IntraDistanceNode(Graph *parentGraph) : Node(parentGraph)
     addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view IntraDistanceNode::type() const { return "IntraDistance"; }
 
-std::string_view IntraDistanceNode::summary() const { return "Calculate a site-site distance histogram within molecules"; }
+std::string_view IntraDistanceNode::summary() const
+{
+    return "Calculate a site-site distance histogram between sites within the same molecule";
+}
+
+/*
+ * Data
+ */
+
+// Clear any local data
+void IntraDistanceNode::clearData()
+{
+    histAB_.reset();
+    rdfAB_.clear();
+}
+
+/*
+ * Processing
+ */
 
 // Run main processing
 NodeConstants::ProcessResult IntraDistanceNode::process()

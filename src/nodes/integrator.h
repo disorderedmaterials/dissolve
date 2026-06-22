@@ -9,19 +9,25 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// Integrator1D Node
 class Integrator1DNode : public Node
 {
     public:
     Integrator1DNode(Graph *parentGraph);
     ~Integrator1DNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
-    // Integrator type
-    enum class Method
+    /*
+     * Data
+     */
+    public:
+    // IntegratorMethod
+    enum class IntegratorMethod
     {
         Trapezoidal,
         AbsoluteTrapezoidal,
@@ -29,25 +35,23 @@ class Integrator1DNode : public Node
         AbsoluteSum,
         SumOfSquares
     };
+    // Return enum options for IntegratorMethod
+    static EnumOptions<IntegratorMethod> integratorMethods();
 
-    // Return enum options for form
-    static EnumOptions<Method> types();
-
-    /*
-     * Definition
-     */
     private:
-    //
-    std::string_view type_;
     // Input vector
     Data1D inputData_;
     // Integral
     Number integral_;
+    // Integration method
+    IntegratorMethod method_;
 
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
+
+EnumOptions<Integrator1DNode::IntegratorMethod> getEnumOptions(Integrator1DNode::IntegratorMethod);

@@ -18,3 +18,4 @@ class Units
     // Return enum options for DensityUnits
     static EnumOptions<Units::DensityUnits> densityUnits();
 };
+EnumOptions<Units::DensityUnits> getEnumOptions(Units::DensityUnits);

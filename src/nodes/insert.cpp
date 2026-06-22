@@ -28,7 +28,14 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ScaleC", "Scale box length C when modifying volume", scaleC_);
     addOption("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
-EnumOptions<Units::DensityUnits> getEnumOptions(Units::DensityUnits) { return Units::densityUnits(); }
+
+/*
+ * Definition
+ */
+
+std::string_view InsertNode::type() const { return "Insert"; };
+
+std::string_view InsertNode::summary() const { return "Insert molecules randomly into a configuration"; };
 
 /*
  * Data
@@ -44,15 +51,7 @@ EnumOptions<InsertNode::BoxActionStyle> InsertNode::boxActionStyles()
 EnumOptions<InsertNode::BoxActionStyle> getEnumOptions(InsertNode::BoxActionStyle) { return InsertNode::boxActionStyles(); }
 
 /*
- * Definition
- */
-
-std::string_view InsertNode::type() const { return "Insert"; };
-
-std::string_view InsertNode::summary() const { return "Insert molecules randomly into a configuration"; };
-
-/*
- * Functions
+ * Processing
  */
 
 // Get population totals to be added from specified MoleculeSet
@@ -141,10 +140,6 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
     Messenger::print("Current box scaled by ({},{},{}) - new volume is {:e} cubic Angstroms.\n", scaleFactors.x, scaleFactors.y,
                      scaleFactors.z, configuration_->box().volume());
 }
-
-/*
- * Processing
- */
 
 // Run main processing
 NodeConstants::ProcessResult InsertNode::process()

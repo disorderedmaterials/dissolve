@@ -26,9 +26,31 @@ IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
     addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view IntraAngleNode::type() const { return "IntraAngle"; }
 
-std::string_view IntraAngleNode::summary() const { return "Calculate angle distributions within molecules"; }
+std::string_view IntraAngleNode::summary() const
+{
+    return "Calculate angle distributions between sites within the same molecule";
+}
+
+/*
+ * Data
+ */
+
+// Clear any local data
+void IntraAngleNode::clearData()
+{
+    intraAngleHist_.reset();
+    angleABC_.clear();
+}
+
+/*
+ * Processing
+ */
 
 // Run main processing
 NodeConstants::ProcessResult IntraAngleNode::process()
