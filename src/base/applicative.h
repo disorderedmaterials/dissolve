@@ -69,6 +69,8 @@ template <typename T> class Parser
     public:
     // Parse a string and, if possible, return the value and the remainder
     parser_output<T> parse(std::string_view input) const { return lambda_(input); };
+    // Parse a string and, if possible, return the value and the remainder
+    parser_output<T> operator()(std::string_view input) const { return lambda_(input); }
 
     // Create a new parser that takes the output of the old parser and
     // passes it through a function
@@ -125,7 +127,7 @@ template <typename T> class Parser
                 if (first)
                 {
                     auto &[body, middle] = *first;
-                    auto second = other.parse(middle);
+                    auto second = other(middle);
                     if (second)
                     {
                         return {{body, std::get<1>(*second)}};
@@ -154,7 +156,7 @@ template <typename T> class Parser
                 if (first)
                 {
                     auto &[body, middle] = *first;
-                    return other.parse(middle);
+                    return other(middle);
                 }
                 else
                 {
@@ -173,7 +175,7 @@ template <typename T> class Parser
             [method, other](const std::string_view input) -> parser_output<T>
             {
                 auto first = method(input);
-                return first ? first : other.parse(input);
+                return first ? first : other(input);
             });
         return result;
     }
@@ -200,7 +202,7 @@ template <typename T> class Parser
                 if (first)
                 {
                     auto &[fst, middle] = *first;
-                    auto second = other.parse(middle);
+                    auto second = other(middle);
                     if (second)
                     {
                         auto &[snd, final] = *second;
@@ -230,7 +232,7 @@ template <typename T> class Parser
                 if (first)
                 {
                     auto &[fst, middle] = *first;
-                    auto second = other.parse(middle);
+                    auto second = other(middle);
                     if (second)
                     {
                         auto &[snd, final] = *second;
@@ -260,7 +262,7 @@ template <typename T> class Parser
                 if (first)
                 {
                     auto &[fst, middle] = *first;
-                    auto second = other.parse(middle);
+                    auto second = other(middle);
                     if (second)
                     {
                         auto &[snd, final] = *second;
@@ -290,7 +292,7 @@ template <typename T> class Parser
                 if (first)
                 {
                     auto &[fst, middle] = *first;
-                    auto second = other.parse(middle);
+                    auto second = other(middle);
                     if (second)
                     {
                         auto &[snd, final] = *second;
@@ -327,7 +329,7 @@ template <typename T> Parser<std::optional<T>> maybe(Parser<T> inner)
     Parser<std::optional<T>> result(
         [inner](const std::string_view input) -> parser_output<std::optional<T>>
         {
-            auto first = inner.parse(input);
+            auto first = inner(input);
             if (first)
             {
                 auto &[body, remainder] = *first;
@@ -353,7 +355,7 @@ template <typename T> Parser<std::vector<T>> some(Parser<T> inner)
             auto ctx = input;
             while (!ctx.empty())
             {
-                auto trial = inner.parse(ctx);
+                auto trial = inner(ctx);
                 if (trial)
                 {
                     auto &[body, remainder] = *trial;

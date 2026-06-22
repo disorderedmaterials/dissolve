@@ -11,7 +11,7 @@ using namespace parsers;
 
 template <typename T> void test_parser(std::string_view input, Parser<T> parser, parser_output<T> expected)
 {
-    auto result = parser.parse(input);
+    auto result = parser(input);
     ASSERT_EQ(result, expected);
 }
 TEST(ApplicativeTest, BasicStrings)
