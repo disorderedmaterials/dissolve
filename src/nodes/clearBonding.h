@@ -6,19 +6,21 @@
 #include "classes/structure.h"
 #include "nodes/node.h"
 
-// ClearBonding Node
 class ClearBondingNode : public Node
 {
     public:
     ClearBondingNode(Graph *parentGraph);
     ~ClearBondingNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Input structure
@@ -29,7 +31,7 @@ class ClearBondingNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };

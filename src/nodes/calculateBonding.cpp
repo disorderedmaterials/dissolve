@@ -18,9 +18,17 @@ CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGrap
     addOption<bool>("Clear", "Whether to clear bonds before recalculating", clear_);
 }
 
+/*
+ * Definition
+ */
+
 std::string_view CalculateBondingNode::type() const { return "CalculateBonding"; }
 
-std::string_view CalculateBondingNode::summary() const { return "Calculate bonding information for a structure"; }
+std::string_view CalculateBondingNode::summary() const { return "Calculate bonding within a structure"; }
+
+/*
+ * Processing
+ */
 
 // Run main processing
 NodeConstants::ProcessResult CalculateBondingNode::process()
@@ -33,6 +41,7 @@ NodeConstants::ProcessResult CalculateBondingNode::process()
     return NodeConstants::ProcessResult::Success;
 }
 
+// Calculate bonding in the specified structure
 void CalculateBondingNode::calculate(Structure &structure, double tolerance, bool clearBefore, bool preventMetallic)
 {
     if (clearBefore)

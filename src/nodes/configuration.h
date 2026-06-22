@@ -5,7 +5,6 @@
 
 #include "classes/configuration.h"
 #include "nodes/node.h"
-#include <memory>
 
 class ConfigurationNode : public Node
 {
@@ -34,7 +33,7 @@ class ConfigurationNode : public Node
     /*
      * Processing
      */
-    private:
+    protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
 };
