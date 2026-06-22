@@ -4,17 +4,12 @@ add_library(
   cli.cpp
   dissolve.cpp
   io.cpp
-  keywords.cpp
-  keywords_configuration.cpp
-  keywords_master.cpp
-  keywords_pairPotentials.cpp
   pairPotentials.cpp
   simulation.cpp
   version.cpp
   cli.h
   compatibility.h
   dissolve.h
-  keywords.h
   version.h
 )
 
