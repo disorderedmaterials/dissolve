@@ -1,5 +1,6 @@
 add_library(
   base
+  applicative.cpp
   cbor.cpp
   enumOptionsBase.cpp
   geometry.cpp
