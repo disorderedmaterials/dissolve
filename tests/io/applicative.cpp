@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/applicative.h"
+#include "base/parserLibrary.h"
 #include <gtest/gtest.h>
 #include <string_view>
 
@@ -80,6 +81,7 @@ TEST(ApplicativeTest, RealNumbers)
 {
     test_exact("-12.0543", real(), -12.0543);
     test_exact("1.02E-3", real(), 1.02e-3);
+    test_exact("-3E-4", real(), -3e-4);
     test_exact("-71.2e3", real(), -71.2e3);
 }
 

@@ -386,15 +386,6 @@ Parser<std::string_view> literal(std::string_view constant);
 // A parser that accepts any amount of digit characters
 Parser<std::string_view> digits();
 
-// A parser that accepts an integer greater than or equal to zero
-Parser<int> natural();
-
-// A parser that accepts an integer
-Parser<int> integer();
-
-// A parser that accepts a real, floating point number
-Parser<double> real();
-
 // A parser that accepts and amount of whitespace
 Parser<std::string_view> spaces();
 
