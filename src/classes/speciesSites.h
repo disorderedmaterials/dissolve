@@ -10,7 +10,7 @@ class SpeciesSite;
 class Species;
 
 // SpeciesSites - Sites from one or more Species
-class SpeciesSites : public Serialisable<>, ResolvableContext
+class SpeciesSites : public Serialisable, ResolvableContext
 {
     public:
     SpeciesSites() = default;

@@ -20,7 +20,7 @@ class CoreData;
 /*
  * Isotopologue Definition
  */
-class Isotopologue : public Serialisable<>
+class Isotopologue : public Serialisable
 {
     public:
     Isotopologue(const Species *parent, std::string name = "");

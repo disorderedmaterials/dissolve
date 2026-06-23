@@ -7,7 +7,7 @@
 #include "math/sampledDouble.h"
 
 // One-Dimensional Histogram
-class Histogram1D : public Serialisable<>
+class Histogram1D : public Serialisable
 {
     public:
     Histogram1D();

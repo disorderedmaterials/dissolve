@@ -24,7 +24,7 @@ class DissolveGraph;
 class PairPotential;
 
 // Node Base
-class Node : public Serialisable<>
+class Node : public Serialisable
 {
     public:
     Node() {}

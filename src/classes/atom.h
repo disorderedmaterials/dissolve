@@ -89,7 +89,7 @@ class AtomBase
 };
 
 // Atom
-template <typename BondClass> class Atom : public AtomBase, public Serialisable<>
+template <typename BondClass> class Atom : public AtomBase, public Serialisable
 {
     public:
     Atom() = default;

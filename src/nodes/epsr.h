@@ -18,7 +18,7 @@
 class AtomType;
 class PartialSet;
 
-class EPSRNamedTargetWeights : public Serialisable<>
+class EPSRNamedTargetWeights : public Serialisable
 {
     public:
     EPSRNamedTargetWeights() = default;

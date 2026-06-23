@@ -13,7 +13,7 @@
 class Data1D;
 
 // One-Dimensional Data with Statistics
-class SampledData1D : public Data1DBase, public Serialisable<>
+class SampledData1D : public Data1DBase, public Serialisable
 {
     public:
     SampledData1D();

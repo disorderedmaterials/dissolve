@@ -24,7 +24,7 @@ class CommonImproper;
 class Structure;
 
 // Species Definition
-class Species : public Serialisable<>
+class Species : public Serialisable
 {
     public:
     Species(std::string name = "Unnamed");

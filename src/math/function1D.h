@@ -111,7 +111,7 @@ class Functions1D
 };
 
 // Function 1D Wrapper
-class Function1DWrapper : public Serialisable<>
+class Function1DWrapper : public Serialisable
 {
     public:
     Function1DWrapper(Functions1D::Form form = Functions1D::Form::None, const std::vector<double> &params = {});

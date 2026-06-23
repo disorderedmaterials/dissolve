@@ -39,7 +39,7 @@ struct ParameterLink
 };
 
 // Base type for all parameter templates to inherit from
-class ParameterBase : public Serialisable<>
+class ParameterBase : public Serialisable
 {
     public:
     ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);

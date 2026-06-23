@@ -10,7 +10,7 @@
 #include "templates/resolvable.h"
 
 // Set of Partials
-class PartialSet : public Serialisable<>, ResolvableContext
+class PartialSet : public Serialisable, ResolvableContext
 {
     public:
     PartialSet() = default;

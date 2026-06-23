@@ -11,7 +11,7 @@ class CoreData;
 class LineParser;
 
 // Vector of double values with sampling
-class SampledVector : public Serialisable<>
+class SampledVector : public Serialisable
 {
     public:
     SampledVector();

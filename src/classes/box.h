@@ -16,7 +16,7 @@ class Cell;
 class Data1D;
 
 // Basic Box Definition
-class Box : public Serialisable<>
+class Box : public Serialisable
 {
     public:
     // Box Type Enum

@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 // 3D Real Vector
-class Vector3 : public Serialisable<>
+class Vector3 : public Serialisable
 {
     public:
     Vector3() = default;

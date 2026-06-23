@@ -10,7 +10,7 @@
 #include <string>
 
 // One-Dimensional Data
-class Data1D : public Data1DBase, public Serialisable<>
+class Data1D : public Data1DBase, public Serialisable
 {
     public:
     Data1D();

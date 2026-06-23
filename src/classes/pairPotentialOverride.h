@@ -9,7 +9,7 @@
 #include <string>
 
 // PairPotential Override Definition
-class PairPotentialOverride : public Serialisable<>
+class PairPotentialOverride : public Serialisable
 {
     public:
     // Override Types

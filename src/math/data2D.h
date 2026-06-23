@@ -12,7 +12,7 @@
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public Data2DBase, public Serialisable<>
+class Data2D : public Data2DBase, public Serialisable
 {
     public:
     Data2D();

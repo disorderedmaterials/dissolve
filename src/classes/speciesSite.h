@@ -22,7 +22,7 @@ class Species;
 class SpeciesAtom;
 
 // Species Site Definition
-class SpeciesSite : public Serialisable<>
+class SpeciesSite : public Serialisable
 {
     public:
     // Site Type

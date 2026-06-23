@@ -8,7 +8,7 @@
 #include "templates/array2D.h"
 
 // BraggReflection Class
-class BraggReflection : public Serialisable<>
+class BraggReflection : public Serialisable
 {
     public:
     BraggReflection();
@@ -78,7 +78,7 @@ class BraggReflection : public Serialisable<>
 };
 
 // BraggReflectionVector class
-class BraggReflectionVector : public Serialisable<>
+class BraggReflectionVector : public Serialisable
 {
     public:
     BraggReflectionVector() = default;

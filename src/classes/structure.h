@@ -35,7 +35,7 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
 };
 
 // Structure
-class Structure : public Serialisable<>
+class Structure : public Serialisable
 {
     public:
     Structure();

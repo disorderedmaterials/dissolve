@@ -12,7 +12,7 @@ class NodeValue;
 class ExpressionVariable;
 
 // 3D Real Vector
-class Vector3i : public Serialisable<>
+class Vector3i : public Serialisable
 {
     public:
     Vector3i() = default;
