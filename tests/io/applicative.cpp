@@ -112,12 +112,14 @@ TEST(ApplicativeTest, XYZStructure)
 
     std::ifstream infile{"xyz/c2so3.xyz"};
     ASSERT_TRUE(infile);
-    auto xyz = (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom())).parse(infile);
+    auto xyz =
+        (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom() << maybe(newlines())))
+            .parse(infile);
     // auto xyz = (maybe(spaces()) >> natural() ).parse(oss.view());
 
     ASSERT_TRUE(xyz);
     auto &[value, rest] = *xyz;
-    EXPECT_TRUE(rest.eof());
+    EXPECT_EQ(rest.get(), -1);
     auto &terms = std::get<1>(value);
     EXPECT_EQ(terms.size(), std::get<0>(value));
 

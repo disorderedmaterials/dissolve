@@ -35,6 +35,11 @@ Parser<std::string> spaces()
 {
     return takeWhile([](const char c) { return isspace(c); });
 }
+// A parser that accepts space and tab
+Parser<std::string> inline_spaces()
+{
+    return takeWhile([](const char c) { return c == ' ' || c == '\t'; });
+}
 // A parse that accepts any amount of visible characters
 Parser<std::string> graphs()
 {

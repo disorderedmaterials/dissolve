@@ -59,7 +59,7 @@ Parser<Vector3> vector3()
 
 parsers::Parser<std::tuple<std::string, Vector3, std::optional<double>>> structureAtom()
 {
-    auto parser = alphas() & spaces() >> vector3() << spaces() & maybe(real() << maybe(spaces()));
+    auto parser = alphas() & inline_spaces() >> vector3() << inline_spaces() & maybe(real() << maybe(inline_spaces()));
     return parser;
 }
 
