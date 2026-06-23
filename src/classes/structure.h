@@ -7,6 +7,7 @@
 #include "classes/atom.h"
 #include "classes/bond.h"
 #include "classes/box.h"
+#include <set>
 #include <vector>
 
 // StructureAtom

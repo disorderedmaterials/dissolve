@@ -37,12 +37,12 @@ NodeConstants::ProcessResult SupercellConfigurationNode::process()
 {
     supercellConfiguration_.empty();
 
-    const auto *box = targetConfiguration_->box();
+    const auto box = targetConfiguration_->box();
 
     // Set up configuration
-    auto supercellLengths = box->axisLengths();
+    auto supercellLengths = box.axisLengths();
     supercellLengths.multiply(supercellRepeat_.x, supercellRepeat_.y, supercellRepeat_.z);
-    supercellConfiguration_.createBoxAndCells(supercellLengths, box->axisAngles(), false);
+    supercellConfiguration_.createBoxAndCells(supercellLengths, box.axisAngles(), false);
 
     // Create images of all molecular unit cell species
     for (auto &mol : targetConfiguration_->molecules())
@@ -56,7 +56,7 @@ NodeConstants::ProcessResult SupercellConfigurationNode::process()
             {
                 // Create and translate molecule
                 for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
-                    supercellConfiguration_.addMolecule(sp)->translate(delta);
+                    supercellConfiguration_.addMolecule(sp)->translate(Vector3(ix, iy, iz));
             }
         }
     }
