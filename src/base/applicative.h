@@ -22,8 +22,8 @@ template <typename T>
 concept TupleLike = requires { std::tuple_size<T>::value; };
 
 // The simplest defintion of an applicative parser is a function that
-// takes a string_view and, if the parse succeeds, returns the parsed
-// value and the rest of the string_view.  To make life simpler, we
+// takes a stream and, if the parse succeeds, returns the parsed
+// value and the rest of the stream.  To make life simpler, we
 // define the parser_output<T> for the return type of the function.
 // This *could* have further implications because there are more
 // complicated parsers we could create.
@@ -36,8 +36,9 @@ concept ApParse = requires(Lambda lam, std::istream input) {
     { lam(input) } -> std::convertible_to<parser_output<T>>;
 };
 
-// It's fully possible to just use the functions as the parsers, but, if we wrap them un a struct, we can use operator
-// overloading to more easily combine smaller parsers into larger parsers.
+// It's fully possible to just use the functions as the parsers, but,
+// if we wrap them in a struct, we can use operator overloading to
+// more easily combine smaller parsers into larger parsers.
 template <typename T> class Parser
 {
 

@@ -105,7 +105,11 @@ TEST(ApplicativeTest, BasicParser)
 
 TEST(ApplicativeTest, Vector) { test_exact("1 2.5 -3e-1", vector3(), Vector3(1, 2.5, -3e-1)); }
 
-TEST(ApplicativeTest, StructureAtom) { test_exact("HW 1 2.5 -3e-4 5.6", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5.6}); }
+TEST(ApplicativeTest, StructureAtom)
+{
+    test_exact("HW 1 2.5 -3e-4 5.6", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5.6});
+    test_exact("He 0.5 0.5 0.5", structureAtom(), {"He", Vector3(0.5, 0.5, 0.5), {}});
+}
 
 TEST(ApplicativeTest, XYZStructure)
 {
@@ -140,6 +144,24 @@ TEST(ApplicativeTest, XYZStructure)
         EXPECT_EQ(r, std::get<1>(terms[index]));
         ++index;
     }
+}
+
+TEST(ApplicativeTest, Helium)
+{
+
+    std::ifstream infile{"xyz/voxelDensity-helium.xyz"};
+    ASSERT_TRUE(infile);
+    auto xyz =
+        (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom() << maybe(newlines())))
+            .parse(infile);
+    ASSERT_TRUE(xyz);
+    auto &[value, rest] = *xyz;
+    EXPECT_EQ(rest.get(), -1);
+    auto &terms = std::get<1>(value);
+    EXPECT_EQ(terms.size(), std::get<0>(value));
+    int index = 0;
+    for (auto &[elem, r, q] : terms)
+        EXPECT_EQ(elem, "He");
 }
 
 } // namespace UnitTest

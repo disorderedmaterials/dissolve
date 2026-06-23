@@ -48,19 +48,6 @@ NodeConstants::ProcessResult ImportXYZTrajectoryNode::process()
     }
     infile.seekg(filePosition_);
 
-    // // Open the file
-    // LineParser parser;
-    // if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
-    // {
-    //     error("Couldn't open trajectory file '{}'.\n", filePath_);
-    //     return NodeConstants::ProcessResult::Failed;
-    // }
-
-    // // Seek to the next file position
-    // parser.seekg(filePosition_);
-
-    structure_.clear();
-
     // Get the frame read result
     auto frameResult = ImportXYZStructureNode::read(infile, structure_);
     if (frameResult != NodeConstants::ProcessResult::Success)
