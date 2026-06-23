@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "classes/configuration.h"
 #include "classes/empiricalFormula.h"
 #include "nodes/cif/importCIFStructure.h"
-#include "tests/graphData.h"
 #include "tests/testData.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 #include <string>
 

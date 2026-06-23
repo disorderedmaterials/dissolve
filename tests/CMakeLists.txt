@@ -40,7 +40,7 @@ function(dissolve_add_test)
   target_link_libraries(
     ${TEST_NAME}
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
-    PRIVATE ${CORE_LINK_LIBS} GTest::gtest_main
+    PRIVATE ${CORE_LINK_LIBS} testing GTest::gtest_main
   )
 
   if(DISSOLVE_UNIT_TEST_GUI)
@@ -61,6 +61,13 @@ function(dissolve_add_test)
   endif(MSVC_DEV)
 
 endfunction()
+
+add_library(testing testing.cpp testing.h)
+target_link_libraries(testing PRIVATE GTest::gtest_main)
+target_include_directories(
+  testing PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CONAN_INCLUDE_DIRS_GTEST}
+                  ${CONAN_INCLUDE_DIRS_PUGIXML} ${CONAN_INCLUDE_DIRS}
+)
 
 # Add unit test subdirectories
 add_subdirectory(algorithms)

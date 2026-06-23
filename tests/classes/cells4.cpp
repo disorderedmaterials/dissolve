@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "tests/graphData.h"
+#include "classes/configuration.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

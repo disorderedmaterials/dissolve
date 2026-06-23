@@ -4,8 +4,8 @@
 #include "nodes/intraDistance.h"
 #include "classes/speciesSites.h"
 #include "nodes/iterableGraph.h"
-#include "tests/graphData.h"
 #include "tests/testData.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 #include <vector>
 

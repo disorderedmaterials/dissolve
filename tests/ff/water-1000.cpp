@@ -3,8 +3,8 @@
 
 #include "kernels/force.h"
 #include "nodes/dissolve.h"
-#include "tests/graphData.h"
 #include "tests/testData.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

@@ -2,7 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "kernels/energy.h"
-#include "tests/graphData.h"
+#include "nodes/neutronSQ.h"
+#include "nodes/species.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 #include <vector>
 

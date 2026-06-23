@@ -2,10 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/units.h"
+#include "classes/configuration.h"
 #include "classes/isotopologueSet.h"
 #include "data/structureFactors.h"
-#include "tests/graphData.h"
+#include "nodes/neutronSQ.h"
+#include "nodes/sq.h"
 #include "tests/testData.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

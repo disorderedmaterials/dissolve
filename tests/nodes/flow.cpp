@@ -6,7 +6,7 @@
 #include "nodes/graph.h"
 #include "nodes/number.h"
 #include "nodes/numberNode.h"
-#include "tests/graphData.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
