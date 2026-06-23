@@ -334,10 +334,9 @@ template <typename T> Parser<std::optional<T>> maybe(Parser<T> inner)
             }
             else
             {
-                std::optional<T> empty;
                 input.clear();
                 input.seekg(location);
-                return {{empty, input}};
+                return {{{}, input}};
             }
         });
     return result;
