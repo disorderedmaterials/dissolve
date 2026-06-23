@@ -247,6 +247,85 @@ void Structure::createBox(const Matrix3 &axes)
 }
 
 /*
+ * Manipulations
+ */
+
+// Recursive function for general manipulation
+void Structure::recurseLocal(std::set<StructureAtom *> &flags, int indexI, ManipulationFunction action)
+{
+    auto *strAtI = atoms_[indexI].get();
+
+    if (flags.find(strAtI) != flags.end())
+        return;
+
+    // Set the flag for indexI and get some necessary values
+    flags.insert(strAtI);
+
+    // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
+    for (const auto *b : strAtI->bonds())
+    {
+        auto indexJ = b->partner(strAtI)->index();
+        auto &j = atoms_[indexJ];
+        if (flags.contains(j.get()))
+            continue;
+
+        action(j.get(), box_.minimumImage(j->r(), strAtI->r()));
+
+        // Recurse into bound neighbours
+        recurseLocal(flags, indexJ, action);
+    }
+}
+void Structure::recurseLocal(std::set<StructureAtom *> &flags, int indexI, ConstManipulationFunction action) const
+{
+    auto *strAtI = atoms_[indexI].get();
+
+    if (flags.find(strAtI) != flags.end())
+        return;
+
+    // Set the flag for indexI and get some necessary values
+    flags.insert(strAtI);
+
+    // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
+    for (const auto b : strAtI->bonds())
+    {
+        auto indexJ = b->partner(strAtI)->index();
+        auto &j = atoms_[indexJ];
+        if (flags.contains(j.get()))
+            continue;
+
+        action(j.get(), box_.minimumImage(j->r(), strAtI->r()));
+
+        // Recurse into bound neighbours
+        recurseLocal(flags, indexJ, action);
+    }
+}
+
+// General manipulation function working on reassembled fragments
+std::set<StructureAtom *> Structure::traverseLocal(ManipulationFunction action)
+{
+    std::set<StructureAtom *> flags;
+    action(atoms_[0].get(), atoms_[0]->r());
+    recurseLocal(flags, 0, action);
+    return flags;
+}
+std::set<StructureAtom *> Structure::traverseLocal(ConstManipulationFunction action) const
+{
+    std::set<StructureAtom *> flags;
+    action(atoms_[0].get(), atoms_[0]->r());
+    recurseLocal(flags, 0, action);
+    return flags;
+}
+
+// Un-fold molecule so it is not cut by box boundaries
+void Structure::unFold()
+{
+    std::set<StructureAtom *> flagged;
+
+    while (flagged.size() <= nAtoms())
+        flagged.merge(traverseLocal([](StructureAtom *j, Vector3 rJ) { j->setR(rJ); }));
+}
+
+/*
  * Serialisation
  */
 

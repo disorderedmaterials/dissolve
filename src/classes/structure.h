@@ -117,6 +117,24 @@ class Structure : public Serialisable<>
     void createBox(const Matrix3 &axes);
 
     /*
+     * Manipulations
+     */
+    private:
+    // Typedef for manipulation functions
+    using ManipulationFunction = std::function<void(StructureAtom *j, Vector3 rJ)>;
+    using ConstManipulationFunction = std::function<void(const StructureAtom *j, Vector3 rJ)>;
+    // Recursive function for general manipulation
+    void recurseLocal(std::set<StructureAtom *> &flags, int indexI, ManipulationFunction action);
+    void recurseLocal(std::set<StructureAtom *> &flags, int indexI, ConstManipulationFunction action) const;
+    // General manipulation function working on reassembled molecule
+    std::set<StructureAtom *> traverseLocal(ManipulationFunction action);
+    std::set<StructureAtom *> traverseLocal(ConstManipulationFunction action) const;
+
+    public:
+    // Un-fold molecule so it is not cut by box boundaries, returning the centre of geometry
+    void unFold();
+
+    /*
      * Serialisation
      */
     public:
