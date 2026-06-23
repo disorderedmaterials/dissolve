@@ -4,6 +4,7 @@
 #include "base/applicative.h"
 #include "base/parserLibrary.h"
 #include <gtest/gtest.h>
+#include <sstream>
 #include <string_view>
 
 namespace UnitTest
@@ -12,22 +13,29 @@ namespace UnitTest
 using namespace parsers;
 using namespace std::literals;
 
-template <typename T> void test_parser(std::string_view input, Parser<T> parser, parser_output<T> expected)
+template <typename T> void test_parser(std::string_view input, Parser<T> parser, std::optional<T> expected)
 {
-    auto result = parser(input);
-    EXPECT_EQ(result, expected);
+    std::cout << "Base string:\t" << input << std::endl;
+    std::istringstream stream{std::string(input)};
+    auto result = parser(stream);
+    if (!result)
+        EXPECT_FALSE(expected);
+    else
+        EXPECT_EQ(std::get<0>(*result), *expected);
 }
 template <typename T> void test_exact(std::string_view input, Parser<T> parser, T expected)
 {
-    auto result = parser.exact(input);
+    std::cout << "Base string:\t" << input << std::endl;
+    std::istringstream stream{std::string(input)};
+    auto result = parser.exact(stream);
     ASSERT_TRUE(result);
     EXPECT_EQ(*result, expected);
 }
 
 TEST(ApplicativeTest, BasicStrings)
 {
-    test_parser("Foo", "Fo"_p, {{"Fo", "o"}});
-    test_parser("Foobar", "Foo"_p, {{"Foo", "bar"}});
+    test_parser("Foo", "Fo"_p, {"Fo"});
+    test_parser("Foobar", "Foo"_p, {"Foo"});
 }
 TEST(ApplicativeTest, Ignoring)
 {
@@ -37,12 +45,12 @@ TEST(ApplicativeTest, Ignoring)
 TEST(ApplicativeTest, Joining)
 {
     test_exact("Foobar", "Foo"_p & "bar", {"Foo", "bar"});
-    test_parser("Foobar", (pure(1) & pure(2)) & (pure(3) & pure(4)), {{{1, 2, 3, 4}, "Foobar"}});
+    test_parser("Foobar", (pure(1) & pure(2)) & (pure(3) & pure(4)), {{1, 2, 3, 4}});
     test_exact("Foobar", ("Fo"_p & "ob") & ("a" & "r"_p), {"Fo", "ob", "a", "r"});
     test_exact("Foobar", ("Fo"_p & "ob") & "ar", {"Fo", "ob", "ar"});
     test_exact("Foobar", "Fo" & ("ob"_p & "ar"), {"Fo", "ob", "ar"});
-    test_parser("Foobar", (pure(1) & pure(2)) & pure(3), {{{1, 2, 3}, "Foobar"}});
-    test_parser("Foobar", pure(1) & (pure(2) & pure(3)), {{{1, 2, 3}, "Foobar"}});
+    test_parser("Foobar", (pure(1) & pure(2)) & pure(3), {{1, 2, 3}});
+    test_parser("Foobar", pure(1) & (pure(2) & pure(3)), {{1, 2, 3}});
 }
 
 TEST(ApplicativeTest, Choices)
@@ -54,7 +62,7 @@ TEST(ApplicativeTest, Choices)
 
 TEST(ApplicativeTest, NaturalNumbers)
 {
-    test_parser("123foo", natural(), {{123, "foo"}});
+    test_parser("123foo", natural(), {123});
     auto triplet = natural() & "," >> natural() & "," >> natural();
     test_exact("123,456,789", triplet, {123, 456, 789});
     auto vecsum = triplet.apply([](const auto x, const auto y, const auto z) -> int { return x + y + z; });
@@ -87,31 +95,29 @@ TEST(ApplicativeTest, RealNumbers)
 
 TEST(ApplicativeTest, BasicParser)
 {
-    test_parser("  \t foo", spaces(), {{"  \t ", "foo"}});
-    test_parser("1qaz.QAZ foo", graphs(), {{"1qaz.QAZ", " foo"}});
-    test_parser("1qaz.QAZ foo", digits() & lowers() & punctuations() & uppers() & spaces(),
-                {{{"1", "qaz", ".", "QAZ", " "}, "foo"}});
+    test_parser("  \t foo", spaces(), {"  \t "});
+    test_exact("HW", alphas(), "HW"s);
+    test_parser("1qaz.QAZ foo", graphs(), {"1qaz.QAZ"});
+    test_parser("1qaz.QAZ foo", digits() & lowers() & punctuations() & uppers() & spaces(), {{"1", "qaz", ".", "QAZ", " "}});
 
-    test_exact("\"Foo\"", "\"" >> alphas() << "\"", "Foo"sv);
+    test_exact("\"Foo\"", "\"" >> alphas() << "\"", "Foo"s);
 }
 
 TEST(ApplicativeTest, Vector) { test_exact("1 2.5 -3e-1", vector3(), Vector3(1, 2.5, -3e-1)); }
 
-TEST(ApplicativeTest, StructureAtom) { test_exact("HW 1 2.5 -3e-4 5", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5}); }
+TEST(ApplicativeTest, StructureAtom) { test_exact("HW 1 2.5 -3e-4 5.6", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5.6}); }
 
 TEST(ApplicativeTest, XYZStructure)
 {
 
     std::ifstream infile{"xyz/c2so3.xyz"};
     ASSERT_TRUE(infile);
-    std::ostringstream oss{};
-    oss << infile.rdbuf();
-    auto xyz = (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom())).parse(oss.view());
+    auto xyz = (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom())).parse(infile);
     // auto xyz = (maybe(spaces()) >> natural() ).parse(oss.view());
 
     ASSERT_TRUE(xyz);
     auto &[value, rest] = *xyz;
-    ASSERT_EQ(rest, "");
+    EXPECT_TRUE(rest.eof());
     auto &terms = std::get<1>(value);
     EXPECT_EQ(terms.size(), std::get<0>(value));
 

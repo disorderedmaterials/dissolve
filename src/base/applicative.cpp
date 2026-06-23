@@ -4,8 +4,8 @@
 #include "applicative.h"
 
 #include <algorithm>
-#include <cctype>
 #include <cmath>
+#include <sstream>
 
 namespace parsers
 {
@@ -13,40 +13,66 @@ namespace parsers
 // A parser that expects an exact string
 Parser<std::string_view> literal(std::string_view constant) { return Parser<std::string_view>(constant); }
 
-Parser<std::string_view> takeWhile(std::function<bool(char)> f)
+Parser<std::string> takeWhile(std::function<bool(char)> f)
 {
-    Parser<std::string_view> result(
-        [f](const auto input) -> parser_output<std::string_view>
+    Parser<std::string> result(
+        [f](auto &input) -> parser_output<std::string>
         {
-            if (input.empty())
+            if (input.eof())
                 return {};
-            auto it = std::find_if(input.begin(), input.end(), [f](const auto x) { return !f(x); });
-            if (it == input.begin())
+            std::string result = "";
+            while (f(input.peek()))
+                result.push_back(input.get());
+            if (result.empty())
                 return {};
-            return {{std::string_view(input.begin(), it), std::string_view(it, input.end())}};
+            return {{result, input}};
         });
     return result;
 }
 
 // A parser that accepts and amount of whitespace
-Parser<std::string_view> spaces() { return takeWhile(std::isspace); }
+Parser<std::string> spaces()
+{
+    return takeWhile([](const char c) { return isspace(c); });
+}
 // A parse that accepts any amount of visible characters
-Parser<std::string_view> graphs() { return takeWhile(std::isgraph); }
+Parser<std::string> graphs()
+{
+    return takeWhile([](const char c) { return std::isgraph(c); });
+}
 // A parse that accepts any amount of alphanumeric characters
-Parser<std::string_view> alphanums() { return takeWhile(std::isalnum); }
+Parser<std::string> alphanums()
+{
+    return takeWhile([](const char c) { return std::isalnum(c); });
+}
 // A parse that accepts any amount of letters
-Parser<std::string_view> alphas() { return takeWhile(std::isalpha); }
+Parser<std::string> alphas()
+{
+    return takeWhile([](const char c) { return std::isalpha(c); });
+}
 // A parse that accepts any amount of upper case letters
-Parser<std::string_view> uppers() { return takeWhile(std::isupper); }
+Parser<std::string> uppers()
+{
+    return takeWhile([](const char c) { return std::isupper(c); });
+}
 // A parse that accepts any amount of lower case letters
-Parser<std::string_view> lowers() { return takeWhile(std::islower); }
+Parser<std::string> lowers()
+{
+    return takeWhile([](const char c) { return std::islower(c); });
+}
 // A parse that accepts any amount of punctuation case letters
-Parser<std::string_view> punctuations() { return takeWhile(std::ispunct); }
+Parser<std::string> punctuations()
+{
+    return takeWhile([](const char c) { return std::ispunct(c); });
+}
 // A parser that accepts any amount of digit characters
-Parser<std::string_view> digits() { return takeWhile(std::isdigit); }
+Parser<std::string> digits()
+{
+    return takeWhile([](const char c) { return std::isdigit(c); });
+}
 
 // A parser that accepts any amount of digit characters
-Parser<std::string_view> inlines()
+Parser<std::string> inlines()
 {
     return takeWhile([](const auto c) { return c != '\r' && c != '\n'; });
 }

@@ -4,9 +4,12 @@
 #pragma once
 
 #include <functional>
+#include <iostream>
 #include <optional>
+#include <sstream>
 #include <string_view>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -24,12 +27,12 @@ concept TupleLike = requires { std::tuple_size<T>::value; };
 // define the parser_output<T> for the return type of the function.
 // This *could* have further implications because there are more
 // complicated parsers we could create.
-template <typename T> using parser_output = std::optional<std::tuple<T, std::string_view>>;
+template <typename T> using parser_output = std::optional<std::tuple<T, std::istream &>>;
 
 // This concept type checks that a given lambda matches the definition
 // given in the paragraph above.
 template <typename Lambda, typename T>
-concept ApParse = requires(Lambda lam, std::string_view input) {
+concept ApParse = requires(Lambda lam, std::istream input) {
     { lam(input) } -> std::convertible_to<parser_output<T>>;
 };
 
@@ -50,12 +53,12 @@ template <typename T> class Parser
     template <typename = std::enable_if<std::is_same<T, std::string_view>::value>>
     Parser(std::string_view constant)
         : lambda_(
-              [constant](const std::string_view input) -> parser_output<std::string_view>
+              [constant](std::istream &input) -> parser_output<std::string_view>
               {
-                  if (input.starts_with(constant))
-                      return {{constant, input.substr(constant.size())}};
-                  else
-                      return {};
+                  for (auto c : constant)
+                      if (c != input.get())
+                          return {};
+                  return {{constant, input}};
               })
     {
     }
@@ -64,18 +67,18 @@ template <typename T> class Parser
     // The actual function that we have wrapped.  We need to wrap this
     // in a std::function instead of using a lambda so that we don't
     // have to handle the exact type of the bound lambda
-    std::function<parser_output<T>(std::string_view)> lambda_;
+    std::function<parser_output<T>(std::istream &)> lambda_;
 
     public:
     // Parse a string and, if possible, return the value and the remainder
-    parser_output<T> parse(std::string_view input) const { return lambda_(input); };
+    parser_output<T> parse(std::istream &input) const { return lambda_(input); };
     // Parse a string and, if possible, return the value and the remainder
-    parser_output<T> operator()(std::string_view input) const { return lambda_(input); }
+    parser_output<T> operator()(std::istream &input) const { return lambda_(input); }
     // Parse a string and enforce that it parsed the entire input
-    std::optional<T> exact(std::string_view input) const
+    std::optional<T> exact(std::istream &input) const
     {
         auto result = lambda_(input);
-        if (result && std::get<1>(*result) == "")
+        if (result && input.get() == -1)
             return std::get<0>(*result);
         return {};
     }
@@ -86,7 +89,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<decltype(f(std::declval<T>()))> result(
-            [method, f](const std::string_view input) -> parser_output<decltype(f(std::declval<T>()))>
+            [method, f](std::istream &input) -> parser_output<decltype(f(std::declval<T>()))>
             {
                 auto first = method(input);
                 if (first)
@@ -109,7 +112,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<decltype(std::apply(f, std::declval<T>()))> result(
-            [method, f](const std::string_view input) -> parser_output<decltype(std::apply(f, std::declval<T>()))>
+            [method, f](std::istream &input) -> parser_output<decltype(std::apply(f, std::declval<T>()))>
             {
                 auto first = method(input);
                 if (first)
@@ -129,7 +132,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<T> result(
-            [method, other](const std::string_view input) -> parser_output<T>
+            [method, other](std::istream &input) -> parser_output<T>
             {
                 auto first = method(input);
                 if (first)
@@ -137,13 +140,9 @@ template <typename T> class Parser
                     auto &[body, middle] = *first;
                     auto second = other(middle);
                     if (second)
-                    {
                         return {{body, std::get<1>(*second)}};
-                    }
                     else
-                    {
                         return {};
-                    }
                 }
                 else
                 {
@@ -158,7 +157,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<U> result(
-            [method, other](const std::string_view input) -> parser_output<U>
+            [method, other](std::istream &input) -> parser_output<U>
             {
                 auto first = method(input);
                 if (first)
@@ -167,9 +166,7 @@ template <typename T> class Parser
                     return other(middle);
                 }
                 else
-                {
                     return {};
-                }
             });
         return result;
     }
@@ -180,10 +177,15 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<T> result(
-            [method, other](const std::string_view input) -> parser_output<T>
+            [method, other](std::istream &input) -> parser_output<T>
             {
+                auto location = input.tellg();
                 auto first = method(input);
-                return first ? first : other(input);
+                if (first)
+                    return first;
+                input.clear();
+                input.seekg(location);
+                return other(input);
             });
         return result;
     }
@@ -204,7 +206,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<std::tuple<T, U>> result(
-            [method, other](const std::string_view input) -> parser_output<std::tuple<T, U>>
+            [method, other](std::istream &input) -> parser_output<std::tuple<T, U>>
             {
                 auto first = method(input);
                 if (first)
@@ -233,7 +235,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<decltype(std::tuple_cat(std::declval<T>(), std::make_tuple(std::declval<U>())))> result(
-            [method, other](const std::string_view input)
+            [method, other](std::istream &input)
                 -> parser_output<decltype(std::tuple_cat(std::declval<T>(), std::make_tuple(std::declval<U>())))>
             {
                 auto first = method(input);
@@ -263,7 +265,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<decltype(std::tuple_cat(std::make_tuple(std::declval<T>()), std::declval<U>()))> result(
-            [method, other](const std::string_view input)
+            [method, other](std::istream &input)
                 -> parser_output<decltype(std::tuple_cat(std::make_tuple(std::declval<T>()), std::declval<U>()))>
             {
                 auto first = method(input);
@@ -293,8 +295,8 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<decltype(std::tuple_cat(std::declval<T>(), std::declval<U>()))> result(
-            [method, other](
-                const std::string_view input) -> parser_output<decltype(std::tuple_cat(std::declval<T>(), std::declval<U>()))>
+            [method,
+             other](std::istream &input) -> parser_output<decltype(std::tuple_cat(std::declval<T>(), std::declval<U>()))>
             {
                 auto first = method(input);
                 if (first)
@@ -319,15 +321,13 @@ template <typename T> class Parser
 // Create a parser that always succeeds and returns a constant value
 template <typename T> Parser<T> pure(T constant)
 {
-    Parser<T> result([constant](const std::string_view input) -> parser_output<int> { return {{constant, input}}; });
+    Parser<T> result([constant](std::istream &input) -> parser_output<int> { return {{constant, input}}; });
     return result;
 }
 
 // A parser that always fails
 template <typename T>
-Parser<T> null([](const auto x) -> parser_output<std::string_view> { return {}; });
-
-// Parser<std::string_view> literal(std::string_view constant);
+Parser<T> null([](const auto x) -> parser_output<T> { return {}; });
 
 // Modify a parser so that the parsed value is wrapped in a
 // std::optional.  If the parser would have failed, act as though
@@ -335,8 +335,9 @@ Parser<T> null([](const auto x) -> parser_output<std::string_view> { return {}; 
 template <typename T> Parser<std::optional<T>> maybe(Parser<T> inner)
 {
     Parser<std::optional<T>> result(
-        [inner](const std::string_view input) -> parser_output<std::optional<T>>
+        [inner](std::istream &input) -> parser_output<std::optional<T>>
         {
+            auto location = input.tellg();
             auto first = inner(input);
             if (first)
             {
@@ -346,6 +347,8 @@ template <typename T> Parser<std::optional<T>> maybe(Parser<T> inner)
             else
             {
                 std::optional<T> empty;
+                input.clear();
+                input.seekg(location);
                 return {{empty, input}};
             }
         });
@@ -357,26 +360,29 @@ template <typename T> Parser<std::optional<T>> maybe(Parser<T> inner)
 template <typename T> Parser<std::vector<T>> some(Parser<T> inner)
 {
     Parser<std::vector<T>> result(
-        [inner](const std::string_view input) -> parser_output<std::vector<T>>
+        [inner](std::istream &input) -> parser_output<std::vector<T>>
         {
             std::vector<T> collection;
-            auto ctx = input;
-            while (!ctx.empty())
+            auto location = input.tellg();
+            while (!input.eof())
             {
-                auto trial = inner(ctx);
+                auto trial = inner(input);
                 if (trial)
                 {
-                    auto &[body, remainder] = *trial;
+                    auto &[body, _] = *trial;
                     collection.push_back(body);
-                    ctx = remainder;
+                    location = input.tellg();
                 }
                 else
+                {
+                    input.clear();
+                    input.seekg(location);
                     break;
+                }
             }
-
             if (collection.empty())
                 return {};
-            return {{collection, ctx}};
+            return {{collection, input}};
         });
     return result;
 }
@@ -384,25 +390,25 @@ template <typename T> Parser<std::vector<T>> some(Parser<T> inner)
 // A parser that expects an exact string
 Parser<std::string_view> literal(std::string_view constant);
 // A parser that accepts any amount of digit characters
-Parser<std::string_view> digits();
+Parser<std::string> digits();
 
 // A parser that accepts and amount of whitespace
-Parser<std::string_view> spaces();
+Parser<std::string> spaces();
 
 // A parser that accepts any amount of visible characters
-Parser<std::string_view> graphs();
+Parser<std::string> graphs();
 // A parser that accepts any amount of alphanumeric characters
-Parser<std::string_view> alphanums();
+Parser<std::string> alphanums();
 // A parser that accepts any amount of letters
-Parser<std::string_view> alphas();
+Parser<std::string> alphas();
 // A parser that accepts any amount of upper case letters
-Parser<std::string_view> uppers();
+Parser<std::string> uppers();
 // A parser that accepts any amount of lower case letters
-Parser<std::string_view> lowers();
+Parser<std::string> lowers();
 // A parser that accepts any amount of punctuation case letters
-Parser<std::string_view> punctuations();
+Parser<std::string> punctuations();
 // A parser that continues until a newline
-Parser<std::string_view> inlines();
+Parser<std::string> inlines();
 // A parser that matches newline characters
 Parser<std::string_view> newlines();
 

@@ -19,6 +19,6 @@ Parser<int> integer();
 Parser<double> real();
 
 Parser<Vector3> vector3();
-Parser<std::tuple<std::string_view, Vector3, std::optional<double>>> structureAtom();
+Parser<std::tuple<std::string, Vector3, std::optional<double>>> structureAtom();
 
 }; // namespace parsers

@@ -57,9 +57,9 @@ Parser<Vector3> vector3()
         .apply([](double x, double y, double z) { return Vector3(x, y, z); });
 }
 
-parsers::Parser<std::tuple<std::string_view, Vector3, std::optional<double>>> structureAtom()
+parsers::Parser<std::tuple<std::string, Vector3, std::optional<double>>> structureAtom()
 {
-    auto parser = alphas() & spaces() >> vector3() << spaces() & maybe(real() << spaces());
+    auto parser = alphas() & spaces() >> vector3() << spaces() & maybe(real() << maybe(spaces()));
     return parser;
 }
 

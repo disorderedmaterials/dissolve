@@ -37,9 +37,7 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
     std::ifstream infile{filePath_};
     if (!infile)
         return error("Couldn't open file '{}' for loading XYZ data.\n", filePath_);
-    std::ostringstream oss{};
-    oss << infile.rdbuf();
-    return read(oss.view(), structure_);
+    return read(infile, structure_);
 
     // // Open file and check that we're OK to proceed importing from it
     // LineParser parser;
@@ -50,14 +48,14 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
 }
 
 // Read structure from the specified file parser
-NodeConstants::ProcessResult ImportXYZStructureNode::read(std::string_view input, Structure &structure)
+NodeConstants::ProcessResult ImportXYZStructureNode::read(std::istream &input, Structure &structure)
 {
     using namespace parsers;
     auto xyz = (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom())).parse(input);
 
     if (!xyz)
         return NodeConstants::ProcessResult::Failed;
-    auto rest = std::get<1>(*xyz);
+    auto &rest = std::get<1>(*xyz);
     auto &[nAtoms, atoms] = std::get<0>(*xyz);
 
     for (auto &[elem, v, q] : atoms)
