@@ -13,12 +13,24 @@ SupercellConfigurationNode::SupercellConfigurationNode(Graph *parentGraph) : Nod
     addPointerOutput<Configuration>("SupercellConfiguration", "Supercell configuration", supercellConfiguration_);
 
     // Options
-    addOption<Vector3i>("SupercellRepeat", "Integer coefficients by which unit cell will be repeated along its dimensions", supercellRepeat_);
+    addOption<Vector3i>("SupercellRepeat", "Integer coefficients by which unit cell will be repeated along its dimensions",
+                        supercellRepeat_);
 }
+
+/*
+ * Definition
+ */
 
 std::string_view SupercellConfigurationNode::type() const { return "SupercellConfiguration"; }
 
-std::string_view SupercellConfigurationNode::summary() const { return "Repeat a unit cell molecular species to a supercell"; }
+std::string_view SupercellConfigurationNode::summary() const
+{
+    return "Create a repeated instance (supercell) of a configuration";
+}
+
+/*
+ * Processing
+ */
 
 // Run main processing
 NodeConstants::ProcessResult SupercellConfigurationNode::process()
@@ -44,11 +56,7 @@ NodeConstants::ProcessResult SupercellConfigurationNode::process()
             {
                 for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
                 {
-                    // Skip origin cell
-                    if (ix == 0 && iy == 0 && iz == 0)
-                        continue;
-
-                    // Translate molecule
+                    // Create and translate molecule
                     auto repeatedMol = supercellConfiguration_.addMolecule(sp);
                     for (auto &molAtom : repeatedMol->atoms())
                         molAtom->setR(molAtom->r() + (box->axes() * Vector3(ix, iy, iz)));
@@ -59,8 +67,8 @@ NodeConstants::ProcessResult SupercellConfigurationNode::process()
 
     supercellConfiguration_.updateObjectRelationships();
 
-    message("Created ({}, {}, {}) supercell - {} atoms total.\n", supercellRepeat_.x, supercellRepeat_.y,
-                     supercellRepeat_.z, supercellConfiguration_.nAtoms());
+    message("Created ({}, {}, {}) supercell - {} atoms total.\n", supercellRepeat_.x, supercellRepeat_.y, supercellRepeat_.z,
+            supercellConfiguration_.nAtoms());
 
     return NodeConstants::ProcessResult::Success;
 }

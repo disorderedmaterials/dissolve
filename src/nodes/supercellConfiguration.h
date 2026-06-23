@@ -13,12 +13,16 @@ class SupercellConfigurationNode : public Node
     SupercellConfigurationNode(Graph *parentGraph);
     ~SupercellConfigurationNode() override = default;
 
+    /*
+     * Definition
+     */
+
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Input configuration
@@ -31,7 +35,7 @@ class SupercellConfigurationNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };
