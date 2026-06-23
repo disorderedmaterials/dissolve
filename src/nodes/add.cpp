@@ -18,10 +18,8 @@ AddNode::AddNode(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
-// Return type of the node
 std::string_view AddNode::type() const { return "Add"; }
 
-// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view AddNode::summary() const { return "Performs addition of operands X and Y"; }
 

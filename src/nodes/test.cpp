@@ -27,10 +27,8 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
-// Return type of the node
 std::string_view TestNode::type() const { return "Test"; }
 
-// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view TestNode::summary() const { return "A node to allow unit testing of various graph features"; }
 

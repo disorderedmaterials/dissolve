@@ -17,10 +17,8 @@ IterableGraph::IterableGraph(Graph *parentGraph) : Graph(parentGraph)
 std::string_view IterableGraph::name() const { return "Iterator"; }
 
 // Return type of the node
-// Return type of the node
 std::string_view IterableGraph::type() const { return "Iterator"; }
 
-// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view IterableGraph::summary() const { return "Iterate the contained graph"; }
 

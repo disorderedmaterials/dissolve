@@ -14,10 +14,8 @@ DissolveGraph::DissolveGraph() : Graph(nullptr) {}
 std::string_view DissolveGraph::name() const { return "Root"; }
 
 // Return type of the node
-// Return type of the node
 std::string_view DissolveGraph::type() const { return "Dissolve"; }
 
-// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view DissolveGraph::summary() const { return "Parent node of all simulations"; }
 

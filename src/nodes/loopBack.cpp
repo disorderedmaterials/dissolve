@@ -11,10 +11,8 @@ LoopBacksNode::LoopBacksNode(Graph *parentGraph) : Node(parentGraph) {}
  */
 
 // Return type of the node
-// Return type of the node
 std::string_view LoopBacksNode::type() const { return "LoopBacks"; }
 
-// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view LoopBacksNode::summary() const { return "Maps feedback from internal node outputs to graph inputs"; }
 

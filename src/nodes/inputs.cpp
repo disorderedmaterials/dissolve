@@ -11,10 +11,8 @@ InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) {}
  */
 
 // Return type of the node
-// Return type of the node
 std::string_view InputsNode::type() const { return "Inputs"; }
 
-// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view InputsNode::summary() const { return "Maps graph inputs to local outputs"; }
 

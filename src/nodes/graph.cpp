@@ -20,10 +20,8 @@ Graph::Graph(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
-// Return type of the node
 std::string_view Graph::type() const { return "Graph"; }
 
-// Return short summary of the node's purpose
 // Return short summary of the node's purpose
 std::string_view Graph::summary() const { return "A node which contains its own inner graph"; }
 
