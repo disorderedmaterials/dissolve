@@ -7,118 +7,12 @@
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/species.h"
-#include "data/isotopes.h"
 #include "main/compatibility.h"
 #include "main/dissolve.h"
-#include "main/keywords.h"
 #include "main/version.h"
 #include "nodes/dissolve.h"
-#include <cstring>
 #include <fstream>
-#include <functional>
-#include <map>
 #include <toml/parser.hpp>
-
-// Load input file through supplied parser
-bool Dissolve::loadInput(LineParser &parser)
-{
-    // Clear all existing data before we begin
-    clear();
-
-    // Variables
-    Configuration *cfg;
-    ModuleLayer *layer = nullptr;
-    Species *sp;
-    auto errorsEncountered = false;
-
-    while (!parser.eofOrBlank())
-    {
-        // Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-        if (parser.getArgsDelim() != LineParser::Success)
-            break;
-
-        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!BlockKeywords::keywords().isValid(parser.argsv(0)))
-        {
-            BlockKeywords::keywords().errorAndPrintValid(parser.argsv(0));
-            errorsEncountered = true;
-            continue;
-        }
-        auto kwd = BlockKeywords::keywords().enumeration(parser.argsv(0));
-
-        // All OK, so process the keyword
-        switch (kwd)
-        {
-            case (BlockKeywords::ConfigurationBlockKeyword):
-                // Check to see if a Configuration with this name already exists...
-                if (coreData_.findConfiguration(parser.argsv(1)))
-                    return Messenger::error("Redefinition of Configuration '{}'.\n", parser.argsv(1));
-
-                cfg = coreData_.addConfiguration();
-                cfg->setName(parser.argsv(1));
-                Messenger::print("\n--> Created Configuration '{}'\n", cfg->name());
-                if (!ConfigurationBlock::parse(parser, this, cfg))
-                    errorsEncountered = true;
-                break;
-            case (BlockKeywords::LayerBlockKeyword):
-                break;
-            case (BlockKeywords::MasterBlockKeyword):
-                if (!MasterBlock::parse(parser, coreData_))
-                    errorsEncountered = true;
-                break;
-            case (BlockKeywords::PairPotentialsBlockKeyword):
-                if (!PairPotentialsBlock::parse(parser, this))
-                    errorsEncountered = true;
-                break;
-            case (BlockKeywords::SpeciesBlockKeyword):
-                // Check to see if a Species with this name already exists...
-                if (coreData_.findSpecies(DissolveSys::niceName(parser.argsv(1))))
-                    return Messenger::error("Redefinition of species '{}'.\n", parser.argsv(1));
-
-                sp = coreData_.addSpecies();
-                sp->setName(parser.argsv(1));
-                Messenger::print("\n--> Created Species '{}'\n", sp->name());
-                if (!sp->read(parser, coreData_))
-                    errorsEncountered = true;
-                else if (Messenger::isVerbose())
-                {
-                    Messenger::print("\n--- Species '{}'...\n", sp->name());
-                    sp->print();
-                }
-                break;
-            default:
-                Messenger::error("Block keyword '{}' is not relevant in this context.\n",
-                                 BlockKeywords::keywords().keyword(kwd));
-                errorsEncountered = true;
-                break;
-        }
-    }
-
-    // Error encountered?
-    if (errorsEncountered)
-        Messenger::error("Errors encountered while parsing input.");
-
-    // Done
-    parser.closeFiles();
-
-    return (!errorsEncountered);
-}
-
-// Load input from supplied string
-bool Dissolve::loadInputFromString(std::string_view inputString)
-{
-    // Set strings and check that we're OK to proceed reading from them
-    LineParser parser;
-    if (!parser.openInputString(inputString))
-        return false;
-
-    auto result = loadInput(parser);
-
-    if (result)
-        Messenger::print("Finished reading input.\n");
-
-    return result;
-}
 
 // Serialise pair potential
 SerialisedValue Dissolve::serialisePairPotentials() const
@@ -263,20 +157,7 @@ bool Dissolve::loadInput(std::string_view filename)
     }
     catch (toml::syntax_error &e)
     {
-        // The file didn't have TOML syntax, so try the original parser
-        // Open file and check that we're OK to proceed reading from it
-        LineParser parser;
-        if (!parser.openInput(filename))
-            return false;
-
-        auto result = loadInput(parser);
-        if (result)
-        {
-            Messenger::print("Finished reading input file.\n");
-            setInputFilename(filename);
-        }
-
-        return result;
+        Messenger::error("Not a valid TOML file?\n\n{}", e.what());
     }
     catch (toml::type_error &e)
     {
@@ -293,124 +174,6 @@ bool Dissolve::saveToml(std::string_view filename) const
     outfile.open(std::string(filename));
     outfile << into_toml() << std::endl;
     outfile.close();
-    return true;
-}
-
-// Save input file
-bool Dissolve::saveInput(std::string_view filename)
-{
-    // Open file
-    LineParser parser;
-
-    if (!parser.openOutput(filename, true) || (!parser.isFileGoodForWriting()))
-    {
-        Messenger::error("Couldn't open output file '{}' to save new input file.\n", filename);
-        return false;
-    }
-
-    // Write title comment
-    if (!parser.writeLineF("# Input file written by Dissolve v{} at {}.\n", Version::info(), DissolveSys::currentTimeAndDate()))
-        return false;
-
-    // Write Species data
-    parser.writeBannerComment("Species");
-    for (auto &sp : coreData_.species())
-    {
-        if (!parser.writeLineF("\n"))
-            return false;
-        if (!sp->write(parser, ""))
-            return false;
-    }
-
-    // Write PairPotentials block
-    if (!parser.writeBannerComment("Pair Potentials"))
-        return false;
-    if (!parser.writeLineF("\n{}\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword)))
-        return false;
-
-    // Atom Type Parameters
-    if (!parser.writeLineF("  # Atom Type Parameters\n"))
-        return false;
-    // for (const auto &atomType : coreData_.atomTypes())
-    //     if (!parser.writeLineF("  {}  {}  {}  {:12.6e}  {}  {}\n",
-    //                            PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
-    //                            atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
-    //                            ShortRangeFunctions::forms().keyword(atomType->interactionPotential().form()),
-    //                            atomType->interactionPotential().parametersAsString()))
-    //         return false;
-
-    // Pair potentials (if we are not using combination rules)
-    if (!useCombinationRules_)
-    {
-        if (!parser.writeLineF("  # Pair Potentials\n"))
-            return false;
-        if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::UseCombinationRules),
-                               DissolveSys::btoa(false)))
-            return false;
-        for (const auto &[at1, at2, pot] : pairPotentials_)
-            if (!parser.writeLineF("  {}  '{}'  '{}'  {}  {}\n",
-                                   PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::PairPotentialKeyword),
-                                   at1->name(), at2->name(), Functions1D::forms().keyword(pot->interactionPotential().form()),
-                                   pot->interactionPotential().parametersAsString()))
-                return false;
-    }
-
-    if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword),
-                           PairPotential::range()))
-        return false;
-    if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword),
-                           PairPotential::delta()))
-        return false;
-    if (!parser.writeLineF("  {}  {}\n",
-                           PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ManualChargeSourceKeyword),
-                           DissolveSys::btoa(PairPotential::chargeSource() != PairPotential::ChargeSource::Automatic)))
-        return false;
-    if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::IncludeCoulombKeyword),
-                           DissolveSys::btoa(PairPotential::chargeSource() == PairPotential::ChargeSource::AtomTypes)))
-        return false;
-    if (!parser.writeLineF("  {}  {}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::CoulombTruncationKeyword),
-                           PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme())))
-        return false;
-    if (!parser.writeLineF("  {}  {}\n",
-                           PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ShortRangeTruncationKeyword),
-                           PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme())))
-        return false;
-    if (!parser.writeLineF("{}\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::EndPairPotentialsKeyword)))
-        return false;
-
-    // Write Configurations
-    if (!parser.writeBannerComment("Configurations"))
-        return false;
-    for (auto &cfg : coreData_.configurations())
-    {
-        if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
-                               cfg->name()))
-            return false;
-
-        // Generator
-        if (!parser.writeLineF("\n  # Generator\n"))
-            return false;
-        if (!parser.writeLineF("  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword)))
-            return false;
-        if (!cfg->generator().serialise(parser, "    "))
-            return false;
-        if (!parser.writeLineF("  End{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword)))
-            return false;
-        if (!parser.writeLineF("\n"))
-            return false;
-        if (!parser.writeLineF("  {}  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::TemperatureKeyword),
-                               cfg->temperature()))
-            return false;
-
-        if (!parser.writeLineF("\n"))
-            return false;
-
-        if (!parser.writeLineF("{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::EndConfigurationKeyword)))
-            return false;
-    }
-
-    parser.closeFiles();
-
     return true;
 }
 

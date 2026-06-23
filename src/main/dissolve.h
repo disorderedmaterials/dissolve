@@ -139,10 +139,6 @@ class Dissolve : public Serialisable<>
     // Accumulated timing information for saving restart file
     SampledDouble saveRestartTimes_;
 
-    private:
-    // Load input file through supplied parser
-    bool loadInput(LineParser &parser);
-
     public:
     // Load input file
     bool loadInput(std::string_view filename);
@@ -150,10 +146,6 @@ class Dissolve : public Serialisable<>
     void deserialisePairPotentials(const SerialisedValue &node);
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
-    // Load input from supplied string
-    bool loadInputFromString(std::string_view inputString);
-    // Save input file
-    bool saveInput(std::string_view filename);
     // Save TOML file
     bool saveToml(std::string_view filename) const;
     // Express pair potentials as a serialisable value
