@@ -41,8 +41,6 @@ void Configuration::empty()
     atoms_.clear();
     appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();
-    globalPotentials_.clear();
-    targetedPotentials_.clear();
     cells_.clear();
 
     ++version_;

@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/dissolve.h"
+#include "classes/potentialMap.h"
 
 DissolveGraph::DissolveGraph() : Graph(nullptr) {}
 
