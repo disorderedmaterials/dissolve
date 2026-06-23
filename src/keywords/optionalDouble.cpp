@@ -97,7 +97,7 @@ void OptionalDoubleKeyword::serialise(std::string tag, SerialisedValue &target) 
 }
 
 // Read values from a serialisable value
-void OptionalDoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void OptionalDoubleKeyword::deserialise(const SerialisedValue &node)
 {
     setData(toml::get<double>(node));
 }

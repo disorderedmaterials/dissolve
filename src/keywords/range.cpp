@@ -115,7 +115,7 @@ bool RangeKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 void RangeKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
-void RangeKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
+void RangeKeyword::deserialise(const SerialisedValue &node) { data_.deserialise(node); }
 
 // Has not changed from initial value
 bool RangeKeyword::isDefault() const { return data_ == default_; }

@@ -41,12 +41,12 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Optional Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_optional<DataClass> && is_instance_of_v<typename DataClass::value_type, std::vector> &&
-                 std::is_base_of_v<Serialisable<>, typename DataClass::value_type::value_type>)
+                 std::is_base_of_v<Serialisable, typename DataClass::value_type::value_type>)
         : SerialisableData(key), data_(targetData),
           dataSerialiser_(
               [&]()
               {
-                  return Serialisable<typename DataClass::value_type>::fromVector(data_.value(),
+                  return Serialisable::fromVector(data_.value(),
                                                                                   [&](const auto &item)
                                                                                   {
                                                                                       SerialisedValue outer;
@@ -58,7 +58,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               [&](const SerialisedValue &value)
               {
                   targetData.emplace();
-                  Serialisable<typename DataClass::value_type>::toVector(value, [&](const auto &node)
+                  Serialisable::toVector(value, [&](const auto &node)
                                                                          { data_->emplace_back().deserialise(node); });
               }),
           dataChecker_([&]() { return targetData.has_value() && !targetData.value().empty(); }),
@@ -73,7 +73,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Optional Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
-        requires(is_optional<DataClass> && std::is_base_of_v<Serialisable<>, typename DataClass::value_type>)
+        requires(is_optional<DataClass> && std::is_base_of_v<Serialisable, typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return data_.value().into_toml(); }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
@@ -92,12 +92,12 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
-        requires(is_instance_of_v<DataClass, std::vector> && std::is_base_of_v<Serialisable<>, typename DataClass::value_type>)
+        requires(is_instance_of_v<DataClass, std::vector> && std::is_base_of_v<Serialisable, typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData),
           dataSerialiser_(
               [&]()
               {
-                  return Serialisable<DataClass>::fromVector(data_,
+                  return Serialisable::fromVector(data_,
                                                              [&](const auto &item)
                                                              {
                                                                  SerialisedValue outer;
@@ -109,7 +109,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               [&](const SerialisedValue &value)
               {
                   data_.clear();
-                  Serialisable<DataClass>::toVector(value, [&](const auto &node) { data_.emplace_back().deserialise(node); });
+                  Serialisable::toVector(value, [&](const auto &node) { data_.emplace_back().deserialise(node); });
               }),
           dataChecker_([&]() { return !targetData.empty(); }),
           dataResolver_(
@@ -143,7 +143,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Serialisable
     SerialisableClass(std::string_view key, DataClass &value)
-        requires(std::is_base_of_v<Serialisable<>, DataClass>)
+        requires(std::is_base_of_v<Serialisable, DataClass>)
         : SerialisableData(key), data_(value), dataResolver_(
                                                    [&](const std::map<std::string, const Species *> &reachableSpecies)
                                                    {

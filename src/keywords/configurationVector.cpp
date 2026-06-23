@@ -75,25 +75,26 @@ void ConfigurationVectorKeyword::serialise(std::string tag, SerialisedValue &tar
 }
 
 // Read values from a serialisable value
-void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node)
 {
-    toVector(node,
-             [&coreData, this](const auto &name)
-             {
-                 auto *cfg = coreData.findConfiguration(std::string_view(std::string(name.as_string())));
-                 if (!cfg)
-                     throw toml::type_error(
-                         std::format("Error defining Configuration targets - no Configuration named '{}' exists.\n",
-                                     std::string(name.as_string())),
-                         name.location());
-
-                 // Check that the configuration isn't already present
-                 if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
-                     throw toml::type_error(std::format("Configuration '{}' has already been referenced.\n", cfg->name()),
-                                            name.location());
-
-                 data_.push_back(cfg);
-             });
+    // TODO DISSOLVE2 Broken, but to be removed anyway.
+    // toVector(node,
+    //          [&coreData, this](const auto &name)
+    //          {
+    //              auto *cfg = coreData.findConfiguration(std::string_view(std::string(name.as_string())));
+    //              if (!cfg)
+    //                  throw toml::type_error(
+    //                      std::format("Error defining Configuration targets - no Configuration named '{}' exists.\n",
+    //                                  std::string(name.as_string())),
+    //                      name.location());
+    //
+    //              // Check that the configuration isn't already present
+    //              if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
+    //                  throw toml::type_error(std::format("Configuration '{}' has already been referenced.\n", cfg->name()),
+    //                                         name.location());
+    //
+    //              data_.push_back(cfg);
+    //          });
 }
 
 // Has not changed from initial value

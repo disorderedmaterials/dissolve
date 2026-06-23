@@ -104,4 +104,4 @@ bool Vec3DoubleKeyword::isDefault() const { return data_ == default_; }
 void Vec3DoubleKeyword::serialise(std::string tag, SerialisedValue &target) const { data_.serialise(tag, target); }
 
 // Read values from a serialisable value
-void Vec3DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
+void Vec3DoubleKeyword::deserialise(const SerialisedValue &node) { data_.deserialise(node); }

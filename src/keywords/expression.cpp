@@ -43,7 +43,7 @@ bool ExpressionKeyword::serialise(LineParser &parser, std::string_view keywordNa
 void ExpressionKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_.expressionString(); }
 
 // Read values from a serialisable value
-void ExpressionKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void ExpressionKeyword::deserialise(const SerialisedValue &node)
 {
     setData(std::string_view(std::string(node.as_string())));
 }

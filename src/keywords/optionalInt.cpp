@@ -97,7 +97,7 @@ void OptionalIntegerKeyword::serialise(std::string tag, SerialisedValue &target)
 }
 
 // Read values from a serialisable value
-void OptionalIntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void OptionalIntegerKeyword::deserialise(const SerialisedValue &node)
 {
     setData(toml::get<int>(node));
 }

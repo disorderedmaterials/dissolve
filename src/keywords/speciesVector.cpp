@@ -68,18 +68,19 @@ void SpeciesVectorKeyword::serialise(std::string tag, SerialisedValue &target) c
 }
 
 // Read values from a serialisable value
-void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void SpeciesVectorKeyword::deserialise(const SerialisedValue &node)
 {
-    toVector(node,
-             [&coreData, this](const auto &item)
-             {
-                 auto title = toml::get<std::string>(item);
-                 auto *species = coreData.findSpecies(title);
-                 if (!species)
-                     throw toml::type_error(std::format("No Species named '{}' exists.\n", title), item.location());
-
-                 data_.push_back(species);
-             });
+    // TODO DISSOLVE2 Broken, but to be removed anyway.
+    // toVector(node,
+    //          [&coreData, this](const auto &item)
+    //          {
+    //              auto title = toml::get<std::string>(item);
+    //              auto *species = coreData.findSpecies(title);
+    //              if (!species)
+    //                  throw toml::type_error(std::format("No Species named '{}' exists.\n", title), item.location());
+    //
+    //              data_.push_back(species);
+    //          });
 }
 
 // Has not changed from initial value

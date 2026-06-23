@@ -23,7 +23,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration : public Serialisable<const CoreData &>
+class Configuration : public Serialisable
 {
     public:
     Configuration();
@@ -252,5 +252,5 @@ class Configuration : public Serialisable<const CoreData &>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &data) override;
+    void deserialise(const SerialisedValue &node) override;
 };

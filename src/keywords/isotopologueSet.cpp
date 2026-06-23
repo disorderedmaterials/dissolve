@@ -80,7 +80,7 @@ void IsotopologueSetKeyword::removeReferencesTo(Isotopologue *iso) { data_.remov
 void IsotopologueSetKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
-void IsotopologueSetKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void IsotopologueSetKeyword::deserialise(const SerialisedValue &node)
 {
     data_.deserialise(node, coreData);
 }

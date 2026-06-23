@@ -104,7 +104,7 @@ void SpeciesSiteVectorKeyword::serialise(std::string tag, SerialisedValue &targe
 }
 
 // Read values from a serialisable value
-void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node)
 {
     toVector(node,
              [this, &coreData](const auto &item)

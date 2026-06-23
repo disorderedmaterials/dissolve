@@ -113,5 +113,5 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override { target[tag] = optionData_.keyword(data_); }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override { data_ = optionData_.deserialise(node); }
+    void deserialise(const SerialisedValue &node) override { data_ = optionData_.deserialise(node); }
 };

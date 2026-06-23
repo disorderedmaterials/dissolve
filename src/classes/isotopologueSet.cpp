@@ -102,7 +102,7 @@ void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
 }
 
 // Read values from a serialisable value
-void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void IsotopologueSet::deserialise(const SerialisedValue &node)
 {
     clear();
 

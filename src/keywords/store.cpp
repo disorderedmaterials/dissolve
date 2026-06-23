@@ -267,11 +267,11 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
 }
 
 // Pull keywords from entries in table
-void KeywordStore::deserialiseFrom(const SerialisedValue &node, const CoreData &coreData)
+void KeywordStore::deserialiseFrom(const SerialisedValue &node)
 {
     for (const auto &section : sections_)
         for (const auto &group : section.groups())
             for (const auto &[keyword, keywordType] : group.keywords())
                 if (node.contains(toml_format(keyword->name())))
-                    keyword->deserialise(node.at(toml_format(keyword->name())), coreData);
+                    keyword->deserialise(node.at(toml_format(keyword->name())));
 }

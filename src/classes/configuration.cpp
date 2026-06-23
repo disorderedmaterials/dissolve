@@ -62,7 +62,7 @@ void Configuration::serialise(std::string tag, SerialisedValue &target) const
 }
 
 // Read values from a serialisable value
-void Configuration::deserialise(const SerialisedValue &node, const CoreData &data)
+void Configuration::deserialise(const SerialisedValue &node)
 {
     setTemperature(toml::find_or<double>(node, "temperature", defaultTemperature_));
     requestedSizeFactor_ = toml::find_or<double>(node, "sizeFactor", defaultSizeFactor_);

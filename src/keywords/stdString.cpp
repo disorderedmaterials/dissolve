@@ -42,7 +42,7 @@ bool StringKeyword::serialise(LineParser &parser, std::string_view keywordName, 
 void StringKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
-void StringKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_string(); }
+void StringKeyword::deserialise(const SerialisedValue &node) { data_ = node.as_string(); }
 
 // Has not changed from initial value
 bool StringKeyword::isDefault() const { return data_ == default_; }

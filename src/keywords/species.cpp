@@ -56,7 +56,8 @@ void SpeciesKeyword::removeReferencesTo(Species *sp)
 void SpeciesKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_->name(); }
 
 // Read values from a serialisable value
-void SpeciesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void SpeciesKeyword::deserialise(const SerialisedValue &node)
 {
-    data_ = coreData.findSpecies(DissolveSys::niceName(std::string(node.as_string())));
+    // TODO DISSOLVE2 Broken, but to be removed anyway.
+    // data_ = coreData.findSpecies(DissolveSys::niceName(std::string(node.as_string())));
 }
