@@ -111,20 +111,7 @@ template <typename T> class Parser
         requires(TupleLike<T>)
     auto apply(Lambda f) -> Parser<decltype(std::apply(f, std::declval<T>()))>
     {
-        auto &method = lambda_;
-        Parser<decltype(std::apply(f, std::declval<T>()))> result(
-            [method, f](std::istream &input) -> parser_output<decltype(std::apply(f, std::declval<T>()))>
-            {
-                auto first = method(input);
-                if (first)
-                {
-                    auto &[body, remainder] = *first;
-                    return {{std::apply(f, body), remainder}};
-                }
-                else
-                    return {};
-            });
-        return result;
+        return map([f](const T tup) { return std::apply(f, tup); });
     }
 
     // Insist that this parse is followed by another parse, but we
