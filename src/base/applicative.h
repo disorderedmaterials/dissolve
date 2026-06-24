@@ -382,7 +382,7 @@ Parser<std::string_view> literal(std::string_view constant);
 // A parser that accepts any amount of digit characters
 Parser<std::string> digits();
 
-// A parser that accepts and amount of whitespace
+// A parser that accepts any amount of whitespace
 Parser<std::string> spaces();
 // A parser that accepts space and tab
 Parser<std::string> inline_spaces();
