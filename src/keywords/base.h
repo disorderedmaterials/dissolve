@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "generator/aliases.h"
 #include "templates/flags.h"
 #include <memory>
 #include <optional>
@@ -137,6 +136,4 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual void removeReferencesTo(Species *sp);
     // Prune any references to the supplied SpeciesSite in the contained data
     virtual void removeReferencesTo(SpeciesSite *spSite);
-    // Prune any references to the supplied GeneratorNode in the contained data
-    virtual void removeReferencesTo(NodeRef node);
 };

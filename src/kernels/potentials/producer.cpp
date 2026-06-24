@@ -3,7 +3,6 @@
 
 #include "kernels/potentials/producer.h"
 #include "kernels/potentials/cylindrical.h"
-#include "kernels/potentials/regional.h"
 #include "kernels/potentials/spherical.h"
 
 // External Potential Producer
@@ -18,8 +17,6 @@ std::unique_ptr<ExternalPotential> create(ExternalPotentialTypes::ExternalPotent
             return std::make_unique<SphericalPotential>();
         case (ExternalPotentialTypes::ExternalPotentialType::Cylindrical):
             return std::make_unique<CylindricalPotential>();
-        case (ExternalPotentialTypes::ExternalPotentialType::Regional):
-            return std::make_unique<RegionalPotential>();
         default:
             Messenger::exception("Creation of external potential type '{}' not implemented.",
                                  ExternalPotentialTypes::keyword(type));

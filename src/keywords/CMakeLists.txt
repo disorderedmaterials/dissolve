@@ -7,17 +7,12 @@ add_library(
   double.cpp
   elementVector.cpp
   expression.cpp
-  expressionVariableVector.cpp
   function1D.cpp
   integer.cpp
   isotopologueSet.cpp
-  nodeBranch.cpp
-  nodeUnderlay.cpp
-  nodeValue.cpp
   optionalDouble.cpp
   optionalInt.cpp
   organiser.cpp
-  generator.cpp
   range.cpp
   rangeVector.cpp
   species.cpp
@@ -28,7 +23,6 @@ add_library(
   store.cpp
   vec3Double.cpp
   vec3Integer.cpp
-  vec3NodeValue.cpp
   base.h
   bool.h
   configuration.h
@@ -37,21 +31,13 @@ add_library(
   elementVector.h
   enumOptions.h
   expression.h
-  expressionVariableVector.h
   function1D.h
   integer.h
   interactionPotential.h
   isotopologueSet.h
-  node.h
-  nodeBranch.h
-  nodeUnderlay.h
-  nodeValue.h
-  nodeValueEnumOptions.h
-  nodeVector.h
   optionalDouble.h
   optionalInt.h
   organiser.h
-  generator.h
   range.h
   species.h
   speciesSite.h
@@ -63,7 +49,6 @@ add_library(
   vec3Double.h
   vec3Integer.h
   vec3Labels.h
-  vec3NodeValue.h
 )
 
 target_include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)
