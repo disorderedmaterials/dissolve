@@ -104,26 +104,7 @@ void SpeciesSiteVectorKeyword::serialise(std::string tag, SerialisedValue &targe
 }
 
 // Read values from a serialisable value
-void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node)
-{
-    toVector(node,
-             [this, &coreData](const auto &item)
-             {
-                 auto species = coreData.findSpecies(toml::find<std::string>(item, "species"));
-                 if (species)
-                 {
-                     auto site = species->findSite(toml::find<std::string>(item, "site"));
-                     if (site)
-                         data_.push_back(site);
-                     else
-                         throw toml::type_error(std::format("Cannot find Site {}", toml::find<std::string>(item, "site")),
-                                                item.location());
-                 }
-                 else
-                     toml::type_error(std::format("Cannot find Species {}", toml::find<std::string>(item, "species")),
-                                      item.location());
-             });
-}
+void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node) {}
 
 // Has not changed from initial value
 bool SpeciesSiteVectorKeyword::isDefault() const { return data_.empty(); }

@@ -97,10 +97,7 @@ void OptionalDoubleKeyword::serialise(std::string tag, SerialisedValue &target) 
 }
 
 // Read values from a serialisable value
-void OptionalDoubleKeyword::deserialise(const SerialisedValue &node)
-{
-    setData(toml::get<double>(node));
-}
+void OptionalDoubleKeyword::deserialise(const SerialisedValue &node) { setData(toml::get<double>(node)); }
 
 // Has not changed from initial value
 bool OptionalDoubleKeyword::isDefault() const { return !set_ || !data_; }

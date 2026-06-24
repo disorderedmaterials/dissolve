@@ -117,7 +117,8 @@ void SpeciesSiteKeyword::deserialise(const SerialisedValue &node)
     //
     // if (axesRequired_ && (!data_->hasAxes()))
     //     throw toml::type_error(
-    //         std::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
+    //         std::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be
+    //         present.\n",
     //                     data_->name(), name()),
     //         node.location());
 }

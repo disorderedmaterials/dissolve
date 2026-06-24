@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include <toml11/toml.hpp>
 #include "templates/keyedVector.h"
 #include "templates/orderedMap.h"
 #include "templates/resolvableKeyedVector.h"
 #include <map>
+#include <toml11/toml.hpp>
 #include <vector>
 
 // The type we use for the nodes of our serialisation tree
@@ -27,7 +27,7 @@ class Serialisable
     // Express as a serialisable value
     virtual void serialise(std::string tag, SerialisedValue &target) const = 0;
     // Read values from a serialisable value
-    virtual void deserialise(const SerialisedValue &node) { }
+    virtual void deserialise(const SerialisedValue &node) {}
 
     /* Functions that hook into the toml11 library */
     // Wrapper for deserialise that toml11 will check for

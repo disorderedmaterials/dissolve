@@ -42,24 +42,22 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_optional<DataClass> && is_instance_of_v<typename DataClass::value_type, std::vector> &&
                  std::is_base_of_v<Serialisable, typename DataClass::value_type::value_type>)
-        : SerialisableData(key), data_(targetData),
-          dataSerialiser_(
-              [&]()
-              {
-                  return Serialisable::fromVector(data_.value(),
-                                                                                  [&](const auto &item)
-                                                                                  {
-                                                                                      SerialisedValue outer;
-                                                                                      item.serialise("inner", outer);
-                                                                                      return outer["inner"];
-                                                                                  });
-              }),
+        : SerialisableData(key), data_(targetData), dataSerialiser_(
+                                                        [&]()
+                                                        {
+                                                            return Serialisable::fromVector(data_.value(),
+                                                                                            [&](const auto &item)
+                                                                                            {
+                                                                                                SerialisedValue outer;
+                                                                                                item.serialise("inner", outer);
+                                                                                                return outer["inner"];
+                                                                                            });
+                                                        }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {
                   targetData.emplace();
-                  Serialisable::toVector(value, [&](const auto &node)
-                                                                         { data_->emplace_back().deserialise(node); });
+                  Serialisable::toVector(value, [&](const auto &node) { data_->emplace_back().deserialise(node); });
               }),
           dataChecker_([&]() { return targetData.has_value() && !targetData.value().empty(); }),
           dataResolver_(
@@ -93,18 +91,17 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_instance_of_v<DataClass, std::vector> && std::is_base_of_v<Serialisable, typename DataClass::value_type>)
-        : SerialisableData(key), data_(targetData),
-          dataSerialiser_(
-              [&]()
-              {
-                  return Serialisable::fromVector(data_,
-                                                             [&](const auto &item)
-                                                             {
-                                                                 SerialisedValue outer;
-                                                                 item.serialise("inner", outer);
-                                                                 return outer["inner"];
-                                                             });
-              }),
+        : SerialisableData(key), data_(targetData), dataSerialiser_(
+                                                        [&]()
+                                                        {
+                                                            return Serialisable::fromVector(data_,
+                                                                                            [&](const auto &item)
+                                                                                            {
+                                                                                                SerialisedValue outer;
+                                                                                                item.serialise("inner", outer);
+                                                                                                return outer["inner"];
+                                                                                            });
+                                                        }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {

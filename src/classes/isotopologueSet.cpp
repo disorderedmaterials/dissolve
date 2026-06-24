@@ -113,12 +113,6 @@ void IsotopologueSet::deserialise(const SerialisedValue &node)
               toMap(topes, [&](const std::string &isoName, const SerialisedValue &population)
                     { set[isoName] = population.as_floating(); });
           });
-
-    // Need to resolve species
-    std::map<std::string, const Species *> speciesMap;
-    for (const auto &sp : coreData.species())
-        speciesMap[std::string(sp.get()->name())] = sp.get();
-    resolve(speciesMap);
 }
 
 // Resolve internal resolvable name references with supplied data
