@@ -181,35 +181,13 @@ class SpeciesSite : public Serialisable<>
     const std::vector<SpeciesSiteInstance> &instances() const;
 
     /*
-     * Read / Write
+     * Serialisation
      */
     public:
-    // Site Block Keyword Enum
-    enum SiteKeyword
-    {
-        AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
-        DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
-        ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
-        FragmentKeyword,           /* 'Fragment' - States that this is a fragment site */
-        DescriptionKeyword,        /* 'Description' - Defines the NETA description for fragment sites */
-        EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
-        OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
-        OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with
-                          mass-weighted coordinates */
-        XAxisKeyword, /* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x
-                 axis */
-        YAxisKeyword  /* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y
-                 axis */
-    };
-    // Return enum option info for SiteKeyword
-    static EnumOptions<SpeciesSite::SiteKeyword> keywords();
-    // Read site definition from specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
-    // Write site definition to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix);
-
+    // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
-    void deserialise(const SerialisedValue &node) override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };
 
 template <> struct Context<const SpeciesSite *>
