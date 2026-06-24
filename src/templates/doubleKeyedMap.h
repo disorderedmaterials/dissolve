@@ -171,7 +171,7 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable
         target[tag] = result;
     };
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node)
+    void deserialise(const SerialisedValue &node) override
     {
         data_.clear();
 

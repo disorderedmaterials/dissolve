@@ -55,7 +55,7 @@ template <class T> class History : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         return Serialisable::fromVector(history_, tag, target, [&](const auto &itemPtr) { return itemPtr->into_toml(); });
     }
@@ -110,7 +110,7 @@ template <class T> class PODHistory : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         if (history_.empty())
             return;

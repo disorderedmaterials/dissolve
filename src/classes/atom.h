@@ -140,12 +140,12 @@ template <typename BondClass> class Atom : public AtomBase, public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
     }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node)
+    void deserialise(const SerialisedValue &node) override
     {
         index_ = toml::find<int>(node, "index");
 
