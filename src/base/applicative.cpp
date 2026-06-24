@@ -16,7 +16,7 @@ Parser<std::string_view> literal(std::string_view constant) { return Parser<std:
 Parser<std::string> takeWhile(std::function<bool(char)> f)
 {
     Parser<std::string> result(
-        [f](auto &input) -> parser_output<std::string>
+        [f](auto &input) -> ParserOutput<std::string>
         {
             if (input.eof())
                 return {};

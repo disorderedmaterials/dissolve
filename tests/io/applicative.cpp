@@ -13,7 +13,7 @@ namespace UnitTest
 using namespace Parsers;
 using namespace std::literals;
 
-template <typename T> void test_parser(std::string_view input, Parser<T> parser, std::optional<T> expected)
+template <typename T> void testParser(std::string_view input, Parser<T> parser, std::optional<T> expected)
 {
     std::cout << "Base string:\t" << input << std::endl;
     std::istringstream stream{std::string(input)};
@@ -23,7 +23,7 @@ template <typename T> void test_parser(std::string_view input, Parser<T> parser,
     else
         EXPECT_EQ(std::get<0>(*result), *expected);
 }
-template <typename T> void test_exact(std::string_view input, Parser<T> parser, T expected)
+template <typename T> void testExact(std::string_view input, Parser<T> parser, T expected)
 {
     std::cout << "Base string:\t" << input << std::endl;
     std::istringstream stream{std::string(input)};
@@ -34,81 +34,81 @@ template <typename T> void test_exact(std::string_view input, Parser<T> parser, 
 
 TEST(ApplicativeTest, BasicStrings)
 {
-    test_parser("Foo", "Fo"_p, {"Fo"});
-    test_parser("Foobar", "Foo"_p, {"Foo"});
+    testParser("Foo", "Fo"_p, {"Fo"});
+    testParser("Foobar", "Foo"_p, {"Foo"});
 }
 TEST(ApplicativeTest, Ignoring)
 {
-    test_exact("Foobar", "Foo"_p << "bar"_p, "Foo"sv);
-    test_exact("Foobar", "Foo" >> "bar"_p, "bar"sv);
+    testExact("Foobar", "Foo"_p << "bar"_p, "Foo"sv);
+    testExact("Foobar", "Foo" >> "bar"_p, "bar"sv);
 }
 TEST(ApplicativeTest, Joining)
 {
-    test_exact("Foobar", "Foo"_p & "bar", {"Foo", "bar"});
-    test_parser("Foobar", (pure(1) & pure(2)) & (pure(3) & pure(4)), {{1, 2, 3, 4}});
-    test_exact("Foobar", ("Fo"_p & "ob") & ("a" & "r"_p), {"Fo", "ob", "a", "r"});
-    test_exact("Foobar", ("Fo"_p & "ob") & "ar", {"Fo", "ob", "ar"});
-    test_exact("Foobar", "Fo" & ("ob"_p & "ar"), {"Fo", "ob", "ar"});
-    test_parser("Foobar", (pure(1) & pure(2)) & pure(3), {{1, 2, 3}});
-    test_parser("Foobar", pure(1) & (pure(2) & pure(3)), {{1, 2, 3}});
+    testExact("Foobar", "Foo"_p & "bar", {"Foo", "bar"});
+    testParser("Foobar", (pure(1) & pure(2)) & (pure(3) & pure(4)), {{1, 2, 3, 4}});
+    testExact("Foobar", ("Fo"_p & "ob") & ("a" & "r"_p), {"Fo", "ob", "a", "r"});
+    testExact("Foobar", ("Fo"_p & "ob") & "ar", {"Fo", "ob", "ar"});
+    testExact("Foobar", "Fo" & ("ob"_p & "ar"), {"Fo", "ob", "ar"});
+    testParser("Foobar", (pure(1) & pure(2)) & pure(3), {{1, 2, 3}});
+    testParser("Foobar", pure(1) & (pure(2) & pure(3)), {{1, 2, 3}});
 }
 
 TEST(ApplicativeTest, Choices)
 {
-    test_exact("Foo", "Foo"_p | "Bar", "Foo"sv);
-    test_exact("Bar", "Foo"_p | "Bar", "Bar"sv);
-    test_parser("Quux", "Foo"_p | "Bar", {});
+    testExact("Foo", "Foo"_p | "Bar", "Foo"sv);
+    testExact("Bar", "Foo"_p | "Bar", "Bar"sv);
+    testParser("Quux", "Foo"_p | "Bar", {});
 }
 
 TEST(ApplicativeTest, NaturalNumbers)
 {
-    test_parser("123foo", natural(), {123});
+    testParser("123foo", natural(), {123});
     auto triplet = natural() & "," >> natural() & "," >> natural();
-    test_exact("123,456,789", triplet, {123, 456, 789});
+    testExact("123,456,789", triplet, {123, 456, 789});
     auto vecsum = triplet.apply([](const auto x, const auto y, const auto z) -> int { return x + y + z; });
-    test_exact("123,456,789", vecsum, 123 + 456 + 789);
+    testExact("123,456,789", vecsum, 123 + 456 + 789);
 }
 
 TEST(ApplicativeTest, Optionals)
 {
-    test_exact("123,456", maybe(natural() << ",") & natural(), {{123}, 456});
-    test_exact("456", maybe(natural() << ",") & natural(), {std::nullopt, 456});
-    test_exact("-456", integer(), -456);
-    test_exact("456", integer(), 456);
+    testExact("123,456", maybe(natural() << ",") & natural(), {{123}, 456});
+    testExact("456", maybe(natural() << ",") & natural(), {std::nullopt, 456});
+    testExact("-456", integer(), -456);
+    testExact("456", integer(), 456);
 }
 
 TEST(ApplicativeTest, MultipleTerms)
 {
     // Parse multiple terms
-    test_exact("123, 456,   789,012", some(integer() << maybe(","_p << maybe(spaces()))), {123, 456, 789, 12});
+    testExact("123, 456,   789,012", some(integer() << maybe(","_p << maybe(spaces()))), {123, 456, 789, 12});
     // Completely fail the parse if no copies are present
-    test_parser("789", some(integer() << ","), {});
+    testParser("789", some(integer() << ","), {});
 }
 
 TEST(ApplicativeTest, RealNumbers)
 {
-    test_exact("-12.0543", real(), -12.0543);
-    test_exact("1.02E-3", real(), 1.02e-3);
-    test_exact("-3E-4", real(), -3e-4);
-    test_exact("-71.2e3", real(), -71.2e3);
+    testExact("-12.0543", real(), -12.0543);
+    testExact("1.02E-3", real(), 1.02e-3);
+    testExact("-3E-4", real(), -3e-4);
+    testExact("-71.2e3", real(), -71.2e3);
 }
 
 TEST(ApplicativeTest, BasicParser)
 {
-    test_parser("  \t foo", spaces(), {"  \t "});
-    test_exact("HW", alphas(), "HW"s);
-    test_parser("1qaz.QAZ foo", graphs(), {"1qaz.QAZ"});
-    test_parser("1qaz.QAZ foo", digits() & lowers() & punctuations() & uppers() & spaces(), {{"1", "qaz", ".", "QAZ", " "}});
+    testParser("  \t foo", spaces(), {"  \t "});
+    testExact("HW", alphas(), "HW"s);
+    testParser("1qaz.QAZ foo", graphs(), {"1qaz.QAZ"});
+    testParser("1qaz.QAZ foo", digits() & lowers() & punctuations() & uppers() & spaces(), {{"1", "qaz", ".", "QAZ", " "}});
 
-    test_exact("\"Foo\"", "\"" >> alphas() << "\"", "Foo"s);
+    testExact("\"Foo\"", "\"" >> alphas() << "\"", "Foo"s);
 }
 
-TEST(ApplicativeTest, Vector) { test_exact("1 2.5 -3e-1", vector3(), Vector3(1, 2.5, -3e-1)); }
+TEST(ApplicativeTest, Vector) { testExact("1 2.5 -3e-1", vector3(), Vector3(1, 2.5, -3e-1)); }
 
 TEST(ApplicativeTest, StructureAtom)
 {
-    test_exact("HW 1 2.5 -3e-4 5.6", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5.6});
-    test_exact("He 0.5 0.5 0.5", structureAtom(), {"He", Vector3(0.5, 0.5, 0.5), {}});
+    testExact("HW 1 2.5 -3e-4 5.6", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5.6});
+    testExact("He 0.5 0.5 0.5", structureAtom(), {"He", Vector3(0.5, 0.5, 0.5), {}});
 }
 
 TEST(ApplicativeTest, XYZStructure)
@@ -118,7 +118,6 @@ TEST(ApplicativeTest, XYZStructure)
     auto xyz =
         (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom() << maybe(newlines())))
             .parse(infile);
-    // auto xyz = (maybe(spaces()) >> natural() ).parse(oss.view());
 
     ASSERT_TRUE(xyz);
     auto &[value, rest] = *xyz;
@@ -157,7 +156,7 @@ TEST(ApplicativeTest, Helium)
     EXPECT_EQ(rest.get(), -1);
     auto &terms = std::get<1>(value);
     EXPECT_EQ(terms.size(), std::get<0>(value));
-    int index = 0;
+    auto index = 0;
     for (auto &[elem, r, q] : terms)
         EXPECT_EQ(elem, "He");
 }

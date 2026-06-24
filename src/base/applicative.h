@@ -27,13 +27,13 @@ concept TupleLike = requires { std::tuple_size<T>::value; };
 // define the parser_output<T> for the return type of the function.
 // This *could* have further implications because there are more
 // complicated parsers we could create.
-template <typename T> using parser_output = std::optional<std::tuple<T, std::istream &>>;
+template <typename T> using ParserOutput = std::optional<std::tuple<T, std::istream &>>;
 
 // This concept type checks that a given lambda matches the definition
 // given in the paragraph above.
 template <typename Lambda, typename T>
 concept ApParse = requires(Lambda lam, std::istream input) {
-    { lam(input) } -> std::convertible_to<parser_output<T>>;
+    { lam(input) } -> std::convertible_to<ParserOutput<T>>;
 };
 
 // It's fully possible to just use the functions as the parsers, but,
@@ -54,7 +54,7 @@ template <typename T> class Parser
     template <typename = std::enable_if<std::is_same<T, std::string_view>::value>>
     Parser(std::string_view constant)
         : lambda_(
-              [constant](std::istream &input) -> parser_output<std::string_view>
+              [constant](std::istream &input) -> ParserOutput<std::string_view>
               {
                   for (auto c : constant)
                       if (c != input.get())
@@ -68,13 +68,13 @@ template <typename T> class Parser
     // The actual function that we have wrapped.  We need to wrap this
     // in a std::function instead of using a lambda so that we don't
     // have to handle the exact type of the bound lambda
-    std::function<parser_output<T>(std::istream &)> lambda_;
+    std::function<ParserOutput<T>(std::istream &)> lambda_;
 
     public:
     // Parse a string and, if possible, return the value and the remainder
-    parser_output<T> parse(std::istream &input) const { return lambda_(input); };
+    ParserOutput<T> parse(std::istream &input) const { return lambda_(input); };
     // Parse a string and, if possible, return the value and the remainder
-    parser_output<T> operator()(std::istream &input) const { return lambda_(input); }
+    ParserOutput<T> operator()(std::istream &input) const { return lambda_(input); }
     // Parse a string and enforce that it parsed the entire input
     std::optional<T> exact(std::istream &input) const
     {
@@ -90,7 +90,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<decltype(f(std::declval<T>()))> result(
-            [method, f](std::istream &input) -> parser_output<decltype(f(std::declval<T>()))>
+            [method, f](std::istream &input) -> ParserOutput<decltype(f(std::declval<T>()))>
             {
                 auto first = method(input);
                 if (first)
@@ -120,7 +120,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<T> result(
-            [method, other](std::istream &input) -> parser_output<T>
+            [method, other](std::istream &input) -> ParserOutput<T>
             {
                 auto first = method(input);
                 if (first)
@@ -145,7 +145,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<U> result(
-            [method, other](std::istream &input) -> parser_output<U>
+            [method, other](std::istream &input) -> ParserOutput<U>
             {
                 auto first = method(input);
                 if (first)
@@ -165,7 +165,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<T> result(
-            [method, other](std::istream &input) -> parser_output<T>
+            [method, other](std::istream &input) -> ParserOutput<T>
             {
                 auto location = input.tellg();
                 auto first = method(input);
@@ -194,7 +194,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<std::tuple<T, U>> result(
-            [method, other](std::istream &input) -> parser_output<std::tuple<T, U>>
+            [method, other](std::istream &input) -> ParserOutput<std::tuple<T, U>>
             {
                 auto first = method(input);
                 if (first)
@@ -224,7 +224,7 @@ template <typename T> class Parser
         auto &method = lambda_;
         Parser<decltype(std::tuple_cat(std::declval<T>(), std::make_tuple(std::declval<U>())))> result(
             [method, other](std::istream &input)
-                -> parser_output<decltype(std::tuple_cat(std::declval<T>(), std::make_tuple(std::declval<U>())))>
+                -> ParserOutput<decltype(std::tuple_cat(std::declval<T>(), std::make_tuple(std::declval<U>())))>
             {
                 auto first = method(input);
                 if (first)
@@ -254,7 +254,7 @@ template <typename T> class Parser
         auto &method = lambda_;
         Parser<decltype(std::tuple_cat(std::make_tuple(std::declval<T>()), std::declval<U>()))> result(
             [method, other](std::istream &input)
-                -> parser_output<decltype(std::tuple_cat(std::make_tuple(std::declval<T>()), std::declval<U>()))>
+                -> ParserOutput<decltype(std::tuple_cat(std::make_tuple(std::declval<T>()), std::declval<U>()))>
             {
                 auto first = method(input);
                 if (first)
@@ -283,8 +283,7 @@ template <typename T> class Parser
     {
         auto &method = lambda_;
         Parser<decltype(std::tuple_cat(std::declval<T>(), std::declval<U>()))> result(
-            [method,
-             other](std::istream &input) -> parser_output<decltype(std::tuple_cat(std::declval<T>(), std::declval<U>()))>
+            [method, other](std::istream &input) -> ParserOutput<decltype(std::tuple_cat(std::declval<T>(), std::declval<U>()))>
             {
                 auto first = method(input);
                 if (first)
@@ -309,14 +308,14 @@ template <typename T> class Parser
 // Create a parser that always succeeds and returns a constant value
 template <typename T> Parser<T> pure(T constant)
 {
-    Parser<T> result([constant](std::istream &input) -> parser_output<int> { return {{constant, input}}; });
+    Parser<T> result([constant](std::istream &input) -> ParserOutput<int> { return {{constant, input}}; });
     return result;
 }
 
 // A parser that always fails
 template <typename T> Parser<T> null()
 {
-    Parser<T> result = ([](const auto x) -> parser_output<T> { return std::nullopt; });
+    Parser<T> result = ([](const auto x) -> ParserOutput<T> { return std::nullopt; });
     return result;
 }
 
@@ -326,7 +325,7 @@ template <typename T> Parser<T> null()
 template <typename T> Parser<std::optional<T>> maybe(Parser<T> inner)
 {
     Parser<std::optional<T>> result(
-        [inner](std::istream &input) -> parser_output<std::optional<T>>
+        [inner](std::istream &input) -> ParserOutput<std::optional<T>>
         {
             auto location = input.tellg();
             auto first = inner(input);
@@ -350,7 +349,7 @@ template <typename T> Parser<std::optional<T>> maybe(Parser<T> inner)
 template <typename T> Parser<std::vector<T>> some(Parser<T> inner)
 {
     Parser<std::vector<T>> result(
-        [inner](std::istream &input) -> parser_output<std::vector<T>>
+        [inner](std::istream &input) -> ParserOutput<std::vector<T>>
         {
             std::vector<T> collection;
             auto location = input.tellg();
