@@ -113,7 +113,6 @@ TEST(ApplicativeTest, StructureAtom)
 
 TEST(ApplicativeTest, XYZStructure)
 {
-
     std::ifstream infile{"xyz/c2so3.xyz"};
     ASSERT_TRUE(infile);
     auto xyz =
