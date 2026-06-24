@@ -314,8 +314,11 @@ template <typename T> Parser<T> pure(T constant)
 }
 
 // A parser that always fails
-template <typename T>
-Parser<T> null([](const auto x) -> parser_output<T> { return std::nullopt; });
+template <typename T> Parser<T> null()
+{
+    Parser<T> result = ([](const auto x) -> parser_output<T> { return std::nullopt; });
+    return result;
+}
 
 // Modify a parser so that the parsed value is wrapped in a
 // std::optional.  If the parser would have failed, act as though
