@@ -7,14 +7,13 @@
 SupercellConfigurationNode::SupercellConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration", targetConfiguration_);
+    addInput("Configuration", "Target configuration", targetConfiguration_);
 
     // Outputs
-    addPointerOutput<Configuration>("SupercellConfiguration", "Supercell configuration", supercellConfiguration_);
+    addPointerOutput("SupercellConfiguration", "Supercell configuration", supercellConfiguration_);
 
     // Options
-    addOption<Vector3i>("SupercellRepeat", "Integer coefficients by which unit cell will be repeated along its dimensions",
-                        supercellRepeat_);
+    addOption("SupercellRepeat", "Integer coefficients by which unit cell will be repeated along its axes", supercellRepeat_);
 }
 
 /*
@@ -32,7 +31,7 @@ std::string_view SupercellConfigurationNode::summary() const
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SupercellConfigurationNode::process()
 {
     supercellConfiguration_.empty();

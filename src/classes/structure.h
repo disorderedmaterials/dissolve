@@ -132,7 +132,7 @@ class Structure : public Serialisable<>
     std::set<StructureAtom *> traverseLocal(ConstManipulationFunction action) const;
 
     public:
-    // Un-fold molecule so it is not cut by box boundaries, returning the centre of geometry
+    // Un-fold bound fragments in the structure
     void unFold();
 
     /*

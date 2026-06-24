@@ -6,7 +6,6 @@
 #include "classes/configuration.h"
 #include "nodes/node.h"
 
-// SupercellConfiguration Node
 class SupercellConfigurationNode : public Node
 {
     public:
@@ -16,7 +15,6 @@ class SupercellConfigurationNode : public Node
     /*
      * Definition
      */
-
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
@@ -26,7 +24,7 @@ class SupercellConfigurationNode : public Node
      */
     private:
     // Input configuration
-    Configuration *targetConfiguration_;
+    Configuration *targetConfiguration_{nullptr};
     // Supercell repeat
     Vector3i supercellRepeat_;
     // Supercell configuration

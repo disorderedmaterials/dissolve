@@ -316,7 +316,7 @@ std::set<StructureAtom *> Structure::traverseLocal(ConstManipulationFunction act
     return flags;
 }
 
-// Un-fold molecule so it is not cut by box boundaries
+// Un-fold bound fragments in the structure
 void Structure::unFold()
 {
     std::set<StructureAtom *> flagged;
