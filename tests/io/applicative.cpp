@@ -3,6 +3,7 @@
 
 #include "base/applicative.h"
 #include "base/parserLibrary.h"
+#include "nodes/importXYZStructure.h"
 #include <gtest/gtest.h>
 #include <sstream>
 #include <string_view>
@@ -107,17 +108,15 @@ TEST(ApplicativeTest, Vector) { testExact("1 2.5 -3e-1", vector3(), Vector3(1, 2
 
 TEST(ApplicativeTest, StructureAtom)
 {
-    testExact("HW 1 2.5 -3e-4 5.6", structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5.6});
-    testExact("He 0.5 0.5 0.5", structureAtom(), {"He", Vector3(0.5, 0.5, 0.5), {}});
+    testExact("HW 1 2.5 -3e-4 5.6", ImportXYZStructureNode::structureAtom(), {"HW", Vector3(1, 2.5, -3e-4), 5.6});
+    testExact("He 0.5 0.5 0.5", ImportXYZStructureNode::structureAtom(), {"He", Vector3(0.5, 0.5, 0.5), {}});
 }
 
 TEST(ApplicativeTest, XYZStructure)
 {
     std::ifstream infile{"xyz/c2so3.xyz"};
     ASSERT_TRUE(infile);
-    auto xyz =
-        (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom() << maybe(newlines())))
-            .parse(infile);
+    auto xyz = ImportXYZStructureNode::structureBlock().parse(infile);
 
     ASSERT_TRUE(xyz);
     auto &[value, rest] = *xyz;
@@ -148,9 +147,7 @@ TEST(ApplicativeTest, Helium)
 {
     std::ifstream infile{"xyz/voxelDensity-helium.xyz"};
     ASSERT_TRUE(infile);
-    auto xyz =
-        (maybe(spaces()) >> natural() << spaces() & inlines() >> newlines() >> some(structureAtom() << maybe(newlines())))
-            .parse(infile);
+    auto xyz = ImportXYZStructureNode::structureBlock().parse(infile);
     ASSERT_TRUE(xyz);
     auto &[value, rest] = *xyz;
     EXPECT_EQ(rest.get(), -1);

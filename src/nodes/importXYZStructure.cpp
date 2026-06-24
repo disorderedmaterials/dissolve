@@ -44,9 +44,7 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
 NodeConstants::ProcessResult ImportXYZStructureNode::read(std::istream &input, Structure &structure)
 {
     using namespace Parsers;
-    auto xyz = (maybe(inlineSpaces()) >> natural() << newlines() &
-                inlines() >> newlines() >> some(structureAtom() << maybe(inlineSpaces()) << maybe(newlines())))
-                   .parse(input);
+    auto xyz = structureBlock().parse(input);
 
     if (!xyz)
         return NodeConstants::ProcessResult::Failed;
@@ -59,4 +57,19 @@ NodeConstants::ProcessResult ImportXYZStructureNode::read(std::istream &input, S
     assert(nAtoms == atoms.size());
 
     return NodeConstants::ProcessResult::Success;
+}
+
+Parsers::Parser<std::tuple<std::string, Vector3, std::optional<double>>> ImportXYZStructureNode::structureAtom()
+{
+    using namespace Parsers;
+    auto parser = alphas() & inlineSpaces() >> vector3() & maybe(inlineSpaces() >> real() << maybe(inlineSpaces()));
+    return parser;
+}
+
+Parsers::Parser<std::tuple<int, std::vector<std::tuple<std::string, Vector3, std::optional<double>>>>>
+ImportXYZStructureNode::structureBlock()
+{
+    using namespace Parsers;
+    return maybe(inlineSpaces()) >> natural() << newlines() &
+           inlines() >> newlines() >> some(structureAtom() << maybe(inlineSpaces()) << maybe(newlines()));
 }
