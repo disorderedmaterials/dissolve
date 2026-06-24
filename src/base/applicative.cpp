@@ -76,7 +76,7 @@ Parser<std::string> digits()
     return takeWhile([](const char c) { return std::isdigit(c); });
 }
 
-// A parser that accepts any amount of digit characters
+// A parser that continues until a newline
 Parser<std::string> inlines()
 {
     return takeWhile([](const auto c) { return c != '\r' && c != '\n'; });
