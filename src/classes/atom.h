@@ -93,7 +93,7 @@ template <typename BondClass> class Atom : public AtomBase, public Serialisable
 {
     public:
     Atom() = default;
-    virtual ~Atom() = default;
+    virtual ~Atom() override = default;
 
     /*
      * Coordinate Manipulation Operators
@@ -125,9 +125,9 @@ template <typename BondClass> class Atom : public AtomBase, public Serialisable
         return nullptr;
     }
     // Return number of bonds
-    int nBonds() const { return bonds_.size(); }
+    int nBonds() const override { return bonds_.size(); }
     // Return indices of other AtomBases to which this one is connected
-    std::vector<AtomBase *> connectedAtoms() const
+    std::vector<AtomBase *> connectedAtoms() const override
     {
         std::vector<AtomBase *> connections;
         for (const auto *bond : bonds_)
