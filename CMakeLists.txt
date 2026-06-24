@@ -295,9 +295,7 @@ set(BASIC_LINK_LIBS
     kernels
     neta
     analyser
-    keywords
     expression
-    items
     base
     math
     data
