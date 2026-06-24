@@ -136,7 +136,7 @@ TEST(ApplicativeTest, XYZStructure)
         {"H", {1.000760, 0.124469, -2.713254}},
 
     };
-    int index = 0;
+    auto index = 0;
     for (auto &[elem, r] : expected)
     {
         EXPECT_EQ(elem, std::get<0>(terms[index]));
