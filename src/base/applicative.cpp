@@ -36,7 +36,7 @@ Parser<std::string> spaces()
     return takeWhile([](const char c) { return isspace(c); });
 }
 // A parser that accepts space and tab
-Parser<std::string> inline_spaces()
+Parser<std::string> inlineSpaces()
 {
     return takeWhile([](const char c) { return c == ' ' || c == '\t'; });
 }

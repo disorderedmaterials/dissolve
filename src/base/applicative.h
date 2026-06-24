@@ -384,7 +384,7 @@ Parser<std::string> digits();
 // A parser that accepts any amount of whitespace
 Parser<std::string> spaces();
 // A parser that accepts space and tab
-Parser<std::string> inline_spaces();
+Parser<std::string> inlineSpaces();
 
 // A parser that accepts any amount of visible characters
 Parser<std::string> graphs();
