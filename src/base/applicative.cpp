@@ -82,7 +82,7 @@ Parser<std::string> inlines()
     return takeWhile([](const auto c) { return c != '\r' && c != '\n'; });
 }
 
-// A parser that accepts any amount of digit characters
+// A parser that matches newline characters
 Parser<std::string_view> newlines() { return "\r\n"_p | "\n"_p; }
 
 // A quick wrapper for easily making parses from strings
