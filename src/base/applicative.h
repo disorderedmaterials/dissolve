@@ -21,7 +21,7 @@ namespace parsers
 template <typename T>
 concept TupleLike = requires { std::tuple_size<T>::value; };
 
-// The simplest defintion of an applicative parser is a function that
+// The simplest definition of an applicative parser is a function that
 // takes a stream and, if the parse succeeds, returns the parsed
 // value and the rest of the stream.  To make life simpler, we
 // define the parser_output<T> for the return type of the function.
