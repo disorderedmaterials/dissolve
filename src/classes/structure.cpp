@@ -251,78 +251,78 @@ void Structure::createBox(const Matrix3 &axes)
  */
 
 // Recursive function for general manipulation
-void Structure::recurseLocal(std::set<StructureAtom *> &flags, int indexI, ManipulationFunction action)
+void Structure::recurseLocal(std::set<StructureAtom *> &fragmentAtoms, StructureAtom *i, ManipulationFunction action)
 {
-    auto *strAtI = atoms_[indexI].get();
-
-    if (flags.find(strAtI) != flags.end())
+    if (fragmentAtoms.contains(i))
         return;
 
     // Set the flag for indexI and get some necessary values
-    flags.insert(strAtI);
+    fragmentAtoms.insert(i);
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
-    for (const auto *b : strAtI->bonds())
+    for (const auto *b : i->bonds())
     {
-        auto indexJ = b->partner(strAtI)->index();
-        auto &j = atoms_[indexJ];
-        if (flags.contains(j.get()))
+        auto j = b->partner(i);
+        if (fragmentAtoms.contains(j))
             continue;
 
-        action(j.get(), box_.minimumImage(j->r(), strAtI->r()));
+        action(j, box_.minimumImage(j->r(), i->r()));
 
         // Recurse into bound neighbours
-        recurseLocal(flags, indexJ, action);
+        recurseLocal(fragmentAtoms, j, action);
     }
 }
-void Structure::recurseLocal(std::set<StructureAtom *> &flags, int indexI, ConstManipulationFunction action) const
+void Structure::recurseLocal(std::set<StructureAtom *> &fragmentAtoms, StructureAtom *i, ConstManipulationFunction action) const
 {
-    auto *strAtI = atoms_[indexI].get();
-
-    if (flags.find(strAtI) != flags.end())
+    if (fragmentAtoms.contains(i))
         return;
 
     // Set the flag for indexI and get some necessary values
-    flags.insert(strAtI);
+    fragmentAtoms.insert(i);
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
-    for (const auto b : strAtI->bonds())
+    for (const auto b : i->bonds())
     {
-        auto indexJ = b->partner(strAtI)->index();
-        auto &j = atoms_[indexJ];
-        if (flags.contains(j.get()))
+        auto j = b->partner(i);
+        if (fragmentAtoms.contains(j))
             continue;
 
-        action(j.get(), box_.minimumImage(j->r(), strAtI->r()));
+        action(j, box_.minimumImage(j->r(), i->r()));
 
         // Recurse into bound neighbours
-        recurseLocal(flags, indexJ, action);
+        recurseLocal(fragmentAtoms, j, action);
     }
 }
 
-// General manipulation function working on reassembled fragments
-std::set<StructureAtom *> Structure::traverseLocal(ManipulationFunction action)
+// Return atoms in the same fragment as the specified atom, unfolding the fragment at the same time
+std::set<StructureAtom *> Structure::getUnfoldedFragment(StructureAtom *containing, ManipulationFunction action)
 {
-    std::set<StructureAtom *> flags;
-    action(atoms_[0].get(), atoms_[0]->r());
-    recurseLocal(flags, 0, action);
-    return flags;
+    std::set<StructureAtom *> fragmentAtoms;
+    action(containing, containing->r());
+    recurseLocal(fragmentAtoms, containing, action);
+    return fragmentAtoms;
 }
-std::set<StructureAtom *> Structure::traverseLocal(ConstManipulationFunction action) const
+std::set<StructureAtom *> Structure::getUnfoldedFragment(StructureAtom *containing, ConstManipulationFunction action) const
 {
-    std::set<StructureAtom *> flags;
-    action(atoms_[0].get(), atoms_[0]->r());
-    recurseLocal(flags, 0, action);
-    return flags;
+    std::set<StructureAtom *> fragmentAtoms;
+    action(containing, containing->r());
+    recurseLocal(fragmentAtoms, containing, action);
+    return fragmentAtoms;
 }
 
 // Un-fold bound fragments in the structure
 void Structure::unFold()
 {
-    std::set<StructureAtom *> flagged;
+    std::set<StructureAtom *> fragmentAtoms;
 
-    while (flagged.size() <= nAtoms())
-        flagged.merge(traverseLocal([](StructureAtom *j, Vector3 rJ) { j->setR(rJ); }));
+    while (fragmentAtoms.size() < nAtoms())
+    {
+        auto atomIt = std::find_if(atoms_.begin(), atoms_.end(), [&fragmentAtoms](const auto &atom) { return !fragmentAtoms.contains(atom.get()); });
+        if (atomIt == atoms_.end())
+            break;
+
+        fragmentAtoms.merge(getUnfoldedFragment(atomIt->get(), [](StructureAtom *j, Vector3 rJ) { j->setR(rJ); }));
+    }
 }
 
 /*

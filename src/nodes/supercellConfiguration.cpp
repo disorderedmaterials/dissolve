@@ -55,7 +55,7 @@ NodeConstants::ProcessResult SupercellConfigurationNode::process()
             {
                 // Create and translate molecule
                 for (auto iz = 0; iz < supercellRepeat_.z; ++iz)
-                    supercellConfiguration_.addMolecule(sp)->translate(Vector3(ix, iy, iz));
+                    supercellConfiguration_.addMolecule(sp)->translate(box.axes() * Vector3(ix, iy, iz));
             }
         }
     }

@@ -125,11 +125,11 @@ class Structure : public Serialisable<>
     using ManipulationFunction = std::function<void(StructureAtom *j, Vector3 rJ)>;
     using ConstManipulationFunction = std::function<void(const StructureAtom *j, Vector3 rJ)>;
     // Recursive function for general manipulation
-    void recurseLocal(std::set<StructureAtom *> &flags, int indexI, ManipulationFunction action);
-    void recurseLocal(std::set<StructureAtom *> &flags, int indexI, ConstManipulationFunction action) const;
-    // General manipulation function working on reassembled molecule
-    std::set<StructureAtom *> traverseLocal(ManipulationFunction action);
-    std::set<StructureAtom *> traverseLocal(ConstManipulationFunction action) const;
+    void recurseLocal(std::set<StructureAtom *> &fragmentAtoms, StructureAtom *i, ManipulationFunction action);
+    void recurseLocal(std::set<StructureAtom *> &fragmentAtoms, StructureAtom *i, ConstManipulationFunction action) const;
+    // Return atoms in the same fragment as the specified atom, unfolding the fragment at the same time
+    std::set<StructureAtom *> getUnfoldedFragment(StructureAtom *containing, ManipulationFunction action);
+    std::set<StructureAtom *> getUnfoldedFragment(StructureAtom *containing, ConstManipulationFunction action) const;
 
     public:
     // Un-fold bound fragments in the structure
