@@ -1,29 +1,29 @@
 add_library(
   base
   applicative.cpp
-  parserLibrary.cpp
   cbor.cpp
-  enumOptionsBase.cpp
-  geometry.cpp
-  lineParser.cpp
-  lock.cpp
-  messenger.cpp
-  outputHandler.cpp
-  sysFunc.cpp
-  timer.cpp
-  units.cpp
-  version.cpp
   enumOption.h
-  enumOptionsBase.h
   enumOptions.h
+  enumOptionsBase.cpp
+  enumOptionsBase.h
+  geometry.cpp
   geometry.h
+  lineParser.cpp
   lineParser.h
+  lock.cpp
   lock.h
+  messenger.cpp
   messenger.h
+  outputHandler.cpp
   outputHandler.h
+  parserLibrary.cpp
+  sysFunc.cpp
   sysFunc.h
+  timer.cpp
   timer.h
+  units.cpp
   units.h
+  version.cpp
   version.h
 )
 
