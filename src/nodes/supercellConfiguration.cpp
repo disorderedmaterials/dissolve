@@ -36,7 +36,7 @@ NodeConstants::ProcessResult SupercellConfigurationNode::process()
 {
     supercellConfiguration_.empty();
 
-    const auto box = targetConfiguration_->box();
+    const auto &box = targetConfiguration_->box();
 
     // Set up configuration
     auto supercellLengths = box.axisLengths();

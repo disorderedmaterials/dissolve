@@ -256,7 +256,6 @@ void Structure::recurseLocal(std::set<StructureAtom *> &fragmentAtoms, Structure
     if (fragmentAtoms.contains(i))
         return;
 
-    // Set the flag for indexI and get some necessary values
     fragmentAtoms.insert(i);
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action
@@ -277,7 +276,6 @@ void Structure::recurseLocal(std::set<StructureAtom *> &fragmentAtoms, Structure
     if (fragmentAtoms.contains(i))
         return;
 
-    // Set the flag for indexI and get some necessary values
     fragmentAtoms.insert(i);
 
     // Loop over attached atoms, performing minimum image repositioning w.r.t. i, and call the action

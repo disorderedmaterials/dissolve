@@ -73,11 +73,22 @@ TEST(StructureTest, Molecule2)
 TEST(StructureTest, Unfold)
 {
     TestGraph graph;
+
+    // Import XYZ node
     auto importXYZNode = graph.createNode("ImportXYZStructure");
     ASSERT_TRUE(importXYZNode);
     ASSERT_TRUE(importXYZNode->setOption("FilePath", std::string("xyz/ch4_folded.xyz")));
-    ASSERT_EQ(importXYZNode->run(), NodeConstants::ProcessResult::Success);
-    auto structure = importXYZNode->getOutputValue<Structure>("Structure");
+
+    // Calculate bonding node
+    auto calculateBondingNode = graph.createNode("CalculateBonding");
+    ASSERT_TRUE(calculateBondingNode);
+
+    // Connect graph
+    ASSERT_TRUE(graph.addEdge({"ImportXYZStructure", "Structure", "CalculateBonding", "Structure"}));
+
+    // Run
+    ASSERT_EQ(calculateBondingNode->run(), NodeConstants::ProcessResult::Success);
+    auto structure = calculateBondingNode->getOutputValue<Structure>("Structure");
     structure.unFold();
 
     // After unfolding, the distances between C and H should all be unity
