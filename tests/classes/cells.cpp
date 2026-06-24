@@ -3,10 +3,9 @@
 
 #include "classes/atomType.h"
 #include "classes/species.h"
-#include "kernels/producer.h"
+#include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
-#include "templates/algorithms.h"
 #include "tests/graphData.h"
 #include <gtest/gtest.h>
 

@@ -5,6 +5,7 @@
 
 #include "classes/speciesSites.h"
 #include "math/histogram3D.h"
+#include "math/range.h"
 #include "nodes/node.h"
 
 // OrientedSDF
