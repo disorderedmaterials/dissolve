@@ -3,14 +3,9 @@
 
 #pragma once
 
-#include "kernels/energy.h"
 #include "math/history.h"
 #include "nodes/node.h"
 
-// Forward Declarations
-class PotentialMap;
-
-// Energy Node
 class EnergyNode : public Node
 {
     public:
@@ -18,18 +13,16 @@ class EnergyNode : public Node
     ~EnergyNode() override = default;
 
     /*
-     * Node
+     * Definition
      */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
-    private:
-    // Run main processing
-    NodeConstants::ProcessResult process() override;
-
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -38,19 +31,11 @@ class EnergyNode : public Node
     double stabilityThreshold_{0.001};
     // Number of points over which to assess the stability of the energy (per Configuration)
     int stabilityWindow_{10};
-
-    /*
-     * Calculated Data
-     */
-    private:
     // Energy histories
     PODHistory<double> totalEnergyHistory_;
     PODHistory<double> totalPairPotentialHistory_, totalMoleculePPHistory_, totalGeometryHistory_, totalCohesiveHistory;
     PODHistory<double> bondHistory_, angleHistory_, torsionHistory_, improperHistory_;
 
-    /*
-     * Functions
-     */
     public:
     // Energy Stability Enum
     enum EnergyStability
@@ -59,4 +44,15 @@ class EnergyNode : public Node
         EnergyStable = 0,
         EnergyUnstable = 1
     };
+
+    public:
+    // Clear any local data
+    void clearData() override;
+
+    /*
+     * Processing
+     */
+    protected:
+    // Perform processing
+    NodeConstants::ProcessResult process() override;
 };

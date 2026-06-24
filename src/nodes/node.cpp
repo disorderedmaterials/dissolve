@@ -46,7 +46,7 @@ void Node::setEcho(bool status) { echo_ = status; }
 void Node::echo() const { std::cout << messages_.back().second; }
 
 /*
- * Processing & Validity
+ * Processing
  */
 
 // Return version index for the node, bumped whenever result outputs change

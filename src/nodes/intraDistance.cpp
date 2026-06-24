@@ -10,22 +10,46 @@
 IntraDistanceNode::IntraDistanceNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_);
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
     addOption("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C", b_);
-    addOption<Vector3>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_);
+    addOption("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", targetConfiguration_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view IntraDistanceNode::type() const { return "IntraDistance"; }
 
-std::string_view IntraDistanceNode::summary() const { return "Calculate a site-site distance histogram within molecules"; }
+// Return short summary of the node's purpose
+std::string_view IntraDistanceNode::summary() const
+{
+    return "Calculate a site-site distance histogram between sites within the same molecule";
+}
 
-// Run main processing
+/*
+ * Data
+ */
+
+// Clear any local data
+void IntraDistanceNode::clearData()
+{
+    histAB_.reset();
+    rdfAB_.clear();
+}
+
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult IntraDistanceNode::process()
 {
     // Select site A

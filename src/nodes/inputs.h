@@ -5,7 +5,6 @@
 
 #include "nodes/node.h"
 
-// Inputs Node
 class InputsNode : public Node
 {
     public:
@@ -22,7 +21,7 @@ class InputsNode : public Node
     std::string_view summary() const override;
 
     /*
-     * Processing & Validity
+     * Processing
      */
     protected:
     // Perform processing

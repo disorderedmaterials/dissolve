@@ -8,7 +8,6 @@
 #include "classes/histogramSet.h"
 #include "classes/partialSet.h"
 #include "classes/species.h"
-#include "items/list.h"
 #include "math/function1D.h"
 #include "math/history.h"
 #include "nodes/node.h"
@@ -21,13 +20,19 @@ class GRNode : public Node
     GRNode(Graph *parentGraph);
     ~GRNode() override = default;
 
-    public:
-    std::string_view type() const override;
-    std::string_view summary() const override;
-
     /*
      * Definition
      */
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
+
+    /*
+     * Data
+     */
+    public:
     // Partial Calculation Method enum
     enum class PartialsMethod
     {
@@ -61,15 +66,15 @@ class GRNode : public Node
     PartialsMethod partialsMethod_{PartialsMethod::AutoMethod};
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     std::optional<Number> requestedRange_;
-    // Whether to save partials and total functions to disk
-    bool save_{false};
-    // Whether to save raw partials and total functions to disk
-    bool saveRaw_{false};
     // Histograms for RDF calculation
     std::optional<HistogramSet> histograms_;
 
+    public:
+    // Clear any local data
+    void clearData() override;
+
     /*
-     * Functions
+     * Processing
      */
     private:
     // Calculate partial g(r) in serial with simple double-loop
@@ -81,18 +86,13 @@ class GRNode : public Node
     // Calculate RDF from raw histogram
     void calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
                       double multiplier);
-
-    public:
     // Calculate raw partials
     bool calculateRawGR(const double grRange, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     bool calculateUnweightedGR();
 
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };
 

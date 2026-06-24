@@ -14,12 +14,17 @@ class OrientedSDFNode : public Node
     OrientedSDFNode(Graph *parentGraph);
     ~OrientedSDFNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -40,11 +45,6 @@ class OrientedSDFNode : public Node
     Range angleRange_{-15.0, 15.0};
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
-
-    /*
-     * Data
-     */
-    private:
     // OrientedSDF
     std::optional<Histogram3D> histogram_;
     Data3D sdf_;
@@ -58,7 +58,7 @@ class OrientedSDFNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

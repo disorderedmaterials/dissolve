@@ -2,16 +2,93 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
+#include "nodes/xRaySQ.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
 #include "classes/xRayWeights.h"
 #include "math/filters.h"
 #include "math/ft.h"
 #include "nodes/edge.h"
-#include "nodes/sq/sq.h"
-#include "nodes/xRaySQ/xRaySQ.h"
+#include "nodes/gr.h"
+#include "nodes/sq.h"
 
-bool XRaySQNode::setReferenceData()
+XRaySQNode::XRaySQNode(Graph *parentGraph) : Node(parentGraph)
+{
+    // Inputs
+    addInput("UnweightedSQ", "Unweighted partial S(Q)", unweightedSQ_);
+    addInput("UnweightedGR", "Unweighted partials g(r)", unweightedGR_);
+    addInput("ReferenceData", "Reference F(Q) data", referenceFQ_);
+
+    // Outputs
+    addOptionalPointerOutput<PartialSet>("WeightedSQ", "Weighted partial structure factors for target configuration",
+                                         weightedSQ_);
+    addOptionalPointerOutput<PartialSet>(
+        "WeightedGR", "Weighted partial radial distribution functions for target configuration", weightedGR_);
+    addOutput("ReferenceGR", "Fourier transform of reference data", referenceGR_);
+
+    // Options
+    addOption("FormFactors", "Atomic form factors to use for weighting", formFactors_);
+    addOption("NormaliseTo", "Normalisation to apply to total weighted F(Q)", normaliseTo_);
+    addOption("ReferenceNormalisedTo", "Normalisation that has been applied to the reference data", referenceNormalisedTo_);
+    addOption("ReferenceFTQMin", "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
+              referenceFTQMin_);
+    addOption("ReferenceFTQMax", "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
+              referenceFTQMax_);
+    addOption("ReferenceFTDeltaR", "Spacing in r to use when generating the Fourier-transformed data", referenceFTDeltaR_);
+    addOption("ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
+              referenceWindowFunction_);
+
+    // Serialisables
+    addSerialisable("weightedGR", weightedGR_);
+    addSerialisable("weightedSQ", weightedSQ_);
+    addSerialisable("representativeGR", representativeGR_);
+}
+
+/*
+ * Definition
+ */
+
+// Return type of the node
+std::string_view XRaySQNode::type() const { return "XRaySQ"; }
+
+// Return short summary of the node's purpose
+std::string_view XRaySQNode::summary() const { return "Calculate x-ray-weighted S(Q) and G(r)."; }
+
+/*
+ * Data
+ */
+
+// Returns the unweighted SQ
+const PartialSet *XRaySQNode::unweightedSQ() const { return unweightedSQ_; }
+
+// Returns the unweighted GR
+const PartialSet *XRaySQNode::unweightedGR() const { return unweightedGR_; }
+
+// Returns the source configuration, belonging to the input SQ node
+const Configuration *XRaySQNode::sourceConfiguration()
+{
+    auto cfgInputEdge = inputEdges().find("UnweightedSQ");
+
+    if (cfgInputEdge == inputEdges().end())
+    {
+        error("Could not find a valid input 'UnweightedSQ' associated with this node ({})", name());
+        return nullptr;
+    }
+
+    auto &cfgSourceNode = cfgInputEdge->second[0]->sourceNode();
+    auto sqNode = static_cast<SQNode *>(&cfgSourceNode);
+
+    return sqNode->sourceConfiguration();
+}
+
+// Return xRay weights
+const XRayWeights &XRaySQNode::weights() const { return weights_; }
+
+/*
+ * Processing
+ */
+
+// Set up reference data
+bool XRaySQNode::setUpReferenceData()
 {
     // Normalise reference data to be consistent with the calculated data
     if (referenceNormalisedTo_ != normaliseTo_)
@@ -75,9 +152,6 @@ bool XRaySQNode::setReferenceData()
 
     return true;
 }
-
-// Return xRay weights
-const XRayWeights &XRaySQNode::weights() const { return weights_; }
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
 bool XRaySQNode::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
@@ -167,25 +241,73 @@ bool XRaySQNode::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet 
     return true;
 }
 
-// Returns the unweighted SQ
-const PartialSet *XRaySQNode::unweightedSQ() const { return unweightedSQ_; }
-
-// Returns the unweighted GR
-const PartialSet *XRaySQNode::unweightedGR() const { return unweightedGR_; }
-
-// Returns the source configuration, belonging to the input SQ node
-const Configuration *XRaySQNode::sourceConfiguration()
+// Perform processing
+NodeConstants::ProcessResult XRaySQNode::process()
 {
-    auto cfgInputEdge = inputEdges().find("UnweightedSQ");
+    // Print argument/parameter summary
+    message("Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
+    if (normaliseTo_ == StructureFactors::NoNormalisation)
+        message("No normalisation will be applied to total F(Q).\n");
+    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
+        message("Total F(Q) will be normalised to <b**2>");
+    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+        message("Total F(Q) will be normalised to <b>**2");
+    if (referenceWindowFunction_ == WindowFunction::Form::None)
+        message("No window function will be applied when calculating representative g(r) from S(Q).");
+    else
+        message("Window function to be applied when calculating representative g(r) from S(Q) is {}.",
+                WindowFunction::forms().keyword(referenceWindowFunction_));
+    Messenger::print("\n");
 
-    if (cfgInputEdge == inputEdges().end())
+    // Set up the data storage if needed
+    if (!weightedSQ_)
     {
-        error("Could not find a valid input 'UnweightedSQ' associated with this node ({})", name());
-        return nullptr;
+        weightedSQ_.emplace();
+        weightedSQ_.value().initialise(*unweightedSQ_);
+    }
+    if (!weightedGR_)
+    {
+        weightedGR_.emplace();
+        weightedGR_.value().initialise(*unweightedGR_);
     }
 
-    auto &cfgSourceNode = cfgInputEdge->second[0]->sourceNode();
-    auto sqNode = static_cast<SQNode *>(&cfgSourceNode);
+    // Construct weights matrix
+    if (!weights_.setUp(unweightedSQ_->realSpeciesPopulations(), formFactors_))
+        return error("Failed to setup xRay weights.");
 
-    return sqNode->sourceConfiguration();
+    // Set up reference FQ and GR
+    if (referenceFQ_ and !setUpReferenceData())
+        return NodeConstants::ProcessResult::Failed;
+
+    Messenger::print("Weights matrix:\n\n");
+    weights_.print();
+
+    // Calculate weighted S(Q)
+    calculateWeightedSQ(*unweightedSQ_, *weightedSQ_, weights_, normaliseTo_);
+
+    // Calculate weighted g(r)
+    calculateWeightedGR(*unweightedGR_, *weightedGR_, weights_, normaliseTo_);
+
+    // Calculate representative total g(r) from FT of calculated F(Q)
+    representativeGR_ = weightedSQ_->total();
+    auto ftQMax = 0.0;
+    if (referenceFTQMax_)
+        ftQMax = referenceFTQMax_.value().asDouble();
+    else if (referenceFQ_)
+    {
+        // Take FT max Q limit from reference data
+        ftQMax = referenceFQ_->xAxis().back();
+    }
+    else
+        ftQMax = weightedSQ_->total().xAxis().back();
+
+    Filters::trim(representativeGR_, referenceFTQMin_.value_or(0.0).asDouble(), ftQMax);
+    auto rMin = weightedGR_->total().xAxis().front();
+    auto rMax = weightedGR_->total().xAxis().back();
+    auto rho = unweightedGR_->effectiveDensity();
+
+    Fourier::sineFT(representativeGR_, 1.0 / (2.0 * M_PI * M_PI * rho), rMin, 0.05, rMax,
+                    WindowFunction(referenceWindowFunction_));
+
+    return NodeConstants::ProcessResult::Success;
 }

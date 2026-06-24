@@ -6,16 +6,27 @@
 ImportEPSRAtoStructureNode::ImportEPSRAtoStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Structure", "Imported structure", structure_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportEPSRAtoStructureNode::type() const { return "ImportEPSRAtoStructure"; }
 
-std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an EPSR ato file."; }
+// Return short summary of the node's purpose
+std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an EPSR ato file"; }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
 {
     structure_.clear();

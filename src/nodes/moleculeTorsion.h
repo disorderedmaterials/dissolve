@@ -6,19 +6,23 @@
 #include "math/histogram1D.h"
 #include "nodes/node.h"
 
-// Molecule Torsion
 class MoleculeTorsionNode : public Node
 {
     public:
     MoleculeTorsionNode(Graph *parentGraph);
     ~MoleculeTorsionNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -27,11 +31,6 @@ class MoleculeTorsionNode : public Node
     const Species *species_{nullptr};
     // Target atom indices
     Number i_{0}, j_{1}, k_{2}, l_{3};
-
-    /*
-     * Data
-     */
-    private:
     // Torsion histogram
     std::optional<Histogram1D> histogram_;
     Data1D frequency_;
@@ -45,7 +44,7 @@ class MoleculeTorsionNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

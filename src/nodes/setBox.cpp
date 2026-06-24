@@ -6,30 +6,32 @@
 SetBoxNode::SetBoxNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<BoxContainingVariant>("Input", "Object containing box to modify", inputVariant_)
-        ->setFlags({ParameterBase::Required});
+    addInput("Input", "Object containing box to modify", inputVariant_)->setFlags({ParameterBase::Required});
 
     // Outputs
-    addOutput<BoxContainingVariant>("Output", "Object", outputVariant_);
+    addOutput("Output", "Object", outputVariant_);
 
     // Options
-    addOption<Vector3>("Lengths", "Side lengths (A, B, C) of the box (Angstroms)", lengths_);
-    addOption<Vector3>("Angles", "Cell angles (alpha, beta, gamma) of the box (degrees)", angles_);
-    addOption<bool>("NonPeriodic", "Whether the box should be defined as non-periodic", nonPeriodic_);
+    addOption("Lengths", "Side lengths (A, B, C) of the box (Angstroms)", lengths_);
+    addOption("Angles", "Cell angles (alpha, beta, gamma) of the box (degrees)", angles_);
+    addOption("NonPeriodic", "Whether the box should be defined as non-periodic", nonPeriodic_);
 }
 
 /*
  * Definition
  */
 
+// Return type of the node
 std::string_view SetBoxNode::type() const { return "SetBox"; }
 
+// Return short summary of the node's purpose
 std::string_view SetBoxNode::summary() const { return "Set the periodic box definition on an object."; }
 
 /*
  * Processing
  */
 
+// Perform processing
 NodeConstants::ProcessResult SetBoxNode::process()
 {
     // Copy the input to the output and work on the output

@@ -16,23 +16,23 @@ class AverageMoleculeNode : public Node
     AverageMoleculeNode(Graph *parentGraph);
     ~AverageMoleculeNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
     Configuration *configuration_{nullptr};
     // Target site
     const SpeciesSite *targetSite_{nullptr};
-
-    /*
-     * Data
-     */
-    private:
     // Averaged coordinates / structure
     std::optional<SampledVector> sampledX_, sampledY_, sampledZ_;
     Structure structure_;
@@ -50,7 +50,7 @@ class AverageMoleculeNode : public Node
     // Update the average structure from sampled coordinate vectors
     void updateStructure();
 
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

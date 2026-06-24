@@ -10,17 +10,24 @@ ExportDLPUtilsPDensDataNode::ExportDLPUtilsPDensDataNode(Graph *parentGraph) : N
     addInput("Data", "Data to export", data_);
 
     // Options
-    addOption<std::string>("FilePath", "Destination file path", filePath_);
+    addOption("FilePath", "Destination file path", filePath_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ExportDLPUtilsPDensDataNode::type() const { return "ExportPDensData"; }
 
+// Return short summary of the node's purpose
 std::string_view ExportDLPUtilsPDensDataNode::summary() const { return "Export 3D data in DLPUtils PDens format"; }
 
 /*
  * Processing
  */
 
+// Perform processing
 NodeConstants::ProcessResult ExportDLPUtilsPDensDataNode::process()
 {
     return write(data_, filePath_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;

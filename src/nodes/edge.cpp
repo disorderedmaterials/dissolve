@@ -273,7 +273,7 @@ ParameterBase &LoopEdge::analogue() { return *analogue_; }
 void Edge::forceNextPull() { sourceNodeVersionIndex_ = NodeConstants::InvalidVersion; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Express as a serialisable value

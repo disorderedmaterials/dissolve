@@ -5,6 +5,7 @@
 #include "nodes/dissolve.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/numberNode.h"
+#include "nodes/outputs.h"
 #include "nodes/registry.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>

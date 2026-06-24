@@ -6,16 +6,27 @@
 ImportXYZStructureNode::ImportXYZStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Structure", "Imported structure", structure_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportXYZStructureNode::type() const { return "ImportXYZStructure"; }
 
-std::string_view ImportXYZStructureNode::summary() const { return "Import an XYZ file."; }
+// Return short summary of the node's purpose
+std::string_view ImportXYZStructureNode::summary() const { return "Import an XYZ file"; }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ImportXYZStructureNode::process()
 {
     structure_.clear();

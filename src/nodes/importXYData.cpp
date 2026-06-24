@@ -9,25 +9,36 @@
 ImportXYDataNode::ImportXYDataNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("Histogram", "Whether the data's x-values represent histogram bin boundaries (e.g. Gudrun mint files)",
-                    histogram_);
-    addOption<std::optional<Number>>("RemoveAverageFromX", "Remove average from X values", removeAverageFromX_);
-    addOption<std::optional<Number>>("XMin", "Minimum X value", xMin_);
-    addOption<std::optional<Number>>("XMax", "Maximum X value", xMax_);
-    addOption<Number>("NPointsToRemove", "Number of points to remove", nPointsToRemove_);
-    addOption<Number>("XColumn", "Column index of data X values", xColumn_);
-    addOption<Number>("YColumn", "Column index of data Y values", yColumn_);
-    addOption<std::optional<Number>>("ErrorColumn", "Column index of data error values", errorColumn_);
+    addOption("FilePath", "File path", filePath_);
+    addOption("Histogram", "Whether the data's x-values represent histogram bin boundaries (e.g. Gudrun mint files)",
+              histogram_);
+    addOption("RemoveAverageFromX", "Remove average from X values", removeAverageFromX_);
+    addOption("XMin", "Minimum X value", xMin_);
+    addOption("XMax", "Maximum X value", xMax_);
+    addOption("NPointsToRemove", "Number of points to remove", nPointsToRemove_);
+    addOption("XColumn", "Column index of data X values", xColumn_);
+    addOption("YColumn", "Column index of data Y values", yColumn_);
+    addOption("ErrorColumn", "Column index of data error values", errorColumn_);
 
     // Outputs
-    addOutput<std::optional<Data1D>>("Data", "Imported data", data_);
+    addOutput("Data", "Imported data", data_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportXYDataNode::type() const { return "Data1DImport"; }
 
-std::string_view ImportXYDataNode::summary() const { return "Import 1D data."; }
+// Return short summary of the node's purpose
+std::string_view ImportXYDataNode::summary() const { return "Import 1D data"; }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ImportXYDataNode::process()
 {
     // Clear the structure, and initialise error arrays if necessary

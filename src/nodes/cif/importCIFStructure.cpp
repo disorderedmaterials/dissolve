@@ -18,44 +18,214 @@
 ImportCIFStructureNode::ImportCIFStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Outputs
-    addOutput<Structure>("Structure", "Structure containing atoms and connectivity", structure_);
+    addOutput("Structure", "Structure containing atoms and connectivity", structure_);
 
     // Option
-    addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<SpaceGroups::SpaceGroupId>("SpaceGroupID", "Set space group from index", spaceGroup_);
+    addOption("FilePath", "File path", filePath_);
+    addOption("SpaceGroupID", "Set space group from index", spaceGroup_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportCIFStructureNode::type() const { return "ImportCIFStructure"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportCIFStructureNode::summary() const
 {
     return "Load and parse a Crystallographic Information File (CIF) to a structure";
 }
 
-// Run main processing
-NodeConstants::ProcessResult ImportCIFStructureNode::process()
+/*
+ * Data
+ */
+
+// Return space group information
+SpaceGroups::SpaceGroupId ImportCIFStructureNode::spaceGroup() const { return spaceGroup_; }
+
+// Return chemical formula
+std::string ImportCIFStructureNode::chemicalFormula() const
 {
-    structure_.clear();
-
-    // Read contents of CIF file
-    if (read(filePath_))
-    {
-        if (!createStructure(spaceGroup_, overlapTolerance_))
-            return error("Did not successfully create a basic structure from the CIF file.");
-
-        return NodeConstants::ProcessResult::Success;
-    }
-
-    return error("Failed to read contents of CIF file");
+    auto it = tags_.find("_chemical_formula_sum");
+    return (it != tags_.end() ? it->second.front() : "Unknown");
 }
 
-/*
- * CIF I/O
- */
+// Get (add or retrieve) named assembly
+CIFAssembly &ImportCIFStructureNode::getAssembly(std::string_view name)
+{
+    auto it = std::find_if(assemblies_.begin(), assemblies_.end(), [name](const auto &a) { return a.name() == name; });
+    if (it != assemblies_.end())
+        return *it;
+
+    return assemblies_.emplace_back(name);
+}
+
+// Return atom assemblies
+std::vector<CIFAssembly> &ImportCIFStructureNode::assemblies() { return assemblies_; }
+
+const std::vector<CIFAssembly> &ImportCIFStructureNode::assemblies() const { return assemblies_; }
+
+// Return basic crystal structure
+const Structure &ImportCIFStructureNode::structure() const { return structure_; }
 
 /*
- * Basic CIF Data
+ * Processing
  */
+
+// Return if the specified tag exists
+bool ImportCIFStructureNode::hasTag(std::string tag) const { return tags_.find(tag) != tags_.end(); }
+
+// Return tag data string (if it exists) assuming a single datum (first in the vector)
+std::optional<std::string> ImportCIFStructureNode::getTagString(std::string tag) const
+{
+    auto it = tags_.find(tag);
+    if (it == tags_.end())
+        return std::nullopt;
+
+    // Check data vector size
+    if (it->second.size() != 1)
+        Messenger::warn("Returning first datum for tag '{}', but {} are available.\n", tag, it->second.size());
+
+    return it->second.front();
+}
+
+// Return tag data strings (if it exists)
+std::vector<std::string> ImportCIFStructureNode::getTagStrings(std::string tag) const
+{
+    auto it = tags_.find(tag);
+    if (it == tags_.end())
+        return {};
+
+    return it->second;
+}
+
+// Return tag data as double (if it exists) assuming a single datum (first in the vector)
+std::optional<double> ImportCIFStructureNode::getTagDouble(std::string tag) const
+{
+    auto it = tags_.find(tag);
+    if (it == tags_.end())
+        return std::nullopt;
+
+    // Check data vector size
+    if (it->second.size() != 1)
+        Messenger::warn("Returning first datum for tag '{}', but {} are available.\n", tag, it->second.size());
+
+    double result;
+    try
+    {
+        result = std::stod(it->second.front());
+    }
+    catch (...)
+    {
+        Messenger::error("Data tag '{}' contains a value that can't be converted to a double ('{}').\n", tag,
+                         it->second.front());
+        return std::nullopt;
+    }
+
+    return result;
+}
+
+// Return tag data doubles (if it exists)
+std::vector<double> ImportCIFStructureNode::getTagDoubles(std::string tag) const
+{
+    auto it = tags_.find(tag);
+    if (it == tags_.end())
+        return {};
+
+    std::vector<double> v;
+    for (const auto &s : it->second)
+    {
+        auto d = 0.0;
+        try
+        {
+            d = std::stod(s);
+        }
+        catch (...)
+        {
+            Messenger::warn("Data tag '{}' contains a value that can't be converted to a double ('{}').\n", tag, s);
+        }
+        v.push_back(d);
+    }
+
+    return v;
+}
+
+// Return tag data as integer (if it exists) assuming a single datum (first in the vector)
+std::optional<int> ImportCIFStructureNode::getTagInt(std::string tag) const
+{
+    auto it = tags_.find(tag);
+    if (it == tags_.end())
+        return std::nullopt;
+
+    // Check data vector size
+    if (it->second.size() != 1)
+        Messenger::warn("Returning first datum for tag '{}', but {} are available.\n", tag, it->second.size());
+
+    int result;
+    try
+    {
+        result = std::stoi(it->second.front());
+    }
+    catch (...)
+    {
+        Messenger::error("Data tag '{}' contains a value that can't be converted to an integer ('{}').\n", tag,
+                         it->second.front());
+        return std::nullopt;
+    }
+
+    return result;
+}
+
+// Return cell lengths
+std::optional<Vector3> ImportCIFStructureNode::getCellLengths() const
+{
+    auto a = getTagDouble("_cell_length_a");
+    if (!a)
+        Messenger::error("Cell length A not defined in CIF.\n");
+    auto b = getTagDouble("_cell_length_b");
+    if (!b)
+        Messenger::error("Cell length B not defined in CIF.\n");
+    auto c = getTagDouble("_cell_length_c");
+    if (!c)
+        Messenger::error("Cell length C not defined in CIF.\n");
+
+    if (a && b && c)
+        return Vector3(a.value(), b.value(), c.value());
+    else
+        return std::nullopt;
+}
+
+// Return cell angles
+std::optional<Vector3> ImportCIFStructureNode::getCellAngles() const
+{
+    auto alpha = getTagDouble("_cell_angle_alpha");
+    if (!alpha)
+        Messenger::error("Cell angle alpha not defined in CIF.\n");
+    auto beta = getTagDouble("_cell_angle_beta");
+    if (!beta)
+        Messenger::error("Cell angle beta not defined in CIF.\n");
+    auto gamma = getTagDouble("_cell_angle_gamma");
+    if (!gamma)
+        Messenger::error("Cell angle gamma not defined in CIF.\n");
+
+    if (alpha && beta && gamma)
+        return Vector3(alpha.value(), beta.value(), gamma.value());
+    else
+        return std::nullopt;
+}
+
+// Return whether a bond distance is defined for the specified label pair
+std::optional<double> ImportCIFStructureNode::getBondDistance(std::string_view labelI, std::string_view labelJ) const
+{
+    auto it = std::find_if(
+        bondingPairs_.begin(), bondingPairs_.end(), [labelI, labelJ](const auto &bp)
+        { return (bp.labelI() == labelI && bp.labelJ() == labelJ) || (bp.labelI() == labelJ && bp.labelJ() == labelI); });
+    if (it != bondingPairs_.end())
+        return it->r();
+    return std::nullopt;
+}
 
 // Parse supplied file into the destination objects
 bool ImportCIFStructureNode::parse(std::string_view filename, CIFImportVisitor::CIFTags &tags) const
@@ -108,13 +278,6 @@ bool ImportCIFStructureNode::parse(std::string_view filename, CIFImportVisitor::
     }
 
     return true;
-}
-
-// Return whether the specified file parses correctly
-bool ImportCIFStructureNode::validFile(std::string_view filename) const
-{
-    CIFImportVisitor::CIFTags tags;
-    return parse(filename, tags);
 }
 
 // Read CIF data from specified file
@@ -235,203 +398,10 @@ bool ImportCIFStructureNode::read(std::string_view filename)
     return true;
 }
 
-// Return if the specified tag exists
-bool ImportCIFStructureNode::hasTag(std::string tag) const { return tags_.find(tag) != tags_.end(); }
-
-// Return tag data string (if it exists) assuming a single datum (first in the vector)
-std::optional<std::string> ImportCIFStructureNode::getTagString(std::string tag) const
-{
-    auto it = tags_.find(tag);
-    if (it == tags_.end())
-        return std::nullopt;
-
-    // Check data vector size
-    if (it->second.size() != 1)
-        Messenger::warn("Returning first datum for tag '{}', but {} are available.\n", tag, it->second.size());
-
-    return it->second.front();
-}
-
-// Return tag data strings (if it exists)
-std::vector<std::string> ImportCIFStructureNode::getTagStrings(std::string tag) const
-{
-    auto it = tags_.find(tag);
-    if (it == tags_.end())
-        return {};
-
-    return it->second;
-}
-
-// Return tag data as double (if it exists) assuming a single datum (first in the vector)
-std::optional<double> ImportCIFStructureNode::getTagDouble(std::string tag) const
-{
-    auto it = tags_.find(tag);
-    if (it == tags_.end())
-        return std::nullopt;
-
-    // Check data vector size
-    if (it->second.size() != 1)
-        Messenger::warn("Returning first datum for tag '{}', but {} are available.\n", tag, it->second.size());
-
-    double result;
-    try
-    {
-        result = std::stod(it->second.front());
-    }
-    catch (...)
-    {
-        Messenger::error("Data tag '{}' contains a value that can't be converted to a double ('{}').\n", tag,
-                         it->second.front());
-        return std::nullopt;
-    }
-
-    return result;
-}
-
-// Return tag data doubles (if it exists)
-std::vector<double> ImportCIFStructureNode::getTagDoubles(std::string tag) const
-{
-    auto it = tags_.find(tag);
-    if (it == tags_.end())
-        return {};
-
-    std::vector<double> v;
-    for (const auto &s : it->second)
-    {
-        auto d = 0.0;
-        try
-        {
-            d = std::stod(s);
-        }
-        catch (...)
-        {
-            Messenger::warn("Data tag '{}' contains a value that can't be converted to a double ('{}').\n", tag, s);
-        }
-        v.push_back(d);
-    }
-
-    return v;
-}
-
-// Return tag data as integer (if it exists) assuming a single datum (first in the vector)
-std::optional<int> ImportCIFStructureNode::getTagInt(std::string tag) const
-{
-    auto it = tags_.find(tag);
-    if (it == tags_.end())
-        return std::nullopt;
-
-    // Check data vector size
-    if (it->second.size() != 1)
-        Messenger::warn("Returning first datum for tag '{}', but {} are available.\n", tag, it->second.size());
-
-    int result;
-    try
-    {
-        result = std::stoi(it->second.front());
-    }
-    catch (...)
-    {
-        Messenger::error("Data tag '{}' contains a value that can't be converted to an integer ('{}').\n", tag,
-                         it->second.front());
-        return std::nullopt;
-    }
-
-    return result;
-}
-
-/*
- * Processed Data
- */
-
-// Return space group information
-SpaceGroups::SpaceGroupId ImportCIFStructureNode::spaceGroup() const { return spaceGroup_; }
-
-// Return cell lengths
-std::optional<Vector3> ImportCIFStructureNode::getCellLengths() const
-{
-    auto a = getTagDouble("_cell_length_a");
-    if (!a)
-        Messenger::error("Cell length A not defined in CIF.\n");
-    auto b = getTagDouble("_cell_length_b");
-    if (!b)
-        Messenger::error("Cell length B not defined in CIF.\n");
-    auto c = getTagDouble("_cell_length_c");
-    if (!c)
-        Messenger::error("Cell length C not defined in CIF.\n");
-
-    if (a && b && c)
-        return Vector3(a.value(), b.value(), c.value());
-    else
-        return std::nullopt;
-}
-
-// Return cell angles
-std::optional<Vector3> ImportCIFStructureNode::getCellAngles() const
-{
-    auto alpha = getTagDouble("_cell_angle_alpha");
-    if (!alpha)
-        Messenger::error("Cell angle alpha not defined in CIF.\n");
-    auto beta = getTagDouble("_cell_angle_beta");
-    if (!beta)
-        Messenger::error("Cell angle beta not defined in CIF.\n");
-    auto gamma = getTagDouble("_cell_angle_gamma");
-    if (!gamma)
-        Messenger::error("Cell angle gamma not defined in CIF.\n");
-
-    if (alpha && beta && gamma)
-        return Vector3(alpha.value(), beta.value(), gamma.value());
-    else
-        return std::nullopt;
-}
-
-// Return chemical formula
-std::string ImportCIFStructureNode::chemicalFormula() const
-{
-    auto it = tags_.find("_chemical_formula_sum");
-    return (it != tags_.end() ? it->second.front() : "Unknown");
-}
-
-// Get (add or retrieve) named assembly
-CIFAssembly &ImportCIFStructureNode::getAssembly(std::string_view name)
-{
-    auto it = std::find_if(assemblies_.begin(), assemblies_.end(), [name](const auto &a) { return a.name() == name; });
-    if (it != assemblies_.end())
-        return *it;
-
-    return assemblies_.emplace_back(name);
-}
-
-// Return atom assemblies
-std::vector<CIFAssembly> &ImportCIFStructureNode::assemblies() { return assemblies_; }
-
-const std::vector<CIFAssembly> &ImportCIFStructureNode::assemblies() const { return assemblies_; }
-
-// Return whether any bond distances are defined
-bool ImportCIFStructureNode::hasBondDistances() const { return !bondingPairs_.empty(); }
-
-// Return whether a bond distance is defined for the specified label pair
-std::optional<double> ImportCIFStructureNode::bondDistance(std::string_view labelI, std::string_view labelJ) const
-{
-    auto it = std::find_if(
-        bondingPairs_.begin(), bondingPairs_.end(), [labelI, labelJ](const auto &bp)
-        { return (bp.labelI() == labelI && bp.labelJ() == labelJ) || (bp.labelI() == labelJ && bp.labelJ() == labelI); });
-    if (it != bondingPairs_.end())
-        return it->r();
-    return std::nullopt;
-}
-
-/*
- * Creation
- */
-
 // Create structure from basic unit cell atoms and connectivity
-bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, double overlapTolerance)
+bool ImportCIFStructureNode::createStructure()
 {
-    spaceGroup_ = sgid;
-
-    overlapTolerance_ = overlapTolerance;
-
-    atomLabelTypes_.clear();
+    std::vector<std::shared_ptr<AtomType>> atomLabelTypes;
 
     // Create temporary atom types corresponding to the unique atom labels
     for (auto &a : assemblies_)
@@ -443,10 +413,10 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
 
             for (auto &i : g.atoms())
             {
-                if (std::find_if(atomLabelTypes_.begin(), atomLabelTypes_.end(),
-                                 [i](const auto &at) { return i.label() == at->name(); }) == atomLabelTypes_.end())
+                if (std::find_if(atomLabelTypes.begin(), atomLabelTypes.end(),
+                                 [i](const auto &at) { return i.label() == at->name(); }) == atomLabelTypes.end())
                 {
-                    atomLabelTypes_.emplace_back(std::make_shared<AtomType>(i.Z(), i.label()));
+                    atomLabelTypes.emplace_back(std::make_shared<AtomType>(i.Z(), i.label()));
                 }
             }
         }
@@ -484,10 +454,10 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
                             continue;
 
                         // Create the new atom
-                        auto atIt = std::find_if(atomLabelTypes_.begin(), atomLabelTypes_.end(),
+                        auto atIt = std::find_if(atomLabelTypes.begin(), atomLabelTypes.end(),
                                                  [&unique](const auto at) { return unique.label() == at->name(); });
                         auto *structureAtom = structure_.addAtom(unique.Z(), r, 0.0);
-                        auto atomLabelTypeIdx = std::distance(atomLabelTypes_.begin(), atIt);
+                        auto atomLabelTypeIdx = std::distance(atomLabelTypes.begin(), atIt);
                         structureAtom->setAtomTypeIndex(atomLabelTypeIdx);
                     }
 
@@ -496,7 +466,7 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
         return false;
 
     // Bonding
-    if (!hasBondDistances())
+    if (bondingPairs_.empty())
         return true;
 
     auto pairs = PairIterator(structure_.nAtoms());
@@ -513,7 +483,7 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
         // Retrieve distance
         auto atomTypeIdxI = i->atomTypeIndex();
         auto atomTypeIdxJ = j->atomTypeIndex();
-        auto r = bondDistance(atomLabelTypes_[atomTypeIdxI]->name(), atomLabelTypes_[atomTypeIdxJ]->name());
+        auto r = getBondDistance(atomLabelTypes[atomTypeIdxI]->name(), atomLabelTypes[atomTypeIdxJ]->name());
         if (r)
         {
             if (!structure_.hasBond(i, j) && fabs(box.minimumDistance(i->r(), j->r()) - r.value()) < 1.0e-2)
@@ -526,9 +496,19 @@ bool ImportCIFStructureNode::createStructure(SpaceGroups::SpaceGroupId sgid, dou
     return true;
 }
 
-/*
- * Getters
- */
+// Perform processing
+NodeConstants::ProcessResult ImportCIFStructureNode::process()
+{
+    structure_.clear();
 
-// Return basic crystal structure
-const Structure &ImportCIFStructureNode::structure() const { return structure_; }
+    // Read contents of CIF file
+    if (read(filePath_))
+    {
+        if (!createStructure())
+            return error("Did not successfully create a basic structure from the CIF file.");
+
+        return NodeConstants::ProcessResult::Success;
+    }
+
+    return error("Failed to read contents of CIF file");
+}

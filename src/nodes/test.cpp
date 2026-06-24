@@ -6,7 +6,7 @@
 TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "A configuration input", configuration_);
+    addInput("Configuration", "A configuration input", configuration_);
     addInput("CreateConfiguration", "Whether to create the optional configuration on run", createConfiguration_);
     addInput("Number", "A single number", number_);
     addInput("NumberVector", "A vector of numbers", numberVector_);
@@ -14,7 +14,7 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
     addInput("Variant", "A variant", variant_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "A configuration output", configuration_);
+    addOutput("Configuration", "A configuration output", configuration_);
     addOptionalPointerOutput<Configuration>("OptionalConfiguration", "An optional Configuration", optionalConfiguration_);
     addOutput("Number", "A single number", number_);
     addOutput("NumberVector", "A vector of numbers", numberVector_);
@@ -23,7 +23,7 @@ TestNode::TestNode(Graph *parentGraph) : Node(parentGraph)
 }
 
 /*
- * Definition (Virtuals)
+ * Definition
  */
 
 // Return type of the node
@@ -32,10 +32,6 @@ std::string_view TestNode::type() const { return "Test"; }
 // Return short summary of the node's purpose
 std::string_view TestNode::summary() const { return "A node to allow unit testing of various graph features"; }
 
-/*
- * Data
- */
-
 // Return the optional Configuration
 const std::optional<Configuration> &TestNode::optionalConfiguration() const { return optionalConfiguration_; }
 
@@ -43,7 +39,7 @@ const std::optional<Configuration> &TestNode::optionalConfiguration() const { re
 TestNode::TestVariant TestNode::variant() { return variant_; }
 
 /*
- * Processing & Validity
+ * Processing
  */
 
 // Perform processing

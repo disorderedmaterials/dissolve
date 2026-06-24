@@ -13,22 +13,31 @@
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration to insert into", configuration_);
-    addOutput<Configuration *>("Configuration", "Modified configuration", configuration_);
-    addInput<const Species *>("Species", "Species to add - all resulting molecules will have identical geometry", species_);
-    addInput<const MoleculeSet *>("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
-    addInput<Number>("Population", "Population of the target to add", population_);
-    addInput<Number>("Density", "Density at which to add the target", density_);
+    addInput("Configuration", "Target configuration to insert into", configuration_);
+    addOutput("Configuration", "Modified configuration", configuration_);
+    addInput("Species", "Species to add - all resulting molecules will have identical geometry", species_);
+    addInput("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
+    addInput("Population", "Population of the target to add", population_);
+    addInput("Density", "Density at which to add the target", density_);
 
     // Options
-    addOption<Units::DensityUnits>("DensityUnits", "Units of target density", densityUnits_);
+    addOption("DensityUnits", "Units of target density", densityUnits_);
     addOption("BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_);
     addOption("ScaleA", "Scale box length A when modifying volume", scaleA_);
     addOption("ScaleB", "Scale box length B when modifying volume", scaleB_);
     addOption("ScaleC", "Scale box length C when modifying volume", scaleC_);
     addOption("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
-EnumOptions<Units::DensityUnits> getEnumOptions(Units::DensityUnits) { return Units::densityUnits(); }
+
+/*
+ * Definition
+ */
+
+// Return type of the node
+std::string_view InsertNode::type() const { return "Insert"; };
+
+// Return short summary of the node's purpose
+std::string_view InsertNode::summary() const { return "Insert molecules randomly into a configuration"; };
 
 /*
  * Data
@@ -44,15 +53,7 @@ EnumOptions<InsertNode::BoxActionStyle> InsertNode::boxActionStyles()
 EnumOptions<InsertNode::BoxActionStyle> getEnumOptions(InsertNode::BoxActionStyle) { return InsertNode::boxActionStyles(); }
 
 /*
- * Definition
- */
-
-std::string_view InsertNode::type() const { return "Insert"; };
-
-std::string_view InsertNode::summary() const { return "Insert molecules randomly into a configuration"; };
-
-/*
- * Functions
+ * Processing
  */
 
 // Get population totals to be added from specified MoleculeSet
@@ -142,11 +143,7 @@ void InsertNode::scaleVolume(int nAtomsToAdd, double massToAdd) const
                      scaleFactors.z, configuration_->box().volume());
 }
 
-/*
- * Processing
- */
-
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult InsertNode::process()
 {
     // Get target MoleculeSet

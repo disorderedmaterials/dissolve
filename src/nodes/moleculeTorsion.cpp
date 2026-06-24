@@ -18,8 +18,14 @@ MoleculeTorsionNode::MoleculeTorsionNode(Graph *parentGraph) : Node(parentGraph)
     addOption("L", "Index of atom l in the torsion i-j-k-l", l_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view MoleculeTorsionNode::type() const { return "MoleculeTorsion"; };
 
+// Return short summary of the node's purpose
 std::string_view MoleculeTorsionNode::summary() const
 {
     return "Calculate a specific torsion distribution in a molecule type";
@@ -43,7 +49,7 @@ const Data1D &MoleculeTorsionNode::frequency() const { return frequency_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult MoleculeTorsionNode::process()
 {
     // Initialise histograms if required
@@ -73,10 +79,6 @@ NodeConstants::ProcessResult MoleculeTorsionNode::process()
     DataOperator1D histogramNormaliser(frequency_);
     // Normalise by value
     histogramNormaliser.normaliseSumTo();
-
-    // // Save phi(ijkl) data?
-    // if (!DataExporter::exportData(dataNormalisedHisto, exportFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

@@ -4,7 +4,7 @@
 #include "nodes/registry.h"
 #include "nodes/add.h"
 #include "nodes/angle.h"
-#include "nodes/atomicMC/atomicMC.h"
+#include "nodes/atomicMC.h"
 #include "nodes/averageMolecule.h"
 #include "nodes/axisAngle.h"
 #include "nodes/bragg.h"
@@ -25,7 +25,7 @@
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/forcefield.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/histogramCN.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
@@ -45,7 +45,7 @@
 #include "nodes/modifierOSites.h"
 #include "nodes/moleculeTorsion.h"
 #include "nodes/multiply.h"
-#include "nodes/neutronSQ/neutronSQ.h"
+#include "nodes/neutronSQ.h"
 #include "nodes/numberNode.h"
 #include "nodes/orientedSDF.h"
 #include "nodes/qSpecies.h"
@@ -54,12 +54,12 @@
 #include "nodes/setCoordinates.h"
 #include "nodes/siteRDF.h"
 #include "nodes/species.h"
-#include "nodes/sq/sq.h"
+#include "nodes/sq.h"
 #include "nodes/subtract.h"
-#include "nodes/vec3Assembly.h"
-#include "nodes/vec3Decomposition.h"
+#include "nodes/vector3Assemble.h"
+#include "nodes/vector3Decompose.h"
 #include "nodes/voxelDensity.h"
-#include "nodes/xRaySQ/xRaySQ.h"
+#include "nodes/xRaySQ.h"
 #include <memory>
 #include <ranges>
 
@@ -133,8 +133,8 @@ void NodeRegistry::instantiateNodeProducers()
                   {"SQ", makeDerivedNode<SQNode>()},
                   {"Species", makeDerivedNode<SpeciesNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
-                  {"Vec3Assembly", makeDerivedNode<Vec3AssemblyNode>()},
-                  {"Vec3Decomposition", makeDerivedNode<Vec3DecompositionNode>()},
+                  {"Vector3Assemble", makeDerivedNode<Vector3AssembleNode>()},
+                  {"Vector3Decompose", makeDerivedNode<Vector3DecomposeNode>()},
                   {"XRaySQ", makeDerivedNode<XRaySQNode>()},
                   {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}};
 }

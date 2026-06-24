@@ -13,12 +13,17 @@ class CalculateBondingNode : public Node
     CalculateBondingNode(Graph *parentGraph);
     ~CalculateBondingNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Input structure
@@ -35,10 +40,11 @@ class CalculateBondingNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 
     public:
+    // Calculate bonding in the specified structure
     static void calculate(Structure &structure, double tolerance = 1.1, bool clearBefore = true, bool preventMetallic = false);
 };

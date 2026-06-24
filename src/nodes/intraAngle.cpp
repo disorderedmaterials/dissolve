@@ -10,7 +10,7 @@
 IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", targetConfiguration_);
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
@@ -18,19 +18,42 @@ IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C", c_);
     addOption("RangeAB", "Range (min, max, binwidth) of A-B distance binning", rangeAB_);
     addOption("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_);
-    addOption<Vector3>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_);
-    addOption<bool>("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)",
-                    symmetric_);
+    addOption("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_);
+    addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", targetConfiguration_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view IntraAngleNode::type() const { return "IntraAngle"; }
 
-std::string_view IntraAngleNode::summary() const { return "Calculate angle distributions within molecules"; }
+// Return short summary of the node's purpose
+std::string_view IntraAngleNode::summary() const
+{
+    return "Calculate angle distributions between sites within the same molecule";
+}
 
-// Run main processing
+/*
+ * Data
+ */
+
+// Clear any local data
+void IntraAngleNode::clearData()
+{
+    intraAngleHist_.reset();
+    angleABC_.clear();
+}
+
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult IntraAngleNode::process()
 {
     // Select site A

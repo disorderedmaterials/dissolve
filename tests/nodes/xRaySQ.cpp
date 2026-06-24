@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/xRaySQ/xRaySQ.h"
-#include "nodes/gr/gr.h"
+#include "nodes/xRaySQ.h"
+#include "nodes/gr.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>

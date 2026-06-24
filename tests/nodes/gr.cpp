@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "math/windowFunction.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"

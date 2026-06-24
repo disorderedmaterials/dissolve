@@ -6,7 +6,6 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// Add Node
 class AddNode : public Node
 {
     public:
@@ -23,7 +22,7 @@ class AddNode : public Node
     std::string_view summary() const override;
 
     /*
-     * Processing & Validity
+     * Data
      */
     private:
     // Operand X
@@ -33,7 +32,10 @@ class AddNode : public Node
     // Result (sum of X and Y)
     Number result_;
 
-    public:
+    /*
+     * Processing
+     */
+    protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
 };

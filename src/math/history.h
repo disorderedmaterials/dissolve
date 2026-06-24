@@ -82,6 +82,8 @@ template <class T> class PODHistory : public Serialisable<>
     std::vector<T> history_;
 
     public:
+    // Clear all data in the history
+    void clear() { history_.clear(); }
     // Push data into the history
     void push(const T &data, int averagingLength)
     {

@@ -5,15 +5,12 @@
 
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
-#include "classes/partialSet.h"
 #include "classes/scatteringMatrix.h"
 #include "math/data1D.h"
 #include "math/range.h"
-#include "nodes/gr/gr.h"
-#include "nodes/iterableGraph.h"
 #include "nodes/node.h"
 #include "nodes/number.h"
-#include "nodes/xRaySQ/xRaySQ.h"
+#include "templates/doubleKeyedMap.h"
 #include <optional>
 #include <tuple>
 
@@ -72,12 +69,17 @@ class EPSRNode : public Node
     EPSRNode(Graph *parentGraph);
     ~EPSRNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     public:
     enum ExpansionFunctionType
@@ -132,16 +134,6 @@ class EPSRNode : public Node
     std::optional<Number> rMinPT_;
     // Degree of smoothing to apply to fluctuation coefficients before summation into potential
     std::optional<Number> fluctuationSmoothing_;
-    // Whether to save difference function and fit
-    bool saveDifferenceFunctions_{false};
-    // Whether to save empirical potentials
-    bool saveEmpiricalPotentials_{false};
-    // Whether to save estimated partials
-    bool saveEstimatedPartials_{false};
-    // Whether to save potential coefficients
-    bool savePotentialCoefficients_{false};
-    // Whether to save simulated F(r) (Fourier transform of calculated F(Q))
-    bool saveSimulatedFR_{false};
     // Target Modules containing data to refine against
     std::vector<std::string> targetNames_;
     // Weightings for targets (if not 1.0)
@@ -165,8 +157,18 @@ class EPSRNode : public Node
     // Run count
     std::optional<int> runCount_;
 
+    public:
+    // Return target process data for a given node
+    const TargetProcessData &targetProcessData(Node *target);
+    // Return scattering matrix
+    const ScatteringMatrix &scatteringMatrix() const;
+    // Return additional potential for a given atom type pair
+    const Data1D &additionalPotential(std::string i, std::string j) const;
+    // Return estimated S(Q) for a given atom type pair
+    const Data1D &estimatedSQ(std::string i, std::string j) const;
+
     /*
-     * Functions
+     * Processing
      */
     private:
     // Returns the target correlation data
@@ -184,8 +186,6 @@ class EPSRNode : public Node
     void updateDeltaSQ(OptionalReferenceWrapper<const PartialSet> unweightedSQ = std::nullopt,
                        OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optCalculatedSQ = std::nullopt,
                        OptionalReferenceWrapper<const DoubleKeyedMap<Data1D>> optEstimatedSQ = std::nullopt);
-
-    public:
     // Create / retrieve arrays for storage of empirical potential coefficients
     Array2D<std::vector<double>> &potentialCoefficients(const int nAtomTypes, std::optional<Number> ncoeffp = std::nullopt);
     // Generate empirical potentials from current coefficients
@@ -200,25 +200,9 @@ class EPSRNode : public Node
     // Return vector of empirical potentials
     std::vector<std::tuple<const AtomType *, const AtomType *, Data1D>> empiricalPotentials();
 
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
-
-    /*
-     * Getters
-     */
-    public:
-    // Return target process data for a given node
-    const TargetProcessData &targetProcessData(Node *target);
-    // Return scattering matrix
-    const ScatteringMatrix &scatteringMatrix() const;
-    // Return additional potential for a given atom type pair
-    const Data1D &additionalPotential(std::string i, std::string j) const;
-    // Return estimated S(Q) for a given atom type pair
-    const Data1D &estimatedSQ(std::string i, std::string j) const;
 };
 
 EnumOptions<EPSRNode::ExpansionFunctionType> getEnumOptions(EPSRNode::ExpansionFunctionType);

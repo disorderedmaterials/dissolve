@@ -7,7 +7,6 @@
 #include "classes/moleculeSet.h"
 #include "nodes/node.h"
 
-// Insert Node
 class InsertNode : public Node
 {
     public:
@@ -18,7 +17,9 @@ class InsertNode : public Node
      * Definition
      */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
@@ -62,7 +63,7 @@ class InsertNode : public Node
     bool rotate_{true};
 
     /*
-     * Functions
+     * Processing
      */
     private:
     // Add volume the configuration's box to accommodate specified atoms / mass
@@ -72,10 +73,7 @@ class InsertNode : public Node
     // Get population totals to be added from specified MoleculeSet
     std::tuple<int, int, double> getPopulationTotals(int population, const MoleculeSet &molecules) const;
 
-    /*
-     * Processing
-     */
-    public:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

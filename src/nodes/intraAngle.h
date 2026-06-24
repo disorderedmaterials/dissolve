@@ -7,19 +7,23 @@
 #include "math/histogram1D.h"
 #include "nodes/node.h"
 
-// IntraAngle Node
 class IntraAngleNode : public Node
 {
     public:
     IntraAngleNode(Graph *parentGraph);
     ~IntraAngleNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -38,17 +42,16 @@ class IntraAngleNode : public Node
     // Whether the angular range should be considered symmetric about 90
     bool symmetric_{false};
 
+    public:
+    // Clear any local data
+    void clearData() override;
+    // Temporary accessors to data for testing
+    const Data1D &intraAngleData() const;
+
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
-
-    /*
-     * Getters
-     */
-    public:
-    // Intramolecular angle histogram
-    const Data1D &intraAngleData() const;
 };

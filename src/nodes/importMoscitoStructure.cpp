@@ -6,17 +6,28 @@
 ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Structure", "Imported structure", structure_);
     addOutput("Forces", "Atomic forces (if present)", forces_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportMoscitoStructureNode::type() const { return "ImportMoscitoStructure"; }
 
-std::string_view ImportMoscitoStructureNode::summary() const { return "Import a Moscito file."; }
+// Return short summary of the node's purpose
+std::string_view ImportMoscitoStructureNode::summary() const { return "Import a Moscito file"; }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
 {
     /*

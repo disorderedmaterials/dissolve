@@ -2,38 +2,60 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/energy.h"
-#include "base/sysFunc.h"
-#include "kernels/producer.h"
-#include "main/dissolve.h"
+#include "base/timer.h"
+#include "kernels/energy.h"
 #include "math/regression.h"
 #include "nodes/dissolve.h"
 
 EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration to calculate energy for", targetConfiguration_)
+    addInput("Configuration", "Configuration to calculate energy for", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", targetConfiguration_);
+    addOutput("Configuration", "Output configuration", targetConfiguration_);
 
     // Options
-    addOption<double>("StabilityThreshold",
-                      "Threshold value at which energy is deemed stable over the defined windowing period",
-                      stabilityThreshold_);
-    addOption<int>("StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)",
-                   stabilityWindow_);
+    addOption("StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period",
+              stabilityThreshold_);
+    addOption("StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)",
+              stabilityWindow_);
 }
 
 /*
- * Node
+ * Definition
  */
 
+// Return type of the node
 std::string_view EnergyNode::type() const { return "Energy"; }
 
+// Return short summary of the node's purpose
 std::string_view EnergyNode::summary() const { return "Calculate total energy of a configuration"; }
 
-// Run main processing
+/*
+ * Data
+ */
+
+// Clear any local data
+void EnergyNode::clearData()
+{
+    totalEnergyHistory_.clear();
+    totalPairPotentialHistory_.clear();
+    totalMoleculePPHistory_.clear();
+    totalGeometryHistory_.clear();
+    totalCohesiveHistory.clear();
+    bondHistory_.clear();
+    angleHistory_.clear();
+    torsionHistory_.clear();
+    improperHistory_.clear();
+}
+
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult EnergyNode::process()
 {
     message("\n");

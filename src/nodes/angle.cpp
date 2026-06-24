@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/angle.h"
-#include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/dataOperator2D.h"
 #include "analyser/siteSelector.h"
@@ -11,11 +10,10 @@
 AngleNode::AngleNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration for the calculation", configuration_)
-        ->setFlags({ParameterBase::Required});
+    addInput("Configuration", "Target configuration for the calculation", configuration_)->setFlags({ParameterBase::Required});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
@@ -33,8 +31,14 @@ AngleNode::AngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view AngleNode::type() const { return "Angle"; }
 
+// Return short summary of the node's purpose
 std::string_view AngleNode::summary() const { return "Calculate details of a specific angle A-B-C"; }
 
 /*
@@ -61,7 +65,7 @@ const Data1D &AngleNode::angleABC() const { return angleABC_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult AngleNode::process()
 {
     // Select site A

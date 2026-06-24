@@ -22,20 +22,23 @@ class SiteRDFNode : public Node
     SiteRDFNode(Graph *parentGraph);
     ~SiteRDFNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
     Configuration *configuration_{nullptr};
     // Target SpeciesSite definitions
     SpeciesSites a_, b_;
-    // Sums
-    Sums sums_;
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{true};
     // Range (min, max, delta) of distance axis
@@ -44,10 +47,6 @@ class SiteRDFNode : public Node
     Range rangeA_{0.0, 3.0};
     Range rangeB_{3.0, 6.0};
     Range rangeC_{6.0, 9.0};
-    // Site RDF
-    Data1D dataRDF_;
-    // Histogram1D between A and B sites
-    std::optional<Histogram1D> histAB_;
     // Flags for ranges
     bool rangeEnabled_[3] = {true, false, false};
     // Whether to calculate the instantaneous coordination numbers rather than forming an average
@@ -55,19 +54,24 @@ class SiteRDFNode : public Node
     // Whether to export instantaneous coordination numbers to disk
     bool exportInstantaneous_{false};
 
+    // Sums
+    Sums sums_;
+    // Site RDF
+    Data1D dataRDF_;
+    // Histogram1D between A and B sites
+    std::optional<Histogram1D> histAB_;
+
     public:
     // Return whether specified coordination number range is enabled
     bool isRangeEnabled(int id) const;
+    // Temporary accessors to data for testing
+    const Data1D &dataRDF();
+    const std::pair<SampledDouble, std::optional<Data1D>> &sumN(std::string name);
 
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
-
-    // Getters
-    public:
-    const Data1D &dataRDF();
-    const std::pair<SampledDouble, std::optional<Data1D>> &sumN(std::string name);
 };

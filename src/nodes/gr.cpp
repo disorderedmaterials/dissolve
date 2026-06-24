@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
+#include "nodes/gr.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -10,14 +11,76 @@
 #include "math/combinations.h"
 #include "math/filters.h"
 #include "nodes/dissolve.h"
-#include "nodes/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 #include <math.h>
 #include <tuple>
 
+GRNode::GRNode(Graph *parentGraph)
+    : Node(parentGraph), rawGRHistory_(
+                             [&]()
+                             {
+                                 PartialSet p;
+                                 p.initialise(unweightedGR_.value());
+                                 return p;
+                             })
+{
+    // Inputs
+    addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
+        ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+
+    // Outputs
+    addOptionalPointerOutput<PartialSet>("RawGR", "Original (unbroadened) partials for the target configuration", rawGR_);
+    addOptionalPointerOutput<PartialSet>("UnweightedGR", "Unweighted partials for target configuration", unweightedGR_);
+
+    // Options
+    addOption("BinWidth", "Bin width (spacing in r) to use", binWidth_);
+    addOption("Range", "Maximum r to calculate g(r) out to", requestedRange_);
+    addOption("Averaging", "Number of historical partial sets to combine into final partials", averagingLength_);
+    addOption("IntraBroadening", "Type of broadening to apply to intramolecular g(r)", intraBroadening_);
+    addOption("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)", nSmooths_);
+    addOption("Method", "Calculation method for partial radial distribution functions", partialsMethod_);
+
+    // Serialisables
+    addSerialisable("rawGR", rawGR_);
+    addSerialisable("rawGRHistory", rawGRHistory_);
+    addSerialisable("unweightedGR", unweightedGR_);
+}
+
+// Return enum option info for PartialsMethod
+EnumOptions<GRNode::PartialsMethod> GRNode::partialsMethods()
+{
+    return EnumOptions<GRNode::PartialsMethod>("PartialsMethod", {{PartialsMethod::AutoMethod, "Auto"},
+                                                                  {PartialsMethod::CellsMethod, "Cells"},
+                                                                  {PartialsMethod::SimpleMethod, "Simple"},
+                                                                  {PartialsMethod::TestMethod, "Test"}});
+}
+EnumOptions<GRNode::PartialsMethod> getEnumOptions(GRNode::PartialsMethod) { return GRNode::partialsMethods(); }
+
 /*
- * Private Functions
+ * Definition
+ */
+
+// Return type of the node
+std::string_view GRNode::type() const { return "GR"; }
+
+// Return short summary of the node's purpose
+std::string_view GRNode::summary() const { return "Calculate radial distribution functions between all atom types"; }
+
+/*
+ * Data
+ */
+
+// Clear any local data
+void GRNode::clearData()
+{
+    rawGR_.reset();
+    rawGRHistory_.clear();
+    unweightedGR_.reset();
+}
+
+/*
+ * Processing
  */
 
 // Calculate partial g(r) in serial with simple double-loop
@@ -267,10 +330,6 @@ void GRNode::calculateRDF(Data1D &gr, const Histogram1D &histogram, double boxVo
     }
 }
 
-/*
- * Public Functions
- */
-
 // Calculate raw partials
 bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
 {
@@ -452,4 +511,78 @@ bool GRNode::calculateUnweightedGR()
     unweightedGR_->formTotals(true);
 
     return true;
+}
+
+// Perform processing
+NodeConstants::ProcessResult GRNode::process()
+{
+    // Print argument/parameter summary
+    if (!requestedRange_)
+        message("Partials will be calculated up to the half-cell range limit.\n");
+    else
+        message("Partials will be calculated out to {} Angstroms.\n", requestedRange_.value().asDouble());
+    message("Bin-width to use is {} Angstroms.\n", binWidth_.asDouble());
+    if (averagingLength_)
+        message("Partials will be averaged over {} sets.\n", averagingLength_.value().asDouble());
+    else
+        message("No averaging of partials will be performed.\n");
+    if (intraBroadening_.form() == Functions1D::Form::None)
+        message("No broadening will be applied to intramolecular g(r).");
+    else
+        message("Broadening to be applied to intramolecular g(r) is {} ({}).",
+                Functions1D::forms().keyword(intraBroadening_.form()), intraBroadening_.parameterSummary());
+    message("Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
+    if (nSmooths_)
+        message("Degree of smoothing to apply to calculated partial g(r) is {}.\n", nSmooths_.value().asInteger());
+    message("\n");
+
+    // Create unweighted GR storage if we need it
+    if (!unweightedGR_)
+    {
+        unweightedGR_.emplace();
+        unweightedGR_.value().initialise(targetConfiguration_->speciesPopulations());
+        unweightedGR_.value().setEffectiveDensity(targetConfiguration_->atomicDensity().value_or(0.0));
+    }
+
+    // Create original GR storage if we need it
+    if (!rawGR_)
+    {
+        rawGR_.emplace();
+        rawGR_.value().initialise(unweightedGR_.value());
+    }
+
+    // Check range
+    auto grRange = targetConfiguration_->box().inscribedSphereRadius();
+    if (!requestedRange_)
+        message("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", targetConfiguration_->name(), grRange);
+    else
+    {
+        if (requestedRange_.value_or(Number(0.0)) > grRange)
+        {
+            error("Specified RDF range of {} Angstroms is out of range for Configuration "
+                  "'{}' (max = {} Angstroms).\n",
+                  requestedRange_.value().asDouble(), targetConfiguration_->name(), grRange);
+            return NodeConstants::ProcessResult::Failed;
+        }
+
+        grRange = requestedRange_.value().asDouble();
+        message("Cutoff for Configuration '{}' is {} Angstroms.\n", targetConfiguration_->name(), grRange);
+    }
+
+    // 'Snap' grRange to nearest bin width...
+    grRange = int(grRange / binWidth_.asDouble()) * binWidth_.asDouble();
+    message("Cutoff (snapped to bin width) is {} Angstroms.\n", grRange);
+
+    // Calculate unweighted partials for this Configuration
+    bool alreadyUpToDate;
+    calculateRawGR(grRange, alreadyUpToDate);
+
+    // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
+    if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
+        (*rawGR_) = rawGRHistory_.push((*rawGR_), averagingLength_.value().asInteger());
+
+    // Form unweighted g(r) from original g(r), applying any requested smoothing and/or intramolecular broadening
+    calculateUnweightedGR();
+
+    return NodeConstants::ProcessResult::Success;
 }

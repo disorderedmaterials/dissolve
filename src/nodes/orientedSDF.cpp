@@ -24,8 +24,10 @@ OrientedSDFNode::OrientedSDFNode(Graph *parentGraph) : Node(parentGraph)
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 }
 
+// Return type of the node
 std::string_view OrientedSDFNode::type() const { return "OrientedSDF"; }
 
+// Return short summary of the node's purpose
 std::string_view OrientedSDFNode::summary() const
 {
     return "Calculate spatial density functions around oriented sites, restricted by relative molecule orientation";
@@ -49,7 +51,7 @@ const Data3D &OrientedSDFNode::sdf() const { return sdf_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult OrientedSDFNode::process()
 {
     // Select site A
@@ -99,10 +101,6 @@ NodeConstants::ProcessResult OrientedSDFNode::process()
     normaliserOrientedSDF.divide(double(a.sites().size()));
     // Normalise by grid
     normaliserOrientedSDF.normaliseByGrid();
-
-    // // Save OrientedSDF data?
-    // if (!DataExporter::exportData(dataOrientedSDF, sdfFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

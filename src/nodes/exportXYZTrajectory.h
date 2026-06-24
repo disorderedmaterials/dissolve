@@ -4,7 +4,6 @@
 #pragma once
 
 #include "nodes/node.h"
-#include <iostream>
 
 // Forward Declarations
 class Configuration;
@@ -19,7 +18,9 @@ class ExportXYZTrajectoryNode : public Node
      * Definition
      */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
@@ -38,7 +39,7 @@ class ExportXYZTrajectoryNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

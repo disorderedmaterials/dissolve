@@ -20,8 +20,14 @@ SDFNode::SDFNode(Graph *parentGraph) : Node(parentGraph)
               excludeSameMolecule_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view SDFNode::type() const { return "SDF"; }
 
+// Return short summary of the node's purpose
 std::string_view SDFNode::summary() const { return "Calculate spatial density functions around oriented sites"; }
 
 /*
@@ -42,7 +48,7 @@ const Data3D &SDFNode::sdf() const { return sdf_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult SDFNode::process()
 {
     // Select site A
@@ -86,10 +92,6 @@ NodeConstants::ProcessResult SDFNode::process()
     normaliserSDF.divide(double(a.sites().size()));
     // Normalise by grid
     normaliserSDF.normaliseByGrid();
-
-    // // Save SDF data?
-    // if (!DataExporter::exportData(dataSDF, sdfFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

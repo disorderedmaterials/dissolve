@@ -6,17 +6,28 @@
 SetCoordinatesNode::SetCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration to modify", configuration_);
+    addInput("Configuration", "Configuration to modify", configuration_);
     addInput("Structure", "Structure to apply", structure_);
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view SetCoordinatesNode::type() const { return "SetCoordinates"; }
 
-std::string_view SetCoordinatesNode::summary() const { return "Set coordinates of a configuration from a source structure."; }
+// Return short summary of the node's purpose
+std::string_view SetCoordinatesNode::summary() const { return "Set coordinates of a configuration from a source structure"; }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult SetCoordinatesNode::process()
 {
     // Check sizes

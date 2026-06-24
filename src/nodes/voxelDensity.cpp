@@ -17,16 +17,18 @@ VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
     addOption("TargetProperty", "Target property for analysis", targetProperty_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view VoxelDensityNode::type() const { return "VoxelDensity"; }
 
+// Return short summary of the node's purpose
 std::string_view VoxelDensityNode::summary() const
 {
     return "Describe distribution of atomic number, mass, and scattering length density across unit cell voxels";
 }
-
-/*
- * Definition
- */
 
 // Return enum option info for TargetPropertyType
 EnumOptions<VoxelDensityNode::TargetPropertyType> VoxelDensityNode::targetPropertyTypes()
@@ -35,6 +37,10 @@ EnumOptions<VoxelDensityNode::TargetPropertyType> VoxelDensityNode::targetProper
         "TargetPropertyType", {{TargetPropertyType::Mass, "Mass"},
                                {TargetPropertyType::AtomicNumber, "AtomicNumber"},
                                {TargetPropertyType::ScatteringLengthDensity, "ScatteringLengthDensity"}});
+}
+EnumOptions<VoxelDensityNode::TargetPropertyType> getEnumOptions(VoxelDensityNode::TargetPropertyType)
+{
+    return VoxelDensityNode::targetPropertyTypes();
 }
 
 /*
@@ -58,12 +64,6 @@ const Data1D &VoxelDensityNode::values() const { return values_; };
  * Processing
  */
 
-// Target property for analysis
-VoxelDensityNode::TargetPropertyType VoxelDensityNode::getCurrentProperty() const { return targetProperty_; }
-
-// Voxel volume (cubic angstroms)
-double VoxelDensityNode::voxelVolume() const { return voxelVolume_; }
-
 // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
 double VoxelDensityNode::voxelSideLength(const double axisLength) const
 {
@@ -80,7 +80,7 @@ void VoxelDensityNode::addValue(const Vector3 &coords, double value)
 // Return atomic coordinates folded into unit cell
 Vector3 VoxelDensityNode::foldedCoordinates(const Vector3 &r, const Box &unitCell) { return unitCell.foldFrac(r); }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult VoxelDensityNode::process()
 {
     auto unitCell = configuration_->box();
@@ -132,9 +132,4 @@ NodeConstants::ProcessResult VoxelDensityNode::process()
     values_ = histogram_->accumulatedData();
 
     return NodeConstants::ProcessResult::Success;
-}
-
-EnumOptions<VoxelDensityNode::TargetPropertyType> getEnumOptions(VoxelDensityNode::TargetPropertyType)
-{
-    return VoxelDensityNode::targetPropertyTypes();
 }

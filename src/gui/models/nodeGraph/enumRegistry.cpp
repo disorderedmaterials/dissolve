@@ -5,7 +5,7 @@
 #include "data/structureFactors.h"
 #include "gui/models/nodeGraph/enumOptionsModel.h"
 #include "math/windowFunction.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/md.h"
 
 std::map<std::type_index, std::shared_ptr<EnumOptionsModel>> EnumRegistry::options_;

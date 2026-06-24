@@ -6,17 +6,28 @@
 ImportDLPOLYStructureNode::ImportDLPOLYStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Structure", "Imported structure", structure_);
     addOutput("Forces", "Atomic forces (if present)", forces_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportDLPOLYStructureNode::type() const { return "ImportDLPOLYStructure"; }
 
-std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file."; }
+// Return short summary of the node's purpose
+std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a DL_POLY CONFIG or REVCON file"; }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ImportDLPOLYStructureNode::process()
 {
     // Open file and check that we're OK to proceed importing from it

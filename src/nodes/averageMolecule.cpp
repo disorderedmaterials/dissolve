@@ -12,8 +12,14 @@ AverageMoleculeNode::AverageMoleculeNode(Graph *parentGraph) : Node(parentGraph)
         ->setFlags({ParameterBase::Required});
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view AverageMoleculeNode::type() const { return "AverageMolecule"; }
 
+// Return short summary of the node's purpose
 std::string_view AverageMoleculeNode::summary() const
 {
     return "Calculate average atomic positions of a molecule type around an oriented site";
@@ -46,7 +52,7 @@ void AverageMoleculeNode::updateStructure()
         i->setR({rx, ry, rz});
 }
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult AverageMoleculeNode::process()
 {
     // Get parent Species of site

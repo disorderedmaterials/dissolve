@@ -7,7 +7,7 @@
 DissolveGraph::DissolveGraph() : Graph(nullptr) {}
 
 /*
- * Definitions (Virtuals)
+ * Definitions
  */
 
 // Return node name
@@ -18,6 +18,10 @@ std::string_view DissolveGraph::type() const { return "Dissolve"; }
 
 // Return short summary of the node's purpose
 std::string_view DissolveGraph::summary() const { return "Parent node of all simulations"; }
+
+/*
+ * Data
+ */
 
 std::optional<std::string> DissolveGraph::loadFile(std::filesystem::path name)
 {
@@ -31,12 +35,6 @@ std::optional<std::string> DissolveGraph::loadFile(std::filesystem::path name)
         return std::format("{} at {} on line ", err.what(), err.location().file_name(), err.location().line_str());
     }
     return {};
-}
-
-// Access a pair potential
-PairPotential &DissolveGraph::pairPotential(const AtomType *at1, const AtomType *at2)
-{
-    return pairPotentials_.get(at1->name(), at2->name());
 }
 
 // Return the DissolveGraph reference
@@ -100,6 +98,12 @@ void DissolveGraph::updatePairPotential(const AtomType &i, const AtomType &j)
 
 // Clear all pair potentials
 void DissolveGraph::clearPairPotentials() { pairPotentials_.clear(); }
+
+// Access a pair potential
+PairPotential &DissolveGraph::pairPotential(const AtomType *at1, const AtomType *at2)
+{
+    return pairPotentials_.get(at1->name(), at2->name());
+}
 
 // Ensure that the specified Configuration has updated type indexing, cells etc.
 void DissolveGraph::updateIndexingAndCells(Configuration *cfg) const

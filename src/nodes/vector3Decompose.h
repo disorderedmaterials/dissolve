@@ -7,16 +7,11 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// Vec3Decomposition Node
-class Vec3DecompositionNode : public Node
+class Vector3DecomposeNode : public Node
 {
     public:
-    Vec3DecompositionNode(Graph *parentGraph);
-    ~Vec3DecompositionNode() override = default;
-
-    public:
-    std::string_view type() const override;
-    std::string_view summary() const override;
+    Vector3DecomposeNode(Graph *parentGraph);
+    ~Vector3DecomposeNode() override = default;
 
     /*
      * Definition
@@ -31,10 +26,16 @@ class Vec3DecompositionNode : public Node
     // Output z
     Number z_;
 
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
+
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

@@ -3,26 +3,32 @@
 
 #pragma once
 
-#include "classes/box.h"
 #include "classes/braggReflection.h"
 #include "classes/configuration.h"
 #include "classes/kVector.h"
-#include "main/dissolve.h"
 #include "math/history.h"
 #include "nodes/node.h"
 
-// Bragg Module
+// Forward Declarations
+class PartialSet;
+
 class BraggNode : public Node
 {
     public:
     BraggNode(Graph *parentGraph);
     ~BraggNode() override = default;
 
+    /*
+     * Definition
+     */
+    public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -47,20 +53,8 @@ class BraggNode : public Node
     PartialSet *unweightedSQ_{nullptr};
     // Broadening function to apply to Bragg S(Q)
     Function1DWrapper braggQBroadening_{Functions1D::Form::GaussianC2, {0.0, 0.02}};
-    // Whether to save Bragg reflection data to disk
-    bool saveReflections_{false};
 
-    /*
-     * Functions
-     */
     public:
-    // Calculate Bragg terms for specified Configuration
-    bool calculateBraggTerms();
-    // Form partial and total reflection functions from calculated reflection data
-    bool formReflectionFunctions();
-    // Re-bin reflection data into supplied arrays
-    bool reBinReflections();
-
     // Get reflections data
     const std::vector<BraggReflection> &braggReflections();
 
@@ -68,6 +62,14 @@ class BraggNode : public Node
      * Processing
      */
     private:
-    // Run main processing
+    // Calculate Bragg terms
+    bool calculateBraggTerms();
+    // Form partial and total reflection functions from calculated reflection data
+    bool formReflectionFunctions();
+    // Re-bin reflection data into supplied arrays
+    bool reBinReflections();
+
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

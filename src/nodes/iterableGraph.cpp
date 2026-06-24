@@ -5,12 +5,12 @@
 
 IterableGraph::IterableGraph(Graph *parentGraph) : Graph(parentGraph)
 {
-    addOption<Number>("N", "Number of loops (iterations) to perform", nIterations_);
+    addOption("N", "Number of loops (iterations) to perform", nIterations_);
     loopBacks_ = dynamic_cast<LoopBacksNode *>(addNode(std::make_unique<LoopBacksNode>(this), "LoopBacks"));
 }
 
 /*
- * Definitions (Virtuals)
+ * Definition
  */
 
 // Return node name
@@ -20,19 +20,23 @@ std::string_view IterableGraph::name() const { return "Iterator"; }
 std::string_view IterableGraph::type() const { return "Iterator"; }
 
 // Return short summary of the node's purpose
-std::string_view IterableGraph::summary() const { return "Loop the contained graph"; }
+std::string_view IterableGraph::summary() const { return "Iterate the contained graph"; }
+
+/*
+ * Data
+ */
 
 // Number of loops (iterations) to perform
-const int IterableGraph::nIterations() const { return nIterations_.asInteger(); }
+int IterableGraph::nIterations() const { return nIterations_.asInteger(); }
 
-// Loop backs
-LoopBacksNode *IterableGraph::loopBacks() { return loopBacks_; }
+// Return loopbacks node
+LoopBacksNode *IterableGraph::loopBacks() const { return loopBacks_; }
 
-// Loop edges
-Graph::Edges &IterableGraph::loopEdges() { return loopEdges_; }
+// Return loop edges
+const Graph::Edges &IterableGraph::loopEdges() const { return loopEdges_; }
 
 // Current loop iteration
-int IterableGraph::currentIteration() { return i_; }
+int IterableGraph::currentIteration() const { return i_; }
 
 // Set the loopbacks corresponding to the graph inputs
 void IterableGraph::setLoopBacks()
@@ -52,44 +56,7 @@ void IterableGraph::releaseLoopBack(const std::string &name)
         inputs.erase(it);
 }
 
-// Add edge between nodes
-bool IterableGraph::addEdge(const EdgeDefinition &definition)
-{
-    if (dynamic_cast<InputsNode *>(parentGraph()->findNode(definition.sourceNode)))
-        setLoopBacks();
-    else if (loopBacks_->findInput(definition.targetInput))
-    {
-        auto edge =
-            Edge::create(this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
-        if (!edge)
-            return false;
-
-        loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs()));
-
-        addOutputLoopEdge(definition.sourceOutput, loopEdges_.back().get());
-
-        return true;
-    }
-
-    return Graph::addEdge(definition);
-}
-
-// Remove edge between nodes
-bool IterableGraph::removeEdge(const EdgeDefinition &definition)
-{
-    if (!Graph::removeEdge(definition))
-    {
-        auto loopEdge = findLoopEdge(definition);
-        if (removeEdge(static_cast<LoopEdge *>(loopEdge)))
-            releaseLoopBack(definition.targetInput);
-        else
-            return false;
-
-        removeOutputLoopEdge(definition.sourceOutput, static_cast<Edge *>(loopEdge));
-    }
-    return true;
-}
-
+// Remove specified loop edge
 bool IterableGraph::removeEdge(LoopEdge *edgeToRemove)
 {
     if (!edgeToRemove)
@@ -155,7 +122,49 @@ Edge *IterableGraph::removeOutputLoopEdge(std::string_view sourceOutput, Edge *e
 }
 
 /*
- * Processing & Validity
+ * Nodes and Edges
+ */
+
+// Add edge between nodes
+bool IterableGraph::addEdge(const EdgeDefinition &definition)
+{
+    if (dynamic_cast<InputsNode *>(parentGraph()->findNode(definition.sourceNode)))
+        setLoopBacks();
+    else if (loopBacks_->findInput(definition.targetInput))
+    {
+        auto edge =
+            Edge::create(this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
+        if (!edge)
+            return false;
+
+        loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs()));
+
+        addOutputLoopEdge(definition.sourceOutput, loopEdges_.back().get());
+
+        return true;
+    }
+
+    return Graph::addEdge(definition);
+}
+
+// Remove edge between nodes
+bool IterableGraph::removeEdge(const EdgeDefinition &definition)
+{
+    if (!Graph::removeEdge(definition))
+    {
+        auto loopEdge = findLoopEdge(definition);
+        if (removeEdge(static_cast<LoopEdge *>(loopEdge)))
+            releaseLoopBack(definition.targetInput);
+        else
+            return false;
+
+        removeOutputLoopEdge(definition.sourceOutput, static_cast<Edge *>(loopEdge));
+    }
+    return true;
+}
+
+/*
+ * Processing
  */
 
 // Perform processing

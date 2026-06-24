@@ -7,16 +7,27 @@
 ImportDLPUtilsPDensNode::ImportDLPUtilsPDensNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<std::optional<Data3D>>("Data", "Imported data", data_);
+    addOutput("Data", "Imported data", data_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportDLPUtilsPDensNode::type() const { return "ImportDLPUtilsPDens"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportDLPUtilsPDensNode::summary() const { return "Import DLPUtils 3D pdens data"; }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ImportDLPUtilsPDensNode::process()
 {
     // Create the data

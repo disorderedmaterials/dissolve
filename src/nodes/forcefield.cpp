@@ -7,7 +7,7 @@
 
 ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addOption<Forcefield *>("Forcefield", "Source forcefield", recipe_.ff);
+    addOption("Forcefield", "Source forcefield", recipe_.ff);
     addOutput("Recipe", "Recipe for the forcefield when applying to a species", recipe_);
 }
 
@@ -15,18 +15,21 @@ ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
  * Definition
  */
 
+// Return type of the node
 std::string_view ForcefieldNode::type() const { return "Forcefield"; }
 
+// Return short summary of the node's purpose
 std::string_view ForcefieldNode::summary() const { return "Set up a forcefield to apply to a species"; }
 
 /*
  * Processing
  */
 
+// Perform processing
 NodeConstants::ProcessResult ForcefieldNode::process() { return NodeConstants::ProcessResult::Success; }
 
 /*
- * I/O
+ * Serialisation
  */
 
 // Serialise any hidden content

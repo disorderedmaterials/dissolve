@@ -10,23 +10,23 @@
 #include "nodes/node.h"
 #include <optional>
 
-// Forward Declarations
-class PartialSet;
-class Data1D;
-
-// Neutron SQ Node
 class NeutronSQNode : public Node
 {
     public:
     NeutronSQNode(Graph *parentGraph);
     ~NeutronSQNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Unweighted S(Q)
@@ -57,37 +57,12 @@ class NeutronSQNode : public Node
     StructureFactors::NormalisationType referenceNormalisedTo_{StructureFactors::NoNormalisation};
     // Window function to use when Fourier transforming reference total F(Q) into g(r)
     WindowFunction::Form referenceWindowFunction_{WindowFunction::Form::Lorch0};
-    // Save weighted g(r) and G(r)
-    bool saveGR_{false};
-    // Save the reference data and its Fourier transform
-    bool saveReference_{false};
-    // Save representative G(r), obtained from Fourier transform of the calculated F(Q)
-    bool saveRepresentativeGR_{false};
-    // Save weighted partial and total structure factors
-    bool saveSQ_{false};
 
-    /*
-     * Functions
-     */
     public:
+    // Clear any local data
+    void clearData() override;
     // Return neutron weights
     NeutronWeights weights() const;
-    // Calculate weighted g(r)
-    bool calculateWeightedGR(const NeutronWeights &weights);
-    // Calculate weighted S(Q)
-    bool calculateWeightedSQ(const NeutronWeights &weights);
-
-    /*
-     * Processing
-     */
-    private:
-    // Run main processing
-    NodeConstants::ProcessResult process() override;
-
-    /*
-     * Getters
-     */
-    public:
     // Returns the unweighted SQ
     const PartialSet *unweightedSQ() const;
     // Returns the unweighted GR
@@ -96,4 +71,17 @@ class NeutronSQNode : public Node
     const IsotopologueSet &isotopologues() const;
     // Returns the source configuration, belonging to the input SQ node
     const Configuration *sourceConfiguration();
+
+    /*
+     * Processing
+     */
+    private:
+    // Calculate weighted g(r)
+    bool calculateWeightedGR(const NeutronWeights &weights);
+    // Calculate weighted S(Q)
+    bool calculateWeightedSQ(const NeutronWeights &weights);
+
+    protected:
+    // Perform processing
+    NodeConstants::ProcessResult process() override;
 };

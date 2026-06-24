@@ -10,11 +10,13 @@ ExportBlockDataNode::ExportBlockDataNode(Graph *parentGraph) : Node(parentGraph)
     addInput("Data", "Data to export", data_);
 
     // Options
-    addOption<std::string>("FilePath", "Destination file path", filePath_);
+    addOption("FilePath", "Destination file path", filePath_);
 }
 
+// Return type of the node
 std::string_view ExportBlockDataNode::type() const { return "ExportBlockData"; }
 
+// Return short summary of the node's purpose
 std::string_view ExportBlockDataNode::summary() const { return "Export data values in block format"; }
 
 /*

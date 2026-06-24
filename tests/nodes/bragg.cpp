@@ -5,9 +5,9 @@
 #include "classes/partialSet.h"
 #include "classes/speciesSites.h"
 #include "math/rangedVector3.h"
-#include "nodes/gr/gr.h"
+#include "nodes/gr.h"
 #include "nodes/iterableGraph.h"
-#include "nodes/sq/sq.h"
+#include "nodes/sq.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>

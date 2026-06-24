@@ -7,7 +7,7 @@
 InputsNode::InputsNode(Graph *parentGraph) : Node(parentGraph) {}
 
 /*
- * Definition (Virtuals)
+ * Definition
  */
 
 // Return type of the node
@@ -17,7 +17,7 @@ std::string_view InputsNode::type() const { return "Inputs"; }
 std::string_view InputsNode::summary() const { return "Maps graph inputs to local outputs"; }
 
 /*
- * Processing & Validity
+ * Processing
  */
 
 // Perform processing

@@ -21,8 +21,14 @@ QSpeciesNode::QSpeciesNode(Graph *parentGraph) : Node(parentGraph)
     addOption("DistanceRange", "Distance range (min, max) over which to calculate Q-Species from central site", distanceRange_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view QSpeciesNode::type() const { return "QSpecies"; }
 
+// Return short summary of the node's purpose
 std::string_view QSpeciesNode::summary() const { return "Calculate QSpecies of a network former"; }
 
 /*
@@ -45,7 +51,7 @@ const Data1D &QSpeciesNode::qSpecies() const { return qSpecies_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult QSpeciesNode::process()
 {
     // Initialise storage if required
@@ -106,10 +112,6 @@ NodeConstants::ProcessResult QSpeciesNode::process()
     normaliserQ.normaliseSumTo();
 
     oxygenSites_ = oxygenSitesHistogram_->accumulatedData();
-
-    // // Save data?
-    // if (!DataExporter::exportData(accumulatedQData, exportFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

@@ -7,10 +7,8 @@
 #include "nodes/graph.h"
 #include "nodes/inputs.h"
 #include "nodes/loopBack.h"
-#include "nodes/outputs.h"
 #include "templates/doubleKeyedMap.h"
 
-// Loop Graph
 class IterableGraph : public Graph
 {
     public:
@@ -20,7 +18,7 @@ class IterableGraph : public Graph
     using LoopEdges = std::vector<std::unique_ptr<LoopEdge>>;
 
     /*
-     * Definition (Virtuals)
+     * Definition
      */
     public:
     // Return node name
@@ -31,7 +29,7 @@ class IterableGraph : public Graph
     std::string_view summary() const override;
 
     /*
-     * Feedback
+     * Data
      */
     private:
     // Number of loops (iterations) to perform
@@ -47,31 +45,37 @@ class IterableGraph : public Graph
     // Release a loopback by name
     void releaseLoopBack(const std::string &name);
 
-    public:
-    // Current loop iteration
-    int currentIteration();
-    // Number of loops (iterations) to perform
-    const int nIterations() const;
-    // Loop backs
-    LoopBacksNode *loopBacks();
-    // Loop edges
-    Edges &loopEdges();
-    // Add edge between nodes
-    bool addEdge(const EdgeDefinition &definition) override;
-    // Remove edge between nodes
-    bool removeEdge(const EdgeDefinition &definition) override;
-    bool removeEdge(LoopEdge *edgeToRemove);
-    // Find loop edge between nodes
-    LoopEdge *findLoopEdge(const EdgeDefinition &definition) const;
-
     private:
     // Add edge to node map
     Edge *addOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
     // Remove edge from node map
     Edge *removeOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
 
+    public:
+    // Current loop iteration
+    int currentIteration() const;
+    // Number of loops (iterations) to perform
+    int nIterations() const;
+    // Return loopbacks node
+    LoopBacksNode *loopBacks() const;
+    // Return loop edges
+    const Edges &loopEdges() const;
+    // Remove specified loop edge
+    bool removeEdge(LoopEdge *edgeToRemove);
+    // Find loop edge between nodes
+    LoopEdge *findLoopEdge(const EdgeDefinition &definition) const;
+
     /*
-     * Processing & Validity
+     * Nodes and Edges
+     */
+    public:
+    // Add edge between nodes
+    bool addEdge(const EdgeDefinition &definition) override;
+    // Remove edge between nodes
+    bool removeEdge(const EdgeDefinition &definition) override;
+
+    /*
+     * Processing
      */
     protected:
     // Perform processing

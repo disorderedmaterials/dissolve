@@ -23,8 +23,14 @@ ModifierOSitesNode::ModifierOSitesNode(Graph *parentGraph) : Node(parentGraph)
               modifierDistanceRange_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ModifierOSitesNode::type() const { return "ModifierOSites"; }
 
+// Return short summary of the node's purpose
 std::string_view ModifierOSitesNode::summary() const
 {
     return "Calculate the percentage FO, BO and NBO bonded to a modifier atom";
@@ -65,7 +71,7 @@ const Data1D &ModifierOSitesNode::distanceMOtherO() const { return distanceMOthe
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult ModifierOSitesNode::process()
 {
     // Select all potential bridging oxygen sites - we will determine which actually are
@@ -167,25 +173,6 @@ NodeConstants::ProcessResult ModifierOSitesNode::process()
     DataOperator1D histMOtherONormaliser(distanceMOtherO_);
     // Normalise by value
     histMOtherONormaliser.normaliseSumTo();
-
-    // // Save data?
-    // if (!DataExporter::exportData(accumulatedData, exportFileAndFormatOType_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(accumulatedModifierData, exportFileAndFormatTotalOSites_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMFO, exportFileAndFormatFOLength_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMNBO, exportFileAndFormatNBOLength_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMBO, exportFileAndFormatBOLength_))
-    //     return ExecutionResult::Failed;
-    //
-    // if (!DataExporter::exportData(dataNormalisedHistMOtherO, exportFileAndFormatOtherOLength_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

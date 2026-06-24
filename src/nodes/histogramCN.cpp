@@ -2,15 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/histogramCN.h"
-#include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "analyser/siteSelector.h"
 
 HistogramCNNode::HistogramCNNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Target configuration for the calculation", configuration_)
-        ->setFlags({ParameterBase::Required});
+    addInput("Configuration", "Target configuration for the calculation", configuration_)->setFlags({ParameterBase::Required});
 
     // Options
     addOption("SiteA", "Set the site(s) 'A' which are to represent the reference origin", a_);
@@ -20,8 +18,14 @@ HistogramCNNode::HistogramCNNode(Graph *parentGraph) : Node(parentGraph)
               distanceRange_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view HistogramCNNode::type() const { return "HistogramCN"; }
 
+// Return short summary of the node's purpose
 std::string_view HistogramCNNode::summary() const { return "Produce a histogram of coordination numbers between sites"; }
 
 /*
@@ -38,7 +42,7 @@ const Data1D &HistogramCNNode::cn() const { return cn_; }
  * Processing
  */
 
-// Run main processing
+// Perform processing
 NodeConstants::ProcessResult HistogramCNNode::process()
 {
     // Select site A
@@ -77,10 +81,6 @@ NodeConstants::ProcessResult HistogramCNNode::process()
     DataOperator1D normaliserCN(cn_);
     // Normalise by value
     normaliserCN.normaliseSumTo();
-
-    // Save CN data?
-    // if (!DataExporter::exportData(dataCN, exportFileAndFormat_))
-    //     return ExecutionResult::Failed;
 
     return NodeConstants::ProcessResult::Success;
 }

@@ -7,22 +7,32 @@
 CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Structure>("Structure", "Input structure", inputStructure_);
+    addInput("Structure", "Input structure", inputStructure_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Output structure", outputStructure_);
+    addOutput("Structure", "Output structure", outputStructure_);
 
     // Options
-    addOption<Number>("Tolerance", "Bonding tolerance factor", tolerance_);
-    addOption<bool>("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
-    addOption<bool>("Clear", "Whether to clear bonds before recalculating", clear_);
+    addOption("Tolerance", "Bonding tolerance factor", tolerance_);
+    addOption("PreventMetallicBonds", "Whether to prevent metallic bonding", preventMetallicBonds_);
+    addOption("Clear", "Whether to clear bonds before recalculating", clear_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view CalculateBondingNode::type() const { return "CalculateBonding"; }
 
-std::string_view CalculateBondingNode::summary() const { return "Calculate bonding information for a structure"; }
+// Return short summary of the node's purpose
+std::string_view CalculateBondingNode::summary() const { return "Calculate bonding within a structure"; }
 
-// Run main processing
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult CalculateBondingNode::process()
 {
     outputStructure_.clear();
@@ -33,6 +43,7 @@ NodeConstants::ProcessResult CalculateBondingNode::process()
     return NodeConstants::ProcessResult::Success;
 }
 
+// Calculate bonding in the specified structure
 void CalculateBondingNode::calculate(Structure &structure, double tolerance, bool clearBefore, bool preventMetallic)
 {
     if (clearBefore)

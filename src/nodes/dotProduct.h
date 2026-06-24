@@ -7,19 +7,23 @@
 #include "nodes/node.h"
 #include "nodes/number.h"
 
-// DotProduct Node
 class DotProductNode : public Node
 {
     public:
     DotProductNode(Graph *parentGraph);
     ~DotProductNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Input vector 1
@@ -32,7 +36,7 @@ class DotProductNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

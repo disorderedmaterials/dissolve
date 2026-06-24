@@ -7,20 +7,31 @@
 ExportXYZTrajectoryNode::ExportXYZTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration from which Trajectory will be exported", configuration_);
+    addInput("Configuration", "Configuration from which Trajectory will be exported", configuration_);
 
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("Extended", "Extended XYZ format", extended_);
+    addOption("FilePath", "File path", filePath_);
+    addOption("Extended", "Extended XYZ format", extended_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ExportXYZTrajectoryNode::type() const { return "ExportTrajectory"; }
 
+// Return short summary of the node's purpose
 std::string_view ExportXYZTrajectoryNode::summary() const
 {
     return "Export configuration coordinates as sequential frames of a trajectory.";
 }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ExportXYZTrajectoryNode::process()
 {
     std::ofstream outfile(filePath_);

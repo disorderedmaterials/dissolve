@@ -15,11 +15,11 @@
 SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Set target configuration for the node", configuration_)
+    addInput("Configuration", "Set target configuration for the node", configuration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
 
     // Outputs
-    addOutput<Configuration *>("Configuration", "Output configuration", configuration_);
+    addOutput("Configuration", "Output configuration", configuration_);
 
     // Options
     addOption("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", a_);
@@ -37,14 +37,24 @@ SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
               instantaneous_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view SiteRDFNode::type() const { return "SiteRDF"; }
 
+// Return short summary of the node's purpose
 std::string_view SiteRDFNode::summary() const
 {
     return "Calculate a site-site radial distribution function and associated coordination numbers";
 }
 
-// Run main processing
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult SiteRDFNode::process()
 {
     // Select site A

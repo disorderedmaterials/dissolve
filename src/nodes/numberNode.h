@@ -13,6 +13,9 @@ class NumberNode : public Node
     NumberNode(Graph *parentGraph);
     ~NumberNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     // Return type of the node
     std::string_view type() const override;
@@ -20,7 +23,7 @@ class NumberNode : public Node
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // The number
@@ -29,7 +32,7 @@ class NumberNode : public Node
     /*
      * Processing
      */
-    public:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

@@ -12,19 +12,23 @@
 // Forward Declarations
 class SpeciesSite;
 
-// Axis Angle
 class AxisAngleNode : public Node
 {
     public:
     AxisAngleNode(Graph *parentGraph);
     ~AxisAngleNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -41,11 +45,6 @@ class AxisAngleNode : public Node
     SpeciesSites a_, b_;
     // Axes to use for sites
     Site::SiteAxis axisA_{Site::SiteAxis::ZAxis}, axisB_{Site::SiteAxis::ZAxis};
-
-    /*
-     * Data
-     */
-    private:
     // RDF
     std::optional<Histogram1D> distanceHistogram_;
     Data1D rdf_;
@@ -65,7 +64,7 @@ class AxisAngleNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

@@ -15,12 +15,17 @@ class HistogramCNNode : public Node
     HistogramCNNode(Graph *parentGraph);
     ~HistogramCNNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
+    // Return type of the node
     std::string_view type() const override;
+    // Return short summary of the node's purpose
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Target configuration
@@ -29,11 +34,6 @@ class HistogramCNNode : public Node
     SpeciesSites a_, b_;
     // Distance range for calculation
     Range distanceRange_{0.0, 5.0};
-
-    /*
-     * Data
-     */
-    private:
     // Histogrammed coordination numbers
     std::optional<IntegerHistogram1D> histogram_;
     Data1D cn_;
@@ -47,7 +47,7 @@ class HistogramCNNode : public Node
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

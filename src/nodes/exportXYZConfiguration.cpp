@@ -9,22 +9,32 @@
 ExportXYZConfigurationNode::ExportXYZConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput<Configuration *>("Configuration", "Configuration to be exported", configuration_);
+    addInput("Configuration", "Configuration to be exported", configuration_);
 
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
-    addOption<bool>("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index",
-                    tagWithIteration_);
+    addOption("FilePath", "File path", filePath_);
+    addOption("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index", tagWithIteration_);
     addSerialisable("Iteration", iteration_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ExportXYZConfigurationNode::type() const { return "ExportXYZConfiguration"; }
 
+// Return short summary of the node's purpose
 std::string_view ExportXYZConfigurationNode::summary() const
 {
     return "Export configuration coordinates from sequential frames of a coordinates.";
 }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ExportXYZConfigurationNode::process()
 {
     auto path = filePath_;

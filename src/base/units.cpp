@@ -9,3 +9,4 @@ EnumOptions<Units::DensityUnits> Units::densityUnits()
     return EnumOptions<Units::DensityUnits>(
         "DensityUnits", {{Units::AtomsPerAngstromUnits, "atoms/A3"}, {Units::GramsPerCentimetreCubedUnits, "g/cm3"}});
 }
+EnumOptions<Units::DensityUnits> getEnumOptions(Units::DensityUnits) { return Units::densityUnits(); }

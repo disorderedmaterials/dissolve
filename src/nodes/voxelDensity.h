@@ -16,10 +16,6 @@ class VoxelDensityNode : public Node
     VoxelDensityNode(Graph *parentGraph);
     ~VoxelDensityNode() override = default;
 
-    public:
-    std::string_view type() const override;
-    std::string_view summary() const override;
-
     /*
      * Definition
      */
@@ -33,10 +29,6 @@ class VoxelDensityNode : public Node
     };
     // Return enum option info for TargetPropertyType
     static EnumOptions<VoxelDensityNode::TargetPropertyType> targetPropertyTypes();
-    // Target property for analysis
-    VoxelDensityNode::TargetPropertyType getCurrentProperty() const;
-    // Voxel volume (cubic angstroms)
-    double voxelVolume() const;
 
     private:
     // Range (min, max, delta) of voxel histogram axis
@@ -51,6 +43,12 @@ class VoxelDensityNode : public Node
     Vector3i nAxisVoxels_{1, 1, 1};
     // Voxel volume (cubic angstroms)
     double voxelVolume_{1.0};
+
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
 
     /*
      * Data
@@ -80,7 +78,9 @@ class VoxelDensityNode : public Node
     Vector3 foldedCoordinates(const Vector3 &r, const Box &unitCell);
     // Actual side length of a single analysis voxel (angstroms), calculated to suit the given unit cell axis
     double voxelSideLength(double axisLength) const;
-    // Run main processing
+
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };
 

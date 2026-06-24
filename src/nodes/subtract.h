@@ -13,6 +13,9 @@ class SubtractNode : public Node
     explicit SubtractNode(Graph *parentGraph);
     ~SubtractNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     // Return type of the node
     std::string_view type() const override;
@@ -20,7 +23,7 @@ class SubtractNode : public Node
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Factor X
@@ -33,7 +36,7 @@ class SubtractNode : public Node
     /*
      * Processing
      */
-    public:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

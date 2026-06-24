@@ -6,16 +6,11 @@
 #include "math/vector3.h"
 #include "nodes/node.h"
 
-// Vec3Assembly Node
-class Vec3AssemblyNode : public Node
+class Vector3AssembleNode : public Node
 {
     public:
-    Vec3AssemblyNode(Graph *parentGraph);
-    ~Vec3AssemblyNode() override = default;
-
-    public:
-    std::string_view type() const override;
-    std::string_view summary() const override;
+    Vector3AssembleNode(Graph *parentGraph);
+    ~Vector3AssembleNode() override = default;
 
     /*
      * Definition
@@ -30,10 +25,16 @@ class Vec3AssemblyNode : public Node
     // Output vector
     Vector3 outputVector_;
 
+    public:
+    // Return type of the node
+    std::string_view type() const override;
+    // Return short summary of the node's purpose
+    std::string_view summary() const override;
+
     /*
      * Processing
      */
-    private:
-    // Run main processing
+    protected:
+    // Perform processing
     NodeConstants::ProcessResult process() override;
 };

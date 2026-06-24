@@ -9,22 +9,33 @@ ImportDLPOLYTrajectoryNode::ImportDLPOLYTrajectoryNode(Graph *parentGraph) : Nod
     volatile_ = true;
 
     // Options
-    addOption<std::string>("FilePath", "File path", filePath_);
+    addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addOutput<Structure>("Structure", "Imported structure", structure_);
+    addOutput("Structure", "Imported structure", structure_);
 
     // Serialisable data
     // addSerialisable("filePosition", filePosition_);
 }
 
+/*
+ * Definition
+ */
+
+// Return type of the node
 std::string_view ImportDLPOLYTrajectoryNode::type() const { return "ImportDLPOLYTrajectory"; }
 
+// Return short summary of the node's purpose
 std::string_view ImportDLPOLYTrajectoryNode::summary() const
 {
-    return "Import structures from sequential frames of a formatted DL_POLY trajectory.";
+    return "Import structures from sequential frames of a formatted DL_POLY trajectory";
 }
 
+/*
+ * Processing
+ */
+
+// Perform processing
 NodeConstants::ProcessResult ImportDLPOLYTrajectoryNode::process()
 {
     message("Reading DL_POLY trajectory file frame from '{}'...\n", filePath_);
