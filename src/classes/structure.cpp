@@ -317,7 +317,8 @@ void Structure::unFold()
 
     while (fragmentAtoms.size() < nAtoms())
     {
-        auto atomIt = std::find_if(atoms_.begin(), atoms_.end(), [&fragmentAtoms](const auto &atom) { return !fragmentAtoms.contains(atom.get()); });
+        auto atomIt = std::find_if(atoms_.begin(), atoms_.end(),
+                                   [&fragmentAtoms](const auto &atom) { return !fragmentAtoms.contains(atom.get()); });
         if (atomIt == atoms_.end())
             break;
 
