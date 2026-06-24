@@ -6,7 +6,6 @@
 #include "classes/atom.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
-#include "kernels/potentials/base.h"
 #include <memory>
 #include <vector>
 
@@ -48,19 +47,4 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     public:
     // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
     SpeciesAtom::ScaledInteractionDefinition scaling(const ConfigurationAtom *j) const;
-
-    /*
-     * Targeted External Potentials
-     */
-    private:
-    // Vector of targeted potentials affecting this atom
-    std::vector<const ExternalPotential *> targetedPotentials_;
-
-    public:
-    // Add targeted potential to this atom
-    void addTargetedPotential(const ExternalPotential *potential);
-    // Clear all targeted potentials from this Atom
-    void clearTargetedPotentials();
-    // Return list of targeted potentials for this atom
-    const std::vector<const ExternalPotential *> &targetedPotentials() const;
 };

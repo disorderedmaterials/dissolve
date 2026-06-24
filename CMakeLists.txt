@@ -293,7 +293,6 @@ set(BASIC_LINK_LIBS
     main
     classes
     kernels
-    potentials
     neta
     analyser
     keywords

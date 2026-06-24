@@ -55,7 +55,6 @@ set(models_SRCS
     dissolveModel.cpp
     dissolveModelImageProvider.cpp
     dissolveModelImageProvider.h
-    externalPotentialModel.cpp
     ffSortFilterModel.cpp
     forcefieldModel.cpp
     globalPotentialFilterProxy.cpp

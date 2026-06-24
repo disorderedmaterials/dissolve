@@ -2,7 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/dissolve.h"
-#include "kernels/producer.h"
+#include "classes/potentialMap.h"
+#include "kernels/energy.h"
+#include "kernels/force.h"
 
 DissolveGraph::DissolveGraph() : Graph(nullptr) {}
 
@@ -143,7 +145,7 @@ std::unique_ptr<EnergyKernel> DissolveGraph::createEnergyKernel(Configuration *c
                             [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotential(*atI, *atJ); });
 
     // Generate and return kernel
-    return KernelProducer::energyKernel(cfg, PotentialMap(atomTypes, pairPotentials_));
+    return std::make_unique<EnergyKernel>(cfg, PotentialMap(atomTypes, pairPotentials_));
 }
 
 // Create a force kernel suitable for the supplied Configuration
@@ -158,7 +160,7 @@ std::unique_ptr<ForceKernel> DissolveGraph::createForceKernel(Configuration *cfg
                             [&](int i, const auto &atI, int j, const auto &atJ) { updatePairPotential(*atI, *atJ); });
 
     // Generate and return kernel
-    return KernelProducer::forceKernel(cfg, PotentialMap(atomTypes, pairPotentials_));
+    return std::make_unique<ForceKernel>(cfg, PotentialMap(atomTypes, pairPotentials_));
 }
 
 /*

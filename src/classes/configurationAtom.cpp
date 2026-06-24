@@ -42,19 +42,3 @@ SpeciesAtom::ScaledInteractionDefinition ConfigurationAtom::scaling(const Config
 
     return speciesAtom_->scaling(j->speciesAtom());
 }
-
-/*
- * Targeted Potentials
- */
-
-// Add targeted potential to this atom
-void ConfigurationAtom::addTargetedPotential(const ExternalPotential *potential)
-{
-    targetedPotentials_.emplace_back(potential);
-}
-
-// Clear all targeted potentials from this Atom
-void ConfigurationAtom::clearTargetedPotentials() { targetedPotentials_.clear(); }
-
-// Return list of targeted potentials for this atom
-const std::vector<const ExternalPotential *> &ConfigurationAtom::targetedPotentials() const { return targetedPotentials_; }

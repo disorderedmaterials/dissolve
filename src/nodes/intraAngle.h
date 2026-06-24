@@ -5,6 +5,7 @@
 
 #include "classes/speciesSites.h"
 #include "math/histogram1D.h"
+#include "math/range.h"
 #include "nodes/node.h"
 
 class IntraAngleNode : public Node

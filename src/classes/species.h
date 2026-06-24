@@ -304,40 +304,6 @@ class Species : public Serialisable<>
      * Serialisation
      */
     public:
-    // Species Block Keyword Enum
-    enum class SpeciesKeyword
-    {
-        Angle,          /* 'Angle' - Defines an Angle joining three atoms */
-        Atom,           /* 'Atom' - Specifies an Atom in the Species */
-        Bond,           /* 'Bond' - Defines a Bond joining two atoms */
-        BondType,       /* 'BondType' - Sets the type of a specific bond */
-        BoxAngles,      /* 'BoxAngles' - Specify unit cell angles for the species */
-        BoxLengths,     /* 'BoxLengths' - Specify unit cell lengths for the species */
-        Charge,         /* 'Charge' - Specifies the atomic charge for an individual atom */
-        CommonAngle,    /* 'CommonAngle' - Define a common angle (added for transition to Dissolve2) */
-        CommonBond,     /* 'CommonBond' - Define a common angle (added for transition to Dissolve2) */
-        CommonImproper, /* 'CommonImproper' - Define a common angle (added for transition to Dissolve2) */
-        CommonTorsion,  /* 'CommonTorsion' - Define a common angle (added for transition to Dissolve2) */
-        EndSpecies,     /* 'EndSpecies' - Signals the end of the current Species */
-        Forcefield,     /* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
-        Improper,       /* 'Improper' - Define an Improper interaction between four atoms */
-        Isotopologue,   /* 'Isotopologue' - Add an isotopologue to the Species */
-        NAngles,        /* 'NAngles' - Hint at the total number of angles in the Species */
-        NAtoms,         /* 'NAtoms' - Hint at the total number of atoms in the Species */
-        NBonds,         /* 'NBonds' - Hint at the total number of bonds in the Species */
-        NImpropers,     /* 'NImpropers' - Hint at the total number of impropers in the Species */
-        NTorsions,      /* 'NTorsions' - Hint at the total number of torsions in the Species */
-        Scaling14,      /* 'Scaling14' - Specify 1-4 scaling factors for torsion terms */
-        Site,           /* 'Site' - Define an analysis site within the Species */
-        Torsion         /* 'Torsion' - Define a Torsion interaction between four atoms */
-    };
-    // Return enum option info for SpeciesKeyword
-    static EnumOptions<Species::SpeciesKeyword> keywords();
-    // Read Species definition from specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
-    // Write Species definition to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix);
-
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value

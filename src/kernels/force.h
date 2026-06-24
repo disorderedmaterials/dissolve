@@ -17,12 +17,8 @@ class PotentialMap;
 // ForceKernel
 class ForceKernel : public GeometryKernel
 {
-    private:
-    friend class KernelProducer;
-    friend class ExternalPotentialsForceKernel;
-    ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap);
-
     public:
+    ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap);
     ~ForceKernel() = default;
 
     private:
