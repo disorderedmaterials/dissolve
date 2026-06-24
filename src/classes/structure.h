@@ -7,6 +7,7 @@
 #include "classes/atom.h"
 #include "classes/bond.h"
 #include "classes/box.h"
+#include <set>
 #include <vector>
 
 // StructureAtom
@@ -115,6 +116,24 @@ class Structure : public Serialisable<>
     void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
     // Create Box definition from axes matrix
     void createBox(const Matrix3 &axes);
+
+    /*
+     * Manipulations
+     */
+    private:
+    // Typedef for manipulation functions
+    using ManipulationFunction = std::function<void(StructureAtom *j, Vector3 rJ)>;
+    using ConstManipulationFunction = std::function<void(const StructureAtom *j, Vector3 rJ)>;
+    // Recursive function for general manipulation
+    void recurseLocal(std::set<StructureAtom *> &fragmentAtoms, StructureAtom *i, ManipulationFunction action);
+    void recurseLocal(std::set<StructureAtom *> &fragmentAtoms, StructureAtom *i, ConstManipulationFunction action) const;
+    // Return atoms in the same fragment as the specified atom, unfolding the fragment at the same time
+    std::set<StructureAtom *> getUnfoldedFragment(StructureAtom *containing, ManipulationFunction action);
+    std::set<StructureAtom *> getUnfoldedFragment(StructureAtom *containing, ConstManipulationFunction action) const;
+
+    public:
+    // Un-fold bound fragments in the structure
+    void unFold();
 
     /*
      * Serialisation

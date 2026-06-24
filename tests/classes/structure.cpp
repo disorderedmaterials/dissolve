@@ -3,6 +3,8 @@
 
 #include "classes/structure.h"
 #include "nodes/calculateBonding.h"
+#include "tests/graphData.h"
+#include <cmath>
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -66,6 +68,39 @@ TEST(StructureTest, Molecule2)
     s.removeAtom(0);
     EXPECT_EQ(s.bonds().size(), 0);
     EXPECT_EQ(s.nAtoms(), 0);
+}
+
+TEST(StructureTest, Unfold)
+{
+    TestGraph graph;
+
+    // Import XYZ node
+    auto importXYZNode = graph.createNode("ImportXYZStructure");
+    ASSERT_TRUE(importXYZNode);
+    ASSERT_TRUE(importXYZNode->setOption("FilePath", std::string("xyz/ch4_folded.xyz")));
+
+    // Calculate bonding node
+    auto calculateBondingNode = graph.createNode("CalculateBonding");
+    ASSERT_TRUE(calculateBondingNode);
+
+    // Connect graph
+    ASSERT_TRUE(graph.addEdge({"ImportXYZStructure", "Structure", "CalculateBonding", "Structure"}));
+
+    // Run
+    ASSERT_EQ(calculateBondingNode->run(), NodeConstants::ProcessResult::Success);
+
+    auto structure = calculateBondingNode->getOutputValue<Structure>("Structure");
+    ASSERT_TRUE(structure.bonds().size() != 0);
+    structure.unFold();
+
+    // After unfolding, the distances between C and H should all be unity
+    for (const auto &bond : structure.bonds())
+    {
+        auto iR = bond->i()->r();
+        auto jR = bond->j()->r();
+        auto distance = abs((iR - jR).magnitude());
+        ASSERT_NEAR(distance, 1, 10e-9);
+    }
 }
 
 } // namespace UnitTest
