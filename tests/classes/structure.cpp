@@ -88,7 +88,9 @@ TEST(StructureTest, Unfold)
 
     // Run
     ASSERT_EQ(calculateBondingNode->run(), NodeConstants::ProcessResult::Success);
+
     auto structure = calculateBondingNode->getOutputValue<Structure>("Structure");
+    ASSERT_TRUE(structure.bonds().size() != 0);
     structure.unFold();
 
     // After unfolding, the distances between C and H should all be unity

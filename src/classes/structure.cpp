@@ -313,14 +313,12 @@ void Structure::unFold()
 {
     std::set<StructureAtom *> fragmentAtoms;
 
-    while (fragmentAtoms.size() < nAtoms())
+    for (auto &atom : atoms())
     {
-        auto atomIt = std::find_if(atoms_.begin(), atoms_.end(),
-                                   [&fragmentAtoms](const auto &atom) { return !fragmentAtoms.contains(atom.get()); });
-        if (atomIt == atoms_.end())
+        if (fragmentAtoms.contains(atom.get()))
             break;
 
-        fragmentAtoms.merge(getUnfoldedFragment(atomIt->get(), [](StructureAtom *j, Vector3 rJ) { j->setR(rJ); }));
+        fragmentAtoms.merge(getUnfoldedFragment(atom.get(), [](StructureAtom *j, Vector3 rJ) { j->setR(rJ); }));
     }
 }
 
