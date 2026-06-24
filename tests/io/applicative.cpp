@@ -147,7 +147,6 @@ TEST(ApplicativeTest, XYZStructure)
 
 TEST(ApplicativeTest, Helium)
 {
-
     std::ifstream infile{"xyz/voxelDensity-helium.xyz"};
     ASSERT_TRUE(infile);
     auto xyz =
