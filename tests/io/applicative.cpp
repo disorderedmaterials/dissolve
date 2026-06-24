@@ -10,7 +10,7 @@
 namespace UnitTest
 {
 
-using namespace parsers;
+using namespace Parsers;
 using namespace std::literals;
 
 template <typename T> void test_parser(std::string_view input, Parser<T> parser, std::optional<T> expected)

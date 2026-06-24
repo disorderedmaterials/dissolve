@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-namespace parsers
+namespace Parsers
 {
 
 // A concept to check if a type is a tuple.  This is built in in
@@ -431,4 +431,4 @@ template <typename T> auto operator&(std::string_view other, Parser<T> self) -> 
     return Parser<std::string_view>(other) & self;
 }
 
-}; // namespace parsers
+}; // namespace Parsers

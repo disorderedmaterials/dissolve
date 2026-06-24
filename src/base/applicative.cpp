@@ -7,7 +7,7 @@
 #include <cmath>
 #include <sstream>
 
-namespace parsers
+namespace Parsers
 {
 
 // A parser that expects an exact string
@@ -87,4 +87,4 @@ Parser<std::string_view> newlines() { return "\r\n"_p | "\n"_p; }
 
 // A quick wrapper for easily making parses from strings
 Parser<std::string_view> operator""_p(const char *text, size_t size) { return literal(std::string_view(text, size)); }
-} // namespace parsers
+} // namespace Parsers

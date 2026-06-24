@@ -6,7 +6,7 @@
 #include "base/applicative.h"
 #include "math/vector3.h"
 
-namespace parsers
+namespace Parsers
 {
 
 // A parser that accepts an integer greater than or equal to zero
@@ -21,4 +21,4 @@ Parser<double> real();
 Parser<Vector3> vector3();
 Parser<std::tuple<std::string, Vector3, std::optional<double>>> structureAtom();
 
-}; // namespace parsers
+}; // namespace Parsers

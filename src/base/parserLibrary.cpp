@@ -4,7 +4,7 @@
 #include "base/parserLibrary.h"
 #include <format>
 
-namespace parsers
+namespace Parsers
 {
 
 // A parser that accepts an integer greater than or equal to zero
@@ -57,10 +57,10 @@ Parser<Vector3> vector3()
         .apply([](double x, double y, double z) { return Vector3(x, y, z); });
 }
 
-parsers::Parser<std::tuple<std::string, Vector3, std::optional<double>>> structureAtom()
+Parser<std::tuple<std::string, Vector3, std::optional<double>>> structureAtom()
 {
     auto parser = alphas() & inline_spaces() >> vector3() & maybe(inline_spaces() >> real() << maybe(inline_spaces()));
     return parser;
 }
 
-} // namespace parsers
+} // namespace Parsers

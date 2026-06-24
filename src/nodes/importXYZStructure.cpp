@@ -43,7 +43,7 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
 // Read structure from the specified input stream
 NodeConstants::ProcessResult ImportXYZStructureNode::read(std::istream &input, Structure &structure)
 {
-    using namespace parsers;
+    using namespace Parsers;
     auto xyz = (maybe(inline_spaces()) >> natural() << newlines() &
                 inlines() >> newlines() >> some(structureAtom() << maybe(inline_spaces()) << maybe(newlines())))
                    .parse(input);
