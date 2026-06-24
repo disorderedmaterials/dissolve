@@ -40,7 +40,7 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
     return read(infile, structure_);
 }
 
-// Read structure from the specified file parser
+// Read structure from the specified input stream
 NodeConstants::ProcessResult ImportXYZStructureNode::read(std::istream &input, Structure &structure)
 {
     using namespace parsers;
