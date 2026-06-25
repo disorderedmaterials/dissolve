@@ -278,3 +278,30 @@ bool Histogram3D::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a serialisable value
+void Histogram3D::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_}, {"xBinWidth", xBinWidth_},
+                   {"yMinimum", yMinimum_}, {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_},
+                   {"zMinimum", zMinimum_}, {"zMaximum", zMaximum_}, {"zBinWidth", zBinWidth_},
+                   {"nBinned", nBinned_},   {"nMissed", nMissed_},   {"averages", averages_.linearArray()}};
+}
+
+// Read values from a serialisable value
+void Histogram3D::deserialise(const SerialisedValue &node)
+{
+    clear();
+
+    initialise(
+        toml::find<double>(node, "xMinimum"), toml::find<double>(node, "xMaximum"), toml::find<double>(node, "yBinWidth"),
+        toml::find<double>(node, "yMinimum"), toml::find<double>(node, "yMaximum"), toml::find<double>(node, "yBinWidth"),
+        toml::find<double>(node, "zMinimum"), toml::find<double>(node, "zMaximum"), toml::find<double>(node, "zBinWidth"));
+
+    nBinned_ = toml::find<long>(node, "nBinned");
+    nMissed_ = toml::find<long>(node, "nMissed");
+
+    averages_.linearArray() = toml::find<std::vector<SampledDouble>>(node, "averages");
+
+    updateAccumulatedData();
+}
