@@ -44,11 +44,4 @@ class PartialSetAccumulator
     const SampledData1D &total() const;
     // Save all partials and total (with errors)
     bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
-
-    /*
-     * Searchers
-     */
-    public:
-    // Return SampledData1D with specified tag, if it exists
-    OptionalReferenceWrapper<const SampledData1D> searchSampledData1D(std::string_view tag) const;
 };

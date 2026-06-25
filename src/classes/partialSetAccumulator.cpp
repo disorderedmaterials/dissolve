@@ -102,27 +102,3 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
 
     return ExportDataNode::write(total_, std::format("{}-{}-total.{}", prefix, tag, suffix));
 }
-
-/*
- * Searchers
- */
-
-// Return SampledData1D with specified tag, if it exists
-OptionalReferenceWrapper<const SampledData1D> PartialSetAccumulator::searchSampledData1D(std::string_view tag) const
-{
-    auto fullIt =
-        std::find_if(partials_.begin(), partials_.end(), [tag](const auto &data) { return data.second.tag() == tag; });
-    if (fullIt != partials_.end())
-        return fullIt->second;
-    auto boundIt = std::find_if(boundPartials_.begin(), boundPartials_.end(),
-                                [tag](const auto &data) { return data.second.tag() == tag; });
-    if (boundIt != boundPartials_.end())
-        return boundIt->second;
-    auto unboundIt = std::find_if(unboundPartials_.begin(), unboundPartials_.end(),
-                                  [tag](const auto &data) { return data.second.tag() == tag; });
-    if (unboundIt != unboundPartials_.end())
-        return unboundIt->second;
-    if (total_.tag() == tag)
-        return total_;
-    return {};
-}
