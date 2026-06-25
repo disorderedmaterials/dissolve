@@ -7,7 +7,6 @@
 #include "classes/isotopologueSet.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "items/deserialisers.h"
 #include "templates/algorithms.h"
 
 NeutronWeights::NeutronWeights(const std::map<const Species *, double> &speciesPopulations,

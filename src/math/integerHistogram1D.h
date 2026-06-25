@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "keywords/optionalInt.h"
 #include "math/data1D.h"
 #include "math/sampledDouble.h"
 #include <map>

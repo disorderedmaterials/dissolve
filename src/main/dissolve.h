@@ -77,8 +77,6 @@ class Dissolve : public Serialisable
     PotentialMap &potentialMap();
     // Update all pair potentials
     bool updatePairPotentials(std::optional<bool> useCombinationRulesHint = {});
-    // Clear additional potentials
-    void clearAdditionalPotentials();
 
     /*
      * Graph node
