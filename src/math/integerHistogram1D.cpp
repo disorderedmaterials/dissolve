@@ -212,3 +212,33 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a serialisable value
+void IntegerHistogram1D::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"zeroCounter", zeroCounter_}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
+
+    if (minimum_)
+        target[tag]["minimum"] = *minimum_;
+    if (maximum_)
+        target[tag]["maximum"] = *maximum_;
+
+    fromMap(averages_, "averages", target);
+}
+
+// Read values from a serialisable value
+void IntegerHistogram1D::deserialise(const SerialisedValue &node)
+{
+    clear();
+
+    getIfPresent<int>(node, "minimum", minimum_);
+    getIfPresent<int>(node, "maximum", maximum_);
+
+    nBinned_ = toml::find<long>(node, "nBinned");
+    nMissed_ = toml::find<long>(node, "nMissed");
+    zeroCounter_ = toml::find<SampledDouble>(node, "nMissed");
+
+    toMap(node, "averages", [&](const auto &key, const auto &value) { averages_[std::stoi(key)].deserialise(value); });
+
+    updateAccumulatedData();
+}
