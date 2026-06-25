@@ -216,8 +216,34 @@ TEST_F(CIFNodeTest, CuBTC)
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
+    EXPECT_EQ(detectedMoleculeStructures.size(), 2);
+    const auto box = detectedMoleculeStructures[0].box();
+
     EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_225);
+
+    // Check box
+    EXPECT_TRUE(testGraph.appendNode("Configuration", "Box"));
+    EXPECT_TRUE(testGraph.appendNode("SetBox"));
+    EXPECT_TRUE(testGraph.appendNode("Species", "MolecularSpeciesA"));
+    EXPECT_TRUE(testGraph.appendNode("Species", "MolecularSpeciesB"));
+    EXPECT_TRUE(testGraph.appendNode("Insert", "InsertMolecularSpeciesA"));
+    EXPECT_TRUE(testGraph.appendNode("Insert", "InsertMolecularSpeciesB"));
+    EXPECT_TRUE(testGraph.appendNode("SupercellConfiguration"));
+    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-0", "MolecularSpeciesA", "Structure"}));
+    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-1", "MolecularSpeciesB", "Structure"}));
+    ASSERT_TRUE(testGraph.addEdge({"Box", "Configuration", "SetBox", "Input"}));
+    ASSERT_TRUE(testGraph.addEdge({"SetBox", "Output", "InsertMolecularSpeciesA", "Configuration"}));
+    ASSERT_TRUE(testGraph.addEdge({"MolecularSpeciesA", "Species", "InsertMolecularSpeciesA", "Species"}));
+    ASSERT_TRUE(testGraph.addEdge({"InsertMolecularSpeciesA", "Configuration", "InsertMolecularSpeciesB", "Configuration"}));
+    ASSERT_TRUE(testGraph.addEdge({"MolecularSpeciesB", "Species", "InsertMolecularSpeciesB", "Species"}));
+    ASSERT_TRUE(testGraph.addEdge({"InsertMolecularSpeciesB", "Configuration", "SupercellConfiguration", "Configuration"}));
+
+    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+
+    auto box = testGraph.fetchHead()->getOutputValue<Configuration *>("SupercellConfiguration");
+
     constexpr auto A = 26.3336;
     // testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 672);
 
@@ -231,8 +257,6 @@ TEST_F(CIFNodeTest, CuBTC)
                                         [](const auto &i) { return i.speciesAtom()->Z(); }),
               EmpiricalFormula::formula(cellFormulaH));
               */
-    auto detectedMoleculeStructureA = detectMoleculesNode->detectedStructures();
-    EXPECT_EQ(detectedMoleculeStructureA.size(), 2);
 }
 /*
 TEST_F(CIFNodeTest, CuBTCActiveAssemblies)

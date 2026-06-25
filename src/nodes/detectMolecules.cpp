@@ -31,6 +31,12 @@ std::vector<std::vector<int>> DetectMoleculesNode::findMolecularFragments(const 
     return fragments;
 }
 
+// Register dynamic outputs
+void DetectMoleculesNode::registerDynamicOutputs()
+{
+    registerDynamicOutput<Structure>(detectedStructures_, "Detect molecular structures", std::string("DetectedMolecule"));
+}
+
 // Run main processing
 NodeConstants::ProcessResult DetectMoleculesNode::process()
 {
