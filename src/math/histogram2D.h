@@ -8,7 +8,7 @@
 #include "templates/array2D.h"
 
 // Two-Dimensional Histogram
-class Histogram2D
+class Histogram2D : public Serialisable<>
 {
     public:
     Histogram2D();
@@ -52,6 +52,10 @@ class Histogram2D
     long int nMissed_;
     // Accumulated data
     Data2D accumulatedData_;
+
+    private:
+    // Update accumulated data
+    void updateAccumulatedData();
 
     public:
     // Initialise with specified bin range
@@ -105,4 +109,8 @@ class Histogram2D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };
