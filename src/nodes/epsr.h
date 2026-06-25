@@ -128,9 +128,9 @@ class EPSRNode : public Node
     Number pSigma1_{0.01};
     // Width for Poisson functions in real space
     Number pSigma2_{0.01};
-    // Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)
+    // Radius at which potential truncation goes to zero (default: use pair potential maximum range)
     std::optional<Number> rMaxPT_;
-    // Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)
+    // Radius at which potential truncation begins (default: 2.0 Angstroms under rmaxpt)
     std::optional<Number> rMinPT_;
     // Degree of smoothing to apply to fluctuation coefficients before summation into potential
     std::optional<Number> fluctuationSmoothing_;
@@ -140,6 +140,10 @@ class EPSRNode : public Node
     EPSRNamedTargetWeights namedWeights_;
     // Total r-factor
     std::optional<Data1D> totalRFactor_;
+    // Ranges to calculate rFactor over
+    std::vector<Range> ranges_;
+    // Run count
+    std::optional<int> runCount_;
     // Empirical potential coefficients
     std::optional<Array2D<std::vector<double>>> potentialCoefficients_;
     // S(Q) from completed scattering matrix
@@ -152,10 +156,6 @@ class EPSRNode : public Node
     std::optional<Data1D> phiArray_;
     // Container for process data for individual target nodes
     TargetProcessDataMap targetProcessData_;
-    // Ranges to calculate rFactor over
-    std::vector<Range> ranges_;
-    // Run count
-    std::optional<int> runCount_;
 
     public:
     // Return target process data for a given node

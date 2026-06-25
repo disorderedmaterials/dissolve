@@ -15,6 +15,10 @@ VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
     addOption("Range", "Range (min, max, delta) of binned property data", binRange_);
     addOption("VoxelSideLength", "Requested side length of a single analysis voxel (Angstroms)", requestedVoxelSideLength_);
     addOption("TargetProperty", "Target property for analysis", targetProperty_);
+
+    // Serialisables
+    addSerialisable("histogram", histogram_);
+    addSerialisable("values", values_);
 }
 
 /*

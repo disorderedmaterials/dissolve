@@ -30,10 +30,6 @@ class SQNode : public Node
     private:
     // Unweighted g(r)
     PartialSet *unweightedGR_{nullptr};
-    // Unweighted S(Q)
-    std::optional<PartialSet> unweightedSQ_;
-    // Historical unweighted S(Q)
-    History<PartialSet> unweightedSQHistory_;
     // Number of historical partial sets to combine into final partials
     std::optional<Number> averagingLength_;
     // Broadening function to apply to S(Q)
@@ -46,6 +42,10 @@ class SQNode : public Node
     Number qMin_{0.05};
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
+    // Unweighted S(Q)
+    std::optional<PartialSet> unweightedSQ_;
+    // Historical unweighted S(Q)
+    History<PartialSet> unweightedSQHistory_;
 
     public:
     // Returns the source configuration, belonging to the input GR node

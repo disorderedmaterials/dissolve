@@ -37,7 +37,7 @@ SQNode::SQNode(Graph *parentGraph)
 
     // Serialisables
     addSerialisable("unweightedSQ", unweightedSQ_);
-    addSerialisable("unweightedSQ", unweightedSQHistory_);
+    addSerialisable("unweightedSQHistory", unweightedSQHistory_);
 }
 
 /*

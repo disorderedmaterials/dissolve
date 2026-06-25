@@ -48,10 +48,6 @@ class GRNode : public Node
     private:
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
-    // Raw simulation g(r)
-    std::optional<PartialSet> rawGR_;
-    // Historical raw g(r)
-    History<PartialSet> rawGRHistory_;
     // Unweighted g(r)
     std::optional<PartialSet> unweightedGR_;
     // Number of historical partial sets to combine into final partials
@@ -68,6 +64,10 @@ class GRNode : public Node
     std::optional<Number> requestedRange_;
     // Histograms for RDF calculation
     std::optional<HistogramSet> histograms_;
+    // Raw simulation g(r)
+    std::optional<PartialSet> rawGR_;
+    // Historical raw g(r)
+    History<PartialSet> rawGRHistory_;
 
     public:
     // Clear any local data

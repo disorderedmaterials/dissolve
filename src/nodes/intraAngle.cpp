@@ -12,6 +12,9 @@ IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput("Configuration", "Set target configuration for the node", targetConfiguration_);
 
+    // Outputs
+    addOutput("Configuration", "Output configuration", targetConfiguration_);
+
     // Options
     addOption("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C", a_);
     addOption("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C", b_);
@@ -21,8 +24,9 @@ IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_);
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
-    // Outputs
-    addOutput("Configuration", "Output configuration", targetConfiguration_);
+    // Serialisables
+    addSerialisable("intraAngleHist", intraAngleHist_);
+    addSerialisable("angleABC", angleABC_);
 }
 
 /*

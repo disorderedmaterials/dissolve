@@ -35,6 +35,11 @@ SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
     addOption("RangeC", "Distance range for third coordination number", rangeC_);
     addOption("Instantaneous", "Whether to calculate instantaneous coordination numbers rather than forming an average",
               instantaneous_);
+
+    // Serialisables
+    addSerialisable("sums", sums_);
+    addSerialisable("dataRDF", dataRDF_);
+    addSerialisable("histAB", histAB_);
 }
 
 /*

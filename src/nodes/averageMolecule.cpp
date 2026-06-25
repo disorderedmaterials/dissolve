@@ -8,8 +8,14 @@ AverageMoleculeNode::AverageMoleculeNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput("Configuration", "Set target configuration for the node", configuration_)->setFlags({ParameterBase::Required});
 
+    // Options
     addOption("Site", "Target site about which to calculate average molecule geometry", targetSite_)
         ->setFlags({ParameterBase::Required});
+
+    // Serialisables
+    addSerialisable("sampledX", sampledX_);
+    addSerialisable("sampledY", sampledY_);
+    addSerialisable("sampledZ", sampledZ_);
 }
 
 /*
