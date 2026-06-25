@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/coreData.h"
 #include "gui/keywordWidgets/optionalInt.h"
 #include <QApplication>
 #include <gtest/gtest.h>

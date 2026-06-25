@@ -19,11 +19,12 @@ bool Dissolve::prepare()
     Messenger::banner("Preparing Simulation");
 
     // Check Species
-    for (const auto &sp : coreData_.species())
-    {
-        if (!sp->checkSetUp())
-            return false;
-    }
+    // TODO DISSOLVE2
+    // for (const auto &sp : coreData_.species())
+    // {
+    //     if (!sp->checkSetUp())
+    //         return false;
+    // }
 
     // Store / update last-used pair potential cutoff
     // If lastPairPotentialCutoff is nullopt, store the current value and move on leaving the cutoff to use as nullopt.
@@ -42,25 +43,26 @@ bool Dissolve::prepare()
         return false;
 
     // Check Configurations
-    std::set<const Species *> globalUsedSpecies;
-    for (auto &cfg : coreData_.configurations())
-    {
-        if (newPairPotentialRange)
-            cfg->updateCells();
-
-        // Check Box extent against pair potential range
-        auto maxPPRange = cfg->box().inscribedSphereRadius();
-        if (PairPotential::range() > maxPPRange)
-            return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance ({}).\n",
-                                    PairPotential::range(), maxPPRange);
-
-        // Update species usage for the next check
-        for (auto &[sp, pop] : cfg->speciesPopulations())
-            globalUsedSpecies.emplace(sp);
-    }
-
-    // If we have no configurations, check all species regardless
-    if (coreData_.nConfigurations() == 0)
-        for (const auto &sp : coreData_.species())
-            globalUsedSpecies.emplace(sp.get());
+    // TODO DISSOLVE2
+    // std::set<const Species *> globalUsedSpecies;
+    // for (auto &cfg : coreData_.configurations())
+    // {
+    //     if (newPairPotentialRange)
+    //         cfg->updateCells();
+    //
+    //     // Check Box extent against pair potential range
+    //     auto maxPPRange = cfg->box().inscribedSphereRadius();
+    //     if (PairPotential::range() > maxPPRange)
+    //         return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance ({}).\n",
+    //                                 PairPotential::range(), maxPPRange);
+    //
+    //     // Update species usage for the next check
+    //     for (auto &[sp, pop] : cfg->speciesPopulations())
+    //         globalUsedSpecies.emplace(sp);
+    // }
+    //
+    // // If we have no configurations, check all species regardless
+    // if (coreData_.nConfigurations() == 0)
+    //     for (const auto &sp : coreData_.species())
+    //         globalUsedSpecies.emplace(sp.get());
 }

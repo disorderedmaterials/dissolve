@@ -5,8 +5,6 @@
 
 #include "base/serialiser.h"
 #include "base/timer.h"
-#include "classes/configuration.h"
-#include "classes/coreData.h"
 #include "classes/pairPotential.h"
 #include "classes/potentialMap.h"
 #include "math/sampledDouble.h"
@@ -23,20 +21,10 @@ class Molecule;
 class Dissolve : public Serialisable
 {
     public:
-    Dissolve(CoreData &coreData);
+    Dissolve();
     ~Dissolve();
 
-    /*
-     * Core
-     */
-    private:
-    // Reference to CoreData
-    CoreData &coreData_;
-
     public:
-    // Return reference to CoreData
-    CoreData &coreData();
-    const CoreData &coreData() const;
     // Clear all data
     void clear();
     // TOML Toggle

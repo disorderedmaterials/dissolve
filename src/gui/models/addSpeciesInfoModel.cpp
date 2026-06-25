@@ -4,7 +4,6 @@
 #include "gui/models/addSpeciesInfoModel.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
 
 /*
  * AddSpeciesInfo

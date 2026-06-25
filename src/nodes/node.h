@@ -18,6 +18,7 @@
 #include <vector>
 
 // Forward Declarations
+class AtomType;
 class Graph;
 class Edge;
 class DissolveGraph;

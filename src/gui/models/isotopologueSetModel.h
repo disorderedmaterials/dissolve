@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/isotopologueSet.h"
+#include "templates/optionalRef.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>
 

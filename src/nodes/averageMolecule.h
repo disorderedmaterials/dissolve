@@ -8,6 +8,7 @@
 #include "nodes/node.h"
 
 // Forward Declarations
+class Configuration;
 class SpeciesSite;
 
 class AverageMoleculeNode : public Node

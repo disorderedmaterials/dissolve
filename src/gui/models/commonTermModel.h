@@ -3,11 +3,13 @@
 
 #pragma once
 
-#include "classes/coreData.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>
 #include <QObject>
+
+// Forward Declarations
+class Species;
 
 namespace CommonTermModelData
 {

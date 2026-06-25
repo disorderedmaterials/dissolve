@@ -5,7 +5,7 @@
 #include "classes/kVector.h"
 #include "nodes/dissolve.h"
 
-Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
+Dissolve::Dissolve()
 {
     // Set core simulation variables
     restartFileFrequency_ = 10;
@@ -24,18 +24,9 @@ Dissolve::~Dissolve() { clear(); }
 
 DissolveGraph *Dissolve::graph() { return graphNode_.get(); }
 
-// Return reference to CoreData
-CoreData &Dissolve::coreData() { return coreData_; }
-
-const CoreData &Dissolve::coreData() const { return coreData_; }
-
 // Clear all data
 void Dissolve::clear()
 {
-    // Core
-    Messenger::printVerbose("Clearing Core Data...\n");
-    coreData_.clear();
-
     // PairPotentials
     Messenger::printVerbose("Clearing Pair Potentials...\n");
     useCombinationRules_ = true;

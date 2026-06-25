@@ -4,7 +4,6 @@
 #include "gui/models/atomTypeModel.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
 #include "templates/algorithms.h"
 
 void AtomTypeModel::reset()

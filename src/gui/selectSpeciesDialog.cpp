@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/selectSpeciesDialog.h"
-#include "classes/coreData.h"
 #include "data/ff/ff.h"
 #include "gui/selectSpeciesWidget.h"
 

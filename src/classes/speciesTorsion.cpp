@@ -2,10 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesTorsion.h"
-#include "classes/coreData.h"
+#include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "math/mathFunc.h"
-#include <map>
 
 SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(nullptr, TorsionFunctions::Form::None) {}
 

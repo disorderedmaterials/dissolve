@@ -3,7 +3,6 @@
 
 #include "gui/getModuleLayerNameDialog.h"
 #include "base/sysFunc.h"
-#include "classes/coreData.h"
 #include "module/layer.h"
 
 GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const std::vector<std::unique_ptr<ModuleLayer>> &layers)

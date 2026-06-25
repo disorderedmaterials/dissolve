@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "classes/coreData.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesTorsion.h"
 #include <map>

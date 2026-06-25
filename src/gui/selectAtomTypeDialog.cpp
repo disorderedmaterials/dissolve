@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/selectAtomTypeDialog.h"
-#include "classes/coreData.h"
 #include "gui/selectAtomTypeWidget.h"
 
 SelectAtomTypeDialog::SelectAtomTypeDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)

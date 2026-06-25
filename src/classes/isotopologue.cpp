@@ -3,7 +3,6 @@
 
 #include "classes/isotopologue.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
 

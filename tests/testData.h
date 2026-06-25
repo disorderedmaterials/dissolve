@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/coreData.h"
 #include "classes/partialSet.h"
 #include "classes/species.h"
 #include "kernels/energy.h"

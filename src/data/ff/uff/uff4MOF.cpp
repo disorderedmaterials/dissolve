@@ -3,7 +3,6 @@
 
 #include "data/ff/uff/uff4MOF.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/elements.h"
 
