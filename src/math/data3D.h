@@ -11,7 +11,7 @@
 class Histogram3D;
 
 // One-Dimensional Data
-class Data3D : public Data3DBase
+class Data3D : public Data3DBase, public Serialisable<>
 {
     public:
     Data3D();
@@ -122,4 +122,8 @@ class Data3D : public Data3DBase
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };
