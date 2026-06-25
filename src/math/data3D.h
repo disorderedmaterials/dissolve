@@ -11,7 +11,7 @@
 class Histogram3D;
 
 // One-Dimensional Data
-class Data3D : public Data3DBase, public Serialisable<>
+class Data3D : public Data3DBase, public Serialisable
 {
     public:
     Data3D();

@@ -8,7 +8,7 @@
 #include "math/sampledDouble.h"
 #include <map>
 
-class IntegerHistogram1D : public Serialisable<>
+class IntegerHistogram1D : public Serialisable
 {
     public:
     IntegerHistogram1D();
@@ -76,5 +76,5 @@ class IntegerHistogram1D : public Serialisable<>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

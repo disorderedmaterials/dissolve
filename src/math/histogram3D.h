@@ -7,7 +7,7 @@
 #include "math/sampledDouble.h"
 #include "templates/array3D.h"
 
-class Histogram3D : public Serialisable<>
+class Histogram3D : public Serialisable
 {
     public:
     Histogram3D();
@@ -134,5 +134,5 @@ class Histogram3D : public Serialisable<>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };
