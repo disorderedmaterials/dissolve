@@ -35,8 +35,6 @@ class DetectMoleculesNode : public Node
     Structure inputStructure_;
     // Output structures
     std::vector<Structure> detectedStructures_;
-    // Best NETA definitions for structure atoms
-    std::map<NETADefinition, Structure> bestNetaDefinitions_;
 
     /*
      * Helpers
@@ -47,17 +45,6 @@ class DetectMoleculesNode : public Node
                                                  const std::vector<int> fragmentIndices);
     // Find molecular fragments
     std::vector<std::vector<int>> findMolecularFragments(const Structure &structure) const;
-    // Determine the best NETA definition for the supplied species
-    std::tuple<NETADefinition, std::vector<StructureAtom *>> bestNETADefinition(const Structure &structure);
-    // Get instances for the supplied species from the cleaned unit cell
-    std::vector<std::vector<Vector3>> getInstances(const Structure &referenceStructure, std::vector<bool> &atomMask,
-                                                   const NETADefinition &neta,
-                                                   const std::vector<StructureAtom *> &referenceRootAtoms);
-    // Recursively check NETA description matches between the supplied atoms
-    std::map<const StructureAtom *, const StructureAtom *>
-    matchAtom(const StructureAtom *referenceAtom, const StructureAtom *instanceAtom,
-              const std::map<const StructureAtom *, NETADefinition> &refNETA,
-              const std::map<const StructureAtom *, const StructureAtom *> &map);
 
     /*
      * Processing
