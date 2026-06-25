@@ -55,7 +55,7 @@ void EnergyNode::clearData()
     totalPairPotentialHistory_.clear();
     totalMoleculePPHistory_.clear();
     totalGeometryHistory_.clear();
-    totalCohesiveHistory.clear();
+    totalCohesiveHistory_.clear();
     bondHistory_.clear();
     angleHistory_.clear();
     torsionHistory_.clear();
@@ -90,7 +90,7 @@ NodeConstants::ProcessResult EnergyNode::process()
     totalEnergyHistory_.push(energy.pairPotential.total() + energy.geometry.total(), podHistoryLength_);
     totalPairPotentialHistory_.push(energy.pairPotential.total(), podHistoryLength_);
     totalMoleculePPHistory_.push(energy.pairPotential.intraMolecular, podHistoryLength_);
-    totalCohesiveHistory.push(energy.pairPotential.interMolecular, podHistoryLength_);
+    totalCohesiveHistory_.push(energy.pairPotential.interMolecular, podHistoryLength_);
     totalGeometryHistory_.push(energy.geometry.total(), podHistoryLength_);
     bondHistory_.push(energy.geometry.bondEnergy, podHistoryLength_);
     angleHistory_.push(energy.geometry.angleEnergy, podHistoryLength_);

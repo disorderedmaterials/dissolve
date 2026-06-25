@@ -49,7 +49,7 @@ EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
     addOption("OverwritePotentials", "Overwrite potentials each time rather than summing them", overwritePotentials_);
 
     // Serialisables
-    addSerialisable("potentialCoefficients", potentialCoefficients_);
+    // addSerialisable("potentialCoefficients", potentialCoefficients_);
     addSerialisable("estimatedSQ", estimatedSQ_);
     addSerialisable("estimatedGR", estimatedGR_);
     addSerialisable("additionalPotentials", additionalPotentials_);

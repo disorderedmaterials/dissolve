@@ -36,7 +36,7 @@ BraggNode::BraggNode(Graph *parentGraph)
     // Serialisables
     addSerialisable("braggReflections", braggReflections_);
     addSerialisable("braggReflectionHistory", braggReflectionHistory_);
-    addSerialisable("braggPartials", braggPartials_);
+    // addSerialisable("braggPartials", braggPartials_);
 }
 
 /*

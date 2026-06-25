@@ -37,7 +37,7 @@ SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
               instantaneous_);
 
     // Serialisables
-    addSerialisable("sums", sums_);
+    // addSerialisable("sums", sums_);
     addSerialisable("dataRDF", dataRDF_);
     addSerialisable("histAB", histAB_);
 }
