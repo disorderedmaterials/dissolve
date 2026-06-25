@@ -5,7 +5,6 @@
 #include "base/lineParser.h"
 #include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
-#include "items/list.h"
 #include "math/sampledData1D.h"
 
 RenderableData1D::RenderableData1D(const Data1DBase &source)
@@ -37,7 +36,8 @@ void RenderableData1D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = sourceList.searchBase<Data1DBase, Data1D, SampledData1D>(tag_);
+    // TODO DISSOLVE2
+    // source_ = sourceList.searchBase<Data1DBase, Data1D, SampledData1D>(tag_);
 }
 
 // Invalidate the current data source

@@ -153,66 +153,6 @@ const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedDa
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool IntegerHistogram1D::deserialise(LineParser &parser)
-{
-    clear();
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    std::optional<int> minLim = parser.argb(0) ? std::optional<int>(parser.argi(1)) : std::nullopt;
-    std::optional<int> maxLim = parser.argb(2) ? std::optional<int>(parser.argi(3)) : std::nullopt;
-    initialise(minLim, maxLim);
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    nBinned_ = parser.argli(0);
-    nMissed_ = parser.argli(1);
-
-    if (!zeroCounter_.deserialise(parser))
-        return false;
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    auto nBins = parser.argli(0);
-    for (auto n = 0; n < nBins; ++n)
-    {
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        auto bin = parser.argi(0);
-        raw_[bin] = parser.argli(1);
-        averages_[bin].deserialise(parser);
-    }
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool IntegerHistogram1D::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("{} {} {} {}\n", DissolveSys::btoa(minimum_.has_value()), minimum_.value_or(0),
-                           DissolveSys::btoa(maximum_.has_value()), maximum_.value_or(0)))
-        return false;
-
-    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
-        return false;
-
-    if (!zeroCounter_.serialise(parser))
-        return false;
-
-    if (!parser.writeLineF("{}\n", averages_.size()))
-        return false;
-
-    for (auto &[key, value] : averages_)
-    {
-        if (!parser.writeLineF("{} {}\n", key, raw_.at(key)))
-            return false;
-        if (!value.serialise(parser))
-            return false;
-    }
-
-    return true;
-}
-
 // Express as a serialisable value
 void IntegerHistogram1D::serialise(std::string tag, SerialisedValue &target) const
 {

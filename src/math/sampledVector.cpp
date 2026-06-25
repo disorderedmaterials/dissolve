@@ -174,40 +174,6 @@ void SampledVector::operator/=(double x)
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool SampledVector::deserialise(LineParser &parser)
-{
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    initialise(parser.argi(0));
-    count_ = parser.argi(1);
-
-    for (auto &&[mean, stDev, m2] : zip(mean_, stDev_, m2_))
-    {
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-
-        mean = parser.argd(0);
-        stDev = parser.argd(1);
-        m2 = parser.argd(2);
-    }
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool SampledVector::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("{} {} # nData count\n", mean_.size(), count_))
-        return false;
-
-    for (auto &&[mean, stDev, m2] : zip(mean_, stDev_, m2_))
-        if (!parser.writeLineF("{} {} {}\n", mean, stDev, m2))
-            return false;
-
-    return true;
-}
-
 // Express as a serialisable value
 void SampledVector::serialise(std::string tag, SerialisedValue &target) const
 {

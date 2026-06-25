@@ -242,43 +242,6 @@ void Histogram3D::operator=(const Histogram3D &source)
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool Histogram3D::deserialise(LineParser &parser)
-{
-    clear();
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    initialise(parser.argd(0), parser.argd(1), parser.argd(2), parser.argd(3), parser.argd(4), parser.argd(5), parser.argd(6),
-               parser.argd(7), parser.argd(8));
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    nBinned_ = parser.argli(0);
-    nMissed_ = parser.argli(1);
-
-    for (auto &average : averages_)
-        if (!average.deserialise(parser))
-            return false;
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool Histogram3D::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("{} {} {} {} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_,
-                           zMinimum_, zMaximum_, zBinWidth_))
-        return false;
-    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
-        return false;
-    for (auto &average : averages_)
-        if (!average.serialise(parser))
-            return false;
-
-    return true;
-}
-
 // Express as a serialisable value
 void Histogram3D::serialise(std::string tag, SerialisedValue &target) const
 {

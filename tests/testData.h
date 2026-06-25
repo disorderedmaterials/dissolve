@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/coreData.h"
+#include "classes/partialSet.h"
 #include "classes/species.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"
@@ -135,14 +136,6 @@ class DissolveSystemTest
     {
         return checkDouble(quantity, A.value(), B, threshold);
     }
-    // Test sampled double
-    [[nodiscard]] bool checkSampledDouble(std::string_view quantity, std::string_view tag, double B, double threshold)
-    {
-        // Locate the target reference data
-        const auto &A = dissolve_.processingModuleData().retrieve<SampledDouble>(tag);
-
-        return checkDouble(quantity, A.value(), B, threshold);
-    }
     // Test Data1D
     [[nodiscard]] static bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
                                           std::string_view nameB, double tolerance = 5.0e-3,
@@ -192,24 +185,6 @@ class DissolveSystemTest
         Messenger::print("Internal data '{}' has error of {:7.3f} with external data '{}' and is {} (threshold is {:6.3e})\n\n",
                          nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
 
-        return !notOK;
-    }
-    // Test SampledVector data
-    [[nodiscard]] bool checkSampledVector(std::string_view tag, const std::vector<double> &referenceData,
-                                          double tolerance = 5.0e-3,
-                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
-    {
-        // Locate the target reference data
-        auto optData = dissolve_.processingModuleData().search<const SampledVector>(tag);
-        if (!optData)
-            throw(std::runtime_error(std::format("No data with tag '{}' exists.\n", tag)));
-        const auto &data = optData->get();
-
-        // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType, data.values(), referenceData).error;
-        auto notOK = std::isnan(error) || error > tolerance;
-        Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
-                         error, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
     // Test Vec3 data

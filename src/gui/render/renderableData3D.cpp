@@ -5,7 +5,6 @@
 #include "base/lineParser.h"
 #include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
-#include "items/list.h"
 #include "math/data3D.h"
 #include "templates/array2D.h"
 #include "templates/array3D.h"
@@ -41,7 +40,8 @@ void RenderableData3D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = sourceList.search<const Data3D>(tag_);
+    // TODO DISSOLVE2
+    // source_ = sourceList.search<const Data3D>(tag_);
 }
 
 // Invalidate the current data source
