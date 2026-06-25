@@ -9,6 +9,9 @@
 #include "math/rangedVector3.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class Configuration;
+
 class DAngleNode : public Node
 {
     public:

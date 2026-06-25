@@ -12,6 +12,9 @@
 #include "nodes/node.h"
 #include <optional>
 
+// Forward Declarations
+class Configuration;
+
 class XRaySQNode : public Node
 {
     public:

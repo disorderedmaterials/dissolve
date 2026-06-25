@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/exportXYZTrajectory.h"
+#include "classes/atomType.h"
+#include "classes/configuration.h"
 #include <fstream>
 
 ExportXYZTrajectoryNode::ExportXYZTrajectoryNode(Graph *parentGraph) : Node(parentGraph)

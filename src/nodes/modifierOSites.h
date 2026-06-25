@@ -9,6 +9,9 @@
 #include "math/range.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class Configuration;
+
 class ModifierOSitesNode : public Node
 {
     public:

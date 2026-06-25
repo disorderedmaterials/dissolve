@@ -67,8 +67,7 @@ TEST_F(GraphCoreTest, Serialisation)
 {
     createGraph();
 
-    CoreData cd;
-    Dissolve d(cd);
+    Dissolve d;
     DissolveGraph copy;
     auto serialised = root_.into_toml();
 

@@ -33,7 +33,6 @@ class DissolveModel : public QObject
     private:
     // Master terms model
     std::unique_ptr<MasterTermTreeModel> commons_ = nullptr;
-    ConfigurationModel configurationModel_;
 
     public:
     // Getter for filename
@@ -80,8 +79,6 @@ class DissolveModel : public QObject
     const CommonImproperModel *commonImpropersModel() const;
     // The number of common impropers
     int nCommonImpropers();
-    // The Configurations Model
-    ConfigurationModel *configurationsModel();
 
     /*
      * Data

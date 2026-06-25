@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/dissolve.h"
+#include "classes/configuration.h"
 #include "classes/potentialMap.h"
 #include "kernels/energy.h"
 #include "kernels/force.h"

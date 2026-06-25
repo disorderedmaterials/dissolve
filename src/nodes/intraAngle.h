@@ -8,6 +8,9 @@
 #include "math/range.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class Configuration;
+
 class IntraAngleNode : public Node
 {
     public:

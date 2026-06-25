@@ -17,8 +17,7 @@
 int main(int args, char **argv)
 {
     // Instantiate main classes
-    CoreData coreData;
-    Dissolve dissolve(coreData);
+    Dissolve dissolve;
 
     DissolveModel dissolveModel;
     dissolveModel.setDissolve(dissolve);

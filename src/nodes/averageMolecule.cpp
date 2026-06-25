@@ -2,6 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/averageMolecule.h"
+#include "classes/configuration.h"
+#include "classes/species.h"
+#include "classes/speciesSite.h"
 
 AverageMoleculeNode::AverageMoleculeNode(Graph *parentGraph) : Node(parentGraph)
 {

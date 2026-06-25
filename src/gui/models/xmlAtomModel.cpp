@@ -7,8 +7,6 @@
 #include <QColor>
 #include <pugixml.hpp>
 
-XmlAtomModel::XmlAtomModel(const CoreData &coreData) : coreData_(coreData) {}
-
 void XmlAtomModel::readFile(const pugi::xml_node &root)
 {
     beginResetModel();

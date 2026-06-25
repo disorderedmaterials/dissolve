@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
+#include "classes/configuration.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"

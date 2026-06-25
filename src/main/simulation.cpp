@@ -53,7 +53,8 @@ bool Dissolve::prepare()
     //     // Check Box extent against pair potential range
     //     auto maxPPRange = cfg->box().inscribedSphereRadius();
     //     if (PairPotential::range() > maxPPRange)
-    //         return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance ({}).\n",
+    //         return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance
+    //         ({}).\n",
     //                                 PairPotential::range(), maxPPRange);
     //
     //     // Update species usage for the next check

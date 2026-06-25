@@ -49,8 +49,6 @@ class XmlTreeModel : public QAbstractItemModel
     void readFile(const pugi::xml_node &);
 
     public:
-    XmlTreeModel(const CoreData &coreData);
-
     QModelIndex parent(const QModelIndex &index) const override;
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

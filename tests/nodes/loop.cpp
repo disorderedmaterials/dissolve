@@ -74,8 +74,7 @@ class IterableGraphTest : public ::testing::Test
 
 TEST_F(IterableGraphTest, BasicNonLoopingSeries)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
+    Dissolve dissolve;
     auto root = std::make_unique<DissolveGraph>();
     auto loop = dynamic_cast<IterableGraph *>(root->createNode("Iterator", "Iterator"));
     auto i = dynamic_cast<NumberNode *>(root->createNode("Number", "i"));

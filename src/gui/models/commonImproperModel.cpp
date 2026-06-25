@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/commonImproperModel.h"
+#include "classes/species.h"
 
 CommonImproperModel::CommonImproperModel(Species *species) : CommonTermModel(species), sourceData_(species->commonImpropers())
 {

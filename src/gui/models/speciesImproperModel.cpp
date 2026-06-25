@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesImproperModel.h"
+#include "classes/speciesAtom.h"
 
 SpeciesImproperModel::SpeciesImproperModel() : impropers_(nullptr) {}
 

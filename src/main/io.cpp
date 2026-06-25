@@ -49,13 +49,9 @@ void Dissolve::serialise(std::string tag, SerialisedValue &target) const
 
     root["version"] = Version::semantic();
 
-    Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
-
     root["pairPotentials"] = serialisePairPotentials();
 
     graphNode_->serialise("graph", root);
-
-    Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 }
 
 // Read pair potentials from a serialisable value
@@ -100,17 +96,6 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
     Serialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
 
     Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
-
-    toMap(node, "species", [this](const std::string &name, const SerialisedValue &data)
-          { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data); });
-
-    toMap(node, "configurations",
-          [this](const std::string &name, const SerialisedValue &data)
-          {
-              auto *cfg = coreData_.addConfiguration();
-              cfg->setName(name);
-              cfg->deserialise(data);
-          });
 }
 
 // Load input from supplied file
@@ -184,7 +169,6 @@ bool Dissolve::hasInputFilename() const { return (!inputFilename_.empty()); }
 void Dissolve::setInputFilename(std::string_view filename)
 {
     inputFilename_ = filename;
-    coreData_.setInputFilename(filename);
 
     restartFilename_ = std::format("{}.restart", inputFilename_);
 }

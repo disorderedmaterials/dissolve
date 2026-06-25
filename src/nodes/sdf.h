@@ -7,7 +7,9 @@
 #include "math/histogram3D.h"
 #include "nodes/node.h"
 
-// SDF
+// Forward Declarations
+class Configuration;
+
 class SDFNode : public Node
 {
     public:

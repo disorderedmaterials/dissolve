@@ -6,6 +6,9 @@
 #include "math/history.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class Configuration;
+
 class EnergyNode : public Node
 {
     public:

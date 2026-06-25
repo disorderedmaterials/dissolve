@@ -6,6 +6,7 @@
 #include "classes/braggReflection.h"
 #include "classes/configuration.h"
 #include "classes/kVector.h"
+#include "math/function1D.h"
 #include "math/history.h"
 #include "nodes/node.h"
 

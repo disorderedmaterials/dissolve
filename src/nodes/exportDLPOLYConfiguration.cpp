@@ -2,8 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/exportDLPOLYConfiguration.h"
+#include "classes/atomType.h"
+#include "classes/configuration.h"
 #include "data/atomicMasses.h"
-#include "main/dissolve.h"
 #include "nodes/constants.h"
 #include <fstream>
 

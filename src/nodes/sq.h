@@ -9,6 +9,9 @@
 #include "math/windowFunction.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class Configuration;
+
 class SQNode : public Node
 {
     public:

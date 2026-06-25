@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/commonAngleModel.h"
+#include "classes/species.h"
 
 CommonAngleModel::CommonAngleModel(Species *species) : CommonTermModel(species), sourceData_(species->commonAngles())
 {

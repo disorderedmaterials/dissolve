@@ -3,12 +3,15 @@
 
 #pragma once
 
+#include "classes/site.h"
 #include "classes/speciesSites.h"
 #include "math/histogram3D.h"
 #include "math/range.h"
 #include "nodes/node.h"
 
-// OrientedSDF
+// Forward Declarations
+class Configuration;
+
 class OrientedSDFNode : public Node
 {
     public:

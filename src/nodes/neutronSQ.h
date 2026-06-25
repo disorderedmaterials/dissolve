@@ -10,6 +10,9 @@
 #include "nodes/node.h"
 #include <optional>
 
+// Forward Declarations
+class Configuration;
+
 class NeutronSQNode : public Node
 {
     public:

@@ -30,7 +30,7 @@ class ExportXYZTrajectoryNode : public Node
     // File path
     std::string filePath_;
     // File format
-    bool extended_;
+    bool extended_{false};
     // Last read file position
     std::streampos filePosition_;
     // Target configuration

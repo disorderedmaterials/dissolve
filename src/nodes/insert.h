@@ -7,6 +7,9 @@
 #include "classes/moleculeSet.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class Configuration;
+
 class InsertNode : public Node
 {
     public:

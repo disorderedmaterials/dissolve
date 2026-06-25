@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 #include "nodes/bragg.h"
 #include "base/timer.h"
+#include "classes/atomType.h"
 #include "classes/partialSet.h"
 
 BraggNode::BraggNode(Graph *parentGraph)

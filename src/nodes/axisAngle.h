@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/site.h"
 #include "classes/speciesSites.h"
 #include "math/histogram1D.h"
 #include "math/histogram2D.h"
@@ -10,6 +11,7 @@
 #include "nodes/node.h"
 
 // Forward Declarations
+class Configuration;
 class SpeciesSite;
 
 class AxisAngleNode : public Node

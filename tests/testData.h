@@ -98,13 +98,12 @@ template <class T> void tomlRoundTrip(T &a, T &b)
 class DissolveSystemTest
 {
     public:
-    DissolveSystemTest() : dissolve_(coreData_) { dissolve_.setRestartFileFrequency(0); };
+    DissolveSystemTest() { dissolve_.setRestartFileFrequency(0); };
 
     /*
      * Dissolve & CoreData
      */
     private:
-    CoreData coreData_;
     Dissolve dissolve_;
     // Whether to perform rewrite checks on setUp
     bool rewriteCheck_{true};
@@ -114,8 +113,6 @@ class DissolveSystemTest
     public:
     // Return the Dissolve object
     Dissolve &dissolve() { return dissolve_; }
-    // Return the CoreData object
-    CoreData &coreData() { return coreData_; }
 
     /*
      * Checks
