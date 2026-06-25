@@ -67,12 +67,8 @@ class BraggReflection : public Serialisable
      * Serialisation
      */
     public:
-    // Read data through specified parser
-    bool deserialise(LineParser &parser);
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
-    // Write data through specified parser
-    bool serialise(LineParser &parser) const;
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
 };
