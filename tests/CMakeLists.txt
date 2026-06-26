@@ -62,7 +62,7 @@ function(dissolve_add_test)
 
 endfunction()
 
-add_library(testing testing.cpp testing.h)
+add_library(testing testing.cpp testingChecks.cpp testing.h)
 target_link_libraries(testing PRIVATE GTest::gtest_main)
 target_include_directories(
   testing PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CONAN_INCLUDE_DIRS_GTEST}
