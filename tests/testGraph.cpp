@@ -240,7 +240,7 @@ std::pair<GRNode *, SQNode *> TestGraph::appendGRSQ(bool noAveraging, bool noInt
 // Create a NeutronSQ node with optional reference data
 NeutronSQNode *TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
                                           const std::vector<std::tuple<std::string, std::string, double>> isotopologues,
-                                          TestGraph::Data1DImportFileFormat referenceData)
+                                          std::string referenceData, bool isHistogram)
 {
     // Construct the isotopologue set
     IsotopologueSet isotopologueSet;
@@ -271,31 +271,31 @@ NeutronSQNode *TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
     EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
 
     // Set reference F(Q) data
-    if (!referenceData.filename.empty())
+    if (!referenceData.empty())
     {
         auto data1DImportNode = createNode("ImportXYData", std::format("Reference-{}", name));
         EXPECT_TRUE(data1DImportNode);
-        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
-        EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
+        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData)));
+        EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", isHistogram));
         EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
     }
 
     return head<NeutronSQNode>();
 }
 // Create an XRaySQ node with optional reference data
-XRaySQNode *TestGraph::appendXRaySQ(SQNode *sqNode, std::string name, TestGraph::Data1DImportFileFormat referenceData)
+XRaySQNode *TestGraph::appendXRaySQ(SQNode *sqNode, std::string name, std::string referenceData, bool isHistogram)
 {
     EXPECT_TRUE(appendNode("XRaySQ", name));
     EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
     EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
 
     // Set reference F(Q) data
-    if (!referenceData.filename.empty())
+    if (!referenceData.empty())
     {
         auto data1DImportNode = createNode("ImportXYData", std::format("Reference-{}", name));
         EXPECT_TRUE(data1DImportNode);
-        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
-        EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
+        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData)));
+        EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", isHistogram));
         EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
     }
     return head<XRaySQNode>();

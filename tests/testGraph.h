@@ -30,16 +30,6 @@ class TestGraph : public DissolveGraph
     }
     ~TestGraph() { exportMermaidGraph(*this); }
 
-    public:
-    // Container for data 1D import filename and whether or not it is a histogram
-    struct Data1DImportFileFormat
-    {
-        std::string filename;
-        bool histogram;
-
-        Data1DImportFileFormat(std::string filename = "", bool histogram = false) : filename(filename), histogram(histogram) {}
-    };
-
     private:
     // Current graph target
     Graph *currentGraph_{nullptr};
@@ -91,9 +81,9 @@ class TestGraph : public DissolveGraph
     // Create a NeutronSQ node with optional reference data
     NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
                                    const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
-                                   TestGraph::Data1DImportFileFormat referenceData = TestGraph::Data1DImportFileFormat{});
+                                   std::string referenceData = {}, bool isHistogram = false);
     // Create an XRaySQ node with optional reference data
     XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name,
-                             TestGraph::Data1DImportFileFormat referenceData = TestGraph::Data1DImportFileFormat{});
+                             std::string referenceData = {}, bool isHistogram = false);
 };
 }; // namespace UnitTest
