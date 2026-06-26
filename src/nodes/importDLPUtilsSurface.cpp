@@ -2,7 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importDLPUtilsSurface.h"
-#include "base/lineParser.h"
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
 
 ImportDLPUtilsSurfaceNode::ImportDLPUtilsSurfaceNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -42,44 +43,34 @@ NodeConstants::ProcessResult ImportDLPUtilsSurfaceNode::process()
 // Read data specified
 bool ImportDLPUtilsSurfaceNode::read(Data2D &data, std::string filePath)
 {
+    using namespace Parsers;
     data.clear();
 
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile(filePath);
+    if (!infile)
         return false;
 
     // Data is in blocks of common Y value, three-columns:  x  y  f(x,y)
+    auto block = some(maybe(inlineSpaces()) >> vector3() << newlines());
+    auto blocks = some(block << spaces());
     std::vector<double> xAxis, yAxis, values;
-    auto firstLineOfBlock = true;
-    while (!parser.eofOrBlank())
+
+    auto result = blocks.exact(infile);
+    if (!result)
+        return false;
+    for (auto group : *result)
     {
-        if (parser.getArgsDelim(LineParser::KeepBlanks) != LineParser::Success)
-            return false;
-
-        // Is this a blank line inbetween blocks?
-        if (parser.nArgs() == 0)
+        xAxis.clear();
+        yAxis.push_back(group[0].y);
+        for (auto point : group)
         {
-            firstLineOfBlock = true;
-            continue;
+            xAxis.push_back(point.x);
+            values.push_back(point.z);
         }
-
-        // If this is the first line of the block, re-start x-axis storage and push next y value
-        if (firstLineOfBlock)
-        {
-            xAxis.clear();
-            yAxis.push_back(parser.argd(1));
-            firstLineOfBlock = false;
-        }
-
-        // Store the x-axis value
-        xAxis.push_back(parser.argd(0));
-
-        // Store the value
-        values.push_back(parser.argd(2));
     }
 
-    parser.closeFiles();
+    infile.close();
 
     // Validity check on number of points in loaded file
     if (xAxis.size() * yAxis.size() != values.size())
