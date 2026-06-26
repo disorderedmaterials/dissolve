@@ -57,6 +57,12 @@ Parser<Vector3> vector3()
     return (real() & spaces() >> real() & spaces() >> real())
         .apply([](double x, double y, double z) { return Vector3(x, y, z); });
 }
+// A parser that accepts a 3-vector of integers
+Parser<Vector3i> vector3i()
+{
+    return (integer() & spaces() >> integer() & spaces() >> integer())
+        .apply([](auto x, auto y, auto z) { return Vector3i(x, y, z); });
+}
 
 // A parser that accepts a 3x3 matrix of floating point numbers
 Parser<Matrix3> matrix3()
