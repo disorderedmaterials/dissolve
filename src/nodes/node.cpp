@@ -140,7 +140,6 @@ NodeConstants::ProcessResult Node::run()
             case (NodeConstants::ProcessResult::Failed):
                 break;
             case (NodeConstants::ProcessResult::Success):
-                updateDynamicOutputs();
                 ++versionIndex_;
                 upToDate_ = true;
                 break;
@@ -282,12 +281,6 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view optionName) con
         return {};
     return options_.at(std::string{optionName});
 }
-
-// Update dynamic outputs
-void Node::updateDynamicOutputs() { registerDynamicOutputs(); }
-
-// Register dynamic outputs
-void Node::registerDynamicOutputs() {}
 
 // Return Options
 Node::NodeParameterMap &Node::options() { return options_; };

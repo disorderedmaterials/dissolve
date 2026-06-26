@@ -300,46 +300,6 @@ class Node : public Serialisable<>
     }
     // Return named option if it exists
     std::shared_ptr<ParameterBase> findOption(std::string_view name) const;
-    // Update dynamic outputs
-    void updateDynamicOutputs();
-    // Register dynamic output from container data source
-    template <typename T>
-    void registerDynamicOutput(std::vector<T> &data, std::string description,
-                               const std::variant<std::string, std::function<std::string(T)>> &name = std::string("dynOut"))
-    {
-        for (int i = 0; i < data.size(); i++)
-        {
-            auto val = data[i];
-            auto paramName = std::holds_alternative<std::string>(name) ? (std::get<std::string>(name) + std::format("-{}", i))
-                                                                       : std::get<std::function<std::string(T)>>(name)(val);
-
-            // Check if output already exists - do not add if it does
-            if (outputs_.find(paramName) != outputs_.end())
-                continue;
-
-            addOutput<T>(paramName, description, data[i]);
-        }
-    }
-    template <typename T>
-    void
-    registerDynamicPointerOutput(std::vector<T> &data, std::string description,
-                                 const std::variant<std::string, std::function<std::string(T)>> &name = std::string("dynOut"))
-    {
-        for (int i = 0; i < data.size(); i++)
-        {
-            auto val = data[i];
-            auto paramName = std::holds_alternative<std::string>(name) ? (std::get<std::string>(name) + std::format("-{}", i))
-                                                                       : std::get<std::function<std::string(T)>>(name)(val);
-
-            // Check if output already exists - do not add if it does
-            if (outputs_.find(paramName) != outputs_.end())
-                continue;
-
-            addPointerOutput<T>(paramName, description, data[i]);
-        }
-    }
-    // Register dynamic outputs
-    virtual void registerDynamicOutputs();
     // Return options
     NodeParameterMap &options();
     // Set option value

@@ -49,17 +49,7 @@ class DetectMoleculesNode : public Node
     /*
      * Processing
      */
-    private:
-    void registerDynamicOutputs() override;
-
     protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
-
-    /*
-     * Getters
-     */
-    public:
-    // Output structures
-    const std::vector<Structure> &detectedStructures() const;
 };

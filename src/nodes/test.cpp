@@ -45,13 +45,6 @@ TestNode::TestVariant TestNode::variant() { return variant_; }
  * Processing
  */
 
-// Register dynamic outputs
-void TestNode::registerDynamicOutputs()
-{
-    registerDynamicOutput<char>(messageParts_, "Individual character from a message", std::string("Message-Part"));
-    registerDynamicPointerOutput<char>(messageParts_, "Individual character from a message", std::string("Message-Ptr-Part"));
-}
-
 // Perform processing
 NodeConstants::ProcessResult TestNode::process()
 {
@@ -67,6 +60,36 @@ NodeConstants::ProcessResult TestNode::process()
     // Standard dynamic outputs
     messageParts_.clear();
     messageParts_.insert(messageParts_.end(), message_.begin(), message_.end());
+
+    /*
+     * Dynamic outputs
+     */
+
+    // Register dynamic (standard) outputs
+    for (int i = 0; i < messageParts_.size(); i++)
+    {
+        auto val = messageParts_[i];
+        auto paramName = std::string("Message-Part" + std::format("-{}", i));
+
+        // Check if output already exists - do not add if it does
+        if (outputs_.find(paramName) != outputs_.end())
+            continue;
+
+        addOutput(paramName, "Part of a message", messageParts_[i]);
+    }
+
+    // Register dynamic pointer outputs
+    for (int i = 0; i < messageParts_.size(); i++)
+    {
+        auto val = messageParts_[i];
+        auto paramName = std::string("Message-Ptr-Part" + std::format("-{}", i));
+
+        // Check if output already exists - do not add if it does
+        if (outputs_.find(paramName) != outputs_.end())
+            continue;
+
+        addPointerOutput(paramName, "Part of a message", messageParts_[i]);
+    }
 
     return NodeConstants::ProcessResult::Success;
 }

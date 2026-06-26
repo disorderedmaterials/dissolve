@@ -58,9 +58,6 @@ class TestNode : public Node
     /*
      * Processing
      */
-    private:
-    void registerDynamicOutputs() override;
-
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;

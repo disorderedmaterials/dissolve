@@ -31,12 +31,6 @@ std::vector<std::vector<int>> DetectMoleculesNode::findMolecularFragments(const 
     return fragments;
 }
 
-// Register dynamic outputs
-void DetectMoleculesNode::registerDynamicOutputs()
-{
-    registerDynamicOutput<Structure>(detectedStructures_, "Detect molecular structures", std::string("DetectedMolecule"));
-}
-
 // Run main processing
 NodeConstants::ProcessResult DetectMoleculesNode::process()
 {
@@ -195,6 +189,23 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                 EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); }));
     message("");
 
+    /*
+     * Dynamic outputs
+     */
+
+    // Register dynamic outputs
+    for (int i = 0; i < detectedStructures_.size(); i++)
+    {
+        auto val = detectedStructures_[i];
+        auto paramName = std::string("DetectedMolecule" + std::format("-{}", i));
+
+        // Check if output already exists - do not add if it does
+        if (outputs_.find(paramName) != outputs_.end())
+            continue;
+
+        addOutput(paramName, "Detected molecular structure", detectedStructures_[i]);
+    }
+
     return NodeConstants::ProcessResult::Success;
 }
 
@@ -229,10 +240,3 @@ Structure &DetectMoleculesNode::copyStructureAtomsAndBonds(const Structure &sour
 
     return target;
 }
-
-/*
- * Getters
- */
-
-// Output structures
-const std::vector<Structure> &DetectMoleculesNode::detectedStructures() const { return detectedStructures_; }
