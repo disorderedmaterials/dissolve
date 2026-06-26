@@ -55,8 +55,7 @@ bool ImportDLPUtilsPDensNode::read(Data3D &data, std::string filePath)
     using namespace Parsers;
     data.clear();
 
-    auto vectI = inlineSpaces() >> integer() & inlineSpaces() >> integer() & inlineSpaces() >> integer();
-    auto firstLine = vectI & vectI & vectI << spaces();
+    auto firstLine = inlineSpaces() >> vector3i() & inlineSpaces() >> vector3i() & inlineSpaces() >> vector3i() << spaces();
     auto secondLine = vector3() << inlineSpaces() & vector3() << inlineSpaces() & vector3() << spaces();
     auto thirdLine = vector3() << spaces();
     auto fourthLine = literal("zyx") << spaces();
@@ -71,19 +70,19 @@ bool ImportDLPUtilsPDensNode::read(Data3D &data, std::string filePath)
     if (!head)
         return false;
 
-    auto &[nx, ny, nz, iminx, iminy, iminz, imaxx, imaxy, imaxz, a, b, c, axisOrigin] = std::get<0>(*head);
+    auto &[n, imin, imax, a, b, c, axisOrigin] = std::get<0>(*head);
 
     // Set up our data
-    data.initialise(nx, axisOrigin.x, a.x, ny, axisOrigin.y, b.y, nz, axisOrigin.z, c.z);
+    data.initialise(n.x, axisOrigin.x, a.x, n.y, axisOrigin.y, b.y, n.z, axisOrigin.z, c.z);
     auto points = some(maybe(spaces()) >> real() << spaces()).exact(infile);
     if (!points)
         return false;
 
     auto idx = 0;
     // Loop over data values ('zyx' loop order, meaning fastest varying is z)
-    for (auto x = 0; x < nx; ++x)
-        for (auto y = 0; y < ny; ++y)
-            for (auto z = 0; z < nz; ++z)
+    for (auto x = 0; x < n.x; ++x)
+        for (auto y = 0; y < n.y; ++y)
+            for (auto z = 0; z < n.z; ++z)
                 // Set the value
                 data.value(x, y, z) = (*points)[idx++];
 
