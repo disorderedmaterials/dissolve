@@ -51,6 +51,7 @@ Parser<double> real()
     return result.apply(nat2dbl);
 }
 
+// A parser that accepts a 3-vector of floating point numbers
 Parser<Vector3> vector3()
 {
     return (real() & spaces() >> real() & spaces() >> real())
