@@ -228,7 +228,6 @@ TEST_F(CIFNodeTest, NaClMolecules)
     // 2x2x2 supercell
     extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A, A, A}, {90, 90, 90}, {2, 2, 2});
     auto supercellConfigurationNode = static_cast<SupercellConfigurationNode *>(testGraph.findNode("SupercellConfiguration"));
-    ASSERT_EQ(testGraph.findNode("SetBox")->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(supercellConfigurationNode->run(), NodeConstants::ProcessResult::Success);
     testBox(supercellConfigurationNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A * 2, A * 2, A * 2},
             {90, 90, 90}, 8 * 8);
@@ -253,10 +252,6 @@ TEST_F(CIFNodeTest, NaClO3)
 
     EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_198);
-    constexpr double A = 6.55;
-    // TODO: Handle supercell configurations
-    //  testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90},
-    //  20);
 
     // No bonding defs in the CIF, so we expect species for each atomic
     // component (4 Na, 4 Cl, and 12 O)
@@ -266,6 +261,13 @@ TEST_F(CIFNodeTest, NaClO3)
     testDetectedMolecularStructure(detectedMoleculeStructureA.at(0), {"Na", 4, 1});
     testDetectedMolecularStructure(detectedMoleculeStructureA.at(1), {"Cl", 4, 1});
     testDetectedMolecularStructure(detectedMoleculeStructureA.at(2), {"O", 12, 1});
+
+    // Check box
+    constexpr double A = 6.55;
+    extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}, {Elements::O, "O"}}, {A, A, A}, {90, 90, 90});
+    auto supercellConfigurationNode = static_cast<SupercellConfigurationNode *>(testGraph.findNode("SupercellConfiguration"));
+    ASSERT_EQ(supercellConfigurationNode->run(), NodeConstants::ProcessResult::Success);
+    testBox(supercellConfigurationNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 20);
 
     // Calculate bonding ourselves to get the correct species
     EXPECT_TRUE(testGraph.appendNode("CalculateBonding"));
