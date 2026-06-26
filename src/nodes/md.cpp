@@ -285,11 +285,12 @@ NodeConstants::ProcessResult MDNode::process()
     }
 
     // Open trajectory file (if requested)
-    LineParser trajParser;
+    std::ofstream outfile;
     if (trajectoryFrequency && trajectoryFrequency > 0)
     {
         std::string trajectoryFile = std::format("{}.md.xyz", targetConfiguration_->name());
-        if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
+        outfile.open(trajectoryFile, std::ios::app);
+        if (!outfile)
         {
             Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
             return NodeConstants::ProcessResult::Failed;
@@ -421,30 +422,26 @@ NodeConstants::ProcessResult MDNode::process()
         if (trajectoryFrequency > 0 && (step % trajectoryFrequency == 0))
         {
             // Write number of atoms
-            trajParser.writeLineF("{}\n", targetConfiguration_->nAtoms());
+            outfile << targetConfiguration_->nAtoms() << std::endl;
 
             // Construct and write header
             std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
             if (energyFrequency && (step % energyFrequency == 0))
                 header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pe.pairPotential.total(),
                                       pe.geometry.total(), ke + pe.pairPotential.total() + pe.geometry.total());
-            if (!trajParser.writeLine(header))
-                return NodeConstants::ProcessResult::Failed;
+            outfile << header << std::endl;
 
             // Write Atoms
             for (const auto &i : atoms)
-            {
-                if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
-                                           i.r().x, i.r().y, i.r().z))
-                    return NodeConstants::ProcessResult::Failed;
-            }
+                outfile << std::format("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
+                                       i.r().x, i.r().y, i.r().z);
         }
     }
     timer.stop();
 
     // Close trajectory file
     if (trajectoryFrequency > 0)
-        trajParser.closeFiles();
+        outfile.close();
 
     if (capForces_)
         Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
