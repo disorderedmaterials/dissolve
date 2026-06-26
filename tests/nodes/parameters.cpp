@@ -5,7 +5,6 @@
 #include "nodes/numberNode.h"
 #include "nodes/test.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

@@ -8,7 +8,6 @@
 #include "nodes/sq.h"
 #include "nodes/xRaySQ.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

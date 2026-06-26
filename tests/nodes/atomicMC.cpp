@@ -7,7 +7,6 @@
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 #include <vector>
 
 namespace UnitTest

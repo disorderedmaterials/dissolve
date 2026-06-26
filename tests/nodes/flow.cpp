@@ -7,7 +7,6 @@
 #include "nodes/number.h"
 #include "nodes/numberNode.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

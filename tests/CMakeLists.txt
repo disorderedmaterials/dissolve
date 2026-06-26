@@ -66,7 +66,7 @@ add_library(testing testing.cpp testingChecks.cpp testingTOML.cpp testing.h)
 target_link_libraries(testing PRIVATE GTest::gtest_main)
 target_include_directories(
   testing PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CONAN_INCLUDE_DIRS_GTEST}
-                  ${CONAN_INCLUDE_DIRS_PUGIXML} ${CONAN_INCLUDE_DIRS}
+                  ${CONAN_INCLUDE_DIRS_PUGIXML}
 )
 
 # Add unit test subdirectories

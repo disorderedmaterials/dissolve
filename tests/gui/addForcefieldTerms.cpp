@@ -6,7 +6,6 @@
 #include "tests/testing.h"
 #include <QTableView>
 #include <gmock/gmock.h>
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

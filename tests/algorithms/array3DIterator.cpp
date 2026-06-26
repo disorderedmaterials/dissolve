@@ -6,8 +6,8 @@
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
 #include <gtest/gtest.h>
+#include <iostream>
 
-#include "iostream"
 namespace UnitTest
 {
 

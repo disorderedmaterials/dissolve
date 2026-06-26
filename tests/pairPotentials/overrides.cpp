@@ -5,7 +5,6 @@
 #include "nodes/neutronSQ.h"
 #include "nodes/species.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 #include <vector>
 
 namespace UnitTest

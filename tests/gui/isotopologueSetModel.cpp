@@ -5,7 +5,6 @@
 #include "classes/isotopologueSet.h"
 #include "classes/species.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

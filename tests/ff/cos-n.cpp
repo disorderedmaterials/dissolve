@@ -6,7 +6,6 @@
 #include "kernels/force.h"
 #include "tests/tempFile.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

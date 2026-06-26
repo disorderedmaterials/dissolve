@@ -3,7 +3,6 @@
 
 #include "templates/doubleKeyedMap.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

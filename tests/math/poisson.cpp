@@ -4,7 +4,6 @@
 #include "math/poissonFit.h"
 #include "nodes/importXYData.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

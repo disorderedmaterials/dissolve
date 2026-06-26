@@ -7,7 +7,6 @@
 #include "tests/tempFile.h"
 #include "tests/testing.h"
 #include <fstream>
-#include <gtest/gtest.h>
 #include <memory>
 #include <sstream>
 

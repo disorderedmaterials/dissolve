@@ -3,7 +3,6 @@
 
 #include "math/histogram1D.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

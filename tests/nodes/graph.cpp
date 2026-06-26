@@ -5,7 +5,6 @@
 #include "nodes/dissolve.h"
 #include "nodes/registry.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

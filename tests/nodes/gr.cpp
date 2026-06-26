@@ -4,7 +4,6 @@
 #include "nodes/gr.h"
 #include "math/windowFunction.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

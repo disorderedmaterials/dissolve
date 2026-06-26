@@ -8,7 +8,6 @@
 #include "main/dissolve.h"
 #include <QTableView>
 #include <gmock/gmock.h>
-#include <gtest/gtest.h>
 
 #include <vector>
 

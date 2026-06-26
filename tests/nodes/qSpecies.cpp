@@ -4,7 +4,6 @@
 #include "nodes/qSpecies.h"
 #include "nodes/species.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

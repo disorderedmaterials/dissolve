@@ -5,7 +5,6 @@
 #include "nodes/calculateBonding.h"
 #include "tests/testing.h"
 #include <cmath>
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

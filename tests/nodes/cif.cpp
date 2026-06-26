@@ -5,7 +5,6 @@
 #include "classes/empiricalFormula.h"
 #include "nodes/cif/importCIFStructure.h"
 #include "tests/testing.h"
-#include <gtest/gtest.h>
 #include <string>
 
 namespace UnitTest

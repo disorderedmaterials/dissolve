@@ -10,7 +10,6 @@
 #include "gui/models/speciesTorsionModel.h"
 #include "main/dissolve.h"
 #include <gmock/gmock.h>
-#include <gtest/gtest.h>
 #include <vector>
 
 Q_DECLARE_METATYPE(Sears91::Isotope);

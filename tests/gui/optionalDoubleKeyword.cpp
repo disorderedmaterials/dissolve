@@ -3,7 +3,6 @@
 
 #include "gui/keywordWidgets/optionalDouble.h"
 #include <QApplication>
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

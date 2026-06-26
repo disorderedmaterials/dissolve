@@ -7,7 +7,6 @@
 #include "templates/algorithms.h"
 #include "tests/testing.h"
 #include <cmath>
-#include <gtest/gtest.h>
 #include <vector>
 
 namespace UnitTest
