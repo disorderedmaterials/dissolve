@@ -28,7 +28,7 @@ class ImportXYZTrajectoryNode : public Node
     // File path
     std::string filePath_;
     // Last read file position
-    std::streampos filePosition_;
+    std::streampos filePosition_{0};
     // Structure
     Structure structure_;
 

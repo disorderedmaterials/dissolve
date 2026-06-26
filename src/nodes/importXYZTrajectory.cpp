@@ -40,26 +40,21 @@ NodeConstants::ProcessResult ImportXYZTrajectoryNode::process()
 {
     message("Reading XYZ trajectory file frame from '{}'...\n", filePath_);
 
-    // Open the file
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile{filePath_};
+    if (!infile)
     {
         error("Couldn't open trajectory file '{}'.\n", filePath_);
         return NodeConstants::ProcessResult::Failed;
     }
-
-    // Seek to the next file position
-    parser.seekg(filePosition_);
-
-    structure_.clear();
+    infile.seekg(filePosition_);
 
     // Get the frame read result
-    auto frameResult = ImportXYZStructureNode::read(parser, structure_);
+    auto frameResult = ImportXYZStructureNode::read(infile, structure_);
     if (frameResult != NodeConstants::ProcessResult::Success)
         return frameResult;
 
     // Store the new trajectory file position
-    filePosition_ = parser.tellg();
+    filePosition_ = infile.tellg();
 
     return NodeConstants::ProcessResult::Success;
 }

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/applicative.h"
 #include "classes/structure.h"
 #include "nodes/node.h"
 
@@ -39,5 +40,9 @@ class ImportXYZStructureNode : public Node
 
     public:
     // Read structure from the specified file parser
-    static NodeConstants::ProcessResult read(LineParser &parser, Structure &structure);
+    static NodeConstants::ProcessResult read(std::istream &input, Structure &structure);
+    static Parsers::Parser<std::tuple<std::string, Vector3, std::optional<double>>> structureAtom();
+
+    static Parsers::Parser<std::tuple<int, std::vector<std::tuple<std::string, Vector3, std::optional<double>>>>>
+    structureBlock();
 };
