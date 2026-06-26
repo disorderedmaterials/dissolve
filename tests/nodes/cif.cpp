@@ -43,6 +43,7 @@ class CIFNodeTest : public ::testing::Test
             auto [z, name] = sp;
             EXPECT_TRUE(graph->addNode(TestGraph::createAtomicSpecies(z), name));
             EXPECT_TRUE(graph->appendNode("Insert", std::string("Insert" + name)));
+            ASSERT_TRUE(graph->fetchHead()->setOption("BoxAction", InsertNode::BoxActionStyle::None));
         }
 
         // Create species from structure
@@ -225,7 +226,7 @@ TEST_F(CIFNodeTest, NaClMolecules)
         DissolveSystemTest::checkVec3(instance[0], (r2 - A / 2).abs());
 
     // 2x2x2 supercell
-    extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A * 2, A * 2, A * 2}, {90, 90, 90}, {2, 2, 2});
+    extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A, A, A}, {90, 90, 90}, {2, 2, 2});
     auto supercellConfigurationNode = static_cast<SupercellConfigurationNode *>(testGraph.findNode("SupercellConfiguration"));
     ASSERT_EQ(testGraph.findNode("SetBox")->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(supercellConfigurationNode->run(), NodeConstants::ProcessResult::Success);
