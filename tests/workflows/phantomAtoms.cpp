@@ -95,54 +95,54 @@ TEST(PhantomAtomsTest, Water)
     auto rawGR = grNode->getOutputValue<PartialSet *>("RawGR");
 
     // Partial g(r) (unbound terms)
-    EXPECT_TRUE(checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.g01", 1, 2, 6.0e-2));
-    EXPECT_TRUE(checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "OW")), "HW-OW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.g01", 1, 4, 2.0e-2));
-    EXPECT_TRUE(checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.g01", 1, 6, 2.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.g01", 1, 2, 6.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "OW")), "HW-OW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.g01", 1, 4, 2.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.g01", 1, 6, 2.0e-2));
 
     // Partial g(r) (intramolecular terms)
-    EXPECT_TRUE(checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.y01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "OW")), "HW-OW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.y01", 1, 4, 0.1));
-    EXPECT_TRUE(checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.y01", 1, 6, 1.5e-2));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.y01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "OW")), "HW-OW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.y01", 1, 4, 0.1));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.y01", 1, 6, 1.5e-2));
 
     // Get the SQ
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     ASSERT_TRUE(unweightedSQ);
 
     // Partial S(Q) (unbound terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.f01", 1, 2, 1.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.f01", 1, 4, 3.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.f01", 1, 6, 3.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.f01", 1, 2, 1.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.f01", 1, 4, 3.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.f01", 1, 6, 3.0e-3));
 
     // Partial S(Q) (intramolecular terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.s01", 1, 4, 1.0e-4));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.s01", 1, 6, 4.0e-5));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.s01", 1, 4, 1.0e-4));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.s01", 1, 6, 4.0e-5));
 
     // Partial S(Q) (intramolecular terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.s01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.s01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
 
     // Total F(Q)
-    EXPECT_TRUE(checkData1D(D2O->getOutputValue<PartialSet *>("WeightedSQ")->total(), "D2O F(Q)",
-                            "epsr25/water1000-neutron/water.EPSR.u01", 1, 2, 3.0e-4));
-    EXPECT_TRUE(checkData1D(H2O->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2O F(Q)",
-                            "epsr25/water1000-neutron/water.EPSR.u01", 1, 4, 6.0e-4));
-    EXPECT_TRUE(checkData1D(HDO->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDO F(Q)",
-                            "epsr25/water1000-neutron/water.EPSR.u01", 1, 6, 2.0e-5));
+    EXPECT_TRUE(testData1D(D2O->getOutputValue<PartialSet *>("WeightedSQ")->total(), "D2O F(Q)",
+                           "epsr25/water1000-neutron/water.EPSR.u01", 1, 2, 3.0e-4));
+    EXPECT_TRUE(testData1D(H2O->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2O F(Q)",
+                           "epsr25/water1000-neutron/water.EPSR.u01", 1, 4, 6.0e-4));
+    EXPECT_TRUE(testData1D(HDO->getOutputValue<PartialSet *>("WeightedSQ")->total(), "HDO F(Q)",
+                           "epsr25/water1000-neutron/water.EPSR.u01", 1, 6, 2.0e-5));
 
     // Total F(Q)
-    EXPECT_TRUE(checkData1D(H2Ox->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2Ox F(Q)",
-                            "epsr25/water1000-neutron-xray/water.EPSR.u01", 1, 8, 1.5e-4));
+    EXPECT_TRUE(testData1D(H2Ox->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2Ox F(Q)",
+                           "epsr25/water1000-neutron-xray/water.EPSR.u01", 1, 8, 1.5e-4));
 }
 
 } // namespace UnitTest

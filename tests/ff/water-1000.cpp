@@ -28,7 +28,7 @@ TEST(Water1000EnergyTest, Full)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Interatomic energy: 1716.032 LJ + 54.1342 correction + -29163.384451743802 Coulomb
     EXPECT_NEAR(1716.032 + 54.1342 - 29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
@@ -62,11 +62,11 @@ TEST(Water1000ForceTest, Full)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
 }
 
 TEST(Water1000ForceTest, Intra)
@@ -92,11 +92,11 @@ TEST(Water1000ForceTest, Intra)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference total forces
     std::vector<Vector3> noPP(geometryForces.size());
-    checkReferenceForceConsistency(noPP, geometryForces, importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
+    testReferenceForceConsistency(noPP, geometryForces, importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
 }
 
 TEST(Water1000EnergyTest, ShortRangeOnly)
@@ -129,7 +129,7 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Interatomic energy: 1716.032 LJ + 54.1342 correction
     EXPECT_NEAR(1716.032 + 54.1342, productionEnergy.pairPotential.interMolecular, 4.3e-2);
@@ -168,11 +168,11 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 
 TEST(Water1000EnergyTest, ShiftedCoulombOnly)
@@ -202,7 +202,7 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Interatomic energy: -29163.384451743802 Coulomb
     EXPECT_NEAR(-29163.384451743802, productionEnergy.pairPotential.interMolecular, 4.3e-2);
@@ -238,11 +238,11 @@ TEST(Water1000ForceTest, CoulombOnly)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 
 TEST(Water1000ForceTest, ShiftedCoulombOnly)
@@ -275,11 +275,11 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 TEST(Water1000EnergyTest, Override)
 {
@@ -359,7 +359,7 @@ TEST(Water1000ForceTest, Overrides)
     kernel->totalForces(pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
 }
 } // namespace UnitTest

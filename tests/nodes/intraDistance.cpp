@@ -50,12 +50,12 @@ TEST(IntraDistanceNodeTest, Water)
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
-    EXPECT_TRUE(checkData1D(dOH1->rdfAB(), "D(O-H1)//NormalisedHistogram", "dlpoly/water267-analysis/water-267-298K.01-02.ij",
-                            1, 3, 6.0e-5));
-    EXPECT_TRUE(checkData1D(dOH2->rdfAB(), "D(O-H2)//NormalisedHistogram", "dlpoly/water267-analysis/water-267-298K.02-03.ij",
-                            1, 3, 7.0e-5));
-    EXPECT_TRUE(checkData1D(dH1H2->rdfAB(), "D(H1-H2)//NormalisedHistogram", "dlpoly/water267-analysis/water-267-298K.01-03.ij",
-                            1, 3, 5.0e-5));
+    EXPECT_TRUE(testData1D(dOH1->rdfAB(), "D(O-H1)//NormalisedHistogram", "dlpoly/water267-analysis/water-267-298K.01-02.ij", 1,
+                           3, 6.0e-5));
+    EXPECT_TRUE(testData1D(dOH2->rdfAB(), "D(O-H2)//NormalisedHistogram", "dlpoly/water267-analysis/water-267-298K.02-03.ij", 1,
+                           3, 7.0e-5));
+    EXPECT_TRUE(testData1D(dH1H2->rdfAB(), "D(H1-H2)//NormalisedHistogram", "dlpoly/water267-analysis/water-267-298K.01-03.ij",
+                           1, 3, 5.0e-5));
 }
 
 } // namespace UnitTest

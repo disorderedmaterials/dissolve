@@ -31,22 +31,22 @@ TEST(SQNodeTest, Water)
     ASSERT_TRUE(unweightedSQ);
 
     // Partial S(Q) (unbound terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.f01", 1, 2, 1.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.f01", 1, 4, 3.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.f01", 1, 6, 3.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.f01", 1, 2, 1.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.f01", 1, 4, 3.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.f01", 1, 6, 3.0e-3));
 
     // Partial S(Q) (intramolecular terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.s01", 1, 4, 1.0e-4));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.s01", 1, 6, 4.0e-5));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.s01", 1, 4, 1.0e-4));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.s01", 1, 6, 4.0e-5));
 
     // Partial S(Q) (intramolecular terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
-                            "epsr25/water1000-neutron/water.EPSR.s01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.s01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
 }
 
 TEST(SQNodeTest, WaterMethanol)
@@ -82,94 +82,94 @@ TEST(SQNodeTest, WaterMethanol)
      */
 
     // Partial g(r) (unbound terms
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 2, 4.0e-2));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 4, 5.0e-2));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "CT")), "OW-CT Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 6));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HC")), "OW-HC Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 8));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OH")), "OW-OH Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 10));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HO")), "OW-HO Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 12));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 14, 5.0e-2));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "CT")), "HW-CT Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 16));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HC")), "HW-HC Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 18));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "OH")), "HW-OH Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 20));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HO")), "HW-HO Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 22));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "CT")), "CT-CT Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 24, 8.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "HC")), "CT-HC Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 26));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "OH")), "CT-OH Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 28));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "HO")), "CT-HO Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 30));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HC", "HC")), "HC-HC Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 32));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HC", "OH")), "HC-OH Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 34));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HC", "HO")), "HC-HO Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 36));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OH", "OH")), "OH-OH Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 38));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OH", "HO")), "OH-HO Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 40));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Unbound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 42));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 2, 4.0e-2));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 4, 5.0e-2));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "CT")), "OW-CT Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 6));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HC")), "OW-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 8));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "OH")), "OW-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 10));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OW", "HO")), "OW-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 12));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 14, 5.0e-2));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "CT")), "HW-CT Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 16));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HC")), "HW-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 18));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "OH")), "HW-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 20));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HW", "HO")), "HW-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 22));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "CT")), "CT-CT Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 24, 8.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "HC")), "CT-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 26));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "OH")), "CT-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 28));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CT", "HO")), "CT-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 30));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HC", "HC")), "HC-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 32));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HC", "OH")), "HC-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 34));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HC", "HO")), "HC-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 36));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OH", "OH")), "OH-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 38));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("OH", "HO")), "OH-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 40));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.f01", 1, 42));
 
     // Partial g(r) (intramolecular terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 4));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 14));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "HC")), "CT-HC Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 26));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "OH")), "CT-OH Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 28));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "HO")), "CT-HO Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 30));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HC", "HC")), "HC-HC Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 32));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HC", "OH")), "HC-OH Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 34));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HC", "HO")), "HC-HO Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 36));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OH", "HO")), "OH-HO Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 40));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 4));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 14));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "HC")), "CT-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 26));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "OH")), "CT-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 28));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "HO")), "CT-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 30));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HC", "HC")), "HC-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 32));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HC", "OH")), "HC-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 34));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HC", "HO")), "HC-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 36));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OH", "HO")), "OH-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 40));
 
     // Partial g(r) (intramolecular terms, zero)
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "CT")), "OW-CT Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 6, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HC")), "OW-HC Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 8, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OH")), "OW-OH Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 10, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HO")), "OW-HO Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 12, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "CT")), "HW-CT Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 16, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HC")), "HW-HC Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 18, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "OH")), "HW-OH Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 20, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HO")), "HW-HO Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 22, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "CT")), "CT-CT Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 24, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OH", "OH")), "OH-OH Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 38, 1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Bound Partial",
-                            "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 42, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "CT")), "OW-CT Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 6, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HC")), "OW-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 8, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "OH")), "OW-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 10, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OW", "HO")), "OW-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 12, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "CT")), "HW-CT Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 16, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HC")), "HW-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 18, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "OH")), "HW-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 20, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HW", "HO")), "HW-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 22, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CT", "CT")), "CT-CT Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 24, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("OH", "OH")), "OH-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 38, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.s01", 1, 42, 1.0e-5, Error::ErrorType::RMSEError));
 }
 
 TEST(SQNodeTest, Benzene)
@@ -196,20 +196,20 @@ TEST(SQNodeTest, Benzene)
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
 
     // Partial S(Q) (unbound terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Unbound Partial",
-                            "epsr25/benzene200-neutron/benzene.EPSR.f01", 1, 2, 7.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Unbound Partial",
-                            "epsr25/benzene200-neutron/benzene.EPSR.f01", 1, 4, 5.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Unbound Partial",
-                            "epsr25/benzene200-neutron/benzene.EPSR.f01", 1, 6, 8.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Unbound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.f01", 1, 2, 7.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Unbound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.f01", 1, 4, 5.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->unboundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Unbound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.f01", 1, 6, 8.0e-3));
 
     // Partial S(Q) (intramolecular terms)
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Bound Partial",
-                            "epsr25/benzene200-neutron/benzene.EPSR.s01", 1, 2, 1.1e-2, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Bound Partial",
-                            "epsr25/benzene200-neutron/benzene.EPSR.s01", 1, 4, 5.0e-3));
-    EXPECT_TRUE(checkData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Bound Partial",
-                            "epsr25/benzene200-neutron/benzene.EPSR.s01", 1, 6, 1.0e-2));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Bound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.s01", 1, 2, 1.1e-2, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Bound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.s01", 1, 4, 5.0e-3));
+    EXPECT_TRUE(testData1D(unweightedSQ->boundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Bound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.s01", 1, 6, 1.0e-2));
 }
 
 } // namespace UnitTest

@@ -35,12 +35,12 @@ TEST(XRaySQNodeTest, WaterReferenceFT)
     ASSERT_EQ(H2Ox->versionIndex(), 0);
 
     // Total F(Q)
-    EXPECT_TRUE(checkData1D(H2Ox->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2Ox F(Q)",
-                            "epsr25/water1000-neutron-xray/water.EPSR.u01", 1, 8, 1.5e-4));
+    EXPECT_TRUE(testData1D(H2Ox->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2Ox F(Q)",
+                           "epsr25/water1000-neutron-xray/water.EPSR.u01", 1, 8, 1.5e-4));
 
     // Total G(r)
-    EXPECT_TRUE(checkData1D(H2Ox->getOutputValue<Data1D>("ReferenceGR"), "H2Ox Reference G(r)",
-                            "epsr25/water1000-neutron-xray/water.EPSR.w01", 1, 8, 5.0e-5));
+    EXPECT_TRUE(testData1D(H2Ox->getOutputValue<Data1D>("ReferenceGR"), "H2Ox Reference G(r)",
+                           "epsr25/water1000-neutron-xray/water.EPSR.w01", 1, 8, 5.0e-5));
 }
 
 } // namespace UnitTest

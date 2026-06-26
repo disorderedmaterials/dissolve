@@ -29,7 +29,7 @@ TEST(CosNTorsionEnergyTest, POE)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Intramolecular energy: 183.4801   # (2.866876 per molecule) * 64 molecules
     EXPECT_NEAR(183.4801, productionEnergy.geometry.torsionEnergy, 1.0e-2);
@@ -57,11 +57,11 @@ TEST(CosNTorsionForcesTest, POE)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.2e-2);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.2e-2);
 }
 
 TEST(CosNTorsionEnergyTest, Py4OHNTf2)
@@ -84,7 +84,7 @@ TEST(CosNTorsionEnergyTest, Py4OHNTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Intramolecular energy: 51.050222   # (25.525111 per molecule) * 2 molecules
     EXPECT_NEAR(51.050222, productionEnergy.geometry.torsionEnergy, 2.0e-5);
@@ -113,11 +113,11 @@ TEST(CosNTorsionForcesTest, Py4OHNTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-3);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-3);
 }
 
 TEST(CosNImproperEnergyTest, Py4OHNTf2)
@@ -140,7 +140,7 @@ TEST(CosNImproperEnergyTest, Py4OHNTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Intramolecular energy: 0.055228   # (0.027614 per molecule) * 2 molecules
     EXPECT_NEAR(0.055228, productionEnergy.geometry.improperEnergy, 1.0e-6);
@@ -169,11 +169,11 @@ TEST(CosNImproperForcesTest, Py4OHNTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 7.0e-2);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 7.0e-2);
 }
 
 TEST(CosNTorsionEnergyTest, Py5NTf2)
@@ -196,7 +196,7 @@ TEST(CosNTorsionEnergyTest, Py5NTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Intramolecular energy: 39.29711  # (19.648555 per molecule) * 2 molecules
     EXPECT_NEAR(39.29711, productionEnergy.geometry.torsionEnergy, 5.0e-5);
@@ -225,11 +225,11 @@ TEST(CosNTorsionForcesTest, Py5NTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-2);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-2);
 }
 
 TEST(CosNImproperEnergyTest, Py5NTf2)
@@ -252,7 +252,7 @@ TEST(CosNImproperEnergyTest, Py5NTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Intramolecular energy: 0.34961  # (0.174805 per molecule) * 2 molecules
     EXPECT_NEAR(0.34961, productionEnergy.geometry.improperEnergy, 2.0e-6);
@@ -281,11 +281,11 @@ TEST(CosNImproperForcesTest, Py5NTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 4.0e-3);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 4.0e-3);
 }
 
 } // namespace UnitTest

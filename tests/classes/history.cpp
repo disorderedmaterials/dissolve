@@ -79,11 +79,11 @@ TEST(History, CustomClass)
     for (auto n = 1; n <= 5; ++n)
     {
         sum += n;
-        EXPECT_TRUE(checkData1D(d * (sum / n), "Original", a.push(d * n, avgLength), "Averaged"));
+        EXPECT_TRUE(testData1D(d * (sum / n), "Original", a.push(d * n, avgLength), "Averaged"));
     }
 
     tomlRoundTrip(a, b);
-    EXPECT_TRUE(checkData1D(a.average(), "A", b.average(), "B"));
+    EXPECT_TRUE(testData1D(a.average(), "A", b.average(), "B"));
 }
 
 TEST(History, CustomClassWithInitialiser)
@@ -130,14 +130,13 @@ TEST(History, CustomClassWithInitialiser)
     for (auto n = 0; n < 3; ++n)
     {
         auto avg = a.push(p, avgLength);
-        EXPECT_TRUE(checkData1D(p.partials().get("Ar//Ar"), "Partial", avg.partials().get("Ar//Ar"), "Averaged"));
+        EXPECT_TRUE(testData1D(p.partials().get("Ar//Ar"), "Partial", avg.partials().get("Ar//Ar"), "Averaged"));
+        EXPECT_TRUE(testData1D(p.boundPartials().get("Ar//Ar"), "BoundPartial", avg.boundPartials().get("Ar//Ar"), "Averaged"));
+        EXPECT_TRUE(testData1D(p.boundTotal(), "BoundTotal", avg.boundTotal(), "Averaged"));
         EXPECT_TRUE(
-            checkData1D(p.boundPartials().get("Ar//Ar"), "BoundPartial", avg.boundPartials().get("Ar//Ar"), "Averaged"));
-        EXPECT_TRUE(checkData1D(p.boundTotal(), "BoundTotal", avg.boundTotal(), "Averaged"));
-        EXPECT_TRUE(
-            checkData1D(p.unboundPartials().get("Ar//Ar"), "UnboundPartial", avg.unboundPartials().get("Ar//Ar"), "Averaged"));
-        EXPECT_TRUE(checkData1D(p.unboundTotal(), "UnboundTotal", avg.unboundTotal(), "Averaged"));
-        EXPECT_TRUE(checkData1D(p.total(), "Total", avg.total(), "Averaged"));
+            testData1D(p.unboundPartials().get("Ar//Ar"), "UnboundPartial", avg.unboundPartials().get("Ar//Ar"), "Averaged"));
+        EXPECT_TRUE(testData1D(p.unboundTotal(), "UnboundTotal", avg.unboundTotal(), "Averaged"));
+        EXPECT_TRUE(testData1D(p.total(), "Total", avg.total(), "Averaged"));
     }
 
     // Accumulate opposite trig values - just test partials as the totals are not automatically modified by PartialSet
@@ -147,20 +146,20 @@ TEST(History, CustomClassWithInitialiser)
     for (auto n = 1; n <= 3; ++n)
     {
         auto avg = a.push(p, avgLength);
-        EXPECT_TRUE(checkData1D(p.partials().get("Ar//Ar"), "Partial", avg.partials().get("Ar//Ar"), "Averaged"));
-        EXPECT_TRUE(checkData1D((dcos * (avgLength - n) - dsin * n) / avgLength, "BoundPartial",
-                                avg.boundPartials().get("Ar//Ar"), "Averaged"));
-        EXPECT_TRUE(checkData1D((dsin * (avgLength - n) - dcos * n) / avgLength, "UnboundPartial",
-                                avg.unboundPartials().get("Ar//Ar"), "Averaged"));
+        EXPECT_TRUE(testData1D(p.partials().get("Ar//Ar"), "Partial", avg.partials().get("Ar//Ar"), "Averaged"));
+        EXPECT_TRUE(testData1D((dcos * (avgLength - n) - dsin * n) / avgLength, "BoundPartial",
+                               avg.boundPartials().get("Ar//Ar"), "Averaged"));
+        EXPECT_TRUE(testData1D((dsin * (avgLength - n) - dcos * n) / avgLength, "UnboundPartial",
+                               avg.unboundPartials().get("Ar//Ar"), "Averaged"));
     }
 
     tomlRoundTrip(a, b);
     auto avgA = a.average();
     auto avgB = b.average();
     EXPECT_TRUE(
-        checkData1D(avgA.boundPartials().get("Ar//Ar"), "BoundPartialA", avgB.boundPartials().get("Ar//Ar"), "BoundPartialB"));
-    EXPECT_TRUE(checkData1D(avgA.unboundPartials().get("Ar//Ar"), "UnboundPartialA", avgB.unboundPartials().get("Ar//Ar"),
-                            "UnboundPartialB"));
+        testData1D(avgA.boundPartials().get("Ar//Ar"), "BoundPartialA", avgB.boundPartials().get("Ar//Ar"), "BoundPartialB"));
+    EXPECT_TRUE(testData1D(avgA.unboundPartials().get("Ar//Ar"), "UnboundPartialA", avgB.unboundPartials().get("Ar//Ar"),
+                           "UnboundPartialB"));
 }
 
 } // namespace UnitTest

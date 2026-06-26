@@ -51,7 +51,7 @@ TEST_F(HexaneForcefieldTest, Energies1)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Interatomic energy: 3.504968 LJ + 0.00501830 correction + 10.8152 Coulomb
     EXPECT_NEAR(3.504968 + 0.00501830 + 10.8152, productionEnergy.pairPotential.total(), 2.0e-4);
@@ -72,11 +72,11 @@ TEST_F(HexaneForcefieldTest, Forces1)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
 }
 
 TEST_F(HexaneForcefieldTest, Energies2)
@@ -87,7 +87,7 @@ TEST_F(HexaneForcefieldTest, Energies2)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Interatomic energy: 5.200344 LJ + 0.0200732 correction + 21.52276 Coulomb
     EXPECT_NEAR(5.200344 + 0.0200732 + 21.52276, productionEnergy.pairPotential.total(), 3.0e-4);
@@ -108,11 +108,11 @@ TEST_F(HexaneForcefieldTest, Forces2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
 }
 
 TEST_F(HexaneForcefieldTest, Energies200)
@@ -123,7 +123,7 @@ TEST_F(HexaneForcefieldTest, Energies200)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    auto productionEnergy = testEnergyConsistency(kernel);
 
     // Interatomic energy: -5124.720 LJ + 200.732 correction + 2020.063 Coulomb
     EXPECT_NEAR(-5124.720 + 200.732 + 2020.063, productionEnergy.pairPotential.total(), 5.0e-2);
@@ -144,11 +144,11 @@ TEST_F(HexaneForcefieldTest, Forces200Full)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.2);
+    testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                  importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.2);
 }
 
 TEST_F(HexaneForcefieldTest, Forces200Bound)
@@ -160,12 +160,12 @@ TEST_F(HexaneForcefieldTest, Forces200Bound)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total bound forces only
-    checkReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                   1.0e-7);
+    testReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
+                                  1.0e-7);
 }
 
 TEST_F(HexaneForcefieldTest, Forces200Unbound)
@@ -177,11 +177,11 @@ TEST_F(HexaneForcefieldTest, Forces200Unbound)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    testForceConsistency(kernel, pairPotentialForces, geometryForces);
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total pair potential forces only
-    checkReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                   0.2);
+    testReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
+                                  0.2);
 }
 } // namespace UnitTest

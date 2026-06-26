@@ -35,8 +35,8 @@ TEST(IntraAngleNodeTest, Water)
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
-    EXPECT_TRUE(checkData1D(intraAngle->intraAngleData(), "A(H1-O-H2)//Angle(ABC)",
-                            "dlpoly/water267-analysis/water-267-298K.01-02-03.ijk", 1, 3, 2.0e-4));
+    EXPECT_TRUE(testData1D(intraAngle->intraAngleData(), "A(H1-O-H2)//Angle(ABC)",
+                           "dlpoly/water267-analysis/water-267-298K.01-02-03.ijk", 1, 3, 2.0e-4));
 }
 
 } // namespace UnitTest

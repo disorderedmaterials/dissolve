@@ -22,8 +22,8 @@ TEST(SPCFwAssignmentTest, Water)
     ASSERT_EQ(species.torsions().size(), 0);
     ASSERT_EQ(species.impropers().size(), 0);
 
-    checkSpeciesAtomType(&species, {{0, "OW"}, {1, "HW"}, {2, "HW"}});
-    checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"});
-    checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"});
+    testSpeciesAtomType(&species, {{0, "OW"}, {1, "HW"}, {2, "HW"}});
+    testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"});
+    testSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"});
 }
 }; // namespace UnitTest

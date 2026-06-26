@@ -40,7 +40,7 @@ void testReconstruction(std::string inpAFile, std::string delfitFile,
         PoissonFit coeffMinimiser(axisData);
         coeffMinimiser.constructReciprocal(0.0, 12.0, fitCoefficients, 0.01, 0.01, 0, 0.01, 0);
 
-        EXPECT_TRUE(checkData1D(coeffMinimiser.approximation(), dataSet, delfitFile, 1, column, errorThreshold));
+        EXPECT_TRUE(testData1D(coeffMinimiser.approximation(), dataSet, delfitFile, 1, column, errorThreshold));
     }
 }
 

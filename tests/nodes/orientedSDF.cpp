@@ -41,6 +41,6 @@ TEST(OrientedSDFNodeTest, Benzene)
 
     Data3D referenceData;
     EXPECT_TRUE(ImportDLPUtilsPDensNode::read(referenceData, "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10"));
-    EXPECT_TRUE(checkData3D(osdf->sdf(), "SDF", referenceData, "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", 0.09));
+    EXPECT_TRUE(testData3D(osdf->sdf(), "SDF", referenceData, "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", 0.09));
 }
 } // namespace UnitTest
