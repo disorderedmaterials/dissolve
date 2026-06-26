@@ -18,6 +18,7 @@ Parser<int> integer();
 // A parser that accepts a real, floating point number
 Parser<double> real();
 
+// A parser that accepts a 3-vector of floating point numbers
 Parser<Vector3> vector3();
 
 }; // namespace Parsers
