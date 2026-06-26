@@ -2,7 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/poissonFit.h"
-#include "tests/testData.h"
+#include "nodes/importXYData.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -40,8 +41,7 @@ void testReconstruction(std::string inpAFile, std::string delfitFile,
         PoissonFit coeffMinimiser(axisData);
         coeffMinimiser.constructReciprocal(0.0, 12.0, fitCoefficients, 0.01, 0.01, 0, 0.01, 0);
 
-        EXPECT_TRUE(
-            DissolveSystemTest::checkData1D(coeffMinimiser.approximation(), dataSet, delfitFile, 1, column, errorThreshold));
+        EXPECT_TRUE(checkData1D(coeffMinimiser.approximation(), dataSet, delfitFile, 1, column, errorThreshold));
     }
 }
 

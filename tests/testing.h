@@ -24,6 +24,17 @@ class XRaySQNode;
 
 namespace UnitTest
 {
+/*
+ * Utility Functions
+ */
+
+// Save the specified graph in Mermaid format to a file named after the unit test
+void exportMermaidGraph(Graph &graph);
+
+/*
+ * Test Graph Framework
+ */
+
 // Basic object setup for any Graph-based test
 class TestGraph : public DissolveGraph
 {
@@ -33,7 +44,7 @@ class TestGraph : public DissolveGraph
         setEcho(true);
         PairPotential::setChargeSource(PairPotential::ChargeSource::Automatic);
     }
-    ~TestGraph() { exportMermaidGraph(); }
+    ~TestGraph() { exportMermaidGraph(*this); }
 
     public:
     // Container for data 1D import filename and whether or not it is a histogram
@@ -100,67 +111,75 @@ class TestGraph : public DissolveGraph
     // Create an XRaySQ node with optional reference data
     XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name,
                              TestGraph::Data1DImportFileFormat referenceData = TestGraph::Data1DImportFileFormat{});
-
-    /*
-     * Data Test Functions
-     */
-    public:
-    // Test simple double
-    [[nodiscard]] bool checkDouble(std::string_view quantity, double A, double B, double threshold);
-    // Test sampled double
-    [[nodiscard]] bool checkSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold);
-    // Test Data1D
-    [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
-                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
-    [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, std::string filePath, int xColumn, int yColumn,
-                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
-    // Test Data2D
-    [[nodiscard]] bool checkData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB, std::string_view nameB,
-                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
-    // Test Data3D
-    [[nodiscard]] bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
-                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
-    // Test Vec3 data
-    void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6);
-    // Test Vec3 vector data
-    void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance = 1.0e-6);
-    // Test species atom type
-    void checkSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
-    // Test interaction parameters
-    template <class Intra>
-    void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
-                                  const InteractionPotential<Intra> &actualParams, double tolerance = 1.0e-6);
-    // Test species bond term
-    void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
-                                    const InteractionPotential<BondFunctions> &expectedParams, double tolerance = 1.0e-6);
-    // Test species angle term
-    void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
-                                    const InteractionPotential<AngleFunctions> &expectedParams, double tolerance = 1.0e-6);
-    // Test species torsion / improper term
-    void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
-                                    const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance = 1.0e-6);
-    // Test consistency between the two supplied double-keyed Data1D maps
-    static bool checkDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
-                                    const DoubleKeyedMap<Data1D> &mapB, double testThreshold);
-    // Test consistency, and error, between supplied partial sets
-    bool checkPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold);
-    // Check consistency between production, molecular, and test energies, returning production values
-    Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6);
-    // Check consistency between production and test forces
-    void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
-                               std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags = {},
-                               double ppMaxDeviation = 1.0e-2, double geomMaxDeviation = 1.0e-6);
-    // Check consistency of supplied forces
-    void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
-                                        const std::vector<Vector3> &referenceForces, double maxDeviation = 1.0e-3);
-
-    /*
-     * Utility Functions
-     */
-    public:
-    // Save the specified graph in Mermaid format to a file named after the unit test
-    static void exportMermaidGraph(Graph &graph);
-    // Save the current graph in Mermaid format to a file named after the unit test
-    void exportMermaidGraph();
 };
-} // namespace UnitTest
+
+/*
+ * Data Test Functions
+ */
+
+// Test simple double
+[[nodiscard]] bool checkDouble(std::string_view quantity, double A, double B, double threshold);
+// Test sampled double
+[[nodiscard]] bool checkSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold);
+// Test Data1D
+[[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
+                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+[[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, std::string filePath, int xColumn, int yColumn,
+                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+// Test Data2D
+[[nodiscard]] bool checkData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB, std::string_view nameB,
+                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+// Test Data3D
+[[nodiscard]] bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
+                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+// Test Vec3 data
+void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6);
+// Test Vec3 vector data
+void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance = 1.0e-6);
+// Test species atom type
+void checkSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
+// Test interaction parameters
+template <class Intra>
+void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
+                              const InteractionPotential<Intra> &actualParams, double tolerance = 1.0e-6);
+// Test species bond term
+void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<BondFunctions> &expectedParams,
+                                double tolerance = 1.0e-6);
+// Test species angle term
+void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<AngleFunctions> &expectedParams,
+                                double tolerance = 1.0e-6);
+// Test species torsion / improper term
+void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
+                                const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance = 1.0e-6);
+// Test consistency between the two supplied double-keyed Data1D maps
+static bool checkDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
+                                const DoubleKeyedMap<Data1D> &mapB, double testThreshold);
+// Test consistency, and error, between supplied partial sets
+bool checkPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold);
+// Check consistency between production, molecular, and test energies, returning production values
+Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6);
+// Check consistency between production and test forces
+void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
+                           std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags = {},
+                           double ppMaxDeviation = 1.0e-2, double geomMaxDeviation = 1.0e-6);
+// Check consistency of supplied forces
+void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
+                                    const std::vector<Vector3> &referenceForces, double maxDeviation = 1.0e-3);
+
+/*
+ * TOML
+ */
+
+// Comparie TOML values with context, but without insisting on a specific ordering of fields
+void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2);
+// Perform round-trip serialisation of A into B
+template <class T> void tomlRoundTrip(T &a, T &b)
+{
+    SerialisedValue serialised;
+    auto s = std::make_shared<SerialisableClass<T>>("data", a);
+    ASSERT_NO_THROW(serialised = s->serialise());
+
+    auto d = std::make_shared<SerialisableClass<T>>("data", b);
+    ASSERT_NO_THROW(d->deserialise(serialised));
+}
+}; // namespace UnitTest

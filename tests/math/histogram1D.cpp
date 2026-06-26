@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/histogram1D.h"
-#include "tests/testData.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

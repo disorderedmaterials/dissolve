@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "tests/graphData.h"
-#include "tests/testData.h"
+#include "data/ff/library.h"
+#include "kernels/energy.h"
+#include "kernels/force.h"
+#include "tests/tempFile.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 

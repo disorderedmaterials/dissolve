@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "kernels/energy.h"
 #include "kernels/force.h"
-#include "nodes/dissolve.h"
-#include "tests/testData.h"
+#include "nodes/species.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 

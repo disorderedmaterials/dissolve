@@ -8,7 +8,6 @@
 #include "nodes/neutronSQ.h"
 #include "nodes/sq.h"
 #include "nodes/xRaySQ.h"
-#include "tests/testData.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 #include <vector>
@@ -78,12 +77,12 @@ TEST(EPSRNodeTest, Water3N)
     ASSERT_EQ(epsrNode->run(), NodeConstants::ProcessResult::Success);
 
     // Estimated Partials
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("OW", "OW"), "EPSR01_EstimatedSQ_OW-OW",
-                                                "epsr25/water1000-neutron/water.EPSR.q01", 1, 2, 2.0e-4));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("OW", "HW"), "EPSR01_EstimatedSQ_OW-HW",
-                                                "epsr25/water1000-neutron/water.EPSR.q01", 1, 4, 2.0e-4));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("HW", "HW"), "EPSR01_EstimatedSQ_HW-HW",
-                                                "epsr25/water1000-neutron/water.EPSR.q01", 1, 6, 1.0e-4));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("OW", "OW"), "EPSR01_EstimatedSQ_OW-OW",
+                            "epsr25/water1000-neutron/water.EPSR.q01", 1, 2, 2.0e-4));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("OW", "HW"), "EPSR01_EstimatedSQ_OW-HW",
+                            "epsr25/water1000-neutron/water.EPSR.q01", 1, 4, 2.0e-4));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("HW", "HW"), "EPSR01_EstimatedSQ_HW-HW",
+                            "epsr25/water1000-neutron/water.EPSR.q01", 1, 6, 1.0e-4));
 }
 
 TEST(EPSRNodeTest, Water3NX)
@@ -154,22 +153,22 @@ TEST(EPSRNodeTest, Water3NX)
     ASSERT_EQ(epsrNode->run(), NodeConstants::ProcessResult::Success);
 
     // Test total neutron-weighted F(r)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->targetProcessData(D2O).simulatedFR, "EPSR01_SimulatedFR_D2O",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 2, 2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->targetProcessData(H2O).simulatedFR, "EPSR01_SimulatedFR_H2O",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 4, 8.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->targetProcessData(HDO).simulatedFR, "EPSR01_SimulatedFR_HDO",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 6, 2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->targetProcessData(H2Ox).simulatedFR, "EPSR01_SimulatedFR_H2Ox",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 8, 2.0e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->targetProcessData(D2O).simulatedFR, "EPSR01_SimulatedFR_D2O",
+                            "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 2, 2.0e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->targetProcessData(H2O).simulatedFR, "EPSR01_SimulatedFR_H2O",
+                            "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 4, 8.0e-3));
+    EXPECT_TRUE(checkData1D(epsrNode->targetProcessData(HDO).simulatedFR, "EPSR01_SimulatedFR_HDO",
+                            "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 6, 2.0e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->targetProcessData(H2Ox).simulatedFR, "EPSR01_SimulatedFR_H2Ox",
+                            "epsr25/water1000-neutron-xray/water.EPSR.x01", 1, 8, 2.0e-2));
 
     // Estimated Partials
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("OW", "OW"), "EPSR01_EstimatedSQ_OW-OW",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.q01", 1, 2, 6.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("OW", "HW"), "EPSR01_EstimatedSQ_OW-HW",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.q01", 1, 4, 6.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("HW", "HW"), "EPSR01_EstimatedSQ_HW-HW",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.q01", 1, 6, 1.3e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("OW", "OW"), "EPSR01_EstimatedSQ_OW-OW",
+                            "epsr25/water1000-neutron-xray/water.EPSR.q01", 1, 2, 6.0e-3));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("OW", "HW"), "EPSR01_EstimatedSQ_OW-HW",
+                            "epsr25/water1000-neutron-xray/water.EPSR.q01", 1, 4, 6.0e-3));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("HW", "HW"), "EPSR01_EstimatedSQ_HW-HW",
+                            "epsr25/water1000-neutron-xray/water.EPSR.q01", 1, 6, 1.3e-2));
 }
 
 TEST(EPSRNodeTest, Benzene)
@@ -224,21 +223,20 @@ TEST(EPSRNodeTest, Benzene)
     ASSERT_EQ(epsrNode->run(), NodeConstants::ProcessResult::Success);
 
     // Test total neutron-weighted F(r)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->targetProcessData(C6H6).simulatedFR, "EPSR01//SimulatedFR//C6H6",
-                                                "epsr25/benzene200-neutron/benzene.EPSR.x01", 1, 2, 1.5e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->targetProcessData(C6D6).simulatedFR, "EPSR01//SimulatedFR//C6D6",
-                                                "epsr25/benzene200-neutron/benzene.EPSR.x01", 1, 4, 1.7e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->targetProcessData(FiftyFifty).simulatedFR,
-                                                "EPSR01//SimulatedFR//5050", "epsr25/benzene200-neutron/benzene.EPSR.x01", 1, 6,
-                                                1.1e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->targetProcessData(C6H6).simulatedFR, "EPSR01//SimulatedFR//C6H6",
+                            "epsr25/benzene200-neutron/benzene.EPSR.x01", 1, 2, 1.5e-3));
+    EXPECT_TRUE(checkData1D(epsrNode->targetProcessData(C6D6).simulatedFR, "EPSR01//SimulatedFR//C6D6",
+                            "epsr25/benzene200-neutron/benzene.EPSR.x01", 1, 4, 1.7e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->targetProcessData(FiftyFifty).simulatedFR, "EPSR01//SimulatedFR//5050",
+                            "epsr25/benzene200-neutron/benzene.EPSR.x01", 1, 6, 1.1e-2));
 
     // Test partial S(Q) derived from experiment via matrix inversion
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("CA", "CA"), "EPSR01//EstimatedSQ//CA-CA",
-                                                "epsr25/benzene200-neutron/benzene.EPSR.q01", 1, 2, 2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("CA", "HA"), "EPSR01//EstimatedSQ//CA-HA",
-                                                "epsr25/benzene200-neutron/benzene.EPSR.q01", 1, 4, 2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(epsrNode->estimatedSQ("HA", "HA"), "EPSR01//EstimatedSQ//HA-HA",
-                                                "epsr25/benzene200-neutron/benzene.EPSR.q01", 1, 6, 2.0e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("CA", "CA"), "EPSR01//EstimatedSQ//CA-CA",
+                            "epsr25/benzene200-neutron/benzene.EPSR.q01", 1, 2, 2.0e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("CA", "HA"), "EPSR01//EstimatedSQ//CA-HA",
+                            "epsr25/benzene200-neutron/benzene.EPSR.q01", 1, 4, 2.0e-2));
+    EXPECT_TRUE(checkData1D(epsrNode->estimatedSQ("HA", "HA"), "EPSR01//EstimatedSQ//HA-HA",
+                            "epsr25/benzene200-neutron/benzene.EPSR.q01", 1, 6, 2.0e-2));
 }
 
 } // namespace UnitTest

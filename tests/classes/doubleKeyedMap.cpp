@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "templates/doubleKeyedMap.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
-#include <tests/testData.h>
 
 namespace UnitTest
 {

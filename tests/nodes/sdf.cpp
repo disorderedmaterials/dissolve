@@ -4,7 +4,7 @@
 #include "nodes/sdf.h"
 #include "nodes/importDLPUtilsPDens.h"
 #include "nodes/iterableGraph.h"
-#include "tests/testData.h"
+#include "nodes/species.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 
@@ -38,8 +38,7 @@ TEST(SDFNodeTest, Water)
 
     Data3D referenceData;
     EXPECT_TRUE(ImportDLPUtilsPDensNode::read(referenceData, "dlpoly/water267-analysis/water-267-298K.11.pdens"));
-    EXPECT_TRUE(DissolveSystemTest::checkData3D(sdf->sdf(), "SDF", referenceData,
-                                                "dlpoly/water267-analysis/water-267-298K.11.pdens", 0.13));
+    EXPECT_TRUE(checkData3D(sdf->sdf(), "SDF", referenceData, "dlpoly/water267-analysis/water-267-298K.11.pdens", 0.13));
 }
 
 TEST(SDFNodeTest, Benzene)
@@ -70,7 +69,6 @@ TEST(SDFNodeTest, Benzene)
 
     Data3D referenceData;
     EXPECT_TRUE(ImportDLPUtilsPDensNode::read(referenceData, "dlpoly/benzene181/benzene181.11.pdens"));
-    EXPECT_TRUE(
-        DissolveSystemTest::checkData3D(sdf->sdf(), "SDF", referenceData, "dlpoly/benzene181/benzene181.11.pdens", 0.3));
+    EXPECT_TRUE(checkData3D(sdf->sdf(), "SDF", referenceData, "dlpoly/benzene181/benzene181.11.pdens", 0.3));
 }
 } // namespace UnitTest

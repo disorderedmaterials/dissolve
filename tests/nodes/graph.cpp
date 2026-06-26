@@ -4,7 +4,6 @@
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
 #include "nodes/registry.h"
-#include "tests/testData.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 
@@ -67,7 +66,6 @@ TEST_F(GraphCoreTest, Serialisation)
 {
     createGraph();
 
-    Dissolve d;
     DissolveGraph copy;
     auto serialised = root_.into_toml();
 

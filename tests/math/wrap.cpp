@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "math/mathFunc.h"
 #include "math/vector3.h"
-#include "tests/testData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

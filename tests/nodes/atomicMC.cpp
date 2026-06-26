@@ -6,7 +6,6 @@
 #include "nodes/dissolve.h"
 #include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
-#include "tests/testData.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 #include <vector>

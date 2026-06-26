@@ -8,7 +8,6 @@
 #include "nodes/gr.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/sq.h"
-#include "tests/testData.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 #include <memory>
@@ -151,18 +150,18 @@ TEST_F(BraggNodeTest, MgO_Full)
     auto weightedSQ = neutronSQNode_->getOutputValue<PartialSet *>("WeightedSQ");
     auto weightedTotal = weightedSQ->total();
 
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+    EXPECT_TRUE(checkData1D(
         unboundPartials.get("Mg1//Mg1"), "SQs_UnweightedSQ_Mg-Mg_Unbound",
         "epsr25/mgo500-555/mgo.EPSR.f01", 1, 2, 1.5e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+    EXPECT_TRUE(checkData1D(
         unboundPartials.get("Mg1//O1"), "SQs_UnweightedSQ_Mg-OX_Unbound",
         "epsr25/mgo500-555/mgo.EPSR.f01", 1, 4, 1.5e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+    EXPECT_TRUE(checkData1D(
         unboundPartials.get("O1//O1"), "SQs_UnweightedSQ_OX-OX_Unbound",
         "epsr25/mgo500-555/mgo.EPSR.f01", 1, 6, 1.5e-2));
 
     // Check total F(Q)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
+    EXPECT_TRUE(checkData1D(
         weightedTotal, "NeutronSQ01_WeightedSQ_Total",
         "epsr25/mgo500-555/mgo.EPSR.u01", 1, 2, 2.7e-3));
 

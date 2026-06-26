@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/empiricalFormula.h"
-#include "tests/testData.h"
+#include "classes/species.h"
 #include <gtest/gtest.h>
 
 TEST(EmpiricalFormulaTest, Order)

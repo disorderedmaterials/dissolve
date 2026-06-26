@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/rangedVector3.h"
-#include "tests/testData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

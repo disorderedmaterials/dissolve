@@ -5,7 +5,6 @@
 #include "nodes/gr.h"
 #include "nodes/neutronSQ.h"
 #include "nodes/sq.h"
-#include "tests/testData.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 
@@ -46,9 +45,9 @@ TEST(BroadeningTest, ArgonBroadening)
         // Get the weighted SQ
         auto weightedSQ = neutronSQNode->getOutputValue<PartialSet *>("WeightedSQ");
         ASSERT_TRUE(weightedSQ);
-        EXPECT_TRUE(DissolveSystemTest::checkData1D(
-            weightedSQ->total(), std::format("{} {}", Functions1D::forms().keyword(form), joinStrings(parameters)), dataFile, 1,
-            2, 3.0e-3));
+        EXPECT_TRUE(checkData1D(weightedSQ->total(),
+                                std::format("{} {}", Functions1D::forms().keyword(form), joinStrings(parameters)), dataFile, 1,
+                                2, 3.0e-3));
     }
 }
 

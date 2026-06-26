@@ -4,7 +4,6 @@
 #include "nodes/voxelDensity.h"
 #include "data/atomicMasses.h"
 #include "nodes/configuration.h"
-#include "tests/testData.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 

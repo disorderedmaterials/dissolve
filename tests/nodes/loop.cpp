@@ -7,7 +7,6 @@
 #include "nodes/numberNode.h"
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
-#include "tests/testData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -74,7 +73,6 @@ class IterableGraphTest : public ::testing::Test
 
 TEST_F(IterableGraphTest, BasicNonLoopingSeries)
 {
-    Dissolve dissolve;
     auto root = std::make_unique<DissolveGraph>();
     auto loop = dynamic_cast<IterableGraph *>(root->createNode("Iterator", "Iterator"));
     auto i = dynamic_cast<NumberNode *>(root->createNode("Number", "i"));

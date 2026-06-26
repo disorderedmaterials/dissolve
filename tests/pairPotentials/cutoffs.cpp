@@ -3,7 +3,7 @@
 
 #include "kernels/force.h"
 #include "nodes/dissolve.h"
-#include "tests/testData.h"
+#include "nodes/species.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 

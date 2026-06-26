@@ -3,7 +3,7 @@
 
 #include "nodes/averageMolecule.h"
 #include "nodes/iterableGraph.h"
-#include "tests/testData.h"
+#include "nodes/species.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 
@@ -32,9 +32,9 @@ TEST(AverageMoleculeNodeTest, Water)
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
     auto &structure = avgMol->structure();
-    DissolveSystemTest::checkVec3(structure.atom(0)->r(), {-0.83305, 0.0, 0.0}, 1.0e-3);
-    DissolveSystemTest::checkVec3(structure.atom(1)->r(), {0.00016, 0.60443, 0.0}, 1.0e-3);
-    DissolveSystemTest::checkVec3(structure.atom(2)->r(), {0.83305, 0.0, 0.0}, 1.0e-3);
+    checkVec3(structure.atom(0)->r(), {-0.83305, 0.0, 0.0}, 1.0e-3);
+    checkVec3(structure.atom(1)->r(), {0.00016, 0.60443, 0.0}, 1.0e-3);
+    checkVec3(structure.atom(2)->r(), {0.83305, 0.0, 0.0}, 1.0e-3);
 }
 
 TEST(AverageMoleculeNodeTest, BeNDy)
@@ -60,9 +60,9 @@ TEST(AverageMoleculeNodeTest, BeNDy)
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
     auto &structure = avgMol->structure();
-    DissolveSystemTest::checkVec3(structure.atom(0)->r(), {2.0, 0.0, 0.0}, 1.0e-3);
-    DissolveSystemTest::checkVec3(structure.atom(1)->r(), {0.0, 0.0, 0.0}, 1.0e-3);
-    DissolveSystemTest::checkVec3(structure.atom(2)->r(), {2.0, 2.828427, 0.0}, 1.0e-3);
+    checkVec3(structure.atom(0)->r(), {2.0, 0.0, 0.0}, 1.0e-3);
+    checkVec3(structure.atom(1)->r(), {0.0, 0.0, 0.0}, 1.0e-3);
+    checkVec3(structure.atom(2)->r(), {2.0, 2.828427, 0.0}, 1.0e-3);
 }
 
 } // namespace UnitTest

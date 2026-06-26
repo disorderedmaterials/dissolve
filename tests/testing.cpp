@@ -302,14 +302,11 @@ XRaySQNode *TestGraph::appendXRaySQ(SQNode *sqNode, std::string name, TestGraph:
 }
 
 /*
- * Data Test Functions
- */
-
-/*
  * Utility Functions
  */
+
 // Save the specified graph in Mermaid format to a file named after the unit test
-void TestGraph::exportMermaidGraph(Graph &graph)
+void exportMermaidGraph(Graph &graph)
 {
     auto suite = ::testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
     auto name = ::testing::UnitTest::GetInstance()->current_test_info()->name();
@@ -320,6 +317,4 @@ void TestGraph::exportMermaidGraph(Graph &graph)
     myfile << graph;
     myfile.close();
 }
-// Save the current graph in Mermaid format to a file named after the unit test
-void TestGraph::exportMermaidGraph() { exportMermaidGraph(*this); }
 }; // namespace UnitTest

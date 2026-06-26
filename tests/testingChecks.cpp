@@ -25,7 +25,7 @@ namespace UnitTest
 }
 // Test Data1D
 [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
-                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+                               double tolerance, Error::ErrorType errorType)
 {
     // Generate the error estimate and compare against the threshold value
     auto error = Error::error(errorType, dataA, dataB).error;
@@ -35,7 +35,7 @@ namespace UnitTest
     return !notOK;
 }
 [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, std::string filePath, int xColumn, int yColumn,
-                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+                               double tolerance, Error::ErrorType errorType)
 {
     Data1D dataB;
     if (!ImportXYDataNode::read(dataB, filePath, xColumn, yColumn))
@@ -48,7 +48,7 @@ namespace UnitTest
 }
 // Test Data2D
 [[nodiscard]] bool checkData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB, std::string_view nameB,
-                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+                               double tolerance, Error::ErrorType errorType)
 {
     // Generate the error estimate and compare against the threshold value
     auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
@@ -60,7 +60,7 @@ namespace UnitTest
 }
 // Test Data3D
 [[nodiscard]] bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
-                               double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+                               double tolerance, Error::ErrorType errorType)
 {
     // Generate the error estimate and compare against the threshold value
     auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
@@ -71,14 +71,14 @@ namespace UnitTest
     return !notOK;
 }
 // Test Vec3 data
-void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6)
+void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance)
 {
     EXPECT_NEAR(A.x, B.x, tolerance);
     EXPECT_NEAR(A.y, B.y, tolerance);
     EXPECT_NEAR(A.z, B.z, tolerance);
 }
 // Test Vec3 vector data
-void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance = 1.0e-6)
+void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance)
 {
     ASSERT_EQ(A.size(), B.size());
     for (auto n = 0; n < A.size(); ++n)
@@ -99,7 +99,7 @@ void checkSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesBy
 // Test interaction parameters
 template <class Intra>
 void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
-                              const InteractionPotential<Intra> &actualParams, double tolerance = 1.0e-6)
+                              const InteractionPotential<Intra> &actualParams, double tolerance)
 {
     Messenger::print("Testing intramolecular interaction: {}...\n", termInfo);
     EXPECT_EQ(Intra::forms().keyword(actualParams.form()), Intra::forms().keyword(expectedParams.form()));
@@ -109,7 +109,7 @@ void checkIntramolecularTerms(const std::string &termInfo, const InteractionPote
 }
 // Test species bond term
 void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<BondFunctions> &expectedParams,
-                                double tolerance = 1.0e-6)
+                                double tolerance)
 {
     ASSERT_TRUE(atoms.size() == 2);
     const auto &b = sp->getBond(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]]);
@@ -120,7 +120,7 @@ void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const Inter
 }
 // Test species angle term
 void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<AngleFunctions> &expectedParams,
-                                double tolerance = 1.0e-6)
+                                double tolerance)
 {
     ASSERT_TRUE(atoms.size() == 3);
     const auto &a = sp->getAngle(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]]);
@@ -131,7 +131,7 @@ void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const Inter
 }
 // Test species torsion / improper term
 void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
-                                const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance = 1.0e-6)
+                                const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance)
 {
     ASSERT_TRUE(atoms.size() == 4);
     const auto &t =
@@ -215,7 +215,7 @@ bool checkPartialSet(const PartialSet &setA, const PartialSet &setB, double test
 }
 
 // Check consistency between production, molecular, and test energies, returning production values
-Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6)
+Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold)
 {
     // Calculate production energies (fully optimised)
     auto productionEnergy = kernel->totalEnergy();
@@ -244,8 +244,8 @@ Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> 
 
 // Check consistency between production and test forces
 void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
-                           std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags = {},
-                           double ppMaxDeviation = 1.0e-2, double geomMaxDeviation = 1.0e-6)
+                           std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags, double ppMaxDeviation,
+                           double geomMaxDeviation)
 {
     // Calculate production forces (fully optimised)
     kernel->totalForces(ppForces, geomForces, flags);
@@ -276,7 +276,7 @@ void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vect
 
 // Check consistency of supplied forces
 void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
-                                    const std::vector<Vector3> &referenceForces, double maxDeviation = 1.0e-3)
+                                    const std::vector<Vector3> &referenceForces, double maxDeviation)
 {
     ASSERT_TRUE(ppForces.size() == geomForces.size());
     ASSERT_TRUE(ppForces.size() == referenceForces.size());
