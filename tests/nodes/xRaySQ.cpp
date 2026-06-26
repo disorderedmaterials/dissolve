@@ -3,7 +3,7 @@
 
 #include "nodes/xRaySQ.h"
 #include "nodes/gr.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

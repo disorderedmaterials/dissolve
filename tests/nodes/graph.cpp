@@ -4,7 +4,7 @@
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
 #include "nodes/registry.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

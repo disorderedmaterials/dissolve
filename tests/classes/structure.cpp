@@ -3,7 +3,7 @@
 
 #include "classes/structure.h"
 #include "nodes/calculateBonding.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 #include <cmath>
 
 namespace UnitTest

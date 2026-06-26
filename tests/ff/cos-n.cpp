@@ -5,7 +5,7 @@
 #include "kernels/energy.h"
 #include "kernels/force.h"
 #include "tests/tempFile.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

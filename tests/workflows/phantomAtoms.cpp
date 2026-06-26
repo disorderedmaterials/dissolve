@@ -7,7 +7,7 @@
 #include "nodes/species.h"
 #include "nodes/sq.h"
 #include "nodes/xRaySQ.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

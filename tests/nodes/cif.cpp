@@ -4,7 +4,7 @@
 #include "classes/configuration.h"
 #include "classes/empiricalFormula.h"
 #include "nodes/cif/importCIFStructure.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 #include <string>
 
 namespace UnitTest

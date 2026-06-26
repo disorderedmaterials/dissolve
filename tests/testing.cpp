@@ -2,303 +2,327 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "tests/testing.h"
-#include "classes/isotopologueSet.h"
-#include "main/dissolve.h"
-#include "nodes/bragg.h"
-#include "nodes/dissolve.h"
-#include "nodes/forcefield.h"
-#include "nodes/gr.h"
-#include "nodes/insert.h"
-#include "nodes/iterableGraph.h"
-#include "nodes/neutronSQ.h"
-#include "nodes/setCoordinates.h"
-#include "nodes/species.h"
-#include "nodes/sq.h"
-#include "nodes/xRaySQ.h"
+#include "classes/species.h"
+#include "kernels/energy.h"
+#include "kernels/force.h"
+#include "nodes/importXYData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
 {
 /*
- * Graph Creation Helpers
+ * Checks
  */
 
-// Returns pointer to current top node in graph
-Node *TestGraph::fetchHead() const { return head_; }
-// Returns the name of the current head node in the graph
-std::string TestGraph::fetchHeadName() const { return head_ ? std::string(head_->name()) : "NO_NODE"; }
-// Append new node to the graph
-Node *TestGraph::appendNode(const std::string &nodeType, const std::optional<std::string> &name)
+// Test simple double
+[[nodiscard]] bool checkDouble(std::string_view quantity, double A, double B, double threshold)
 {
-    auto node = name.has_value() ? currentGraph_->createNode(nodeType, *name) : currentGraph_->createNode(nodeType);
-
-    if (!node)
-        return nullptr;
-
-    head_ = node;
-
-    return node;
+    auto delta = fabs(A - B);
+    auto isOK = delta <= threshold;
+    Messenger::print("Reference {} delta with correct value is {:15.9e} and is {} (threshold is {:10.3e})\n", quantity, delta,
+                     isOK ? "OK" : "NOT OK", threshold);
+    return isOK;
 }
-// Create species insertion node chain
-Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSourceOutput,
-                                        const std::vector<std::pair<std::string, int>> &species, double rho,
-                                        Units::DensityUnits rhoUnits, InsertNode::BoxActionStyle boxActionStyle)
+// Test sampled double
+[[nodiscard]] bool checkSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold)
 {
-    // Add Species and Insert nodes
-    for (auto &[speciesString, population] : species)
+    return checkDouble(quantity, A.value(), B, threshold);
+}
+// Test Data1D
+[[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
+                               double tolerance, Error::ErrorType errorType)
+{
+    // Generate the error estimate and compare against the threshold value
+    auto error = Error::error(errorType, dataA, dataB).error;
+    auto notOK = std::isnan(error) || error > tolerance;
+    Messenger::print("Data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA, error, nameB,
+                     notOK ? "NOT OK" : "OK", tolerance);
+    return !notOK;
+}
+[[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, std::string filePath, int xColumn, int yColumn,
+                               double tolerance, Error::ErrorType errorType)
+{
+    Data1D dataB;
+    if (!ImportXYDataNode::read(dataB, filePath, xColumn, yColumn))
     {
-        // Create the species node and get the species pointer
-        std::unique_ptr<SpeciesNode> speciesUnique;
-        if (speciesString.ends_with(".toml"))
-            speciesUnique = loadTOMLSpecies(speciesString);
+        std::cout << std::format("Failed to read data from '{}'\n", filePath);
+        return false;
+    }
+
+    return checkData1D(dataA, nameA, dataB, filePath, tolerance, errorType);
+}
+// Test Data2D
+[[nodiscard]] bool checkData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB, std::string_view nameB,
+                               double tolerance, Error::ErrorType errorType)
+{
+    // Generate the error estimate and compare against the threshold value
+    auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
+    auto notOK = std::isnan(error) || error > tolerance;
+    Messenger::print("Data '{}' has error of {:7.3f} with data '{}' and is {} (threshold is {:6.3e})\n\n", nameA, error, nameB,
+                     notOK ? "NOT OK" : "OK", tolerance);
+
+    return !notOK;
+}
+// Test Data3D
+[[nodiscard]] bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
+                               double tolerance, Error::ErrorType errorType)
+{
+    // Generate the error estimate and compare against the threshold value
+    auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
+    auto notOK = std::isnan(error) || error > tolerance;
+    Messenger::print("Internal data '{}' has error of {:7.3f} with external data '{}' and is {} (threshold is {:6.3e})\n\n",
+                     nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
+
+    return !notOK;
+}
+// Test Vec3 data
+void checkVec3(const Vector3 &A, const Vector3 &B, double tolerance)
+{
+    EXPECT_NEAR(A.x, B.x, tolerance);
+    EXPECT_NEAR(A.y, B.y, tolerance);
+    EXPECT_NEAR(A.z, B.z, tolerance);
+}
+// Test Vec3 vector data
+void checkVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance)
+{
+    ASSERT_EQ(A.size(), B.size());
+    for (auto n = 0; n < A.size(); ++n)
+        checkVec3(A[n], B[n], tolerance);
+}
+// Test species atom type
+void checkSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
+{
+    for (auto &[atomIndex, atomTypeName] : namesById)
+    {
+        ASSERT_TRUE(atomIndex >= 0 && atomIndex < sp->nAtoms());
+        auto &spAtom = sp->atom(atomIndex);
+        auto at = spAtom.atomType();
+        ASSERT_TRUE(at);
+        EXPECT_EQ(at->name(), atomTypeName);
+    }
+}
+// Test interaction parameters
+template <class Intra>
+void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
+                              const InteractionPotential<Intra> &actualParams, double tolerance)
+{
+    Messenger::print("Testing intramolecular interaction: {}...\n", termInfo);
+    EXPECT_EQ(Intra::forms().keyword(actualParams.form()), Intra::forms().keyword(expectedParams.form()));
+    EXPECT_EQ(actualParams.nParameters(), expectedParams.nParameters());
+    for (auto &&[current, expected] : zip(actualParams.parameters(), expectedParams.parameters()))
+        EXPECT_NEAR(current, expected, tolerance);
+}
+// Test species bond term
+void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<BondFunctions> &expectedParams,
+                                double tolerance)
+{
+    ASSERT_TRUE(atoms.size() == 2);
+    const auto &b = sp->getBond(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]]);
+    if (!b)
+        throw(std::runtime_error(std::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+    checkIntramolecularTerms(std::format("bond {}", joinStrings(atoms, "-")), expectedParams, b->get().interactionPotential(),
+                             tolerance);
+}
+// Test species angle term
+void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<AngleFunctions> &expectedParams,
+                                double tolerance)
+{
+    ASSERT_TRUE(atoms.size() == 3);
+    const auto &a = sp->getAngle(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]]);
+    if (!a)
+        throw(std::runtime_error(std::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+    checkIntramolecularTerms(std::format("angle {}", joinStrings(atoms, "-")), expectedParams, a->get().interactionPotential(),
+                             tolerance);
+}
+// Test species torsion / improper term
+void checkSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
+                                const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance)
+{
+    ASSERT_TRUE(atoms.size() == 4);
+    const auto &t =
+        sp->getTorsion(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]], &sp->atoms()[atoms[3]]);
+    const auto &i =
+        sp->getImproper(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]], &sp->atoms()[atoms[3]]);
+    if (!t && !i)
+        throw(std::runtime_error(
+            std::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
+    else if (t)
+        checkIntramolecularTerms(std::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
+                                 t->get().interactionPotential(), tolerance);
+    else
+        checkIntramolecularTerms(std::format("improper {}", joinStrings(atoms, "-")), expectedParams,
+                                 i->get().interactionPotential(), tolerance);
+}
+// Test consistency between the two supplied double-keyed Data1D maps
+bool checkDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA, const DoubleKeyedMap<Data1D> &mapB,
+                         double testThreshold)
+{
+    // Check map sizes
+    if (mapA.size() != mapB.size())
+    {
+        std::cout << std::format("Maps containing {} data are of dissimilar size (A = {}, B = {})\n", mapContents, mapA.size(),
+                                 mapB.size());
+        return false;
+    }
+
+    // Check individual data
+    for (auto &[key, dataA] : mapA)
+    {
+        // Find same-keyed data in mapB
+        if (mapB.contains(key))
+        {
+            auto errorReport = Error::percent(dataA, mapB.get(key));
+            std::cout << Error::errorReportString(errorReport) << std::endl;
+            std::cout << std::format("{} '{}' in map B has {} error of {:7.3f}{} with data in map A and is "
+                                     "{} (threshold is {:6.3f}%)\n\n",
+                                     mapContents, key, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                                     errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                     errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+            if (errorReport.error > testThreshold)
+                return false;
+        }
         else
         {
-            if (speciesString.find('|') == std::string::npos)
-                speciesUnique = createAtomicSpecies(Elements::element(speciesString), {ShortRangeFunctions::Form::Undefined});
-            else
-                speciesUnique =
-                    createAtomicSpecies(Elements::element(DissolveSys::beforeChar(speciesString, '|')),
-                                        {ShortRangeFunctions::Form::LennardJones, DissolveSys::afterChar(speciesString, '|')});
+            std::cout << std::format("{} '{}' is present in map A but not in map B.\n", mapContents, key);
+            return false;
         }
-        EXPECT_TRUE(speciesUnique);
-        auto &speciesNode = speciesUnique->species();
-
-        // Move the species node into the graph
-        currentGraph_->addNode(std::move(speciesUnique), speciesNode.name());
-
-        auto insertNodeName = std::format("Insert-{}", speciesNode.name());
-        EXPECT_TRUE(appendNode("Insert", insertNodeName));
-        EXPECT_TRUE(fetchHead()->setInput<Number>("Population", population));
-        EXPECT_TRUE(fetchHead()->setInput<Number>("Density", rho));
-        EXPECT_TRUE(fetchHead()->setOption("BoxAction", boxActionStyle));
-        EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
-        EXPECT_TRUE(currentGraph_->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
-        EXPECT_TRUE(
-            currentGraph_->addEdge({std::string(cfgSourceNode->name()), cfgSourceOutput, insertNodeName, "Configuration"}));
-
-        cfgSourceNode = fetchHead();
-
-        // After the first InsertNode addition the source output name reverts to "Configuration" (it may previously have
-        // been Output from SetBox)
-        cfgSourceOutput = "Configuration";
     }
 
-    return fetchHead();
+    return true;
+}
+// Test consistency, and error, between supplied partial sets
+bool checkPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold)
+{
+    // Full partials
+    if (!checkDoubleKeyedMap("Full Partials", setA.partials(), setB.partials(), testThreshold))
+        return false;
+
+    // Bound partials
+    if (!checkDoubleKeyedMap("Bound Partials", setA.boundPartials(), setB.boundPartials(), testThreshold))
+        return false;
+
+    // Unbound partials
+    if (!checkDoubleKeyedMap("Unbound Partials", setA.unboundPartials(), setB.unboundPartials(), testThreshold))
+        return false;
+
+    // Total
+    auto errorReport = Error::percent(setA.total(), setB.total());
+    std::cout << Error::errorReportString(errorReport) << std::endl;
+    std::cout << std::format(
+        "Total in set B has {} error of {:7.3f}{} with data in set A and is {} (threshold is {:6.3f}%)\n\n",
+        Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+        errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+        errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+    if (errorReport.error > testThreshold)
+        return false;
+
+    return true;
 }
 
-// Create and return atomic SpeciesNode
-std::unique_ptr<SpeciesNode> TestGraph::createAtomicSpecies(Elements::Element element,
-                                                            InteractionPotential<ShortRangeFunctions> potential)
+// Check consistency between production, molecular, and test energies, returning production values
+Kernel::EnergyResult checkEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold)
 {
-    // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
-    auto speciesNodePtr = speciesNodeUniquePtr.get();
-    auto species = &speciesNodePtr->species();
-    species->setName(Elements::symbol(element));
-    species->createAtomic(element, potential);
+    // Calculate production energies (fully optimised)
+    auto productionEnergy = kernel->totalEnergy();
 
-    return speciesNodeUniquePtr;
+    // Calculate baseline test energies (simple double-loop, PBC always)
+    auto testEnergy = kernel->totalEnergySimple();
+
+    // Calculate molecule-centric energy
+    auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy();
+
+    // Compare basic energies with production value
+    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.intraMolecular, productionEnergy.pairPotential.intraMolecular, testThreshold);
+    EXPECT_NEAR(testEnergy.geometry.total(), productionEnergy.geometry.total(), testThreshold);
+
+    // Compare basic energies with molecule-based values
+    EXPECT_NEAR(testEnergy.pairPotential.total(), molecularPPEnergy.total(), testThreshold);
+    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, molecularPPEnergy.interMolecular, testThreshold);
+
+    // Compare molecule-based energies with production values
+    EXPECT_NEAR(molecularPPEnergy.total(), productionEnergy.pairPotential.total(), testThreshold);
+    EXPECT_NEAR(molecularPPEnergy.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
+
+    return productionEnergy;
 }
-// Create species from TOML file
-std::unique_ptr<SpeciesNode> TestGraph::loadTOMLSpecies(std::string_view path)
-{
-    // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
-    auto speciesNodePtr = speciesNodeUniquePtr.get();
-    auto &species = speciesNodePtr->species();
-    species.load(path);
 
-    return speciesNodeUniquePtr;
+// Check consistency between production and test forces
+void checkForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
+                           std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags, double ppMaxDeviation,
+                           double geomMaxDeviation)
+{
+    // Calculate production forces (fully optimised)
+    kernel->totalForces(ppForces, geomForces, flags);
+
+    // Calculate baseline test forces (simple double-loop, PBC always)
+    std::vector<Vector3> ppTestForces, geomTestForces;
+    kernel->totalForcesSimple(ppTestForces, geomTestForces, flags);
+
+    // Pair potential forces
+    if (!(flags.isSet(Kernel::CalculationFlags::ExcludeInterMolecularPairPotential) &&
+          flags.isSet(Kernel::CalculationFlags::ExcludeIntraMolecularPairPotential)))
+        for (auto &&[pairPotentialTestForce, pairPotentialProductionForce] : zip(ppTestForces, ppForces))
+        {
+            EXPECT_NEAR(pairPotentialProductionForce.x, pairPotentialTestForce.x, ppMaxDeviation);
+            EXPECT_NEAR(pairPotentialProductionForce.y, pairPotentialTestForce.y, ppMaxDeviation);
+            EXPECT_NEAR(pairPotentialProductionForce.z, pairPotentialTestForce.z, ppMaxDeviation);
+        }
+
+    // Geometric forces
+    if (flags.isNotSet(Kernel::CalculationFlags::ExcludeGeometric))
+        for (auto &&[geometryTestForce, geometryProductionForce] : zip(geomTestForces, geomForces))
+        {
+            EXPECT_NEAR(geometryProductionForce.x, geometryTestForce.x, geomMaxDeviation);
+            EXPECT_NEAR(geometryProductionForce.y, geometryTestForce.y, geomMaxDeviation);
+            EXPECT_NEAR(geometryProductionForce.z, geometryTestForce.z, geomMaxDeviation);
+        }
 }
-// Create a species node with structure and forcefield data sources
-SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name, std::string structureNodeType,
-                                                                std::string structureFilePath, std::shared_ptr<Forcefield> ff,
-                                                                bool calculateBonding)
+
+// Check consistency of supplied forces
+void checkReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
+                                    const std::vector<Vector3> &referenceForces, double maxDeviation)
 {
-    // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
-    EXPECT_TRUE(speciesNodeUniquePtr);
-    auto speciesNodePtr = speciesNodeUniquePtr.get();
-    EXPECT_TRUE(speciesNodePtr);
-    auto &species = speciesNodePtr->species();
-    species.setName(name);
-    currentGraph_->addNode(std::move(speciesNodeUniquePtr), name);
+    ASSERT_TRUE(ppForces.size() == geomForces.size());
+    ASSERT_TRUE(ppForces.size() == referenceForces.size());
 
-    // Create structure import node
-    auto structureNode = createNode(structureNodeType);
-    EXPECT_TRUE(structureNode);
-    structureNode->setOption<std::string>("FilePath", structureFilePath);
-
-    // Create rebonding node?
-    if (calculateBonding)
+    for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
     {
-        auto calculateBondingNode = createNode("CalculateBonding");
-        EXPECT_TRUE(calculateBondingNode);
-        EXPECT_TRUE(currentGraph_->addEdge({structureNodeType, "Structure", "CalculateBonding", "Structure"}));
-        EXPECT_TRUE(currentGraph_->addEdge({"CalculateBonding", "Structure", name, "Structure"}));
+        auto calculatedForce = ppForce + geometryForce;
+        EXPECT_NEAR(calculatedForce.x, referenceForce.x, maxDeviation);
+        EXPECT_NEAR(calculatedForce.y, referenceForce.y, maxDeviation);
+        EXPECT_NEAR(calculatedForce.z, referenceForce.z, maxDeviation);
+    }
+}
+
+/*
+ * TOML
+ */
+
+// Compare TOML values with context, but without insisting on a specific ordering of fields
+void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2)
+{
+    if (toml.is_table())
+    {
+        ASSERT_TRUE(toml2.is_table()) << location;
+        for (auto &[k, v] : toml.as_table())
+        {
+            ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
+            compareToml(std::format("{}.{}", location, k), v, toml2.at(k));
+        }
+    }
+    else if (toml.is_array())
+    {
+        auto arr = toml.as_array();
+        auto arr2 = toml2.as_array();
+        ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
+        for (int i = 0; i < arr.size(); ++i)
+            compareToml(std::format("{}[{}]", location, i), arr[i], arr2[i]);
     }
     else
-        EXPECT_TRUE(currentGraph_->addEdge({structureNodeType, "Structure", name, "Structure"}));
-
-    // Create forcefield node
-    auto forcefieldNode = dynamic_cast<ForcefieldNode *>(createNode("Forcefield"));
-    EXPECT_TRUE(forcefieldNode);
-    EXPECT_TRUE(forcefieldNode->setOption<Forcefield *>("Forcefield", ff.get()));
-    EXPECT_TRUE(currentGraph_->addEdge({"Forcefield", "Recipe", name, "Recipe"}));
-
-    return speciesNodePtr;
-}
-// Create basic configuration graph, returning the last node
-Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species, double rho,
-                                     Units::DensityUnits rhoUnits)
-{
-    // Create configuration
-    EXPECT_TRUE(appendNode("Configuration", name));
-
-    // Add Species and Insert nodes
-    return createAndInsertSpecies(fetchHead(), "Configuration", species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
-}
-// Create basic configuration graph, returning the last node
-Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
-                                     const Vector3 &cellLengths, const Vector3 &cellAngles)
-{
-    // Create configuration and SetBox nodes
-    EXPECT_TRUE(appendNode("Configuration", name));
-    EXPECT_TRUE(appendNode("SetBox"));
-    fetchHead()->setOption<Vector3>("Lengths", cellLengths);
-    fetchHead()->setOption<Vector3>("Angles", cellAngles);
-    EXPECT_TRUE(currentGraph_->addEdge({name, "Configuration", "SetBox", "Input"}));
-
-    // Add Species and Insert nodes
-    return createAndInsertSpecies(fetchHead(), "Output", species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
-                                  InsertNode::BoxActionStyle::None);
-}
-// Append a set coordinates node with a structure import input
-Node *TestGraph::appendSetCoordinates(std::string_view importNodeType, std::string filePath, std::string sourceOutpuName)
-{
-    const auto cfgSourceNode = fetchHead();
-
-    EXPECT_TRUE(appendNode("SetCoordinates"));
-    auto structureNode = createNode(importNodeType);
-    EXPECT_TRUE(structureNode);
-    EXPECT_TRUE(structureNode->setOption<std::string>("FilePath", filePath));
-
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
-
-    EXPECT_TRUE(
-        currentGraph_->addEdge({std::string(cfgSourceNode->name()), sourceOutpuName, "SetCoordinates", "Configuration"}));
-
-    return head<SetCoordinatesNode>();
-}
-// Create a trajectory iterator subgraph
-IterableGraph *TestGraph::appendTrajectoryIterator(std::string trajectoryImportNodeType, std::string filePath)
-{
-    // Get current head node before we create the IterableGraph
-    auto oldHead = head_;
-    auto oldGraph = currentGraph_;
-
-    // Add iterator node and make it the current graph
-    currentGraph_ = dynamic_cast<IterableGraph *>(appendNode("Iterator", "Iterator"));
-    EXPECT_TRUE(currentGraph_);
-    head_ = nullptr;
-
-    // Create a dynamic input from the (assumed) "Configuration" output on the old head of the previous graph
-    EXPECT_TRUE(oldGraph->addEdge({std::string(oldHead->name()), "Configuration", "Iterator", "Configuration"}));
-
-    // Within the iterator graph create SetCoordinates and trajectory import nodes
-    auto trajectoryNode = appendNode(trajectoryImportNodeType);
-    EXPECT_TRUE(trajectoryNode);
-    EXPECT_TRUE(trajectoryNode->setOption<std::string>("FilePath", filePath));
-    EXPECT_TRUE(appendNode("SetCoordinates"));
-
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(trajectoryNode->name()), "Structure", "SetCoordinates", "Structure"}));
-
-    EXPECT_TRUE(currentGraph_->addEdge({"Inputs", "Configuration", "SetCoordinates", "Configuration"}));
-
-    return dynamic_cast<IterableGraph *>(currentGraph_);
-}
-// Append GR and SQ nodes
-std::pair<GRNode *, SQNode *> TestGraph::appendGRSQ(bool noAveraging, bool noIntraBroadening)
-{
-    // Create and setup the GR node
-    auto grNode = dynamic_cast<GRNode *>(createNode("GR"));
-    EXPECT_TRUE(grNode);
-    if (noAveraging)
-        EXPECT_TRUE(grNode->setOption("Averaging", std::optional<Number>()));
-    if (noIntraBroadening)
-        EXPECT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
-
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(fetchHead()->name()), "Configuration", "GR", "Configuration"}));
-
-    // Create the SQ node
-    auto sqNode = dynamic_cast<SQNode *>(createNode("SQ"));
-    EXPECT_TRUE(sqNode);
-    EXPECT_TRUE(currentGraph_->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
-
-    return {grNode, sqNode};
-}
-// Create a NeutronSQ node with optional reference data
-NeutronSQNode *TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
-                                          const std::vector<std::tuple<std::string, std::string, double>> isotopologues,
-                                          TestGraph::Data1DImportFileFormat referenceData)
-{
-    // Construct the isotopologue set
-    IsotopologueSet isotopologueSet;
-    for (auto &&[speciesName, isotopologueName, relativeWeight] : isotopologues)
     {
-        // Find the named species node
-        auto speciesNode = dynamic_cast<SpeciesNode *>(findNode(speciesName));
-        if (!speciesNode)
-        {
-            std::cout << std::format("No species named '{}' exists in the graph - can't construct IsotopologueSet\n",
-                                     speciesName);
-            return nullptr;
-        }
-        auto &species = speciesNode->species();
-        auto isotopologue = species.findIsotopologue(isotopologueName);
-        if (!isotopologue)
-        {
-            std::cout << std::format("No isotopologue named '{}' exists in species '{}' - can't construct IsotopologueSet\n",
-                                     isotopologueName, speciesName);
-            return nullptr;
-        }
-        isotopologueSet.add(isotopologue, relativeWeight);
+        EXPECT_EQ(toml, toml2) << location;
     }
-
-    EXPECT_TRUE(appendNode("NeutronSQ", name));
-    EXPECT_TRUE(fetchHead()->setOption("Isotopologues", isotopologueSet));
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
-
-    // Set reference F(Q) data
-    if (!referenceData.filename.empty())
-    {
-        auto data1DImportNode = createNode("ImportXYData", std::format("Reference-{}", name));
-        EXPECT_TRUE(data1DImportNode);
-        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
-        EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
-        EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
-    }
-
-    return head<NeutronSQNode>();
-}
-// Create an XRaySQ node with optional reference data
-XRaySQNode *TestGraph::appendXRaySQ(SQNode *sqNode, std::string name, TestGraph::Data1DImportFileFormat referenceData)
-{
-    EXPECT_TRUE(appendNode("XRaySQ", name));
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedGR", name, "UnweightedGR"}));
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(sqNode->name()), "UnweightedSQ", name, "UnweightedSQ"}));
-
-    // Set reference F(Q) data
-    if (!referenceData.filename.empty())
-    {
-        auto data1DImportNode = createNode("ImportXYData", std::format("Reference-{}", name));
-        EXPECT_TRUE(data1DImportNode);
-        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData.filename)));
-        EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", referenceData.histogram));
-        EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
-    }
-    return head<XRaySQNode>();
 }
 
 /*

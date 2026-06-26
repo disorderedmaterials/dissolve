@@ -8,7 +8,7 @@
 #include "nodes/gr.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/sq.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 #include <memory>
 
 namespace UnitTest

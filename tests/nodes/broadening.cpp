@@ -5,7 +5,7 @@
 #include "nodes/gr.h"
 #include "nodes/neutronSQ.h"
 #include "nodes/sq.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

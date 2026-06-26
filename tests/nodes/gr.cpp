@@ -3,7 +3,7 @@
 
 #include "nodes/gr.h"
 #include "math/windowFunction.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

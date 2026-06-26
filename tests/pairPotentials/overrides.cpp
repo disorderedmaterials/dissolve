@@ -4,8 +4,7 @@
 #include "kernels/energy.h"
 #include "nodes/neutronSQ.h"
 #include "nodes/species.h"
-#include "tests/testing.h"
-#include <vector>
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

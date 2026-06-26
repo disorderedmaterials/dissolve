@@ -5,7 +5,7 @@
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/importXYZTrajectory.h"
 #include "tests/tempFile.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 #include <fstream>
 #include <memory>
 #include <sstream>

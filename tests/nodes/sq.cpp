@@ -4,7 +4,7 @@
 #include "nodes/sq.h"
 #include "math/windowFunction.h"
 #include "nodes/gr.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

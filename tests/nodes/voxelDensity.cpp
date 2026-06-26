@@ -4,7 +4,7 @@
 #include "nodes/voxelDensity.h"
 #include "data/atomicMasses.h"
 #include "nodes/configuration.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

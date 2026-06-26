@@ -3,7 +3,7 @@
 
 #include "nodes/moleculeTorsion.h"
 #include "nodes/iterableGraph.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

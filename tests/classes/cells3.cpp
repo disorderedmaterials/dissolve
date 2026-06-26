@@ -5,7 +5,7 @@
 #include "kernels/energy.h"
 #include "nodes/species.h"
 #include "templates/algorithms.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

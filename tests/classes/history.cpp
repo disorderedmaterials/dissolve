@@ -4,7 +4,7 @@
 #include "math/history.h"
 #include "nodes/number.h"
 #include "nodes/species.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

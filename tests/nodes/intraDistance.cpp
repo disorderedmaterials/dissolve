@@ -5,7 +5,7 @@
 #include "classes/speciesSites.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/species.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 #include <vector>
 
 namespace UnitTest

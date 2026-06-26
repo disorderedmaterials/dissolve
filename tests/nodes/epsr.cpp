@@ -8,7 +8,7 @@
 #include "nodes/neutronSQ.h"
 #include "nodes/sq.h"
 #include "nodes/xRaySQ.h"
-#include "tests/testing.h"
+#include "tests/testGraph.h"
 #include <vector>
 
 namespace UnitTest
