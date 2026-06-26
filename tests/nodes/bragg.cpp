@@ -5,6 +5,7 @@
 #include "classes/partialSet.h"
 #include "classes/speciesSites.h"
 #include "math/rangedVector3.h"
+#include "nodes/detectMolecules.h"
 #include "nodes/gr.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/sq.h"
@@ -37,18 +38,37 @@ class BraggNodeTest : public ::testing::Test
         // Create species and configuration from MgO cif file
         auto root = testGraph_.dissolveGraph();
 
+        // Add species
+        EXPECT_TRUE(testGraph_.addNode(TestGraph::createAtomicSpecies(Elements::Mg), "Mg"));
+        EXPECT_TRUE(testGraph_.addNode(TestGraph::createAtomicSpecies(Elements::O), "O"));
+
+        // Import CIF and detect molecular species
         ASSERT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<std::string>("FilePath", "cif/1000053.cif"));
 
-        ASSERT_TRUE(testGraph_.appendNode("CIFBondingOptions", "CIFBonds"));
-        ASSERT_TRUE(root->addEdge({"ImportCIFStructure", "CIFContext", "CIFBonds", "CIFContext"}));
-        ASSERT_TRUE(testGraph_.fetchHead()->setOption<bool>("PreventAllBonds", true));
+        ASSERT_TRUE(testGraph_.appendNode("ClearBonding"));
+        ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "Crystal"));
+        ASSERT_TRUE(root->addEdge({"ImportCIFStructure", "Structure", "ClearBonding", "Structure"}));
+        ASSERT_TRUE(testGraph_.addEdge({"ClearBonding", "Structure", "Crystal", "Structure"}));
+        auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("Crystal"));
+        ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
+        ASSERT_EQ(detectMoleculesNode->outputs().size(), 2);
 
         // Create a supercell that is 5 * unitcell
-        ASSERT_TRUE(testGraph_.appendNode("CIFMolecularSpecies", "Crystal"));
+        ASSERT_TRUE(testGraph_.appendNode("Configuration", "UnitcellConfiguration"));
+        ASSERT_TRUE(testGraph_.appendNode("Insert", "InsertMg"));
+        ASSERT_TRUE(testGraph_.appendNode("Insert", "InsertO"));
+        ASSERT_TRUE(testGraph_.appendNode("SupercellConfiguration"));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Vector3i>("SupercellRepeat", supercellRepeat_));
 
-        ASSERT_TRUE(root->addEdge({"CIFBonds", "CIFContext", "Crystal", "CIFContext"}));
+        // Set up connections
+        ASSERT_TRUE(testGraph_.addEdge({"UnitcellConfiguration", "Configuration", "InsertMg", "Configuration"}));
+        ASSERT_TRUE(testGraph_.addEdge({"Crystal", "DetectedMolecule-0", "InsertMg", "Instances"}));
+        ASSERT_TRUE(testGraph_.addEdge({"Mg", "Species", "InsertMg", "Species"}));
+        ASSERT_TRUE(testGraph_.addEdge({"InsertMg", "Configuration", "InsertO", "Configuration"}));
+        ASSERT_TRUE(testGraph_.addEdge({"Crystal", "DetectedMolecule-1", "InsertO", "Instances"}));
+        ASSERT_TRUE(testGraph_.addEdge({"O", "Species", "InsertO", "Species"}));
+        ASSERT_TRUE(testGraph_.addEdge({"InsertO", "Configuration", "SupercellConfiguration", "Configuration"}));
 
         // Import coordinates
         ASSERT_TRUE(
@@ -69,7 +89,7 @@ class BraggNodeTest : public ::testing::Test
 
         // Bragg node
         ASSERT_TRUE(testGraph_.appendNode("Bragg", "Bragg01"));
-        ASSERT_TRUE(root->addEdge({"Crystal", "SupercellConfiguration", "Bragg01", "Configuration"}));
+        ASSERT_TRUE(root->addEdge({"SupercellConfiguration", "SupercellConfiguration", "Bragg01", "Configuration"}));
         ASSERT_TRUE(root->addEdge({std::string(sqNode->name()), "UnweightedSQ", "Bragg01", "UnweightedSQ"}));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Number>("QMax", 20.0));
         ASSERT_TRUE(testGraph_.fetchHead()->setOption<Function1DWrapper>(
@@ -134,7 +154,6 @@ class BraggNodeTest : public ::testing::Test
     }
 };
 
-/*
 TEST_F(BraggNodeTest, MgO_Full)
 {
     createGraph({5, 5, 5});
@@ -151,20 +170,16 @@ TEST_F(BraggNodeTest, MgO_Full)
     auto weightedSQ = neutronSQNode_->getOutputValue<PartialSet *>("WeightedSQ");
     auto weightedTotal = weightedSQ->total();
 
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("Mg1//Mg1"), "SQs_UnweightedSQ_Mg-Mg_Unbound",
-        "epsr25/mgo500-555/mgo.EPSR.f01", 1, 2, 1.5e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("Mg1//O1"), "SQs_UnweightedSQ_Mg-OX_Unbound",
-        "epsr25/mgo500-555/mgo.EPSR.f01", 1, 4, 1.5e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        unboundPartials.get("O1//O1"), "SQs_UnweightedSQ_OX-OX_Unbound",
-        "epsr25/mgo500-555/mgo.EPSR.f01", 1, 6, 1.5e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(unboundPartials.get("Mg1//Mg1"), "SQs_UnweightedSQ_Mg-Mg_Unbound",
+                                                "epsr25/mgo500-555/mgo.EPSR.f01", 1, 2, 1.5e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(unboundPartials.get("Mg1//O1"), "SQs_UnweightedSQ_Mg-OX_Unbound",
+                                                "epsr25/mgo500-555/mgo.EPSR.f01", 1, 4, 1.5e-2));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(unboundPartials.get("O1//O1"), "SQs_UnweightedSQ_OX-OX_Unbound",
+                                                "epsr25/mgo500-555/mgo.EPSR.f01", 1, 6, 1.5e-2));
 
     // Check total F(Q)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(
-        weightedTotal, "NeutronSQ01_WeightedSQ_Total",
-        "epsr25/mgo500-555/mgo.EPSR.u01", 1, 2, 2.7e-3));
+    EXPECT_TRUE(DissolveSystemTest::checkData1D(weightedTotal, "NeutronSQ01_WeightedSQ_Total", "epsr25/mgo500-555/mgo.EPSR.u01",
+                                                1, 2, 2.7e-3));
 
     // Check intensities
     //                                   Q     h k l     mult    I(Mg-Mg           Mg-O         O-O)
@@ -1285,5 +1300,5 @@ TEST_F(BraggNodeTest, MgO_Intensities111)
                                  {939, 9.994500, {33, 6, 0}, 432, {1.128566e-25, 1.128469e-25, 1.128662e-25}},
                                  {940, 9.999500, {33, 6, 1}, 264, {6.660584e-26, -6.738634e-26, 6.838882e-26}}}));
 }
-*/
+
 } // namespace UnitTest
