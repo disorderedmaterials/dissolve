@@ -2,12 +2,15 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/empiricalFormula.h"
+#include "data/elements.h"
 #include "nodes/calculateBonding.h"
 #include "nodes/cif/importCIFStructure.h"
 #include "nodes/detectMolecules.h"
+#include "nodes/supercellConfiguration.h"
 #include "tests/graphData.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
+#include <optional>
 #include <string>
 
 namespace UnitTest
@@ -21,6 +24,88 @@ class CIFNodeTest : public ::testing::Test
     public:
     // Molecular species information
     using MolecularSpeciesInfo = std::tuple<std::string, int, int>;
+    // Extend graph to convert detected species to a supercell configuration
+    void extendToSupercell(TestGraph *graph, std::vector<std::pair<Elements::Element, std::string>> expectedSpecies,
+                           const Vector3 &boxLengths, const Vector3 &boxAngles, Vector3i supercellRepeat = {1, 1, 1})
+    {
+        EXPECT_TRUE(graph->appendNode("Configuration"));
+        EXPECT_TRUE(graph->appendNode("SetBox"));
+        ASSERT_TRUE(graph->fetchHead()->setOption("Lengths", boxLengths));
+        ASSERT_TRUE(graph->fetchHead()->setOption("Angles", boxAngles));
+        EXPECT_TRUE(graph->appendNode("SupercellConfiguration"));
+        ASSERT_TRUE(graph->fetchHead()->setOption("SupercellRepeat", supercellRepeat));
+        ASSERT_TRUE(graph->addEdge({"Configuration", "Configuration", "SetBox", "Input"}));
+
+        const auto nExpectedSpecies = expectedSpecies.size();
+
+        for (const auto &sp : expectedSpecies)
+        {
+            auto [z, name] = sp;
+            EXPECT_TRUE(graph->addNode(TestGraph::createAtomicSpecies(z), name));
+            EXPECT_TRUE(graph->appendNode("Insert", std::string("Insert" + name)));
+        }
+
+        // Create species from structure
+        ASSERT_TRUE(graph->addEdge({"DetectMolecules", "DetectedMolecule-0", expectedSpecies.front().second, "Structure"}));
+
+        // Pass configuration output from set box node to the input configuration of this insert node
+        ASSERT_TRUE(
+            graph->addEdge({"SetBox", "Output", std::string("Insert" + expectedSpecies.front().second), "Configuration"}));
+
+        // Pass this species to its insert node
+        ASSERT_TRUE(graph->addEdge(
+            {expectedSpecies.front().second, "Species", std::string("Insert" + expectedSpecies.front().second), "Species"}));
+
+        // Pass the corresponding detected molecular structure to this species' insert node
+        // TODO: check if we have a reliable molecule name to use here at the structure level
+        ASSERT_TRUE(graph->addEdge(
+            {"DetectMolecules", "DetectedMolecule-0", std::string("Insert" + expectedSpecies.front().second), "Instances"}));
+
+        for (int i = 1; i < expectedSpecies.size() - 1; i++)
+        {
+            auto lastSpeciesName = expectedSpecies[i - 1].second;
+            auto speciesName = expectedSpecies[i].second;
+
+            // Create species from structure
+            ASSERT_TRUE(graph->addEdge(
+                {"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(i)), speciesName, "Structure"}));
+
+            // Pass configuration output from preceding insert node to the input configuration of this one
+            ASSERT_TRUE(graph->addEdge({std::string("Insert" + lastSpeciesName), "Configuration",
+                                        std::string("Insert" + speciesName), "Configuration"}));
+
+            // Pass this species to its insert node
+            ASSERT_TRUE(graph->addEdge({speciesName, "Species", std::string("Insert" + speciesName), "Species"}));
+
+            // Pass the corresponding detected molecular structure to this species' insert node
+            // TODO: check if we have a reliable molecule name to use here at the structure level
+            ASSERT_TRUE(graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(i)),
+                                        std::string("Insert" + speciesName), "Instances"}));
+        }
+
+        //
+        ASSERT_TRUE(graph->addEdge({std::string("Insert" + expectedSpecies[nExpectedSpecies - 2].second), "Configuration",
+                                    std::string("Insert" + expectedSpecies.back().second), "Configuration"}));
+
+        // Create species from structure
+        ASSERT_TRUE(
+            graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(expectedSpecies.size() - 1)),
+                            expectedSpecies.back().second, "Structure"}));
+
+        // Pass configuration output from set box node to the input configuration of the supercell configuration
+        ASSERT_TRUE(graph->addEdge({std::string("Insert" + expectedSpecies.back().second), "Configuration",
+                                    "SupercellConfiguration", "Configuration"}));
+
+        // Pass this species to its insert node
+        ASSERT_TRUE(graph->addEdge(
+            {expectedSpecies.back().second, "Species", std::string("Insert" + expectedSpecies.back().second), "Species"}));
+
+        // Pass the corresponding detected molecular structure to this species' insert node
+        // TODO: check if we have a reliable molecule name to use here at the structure level
+        ASSERT_TRUE(
+            graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(expectedSpecies.size() - 1)),
+                            std::string("Insert" + expectedSpecies.back().second), "Instances"}));
+    }
     // Test Box definition
     void testBox(const Configuration *cfg, const Vector3 &lengths, const Vector3 &angles, int nAtoms)
     {
@@ -55,11 +140,11 @@ class CIFNodeTest : public ::testing::Test
                 // Locate the atom in the reference system at the instance atom coordinates
                 auto instanceR = instanceAtom.r();
                 auto spAtomIt = std::find_if(referenceCoordinates.atoms().begin(), referenceCoordinates.atoms().end(),
-                                             [box, instanceR](const auto &refAtom)
-                                             { return box.minimumDistance(refAtom.r(), instanceR) < 0.01; });
+                                                [box, instanceR](const auto &refAtom)
+                                                { return box.minimumDistance(refAtom.r(), instanceR) < 0.01; });
                 std::cout << std::format("{}  {} {} {}", Elements::symbol(speciesAtom.Z()), instanceAtom.r().x,
-                                         instanceAtom.r().y, instanceAtom.r().z)
-                          << std::endl;
+                                            instanceAtom.r().y, instanceAtom.r().z)
+                            << std::endl;
                 ASSERT_NE(spAtomIt, referenceCoordinates.atoms().end());
                 EXPECT_EQ(spAtomIt->Z(), speciesAtom.Z());
             }
@@ -140,13 +225,12 @@ TEST_F(CIFNodeTest, NaClMolecules)
         DissolveSystemTest::checkVec3(instance[0], (r2 - A / 2).abs());
 
     // 2x2x2 supercell
-    /* TODO: Handle supercell configurations
-    detectMoleculesNode->setOption<Vector3i>("SupercellRepeat", {2, 2, 2});
-    testGraph.dissolveGraph()->setUpdateRequired();
-    ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-    testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A * 2, A * 2, A * 2},
+    extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A * 2, A * 2, A * 2}, {90, 90, 90}, {2, 2, 2});
+    auto supercellConfigurationNode = static_cast<SupercellConfigurationNode *>(testGraph.findNode("SupercellConfiguration"));
+    ASSERT_EQ(testGraph.findNode("SetBox")->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(supercellConfigurationNode->run(), NodeConstants::ProcessResult::Success);
+    testBox(supercellConfigurationNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A * 2, A * 2, A * 2},
             {90, 90, 90}, 8 * 8);
-    */
 }
 
 TEST_F(CIFNodeTest, NaClO3)
@@ -170,7 +254,8 @@ TEST_F(CIFNodeTest, NaClO3)
               SpaceGroups::SpaceGroup_198);
     constexpr double A = 6.55;
     // TODO: Handle supercell configurations
-    //  testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 20);
+    //  testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90},
+    //  20);
 
     // No bonding defs in the CIF, so we expect species for each atomic
     // component (4 Na, 4 Cl, and 12 O)
@@ -223,37 +308,19 @@ TEST_F(CIFNodeTest, CuBTC)
     EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_225);
 
-    // Check box
-    EXPECT_TRUE(testGraph.appendNode("Configuration", "Box"));
-    EXPECT_TRUE(testGraph.appendNode("SetBox"));
-    EXPECT_TRUE(testGraph.appendNode("Species", "MolecularSpeciesA"));
-    EXPECT_TRUE(testGraph.appendNode("Species", "MolecularSpeciesB"));
-    EXPECT_TRUE(testGraph.appendNode("Insert", "InsertMolecularSpeciesA"));
-    EXPECT_TRUE(testGraph.appendNode("Insert", "InsertMolecularSpeciesB"));
-    EXPECT_TRUE(testGraph.appendNode("SupercellConfiguration"));
-    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-0", "MolecularSpeciesA", "Structure"}));
-    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-1", "MolecularSpeciesB", "Structure"}));
-    ASSERT_TRUE(testGraph.addEdge({"Box", "Configuration", "SetBox", "Input"}));
-    ASSERT_TRUE(testGraph.addEdge({"SetBox", "Output", "InsertMolecularSpeciesA", "Configuration"}));
-    ASSERT_TRUE(testGraph.addEdge({"MolecularSpeciesA", "Species", "InsertMolecularSpeciesA", "Species"}));
-    ASSERT_TRUE(testGraph.addEdge({"InsertMolecularSpeciesA", "Configuration", "InsertMolecularSpeciesB", "Configuration"}));
-    ASSERT_TRUE(testGraph.addEdge({"MolecularSpeciesB", "Species", "InsertMolecularSpeciesB", "Species"}));
-    ASSERT_TRUE(testGraph.addEdge({"InsertMolecularSpeciesB", "Configuration", "SupercellConfiguration", "Configuration"}));
-
-    ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
-
-    auto box = testGraph.fetchHead()->getOutputValue<Configuration *>("SupercellConfiguration");
-
+    /* TODO: Handle supercell configurations
     constexpr auto A = 26.3336;
-    // testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 672);
+    // testBox(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90},
+    672);
 
     // Check basic formula (which includes bound water oxygens - with no H - at this point) and using O group
-    /* TODO: Handle supercell configurations
+
     // 16 basic formula units per unit cell
     constexpr auto N = 16;
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaH = {
         {Elements::Cu, 3 * N}, {Elements::C, 18 * N}, {Elements::H, 6 * N}, {Elements::O, 15 * N}};
-    EXPECT_EQ(EmpiricalFormula::formula(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration")->atoms(),
+    EXPECT_EQ(EmpiricalFormula::formula(detectMoleculesNode->getOutputValue<Configuration
+    *>("SupercellConfiguration")->atoms(),
                                         [](const auto &i) { return i.speciesAtom()->Z(); }),
               EmpiricalFormula::formula(cellFormulaH));
               */
@@ -280,18 +347,15 @@ TEST_F(CIFNodeTest, CuBTCActiveAssemblies)
     testGraph.fetchHead()->setOption("AtomGroup", std::string("2"));
     testGraph.fetchHead()->setOption("SetActive", true);
     testGraph.removeEdge(
-        {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", std::string(detectMoleculesNode->name()), "CIFContext"});
-    testGraph.addEdge(
-        {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", cifNameFromFile(cif) + "//AtomGroupA1", "CIFContext"});
-    testGraph.addEdge(
-        {cifNameFromFile(cif) + "//AtomGroupA1", "CIFContext", cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext"});
-    testGraph.addEdge(
-        {cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext", cifNameFromFile(cif) + "//AtomGroupC2", "CIFContext"});
-    testGraph.addEdge(
-        {cifNameFromFile(cif) + "//AtomGroupC2", "CIFContext", std::string(detectMoleculesNode->name()), "CIFContext"});
-    testGraph.setUpdateRequired();
+        {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", std::string(detectMoleculesNode->name()),
+"CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", cifNameFromFile(cif) +
+"//AtomGroupA1", "CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) + "//AtomGroupA1", "CIFContext",
+cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) + "//AtomGroupB2",
+"CIFContext", cifNameFromFile(cif) + "//AtomGroupC2", "CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) +
+"//AtomGroupC2", "CIFContext", std::string(detectMoleculesNode->name()), "CIFContext"}); testGraph.setUpdateRequired();
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(EmpiricalFormula::formula(detectMoleculesNode->getOutputValue<Configuration *>("SupercellConfiguration")->atoms(),
+    EXPECT_EQ(EmpiricalFormula::formula(detectMoleculesNode->getOutputValue<Configuration
+*>("SupercellConfiguration")->atoms(),
                                         [](const auto &i) { return i.speciesAtom()->Z(); }),
               EmpiricalFormula::formula(cellFormulaNH2));
 

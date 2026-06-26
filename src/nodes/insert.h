@@ -5,6 +5,7 @@
 
 #include "base/units.h"
 #include "classes/moleculeSet.h"
+#include "classes/structure.h"
 #include "nodes/node.h"
 
 class InsertNode : public Node
@@ -36,19 +37,34 @@ class InsertNode : public Node
     // Return enum option info for BoxActionStyle
     static EnumOptions<BoxActionStyle> boxActionStyles();
 
+    // Box Action Style
+    enum class InstantiationMethod
+    {
+        Sample,         /* N instances sampled randomly from instances, honouring the specified rotation/translation options  */
+        InstantiateAll, /* Instantiate all M instances in their current positions */
+    };
+    // Return enum option info for BoxActionStyle
+    static EnumOptions<InstantiationMethod> instantiationMethod();
+
     private:
+    // Typedef for allowed insert types (species/moleculeset)
+    using InsertTypeVariant = VariantParameterData<const MoleculeSet *, const Species *>;
+    // Insert type input and output
+    InsertTypeVariant speciesVariant_;
     // Target configuration to insert into
     Configuration *configuration_{nullptr};
+    // Instances
+    Structure instances_;
     // AtomTypes owned by the node
     const std::vector<std::shared_ptr<AtomType>> *atomTypes_{nullptr};
-    // Species to be added (if no MoleculeSet is given)
-    const Species *species_{nullptr};
-    // MoleculeSet to be added (if no Species is given)
-    const MoleculeSet *moleculeSet_{nullptr};
     // The default box action if none is specified
     static constexpr BoxActionStyle defaultBoxAction_ = BoxActionStyle::AddVolume;
+    // The default instantiation method if none is specified
+    static constexpr InstantiationMethod defaultInstantiationMethod_ = InstantiationMethod::InstantiateAll;
     // Action to take on the Box geometry / volume on addition of the species
     BoxActionStyle boxAction_{defaultBoxAction_};
+    // Strategy for instantiation of species during insertion
+    InstantiationMethod instantiationMethod_{defaultInstantiationMethod_};
     // Target density when adding molecules (if adjusting box size)
     Number density_{1.0};
     // Units for the specified density value
