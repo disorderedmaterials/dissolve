@@ -58,4 +58,12 @@ Parser<Vector3> vector3()
         .apply([](double x, double y, double z) { return Vector3(x, y, z); });
 }
 
+// A parser that accepts a 3x3 matrix of floating point numbers
+Parser<Matrix3> matrix3()
+{
+    return (maybe(inlineSpaces()) >> vector3() << spaces() & maybe(inlineSpaces()) >> vector3() << spaces() &
+            maybe(inlineSpaces()) >> vector3() << spaces())
+        .apply([](const auto m1, const auto m2, const auto m3) { return Matrix3(m1, m2, m3); });
+}
+
 } // namespace Parsers

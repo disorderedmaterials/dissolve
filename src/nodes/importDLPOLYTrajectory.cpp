@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importDLPOLYTrajectory.h"
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
 #include "nodes/importDLPOLYStructure.h"
 
 ImportDLPOLYTrajectoryNode::ImportDLPOLYTrajectoryNode(Graph *parentGraph) : Node(parentGraph)
@@ -38,35 +40,41 @@ std::string_view ImportDLPOLYTrajectoryNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult ImportDLPOLYTrajectoryNode::process()
 {
+    using namespace Parsers;
     message("Reading DL_POLY trajectory file frame from '{}'...\n", filePath_);
 
-    // Open the file
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile{filePath_};
+    if (!infile)
     {
         error("Couldn't open trajectory file '{}'.\n", filePath_);
         return NodeConstants::ProcessResult::Failed;
     }
 
     // Seek to the next file position
-    parser.seekg(filePosition_);
+    infile.seekg(filePosition_);
 
     // Read first line:  'timestep    <stepNo>  <nAtoms>  <keytrj>  <imcon>
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+    auto head = header().parse(infile);
+    if (!head)
         return NodeConstants::ProcessResult::Failed;
+    auto &[stepno, natoms, keytrj, imcon, _] = std::get<0>(*head);
 
-    auto keytrj = parser.argi(3);
-    auto imcon = parser.argi(4);
-    auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
-    message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
+    message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", natoms, keytrj, imcon);
 
     // Get the frame read result
-    auto frameResult = ImportDLPOLYStructureNode::read(parser, parser.argi(3), parser.argi(4), parser.argi(2), structure_);
+    auto frameResult = ImportDLPOLYStructureNode::read(infile, keytrj, imcon, natoms, structure_);
     if (frameResult != NodeConstants::ProcessResult::Success)
         return frameResult;
 
     // Store the new trajectory file position
-    filePosition_ = parser.tellg();
+    filePosition_ = infile.tellg();
 
     return NodeConstants::ProcessResult::Success;
+}
+
+Parsers::Parser<std::tuple<int, int, int, int, double>> ImportDLPOLYTrajectoryNode::header()
+{
+    using namespace Parsers;
+    return literal("timestep") >> inlineSpaces() >> natural() << inlineSpaces() & natural() << inlineSpaces() &
+           natural() << inlineSpaces() & natural() << inlineSpaces() & real() << spaces();
 }

@@ -3,6 +3,8 @@
 
 #include "base/applicative.h"
 #include "base/parserLibrary.h"
+#include "nodes/importDLPOLYStructure.h"
+#include "nodes/importDLPOLYTrajectory.h"
 #include "nodes/importXYZStructure.h"
 #include <gtest/gtest.h>
 #include <sstream>
@@ -159,3 +161,48 @@ TEST(ApplicativeTest, Helium)
 }
 
 } // namespace UnitTest
+
+TEST(ApplicativeTest, DLPOLYStructure)
+{
+    using namespace Parsers;
+    std::ifstream infile{"dlpoly/water1000/full.REVCON"};
+    ASSERT_TRUE(infile);
+    auto header = ImportDLPOLYStructureNode::header().parse(infile);
+    ASSERT_TRUE(header);
+    auto &[value, rest] = *header;
+    auto [title, keytrj, imcon, natoms] = value;
+    EXPECT_TRUE(title.starts_with("Bulk"));
+    EXPECT_EQ(keytrj, 2);
+    EXPECT_EQ(imcon, 1);
+    EXPECT_EQ(natoms, 3000);
+    auto matrix = matrix3().parse(infile);
+    ASSERT_TRUE(matrix);
+    std::cout << "Next char:\t" << infile.peek() << std::endl;
+    auto example = ImportDLPOLYStructureNode::atom();
+    auto more = some(example).parse(infile);
+    ASSERT_TRUE(more);
+    auto &[pos, vel, forces] = std::get<0>(*more)[0];
+    EXPECT_EQ(pos.x, -10.97620028);
+    EXPECT_EQ(vel->y, -1.89534626301);
+    EXPECT_EQ(forces->z, -7400.12500402);
+}
+
+TEST(ApplicativeTest, DLPOLYTrajectory)
+{
+    using namespace Parsers;
+    std::ifstream infile{"dlpoly/water267-npt/water-267-298K.HISf"};
+    ASSERT_TRUE(infile);
+    auto header = ImportDLPOLYTrajectoryNode::header().parse(infile);
+    ASSERT_TRUE(header);
+    auto &[value, rest] = *header;
+    auto [stepno, natoms, keytrj, imcon, _] = value;
+    EXPECT_EQ(natoms, 801);
+    auto matrix = matrix3().parse(infile);
+    ASSERT_TRUE(matrix);
+    std::cout << "Next char:\t" << infile.peek() << std::endl;
+    auto example = ImportDLPOLYStructureNode::atom();
+    auto more = some(example).parse(infile);
+    ASSERT_TRUE(more);
+    auto &[pos, vel, forces] = std::get<0>(*more)[0];
+    EXPECT_EQ(pos.x, 8.278);
+}
