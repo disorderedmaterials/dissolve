@@ -68,7 +68,7 @@ void Function1DKeyword::serialise(std::string tag, SerialisedValue &target) cons
 }
 
 // Read values from a serialisable value
-void Function1DKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void Function1DKeyword::deserialise(const SerialisedValue &node)
 {
     data_.setFormAndParameters(Functions1D::forms().deserialise(node.at("type")),
                                toml::find<std::vector<double>>(node, "parameters"));

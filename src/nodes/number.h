@@ -8,7 +8,7 @@
 #include <variant>
 
 // Node Number
-class Number : public Serialisable<>
+class Number : public Serialisable
 {
     public:
     using NumberVariant = std::variant<int, double>;

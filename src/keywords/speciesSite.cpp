@@ -94,29 +94,31 @@ void SpeciesSiteKeyword::serialise(std::string tag, SerialisedValue &target) con
 }
 
 // Read values from a serialisable value
-void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void SpeciesSiteKeyword::deserialise(const SerialisedValue &node)
 {
-    KeywordBase::deserialise(node, coreData);
-    std::string species = toml::find<std::string>(node, "species");
-    std::string site = toml::find<std::string>(node, "site");
-    // Find target Species (first argument)
-    Species *sp = coreData.findSpecies(species);
-    if (!sp)
-    {
-        throw toml::type_error(std::format("Error setting SpeciesSite - no Species named '{}' exists.\n", species),
-                               node.location());
-    }
-
-    // Find specified Site (second argument) in the Species
-    data_ = sp->findSite(site);
-    if (!data_)
-        throw toml::type_error(
-            std::format("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n", site, sp->name()),
-            node.location());
-
-    if (axesRequired_ && (!data_->hasAxes()))
-        throw toml::type_error(
-            std::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
-                        data_->name(), name()),
-            node.location());
+    // TODO DISSOLVE2 Broken, but to be removed anyway.
+    // KeywordBase::deserialise(node, coreData);
+    // std::string species = toml::find<std::string>(node, "species");
+    // std::string site = toml::find<std::string>(node, "site");
+    // // Find target Species (first argument)
+    // Species *sp = coreData.findSpecies(species);
+    // if (!sp)
+    // {
+    //     throw toml::type_error(std::format("Error setting SpeciesSite - no Species named '{}' exists.\n", species),
+    //                            node.location());
+    // }
+    //
+    // // Find specified Site (second argument) in the Species
+    // data_ = sp->findSite(site);
+    // if (!data_)
+    //     throw toml::type_error(
+    //         std::format("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n", site, sp->name()),
+    //         node.location());
+    //
+    // if (axesRequired_ && (!data_->hasAxes()))
+    //     throw toml::type_error(
+    //         std::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be
+    //         present.\n",
+    //                     data_->name(), name()),
+    //         node.location());
 }

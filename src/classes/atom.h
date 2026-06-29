@@ -89,11 +89,11 @@ class AtomBase
 };
 
 // Atom
-template <typename BondClass> class Atom : public AtomBase, public Serialisable<>
+template <typename BondClass> class Atom : public AtomBase, public Serialisable
 {
     public:
     Atom() = default;
-    virtual ~Atom() = default;
+    virtual ~Atom() override = default;
 
     /*
      * Coordinate Manipulation Operators
@@ -125,9 +125,9 @@ template <typename BondClass> class Atom : public AtomBase, public Serialisable<
         return nullptr;
     }
     // Return number of bonds
-    int nBonds() const { return bonds_.size(); }
+    int nBonds() const override { return bonds_.size(); }
     // Return indices of other AtomBases to which this one is connected
-    std::vector<AtomBase *> connectedAtoms() const
+    std::vector<AtomBase *> connectedAtoms() const override
     {
         std::vector<AtomBase *> connections;
         for (const auto *bond : bonds_)
@@ -140,12 +140,12 @@ template <typename BondClass> class Atom : public AtomBase, public Serialisable<
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const
+    void serialise(std::string tag, SerialisedValue &target) const override
     {
         target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
     }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node)
+    void deserialise(const SerialisedValue &node) override
     {
         index_ = toml::find<int>(node, "index");
 

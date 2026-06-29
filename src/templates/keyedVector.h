@@ -3,8 +3,10 @@
 
 #pragma once
 
+#include <format>
 #include <functional>
 #include <map>
+#include <stdexcept>
 #include <vector>
 
 // Keyed Vector

@@ -12,7 +12,7 @@
 class Graph;
 
 // Edge Definition
-class EdgeDefinition : public Serialisable<>
+class EdgeDefinition : public Serialisable
 {
     public:
     EdgeDefinition() = default;
@@ -29,7 +29,7 @@ class EdgeDefinition : public Serialisable<>
 };
 
 // Edge
-class Edge : public Serialisable<>
+class Edge : public Serialisable
 {
     friend class LoopEdge;
 

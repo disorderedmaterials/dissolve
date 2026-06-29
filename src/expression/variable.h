@@ -6,7 +6,7 @@
 #include "expression/value.h"
 
 // Variable
-class ExpressionVariable : public Serialisable<>
+class ExpressionVariable : public Serialisable
 {
     public:
     ExpressionVariable(const ExpressionValue &value = ExpressionValue());
@@ -48,5 +48,5 @@ class ExpressionVariable : public Serialisable<>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

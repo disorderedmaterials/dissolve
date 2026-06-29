@@ -69,7 +69,7 @@ void RangeVectorKeyword::serialise(std::string tag, SerialisedValue &target) con
 }
 
 // Read values from a serialisable value
-void RangeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void RangeVectorKeyword::deserialise(const SerialisedValue &node)
 {
     toVector(node, [this](const auto &item)
              { data_.emplace_back(toml::find<double>(item, "min"), toml::find<double>(item, "max")); });

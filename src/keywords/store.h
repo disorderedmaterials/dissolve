@@ -265,7 +265,7 @@ class KeywordStore
     // Apply the terms in the keyword store to a node
     SerialisedValue serialiseOnto(SerialisedValue node) const;
     // Pull keywords from entries in table
-    void deserialiseFrom(const SerialisedValue &node, const CoreData &coreData);
+    void deserialiseFrom(const SerialisedValue &node);
 
     /*
      * Object Management

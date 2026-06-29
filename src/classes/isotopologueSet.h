@@ -12,7 +12,7 @@ class Isotopologue;
 class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species
-class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
+class IsotopologueSet : public Serialisable, ResolvableContext
 {
     public:
     IsotopologueSet() = default;
@@ -54,7 +54,7 @@ class IsotopologueSet : public Serialisable<const CoreData &>, ResolvableContext
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    void deserialise(const SerialisedValue &node) override;
     // Resolve internal resolvable name references with supplied data
     void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
 };

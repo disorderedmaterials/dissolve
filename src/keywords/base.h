@@ -24,7 +24,7 @@ class Species;
 class SpeciesSite;
 
 // Keyword Base Class
-class KeywordBase : public Serialisable<CoreData const &>
+class KeywordBase : public Serialisable
 {
     public:
     KeywordBase(const std::type_index typeIndex);
@@ -72,7 +72,7 @@ class KeywordBase : public Serialisable<CoreData const &>
     // Express as a serialisable value
     virtual void serialise(std::string tag, SerialisedValue &target) const override = 0;
     // Read values from a serialisable value
-    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override {};
+    virtual void deserialise(const SerialisedValue &node) override {};
 
     /*
      * Keyword Types

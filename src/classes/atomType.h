@@ -14,7 +14,7 @@
 #include <vector>
 
 // AtomType Definition
-class AtomType : public Serialisable<>, public std::enable_shared_from_this<AtomType>
+class AtomType : public Serialisable, public std::enable_shared_from_this<AtomType>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);

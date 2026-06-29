@@ -9,7 +9,7 @@
 class AtomBase;
 
 // Bond
-template <class AtomClass> class Bond : public Serialisable<>
+template <class AtomClass> class Bond : public Serialisable
 {
     public:
     Bond(AtomClass *i = nullptr, AtomClass *j = nullptr) : i_(i), j_(j) {}

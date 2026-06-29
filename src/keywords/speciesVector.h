@@ -47,7 +47,7 @@ class SpeciesVectorKeyword : public KeywordBase
 
     public:
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    void deserialise(const SerialisedValue &node) override;
     // Has not changed from initial value
     bool isDefault() const override;
     // Express as a serialisable value

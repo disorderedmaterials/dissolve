@@ -11,7 +11,7 @@ class CoreData;
 class LineParser;
 
 // Vector of double values with sampling
-class SampledVector : public Serialisable<>
+class SampledVector : public Serialisable
 {
     public:
     SampledVector();
@@ -70,5 +70,5 @@ class SampledVector : public Serialisable<>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

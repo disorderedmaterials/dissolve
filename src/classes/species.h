@@ -24,7 +24,7 @@ class CommonImproper;
 class Structure;
 
 // Species Definition
-class Species : public Serialisable<>
+class Species : public Serialisable
 {
     public:
     Species(std::string name = "Unnamed");
@@ -307,5 +307,5 @@ class Species : public Serialisable<>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

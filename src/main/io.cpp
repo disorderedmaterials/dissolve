@@ -109,7 +109,7 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
           {
               auto *cfg = coreData_.addConfiguration();
               cfg->setName(name);
-              cfg->deserialise(data, coreData_);
+              cfg->deserialise(data);
           });
 }
 

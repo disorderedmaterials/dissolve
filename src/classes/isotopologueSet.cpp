@@ -102,7 +102,7 @@ void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
 }
 
 // Read values from a serialisable value
-void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void IsotopologueSet::deserialise(const SerialisedValue &node)
 {
     clear();
 
@@ -113,12 +113,6 @@ void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &c
               toMap(topes, [&](const std::string &isoName, const SerialisedValue &population)
                     { set[isoName] = population.as_floating(); });
           });
-
-    // Need to resolve species
-    std::map<std::string, const Species *> speciesMap;
-    for (const auto &sp : coreData.species())
-        speciesMap[std::string(sp.get()->name())] = sp.get();
-    resolve(speciesMap);
 }
 
 // Resolve internal resolvable name references with supplied data

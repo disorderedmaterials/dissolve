@@ -8,7 +8,7 @@
 #include <optional>
 
 // Ranged Vector3
-class RangedVector3 : public Serialisable<>
+class RangedVector3 : public Serialisable
 {
     public:
     RangedVector3() = default;

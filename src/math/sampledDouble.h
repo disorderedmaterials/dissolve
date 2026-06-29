@@ -11,7 +11,7 @@ class LineParser;
 class ProcessPool;
 
 // Double value with sampling
-class SampledDouble : public Serialisable<>
+class SampledDouble : public Serialisable
 {
     public:
     SampledDouble();

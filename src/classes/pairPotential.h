@@ -13,7 +13,7 @@
 class AtomType;
 
 // PairPotential Definition
-class PairPotential : Serialisable<>
+class PairPotential : public Serialisable
 {
     public:
     PairPotential(std::string_view nameI = {}, std::string_view nameJ = {});
@@ -222,5 +222,5 @@ class PairPotential : Serialisable<>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

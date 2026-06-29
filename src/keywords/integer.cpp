@@ -77,7 +77,7 @@ bool IntegerKeyword::serialise(LineParser &parser, std::string_view keywordName,
 void IntegerKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
-void IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_integer(); }
+void IntegerKeyword::deserialise(const SerialisedValue &node) { data_ = node.as_integer(); }
 
 // Has not changed from initial value
 bool IntegerKeyword::isDefault() const { return data_ == default_; }

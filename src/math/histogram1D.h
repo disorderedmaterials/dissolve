@@ -7,7 +7,7 @@
 #include "math/sampledDouble.h"
 
 // One-Dimensional Histogram
-class Histogram1D : public Serialisable<>
+class Histogram1D : public Serialisable
 {
     public:
     Histogram1D();
@@ -97,5 +97,5 @@ class Histogram1D : public Serialisable<>
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };

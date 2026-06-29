@@ -61,7 +61,8 @@ void ConfigurationKeyword::serialise(std::string tag, SerialisedValue &target) c
 }
 
 // Read values from a serialisable value
-void ConfigurationKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void ConfigurationKeyword::deserialise(const SerialisedValue &node)
 {
-    data_ = coreData.findConfiguration(std::string_view(std::string(node.as_string())));
+    // TODO DISSOLVE2 Broken, but to be removed anyway.
+    // data_ = coreData.findConfiguration(std::string_view(std::string(node.as_string())));
 }

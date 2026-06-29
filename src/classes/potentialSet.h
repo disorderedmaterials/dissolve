@@ -10,7 +10,7 @@
 class AtomType;
 
 // Set of Potentials
-class PotentialSet : public Serialisable<>
+class PotentialSet : public Serialisable
 {
     public:
     PotentialSet();

@@ -8,7 +8,7 @@
 #include <optional>
 
 // Range
-class Range : public Serialisable<>
+class Range : public Serialisable
 {
     public:
     Range(std::optional<double> minimum = std::nullopt, std::optional<double> maximum = std::nullopt);

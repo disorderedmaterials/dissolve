@@ -97,7 +97,7 @@ bool Vec3IntegerKeyword::serialise(LineParser &parser, std::string_view keywordN
 void Vec3IntegerKeyword::serialise(std::string tag, SerialisedValue &target) const { target[tag] = data_; }
 
 // Read values from a serialisable value
-void Vec3IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
+void Vec3IntegerKeyword::deserialise(const SerialisedValue &node) { data_.deserialise(node); }
 
 // Has not changed from initial value
 bool Vec3IntegerKeyword::isDefault() const { return data_ == default_; }
