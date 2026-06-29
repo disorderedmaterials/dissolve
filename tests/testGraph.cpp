@@ -216,7 +216,7 @@ IterableGraph *TestGraph::appendTrajectoryIterator(std::string trajectoryImportN
     auto oldGraph = currentGraph_;
 
     // Add iterator node and make it the current graph
-    currentGraph_ = dynamic_cast<IterableGraph *>(appendNode("Iterator", "Iterator"));
+    currentGraph_ = dynamic_cast<IterableGraph *>(appendNode("Iterator"));
     EXPECT_TRUE(currentGraph_);
     head_ = nullptr;
 
