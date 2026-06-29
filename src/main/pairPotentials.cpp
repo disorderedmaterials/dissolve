@@ -131,30 +131,17 @@ bool Dissolve::updatePairPotentials(std::optional<bool> useCombinationRulesHint)
     // REMOVED for Dissolve2
 
     // Fourth step - set any additional potential
-    for (auto &&[at1, at2, pp] : pairPotentials_)
-    {
-        // Check processing module data for a named additional potential
-        auto addPotName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
-        if (processingModuleData_.contains(addPotName, "Dissolve"))
-            pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
-    }
+    // TODO DISSOLVE2
+    // for (auto &&[at1, at2, pp] : pairPotentials_)
+    // {
+    //     // Check processing module data for a named additional potential
+    //     auto addPotName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
+    //     if (processingModuleData_.contains(addPotName, "Dissolve"))
+    //         pp->setAdditionalPotential(processingModuleData_.retrieve<Data1D>(addPotName, "Dissolve"));
+    // }
 
     // Reinitialise the potential map
     // DSABLED FOR DISSOLVE2
     // return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_);
     return true;
-}
-
-// Clear additional potentials
-void Dissolve::clearAdditionalPotentials()
-{
-    for (auto &&[at1, at2, pp] : pairPotentials_)
-    {
-        pp->resetAdditionalPotential();
-
-        // Clear entry in processing module data if it exists
-        auto itemName = std::format("Potential_{}-{}_Additional", at1->name(), at2->name());
-        if (processingModuleData_.contains(itemName, "Dissolve"))
-            processingModuleData_.remove(itemName, "Dissolve");
-    }
 }

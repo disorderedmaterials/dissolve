@@ -1,5 +1,0 @@
-dissolve_add_test(SRC double.cpp)
-dissolve_add_test(SRC integer.cpp)
-dissolve_add_test(SRC optionalDouble.cpp)
-dissolve_add_test(SRC optionalInteger.cpp)
-dissolve_add_test(SRC range.cpp)

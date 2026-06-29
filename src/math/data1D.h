@@ -114,10 +114,6 @@ class Data1D : public Data1DBase, public Serialisable
      * Serialisation
      */
     public:
-    // Read data through specified LineParser
-    bool deserialise(LineParser &parser);
-    // Write data through specified LineParser
-    bool serialise(LineParser &parser) const;
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value

@@ -3,8 +3,6 @@
 
 #include "classes/braggReflection.h"
 #include "base/lineParser.h"
-#include "items/deserialisers.h"
-#include "items/serialisers.h"
 
 BraggReflectionVector::BraggReflectionVector(const BraggReflectionVector &other) : reflections_(other.reflections_) {}
 
@@ -139,24 +137,6 @@ const Vector3i &BraggReflection::hkl() const { return hkl_; }
  * Serialisation
  */
 
-// Read data through specified parser
-bool BraggReflection::deserialise(LineParser &parser)
-{
-    // Read index, Q centre, and number of contributing K-vectors
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    index_ = parser.argi(0);
-    q_ = parser.argd(1);
-    nKVectors_ = parser.argi(2);
-    hkl_ = parser.arg3i(3);
-
-    // Read intensities array
-    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intensities_, parser))
-        return false;
-
-    return true;
-}
-
 // Read values from a serialisable value
 void BraggReflection::deserialise(const SerialisedValue &node)
 {
@@ -176,18 +156,4 @@ void BraggReflection::serialise(std::string tag, SerialisedValue &target) const
     braggReflection["q"] = q_;
     braggReflection["nKVectors"] = nKVectors_;
     hkl_.serialise(tag, target);
-}
-
-// Write data through specified parser
-bool BraggReflection::serialise(LineParser &parser) const
-{
-    // Write index, Q centre, and number of contributing K-vectors
-    if (!parser.writeLineF("{} {} {} {} {} {}\n", index_, q_, nKVectors_, hkl_.x, hkl_.y, hkl_.z))
-        return false;
-
-    // Write intensities array
-    if (!GenericItemSerialiser::serialise<Array2D<double>>(intensities_, parser))
-        return false;
-
-    return true;
 }

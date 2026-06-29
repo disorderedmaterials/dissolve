@@ -148,68 +148,6 @@ void SampledData1D::operator+=(const std::vector<double> &source)
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool SampledData1D::deserialise(LineParser &parser)
-{
-    clear();
-
-    // Read tag
-    if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
-        return false;
-    tag_ = parser.line();
-
-    // Read number of points and sample size
-    if (parser.getArgsDelim(LineParser::KeepBlanks) != LineParser::Success)
-        return false;
-    auto nPoints = parser.argi(0);
-    auto count = parser.argi(1);
-
-    // Read samples into temporary arrays, then set values_ at the end
-    x_.reserve(nPoints);
-    std::vector<double> mean, stDev, m2;
-    mean.reserve(nPoints);
-    stDev.reserve(nPoints);
-    m2.reserve(nPoints);
-    for (auto n = 0; n < nPoints; ++n)
-    {
-        if (parser.getArgsDelim(LineParser::KeepBlanks) != LineParser::Success)
-            return false;
-
-        x_.push_back(parser.argd(0));
-        mean.push_back(parser.argd(1));
-        stDev.push_back(parser.argd(2));
-        m2.push_back(parser.argd(3));
-    }
-    values_.initialise(count, mean, stDev, m2);
-
-    return true;
-}
-
-// Read value data only through specified LineParser
-bool SampledData1D::deserialiseValues(LineParser &parser) { return values_.deserialise(parser); }
-
-// Write data through specified LineParser
-bool SampledData1D::serialise(LineParser &parser) const
-{
-    // Write tag
-    if (!parser.writeLine(tag_))
-        return false;
-
-    // Write number of points and sample size
-    if (!parser.writeLineF("{} {}  # nData count\n", x_.size(), values_.count()))
-        return false;
-
-    // Write four-column format : x, mean, stDev, m2
-    for (auto &&[x, mean, m2, stDev] : zip(x_, values_.values(), values_.m2(), values_.stDev()))
-        if (!parser.writeLineF("{} {} {} {}\n", x, mean, m2, stDev))
-            return false;
-
-    return true;
-}
-
-// Write value data only through specified LineParser
-bool SampledData1D::serialiseValues(LineParser &parser) const { return values_.serialise(parser); }
-
 // Express as a serialisable value
 void SampledData1D::serialise(std::string tag, SerialisedValue &target) const
 {

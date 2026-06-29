@@ -217,13 +217,10 @@ NodeConstants::ProcessResult MDNode::process()
     if (!velocities_)
         velocities_.emplace();
     auto &velocities = velocities_.value();
-    auto status = GenericItem::ItemStatus::Created;
-    if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
-         velocities.size() != targetConfiguration_->nAtoms()) &&
-        !intramolecularForcesOnly_)
+    if ((randomVelocities_ || velocities.size() != targetConfiguration_->nAtoms()) && !intramolecularForcesOnly_)
     {
         // Show warning message on array size mismatch
-        if (status != GenericItem::ItemStatus::Created && velocities.size() != targetConfiguration_->nAtoms())
+        if (velocities.size() != targetConfiguration_->nAtoms())
             Messenger::warn(
                 "Size of existing velocities array doesn't match the current configuration size - they will be ignored.");
 

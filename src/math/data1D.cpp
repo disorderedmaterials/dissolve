@@ -416,63 +416,6 @@ void Data1D::operator/=(const double factor)
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool Data1D::deserialise(LineParser &parser)
-{
-    clear();
-
-    // Read name
-    if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
-        return false;
-    tag_ = parser.line();
-
-    // Read number of points and whether errors are present
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    auto nPoints = parser.argi(0);
-    auto errors = parser.argb(1);
-    initialise(nPoints, errors);
-
-    // Read data points
-    for (auto n = 0; n < nPoints; ++n)
-    {
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        x_[n] = parser.argd(0);
-        values_[n] = parser.argd(1);
-        if (hasError_)
-            errors_[n] = parser.argd(2);
-    }
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool Data1D::serialise(LineParser &parser) const
-{
-    // Write tag
-    if (!parser.writeLineF("{}\n", tag_))
-        return false;
-
-    // Write axis size and errors flag
-    if (!parser.writeLineF("{} {}\n", x_.size(), DissolveSys::btoa(hasError_)))
-        return false;
-
-    // Write values / errors
-    if (hasError_)
-    {
-        for (auto &&[x, value, error] : zip(x_, values_, errors_))
-            if (!parser.writeLineF("{}  {}  {}\n", x, value, error))
-                return false;
-    }
-    else
-        for (auto &&[x, value] : zip(x_, values_))
-            if (!parser.writeLineF("{}  {}\n", x, value))
-                return false;
-
-    return true;
-}
-
 // Express as a serialisable value
 void Data1D::serialise(std::string tag, SerialisedValue &target) const
 {

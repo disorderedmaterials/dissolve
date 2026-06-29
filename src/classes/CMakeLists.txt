@@ -12,7 +12,6 @@ add_library(
   configuration.cpp
   configuration_box.cpp
   configuration_contents.cpp
-  configuration_io.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
   configurationAtom.cpp

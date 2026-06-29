@@ -220,47 +220,6 @@ void Histogram2D::operator=(const Histogram2D &source)
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool Histogram2D::deserialise(LineParser &parser)
-{
-    clear();
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    initialise(parser.argd(0), parser.argd(1), parser.argd(2), parser.argd(3), parser.argd(4), parser.argd(5));
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    nBinned_ = parser.argli(0);
-    nMissed_ = parser.argli(1);
-
-    for (auto x = 0; x < nXBins_; ++x)
-    {
-        for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_[{x, y}].deserialise(parser))
-                return false;
-    }
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool Histogram2D::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("{} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_))
-        return false;
-    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
-        return false;
-    for (auto x = 0; x < nXBins_; ++x)
-    {
-        for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_[{x, y}].serialise(parser))
-                return false;
-    }
-
-    return true;
-}
-
 // Express as a serialisable value
 void Histogram2D::serialise(std::string tag, SerialisedValue &target) const
 {

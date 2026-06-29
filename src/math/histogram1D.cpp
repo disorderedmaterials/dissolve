@@ -212,41 +212,6 @@ Histogram1D Histogram1D::operator+(const Histogram1D &other) const
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool Histogram1D::deserialise(LineParser &parser)
-{
-    clear();
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    initialise(parser.argd(0), parser.argd(1), parser.argd(2));
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    nBinned_ = parser.argli(0);
-    nMissed_ = parser.argli(1);
-
-    for (auto n = 0; n < nBins_; ++n)
-        if (!averages_[n].deserialise(parser))
-            return false;
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool Histogram1D::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, binWidth_))
-        return false;
-    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
-        return false;
-    for (auto n = 0; n < nBins_; ++n)
-        if (!averages_.at(n).serialise(parser))
-            return false;
-
-    return true;
-}
-
 // Express as a serialisable value
 void Histogram1D::serialise(std::string tag, SerialisedValue &target) const
 {

@@ -9,7 +9,6 @@
 #include "classes/coreData.h"
 #include "classes/pairPotential.h"
 #include "classes/potentialMap.h"
-#include "items/list.h"
 #include "math/sampledDouble.h"
 
 // Forward Declarations
@@ -78,19 +77,6 @@ class Dissolve : public Serialisable
     PotentialMap &potentialMap();
     // Update all pair potentials
     bool updatePairPotentials(std::optional<bool> useCombinationRulesHint = {});
-    // Clear additional potentials
-    void clearAdditionalPotentials();
-
-    /*
-     * Processing Module Data
-     */
-    private:
-    // Data associated with processing Modules
-    GenericList processingModuleData_;
-
-    public:
-    // Return data associated with main processing Modules
-    GenericList &processingModuleData();
 
     /*
      * Graph node

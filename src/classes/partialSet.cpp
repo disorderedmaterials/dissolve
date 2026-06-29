@@ -7,7 +7,6 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "items/deserialisers.h"
 #include "math/interpolator.h"
 #include "nodes/exportData.h"
 #include "templates/algorithms.h"
@@ -456,129 +455,6 @@ OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view
 /*
  * Serialisation
  */
-
-int readDataPoint(int argIndex, LineParser &parser, Data1D &data)
-{
-    data.values().push_back(parser.argd(argIndex++));
-    if (data.valuesHaveErrors())
-        data.errors().push_back(parser.argd(argIndex++));
-    return argIndex;
-}
-
-// Read data through specified LineParser
-bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
-{
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    fingerprint_ = parser.argsv(0);
-    triangular_ = parser.hasArg(1) ? parser.argb(1) : true;
-
-    // Read species populations
-    realSpeciesPopulations_.clear();
-
-    // Write out species populations first
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    auto nSpecies = parser.argi(0);
-    for (auto n = 0; n < nSpecies; ++n)
-    {
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        auto *sp = coreData.findSpecies(parser.argsv(0));
-        if (!sp)
-            return Messenger::error("Species '{}' not found.\n", parser.argsv(0));
-        realSpeciesPopulations_[sp] = parser.argd(1);
-    }
-
-    // Clear partials
-    partials_ = DoubleKeyedMap<Data1D>(triangular_);
-    boundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
-    unboundPartials_ = DoubleKeyedMap<Data1D>(triangular_);
-
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    auto nPartials = parser.argi(0);
-
-    // Read in individual partials
-    for (auto n = 0; n < nPartials; ++n)
-    {
-        // Read key
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return false;
-        auto key = parser.args(0);
-
-        if (!partials_.map()[key].deserialise(parser))
-            return false;
-        if (!boundPartials_.map()[key].deserialise(parser))
-            return false;
-        if (!unboundPartials_.map()[key].deserialise(parser))
-            return false;
-    }
-
-    // Read totals
-    if (!total_.deserialise(parser))
-        return false;
-    if (!boundTotal_.deserialise(parser))
-        return false;
-    if (!unboundTotal_.deserialise(parser))
-        return false;
-
-    return true;
-}
-
-std::string writeDataPoint(int i, Data1D data)
-{
-    if (data.valuesHaveErrors())
-        return std::format("{} {}", data.value(i), data.error(i));
-    else
-        return std::format("{}", data.value(i));
-}
-
-// Write data through specified LineParser
-bool PartialSet::serialise(LineParser &parser) const
-{
-    if (!parser.writeLineF("'{}'  {}\n", fingerprint_, triangular_))
-        return false;
-
-    // Write out species populations first
-    if (!parser.writeLineF("{}\n", realSpeciesPopulations_.size()))
-        return false;
-    for (auto &[resolvableSpecies, population] : realSpeciesPopulations_)
-        if (!parser.writeLineF("{} {}\n", resolvableSpecies.name(), population))
-            return false;
-
-    // Write number of keys to expect
-    if (!parser.writeLineF("{}\n", partials_.size()))
-        return false;
-
-    // Write partials using the full partials as the master key set
-    for (const auto &[key, partial] : partials_)
-    {
-        auto &bound = boundPartials_.map().at(key);
-        auto &unbound = unboundPartials_.map().at(key);
-
-        // Write key
-        if (!parser.writeLineF("{}\n", key))
-            return false;
-
-        if (!partial.serialise(parser))
-            return false;
-        if (!bound.serialise(parser))
-            return false;
-        if (!unbound.serialise(parser))
-            return false;
-    }
-
-    // Write totals
-    if (!total_.serialise(parser))
-        return false;
-    if (!boundTotal_.serialise(parser))
-        return false;
-    if (!unboundTotal_.serialise(parser))
-        return false;
-
-    return true;
-}
 
 // Express as a serialisable value
 void PartialSet::serialise(std::string tag, SerialisedValue &target) const

@@ -141,21 +141,6 @@ void SampledDouble::operator/=(double x)
  * Serialisation
  */
 
-// Read data through specified LineParser
-bool SampledDouble::deserialise(LineParser &parser)
-{
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    mean_ = parser.argd(0);
-    count_ = parser.argi(1);
-    m2_ = parser.argd(2);
-
-    return true;
-}
-
-// Write data through specified LineParser
-bool SampledDouble::serialise(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
-
 // Express as a serialisable value
 void SampledDouble::serialise(std::string tag, SerialisedValue &target) const
 {

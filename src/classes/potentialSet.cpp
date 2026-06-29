@@ -2,10 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/potentialSet.h"
-#include "base/lineParser.h"
 #include "classes/atomType.h"
-#include "classes/configuration.h"
-#include "items/deserialisers.h"
 
 PotentialSet::PotentialSet() { fingerprint_ = "NO_FINGERPRINT"; }
 
