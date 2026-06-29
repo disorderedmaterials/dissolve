@@ -48,6 +48,8 @@ class TestGraphFixture : public testing::Test
     virtual void prepareTestData() = 0;
     // Perform graph construction
     virtual void constructGraph() = 0;
+    // Run graph
+    virtual void runGraph() = 0;
     // Perform tests on generated data
     virtual void performTests() = 0;
     // Find specified node
@@ -62,18 +64,30 @@ class TestGraphFixture : public testing::Test
     // Go
     void go()
     {
+        // Prepare test data
+        ASSERT_NO_THROW(prepareTestData());
+
+        // Set the initial graph target to the test graph
         currentGraph_ = testGraph_;
 
         // Construct the graph
         ASSERT_NO_THROW(constructGraph());
+        // Run the graph
+        ASSERT_NO_THROW(runGraph());
         // Run the tests
         ASSERT_NO_THROW(performTests());
         // Serialise graph to TOML
         ASSERT_TRUE(serialiseGraphToTOML());
 
-        //
+        // Switch to the deserialised graph target
         currentGraph_ = deserialisedGraph_;
+
+        // Deserialise from the stored TOML
+        ASSERT_NO_THROW(deserialisedGraph_.deserialise(graphTOML_["graph"]));
+        // Run the graph
+        ASSERT_NO_THROW(runGraph());
+        // Run the tests
+        ASSERT_NO_THROW(performTests());
     }
-    //
 };
 }; // namespace UnitTest
