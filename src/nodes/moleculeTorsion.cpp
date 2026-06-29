@@ -16,6 +16,10 @@ MoleculeTorsionNode::MoleculeTorsionNode(Graph *parentGraph) : Node(parentGraph)
     addOption("J", "Index of atom j in the torsion i-j-k-l", j_);
     addOption("K", "Index of atom k in the torsion i-j-k-l", k_);
     addOption("L", "Index of atom l in the torsion i-j-k-l", l_);
+
+    // Serialisables
+    addSerialisable("histogram", histogram_);
+    addSerialisable("frequency", frequency_);
 }
 
 /*

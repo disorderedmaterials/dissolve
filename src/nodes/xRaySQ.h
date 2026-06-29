@@ -39,10 +39,6 @@ class XRaySQNode : public Node
     PartialSet *unweightedSQ_{nullptr};
     // Unweighted g(r)
     PartialSet *unweightedGR_{nullptr};
-    // Weighted S(Q)
-    std::optional<PartialSet> weightedSQ_;
-    // Weighted g(r)
-    std::optional<PartialSet> weightedGR_;
     // Representative g(r) calculated from FT of total weighted F(Q)
     Data1D representativeGR_;
     // Isotopologues to use for constructing weights matrix
@@ -63,6 +59,10 @@ class XRaySQNode : public Node
     StructureFactors::NormalisationType referenceNormalisedTo_{StructureFactors::NoNormalisation};
     // Window function to use when Fourier transforming reference total F(Q) into g(r)
     WindowFunction::Form referenceWindowFunction_{WindowFunction::Form::Lorch0};
+    // Weighted S(Q)
+    std::optional<PartialSet> weightedSQ_;
+    // Weighted g(r)
+    std::optional<PartialSet> weightedGR_;
 
     public:
     // Returns the unweighted SQ

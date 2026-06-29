@@ -37,11 +37,11 @@ class IntraAngleNode : public Node
     Range rangeBC_{0.0, 10.0};
     // Range (min, max, binwidth) of angle axis
     Vector3 angleRange_{0.0, 180.0, 1.0};
+    // Whether the angular range should be considered symmetric about 90
+    bool symmetric_{false};
     // Angle(ABC)
     std::optional<Histogram1D> intraAngleHist_;
     Data1D angleABC_;
-    // Whether the angular range should be considered symmetric about 90
-    bool symmetric_{false};
 
     public:
     // Clear any local data

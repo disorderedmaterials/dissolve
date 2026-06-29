@@ -29,6 +29,20 @@ AngleNode::AngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ExcludeSameSiteAC", "Whether to exclude correlations between A and C sites on the same molecule",
               excludeSameSiteAC_);
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
+
+    // Serialisables
+    addSerialisable("distanceHistogramAB", distanceHistogramAB_);
+    addSerialisable("rdfAB", rdfAB_);
+    addSerialisable("distanceHistogramBC", distanceHistogramBC_);
+    addSerialisable("rdfBC", rdfBC_);
+    addSerialisable("angleHistogramABC", angleHistogramABC_);
+    addSerialisable("angleABC", angleABC_);
+    addSerialisable("dAngleHistogramAB", dAngleHistogramAB_);
+    addSerialisable("dAngleAB", dAngleAB_);
+    addSerialisable("dAngleHistogramBC", dAngleHistogramBC_);
+    addSerialisable("dAngleBC", dAngleBC_);
+    addSerialisable("dDAngleHistogramABC", dDAngleHistogramABC_);
+    addSerialisable("dDAngleABC", dDAngleABC_);
 }
 
 /*

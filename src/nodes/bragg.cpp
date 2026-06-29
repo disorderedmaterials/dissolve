@@ -34,7 +34,9 @@ BraggNode::BraggNode(Graph *parentGraph)
     addOption("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)", braggQBroadening_);
 
     // Serialisables
-    addSerialisable("weightedGR", braggReflections_);
+    addSerialisable("braggReflections", braggReflections_);
+    addSerialisable("braggReflectionHistory", braggReflectionHistory_);
+    // addSerialisable("braggPartials", braggPartials_);
 }
 
 /*

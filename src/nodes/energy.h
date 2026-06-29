@@ -33,7 +33,7 @@ class EnergyNode : public Node
     int stabilityWindow_{10};
     // Energy histories
     PODHistory<double> totalEnergyHistory_;
-    PODHistory<double> totalPairPotentialHistory_, totalMoleculePPHistory_, totalGeometryHistory_, totalCohesiveHistory;
+    PODHistory<double> totalPairPotentialHistory_, totalMoleculePPHistory_, totalGeometryHistory_, totalCohesiveHistory_;
     PODHistory<double> bondHistory_, angleHistory_, torsionHistory_, improperHistory_;
 
     public:

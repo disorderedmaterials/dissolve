@@ -19,6 +19,12 @@ QSpeciesNode::QSpeciesNode(Graph *parentGraph) : Node(parentGraph)
               "Set the site(s) 'NF' for which the distribution around the bonding oxygen sites should be calculated",
               networkFormerSpeciesSites_);
     addOption("DistanceRange", "Distance range (min, max) over which to calculate Q-Species from central site", distanceRange_);
+
+    // Serialisables
+    addSerialisable("qSpeciesHistogram", qSpeciesHistogram_);
+    addSerialisable("qSpecies", qSpecies_);
+    addSerialisable("oxygenSitesHistogram", oxygenSitesHistogram_);
+    addSerialisable("oxygenSites", oxygenSites_);
 }
 
 /*

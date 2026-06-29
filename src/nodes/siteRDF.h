@@ -13,7 +13,6 @@
 #include <optional>
 #include <string_view>
 
-// Calculate RDF Module
 class SiteRDFNode : public Node
 {
     using Sums = std::map<std::string, std::pair<SampledDouble, std::optional<Data1D>>>;
@@ -53,7 +52,6 @@ class SiteRDFNode : public Node
     bool instantaneous_{false};
     // Whether to export instantaneous coordination numbers to disk
     bool exportInstantaneous_{false};
-
     // Sums
     Sums sums_;
     // Site RDF

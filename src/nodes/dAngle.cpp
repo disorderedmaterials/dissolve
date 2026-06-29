@@ -21,6 +21,14 @@ DAngleNode::DAngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_);
     addOption("ExcludeSameMolecule", "Whether to exclude correlations between B and C sites on the same molecule",
               excludeSameMolecule_);
+
+    // Serialisables
+    addSerialisable("distanceHistogramBC", distanceHistogramBC_);
+    addSerialisable("rdfBC", rdfBC_);
+    addSerialisable("angleHistogram", angleHistogram_);
+    addSerialisable("angle", angle_);
+    addSerialisable("distanceAngleMap", distanceAngleMap_);
+    addSerialisable("dAngle", dAngle_);
 }
 
 /*
