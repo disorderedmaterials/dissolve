@@ -43,6 +43,22 @@ void Histogram2D::clear()
  * Data
  */
 
+// Update accumulated data
+void Histogram2D::updateAccumulatedData()
+{
+    // Set up arrays
+    accumulatedData_.initialise(bins_.size(), true);
+
+    // Store bin centres and accumulated averages in the object
+    for (auto n = 0; n < bins_.size(); ++n)
+    {
+        accumulatedData_.xAxis(n) = xBinCentres_[n];
+        accumulatedData_.yAxis(n) = yBinCentres_[n];
+        accumulatedData_.values().linearArray()[n] = averages_[n];
+        accumulatedData_.errors().linearArray()[n] = averages_[n].stDev();
+    }
+}
+
 // Initialise with specified bin range
 void Histogram2D::initialise(double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth)
 {
@@ -243,4 +259,29 @@ bool Histogram2D::serialise(LineParser &parser) const
     }
 
     return true;
+}
+
+// Express as a serialisable value
+void Histogram2D::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_}, {"xBinWidth", xBinWidth_},
+                   {"yMinimum", yMinimum_}, {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_},
+                   {"nBinned", nBinned_},   {"nMissed", nMissed_},   {"averages", averages_.linearArray()}};
+}
+
+// Read values from a serialisable value
+void Histogram2D::deserialise(const SerialisedValue &node)
+{
+    clear();
+
+    initialise(toml::find<double>(node, "xMinimum"), toml::find<double>(node, "xMaximum"),
+               toml::find<double>(node, "yBinWidth"), toml::find<double>(node, "yMinimum"),
+               toml::find<double>(node, "yMaximum"), toml::find<double>(node, "yBinWidth"));
+
+    nBinned_ = toml::find<long>(node, "nBinned");
+    nMissed_ = toml::find<long>(node, "nMissed");
+
+    averages_.linearArray() = toml::find<std::vector<SampledDouble>>(node, "averages");
+
+    updateAccumulatedData();
 }

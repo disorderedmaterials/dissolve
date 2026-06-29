@@ -7,8 +7,7 @@
 #include "math/sampledDouble.h"
 #include "templates/array3D.h"
 
-// Three-Dimensional Histogram
-class Histogram3D
+class Histogram3D : public Serialisable
 {
     public:
     Histogram3D();
@@ -132,4 +131,8 @@ class Histogram3D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

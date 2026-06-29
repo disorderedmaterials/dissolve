@@ -54,6 +54,14 @@ class Serialisable
 
         return false;
     }
+    // Place the named value into the supplied object, but only if it exists
+    template <typename T, typename U> bool getIfPresent(const SerialisedValue &node, std::string name, U &destination)
+    {
+        if (!node.contains(name))
+            return false;
+        destination = toml::find<T>(node, name);
+        return true;
+    }
     // A helper function to add elements of a vector to a node under the named heading
     template <serialisablePointer T>
     static void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node)
@@ -176,14 +184,14 @@ class Serialisable
         SerialisedValue result;
         for (auto &[key, value] : map)
             if constexpr (serialisablePointer<V>)
-                value->serialise(std::string(key), result);
+                value->serialise(std::format("{}", key), result);
             else if constexpr (std::is_base_of_v<Serialisable, V>)
-                value.serialise(key, result);
+                value.serialise(std::format("{}", key), result);
             else
                 // We use the direct value (with casting) instead of
                 // value.serialise() to handle the case where the value
                 // is a raw type (e.g. int)
-                result[std::string(key)] = value;
+                result[std::format("{}", key)] = value;
         if (!map.empty())
             node[name] = result;
     }

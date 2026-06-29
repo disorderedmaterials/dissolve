@@ -440,3 +440,30 @@ bool Data3D::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a serialisable value
+void Data3D::serialise(std::string tag, SerialisedValue &target) const
+{
+    target[tag] = {{"tag", tag_}, {"x", x_}, {"y", y_}, {"z", z_}, {"values", values_.linearArray()}};
+    if (hasError_)
+        target[tag]["errors"] = errors_.linearArray();
+}
+
+// Read values from a serialisable value
+void Data3D::deserialise(const SerialisedValue &node)
+{
+    tag_ = toml::find<std::string>(node, "tag");
+    x_ = toml::find<std::vector<double>>(node, "x");
+    y_ = toml::find<std::vector<double>>(node, "y");
+    z_ = toml::find<std::vector<double>>(node, "z");
+    values_.initialise(x_.size(), y_.size(), z_.size());
+    values_.linearArray() = toml::find<std::vector<double>>(node, "values");
+
+    Serialisable::optionalOn(node, "errors",
+                             [this](const auto errors)
+                             {
+                                 hasError_ = true;
+                                 errors_.initialise(x_.size(), y_.size(), z_.size());
+                                 errors_.linearArray() = toml::get<std::vector<double>>(errors);
+                             });
+}
