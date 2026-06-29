@@ -81,8 +81,8 @@ class TestGraph : public DissolveGraph
     // Create a NeutronSQ node with optional reference data
     NeutronSQNode *appendNeutronSQ(SQNode *sqNode, std::string name,
                                    const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
-                                   std::string referenceData = {}, bool isHistogram = false);
+                                   std::string referenceData = {}, bool isHistogram = true);
     // Create an XRaySQ node with optional reference data
-    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, std::string referenceData = {}, bool isHistogram = false);
+    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, std::string referenceData = {}, bool isHistogram = true);
 };
 }; // namespace UnitTest
