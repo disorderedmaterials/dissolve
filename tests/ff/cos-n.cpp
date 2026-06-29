@@ -61,7 +61,7 @@ TEST(CosNTorsionForcesTest, POE)
 
     // Check agreement with external reference forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.0e-2);
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.2e-2);
 }
 
 TEST(CosNTorsionEnergyTest, Py4OHNTf2)

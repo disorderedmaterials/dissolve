@@ -5,6 +5,7 @@
 #include "base/parserLibrary.h"
 #include "nodes/importDLPOLYStructure.h"
 #include "nodes/importDLPOLYTrajectory.h"
+#include "nodes/importMoscitoStructure.h"
 #include "nodes/importXYZStructure.h"
 #include <gtest/gtest.h>
 #include <sstream>
@@ -205,4 +206,31 @@ TEST(ApplicativeTest, DLPOLYTrajectory)
     ASSERT_TRUE(more);
     auto &[pos, vel, forces] = std::get<0>(*more)[0];
     EXPECT_EQ(pos.x, 8.278);
+}
+
+TEST(ApplicativeTest, Moscito)
+{
+    using namespace Parsers;
+    std::ifstream infile{"moscito/py5_torsions/py5-ntf2-final.str"};
+    ASSERT_TRUE(infile);
+    auto header = ImportMoscitoStructureNode::header().parse(infile);
+    ASSERT_TRUE(header);
+    auto &[c, nmolecules] = std::get<0>(*header);
+    EXPECT_EQ(c.x, 2.0);
+    EXPECT_EQ(nmolecules, 2);
+
+    auto mols = some(ImportMoscitoStructureNode::molecule()).parse(infile);
+    ASSERT_TRUE(mols);
+    auto &[name, type, natoms, index, atoms] = std::get<0>(*mols)[0];
+    EXPECT_EQ(name, "cat");
+    EXPECT_EQ(type, 1);
+    EXPECT_EQ(natoms, 27);
+    EXPECT_EQ(index, 1);
+
+    auto &[atomname, idx, pos, vel, force] = atoms[0];
+    EXPECT_EQ(atomname, "nc1");
+    EXPECT_EQ(idx, 1);
+    EXPECT_EQ(pos.x, 0.31811301);
+    EXPECT_EQ(vel.x, 0.43076653);
+    EXPECT_EQ(force.x, -0.12764812E+03);
 }

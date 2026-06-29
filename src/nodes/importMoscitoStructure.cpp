@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importMoscitoStructure.h"
+#include "base/parserLibrary.h"
+#include <fstream>
 
 ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -47,58 +49,42 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
      *
      * Units are:  distance = nm, velocities = nm ps-1, forces = kJ mol-1 nm-1
      */
+    using namespace Parsers;
+    auto firstLine = inlineSpaces() >> vector3() << newlines();
+    auto secondLine = inlineSpaces() >> natural() << newlines();
+    auto thirdLine = maybe(inlines()) >> newlines();
+    auto atom = alphanums() & inlineSpaces() >> natural() << spaces() & vector3() << spaces() & vector3() << spaces() &
+                vector3() << spaces();
+    auto molecule = alphanums() << spaces() & natural() & inlineSpaces() >> natural() &
+                    inlineSpaces() >> natural() << newlines() & some(atom);
+    auto fileStructure = firstLine & secondLine << thirdLine & some(molecule);
+
+    std::ifstream infile(filePath_);
+    if (!infile)
+        return error("Couldn't open file '{}' for loading Moscito data.\n", filePath_);
+
+    auto parsed = fileStructure.exact(infile);
+    if (!parsed)
+        return error("Couldn't parse file '{}' for loading Moscito data.\n", filePath_);
+
+    auto &[box, nmolecules, molecules] = *parsed;
 
     // Clear storage objects
     structure_.clear();
     forces_.clear();
 
-    // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
-        return error("Couldn't open file '{}' for loading Moscito data.\n", filePath_);
-
-    message(" --> Importing coordinates in Moscito (str) format...\n");
-    // Read cell lengths
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return NodeConstants::ProcessResult::Failed;
-    structure_.createBox(parser.arg3d(0), {90.0, 90.0, 90.0});
-
-    // Read nmolecules
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return NodeConstants::ProcessResult::Failed;
-    auto nMolecules = parser.argi(0);
-    message(" --> Structure file contains {} molecules.\n", nMolecules);
-
-    for (auto n = 0; n < nMolecules; ++n)
+    structure_.createBox(box, {90.0, 90.0, 90.0});
+    assert(nmolecules == molecules.size());
+    for (auto molecule : molecules)
     {
-        // Read and discard remark and molecule label lines
-        if (parser.skipLines(2) != LineParser::Success)
-            return NodeConstants::ProcessResult::Failed;
-
-        // Get number of atoms in this molecule (second integer)
-        if (parser.getArgsDelim(LineParser::KeepBlanks) != LineParser::Success)
-            return NodeConstants::ProcessResult::Failed;
-        auto nAtoms = parser.argi(1);
+        auto &[molname, moltype, natoms, molindex, atoms] = molecule;
+        assert(natoms == atoms.size());
 
         // Read in atom coordinates
-        for (auto i = 0; i < nAtoms; ++i)
+        for (auto atom : atoms)
         {
-            // Read atom label / index line
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
-            auto name = parser.args(0);
-
-            // Read coordinates (in nm)
-            // Coordinates are in fixed format (15.8e) with *no spacing between values*
-            if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
-            std::string line{parser.line()};
-            structure_.addAtom(name, {std::stof(line.substr(0, 15)) * 10.0, std::stof(line.substr(15, 15)) * 10.0,
-                                      std::stof(line.substr(30)) * 10.0});
-
-            // Skip velocity line
-            if (parser.skipLines(1) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
+            auto &[name, index, pos, vec, force] = atom;
+            structure_.addAtom(name, pos * 10.0);
 
             /*
              * Read forces (in kJ mol-1 nm-1)
@@ -111,13 +97,35 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
              *
              * Note: Forces are in fixed format (15.8e) with *no spacing between values*
              */
-            if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
-            line = parser.line();
-            forces_.emplace_back(std::stof(line.substr(0, 15)) * 10.0, std::stof(line.substr(15, 15)) * 10.0,
-                                 std::stof(line.substr(30)) * 10.0);
+            forces_.emplace_back(force * 10.0);
         }
     }
 
     return NodeConstants::ProcessResult::Success;
+}
+
+// parse the header of a moscito file
+Parsers::Parser<std::tuple<Vector3, int>> ImportMoscitoStructureNode::header()
+{
+    using namespace Parsers;
+    auto firstLine = inlineSpaces() >> vector3() << newlines();
+    auto secondLine = inlineSpaces() >> natural() << newlines();
+    auto thirdLine = maybe(inlines()) >> newlines();
+    return firstLine & secondLine << thirdLine;
+}
+
+// parse an atom from a moscito file
+Parsers::Parser<std::tuple<std::string, int, Vector3, Vector3, Vector3>> ImportMoscitoStructureNode::atom()
+{
+    using namespace Parsers;
+    return alphanums() & inlineSpaces() >> natural() << spaces() & vector3() << spaces() & vector3() << spaces() &
+           vector3() << spaces();
+}
+// parse an molecule from a moscito file
+Parsers::Parser<std::tuple<std::string, int, int, int, std::vector<std::tuple<std::string, int, Vector3, Vector3, Vector3>>>>
+ImportMoscitoStructureNode::molecule()
+{
+    using namespace Parsers;
+    return alphanums() << spaces() & natural() & inlineSpaces() >> natural() & inlineSpaces() >> natural() << newlines() &
+           some(ImportMoscitoStructureNode::atom());
 }
