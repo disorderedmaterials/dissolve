@@ -7,6 +7,7 @@
 #include "kernels/force.h"
 #include "math/mathFunc.h"
 #include "nodes/dissolve.h"
+#include <fstream>
 
 MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -286,6 +287,7 @@ NodeConstants::ProcessResult MDNode::process()
 
     // Open trajectory file (if requested)
     std::ofstream outfile;
+    std::ostreambuf_iterator<char> out(outfile);
     if (trajectoryFrequency && trajectoryFrequency > 0)
     {
         std::string trajectoryFile = std::format("{}.md.xyz", targetConfiguration_->name());
@@ -422,19 +424,19 @@ NodeConstants::ProcessResult MDNode::process()
         if (trajectoryFrequency > 0 && (step % trajectoryFrequency == 0))
         {
             // Write number of atoms
-            outfile << targetConfiguration_->nAtoms() << std::endl;
+            std::format_to(out, "{}\n", targetConfiguration_->nAtoms());
 
             // Construct and write header
-            std::string header = std::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
+            std::format_to(out, "Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
             if (energyFrequency && (step % energyFrequency == 0))
-                header += std::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pe.pairPotential.total(),
-                                      pe.geometry.total(), ke + pe.pairPotential.total() + pe.geometry.total());
-            outfile << header << std::endl;
+                std::format_to(out, ", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", pe.pairPotential.total(),
+                               pe.geometry.total(), ke + pe.pairPotential.total() + pe.geometry.total());
+            std::format_to(out, "\n");
 
             // Write Atoms
             for (const auto &i : atoms)
-                outfile << std::format("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()),
-                                       i.r().x, i.r().y, i.r().z);
+                std::format_to(out, "{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n", Elements::symbol(i.speciesAtom()->Z()), i.r().x,
+                               i.r().y, i.r().z);
         }
     }
     timer.stop();
