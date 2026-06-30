@@ -83,7 +83,6 @@ class TestGraph : public DissolveGraph
                                    const std::vector<std::tuple<std::string, std::string, double>> isotopologues = {},
                                    std::string referenceData = {}, bool isHistogram = false);
     // Create an XRaySQ node with optional reference data
-    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name,
-                             std::string referenceData = {}, bool isHistogram = false);
+    XRaySQNode *appendXRaySQ(SQNode *sqNode, std::string name, std::string referenceData = {}, bool isHistogram = false);
 };
 }; // namespace UnitTest
