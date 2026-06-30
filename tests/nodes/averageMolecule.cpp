@@ -31,9 +31,9 @@ TEST(AverageMoleculeNodeTest, Water)
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
     auto &structure = avgMol->structure();
-    testVec3(structure.atom(0)->r(), {-0.83305, 0.0, 0.0}, 1.0e-3);
-    testVec3(structure.atom(1)->r(), {0.00016, 0.60443, 0.0}, 1.0e-3);
-    testVec3(structure.atom(2)->r(), {0.83305, 0.0, 0.0}, 1.0e-3);
+    EXPECT_TRUE(testVec3("Atom 0 position", structure.atom(0)->r(), {-0.83305, 0.0, 0.0}, 1.0e-3));
+    EXPECT_TRUE(testVec3("tom 1 position", structure.atom(1)->r(), {0.00016, 0.60443, 0.0}, 1.0e-3));
+    EXPECT_TRUE(testVec3("Atom 2 position", structure.atom(2)->r(), {0.83305, 0.0, 0.0}, 1.0e-3));
 }
 
 TEST(AverageMoleculeNodeTest, BeNDy)
@@ -59,9 +59,9 @@ TEST(AverageMoleculeNodeTest, BeNDy)
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
     auto &structure = avgMol->structure();
-    testVec3(structure.atom(0)->r(), {2.0, 0.0, 0.0}, 1.0e-3);
-    testVec3(structure.atom(1)->r(), {0.0, 0.0, 0.0}, 1.0e-3);
-    testVec3(structure.atom(2)->r(), {2.0, 2.828427, 0.0}, 1.0e-3);
+    EXPECT_TRUE(testVec3("Atom 0 position", structure.atom(0)->r(), {2.0, 0.0, 0.0}, 1.0e-3));
+    EXPECT_TRUE(testVec3("Atom 1 position", structure.atom(1)->r(), {0.0, 0.0, 0.0}, 1.0e-3));
+    EXPECT_TRUE(testVec3("Atom 2 position", structure.atom(2)->r(), {2.0, 2.828427, 0.0}, 1.0e-3));
 }
 
 } // namespace UnitTest

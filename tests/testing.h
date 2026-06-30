@@ -56,9 +56,8 @@ void exportMermaidGraph(Graph &graph);
                                                   std::string_view nameB, double tolerance = 5.0e-3,
                                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 // Test Vec3 data
-void testVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6);
-// Test Vec3 vector data
-void testVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance = 1.0e-6);
+[[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B,
+                                                double tolerance = 1.0e-6);
 // Test species atom type
 void testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
 // Test interaction parameters

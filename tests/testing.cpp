@@ -11,7 +11,7 @@
 namespace UnitTest
 {
 /*
- * Checks
+ * Data Test Functions
  */
 
 // Test simple double
@@ -79,18 +79,15 @@ namespace UnitTest
     return testing::AssertionSuccess();
 }
 // Test Vec3 data
-void testVec3(const Vector3 &A, const Vector3 &B, double tolerance)
+[[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B, double tolerance)
 {
-    EXPECT_NEAR(A.x, B.x, tolerance);
-    EXPECT_NEAR(A.y, B.y, tolerance);
-    EXPECT_NEAR(A.z, B.z, tolerance);
-}
-// Test Vec3 vector data
-void testVec3Vector(const std::vector<Vector3> &A, const std::vector<Vector3> &B, double tolerance)
-{
-    ASSERT_EQ(A.size(), B.size());
-    for (auto n = 0; n < A.size(); ++n)
-        testVec3(A[n], B[n], tolerance);
+    auto C = A - B;
+    if (fabs(C.x) > tolerance || fabs(C.x) > tolerance || fabs(C.x) > tolerance)
+        return testing::AssertionFailure() << std::format(
+                   "{} differs by ({},{},{}) which exceeds the per-component threshold of {}", quantity, C.x, C.y, C.z,
+                   tolerance);
+
+    return testing::AssertionSuccess();
 }
 // Test species atom type
 void testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
