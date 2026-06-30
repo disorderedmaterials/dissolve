@@ -54,6 +54,9 @@ Parser<double> real()
 // A parser that accepts a 3-vector of floating point numbers
 Parser<Vector3> vector3()
 {
+    // Annoyingly, the Moscito file format does not guarantee spaces
+    // between the numbers when the numbers are negative.  Luckily, we
+    // can still parse this scenario.
     return (real() & maybe(spaces()) >> real() & maybe(spaces()) >> real())
         .apply([](double x, double y, double z) { return Vector3(x, y, z); });
 }
