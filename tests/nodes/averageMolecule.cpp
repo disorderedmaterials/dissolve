@@ -32,7 +32,7 @@ TEST(AverageMoleculeNodeTest, Water)
 
     auto &structure = avgMol->structure();
     EXPECT_TRUE(testVec3("Atom 0 position", structure.atom(0)->r(), {-0.83305, 0.0, 0.0}, 1.0e-3));
-    EXPECT_TRUE(testVec3("tom 1 position", structure.atom(1)->r(), {0.00016, 0.60443, 0.0}, 1.0e-3));
+    EXPECT_TRUE(testVec3("Atom 1 position", structure.atom(1)->r(), {0.00016, 0.60443, 0.0}, 1.0e-3));
     EXPECT_TRUE(testVec3("Atom 2 position", structure.atom(2)->r(), {0.83305, 0.0, 0.0}, 1.0e-3));
 }
 

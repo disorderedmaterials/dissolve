@@ -90,16 +90,26 @@ namespace UnitTest
     return testing::AssertionSuccess();
 }
 // Test species atom type
-void testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
+[[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
 {
     for (auto &[atomIndex, atomTypeName] : namesById)
     {
-        ASSERT_TRUE(atomIndex >= 0 && atomIndex < sp->nAtoms());
+        if (atomIndex < 0 || atomIndex >= sp->nAtoms())
+            return testing::AssertionFailure()
+                   << std::format("Atom index out of range - {} in a species of {} atoms", atomIndex, sp->nAtoms());
+
         auto &spAtom = sp->atom(atomIndex);
         auto at = spAtom.atomType();
-        ASSERT_TRUE(at);
-        EXPECT_EQ(at->name(), atomTypeName);
+        if (!at)
+            return testing::AssertionFailure()
+                   << std::format("Atom index out of range - {} in a species of {} atoms", atomIndex, sp->nAtoms());
+
+        if (at->name() != atomTypeName)
+            return testing::AssertionFailure() << std::format("Atom type name ({}) for index {} does not match expected ({})",
+                                                              at->name(), atomIndex, atomTypeName);
     }
+
+    return testing::AssertionSuccess();
 }
 // Test interaction parameters
 template <class Intra>

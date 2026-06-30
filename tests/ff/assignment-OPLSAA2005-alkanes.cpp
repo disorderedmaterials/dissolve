@@ -22,23 +22,23 @@ TEST(OPLSAA2005AlkanesAssignmentTest, Heptane)
     ASSERT_EQ(species.torsions().size(), 36);
     ASSERT_EQ(species.impropers().size(), 0);
 
-    testSpeciesAtomType(&species, {{0, "CT3"},
-                                   {1, "CT2"},
-                                   {2, "CT2"},
-                                   {3, "CT2"},
-                                   {4, "CT3"},
-                                   {5, "HC"},
-                                   {6, "HC"},
-                                   {7, "HC"},
-                                   {8, "HC"},
-                                   {9, "HC"},
-                                   {10, "HC"},
-                                   {11, "HC"},
-                                   {12, "HC"},
-                                   {13, "HC"},
-                                   {14, "HC"},
-                                   {15, "HC"},
-                                   {16, "HC"}});
+    EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "CT3"},
+                                               {1, "CT2"},
+                                               {2, "CT2"},
+                                               {3, "CT2"},
+                                               {4, "CT3"},
+                                               {5, "HC"},
+                                               {6, "HC"},
+                                               {7, "HC"},
+                                               {8, "HC"},
+                                               {9, "HC"},
+                                               {10, "HC"},
+                                               {11, "HC"},
+                                               {12, "HC"},
+                                               {13, "HC"},
+                                               {14, "HC"},
+                                               {15, "HC"},
+                                               {16, "HC"}}));
     testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"});
     testSpeciesIntramolecular(&species, {0, 7}, {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"});
     testSpeciesIntramolecular(&species, {0, 1, 9}, {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"});
@@ -64,9 +64,10 @@ TEST(OPLSAA2005AlkanesAssignmentTest, Cycloheptane)
     ASSERT_EQ(species.torsions().size(), 63);
     ASSERT_EQ(species.impropers().size(), 0);
 
-    testSpeciesAtomType(&species, {{0, "CT2"}, {1, "CT2"}, {2, "CT2"}, {3, "CT2"}, {4, "CT2"}, {5, "CT2"}, {6, "CT2"},
-                                   {7, "HC"},  {8, "HC"},  {9, "HC"},  {10, "HC"}, {11, "HC"}, {12, "HC"}, {13, "HC"},
-                                   {14, "HC"}, {15, "HC"}, {16, "HC"}, {17, "HC"}, {18, "HC"}, {19, "HC"}, {20, "HC"}});
+    EXPECT_TRUE(
+        testSpeciesAtomType(&species, {{0, "CT2"}, {1, "CT2"}, {2, "CT2"}, {3, "CT2"}, {4, "CT2"}, {5, "CT2"}, {6, "CT2"},
+                                       {7, "HC"},  {8, "HC"},  {9, "HC"},  {10, "HC"}, {11, "HC"}, {12, "HC"}, {13, "HC"},
+                                       {14, "HC"}, {15, "HC"}, {16, "HC"}, {17, "HC"}, {18, "HC"}, {19, "HC"}, {20, "HC"}}));
     testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"});
     testSpeciesIntramolecular(&species, {0, 7}, {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"});
     testSpeciesIntramolecular(&species, {0, 1, 9}, {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"});

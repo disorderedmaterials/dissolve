@@ -59,7 +59,7 @@ void exportMermaidGraph(Graph &graph);
 [[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B,
                                                 double tolerance = 1.0e-6);
 // Test species atom type
-void testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
+[[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
 // Test interaction parameters
 template <class Intra>
 void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,

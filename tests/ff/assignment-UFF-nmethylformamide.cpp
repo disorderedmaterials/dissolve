@@ -22,8 +22,8 @@ TEST(UFFNMethylFormamideAssignmentTest, NMethylFormamide)
     ASSERT_EQ(species.torsions().size(), 10);
     ASSERT_EQ(species.impropers().size(), 2);
 
-    testSpeciesAtomType(
-        &species, {{0, "H_"}, {1, "C_amR"}, {2, "N_amR"}, {3, "O_2"}, {4, "C_3"}, {5, "H_"}, {6, "H_"}, {7, "H_"}, {8, "H_"}});
+    EXPECT_TRUE(testSpeciesAtomType(
+        &species, {{0, "H_"}, {1, "C_amR"}, {2, "N_amR"}, {3, "O_2"}, {4, "C_3"}, {5, "H_"}, {6, "H_"}, {7, "H_"}, {8, "H_"}}));
     testSpeciesIntramolecular(&species, {1, 2}, {BondFunctions::Form::Harmonic, "k=5410.2978 eq=1.3568"}, 5.0e-5);
     testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2991.0611 eq=1.08142"}, 5.0e-5);
     testSpeciesIntramolecular(&species, {2, 4}, {BondFunctions::Form::Harmonic, "k=4432.3881 eq=1.45007"}, 5.0e-5);

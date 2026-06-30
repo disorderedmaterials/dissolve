@@ -22,7 +22,7 @@ TEST(OPLSAA2005AlcoholsAssignmentTest, Methanol)
     ASSERT_EQ(species.torsions().size(), 3);
     ASSERT_EQ(species.impropers().size(), 0);
 
-    testSpeciesAtomType(&species, {{0, "CT"}, {1, "OH"}, {2, "HO"}, {3, "HC"}, {4, "HC"}, {5, "HC"}});
+    EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "CT"}, {1, "OH"}, {2, "HO"}, {3, "HC"}, {4, "HC"}, {5, "HC"}}));
     testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2677.76 eq=1.41"});
     testSpeciesIntramolecular(&species, {0, 3}, {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"});
     testSpeciesIntramolecular(&species, {0, 1, 2}, {AngleFunctions::Form::Harmonic, "k=460.24 eq=108.5"});

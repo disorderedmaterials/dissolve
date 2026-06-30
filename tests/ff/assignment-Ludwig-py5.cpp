@@ -23,11 +23,11 @@ TEST(LudwigPy5AssignmentTest, Py5)
     ASSERT_EQ(species.torsions().size(), 66);
     ASSERT_EQ(species.impropers().size(), 6);
 
-    testSpeciesAtomType(&species,
-                        {{0, "nc"},    {1, "ca_o"},  {2, "ca_m"},  {3, "ca_p"},  {4, "ca_m"},  {5, "ca_o"},  {6, "ha_o"},
-                         {7, "ha_m"},  {8, "ha_p"},  {9, "ha_m"},  {10, "ha_o"}, {11, "ct_1"}, {12, "ct_2"}, {13, "hc_1"},
-                         {14, "hc_1"}, {15, "ct_3"}, {16, "hc_2"}, {17, "hc_2"}, {18, "ct_4"}, {19, "hc_3"}, {20, "hc_3"},
-                         {21, "cm"},   {22, "hc_4"}, {23, "hc_4"}, {24, "hm"},   {25, "hm"},   {26, "hm"}});
+    EXPECT_TRUE(testSpeciesAtomType(
+        &species, {{0, "nc"},    {1, "ca_o"},  {2, "ca_m"},  {3, "ca_p"},  {4, "ca_m"},  {5, "ca_o"},  {6, "ha_o"},
+                   {7, "ha_m"},  {8, "ha_p"},  {9, "ha_m"},  {10, "ha_o"}, {11, "ct_1"}, {12, "ct_2"}, {13, "hc_1"},
+                   {14, "hc_1"}, {15, "ct_3"}, {16, "hc_2"}, {17, "hc_2"}, {18, "ct_4"}, {19, "hc_3"}, {20, "hc_3"},
+                   {21, "cm"},   {22, "hc_4"}, {23, "hc_4"}, {24, "hm"},   {25, "hm"},   {26, "hm"}}));
     testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4042 eq=1.339"});
     testSpeciesIntramolecular(&species, {1, 6}, {BondFunctions::Form::Harmonic, "k=3071 eq=1.08"});
     testSpeciesIntramolecular(&species, {11, 0, 1}, {AngleFunctions::Form::Harmonic, "k=585.8 eq=121.5"});
