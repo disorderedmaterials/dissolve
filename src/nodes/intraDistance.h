@@ -7,6 +7,9 @@
 #include "math/histogram1D.h"
 #include "nodes/node.h"
 
+// Forward Declarations
+class Configuration;
+
 class IntraDistanceNode : public Node
 {
     public:

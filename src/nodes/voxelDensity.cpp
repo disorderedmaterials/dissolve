@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/voxelDensity.h"
-#include "analyser/dataExporter.h"
 #include "analyser/dataOperator1D.h"
 #include "data/atomicMasses.h"
+#include "data/isotopes.h"
 
 VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
 {

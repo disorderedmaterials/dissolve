@@ -2,8 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesAngleModel.h"
-#include "classes/speciesAtom.h"
-#include "classes/speciesBond.h"
 
 SpeciesAngleModel::SpeciesAngleModel() : angles_(nullptr) {}
 

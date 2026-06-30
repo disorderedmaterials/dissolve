@@ -4,12 +4,13 @@
 #pragma once
 
 #include "classes/speciesSites.h"
-#include "math/histogram1D.h"
 #include "math/integerHistogram1D.h"
 #include "math/range.h"
 #include "nodes/node.h"
 
-// Q-Species
+// Forward Declarations
+class Configuration;
+
 class QSpeciesNode : public Node
 {
     public:

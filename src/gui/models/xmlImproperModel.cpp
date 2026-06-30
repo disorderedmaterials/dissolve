@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/xmlImproperModel.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include <pugixml.hpp>
 
 XmlImproperModel::XmlImproperModel() {}

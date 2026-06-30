@@ -3,7 +3,6 @@
 
 #include "classes/speciesSite.h"
 #include "base/lineParser.h"
-#include "classes/coreData.h"
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicMasses.h"

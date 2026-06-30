@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/selectSpeciesWidget.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 
 SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)

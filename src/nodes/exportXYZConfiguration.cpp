@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/exportXYZConfiguration.h"
-#include "main/dissolve.h"
+#include "classes/configuration.h"
 #include "nodes/constants.h"
 #include <fstream>
 

@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/setCoordinates.h"
+#include "classes/configuration.h"
 
 SetCoordinatesNode::SetCoordinatesNode(Graph *parentGraph) : Node(parentGraph)
 {

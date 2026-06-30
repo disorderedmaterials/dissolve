@@ -6,6 +6,7 @@
 #include "base/applicative.h"
 #include "classes/structure.h"
 #include "nodes/node.h"
+#include "templates/optionalRef.h"
 
 class ImportDLPOLYStructureNode : public Node
 {

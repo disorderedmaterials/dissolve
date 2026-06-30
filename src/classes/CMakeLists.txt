@@ -15,7 +15,6 @@ add_library(
   configuration_sites.cpp
   configuration_upkeep.cpp
   configurationAtom.cpp
-  coreData.cpp
   empiricalFormula.cpp
   fullPairIterator.cpp
   histogramSet.cpp
@@ -72,7 +71,6 @@ add_library(
   cellArray.h
   configuration.h
   configurationAtom.cpp
-  coreData.h
   empiricalFormula.h
   fragment.h
   histogramSet.h

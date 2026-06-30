@@ -4,7 +4,6 @@
 #include "gui/getConfigurationNameDialog.h"
 #include "base/sysFunc.h"
 #include "classes/configuration.h"
-#include "classes/coreData.h"
 
 GetConfigurationNameDialog::GetConfigurationNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData)
 {

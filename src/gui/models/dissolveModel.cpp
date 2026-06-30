@@ -22,7 +22,6 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
 
     // commons_ = std::make_unique<MasterTermTreeModel>(dissolve_->coreData());
-    configurationModel_.setData(dissolve_->coreData().configurations());
     Q_EMIT modelsUpdated();
 }
 
@@ -36,7 +35,6 @@ void DissolveModel::update()
         commons_->torsionModel_.reset();
         commons_->improperModel_.reset();
     }
-    configurationModel_.reset();
     Q_EMIT modelsUpdated();
 }
 
@@ -104,16 +102,12 @@ int DissolveModel::nCommonImpropers()
     return commons_->improperModel_.rowCount();
 }
 
-// The Configuration Model
-ConfigurationModel *DissolveModel::configurationsModel() { return &configurationModel_; }
-
 // Getter for filename
 QUrl DissolveModel::fileName() { return QUrl(dissolve_->inputFilename().data()); }
 
 void DissolveModel::loadInput(QUrl filename)
 {
     dissolve_->loadInput(filename.toLocalFile().toStdString());
-    configurationModel_.reset();
     Q_EMIT(modelsUpdated());
 }
 

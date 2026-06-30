@@ -3,7 +3,6 @@
 
 #include "gui/configurationViewerWidget.h"
 #include "classes/configuration.h"
-#include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
 #include "gui/widgets/elementSelector.h"
 #include "main/dissolve.h"

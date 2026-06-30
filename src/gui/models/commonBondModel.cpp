@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/commonBondModel.h"
+#include "classes/species.h"
 
 CommonBondModel::CommonBondModel(Species *species) : CommonTermModel(species), sourceData_(species->commonBonds())
 {

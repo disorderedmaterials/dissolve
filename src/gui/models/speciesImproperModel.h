@@ -3,13 +3,12 @@
 
 #pragma once
 
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <vector>
-
-// Forward Declarations
-class CoreData;
 
 class SpeciesImproperModel : public QAbstractTableModel
 {

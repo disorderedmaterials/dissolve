@@ -4,7 +4,6 @@
 #include "classes/speciesAtom.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 #include "classes/speciesBond.h"
 #include <algorithm>

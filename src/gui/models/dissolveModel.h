@@ -23,8 +23,6 @@ class DissolveModel : public QObject
     Q_PROPERTY(const CommonTorsionModel *commonTorsionsModel READ commonTorsionsModel NOTIFY commonsChanged)
     // The Master Improper Model
     Q_PROPERTY(const CommonImproperModel *commonImpropersModel READ commonImpropersModel NOTIFY commonsChanged)
-    // The Configuration Model
-    Q_PROPERTY(const ConfigurationModel *configurationsModel READ configurationsModel NOTIFY configurationsChanged)
     // File to load
     Q_PROPERTY(QUrl file READ fileName WRITE loadInput NOTIFY modelsUpdated)
     // The main graph
@@ -33,7 +31,6 @@ class DissolveModel : public QObject
     private:
     // Master terms model
     std::unique_ptr<MasterTermTreeModel> commons_ = nullptr;
-    ConfigurationModel configurationModel_;
 
     public:
     // Getter for filename
@@ -51,8 +48,6 @@ class DissolveModel : public QObject
 
     // Species model has been replaced
     void speciesChanged();
-    // Configurations model has been replaced
-    void configurationsChanged();
     // ModuleLayers model has been replaced
     void moduleLayersChanged();
 
@@ -80,8 +75,6 @@ class DissolveModel : public QObject
     const CommonImproperModel *commonImpropersModel() const;
     // The number of common impropers
     int nCommonImpropers();
-    // The Configurations Model
-    ConfigurationModel *configurationsModel();
 
     /*
      * Data

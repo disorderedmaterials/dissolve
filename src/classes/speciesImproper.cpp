@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesImproper.h"
-#include "classes/coreData.h"
+#include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesTorsion.h"
 

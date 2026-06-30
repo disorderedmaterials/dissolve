@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/box.h"
-#include "classes/coreData.h"
 #include "expression/variable.h"
 #include "main/dissolve.h"
 #include "nodes/configuration.h"

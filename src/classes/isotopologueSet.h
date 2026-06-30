@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/coreData.h"
 
 // Forward Declarations
 class Species;

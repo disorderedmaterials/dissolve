@@ -3,6 +3,7 @@
 
 #include "nodes/energy.h"
 #include "base/timer.h"
+#include "classes/configuration.h"
 #include "kernels/energy.h"
 #include "math/regression.h"
 #include "nodes/dissolve.h"

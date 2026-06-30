@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/commonTorsionModel.h"
+#include "classes/species.h"
 
 CommonTorsionModel::CommonTorsionModel(Species *species) : CommonTermModel(species), sourceData_(species->commonTorsions())
 {

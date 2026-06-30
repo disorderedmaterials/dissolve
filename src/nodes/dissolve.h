@@ -11,6 +11,7 @@
 #include <filesystem>
 
 // Forward declarations
+class Configuration;
 class EnergyKernel;
 class ForceKernel;
 class PotentialMap;

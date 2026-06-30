@@ -4,7 +4,6 @@
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 #include <algorithm>

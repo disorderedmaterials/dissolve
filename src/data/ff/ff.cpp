@@ -4,7 +4,6 @@
 #include "data/ff/ff.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"

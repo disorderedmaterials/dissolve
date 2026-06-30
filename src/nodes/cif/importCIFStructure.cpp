@@ -6,7 +6,6 @@
 #include "CIFImportParser.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
-#include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
 #include "nodes/cif/io/CIFImportErrorListeners.h"
 #include "nodes/cif/io/CIFImportVisitor.h"

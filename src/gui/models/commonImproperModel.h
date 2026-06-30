@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
 #include "gui/models/commonTermModel.h"
 #include "gui/models/modelUpdater.h"

@@ -4,7 +4,6 @@
 #include "data/ff/camelloneBKS/camelloneBKS.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
-#include "classes/coreData.h"
 #include "classes/speciesAtom.h"
 #include "data/ff/angleTerm.h"
 #include "data/ff/atomType.h"

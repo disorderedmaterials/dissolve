@@ -3,7 +3,6 @@
 
 #include "gui/getSpeciesNameDialog.h"
 #include "base/sysFunc.h"
-#include "classes/coreData.h"
 #include "classes/species.h"
 
 GetSpeciesNameDialog::GetSpeciesNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData)

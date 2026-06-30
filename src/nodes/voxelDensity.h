@@ -8,6 +8,7 @@
 #include "templates/array3D.h"
 
 // Forward declarations
+class Box;
 class Configuration;
 
 class VoxelDensityNode : public Node

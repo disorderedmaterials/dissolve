@@ -3,6 +3,7 @@
 
 #include "nodes/epsr.h"
 #include "base/sysFunc.h"
+#include "classes/configuration.h"
 #include "classes/partialSet.h"
 #include "classes/scatteringMatrix.h"
 #include "main/dissolve.h"

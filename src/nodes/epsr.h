@@ -16,6 +16,7 @@
 
 // Forward Declarations
 class AtomType;
+class Configuration;
 class PartialSet;
 
 class EPSRNamedTargetWeights : public Serialisable
