@@ -3,6 +3,7 @@
 
 #include "gui/models/speciesTorsionModel.h"
 #include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 
 SpeciesTorsionModel::SpeciesTorsionModel() : torsions_(nullptr) {}
 

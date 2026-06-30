@@ -8,9 +8,6 @@
 #include <QModelIndex>
 #include <vector>
 
-// Forward Declarations
-class CoreData;
-
 class SpeciesTorsionModel : public QAbstractTableModel
 {
     Q_OBJECT

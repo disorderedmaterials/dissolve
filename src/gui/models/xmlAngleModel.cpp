@@ -2,6 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/xmlAngleModel.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "math/mathFunc.h"
 #include <pugixml.hpp>
 

@@ -7,9 +7,6 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 
-// Forward Declarations
-class CoreData;
-
 class SpeciesAngleModel : public QAbstractTableModel
 {
     Q_OBJECT
