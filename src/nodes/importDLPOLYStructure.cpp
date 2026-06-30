@@ -116,7 +116,7 @@ NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(std::istream &input
         }
     }
 
-    // // Copy forces out?
+    // Copy forces out?
     if (optForces)
         optForces.value().get() = forces;
 
