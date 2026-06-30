@@ -44,14 +44,14 @@ class SDFNodeWaterTest : public TestGraphFixture
         ASSERT_TRUE(iterator->addEdge({testGraph_.fetchHeadName(), "Configuration", "SDF", "Configuration"}));
     }
     // Run the graph
-    void runGraph()
+    void runGraph() override
     {
         auto *iterator = findNode<IterableGraph>("Iterator");
         ASSERT_TRUE(iterator);
         ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
     }
     // Perform tests on generated data
-    void performTests()
+    void performTests() override
     {
         auto *iterator = findNode<IterableGraph>("Iterator");
         ASSERT_TRUE(iterator);
