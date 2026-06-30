@@ -36,20 +36,25 @@ void exportMermaidGraph(Graph &graph);
  */
 
 // Test simple double
-[[nodiscard]] bool testDouble(std::string_view quantity, double A, double B, double threshold);
+[[nodiscard]] testing::AssertionResult testDouble(std::string_view quantity, double A, double B, double threshold);
 // Test sampled double
-[[nodiscard]] bool testSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold);
+[[nodiscard]] testing::AssertionResult testSampledDouble(std::string_view quantity, SampledDouble A, double B,
+                                                         double threshold);
 // Test Data1D
-[[nodiscard]] bool testData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
-                              double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
-[[nodiscard]] bool testData1D(const Data1D &dataA, std::string_view nameA, std::string filePath, int xColumn, int yColumn,
-                              double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+[[nodiscard]] testing::AssertionResult testData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
+                                                  std::string_view nameB, double tolerance = 5.0e-3,
+                                                  Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+[[nodiscard]] testing::AssertionResult testData1D(const Data1D &dataA, std::string_view nameA, std::string filePath,
+                                                  int xColumn, int yColumn, double tolerance = 5.0e-3,
+                                                  Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 // Test Data2D
-[[nodiscard]] bool testData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB, std::string_view nameB,
-                              double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+[[nodiscard]] testing::AssertionResult testData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB,
+                                                  std::string_view nameB, double tolerance = 5.0e-3,
+                                                  Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 // Test Data3D
-[[nodiscard]] bool testData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
-                              double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError);
+[[nodiscard]] testing::AssertionResult testData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
+                                                  std::string_view nameB, double tolerance = 5.0e-3,
+                                                  Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 // Test Vec3 data
 void testVec3(const Vector3 &A, const Vector3 &B, double tolerance = 1.0e-6);
 // Test Vec3 vector data
@@ -88,7 +93,7 @@ void testReferenceForceConsistency(const std::vector<Vector3> &ppForces, const s
  * TOML
  */
 
-// Comparie TOML values with context, but without insisting on a specific ordering of fields
+// Compare TOML values with context, but without insisting on a specific ordering of fields
 void compareToml(std::string location, SerialisedValue toml, SerialisedValue toml2);
 // Perform round-trip serialisation of A into B
 template <class T> void tomlRoundTrip(T &a, T &b)

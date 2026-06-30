@@ -18,63 +18,65 @@ namespace UnitTest
 [[nodiscard]] testing::AssertionResult testDouble(std::string_view quantity, double A, double B, double threshold)
 {
     auto delta = fabs(A - B);
-    if (delta <= threshold) {
+    if (delta <= threshold)
         return testing::AssertionSuccess();
-    } else {
-        return testing::AssertionFailure() << std::format("{} values {} and {} have a difference of {}, which exceeds {}", quantity, A, B, delta, threshold);
-    }
+
+    return testing::AssertionFailure() << std::format("{} values {} and {} differ by {} which exceeds the threshold of {}",
+                                                      quantity, A, B, delta, threshold);
 }
 // Test sampled double
-[[nodiscard]] bool testSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold)
+[[nodiscard]] testing::AssertionResult testSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold)
 {
     return testDouble(quantity, A.value(), B, threshold);
 }
 // Test Data1D
-[[nodiscard]] bool testData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
-                              double tolerance, Error::ErrorType errorType)
+[[nodiscard]] testing::AssertionResult testData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
+                                                  std::string_view nameB, double threshold, Error::ErrorType errorType)
 {
     // Generate the error estimate and compare against the threshold value
     auto error = Error::error(errorType, dataA, dataB).error;
-    auto notOK = std::isnan(error) || error > tolerance;
-    Messenger::print("Data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA, error, nameB,
-                     notOK ? "NOT OK" : "OK", tolerance);
-    return !notOK;
+    if (std::isnan(error) || error > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Data '{}' has error of {} with data '{}' h exceeds the threshold of {}\n", nameA, error, nameB, threshold);
+
+    return testing::AssertionSuccess();
 }
-[[nodiscard]] bool testData1D(const Data1D &dataA, std::string_view nameA, std::string filePath, int xColumn, int yColumn,
-                              double tolerance, Error::ErrorType errorType)
+[[nodiscard]] testing::AssertionResult testData1D(const Data1D &dataA, std::string_view nameA, std::string filePath,
+                                                  int xColumn, int yColumn, double threshold, Error::ErrorType errorType)
 {
     Data1D dataB;
     if (!ImportXYDataNode::read(dataB, filePath, xColumn, yColumn))
     {
-        std::cout << std::format("Failed to read data from '{}'\n", filePath);
-        return false;
+        testing::AssertionFailure() << std::format("Failed to read data from '{}'\n", filePath);
     }
 
-    return testData1D(dataA, nameA, dataB, filePath, tolerance, errorType);
+    return testData1D(dataA, nameA, dataB, filePath, threshold, errorType);
 }
 // Test Data2D
-[[nodiscard]] bool testData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB, std::string_view nameB,
-                              double tolerance, Error::ErrorType errorType)
+[[nodiscard]] testing::AssertionResult testData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB,
+                                                  std::string_view nameB, double threshold, Error::ErrorType errorType)
 {
     // Generate the error estimate and compare against the threshold value
     auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
-    auto notOK = std::isnan(error) || error > tolerance;
-    Messenger::print("Data '{}' has error of {:7.3f} with data '{}' and is {} (threshold is {:6.3e})\n\n", nameA, error, nameB,
-                     notOK ? "NOT OK" : "OK", tolerance);
+    if (std::isnan(error) || error > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Data '{}' has error of {} with data '{}' which exceeds the threshold of {}", nameA, error, nameB,
+                   threshold);
 
-    return !notOK;
+    return testing::AssertionSuccess();
 }
 // Test Data3D
-[[nodiscard]] bool testData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
-                              double tolerance, Error::ErrorType errorType)
+[[nodiscard]] testing::AssertionResult testData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
+                                                  std::string_view nameB, double threshold, Error::ErrorType errorType)
 {
     // Generate the error estimate and compare against the threshold value
     auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
-    auto notOK = std::isnan(error) || error > tolerance;
-    Messenger::print("Internal data '{}' has error of {:7.3f} with external data '{}' and is {} (threshold is {:6.3e})\n\n",
-                     nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
+    if (std::isnan(error) || error > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Internal data '{}' has error of {} with external data '{}' which exceeds the threshold of {}", nameA, error,
+                   nameB, threshold);
 
-    return !notOK;
+    return testing::AssertionSuccess();
 }
 // Test Vec3 data
 void testVec3(const Vector3 &A, const Vector3 &B, double tolerance)
