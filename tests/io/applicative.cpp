@@ -161,11 +161,8 @@ TEST(ApplicativeTest, Helium)
         EXPECT_EQ(elem, "He");
 }
 
-} // namespace UnitTest
-
 TEST(ApplicativeTest, DLPOLYStructure)
 {
-    using namespace Parsers;
     std::ifstream infile{"dlpoly/water1000/full.REVCON"};
     ASSERT_TRUE(infile);
     auto header = ImportDLPOLYStructureNode::header().parse(infile);
@@ -190,7 +187,6 @@ TEST(ApplicativeTest, DLPOLYStructure)
 
 TEST(ApplicativeTest, DLPOLYTrajectory)
 {
-    using namespace Parsers;
     std::ifstream infile{"dlpoly/water267-npt/water-267-298K.HISf"};
     ASSERT_TRUE(infile);
     auto header = ImportDLPOLYTrajectoryNode::header().parse(infile);
@@ -210,7 +206,6 @@ TEST(ApplicativeTest, DLPOLYTrajectory)
 
 TEST(ApplicativeTest, Moscito)
 {
-    using namespace Parsers;
     std::ifstream infile{"moscito/py5_torsions/py5-ntf2-final.str"};
     ASSERT_TRUE(infile);
     auto header = ImportMoscitoStructureNode::header().parse(infile);
@@ -234,3 +229,5 @@ TEST(ApplicativeTest, Moscito)
     EXPECT_EQ(vel.x, 0.43076653);
     EXPECT_EQ(force.x, -0.12764812E+03);
 }
+
+} // namespace UnitTest
