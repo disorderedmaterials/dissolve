@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/applicative.h"
 #include "classes/structure.h"
 #include "nodes/node.h"
 
@@ -37,4 +38,8 @@ class ImportDLPOLYTrajectoryNode : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Parse file header
+    static Parsers::Parser<std::tuple<int, int, int, int, double>> header();
 };

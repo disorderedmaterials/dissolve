@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/applicative.h"
 #include "classes/structure.h"
 #include "nodes/node.h"
 
@@ -41,6 +42,8 @@ class ImportDLPOLYStructureNode : public Node
 
     public:
     // Read structure from the specified file parser
-    static NodeConstants::ProcessResult read(LineParser &parser, int keytrj, int imcon, int nAtoms, Structure &structure,
+    static NodeConstants::ProcessResult read(std::istream &input, int keytrj, int imcon, int nAtoms, Structure &structure,
                                              OptionalReferenceWrapper<std::vector<Vector3>> forces = {});
+    static Parsers::Parser<std::tuple<std::string, int, int, std::optional<int>>> header();
+    static Parsers::Parser<std::tuple<Vector3, std::optional<Vector3>, std::optional<Vector3>>> atom();
 };

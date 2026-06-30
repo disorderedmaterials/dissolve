@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include "base/applicative.h"
 #include "classes/structure.h"
+#include "math/vector3.h"
 #include "nodes/node.h"
 
 class ImportMoscitoStructureNode : public Node
@@ -38,4 +40,14 @@ class ImportMoscitoStructureNode : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Parse the header of a moscito file
+    static Parsers::Parser<std::tuple<Vector3, int>> header();
+    // Parse an atom from a moscito file
+    static Parsers::Parser<std::tuple<std::string, int, Vector3, Vector3, Vector3>> atom();
+    // Parse an molecule from a moscito file
+    static Parsers::Parser<
+        std::tuple<std::string, int, int, int, std::vector<std::tuple<std::string, int, Vector3, Vector3, Vector3>>>>
+    molecule();
 };

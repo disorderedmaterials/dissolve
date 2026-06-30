@@ -4,7 +4,9 @@
 #pragma once
 
 #include "base/applicative.h"
+#include "math/matrix3.h"
 #include "math/vector3.h"
+#include "math/vector3i.h"
 
 namespace Parsers
 {
@@ -20,5 +22,10 @@ Parser<double> real();
 
 // A parser that accepts a 3-vector of floating point numbers
 Parser<Vector3> vector3();
+// A parser that accepts a 3-vector of integers
+Parser<Vector3i> vector3i();
+
+// A parser that accepts a 3x3 matrix of floating point numbers
+Parser<Matrix3> matrix3();
 
 }; // namespace Parsers

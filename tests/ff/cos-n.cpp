@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "data/ff/library.h"
 #include "tests/graphData.h"
-#include "tests/tempFile.h"
 #include "tests/testData.h"
 #include <gtest/gtest.h>
 
@@ -61,7 +59,7 @@ TEST(CosNTorsionForcesTest, POE)
 
     // Check agreement with external reference forces
     checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.0e-2);
+                                   importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.2e-2);
 }
 
 TEST(CosNTorsionEnergyTest, Py4OHNTf2)

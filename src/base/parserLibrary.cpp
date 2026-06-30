@@ -54,8 +54,25 @@ Parser<double> real()
 // A parser that accepts a 3-vector of floating point numbers
 Parser<Vector3> vector3()
 {
-    return (real() & spaces() >> real() & spaces() >> real())
+    // Annoyingly, the Moscito file format does not guarantee spaces
+    // between the numbers when the numbers are negative.  Luckily, we
+    // can still parse this scenario.
+    return (real() & maybe(spaces()) >> real() & maybe(spaces()) >> real())
         .apply([](double x, double y, double z) { return Vector3(x, y, z); });
+}
+// A parser that accepts a 3-vector of integers
+Parser<Vector3i> vector3i()
+{
+    return (integer() & maybe(spaces()) >> integer() & maybe(spaces()) >> integer())
+        .apply([](auto x, auto y, auto z) { return Vector3i(x, y, z); });
+}
+
+// A parser that accepts a 3x3 matrix of floating point numbers
+Parser<Matrix3> matrix3()
+{
+    return (maybe(inlineSpaces()) >> vector3() << spaces() & maybe(inlineSpaces()) >> vector3() << spaces() &
+            maybe(inlineSpaces()) >> vector3() << spaces())
+        .apply([](const auto m1, const auto m2, const auto m3) { return Matrix3(m1, m2, m3); });
 }
 
 } // namespace Parsers

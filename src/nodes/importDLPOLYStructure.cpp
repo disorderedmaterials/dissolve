@@ -2,6 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importDLPOLYStructure.h"
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
+#include "data/elements.h"
 
 ImportDLPOLYStructureNode::ImportDLPOLYStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -30,50 +33,42 @@ std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a D
 // Perform processing
 NodeConstants::ProcessResult ImportDLPOLYStructureNode::process()
 {
-    // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile{filePath_};
+    if (!infile)
         return error("Couldn't open file '{}' for loading coordinates data.\n", filePath_);
-
-    // Skip title
-    if (parser.skipLines(1) != LineParser::Success)
-        return NodeConstants::ProcessResult::Failed;
-
-    // Import in keytrj, imcon, and number of atoms, and initialise arrays
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return NodeConstants::ProcessResult::Failed;
-
-    auto keytrj = parser.argi(0);
-    auto imcon = parser.argi(1);
-    auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
-    if (nAtoms == 0)
+    auto head = header().parse(infile);
+    if (!head)
+        return error("Failed to parse file header");
+    auto &[title, keytrj, imcon, natoms] = std::get<0>(*head);
+    if (!natoms)
         message(" --> Expecting coordinates for an unknown number of atoms (DLPOLY keytrj={}, imcon={}) - will read "
                 "until end of file.\n",
-                nAtoms, keytrj, imcon);
+                keytrj, imcon);
     else
-        message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
-
-    return read(parser, keytrj, imcon, nAtoms, structure_, forces_);
+        message(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", *natoms, keytrj, imcon);
+    return read(infile, keytrj, imcon, natoms.value_or(0), structure_, forces_);
 }
 
 // Read structure from the specified file parser
-NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(LineParser &parser, int keytrj, int imcon, int nAtoms,
+NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(std::istream &input, int keytrj, int imcon, int nAtoms,
                                                              Structure &structure,
                                                              OptionalReferenceWrapper<std::vector<Vector3>> optForces)
 {
-    /*
-     * Import DL_POLY coordinates information through the specified line parser.
-     * We assume HISf, CONFIG or REVCON format (only the first two lines differ)
-     *
-     * Line 1:    Title
-     * Line 2:    keytrj   imcon    natoms    []
-     * Line 3-5:  cell matrix (if imcon > 0)
-     * Line 6:    atomtype        id
-     * Line 7:    rx   ry   rz
-     * Line 8:    vx   vy   vz      if (keytrj > 0)
-     * Line 9:    fx   fy   fz	if (keytrj > 1)
-     *   ...
-     */
+    // /*
+    //  * Import DL_POLY coordinates information through the specified line parser.
+    //  * We assume HISf, CONFIG or REVCON format (only the first two lines differ)
+    //  *
+    //  * Line 1:    Title
+    //  * Line 2:    keytrj   imcon    natoms    []
+    //  * Line 3-5:  cell matrix (if imcon > 0)
+    //  * Line 6:    atomtype        id
+    //  * Line 7:    rx   ry   rz
+    //  * Line 8:    vx   vy   vz      if (keytrj > 0)
+    //  * Line 9:    fx   fy   fz	if (keytrj > 1)
+    //  *   ...
+    //  */
+
+    using namespace Parsers;
 
     // Clear storage objects
     structure.clear();
@@ -82,47 +77,43 @@ NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(LineParser &parser,
     // Read cell information if given
     if (imcon > 0)
     {
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        auto mat = matrix3().parse(input);
+        if (!mat)
             return NodeConstants::ProcessResult::Failed;
-        auto m1 = parser.arg3d(0);
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return NodeConstants::ProcessResult::Failed;
-        auto m2 = parser.arg3d(0);
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-            return NodeConstants::ProcessResult::Failed;
-        auto m3 = parser.arg3d(0);
-        structure.createBox(Matrix3(m1, m2, m3));
+        structure.createBox(std::get<0>(*mat));
     }
 
-    // Loop over atoms (either a specified number, or until we reach the end of the file
-    while (!parser.eofOrBlank())
+    auto atomType = graphs() << inlineSpaces() & natural() << inlineSpaces() &
+                    maybe(real() << maybe(inlineSpaces() << real()) << newlines());
+
+    if (keytrj == 0)
     {
-        // Skip atomname line
-        if (parser.skipLines(1) != LineParser::Success)
+        auto terms = atomType >> spaces() >> vector3() << spaces();
+        auto result = some(terms).parse(input);
+        if (!result)
             return NodeConstants::ProcessResult::Failed;
-
-        // Read position
-        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        for (auto position : std::get<0>(*result))
+            structure.addAtom(Elements::Unknown, position);
+    }
+    else if (keytrj == 1)
+    {
+        auto terms = atomType >> vector3() << spaces() & vector3() << spaces();
+        auto result = some(terms).parse(input);
+        if (!result)
             return NodeConstants::ProcessResult::Failed;
-        structure.addAtom(Elements::Unknown, parser.arg3d(0));
-
-        // Read velocity if present
-        if (keytrj > 0)
+        for (auto &[position, velocity] : std::get<0>(*result))
+            structure.addAtom(Elements::Unknown, position);
+    }
+    else
+    {
+        auto result = some(atom()).parse(input);
+        if (!result)
+            return NodeConstants::ProcessResult::Failed;
+        for (auto &[position, velocity, force] : std::get<0>(*result))
         {
-            if (parser.skipLines(1) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
+            structure.addAtom(Elements::Unknown, position);
+            forces.push_back(*force);
         }
-
-        // Read forces if present
-        if (keytrj > 1)
-        {
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
-            forces.push_back(parser.arg3d(0));
-        }
-
-        if ((nAtoms > 0) && (structure.nAtoms() == nAtoms))
-            break;
     }
 
     // Copy forces out?
@@ -130,4 +121,19 @@ NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(LineParser &parser,
         optForces.value().get() = forces;
 
     return NodeConstants::ProcessResult::Success;
+}
+
+Parsers::Parser<std::tuple<std::string, int, int, std::optional<int>>> ImportDLPOLYStructureNode::header()
+{
+    using namespace Parsers;
+    return inlines() << newlines() & maybe(inlineSpaces()) >> natural() << inlineSpaces() & natural() &
+           maybe(inlineSpaces() >> natural() << maybe(inlineSpaces() << real())) << spaces();
+}
+
+Parsers::Parser<std::tuple<Vector3, std::optional<Vector3>, std::optional<Vector3>>> ImportDLPOLYStructureNode::atom()
+{
+    using namespace Parsers;
+    auto atomType =
+        graphs() << inlineSpaces() & natural() & maybe(inlineSpaces() >> real()) & maybe(inlineSpaces() >> real()) << spaces();
+    return atomType >> vector3() << spaces() & maybe(vector3() << spaces()) & maybe(vector3() << spaces());
 }

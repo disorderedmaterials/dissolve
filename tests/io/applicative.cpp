@@ -3,6 +3,9 @@
 
 #include "base/applicative.h"
 #include "base/parserLibrary.h"
+#include "nodes/importDLPOLYStructure.h"
+#include "nodes/importDLPOLYTrajectory.h"
+#include "nodes/importMoscitoStructure.h"
 #include "nodes/importXYZStructure.h"
 #include <gtest/gtest.h>
 #include <sstream>
@@ -156,6 +159,75 @@ TEST(ApplicativeTest, Helium)
     auto index = 0;
     for (auto &[elem, r, q] : terms)
         EXPECT_EQ(elem, "He");
+}
+
+TEST(ApplicativeTest, DLPOLYStructure)
+{
+    std::ifstream infile{"dlpoly/water1000/full.REVCON"};
+    ASSERT_TRUE(infile);
+    auto header = ImportDLPOLYStructureNode::header().parse(infile);
+    ASSERT_TRUE(header);
+    auto &[value, rest] = *header;
+    auto [title, keytrj, imcon, natoms] = value;
+    EXPECT_TRUE(title.starts_with("Bulk"));
+    EXPECT_EQ(keytrj, 2);
+    EXPECT_EQ(imcon, 1);
+    EXPECT_EQ(natoms, 3000);
+    auto matrix = matrix3().parse(infile);
+    ASSERT_TRUE(matrix);
+    std::cout << "Next char:\t" << infile.peek() << std::endl;
+    auto example = ImportDLPOLYStructureNode::atom();
+    auto more = some(example).parse(infile);
+    ASSERT_TRUE(more);
+    auto &[pos, vel, forces] = std::get<0>(*more)[0];
+    EXPECT_EQ(pos.x, -10.97620028);
+    EXPECT_EQ(vel->y, -1.89534626301);
+    EXPECT_EQ(forces->z, -7400.12500402);
+}
+
+TEST(ApplicativeTest, DLPOLYTrajectory)
+{
+    std::ifstream infile{"dlpoly/water267-npt/water-267-298K.HISf"};
+    ASSERT_TRUE(infile);
+    auto header = ImportDLPOLYTrajectoryNode::header().parse(infile);
+    ASSERT_TRUE(header);
+    auto &[value, rest] = *header;
+    auto [stepno, natoms, keytrj, imcon, _] = value;
+    EXPECT_EQ(natoms, 801);
+    auto matrix = matrix3().parse(infile);
+    ASSERT_TRUE(matrix);
+    std::cout << "Next char:\t" << infile.peek() << std::endl;
+    auto example = ImportDLPOLYStructureNode::atom();
+    auto more = some(example).parse(infile);
+    ASSERT_TRUE(more);
+    auto &[pos, vel, forces] = std::get<0>(*more)[0];
+    EXPECT_EQ(pos.x, 8.278);
+}
+
+TEST(ApplicativeTest, Moscito)
+{
+    std::ifstream infile{"moscito/py5_torsions/py5-ntf2-final.str"};
+    ASSERT_TRUE(infile);
+    auto header = ImportMoscitoStructureNode::header().parse(infile);
+    ASSERT_TRUE(header);
+    auto &[c, nmolecules] = std::get<0>(*header);
+    EXPECT_EQ(c.x, 2.0);
+    EXPECT_EQ(nmolecules, 2);
+
+    auto mols = some(ImportMoscitoStructureNode::molecule()).parse(infile);
+    ASSERT_TRUE(mols);
+    auto &[name, type, natoms, index, atoms] = std::get<0>(*mols)[0];
+    EXPECT_EQ(name, "cat");
+    EXPECT_EQ(type, 1);
+    EXPECT_EQ(natoms, 27);
+    EXPECT_EQ(index, 1);
+
+    auto &[atomname, idx, pos, vel, force] = atoms[0];
+    EXPECT_EQ(atomname, "nc1");
+    EXPECT_EQ(idx, 1);
+    EXPECT_EQ(pos.x, 0.31811301);
+    EXPECT_EQ(vel.x, 0.43076653);
+    EXPECT_EQ(force.x, -0.12764812E+03);
 }
 
 } // namespace UnitTest

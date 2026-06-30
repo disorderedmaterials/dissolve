@@ -2,7 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importDLPUtilsPDens.h"
-#include "base/lineParser.h"
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
 
 ImportDLPUtilsPDensNode::ImportDLPUtilsPDensNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -51,49 +52,39 @@ bool ImportDLPUtilsPDensNode::read(Data3D &data, std::string filePath)
      * Line 4 : loop order (e.g. 'zyx')
      * Line 5+: data (N = gridx*gridy*gridz)
      */
+    using namespace Parsers;
     data.clear();
 
+    auto firstLine = inlineSpaces() >> vector3i() & inlineSpaces() >> vector3i() & inlineSpaces() >> vector3i() << spaces();
+    auto secondLine = vector3() << inlineSpaces() & vector3() << inlineSpaces() & vector3() << spaces();
+    auto thirdLine = vector3() << spaces();
+    auto fourthLine = literal("zyx") << spaces();
+    auto header = firstLine & secondLine & thirdLine << fourthLine;
+
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile(filePath);
+    if (!infile)
         return false;
 
-    // Get array dimensioos
-    if (parser.getArgsDelim() != LineParser::Success)
+    auto head = header.parse(infile);
+    if (!head)
         return false;
-    auto N = parser.argi(0);
 
-    // Get voxel sizes, assuming cubic grid
-    if (parser.getArgsDelim() != LineParser::Success)
-        return false;
-    auto delta = Vector3(parser.argd(0), parser.argd(4), parser.argd(8));
-
-    // Get grid origin coordinates
-    if (parser.getArgsDelim() != LineParser::Success)
-        return false;
-    auto axisOrigin = parser.arg3d(0);
-
-    // Get loop order - we handle `zyx` and nothing else for now
-    if (parser.getArgsDelim() != LineParser::Success)
-        return false;
-    if (parser.args(0) != "zyx")
-        return Messenger::error("Only 'zyx' loop order is allowed.\n");
+    auto &[n, imin, imax, a, b, c, axisOrigin] = std::get<0>(*head);
 
     // Set up our data
-    data.initialise(N, axisOrigin.x, delta.x, N, axisOrigin.y, delta.y, N, axisOrigin.z, delta.z);
+    data.initialise(n.x, axisOrigin.x, a.x, n.y, axisOrigin.y, b.y, n.z, axisOrigin.z, c.z);
+    auto points = some(maybe(spaces()) >> real() << spaces()).exact(infile);
+    if (!points)
+        return false;
 
+    auto idx = 0;
     // Loop over data values ('zyx' loop order, meaning fastest varying is z)
-    for (auto x = 0; x < N; ++x)
-        for (auto y = 0; y < N; ++y)
-            for (auto z = 0; z < N; ++z)
-            {
-                // Read line
-                if (parser.getArgsDelim() != LineParser::Success)
-                    return false;
-
+    for (auto x = 0; x < n.x; ++x)
+        for (auto y = 0; y < n.y; ++y)
+            for (auto z = 0; z < n.z; ++z)
                 // Set the value
-                data.value(x, y, z) = parser.argd(0);
-            }
+                data.value(x, y, z) = (*points)[idx++];
 
     return true;
 }
