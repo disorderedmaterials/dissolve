@@ -2,8 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/models/speciesTorsionModel.h"
-#include "classes/speciesAtom.h"
-#include "classes/speciesBond.h"
 
 SpeciesTorsionModel::SpeciesTorsionModel() : torsions_(nullptr) {}
 

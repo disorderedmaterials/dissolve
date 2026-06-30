@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAngle.h"
+#include "classes/speciesBond.h"
 
 // Return enum options for AngleFunction
 EnumOptions<AngleFunctions::Form> AngleFunctions::forms()

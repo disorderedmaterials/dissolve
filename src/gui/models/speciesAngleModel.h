@@ -4,6 +4,8 @@
 #pragma once
 
 #include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 

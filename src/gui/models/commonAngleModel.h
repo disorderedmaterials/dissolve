@@ -4,6 +4,8 @@
 #pragma once
 
 #include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "gui/models/commonTermModel.h"
 #include "gui/models/modelUpdater.h"
 #include "templates/optionalRef.h"

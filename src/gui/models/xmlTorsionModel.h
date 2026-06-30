@@ -3,12 +3,13 @@
 
 #pragma once
 
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "data/ff/torsionTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
-#include <pugixml.hpp>
-
 #include <map>
+#include <pugixml.hpp>
 #include <tuple>
 #include <vector>
 
