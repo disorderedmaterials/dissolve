@@ -3,7 +3,6 @@
 
 #include "nodes/importMoscitoStructure.h"
 #include "base/parserLibrary.h"
-#include <fstream>
 
 ImportMoscitoStructureNode::ImportMoscitoStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
