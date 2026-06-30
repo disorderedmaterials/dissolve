@@ -609,23 +609,23 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         else if constexpr (HasEnumOptions<DataClass>)
         {
             DataClass proxy; // Fake T value to get the correct overload
-            Parameter<DataClass>::data_ = getEnumOptions(proxy).deserialise(node);
+            Parameter<DataClass>::data_ = getEnumOptions(proxy).enumeration(toml::find<std::string>(node, "data"));
         }
-        else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
+        else if constexpr (std::is_same_v<DataClass, std::optional<double>>)
         {
             if (node.contains("data"))
                 Parameter<DataClass>::data_ = Deserialisable::deser<double>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
-        else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
+        else if constexpr (std::is_same_v<DataClass, std::optional<Number>>)
         {
             if (node.contains("data"))
                 Parameter<DataClass>::data_ = Deserialisable::deser<Number>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
-        else if constexpr (std::is_convertible<DataClass, std::optional<Data1D>>::value)
+        else if constexpr (std::is_same_v<DataClass, std::optional<Data1D>>)
         {
             if (node.contains("data"))
                 Parameter<DataClass>::data_ = Deserialisable::deser<Data1D>(node.at("data"));
