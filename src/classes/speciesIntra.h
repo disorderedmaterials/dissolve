@@ -6,11 +6,11 @@
 #include "base/messenger.h"
 #include "base/serialiser.h"
 #include "classes/interactionPotential.h"
+#include "classes/speciesAtom.h"
 #include <string>
 #include <vector>
 
 // Forward Declarations
-class SpeciesAtom;
 class Species;
 
 // Base class for intramolecular interactions within Species
