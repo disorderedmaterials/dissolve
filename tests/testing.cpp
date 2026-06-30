@@ -15,13 +15,14 @@ namespace UnitTest
  */
 
 // Test simple double
-[[nodiscard]] bool testDouble(std::string_view quantity, double A, double B, double threshold)
+[[nodiscard]] testing::AssertionResult testDouble(std::string_view quantity, double A, double B, double threshold)
 {
     auto delta = fabs(A - B);
-    auto isOK = delta <= threshold;
-    Messenger::print("Reference {} delta with correct value is {:15.9e} and is {} (threshold is {:10.3e})\n", quantity, delta,
-                     isOK ? "OK" : "NOT OK", threshold);
-    return isOK;
+    if (delta <= threshold) {
+        return testing::AssertionSuccess();
+    } else {
+        return testing::AssertionFailure() << std::format("{} values {} and {} have a difference of {}, which exceeds {}", quantity, A, B, delta, threshold);
+    }
 }
 // Test sampled double
 [[nodiscard]] bool testSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold)
