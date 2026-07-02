@@ -62,17 +62,25 @@ void exportMermaidGraph(Graph &graph);
 [[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
 // Test interaction parameters
 template <class Intra>
-void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
-                              const InteractionPotential<Intra> &actualParams, double tolerance = 1.0e-6);
+[[nodiscard]] testing::AssertionResult
+checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
+                         const InteractionPotential<Intra> &actualParams, double tolerance = 1.0e-6);
 // Test species bond term
-void testSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<BondFunctions> &expectedParams,
-                               double tolerance = 1.0e-6);
+[[nodiscard]] testing::AssertionResult testSpeciesBond(OptionalReferenceWrapper<const SpeciesBond> optBond,
+                                                       const InteractionPotential<BondFunctions> &expectedParams,
+                                                       double tolerance = 1.0e-6);
 // Test species angle term
-void testSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<AngleFunctions> &expectedParams,
-                               double tolerance = 1.0e-6);
-// Test species torsion / improper term
-void testSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
-                               const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance = 1.0e-6);
+[[nodiscard]] testing::AssertionResult testSpeciesAngle(OptionalReferenceWrapper<const SpeciesAngle> optAngle,
+                                                        const InteractionPotential<AngleFunctions> &expectedParams,
+                                                        double tolerance = 1.0e-6);
+// Test species torsion term
+[[nodiscard]] testing::AssertionResult testSpeciesTorsion(OptionalReferenceWrapper<const SpeciesTorsion> optTorsion,
+                                                          const InteractionPotential<TorsionFunctions> &expectedParams,
+                                                          double tolerance = 1.0e-6);
+// Test species improper term
+[[nodiscard]] testing::AssertionResult testSpeciesImproper(OptionalReferenceWrapper<const SpeciesImproper> optImproper,
+                                                           const InteractionPotential<TorsionFunctions> &expectedParams,
+                                                           double tolerance = 1.0e-6);
 // Test consistency between the two supplied double-keyed Data1D maps
 static bool testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
                                const DoubleKeyedMap<Data1D> &mapB, double testThreshold);

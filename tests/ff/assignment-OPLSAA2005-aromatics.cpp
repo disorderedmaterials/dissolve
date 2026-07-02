@@ -23,13 +23,13 @@ TEST(OPLSAA2005AromaticsAssignmentTest, Benzene)
     ASSERT_EQ(species.impropers().size(), 6);
 
     EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "CA"}, {1, "HA"}}));
-    testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=3071.06 eq=1.08"});
-    testSpeciesIntramolecular(&species, {0, 2}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
-    testSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=292.88 eq=120"});
-    testSpeciesIntramolecular(&species, {0, 2, 4}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
-    testSpeciesIntramolecular(&species, {1, 0, 2, 3}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
-    testSpeciesIntramolecular(&species, {1, 0, 2, 4}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
-    testSpeciesIntramolecular(&species, {10, 0, 2, 4}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 1), {BondFunctions::Form::Harmonic, "k=3071.06 eq=1.08"}));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 2), {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(1, 0, 2), {AngleFunctions::Form::Harmonic, "k=292.88 eq=120"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(0, 2, 4), {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(1, 0, 2, 3), {TorsionFunctions::Form::Cos3, "0  30.334  0"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(1, 0, 2, 4), {TorsionFunctions::Form::Cos3, "0  30.334  0"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(10, 0, 2, 4), {TorsionFunctions::Form::Cos3, "0  30.334  0"}));
 }
 
 TEST(OPLSAA2005AromaticsAssignmentTest, Naphthalene)
@@ -65,9 +65,9 @@ TEST(OPLSAA2005AromaticsAssignmentTest, Naphthalene)
                                                {15, "HA"},
                                                {16, "HA"},
                                                {17, "HA"}}));
-    testSpeciesIntramolecular(&species, {2, 7}, {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"});
-    testSpeciesIntramolecular(&species, {1, 2, 7}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
-    testSpeciesIntramolecular(&species, {1, 2, 3}, {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"});
-    testSpeciesIntramolecular(&species, {8, 0, 1, 2}, {TorsionFunctions::Form::Cos3, "0  30.334  0"});
+    EXPECT_TRUE(testSpeciesBond(species.getBond(2, 7), {BondFunctions::Form::Harmonic, "k=3924.59 eq=1.4"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(1, 2, 7), {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(1, 2, 3), {AngleFunctions::Form::Harmonic, "k=527.184 eq=120"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(8, 0, 1, 2), {TorsionFunctions::Form::Cos3, "0  30.334  0"}));
 }
 }; // namespace UnitTest

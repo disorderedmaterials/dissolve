@@ -113,55 +113,63 @@ namespace UnitTest
 }
 // Test interaction parameters
 template <class Intra>
-void checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
-                              const InteractionPotential<Intra> &actualParams, double tolerance)
+[[nodiscard]] testing::AssertionResult
+checkIntramolecularTerms(const std::string &term, const InteractionPotential<Intra> &expectedParams,
+                         const InteractionPotential<Intra> &actualParams, double tolerance)
 {
-    Messenger::print("Testing intramolecular interaction: {}...\n", termInfo);
-    EXPECT_EQ(Intra::forms().keyword(actualParams.form()), Intra::forms().keyword(expectedParams.form()));
-    EXPECT_EQ(actualParams.nParameters(), expectedParams.nParameters());
+    if (Intra::forms().keyword(actualParams.form()) != Intra::forms().keyword(expectedParams.form()))
+        return testing::AssertionFailure() << std::format("{} has wrong form - {} vs the expected {}", term,
+                                                          Intra::forms().keyword(actualParams.form()),
+                                                          Intra::forms().keyword(expectedParams.form()));
+    if (actualParams.nParameters() != expectedParams.nParameters())
+        return testing::AssertionFailure() << std::format("{} has wrong parameter count - {} vs the expected {}", term,
+                                                          actualParams.nParameters(), expectedParams.nParameters());
     for (auto &&[current, expected] : zip(actualParams.parameters(), expectedParams.parameters()))
-        EXPECT_NEAR(current, expected, tolerance);
+        if (fabs(current - expected) > tolerance)
+            return testing::AssertionFailure()
+                   << std::format("{} has wrong parameter value - {} vs the expected {}", term, current, expected);
+
+    return testing::AssertionSuccess();
 }
 // Test species bond term
-void testSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<BondFunctions> &expectedParams,
-                               double tolerance)
+[[nodiscard]] testing::AssertionResult testSpeciesBond(OptionalReferenceWrapper<const SpeciesBond> optBond,
+                                                       const InteractionPotential<BondFunctions> &expectedParams,
+                                                       double tolerance)
 {
-    ASSERT_TRUE(atoms.size() == 2);
-    const auto &b = sp->getBond(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]]);
-    if (!b)
-        throw(std::runtime_error(std::format("No bond {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
-    checkIntramolecularTerms(std::format("bond {}", joinStrings(atoms, "-")), expectedParams, b->get().interactionPotential(),
-                             tolerance);
+    if (!optBond)
+        return testing::AssertionFailure() << "No bond provided to test";
+    auto &b = (*optBond).get();
+    return checkIntramolecularTerms(std::format("Bond {} in species '{}'",
+                                                joinStrings(b.atoms(), "-", [](const auto &atom) { return atom->index(); }),
+                                                b.parent()->name()),
+                                    expectedParams, b.interactionPotential(), tolerance);
 }
 // Test species angle term
-void testSpeciesIntramolecular(Species *sp, std::vector<int> atoms, const InteractionPotential<AngleFunctions> &expectedParams,
-                               double tolerance)
+[[nodiscard]] testing::AssertionResult testSpeciesAngle(OptionalReferenceWrapper<const SpeciesAngle> optAngle,
+                                                        const InteractionPotential<AngleFunctions> &expectedParams,
+                                                        double tolerance)
 {
-    ASSERT_TRUE(atoms.size() == 3);
-    const auto &a = sp->getAngle(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]]);
-    if (!a)
-        throw(std::runtime_error(std::format("No angle {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
-    checkIntramolecularTerms(std::format("angle {}", joinStrings(atoms, "-")), expectedParams, a->get().interactionPotential(),
-                             tolerance);
+    if (!optAngle)
+        return testing::AssertionFailure() << "No angle provided to test";
+    auto &a = (*optAngle).get();
+    printf("SP = %p\n", a.parent());
+    return checkIntramolecularTerms(std::format("Angle {} in species '{}'",
+                                                joinStrings(a.atoms(), "-", [](const auto &atom) { return atom->index(); }),
+                                                a.parent()->name()),
+                                    expectedParams, a.interactionPotential(), tolerance);
 }
 // Test species torsion / improper term
-void testSpeciesIntramolecular(Species *sp, std::vector<int> atoms,
-                               const InteractionPotential<TorsionFunctions> &expectedParams, double tolerance)
+[[nodiscard]] testing::AssertionResult testSpeciesTorsion(OptionalReferenceWrapper<const SpeciesTorsion> optTorsion,
+                                                          const InteractionPotential<TorsionFunctions> &expectedParams,
+                                                          double tolerance)
 {
-    ASSERT_TRUE(atoms.size() == 4);
-    const auto &t =
-        sp->getTorsion(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]], &sp->atoms()[atoms[3]]);
-    const auto &i =
-        sp->getImproper(&sp->atoms()[atoms[0]], &sp->atoms()[atoms[1]], &sp->atoms()[atoms[2]], &sp->atoms()[atoms[3]]);
-    if (!t && !i)
-        throw(std::runtime_error(
-            std::format("No torsion or improper {} exists in species '{}'.\n", joinStrings(atoms, "-"), sp->name())));
-    else if (t)
-        checkIntramolecularTerms(std::format("torsion {}", joinStrings(atoms, "-")), expectedParams,
-                                 t->get().interactionPotential(), tolerance);
-    else
-        checkIntramolecularTerms(std::format("improper {}", joinStrings(atoms, "-")), expectedParams,
-                                 i->get().interactionPotential(), tolerance);
+    if (!optTorsion)
+        return testing::AssertionFailure() << "No torsion provided to test";
+    auto &t = (*optTorsion).get();
+    return checkIntramolecularTerms(std::format("Torsion {} in species '{}'",
+                                                joinStrings(t.atoms(), "-", [](const auto &atom) { return atom->index(); }),
+                                                t.parent()->name()),
+                                    expectedParams, t.interactionPotential(), tolerance);
 }
 // Test consistency between the two supplied double-keyed Data1D maps
 bool testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA, const DoubleKeyedMap<Data1D> &mapB,

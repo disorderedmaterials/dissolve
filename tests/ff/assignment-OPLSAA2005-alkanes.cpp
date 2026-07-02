@@ -39,14 +39,14 @@ TEST(OPLSAA2005AlkanesAssignmentTest, Heptane)
                                                {14, "HC"},
                                                {15, "HC"},
                                                {16, "HC"}}));
-    testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"});
-    testSpeciesIntramolecular(&species, {0, 7}, {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"});
-    testSpeciesIntramolecular(&species, {0, 1, 9}, {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"});
-    testSpeciesIntramolecular(&species, {0, 1, 2}, {AngleFunctions::Form::Harmonic, "k=488.273 eq=112.7"});
-    testSpeciesIntramolecular(&species, {15, 4, 16}, {AngleFunctions::Form::Harmonic, "k=276.144 eq=107.8"});
-    testSpeciesIntramolecular(&species, {7, 0, 1, 9}, {TorsionFunctions::Form::Cos3, "0  0  1.2552"});
-    testSpeciesIntramolecular(&species, {7, 0, 1, 2}, {TorsionFunctions::Form::Cos3, "0  0  1.2552"});
-    testSpeciesIntramolecular(&species, {0, 1, 2, 3}, {TorsionFunctions::Form::Cos3, "5.4392  -0.2092  0.8368"});
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 1), {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"}));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 7), {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(0, 1, 9), {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(0, 1, 2), {AngleFunctions::Form::Harmonic, "k=488.273 eq=112.7"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(15, 4, 16), {AngleFunctions::Form::Harmonic, "k=276.144 eq=107.8"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(7, 0, 1, 9), {TorsionFunctions::Form::Cos3, "0  0  1.2552"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(7, 0, 1, 2), {TorsionFunctions::Form::Cos3, "0  0  1.2552"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(0, 1, 2, 3), {TorsionFunctions::Form::Cos3, "5.4392  -0.2092  0.8368"}));
 }
 
 TEST(OPLSAA2005AlkanesAssignmentTest, Cycloheptane)
@@ -68,13 +68,13 @@ TEST(OPLSAA2005AlkanesAssignmentTest, Cycloheptane)
         testSpeciesAtomType(&species, {{0, "CT2"}, {1, "CT2"}, {2, "CT2"}, {3, "CT2"}, {4, "CT2"}, {5, "CT2"}, {6, "CT2"},
                                        {7, "HC"},  {8, "HC"},  {9, "HC"},  {10, "HC"}, {11, "HC"}, {12, "HC"}, {13, "HC"},
                                        {14, "HC"}, {15, "HC"}, {16, "HC"}, {17, "HC"}, {18, "HC"}, {19, "HC"}, {20, "HC"}}));
-    testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"});
-    testSpeciesIntramolecular(&species, {0, 7}, {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"});
-    testSpeciesIntramolecular(&species, {0, 1, 9}, {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"});
-    testSpeciesIntramolecular(&species, {0, 1, 2}, {AngleFunctions::Form::Harmonic, "k=488.273 eq=112.7"});
-    testSpeciesIntramolecular(&species, {15, 4, 16}, {AngleFunctions::Form::Harmonic, "k=276.144 eq=107.8"});
-    testSpeciesIntramolecular(&species, {7, 0, 1, 9}, {TorsionFunctions::Form::Cos3, "0  0  1.2552"});
-    testSpeciesIntramolecular(&species, {7, 0, 1, 2}, {TorsionFunctions::Form::Cos3, "0  0  1.2552"});
-    testSpeciesIntramolecular(&species, {0, 1, 2, 3}, {TorsionFunctions::Form::Cos3, "5.4392  -0.2092  0.8368"});
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 1), {BondFunctions::Form::Harmonic, "k=2242.62 eq=1.529"}));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 7), {BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(0, 1, 9), {AngleFunctions::Form::Harmonic, "k=313.8 eq=110.7"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(0, 1, 2), {AngleFunctions::Form::Harmonic, "k=488.273 eq=112.7"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(15, 4, 16), {AngleFunctions::Form::Harmonic, "k=276.144 eq=107.8"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(7, 0, 1, 9), {TorsionFunctions::Form::Cos3, "0  0  1.2552"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(7, 0, 1, 2), {TorsionFunctions::Form::Cos3, "0  0  1.2552"}));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(0, 1, 2, 3), {TorsionFunctions::Form::Cos3, "5.4392  -0.2092  0.8368"}));
 }
 }; // namespace UnitTest

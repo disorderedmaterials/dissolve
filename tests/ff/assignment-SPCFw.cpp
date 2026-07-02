@@ -23,7 +23,7 @@ TEST(SPCFwAssignmentTest, Water)
     ASSERT_EQ(species.impropers().size(), 0);
 
     EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "OW"}, {1, "HW"}, {2, "HW"}}));
-    testSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"});
-    testSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"});
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 1), {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(1, 0, 2), {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"}));
 }
 }; // namespace UnitTest

@@ -109,29 +109,34 @@ class Species : public Serialisable
     // Return vector of SpeciesBond
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
-    // Return the SpeciesBond between the specified SpeciesAtom indices, if it exists
-    OptionalReferenceWrapper<SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j);
+    // Return the SpeciesBond between the specified SpeciesAtoms / indices, if it exists
+    OptionalReferenceWrapper<const SpeciesBond> getBond(const SpeciesAtom *i, const SpeciesAtom *j) const;
+    OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
     // Return vector of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
     const std::vector<SpeciesAngle> &angles() const;
-    // Return the SpeciesAngle between the specified SpeciesAtom indices, if it exists
-    OptionalReferenceWrapper<SpeciesAngle> getAngle(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k);
+    // Return the SpeciesAngle between the specified SpeciesAtoms / indices, if it exists
+    OptionalReferenceWrapper<const SpeciesAngle> getAngle(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                          const SpeciesAtom *k) const;
+    OptionalReferenceWrapper<const SpeciesAngle> getAngle(int i, int j, int k) const;
     // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
-    // Return the SpeciesTorsion between the specified SpeciesAtom indices, if it exists
-    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
-                                                        const SpeciesAtom *l);
+    // Return the SpeciesTorsion between the specified SpeciesAtoms / indices, if it exists
+    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
+                                                              const SpeciesAtom *l) const;
+    OptionalReferenceWrapper<const SpeciesTorsion> getTorsion(int i, int j, int k, int l) const;
     // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;
     // Add a new improper term between the specified atoms
     SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Return the SpeciesImproper between the specified SpeciesAtom indices, if it exists
-    OptionalReferenceWrapper<SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j, const SpeciesAtom *k,
-                                                          const SpeciesAtom *l);
+    // Return the SpeciesImproper between the specified SpeciesAtoms /indices, if it exists
+    OptionalReferenceWrapper<const SpeciesImproper> getImproper(const SpeciesAtom *i, const SpeciesAtom *j,
+                                                                const SpeciesAtom *k, const SpeciesAtom *l) const;
+    OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
     // Clear forcefield data from intramolecular terms
     void clearIntramolecularForcefieldTerms();
 

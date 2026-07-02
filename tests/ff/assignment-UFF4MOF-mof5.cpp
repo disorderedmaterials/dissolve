@@ -54,13 +54,15 @@ TEST(UFF4MOFMOF5AssignmentTest, MOF5)
                                                {226, "C_R"},
                                                {290, "C_R"},
                                                {386, "H_"}}));
-    testSpeciesIntramolecular(&species, {386, 290}, {BondFunctions::Form::Harmonic, "k=2991.0611 eq=1.08142"}, 1.0e-5);
-    testSpeciesIntramolecular(&species, {0, 32}, {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 3.0e-5);
-    testSpeciesIntramolecular(&species, {8, 32}, {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 1.0e-5);
-    testSpeciesIntramolecular(&species, {71, 156}, {BondFunctions::Form::Harmonic, "k=5048.4039 eq=1.34262"}, 5.0e-6);
-    testSpeciesIntramolecular(&species, {178, 122, 26}, {AngleFunctions::Form::Cosine, "53.5872 3 0 -1"}, 3.0e-5);
-    testSpeciesIntramolecular(&species, {121, 29, 112}, {AngleFunctions::Form::Cosine, "107.58286 3 0 -1"}, 6.0e-6);
-    testSpeciesIntramolecular(&species, {178, 122, 26, 117}, {TorsionFunctions::Form::UFFCosine, "96.4708  2  180"}, 5.0e-5);
-    testSpeciesIntramolecular(&species, {178, 122, 133, 226}, {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"});
+    EXPECT_TRUE(testSpeciesBond(species.getBond(386, 290), {BondFunctions::Form::Harmonic, "k=2991.0611 eq=1.08142"}, 1.0e-5));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 32), {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 3.0e-5));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(8, 32), {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 1.0e-5));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(71, 156), {BondFunctions::Form::Harmonic, "k=5048.4039 eq=1.34262"}, 5.0e-6));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(178, 122, 26), {AngleFunctions::Form::Cosine, "53.5872 3 0 -1"}, 3.0e-5));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(121, 29, 112), {AngleFunctions::Form::Cosine, "107.58286 3 0 -1"}, 6.0e-6));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(178, 122, 26, 117),
+                                   {TorsionFunctions::Form::UFFCosine, "96.4708  2  180"}, 5.0e-5));
+    EXPECT_TRUE(
+        testSpeciesTorsion(species.getTorsion(178, 122, 133, 226), {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"}));
 }
 }; // namespace UnitTest
