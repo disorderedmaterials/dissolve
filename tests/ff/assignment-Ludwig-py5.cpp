@@ -32,11 +32,11 @@ TEST(LudwigPy5AssignmentTest, Py5)
     EXPECT_TRUE(testSpeciesBond(species.getBond(1, 6), {BondFunctions::Form::Harmonic, "k=3071 eq=1.08"}));
     EXPECT_TRUE(testSpeciesAngle(species.getAngle(11, 0, 1), {AngleFunctions::Form::Harmonic, "k=585.8 eq=121.5"}));
     EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(0, 1, 2, 3), {TorsionFunctions::Form::Cosine, "15.178  2  180  1"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(0, 1, 5, 11), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(1, 0, 2, 6), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(2, 1, 3, 7), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(3, 2, 4, 8), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(4, 3, 5, 9), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(5, 0, 4, 10), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(0, 1, 5, 11), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(1, 0, 2, 6), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(2, 1, 3, 7), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(3, 2, 4, 8), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(4, 3, 5, 9), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(5, 0, 4, 10), {TorsionFunctions::Form::Cosine, "4.606 2 180 1"}));
 }
 }; // namespace UnitTest

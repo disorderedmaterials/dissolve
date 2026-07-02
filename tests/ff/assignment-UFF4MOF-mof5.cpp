@@ -63,6 +63,6 @@ TEST(UFF4MOFMOF5AssignmentTest, MOF5)
     EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(178, 122, 26, 117),
                                    {TorsionFunctions::Form::UFFCosine, "96.4708  2  180"}, 5.0e-5));
     EXPECT_TRUE(
-        testSpeciesTorsion(species.getTorsion(178, 122, 133, 226), {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"}));
+        testSpeciesImproper(species.getImproper(178, 122, 133, 226), {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"}));
 }
 }; // namespace UnitTest

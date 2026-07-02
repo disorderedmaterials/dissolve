@@ -35,7 +35,7 @@ TEST(UFFNMethylFormamideAssignmentTest, NMethylFormamide)
                                  6.0e-5));
     EXPECT_TRUE(
         testSpeciesTorsion(species.getTorsion(0, 1, 2, 4), {TorsionFunctions::Form::UFFCosine, "101.9308  2  180"}, 2.0e-5));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(1, 0, 2, 3), {TorsionFunctions::Form::FourierN, "209.2 1 -1 0"}));
-    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(2, 5, 1, 4), {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(1, 0, 2, 3), {TorsionFunctions::Form::FourierN, "209.2 1 -1 0"}));
+    EXPECT_TRUE(testSpeciesImproper(species.getImproper(2, 5, 1, 4), {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"}));
 }
 }; // namespace UnitTest

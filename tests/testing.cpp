@@ -158,7 +158,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
                                                 a.parent()->name()),
                                     expectedParams, a.interactionPotential(), tolerance);
 }
-// Test species torsion / improper term
+// Test species torsion term
 [[nodiscard]] testing::AssertionResult testSpeciesTorsion(OptionalReferenceWrapper<const SpeciesTorsion> optTorsion,
                                                           const InteractionPotential<TorsionFunctions> &expectedParams,
                                                           double tolerance)
@@ -170,6 +170,19 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
                                                 joinStrings(t.atoms(), "-", [](const auto &atom) { return atom->index(); }),
                                                 t.parent()->name()),
                                     expectedParams, t.interactionPotential(), tolerance);
+}
+// Test species improper term
+[[nodiscard]] testing::AssertionResult testSpeciesImproper(OptionalReferenceWrapper<const SpeciesImproper> optImproper,
+                                                           const InteractionPotential<TorsionFunctions> &expectedParams,
+                                                           double tolerance)
+{
+    if (!optImproper)
+        return testing::AssertionFailure() << "No improper provided to test";
+    auto &i = (*optImproper).get();
+    return checkIntramolecularTerms(std::format("Improper {} in species '{}'",
+                                                joinStrings(i.atoms(), "-", [](const auto &atom) { return atom->index(); }),
+                                                i.parent()->name()),
+                                    expectedParams, i.interactionPotential(), tolerance);
 }
 // Test consistency between the two supplied double-keyed Data1D maps
 bool testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA, const DoubleKeyedMap<Data1D> &mapB,
