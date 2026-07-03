@@ -100,8 +100,8 @@ TEST_F(BenzeneForcefieldTest, ForcesIntra)
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                  1.0e-2);
+    EXPECT_TRUE(testReferenceForceConsistency(zeroForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 1.0e-2));
 }
 
 TEST_F(BenzeneForcefieldTest, ForcesVDW)
@@ -121,8 +121,8 @@ TEST_F(BenzeneForcefieldTest, ForcesVDW)
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                  0.12);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, zeroForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.12));
 }
 
 TEST_F(BenzeneForcefieldTest, ForcesElectrostatics)
@@ -142,7 +142,7 @@ TEST_F(BenzeneForcefieldTest, ForcesElectrostatics)
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                  3.0e-4);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, zeroForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-4));
 }
 } // namespace UnitTest
