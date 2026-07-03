@@ -24,11 +24,13 @@ namespace UnitTest
     return testing::AssertionFailure() << std::format("{} values {} and {} differ by {} which exceeds the threshold of {}",
                                                       quantity, A, B, delta, threshold);
 }
+
 // Test sampled double
 [[nodiscard]] testing::AssertionResult testSampledDouble(std::string_view quantity, SampledDouble A, double B, double threshold)
 {
     return testDouble(quantity, A.value(), B, threshold);
 }
+
 // Test Data1D
 [[nodiscard]] testing::AssertionResult testData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
                                                   std::string_view nameB, double threshold, Error::ErrorType errorType)
@@ -52,6 +54,7 @@ namespace UnitTest
 
     return testData1D(dataA, nameA, dataB, filePath, threshold, errorType);
 }
+
 // Test Data2D
 [[nodiscard]] testing::AssertionResult testData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB,
                                                   std::string_view nameB, double threshold, Error::ErrorType errorType)
@@ -65,6 +68,7 @@ namespace UnitTest
 
     return testing::AssertionSuccess();
 }
+
 // Test Data3D
 [[nodiscard]] testing::AssertionResult testData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
                                                   std::string_view nameB, double threshold, Error::ErrorType errorType)
@@ -78,6 +82,7 @@ namespace UnitTest
 
     return testing::AssertionSuccess();
 }
+
 // Test Vec3 data
 [[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B, double tolerance)
 {
@@ -89,6 +94,7 @@ namespace UnitTest
 
     return testing::AssertionSuccess();
 }
+
 // Test species atom type
 [[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById)
 {
@@ -111,6 +117,7 @@ namespace UnitTest
 
     return testing::AssertionSuccess();
 }
+
 // Test interaction parameters
 template <class Intra>
 [[nodiscard]] testing::AssertionResult
@@ -131,6 +138,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
 
     return testing::AssertionSuccess();
 }
+
 // Test species bond term
 [[nodiscard]] testing::AssertionResult testSpeciesBond(OptionalReferenceWrapper<const SpeciesBond> optBond,
                                                        const InteractionPotential<BondFunctions> &expectedParams,
@@ -144,6 +152,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
                                                 b.parent()->name()),
                                     expectedParams, b.interactionPotential(), tolerance);
 }
+
 // Test species angle term
 [[nodiscard]] testing::AssertionResult testSpeciesAngle(OptionalReferenceWrapper<const SpeciesAngle> optAngle,
                                                         const InteractionPotential<AngleFunctions> &expectedParams,
@@ -158,6 +167,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
                                                 a.parent()->name()),
                                     expectedParams, a.interactionPotential(), tolerance);
 }
+
 // Test species torsion term
 [[nodiscard]] testing::AssertionResult testSpeciesTorsion(OptionalReferenceWrapper<const SpeciesTorsion> optTorsion,
                                                           const InteractionPotential<TorsionFunctions> &expectedParams,
@@ -171,6 +181,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
                                                 t.parent()->name()),
                                     expectedParams, t.interactionPotential(), tolerance);
 }
+
 // Test species improper term
 [[nodiscard]] testing::AssertionResult testSpeciesImproper(OptionalReferenceWrapper<const SpeciesImproper> optImproper,
                                                            const InteractionPotential<TorsionFunctions> &expectedParams,
@@ -184,6 +195,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
                                                 i.parent()->name()),
                                     expectedParams, i.interactionPotential(), tolerance);
 }
+
 // Test consistency between the two supplied double-keyed Data1D maps
 [[nodiscard]] testing::AssertionResult testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
                                                           const DoubleKeyedMap<Data1D> &mapB, double testThreshold)
@@ -216,6 +228,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
 
     return testing::AssertionSuccess();
 }
+
 // Test consistency between production, molecular, and test energies, returning production values
 [[nodiscard]] testing::AssertionResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double threshold,
                                                              Kernel::EnergyResult &productionEnergy)
