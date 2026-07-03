@@ -55,9 +55,9 @@ void exportMermaidGraph(Graph &graph);
 [[nodiscard]] testing::AssertionResult testData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
                                                   std::string_view nameB, double threshold = 5.0e-3,
                                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError);
-// Test Vec3 data
-[[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B,
-                                                double threshold = 1.0e-6);
+// Test Vector3 data
+[[nodiscard]] testing::AssertionResult testVector3(std::string_view quantity, const Vector3 &A, const Vector3 &B,
+                                                   double threshold = 1.0e-6);
 // Test species atom type
 [[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
 // Test interaction parameters

@@ -139,10 +139,10 @@ TEST_F(CIFNodeTest, NaCl)
     testMolecularSpecies(molecularSpecies.at(0), {"Na", 4, 1});
     std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
     for (auto &&[instance, r2] : zip(molecularSpecies.at(0).instances(), R))
-        testVec3(instance.localAtoms()[0].r(), r2);
+        testVector3(instance.localAtoms()[0].r(), r2);
     testMolecularSpecies(molecularSpecies.at(1), {"Cl", 4, 1});
     for (auto &&[instance, r2] : zip(molecularSpecies.at(1).instances(), R))
-        testVec3(instance.localAtoms()[0].r(), (r2 - A / 2).abs());
+        testVector3(instance.localAtoms()[0].r(), (r2 - A / 2).abs());
 
     // 2x2x2 supercell
     molecularSpeciesNode->setOption<Vector3i>("SupercellRepeat", {2, 2, 2});

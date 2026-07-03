@@ -83,8 +83,9 @@ namespace UnitTest
     return testing::AssertionSuccess();
 }
 
-// Test Vec3 data
-[[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B, double threshold)
+// Test Vector3 data
+[[nodiscard]] testing::AssertionResult testVector3(std::string_view quantity, const Vector3 &A, const Vector3 &B,
+                                                   double threshold)
 {
     auto C = A - B;
     if (fabs(C.x) > threshold || fabs(C.x) > threshold || fabs(C.x) > threshold)
