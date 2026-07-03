@@ -216,11 +216,12 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
 
     return testing::AssertionSuccess();
 }
-// Check consistency between production, molecular, and test energies, returning production values
-Kernel::EnergyResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold)
+// Test consistency between production, molecular, and test energies, returning production values
+[[nodiscard]] testing::AssertionResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double threshold,
+                                                             Kernel::EnergyResult &productionEnergy)
 {
     // Calculate production energies (fully optimised)
-    auto productionEnergy = kernel->totalEnergy();
+    productionEnergy = kernel->totalEnergy();
 
     // Calculate baseline test energies (simple double-loop, PBC always)
     auto testEnergy = kernel->totalEnergySimple();
@@ -229,19 +230,56 @@ Kernel::EnergyResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &
     auto molecularPPEnergy = kernel->totalMoleculePairPotentialEnergy();
 
     // Compare basic energies with production value
-    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
-    EXPECT_NEAR(testEnergy.pairPotential.intraMolecular, productionEnergy.pairPotential.intraMolecular, testThreshold);
-    EXPECT_NEAR(testEnergy.geometry.total(), productionEnergy.geometry.total(), testThreshold);
+    if (fabs(testEnergy.pairPotential.interMolecular - productionEnergy.pairPotential.interMolecular) > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Production interMolecular pairPotential value of {} differs by {} from "
+                   "test energy of {} which exceeds threshold of {}",
+                   productionEnergy.pairPotential.interMolecular,
+                   testEnergy.pairPotential.interMolecular - productionEnergy.pairPotential.interMolecular,
+                   testEnergy.pairPotential.interMolecular, threshold);
+    if (fabs(testEnergy.pairPotential.intraMolecular - productionEnergy.pairPotential.intraMolecular) > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Production intraMolecular pairPotential value of {} differs by {} from "
+                   "test energy of {} which exceeds threshold of {}",
+                   productionEnergy.pairPotential.intraMolecular,
+                   testEnergy.pairPotential.intraMolecular - productionEnergy.pairPotential.intraMolecular,
+                   testEnergy.pairPotential.intraMolecular, threshold);
+    if (fabs(testEnergy.geometry.total() - productionEnergy.geometry.total()) > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Production total geometry value of {} differs by {} from test energy of {} which exceeds threshold of {}",
+                   productionEnergy.geometry.total(), testEnergy.geometry.total() - productionEnergy.geometry.total(),
+                   testEnergy.geometry.total(), threshold);
 
     // Compare basic energies with molecule-based values
-    EXPECT_NEAR(testEnergy.pairPotential.total(), molecularPPEnergy.total(), testThreshold);
-    EXPECT_NEAR(testEnergy.pairPotential.interMolecular, molecularPPEnergy.interMolecular, testThreshold);
+    if (fabs(testEnergy.pairPotential.total() - molecularPPEnergy.total()) > threshold)
+        return testing::AssertionFailure() << std::format("Molecular total pairPotential value of {} differs by {} from test "
+                                                          "energy of {} which exceeds threshold of {}",
+                                                          molecularPPEnergy.total(),
+                                                          testEnergy.pairPotential.total() - molecularPPEnergy.total(),
+                                                          testEnergy.total(), threshold);
+    if (fabs(testEnergy.pairPotential.interMolecular - molecularPPEnergy.interMolecular) > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Molecular interMolecular pairPotential value of {} differs by {} from test energy of {} which exceeds "
+                   "threshold of {}",
+                   molecularPPEnergy.interMolecular, testEnergy.pairPotential.interMolecular - molecularPPEnergy.interMolecular,
+                   testEnergy.pairPotential.interMolecular, threshold);
 
     // Compare molecule-based energies with production values
-    EXPECT_NEAR(molecularPPEnergy.total(), productionEnergy.pairPotential.total(), testThreshold);
-    EXPECT_NEAR(molecularPPEnergy.interMolecular, productionEnergy.pairPotential.interMolecular, testThreshold);
+    if (fabs(molecularPPEnergy.total() - productionEnergy.pairPotential.total()) > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Production total pairPotential value of {} differs by {} from molecular "
+                   "energy of {} which exceeds threshold of {}",
+                   molecularPPEnergy.total() - productionEnergy.pairPotential.total(), productionEnergy.pairPotential.total(),
+                   molecularPPEnergy.total(), threshold);
+    if (fabs(molecularPPEnergy.interMolecular - productionEnergy.pairPotential.interMolecular) > threshold)
+        return testing::AssertionFailure() << std::format(
+                   "Production interMolecular pairPotential value of {} differs by {} from "
+                   "molecular energy of {} which exceeds threshold of {}",
+                   productionEnergy.pairPotential.interMolecular,
+                   molecularPPEnergy.interMolecular - productionEnergy.pairPotential.interMolecular,
+                   molecularPPEnergy.interMolecular, threshold);
 
-    return productionEnergy;
+    return testing::AssertionSuccess();
 }
 
 // Check consistency between production and test forces

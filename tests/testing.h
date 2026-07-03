@@ -86,8 +86,9 @@ checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential
                                                           const DoubleKeyedMap<Data1D> &mapB, double testThreshold);
 // Test consistency, and error, between supplied partial sets
 [[nodiscard]] testing::AssertionResult testPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold);
-// Check consistency between production, molecular, and test energies, returning production values
-Kernel::EnergyResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6);
+// Test consistency between production, molecular, and test energies, returning production values
+[[nodiscard]] testing::AssertionResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold,
+                                                             Kernel::EnergyResult &productionEnergy);
 // Check consistency between production and test forces
 void testForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
                           std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags = {},

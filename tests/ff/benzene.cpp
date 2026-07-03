@@ -58,7 +58,8 @@ TEST_F(BenzeneForcefieldTest, Energies)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Interatomic energy:  -1334.653 LJ + 182.307 correction + 561.2389 Coulomb
     EXPECT_NEAR(-1334.653 + 182.307 + 561.2389, productionEnergy.pairPotential.total(), 4.0e-2);

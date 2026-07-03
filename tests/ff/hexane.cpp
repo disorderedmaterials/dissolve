@@ -51,7 +51,8 @@ TEST_F(HexaneForcefieldTest, Energies1)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Interatomic energy: 3.504968 LJ + 0.00501830 correction + 10.8152 Coulomb
     EXPECT_NEAR(3.504968 + 0.00501830 + 10.8152, productionEnergy.pairPotential.total(), 2.0e-4);
@@ -87,7 +88,8 @@ TEST_F(HexaneForcefieldTest, Energies2)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Interatomic energy: 5.200344 LJ + 0.0200732 correction + 21.52276 Coulomb
     EXPECT_NEAR(5.200344 + 0.0200732 + 21.52276, productionEnergy.pairPotential.total(), 3.0e-4);
@@ -123,7 +125,8 @@ TEST_F(HexaneForcefieldTest, Energies200)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Interatomic energy: -5124.720 LJ + 200.732 correction + 2020.063 Coulomb
     EXPECT_NEAR(-5124.720 + 200.732 + 2020.063, productionEnergy.pairPotential.total(), 5.0e-2);

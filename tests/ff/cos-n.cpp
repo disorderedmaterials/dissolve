@@ -29,7 +29,8 @@ TEST(CosNTorsionEnergyTest, POE)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Intramolecular energy: 183.4801   # (2.866876 per molecule) * 64 molecules
     EXPECT_NEAR(183.4801, productionEnergy.geometry.torsionEnergy, 1.0e-2);
@@ -84,7 +85,8 @@ TEST(CosNTorsionEnergyTest, Py4OHNTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Intramolecular energy: 51.050222   # (25.525111 per molecule) * 2 molecules
     EXPECT_NEAR(51.050222, productionEnergy.geometry.torsionEnergy, 2.0e-5);
@@ -140,7 +142,8 @@ TEST(CosNImproperEnergyTest, Py4OHNTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Intramolecular energy: 0.055228   # (0.027614 per molecule) * 2 molecules
     EXPECT_NEAR(0.055228, productionEnergy.geometry.improperEnergy, 1.0e-6);
@@ -196,7 +199,8 @@ TEST(CosNTorsionEnergyTest, Py5NTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Intramolecular energy: 39.29711  # (19.648555 per molecule) * 2 molecules
     EXPECT_NEAR(39.29711, productionEnergy.geometry.torsionEnergy, 5.0e-5);
@@ -252,7 +256,8 @@ TEST(CosNImproperEnergyTest, Py5NTf2)
     auto kernel = testGraph.createEnergyKernel(cfg);
 
     // Check consistency between production and test energies
-    auto productionEnergy = testEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Intramolecular energy: 0.34961  # (0.174805 per molecule) * 2 molecules
     EXPECT_NEAR(0.34961, productionEnergy.geometry.improperEnergy, 2.0e-6);
