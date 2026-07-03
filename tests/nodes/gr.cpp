@@ -30,14 +30,20 @@ TEST(GRNodeTest, Methods)
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
     auto rawGRSimple = *grNode->getOutputValue<PartialSet *>("RawGR");
     ASSERT_EQ(grNode->versionIndex(), 1);
-    ASSERT_TRUE(testPartialSet(rawGRBaseline, rawGRSimple, 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Full partials", rawGRBaseline.partials(), rawGRSimple.partials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Bound partials", rawGRBaseline.boundPartials(), rawGRSimple.boundPartials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Unbound partials", rawGRBaseline.unboundPartials(), rawGRSimple.unboundPartials(), 1.0e-8));
+    ASSERT_TRUE(testData1D(rawGRBaseline.total(), "Total (baseline)", rawGRSimple.total(), "Total (raw)", 1.0e-8));
 
     // Test against cells method
     ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::CellsMethod));
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
     auto rawGRCells = *grNode->getOutputValue<PartialSet *>("RawGR");
     ASSERT_EQ(grNode->versionIndex(), 2);
-    ASSERT_TRUE(testPartialSet(rawGRBaseline, rawGRCells, 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Full partials", rawGRBaseline.partials(), rawGRCells.partials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Bound partials", rawGRBaseline.boundPartials(), rawGRCells.boundPartials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Unbound partials", rawGRBaseline.unboundPartials(), rawGRCells.unboundPartials(), 1.0e-8));
+    ASSERT_TRUE(testData1D(rawGRBaseline.total(), "Total (baseline)", rawGRCells.total(), "Total (raw)", 1.0e-8));
 }
 
 TEST(GRNodeTest, Water)

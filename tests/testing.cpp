@@ -185,16 +185,13 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
                                     expectedParams, i.interactionPotential(), tolerance);
 }
 // Test consistency between the two supplied double-keyed Data1D maps
-bool testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA, const DoubleKeyedMap<Data1D> &mapB,
-                        double testThreshold)
+[[nodiscard]] testing::AssertionResult testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
+                                                          const DoubleKeyedMap<Data1D> &mapB, double testThreshold)
 {
     // Check map sizes
     if (mapA.size() != mapB.size())
-    {
-        std::cout << std::format("Maps containing {} data are of dissimilar size (A = {}, B = {})\n", mapContents, mapA.size(),
-                                 mapB.size());
-        return false;
-    }
+        return testing::AssertionFailure() << std::format("Maps containing {} data are of dissimilar size (A = {}, B = {})\n",
+                                                          mapContents, mapA.size(), mapB.size());
 
     // Check individual data
     for (auto &[key, dataA] : mapA)
@@ -203,53 +200,22 @@ bool testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1
         if (mapB.contains(key))
         {
             auto errorReport = Error::percent(dataA, mapB.get(key));
-            std::cout << Error::errorReportString(errorReport) << std::endl;
-            std::cout << std::format("{} '{}' in map B has {} error of {:7.3f}{} with data in map A and is "
-                                     "{} (threshold is {:6.3f}%)\n\n",
-                                     mapContents, key, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                                     errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                     errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+
             if (errorReport.error > testThreshold)
-                return false;
+                return testing::AssertionFailure() << std::format(
+                           "{} '{}' in map B has {} error of {}{} with data in map A which exceeds the threshold of {}",
+                           mapContents, key, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                           errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testThreshold);
         }
         else
         {
-            std::cout << std::format("{} '{}' is present in map A but not in map B.\n", mapContents, key);
-            return false;
+            return testing::AssertionFailure()
+                   << std::format("{} '{}' is present in map A but not in map B.\n", mapContents, key);
         }
     }
 
-    return true;
+    return testing::AssertionSuccess();
 }
-// Test consistency, and error, between supplied partial sets
-bool testPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold)
-{
-    // Full partials
-    if (!testDoubleKeyedMap("Full Partials", setA.partials(), setB.partials(), testThreshold))
-        return false;
-
-    // Bound partials
-    if (!testDoubleKeyedMap("Bound Partials", setA.boundPartials(), setB.boundPartials(), testThreshold))
-        return false;
-
-    // Unbound partials
-    if (!testDoubleKeyedMap("Unbound Partials", setA.unboundPartials(), setB.unboundPartials(), testThreshold))
-        return false;
-
-    // Total
-    auto errorReport = Error::percent(setA.total(), setB.total());
-    std::cout << Error::errorReportString(errorReport) << std::endl;
-    std::cout << std::format(
-        "Total in set B has {} error of {:7.3f}{} with data in set A and is {} (threshold is {:6.3f}%)\n\n",
-        Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-        errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-        errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-    if (errorReport.error > testThreshold)
-        return false;
-
-    return true;
-}
-
 // Check consistency between production, molecular, and test energies, returning production values
 Kernel::EnergyResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold)
 {

@@ -82,10 +82,10 @@ checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential
                                                            const InteractionPotential<TorsionFunctions> &expectedParams,
                                                            double tolerance = 1.0e-6);
 // Test consistency between the two supplied double-keyed Data1D maps
-static bool testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
-                               const DoubleKeyedMap<Data1D> &mapB, double testThreshold);
+[[nodiscard]] testing::AssertionResult testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
+                                                          const DoubleKeyedMap<Data1D> &mapB, double testThreshold);
 // Test consistency, and error, between supplied partial sets
-bool testPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold);
+[[nodiscard]] testing::AssertionResult testPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold);
 // Check consistency between production, molecular, and test energies, returning production values
 Kernel::EnergyResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold = 1.0e-6);
 // Check consistency between production and test forces
