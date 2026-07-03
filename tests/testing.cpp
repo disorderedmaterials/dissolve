@@ -84,13 +84,13 @@ namespace UnitTest
 }
 
 // Test Vec3 data
-[[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B, double tolerance)
+[[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B, double threshold)
 {
     auto C = A - B;
-    if (fabs(C.x) > tolerance || fabs(C.x) > tolerance || fabs(C.x) > tolerance)
+    if (fabs(C.x) > threshold || fabs(C.x) > threshold || fabs(C.x) > threshold)
         return testing::AssertionFailure() << std::format(
                    "{} differs by ({},{},{}) which exceeds the per-component threshold of {}", quantity, C.x, C.y, C.z,
-                   tolerance);
+                   threshold);
 
     return testing::AssertionSuccess();
 }
@@ -122,7 +122,7 @@ namespace UnitTest
 template <class Intra>
 [[nodiscard]] testing::AssertionResult
 checkIntramolecularTerms(const std::string &term, const InteractionPotential<Intra> &expectedParams,
-                         const InteractionPotential<Intra> &actualParams, double tolerance)
+                         const InteractionPotential<Intra> &actualParams, double threshold)
 {
     if (Intra::forms().keyword(actualParams.form()) != Intra::forms().keyword(expectedParams.form()))
         return testing::AssertionFailure() << std::format("{} has wrong form - {} vs the expected {}", term,
@@ -132,7 +132,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
         return testing::AssertionFailure() << std::format("{} has wrong parameter count - {} vs the expected {}", term,
                                                           actualParams.nParameters(), expectedParams.nParameters());
     for (auto &&[current, expected] : zip(actualParams.parameters(), expectedParams.parameters()))
-        if (fabs(current - expected) > tolerance)
+        if (fabs(current - expected) > threshold)
             return testing::AssertionFailure()
                    << std::format("{} has wrong parameter value - {} vs the expected {}", term, current, expected);
 
@@ -142,7 +142,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
 // Test species bond term
 [[nodiscard]] testing::AssertionResult testSpeciesBond(OptionalReferenceWrapper<const SpeciesBond> optBond,
                                                        const InteractionPotential<BondFunctions> &expectedParams,
-                                                       double tolerance)
+                                                       double threshold)
 {
     if (!optBond)
         return testing::AssertionFailure() << "No bond provided to test";
@@ -150,13 +150,13 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
     return checkIntramolecularTerms(std::format("Bond {} in species '{}'",
                                                 joinStrings(b.atoms(), "-", [](const auto &atom) { return atom->index(); }),
                                                 b.parent()->name()),
-                                    expectedParams, b.interactionPotential(), tolerance);
+                                    expectedParams, b.interactionPotential(), threshold);
 }
 
 // Test species angle term
 [[nodiscard]] testing::AssertionResult testSpeciesAngle(OptionalReferenceWrapper<const SpeciesAngle> optAngle,
                                                         const InteractionPotential<AngleFunctions> &expectedParams,
-                                                        double tolerance)
+                                                        double threshold)
 {
     if (!optAngle)
         return testing::AssertionFailure() << "No angle provided to test";
@@ -165,13 +165,13 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
     return checkIntramolecularTerms(std::format("Angle {} in species '{}'",
                                                 joinStrings(a.atoms(), "-", [](const auto &atom) { return atom->index(); }),
                                                 a.parent()->name()),
-                                    expectedParams, a.interactionPotential(), tolerance);
+                                    expectedParams, a.interactionPotential(), threshold);
 }
 
 // Test species torsion term
 [[nodiscard]] testing::AssertionResult testSpeciesTorsion(OptionalReferenceWrapper<const SpeciesTorsion> optTorsion,
                                                           const InteractionPotential<TorsionFunctions> &expectedParams,
-                                                          double tolerance)
+                                                          double threshold)
 {
     if (!optTorsion)
         return testing::AssertionFailure() << "No torsion provided to test";
@@ -179,13 +179,13 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
     return checkIntramolecularTerms(std::format("Torsion {} in species '{}'",
                                                 joinStrings(t.atoms(), "-", [](const auto &atom) { return atom->index(); }),
                                                 t.parent()->name()),
-                                    expectedParams, t.interactionPotential(), tolerance);
+                                    expectedParams, t.interactionPotential(), threshold);
 }
 
 // Test species improper term
 [[nodiscard]] testing::AssertionResult testSpeciesImproper(OptionalReferenceWrapper<const SpeciesImproper> optImproper,
                                                            const InteractionPotential<TorsionFunctions> &expectedParams,
-                                                           double tolerance)
+                                                           double threshold)
 {
     if (!optImproper)
         return testing::AssertionFailure() << "No improper provided to test";
@@ -193,7 +193,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
     return checkIntramolecularTerms(std::format("Improper {} in species '{}'",
                                                 joinStrings(i.atoms(), "-", [](const auto &atom) { return atom->index(); }),
                                                 i.parent()->name()),
-                                    expectedParams, i.interactionPotential(), tolerance);
+                                    expectedParams, i.interactionPotential(), threshold);
 }
 
 // Test consistency between the two supplied double-keyed Data1D maps
@@ -298,8 +298,8 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
 // Test consistency between production and test forces
 [[nodiscard]] testing::AssertionResult testForceConsistency(const std::unique_ptr<ForceKernel> &kernel,
                                                             std::vector<Vector3> &ppForces, std::vector<Vector3> &geomForces,
-                                                            Flags<Kernel::CalculationFlags> flags, double ppMaxDeviation,
-                                                            double geomMaxDeviation)
+                                                            Flags<Kernel::CalculationFlags> flags, double ppThreshold,
+                                                            double geomThreshold)
 {
     // Calculate production forces (fully optimised)
     kernel->totalForces(ppForces, geomForces, flags);
@@ -314,25 +314,25 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
           flags.isSet(Kernel::CalculationFlags::ExcludeIntraMolecularPairPotential)))
         for (auto &&[pairPotentialTestForce, pairPotentialProductionForce] : zip(ppTestForces, ppForces))
         {
-            if (fabs(pairPotentialProductionForce.x - pairPotentialTestForce.x) > ppMaxDeviation)
+            if (fabs(pairPotentialProductionForce.x - pairPotentialTestForce.x) > ppThreshold)
             {
                 std::cout << std::format("pairPotentialProductionForce.x differs by {} from pairPotentialTestForce.x which "
                                          "exceeds the threshold of {}",
-                                         pairPotentialProductionForce.x - pairPotentialTestForce.x, ppMaxDeviation);
+                                         pairPotentialProductionForce.x - pairPotentialTestForce.x, ppThreshold);
                 ++nPPFailed;
             }
-            if (fabs(pairPotentialProductionForce.y - pairPotentialTestForce.y) > ppMaxDeviation)
+            if (fabs(pairPotentialProductionForce.y - pairPotentialTestForce.y) > ppThreshold)
             {
                 std::cout << std::format("pairPotentialProductionForce.y differs by {} from pairPotentialTestForce.y which "
                                          "exceeds the threshold of {}",
-                                         pairPotentialProductionForce.y - pairPotentialTestForce.y, ppMaxDeviation);
+                                         pairPotentialProductionForce.y - pairPotentialTestForce.y, ppThreshold);
                 ++nPPFailed;
             }
-            if (fabs(pairPotentialProductionForce.z - pairPotentialTestForce.z) > ppMaxDeviation)
+            if (fabs(pairPotentialProductionForce.z - pairPotentialTestForce.z) > ppThreshold)
             {
                 std::cout << std::format("pairPotentialProductionForce.z differs by {} from pairPotentialTestForce.z which "
                                          "exceeds the threshold of {}",
-                                         pairPotentialProductionForce.z - pairPotentialTestForce.z, ppMaxDeviation);
+                                         pairPotentialProductionForce.z - pairPotentialTestForce.z, ppThreshold);
                 ++nPPFailed;
             }
         }
@@ -342,25 +342,25 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
     if (flags.isNotSet(Kernel::CalculationFlags::ExcludeGeometric))
         for (auto &&[geometryTestForce, geometryProductionForce] : zip(geomTestForces, geomForces))
         {
-            if (fabs(geometryProductionForce.x - geometryTestForce.x) > geomMaxDeviation)
+            if (fabs(geometryProductionForce.x - geometryTestForce.x) > geomThreshold)
             {
                 std::cout << std::format(
                     "geometryProductionForce.x differs by {} from geometryTestForce.x which exceeds the threshold of {}",
-                    geometryProductionForce.x - geometryTestForce.x, geomMaxDeviation);
+                    geometryProductionForce.x - geometryTestForce.x, geomThreshold);
                 ++nGeometryFailed;
             }
-            if (fabs(geometryProductionForce.y - geometryTestForce.y) > geomMaxDeviation)
+            if (fabs(geometryProductionForce.y - geometryTestForce.y) > geomThreshold)
             {
                 std::cout << std::format(
                     "geometryProductionForce.y differs by {} from geometryTestForce.y which exceeds the threshold of {}",
-                    geometryProductionForce.y - geometryTestForce.y, geomMaxDeviation);
+                    geometryProductionForce.y - geometryTestForce.y, geomThreshold);
                 ++nGeometryFailed;
             }
-            if (fabs(geometryProductionForce.z - geometryTestForce.z) > geomMaxDeviation)
+            if (fabs(geometryProductionForce.z - geometryTestForce.z) > geomThreshold)
             {
                 std::cout << std::format(
                     "geometryProductionForce.z differs by {} from geometryTestForce.z which exceeds the threshold of {}",
-                    geometryProductionForce.z - geometryTestForce.z, geomMaxDeviation);
+                    geometryProductionForce.z - geometryTestForce.z, geomThreshold);
                 ++nGeometryFailed;
             }
         }
@@ -376,7 +376,7 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
 [[nodiscard]] testing::AssertionResult testReferenceForceConsistency(const std::vector<Vector3> &ppForces,
                                                                      const std::vector<Vector3> &geomForces,
                                                                      const std::vector<Vector3> &referenceForces,
-                                                                     double maxDeviation)
+                                                                     double threshold)
 {
     if (ppForces.size() != geomForces.size())
         return testing::AssertionFailure() << std::format("Sizes of pairPotential and geometry force vectors differ ({} vs {})",
@@ -390,22 +390,22 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
     for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
     {
         auto calculatedForce = ppForce + geometryForce;
-        if (fabs(calculatedForce.x - referenceForce.x) > maxDeviation)
+        if (fabs(calculatedForce.x - referenceForce.x) > threshold)
         {
             std::cout << std::format("calculatedForce.x differs by {} from referenceForce.x which exceeds the threshold of {}",
-                                     calculatedForce.x - referenceForce.x, maxDeviation);
+                                     calculatedForce.x - referenceForce.x, threshold);
             ++nFailed;
         }
-        if (fabs(calculatedForce.y - referenceForce.y) > maxDeviation)
+        if (fabs(calculatedForce.y - referenceForce.y) > threshold)
         {
             std::cout << std::format("calculatedForce.y differs by {} from referenceForce.y which exceeds the threshold of {}",
-                                     calculatedForce.y - referenceForce.y, maxDeviation);
+                                     calculatedForce.y - referenceForce.y, threshold);
             ++nFailed;
         }
-        if (fabs(calculatedForce.z - referenceForce.z) > maxDeviation)
+        if (fabs(calculatedForce.z - referenceForce.z) > threshold)
         {
             std::cout << std::format("calculatedForce.z differs by {} from referenceForce.z which exceeds the threshold of {}",
-                                     calculatedForce.z - referenceForce.z, maxDeviation);
+                                     calculatedForce.z - referenceForce.z, threshold);
             ++nFailed;
         }
     }

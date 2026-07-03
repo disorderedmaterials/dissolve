@@ -42,63 +42,63 @@ void exportMermaidGraph(Graph &graph);
                                                          double threshold);
 // Test Data1D
 [[nodiscard]] testing::AssertionResult testData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB,
-                                                  std::string_view nameB, double tolerance = 5.0e-3,
+                                                  std::string_view nameB, double threshold = 5.0e-3,
                                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 [[nodiscard]] testing::AssertionResult testData1D(const Data1D &dataA, std::string_view nameA, std::string filePath,
-                                                  int xColumn, int yColumn, double tolerance = 5.0e-3,
+                                                  int xColumn, int yColumn, double threshold = 5.0e-3,
                                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 // Test Data2D
 [[nodiscard]] testing::AssertionResult testData2D(const Data2D &dataA, std::string_view nameA, const Data2D &dataB,
-                                                  std::string_view nameB, double tolerance = 5.0e-3,
+                                                  std::string_view nameB, double threshold = 5.0e-3,
                                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 // Test Data3D
 [[nodiscard]] testing::AssertionResult testData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB,
-                                                  std::string_view nameB, double tolerance = 5.0e-3,
+                                                  std::string_view nameB, double threshold = 5.0e-3,
                                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError);
 // Test Vec3 data
 [[nodiscard]] testing::AssertionResult testVec3(std::string_view quantity, const Vector3 &A, const Vector3 &B,
-                                                double tolerance = 1.0e-6);
+                                                double threshold = 1.0e-6);
 // Test species atom type
 [[nodiscard]] testing::AssertionResult testSpeciesAtomType(Species *sp, const std::map<int, std::string> &namesById);
 // Test interaction parameters
 template <class Intra>
 [[nodiscard]] testing::AssertionResult
 checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential<Intra> &expectedParams,
-                         const InteractionPotential<Intra> &actualParams, double tolerance = 1.0e-6);
+                         const InteractionPotential<Intra> &actualParams, double threshold = 1.0e-6);
 // Test species bond term
 [[nodiscard]] testing::AssertionResult testSpeciesBond(OptionalReferenceWrapper<const SpeciesBond> optBond,
                                                        const InteractionPotential<BondFunctions> &expectedParams,
-                                                       double tolerance = 1.0e-6);
+                                                       double threshold = 1.0e-6);
 // Test species angle term
 [[nodiscard]] testing::AssertionResult testSpeciesAngle(OptionalReferenceWrapper<const SpeciesAngle> optAngle,
                                                         const InteractionPotential<AngleFunctions> &expectedParams,
-                                                        double tolerance = 1.0e-6);
+                                                        double threshold = 1.0e-6);
 // Test species torsion term
 [[nodiscard]] testing::AssertionResult testSpeciesTorsion(OptionalReferenceWrapper<const SpeciesTorsion> optTorsion,
                                                           const InteractionPotential<TorsionFunctions> &expectedParams,
-                                                          double tolerance = 1.0e-6);
+                                                          double threshold = 1.0e-6);
 // Test species improper term
 [[nodiscard]] testing::AssertionResult testSpeciesImproper(OptionalReferenceWrapper<const SpeciesImproper> optImproper,
                                                            const InteractionPotential<TorsionFunctions> &expectedParams,
-                                                           double tolerance = 1.0e-6);
+                                                           double threshold = 1.0e-6);
 // Test consistency between the two supplied double-keyed Data1D maps
 [[nodiscard]] testing::AssertionResult testDoubleKeyedMap(std::string_view mapContents, const DoubleKeyedMap<Data1D> &mapA,
-                                                          const DoubleKeyedMap<Data1D> &mapB, double testThreshold);
+                                                          const DoubleKeyedMap<Data1D> &mapB, double threshold);
 // Test consistency, and error, between supplied partial sets
-[[nodiscard]] testing::AssertionResult testPartialSet(const PartialSet &setA, const PartialSet &setB, double testThreshold);
+[[nodiscard]] testing::AssertionResult testPartialSet(const PartialSet &setA, const PartialSet &setB, double threshold);
 // Test consistency between production, molecular, and test energies, returning production values
-[[nodiscard]] testing::AssertionResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold,
+[[nodiscard]] testing::AssertionResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double threshold,
                                                              Kernel::EnergyResult &productionEnergy);
 // Check consistency between production and test forces
 [[nodiscard]] testing::AssertionResult testForceConsistency(const std::unique_ptr<ForceKernel> &kernel,
                                                             std::vector<Vector3> &ppForces, std::vector<Vector3> &geomForces,
                                                             Flags<Kernel::CalculationFlags> flags = {},
-                                                            double ppMaxDeviation = 1.0e-2, double geomMaxDeviation = 1.0e-6);
+                                                            double ppThreshold = 1.0e-2, double geomThreshold = 1.0e-6);
 // Check consistency of supplied forces
 [[nodiscard]] testing::AssertionResult testReferenceForceConsistency(const std::vector<Vector3> &ppForces,
                                                                      const std::vector<Vector3> &geomForces,
                                                                      const std::vector<Vector3> &referenceForces,
-                                                                     double maxDeviation = 1.0e-3);
+                                                                     double threshold = 1.0e-3);
 
 /*
  * TOML
