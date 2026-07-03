@@ -73,11 +73,11 @@ TEST_F(HexaneForcefieldTest, Forces1)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2));
 }
 
 TEST_F(HexaneForcefieldTest, Energies2)
@@ -110,11 +110,11 @@ TEST_F(HexaneForcefieldTest, Forces2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-2));
 }
 
 TEST_F(HexaneForcefieldTest, Energies200)
@@ -147,11 +147,11 @@ TEST_F(HexaneForcefieldTest, Forces200Full)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.2);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.2));
 }
 
 TEST_F(HexaneForcefieldTest, Forces200Bound)
@@ -163,7 +163,7 @@ TEST_F(HexaneForcefieldTest, Forces200Bound)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total bound forces only
@@ -180,7 +180,7 @@ TEST_F(HexaneForcefieldTest, Forces200Unbound)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total pair potential forces only

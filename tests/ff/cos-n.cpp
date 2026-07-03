@@ -58,11 +58,11 @@ TEST(CosNTorsionForcesTest, POE)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.2e-2);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 6.2e-2));
 }
 
 TEST(CosNTorsionEnergyTest, Py4OHNTf2)
@@ -115,11 +115,11 @@ TEST(CosNTorsionForcesTest, Py4OHNTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-3);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-3));
 }
 
 TEST(CosNImproperEnergyTest, Py4OHNTf2)
@@ -172,11 +172,11 @@ TEST(CosNImproperForcesTest, Py4OHNTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 7.0e-2);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 7.0e-2));
 }
 
 TEST(CosNTorsionEnergyTest, Py5NTf2)
@@ -229,11 +229,11 @@ TEST(CosNTorsionForcesTest, Py5NTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-2);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 9.0e-2));
 }
 
 TEST(CosNImproperEnergyTest, Py5NTf2)
@@ -286,11 +286,11 @@ TEST(CosNImproperForcesTest, Py5NTf2)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 4.0e-3);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 4.0e-3));
 }
 
 } // namespace UnitTest

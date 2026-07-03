@@ -295,10 +295,11 @@ checkIntramolecularTerms(const std::string &term, const InteractionPotential<Int
     return testing::AssertionSuccess();
 }
 
-// Check consistency between production and test forces
-void testForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
-                          std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags, double ppMaxDeviation,
-                          double geomMaxDeviation)
+// Test consistency between production and test forces
+[[nodiscard]] testing::AssertionResult testForceConsistency(const std::unique_ptr<ForceKernel> &kernel,
+                                                            std::vector<Vector3> &ppForces, std::vector<Vector3> &geomForces,
+                                                            Flags<Kernel::CalculationFlags> flags, double ppMaxDeviation,
+                                                            double geomMaxDeviation)
 {
     // Calculate production forces (fully optimised)
     kernel->totalForces(ppForces, geomForces, flags);
@@ -308,39 +309,111 @@ void testForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vecto
     kernel->totalForcesSimple(ppTestForces, geomTestForces, flags);
 
     // Pair potential forces
+    auto nPPFailed = 0;
     if (!(flags.isSet(Kernel::CalculationFlags::ExcludeInterMolecularPairPotential) &&
           flags.isSet(Kernel::CalculationFlags::ExcludeIntraMolecularPairPotential)))
         for (auto &&[pairPotentialTestForce, pairPotentialProductionForce] : zip(ppTestForces, ppForces))
         {
-            EXPECT_NEAR(pairPotentialProductionForce.x, pairPotentialTestForce.x, ppMaxDeviation);
-            EXPECT_NEAR(pairPotentialProductionForce.y, pairPotentialTestForce.y, ppMaxDeviation);
-            EXPECT_NEAR(pairPotentialProductionForce.z, pairPotentialTestForce.z, ppMaxDeviation);
+            if (fabs(pairPotentialProductionForce.x - pairPotentialTestForce.x) > ppMaxDeviation)
+            {
+                std::cout << std::format("pairPotentialProductionForce.x differs by {} from pairPotentialTestForce.x which "
+                                         "exceeds the threshold of {}",
+                                         pairPotentialProductionForce.x - pairPotentialTestForce.x, ppMaxDeviation);
+                ++nPPFailed;
+            }
+            if (fabs(pairPotentialProductionForce.y - pairPotentialTestForce.y) > ppMaxDeviation)
+            {
+                std::cout << std::format("pairPotentialProductionForce.y differs by {} from pairPotentialTestForce.y which "
+                                         "exceeds the threshold of {}",
+                                         pairPotentialProductionForce.y - pairPotentialTestForce.y, ppMaxDeviation);
+                ++nPPFailed;
+            }
+            if (fabs(pairPotentialProductionForce.z - pairPotentialTestForce.z) > ppMaxDeviation)
+            {
+                std::cout << std::format("pairPotentialProductionForce.z differs by {} from pairPotentialTestForce.z which "
+                                         "exceeds the threshold of {}",
+                                         pairPotentialProductionForce.z - pairPotentialTestForce.z, ppMaxDeviation);
+                ++nPPFailed;
+            }
         }
 
     // Geometric forces
+    auto nGeometryFailed = 0;
     if (flags.isNotSet(Kernel::CalculationFlags::ExcludeGeometric))
         for (auto &&[geometryTestForce, geometryProductionForce] : zip(geomTestForces, geomForces))
         {
-            EXPECT_NEAR(geometryProductionForce.x, geometryTestForce.x, geomMaxDeviation);
-            EXPECT_NEAR(geometryProductionForce.y, geometryTestForce.y, geomMaxDeviation);
-            EXPECT_NEAR(geometryProductionForce.z, geometryTestForce.z, geomMaxDeviation);
+            if (fabs(geometryProductionForce.x - geometryTestForce.x) > geomMaxDeviation)
+            {
+                std::cout << std::format(
+                    "geometryProductionForce.x differs by {} from geometryTestForce.x which exceeds the threshold of {}",
+                    geometryProductionForce.x - geometryTestForce.x, geomMaxDeviation);
+                ++nGeometryFailed;
+            }
+            if (fabs(geometryProductionForce.y - geometryTestForce.y) > geomMaxDeviation)
+            {
+                std::cout << std::format(
+                    "geometryProductionForce.y differs by {} from geometryTestForce.y which exceeds the threshold of {}",
+                    geometryProductionForce.y - geometryTestForce.y, geomMaxDeviation);
+                ++nGeometryFailed;
+            }
+            if (fabs(geometryProductionForce.z - geometryTestForce.z) > geomMaxDeviation)
+            {
+                std::cout << std::format(
+                    "geometryProductionForce.z differs by {} from geometryTestForce.z which exceeds the threshold of {}",
+                    geometryProductionForce.z - geometryTestForce.z, geomMaxDeviation);
+                ++nGeometryFailed;
+            }
         }
+
+    if (nPPFailed > 0 || nGeometryFailed > 0)
+        return testing::AssertionFailure() << std::format("{} force components failed ({} pairPotential and {} geometry)",
+                                                          nPPFailed + nGeometryFailed, nPPFailed, nGeometryFailed);
+
+    return testing::AssertionSuccess();
 }
 
 // Check consistency of supplied forces
-void testReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
-                                   const std::vector<Vector3> &referenceForces, double maxDeviation)
+[[nodiscard]] testing::AssertionResult testReferenceForceConsistency(const std::vector<Vector3> &ppForces,
+                                                                     const std::vector<Vector3> &geomForces,
+                                                                     const std::vector<Vector3> &referenceForces,
+                                                                     double maxDeviation)
 {
-    ASSERT_TRUE(ppForces.size() == geomForces.size());
-    ASSERT_TRUE(ppForces.size() == referenceForces.size());
+    if (ppForces.size() != geomForces.size())
+        return testing::AssertionFailure() << std::format("Sizes of pairPotential and geometry force vectors differ ({} vs {})",
+                                                          ppForces.size(), geomForces.size());
+    if (ppForces.size() != referenceForces.size())
+        return testing::AssertionFailure() << std::format(
+                   "Sizes of pairPotential/geometry and reference force vectors differ ({} vs {})", ppForces.size(),
+                   referenceForces.size());
 
+    auto nFailed = 0;
     for (auto &&[ppForce, geometryForce, referenceForce] : zip(ppForces, geomForces, referenceForces))
     {
         auto calculatedForce = ppForce + geometryForce;
-        EXPECT_NEAR(calculatedForce.x, referenceForce.x, maxDeviation);
-        EXPECT_NEAR(calculatedForce.y, referenceForce.y, maxDeviation);
-        EXPECT_NEAR(calculatedForce.z, referenceForce.z, maxDeviation);
+        if (fabs(calculatedForce.x - referenceForce.x) > maxDeviation)
+        {
+            std::cout << std::format("calculatedForce.x differs by {} from referenceForce.x which exceeds the threshold of {}",
+                                     calculatedForce.x - referenceForce.x, maxDeviation);
+            ++nFailed;
+        }
+        if (fabs(calculatedForce.y - referenceForce.y) > maxDeviation)
+        {
+            std::cout << std::format("calculatedForce.y differs by {} from referenceForce.y which exceeds the threshold of {}",
+                                     calculatedForce.y - referenceForce.y, maxDeviation);
+            ++nFailed;
+        }
+        if (fabs(calculatedForce.z - referenceForce.z) > maxDeviation)
+        {
+            std::cout << std::format("calculatedForce.z differs by {} from referenceForce.z which exceeds the threshold of {}",
+                                     calculatedForce.z - referenceForce.z, maxDeviation);
+            ++nFailed;
+        }
     }
+
+    if (nFailed > 0)
+        return testing::AssertionFailure() << std::format("{} force components failed.", nFailed);
+
+    return testing::AssertionSuccess();
 }
 
 /*

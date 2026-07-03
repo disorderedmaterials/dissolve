@@ -80,11 +80,11 @@ TEST_F(BenzeneForcefieldTest, ForcesFull)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.12);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.12));
 }
 
 TEST_F(BenzeneForcefieldTest, ForcesIntra)
@@ -96,7 +96,7 @@ TEST_F(BenzeneForcefieldTest, ForcesIntra)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
@@ -117,7 +117,7 @@ TEST_F(BenzeneForcefieldTest, ForcesVDW)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
@@ -138,7 +138,7 @@ TEST_F(BenzeneForcefieldTest, ForcesElectrostatics)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces

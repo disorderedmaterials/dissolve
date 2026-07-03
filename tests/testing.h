@@ -90,12 +90,15 @@ checkIntramolecularTerms(const std::string &termInfo, const InteractionPotential
 [[nodiscard]] testing::AssertionResult testEnergyConsistency(const std::unique_ptr<EnergyKernel> &kernel, double testThreshold,
                                                              Kernel::EnergyResult &productionEnergy);
 // Check consistency between production and test forces
-void testForceConsistency(const std::unique_ptr<ForceKernel> &kernel, std::vector<Vector3> &ppForces,
-                          std::vector<Vector3> &geomForces, Flags<Kernel::CalculationFlags> flags = {},
-                          double ppMaxDeviation = 1.0e-2, double geomMaxDeviation = 1.0e-6);
+[[nodiscard]] testing::AssertionResult testForceConsistency(const std::unique_ptr<ForceKernel> &kernel,
+                                                            std::vector<Vector3> &ppForces, std::vector<Vector3> &geomForces,
+                                                            Flags<Kernel::CalculationFlags> flags = {},
+                                                            double ppMaxDeviation = 1.0e-2, double geomMaxDeviation = 1.0e-6);
 // Check consistency of supplied forces
-void testReferenceForceConsistency(const std::vector<Vector3> &ppForces, const std::vector<Vector3> &geomForces,
-                                   const std::vector<Vector3> &referenceForces, double maxDeviation = 1.0e-3);
+[[nodiscard]] testing::AssertionResult testReferenceForceConsistency(const std::vector<Vector3> &ppForces,
+                                                                     const std::vector<Vector3> &geomForces,
+                                                                     const std::vector<Vector3> &referenceForces,
+                                                                     double maxDeviation = 1.0e-3);
 
 /*
  * TOML

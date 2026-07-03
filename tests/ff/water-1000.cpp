@@ -63,11 +63,11 @@ TEST(Water1000ForceTest, Full)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference total forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9));
 }
 
 TEST(Water1000ForceTest, Intra)
@@ -93,7 +93,7 @@ TEST(Water1000ForceTest, Intra)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference total forces
     std::vector<Vector3> noPP(geometryForces.size());
@@ -170,11 +170,12 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_TRUE(
+        testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric}));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1));
 }
 
 TEST(Water1000EnergyTest, ShiftedCoulombOnly)
@@ -241,11 +242,12 @@ TEST(Water1000ForceTest, CoulombOnly)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_TRUE(
+        testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric}));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1));
 }
 
 TEST(Water1000ForceTest, ShiftedCoulombOnly)
@@ -278,11 +280,12 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+    EXPECT_TRUE(
+        testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric}));
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1));
 }
 TEST(Water1000EnergyTest, Override)
 {
@@ -362,7 +365,7 @@ TEST(Water1000ForceTest, Overrides)
     kernel->totalForces(pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
 
     // Check agreement with external reference forces
-    testReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                  importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.6e-1));
 }
 } // namespace UnitTest
