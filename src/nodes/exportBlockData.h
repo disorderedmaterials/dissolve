@@ -47,23 +47,17 @@ class ExportBlockDataNode : public Node
     template <class DataClass> bool write(const DataClass &data, const std::string &filePath)
     {
         // Open the file
-        LineParser parser;
-        if (!parser.openOutput(filePath))
-        {
-            parser.closeFiles();
+        std::ofstream outfile(std::string(filePath), std::ios::out);
+        std::ostreambuf_iterator<char> out(outfile);
+        if (!outfile)
             return false;
-        }
 
         if (data.valuesHaveErrors())
-        {
             for (auto &&[value, error] : zip(data.values(), data.errors()))
-                if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", value, error))
-                    return false;
-        }
+                std::format_to(out, "{:16.10e}  {:16.10e}\n", value, error);
         else
             for (auto value : data.values())
-                if (!parser.writeLineF("{:16.10e}\n", value))
-                    return false;
+                std::format_to(out, "{:16.10e}\n", value);
 
         return true;
     }
