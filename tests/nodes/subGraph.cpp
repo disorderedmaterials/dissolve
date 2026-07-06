@@ -74,7 +74,6 @@ class SubGraphTest : public ::testing::Test
     }
 
     protected:
-    // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
     DissolveGraph root_;
     Graph *graphA_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr}, *w_{nullptr};

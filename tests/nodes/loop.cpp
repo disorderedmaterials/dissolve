@@ -64,7 +64,6 @@ class IterableGraphTest : public ::testing::Test
     }
 
     protected:
-    // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
     DissolveGraph root_;
     NumberNode *i_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr};
