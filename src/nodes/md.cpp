@@ -22,7 +22,6 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
     addOption("RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation",
               randomVelocities_);
 
-    addOption("RestrictToSpecies", "Restrict the calculation to the specified Species", restrictToSpecies_);
     addOption("OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable", onlyWhenEnergyStable_);
 
     addOption("EnergyFrequency", "Frequency at which to calculate total system energy", energyFrequency_);
@@ -156,9 +155,6 @@ NodeConstants::ProcessResult MDNode::process()
         message("Summary will be written every {} step(s).\n", outputFrequency);
     else
         message("Summary will not be written.\n");
-    if (!restrictToSpecies_.empty())
-        message("Calculation will be restricted to species: {}\n",
-                joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     message("\n");
 
     // Create kernels
@@ -195,22 +191,6 @@ NodeConstants::ProcessResult MDNode::process()
     double tInstant, ke, tScale;
     Kernel::EnergyResult pe;
 
-    // Determine target molecules from the restrictedSpecies vector (if any)
-    std::vector<const Molecule *> targetMolecules;
-    std::vector<int> free(targetConfiguration_->nAtoms(), 0);
-    if (restrictToSpecies_.empty())
-    {
-        std::fill(free.begin(), free.end(), 1);
-    }
-    else
-        for (const auto &mol : targetConfiguration_->molecules())
-            if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
-            {
-                targetMolecules.push_back(mol.get());
-                auto offset = mol->globalAtomOffset();
-                std::fill(free.begin() + offset, free.begin() + offset + mol->atoms().size(), 1);
-            }
-
     /*
      * Calculation Begins
      */
@@ -227,12 +207,9 @@ NodeConstants::ProcessResult MDNode::process()
 
         Messenger::print("Random initial velocities will be assigned.\n");
         velocities.resize(targetConfiguration_->nAtoms(), Vector3());
-        for (auto &&[v, iFree] : zip(velocities, free))
+        for (auto &v : velocities)
         {
-            if (iFree)
-                v.set(exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5));
-            else
-                v.zero();
+            v.set(exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5), exp(DissolveMath::random() - 0.5));
             v /= sqrt(2.0 * M_PI);
         }
     }
@@ -256,10 +233,8 @@ NodeConstants::ProcessResult MDNode::process()
     // Calculate total velocity and mass over all atoms
     Vector3 vCom;
     auto massSum = 0.0;
-    for (auto &&[v, m, iFree] : zip(velocities, mass, free))
+    for (auto &&[v, m] : zip(velocities, mass))
     {
-        if (!iFree)
-            continue;
         vCom += v * m;
         massSum += m;
     }
@@ -267,12 +242,9 @@ NodeConstants::ProcessResult MDNode::process()
     // Finalise initial velocities (unless considering intramolecular forces only)
     if (!intramolecularForcesOnly_)
     {
-        // Remove any velocity shift, and re-zero velocities on fixed atoms
+        // Remove any velocity shift
         vCom /= massSum;
         std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
-        for (auto &&[v, iFree] : zip(velocities, free))
-            if (!iFree)
-                v.zero();
 
         // Calculate instantaneous temperature
         ke = 0.0;
@@ -313,17 +285,11 @@ NodeConstants::ProcessResult MDNode::process()
     // If we're not using a fixed timestep the forces need to be available immediately
     if (timestepType_ != TimestepType::Fixed)
     {
-        // Calculate forces
-        if (targetMolecules.empty())
-        {
-            if (intramolecularForcesOnly_)
-                forceKernel->totalForces(pairPotentialForces, geometryForces,
-                                         {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
-            else
-                forceKernel->totalForces(pairPotentialForces, geometryForces);
-        }
+        if (intramolecularForcesOnly_)
+            forceKernel->totalForces(pairPotentialForces, geometryForces,
+                                     {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
         else
-            throw(std::runtime_error("Forces calculation on a set of molecules is currently not available.\n"));
+            forceKernel->totalForces(pairPotentialForces, geometryForces);
 
         // Check for suitable timestep
         if (!determineTimeStep(timestepType_, fixedTimestep, pairPotentialForces, geometryForces))
@@ -365,16 +331,12 @@ NodeConstants::ProcessResult MDNode::process()
         targetConfiguration_->updateAtomLocations();
 
         // Calculate forces
-        if (targetMolecules.empty())
-        {
-            if (intramolecularForcesOnly_)
-                forceKernel->totalForces(pairPotentialForces, geometryForces,
-                                         {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
-            else
-                forceKernel->totalForces(pairPotentialForces, geometryForces);
-        }
+        if (intramolecularForcesOnly_)
+            forceKernel->totalForces(pairPotentialForces, geometryForces,
+                                     {Kernel::ExcludeInterMolecularPairPotential, Kernel::ExcludeExtended});
         else
-            throw(std::runtime_error("Forces calculation on a set of molecules is currently not available.\n"));
+            forceKernel->totalForces(pairPotentialForces, geometryForces);
+
         // Cap forces
         if (capForces_)
             nCapped = capForces(maxForce, pairPotentialForces, geometryForces);
