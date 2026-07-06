@@ -167,8 +167,8 @@ TEST_F(HexaneForcefieldTest, Forces200Bound)
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total bound forces only
-    testReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                  1.0e-7);
+    EXPECT_TRUE(testReferenceForceConsistency(zeroForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 1.0e-7));
 }
 
 TEST_F(HexaneForcefieldTest, Forces200Unbound)
@@ -184,7 +184,7 @@ TEST_F(HexaneForcefieldTest, Forces200Unbound)
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total pair potential forces only
-    testReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                  0.2);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, zeroForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.2));
 }
 } // namespace UnitTest

@@ -97,7 +97,8 @@ TEST(Water1000ForceTest, Intra)
 
     // Check agreement with external reference total forces
     std::vector<Vector3> noPP(geometryForces.size());
-    testReferenceForceConsistency(noPP, geometryForces, importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9);
+    EXPECT_TRUE(
+        testReferenceForceConsistency(noPP, geometryForces, importNode->getOutputValue<std::vector<Vector3>>("Forces"), 1.9));
 }
 
 TEST(Water1000EnergyTest, ShortRangeOnly)
