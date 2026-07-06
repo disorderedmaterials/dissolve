@@ -28,4 +28,7 @@ Parser<Vector3i> vector3i();
 // A parser that accepts a 3x3 matrix of floating point numbers
 Parser<Matrix3> matrix3();
 
+// A parser that reads everything until the end of the line
+Parser<std::optional<std::string>> toEndOfLine();
+
 }; // namespace Parsers

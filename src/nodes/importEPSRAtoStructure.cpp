@@ -2,7 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importEPSRAtoStructure.h"
-#include "base/lineParser.h"
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
 
 ImportEPSRAtoStructureNode::ImportEPSRAtoStructureNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -33,8 +34,8 @@ NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
     structure_.clear();
 
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath_)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile(filePath_);
+    if (!infile)
         return error("Couldn't open file '{}' for loading EPSR ato data.\n", filePath_);
 
     // File header:
@@ -42,30 +43,34 @@ NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
     //    or   2   : nmols,   temperature             (for non-cubic systems)
     // followed by : A, B, C
     //             : phib, thetac, phic
-    if (parser.getArgsDelim() != LineParser::Success)
+    using namespace Parsers;
+    auto cubic = inlineSpaces() >> natural() & inlineSpaces() >> real() & inlineSpaces() >> real() << toEndOfLine();
+    auto noncubic = inlineSpaces() >> natural() & pure(-1.0) & inlineSpaces() >> natural() << toEndOfLine();
+    auto header = cubic | noncubic;
+    auto head = header.parse(infile);
+    if (!head)
         return NodeConstants::ProcessResult::Failed;
-    auto nMols = parser.argi(0);
-    if (parser.nArgs() == 3)
+    auto &[nMols, boxSize, temperature] = std::get<0>(*head);
+    if (boxSize != -1.0)
     {
-        double boxSize = parser.argd(1);
-        message("File has a cubic cell (side length {} Angstroms)", boxSize);
         structure_.createBox({boxSize, boxSize, boxSize}, {90.0, 90.0, 90.0});
     }
     else
     {
-        message("File has a full cell specification");
-        Vector3 lengths, angles;
-        if (parser.getArgsDelim() != LineParser::Success)
+        auto tempVect = inlineSpaces() >> vector3() << toEndOfLine();
+        auto l = tempVect.parse(infile);
+        if (!l)
             return NodeConstants::ProcessResult::Failed;
-        lengths = parser.arg3d(0);
-        if (parser.getArgsDelim() != LineParser::Success)
+        auto lengths = std::get<0>(*l);
+        auto a = tempVect.parse(infile);
+        if (!a)
             return NodeConstants::ProcessResult::Failed;
-        angles = parser.arg3d(0);
+        auto angles = std::get<0>(*a);
         structure_.createBox(lengths, angles);
     }
 
     // 2 : step sizes etc. **IGNORED**
-    if (parser.getArgsDelim() != LineParser::Success)
+    if (!toEndOfLine().parse(infile))
         return NodeConstants::ProcessResult::Failed;
 
     // Molecule/atom specifications are in the form:
@@ -78,79 +83,83 @@ NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
     // n+6: atom1, atom2 (bonds of rotation 'axis')
     // n+7: list of headgroup atoms that are rotated
     auto atomOffset = 0;
-    for (auto m = 0; m < nMols; m++)
+    auto m = 0;
+    for (; m < nMols; m++)
     {
         Messenger::printVerbose("Importing molecule {} from EPSR ato file...\n", m + 1);
+        auto molHeader =
+            inlineSpaces() >> natural() & inlineSpaces() >> vector3() & inlineSpaces() >> vector3() << toEndOfLine();
+        auto molHead = molHeader.parse(infile);
 
-        if (parser.getArgsDelim() != LineParser::Success)
+        if (!molHead)
             return NodeConstants::ProcessResult::Failed;
-        auto nAtoms = parser.argi(0);
-        auto com = parser.arg3d(1);
+        auto &[nAtoms, com, phi] = std::get<0>(*molHead);
 
-        for (auto n = 0; n < nAtoms; n++)
+        auto n = 0;
+        for (; n < nAtoms; n++)
         {
+            auto atomHead = maybe(spaces()) >> alphas() << toEndOfLine();
+            auto ah = atomHead.parse(infile);
             // Atom name
-            if (parser.getArgsDelim() != LineParser::Success)
+            if (!ah)
                 return NodeConstants::ProcessResult::Failed;
-            auto name = parser.args(0);
+            auto name = std::get<0>(*ah);
 
+            auto del = (inlineSpaces() >> vector3() << toEndOfLine()).parse(infile);
             // Atom coordinates (specified as offset from com)
-            if (parser.getArgsDelim() != LineParser::Success)
+            if (!del)
                 return NodeConstants::ProcessResult::Failed;
-            auto delta = parser.arg3d(0);
+            auto delta = std::get<0>(*del);
 
             // Add a new atom
             structure_.addAtom(name, com + delta);
 
             // Import in number of restraints line
-            if (parser.getArgsDelim() != LineParser::Success)
+            auto restCount = (inlineSpaces() >> natural()).parse(infile);
+            if (!restCount)
                 return NodeConstants::ProcessResult::Failed;
-            auto nRestraints = parser.argi(0);
-            auto currentArg = 1;
+            auto nRestraints = std::get<0>(*restCount);
             while (nRestraints > 0)
             {
                 // Look at next available argument - if none, import another line in
-                if (currentArg >= parser.nArgs())
-                {
-                    if (parser.getArgsDelim() != LineParser::Success)
-                        return NodeConstants::ProcessResult::Failed;
-                    currentArg = 0;
-                }
-                currentArg += 2;
+                auto rest = (spaces() >> natural() & spaces() >> real());
+                auto r = rest.parse(infile);
+                if (!r)
+                    return NodeConstants::ProcessResult::Failed;
+                auto &[a, b] = std::get<0>(*r);
                 --nRestraints;
             }
         }
 
         // Discard molecular rotations and dihedrals
         // There are 14 atoms per line - first line contains number of atoms followed by (up to) 13 indices
-        if (parser.getArgsDelim() != LineParser::Success)
+        auto rotations = (maybe(spaces()) >> natural() << toEndOfLine()).parse(infile);
+        if (!rotations)
             return NodeConstants::ProcessResult::Failed;
-        auto nRotations = parser.argi(0);
+        auto nRotations = std::get<0>(*rotations);
         while (nRotations > 0)
         {
-            // Import line to find out which type of definition this is...
-            if (parser.getArgsDelim() != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
-
-            // Skip axis line
-            if (parser.skipLines(1) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
-
             // If a DIHedral, we expect an integer which defines the number of constraints, and thus the number of
             // lines to skip before the main
-            if (DissolveSys::sameString(parser.argsv(0), "DIH"))
+            auto dih = maybe(inlineSpaces() >> "DIH"_p << toEndOfLine());
+            auto d = dih.parse(infile);
+            if (d && std::get<0>(*d))
             {
-                if (parser.getArgsDelim() != LineParser::Success)
+                toEndOfLine().parse(infile);
+                auto constraints = (inlineSpaces() >> natural() << toEndOfLine()).parse(infile);
+                if (!constraints)
                     return NodeConstants::ProcessResult::Failed;
-                if (parser.skipLines(parser.argi(0)) != LineParser::Success)
-                    return NodeConstants::ProcessResult::Failed;
+                for (auto i = 0; i < std::get<0>(*constraints); ++i)
+                    toEndOfLine().parse(infile);
             }
 
             // Finally, import in number of atoms affected by rotation and calculate next number of lines to discard
-            if (parser.getArgsDelim() != LineParser::Success)
+            auto atoms = (inlineSpaces() >> natural() << toEndOfLine()).parse(infile);
+            if (!atoms)
                 return NodeConstants::ProcessResult::Failed;
-            if (parser.skipLines(parser.argi(0) / 14) != LineParser::Success)
-                return NodeConstants::ProcessResult::Failed;
+            auto ats = std::get<0>(*atoms);
+            for (auto i = 0; i < ats / 14; ++i)
+                toEndOfLine().parse(infile);
 
             --nRotations;
         }

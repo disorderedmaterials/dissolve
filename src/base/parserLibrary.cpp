@@ -75,4 +75,7 @@ Parser<Matrix3> matrix3()
         .apply([](const auto m1, const auto m2, const auto m3) { return Matrix3(m1, m2, m3); });
 }
 
+// A parser that reads everything until the end of the line
+Parser<std::optional<std::string>> toEndOfLine() { return maybe(inlines()) << newlines(); }
+
 } // namespace Parsers
