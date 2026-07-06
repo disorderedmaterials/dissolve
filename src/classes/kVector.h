@@ -8,7 +8,6 @@
 
 // Forward Declarations
 class BraggReflection;
-class CoreData;
 
 // K-Vector
 class KVector

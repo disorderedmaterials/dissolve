@@ -15,7 +15,6 @@
 // Forward Declarations
 class AtomType;
 class Species;
-class CoreData;
 
 /*
  * Isotopologue Definition
