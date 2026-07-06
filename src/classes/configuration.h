@@ -223,10 +223,6 @@ class Configuration : public Serialisable
      * Serialisation
      */
     public:
-    // Write through specified LineParser
-    bool serialise(LineParser &parser) const;
-    // Read from specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData, bool hasPotentials);
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value

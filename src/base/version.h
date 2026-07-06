@@ -3,9 +3,6 @@
 
 #pragma once
 
-// Forward Declarations
-class CoreData;
-
 // Version Counter
 class VersionCounter
 {

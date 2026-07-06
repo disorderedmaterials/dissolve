@@ -7,7 +7,6 @@
 #include <QDialog>
 
 // Forward Declarations
-class CoreData;
 class ModuleLayer;
 
 // Get Layer Name Dialog
