@@ -82,24 +82,6 @@ class SubGraphTest : public ::testing::Test
     std::shared_ptr<ParameterBase> wB_{nullptr};
 };
 
-TEST_F(SubGraphTest, Serialisation){
-    //    createGraph();
-    //
-    //    CoreData cd;
-    //    Dissolve d(cd);
-    //    DissolveGraph copy(d);
-    //    auto serialised = root_.serialise();
-    //
-    //    SerialisedValue contents = toml::parse("dissolve/input/simple_addition_graph.toml"
-    //    UnitTest::compareToml("", serialised, contents);
-    //
-    //    std::cout << serialised << std::endl;
-    //    copy.deserialise(serialised);
-    //    auto repeat = copy.serialise();
-    //
-    //    UnitTest::compareToml("", repeat, contents);
-};
-
 TEST_F(SubGraphTest, Connections)
 {
     createGraph();
