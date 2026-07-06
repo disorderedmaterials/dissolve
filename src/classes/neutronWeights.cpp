@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/neutronWeights.h"
-#include "base/lineParser.h"
 #include "classes/atomType.h"
 #include "classes/isotopologueSet.h"
 #include "classes/species.h"

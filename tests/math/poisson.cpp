@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "base/lineParser.h"
 #include "math/poissonFit.h"
 #include "nodes/importXYData.h"
 #include "tests/testing.h"

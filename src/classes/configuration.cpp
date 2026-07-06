@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/cell.h"

@@ -61,8 +61,6 @@ int GraphEdgeModel::rowCount(const QModelIndex &parent) const
 {
     if (!graph_)
         return 0;
-    for (auto &edge : edges())
-        std::cout << edge->definition().asString() << std::endl;
     return edges().size();
 }
 

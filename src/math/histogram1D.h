@@ -5,6 +5,7 @@
 
 #include "math/data1D.h"
 #include "math/sampledDouble.h"
+#include "math/vector3.h"
 
 // One-Dimensional Histogram
 class Histogram1D : public Serialisable

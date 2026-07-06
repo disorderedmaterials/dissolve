@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importEPSRAtoStructure.h"
+#include "base/lineParser.h"
 
 ImportEPSRAtoStructureNode::ImportEPSRAtoStructureNode(Graph *parentGraph) : Node(parentGraph)
 {

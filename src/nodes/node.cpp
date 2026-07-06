@@ -6,6 +6,7 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include <algorithm>
+#include <iostream>
 
 /*
  * Definition

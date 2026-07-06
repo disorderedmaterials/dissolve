@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/data3D.h"
-#include "base/lineParser.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "math/histogram3D.h"

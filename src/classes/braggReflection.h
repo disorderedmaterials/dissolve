@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "base/lineParser.h"
 #include "base/serialiser.h"
+#include "math/vector3i.h"
 #include "templates/array2D.h"
 
 // BraggReflection Class

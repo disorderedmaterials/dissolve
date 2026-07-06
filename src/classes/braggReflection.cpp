@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/braggReflection.h"
-#include "base/lineParser.h"
 
 BraggReflectionVector::BraggReflectionVector(const BraggReflectionVector &other) : reflections_(other.reflections_) {}
 
