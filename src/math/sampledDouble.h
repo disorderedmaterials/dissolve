@@ -6,7 +6,6 @@
 #include "base/serialiser.h"
 
 // Forward Declarations
-class LineParser;
 class ProcessPool;
 
 // Double value with sampling

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/lineParser.h"
 #include "base/messenger.h"
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
@@ -122,15 +121,6 @@ template <class Functions> class InteractionPotential
     }
     // Parse parameters from specified string
     bool parseParameters(std::string_view paramString) { return parseParameters(DissolveSys::splitString(paramString)); }
-    // Parse parameters from current line
-    bool parseParameters(const LineParser &parser, int startArg)
-    {
-        // Construct a vector of all remaining arguments on the line, starting from the argument offset
-        std::vector<std::string_view> terms;
-        for (auto n = startArg; n < parser.nArgs(); ++n)
-            terms.emplace_back(parser.argsv(n));
-        return parseParameters(terms);
-    }
     // Set form and parameters
     void setFormAndParameters(typename Functions::Form form, const std::vector<double> &params)
     {

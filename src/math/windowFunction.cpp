@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/windowFunction.h"
-#include "base/lineParser.h"
 #include "math/data1D.h"
 #include "math/mathFunc.h"
 
@@ -27,18 +26,6 @@ EnumOptions<WindowFunction::Form> getEnumOptions(WindowFunction::Form) { return 
  */
 
 void WindowFunction::set(WindowFunction::Form form) { form_ = form; }
-
-// Set function data from LineParser source
-bool WindowFunction::set(LineParser &parser, int startArg)
-{
-    // First argument is the form of the function
-    if (forms().isValid(parser.argsv(startArg)))
-        return forms().errorAndPrintValid(parser.argsv(startArg));
-
-    form_ = forms().enumeration(parser.argsv(startArg));
-
-    return true;
-}
 
 // Return functional form
 WindowFunction::Form WindowFunction::form() const { return form_; }

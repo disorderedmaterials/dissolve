@@ -6,9 +6,6 @@
 #include "base/serialiser.h"
 #include <vector>
 
-// Forward Declarations
-class LineParser;
-
 // Vector of double values with sampling
 class SampledVector : public Serialisable
 {
