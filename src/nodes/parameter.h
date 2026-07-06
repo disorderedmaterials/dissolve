@@ -562,10 +562,6 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
     {
     };
 
-    template <serialisablePointer E> struct is_ptr_vector<std::vector<E>> : std::true_type
-    {
-    };
-
     /*
      * Serialisation
      */
@@ -587,8 +583,6 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
             if (Parameter<DataClass>::data_)
                 result["data"] = *Parameter<DataClass>::data_;
         }
-        else if constexpr (serialisablePointer<DataClass>)
-            Parameter<DataClass>::data_->serialise("data", result);
         else
             result["data"] = Parameter<DataClass>::data_;
 
@@ -628,11 +622,6 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
                 Parameter<DataClass>::data_ = toml::find<Data1D>(node, "data");
             else
                 Parameter<DataClass>::data_ = {};
-        }
-        else if constexpr (serialisablePointer<DataClass>)
-        {
-            CoreData coreData; // Temporary patch until we fix up the deserialisation
-            Parameter<DataClass>::data_->deserialise(node.at("data"), coreData);
         }
         else
         {
