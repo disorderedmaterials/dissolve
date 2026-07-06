@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/partialSet.h"
-#include "base/lineParser.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -278,8 +277,6 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
 
     auto typeFractions = atomTypeFractions();
 
-    LineParser parser;
-
     // Write partials
     for_each_pair_early(
         typeFractions,
@@ -291,19 +288,20 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
             std::string filename{std::format("{}-{}-{}-{}.{}", prefix, tag, popI.first->name(), popJ.first->name(), suffix)};
             Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-            parser.openOutput(filename, true);
-            if (!parser.isFileGoodForWriting())
+            std::ofstream outfile(filename, std::ios::out);
+            std::ostreambuf_iterator<char> out(outfile);
+            if (!outfile)
                 return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
             auto &full = partials_.get(key);
             auto &bound = boundPartials_.get(key);
             auto &unbound = unboundPartials_.get(key);
 
-            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
+            std::format_to(out, "# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Bound", "Unbound");
             for (auto n = 0; n < full.nValues(); ++n)
-                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
-                                  unbound.value(n));
-            parser.closeFiles();
+                std::format_to(out, "{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
+                               unbound.value(n));
+            outfile.close();
 
             return EarlyReturn<bool>::Continue;
         },
