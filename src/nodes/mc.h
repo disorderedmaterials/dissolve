@@ -30,9 +30,9 @@ class MCNode : public Node
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Temperature (K)
-    Number temperature_{300};
-    // Number of shakes to attempt per molecule
-    int nShakesPerMolecule_{1};
+    Number temperature_{300, 0.0};
+    // Number of attempts to make per move
+    Number nTrials_{1, 1};
     // Step size in degrees to use for the rotational component of the Monte Carlo moves
     double rotationStepSize_{1.0};
     // Minimum step size for rotations (degrees)

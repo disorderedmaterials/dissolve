@@ -41,6 +41,7 @@
 #include "nodes/intraAngle.h"
 #include "nodes/intraDistance.h"
 #include "nodes/iterableGraph.h"
+#include "nodes/mc.h"
 #include "nodes/md.h"
 #include "nodes/modifierOSites.h"
 #include "nodes/moleculeTorsion.h"
@@ -119,6 +120,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
                   {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
                   {"Iterator", makeDerivedNode<IterableGraph>()},
+                  {"MC", makeDerivedNode<MCNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
                   {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
                   {"MoleculeTorsion", makeDerivedNode<MoleculeTorsionNode>()},
