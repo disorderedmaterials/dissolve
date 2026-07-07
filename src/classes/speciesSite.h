@@ -187,7 +187,7 @@ class SpeciesSite : public Serialisable
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node);
+    void deserialise(const SerialisedValue &node) override;
 };
 
 template <> struct Context<const SpeciesSite *>
