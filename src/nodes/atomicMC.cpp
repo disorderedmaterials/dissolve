@@ -50,7 +50,6 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 {
     // Get numeric input data
     auto nShakesPerAtom = nShakesPerAtom_.asInteger();
-    auto stepSize = stepSize_.asDouble();
     auto stepSizeMax = stepSizeMax_.asDouble();
     auto stepSizeMin = stepSizeMin_.asDouble();
     auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
@@ -60,7 +59,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     // Print argument/parameter summary
     message("Performing {} shake(s) per Atom\n", nShakesPerAtom);
-    message("Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n", stepSize, stepSizeMin,
+    message("Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n", stepSize_, stepSizeMin,
             stepSizeMax);
     message("Target acceptance rate is {}.\n", targetAcceptanceRate);
     message("\n");
@@ -88,7 +87,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                 auto moveInitialPos = i->r();
 
                 // Translate Atom randomly according to the stepsize and update its Cell position
-                *i += Vector3::randomUnit() * stepSize;
+                *i += Vector3::randomUnit() * stepSize_;
                 targetConfiguration_->updateAtomLocation(i);
 
                 // Calculate new energy
@@ -134,13 +133,13 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
 
     // Update and set translation step size
-    stepSize *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate;
-    if (stepSize < stepSizeMin)
-        stepSize = stepSizeMin;
-    else if (stepSize > stepSizeMax)
-        stepSize = stepSizeMax;
+    stepSize_ *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate;
+    if (stepSize_ < stepSizeMin)
+        stepSize_ = stepSizeMin;
+    else if (stepSize_ > stepSizeMax)
+        stepSize_ = stepSizeMax;
 
-    message("Updated step size is {} Angstroms.\n", stepSize);
+    message("Updated step size is {} Angstroms.\n", stepSize_);
 
     // Increase contents version in Configuration
     if (nAccepted > 0)
