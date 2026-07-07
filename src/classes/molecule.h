@@ -70,6 +70,10 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     void traverseLocal(const Box &box, ConstManipulationFunction action) const;
 
     public:
+    // Return the coordinates of atoms within the molecule
+    std::vector<Vector3> atomCoordinates() const;
+    // Set the coordinates of atoms within the molecule
+    void setAtomCoordinates(const std::vector<Vector3> &atomCoordinates);
     // Un-fold molecule so it is not cut by box boundaries, returning the centre of geometry
     Vector3 unFold(const Box &box);
     // Set centre of geometry

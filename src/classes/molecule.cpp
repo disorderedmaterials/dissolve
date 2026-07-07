@@ -130,6 +130,23 @@ void Molecule::traverseLocal(const Box &box, ConstManipulationFunction action) c
     recurseLocal(flags, box, 0, action);
 }
 
+// Return the coordinates of atoms within the molecule
+std::vector<Vector3> Molecule::atomCoordinates() const
+{
+    std::vector<Vector3> r;
+    r.reserve(atoms_.size());
+    for (auto &atom : atoms_)
+        r.push_back(atom->r());
+    return r;
+}
+
+// Set the coordinates of atoms within the molecule
+void Molecule::setAtomCoordinates(const std::vector<Vector3> &atomCoordinates)
+{
+    for (auto &&[atom, newR] : zip(atoms_, atomCoordinates))
+        atom->setR(newR);
+}
+
 // Un-fold molecule so it is not cut by box boundaries
 Vector3 Molecule::unFold(const Box &box)
 {
