@@ -29,17 +29,17 @@ class AtomicMCNode : public Node
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
     // Temperature (K)
-    Number temperature_{300};
+    Number temperature_{300, 0.0};
     // Number of shakes to attempt per atom
-    Number nShakesPerAtom_{1};
+    Number nShakesPerAtom_{1, 1};
     // Step size in Angstroms to use in Monte Carlo moves
-    Number stepSize_{0.0001};
+    double stepSize_{0.0001};
     // Maximum allowed value for step size, in Angstroms
-    Number stepSizeMax_{1.0};
+    Number stepSizeMax_{1.0, 0.1, 10.0};
     // Minimum allowed value for step size, in Angstroms
-    Number stepSizeMin_{0.0001};
+    Number stepSizeMin_{0.001, 0.001, 1.0};
     // Target acceptance rate for Monte Carlo moves
-    Number targetAcceptanceRate_{0.33};
+    Number targetAcceptanceRate_{0.33, 0.01, 1.0};
 
     /*
      * Processing
