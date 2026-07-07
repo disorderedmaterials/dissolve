@@ -48,7 +48,7 @@ std::string_view AtomicMCNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult AtomicMCNode::process()
 {
-    // Get numeric input data
+    // Get options
     auto nShakesPerAtom = nShakesPerAtom_.asInteger();
     auto stepSizeMax = stepSizeMax_.asDouble();
     auto stepSizeMin = stepSizeMin_.asDouble();
@@ -141,7 +141,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     message("Updated step size is {} Angstroms.\n", stepSize_);
 
-    // Increase contents version in Configuration
+    // Mark the configuration as having been modified
     if (nAccepted > 0)
         targetConfiguration_->notifyAtomicPositionsChanged();
 
