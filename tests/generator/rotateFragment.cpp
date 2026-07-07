@@ -9,8 +9,6 @@
 #include "generator/generator.h"
 #include "generator/select.h"
 #include "main/dissolve.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
 #include <string>
 
 namespace UnitTest

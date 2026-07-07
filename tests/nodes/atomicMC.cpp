@@ -4,11 +4,8 @@
 #include "nodes/atomicMC.h"
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
-#include "nodes/insert.h"
 #include "nodes/iterableGraph.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "tests/testGraph.h"
 #include <vector>
 
 namespace UnitTest

@@ -3,9 +3,9 @@
 
 #include "math/windowFunction.h"
 #include "nodes/gr.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/neutronSQ.h"
+#include "nodes/sq.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -44,9 +44,9 @@ TEST(BroadeningTest, ArgonBroadening)
         // Get the weighted SQ
         auto weightedSQ = neutronSQNode->getOutputValue<PartialSet *>("WeightedSQ");
         ASSERT_TRUE(weightedSQ);
-        EXPECT_TRUE(DissolveSystemTest::checkData1D(
-            weightedSQ->total(), std::format("{} {}", Functions1D::forms().keyword(form), joinStrings(parameters)), dataFile, 1,
-            2, 3.0e-3));
+        EXPECT_TRUE(testData1D(weightedSQ->total(),
+                               std::format("{} {}", Functions1D::forms().keyword(form), joinStrings(parameters)), dataFile, 1,
+                               2, 3.0e-3));
     }
 }
 

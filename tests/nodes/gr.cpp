@@ -3,9 +3,7 @@
 
 #include "nodes/gr.h"
 #include "math/windowFunction.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -32,14 +30,20 @@ TEST(GRNodeTest, Methods)
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
     auto rawGRSimple = *grNode->getOutputValue<PartialSet *>("RawGR");
     ASSERT_EQ(grNode->versionIndex(), 1);
-    ASSERT_TRUE(DissolveSystemTest::checkPartialSet(rawGRBaseline, rawGRSimple, 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Full partials", rawGRBaseline.partials(), rawGRSimple.partials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Bound partials", rawGRBaseline.boundPartials(), rawGRSimple.boundPartials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Unbound partials", rawGRBaseline.unboundPartials(), rawGRSimple.unboundPartials(), 1.0e-8));
+    ASSERT_TRUE(testData1D(rawGRBaseline.total(), "Total (baseline)", rawGRSimple.total(), "Total (raw)", 1.0e-8));
 
     // Test against cells method
     ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::CellsMethod));
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
     auto rawGRCells = *grNode->getOutputValue<PartialSet *>("RawGR");
     ASSERT_EQ(grNode->versionIndex(), 2);
-    ASSERT_TRUE(DissolveSystemTest::checkPartialSet(rawGRBaseline, rawGRCells, 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Full partials", rawGRBaseline.partials(), rawGRCells.partials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Bound partials", rawGRBaseline.boundPartials(), rawGRCells.boundPartials(), 1.0e-8));
+    ASSERT_TRUE(testDoubleKeyedMap("Unbound partials", rawGRBaseline.unboundPartials(), rawGRCells.unboundPartials(), 1.0e-8));
+    ASSERT_TRUE(testData1D(rawGRBaseline.total(), "Total (baseline)", rawGRCells.total(), "Total (raw)", 1.0e-8));
 }
 
 TEST(GRNodeTest, Water)
@@ -62,25 +66,20 @@ TEST(GRNodeTest, Water)
     auto rawGR = grNode->getOutputValue<PartialSet *>("RawGR");
 
     // Partial g(r) (unbound terms)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")),
-                                                "OW-OW Unbound Partial", "epsr25/water1000-neutron/water.EPSR.g01", 1, 2,
-                                                6.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "OW")),
-                                                "HW-OW Unbound Partial", "epsr25/water1000-neutron/water.EPSR.g01", 1, 4,
-                                                2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")),
-                                                "HW-HW Unbound Partial", "epsr25/water1000-neutron/water.EPSR.g01", 1, 6,
-                                                2.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.g01", 1, 2, 6.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "OW")), "HW-OW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.g01", 1, 4, 2.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.g01", 1, 6, 2.0e-2));
 
     // Partial g(r) (intramolecular terms)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OW")),
-                                                "OW-OW Bound Partial", "epsr25/water1000-neutron/water.EPSR.y01", 1, 2, 1.0e-5,
-                                                Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "OW")),
-                                                "HW-OW Bound Partial", "epsr25/water1000-neutron/water.EPSR.y01", 1, 4, 0.1));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HW")),
-                                                "HW-HW Bound Partial", "epsr25/water1000-neutron/water.EPSR.y01", 1, 6,
-                                                1.5e-2));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.y01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "OW")), "HW-OW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.y01", 1, 4, 0.1));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
+                           "epsr25/water1000-neutron/water.EPSR.y01", 1, 6, 1.5e-2));
 }
 
 TEST(GRNodeTest, WaterMethanol)
@@ -112,136 +111,94 @@ TEST(GRNodeTest, WaterMethanol)
      */
 
     // Partial g(r) (unbound terms
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")),
-                                                "OW-OW Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 2,
-                                                1.0));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")),
-                                                "OW-HW Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 4,
-                                                0.5));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "CT")),
-                                                "OW-CT Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 6,
-                                                0.2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "HC")),
-                                                "OW-HC Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 8,
-                                                7.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OH")),
-                                                "OW-OH Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 10,
-                                                0.2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "HO")),
-                                                "OW-HO Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 12,
-                                                0.3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")),
-                                                "HW-HW Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 14,
-                                                0.4));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "CT")),
-                                                "HW-CT Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 16,
-                                                0.1));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HC")),
-                                                "HW-HC Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 18,
-                                                4.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "OH")),
-                                                "HW-OH Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 20,
-                                                0.2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HO")),
-                                                "HW-HO Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 22,
-                                                0.2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "CT")),
-                                                "CT-CT Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 24,
-                                                0.2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "HC")),
-                                                "CT-HC Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 26,
-                                                4.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "OH")),
-                                                "CT-OH Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 28,
-                                                0.1));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "HO")),
-                                                "CT-HO Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 30,
-                                                0.1));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HC", "HC")),
-                                                "HC-HC Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 32,
-                                                4.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HC", "OH")),
-                                                "HC-OH Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 34,
-                                                4.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HC", "HO")),
-                                                "HC-HO Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 36,
-                                                5.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OH", "OH")),
-                                                "OH-OH Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 38,
-                                                0.3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OH", "HO")),
-                                                "OH-HO Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 40,
-                                                0.1));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HO", "HO")),
-                                                "HO-HO Unbound Partial", "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 42,
-                                                0.3));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 2, 1.0));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 4, 0.5));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "CT")), "OW-CT Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 6, 0.2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "HC")), "OW-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 8, 7.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "OH")), "OW-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 10, 0.2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OW", "HO")), "OW-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 12, 0.3));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 14, 0.4));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "CT")), "HW-CT Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 16, 0.1));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HC")), "HW-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 18, 4.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "OH")), "HW-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 20, 0.2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HW", "HO")), "HW-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 22, 0.2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "CT")), "CT-CT Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 24, 0.2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "HC")), "CT-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 26, 4.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "OH")), "CT-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 28, 0.1));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CT", "HO")), "CT-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 30, 0.1));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HC", "HC")), "HC-HC Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 32, 4.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HC", "OH")), "HC-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 34, 4.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HC", "HO")), "HC-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 36, 5.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OH", "OH")), "OH-OH Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 38, 0.3));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("OH", "HO")), "OH-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 40, 0.1));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Unbound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.g01", 1, 42, 0.3));
 
     // Partial g(r) (intramolecular terms)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "HW")),
-                                                "OW-HW Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 4,
-                                                0.8));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HW")),
-                                                "HW-HW Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 14,
-                                                0.5));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "HC")),
-                                                "CT-HC Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 26,
-                                                0.3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "OH")),
-                                                "CT-OH Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 28,
-                                                0.5));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "HO")),
-                                                "CT-HO Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 30,
-                                                0.2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HC", "HC")),
-                                                "HC-HC Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 32,
-                                                0.06));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HC", "OH")),
-                                                "HC-OH Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 34,
-                                                0.08));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HC", "HO")),
-                                                "HC-HO Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 36,
-                                                0.5));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OH", "HO")),
-                                                "OH-HO Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 40,
-                                                0.5));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "HW")), "OW-HW Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 4, 0.8));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HW")), "HW-HW Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 14, 0.5));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "HC")), "CT-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 26, 0.3));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "OH")), "CT-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 28, 0.5));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "HO")), "CT-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 30, 0.2));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HC", "HC")), "HC-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 32, 0.06));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HC", "OH")), "HC-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 34, 0.08));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HC", "HO")), "HC-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 36, 0.5));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OH", "HO")), "OH-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 40, 0.5));
 
     // Partial g(r) (intramolecular terms, zero)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OW")),
-                                                "OW-OW Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 2,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "CT")),
-                                                "OW-CT Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 6,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "HC")),
-                                                "OW-HC Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 8,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OH")),
-                                                "OW-OH Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 10,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "HO")),
-                                                "OW-HO Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 12,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "CT")),
-                                                "HW-CT Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 16,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HC")),
-                                                "HW-HC Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 18,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "OH")),
-                                                "HW-OH Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 20,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HO")),
-                                                "HW-HO Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 22,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "CT")),
-                                                "CT-CT Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 24,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OH", "OH")),
-                                                "OH-OH Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 38,
-                                                1.0e-5, Error::ErrorType::RMSEError));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HO", "HO")),
-                                                "HO-HO Bound Partial", "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 42,
-                                                1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OW")), "OW-OW Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 2, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "CT")), "OW-CT Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 6, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "HC")), "OW-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 8, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "OH")), "OW-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 10, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OW", "HO")), "OW-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 12, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "CT")), "HW-CT Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 16, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HC")), "HW-HC Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 18, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "OH")), "HW-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 20, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HW", "HO")), "HW-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 22, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CT", "CT")), "CT-CT Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 24, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("OH", "OH")), "OH-OH Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 38, 1.0e-5, Error::ErrorType::RMSEError));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HO", "HO")), "HO-HO Bound Partial",
+                           "epsr25/water300methanol600/watermeth.EPSR.y01", 1, 42, 1.0e-5, Error::ErrorType::RMSEError));
 }
 
 TEST(GRNodeTest, Benzene)
@@ -265,26 +222,20 @@ TEST(GRNodeTest, Benzene)
     auto rawGR = grNode->getOutputValue<PartialSet *>("RawGR");
 
     // Partial g(r) (unbound terms)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CA", "CA")),
-                                                "CA-CA Unbound Partial", "epsr25/benzene200-neutron/benzene.EPSR.g01", 1, 2,
-                                                3.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CA", "HA")),
-                                                "CA-HA Unbound Partial", "epsr25/benzene200-neutron/benzene.EPSR.g01", 1, 4,
-                                                2.0e-2));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HA", "HA")),
-                                                "HA-HA Unbound Partial", "epsr25/benzene200-neutron/benzene.EPSR.g01", 1, 6,
-                                                4.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Unbound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.g01", 1, 2, 3.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Unbound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.g01", 1, 4, 2.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->unboundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Unbound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.g01", 1, 6, 4.0e-2));
 
     // Partial g(r) (intramolecular terms)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CA", "CA")),
-                                                "CA-CA Bound Partial", "epsr25/benzene200-neutron/benzene.EPSR.y01", 1, 2,
-                                                0.12));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CA", "HA")),
-                                                "CA-HA Bound Partial", "epsr25/benzene200-neutron/benzene.EPSR.y01", 1, 4,
-                                                0.18));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HA", "HA")),
-                                                "HA-HA Bound Partial", "epsr25/benzene200-neutron/benzene.EPSR.y01", 1, 6,
-                                                9.0e-2));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CA", "CA")), "CA-CA Bound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.y01", 1, 2, 0.12));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("CA", "HA")), "CA-HA Bound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.y01", 1, 4, 0.18));
+    EXPECT_TRUE(testData1D(rawGR->boundPartials().get(DoubleKeyedMapKey("HA", "HA")), "HA-HA Bound Partial",
+                           "epsr25/benzene200-neutron/benzene.EPSR.y01", 1, 6, 9.0e-2));
 }
 
 } // namespace UnitTest

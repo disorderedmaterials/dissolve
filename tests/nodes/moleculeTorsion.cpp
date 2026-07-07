@@ -3,9 +3,7 @@
 
 #include "nodes/moleculeTorsion.h"
 #include "nodes/iterableGraph.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -35,8 +33,8 @@ TEST(MoleculeTorsionNodeTest, Benzene)
     ASSERT_TRUE(iterator->setOption<Number>("N", 80));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(moleculeTorsion->frequency(), "Normalised Frequency",
-                                                "dlpoly/benzene181/benzene181.01-03-05-07.tors.norm", 1, 2, 1.0e-3));
+    EXPECT_TRUE(testData1D(moleculeTorsion->frequency(), "Normalised Frequency",
+                           "dlpoly/benzene181/benzene181.01-03-05-07.tors.norm", 1, 2, 1.0e-3));
 }
 
 } // namespace UnitTest

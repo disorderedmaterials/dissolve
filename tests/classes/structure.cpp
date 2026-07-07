@@ -3,9 +3,8 @@
 
 #include "classes/structure.h"
 #include "nodes/calculateBonding.h"
-#include "tests/graphData.h"
+#include "tests/testGraph.h"
 #include <cmath>
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

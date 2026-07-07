@@ -3,10 +3,9 @@
 
 #include "classes/neutronWeights.h"
 #include "classes/isotopologueSet.h"
-#include "tests/graphData.h"
+#include "classes/species.h"
 #include "tests/tempFile.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "tests/testing.h"
 
 namespace UnitTest
 {

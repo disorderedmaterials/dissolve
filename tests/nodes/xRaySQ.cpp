@@ -3,9 +3,7 @@
 
 #include "nodes/xRaySQ.h"
 #include "nodes/gr.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -23,7 +21,7 @@ TEST(XRaySQNodeTest, WaterReferenceFT)
     ASSERT_TRUE(sqNode);
 
     // Add XRaySQ
-    auto H2Ox = testGraph.appendXRaySQ(sqNode, "H2Ox", {"epsr25/water1000-neutron-xray/PCCPfofq.txt"});
+    auto H2Ox = testGraph.appendXRaySQ(sqNode, "H2Ox", "epsr25/water1000-neutron-xray/PCCPfofq.txt", false);
     ASSERT_TRUE(H2Ox);
     ASSERT_TRUE(H2Ox->setOption<StructureFactors::NormalisationType>(
         "NormaliseTo", StructureFactors::NormalisationType::AverageOfSquaresNormalisation));
@@ -37,12 +35,12 @@ TEST(XRaySQNodeTest, WaterReferenceFT)
     ASSERT_EQ(H2Ox->versionIndex(), 0);
 
     // Total F(Q)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(H2Ox->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2Ox F(Q)",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.u01", 1, 8, 1.5e-4));
+    EXPECT_TRUE(testData1D(H2Ox->getOutputValue<PartialSet *>("WeightedSQ")->total(), "H2Ox F(Q)",
+                           "epsr25/water1000-neutron-xray/water.EPSR.u01", 1, 8, 1.5e-4));
 
     // Total G(r)
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(H2Ox->getOutputValue<Data1D>("ReferenceGR"), "H2Ox Reference G(r)",
-                                                "epsr25/water1000-neutron-xray/water.EPSR.w01", 1, 8, 5.0e-5));
+    EXPECT_TRUE(testData1D(H2Ox->getOutputValue<Data1D>("ReferenceGR"), "H2Ox Reference G(r)",
+                           "epsr25/water1000-neutron-xray/water.EPSR.w01", 1, 8, 5.0e-5));
 }
 
 } // namespace UnitTest

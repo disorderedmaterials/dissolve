@@ -4,7 +4,6 @@
 #include "classes/species.h"
 #include "gui/models/modifyChargesModel.h"
 #include <gmock/gmock.h>
-#include <gtest/gtest.h>
 
 #define NO_DISPLAY false
 

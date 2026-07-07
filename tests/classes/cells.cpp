@@ -2,12 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
+#include "classes/configuration.h"
 #include "classes/species.h"
 #include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "math/mathFunc.h"
-#include "tests/graphData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

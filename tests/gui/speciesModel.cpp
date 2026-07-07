@@ -5,7 +5,6 @@
 #include "classes/bondFunctions.h"
 #include "data/elements.h"
 #include "gui/models/nodeGraph/graphModel.h"
-#include <gtest/gtest.h>
 
 namespace UnitTest
 {

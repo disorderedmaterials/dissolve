@@ -4,11 +4,9 @@
 #include "nodes/constants.h"
 #include "nodes/exportXYZTrajectory.h"
 #include "nodes/importXYZTrajectory.h"
-#include "tests/graphData.h"
 #include "tests/tempFile.h"
-#include "tests/testData.h"
+#include "tests/testGraph.h"
 #include <fstream>
-#include <gtest/gtest.h>
 #include <memory>
 #include <sstream>
 

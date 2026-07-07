@@ -7,7 +7,6 @@
 #include "generator/parameters.h"
 #include "generator/select.h"
 #include "keywords/node.h"
-#include <gtest/gtest.h>
 #include <string>
 
 namespace UnitTest

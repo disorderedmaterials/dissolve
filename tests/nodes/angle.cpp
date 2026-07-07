@@ -5,9 +5,8 @@
 #include "classes/speciesSites.h"
 #include "math/rangedVector3.h"
 #include "nodes/iterableGraph.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -39,11 +38,10 @@ TEST(AngleNodeTest, Water)
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(angle->rdfBC(), "B-C RDF",
-                                                "dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", 1, 2, 4.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(angle->angleABC(), "A-B-C angle",
-                                                "dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm", 1, 2,
-                                                3.0e-6));
+    EXPECT_TRUE(
+        testData1D(angle->rdfBC(), "B-C RDF", "dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", 1, 2, 4.0e-3));
+    EXPECT_TRUE(testData1D(angle->angleABC(), "A-B-C angle",
+                           "dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm", 1, 2, 3.0e-6));
 }
 
 } // namespace UnitTest

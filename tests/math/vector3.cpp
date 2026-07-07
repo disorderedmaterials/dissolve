@@ -2,8 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/vector3.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "tests/testing.h"
 
 namespace UnitTest
 {

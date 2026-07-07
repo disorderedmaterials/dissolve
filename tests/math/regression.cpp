@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/regression.h"
-#include "tests/testData.h"
+#include "math/data1D.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

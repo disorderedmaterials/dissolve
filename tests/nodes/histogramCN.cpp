@@ -3,9 +3,9 @@
 
 #include "nodes/histogramCN.h"
 #include "nodes/angle.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/iterableGraph.h"
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

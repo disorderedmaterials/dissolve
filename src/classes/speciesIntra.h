@@ -23,6 +23,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     SpeciesIntra(SpeciesIntra &&source) = delete;
     SpeciesIntra &operator=(const SpeciesIntra &source)
     {
+        parent_ = source.parent_;
         interactionPotential_ = source.interactionPotential_;
         commonTerm_ = source.commonTerm_;
         attached_[0] = source.attached_[0];

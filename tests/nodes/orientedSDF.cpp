@@ -4,9 +4,8 @@
 #include "nodes/orientedSDF.h"
 #include "nodes/importDLPUtilsPDens.h"
 #include "nodes/iterableGraph.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -42,7 +41,6 @@ TEST(OrientedSDFNodeTest, Benzene)
 
     Data3D referenceData;
     EXPECT_TRUE(ImportDLPUtilsPDensNode::read(referenceData, "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10"));
-    EXPECT_TRUE(DissolveSystemTest::checkData3D(osdf->sdf(), "SDF", referenceData,
-                                                "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", 0.09));
+    EXPECT_TRUE(testData3D(osdf->sdf(), "SDF", referenceData, "dlpoly/benzene181/benzene181.11.pdens.zOrient0_10", 0.09));
 }
 } // namespace UnitTest

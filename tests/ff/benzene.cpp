@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "kernels/energy.h"
 #include "kernels/force.h"
 #include "nodes/dissolve.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -58,7 +58,8 @@ TEST_F(BenzeneForcefieldTest, Energies)
     auto kernel = testGraph_.createEnergyKernel(configuration_);
 
     // Check consistency between production and test energies
-    auto productionEnergy = checkEnergyConsistency(kernel);
+    Kernel::EnergyResult productionEnergy;
+    EXPECT_TRUE(testEnergyConsistency(kernel, 1.0e-6, productionEnergy));
 
     // Interatomic energy:  -1334.653 LJ + 182.307 correction + 561.2389 Coulomb
     EXPECT_NEAR(-1334.653 + 182.307 + 561.2389, productionEnergy.pairPotential.total(), 4.0e-2);
@@ -79,11 +80,11 @@ TEST_F(BenzeneForcefieldTest, ForcesFull)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, geometryForces,
-                                   importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.12);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.12));
 }
 
 TEST_F(BenzeneForcefieldTest, ForcesIntra)
@@ -95,12 +96,12 @@ TEST_F(BenzeneForcefieldTest, ForcesIntra)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(zeroForces, geometryForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                   1.0e-2);
+    EXPECT_TRUE(testReferenceForceConsistency(zeroForces, geometryForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 1.0e-2));
 }
 
 TEST_F(BenzeneForcefieldTest, ForcesVDW)
@@ -116,12 +117,12 @@ TEST_F(BenzeneForcefieldTest, ForcesVDW)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                   0.12);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, zeroForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 0.12));
 }
 
 TEST_F(BenzeneForcefieldTest, ForcesElectrostatics)
@@ -137,11 +138,11 @@ TEST_F(BenzeneForcefieldTest, ForcesElectrostatics)
 
     // Check consistency between production and test forces
     std::vector<Vector3> pairPotentialForces, geometryForces;
-    checkForceConsistency(kernel, pairPotentialForces, geometryForces);
+    EXPECT_TRUE(testForceConsistency(kernel, pairPotentialForces, geometryForces));
     std::vector<Vector3> zeroForces(pairPotentialForces.size());
 
     // Check agreement with external reference total forces
-    checkReferenceForceConsistency(pairPotentialForces, zeroForces, importNode_->getOutputValue<std::vector<Vector3>>("Forces"),
-                                   3.0e-4);
+    EXPECT_TRUE(testReferenceForceConsistency(pairPotentialForces, zeroForces,
+                                              importNode_->getOutputValue<std::vector<Vector3>>("Forces"), 3.0e-4));
 }
 } // namespace UnitTest

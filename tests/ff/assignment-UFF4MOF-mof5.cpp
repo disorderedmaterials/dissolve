@@ -2,15 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
 TEST(UFF4MOFMOF5AssignmentTest, MOF5)
 {
-    DissolveSystemTest systemTest;
     TestGraph testGraph;
     auto *importNode = testGraph.createNode("ImportXYZStructure");
     ASSERT_TRUE(importNode);
@@ -40,7 +38,7 @@ TEST(UFF4MOFMOF5AssignmentTest, MOF5)
     ASSERT_EQ(species.torsions().size(), 1536);
     ASSERT_EQ(species.impropers().size(), 192);
 
-    systemTest.checkSpeciesAtomType(&species, {{0, "Zn3f2"},
+    EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "Zn3f2"},
                                                {1, "Zn3f2"},
                                                {26, "Zn3f2"},
                                                {29, "Zn3f2"},
@@ -55,17 +53,16 @@ TEST(UFF4MOFMOF5AssignmentTest, MOF5)
                                                {178, "C_R"},
                                                {226, "C_R"},
                                                {290, "C_R"},
-                                               {386, "H_"}});
-    systemTest.checkSpeciesIntramolecular(&species, {386, 290}, {BondFunctions::Form::Harmonic, "k=2991.0611 eq=1.08142"},
-                                          1.0e-5);
-    systemTest.checkSpeciesIntramolecular(&species, {0, 32}, {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 3.0e-5);
-    systemTest.checkSpeciesIntramolecular(&species, {8, 32}, {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 1.0e-5);
-    systemTest.checkSpeciesIntramolecular(&species, {71, 156}, {BondFunctions::Form::Harmonic, "k=5048.4039 eq=1.34262"},
-                                          5.0e-6);
-    systemTest.checkSpeciesIntramolecular(&species, {178, 122, 26}, {AngleFunctions::Form::Cosine, "53.5872 3 0 -1"}, 3.0e-5);
-    systemTest.checkSpeciesIntramolecular(&species, {121, 29, 112}, {AngleFunctions::Form::Cosine, "107.58286 3 0 -1"}, 6.0e-6);
-    systemTest.checkSpeciesIntramolecular(&species, {178, 122, 26, 117}, {TorsionFunctions::Form::UFFCosine, "96.4708  2  180"},
-                                          5.0e-5);
-    systemTest.checkSpeciesIntramolecular(&species, {178, 122, 133, 226}, {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"});
+                                               {386, "H_"}}));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(386, 290), {BondFunctions::Form::Harmonic, "k=2991.0611 eq=1.08142"}, 1.0e-5));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 32), {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 3.0e-5));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(8, 32), {BondFunctions::Form::Harmonic, "k=1337.872 eq=1.84185"}, 1.0e-5));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(71, 156), {BondFunctions::Form::Harmonic, "k=5048.4039 eq=1.34262"}, 5.0e-6));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(178, 122, 26), {AngleFunctions::Form::Cosine, "53.5872 3 0 -1"}, 3.0e-5));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(121, 29, 112), {AngleFunctions::Form::Cosine, "107.58286 3 0 -1"}, 6.0e-6));
+    EXPECT_TRUE(testSpeciesTorsion(species.getTorsion(178, 122, 26, 117),
+                                   {TorsionFunctions::Form::UFFCosine, "96.4708  2  180"}, 5.0e-5));
+    EXPECT_TRUE(
+        testSpeciesImproper(species.getImproper(178, 122, 133, 226), {TorsionFunctions::Form::FourierN, "25.104 1 -1 0"}));
 }
 }; // namespace UnitTest

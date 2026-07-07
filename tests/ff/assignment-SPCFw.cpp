@@ -2,15 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
 TEST(SPCFwAssignmentTest, Water)
 {
-    DissolveSystemTest systemTest;
     TestGraph testGraph;
     auto *speciesNode = testGraph.createSpeciesFromStructureAndForcefield("Water", "ImportXYZStructure", "xyz/water.xyz",
                                                                           ForcefieldLibrary::forcefield("SPC/Fw"));
@@ -24,8 +22,8 @@ TEST(SPCFwAssignmentTest, Water)
     ASSERT_EQ(species.torsions().size(), 0);
     ASSERT_EQ(species.impropers().size(), 0);
 
-    systemTest.checkSpeciesAtomType(&species, {{0, "OW"}, {1, "HW"}, {2, "HW"}});
-    systemTest.checkSpeciesIntramolecular(&species, {0, 1}, {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"});
-    systemTest.checkSpeciesIntramolecular(&species, {1, 0, 2}, {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"});
+    EXPECT_TRUE(testSpeciesAtomType(&species, {{0, "OW"}, {1, "HW"}, {2, "HW"}}));
+    EXPECT_TRUE(testSpeciesBond(species.getBond(0, 1), {BondFunctions::Form::Harmonic, "k=4431.53 eq=1"}));
+    EXPECT_TRUE(testSpeciesAngle(species.getAngle(1, 0, 2), {AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24"}));
 }
 }; // namespace UnitTest

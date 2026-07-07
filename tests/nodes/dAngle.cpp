@@ -5,9 +5,8 @@
 #include "analyser/dataOperator2D.h"
 #include "nodes/importDLPUtilsSurface.h"
 #include "nodes/iterableGraph.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -38,11 +37,10 @@ TEST(DAngleNodeTest, Water)
     ASSERT_TRUE(iterator->setOption<Number>("N", 95));
     ASSERT_EQ(iterator->run(), NodeConstants::ProcessResult::Success);
 
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(dAngle->rdfBC(), "B-C RDF",
-                                                "dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", 1, 2, 4.0e-3));
-    EXPECT_TRUE(DissolveSystemTest::checkData1D(dAngle->angle(), "Angle Distributions",
-                                                "dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm", 1, 2,
-                                                3.0e-6));
+    EXPECT_TRUE(
+        testData1D(dAngle->rdfBC(), "B-C RDF", "dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum", 1, 2, 4.0e-3));
+    EXPECT_TRUE(testData1D(dAngle->angle(), "Angle Distributions",
+                           "dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm", 1, 2, 3.0e-6));
 
     // Test DAngle map - the reference data have not been normalised to account for sin(y) or the spherical shell (RDF) density.
     Data2D referenceData;
@@ -51,8 +49,7 @@ TEST(DAngleNodeTest, Water)
     auto data = dAngle->distanceAngleMap().accumulatedData();
     DataOperator2D dAngleNormaliser(data);
     dAngleNormaliser.divide(267.0);
-    EXPECT_TRUE(DissolveSystemTest::checkData2D(data, "Distance-Angle Map", referenceData,
-                                                "water-267-298K.dahist1_02_1_01_02.surf", 3.0e-3));
+    EXPECT_TRUE(testData2D(data, "Distance-Angle Map", referenceData, "water-267-298K.dahist1_02_1_01_02.surf", 3.0e-3));
 }
 
 } // namespace UnitTest

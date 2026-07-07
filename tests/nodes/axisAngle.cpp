@@ -2,9 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/axisAngle.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

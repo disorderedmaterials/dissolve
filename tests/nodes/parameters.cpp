@@ -4,8 +4,7 @@
 #include "nodes/dissolve.h"
 #include "nodes/numberNode.h"
 #include "nodes/test.h"
-#include "tests/graphData.h"
-#include <gtest/gtest.h>
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {

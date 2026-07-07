@@ -2,11 +2,12 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/units.h"
+#include "classes/configuration.h"
 #include "classes/isotopologueSet.h"
 #include "data/structureFactors.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/neutronSQ.h"
+#include "nodes/sq.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -47,14 +48,12 @@ TEST(GraphArgonTest, AllCorrelations)
     // Check total unweighted SQ
     auto unweightedSQ = sqNode->getOutputValue<PartialSet *>("UnweightedSQ");
     ASSERT_TRUE(unweightedSQ);
-    ASSERT_TRUE(DissolveSystemTest::checkData1D(unweightedSQ->total(), "UnweightedSQ",
-                                                "dissolve2/argon/SQ01-UnweightedSQ-total.sq", 1, 2));
+    ASSERT_TRUE(testData1D(unweightedSQ->total(), "UnweightedSQ", "dissolve2/argon/SQ01-UnweightedSQ-total.sq", 1, 2));
 
     // Check neutron weighted SQ
     auto weightedSQ = neutronSQNode->getOutputValue<PartialSet *>("WeightedSQ");
     ASSERT_TRUE(weightedSQ);
-    ASSERT_TRUE(DissolveSystemTest::checkData1D(weightedSQ->total(), "WeightedSQ",
-                                                "dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq", 1, 2, 0.025));
+    ASSERT_TRUE(testData1D(weightedSQ->total(), "WeightedSQ", "dissolve2/argon/NeutronSQ01-WeightedSQ-total.sq", 1, 2, 0.025));
 }
 
 } // namespace UnitTest

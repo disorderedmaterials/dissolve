@@ -5,9 +5,8 @@
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
 #include "templates/algorithms.h"
-#include "tests/testData.h"
+#include "tests/testing.h"
 #include <cmath>
-#include <gtest/gtest.h>
 #include <vector>
 
 namespace UnitTest

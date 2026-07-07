@@ -4,7 +4,6 @@
 #include "templates/algorithms.h"
 #include <array>
 #include <gtest/gtest.h>
-#include <string_view>
 #include <vector>
 
 namespace UnitTest

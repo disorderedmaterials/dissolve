@@ -5,7 +5,6 @@
 #include "classes/atomType.h"
 #include "math/data1D.h"
 #include "math/history.h"
-#include "tests/testData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

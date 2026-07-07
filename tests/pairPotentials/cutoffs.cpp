@@ -3,9 +3,8 @@
 
 #include "kernels/force.h"
 #include "nodes/dissolve.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "nodes/species.h"
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -44,7 +43,8 @@ TEST(PairPotentialCutoffTest, ShortRange)
     {
         PairPotential::setRange(cutoff, 1.0e-4);
         auto kernel = testGraph.createForceKernel(cfg);
-        checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+        EXPECT_TRUE(
+            testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric}));
     }
 }
 
@@ -78,7 +78,8 @@ TEST(PairPotentialCutoffTest, Coulomb)
     {
         PairPotential::setRange(cutoff, 1.0e-4);
         auto kernel = testGraph.createForceKernel(cfg);
-        checkForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric});
+        EXPECT_TRUE(
+            testForceConsistency(kernel, pairPotentialForces, geometryForces, {Kernel::CalculationFlags::ExcludeGeometric}));
     }
 }
 

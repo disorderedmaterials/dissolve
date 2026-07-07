@@ -6,8 +6,6 @@
 #include "data/ff/library.h"
 #include "generator/generator.h"
 #include "main/dissolve.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
 #include <string>
 
 namespace UnitTest

@@ -6,8 +6,7 @@
 #include "nodes/graph.h"
 #include "nodes/number.h"
 #include "nodes/numberNode.h"
-#include "tests/graphData.h"
-#include <gtest/gtest.h>
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -231,7 +230,7 @@ TEST_F(GraphFlowTest, RemoveEdges)
     x2a->set(Number{20});
     EXPECT_EQ(z_->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(z_->findOutput("Result")->get<Number>().asInteger(), 30);
-    TestGraph::exportMermaidGraph(graph_);
+    exportMermaidGraph(graph_);
 }
 
 } // namespace UnitTest

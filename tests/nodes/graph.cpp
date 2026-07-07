@@ -4,9 +4,7 @@
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
 #include "nodes/registry.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
-#include <gtest/gtest.h>
+#include "tests/testGraph.h"
 
 namespace UnitTest
 {
@@ -67,7 +65,6 @@ TEST_F(GraphCoreTest, Serialisation)
 {
     createGraph();
 
-    Dissolve d;
     DissolveGraph copy;
     auto serialised = root_.into_toml();
 

@@ -3,8 +3,8 @@
 
 #include "gui/models/isotopologueSetModel.h"
 #include "classes/isotopologueSet.h"
-#include "tests/graphData.h"
-#include <gtest/gtest.h>
+#include "classes/species.h"
+#include "tests/testing.h"
 
 namespace UnitTest
 {
