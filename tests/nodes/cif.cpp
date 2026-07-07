@@ -227,13 +227,15 @@ TEST_F(CIFNodeTest, NaClMolecules)
               SpaceGroups::SpaceGroup_225);
     constexpr double A = 5.62;
 
-    EXPECT_EQ(getDetectedMolecularStructures(detectMoleculesNode, 2).size(), 2);
-    testDetectedMolecularStructure(getDetectedMolecularStructures(detectMoleculesNode, 2).at(0), {"Na", 4, 1});
+    // Check atomic positions
     std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
-    for (auto &&[instance, r2] : zip(getDetectedMolecularStructures(detectMoleculesNode, 2).at(0).instances(), R))
+    auto structures = getDetectedMolecularStructures(detectMoleculesNode, 2);
+    EXPECT_EQ(structures.size(), 2);
+    testDetectedMolecularStructure(structures.at(0), {"Na", 4, 1});
+    for (auto &&[instance, r2] : zip(structures.at(0).instances(), R))
         DissolveSystemTest::checkVec3(instance[0], r2);
-    testDetectedMolecularStructure(getDetectedMolecularStructures(detectMoleculesNode, 2).at(1), {"Cl", 4, 1});
-    for (auto &&[instance, r2] : zip(getDetectedMolecularStructures(detectMoleculesNode, 2).at(1).instances(), R))
+    testDetectedMolecularStructure(structures.at(1), {"Cl", 4, 1});
+    for (auto &&[instance, r2] : zip(structures.at(1).instances(), R))
         DissolveSystemTest::checkVec3(instance[0], (r2 - A / 2).abs());
 
     // 2x2x2 supercell
