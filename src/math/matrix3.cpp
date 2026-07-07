@@ -409,108 +409,127 @@ void Matrix3::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
  */
 
 // Create rotation matrix about X
-void Matrix3::createRotationX(double angle)
+Matrix3 Matrix3::createRotationX(double angle)
 {
-    double cosx, sinx, theta = DissolveMath::toRadians(angle);
-    cosx = cos(theta);
-    sinx = sin(theta);
-    matrix_[0] = 1.0;
-    matrix_[1] = 0.0;
-    matrix_[2] = 0.0;
+    const auto theta = DissolveMath::toRadians(angle);
+    const auto cosx = cos(theta), sinx = sin(theta);
 
-    matrix_[3] = 0.0;
-    matrix_[4] = cosx;
-    matrix_[5] = -sinx;
+    Matrix3 m;
 
-    matrix_[6] = 0.0;
-    matrix_[7] = sinx;
-    matrix_[8] = cosx;
+    m[0] = 1.0;
+    m[1] = 0.0;
+    m[2] = 0.0;
+
+    m[3] = 0.0;
+    m[4] = cosx;
+    m[5] = -sinx;
+
+    m[6] = 0.0;
+    m[7] = sinx;
+    m[8] = cosx;
+
+    return m;
 }
 
 // Create XY rotation matrix
-void Matrix3::createRotationXY(double anglex, double angley)
+Matrix3 Matrix3::createRotationXY(double anglex, double angley)
 {
-    double cosx, sinx, cosy, siny, thetax = DissolveMath::toRadians(anglex), thetay = DissolveMath::toRadians(angley);
-    cosx = cos(thetax);
-    cosy = cos(thetay);
-    sinx = sin(thetax);
-    siny = sin(thetay);
-    matrix_[0] = cosy;
-    matrix_[1] = (-sinx) * (-siny);
-    matrix_[2] = -siny * cosx;
+    const auto thetax = DissolveMath::toRadians(anglex), thetay = DissolveMath::toRadians(angley);
+    auto cosx = cos(thetax), cosy = cos(thetay), sinx = sin(thetax), siny = sin(thetay);
 
-    matrix_[3] = 0.0;
-    matrix_[4] = cosx;
-    matrix_[5] = sinx;
+    Matrix3 m;
 
-    matrix_[6] = siny;
-    matrix_[7] = (-sinx) * cosy;
-    matrix_[8] = cosx * cosy;
+    m[0] = cosy;
+    m[1] = (-sinx) * (-siny);
+    m[2] = -siny * cosx;
+
+    m[3] = 0.0;
+    m[4] = cosx;
+    m[5] = sinx;
+
+    m[6] = siny;
+    m[7] = (-sinx) * cosy;
+    m[8] = cosx * cosy;
+
+    return m;
 }
 
 // Create rotation matrix about Y
-void Matrix3::createRotationY(double angle)
+Matrix3 Matrix3::createRotationY(double angle)
 {
-    double cosx, sinx, theta = DissolveMath::toRadians(angle);
-    cosx = cos(theta);
-    sinx = sin(theta);
-    matrix_[0] = cosx;
-    matrix_[1] = 0.0;
-    matrix_[2] = sinx;
+    const auto theta = DissolveMath::toRadians(angle);
+    const auto cosy = cos(theta), siny = sin(theta);
 
-    matrix_[3] = 0.0;
-    matrix_[4] = 1.0;
-    matrix_[5] = 0.0;
+    Matrix3 m;
 
-    matrix_[6] = -sinx;
-    matrix_[7] = 0.0;
-    matrix_[8] = cosx;
+    m[0] = cosy;
+    m[1] = 0.0;
+    m[2] = siny;
+
+    m[3] = 0.0;
+    m[4] = 1.0;
+    m[5] = 0.0;
+
+    m[6] = -siny;
+    m[7] = 0.0;
+    m[8] = cosy;
+
+    return m;
 }
 
 // Create rotation matrix about Z
-void Matrix3::createRotationZ(double angle)
+Matrix3 Matrix3::createRotationZ(double angle)
 {
-    double cosx, sinx, theta = DissolveMath::toRadians(angle);
-    cosx = cos(theta);
-    sinx = sin(theta);
-    matrix_[0] = cosx;
-    matrix_[1] = -sinx;
-    matrix_[2] = 0.0;
+    const auto theta = DissolveMath::toRadians(angle);
+    const auto cosz = cos(theta), sinz = sin(theta);
 
-    matrix_[3] = sinx;
-    matrix_[4] = cosx;
-    matrix_[5] = 0.0;
+    Matrix3 m;
 
-    matrix_[6] = 0.0;
-    matrix_[7] = 0.0;
-    matrix_[8] = 1.0;
+    m[0] = cosz;
+    m[1] = -sinz;
+    m[2] = 0.0;
+
+    m[3] = sinz;
+    m[4] = cosz;
+    m[5] = 0.0;
+
+    m[6] = 0.0;
+    m[7] = 0.0;
+    m[8] = 1.0;
+
+    return m;
 }
 
 // Create axis rotation quaternion
-void Matrix3::createRotationAxis(Vector3 axis, double angle, bool normalise)
+Matrix3 Matrix3::createRotationAxis(Vector3 axis, double angle, bool normalise)
 {
-    double cosx, sinx, theta = DissolveMath::toRadians(angle), oneMcosx;
+    const auto theta = DissolveMath::toRadians(angle);
+    const auto cosx = cos(theta), sinx = sin(theta);
+    const auto oneMcosx = 1.0 - cosx;
+
     if (normalise)
     {
-        double mag = sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+        auto mag = sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
         axis.x /= mag;
         axis.y /= mag;
         axis.z /= mag;
     }
-    cosx = cos(theta);
-    sinx = sin(theta);
-    oneMcosx = 1.0 - cosx;
-    matrix_[0] = axis.x * axis.x * oneMcosx + cosx;
-    matrix_[1] = axis.x * axis.y * oneMcosx - axis.z * sinx;
-    matrix_[2] = axis.x * axis.z * oneMcosx + axis.y * sinx;
 
-    matrix_[3] = axis.x * axis.y * oneMcosx + axis.z * sinx;
-    matrix_[4] = axis.y * axis.y * oneMcosx + cosx;
-    matrix_[5] = axis.y * axis.z * oneMcosx - axis.x * sinx;
+    Matrix3 m;
 
-    matrix_[6] = axis.x * axis.z * oneMcosx - axis.y * sinx;
-    matrix_[7] = axis.y * axis.z * oneMcosx + axis.x * sinx;
-    matrix_[8] = axis.z * axis.z * oneMcosx + cosx;
+    m[0] = axis.x * axis.x * oneMcosx + cosx;
+    m[1] = axis.x * axis.y * oneMcosx - axis.z * sinx;
+    m[2] = axis.x * axis.z * oneMcosx + axis.y * sinx;
+
+    m[3] = axis.x * axis.y * oneMcosx + axis.z * sinx;
+    m[4] = axis.y * axis.y * oneMcosx + cosx;
+    m[5] = axis.y * axis.z * oneMcosx - axis.x * sinx;
+
+    m[6] = axis.x * axis.z * oneMcosx - axis.y * sinx;
+    m[7] = axis.y * axis.z * oneMcosx + axis.x * sinx;
+    m[8] = axis.z * axis.z * oneMcosx + cosx;
+
+    return m;
 }
 
 // Apply rotation about X axis

@@ -92,15 +92,15 @@ class Matrix3
      */
     public:
     // Create rotation matrix about X
-    void createRotationX(double angle);
+    static Matrix3 createRotationX(double angle);
     // Create XY rotation matrix
-    void createRotationXY(double anglex, double angley);
+    static Matrix3 createRotationXY(double anglex, double angley);
     // Create rotation matrix about Y
-    void createRotationY(double angle);
+    static Matrix3 createRotationY(double angle);
     // Create rotation matrix about Z
-    void createRotationZ(double angle);
+    static Matrix3 createRotationZ(double angle);
     // Create axis rotation quaternion
-    void createRotationAxis(Vector3 axis, double angle, bool normalise);
+    static Matrix3 createRotationAxis(Vector3 axis, double angle, bool normalise);
     // Apply rotation about X axis
     void applyRotationX(double angle);
     // Apply axis rotation quaternion
