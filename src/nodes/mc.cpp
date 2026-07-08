@@ -7,6 +7,7 @@
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
 #include "nodes/dissolve.h"
+#include "nodes/mcCommon.h"
 
 MCNode::MCNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -54,19 +55,14 @@ NodeConstants::ProcessResult MCNode::process()
 
     // Get options
     auto nTrials = nTrials_.asInteger();
-    auto translationStepSizeMin = translationStepSizeMin_.asDouble();
-    auto translationStepSizeMax = translationStepSizeMax_.asDouble();
-    auto rotationStepSizeMin = rotationStepSizeMin_.asDouble();
-    auto rotationStepSizeMax = rotationStepSizeMax_.asDouble();
-    auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
 
     // Print argument/parameter summary
     message("Performing {} moves(s) per term.\n", nTrials);
     message("Step size for translation adjustments is {:.5f} Angstroms (allowed range is {} <= "
             "delta <= {}).\n",
-            translationStepSize_, translationStepSizeMin, translationStepSizeMax);
+            translationStepSize_, translationStepSizeMin_.asDouble(), translationStepSizeMax_.asDouble());
     message("Step size for rotation adjustments is {:.5f} degrees (allowed range is {} <= delta <= {}).\n", rotationStepSize_,
-            rotationStepSizeMin, rotationStepSizeMax);
+            rotationStepSizeMin_.asDouble(), rotationStepSizeMax_.asDouble());
     message("\n");
 
     // Prepare for energy calculation, generate kernel
@@ -169,28 +165,20 @@ NodeConstants::ProcessResult MCNode::process()
     // Calculate and print acceptance rates
     auto transRate = double(nTranslationsAccepted) / nTranslationAttempts;
     auto rotRate = double(nRotationsAccepted) / nRotationAttempts;
-    message("Total number of attempted moves was {} ({} work)\n", nGeneralAttempts, timer.totalTimeString());
+    message("Total number of attempted moves was {} ({} elapsed)\n", nGeneralAttempts, timer.totalTimeString());
     message("Overall translation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * transRate,
             nTranslationsAccepted, nTranslationAttempts);
     message("Overall rotation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rotRate, nRotationsAccepted,
             nRotationAttempts);
 
-    // Update and set translation step size
-    translationStepSize_ *= (nTranslationsAccepted == 0) ? 0.8 : transRate / targetAcceptanceRate;
-    if (translationStepSize_ < translationStepSizeMin)
-        translationStepSize_ = translationStepSizeMin;
-    else if (translationStepSize_ > translationStepSizeMax)
-        translationStepSize_ = translationStepSizeMax;
-
+    // Update step sizes
+    translationStepSize_ = MCCommon::updateStepSize(translationStepSize_, nTranslationAttempts, nTranslationsAccepted,
+                                                    targetAcceptanceRate_.asDouble(), translationStepSizeMin_.asDouble(),
+                                                    translationStepSizeMax_.asDouble());
+    rotationStepSize_ =
+        MCCommon::updateStepSize(rotationStepSize_, nRotationAttempts, nRotationsAccepted, targetAcceptanceRate_.asDouble(),
+                                 rotationStepSizeMin_.asDouble(), rotationStepSizeMax_.asDouble());
     message("Updated step size for translations is {:.5f} Angstroms.\n", translationStepSize_);
-
-    // Update and set rotation step size
-    rotationStepSize_ *= (nRotationsAccepted == 0) ? 0.8 : rotRate / targetAcceptanceRate;
-    if (rotationStepSize_ < rotationStepSizeMin)
-        rotationStepSize_ = rotationStepSizeMin;
-    else if (rotationStepSize_ > rotationStepSizeMax)
-        rotationStepSize_ = rotationStepSizeMax;
-
     message("Updated step size for rotations is {:.5f} degrees.\n", rotationStepSize_);
 
     // Mark the configuration as having been modified
