@@ -7,7 +7,6 @@
 #include <vector>
 
 // Forward Declarations
-class CoreData;
 class LineParser;
 
 // Vector of double values with sampling

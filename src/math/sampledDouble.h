@@ -6,7 +6,6 @@
 #include "base/serialiser.h"
 
 // Forward Declarations
-class CoreData;
 class LineParser;
 class ProcessPool;
 

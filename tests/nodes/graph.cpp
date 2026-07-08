@@ -56,7 +56,6 @@ class GraphCoreTest : public ::testing::Test
     }
 
     protected:
-    // We need a CoreData and Dissolve definition to properly instantiate DissolveGraph at present.
     DissolveGraph root_;
     AddNode *x_{nullptr}, *y_{nullptr}, *z_{nullptr};
 };

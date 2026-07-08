@@ -63,8 +63,6 @@ class MDNode : public Node
     std::optional<Number> outputFrequency_{5};
     // Whether random velocities should always be assigned before beginning MD simulation
     bool randomVelocities_{false};
-    // Species to restrict calculation to
-    std::vector<const Species *> restrictToSpecies_;
     // Write frequency for trajectory file
     std::optional<Number> trajectoryFrequency_;
     // Velocities
