@@ -13,7 +13,7 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-    addInput("Temperature", "Temperature (K)", temperature_)->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addInput("Temperature", "Temperature (K)", temperature_);
 
     // Options
     addOption("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);

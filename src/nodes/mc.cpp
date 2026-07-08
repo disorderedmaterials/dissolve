@@ -13,7 +13,7 @@ MCNode::MCNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput("Configuration", "Set target configuration for the module", targetConfiguration_)
         ->setFlags({ParameterBase::Required});
-    addInput("Temperature", "Temperature (K)", temperature_)->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addInput("Temperature", "Temperature (K)", temperature_);
 
     // Options
     addOption("NTrials", "Number of attempts per move", nTrials_);
