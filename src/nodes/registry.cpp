@@ -40,6 +40,7 @@
 #include "nodes/integrator.h"
 #include "nodes/intraAngle.h"
 #include "nodes/intraDistance.h"
+#include "nodes/intraMC.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/mc.h"
 #include "nodes/md.h"
@@ -119,6 +120,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
                   {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
+                  {"IntraMC", makeDerivedNode<IntraMCNode>()},
                   {"Iterator", makeDerivedNode<IterableGraph>()},
                   {"MC", makeDerivedNode<MCNode>()},
                   {"MD", makeDerivedNode<MDNode>()},
