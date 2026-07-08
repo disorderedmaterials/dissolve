@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableData1D.h"
-#include "base/lineParser.h"
 #include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
 #include "math/sampledData1D.h"

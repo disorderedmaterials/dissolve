@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderable.h"
-#include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"

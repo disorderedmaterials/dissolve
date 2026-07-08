@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableSpecies.h"
-#include "base/lineParser.h"
 #include "classes/configurationAtom.h"
 #include "data/elementColours.h"
 #include "gui/render/renderableConfiguration.h"
