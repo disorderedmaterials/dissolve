@@ -37,7 +37,7 @@ class AtomicMCNode : public Node
     // Maximum allowed value for step size, in Angstroms
     Number stepSizeMax_{1.0, 0.1, 10.0};
     // Minimum allowed value for step size, in Angstroms
-    Number stepSizeMin_{0.001, 0.001, 1.0};
+    Number stepSizeMin_{0.001, 0.0001, 1.0};
     // Target acceptance rate for Monte Carlo moves
     Number targetAcceptanceRate_{0.33, 0.01, 1.0};
 
