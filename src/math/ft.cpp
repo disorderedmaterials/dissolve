@@ -6,6 +6,7 @@
 #include "templates/algorithms.h"
 #include "templates/parallelDefs.h"
 #include <algorithm>
+#include <cmath>
 #include <functional>
 #include <numeric>
 #include <vector>

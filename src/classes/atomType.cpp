@@ -4,7 +4,7 @@
 #include "classes/atomType.h"
 #include "data/elements.h"
 #include "templates/algorithms.h"
-#include <map>
+#include <cmath>
 
 AtomType::AtomType(Elements::Element Z) : Z_(Z), interactionPotential_(ShortRangeFunctions::Form::Undefined) {}
 AtomType::AtomType(std::string_view name) : name_(name), interactionPotential_(ShortRangeFunctions::Form::Undefined) {}

@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/shortRangeFunctions.h"
+#include <cmath>
 
 // Return enum options for ShortRangeType
 EnumOptions<ShortRangeFunctions::Form> ShortRangeFunctions::forms()
