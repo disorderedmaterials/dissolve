@@ -35,7 +35,7 @@ class SerialisableData
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
-template <typename DataClass> class SerialisableClass : SerialisableData
+template <typename DataClass> class SerialisableClass : public SerialisableData
 {
     public:
     // Optional Vector of Serialisable

@@ -548,7 +548,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 };
 
 // Primary type for a Parameter to a specific DataClass
-template <typename DataClass> class SerialisableParameter
+template <typename DataClass> class SerialisableParameter : public Parameter<DataClass>
 {
     public:
     SerialisableParameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
@@ -569,22 +569,23 @@ template <typename DataClass> class SerialisableParameter
     // Express as a serialised value
     void serialise(std::string tag, SerialisedValue &target) const
     {
+        using namespace Serialisable;
         SerialisedValue result = {};
 
         // Serialise non-pointer values
         if constexpr (HasEnumOptions<DataClass>)
             result["data"] = getEnumOptions(Parameter<DataClass>::data_).serialise(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, Number>::value)
-            result["data"] = Parameter<DataClass>::data_;
+            result["data"] = ser(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, std::string>::value)
-            result["data"] = Parameter<DataClass>::data_;
+            result["data"] = ser(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (Parameter<DataClass>::data_)
-                result["data"] = *Parameter<DataClass>::data_;
+                result["data"] = ser(*Parameter<DataClass>::data_);
         }
         else
-            result["data"] = Parameter<DataClass>::data_;
+            result["data"] = ser(Parameter<DataClass>::data_);
 
         target[tag] = result;
     };
