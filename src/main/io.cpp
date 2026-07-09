@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "base/lineParser.h"
 #include "base/messenger.h"
 #include "base/serialiser.h"
 #include "base/sysFunc.h"

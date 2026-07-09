@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/exportBlockData.h"
-#include "base/lineParser.h"
 
 ExportBlockDataNode::ExportBlockDataNode(Graph *parentGraph) : Node(parentGraph)
 {

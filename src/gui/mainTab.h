@@ -11,7 +11,6 @@
 // Forward Declarations
 class Dissolve;
 class DissolveWindow;
-class LineParser;
 class MainTabsWidget;
 class QLayout;
 class QMdiArea;

@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/histogramSet.h"
-#include "base/lineParser.h"
 #include "classes/atomType.h"
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"

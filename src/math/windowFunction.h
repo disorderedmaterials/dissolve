@@ -6,7 +6,6 @@
 #include "base/enumOptions.h"
 
 // Forward Declarations
-class LineParser;
 class Data1D;
 
 // Window Function
@@ -42,8 +41,6 @@ class WindowFunction
     public:
     // Set functional form
     void set(WindowFunction::Form form);
-    // Set function data from LineParser source
-    bool set(LineParser &parser, int startArg);
     // Return function type
     WindowFunction::Form form() const;
     // Set-up function for specified data

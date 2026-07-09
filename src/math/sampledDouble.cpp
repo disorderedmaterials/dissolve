@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/sampledDouble.h"
-#include "base/lineParser.h"
 #include <cmath>
 
 SampledDouble::SampledDouble() { clear(); }

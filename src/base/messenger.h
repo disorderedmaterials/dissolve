@@ -7,9 +7,6 @@
 #include <format>
 #include <functional>
 
-// Forward Declarations
-class LineParser;
-
 // Global messaging handler
 class Messenger
 {

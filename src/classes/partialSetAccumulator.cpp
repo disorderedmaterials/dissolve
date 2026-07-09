@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/partialSetAccumulator.h"
-#include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "nodes/exportData.h"
 #include <format>
@@ -70,8 +69,6 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
 {
     assert(!prefix.empty());
 
-    LineParser parser;
-
     // Write partials
     for (auto &[key, fullPartial] : partials_)
     {
@@ -87,17 +84,19 @@ bool PartialSetAccumulator::save(std::string_view prefix, std::string_view tag, 
         std::string filename{std::format("{}-{}-{}.{}", prefix, tag, DissolveSys::niceName(fullPartial.tag()), suffix)};
         Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-        parser.openOutput(filename, true);
-        if (!parser.isFileGoodForWriting())
+        std::ofstream outfile(filename, std::ios::out);
+        std::ostreambuf_iterator<char> out(outfile);
+
+        if (!outfile)
             return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-        parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Error", "Bound",
-                          "Error", "Unbound", "Error");
+        std::format_to(out, "# {:<14}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}  {:<16}\n", abscissaUnits, "Full", "Error",
+                       "Bound", "Error", "Unbound", "Error");
         for (auto n = 0; n < fullPartial.nValues(); ++n)
-            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", fullPartial.xAxis(n),
-                              fullPartial.value(n), fullPartial.error(n), boundPartial.value(n), boundPartial.error(n),
-                              unboundPartial.value(n), unboundPartial.error(n));
-        parser.closeFiles();
+            std::format_to(out, "{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", fullPartial.xAxis(n),
+                           fullPartial.value(n), fullPartial.error(n), boundPartial.value(n), boundPartial.error(n),
+                           unboundPartial.value(n), unboundPartial.error(n));
+        outfile.close();
     }
 
     return ExportDataNode::write(total_, std::format("{}-{}-total.{}", prefix, tag, suffix));

@@ -85,13 +85,6 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         std::vector<std::string_view> terms{DissolveSys::splitString(params)};
         return interactionPotential_.parseParameters(terms);
     }
-    bool setInteractionParameters(LineParser &parser, int startArg)
-    {
-        if (commonTerm_)
-            return Messenger::error("Refused to set intramolecular parameters since common parameters are referenced.\n");
-
-        return interactionPotential_.parseParameters(parser, startArg);
-    }
     // Set form and parameters
     void setInteractionFormAndParameters(typename Functions::Form form, const std::vector<double> &params)
     {

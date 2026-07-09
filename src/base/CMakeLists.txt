@@ -8,8 +8,6 @@ add_library(
   enumOptionsBase.h
   geometry.cpp
   geometry.h
-  lineParser.cpp
-  lineParser.h
   lock.cpp
   lock.h
   messenger.cpp

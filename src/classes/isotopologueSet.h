@@ -8,7 +8,6 @@
 // Forward Declarations
 class Species;
 class Isotopologue;
-class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species
 class IsotopologueSet : public Serialisable, ResolvableContext

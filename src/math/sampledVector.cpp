@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/sampledVector.h"
-#include "base/lineParser.h"
+#include "base/messenger.h"
 #include "templates/algorithms.h"
 #include <cmath>
 

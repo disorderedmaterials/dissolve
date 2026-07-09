@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/poissonFit.h"
-#include "base/lineParser.h"
 #include "math/data1D.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -189,15 +188,16 @@ const std::vector<double> &PoissonFit::C() const { return C_; }
 // Save coefficients to specified file
 bool PoissonFit::saveCoefficients(std::string_view filename) const
 {
-    LineParser parser;
-    if (!parser.openOutput(filename))
+    std::ofstream outfile(std::string(filename), std::ios::out);
+    std::ostreambuf_iterator<char> out(outfile);
+    if (!outfile)
         return false;
 
-    parser.writeLineF("#   C\n");
+    std::format_to(out, "#   C\n");
     for (auto n = 0; n < nPoissons_; ++n)
-        parser.writeLineF("{}\n", C_[n]);
+        std::format_to(out, "{}\n", C_[n]);
 
-    parser.closeFiles();
+    outfile.close();
 
     return true;
 }

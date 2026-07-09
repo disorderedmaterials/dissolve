@@ -5,6 +5,7 @@
 
 #include "classes/configurationAtom.h"
 #include "math/vector3.h"
+#include "math/vector3i.h"
 #include <set>
 #include <vector>
 

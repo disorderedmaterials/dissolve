@@ -4,6 +4,7 @@
 #pragma once
 
 #include "math/histogram1D.h"
+#include "math/vector3i.h"
 #include "nodes/node.h"
 #include "templates/array3D.h"
 

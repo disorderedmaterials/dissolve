@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableSpeciesSite.h"
-#include "base/lineParser.h"
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/site.h"

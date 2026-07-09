@@ -1,40 +1,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
 #include "math/poissonFit.h"
 #include "nodes/importXYData.h"
 #include "tests/testing.h"
+#include <fstream>
 
 namespace UnitTest
 {
 void testReconstruction(std::string inpAFile, std::string delfitFile,
                         const std::vector<std::tuple<std::string, int, double>> &targets, Data1D axisData)
 {
-    LineParser parser;
-    ASSERT_TRUE(parser.openInput(inpAFile));
+    using namespace Parsers;
+    std::ifstream infile(inpAFile);
+    ASSERT_TRUE(infile);
 
     // First line contains parameters relating to energy / pressure calculation which we can skip
-    ASSERT_TRUE(parser.getArgsDelim(LineParser::Defaults) == LineParser::Success);
+    ASSERT_TRUE(toEndOfLine().parse(infile));
 
     for (auto &[dataSet, column, errorThreshold] : targets)
     {
         // Data file index
-        ASSERT_TRUE(parser.getArgsDelim(LineParser::Defaults) == LineParser::Success);
+        auto index = (inlineSpaces() >> natural() << toEndOfLine()).parse(infile);
+        ASSERT_TRUE(index);
 
-        std::cout << std::format("Reading fit coefficients for data {} ({})...\n", dataSet, parser.argi(0));
-
-        // Number of coefficients, stepsize in r, sigma2
-        ASSERT_TRUE(parser.getArgsDelim(LineParser::Defaults) == LineParser::Success);
-        const auto nCoeff = parser.argi(0);
+        std::cout << std::format("Reading fit coefficients for data {} ({})...\n", dataSet, std::get<0>(*index));
 
         // Coefficients (all on one line)
-        ASSERT_TRUE(parser.getArgsDelim(LineParser::Defaults) == LineParser::Success);
-        ASSERT_TRUE(parser.nArgs() == nCoeff);
-
-        std::vector<double> fitCoefficients;
-        fitCoefficients.resize(nCoeff);
-        for (auto i = 0; i < nCoeff; ++i)
-            fitCoefficients[i] = parser.argd(i);
+        auto count = (inlineSpaces() >> natural() << toEndOfLine()).parse(infile);
+        ASSERT_TRUE(count);
+        auto nCoeff = std::get<0>(*count);
+        auto coefficients = (some(inlineSpaces() >> real()) << newlines()).parse(infile);
+        ASSERT_TRUE(coefficients);
+        auto fitCoefficients = std::get<0>(*coefficients);
+        ASSERT_EQ(nCoeff, fitCoefficients.size());
 
         // Construct the fit
         PoissonFit coeffMinimiser(axisData);

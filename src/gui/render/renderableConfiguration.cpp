@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui/render/renderableConfiguration.h"
-#include "base/lineParser.h"
 #include "classes/box.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"

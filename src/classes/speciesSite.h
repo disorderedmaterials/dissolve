@@ -16,7 +16,6 @@
 
 // Forward Declarations
 class Configuration;
-class LineParser;
 class Site;
 class Species;
 class SpeciesAtom;

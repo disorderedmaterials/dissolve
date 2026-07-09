@@ -2,7 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/importXYData.h"
-#include "base/lineParser.h"
+#include "base/applicative.h"
+#include "base/parserLibrary.h"
 #include "math/data1D.h"
 #include "math/filters.h"
 
@@ -80,6 +81,7 @@ NodeConstants::ProcessResult ImportXYDataNode::process()
 // Read data specified
 bool ImportXYDataNode::read(Data1D &data, std::string filePath, int xColumn, int yColumn, int errorColumn, bool histogram)
 {
+    using namespace Parsers;
     // Clear the data
     data.clear();
 
@@ -89,32 +91,35 @@ bool ImportXYDataNode::read(Data1D &data, std::string filePath, int xColumn, int
     --errorColumn;
 
     // Open file and check that we're OK to proceed importing from it
-    LineParser parser;
-    if ((!parser.openInput(filePath)) || (!parser.isFileGoodForReading()))
+    std::ifstream infile(filePath);
+    if (!infile)
         return false;
 
-    while (!parser.eofOrBlank())
-    {
-        if (parser.getArgsDelim() != LineParser::Success)
-            return false;
-
-        // Check columns provided
-        if ((xColumn >= parser.nArgs()) || (yColumn >= parser.nArgs()))
-            return false;
-
-        // Are we reading errors too?
-        if (errorColumn == -1)
-            data.addPoint(parser.argd(xColumn), parser.argd(yColumn));
-        else
+    std::optional<std::vector<std::string>> commentLine;
+    // Treat lines that begin with # as empty data points
+    auto comment =
+        "#"_p >> inlines() >> newlines().map([](const auto x) -> std::optional<std::vector<std::string>> { return {}; });
+    // We *may* have to deal with mixed numeric and alphabetic data,
+    // so treat each line as a list of strings and only parse the
+    // double at the end.  Use the map command to wrap the data in an optionsl
+    auto line = comment | (some(maybe(inlineSpaces()) >> graphs()) << spaces())
+                              .map([](auto x) -> std::optional<std::vector<std::string>> { return x; });
+    auto parsed = some(line).parse(infile);
+    if (!parsed)
+        return false;
+    auto lines = std::get<0>(*parsed);
+    if (errorColumn == -1)
+        for (auto l : lines)
         {
-            if (errorColumn >= parser.nArgs())
-                return false;
-
-            data.addPoint(parser.argd(xColumn), parser.argd(yColumn), parser.argd(errorColumn));
+            if (!l) // just a comment;
+                continue;
+            if (errorColumn == -1)
+                data.addPoint(std::stod(l->at(xColumn)), std::stod(l->at(yColumn)));
+            else
+                data.addPoint(std::stod(l->at(xColumn)), std::stod(l->at(yColumn)), std::stod(l->at(errorColumn)));
         }
-    }
 
-    parser.closeFiles();
+    infile.close();
 
     // If we have a histogram, convert bin boundaries to centre-bin values
     if (histogram)

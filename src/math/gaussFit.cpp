@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/gaussFit.h"
-#include "base/lineParser.h"
 #include "math/data1D.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -106,15 +105,16 @@ const std::vector<double> &GaussFit::fwhm() const { return fwhm_; }
 // Save coefficients to specified file
 bool GaussFit::saveCoefficients(std::string_view filename) const
 {
-    LineParser parser;
-    if (!parser.openOutput(filename))
+    std::ofstream outfile(std::string(filename), std::ios::out);
+    std::ostreambuf_iterator<char> out(outfile);
+    if (!outfile)
         return false;
 
-    parser.writeLineF("#  x  A  FWHM\n");
+    std::format_to(out, "#  x  A  FWHM\n");
     for (auto n = 0; n < nGaussians_; ++n)
-        parser.writeLineF("{}  {}  {}\n", x_[n], A_[n], fwhm_[n]);
+        std::format_to(out, "{}  {}  {}\n", x_[n], A_[n], fwhm_[n]);
 
-    parser.closeFiles();
+    outfile.close();
 
     return true;
 }
@@ -134,24 +134,24 @@ bool GaussFit::saveFTGaussians(std::string_view filenamePrefix, double xStep) co
     double xDelta = (xStep < 0.0 ? referenceData_.xAxis(1) - referenceData_.xAxis(0) : xStep);
     for (auto n = 0; n < nGaussians_; ++n)
     {
-        LineParser parser;
-        if (!parser.openOutput(std::format("{}-{:03d}.gauss", filenamePrefix, n)))
+        std::ofstream outfile(std::format("{}-{:03d}.gauss", filenamePrefix, n), std::ios::out);
+        std::ostreambuf_iterator<char> out(outfile);
+        if (!outfile)
             return false;
 
         auto xCentre = x_[n];
         auto A = A_[n];
         auto fwhm = fwhm_[n];
-        if (!parser.writeLineF("#  x={}  A={}  fwhm={}\n", xCentre, A, fwhm))
-            return false;
+        std::format_to(out, "#  x={}  A={}  fwhm={}\n", xCentre, A, fwhm);
 
         double x = referenceData_.xAxis().front();
         while (x < referenceData_.xAxis().back())
         {
-            parser.writeLineF("{}  {}\n", x, gaussianFT(x, xCentre, A, fwhm));
+            std::format_to(out, "{}  {}\n", x, gaussianFT(x, xCentre, A, fwhm));
             x += xDelta;
         }
 
-        parser.closeFiles();
+        outfile.close();
     }
 
     return true;

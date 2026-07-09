@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "base/lineParser.h"
 #include "base/sysFunc.h"
+#include <iostream>
 
 // Static Members
 bool Messenger::quiet_ = false;

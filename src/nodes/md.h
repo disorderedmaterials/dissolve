@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "base/lineParser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
