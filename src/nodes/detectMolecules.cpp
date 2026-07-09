@@ -97,7 +97,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
 
                 // Set up the return value and bind its contents
                 NETADefinition bestNETA;
-                std::vector<StructureAtom *> rootAtoms;
+                std::vector<const StructureAtom *> rootAtoms;
 
                 // Maintain a set of atoms matched by any NETA description we generate
                 std::set<const StructureAtom *> alreadyMatched;
@@ -113,10 +113,9 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                                                                      NETADefinition::NETACreationFlags::IncludeRootElement));
 
                 // Apply this match over the whole fragment
-                std::vector<StructureAtom *> currentRootAtoms;
-                for (auto fragmentAtomIndex : fragment)
+                std::vector<const StructureAtom *> currentRootAtoms;
+                for (auto fragmentAtom : fragmentAtoms)
                 {
-                    const auto fragmentAtom = inputStructure_.atom(fragmentAtomIndex);
                     if (neta.matches(fragmentAtom))
                     {
                         currentRootAtoms.push_back(fragmentAtom);
