@@ -21,7 +21,7 @@ DetectMoleculesNode::DetectMoleculesNode(Graph *parentGraph) : Node(parentGraph)
 
 std::string_view DetectMoleculesNode::type() const { return "DetectMolecules"; }
 
-std::string_view DetectMoleculesNode::summary() const { return "Detect molecular species within a structure"; }
+std::string_view DetectMoleculesNode::summary() const { return "Detect molecular instances within a structure"; }
 
 /*
  * Processing
@@ -52,7 +52,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
         return false;
     };
 
-    // Try selecting within the species from the first atom - if this captures all atoms we have a bound framework...
+    // Try selecting within the fragment from the first atom - if this captures all atoms we have a bound framework...
     if (fragmentMap.contains(inputStructure_.nAtoms()))
         return error(
             "Can't create molecular definitions since this unit cell appears to be a continuous framework/network. Consider "
@@ -111,7 +111,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                             Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
                                                                      NETADefinition::NETACreationFlags::IncludeRootElement));
 
-                // Apply this match over the whole species
+                // Apply this match over the whole fragment
                 std::vector<StructureAtom *> currentRootAtoms;
                 for (auto fragmentAtomIndex : fragment)
                 {
@@ -144,6 +144,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                  * Get instances
                  */
 
+                // Get all atoms belonging to fragments from the same fragment size group
                 auto fragmentSizeGroupAtoms = getFragmentAtoms(inputStructure_, fragments);
 
                 // Iterate over all structural atoms, matching their unit cell atoms by NETA
