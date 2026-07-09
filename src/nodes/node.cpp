@@ -341,7 +341,7 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
     result["x"] = x;
     result["y"] = y;
 
-    fromMap(options_, "options", result);
+    Serialisable::fromMap(options_, "options", result);
 
     serialiseInternal(result);
 
@@ -351,6 +351,7 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Node::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     x = toml::find<int>(node, "x");
     y = toml::find<int>(node, "y");
     toMap(node, "inputs",

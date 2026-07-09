@@ -45,13 +45,13 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
                                                         {
-                                                            return Serialisable::fromVector(data_.value(),
-                                                                                            [&](const auto &item)
-                                                                                            {
-                                                                                                SerialisedValue outer;
-                                                                                                item.serialise("inner", outer);
-                                                                                                return outer["inner"];
-                                                                                            });
+                                                            return Serialisable::vector(data_.value(),
+                                                                                        [&](const auto &item)
+                                                                                        {
+                                                                                            SerialisedValue outer;
+                                                                                            item.serialise("inner", outer);
+                                                                                            return outer["inner"];
+                                                                                        });
                                                         }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
@@ -94,13 +94,13 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
                                                         {
-                                                            return Serialisable::fromVector(data_,
-                                                                                            [&](const auto &item)
-                                                                                            {
-                                                                                                SerialisedValue outer;
-                                                                                                item.serialise("inner", outer);
-                                                                                                return outer["inner"];
-                                                                                            });
+                                                            return Serialisable::vector(data_,
+                                                                                        [&](const auto &item)
+                                                                                        {
+                                                                                            SerialisedValue outer;
+                                                                                            item.serialise("inner", outer);
+                                                                                            return outer["inner"];
+                                                                                        });
                                                         }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)

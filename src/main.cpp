@@ -60,7 +60,7 @@ int main(int args, char **argv)
         Messenger::print("Saving input file to '{}'...\n", filename.string());
         bool result;
 
-        auto toml = dissolve.into_toml();
+        auto toml = Serialisable::ser(&dissolve);
         std::ofstream outfile;
         outfile.open(options.writeInputFilename().value());
         outfile << toml;

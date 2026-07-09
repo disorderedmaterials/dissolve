@@ -584,7 +584,7 @@ void Function1DWrapper::serialise(std::string tag, SerialisedValue &target) cons
 
     result["form"] = Functions1D::forms().keywordByIndex(static_cast<int>(form_));
 
-    Serialisable::fromVector(parameters_, "parameters", result, [](const auto &x) { return x; });
+    Serialisable::vector(parameters_, "parameters", result, [](const auto &x) { return x; });
 }
 
 // Read values from a serialisable value

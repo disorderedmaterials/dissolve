@@ -57,7 +57,7 @@ template <class T> class History
     // Express as a serialisable value
     void serialise(std::string tag, SerialisedValue &target) const
     {
-        return Serialisable::fromVector(history_, tag, target, [&](const auto &itemPtr) { return itemPtr->into_toml(); });
+        return Serialisable::vector(history_, tag, target, [&](const auto &itemPtr) { return Serialisable::ser(*itemPtr); });
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node)

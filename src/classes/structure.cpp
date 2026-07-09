@@ -308,8 +308,8 @@ void Structure::unFold()
 void Structure::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &result = target[tag];
-    Serialisable::fromVector<>(atoms_, "atoms", result);
-    Serialisable::fromVector<>(bonds_, "bonds", result);
+    Serialisable::vector<>(atoms_, "atoms", result);
+    Serialisable::vector<>(bonds_, "bonds", result);
 }
 
 // Read values from a serialisable value

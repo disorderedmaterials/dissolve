@@ -261,15 +261,17 @@ std::string Graph::location() const
 // Express as a serialisable value
 void Graph::serialise(std::string tag, SerialisedValue &target) const
 {
+    using namespace Serialisable;
     Node::serialise(tag, target);
     auto &result = target[tag];
     fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
-    fromVector(edges_, "edges", result);
+    vector(edges_, "edges", result);
 }
 
 // Read values from a serialisable value
 void Graph::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     Node::deserialise(node);
     toMap(node, "nodes",
           [this](const auto name, const auto &value)
@@ -279,7 +281,7 @@ void Graph::deserialise(const SerialisedValue &node)
 
               child->deserialise(value);
           });
-    toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
+    vector(node, "edges", [this](const auto &value) { addEdge(de<EdgeDefinition>(value)); });
 }
 
 /*

@@ -179,15 +179,15 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
     result["name"] = name_;
 
     Serialisable::fromVectorToTable(atomTypes_, "atomTypes", result);
-    Serialisable::fromVector<>(atoms_, "atoms", result);
+    Serialisable::vector<>(atoms_, "atoms", result);
     Serialisable::fromVectorToTable<>(commonBonds_, "commonBonds", result);
-    Serialisable::fromVector<>(bonds_, "bonds", result);
+    Serialisable::vector<>(bonds_, "bonds", result);
     Serialisable::fromVectorToTable<>(commonAngles_, "commonAngles", result);
-    Serialisable::fromVector<>(angles_, "angles", result);
+    Serialisable::vector<>(angles_, "angles", result);
     Serialisable::fromVectorToTable<>(commonTorsions_, "commonTorsions", result);
-    Serialisable::fromVector<>(torsions_, "torsions", result);
+    Serialisable::vector<>(torsions_, "torsions", result);
     Serialisable::fromVectorToTable<>(commonImpropers_, "commonImpropers", result);
-    Serialisable::fromVector<>(impropers_, "impropers", result);
+    Serialisable::vector<>(impropers_, "impropers", result);
     Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
     Serialisable::fromVectorToTable<>(sites_, "sites", result);
 }

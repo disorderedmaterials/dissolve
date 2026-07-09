@@ -626,8 +626,6 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
                 Parameter<DataClass>::data_ = {};
         }
         else
-        {
-            Parameter<DataClass>::data_ = toml::find<DataClass>(node, "data");
-        }
+            Parameter<DataClass>::data_ = de<DataClass>(node.at("data"));
     }
 };

@@ -32,7 +32,7 @@ const BraggReflection &BraggReflectionVector::operator[](int i) const { return r
 // Express as a serialisable value
 void BraggReflectionVector::serialise(std::string tag, SerialisedValue &target) const
 {
-    Serialisable::fromVector(reflections_, tag, target);
+    Serialisable::vector(reflections_, tag, target);
 }
 
 // Read values from a serialisable value

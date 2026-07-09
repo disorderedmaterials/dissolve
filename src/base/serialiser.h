@@ -31,23 +31,26 @@ concept SerialisableCast = requires(T a) { toml::into<T>::into_toml(a); };
 
 // template <typename T>
 // concept SerialisableFromInto = requires(T a,
-template <SerialisiblePointer T> void serialiseOnto(T a, std::string tag, SerialisedValue &target)
+template <SerialisiblePointer T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
 {
     a->serialise(tag, target);
 }
 
-template <SerialisibleClass T> void serialiseOnto(T a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); }
+template <SerialisibleClass T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
+{
+    a.serialise(tag, target);
+}
 
-template <SerialisableCast T> void serialiseOnto(T a, std::string tag, SerialisedValue &target) { target[tag] = a; }
+template <SerialisableCast T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target) { target[tag] = a; }
 
-void serialiseOnto(int a, std::string tag, SerialisedValue &target);
-void serialiseOnto(double a, std::string tag, SerialisedValue &target);
-void serialiseOnto(std::string a, std::string tag, SerialisedValue &target);
+void serialiseOnto(const int a, std::string tag, SerialisedValue &target);
+void serialiseOnto(const double a, std::string tag, SerialisedValue &target);
+void serialiseOnto(const std::string a, std::string tag, SerialisedValue &target);
 
 template <typename T>
-concept Serialisible = requires(T a, std::string tag, SerialisedValue &target) { serialiseOnto(a, tag, target); };
+concept Serialisible = requires(const T a, std::string tag, SerialisedValue &target) { serialiseOnto(a, tag, target); };
 
-template <Serialisible T> SerialisedValue ser(T a)
+template <Serialisible T> SerialisedValue ser(const T &a)
 {
     SerialisedValue temp;
     serialiseOnto(a, "inner", temp);

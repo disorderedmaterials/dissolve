@@ -519,12 +519,11 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
             site["description"] = fragment_.definitionString();
             break;
         case SiteType::Static:
-            Serialisable::fromVector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
-            Serialisable::fromVector(staticXAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
-            Serialisable::fromVector(staticYAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
-            Serialisable::fromVector(dynamicElements_, "elements", site,
-                                     [](const auto &item) { return Elements::symbol(item); });
-            Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
+            Serialisable::vector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::vector(staticXAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::vector(staticYAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
+            Serialisable::vector(dynamicElements_, "elements", site, [](const auto &item) { return Elements::symbol(item); });
+            Serialisable::vector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
             break;
     }
 }
@@ -538,21 +537,20 @@ void SpeciesSite::deserialise(const SerialisedValue &node)
     switch (type_)
     {
         case SiteType::Static:
-            toVector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
-            toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
-            toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
-            toVector(node, "elements",
-                     [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
-            toVector(node, "atomTypes",
-                     [&, this](const auto &at) { addDynamicAtomType(parent_->findAtomType(std::string(at.as_string()))); });
+            vector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
+            vector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
+            vector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
+            vector(node, "elements",
+                   [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
+            vector(node, "atomTypes",
+                   [&, this](const auto &at) { addDynamicAtomType(parent_->findAtomType(std::string(at.as_string()))); });
 
             break;
         case SiteType::Fragment:
             fragment_.create(toml::find<std::string>(node, "description"));
             break;
         case SiteType::Dynamic:
-            toVector(node, "element",
-                     [this](const auto &element) { addDynamicElement(toml::get<Elements::Element>(element)); });
+            vector(node, "element", [this](const auto &element) { addDynamicElement(toml::get<Elements::Element>(element)); });
             break;
     }
 

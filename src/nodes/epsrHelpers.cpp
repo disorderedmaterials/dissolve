@@ -362,10 +362,10 @@ void EPSRNamedTargetWeights::serialise(std::string tag, SerialisedValue &target)
 void EPSRNamedTargetWeights::deserialise(const SerialisedValue &node)
 {
     weights_.clear();
-    return Serialisable::toMap(node,
-                               [&](const auto &key, const auto &value)
-                               {
-                                   std::pair<std::string, double> mapping(std::string(key), 1.0);
-                                   weights_.insert(mapping);
-                               });
+    return Deserialisable::toMap(node,
+                                 [&](const auto &key, const auto &value)
+                                 {
+                                     std::pair<std::string, double> mapping(std::string(key), 1.0);
+                                     weights_.insert(mapping);
+                                 });
 }
