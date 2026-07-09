@@ -67,6 +67,7 @@ std::vector<const SpeciesSite *> SpeciesSites::getSpeciesSites() const
 // Express as a serialisable value
 void SpeciesSites::serialise(std::string tag, SerialisedValue &target) const
 {
+    using namespace Serialisable;
     if (sites_.size() == 0)
         return;
 
@@ -79,6 +80,7 @@ void SpeciesSites::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesSites::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     clear();
 
     toMap(node, "set",

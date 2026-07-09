@@ -401,5 +401,5 @@ void SpeciesTorsion::deserialise(const SerialisedValue &node)
 
     electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
 
-    Serialisable::optionalOn(node, "v14", [this](const auto node) { vdw14Scaling_ = node.as_floating(); });
+    Deserialisable::optionalOn(node, "v14", [this](const auto node) { vdw14Scaling_ = node.as_floating(); });
 }

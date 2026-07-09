@@ -591,6 +591,7 @@ template <typename DataClass> class SerialisableParameter
     // Read from a serialised value
     void deserialise(const SerialisedValue &node)
     {
+        using namespace Deserialisable;
         if constexpr (std::is_pointer<DataClass>::value)
         {
             Parameter<DataClass>::data_ = nullptr;
@@ -612,14 +613,14 @@ template <typename DataClass> class SerialisableParameter
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = toml::find<Number>(node, "data");
+                Parameter<DataClass>::data_ = de<Number>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<Data1D>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = toml::find<Data1D>(node, "data");
+                Parameter<DataClass>::data_ = de<Data1D>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }

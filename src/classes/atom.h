@@ -93,7 +93,7 @@ template <typename BondClass> class Atom : public AtomBase
 {
     public:
     Atom() = default;
-    virtual ~Atom() override = default;
+    virtual ~Atom() = default;
 
     /*
      * Coordinate Manipulation Operators

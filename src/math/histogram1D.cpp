@@ -214,8 +214,9 @@ Histogram1D Histogram1D::operator+(const Histogram1D &other) const
 // Express as a serialisable value
 void Histogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_},
-                   {"nBinned", nBinned_}, {"nMissed", nMissed_}, {"averages", averages_}};
+    target[tag] = {
+        {"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
+    Serialisable::vector(averages_, "averages", target[tag]);
 }
 
 // Read values from a serialisable value
@@ -228,7 +229,7 @@ void Histogram1D::deserialise(const SerialisedValue &node)
     nBinned_ = toml::find<long>(node, "nBinned");
     nMissed_ = toml::find<long>(node, "nMissed");
 
-    averages_ = toml::find<std::vector<SampledDouble>>(node, "averages");
+    averages_ = Deserialisable::vector<SampledDouble>(node.at("averages"));
 
     updateAccumulatedData();
 }

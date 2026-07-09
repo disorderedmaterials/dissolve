@@ -457,25 +457,26 @@ OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view
 // Express as a serialisable value
 void PartialSet::serialise(std::string tag, SerialisedValue &target) const
 {
+    using namespace Serialisable;
     auto &result = target[tag];
 
-    result["realSpeciesPopulations"] = Serialisable::fromVectorToTable(realSpeciesPopulations_);
+    result["realSpeciesPopulations"] = fromVectorToTable(realSpeciesPopulations_);
 
     partials_.serialise("partials", result);
     boundPartials_.serialise("boundPartials", result);
     unboundPartials_.serialise("unboundPartials", result);
 
-    result["total"] = total_;
-    result["boundTotal"] = boundTotal_;
-    result["unboundTotal"] = unboundTotal_;
+    result["total"] = ser(total_);
+    result["boundTotal"] = ser(boundTotal_);
+    result["unboundTotal"] = ser(unboundTotal_);
 }
 
 // Read values from a serialisable value
 void PartialSet::deserialise(SerialisedValue node)
 {
     // Real species populations
-    Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
-                        { realSpeciesPopulations_[name] = population.as_floating(); });
+    Deserialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
+                          { realSpeciesPopulations_[name] = population.as_floating(); });
 
     partials_.deserialise(node["partials"]);
     boundPartials_.deserialise(node["boundPartials"]);

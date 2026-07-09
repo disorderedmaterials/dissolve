@@ -480,22 +480,21 @@ void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void PairPotential::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     nameI_ = toml::find<std::string>(node, "nameI");
     nameJ_ = toml::find<std::string>(node, "nameJ");
 
     Functions1D::Form form;
-    Serialisable::optionalOn(node, "form",
-                             [&](const auto node) { form = Functions1D::forms().enumeration(std::string(node.as_string())); });
+    optionalOn(node, "form", [&](const auto node) { form = Functions1D::forms().enumeration(std::string(node.as_string())); });
 
     std::vector<double> parameters;
-    Serialisable::optionalOn(node, "parameters",
-                             [&](const auto node)
-                             {
-                                 auto &parameterNames = Functions1D::parameters(form);
-                                 std::transform(parameterNames.begin(), parameterNames.end(), std::back_inserter(parameters),
-                                                [&node](const auto parameterName)
-                                                { return node.at(parameterName).as_floating(); });
-                             });
+    optionalOn(node, "parameters",
+               [&](const auto node)
+               {
+                   auto &parameterNames = Functions1D::parameters(form);
+                   std::transform(parameterNames.begin(), parameterNames.end(), std::back_inserter(parameters),
+                                  [&node](const auto parameterName) { return node.at(parameterName).as_floating(); });
+               });
 
     setInteractionPotential({form, parameters});
 }

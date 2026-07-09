@@ -39,7 +39,7 @@ void BraggReflectionVector::serialise(std::string tag, SerialisedValue &target) 
 void BraggReflectionVector::deserialise(const SerialisedValue &node)
 {
     reflections_.clear();
-    return Serialisable::toVector(node,
+    return Deserialisable::vector(node,
                                   [&](const auto &value)
                                   {
                                       auto &reflection = reflections_.emplace_back();

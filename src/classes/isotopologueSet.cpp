@@ -3,7 +3,6 @@
 
 #include "classes/isotopologueSet.h"
 #include "classes/species.h"
-#include <algorithm>
 
 IsotopologueSet::IsotopologueSet(const std::vector<std::pair<const Isotopologue *, double>> &topes)
 {
@@ -90,18 +89,21 @@ IsotopologueSet::isotopologues() const
 // Express as a serialisable value
 void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
 {
+    using namespace Serialisable;
     if (isotopologues_.size() == 0)
         return;
 
     SerialisedValue value;
-    value["set"] = fromVectorToTable(isotopologues_, [](const auto &topes)
-                                     { return fromVectorToTable(topes, [](const auto isoWeight) { return isoWeight; }); });
+    value["set"] =
+        Serialisable::fromVectorToTable(isotopologues_, [](const auto &topes)
+                                        { return fromVectorToTable(topes, [](const auto isoWeight) { return isoWeight; }); });
     target[tag] = value;
 }
 
 // Read values from a serialisable value
 void IsotopologueSet::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     clear();
 
     toMap(node, "set",

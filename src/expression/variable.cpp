@@ -61,12 +61,14 @@ ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 // Express as a serialisable value
 void ExpressionVariable::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"name", baseName_}, {"value", value_}};
+    using namespace Serialisable;
+    target[tag] = {{"name", ser(baseName_)}, {"value", ser(value_)}};
 }
 
 // Read values from a serialisable value
 void ExpressionVariable::deserialise(const SerialisedValue &node)
 {
-    value_ = toml::find<ExpressionValue>(node, "value");
-    setBaseName(toml::find<std::string>(node, "name"));
+    using namespace Deserialisable;
+    value_ = de<ExpressionValue>(node.at("value"));
+    setBaseName(de<std::string>(node.at("name")));
 }

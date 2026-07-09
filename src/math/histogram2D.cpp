@@ -222,9 +222,9 @@ void Histogram2D::operator=(const Histogram2D &source)
 // Express as a serialisable value
 void Histogram2D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_}, {"xBinWidth", xBinWidth_},
-                   {"yMinimum", yMinimum_}, {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_},
-                   {"nBinned", nBinned_},   {"nMissed", nMissed_},   {"averages", averages_.linearArray()}};
+    target[tag] = {{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_},   {"xBinWidth", xBinWidth_}, {"yMinimum", yMinimum_},
+                   {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_}, {"nBinned", nBinned_},     {"nMissed", nMissed_}};
+    Serialisable::vector(averages_.linearArray(), "averages", target[tag]);
 }
 
 // Read values from a serialisable value
@@ -239,7 +239,7 @@ void Histogram2D::deserialise(const SerialisedValue &node)
     nBinned_ = toml::find<long>(node, "nBinned");
     nMissed_ = toml::find<long>(node, "nMissed");
 
-    averages_.linearArray() = toml::find<std::vector<SampledDouble>>(node, "averages");
+    averages_.linearArray() = Deserialisable::vector<SampledDouble>(node.at("averages"));
 
     updateAccumulatedData();
 }

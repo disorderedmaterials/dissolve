@@ -63,7 +63,7 @@ template <class T> class History
     void deserialise(const SerialisedValue &node)
     {
         history_.clear();
-        return Serialisable::toVector(node,
+        return Deserialisable::vector(node,
                                       [&](const auto &value)
                                       {
                                           auto &unique =

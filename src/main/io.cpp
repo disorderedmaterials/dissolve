@@ -86,15 +86,16 @@ void Dissolve::deserialisePairPotentials(const SerialisedValue &node)
 // Read values from a serialisable value
 void Dissolve::deserialise(const SerialisedValue &originalNode)
 {
+    using namespace Deserialisable;
     // Default to current version if no version info is given.
     auto hasVersion = originalNode.contains("version");
     if (!hasVersion)
         Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
     const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
-    Serialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
+    optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
 
-    Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
+    optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 }
 
 // Load input from supplied file
@@ -156,7 +157,7 @@ bool Dissolve::saveToml(std::string_view filename) const
 {
     std::ofstream outfile;
     outfile.open(std::string(filename));
-    outfile << into_toml() << std::endl;
+    outfile << Serialisable::ser(this) << std::endl;
     outfile.close();
     return true;
 }

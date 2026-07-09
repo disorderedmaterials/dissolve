@@ -532,6 +532,7 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesSite::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     type_ = siteTypes().deserialise(toml::find_or(node, "type", "static"));
 
     switch (type_)

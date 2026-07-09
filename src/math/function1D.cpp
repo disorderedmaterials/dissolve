@@ -593,5 +593,5 @@ void Function1DWrapper::deserialise(const SerialisedValue &node)
     Functions1D::Form proxy;
     form_ = getEnumOptions(proxy).deserialise(node);
 
-    Serialisable::toVector(node, "parameters", [this](const auto &x) { parameters_.emplace_back(toml::get<double>(x)); });
+    Deserialisable::vector(node, "parameters", [this](const auto &x) { parameters_.emplace_back(toml::get<double>(x)); });
 }

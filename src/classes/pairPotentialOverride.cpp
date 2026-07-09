@@ -72,23 +72,23 @@ void PairPotentialOverride::serialise(std::string tag, SerialisedValue &target) 
 // Read values from a serialisable value
 void PairPotentialOverride::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     matchI_ = toml::find<std::string>(node, "matchI");
     matchJ_ = toml::find<std::string>(node, "matchJ");
 
-    Serialisable::optionalOn(node, "type", [this](const auto node)
-                             { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
+    optionalOn(node, "type",
+               [this](const auto node) { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
 
-    Serialisable::optionalOn(
-        node, "form", [this](const auto node)
-        { interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string()))); });
+    optionalOn(node, "form", [this](const auto node)
+               { interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string()))); });
 
-    Serialisable::optionalOn(node, "parameters",
-                             [this](const auto node)
-                             {
-                                 auto &parameters = Functions1D::parameters(interactionPotential_.form());
-                                 std::vector<double> values;
-                                 std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
-                                                [&node](const auto parameter) { return node.at(parameter).as_floating(); });
-                                 interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
-                             });
+    optionalOn(node, "parameters",
+               [this](const auto node)
+               {
+                   auto &parameters = Functions1D::parameters(interactionPotential_.form());
+                   std::vector<double> values;
+                   std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                                  [&node](const auto parameter) { return node.at(parameter).as_floating(); });
+                   interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
+               });
 }

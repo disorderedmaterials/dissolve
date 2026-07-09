@@ -346,11 +346,11 @@ void Data3D::deserialise(const SerialisedValue &node)
     values_.initialise(x_.size(), y_.size(), z_.size());
     values_.linearArray() = toml::find<std::vector<double>>(node, "values");
 
-    Serialisable::optionalOn(node, "errors",
-                             [this](const auto errors)
-                             {
-                                 hasError_ = true;
-                                 errors_.initialise(x_.size(), y_.size(), z_.size());
-                                 errors_.linearArray() = toml::get<std::vector<double>>(errors);
-                             });
+    Deserialisable::optionalOn(node, "errors",
+                               [this](const auto errors)
+                               {
+                                   hasError_ = true;
+                                   errors_.initialise(x_.size(), y_.size(), z_.size());
+                                   errors_.linearArray() = toml::get<std::vector<double>>(errors);
+                               });
 }
