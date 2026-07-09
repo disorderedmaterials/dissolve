@@ -38,7 +38,7 @@ struct ParameterLink
 };
 
 // Base type for all parameter templates to inherit from
-class ParameterBase : public Serialisable
+class ParameterBase
 {
     public:
     ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
@@ -160,9 +160,9 @@ class ParameterBase : public Serialisable
      */
     public:
     // Express as a serialised value
-    virtual void serialise(std::string tag, SerialisedValue &target) const override {}
+    virtual void serialise(std::string tag, SerialisedValue &target) const {}
     // Read from a serialised value
-    virtual void deserialise(const SerialisedValue &node) override { return; }
+    virtual void deserialise(const SerialisedValue &node) { return; }
 };
 
 namespace ParameterFactory
@@ -548,7 +548,7 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
 };
 
 // Primary type for a Parameter to a specific DataClass
-template <typename DataClass> class SerialisableParameter : public Parameter<DataClass>
+template <typename DataClass> class SerialisableParameter
 {
     public:
     SerialisableParameter(Node *parent, std::string_view name, std::string_view description, DataClass &value,
@@ -567,7 +567,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
      */
     public:
     // Express as a serialised value
-    void serialise(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         SerialisedValue result = {};
 
@@ -589,7 +589,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         target[tag] = result;
     };
     // Read from a serialised value
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node)
     {
         if constexpr (std::is_pointer<DataClass>::value)
         {

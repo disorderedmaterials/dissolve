@@ -18,7 +18,7 @@ class Isotopologue;
 class Molecule;
 
 // Dissolve Main Class
-class Dissolve : public Serialisable
+class Dissolve
 {
     public:
     Dissolve();
@@ -119,13 +119,13 @@ class Dissolve : public Serialisable
     // Read pair potentials from a serialisable value
     void deserialisePairPotentials(const SerialisedValue &node);
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
     // Save TOML file
     bool saveToml(std::string_view filename) const;
     // Express pair potentials as a serialisable value
     SerialisedValue serialisePairPotentials() const;
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Return whether an input filename has been set
     bool hasInputFilename() const;
     // Set current input filename

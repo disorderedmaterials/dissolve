@@ -8,7 +8,7 @@
 #include "templates/array2D.h"
 
 // BraggReflection Class
-class BraggReflection : public Serialisable
+class BraggReflection
 {
     public:
     BraggReflection();
@@ -68,13 +68,13 @@ class BraggReflection : public Serialisable
      */
     public:
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
 };
 
 // BraggReflectionVector class
-class BraggReflectionVector : public Serialisable
+class BraggReflectionVector
 {
     public:
     BraggReflectionVector() = default;
@@ -101,7 +101,7 @@ class BraggReflectionVector : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };

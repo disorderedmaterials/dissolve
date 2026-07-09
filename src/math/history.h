@@ -11,7 +11,7 @@
 
 // Serialisable Data History
 // Requires that the template class T is itself a Serialisable and implements the += and * operators
-template <class T> class History : public Serialisable
+template <class T> class History
 {
     public:
     History(std::function<T()> initialiser = {}) : initialiser_(std::move(initialiser)) {}
@@ -55,12 +55,12 @@ template <class T> class History : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         return Serialisable::fromVector(history_, tag, target, [&](const auto &itemPtr) { return itemPtr->into_toml(); });
     }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node)
     {
         history_.clear();
         return Serialisable::toVector(node,
@@ -75,7 +75,7 @@ template <class T> class History : public Serialisable
 
 // Serialisable POD Data History
 // History for PODs, e.g. double, int
-template <class T> class PODHistory : public Serialisable
+template <class T> class PODHistory
 {
     private:
     // Stored historical data
@@ -110,7 +110,7 @@ template <class T> class PODHistory : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         if (history_.empty())
             return;
@@ -119,5 +119,5 @@ template <class T> class PODHistory : public Serialisable
         target[tag] = data;
     }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override { history_ = toml::find<std::vector<T>>(node, "history"); }
+    void deserialise(const SerialisedValue &node) { history_ = toml::find<std::vector<T>>(node, "history"); }
 };

@@ -12,7 +12,7 @@
 class Graph;
 
 // Edge Definition
-class EdgeDefinition : public Serialisable
+class EdgeDefinition
 {
     public:
     EdgeDefinition() = default;
@@ -23,13 +23,13 @@ class EdgeDefinition : public Serialisable
     // Return as a string
     std::string asString() const;
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };
 
 // Edge
-class Edge : public Serialisable
+class Edge
 {
     friend class LoopEdge;
 
@@ -81,9 +81,9 @@ class Edge : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };
 
 // Loop edge

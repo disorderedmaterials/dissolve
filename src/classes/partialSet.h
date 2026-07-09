@@ -10,7 +10,7 @@
 #include "templates/resolvable.h"
 
 // Set of Partials
-class PartialSet : public Serialisable, ResolvableContext
+class PartialSet : ResolvableContext
 {
     public:
     PartialSet() = default;
@@ -115,7 +115,7 @@ class PartialSet : public Serialisable, ResolvableContext
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
     void deserialise(SerialisedValue node);
     // Resolve internal resolvable name references with supplied data

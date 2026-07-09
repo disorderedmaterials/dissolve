@@ -17,7 +17,7 @@
  * removing the critical dependence of an immutably ordered vector of AtomTypes.
  */
 using DoubleKeyedMapKey = std::pair<std::string_view, std::string_view>;
-template <typename ValueClass> class DoubleKeyedMap : public Serialisable
+template <typename ValueClass> class DoubleKeyedMap
 {
     public:
     DoubleKeyedMap(bool mirrored = false) : mirroredAreEquivalent_(mirrored) {}
@@ -164,14 +164,14 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         SerialisedValue result;
         Serialisable::fromMap(data_, "map", result);
         target[tag] = result;
     };
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node)
     {
         data_.clear();
 

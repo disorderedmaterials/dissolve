@@ -14,7 +14,7 @@
 class Species;
 
 // Base class for intramolecular interactions within Species
-template <class Intra, class Functions> class SpeciesIntra : public Serialisable
+template <class Intra, class Functions> class SpeciesIntra
 {
     public:
     explicit SpeciesIntra(Species *parent, typename Functions::Form form) : parent_(parent), interactionPotential_(form) {};
@@ -162,7 +162,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         auto &result = target[tag];
 
@@ -203,7 +203,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             SpeciesIntra::deserialise(node);
     }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node)
     {
         Serialisable::optionalOn(node, "form",
                                  [this](const SerialisedValue &node)

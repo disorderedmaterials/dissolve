@@ -35,7 +35,7 @@ class SerialisableData
 };
 
 // Primary type for a SerialisableClass to a specific DataClass
-template <typename DataClass> class SerialisableClass : public SerialisableData
+template <typename DataClass> class SerialisableClass
 {
     public:
     // Optional Vector of Serialisable
@@ -180,11 +180,11 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
      */
     public:
     // Return whether there is data to serialise
-    bool canSerialise() const override { return dataChecker_(); }
+    bool canSerialise() const { return dataChecker_(); }
     // Express as a serialised value
-    SerialisedValue serialise() const override { return dataSerialiser_(); };
+    SerialisedValue serialise() const { return dataSerialiser_(); };
     // Read from a serialised value
-    void deserialise(const SerialisedValue &node) override { dataDeserialiser_(node); }
+    void deserialise(const SerialisedValue &node) { dataDeserialiser_(node); }
     // Resolve named data
     void resolve(const std::map<std::string, const Species *> &speciesInScope) override { dataResolver_(speciesInScope); };
 };

@@ -8,7 +8,7 @@
 #include <optional>
 
 // Range
-class Range : public Serialisable
+class Range
 {
     public:
     Range(std::optional<double> minimum = std::nullopt, std::optional<double> maximum = std::nullopt);
@@ -40,9 +40,9 @@ class Range : public Serialisable
     // Return whether or not the range has been fully defined
     bool isDefined() const;
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
     bool operator==(const Range &rhs) const;
     bool operator!=(const Range &rhs) const;
 };
