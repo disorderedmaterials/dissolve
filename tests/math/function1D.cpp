@@ -4,6 +4,7 @@
 #include "math/function1D.h"
 #include "math/data1D.h"
 #include "templates/algorithms.h"
+#include <cmath>
 #include <gtest/gtest.h>
 #include <vector>
 
