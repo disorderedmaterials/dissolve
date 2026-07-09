@@ -27,6 +27,23 @@ namespace UnitTest
 Node *TestGraph::fetchHead() const { return head_; }
 // Returns the name of the current head node in the graph
 std::string TestGraph::fetchHeadName() const { return head_ ? std::string(head_->name()) : "NO_NODE"; }
+// Run the graph in a piecewise manner - initially from a specific node, then from the last node - in order to emplace a set
+// of dynamic edges that we expect to exist at run time
+NodeConstants::ProcessResult TestGraph::runDynamic(Node *startNode, std::vector<EdgeDefinition> edges) const
+{
+    currentGraph_->setUpdateRequired();
+
+    auto result = NodeConstants::ProcessResult::Unchanged;
+    result = startNode->run();
+    if (result == NodeConstants::ProcessResult::Failed)
+        return result;
+
+    for (const auto &edge : edges)
+        if (!currentGraph_->addEdge(edge) ||
+            currentGraph_->findNode(edge.targetNode)->run() == NodeConstants::ProcessResult::Failed)
+            return NodeConstants::ProcessResult::Failed;
+    return result;
+}
 // Append new node to the graph
 Node *TestGraph::appendNode(const std::string &nodeType, const std::optional<std::string> &name)
 {
