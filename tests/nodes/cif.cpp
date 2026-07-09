@@ -6,11 +6,10 @@
 #include "data/elements.h"
 #include "nodes/calculateBonding.h"
 #include "nodes/cif/importCIFStructure.h"
-#include "tests/testGraph.h"
 #include "nodes/detectMolecules.h"
+#include "nodes/species.h"
 #include "nodes/supercellConfiguration.h"
-#include "tests/graphData.h"
-#include "tests/testData.h"
+#include "tests/testGraph.h"
 #include <gtest/gtest.h>
 #include <optional>
 #include <string>
@@ -54,7 +53,9 @@ class CIFNodeTest : public ::testing::Test
         for (const auto &sp : expectedSpecies)
         {
             auto [z, name] = sp;
-            EXPECT_TRUE(graph->addNode(TestGraph::createAtomicSpecies(z), name));
+            std::unique_ptr<SpeciesNode> speciesUnique;
+            speciesUnique = TestGraph::createAtomicSpecies(z);
+            EXPECT_TRUE(graph->addNode(std::move(speciesUnique), name));
             EXPECT_TRUE(graph->appendNode("Insert", std::string("Insert" + name)));
             ASSERT_TRUE(graph->fetchHead()->setOption("BoxAction", InsertNode::BoxActionStyle::None));
         }
@@ -235,10 +236,10 @@ TEST_F(CIFNodeTest, NaClMolecules)
     EXPECT_EQ(structures.size(), 2);
     testDetectedMolecularStructure(structures.at(0), {"Na", 4, 1});
     for (auto &&[instance, r2] : zip(structures.at(0).instances(), R))
-        DissolveSystemTest::checkVec3(instance[0], r2);
+        testVector3("Molecular instance coordinates", instance[0], r2);
     testDetectedMolecularStructure(structures.at(1), {"Cl", 4, 1});
     for (auto &&[instance, r2] : zip(structures.at(1).instances(), R))
-        DissolveSystemTest::checkVec3(instance[0], (r2 - A / 2).abs());
+        testVector3("Molecular instance coordinates", instance[0], (r2 - A / 2).abs());
 
     // 2x2x2 supercell
     extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A, A, A}, {90, 90, 90}, {2, 2, 2});

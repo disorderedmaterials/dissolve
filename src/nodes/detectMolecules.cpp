@@ -8,6 +8,7 @@
 #include "classes/species.h"
 #include <algorithm>
 #include <format>
+#include <iostream>
 
 DetectMoleculesNode::DetectMoleculesNode(Graph *parentGraph) : Node(parentGraph)
 {
