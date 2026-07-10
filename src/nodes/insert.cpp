@@ -19,8 +19,7 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
     addOutput("Configuration", "Modified configuration", configuration_);
     addInput("Population", "Population of the target to add", population_);
     addInput("Density", "Density at which to add the target", density_);
-    addInput("Species", "Source species or molecule set to add - all resulting molecules will have identical geometry",
-             speciesVariant_);
+    addInput("Species", "Source species or molecule set to add", speciesVariant_);
     addInput("Instances", "", instances_);
 
     // Options
@@ -198,34 +197,10 @@ NodeConstants::ProcessResult InsertNode::process()
             break;
     }
 
+    // Prepare random number generation in case we are inserting via random sampling
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(0, ipop - 1);
-    std::set<int> alreadySampled;
-
-    const auto sampleInstances = [&alreadySampled, &distr, &gen, ipop, this]()
-    {
-        const auto instances = this->instances_.instances();
-
-        int index = 0;
-
-        // We've run out of new unsampled instances
-        if (alreadySampled.size() == instances.size())
-            return -1;
-
-        while (true)
-        {
-            auto sampledIndex = distr(gen);
-            if (alreadySampled.contains(sampledIndex))
-                continue;
-
-            index += sampledIndex;
-            alreadySampled.insert(index);
-            break;
-        }
-
-        return index;
-    };
 
     Matrix3 transform;
     const auto &box = configuration_->box();
@@ -242,20 +217,23 @@ NodeConstants::ProcessResult InsertNode::process()
         if (hasInstances)
         {
             std::vector<Vector3> atomicCoords;
-            if (instantiationMethod_ == InstantiationMethod::InstantiateAll)
+            switch (instantiationMethod_)
             {
-                atomicCoords = instances_.instances()[n];
-                insertionComplete = true;
-            }
-            else
-            {
-                auto instancesIndex = sampleInstances();
-                if (instancesIndex < 0)
+                case InstantiationMethod::InstantiateAll:
+                {
+                    atomicCoords = instances_.instances()[n];
+                    insertionComplete = true;
                     break;
+                }
+                case InstantiationMethod::Sample:
+                    atomicCoords = instances_.instances()[distr(gen)];
+                    break;
+                default:
+                    return error("Invalid instantiation method found (must be one of 'InstantialAll' or 'Sample')");
             }
 
             // Update molecular atomic coordinates
-            for (int i = 0; i < mol->nAtoms(); i++)
+            for (auto i = 0; i < mol->nAtoms(); ++i)
                 mol->atom(i)->setR(atomicCoords[i]);
 
             if (insertionComplete)

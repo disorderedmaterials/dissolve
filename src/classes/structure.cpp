@@ -124,7 +124,7 @@ const StructureAtom *Structure::atom(int i) const { return atoms_[i].get(); }
 const std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() const { return atoms_; }
 std::vector<std::unique_ptr<StructureAtom>> &Structure::atoms() { return atoms_; }
 
-// Return molecular species coordinates
+// Return positional instances
 const std::vector<std::vector<Vector3>> &Structure::instances() const { return instances_; }
 std::vector<std::vector<Vector3>> &Structure::instances() { return instances_; }
 

@@ -19,7 +19,7 @@ class Species;
 // DetectMolecules Node
 class DetectMoleculesNode : public Node
 {
-    using FragmentVector = std::vector<std::vector<int>>;
+    using NETAFragmentVector = std::vector<std::pair<std::optional<NETADefinition>, std::vector<int>>>;
     using AtomCollection = std::variant<std::set<const AtomBase *>, std::vector<const StructureAtom *>>;
 
     public:
@@ -38,23 +38,24 @@ class DetectMoleculesNode : public Node
     Structure inputStructure_;
     // Output structures
     std::vector<Structure> detectedStructures_;
+    // Lambda to determine if fragment is large enough to skip NETA creation
+    std::function<bool(int)> largeFragment_{[this](int size) { return size * 2 > inputStructure_.nAtoms(); }};
 
     /*
      * Helpers
      */
     private:
     // Copy atom and bond information from one structure to another
-    static Structure &copyStructureAtomsAndBonds(const Structure &source, Structure &target,
-                                                 const std::vector<int> fragmentIndices);
+    Structure &copyStructureAtomsAndBonds(Structure &target, const std::vector<int> fragmentIndices) const;
     // Add fragment molecular instance
-    static void addInstance(std::vector<Vector3> &targetInstance, const AtomCollection &instanceFragmentAtoms);
+    void addInstance(std::vector<Vector3> &targetInstance, const AtomCollection &instanceFragmentAtoms) const;
     // Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
-    static std::vector<const StructureAtom *> getFragmentAtoms(const Structure &structure,
-                                                               const std::vector<int> &fragmentIndices);
-    static std::vector<const StructureAtom *> getFragmentAtoms(const Structure &structure,
-                                                               const FragmentVector &fragmentIndices);
+    std::vector<const StructureAtom *> getFragmentAtoms(const std::vector<int> &fragmentIndices) const;
+    std::vector<const StructureAtom *> getFragmentAtoms(const NETAFragmentVector &fragmentIndices) const;
     // Find all molecular fragments
-    static std::map<int, FragmentVector> findMolecularFragments(const Structure &structure);
+    std::map<int, NETAFragmentVector> findMolecularFragments() const;
+    // Determine best NETA definition for index atoms within a fragment
+    NETADefinition bestNETADefintion(const std::vector<int> &fragmentAtoms) const;
 
     /*
      * Processing
