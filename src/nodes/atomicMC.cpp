@@ -6,8 +6,8 @@
 #include "classes/configuration.h"
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
+#include "math/mc.h"
 #include "nodes/dissolve.h"
-#include "nodes/mcCommon.h"
 
 AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -128,8 +128,8 @@ NodeConstants::ProcessResult AtomicMCNode::process()
     message("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
 
     // Update step size
-    stepSize_ = MCCommon::updateStepSize(stepSize_, nAttempts, nAccepted, targetAcceptanceRate_.asDouble(),
-                                         stepSizeMin_.asDouble(), stepSizeMax_.asDouble());
+    stepSize_ = MonteCarloCommon::updateStepSize(stepSize_, nAttempts, nAccepted, targetAcceptanceRate_.asDouble(),
+                                                 stepSizeMin_.asDouble(), stepSizeMax_.asDouble());
     message("Updated step size is {} Angstroms.\n", stepSize_);
 
     // Mark the configuration as having been modified

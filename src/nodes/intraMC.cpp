@@ -7,8 +7,8 @@
 #include "classes/species.h"
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
+#include "math/mc.h"
 #include "nodes/dissolve.h"
-#include "nodes/mcCommon.h"
 
 IntraMCNode::IntraMCNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -251,8 +251,9 @@ NodeConstants::ProcessResult IntraMCNode::process()
         auto bondRate = double(nBondMovesAccepted) / nBondMovesAttempted;
         message("Overall bond acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * bondRate, nBondMovesAccepted,
                 nBondMovesAttempted);
-        bondStepSize_ = MCCommon::updateStepSize(bondStepSize_, nBondMovesAttempted, nBondMovesAccepted, targetAcceptanceRate,
-                                                 bondStepSizeMin_.asDouble(), bondStepSizeMax_.asDouble());
+        bondStepSize_ =
+            MonteCarloCommon::updateStepSize(bondStepSize_, nBondMovesAttempted, nBondMovesAccepted, targetAcceptanceRate,
+                                             bondStepSizeMin_.asDouble(), bondStepSizeMax_.asDouble());
         message("Updated step size for bonds is {:.5f} Angstroms.\n", bondStepSize_);
     }
     if (adjustAngles_)
@@ -261,8 +262,8 @@ NodeConstants::ProcessResult IntraMCNode::process()
         message("Overall angle acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * angleRate,
                 nAngleMovesAccepted, nAngleMovesAttempted);
         angleStepSize_ =
-            MCCommon::updateStepSize(angleStepSize_, nAngleMovesAttempted, nAngleMovesAccepted, targetAcceptanceRate,
-                                     angleStepSizeMin_.asDouble(), angleStepSizeMax_.asDouble());
+            MonteCarloCommon::updateStepSize(angleStepSize_, nAngleMovesAttempted, nAngleMovesAccepted, targetAcceptanceRate,
+                                             angleStepSizeMin_.asDouble(), angleStepSizeMax_.asDouble());
         message("Updated step size for angles is {:.5f} Angstroms.\n", angleStepSize_);
     }
     if (adjustTorsions_)
@@ -270,9 +271,9 @@ NodeConstants::ProcessResult IntraMCNode::process()
         auto torsionRate = double(nTorsionMovesAccepted) / nTorsionMovesAttempted;
         message("Overall torsion acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * torsionRate,
                 nTorsionMovesAccepted, nTorsionMovesAttempted);
-        torsionStepSize_ =
-            MCCommon::updateStepSize(torsionStepSize_, nTorsionMovesAttempted, nTorsionMovesAccepted, targetAcceptanceRate,
-                                     torsionStepSizeMin_.asDouble(), torsionStepSizeMax_.asDouble());
+        torsionStepSize_ = MonteCarloCommon::updateStepSize(torsionStepSize_, nTorsionMovesAttempted, nTorsionMovesAccepted,
+                                                            targetAcceptanceRate, torsionStepSizeMin_.asDouble(),
+                                                            torsionStepSizeMax_.asDouble());
         message("Updated step size for torsions is {:.5f} Angstroms.\n", torsionStepSize_);
     }
 

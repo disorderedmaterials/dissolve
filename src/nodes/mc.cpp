@@ -6,8 +6,8 @@
 #include "classes/configuration.h"
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
+#include "math/mc.h"
 #include "nodes/dissolve.h"
-#include "nodes/mcCommon.h"
 
 MCNode::MCNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -172,12 +172,12 @@ NodeConstants::ProcessResult MCNode::process()
             nRotationAttempts);
 
     // Update step sizes
-    translationStepSize_ = MCCommon::updateStepSize(translationStepSize_, nTranslationAttempts, nTranslationsAccepted,
-                                                    targetAcceptanceRate_.asDouble(), translationStepSizeMin_.asDouble(),
-                                                    translationStepSizeMax_.asDouble());
-    rotationStepSize_ =
-        MCCommon::updateStepSize(rotationStepSize_, nRotationAttempts, nRotationsAccepted, targetAcceptanceRate_.asDouble(),
-                                 rotationStepSizeMin_.asDouble(), rotationStepSizeMax_.asDouble());
+    translationStepSize_ = MonteCarloCommon::updateStepSize(
+        translationStepSize_, nTranslationAttempts, nTranslationsAccepted, targetAcceptanceRate_.asDouble(),
+        translationStepSizeMin_.asDouble(), translationStepSizeMax_.asDouble());
+    rotationStepSize_ = MonteCarloCommon::updateStepSize(rotationStepSize_, nRotationAttempts, nRotationsAccepted,
+                                                         targetAcceptanceRate_.asDouble(), rotationStepSizeMin_.asDouble(),
+                                                         rotationStepSizeMax_.asDouble());
     message("Updated step size for translations is {:.5f} Angstroms.\n", translationStepSize_);
     message("Updated step size for rotations is {:.5f} degrees.\n", rotationStepSize_);
 
