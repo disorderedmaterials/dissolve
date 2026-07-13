@@ -4,6 +4,7 @@
 #include "math/mc.h"
 #include "base/messenger.h"
 #include "math/mathFunc.h"
+#include <algorithm>
 #include <numeric>
 
 MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction, MinimiserSamplingFunction samplingFunction)
