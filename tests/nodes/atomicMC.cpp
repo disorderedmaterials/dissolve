@@ -22,6 +22,7 @@ TEST(AtomShakeTest, Water)
     auto iterator = testGraph.head<IterableGraph>();
     auto atomicMCNode = dynamic_cast<AtomicMCNode *>(iterator->createNode("AtomicMC", "AtomicMC"));
     ASSERT_TRUE(atomicMCNode->setOption<Number>("ShakesPerAtom", 10));
+    ASSERT_TRUE(atomicMCNode->setOption<Number>("StepSizeMin", 1.0e-4));
 
     // Create number node to modify temperature
     ASSERT_TRUE(testGraph.appendNode("Number", "Temperature"));

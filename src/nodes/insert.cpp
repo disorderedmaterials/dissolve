@@ -13,7 +13,6 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput("Configuration", "Target configuration to insert into", configuration_);
-    addOutput("Configuration", "Modified configuration", configuration_);
     addInput("Species", "Species to add - all resulting molecules will have identical geometry", species_);
     addInput("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
     addInput("Population", "Population of the target to add", population_);
@@ -26,6 +25,9 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ScaleB", "Scale box length B when modifying volume", scaleB_);
     addOption("ScaleC", "Scale box length C when modifying volume", scaleC_);
     addOption("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
+
+    // Outputs
+    addOutput("Configuration", "Modified configuration", configuration_);
 }
 
 /*

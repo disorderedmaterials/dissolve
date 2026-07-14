@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "expression/variable.h"
 #include <functional>
-#include <memory>
 #include <vector>
 
 class MonteCarloMinimiser
@@ -54,3 +52,10 @@ class MonteCarloMinimiser
     // Minimise target parameters
     double minimise();
 };
+
+namespace MonteCarloCommon
+{
+// Update the given step size
+double updateStepSize(double currentStepSize, int nMovesAttempted, int nMovesSucceeded, double targetAcceptanceRate,
+                      double stepMin, double stepMax);
+}; // namespace MonteCarloCommon

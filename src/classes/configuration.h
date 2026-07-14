@@ -188,8 +188,8 @@ class Configuration : public Serialisable
     void updateAtomLocation(ConfigurationAtom *i);
     // Update Cell locations of atoms within the specified Molecule
     void updateAtomLocations(const std::shared_ptr<Molecule> &mol);
-    // Update Cell location of specified Atom indices
-    void updateAtomLocations(const std::vector<int> &targetAtoms, int indexOffset);
+    // Update Cell locations of the indexed  atoms within the specified Molecule
+    void updateAtomLocations(const std::shared_ptr<Molecule> &mol, const std::vector<int> &targetAtoms);
 
     /*
      * Site Stacks

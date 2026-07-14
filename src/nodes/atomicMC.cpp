@@ -6,6 +6,7 @@
 #include "classes/configuration.h"
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
+#include "math/mc.h"
 #include "nodes/dissolve.h"
 
 AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
@@ -13,7 +14,7 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput("Configuration", "Set target configuration for the node", targetConfiguration_)
         ->setFlags({ParameterBase::Required, ParameterBase::ClearData});
-    addInput("Temperature", "Temperature (K)", temperature_)->setFlags({ParameterBase::Required, ParameterBase::ClearData});
+    addInput("Temperature", "Temperature (K)", temperature_);
 
     // Options
     addOption("ShakesPerAtom", "Number of shakes to attempt per atom", nShakesPerAtom_);
@@ -36,10 +37,7 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
 std::string_view AtomicMCNode::type() const { return "AtomicMC"; }
 
 // Return short summary of the node's purpose
-std::string_view AtomicMCNode::summary() const
-{
-    return "Perform a Monte Carlo trial move on every atom in the target configuration";
-}
+std::string_view AtomicMCNode::summary() const { return "Perform atomic Monte Carlo on the target configuration"; }
 
 /*
  * Processing
@@ -48,21 +46,17 @@ std::string_view AtomicMCNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult AtomicMCNode::process()
 {
-    // Get numeric input data
+    // Get options
     auto nShakesPerAtom = nShakesPerAtom_.asInteger();
-    auto stepSize = stepSize_.asDouble();
-    auto stepSizeMax = stepSizeMax_.asDouble();
-    auto stepSizeMin = stepSizeMin_.asDouble();
-    auto targetAcceptanceRate = targetAcceptanceRate_.asDouble();
 
     // Retrieve control parameters from Configuration
     const auto rRT = 1.0 / (.008314472 * temperature_.asDouble());
 
     // Print argument/parameter summary
     message("Performing {} shake(s) per Atom\n", nShakesPerAtom);
-    message("Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n", stepSize, stepSizeMin,
-            stepSizeMax);
-    message("Target acceptance rate is {}.\n", targetAcceptanceRate);
+    message("Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n", stepSize_,
+            stepSizeMin_.asDouble(), stepSizeMax_.asDouble());
+    message("Target acceptance rate is {}.\n", targetAcceptanceRate_.asDouble());
     message("\n");
 
     // Prepare for energy calculation, generate kernel
@@ -88,7 +82,7 @@ NodeConstants::ProcessResult AtomicMCNode::process()
                 auto moveInitialPos = i->r();
 
                 // Translate Atom randomly according to the stepsize and update its Cell position
-                *i += Vector3::randomUnit() * stepSize;
+                *i += Vector3::randomUnit() * stepSize_;
                 targetConfiguration_->updateAtomLocation(i);
 
                 // Calculate new energy
@@ -129,20 +123,16 @@ NodeConstants::ProcessResult AtomicMCNode::process()
 
     // Calculate and print acceptance rate
     double rate = double(nAccepted) / nAttempts;
-    message("Total number of attempted moves was {} ({})\n", nAttempts, timer.totalTimeString());
+    message("Total number of attempted moves was {} ({} elapsed)\n", nAttempts, timer.totalTimeString());
 
     message("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
 
-    // Update and set translation step size
-    stepSize *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate;
-    if (stepSize < stepSizeMin)
-        stepSize = stepSizeMin;
-    else if (stepSize > stepSizeMax)
-        stepSize = stepSizeMax;
+    // Update step size
+    stepSize_ = MonteCarloCommon::updateStepSize(stepSize_, nAttempts, nAccepted, targetAcceptanceRate_.asDouble(),
+                                                 stepSizeMin_.asDouble(), stepSizeMax_.asDouble());
+    message("Updated step size is {} Angstroms.\n", stepSize_);
 
-    message("Updated step size is {} Angstroms.\n", stepSize);
-
-    // Increase contents version in Configuration
+    // Mark the configuration as having been modified
     if (nAccepted > 0)
         targetConfiguration_->notifyAtomicPositionsChanged();
 
