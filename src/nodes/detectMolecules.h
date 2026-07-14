@@ -21,7 +21,6 @@ class DetectMoleculesNode : public Node
 {
     using FragmentIndices = std::vector<int>;
     using NETAFragmentVector = std::vector<std::pair<std::optional<NETADefinition>, FragmentIndices>>;
-    using AtomCollection = std::variant<std::set<const AtomBase *>, std::vector<const StructureAtom *>>;
 
     public:
     DetectMoleculesNode(Graph *parentGraph);
