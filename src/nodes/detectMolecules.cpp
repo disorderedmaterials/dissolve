@@ -55,21 +55,21 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             detectedStructure.createBox(inputStructure_.box().axes());
             std::vector<std::vector<Vector3>> instances;
 
-            // Get fragment atoms
-            auto fragmentAtoms = getFragmentAtoms(fragment);
-
             if (!neta.has_value())
             {
-                addInstance(instances.emplace_back(), fragmentAtoms);
+                // Add instances
+                auto &instanceAtoms = instances.emplace_back();
+                for (auto &fragmentAtomIndex : fragment)
+                    instanceAtoms.push_back(inputStructure_.atom(fragmentAtomIndex)->r());
 
                 // Mask these fragment atoms
-                for (const auto &unmasked : fragmentAtoms)
-                    atomMask.insert(unmasked);
+                for (const auto &unmaskedAtomIndex : fragment)
+                    atomMask.insert(inputStructure_.atom(unmaskedAtomIndex));
             }
             else
-                for (const auto &fragmentAtom : fragmentAtoms)
+                for (const auto &fragmentAtomIndex : fragment)
                 {
-                    if (atomMask.contains(fragmentAtom))
+                    if (atomMask.contains(inputStructure_.atom(fragmentAtomIndex)))
                         continue;
 
                     // Get all atoms belonging to fragments from the same fragment size group
@@ -99,7 +99,10 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                         if (matchedUnitCellAtoms.empty())
                             continue;
 
-                        addInstance(instances.emplace_back(), matchedUnitCellAtoms);
+                        // Add instances
+                        auto &instanceAtoms = instances.emplace_back();
+                        for (const auto &matchedUnitCellAtom : matchedUnitCellAtoms)
+                            instanceAtoms.push_back(matchedUnitCellAtom->r());
                     }
                 }
 
@@ -165,18 +168,6 @@ Structure &DetectMoleculesNode::copyStructureAtomsAndBonds(Structure &target, co
     }
 
     return target;
-}
-
-// Add fragment molecular instance
-void DetectMoleculesNode::addInstance(std::vector<Vector3> &targetInstance, const AtomCollection &instanceFragmentAtoms) const
-{
-    std::visit(
-        [&](const auto &atoms)
-        {
-            for (const AtomBase *atom : atoms)
-                targetInstance.push_back(atom->r());
-        },
-        instanceFragmentAtoms);
 }
 
 // Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
