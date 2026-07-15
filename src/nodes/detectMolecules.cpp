@@ -254,7 +254,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
      */
 
     // Register dynamic outputs
-    for (int i = 0; i < detectedStructures_.size(); i++)
+    for (auto i = 0; i < detectedStructures_.size(); ++i)
     {
         auto val = detectedStructures_[i];
         auto paramName = std::string("DetectedMolecule" + std::format("-{}", i));
