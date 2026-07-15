@@ -108,9 +108,6 @@ if(MULTI_THREADING)
 endif(MULTI_THREADING)
 
 if(GUI)
-  find_package(Freetype REQUIRED)
-  find_package(FTGL REQUIRED)
-
   list(APPEND CMAKE_PREFIX_PATH "${QT_BASE_DIR}")
   find_package(OpenGL REQUIRED)
   find_package(
@@ -153,11 +150,6 @@ if(WIN32)
   set(gui_target_name Dissolve-GUI)
   set(qmlgui_target_name Dissolve-GUI-QML)
 
-  # Adjust external include directories for GUI
-  if(GUI)
-    include_directories(${FTGL_INCLUDE_DIRS})
-  endif(GUI)
-
   # Format requires on MSVC std:c++latest, so we have to ask for C++23, despite the fact it's part of the C++20 standard.
   set(CMAKE_CXX_STANDARD 23)
 
@@ -195,15 +187,6 @@ if(APPLE)
   set(qmlgui_target_name dissolve-gui-qml)
 
   add_definitions(-D_MAC)
-
-  if(GUI)
-    # Find GLUT
-    find_package(GLUT REQUIRED)
-
-    # Adjust external include directories for GUI
-    include_directories(${FTGL_INCLUDE_DIRS})
-    include_directories(${FREETYPE_INCLUDE_DIRS})
-  endif(GUI)
 endif(APPLE)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
