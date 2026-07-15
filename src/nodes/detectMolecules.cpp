@@ -186,16 +186,15 @@ std::vector<const StructureAtom *> DetectMoleculesNode::getFragmentAtoms(const N
 std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::findMolecularFragments() const
 {
     std::map<int, NETAFragmentVector> map;
-
     std::set<int> alreadyInFragment;
 
-    for (int i = 0; i < inputStructure_.nAtoms(); i++)
+    for (auto i = 0; i < inputStructure_.nAtoms(); ++i)
     {
         auto fragmentIndices = Fragment<StructureAtom, Bond<StructureAtom>>::get(inputStructure_.atoms(), i);
 
         // If any indices already within a fragment, continue
         std::set<int> fragmentIndicesSet(fragmentIndices.begin(), fragmentIndices.end());
-        const int nNewIndices = fragmentIndicesSet.size();
+        const auto nNewIndices = fragmentIndicesSet.size();
         fragmentIndicesSet.merge(std::set<int>(alreadyInFragment.begin(), alreadyInFragment.end()));
         if (fragmentIndicesSet.size() != (alreadyInFragment.size() + nNewIndices))
             continue;
@@ -205,7 +204,7 @@ std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::find
             alreadyInFragment.insert(idx);
 
         // Map fragment size to fragment indices
-        const int size = fragmentIndices.size();
+        const auto size = fragmentIndices.size();
         if (!map.contains(size))
             map.emplace(size, NETAFragmentVector{});
 
