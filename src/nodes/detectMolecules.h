@@ -42,7 +42,7 @@ class DetectMoleculesNode : public Node
     std::function<bool(int)> largeFragment_{[this](int size) { return size * 2 > inputStructure_.nAtoms(); }};
 
     /*
-     * Helpers
+     * Processing
      */
     private:
     // Copy atom and bond information from one structure to another
@@ -55,9 +55,6 @@ class DetectMoleculesNode : public Node
     // Determine best NETA definition for index atoms within a fragment
     NETADefinition bestNETADefintion(const std::vector<int> &fragmentAtoms) const;
 
-    /*
-     * Processing
-     */
     protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;

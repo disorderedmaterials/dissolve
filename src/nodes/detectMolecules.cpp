@@ -28,110 +28,6 @@ std::string_view DetectMoleculesNode::summary() const { return "Detect molecular
  * Processing
  */
 
-// Run main processing
-NodeConstants::ProcessResult DetectMoleculesNode::process()
-{
-    detectedStructures_.clear();
-
-    // Unfold structure
-    inputStructure_.unFold();
-
-    // Return all discovered molecular fragment index vectors
-    auto fragmentMap = getFragments();
-
-    // Check for a single, bound framework fragment
-    if (fragmentMap.contains(inputStructure_.nAtoms()))
-        return error(
-            "Can't create molecular definitions since this unit cell appears to be a continuous framework/network. Consider "
-            "adjusting the bonding options in order to generate molecular fragments.\n");
-
-    for (auto &[_, fragments] : fragmentMap)
-        for (auto &[neta, fragment] : fragments)
-        {
-            // Make a const copy of the current fragment for later reference
-            const auto currentFragment = fragment;
-
-            // Create a provisional structure for the detected fragment
-            Structure detectedStructure;
-            detectedStructure.createBox(inputStructure_.box().axes());
-            std::vector<std::vector<Vector3>> instances;
-
-            if (!neta.has_value())
-            {
-                // Add instances
-                auto &instanceAtoms = instances.emplace_back();
-                for (auto &fragmentAtomIndex : currentFragment)
-                    instanceAtoms.push_back(inputStructure_.atom(fragmentAtomIndex)->r());
-
-                break;
-            }
-            else
-            {
-                // Iterate over all structural atoms, matching their unit cell atoms by NETA
-                fragments.erase(
-                    std::remove_if(fragments.begin(), fragments.end(),
-                                   [this, &instances, &neta, &currentFragment](auto &pair) -> bool
-                                   {
-                                       auto &[_, fragmentAtomIndices] = pair;
-
-                                       for (const auto &fragmentAtomIndex : fragmentAtomIndices)
-                                       {
-                                           auto matchedUnitCellAtoms =
-                                               neta->matchedPath(this->inputStructure_.atom(fragmentAtomIndex)).set();
-
-                                           if (!matchedUnitCellAtoms.empty())
-                                           {
-                                               //  Add instances
-                                               auto &instanceAtoms = instances.emplace_back();
-                                               for (const auto &matchedUnitCellAtom : matchedUnitCellAtoms)
-                                                   instanceAtoms.push_back(matchedUnitCellAtom->r());
-
-                                               return true;
-                                           }
-                                       }
-
-                                       return false;
-                                   }),
-                    fragments.end());
-            }
-
-            if (!instances.empty())
-                detectedStructures_.emplace_back(copyStructureAtomsAndBonds(detectedStructure, currentFragment)).instances() =
-                    instances;
-        }
-
-    message("Detected {} distinct fragment structures:\n\n", detectedStructures_.size());
-    message("   ID     N  Species Formula\n");
-    auto count = 1;
-    for (const auto &structure : detectedStructures_)
-        message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(),
-                EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); }));
-    message("");
-
-    /*
-     * Dynamic outputs
-     */
-
-    // Register dynamic outputs
-    for (int i = 0; i < detectedStructures_.size(); i++)
-    {
-        auto val = detectedStructures_[i];
-        auto paramName = std::string("DetectedMolecule" + std::format("-{}", i));
-
-        // Check if output already exists - do not add if it does
-        if (outputs_.find(paramName) != outputs_.end())
-            continue;
-
-        addOutput(paramName, "Detected molecular structure", detectedStructures_[i]);
-    }
-
-    return NodeConstants::ProcessResult::Success;
-}
-
-/*
- * Helpers
- */
-
 // Copy atom and bond information from one structure to another
 Structure &DetectMoleculesNode::copyStructureAtomsAndBonds(Structure &target, const std::vector<int> fragmentAtomIndices) const
 {
@@ -270,4 +166,105 @@ NETADefinition DetectMoleculesNode::bestNETADefintion(const std::vector<int> &fr
     }
 
     return bestNETA;
+}
+
+
+// Run main processing
+NodeConstants::ProcessResult DetectMoleculesNode::process()
+{
+    detectedStructures_.clear();
+
+    // Unfold structure
+    inputStructure_.unFold();
+
+    // Return all discovered molecular fragment index vectors
+    auto fragmentMap = getFragments();
+
+    // Check for a single, bound framework fragment
+    if (fragmentMap.contains(inputStructure_.nAtoms()))
+        return error(
+            "Can't create molecular definitions since this unit cell appears to be a continuous framework/network. Consider "
+            "adjusting the bonding options in order to generate molecular fragments.\n");
+
+    for (auto &[_, fragments] : fragmentMap)
+        for (auto &[neta, fragment] : fragments)
+        {
+            // Make a const copy of the current fragment for later reference
+            const auto currentFragment = fragment;
+
+            // Create a provisional structure for the detected fragment
+            Structure detectedStructure;
+            detectedStructure.createBox(inputStructure_.box().axes());
+            std::vector<std::vector<Vector3>> instances;
+
+            if (!neta.has_value())
+            {
+                // Add instances
+                auto &instanceAtoms = instances.emplace_back();
+                for (auto &fragmentAtomIndex : currentFragment)
+                    instanceAtoms.push_back(inputStructure_.atom(fragmentAtomIndex)->r());
+
+                break;
+            }
+            else
+            {
+                // Iterate over all structural atoms, matching their unit cell atoms by NETA
+                fragments.erase(
+                    std::remove_if(fragments.begin(), fragments.end(),
+                                   [this, &instances, &neta, &currentFragment](auto &pair) -> bool
+                                   {
+                                       auto &[_, fragmentAtomIndices] = pair;
+
+                                       for (const auto &fragmentAtomIndex : fragmentAtomIndices)
+                                       {
+                                           auto matchedUnitCellAtoms =
+                                               neta->matchedPath(this->inputStructure_.atom(fragmentAtomIndex)).set();
+
+                                           if (!matchedUnitCellAtoms.empty())
+                                           {
+                                               //  Add instances
+                                               auto &instanceAtoms = instances.emplace_back();
+                                               for (const auto &matchedUnitCellAtom : matchedUnitCellAtoms)
+                                                   instanceAtoms.push_back(matchedUnitCellAtom->r());
+
+                                               return true;
+                                           }
+                                       }
+
+                                       return false;
+                                   }),
+                    fragments.end());
+            }
+
+            if (!instances.empty())
+                detectedStructures_.emplace_back(copyStructureAtomsAndBonds(detectedStructure, currentFragment)).instances() =
+                    instances;
+        }
+
+    message("Detected {} distinct fragment structures:\n\n", detectedStructures_.size());
+    message("   ID     N  Species Formula\n");
+    auto count = 1;
+    for (const auto &structure : detectedStructures_)
+        message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(),
+                EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); }));
+    message("");
+
+    /*
+     * Dynamic outputs
+     */
+
+    // Register dynamic outputs
+    for (int i = 0; i < detectedStructures_.size(); i++)
+    {
+        auto val = detectedStructures_[i];
+        auto paramName = std::string("DetectedMolecule" + std::format("-{}", i));
+
+        // Check if output already exists - do not add if it does
+        if (outputs_.find(paramName) != outputs_.end())
+            continue;
+
+        addOutput(paramName, "Detected molecular structure", detectedStructures_[i]);
+    }
+
+    return NodeConstants::ProcessResult::Success;
 }
