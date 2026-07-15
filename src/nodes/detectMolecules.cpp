@@ -45,11 +45,12 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             "Can't create molecular definitions since this unit cell appears to be a continuous framework/network. Consider "
             "adjusting the bonding options in order to generate molecular fragments.\n");
 
-    std::set<const StructureAtom *> atomMask;
-
-    for (const auto &[size, fragments] : fragmentMap)
-        for (const auto &[neta, fragment] : fragments)
+    for (auto &[_, fragments] : fragmentMap)
+        for (auto &[neta, fragment] : fragments)
         {
+            // Make a const copy of the current fragment for later reference
+            const auto currentFragment = fragment;
+
             // Create a provisional structure for the detected fragment
             Structure detectedStructure;
             detectedStructure.createBox(inputStructure_.box().axes());
@@ -59,55 +60,43 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             {
                 // Add instances
                 auto &instanceAtoms = instances.emplace_back();
-                for (auto &fragmentAtomIndex : fragment)
+                for (auto &fragmentAtomIndex : currentFragment)
                     instanceAtoms.push_back(inputStructure_.atom(fragmentAtomIndex)->r());
 
-                // Mask these fragment atoms
-                for (const auto &unmaskedAtomIndex : fragment)
-                    atomMask.insert(inputStructure_.atom(unmaskedAtomIndex));
+                break;
             }
             else
-                for (const auto &fragmentAtomIndex : fragment)
-                {
-                    if (atomMask.contains(inputStructure_.atom(fragmentAtomIndex)))
-                        continue;
+            {
+                // Iterate over all structural atoms, matching their unit cell atoms by NETA
+                fragments.erase(
+                    std::remove_if(fragments.begin(), fragments.end(),
+                                   [this, &instances, &neta, &currentFragment](auto &pair) -> bool
+                                   {
+                                       auto &[_, fragmentAtomIndices] = pair;
 
-                    // Get all atoms belonging to fragments from the same fragment size group
-                    auto fragmentSizeGroupAtoms = getFragmentAtoms(fragments);
+                                       for (const auto &fragmentAtomIndex : fragmentAtomIndices)
+                                       {
+                                           auto matchedUnitCellAtoms =
+                                               neta->matchedPath(this->inputStructure_.atom(fragmentAtomIndex)).set();
 
-                    // Iterate over all structural atoms, matching their unit cell atoms by NETA
-                    std::vector<std::set<const AtomBase *>> matchedUnitCellAtomSets;
-                    for (const auto &fragmentAtom : fragmentSizeGroupAtoms)
-                    {
-                        if (atomMask.contains(fragmentAtom))
-                            continue;
+                                           if (!matchedUnitCellAtoms.empty())
+                                           {
+                                               //  Add instances
+                                               auto &instanceAtoms = instances.emplace_back();
+                                               for (const auto &matchedUnitCellAtom : matchedUnitCellAtoms)
+                                                   instanceAtoms.push_back(matchedUnitCellAtom->r());
 
-                        auto matchedPath = neta->matchedPath(fragmentAtom).set();
-                        if (!matchedPath.empty())
-                        {
-                            auto set = matchedUnitCellAtomSets.emplace_back(matchedPath);
+                                               return true;
+                                           }
+                                       }
 
-                            // Mask the current matched fragment atom
-                            for (const auto &matchedAtom : set)
-                                atomMask.insert(static_cast<const StructureAtom *>(matchedAtom));
-                        }
-                    }
-
-                    // Loop over matched unit cell atoms, retrieving instances
-                    for (const auto &matchedUnitCellAtoms : matchedUnitCellAtomSets)
-                    {
-                        if (matchedUnitCellAtoms.empty())
-                            continue;
-
-                        // Add instances
-                        auto &instanceAtoms = instances.emplace_back();
-                        for (const auto &matchedUnitCellAtom : matchedUnitCellAtoms)
-                            instanceAtoms.push_back(matchedUnitCellAtom->r());
-                    }
-                }
+                                       return false;
+                                   }),
+                    fragments.end());
+            }
 
             if (!instances.empty())
-                detectedStructures_.emplace_back(copyStructureAtomsAndBonds(detectedStructure, fragment)).instances() =
+                detectedStructures_.emplace_back(copyStructureAtomsAndBonds(detectedStructure, currentFragment)).instances() =
                     instances;
         }
 
