@@ -141,7 +141,6 @@ Structure &DetectMoleculesNode::copyStructureAtomsAndBonds(Structure &target, co
     {
         const auto fragmentAtom = inputStructure_.atom(fragAtomIndex);
         originalIndexMap[fragAtomIndex] = target.addAtom(fragmentAtom->Z(), fragmentAtom->r(), fragmentAtom->q());
-        std::cout << std::format("New atom added to structure: {}  {}\n", fragAtomIndex, Elements::symbol(fragmentAtom->Z()));
     }
 
     // Copy bond information - since our fragment is by definition a bound fragment, we copy all bonds on each atom
