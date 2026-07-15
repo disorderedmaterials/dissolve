@@ -50,8 +50,8 @@ class DetectMoleculesNode : public Node
     // Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
     std::vector<const StructureAtom *> getFragmentAtoms(const std::vector<int> &fragmentIndices) const;
     std::vector<const StructureAtom *> getFragmentAtoms(const NETAFragmentVector &fragmentIndices) const;
-    // Find all molecular fragments
-    std::map<int, NETAFragmentVector> findMolecularFragments() const;
+    // Get all fragments in the structure
+    std::map<int, NETAFragmentVector> getFragments() const;
     // Determine best NETA definition for index atoms within a fragment
     NETADefinition bestNETADefintion(const std::vector<int> &fragmentAtoms) const;
 

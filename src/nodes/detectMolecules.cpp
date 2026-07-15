@@ -37,7 +37,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
     inputStructure_.unFold();
 
     // Return all discovered molecular fragment index vectors
-    auto fragmentMap = findMolecularFragments();
+    auto fragmentMap = getFragments();
 
     // Check for a single, bound framework fragment
     if (fragmentMap.contains(inputStructure_.nAtoms()))
@@ -182,26 +182,20 @@ std::vector<const StructureAtom *> DetectMoleculesNode::getFragmentAtoms(const N
     return getFragmentAtoms(indices);
 }
 
-// Find all molecular fragments
-std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::findMolecularFragments() const
+// Get all fragments in the structure
+std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::getFragments() const
 {
     std::map<int, NETAFragmentVector> map;
-    std::set<int> alreadyInFragment;
+    std::set<int> atomsInFragments;
 
     for (auto i = 0; i < inputStructure_.nAtoms(); ++i)
     {
-        auto fragmentIndices = Fragment<StructureAtom, Bond<StructureAtom>>::get(inputStructure_.atoms(), i);
-
-        // If any indices already within a fragment, continue
-        std::set<int> fragmentIndicesSet(fragmentIndices.begin(), fragmentIndices.end());
-        const auto nNewIndices = fragmentIndicesSet.size();
-        fragmentIndicesSet.merge(std::set<int>(alreadyInFragment.begin(), alreadyInFragment.end()));
-        if (fragmentIndicesSet.size() != (alreadyInFragment.size() + nNewIndices))
+        // Skip this atom if it has already been detected within a fragment
+        if (atomsInFragments.contains(i))
             continue;
 
-        // Register the current fragment indices
-        for (auto &idx : fragmentIndices)
-            alreadyInFragment.insert(idx);
+        // Get the fragment containing this atom index
+        auto fragmentIndices = Fragment<StructureAtom, Bond<StructureAtom>>::get(inputStructure_.atoms(), i);
 
         // Map fragment size to fragment indices
         const auto size = fragmentIndices.size();
@@ -212,6 +206,9 @@ std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::find
         targetFragments.push_back(
             {(size * 2 > inputStructure_.nAtoms()) ? std::optional<NETADefinition>{} : bestNETADefintion(fragmentIndices),
              fragmentIndices});
+
+        // Merge in new indices
+        atomsInFragments.merge(std::set<int>(fragmentIndices.begin(), fragmentIndices.end()));
     }
 
     return map;
