@@ -16,10 +16,7 @@ target_include_directories(
   gui
   PRIVATE ${PROJECT_SOURCE_DIR}/src
           ${PROJECT_BINARY_DIR}/src
-          ${FREETYPE_INCLUDE_DIRS}
           ${Qt6Core_INCLUDE_DIRS}
-          ${Qt6OpenGL_INCLUDE_DIRS}
-          ${Qt6OpenGLWidgets_INCLUDE_DIRS}
           ${Qt6Widgets_INCLUDE_DIRS}
 )
 
@@ -29,8 +26,6 @@ target_link_libraries(
           widgets
           models
           base
-          Qt6::OpenGL
-          Qt6::OpenGLWidgets
           Qt6::Quick
           Qt6::QuickControls2
           Qt6::Core
@@ -42,7 +37,6 @@ target_link_libraries(
 
 # Subdirectories
 add_subdirectory(delegates)
-add_subdirectory(render)
 add_subdirectory(widgets)
 add_subdirectory(models)
 add_subdirectory(icons)
