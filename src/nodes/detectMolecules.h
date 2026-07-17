@@ -38,8 +38,6 @@ class DetectMoleculesNode : public Node
     Structure inputStructure_;
     // Output structures
     std::vector<Structure> detectedStructures_;
-    // Lambda to determine if fragment is large enough to skip NETA creation
-    std::function<bool(int)> largeFragment_{[this](int size) { return size * 2 > inputStructure_.nAtoms(); }};
 
     /*
      * Processing
