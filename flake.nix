@@ -32,7 +32,6 @@
           gbenchmark
           cmake
           cli11
-          freetype
           gcc14
           gsl
           inetutils # for rsh
@@ -44,8 +43,6 @@
         ];
       gui_libs = system: pkgs: qt: [
         pkgs.glib
-        pkgs.freetype
-        pkgs.ftgl
         pkgs.libGL.dev
         pkgs.libglvnd
         pkgs.libglvnd.dev
