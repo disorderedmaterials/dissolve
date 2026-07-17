@@ -14,9 +14,6 @@ class Species;
 // DetectMolecules Node
 class DetectMoleculesNode : public Node
 {
-    using FragmentIndices = std::vector<int>;
-    using NETAFragmentVector = std::vector<std::pair<std::optional<NETADefinition>, FragmentIndices>>;
-
     public:
     DetectMoleculesNode(Graph *parentGraph);
     ~DetectMoleculesNode() override = default;
@@ -38,12 +35,16 @@ class DetectMoleculesNode : public Node
      * Processing
      */
     private:
-    // Copy atom and bond information from one structure to another
-    Structure &copyStructureAtomsAndBonds(Structure &target, const std::vector<int> fragmentIndices) const;
+    // Duplicate specified input structure atoms and their bonds, returning a new structure (including the unit cell)
+    Structure duplicateAtomsAndBonds(const std::vector<int> &inputStructureAtomIndices) const;
     // Get all fragments in the structure
-    std::map<int, NETAFragmentVector> getFragments() const;
-    // Determine best NETA definition for index atoms within a fragment
+    std::map<int, std::vector<std::vector<int>>> getFragments() const;
+    // Get coordinates of specified atoms of the input structure
+    std::vector<Vector3> getAtomCoordinates(const std::vector<int> &inputStructureAtomIndices) const;
+    // Determine best NETA definition for supplied fragment atoms
     NETADefinition bestNETADefinition(const std::vector<int> &fragmentAtoms) const;
+    // Use the supplied NETA definition on the provided fragment, returning the first match
+    NETAMatchedGroup matchFragment(const NETADefinition &neta, const std::vector<int> &fragmentAtoms) const;
 
     protected:
     // Run main processing
