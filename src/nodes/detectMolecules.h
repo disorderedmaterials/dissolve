@@ -3,14 +3,9 @@
 
 #pragma once
 
-#include "classes/localMolecule.h"
-#include "classes/molecule.h"
-#include "classes/species.h"
+#include "neta/neta.h"
 #include "classes/structure.h"
-#include "data/elements.h"
-#include "math/vector3.h"
 #include "nodes/node.h"
-#include <algorithm>
 #include <map>
 #include <vector>
 
