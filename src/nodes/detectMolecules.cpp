@@ -54,30 +54,6 @@ Structure &DetectMoleculesNode::copyStructureAtomsAndBonds(Structure &target, co
     return target;
 }
 
-// Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
-std::vector<const StructureAtom *> DetectMoleculesNode::getFragmentAtoms(const std::vector<int> &fragmentIndices) const
-{
-    std::vector<const StructureAtom *> fragmentAtoms;
-    for (const auto &fragmentAtomIndex : fragmentIndices)
-        fragmentAtoms.push_back(inputStructure_.atom(int(fragmentAtomIndex)));
-
-    return fragmentAtoms;
-}
-
-// Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
-std::vector<const StructureAtom *> DetectMoleculesNode::getFragmentAtoms(const NETAFragmentVector &fragmentIndices) const
-{
-    std::vector<int> indices;
-    std::size_t newSize = 0;
-    for (const auto &v : fragmentIndices)
-        ++newSize;
-    indices.reserve(newSize);
-    for (const auto &[_, v] : fragmentIndices)
-        indices.insert(indices.end(), v.begin(), v.end());
-
-    return getFragmentAtoms(indices);
-}
-
 // Get all fragments in the structure
 std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::getFragments() const
 {

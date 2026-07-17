@@ -47,9 +47,6 @@ class DetectMoleculesNode : public Node
     private:
     // Copy atom and bond information from one structure to another
     Structure &copyStructureAtomsAndBonds(Structure &target, const std::vector<int> fragmentIndices) const;
-    // Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
-    std::vector<const StructureAtom *> getFragmentAtoms(const std::vector<int> &fragmentIndices) const;
-    std::vector<const StructureAtom *> getFragmentAtoms(const NETAFragmentVector &fragmentIndices) const;
     // Get all fragments in the structure
     std::map<int, NETAFragmentVector> getFragments() const;
     // Determine best NETA definition for index atoms within a fragment
