@@ -76,7 +76,7 @@ std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::getF
 
         auto &targetFragments = map[size];
         targetFragments.push_back(
-            {(size * 2 > inputStructure_.nAtoms()) ? std::optional<NETADefinition>{} : bestNETADefintion(fragmentIndices),
+            {(size * 2 > inputStructure_.nAtoms()) ? std::optional<NETADefinition>{} : bestNETADefinition(fragmentIndices),
              fragmentIndices});
 
         // Merge in new indices
@@ -87,7 +87,7 @@ std::map<int, DetectMoleculesNode::NETAFragmentVector> DetectMoleculesNode::getF
 }
 
 // Determine best NETA definition for index atoms within a fragment
-NETADefinition DetectMoleculesNode::bestNETADefintion(const std::vector<int> &fragmentIndices) const
+NETADefinition DetectMoleculesNode::bestNETADefinition(const std::vector<int> &fragmentIndices) const
 {
     // Find the best NETA definition for this fragment
     NETADefinition bestNETA;

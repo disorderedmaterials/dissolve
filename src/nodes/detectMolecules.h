@@ -50,7 +50,7 @@ class DetectMoleculesNode : public Node
     // Get all fragments in the structure
     std::map<int, NETAFragmentVector> getFragments() const;
     // Determine best NETA definition for index atoms within a fragment
-    NETADefinition bestNETADefintion(const std::vector<int> &fragmentAtoms) const;
+    NETADefinition bestNETADefinition(const std::vector<int> &fragmentAtoms) const;
 
     protected:
     // Run main processing
