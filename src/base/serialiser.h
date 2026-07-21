@@ -122,6 +122,7 @@ void fromVectorToTable(const std::vector<T> &vec, std::string name, SerialisedVa
 // issue before TOML is merged.
 template <typename T, typename Lambda, typename Lambda2>
 SerialisedValue fromVectorToMap(const std::vector<T> &vec, Lambda getName, Lambda2 getValue)
+    requires requires(T x) { std::is_same<std::string, decltype(getName(x))>::value; }
 {
     SerialisedValue group;
     for (auto &value : vec)
