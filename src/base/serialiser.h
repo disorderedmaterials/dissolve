@@ -57,7 +57,7 @@ template <Serialisible T> SerialisedValue ser(const T &a)
     return temp["inner"];
 }
 // A helper function to add the elements of a map to a node under a name
-template <typename K, typename V> void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node)
+template <typename K, typename V> void map(const std::map<K, V> &map, std::string name, SerialisedValue &node)
 {
     SerialisedValue result;
     for (auto &[key, value] : map)
@@ -67,15 +67,15 @@ template <typename K, typename V> void fromMap(const std::map<K, V> &map, std::s
 }
 
 // A helper function to add elements of a vector to a node under the named heading
-template <SerialisiblePointer T> void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node)
+template <SerialisiblePointer T> void fromVectorToTable(const std::vector<T> &vec, std::string name, SerialisedValue &node)
 {
-    fromVectorToTable(vector, name, node, [](const auto &item) { return item->name().data(); });
+    fromVectorToTable(vec, name, node, [](const auto &item) { return item->name().data(); });
 }
 // A helper function to add elements of a vector to a node
-template <typename T, typename Lambda> SerialisedValue fromVectorToTable(const std::vector<T> &vector, Lambda getName)
+template <typename T, typename Lambda> SerialisedValue fromVectorToTable(const std::vector<T> &vec, Lambda getName)
 {
     SerialisedValue group;
-    for (const auto &value : vector)
+    for (const auto &value : vec)
         value->serialise(getName(value), group);
     return group;
 };
@@ -90,7 +90,7 @@ SerialisedValue fromVectorToTable(const KeyedVector<KeyClass, ValueClass> &keyed
 };
 // A helper function to add elements of a ResolvableKeyedVector to a node
 template <typename KeyClass, typename ValueClass>
-SerialisedValue fromVectorToTable(const ResolvableKeyedVector<KeyClass, ValueClass> &keyedVector)
+SerialisedValue vector(const ResolvableKeyedVector<KeyClass, ValueClass> &keyedVector)
 {
     SerialisedValue group;
     for (const auto &[resolvable, value] : keyedVector)
@@ -98,7 +98,7 @@ SerialisedValue fromVectorToTable(const ResolvableKeyedVector<KeyClass, ValueCla
     return group;
 }
 template <typename KeyClass, typename ValueClass, typename Lambda>
-SerialisedValue fromVectorToTable(const ResolvableKeyedVector<KeyClass, ValueClass> &keyedVector, Lambda getInner)
+SerialisedValue vector(const ResolvableKeyedVector<KeyClass, ValueClass> &keyedVector, Lambda getInner)
 {
     SerialisedValue group;
     for (const auto &[resolvable, value] : keyedVector)
@@ -107,11 +107,11 @@ SerialisedValue fromVectorToTable(const ResolvableKeyedVector<KeyClass, ValueCla
 }
 // A helper function to add elements of a vector to a node under the named heading
 template <typename T, typename Lambda>
-void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node, Lambda getName)
+void fromVectorToTable(const std::vector<T> &vec, std::string name, SerialisedValue &node, Lambda getName)
 {
-    if (vector.empty())
+    if (vec.empty())
         return;
-    node[name] = fromVectorToTable(vector, getName);
+    node[name] = fromVectorToTable(vec, getName);
 };
 // A helper function to add elements of a vector to a node.  This
 // is more generic than fromVectorToTable and the later could be
@@ -121,10 +121,10 @@ void fromVectorToTable(const std::vector<T> &vector, std::string name, Serialise
 // to just remove the other overloads.  That should be another
 // issue before TOML is merged.
 template <typename T, typename Lambda, typename Lambda2>
-SerialisedValue fromVectorToMap(const std::vector<T> &vector, Lambda getName, Lambda2 getValue)
+SerialisedValue fromVectorToMap(const std::vector<T> &vec, Lambda getName, Lambda2 getValue)
 {
     SerialisedValue group;
-    for (auto &value : vector)
+    for (auto &value : vec)
         group[getName(value)] = getValue(value);
     return group;
 };
@@ -264,14 +264,14 @@ template <typename Lambda> bool optionalOn(const SerialisedValue &node, std::str
     return false;
 }
 // Act over each value in a node table, if the key exists
-template <typename Lambda> void toMap(const SerialisedValue &node, Lambda action)
+template <typename Lambda> void map(const SerialisedValue &node, Lambda action)
 {
     for (auto &[key, value] : node.as_table())
         action(key, value);
 }
 
 // Act over each value in a node table, if the key exists
-template <typename Lambda> void toMap(const SerialisedValue &node, std::string key, Lambda action)
+template <typename Lambda> void map(const SerialisedValue &node, std::string key, Lambda action)
 {
     if (!node.contains(key))
         return;

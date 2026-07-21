@@ -273,14 +273,14 @@ void Graph::deserialise(const SerialisedValue &node)
 {
     using namespace Deserialisable;
     Node::deserialise(node);
-    toMap(node, "nodes",
-          [this](const auto name, const auto &value)
-          {
-              std::string nodeType = toml::find<std::string>(value, "type");
-              auto child = createNode(nodeType, name);
+    map(node, "nodes",
+        [this](const auto name, const auto &value)
+        {
+            std::string nodeType = toml::find<std::string>(value, "type");
+            auto child = createNode(nodeType, name);
 
-              child->deserialise(value);
-          });
+            child->deserialise(value);
+        });
     vector(node, "edges", [this](const auto &value) { addEdge(de<EdgeDefinition>(value)); });
 }
 

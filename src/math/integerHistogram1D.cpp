@@ -163,7 +163,7 @@ void IntegerHistogram1D::serialise(std::string tag, SerialisedValue &target) con
     if (maximum_)
         target[tag]["maximum"] = *maximum_;
 
-    fromMap(averages_, "averages", target);
+    map(averages_, "averages", target);
 }
 
 // Read values from a serialisable value
@@ -179,8 +179,8 @@ void IntegerHistogram1D::deserialise(const SerialisedValue &node)
     nMissed_ = de<long>(node.at("nMissed"));
     zeroCounter_ = de<SampledDouble>(node.at("nMissed"));
 
-    Deserialisable::toMap(node, "averages",
-                          [&](const auto &key, const auto &value) { averages_[std::stoi(key)].deserialise(value); });
+    Deserialisable::map(node, "averages",
+                        [&](const auto &key, const auto &value) { averages_[std::stoi(key)].deserialise(value); });
 
     updateAccumulatedData();
 }

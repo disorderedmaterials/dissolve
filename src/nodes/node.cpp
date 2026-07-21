@@ -341,7 +341,7 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
     result["x"] = x;
     result["y"] = y;
 
-    Serialisable::fromMap(options_, "options", result);
+    Serialisable::map(options_, "options", result);
 
     serialiseInternal(result);
 
@@ -354,22 +354,22 @@ void Node::deserialise(const SerialisedValue &node)
     using namespace Deserialisable;
     x = toml::find<int>(node, "x");
     y = toml::find<int>(node, "y");
-    toMap(node, "inputs",
-          [this](const auto &k, const auto &v)
-          {
-              if (inputs_.contains(k))
-                  inputs_[k]->deserialise(v);
-              else
-                  Messenger::exception("Node {} does not contain a parameter {}", name(), k);
-          });
-    toMap(node, "options",
-          [this](const auto &k, const auto &v)
-          {
-              if (options_.contains(k))
-                  options_[k]->deserialise(v);
-              else
-                  Messenger::exception("Node {} does not contain an option {}", name(), k);
-          });
+    map(node, "inputs",
+        [this](const auto &k, const auto &v)
+        {
+            if (inputs_.contains(k))
+                inputs_[k]->deserialise(v);
+            else
+                Messenger::exception("Node {} does not contain a parameter {}", name(), k);
+        });
+    map(node, "options",
+        [this](const auto &k, const auto &v)
+        {
+            if (options_.contains(k))
+                options_[k]->deserialise(v);
+            else
+                Messenger::exception("Node {} does not contain an option {}", name(), k);
+        });
     deserialiseInternal(node);
 }
 

@@ -72,8 +72,8 @@ void SpeciesSites::serialise(std::string tag, SerialisedValue &target) const
         return;
 
     SerialisedValue value;
-    value["sites"] = fromVectorToTable(sites_, [](const auto &sites)
-                                       { return fromVectorToTable(sites, [](const auto isoWeight) { return isoWeight; }); });
+    value["sites"] =
+        vector(sites_, [](const auto &sites) { return vector(sites, [](const auto isoWeight) { return isoWeight; }); });
     target[tag] = value;
 }
 
@@ -83,13 +83,13 @@ void SpeciesSites::deserialise(const SerialisedValue &node)
     using namespace Deserialisable;
     clear();
 
-    toMap(node, "set",
-          [&](const std::string &speciesName, const SerialisedValue &sites)
-          {
-              auto &set = sites_[speciesName];
-              toMap(sites, [&](const std::string &siteName, const SerialisedValue &population)
-                    { set[siteName] = population.as_floating(); });
-          });
+    map(node, "set",
+        [&](const std::string &speciesName, const SerialisedValue &sites)
+        {
+            auto &set = sites_[speciesName];
+            map(sites, [&](const std::string &siteName, const SerialisedValue &population)
+                { set[siteName] = population.as_floating(); });
+        });
 }
 
 // Resolve internal resolvable name references with supplied data

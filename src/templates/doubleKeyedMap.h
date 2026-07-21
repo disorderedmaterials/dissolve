@@ -167,7 +167,7 @@ template <typename ValueClass> class DoubleKeyedMap
     void serialise(std::string tag, SerialisedValue &target) const
     {
         SerialisedValue result;
-        Serialisable::fromMap(data_, "map", result);
+        Serialisable::map(data_, "map", result);
         target[tag] = result;
     };
     // Read values from a serialisable value

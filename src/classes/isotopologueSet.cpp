@@ -94,9 +94,8 @@ void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
         return;
 
     SerialisedValue value;
-    value["set"] =
-        Serialisable::fromVectorToTable(isotopologues_, [](const auto &topes)
-                                        { return fromVectorToTable(topes, [](const auto isoWeight) { return isoWeight; }); });
+    value["set"] = Serialisable::vector(isotopologues_, [](const auto &topes)
+                                        { return vector(topes, [](const auto isoWeight) { return isoWeight; }); });
     target[tag] = value;
 }
 
@@ -106,13 +105,13 @@ void IsotopologueSet::deserialise(const SerialisedValue &node)
     using namespace Deserialisable;
     clear();
 
-    toMap(node, "set",
-          [&](const std::string &speciesName, const SerialisedValue &topes)
-          {
-              auto &set = isotopologues_[speciesName];
-              toMap(topes, [&](const std::string &isoName, const SerialisedValue &population)
-                    { set[isoName] = population.as_floating(); });
-          });
+    map(node, "set",
+        [&](const std::string &speciesName, const SerialisedValue &topes)
+        {
+            auto &set = isotopologues_[speciesName];
+            map(topes, [&](const std::string &isoName, const SerialisedValue &population)
+                { set[isoName] = population.as_floating(); });
+        });
 }
 
 // Resolve internal resolvable name references with supplied data

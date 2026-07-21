@@ -198,13 +198,13 @@ void Species::deserialise(const SerialisedValue &node)
     using namespace Deserialisable;
     setName(toml::find<std::string>(node, "name"));
 
-    toMap(node, "atomTypes", [this](const std::string &name, const auto &data)
-          { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
+    map(node, "atomTypes", [this](const std::string &name, const auto &data)
+        { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
 
     vector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
 
-    toMap(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
-          { commonBonds_.emplace_back(std::make_unique<CommonBond>(name))->deserialise(bond); });
+    map(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
+        { commonBonds_.emplace_back(std::make_unique<CommonBond>(name))->deserialise(bond); });
     vector(node, "bonds",
            [this](const SerialisedValue &bond)
            {
@@ -212,8 +212,8 @@ void Species::deserialise(const SerialisedValue &node)
                    .deserialise(bond);
            });
 
-    toMap(node, "commonAngles", [this](const std::string &name, const SerialisedValue &bond)
-          { commonAngles_.emplace_back(std::make_unique<CommonAngle>(name))->deserialise(bond); });
+    map(node, "commonAngles", [this](const std::string &name, const SerialisedValue &bond)
+        { commonAngles_.emplace_back(std::make_unique<CommonAngle>(name))->deserialise(bond); });
     vector(node, "angles",
            [this](const SerialisedValue &angle)
            {
@@ -223,8 +223,8 @@ void Species::deserialise(const SerialisedValue &node)
                    .deserialise(angle);
            });
 
-    toMap(node, "commonImpropers", [this](const std::string &name, const SerialisedValue &bond)
-          { commonImpropers_.emplace_back(std::make_unique<CommonImproper>(name))->deserialise(bond); });
+    map(node, "commonImpropers", [this](const std::string &name, const SerialisedValue &bond)
+        { commonImpropers_.emplace_back(std::make_unique<CommonImproper>(name))->deserialise(bond); });
     vector(node, "impropers",
            [this](const SerialisedValue &improper)
            {
@@ -234,8 +234,8 @@ void Species::deserialise(const SerialisedValue &node)
                    .deserialise(improper);
            });
 
-    toMap(node, "commonTorsions", [this](const std::string &name, const SerialisedValue &bond)
-          { commonTorsions_.emplace_back(std::make_unique<CommonTorsion>(name))->deserialise(bond); });
+    map(node, "commonTorsions", [this](const std::string &name, const SerialisedValue &bond)
+        { commonTorsions_.emplace_back(std::make_unique<CommonTorsion>(name))->deserialise(bond); });
     vector(node, "torsions",
            [this](const SerialisedValue &torsion)
            {
@@ -245,14 +245,14 @@ void Species::deserialise(const SerialisedValue &node)
                    .deserialise(torsion);
            });
 
-    toMap(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
-          { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
+    map(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
+        { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
 
     // We must finalise the intramolecular data before we attempt to add sites as Fragment sites need the bond connectivity
     finaliseIntramolecularData(false);
 
-    toMap(node, "sites", [this](const std::string &name, const SerialisedValue &site)
-          { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
+    map(node, "sites", [this](const std::string &name, const SerialisedValue &site)
+        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
 
     // Always update type indexing after deserialisation
     updateTypeIndexing();

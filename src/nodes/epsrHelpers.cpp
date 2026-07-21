@@ -355,17 +355,17 @@ std::vector<std::pair<std::string, double>> EPSRNamedTargetWeights::value()
 // Express as a serialisable value
 void EPSRNamedTargetWeights::serialise(std::string tag, SerialisedValue &target) const
 {
-    Serialisable::fromMap(weights_, tag, target);
+    Serialisable::map(weights_, tag, target);
 }
 
 // Read values from a serialisable value
 void EPSRNamedTargetWeights::deserialise(const SerialisedValue &node)
 {
     weights_.clear();
-    return Deserialisable::toMap(node,
-                                 [&](const auto &key, const auto &value)
-                                 {
-                                     std::pair<std::string, double> mapping(std::string(key), 1.0);
-                                     weights_.insert(mapping);
-                                 });
+    return Deserialisable::map(node,
+                               [&](const auto &key, const auto &value)
+                               {
+                                   std::pair<std::string, double> mapping(std::string(key), 1.0);
+                                   weights_.insert(mapping);
+                               });
 }

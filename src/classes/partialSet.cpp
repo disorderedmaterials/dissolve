@@ -460,7 +460,7 @@ void PartialSet::serialise(std::string tag, SerialisedValue &target) const
     using namespace Serialisable;
     auto &result = target[tag];
 
-    result["realSpeciesPopulations"] = fromVectorToTable(realSpeciesPopulations_);
+    result["realSpeciesPopulations"] = vector(realSpeciesPopulations_);
 
     partials_.serialise("partials", result);
     boundPartials_.serialise("boundPartials", result);
@@ -475,8 +475,8 @@ void PartialSet::serialise(std::string tag, SerialisedValue &target) const
 void PartialSet::deserialise(SerialisedValue node)
 {
     // Real species populations
-    Deserialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
-                          { realSpeciesPopulations_[name] = population.as_floating(); });
+    Deserialisable::map(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
+                        { realSpeciesPopulations_[name] = population.as_floating(); });
 
     partials_.deserialise(node["partials"]);
     boundPartials_.deserialise(node["boundPartials"]);
