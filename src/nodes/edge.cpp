@@ -3,6 +3,7 @@
 
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/inputs.h"
 #include "nodes/loopBack.h"
 #include "nodes/outputs.h"
 
@@ -38,11 +39,28 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
         Messenger::error("Source node '{}' does not exist in the graph.\n", definition.sourceNode);
         return {};
     }
+
     auto sourceOutput = sourceNode->findOutput(definition.sourceOutput);
     if (!sourceOutput)
     {
-        Messenger::error("Source node '{}' has no output parameter '{}'.\n", definition.sourceNode, definition.sourceOutput);
-        return {};
+        // If the source node is a Graph's own Inputs node, we will create an edge on the fly - else, throw an error
+        if (!dynamic_cast<InputsNode *>(sourceNode))
+        {
+            Messenger::error("Source node '{}' has no output parameter '{}'.\n", definition.sourceNode,
+                             definition.sourceOutput);
+            return {};
+        }
+
+        // The target node is the parent Graph's own Inputs node, so create a parameter link from the mapped input to the
+        // targetInput
+        auto targetNode = parent->findNode(definition.targetNode);
+        auto link = targetNode->findInput(definition.targetInput)->createParameterLink(definition.sourceOutput);
+        if (!parent->addProxyInput(link.inputParameter, link.outputParameter))
+        {
+            Messenger::error("Failed to add mapped input '{}'.\n", definition.targetInput);
+            return {};
+        }
+        sourceOutput = parent->proxyInputs().findOutput(definition.sourceOutput);
     }
 
     // Confirm that the source is actually an output
@@ -75,13 +93,19 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     {
         // The target node is a Graph: create a parameter link from the sourceOutput and from it a mapped input
         auto graphNode = dynamic_cast<Graph *>(targetNode);
-        auto link = sourceOutput->createParameterLink(definition.targetInput);
-        if (!graphNode->addProxyInput(link.inputParameter, link.outputParameter))
+        auto existingTargetInput = graphNode->findInput(definition.targetInput);
+        if (!existingTargetInput.get())
         {
-            Messenger::error("Failed to add mapped input '{}'.\n", definition.targetInput);
-            return {};
+            auto link = sourceOutput->createParameterLink(definition.targetInput);
+            if (!graphNode->addProxyInput(link.inputParameter, link.outputParameter))
+            {
+                Messenger::error("Failed to add mapped input '{}'.\n", definition.targetInput);
+                return {};
+            }
+            targetInput = link.inputParameter;
         }
-        targetInput = link.inputParameter;
+        else
+            targetInput = existingTargetInput;
     }
     else if (dynamic_cast<OutputsNode *>(targetNode))
     {
