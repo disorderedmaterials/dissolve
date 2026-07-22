@@ -83,6 +83,34 @@ class SubGraphTest : public ::testing::Test
     std::shared_ptr<ParameterBase> wB_{nullptr};
 };
 
+TEST_F(SubGraphTest, RoundTrip)
+{
+    createGraph();
+
+    // Create a mapped input on GraphA by creating an edge to it
+    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
+
+    // Connect the mapped input on GraphA internally to it's "z" node
+    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
+
+    // Connect y result to z
+    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
+
+    // Connect z result to graphA output, creating a mapped output
+    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
+
+    // Connect GraphA mapped output "D" to node "w"
+    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
+
+    // Serialised graph TOML
+    SerialisedValue graphTOML_;
+    ASSERT_NO_THROW(root_.serialise("graph", graphTOML_));
+
+    // Deserialise from the stored TOML
+    auto deserialisedGraph = std::make_unique<DissolveGraph>();
+    ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML_["graph"]));
+}
+
 TEST_F(SubGraphTest, Serialisation){
     //    createGraph();
     //
