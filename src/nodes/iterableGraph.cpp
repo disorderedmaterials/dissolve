@@ -45,6 +45,8 @@ void IterableGraph::setLoopBacks()
 
     for (const auto &[name, param] : sources)
         loopBacks_->inputs().insert_or_assign(name, param);
+
+    auto res = true;
 }
 
 // Release loopback by name
@@ -128,23 +130,28 @@ Edge *IterableGraph::removeOutputLoopEdge(std::string_view sourceOutput, Edge *e
 // Add edge between nodes
 bool IterableGraph::addEdge(const EdgeDefinition &definition)
 {
-    if (dynamic_cast<InputsNode *>(parentGraph()->findNode(definition.sourceNode)))
-        setLoopBacks();
-    else if (loopBacks_->findInput(definition.targetInput))
-    {
-        auto edge =
-            Edge::create(this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
-        if (!edge)
-            return false;
+    // Refresh the graph loopbacks
+    setLoopBacks();
 
-        loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs()));
+    // Check if the connection is invertible.
+    // Invertibility is satisfied when the source node (internal to the graph) can output to an existing loopback,
+    // which discounts any edge for which no loopbacks correspond to the target input, as well as the graphs own InputsNode.
+    auto nonInvertibleNode = dynamic_cast<InputsNode *>(parentGraph()->findNode(definition.sourceNode)) ||
+                             !loopBacks_->findInput(definition.targetInput);
 
-        addOutputLoopEdge(definition.sourceOutput, loopEdges_.back().get());
+    // If not invertible, create and return a standard edge
+    if (nonInvertibleNode)
+        return Graph::addEdge(definition);
 
-        return true;
-    }
+    // Create loop edge
+    auto edge =
+        Edge::create(this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
+    if (!edge)
+        return false;
 
-    return Graph::addEdge(definition);
+    loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs()));
+
+    return addOutputLoopEdge(definition.sourceOutput, loopEdges_.back().get());
 }
 
 // Remove edge between nodes
