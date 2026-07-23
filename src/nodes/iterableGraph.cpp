@@ -213,8 +213,8 @@ void IterableGraph::deserialise(const SerialisedValue &node)
              [this](const auto &value)
              {
                  auto definition = toml::get<EdgeDefinition>(value);
-                 auto edge =
-                     Edge::create(this, {definition.sourceNode, definition.sourceOutput, "LoopBacks", definition.targetInput});
+                 auto edge = Edge::create(
+                     this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
                  if (!edge)
                      return false;
 

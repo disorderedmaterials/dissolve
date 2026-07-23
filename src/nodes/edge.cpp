@@ -318,6 +318,7 @@ void Edge::deserialise(const SerialisedValue &node)
 void LoopEdge::serialise(std::string tag, SerialisedValue &target) const
 {
     definition().serialise(tag, target);
+    target[tag]["targetNode"] = "LoopBacks";
     target[tag]["analogue"] = analogue_;
 }
 
