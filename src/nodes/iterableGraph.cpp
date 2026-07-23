@@ -45,8 +45,6 @@ void IterableGraph::setLoopBacks()
 
     for (const auto &[name, param] : sources)
         loopBacks_->inputs().insert_or_assign(name, param);
-
-    auto res = true;
 }
 
 // Release loopback by name
