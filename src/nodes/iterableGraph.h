@@ -46,6 +46,8 @@ class IterableGraph : public Graph
     void releaseLoopBack(const std::string &name);
 
     private:
+    // Add edge between nodes
+    bool addLoopEdge(std::unique_ptr<Edge> edge, std::string_view source);
     // Add edge to node map
     Edge *addOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
     // Remove edge from node map
@@ -80,4 +82,13 @@ class IterableGraph : public Graph
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

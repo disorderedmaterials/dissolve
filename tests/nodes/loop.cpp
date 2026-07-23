@@ -77,12 +77,17 @@ TEST_F(IterableGraphTest, RoundTrip)
     createGraph();
 
     // Serialised graph TOML
-    SerialisedValue graphTOML_;
-    ASSERT_NO_THROW(root_.serialise("graph", graphTOML_));
+    SerialisedValue graphTOML;
+    ASSERT_NO_THROW(root_.serialise("graph", graphTOML));
 
     // Deserialise from the stored TOML
     auto deserialisedGraph = std::make_unique<DissolveGraph>();
-    ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML_["graph"]));
+    ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML["graph"]));
+
+    // Complete round trip - re-serialise the result and compare it to the original TOML
+    SerialisedValue compareTOML;
+    ASSERT_NO_THROW(deserialisedGraph->serialise("graph", compareTOML));
+    ASSERT_NO_THROW(UnitTest::compareToml("", graphTOML, compareTOML));
 }
 
 TEST_F(IterableGraphTest, BasicNonLoopingSeries)

@@ -312,3 +312,13 @@ void Edge::deserialise(const SerialisedValue &node)
     throw std::runtime_error("Cannot directly deserialise edges.  Please contact the Dissolve development team if you are "
                              "seeing this error - this is a bug and NOT your fault.\n");
 }
+
+// Express as a serialisable value
+void LoopEdge::serialise(std::string tag, SerialisedValue &target) const
+{
+    definition().serialise(tag, target);
+    target[tag]["analogue"] = analogue_;
+}
+
+// Read values from a serialisable value
+void LoopEdge::deserialise(const SerialisedValue &node) { Edge::deserialise(node); }
