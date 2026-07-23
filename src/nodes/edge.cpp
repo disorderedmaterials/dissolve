@@ -32,6 +32,7 @@ class EdgeConstructor : public Edge
 // Create an edge from the supplied definition
 std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definition)
 {
+    // Get target node
     auto targetNode = parent->findNode(definition.targetNode);
 
     // Get source node and output
