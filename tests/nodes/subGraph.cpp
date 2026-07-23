@@ -72,6 +72,21 @@ class SubGraphTest : public ::testing::Test
         wB_ = w_->findInput("Y");
         ASSERT_TRUE(wB_);
         wB_->set(Number{5});
+
+        // Create a mapped input on GraphA by creating an edge to it
+        EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
+
+        // Connect the mapped input on GraphA internally to it's "z" node
+        EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
+
+        // Connect y result to z
+        EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
+
+        // Connect z result to graphA output, creating a mapped output
+        EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
+
+        // Connect GraphA mapped output "D" to node "w"
+        EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
     }
 
     protected:
@@ -106,8 +121,6 @@ class SubGraphTest : public ::testing::Test
 TEST_F(SubGraphTest, RoundTrip)
 {
     createGraph();
-
-    connect();
 
     // Serialised graph TOML
     SerialisedValue graphTOML;
@@ -144,15 +157,11 @@ TEST_F(SubGraphTest, Serialisation){
 TEST_F(SubGraphTest, Connections)
 {
     createGraph();
-
-    connect();
 }
 
 TEST_F(SubGraphTest, Flow)
 {
     createGraph();
-
-    connect();
 
     // Run w - all nodes should update
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);

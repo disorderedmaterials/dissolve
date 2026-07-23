@@ -88,9 +88,7 @@ LoopEdge *IterableGraph::findLoopEdge(const EdgeDefinition &definition) const
 // Add edge between nodes
 bool IterableGraph::addLoopEdge(std::unique_ptr<Edge> edge, std::string_view source)
 {
-    loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs()));
-
-    return addOutputLoopEdge(source, loopEdges_.back().get());
+    return addOutputLoopEdge(source, loopEdges_.emplace_back(LoopEdge::makeLoopEdge(edge.release(), proxyInputs())).get());
 }
 
 // Add edge to node map
