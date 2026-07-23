@@ -73,7 +73,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Optional Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_optional<DataClass> && Serialisable::Serialisible<typename DataClass::value_type>)
-        : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return data_.value().into_toml(); }),
+        : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return Serialisable::ser(data_.value()); }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {
@@ -119,29 +119,9 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               })
     {
     }
-    // Trivial Non-Serialisable Value
-    SerialisableClass(std::string_view key, DataClass &value)
-        requires(std::is_trivial_v<DataClass>)
-        : SerialisableData(key), data_(value), dataSerialiser_(
-                                                   [&]()
-                                                   {
-                                                       SerialisedValue value;
-                                                       value = data_;
-                                                       return value;
-                                                   }),
-          dataDeserialiser_(
-              [&](const SerialisedValue &value)
-              {
-                  if constexpr (std::is_floating_point_v<DataClass>)
-                      data_ = value.as_floating();
-                  else if constexpr (std::is_integral_v<DataClass>)
-                      data_ = value.as_integer();
-              })
-    {
-    }
     // Serialisable
     SerialisableClass(std::string_view key, DataClass &value)
-        requires(Serialisable::Serialisible<DataClass>)
+        requires(!is_optional<DataClass> && Serialisable::Serialisible<DataClass>)
         : SerialisableData(key), data_(value), dataResolver_(
                                                    [&](const std::map<std::string, const Species *> &reachableSpecies)
                                                    {
@@ -160,15 +140,10 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     DataClass &data_;
     // Serialiser for target data
     using DataSerialiser = std::function<SerialisedValue()>;
-    DataSerialiser dataSerialiser_{[&]()
-                                   {
-                                       SerialisedValue target;
-                                       data_.serialise("inner", target);
-                                       return target["inner"];
-                                   }};
+    DataSerialiser dataSerialiser_{[&]() { return Serialisable::ser(data_); }};
     // Deserialiser for target data
     using DataDeserialiser = std::function<void(const SerialisedValue &value)>;
-    DataDeserialiser dataDeserialiser_{[&](const SerialisedValue &value) { data_.deserialise(value); }};
+    DataDeserialiser dataDeserialiser_{[&](const SerialisedValue &value) { Deserialisable::deserialiseOnto(data_, value); }};
     // Value checker for data, returning whether there is actually data to write
     using ValueChecker = std::function<bool()>;
     ValueChecker dataChecker_{[&]() { return true; }};
