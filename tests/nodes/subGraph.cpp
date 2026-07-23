@@ -4,6 +4,7 @@
 #include "nodes/add.h"
 #include "nodes/dissolve.h"
 #include "nodes/number.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -81,34 +82,45 @@ class SubGraphTest : public ::testing::Test
     std::shared_ptr<ParameterBase> xA_{nullptr}, xB_{nullptr};
     std::shared_ptr<ParameterBase> yA_{nullptr}, yB_{nullptr};
     std::shared_ptr<ParameterBase> wB_{nullptr};
+
+    // Basic sub-graph connection test
+    void connect()
+    {
+        // Create a mapped input on GraphA by creating an edge to it
+        EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
+
+        // Connect the mapped input on GraphA internally to it's "z" node
+        EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
+
+        // Connect y result to z
+        EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
+
+        // Connect z result to graphA output, creating a mapped output
+        EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
+
+        // Connect GraphA mapped output "D" to node "w"
+        EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
+    }
 };
 
 TEST_F(SubGraphTest, RoundTrip)
 {
     createGraph();
 
-    // Create a mapped input on GraphA by creating an edge to it
-    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
-
-    // Connect the mapped input on GraphA internally to it's "z" node
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
-
-    // Connect y result to z
-    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
-
-    // Connect z result to graphA output, creating a mapped output
-    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
-
-    // Connect GraphA mapped output "D" to node "w"
-    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
+    connect();
 
     // Serialised graph TOML
-    SerialisedValue graphTOML_;
-    ASSERT_NO_THROW(root_.serialise("graph", graphTOML_));
+    SerialisedValue graphTOML;
+    ASSERT_NO_THROW(root_.serialise("graph", graphTOML));
 
     // Deserialise from the stored TOML
     auto deserialisedGraph = std::make_unique<DissolveGraph>();
-    ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML_["graph"]));
+    ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML["graph"]));
+
+    // Complete round trip - re-serialise the result and compare it to the original TOML
+    SerialisedValue compareTOML;
+    ASSERT_NO_THROW(deserialisedGraph->serialise("graph", compareTOML));
+    ASSERT_NO_THROW(UnitTest::compareToml("", graphTOML, compareTOML));
 }
 
 TEST_F(SubGraphTest, Serialisation){
@@ -133,40 +145,14 @@ TEST_F(SubGraphTest, Connections)
 {
     createGraph();
 
-    // Create a mapped input on GraphA by creating an edge to it
-    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
-
-    // Connect the mapped input on GraphA internally to it's "z" node
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
-
-    // Connect y result to z
-    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
-
-    // Connect z result to graphA output, creating a mapped output
-    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
-
-    // Connect GraphA mapped output "D" to node "w"
-    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
+    connect();
 }
 
 TEST_F(SubGraphTest, Flow)
 {
     createGraph();
 
-    // Create a mapped input on GraphA by creating an edge to it
-    EXPECT_TRUE(root_.addEdge({"x", "Result", "GraphA", "C"}));
-
-    // Connect the mapped input on GraphA internally to it's "z" node
-    EXPECT_TRUE(graphA_->addEdge({"Inputs", "C", "z", "X"}));
-
-    // Connect y result to z
-    EXPECT_TRUE(graphA_->addEdge({"y", "Result", "z", "Y"}));
-
-    // Connect z result to graphA output, creating a mapped output
-    EXPECT_TRUE(graphA_->addEdge({"z", "Result", "Outputs", "D"}));
-
-    // Connect GraphA mapped output "D" to node "w"
-    EXPECT_TRUE(root_.addEdge({"GraphA", "D", "w", "X"}));
+    connect();
 
     // Run w - all nodes should update
     EXPECT_EQ(w_->run(), NodeConstants::ProcessResult::Success);

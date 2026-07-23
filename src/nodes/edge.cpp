@@ -32,6 +32,8 @@ class EdgeConstructor : public Edge
 // Create an edge from the supplied definition
 std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definition)
 {
+    auto targetNode = parent->findNode(definition.targetNode);
+
     // Get source node and output
     auto sourceNode = parent->findNode(definition.sourceNode);
     if (!sourceNode)
@@ -53,7 +55,6 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
 
         // The target node is the parent Graph's own Inputs node, so create a parameter link from the mapped input to the
         // targetInput
-        auto targetNode = parent->findNode(definition.targetNode);
         auto link = targetNode->findInput(definition.targetInput)->createParameterLink(definition.sourceOutput);
         if (!parent->addProxyInput(link.inputParameter, link.outputParameter))
         {
@@ -72,7 +73,6 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     }
 
     // Get target node and input
-    auto targetNode = parent->findNode(definition.targetNode);
     if (!targetNode)
     {
         Messenger::error("Target node '{}' does not exist in the graph.\n", definition.targetNode);

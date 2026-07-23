@@ -427,9 +427,12 @@ void compareToml(std::string location, SerialisedValue toml, SerialisedValue tom
     if (toml.is_table())
     {
         ASSERT_TRUE(toml2.is_table()) << location;
+        auto tab1 = toml.as_table();
+        auto tab2 = toml2.as_table();
         for (auto &[k, v] : toml.as_table())
         {
-            ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
+            auto result = toml2.contains(k);
+            ASSERT_TRUE(result) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
             compareToml(std::format("{}.{}", location, k), v, toml2.at(k));
         }
     }
