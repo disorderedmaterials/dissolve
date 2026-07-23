@@ -585,8 +585,10 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
             if (Parameter<DataClass>::data_)
                 result["data"] = ser(*Parameter<DataClass>::data_);
         }
-        else
+        else if constexpr (Serialisable::Serialisible<DataClass>)
             result["data"] = ser(Parameter<DataClass>::data_);
+        else
+            throw(std::runtime_error(std::format("Cannot deserialise type {}", typeid(DataClass).name())));
 
         target[tag] = result;
     };
@@ -626,7 +628,9 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
             else
                 Parameter<DataClass>::data_ = {};
         }
-        else
+        else if constexpr (Deserialisable::Deserialisible<DataClass>)
             Parameter<DataClass>::data_ = de<DataClass>(node.at("data"));
+        else
+            throw(std::runtime_error(std::format("Cannot deserialise type {}", typeid(DataClass).name())));
     }
 };
