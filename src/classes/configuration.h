@@ -11,6 +11,7 @@
 #include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/siteStack.h"
+#include "templates/keyedVector.h"
 #include <map>
 #include <memory>
 #include <vector>

@@ -3,6 +3,7 @@
 
 #include "math/histogram1D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "templates/algorithms.h"
 #include <cassert>
 

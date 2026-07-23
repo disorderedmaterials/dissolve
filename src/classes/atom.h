@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
+#include "base/serialiserLibrary.h"
 #include "classes/atomConstants.h"
 #include "classes/bond.h"
 #include "data/elements.h"

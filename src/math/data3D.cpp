@@ -3,6 +3,7 @@
 
 #include "math/data3D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "math/histogram3D.h"
 #include "templates/array3D.h"

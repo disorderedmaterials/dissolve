@@ -2,7 +2,6 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "base/serialiser.h"
-#include "base/messenger.h"
 
 namespace Serialisable
 {

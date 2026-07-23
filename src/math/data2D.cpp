@@ -3,6 +3,7 @@
 
 #include "math/data2D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "math/data1D.h"
 #include "math/histogram2D.h"

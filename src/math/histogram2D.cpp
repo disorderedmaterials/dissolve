@@ -3,6 +3,7 @@
 
 #include "math/histogram2D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "math/histogram1D.h"
 
 Histogram2D::Histogram2D()

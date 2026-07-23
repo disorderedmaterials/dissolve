@@ -3,6 +3,7 @@
 
 #include "expression/variable.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include <cstring>
 
 ExpressionVariable::ExpressionVariable(const ExpressionValue &value)

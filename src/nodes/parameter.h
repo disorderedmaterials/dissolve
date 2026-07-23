@@ -6,6 +6,7 @@
 #include "base/context.h"
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "math/data1D.h"
 #include "nodes/number.h"
 #include "templates/algorithms.h"

@@ -3,6 +3,7 @@
 
 #include "math/integerHistogram1D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"

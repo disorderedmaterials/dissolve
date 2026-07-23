@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atomType.h"
+#include "base/serialiserLibrary.h"
 #include "data/elements.h"
 #include "templates/algorithms.h"
 #include <cmath>

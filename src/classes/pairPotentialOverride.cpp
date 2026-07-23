@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairPotentialOverride.h"
+#include "base/serialiserLibrary.h"
 #include "classes/atomType.h"
 
 PairPotentialOverride::PairPotentialOverride() : interactionPotential_(Functions1D::Form::None) {}

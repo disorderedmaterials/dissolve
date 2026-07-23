@@ -3,6 +3,7 @@
 
 #include "math/data1D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include <cassert>

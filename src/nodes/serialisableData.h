@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "templates/algorithms.h"
 
 // Base type for serialisable data

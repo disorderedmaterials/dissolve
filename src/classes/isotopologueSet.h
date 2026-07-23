@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "templates/resolvableKeyedVector.h"
 
 // Forward Declarations
 class Species;

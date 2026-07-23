@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include "templates/array2D.h"
