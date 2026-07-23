@@ -62,14 +62,6 @@ template <SerialisiblePointer T> void fromVectorToTable(const std::vector<T> &ve
 {
     fromVectorToTable(vec, name, node, [](const auto &item) { return item->name().data(); });
 }
-// A helper function to add elements of a vector to a node
-template <typename T, typename Lambda> SerialisedValue fromVectorToTable(const std::vector<T> &vec, Lambda getName)
-{
-    SerialisedValue group;
-    for (const auto &value : vec)
-        value->serialise(getName(value), group);
-    return group;
-};
 // A helper function to add elements of a ResolvableKeyedVector to a node
 template <typename KeyClass, typename ValueClass>
 SerialisedValue vector(const ResolvableKeyedVector<KeyClass, ValueClass> &keyedVector)
@@ -93,7 +85,10 @@ void fromVectorToTable(const std::vector<T> &vec, std::string name, SerialisedVa
 {
     if (vec.empty())
         return;
-    node[name] = fromVectorToTable(vec, getName);
+    SerialisedValue group;
+    for (const auto &value : vec)
+        serialiseOnto(value, getName(value), group);
+    node[name] = group;
 };
 // A helper function to add elements of a vector to a node.  This
 // is more generic than fromVectorToTable and the later could be
@@ -139,7 +134,9 @@ template <typename T> void vector(const std::vector<T> &vec, std::string name, S
            });
 }
 // A helper function to add the elements of a vector to a node under a name
-template <typename T, typename Lambda> SerialisedValue vector(const std::vector<T> &vec, Lambda toSerial)
+template <typename T, typename Lambda>
+SerialisedValue vector(const std::vector<T> &vec, Lambda toSerial)
+    requires(requires(T a) { std::is_same_v<decltype(toSerial(a)), SerialisedValue>; })
 {
     SerialisedValue result = SerialisedValue::array_type{};
     std::transform(vec.begin(), vec.end(), std::back_inserter(result), toSerial);
