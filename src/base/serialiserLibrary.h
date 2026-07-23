@@ -216,7 +216,7 @@ template <Deserialisible T> T de_or(const SerialisedValue &target, std::string t
     T a;
     if (target.contains(tag))
     {
-        deserialiseOnto(a, target);
+        deserialiseOnto(a, target.at(tag));
         return a;
     }
     else
