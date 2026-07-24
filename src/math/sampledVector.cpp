@@ -3,6 +3,7 @@
 
 #include "math/sampledVector.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "templates/algorithms.h"
 #include <cmath>
 
@@ -183,8 +184,9 @@ void SampledVector::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SampledVector::deserialise(const SerialisedValue &node)
 {
-    count_ = toml::find<int>(node, "count");
-    mean_ = toml::find<std::vector<double>>(node, "mean");
-    stDev_ = toml::find<std::vector<double>>(node, "stDev");
-    m2_ = toml::find<std::vector<double>>(node, "m2");
+    using namespace Deserialisable;
+    count_ = de<int>(node.at("count"));
+    mean_ = vector<double>(node.at("mean"));
+    stDev_ = vector<double>(node.at("stDev"));
+    m2_ = vector<double>(node.at("m2"));
 }

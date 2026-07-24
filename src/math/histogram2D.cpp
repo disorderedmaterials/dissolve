@@ -231,14 +231,14 @@ void Histogram2D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Histogram2D::deserialise(const SerialisedValue &node)
 {
+    using namespace Deserialisable;
     clear();
 
-    initialise(toml::find<double>(node, "xMinimum"), toml::find<double>(node, "xMaximum"),
-               toml::find<double>(node, "yBinWidth"), toml::find<double>(node, "yMinimum"),
-               toml::find<double>(node, "yMaximum"), toml::find<double>(node, "yBinWidth"));
+    initialise(de<double>(node.at("xMinimum")), de<double>(node.at("xMaximum")), de<double>(node.at("yBinWidth")),
+               de<double>(node.at("yMinimum")), de<double>(node.at("yMaximum")), de<double>(node.at("yBinWidth")));
 
-    nBinned_ = toml::find<long>(node, "nBinned");
-    nMissed_ = toml::find<long>(node, "nMissed");
+    nBinned_ = de<long>(node.at("nBinned"));
+    nMissed_ = de<long>(node.at("nMissed"));
 
     averages_.linearArray() = Deserialisable::vector<SampledDouble>(node.at("averages"));
 

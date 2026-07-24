@@ -321,8 +321,8 @@ void Structure::deserialise(const SerialisedValue &node)
     vector(node, "bonds",
            [this](const SerialisedValue &bond)
            {
-               auto &i = atoms_.at(toml::find<int>(bond, "i"));
-               auto &j = atoms_.at(toml::find<int>(bond, "j"));
+               auto &i = atoms_.at(de<int>(bond.at("i")));
+               auto &j = atoms_.at(de<int>(bond.at("j")));
                bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i.get(), j.get()));
            });
 }

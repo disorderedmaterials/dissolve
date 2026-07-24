@@ -610,7 +610,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = toml::find<double>(node, "data");
+                Parameter<DataClass>::data_ = Deserialisable::de<double>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }

@@ -120,5 +120,5 @@ template <class T> class PODHistory
         target[tag] = data;
     }
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) { history_ = toml::find<std::vector<T>>(node, "history"); }
+    void deserialise(const SerialisedValue &node) { history_ = Deserialisable::vector<T>(node.at("history")); }
 };

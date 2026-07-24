@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/sampledDouble.h"
+#include "base/serialiserLibrary.h"
 #include <cmath>
 
 SampledDouble::SampledDouble() { clear(); }
@@ -149,7 +150,8 @@ void SampledDouble::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SampledDouble::deserialise(const SerialisedValue &value)
 {
-    mean_ = toml::find<double>(value, "mean");
-    count_ = toml::find<int>(value, "count");
-    m2_ = toml::find<double>(value, "m2");
+    using namespace Deserialisable;
+    mean_ = de<double>(value.at("mean"));
+    count_ = de<int>(value.at("count"));
+    m2_ = de<double>(value.at("m2"));
 };

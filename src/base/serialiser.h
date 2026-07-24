@@ -21,6 +21,7 @@ void serialiseOnto(const std::string a, std::string tag, SerialisedValue &target
 namespace Deserialisable
 {
 
+void deserialiseOnto(bool &a, const SerialisedValue &target);
 void deserialiseOnto(int &a, const SerialisedValue &target);
 void deserialiseOnto(long &a, const SerialisedValue &target);
 void deserialiseOnto(float &a, const SerialisedValue &target);

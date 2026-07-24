@@ -180,18 +180,12 @@ bool isMetallic(Element Z);
 }; // namespace Elements
 
 // TOML Conversion
-namespace toml
+namespace Serialisable
 {
-template <> struct from<Elements::Element>
-{
-    static Elements::Element from_toml(const toml::value &node) { return Elements::element(toml::get<std::string>(node)); }
-};
+void serialiseOnto(const Elements::Element &elem, std::string tag, SerialisedValue node);
+}; // namespace Serialisable
 
-template <> struct into<Elements::Element>
+namespace Deserialisable
 {
-    static toml::basic_value<toml::preserve_comments> into_toml(const Elements::Element &e)
-    {
-        return Elements::symbol(e).data();
-    }
-};
-} // namespace toml
+void deserialiseOnto(Elements::Element &elem, const SerialisedValue &node);
+}; // namespace Deserialisable

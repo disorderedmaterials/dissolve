@@ -399,7 +399,7 @@ void SpeciesTorsion::deserialise(const SerialisedValue &node)
     SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise(node,
                                                                 [&](auto &form) { return parent_->getCommonTorsion(form); });
 
-    electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
+    electrostatic14Scaling_ = Deserialisable::de_or<double>(node, "q14", 0.5);
 
     Deserialisable::optionalOn(node, "v14", [this](const auto node) { vdw14Scaling_ = node.as_floating(); });
 }

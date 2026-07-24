@@ -428,14 +428,15 @@ void Data1D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data1D::deserialise(const SerialisedValue &node)
 {
-    tag_ = toml::find<std::string>(node, "tag");
-    x_ = toml::find<std::vector<double>>(node, "x");
-    values_ = toml::find<std::vector<double>>(node, "y");
+    using namespace Deserialisable;
+    tag_ = de<std::string>(node.at("tag"));
+    x_ = vector<double>(node.at("x"));
+    values_ = vector<double>(node.at("y"));
 
     Deserialisable::optionalOn(node, "errors",
                                [this](const auto errors)
                                {
                                    hasError_ = true;
-                                   errors_ = toml::get<std::vector<double>>(errors);
+                                   errors_ = vector<double>(errors);
                                });
 }

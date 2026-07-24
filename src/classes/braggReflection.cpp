@@ -140,9 +140,10 @@ const Vector3i &BraggReflection::hkl() const { return hkl_; }
 // Read values from a serialisable value
 void BraggReflection::deserialise(const SerialisedValue &node)
 {
-    index_ = toml::find<int>(node, "index");
-    q_ = toml::find<double>(node, "q");
-    nKVectors_ = toml::find<int>(node, "nKVectors");
+    using namespace Deserialisable;
+    index_ = de<int>(node.at("index"));
+    q_ = de<double>(node.at("q"));
+    nKVectors_ = de<int>(node.at("nKVectors"));
     hkl_.zero();
     hkl_.deserialise(node);
 }

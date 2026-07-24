@@ -12,6 +12,7 @@ void serialiseOnto(std::string a, std::string tag, SerialisedValue &target) { ta
 
 namespace Deserialisable
 {
+void deserialiseOnto(bool &a, const SerialisedValue &target) { a = target.as_boolean(); }
 void deserialiseOnto(int &a, const SerialisedValue &target) { a = target.as_integer(); }
 void deserialiseOnto(long &a, const SerialisedValue &target) { a = target.as_integer(); }
 void deserialiseOnto(float &a, const SerialisedValue &target) { a = target.as_floating(); }

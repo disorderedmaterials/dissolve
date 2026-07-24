@@ -257,10 +257,9 @@ void Histogram3D::deserialise(const SerialisedValue &node)
     using namespace Deserialisable;
     clear();
 
-    initialise(
-        toml::find<double>(node, "xMinimum"), toml::find<double>(node, "xMaximum"), toml::find<double>(node, "yBinWidth"),
-        toml::find<double>(node, "yMinimum"), toml::find<double>(node, "yMaximum"), toml::find<double>(node, "yBinWidth"),
-        toml::find<double>(node, "zMinimum"), toml::find<double>(node, "zMaximum"), toml::find<double>(node, "zBinWidth"));
+    initialise(de<double>(node.at("xMinimum")), de<double>(node.at("xMaximum")), de<double>(node.at("yBinWidth")),
+               de<double>(node.at("yMinimum")), de<double>(node.at("yMaximum")), de<double>(node.at("yBinWidth")),
+               de<double>(node.at("zMinimum")), de<double>(node.at("zMaximum")), de<double>(node.at("zBinWidth")));
 
     nBinned_ = de<long>(node.at("nBinned"));
     nMissed_ = de<long>(node.at("nMissed"));

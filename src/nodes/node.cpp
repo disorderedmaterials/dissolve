@@ -352,8 +352,8 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 void Node::deserialise(const SerialisedValue &node)
 {
     using namespace Deserialisable;
-    x = toml::find<int>(node, "x");
-    y = toml::find<int>(node, "y");
+    x = de<int>(node.at("x"));
+    y = de<int>(node.at("y"));
     map(node, "inputs",
         [this](const auto &k, const auto &v)
         {

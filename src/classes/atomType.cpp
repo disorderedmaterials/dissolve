@@ -89,9 +89,9 @@ void AtomType::serialise(std::string tag, SerialisedValue &target) const
 void AtomType::deserialise(SerialisedValue node)
 {
     using namespace Deserialisable;
-    Z_ = toml::find<Elements::Element>(node, "z");
-    charge_ = toml::find_or<double>(node, "charge", 0.0);
-    exchangeable_ = toml::find_or<bool>(node, "exchangeable", false);
+    Z_ = de<Elements::Element>(node.at("z"));
+    charge_ = de_or<double>(node, "charge", 0.0);
+    exchangeable_ = de_or<bool>(node, "exchangeable", false);
 
     optionalOn(node, "form", [this](const auto node)
                { interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node.as_string()))); });

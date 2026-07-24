@@ -74,8 +74,8 @@ void PairPotentialOverride::serialise(std::string tag, SerialisedValue &target) 
 void PairPotentialOverride::deserialise(const SerialisedValue &node)
 {
     using namespace Deserialisable;
-    matchI_ = toml::find<std::string>(node, "matchI");
-    matchJ_ = toml::find<std::string>(node, "matchJ");
+    matchI_ = de<std::string>(node.at("matchI"));
+    matchJ_ = de<std::string>(node.at("matchJ"));
 
     optionalOn(node, "type",
                [this](const auto node) { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });

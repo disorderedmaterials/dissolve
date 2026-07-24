@@ -532,7 +532,7 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
 void SpeciesSite::deserialise(const SerialisedValue &node)
 {
     using namespace Deserialisable;
-    type_ = siteTypes().deserialise(toml::find_or(node, "type", "static"));
+    type_ = siteTypes().deserialise(de_or(node, "type", std::string("static")));
 
     switch (type_)
     {
@@ -547,14 +547,14 @@ void SpeciesSite::deserialise(const SerialisedValue &node)
 
             break;
         case SiteType::Fragment:
-            fragment_.create(toml::find<std::string>(node, "description"));
+            fragment_.create(de<std::string>(node.at("description")));
             break;
         case SiteType::Dynamic:
-            vector(node, "element", [this](const auto &element) { addDynamicElement(toml::get<Elements::Element>(element)); });
+            vector(node, "element", [this](const auto &element) { addDynamicElement(de<Elements::Element>(element)); });
             break;
     }
 
-    originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
+    originMassWeighted_ = de_or<bool>(node, "originMassWeighted", false);
 
     generateInstances();
 }

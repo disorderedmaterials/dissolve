@@ -196,7 +196,7 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
 void Species::deserialise(const SerialisedValue &node)
 {
     using namespace Deserialisable;
-    setName(toml::find<std::string>(node, "name"));
+    setName(de<std::string>(node.at("name")));
 
     map(node, "atomTypes", [this](const std::string &name, const auto &data)
         { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
@@ -205,12 +205,9 @@ void Species::deserialise(const SerialisedValue &node)
 
     map(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
         { commonBonds_.emplace_back(std::make_unique<CommonBond>(name))->deserialise(bond); });
-    vector(node, "bonds",
-           [this](const SerialisedValue &bond)
-           {
-               bonds_.emplace_back(this, &atoms_.at(toml::find<int>(bond, "i")), &atoms_.at(toml::find<int>(bond, "j")))
-                   .deserialise(bond);
-           });
+    vector(
+        node, "bonds", [this](const SerialisedValue &bond)
+        { bonds_.emplace_back(this, &atoms_.at(de<int>(bond.at("i"))), &atoms_.at(de<int>(bond.at("j")))).deserialise(bond); });
 
     map(node, "commonAngles", [this](const std::string &name, const SerialisedValue &bond)
         { commonAngles_.emplace_back(std::make_unique<CommonAngle>(name))->deserialise(bond); });
@@ -218,8 +215,8 @@ void Species::deserialise(const SerialisedValue &node)
            [this](const SerialisedValue &angle)
            {
                angles_
-                   .emplace_back(this, &atoms_.at(toml::find<int>(angle, "i")), &atoms_.at(toml::find<int>(angle, "j")),
-                                 &atoms_.at(toml::find<int>(angle, "k")))
+                   .emplace_back(this, &atoms_.at(de<int>(angle.at("i"))), &atoms_.at(de<int>(angle.at("j"))),
+                                 &atoms_.at(de<int>(angle.at("k"))))
                    .deserialise(angle);
            });
 
@@ -229,8 +226,8 @@ void Species::deserialise(const SerialisedValue &node)
            [this](const SerialisedValue &improper)
            {
                impropers_
-                   .emplace_back(this, &atoms_.at(toml::find<int>(improper, "i")), &atoms_.at(toml::find<int>(improper, "j")),
-                                 &atoms_.at(toml::find<int>(improper, "k")), &atoms_.at(toml::find<int>(improper, "l")))
+                   .emplace_back(this, &atoms_.at(de<int>(improper.at("i"))), &atoms_.at(de<int>(improper.at("j"))),
+                                 &atoms_.at(de<int>(improper.at("k"))), &atoms_.at(de<int>(improper.at("l"))))
                    .deserialise(improper);
            });
 
@@ -240,8 +237,8 @@ void Species::deserialise(const SerialisedValue &node)
            [this](const SerialisedValue &torsion)
            {
                torsions_
-                   .emplace_back(this, &atoms_.at(toml::find<int>(torsion, "i")), &atoms_.at(toml::find<int>(torsion, "j")),
-                                 &atoms_.at(toml::find<int>(torsion, "k")), &atoms_.at(toml::find<int>(torsion, "l")))
+                   .emplace_back(this, &atoms_.at(de<int>(torsion.at("i"))), &atoms_.at(de<int>(torsion.at("j"))),
+                                 &atoms_.at(de<int>(torsion.at("k"))), &atoms_.at(de<int>(torsion.at("l"))))
                    .deserialise(torsion);
            });
 

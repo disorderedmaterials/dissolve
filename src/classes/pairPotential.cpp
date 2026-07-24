@@ -481,8 +481,8 @@ void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 void PairPotential::deserialise(const SerialisedValue &node)
 {
     using namespace Deserialisable;
-    nameI_ = toml::find<std::string>(node, "nameI");
-    nameJ_ = toml::find<std::string>(node, "nameJ");
+    nameI_ = de<std::string>(node.at("nameI"));
+    nameJ_ = de<std::string>(node.at("nameJ"));
 
     Functions1D::Form form;
     optionalOn(node, "form", [&](const auto node) { form = Functions1D::forms().enumeration(std::string(node.as_string())); });

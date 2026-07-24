@@ -3,6 +3,7 @@
 
 #include "math/sampledData1D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "math/histogram1D.h"
 #include "templates/algorithms.h"
 #include <cassert>
@@ -157,6 +158,6 @@ void SampledData1D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SampledData1D::deserialise(const SerialisedValue &node)
 {
-    x_ = toml::find<std::vector<double>>(node, "x");
+    x_ = Deserialisable::vector<double>(node.at("x"));
     values_.deserialise(node.at("values"));
 }

@@ -276,7 +276,7 @@ void Graph::deserialise(const SerialisedValue &node)
     map(node, "nodes",
         [this](const auto name, const auto &value)
         {
-            std::string nodeType = toml::find<std::string>(value, "type");
+            std::string nodeType = de<std::string>(value.at("type"));
             auto child = createNode(nodeType, name);
 
             child->deserialise(value);

@@ -331,17 +331,18 @@ void Data2D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data2D::deserialise(const SerialisedValue &node)
 {
-    tag_ = toml::find<std::string>(node, "tag");
-    x_ = toml::find<std::vector<double>>(node, "x");
-    y_ = toml::find<std::vector<double>>(node, "y");
+    using namespace Deserialisable;
+    tag_ = de<std::string>(node.at("tag"));
+    x_ = vector<double>(node.at("x"));
+    y_ = vector<double>(node.at("y"));
     values_.initialise(x_.size(), y_.size());
-    values_.linearArray() = toml::find<std::vector<double>>(node, "values");
+    values_.linearArray() = vector<double>(node.at("values"));
 
     Deserialisable::optionalOn(node, "errors",
                                [this](const auto errors)
                                {
                                    hasError_ = true;
                                    errors_.initialise(x_.size(), y_.size());
-                                   errors_.linearArray() = toml::get<std::vector<double>>(errors);
+                                   errors_.linearArray() = vector<double>(errors);
                                });
 }

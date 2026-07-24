@@ -63,7 +63,8 @@ void Configuration::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Configuration::deserialise(const SerialisedValue &node)
 {
-    setTemperature(toml::find_or<double>(node, "temperature", defaultTemperature_));
-    requestedSizeFactor_ = toml::find_or<double>(node, "sizeFactor", defaultSizeFactor_);
-    requestedCellDivisionLength_ = toml::find_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
+    using namespace Deserialisable;
+    setTemperature(de_or<double>(node, "temperature", defaultTemperature_));
+    requestedSizeFactor_ = de_or<double>(node, "sizeFactor", defaultSizeFactor_);
+    requestedCellDivisionLength_ = de_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
 }

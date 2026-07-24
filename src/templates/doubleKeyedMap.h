@@ -176,7 +176,7 @@ template <typename ValueClass> class DoubleKeyedMap
     {
         data_.clear();
 
-        for (auto &[mapKey, value] : toml::find<SerialisedValue::table_type>(node, "map"))
+        for (auto &[mapKey, value] : node.at("map").as_table())
         {
             if constexpr (std::is_same_v<ValueClass, double>)
                 data_[mapKey] = value.as_floating();
