@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "base/serialiserLibrary.h"
 #include "classes/atomConstants.h"
 #include "classes/bond.h"
 #include "data/elements.h"
@@ -87,6 +86,16 @@ class AtomBase
     AtomGeometry geometry() const;
     // Return whether the geometry of this atom matches that specified
     bool isGeometry(AtomGeometry geom) const;
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const;
+
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };
 
 // Atom
@@ -134,24 +143,5 @@ template <typename BondClass> class Atom : public AtomBase
         for (const auto *bond : bonds_)
             connections.emplace_back(bond->partner(this));
         return connections;
-    }
-
-    /*
-     * Serialisation
-     */
-    public:
-    // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const
-    {
-        using namespace Serialisable;
-        target[tag] = {{"index", index_}, {"z", ser(Z_)}, {"r", ser(r_)}, {"q", q_}};
-    }
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node)
-    {
-        using namespace Deserialisable;
-        index_ = de<int>(node.at("index"));
-
-        set(de<Elements::Element>(node.at("z")), de<Vector3>(node.at("r")), de_or<double>(node, "q", 0));
     }
 };

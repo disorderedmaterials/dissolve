@@ -5,6 +5,7 @@
 
 #include "base/messenger.h"
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "classes/interactionPotential.h"
 #include "classes/speciesAtom.h"
 #include <string>

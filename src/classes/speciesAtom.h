@@ -13,6 +13,7 @@
 
 // Forward Declarations
 class AtomType;
+class Species;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;

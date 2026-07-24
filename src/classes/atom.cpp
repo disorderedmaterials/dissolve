@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/atom.h"
+#include "base/serialiserLibrary.h"
 #include "classes/box.h"
 
 /*
@@ -135,3 +136,18 @@ AtomBase::AtomGeometry AtomBase::geometry() const
 
 // Return whether the geometry of this atom matches that specified
 bool AtomBase::isGeometry(AtomGeometry geom) const { return geometry() == geom; }
+
+// Express as a serialisable value
+void AtomBase::serialise(std::string tag, SerialisedValue &target) const
+{
+    using namespace Serialisable;
+    target[tag] = {{"index", index_}, {"z", ser(Z_)}, {"r", ser(r_)}, {"q", q_}};
+}
+// Read values from a serialisable value
+void AtomBase::deserialise(const SerialisedValue &node)
+{
+    using namespace Deserialisable;
+    index_ = de<int>(node.at("index"));
+
+    set(de<Elements::Element>(node.at("z")), de<Vector3>(node.at("r")), de_or<double>(node, "q", 0));
+}

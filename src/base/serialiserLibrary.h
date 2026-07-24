@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "templates/keyedVector.h"
 #include "templates/resolvableKeyedVector.h"
 #include <algorithm>
 #include <iterator>
