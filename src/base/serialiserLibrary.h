@@ -20,9 +20,6 @@ concept SerialisiblePointer = requires(T a, std::string tag, SerialisedValue tar
 template <typename T>
 concept SerialisibleClass = requires(T a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); };
 
-template <typename T>
-concept SerialisableCast = requires(T a) { toml::into<T>::into_toml(a); };
-
 // template <typename T>
 // concept SerialisableFromInto = requires(T a,
 template <SerialisiblePointer T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
@@ -34,8 +31,6 @@ template <SerialisibleClass T> void serialiseOnto(const T &a, std::string tag, S
 {
     a.serialise(tag, target);
 }
-
-template <SerialisableCast T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target) { target[tag] = a; }
 
 template <typename T>
 concept Serialisible = requires(const T a, std::string tag, SerialisedValue &target) { serialiseOnto(a, tag, target); };
@@ -187,18 +182,10 @@ namespace Deserialisable
 template <typename T>
 concept DeserialisibleClass = requires(T a, SerialisedValue &node) { a.deserialise(node); };
 
-template <typename T>
-concept DeserialisableCast = requires(T a, SerialisedValue &node) { a = toml::from<T>::from_toml(node); };
-
 // template <typename T>
 // concept DeserialisableFromInto = requires(T a,
 
 template <DeserialisibleClass T> void deserialiseOnto(T &a, const SerialisedValue &target) { a.deserialise(target); }
-
-template <DeserialisableCast T> void deserialiseOnto(T &a, const SerialisedValue &target)
-{
-    a = toml::from<T>::from_toml(target);
-}
 
 template <typename T>
 concept Deserialisible = requires(T &a, const SerialisedValue &target) { deserialiseOnto(a, target); };
