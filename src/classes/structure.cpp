@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/structure.h"
+#include "base/serialiserLibrary.h"
 #include "classes/bond.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"

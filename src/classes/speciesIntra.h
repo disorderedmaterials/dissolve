@@ -5,7 +5,6 @@
 
 #include "base/messenger.h"
 #include "base/serialiser.h"
-#include "base/serialiserLibrary.h"
 #include "classes/interactionPotential.h"
 #include "classes/speciesAtom.h"
 #include <string>
@@ -192,46 +191,45 @@ template <class Intra, class Functions> class SpeciesIntra
     {
         // Common tag - used by individual species terms (not the common terms themselves) to specify a reference to a common
         // term. If it doesn't exist, serialise form and parameters as normal.
-        if (!Deserialisable::optionalOn(node, "common",
-                                        [this, &lambda](const SerialisedValue &node)
-                                        {
-                                            std::string form = node.as_string();
-                                            auto common = lambda(form);
-                                            if (!common)
-                                                throw std::runtime_error("Common Term not found.");
-                                            setCommonTerm(&common->get());
-                                        }))
+        if (node.contains("common"))
+        {
+            std::string cmmn = node.at("common").as_string();
+            auto common = lambda(cmmn);
+            if (!common)
+                throw std::runtime_error("Common Term not found.");
+            setCommonTerm(&common->get());
+        }
+        else
             SpeciesIntra::deserialise(node);
     }
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node)
     {
-        Deserialisable::optionalOn(node, "form",
-                                   [this](const SerialisedValue &node)
-                                   {
-                                       std::string form = node.as_string();
-                                       setInteractionForm(Functions::forms().enumeration(form));
-                                   });
-        Deserialisable::optionalOn(node, "parameters",
-                                   [this](const auto node)
-                                   {
-                                       auto names = Functions::parameters(interactionForm());
-                                       std::vector<double> values;
-                                       std::map<std::string, double> map;
-                                       switch (node.type())
-                                       {
-                                           case toml::value_t::array:
-                                               values = toml::get<std::vector<double>>(node);
-                                               break;
-                                           case toml::value_t::table:
-                                               map = toml::get<std::map<std::string, double>>(node);
-                                               std::transform(names.begin(), names.end(), std::back_inserter(values),
-                                                              [&map](const auto &name) { return map[name]; });
-                                               break;
-                                           default:
-                                               throw toml::type_error("Cannot understand parameter value", node.location());
-                                       }
-                                       setInteractionFormAndParameters(interactionForm(), values);
-                                   });
+        if (node.contains("form"))
+        {
+            std::string form = node.at("form").as_string();
+            setInteractionForm(Functions::forms().enumeration(form));
+        }
+        if (node.contains("parameters"))
+        {
+            auto params = node.at("parameters");
+            auto names = Functions::parameters(interactionForm());
+            std::vector<double> values;
+            std::map<std::string, double> map;
+            switch (params.type())
+            {
+                case toml::value_t::array:
+                    values = toml::get<std::vector<double>>(params);
+                    break;
+                case toml::value_t::table:
+                    map = toml::get<std::map<std::string, double>>(params);
+                    std::transform(names.begin(), names.end(), std::back_inserter(values),
+                                   [&map](const auto &name) { return map[name]; });
+                    break;
+                default:
+                    throw toml::type_error("Cannot understand parameter value", params.location());
+            }
+            setInteractionFormAndParameters(interactionForm(), values);
+        }
     }
 };

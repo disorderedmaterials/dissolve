@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesSites.h"
+#include "base/serialiserLibrary.h"
 #include "classes/species.h"
 
 SpeciesSites::SpeciesSites(const std::vector<const SpeciesSite *> &sites)

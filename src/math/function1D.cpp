@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/function1D.h"
+#include "base/serialiserLibrary.h"
 #include "classes/pairPotential.h"
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"

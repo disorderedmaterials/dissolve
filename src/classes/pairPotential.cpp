@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairPotential.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "math/derivative.h"

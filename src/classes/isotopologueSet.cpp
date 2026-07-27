@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/isotopologueSet.h"
+#include "base/serialiserLibrary.h"
 #include "classes/species.h"
 
 IsotopologueSet::IsotopologueSet(const std::vector<std::pair<const Isotopologue *, double>> &topes)

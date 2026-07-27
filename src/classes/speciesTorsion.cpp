@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesTorsion.h"
+#include "base/serialiserLibrary.h"
 #include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "math/mathFunc.h"

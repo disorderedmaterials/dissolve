@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesSite.h"
+#include "base/serialiserLibrary.h"
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicMasses.h"

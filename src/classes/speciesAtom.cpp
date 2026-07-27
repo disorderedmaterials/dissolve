@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAtom.h"
+#include "base/serialiserLibrary.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/species.h"
