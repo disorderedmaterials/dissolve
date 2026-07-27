@@ -34,6 +34,18 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
 {
     // Get target node
     auto targetNode = parent->findNode(definition.targetNode);
+    if (!targetNode)
+    {
+        Messenger::error("Target node '{}' does not exist in the graph.\n", definition.targetNode);
+        return {};
+    }
+
+    // Disallow circular edges (mostly a check for Graph -> Graph connections)
+    if (targetNode == parent)
+    {
+        Messenger::error("Target node is graph '{}' and cannot be the owner of the edge.", definition.targetNode);
+        return {};
+    }
 
     // Get source node and output
     auto sourceNode = parent->findNode(definition.sourceNode);
@@ -70,20 +82,6 @@ std::unique_ptr<Edge> Edge::create(Graph *parent, const EdgeDefinition &definiti
     {
         Messenger::error("Source node '{}' has parameter '{}' but it is not an output.\n", definition.sourceNode,
                          definition.sourceOutput);
-        return {};
-    }
-
-    // Get target node and input
-    if (!targetNode)
-    {
-        Messenger::error("Target node '{}' does not exist in the graph.\n", definition.targetNode);
-        return {};
-    }
-
-    // Disallow circular edges (mostly a check for Graph -> Graph connections)
-    if (targetNode == parent)
-    {
-        Messenger::error("Target node is graph '{}' and cannot be the owner of the edge.", definition.targetNode);
         return {};
     }
 
