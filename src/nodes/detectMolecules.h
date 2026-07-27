@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "neta/neta.h"
 #include "classes/structure.h"
+#include "neta/neta.h"
 #include "nodes/node.h"
 #include <map>
 #include <vector>

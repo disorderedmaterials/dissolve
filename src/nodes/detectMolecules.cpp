@@ -195,50 +195,39 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
         // Loop over fragments of this size
         while (!fragments.empty())
         {
+            printf("FRAGs now %li\n", fragments.size());
             // Get frontmost fragment and create the best NETA definition for it
             const auto &currentFragment = fragments.front();
             auto neta = bestNETADefinition(currentFragment);
 
             // Apply the NETA match back over the fragement in order to get the matched atom ordering, and create a structure
             auto netaMatch = matchFragment(neta, currentFragment);
-            std::vector<int> netaOrdering;
-            std::ranges::transform(netaMatch, )
+            std::vector<int> netaOrdering(netaMatch.set().size());
+            std::ranges::transform(netaMatch.set(), netaOrdering.begin(), [](auto atom) { return atom->index(); });
 
             // Create a provisional structure for the current fragment, using indices in the order matched by NETA
-            Structure detectedStructure;
+            auto detectedStructure = duplicateAtomsAndBonds(netaOrdering);
             detectedStructure.createBox(inputStructure_.box().axes());
-            std::vector<std::vector<Vector3>> instances;
+            std::cout << EmpiricalFormula::formula(detectedStructure.atoms(), [](const auto &i) { return i->Z(); })
+                      << std::endl;
 
-            // Iterate over all structural atoms, matching their unit cell atoms by NETA
-            fragments.erase(
-                std::remove_if(fragments.begin(), fragments.end(),
-                               [this, &instances, &neta, &currentFragment](auto &pair) -> bool
-                               {
-                                   auto &[_, fragmentAtomIndices] = pair;
+            // Find, copy as instances, and then erase all fragments that match the current NETA
+            fragments.erase(std::remove_if(fragments.begin(), fragments.end(),
+                                           [&](auto &fragment) -> bool
+                                           {
+                                               // Attempt to match this fragment
+                                               auto fragmentMatch = matchFragment(neta, fragment);
+                                               if (fragmentMatch.set().empty())
+                                                   return false;
 
-                                   for (const auto &fragmentAtomIndex : fragmentAtomIndices)
-                                   {
-                                       auto matchedUnitCellAtoms =
-                                           neta->matchedPath(this->inputStructure_.atom(fragmentAtomIndex)).set();
+                                               // Store this match as an instance
+                                               auto &instanceAtoms = detectedStructure.instances().emplace_back();
+                                               for (const auto fragmentAtom : fragmentMatch.set())
+                                                   instanceAtoms.push_back(fragmentAtom->r());
 
-                                       if (!matchedUnitCellAtoms.empty())
-                                       {
-                                           //  Add instances
-                                           auto &instanceAtoms = instances.emplace_back();
-                                           for (const auto &matchedUnitCellAtom : matchedUnitCellAtoms)
-                                               instanceAtoms.push_back(matchedUnitCellAtom->r());
-
-                                           return true;
-                                       }
-                                   }
-
-                                   return false;
-                               }),
-                fragments.end());
-
-            if (!instances.empty())
-                detectedStructures_.emplace_back(copyStructureAtomsAndBonds(detectedStructure, currentFragment)).instances() =
-                    instances;
+                                               return true;
+                                           }),
+                            fragments.end());
         }
     }
 
