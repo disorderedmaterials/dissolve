@@ -208,8 +208,6 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             // Create a provisional structure for the current fragment, using indices in the order matched by NETA
             auto detectedStructure = duplicateAtomsAndBonds(netaOrdering);
             detectedStructure.createBox(inputStructure_.box().axes());
-            std::cout << EmpiricalFormula::formula(detectedStructure.atoms(), [](const auto &i) { return i->Z(); })
-                      << std::endl;
 
             // Find, copy as instances, and then erase all fragments that match the current NETA
             fragments.erase(std::remove_if(fragments.begin(), fragments.end(),
@@ -228,6 +226,9 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                                                return true;
                                            }),
                             fragments.end());
+
+            // Store the detected structure
+            detectedStructures_.emplace_back(detectedStructure);
         }
     }
 
