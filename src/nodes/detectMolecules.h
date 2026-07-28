@@ -36,7 +36,7 @@ class DetectMoleculesNode : public Node
      */
     private:
     // Duplicate specified input structure atoms and their bonds, returning a new structure (including the unit cell)
-    Structure duplicateAtomsAndBonds(const std::vector<int> &inputStructureAtomIndices) const;
+    Structure copyAtomsAndBonds(const std::vector<int> &inputStructureAtomIndices) const;
     // Get all fragments in the structure
     std::map<int, std::vector<std::vector<int>>> getFragments() const;
     // Get coordinates of specified atoms of the input structure

@@ -29,7 +29,7 @@ std::string_view DetectMoleculesNode::summary() const { return "Detect molecular
  */
 
 // Duplicate specified atoms (from indices) and their bonds, returning a new structure (including the unit cell)
-Structure DetectMoleculesNode::duplicateAtomsAndBonds(const std::vector<int> &inputStructureAtomIndices) const
+Structure DetectMoleculesNode::copyAtomsAndBonds(const std::vector<int> &inputStructureAtomIndices) const
 {
     Structure structure;
 
@@ -184,7 +184,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
         // If there is a single fragment for this size, no NETA is required and we can just store it
         if (fragments.size() == 1)
         {
-            auto structure = duplicateAtomsAndBonds(fragments.front());
+            auto structure = copyAtomsAndBonds(fragments.front());
             structure.instances().push_back(getAtomCoordinates(fragments.front()));
 
             detectedStructures_.emplace_back(structure);
@@ -205,7 +205,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             std::ranges::transform(netaMatch.set(), netaOrdering.begin(), [](auto atom) { return atom->index(); });
 
             // Create a provisional structure for the current fragment, using indices in the order matched by NETA
-            auto detectedStructure = duplicateAtomsAndBonds(netaOrdering);
+            auto detectedStructure = copyAtomsAndBonds(netaOrdering);
             detectedStructure.createBox(inputStructure_.box().axes());
 
             // Find, copy as instances, and then erase all fragments that match the current NETA
