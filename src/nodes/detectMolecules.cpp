@@ -25,6 +25,13 @@ std::string_view DetectMoleculesNode::type() const { return "DetectMolecules"; }
 std::string_view DetectMoleculesNode::summary() const { return "Detect molecular instances within a structure"; }
 
 /*
+ * Data
+ */
+
+// Return the detected structures
+const std::vector<Structure> &DetectMoleculesNode::detectedStructures() const { return detectedStructures_; }
+
+/*
  * Processing
  */
 
