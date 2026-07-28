@@ -195,7 +195,6 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
         // Loop over fragments of this size
         while (!fragments.empty())
         {
-            printf("FRAGs now %li\n", fragments.size());
             // Get frontmost fragment and create the best NETA definition for it
             const auto &currentFragment = fragments.front();
             auto neta = bestNETADefinition(currentFragment);
