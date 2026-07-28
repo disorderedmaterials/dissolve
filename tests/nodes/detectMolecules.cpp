@@ -15,14 +15,14 @@ TEST(DetectMoleculesNodeTest, Water33Unordered)
     TestGraph testGraph;
 
     // Load the xyz file - a system of 33 water molecules in a 10x10x10 Angstrom cubic box, atoms randomly ordered
-    auto importXYZStructure = testGraph.appendNode("ImportXYZStructure");
-    ASSERT_TRUE(importXYZStructure);
-    importXYZStructure->setOption("FilePath", std::string("xyz/water33unordered.xyz"));
+    auto importXYZStructureNode = testGraph.appendNode("ImportXYZStructure");
+    ASSERT_TRUE(importXYZStructureNode);
+    importXYZStructureNode->setOption("FilePath", std::string("xyz/water33unordered.xyz"));
 
     // Set the periodic box in the structure
-    auto setBox = testGraph.appendNode("SetBox");
-    ASSERT_TRUE(setBox);
-    setBox->setOption("Lengths", Vector3(10.0, 10.0, 10.0));
+    auto setBoxNode = testGraph.appendNode("SetBox");
+    ASSERT_TRUE(setBoxNode);
+    setBoxNode->setOption("Lengths", Vector3(10.0, 10.0, 10.0));
     ASSERT_TRUE(testGraph.addEdge({"ImportXYZStructure", "Structure", "SetBox", "Input"}));
 
     // Calculate bonding
@@ -30,13 +30,34 @@ TEST(DetectMoleculesNodeTest, Water33Unordered)
     ASSERT_TRUE(testGraph.addEdge({"SetBox", "Output", "CalculateBonding", "Structure"}));
 
     // Append DetectMolecules
-    auto detectMolecules = static_cast<DetectMoleculesNode *>(testGraph.appendNode("DetectMolecules"));
-    ASSERT_TRUE(detectMolecules);
+    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.appendNode("DetectMolecules"));
+    ASSERT_TRUE(detectMoleculesNode);
     ASSERT_TRUE(testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"}));
 
     // Run to get detected structures
-    ASSERT_EQ(detectMolecules->run(), NodeConstants::ProcessResult::Success);
-    ASSERT_EQ(detectMolecules->detectedStructures().size(), 1);
-    ASSERT_EQ(detectMolecules->detectedStructures().at(0).instances().size(), 33);
+    ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(detectMoleculesNode->detectedStructures().size(), 1);
+    ASSERT_EQ(detectMoleculesNode->detectedStructures().at(0).instances().size(), 33);
+
+    // Create a configuration
+    ASSERT_TRUE(testGraph.appendNode("Configuration"));
+    auto setBoxConfigurationNode = testGraph.appendNode("SetBox", "SetBoxConfiguration");
+    ASSERT_TRUE(setBoxConfigurationNode);
+    setBoxConfigurationNode->setOption("Lengths", Vector3(10.0, 10.0, 10.0));
+    ASSERT_TRUE(testGraph.addEdge({"Configuration", "Configuration", "SetBoxConfiguration", "Input"}));
+
+    // Create a species from the detected structure
+    auto speciesNode = testGraph.appendNode("Species", "Water");
+    ASSERT_TRUE(speciesNode);
+    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-0", "Water", "Structure"}));
+
+    auto insertNode = testGraph.appendNode("Insert");
+    ASSERT_TRUE(insertNode);
+    ASSERT_TRUE(insertNode->setOption("BoxAction", InsertNode::BoxActionStyle::None));
+    ASSERT_TRUE(testGraph.addEdge({"SetBoxConfiguration", "Output", "Insert", "Configuration"}));
+    ASSERT_TRUE(testGraph.addEdge({"Water", "Species", "Insert", "Species"}));
+    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-0", "Insert", "Instances"}));
+
+    ASSERT_EQ(insertNode->run(), NodeConstants::ProcessResult::Success);
 }
 } // namespace UnitTest
