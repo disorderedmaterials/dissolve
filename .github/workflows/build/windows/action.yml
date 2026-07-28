@@ -42,6 +42,13 @@ runs:
     shell: bash
     run: pip3 install py7zr==1.1.0 aqtinstall conan
 
+  - name: Get ANTLR
+    working-directory: ${{ runner.temp }}
+    shell: bash
+    run: |
+      set -ex
+      wget https://www.antlr.org/download/antlr-${{ inputs.antlrVersion }}-complete.jar -Oantlr-${{ inputs.antlrVersion }}-complete.jar
+
   #
   # Install Qt
   #
