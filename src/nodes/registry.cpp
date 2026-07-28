@@ -14,6 +14,7 @@
 #include "nodes/configuration.h"
 #include "nodes/dAngle.h"
 #include "nodes/derivative.h"
+#include "nodes/detectMolecules.h"
 #include "nodes/dotProduct.h"
 #include "nodes/edge.h"
 #include "nodes/energy.h"
@@ -94,6 +95,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
                   {"DAngle", makeDerivedNode<DAngleNode>()},
                   {"Derivative", makeDerivedNode<DerivativeNode>()},
+                  {"DetectMolecules", makeDerivedNode<DetectMoleculesNode>()},
                   {"DotProduct", makeDerivedNode<DotProductNode>()},
                   {"Energy", makeDerivedNode<EnergyNode>()},
                   {"EPSR", makeDerivedNode<EPSRNode>()},

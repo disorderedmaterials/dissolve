@@ -8,19 +8,23 @@
 #include "kernels/energy.h"
 #include "math/mathFunc.h"
 #include "nodes/dissolve.h"
+#include <algorithm>
+#include <random>
+#include <variant>
 
 InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput("Configuration", "Target configuration to insert into", configuration_);
-    addInput("Species", "Species to add - all resulting molecules will have identical geometry", species_);
-    addInput("MoleculeSet", "MoleculeSet to use as the source", moleculeSet_);
     addInput("Population", "Population of the target to add", population_);
     addInput("Density", "Density at which to add the target", density_);
+    addInput("Species", "Source species or molecule set to add", speciesVariant_);
+    addInput("Instances", "Molecular fragment instances", instances_);
 
     // Options
     addOption("DensityUnits", "Units of target density", densityUnits_);
     addOption("BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_);
+    addOption("InstantiationMethod", "Strategy for instantiation of species during insertion", instantiationMethod_);
     addOption("ScaleA", "Scale box length A when modifying volume", scaleA_);
     addOption("ScaleB", "Scale box length B when modifying volume", scaleB_);
     addOption("ScaleC", "Scale box length C when modifying volume", scaleC_);
@@ -52,6 +56,18 @@ EnumOptions<InsertNode::BoxActionStyle> InsertNode::boxActionStyles()
                                                                  {InsertNode::BoxActionStyle::ScaleVolume, "ScaleVolume"}});
 }
 EnumOptions<InsertNode::BoxActionStyle> getEnumOptions(InsertNode::BoxActionStyle) { return InsertNode::boxActionStyles(); }
+
+// Return enum option info for InstantiationMethod
+EnumOptions<InsertNode::InstantiationMethod> InsertNode::instantiationMethod()
+{
+    return EnumOptions<InsertNode::InstantiationMethod>("InstantiationMethod",
+                                                        {{InsertNode::InstantiationMethod::Sample, "Sample"},
+                                                         {InsertNode::InstantiationMethod::InstantiateAll, "InstantiateAll"}});
+}
+EnumOptions<InsertNode::InstantiationMethod> getEnumOptions(InsertNode::InstantiationMethod)
+{
+    return InsertNode::instantiationMethod();
+}
 
 /*
  * Processing
@@ -149,11 +165,17 @@ NodeConstants::ProcessResult InsertNode::process()
 {
     // Get target MoleculeSet
     MoleculeSet speciesMoleculeSet;
-    if (species_)
-        speciesMoleculeSet.addMolecule(species_);
-    const MoleculeSet &targetMoleculeSet = species_ ? speciesMoleculeSet : *moleculeSet_;
+    auto insertFromSpecies = speciesVariant_.isAlternative(std::type_index(typeid(const Species *)));
+    if (insertFromSpecies)
+        speciesMoleculeSet.addMolecule(std::get<const Species *>(speciesVariant_.data));
+    const MoleculeSet &targetMoleculeSet =
+        insertFromSpecies ? speciesMoleculeSet : *std::get<const MoleculeSet *>(speciesVariant_.data);
 
-    auto ipop = population_.asInteger();
+    // Bool flag - do we have instances for this species
+    auto hasInstances = !instances_.instances().empty();
+
+    auto ipop = hasInstances && instantiationMethod_ == InstantiationMethod::InstantiateAll ? instances_.instances().size()
+                                                                                            : population_.asInteger();
     if (ipop <= 0)
     {
         warn("Population is zero so nothing will be added.\n");
@@ -177,6 +199,11 @@ NodeConstants::ProcessResult InsertNode::process()
             break;
     }
 
+    // Prepare random number generation in case we are inserting via random sampling
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distr(0, ipop - 1);
+
     Matrix3 transform;
     const auto &box = configuration_->box();
     configuration_->atoms().reserve(configuration_->atoms().size() + nAnyAtoms);
@@ -184,6 +211,36 @@ NodeConstants::ProcessResult InsertNode::process()
     {
         // Add the Molecule
         auto mol = configuration_->copyMolecule(targetMoleculeSet.localMolecule(n));
+
+        auto insertionComplete = false;
+
+        // If we have instances, either instantiate all from current positions, or sample from them randomly and/or randomise
+        // position of Molecule over the whole box
+        if (hasInstances)
+        {
+            std::vector<Vector3> atomicCoords;
+            switch (instantiationMethod_)
+            {
+                case InstantiationMethod::InstantiateAll:
+                {
+                    atomicCoords = instances_.instances()[n];
+                    insertionComplete = true;
+                    break;
+                }
+                case InstantiationMethod::Sample:
+                    atomicCoords = instances_.instances()[distr(gen)];
+                    break;
+                default:
+                    return error("Invalid instantiation method found (must be one of 'InstantialAll' or 'Sample')");
+            }
+
+            // Update molecular atomic coordinates
+            for (auto i = 0; i < mol->nAtoms(); ++i)
+                mol->atom(i)->setR(atomicCoords[i]);
+
+            if (insertionComplete)
+                continue;
+        }
 
         // Randomise position of Molecule over the whole box
         auto newCentre = box.getReal({DissolveMath::random(), DissolveMath::random(), DissolveMath::random()});

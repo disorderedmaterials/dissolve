@@ -33,6 +33,11 @@ class TestNode : public Node
     // Variant
     using TestVariant = VariantParameterData<Structure, Number, std::string, Configuration *>;
     TestVariant variant_;
+    // Test string
+    char char_;
+    char *charPtr_;
+    std::string message_;
+    std::vector<char> messageParts_;
 
     public:
     // Return type of the node
