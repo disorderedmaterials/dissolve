@@ -20,7 +20,7 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
     addInput("Population", "Population of the target to add", population_);
     addInput("Density", "Density at which to add the target", density_);
     addInput("Species", "Source species or molecule set to add", speciesVariant_);
-    addInput("Instances", "", instances_);
+    addInput("Instances", "Molecular fragment instances", instances_);
 
     // Options
     addOption("DensityUnits", "Units of target density", densityUnits_);
