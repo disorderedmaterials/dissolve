@@ -50,6 +50,7 @@ runs:
     shell: bash
     run: |
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
+      aqt list-qt mac desktop
       aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ inputs.qtVersion }} -m all
 
   #
