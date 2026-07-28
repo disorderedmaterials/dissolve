@@ -236,10 +236,10 @@ TEST_F(CIFNodeTest, NaClMolecules)
     EXPECT_EQ(structures.size(), 2);
     testDetectedMolecularStructure(structures.at(0), {"Na", 4, 1});
     for (auto &&[instance, r2] : zip(structures.at(0).instances(), R))
-        testVector3("Molecular instance coordinates", instance[0], r2);
+        EXPECT_TRUE(testVector3("Molecular instance coordinates", instance[0], r2));
     testDetectedMolecularStructure(structures.at(1), {"Cl", 4, 1});
     for (auto &&[instance, r2] : zip(structures.at(1).instances(), R))
-        testVector3("Molecular instance coordinates", instance[0], (r2 - A / 2).abs());
+        EXPECT_TRUE(testVector3("Molecular instance coordinates", instance[0], (r2 - A / 2).abs()));
 
     // 2x2x2 supercell
     extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A, A, A}, {90, 90, 90}, {2, 2, 2});
