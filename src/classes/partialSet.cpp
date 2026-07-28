@@ -457,18 +457,17 @@ OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view
 // Express as a serialisable value
 void PartialSet::serialise(std::string tag, SerialisedValue &target) const
 {
-    using namespace Serialisable;
     auto &result = target[tag];
 
-    result["realSpeciesPopulations"] = vector(realSpeciesPopulations_);
+    result["realSpeciesPopulations"] = Serialisable::vector(realSpeciesPopulations_);
 
     partials_.serialise("partials", result);
     boundPartials_.serialise("boundPartials", result);
     unboundPartials_.serialise("unboundPartials", result);
 
-    result["total"] = ser(total_);
-    result["boundTotal"] = ser(boundTotal_);
-    result["unboundTotal"] = ser(unboundTotal_);
+    result["total"] = Serialisable::ser(total_);
+    result["boundTotal"] = Serialisable::ser(boundTotal_);
+    result["unboundTotal"] = Serialisable::ser(unboundTotal_);
 }
 
 // Read values from a serialisable value

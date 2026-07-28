@@ -90,29 +90,28 @@ IsotopologueSet::isotopologues() const
 // Express as a serialisable value
 void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
 {
-    using namespace Serialisable;
     if (isotopologues_.size() == 0)
         return;
 
     SerialisedValue value;
-    value["set"] = Serialisable::vector(isotopologues_, [](const auto &topes)
-                                        { return vector(topes, [](const auto isoWeight) { return isoWeight; }); });
+    value["set"] =
+        Serialisable::vector(isotopologues_, [](const auto &topes)
+                             { return Serialisable::vector(topes, [](const auto isoWeight) { return isoWeight; }); });
     target[tag] = value;
 }
 
 // Read values from a serialisable value
 void IsotopologueSet::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
     clear();
 
-    map(node, "set",
-        [&](const std::string &speciesName, const SerialisedValue &topes)
-        {
-            auto &set = isotopologues_[speciesName];
-            map(topes, [&](const std::string &isoName, const SerialisedValue &population)
-                { set[isoName] = population.as_floating(); });
-        });
+    Deserialisable::map(node, "set",
+                        [&](const std::string &speciesName, const SerialisedValue &topes)
+                        {
+                            auto &set = isotopologues_[speciesName];
+                            Deserialisable::map(topes, [&](const std::string &isoName, const SerialisedValue &population)
+                                                { set[isoName] = population.as_floating(); });
+                        });
 }
 
 // Resolve internal resolvable name references with supplied data

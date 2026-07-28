@@ -156,29 +156,27 @@ const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedDa
 // Express as a serialisable value
 void IntegerHistogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    using namespace Serialisable;
-    target[tag] = {{"zeroCounter", ser(zeroCounter_)}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
+    target[tag] = {{"zeroCounter", Serialisable::ser(zeroCounter_)}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
 
     if (minimum_)
         target[tag]["minimum"] = *minimum_;
     if (maximum_)
         target[tag]["maximum"] = *maximum_;
 
-    map(averages_, "averages", target);
+    Serialisable::map(averages_, "averages", target);
 }
 
 // Read values from a serialisable value
 void IntegerHistogram1D::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
     clear();
 
     Deserialisable::getIfPresent<int>(node, "minimum", minimum_);
     Deserialisable::getIfPresent<int>(node, "maximum", maximum_);
 
-    nBinned_ = de<long>(node.at("nBinned"));
-    nMissed_ = de<long>(node.at("nMissed"));
-    zeroCounter_ = de<SampledDouble>(node.at("nMissed"));
+    nBinned_ = Deserialisable::de<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::de<long>(node.at("nMissed"));
+    zeroCounter_ = Deserialisable::de<SampledDouble>(node.at("nMissed"));
 
     Deserialisable::map(node, "averages",
                         [&](const auto &key, const auto &value) { averages_[std::stoi(key)].deserialise(value); });

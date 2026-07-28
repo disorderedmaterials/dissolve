@@ -196,61 +196,70 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    setName(de<std::string>(node.at("name")));
+    setName(Deserialisable::de<std::string>(node.at("name")));
 
-    map(node, "atomTypes", [this](const std::string &name, const auto &data)
-        { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
+    Deserialisable::map(node, "atomTypes", [this](const std::string &name, const auto &data)
+                        { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
 
-    vector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
+    Deserialisable::vector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back(this).deserialise(atom); });
 
-    map(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
-        { commonBonds_.emplace_back(std::make_unique<CommonBond>(name))->deserialise(bond); });
-    vector(
-        node, "bonds", [this](const SerialisedValue &bond)
-        { bonds_.emplace_back(this, &atoms_.at(de<int>(bond.at("i"))), &atoms_.at(de<int>(bond.at("j")))).deserialise(bond); });
+    Deserialisable::map(node, "commonBonds", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonBonds_.emplace_back(std::make_unique<CommonBond>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "bonds",
+                           [this](const SerialisedValue &bond)
+                           {
+                               bonds_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(bond.at("i"))),
+                                                 &atoms_.at(Deserialisable::de<int>(bond.at("j"))))
+                                   .deserialise(bond);
+                           });
 
-    map(node, "commonAngles", [this](const std::string &name, const SerialisedValue &bond)
-        { commonAngles_.emplace_back(std::make_unique<CommonAngle>(name))->deserialise(bond); });
-    vector(node, "angles",
-           [this](const SerialisedValue &angle)
-           {
-               angles_
-                   .emplace_back(this, &atoms_.at(de<int>(angle.at("i"))), &atoms_.at(de<int>(angle.at("j"))),
-                                 &atoms_.at(de<int>(angle.at("k"))))
-                   .deserialise(angle);
-           });
+    Deserialisable::map(node, "commonAngles", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonAngles_.emplace_back(std::make_unique<CommonAngle>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "angles",
+                           [this](const SerialisedValue &angle)
+                           {
+                               angles_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(angle.at("i"))),
+                                                 &atoms_.at(Deserialisable::de<int>(angle.at("j"))),
+                                                 &atoms_.at(Deserialisable::de<int>(angle.at("k"))))
+                                   .deserialise(angle);
+                           });
 
-    map(node, "commonImpropers", [this](const std::string &name, const SerialisedValue &bond)
-        { commonImpropers_.emplace_back(std::make_unique<CommonImproper>(name))->deserialise(bond); });
-    vector(node, "impropers",
-           [this](const SerialisedValue &improper)
-           {
-               impropers_
-                   .emplace_back(this, &atoms_.at(de<int>(improper.at("i"))), &atoms_.at(de<int>(improper.at("j"))),
-                                 &atoms_.at(de<int>(improper.at("k"))), &atoms_.at(de<int>(improper.at("l"))))
-                   .deserialise(improper);
-           });
+    Deserialisable::map(node, "commonImpropers", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonImpropers_.emplace_back(std::make_unique<CommonImproper>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "impropers",
+                           [this](const SerialisedValue &improper)
+                           {
+                               impropers_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(improper.at("i"))),
+                                                 &atoms_.at(Deserialisable::de<int>(improper.at("j"))),
+                                                 &atoms_.at(Deserialisable::de<int>(improper.at("k"))),
+                                                 &atoms_.at(Deserialisable::de<int>(improper.at("l"))))
+                                   .deserialise(improper);
+                           });
 
-    map(node, "commonTorsions", [this](const std::string &name, const SerialisedValue &bond)
-        { commonTorsions_.emplace_back(std::make_unique<CommonTorsion>(name))->deserialise(bond); });
-    vector(node, "torsions",
-           [this](const SerialisedValue &torsion)
-           {
-               torsions_
-                   .emplace_back(this, &atoms_.at(de<int>(torsion.at("i"))), &atoms_.at(de<int>(torsion.at("j"))),
-                                 &atoms_.at(de<int>(torsion.at("k"))), &atoms_.at(de<int>(torsion.at("l"))))
-                   .deserialise(torsion);
-           });
+    Deserialisable::map(node, "commonTorsions", [this](const std::string &name, const SerialisedValue &bond)
+                        { commonTorsions_.emplace_back(std::make_unique<CommonTorsion>(name))->deserialise(bond); });
+    Deserialisable::vector(node, "torsions",
+                           [this](const SerialisedValue &torsion)
+                           {
+                               torsions_
+                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(torsion.at("i"))),
+                                                 &atoms_.at(Deserialisable::de<int>(torsion.at("j"))),
+                                                 &atoms_.at(Deserialisable::de<int>(torsion.at("k"))),
+                                                 &atoms_.at(Deserialisable::de<int>(torsion.at("l"))))
+                                   .deserialise(torsion);
+                           });
 
-    map(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
-        { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
+    Deserialisable::map(node, "isotopologues", [this](const std::string &name, const SerialisedValue &iso)
+                        { isotopologues_.emplace_back(std::make_unique<Isotopologue>(this, name))->deserialise(iso); });
 
     // We must finalise the intramolecular data before we attempt to add sites as Fragment sites need the bond connectivity
     finaliseIntramolecularData(false);
 
-    map(node, "sites", [this](const std::string &name, const SerialisedValue &site)
-        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
+    Deserialisable::map(node, "sites", [this](const std::string &name, const SerialisedValue &site)
+                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
 
     // Always update type indexing after deserialisation
     updateTypeIndexing();

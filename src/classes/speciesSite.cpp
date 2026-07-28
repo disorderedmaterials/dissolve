@@ -532,30 +532,33 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesSite::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    type_ = siteTypes().deserialise(de_or(node, "type", std::string("static")));
+    type_ = siteTypes().deserialise(Deserialisable::de_or(node, "type", std::string("static")));
 
     switch (type_)
     {
         case SiteType::Static:
-            vector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
-            vector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
-            vector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
-            vector(node, "elements",
-                   [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
-            vector(node, "atomTypes",
-                   [&, this](const auto &at) { addDynamicAtomType(parent_->findAtomType(std::string(at.as_string()))); });
+            Deserialisable::vector(node, "originAtoms",
+                                   [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
+            Deserialisable::vector(node, "xAxisAtoms",
+                                   [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
+            Deserialisable::vector(node, "yAxisAtoms",
+                                   [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
+            Deserialisable::vector(node, "elements", [this](const auto &el)
+                                   { addDynamicElement(Elements::element(std::string(el.as_string()))); });
+            Deserialisable::vector(node, "atomTypes", [&, this](const auto &at)
+                                   { addDynamicAtomType(parent_->findAtomType(std::string(at.as_string()))); });
 
             break;
         case SiteType::Fragment:
-            fragment_.create(de<std::string>(node.at("description")));
+            fragment_.create(Deserialisable::de<std::string>(node.at("description")));
             break;
         case SiteType::Dynamic:
-            vector(node, "element", [this](const auto &element) { addDynamicElement(de<Elements::Element>(element)); });
+            Deserialisable::vector(node, "element", [this](const auto &element)
+                                   { addDynamicElement(Deserialisable::de<Elements::Element>(element)); });
             break;
     }
 
-    originMassWeighted_ = de_or<bool>(node, "originMassWeighted", false);
+    originMassWeighted_ = Deserialisable::de_or<bool>(node, "originMassWeighted", false);
 
     generateInstances();
 }

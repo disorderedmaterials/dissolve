@@ -481,21 +481,22 @@ void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void PairPotential::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    nameI_ = de<std::string>(node.at("nameI"));
-    nameJ_ = de<std::string>(node.at("nameJ"));
+    nameI_ = Deserialisable::de<std::string>(node.at("nameI"));
+    nameJ_ = Deserialisable::de<std::string>(node.at("nameJ"));
 
     Functions1D::Form form;
-    optionalOn(node, "form", [&](const auto node) { form = Functions1D::forms().enumeration(std::string(node.as_string())); });
+    Deserialisable::optionalOn(node, "form", [&](const auto node)
+                               { form = Functions1D::forms().enumeration(std::string(node.as_string())); });
 
     std::vector<double> parameters;
-    optionalOn(node, "parameters",
-               [&](const auto node)
-               {
-                   auto &parameterNames = Functions1D::parameters(form);
-                   std::transform(parameterNames.begin(), parameterNames.end(), std::back_inserter(parameters),
-                                  [&node](const auto parameterName) { return node.at(parameterName).as_floating(); });
-               });
+    Deserialisable::optionalOn(node, "parameters",
+                               [&](const auto node)
+                               {
+                                   auto &parameterNames = Functions1D::parameters(form);
+                                   std::transform(parameterNames.begin(), parameterNames.end(), std::back_inserter(parameters),
+                                                  [&node](const auto parameterName)
+                                                  { return node.at(parameterName).as_floating(); });
+                               });
 
     setInteractionPotential({form, parameters});
 }

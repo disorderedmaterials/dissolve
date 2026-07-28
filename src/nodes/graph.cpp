@@ -261,27 +261,25 @@ std::string Graph::location() const
 // Express as a serialisable value
 void Graph::serialise(std::string tag, SerialisedValue &target) const
 {
-    using namespace Serialisable;
     Node::serialise(tag, target);
     auto &result = target[tag];
-    fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
-    vector(edges_, "edges", result);
+    Serialisable::fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
+    Serialisable::vector(edges_, "edges", result);
 }
 
 // Read values from a serialisable value
 void Graph::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
     Node::deserialise(node);
-    map(node, "nodes",
-        [this](const auto name, const auto &value)
-        {
-            std::string nodeType = de<std::string>(value.at("type"));
-            auto child = createNode(nodeType, name);
+    Deserialisable::map(node, "nodes",
+                        [this](const auto name, const auto &value)
+                        {
+                            std::string nodeType = Deserialisable::de<std::string>(value.at("type"));
+                            auto child = createNode(nodeType, name);
 
-            child->deserialise(value);
-        });
-    vector(node, "edges", [this](const auto &value) { addEdge(de<EdgeDefinition>(value)); });
+                            child->deserialise(value);
+                        });
+    Deserialisable::vector(node, "edges", [this](const auto &value) { addEdge(Deserialisable::de<EdgeDefinition>(value)); });
 }
 
 /*

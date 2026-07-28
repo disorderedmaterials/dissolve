@@ -331,18 +331,17 @@ void Data2D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data2D::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    tag_ = de<std::string>(node.at("tag"));
-    x_ = vector<double>(node.at("x"));
-    y_ = vector<double>(node.at("y"));
+    tag_ = Deserialisable::de<std::string>(node.at("tag"));
+    x_ = Deserialisable::vector<double>(node.at("x"));
+    y_ = Deserialisable::vector<double>(node.at("y"));
     values_.initialise(x_.size(), y_.size());
-    values_.linearArray() = vector<double>(node.at("values"));
+    values_.linearArray() = Deserialisable::vector<double>(node.at("values"));
 
     Deserialisable::optionalOn(node, "errors",
                                [this](const auto errors)
                                {
                                    hasError_ = true;
                                    errors_.initialise(x_.size(), y_.size());
-                                   errors_.linearArray() = vector<double>(errors);
+                                   errors_.linearArray() = Deserialisable::vector<double>(errors);
                                });
 }

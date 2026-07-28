@@ -223,13 +223,13 @@ void Histogram1D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Histogram1D::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
     clear();
 
-    initialise(de<double>(node.at("minimum")), de<double>(node.at("maximum")), de<double>(node.at("binWidth")));
+    initialise(Deserialisable::de<double>(node.at("minimum")), Deserialisable::de<double>(node.at("maximum")),
+               Deserialisable::de<double>(node.at("binWidth")));
 
-    nBinned_ = de<long>(node.at("nBinned"));
-    nMissed_ = de<long>(node.at("nMissed"));
+    nBinned_ = Deserialisable::de<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::de<long>(node.at("nMissed"));
 
     averages_ = Deserialisable::vector<SampledDouble>(node.at("averages"));
 

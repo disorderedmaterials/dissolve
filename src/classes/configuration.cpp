@@ -63,8 +63,7 @@ void Configuration::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Configuration::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    setTemperature(de_or<double>(node, "temperature", defaultTemperature_));
-    requestedSizeFactor_ = de_or<double>(node, "sizeFactor", defaultSizeFactor_);
-    requestedCellDivisionLength_ = de_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
+    setTemperature(Deserialisable::de_or<double>(node, "temperature", defaultTemperature_));
+    requestedSizeFactor_ = Deserialisable::de_or<double>(node, "sizeFactor", defaultSizeFactor_);
+    requestedCellDivisionLength_ = Deserialisable::de_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
 }

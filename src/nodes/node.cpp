@@ -351,25 +351,24 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Node::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    x = de<int>(node.at("x"));
-    y = de<int>(node.at("y"));
-    map(node, "inputs",
-        [this](const auto &k, const auto &v)
-        {
-            if (inputs_.contains(k))
-                inputs_[k]->deserialise(v);
-            else
-                Messenger::exception("Node {} does not contain a parameter {}", name(), k);
-        });
-    map(node, "options",
-        [this](const auto &k, const auto &v)
-        {
-            if (options_.contains(k))
-                options_[k]->deserialise(v);
-            else
-                Messenger::exception("Node {} does not contain an option {}", name(), k);
-        });
+    x = Deserialisable::de<int>(node.at("x"));
+    y = Deserialisable::de<int>(node.at("y"));
+    Deserialisable::map(node, "inputs",
+                        [this](const auto &k, const auto &v)
+                        {
+                            if (inputs_.contains(k))
+                                inputs_[k]->deserialise(v);
+                            else
+                                Messenger::exception("Node {} does not contain a parameter {}", name(), k);
+                        });
+    Deserialisable::map(node, "options",
+                        [this](const auto &k, const auto &v)
+                        {
+                            if (options_.contains(k))
+                                options_[k]->deserialise(v);
+                            else
+                                Messenger::exception("Node {} does not contain an option {}", name(), k);
+                        });
     deserialiseInternal(node);
 }
 

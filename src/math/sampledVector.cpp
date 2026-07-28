@@ -184,9 +184,8 @@ void SampledVector::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SampledVector::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    count_ = de<int>(node.at("count"));
-    mean_ = vector<double>(node.at("mean"));
-    stDev_ = vector<double>(node.at("stDev"));
-    m2_ = vector<double>(node.at("m2"));
+    count_ = Deserialisable::de<int>(node.at("count"));
+    mean_ = Deserialisable::vector<double>(node.at("mean"));
+    stDev_ = Deserialisable::vector<double>(node.at("stDev"));
+    m2_ = Deserialisable::vector<double>(node.at("m2"));
 }

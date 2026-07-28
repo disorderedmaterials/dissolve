@@ -168,26 +168,25 @@ SpeciesAtom::ScaledInteractionDefinition SpeciesAtom::scaling(const SpeciesAtom 
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
-    using namespace Serialisable;
-    target[tag] = {{"index", index_}, {"z", ser(Z_)}, {"r", ser(r_)}, {"q", q_}};
+    target[tag] = {{"index", index_}, {"z", Serialisable::ser(Z_)}, {"r", Serialisable::ser(r_)}, {"q", q_}};
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
 void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    index_ = de<int>(node.at("index"));
+    index_ = Deserialisable::de<int>(node.at("index"));
 
-    set(de<Elements::Element>(node.at("z")), de<Vector3>(node.at("r")), de_or<double>(node, "q", 0));
+    set(Deserialisable::de<Elements::Element>(node.at("z")), Deserialisable::de<Vector3>(node.at("r")),
+        Deserialisable::de_or<double>(node, "q", 0));
 
-    optionalOn(node, "type",
-               [&](const auto innerNode)
-               {
-                   if (Z_ == Elements::Unknown)
-                       return;
-                   std::string name = de<std::string>(innerNode);
-                   atomType_ = parent_->findAtomType(name);
-                   if (atomType_ == nullptr)
-                       atomType_ = parent_->addAtomType(Z_, name);
-               });
+    Deserialisable::optionalOn(node, "type",
+                               [&](const auto innerNode)
+                               {
+                                   if (Z_ == Elements::Unknown)
+                                       return;
+                                   std::string name = Deserialisable::de<std::string>(innerNode);
+                                   atomType_ = parent_->findAtomType(name);
+                                   if (atomType_ == nullptr)
+                                       atomType_ = parent_->addAtomType(Z_, name);
+                               });
 }

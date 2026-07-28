@@ -140,10 +140,9 @@ const Vector3i &BraggReflection::hkl() const { return hkl_; }
 // Read values from a serialisable value
 void BraggReflection::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    index_ = de<int>(node.at("index"));
-    q_ = de<double>(node.at("q"));
-    nKVectors_ = de<int>(node.at("nKVectors"));
+    index_ = Deserialisable::de<int>(node.at("index"));
+    q_ = Deserialisable::de<double>(node.at("q"));
+    nKVectors_ = Deserialisable::de<int>(node.at("nKVectors"));
     hkl_.zero();
     hkl_.deserialise(node);
 }

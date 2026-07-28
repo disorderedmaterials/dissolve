@@ -254,17 +254,18 @@ void Histogram3D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Histogram3D::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
     clear();
 
-    initialise(de<double>(node.at("xMinimum")), de<double>(node.at("xMaximum")), de<double>(node.at("yBinWidth")),
-               de<double>(node.at("yMinimum")), de<double>(node.at("yMaximum")), de<double>(node.at("yBinWidth")),
-               de<double>(node.at("zMinimum")), de<double>(node.at("zMaximum")), de<double>(node.at("zBinWidth")));
+    initialise(Deserialisable::de<double>(node.at("xMinimum")), Deserialisable::de<double>(node.at("xMaximum")),
+               Deserialisable::de<double>(node.at("yBinWidth")), Deserialisable::de<double>(node.at("yMinimum")),
+               Deserialisable::de<double>(node.at("yMaximum")), Deserialisable::de<double>(node.at("yBinWidth")),
+               Deserialisable::de<double>(node.at("zMinimum")), Deserialisable::de<double>(node.at("zMaximum")),
+               Deserialisable::de<double>(node.at("zBinWidth")));
 
-    nBinned_ = de<long>(node.at("nBinned"));
-    nMissed_ = de<long>(node.at("nMissed"));
+    nBinned_ = Deserialisable::de<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::de<long>(node.at("nMissed"));
 
-    averages_.linearArray() = vector<SampledDouble>(node.at("averages"));
+    averages_.linearArray() = Deserialisable::vector<SampledDouble>(node.at("averages"));
 
     updateAccumulatedData();
 }

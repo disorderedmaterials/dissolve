@@ -340,19 +340,18 @@ void Data3D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data3D::deserialise(const SerialisedValue &node)
 {
-    using namespace Deserialisable;
-    tag_ = de<std::string>(node.at("tag"));
-    x_ = vector<double>(node.at("x"));
-    y_ = vector<double>(node.at("y"));
-    z_ = vector<double>(node.at("z"));
+    tag_ = Deserialisable::de<std::string>(node.at("tag"));
+    x_ = Deserialisable::vector<double>(node.at("x"));
+    y_ = Deserialisable::vector<double>(node.at("y"));
+    z_ = Deserialisable::vector<double>(node.at("z"));
     values_.initialise(x_.size(), y_.size(), z_.size());
-    values_.linearArray() = vector<double>(node.at("values"));
+    values_.linearArray() = Deserialisable::vector<double>(node.at("values"));
 
     Deserialisable::optionalOn(node, "errors",
                                [this](const auto errors)
                                {
                                    hasError_ = true;
                                    errors_.initialise(x_.size(), y_.size(), z_.size());
-                                   errors_.linearArray() = vector<double>(errors);
+                                   errors_.linearArray() = Deserialisable::vector<double>(errors);
                                });
 }
