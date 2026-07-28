@@ -16,7 +16,6 @@ InsertNode::InsertNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
     addInput("Configuration", "Target configuration to insert into", configuration_);
-    addOutput("Configuration", "Modified configuration", configuration_);
     addInput("Population", "Population of the target to add", population_);
     addInput("Density", "Density at which to add the target", density_);
     addInput("Species", "Source species or molecule set to add", speciesVariant_);
