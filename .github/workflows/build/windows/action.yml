@@ -56,6 +56,7 @@ runs:
   - name: Install Qt
     shell: bash
     run: |
+      aqt list-qt windows desktop
       aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ inputs.qtVersion }} win64_msvc2019_64 -m all
 
   - name: Setup MSVC Compiler
