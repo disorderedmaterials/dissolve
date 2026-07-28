@@ -3,14 +3,9 @@
 
 #pragma once
 
-#include "classes/localMolecule.h"
-#include "classes/molecule.h"
-#include "classes/species.h"
 #include "classes/structure.h"
-#include "data/elements.h"
-#include "math/vector3.h"
+#include "neta/neta.h"
 #include "nodes/node.h"
-#include <algorithm>
 #include <map>
 #include <vector>
 
@@ -19,9 +14,6 @@ class Species;
 // DetectMolecules Node
 class DetectMoleculesNode : public Node
 {
-    using FragmentIndices = std::vector<int>;
-    using NETAFragmentVector = std::vector<std::pair<std::optional<NETADefinition>, FragmentIndices>>;
-
     public:
     DetectMoleculesNode(Graph *parentGraph);
     ~DetectMoleculesNode() override = default;
@@ -38,26 +30,22 @@ class DetectMoleculesNode : public Node
     Structure inputStructure_;
     // Output structures
     std::vector<Structure> detectedStructures_;
-    // Lambda to determine if fragment is large enough to skip NETA creation
-    std::function<bool(int)> largeFragment_{[this](int size) { return size * 2 > inputStructure_.nAtoms(); }};
-
-    /*
-     * Helpers
-     */
-    private:
-    // Copy atom and bond information from one structure to another
-    Structure &copyStructureAtomsAndBonds(Structure &target, const std::vector<int> fragmentIndices) const;
-    // Get fragment atoms from either a single set of fragment indices, or in its overloaded form, a vector of fragments
-    std::vector<const StructureAtom *> getFragmentAtoms(const std::vector<int> &fragmentIndices) const;
-    std::vector<const StructureAtom *> getFragmentAtoms(const NETAFragmentVector &fragmentIndices) const;
-    // Find all molecular fragments
-    std::map<int, NETAFragmentVector> findMolecularFragments() const;
-    // Determine best NETA definition for index atoms within a fragment
-    NETADefinition bestNETADefintion(const std::vector<int> &fragmentAtoms) const;
 
     /*
      * Processing
      */
+    private:
+    // Duplicate specified input structure atoms and their bonds, returning a new structure (including the unit cell)
+    Structure copyAtomsAndBonds(const std::vector<int> &inputStructureAtomIndices) const;
+    // Get all fragments in the structure
+    std::map<int, std::vector<std::vector<int>>> getFragments() const;
+    // Get coordinates of specified atoms of the input structure
+    std::vector<Vector3> getAtomCoordinates(const std::vector<int> &inputStructureAtomIndices) const;
+    // Determine best NETA definition for supplied fragment atoms
+    NETADefinition bestNETADefinition(const std::vector<int> &fragmentAtoms) const;
+    // Use the supplied NETA definition on the provided fragment, returning the first match
+    NETAMatchedGroup matchFragment(const NETADefinition &neta, const std::vector<int> &fragmentAtoms) const;
+
     protected:
     // Run main processing
     NodeConstants::ProcessResult process() override;
