@@ -42,7 +42,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Optional Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_optional<DataClass> && is_instance_of_v<typename DataClass::value_type, std::vector> &&
-                 Serialisable::Serialisible<typename DataClass::value_type::value_type>)
+                 Serialisable::Serialisable<typename DataClass::value_type::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
                                                         {
@@ -72,7 +72,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Optional Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
-        requires(is_optional<DataClass> && Serialisable::Serialisible<typename DataClass::value_type>)
+        requires(is_optional<DataClass> && Serialisable::Serialisable<typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return Serialisable::ser(data_.value()); }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
@@ -91,7 +91,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
-        requires(is_instance_of_v<DataClass, std::vector> && Serialisable::Serialisible<typename DataClass::value_type>)
+        requires(is_instance_of_v<DataClass, std::vector> && Serialisable::Serialisable<typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
                                                         {
@@ -121,7 +121,7 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Serialisable
     SerialisableClass(std::string_view key, DataClass &value)
-        requires(!is_optional<DataClass> && Serialisable::Serialisible<DataClass>)
+        requires(!is_optional<DataClass> && Serialisable::Serialisable<DataClass>)
         : SerialisableData(key), data_(value), dataResolver_(
                                                    [&](const std::map<std::string, const Species *> &reachableSpecies)
                                                    {

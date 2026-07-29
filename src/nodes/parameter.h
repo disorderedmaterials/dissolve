@@ -584,7 +584,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
             if (Parameter<DataClass>::data_)
                 result["data"] = Serialisable::ser(*Parameter<DataClass>::data_);
         }
-        else if constexpr (Serialisable::Serialisible<DataClass>)
+        else if constexpr (Serialisable::Serialisable<DataClass>)
             result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else
             throw(std::runtime_error(std::format("Cannot deserialise type {}", typeid(DataClass).name())));

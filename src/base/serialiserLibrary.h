@@ -15,27 +15,27 @@ namespace Serialisable
 // We need a way at compile time to detect all the types of smart
 // pointers for things that can be serialised
 template <typename T>
-concept SerialisiblePointer = requires(T a, std::string tag, SerialisedValue target) { a->serialise(tag, target); };
+concept SerialisablePointer = requires(T a, std::string tag, SerialisedValue target) { a->serialise(tag, target); };
 
 template <typename T>
-concept SerialisibleClass = requires(T a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); };
+concept SerialisableClass = requires(T a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); };
 
 // template <typename T>
 // concept SerialisableFromInto = requires(T a,
-template <SerialisiblePointer T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
+template <SerialisablePointer T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
 {
     a->serialise(tag, target);
 }
 
-template <SerialisibleClass T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
+template <SerialisableClass T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
 {
     a.serialise(tag, target);
 }
 
 template <typename T>
-concept Serialisible = requires(const T a, std::string tag, SerialisedValue &target) { serialiseOnto(a, tag, target); };
+concept Serialisable = requires(const T a, std::string tag, SerialisedValue &target) { serialiseOnto(a, tag, target); };
 
-template <Serialisible T> SerialisedValue ser(const T &a)
+template <Serialisable T> SerialisedValue ser(const T &a)
 {
     SerialisedValue temp;
     serialiseOnto(a, "inner", temp);
@@ -52,7 +52,7 @@ template <typename K, typename V> void map(const std::map<K, V> &map, std::strin
 }
 
 // A helper function to add elements of a vector to a node under the named heading
-template <SerialisiblePointer T> void fromVectorToTable(const std::vector<T> &vec, std::string name, SerialisedValue &node)
+template <SerialisablePointer T> void fromVectorToTable(const std::vector<T> &vec, std::string name, SerialisedValue &node)
 {
     fromVectorToTable(vec, name, node, [](const auto &item) { return item->name().data(); });
 }
@@ -163,7 +163,7 @@ void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node,
         if (!filter(key, value))
             continue;
         changed = true;
-        if constexpr (SerialisiblePointer<V>)
+        if constexpr (SerialisablePointer<V>)
             value->serialise(std::string(key), result);
         else
             // We use the direct value (with casting) instead of

@@ -207,7 +207,7 @@ class Node
         return param;
     }
     // Add serialisable input parameter
-    template <Serialisable::Serialisible T>
+    template <Serialisable::Serialisable T>
     std::shared_ptr<ParameterBase> addSerialisableInput(std::string_view inputName, std::string_view description, T &data)
     {
         if (findInput(inputName))
