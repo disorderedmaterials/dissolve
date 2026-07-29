@@ -275,7 +275,7 @@ void Box::scale(Vector3 scaleFactors)
  */
 
 // Convert specified fractional coordinates to real-space coordinates
-inline void Box::toReal(Vector3 &r) const
+void Box::toReal(Vector3 &r) const
 {
     switch (type_)
     {
@@ -327,7 +327,7 @@ Vector3 Box::getReal(Vector3 r) const
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-inline void Box::toFractional(Vector3 &r) const
+void Box::toFractional(Vector3 &r) const
 {
     switch (type_)
     {
