@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "base/units.h"
 #include "base/version.h"
 #include "classes/box.h"
 #include "classes/cellArray.h"
@@ -124,6 +125,9 @@ class Configuration : public Serialisable
     void unFoldMolecules();
     // Scale contents of the box by the specified factors along each axis
     void scaleContents(Vector3 scaleFactors);
+    // Return the scale factors required for the addition of atoms / mass at the specified density
+    Vector3 getScaleFactors(int nAtomsToAdd, double massToAdd, double density, Units::DensityUnits densityUnits,
+                            const std::array<bool, 3> &scaleAxes, bool isBoxDensity = false) const;
     // Update type indices per Atom
     void updateTypeIndexing();
 

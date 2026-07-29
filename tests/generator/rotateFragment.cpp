@@ -40,7 +40,7 @@ TEST(RotateFragmentGeneratorNodeTest, Benzene)
     // Add a single Benzene molecule at the centre of the cell - this way, rotations will not break it across box boundaries
     auto add = procedure.createRootNode<AddGeneratorNode>("Benzene", benzene, 1);
     add->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Central);
-    add->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
+    add->keywords().setEnumeration("BoxScaling", AddGeneratorNode::BoxScalingType::None);
     add->keywords().set("Rotate", false);
 
     // Set up the prior configuration

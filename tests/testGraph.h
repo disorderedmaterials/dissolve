@@ -6,6 +6,7 @@
 #include "base/units.h"
 #include "kernels/common.h"
 #include "nodes/dissolve.h"
+#include "nodes/insertRandom.h"
 #include "tests/testing.h"
 #include <gtest/gtest.h>
 
@@ -55,7 +56,7 @@ class TestGraph : public DissolveGraph
     Node *createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSourceOutput,
                                  const std::vector<std::pair<std::string, int>> &species, double rho,
                                  Units::DensityUnits rhoUnits = Units::DensityUnits::AtomsPerAngstromUnits,
-                                 InsertNode::BoxActionStyle boxActionStyle = InsertNode::BoxActionStyle::AddVolume);
+                                 InsertRandomNode::BoxScalingType boxScalingType = InsertRandomNode::BoxScalingType::AddVolume);
 
     public:
     // Create and return atomic SpeciesNode

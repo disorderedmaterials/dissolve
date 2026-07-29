@@ -11,7 +11,6 @@
 #include "math/data3D.h"
 #include "math/error.h"
 #include "nodes/dissolve.h"
-#include "nodes/insert.h"
 #include <gtest/gtest.h>
 
 // Forward Declarations
