@@ -32,7 +32,7 @@ class Box : public Serialisable
     };
     // Return enum options for BoxType
     static EnumOptions<BoxType> boxTypes();
-    Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles);
+    Box(Box::BoxType boxType, Vector3 lengths, Vector3 angles);
     Box(const Box &other);
     ~Box() = default;
     Box &operator=(const Box &source) = default;
