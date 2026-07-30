@@ -151,7 +151,7 @@ endif(GUI)
 if(WIN32)
   set(target_name Dissolve)
   set(gui_target_name Dissolve-GUI)
-  set(qmlgui_target_name Dissolve-GUI-QML)
+  set(qmlgui_target_name Dissolve2-GUI)
 
   # Adjust external include directories for GUI
   if(GUI)
@@ -176,7 +176,7 @@ endif(WIN32)
 if(UNIX)
   set(target_name dissolve)
   set(gui_target_name dissolve-gui)
-  set(qmlgui_target_name dissolve-gui-qml)
+  set(qmlgui_target_name dissolve2-gui)
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
@@ -192,7 +192,7 @@ if(APPLE)
 
   set(target_name dissolve)
   set(gui_target_name dissolve-gui)
-  set(qmlgui_target_name dissolve-gui-qml)
+  set(qmlgui_target_name dissolve2-gui)
 
   add_definitions(-D_MAC)
 
@@ -253,8 +253,8 @@ target_include_directories(
 if(GUI)
 
   # Dissolve QML GUI
-  qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui-qml.cpp)
-  set_source_files_properties(${SRCS}/gui-qml/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
+  qt_add_executable(${qmlgui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve2-gui.cpp)
+  set_source_files_properties(${SRCS}/gui2/qml/DissolveMain.qml PROPERTIES QT_RESOURCE_ALIAS qml/DissolveMain.qml)
 
   qt_add_qml_module(
     ${qmlgui_target_name}
@@ -263,20 +263,20 @@ if(GUI)
     URI
     Dissolve
     QML_FILES
-    ${SRCS}/gui-qml/qml/DissolveMain.qml
-    ${SRCS}/gui/qml/nodeGraph/ForcefieldDialog.qml
-    ${SRCS}/gui/qml/nodeGraph/GraphView.qml
-    ${SRCS}/gui/qml/nodeGraph/GraphDelegate.qml
-    ${SRCS}/gui/qml/nodeGraph/ParameterDelegate.qml
-    ${SRCS}/gui/qml/nodeGraph/NodeBox.qml
-    ${SRCS}/gui/qml/nodeGraph/SpeciesDialog.qml
-    ${SRCS}/gui/qml/nodeGraph/ElementComboBox.qml
+    ${SRCS}/gui2/qml/DissolveMain.qml
+    ${SRCS}/gui2/qml/nodeGraph/ForcefieldDialog.qml
+    ${SRCS}/gui2/qml/nodeGraph/GraphView.qml
+    ${SRCS}/gui2/qml/nodeGraph/GraphDelegate.qml
+    ${SRCS}/gui2/qml/nodeGraph/ParameterDelegate.qml
+    ${SRCS}/gui2/qml/nodeGraph/NodeBox.qml
+    ${SRCS}/gui2/qml/nodeGraph/SpeciesDialog.qml
+    ${SRCS}/gui2/qml/periodicTable/ElementComboBox.qml
     RESOURCES
   )
 
   # Set project-local include directories for target (we expect to need less of these dependencies over time)
   target_include_directories(
-    ${qmlgui_target_name} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/src/gui/gui_autogen/include
+    ${qmlgui_target_name} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/src/gui2/gui_autogen/include
                                   ${Qt6Core_INCLUDE_DIRS} ${Qt6Gui_INCLUDE_DIRS}
   )
 
@@ -348,7 +348,7 @@ if(GUI)
 
   # Link to models when developing QML Dissolve in Visual Studio
   if(MSVC_DEV)
-    set(QML_GUI_LIBS models)
+    set(QML_GUI_LIBS models2)
   endif(MSVC_DEV)
 
   # Dissolve2 QML plugins
@@ -364,7 +364,7 @@ if(GUI)
     ${qmlgui_target_name}
     PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
            # Module gui libs
-           gui-qml ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} ${QML_PLUGINS}
+           gui2 ${QML_GUI_LIBS} ${NO_WHOLE_ARCHIVE_FLAG} ${QML_PLUGINS}
     PRIVATE # External libs
             Qt6::Quick3D Qt6::Qml Qt6::Widgets ${CORE_LINK_LIBS} ${THREADING_LINK_LIBS}
   )
