@@ -397,14 +397,6 @@ Box Box::generate(Vector3 lengths, std::optional<Vector3> angles, bool nonPeriod
         angles = {90.0, 90.0, 90.0};
     return nonPeriodic ? Box(Box::BoxType::None, lengths, *angles) : Box::generate(lengths, *angles);
 }
-Box Box::generate(Vector3 lengths, Vector3 angles)
-{
-    auto boxType = type(lengths, angles);
-    if (!boxType)
-        Messenger::exception("Suitable box type couldn't be determined, so no Box can be generated.");
-
-    return Box(*boxType, lengths, angles);
-}
 
 // Generate Boxes of a given type
 Box Box::none() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }

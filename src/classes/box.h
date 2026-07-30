@@ -145,7 +145,6 @@ class Box : public Serialisable
     public:
     // Generate a suitable Box given the supplied relative lengths, angles, and volume
     static Box generate(Vector3 lengths, std::optional<Vector3> angles = {}, bool nonPeriodic = false);
-    static Box generate(Vector3 lengths, Vector3 angles);
     // Generate Boxes of a given type
     static Box none();
     static Box cubic(double length);
