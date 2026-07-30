@@ -51,12 +51,12 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Set variables
-      appName=Dissolve-GUI-QML-${{ runner.arch }}
+      appName=Dissolve2-GUI-${{ runner.arch }}
       appDirName=${appName}.app
-      packageName=Dissolve-GUI-QML-${{ runner.arch }}-${{ inputs.currentVersion }}
+      packageName=Dissolve2-GUI-${{ runner.arch }}-${{ inputs.currentVersion }}
 
       # Prepare the dmg file content
-      ./prep-dmg -a Dissolve-GUI-QML-${{ runner.arch }} -v ${{ inputs.currentVersion }} -b build/bin/dissolve-gui-qml.app/Contents/MacOS/dissolve-gui-qml -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui-qml.app/Contents/Info.plist -q src/gui/qml
+      ./prep-dmg -a Dissolve2-GUI-${{ runner.arch }} -v ${{ inputs.currentVersion }} -b build/bin/dissolve2-gui.app/Contents/MacOS/dissolve2-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve2-gui.app/Contents/Info.plist -q src/gui/qml
 
       # Copy dependencies into Frameworks folder in app bundle
       cp -v ./build/direct_deploy/*/lib/*.dylib ${packageName}/${appDirName}/Contents/Frameworks/
@@ -69,7 +69,7 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Set variables
-      appName=Dissolve-GUI-QML-${{ runner.arch }}
+      appName=Dissolve2-GUI-${{ runner.arch }}
       appDirName=${appName}.app
       packageName=Dissolve-GUI-${{ runner.arch }}-${{ inputs.currentVersion }}
       dmgName=Dissolve-GUI-${{ inputs.currentVersion }}-${{ runner.arch }}
