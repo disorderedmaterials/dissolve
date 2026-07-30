@@ -183,3 +183,6 @@ std::unique_ptr<Node> NodeRegistry::produce(Graph *parent, std::string_view node
 
     return producers_.at(nodeType)(parent);
 }
+
+// Return producers
+const std::map<std::string_view, NodeProducer> &NodeRegistry::producers() { return producers_; }

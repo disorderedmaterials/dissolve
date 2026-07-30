@@ -27,4 +27,6 @@ class NodeRegistry
     static std::vector<std::string_view> getNodeTypesFuzzy(std::string_view weakNodeType);
     // Produce a node of the given type with the specified Graph parent
     static std::unique_ptr<Node> produce(Graph *parent, std::string_view nodeType);
+    // Return producers
+    static const std::map<std::string_view, NodeProducer> &producers();
 };
