@@ -284,7 +284,7 @@ inline void Box::toReal(Vector3 &r) const
             r.z *= axesArray_[8];
             break;
         case BoxType::None:
-            break; // Single Image performs no conversion
+            break;
     }
 }
 
@@ -336,7 +336,7 @@ inline void Box::toFractional(Vector3 &r) const
             r.z *= inverseAxesArray_[8];
             break;
         case BoxType::None:
-            break; // Single Image performs no conversion
+            break;
     }
 }
 
