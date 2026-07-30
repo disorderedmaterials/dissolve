@@ -159,3 +159,25 @@ void Species::updateTypeIndexing()
 
     typeIndicesValid_ = true;
 }
+
+// Return positional instances
+const std::vector<std::vector<Vector3>> &Species::instances() const { return instances_; }
+
+// Return as a Structure
+Structure Species::asStructure(bool includeInstances) const
+{
+    Structure result;
+
+    result.createBox(box_.);
+
+        for (auto &i : atoms_)
+                result.addAtom(i.Z(), i.r(), i.q())->setIndex(i.index());
+
+        for (auto &bond : bonds_)
+               result.addBond(bond.i()->index(), bond.j()->index());
+
+    if (includeInstances)
+        result.instances() = instances_;
+
+    return result;
+}
