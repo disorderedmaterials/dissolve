@@ -8,8 +8,6 @@
             - ninja
             - pkgconfiglite
             - Qt6 <VERSION>
-            - Freetype
-            - FTGL
             - Antlr4 (Java backend)
             - Java JDK (latest)
         
@@ -254,124 +252,6 @@ if (-not [string]::IsNullOrEmpty($qtVersion))
     }
 }
 
-# Build/retrieve Freetype
-$freetypeVersion = "2.12.1"
-$freetypeArchive = "https://download.savannah.gnu.org/releases/freetype/freetype-$freetypeVersion.tar.gz"
-$freetypeRepo = "freetype-repo"
-$freetypeInstall = "freetype-install"
-$freetypeOutput = "freetype.tgz"
-
-$freetypeInstallDir = (Join-Path -Path $dependencies -ChildPath $freetypeInstall)
-New-Item -ItemType Directory -Path $freetypeInstallDir -ErrorAction SilentlyContinue
-
-$freetypeBuildDir = (Join-Path -Path $dependencies -ChildPath "freetype-build")
-New-Item -ItemType Directory -Path $freetypeBuildDir -ErrorAction SilentlyContinue
-
-Write-Host "Downloading freetype archive... " @info_colors
-Invoke-WebRequest -Uri $freetypeArchive -OutFile $freetypeOutput
-
-Write-Host "Unpacking freetype... " @info_colors
-tar -zxvf $freetypeOutput -C $dependencies
-
-Remove-Item -Path $freetypeOutput -Force
-try
-{
-    Rename-Item -Path (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion") -NewName $freetypeRepo -ErrorAction Stop
-}
-catch
-{
-    # Move freetype if error on rename
-    $fromFreetype = (Join-Path -Path $dependencies -ChildPath "freetype-$freetypeVersion")
-    $moveFreetype = (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
-    if (-not (Test-Path -Path $moveFreetype))
-    {
-        New-Item -Path $moveFreetype -ItemType Directory | Out-Null
-    }
-
-    Get-ChildItem -Path $fromFreetype -Force | Move-Item -Destination $moveFreetype -Force
-    Remove-Item -Path $fromFreetype -Force
-}
-
-
-Write-Host "Building freetype (from location: $freetypeBuildDir)... " @info_colors
-Set-Location -Path $freetypeBuildDir
-
-cmake ../$freetypeRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../$freetypeInstall
-cmake --build . --target install --config $build
-
-$freetypeLib = "$freetypeInstall\lib"
-$freetypeBin = "$freetypeInstall\bin"
-
-$freetypeLibPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeLib"
-$freetypeBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeBin"
-
-$lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
-
-$freetypeIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeRepo"
-$freetype2IncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$freetypeInstall\include\freetype2"
-
-$include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
-
-# Build/retrieve FTGL
-Set-Location -Path $projectDir
-
-$ftglUri = "https://github.com/disorderedmaterials/ftgl-2.4.0.git"
-$ftglRepo = "ftgl-repo"
-$ftglInstall = "ftgl-install"
-$freetypeRepoPath = (Join-Path -Path $dependencies -ChildPath $freetypeRepo)
-
-$ftglInstallDir = (Join-Path -Path $dependencies -ChildPath $ftglInstall)
-New-Item -ItemType Directory -Path $ftglInstallDir -ErrorAction SilentlyContinue
-
-$ftglBuildDir = (Join-Path -Path $dependencies -ChildPath "ftgl-build")
-New-Item -ItemType Directory -Path $ftglBuildDir -ErrorAction SilentlyContinue
-
-$ftglRepoPath = (Join-Path -Path $dependencies -ChildPath "ftgl-repo")
-
-Write-Host "Cloning FTGL (DisorderedMaterials fork) repo... " @info_colors
-git clone $ftglUri $ftglRepoPath
-
-Set-Location -Path $projectDir
-
-$ftglLibPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\lib"
-$ftglBinPath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\bin"
-$ftglIncludePath = Join-Path -Path "$(Get-Location)" -ChildPath "$dependencies\$ftglInstall\include"
-
-Write-Host "Building FTGL (from location: $ftglBuildDir)... " @info_colors
-
-if (-not $release) {
-    Copy-Item -Path "$freetypeBinPath\freetyped.dll" -Destination "$freetypeBinPath\freetype.dll"
-    Copy-Item -Path "$freetypeLibPath\freetyped.lib" -Destination "$freetypeLibPath\freetype.lib"
-}
-    
-Set-Location -Path $ftglBuildDir
-
-cmake ../$ftglRepo -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE:STRING=$build -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../$ftglInstall -DFREETYPE_LIBRARY="$(Join-Path -Path $freetypeLibPath -ChildPath "freetype.lib")" -DFREETYPE_INCLUDE_DIRS="$(Join-Path -Path $projectDir -ChildPath $freetypeInstallDir)\include\freetype2"
-cmake --build . --target install --config $build
-
-$ftglLib = "$ftglInstall\lib"
-$ftglBin = "$ftglInstall\bin"
-
-$ftglLibPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglLib"
-$ftglBinPath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglBin"
-
-$lib = [System.Environment]::GetEnvironmentVariable("LIB", [System.EnvironmentVariableTarget]::Machine)
-
-if ($lib -notlike "*$ftglInstall*") {
-    Write-Host "Setting LIB environment variable with FTGL library... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("LIB", "$ftglLibPath;$ftglBinPath;$lib", [System.EnvironmentVariableTarget]::Machine)
-}
-
-$ftglInclude = "$ftglRepo\src"
-$ftglIncludePath =  Join-Path -Path $projectDir -ChildPath "$dependencies\$ftglInclude"
-
-$include = [System.Environment]::GetEnvironmentVariable("INCLUDE", [System.EnvironmentVariableTarget]::Machine)
-
-if ($include -notlike "*$ftglInclude*") {
-    Write-Host "Setting INCLUDE environment variable with FTGL includes... " @info_colors
-    [System.Environment]::SetEnvironmentVariable("INCLUDE", "$ftglIncludePath;$include", [System.EnvironmentVariableTarget]::Machine)
-}
-
 # Get ANTLR and Java
 Set-Location -Path $projectDir
 
@@ -434,10 +314,6 @@ $out = Join-Path -Path $projectDir -ChildPath "build"
 $cacheVariables = @{
     CMAKE_C_COMPILER = "cl"
     CMAKE_CXX_COMPILER = "cl"
-    FTGL_LIBRARY = Normalise-Path -path "$ftglLibPath\ftgl$binSuffix.lib"
-    FTGL_INCLUDE_DIR = Normalise-Path -path $ftglIncludePath
-    FREETYPE_LIBRARY = Normalise-Path -path "$freetypeLibPath\freetype$binSuffix.lib"
-    FREETYPE_INCLUDE_DIRS = "$(Normalise-Path -path $freetypeIncludePath);$(Normalise-Path -path $freetype2IncludePath)"
     ANTLR_EXECUTABLE = Normalise-Path -path $antlrExePath
     Java_JAVA_EXECUTABLE = Normalise-Path -path $javaExePath
     MULTI_THREADING = $threading
