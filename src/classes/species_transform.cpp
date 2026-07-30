@@ -283,6 +283,9 @@ void Species::createAtomic(Elements::Element Z, InteractionPotential<ShortRangeF
     // Add a central site
     auto *site = addSite("Origin");
     site->addStaticOriginAtom(0);
+
+    // Create accompanying structure
+    structure_.addAtom(Z, {});
 }
 
 // Load from specified TOML file
@@ -321,16 +324,5 @@ void Species::create(const Structure &structure)
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
 
-// Return as a Structure
-Structure Species::asStructure() const
-{
-    Structure result;
-
-    for (auto &i : atoms_)
-        result.addAtom(i.Z(), i.r(), i.q())->setIndex(i.index());
-
-    for (auto &bond : bonds_)
-        result.addBond(bond.i()->index(), bond.j()->index());
-
-    return result;
-}
+// Return underlying structure
+const Structure &Species::structure() const { return structure_; }

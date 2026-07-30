@@ -20,6 +20,7 @@ void Species::clear()
     bonds_.clear();
 
     atoms_.clear();
+    structure_.clear();
 
     atomTypes_.clear();
     commonBonds_.clear();

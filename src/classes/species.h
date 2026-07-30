@@ -12,6 +12,7 @@
 #include "classes/speciesImproper.h"
 #include "classes/speciesSite.h"
 #include "classes/speciesTorsion.h"
+#include "classes/structure.h"
 #include "templates/keyedVector.h"
 #include <memory>
 #include <vector>
@@ -21,7 +22,6 @@ class CommonBond;
 class CommonAngle;
 class CommonTorsion;
 class CommonImproper;
-class Structure;
 
 // Species Definition
 class Species
@@ -284,6 +284,8 @@ class Species
      * Creation
      */
     private:
+    // Underlying structure, including instance data, for the species
+    Structure structure_;
     // Whether the attached atoms lists have been created
     bool attachedAtomListsGenerated_{false};
 
@@ -301,8 +303,8 @@ class Species
     void create(const Structure &structure);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
-    // Return as a Structure
-    Structure asStructure() const;
+    // Return underlying structure
+    const Structure &structure() const;
 
     /*
      * Serialisation
