@@ -3,6 +3,7 @@
 
 #include "base/messenger.h"
 #include "gui2/models/dissolveModel.h"
+#include "gui2/models/nodeGraph/nodeRegistryModel.h"
 #include "gui2/models/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
@@ -22,6 +23,8 @@ int main(int args, char **argv)
     DissolveModel dissolveModel;
     dissolveModel.setDissolve(dissolve);
 
+    NodeRegistryModel nodeRegistryModel;
+
     // Parse CLI options
     CLIOptions options;
     if (options.parse(args, argv, true) != CLIOptions::Success)
@@ -35,6 +38,7 @@ int main(int args, char **argv)
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("dissolve", &dissolveModel);
+    engine.rootContext()->setContextProperty("nodeRegistry", &nodeRegistryModel);
     const QUrl url(u"qrc:/Dissolve/qml/DissolveMain.qml"_qs);
     Types::registerDissolveQmlTypes();
 

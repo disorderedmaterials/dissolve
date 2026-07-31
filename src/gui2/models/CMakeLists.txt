@@ -8,10 +8,17 @@ set(nodeGraphModels_MOC_HDRS
     nodeGraph/graphNodeModel.h
     nodeGraph/generatorGraphModel.h
     nodeGraph/nodeWrapper.h
+    nodeGraph/nodeRegistryModel.h
 )
 
-set(nodeGraphModel_SRCS nodeGraph/enumOptionsModel.cpp nodeGraph/enumRegistry.cpp nodeGraph/graphEdgeModel.cpp nodeGraph/graphModel.cpp
-                        nodeGraph/graphNodeModel.cpp nodeGraph/parameterModel.cpp
+set(nodeGraphModel_SRCS
+    nodeGraph/enumOptionsModel.cpp
+    nodeGraph/enumRegistry.cpp
+    nodeGraph/graphEdgeModel.cpp
+    nodeGraph/graphModel.cpp
+    nodeGraph/graphNodeModel.cpp
+    nodeGraph/parameterModel.cpp
+    nodeGraph/nodeRegistryModel.cpp
 )
 
 # QML Types ###
