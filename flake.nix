@@ -115,7 +115,7 @@
                 old.tbb_2021_11
                 (onedpl pkgs old)
               ];
-            nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
+            nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook3 ];
 
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
