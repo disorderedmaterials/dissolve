@@ -45,6 +45,7 @@
           cmake
           cli11
           freetype
+          gcc14
           gsl
           inetutils # for rsh
           ninja
@@ -89,7 +90,7 @@
             checks ? true,
             benchmarks ? false,
           }:
-          pkgs.stdenv.mkDerivation ({
+          pkgs.gcc14Stdenv.mkDerivation ({
             inherit version;
             pname = exe-name gui;
             src = pkgs.lib.fileset.toSource {
@@ -111,9 +112,8 @@
               ++ pkgs.lib.optionals gui (gui_libs system pkgs qt)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
-                pkgs.tbb_2021_11
+                old.tbb_2021_11
                 (onedpl pkgs old)
-                (onedpl pkgs old).dev
               ];
             nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
 
@@ -177,7 +177,7 @@
 
         defaultPackage = self.packages.${system}.dissolve;
 
-        devShells.default = pkgs.mkShell {
+        devShells.default = pkgs.mkShellNoCC {
           name = "dissolve-shell";
           buildInputs =
             base_libs pkgs
@@ -196,6 +196,7 @@
               conan
               cppcheck
               direnv
+              gcc14
               gdb
               gtk3
               nixGL.nixGLIntel
