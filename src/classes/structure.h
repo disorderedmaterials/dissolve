@@ -39,7 +39,7 @@ class StructureAtom : public Atom<Bond<StructureAtom>>
 class Structure : public Serialisable
 {
     public:
-    Structure();
+    Structure() = default;
     virtual ~Structure() = default;
     Structure(const Structure &source);
     Structure &operator=(const Structure &source);
@@ -114,13 +114,8 @@ class Structure : public Serialisable
 
     public:
     // Return periodic box
+    Box &box();
     const Box &box() const;
-    // Remove Box definition and revert to single image
-    void removeBox();
-    // Create Box definition with specified lengths and angles
-    void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
-    // Create Box definition from axes matrix
-    void createBox(const Matrix3 &axes);
 
     /*
      * Manipulations

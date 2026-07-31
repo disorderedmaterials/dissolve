@@ -72,7 +72,7 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
     structure_.clear();
     forces_.clear();
 
-    structure_.createBox(box, {90.0, 90.0, 90.0});
+    structure_.box() = Box(box, {90.0, 90.0, 90.0});
     assert(nmolecules == molecules.size());
     for (auto molecule : molecules)
     {

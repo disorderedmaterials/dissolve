@@ -136,13 +136,8 @@ void Species::clearIntramolecularForcefieldTerms()
 }
 
 // Return periodic box
+Box &Species::box() { return box_; }
 const Box &Species::box() const { return box_; }
 
-// Remove Box definition and revert to single image
-void Species::removeBox() { box_ = Box::none(); }
-
-// Create Box definition with specified lengths and angles
-void Species::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
-{
-    box_ = Box::generate(lengths, angles, nonPeriodic);
-}
+// Remove Box definition and revert to nonperiodic
+void Species::removeBox() { box_ = Box(); }

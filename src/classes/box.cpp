@@ -5,10 +5,71 @@
 #include "classes/cell.h"
 #include "math/mathFunc.h"
 
-Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
-    : type_(boxType), a_(lengths.x), b_(lengths.y), c_(lengths.z), ra_(1.0 / lengths.x), rb_(1.0 / lengths.y),
-      rc_(1.0 / lengths.z), alpha_(angles.x), beta_(angles.y), gamma_(angles.z)
+Box::Box(const Vector3 &lengths, const Vector3 &angles) { initialise(lengths, angles); }
+
+Box::Box(const Matrix3 &axes)
 {
+    // Calculate cell lengths
+    Vector3 lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
+
+    // Calculate cell angles
+
+    auto vecx = axes.columnAsVec3(0);
+    auto vecy = axes.columnAsVec3(1);
+    auto vecz = axes.columnAsVec3(2);
+    vecx.normalise();
+    vecy.normalise();
+    vecz.normalise();
+
+    Vector3 angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
+    angles.toDegrees();
+
+    initialise(lengths, angles);
+}
+
+Box::Box(const Box &other)
+{
+    type_ = other.type_;
+    a_ = other.a_;
+    b_ = other.b_;
+    c_ = other.c_;
+    ra_ = other.ra_;
+    rb_ = other.rb_;
+    rc_ = other.rc_;
+    alpha_ = other.alpha_;
+    beta_ = other.beta_;
+    gamma_ = other.gamma_;
+    axes_ = other.axes_;
+    axesArray_ = other.axesArray_;
+    inverseAxes_ = other.inverseAxes_;
+    inverseAxesArray_ = other.inverseAxesArray_;
+    reciprocalAxes_ = other.reciprocalAxes_;
+    periodic_ = other.periodic_;
+    volume_ = other.volume_;
+    reciprocalVolume_ = other.reciprocalVolume_;
+}
+
+/*
+ * Basic Definition
+ */
+
+// Initialise the box with the supplied lengths and angles
+void Box::initialise(const Vector3 &lengths, const Vector3 &angles)
+{
+    // Set basic values
+    a_ = lengths.x;
+    b_ = lengths.y;
+    c_ = lengths.z;
+    ra_ = 1.0 / lengths.x;
+    rb_ = 1.0 / lengths.y;
+    rc_ = 1.0 / lengths.z;
+    alpha_ = angles.x;
+    beta_ = angles.y;
+    gamma_ = angles.z;
+
+    // Determine box type
+    type_ = type(lengths, angles);
+
     // Set periodicity flags
     periodic_ = {type_ != BoxType::None, type_ != BoxType::None, type_ != BoxType::None};
 
@@ -66,32 +127,6 @@ Box::Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles)
     reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
 
-Box::Box(const Box &other)
-{
-    type_ = other.type_;
-    a_ = other.a_;
-    b_ = other.b_;
-    c_ = other.c_;
-    ra_ = other.ra_;
-    rb_ = other.rb_;
-    rc_ = other.rc_;
-    alpha_ = other.alpha_;
-    beta_ = other.beta_;
-    gamma_ = other.gamma_;
-    axes_ = other.axes_;
-    axesArray_ = other.axesArray_;
-    inverseAxes_ = other.inverseAxes_;
-    inverseAxesArray_ = other.inverseAxesArray_;
-    reciprocalAxes_ = other.reciprocalAxes_;
-    periodic_ = other.periodic_;
-    volume_ = other.volume_;
-    reciprocalVolume_ = other.reciprocalVolume_;
-}
-
-/*
- * Basic Definition
- */
-
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
@@ -108,11 +143,11 @@ EnumOptions<Box::BoxType> Box::boxTypes()
 Box::BoxType Box::type() const { return type_; }
 
 // Determine Box type
-std::optional<Box::BoxType> Box::type(Vector3 lengths, Vector3 angles)
+Box::BoxType Box::type(const Vector3 &lengths, const Vector3 &angles)
 {
     // Check lengths
     if (lengths.min() < 1.0e-5 || angles.min() < 1.0)
-        return {};
+        return BoxType::None;
 
     // Determine any right angles
     auto rightAlpha = (fabs(angles.x - 90.0) < 1.0e-5);
@@ -390,41 +425,12 @@ double Box::torsionInRadians(const Vector3 &i, const Vector3 &j, const Vector3 &
  * Utility Routines
  */
 
-// Generate a suitable Box given the supplied relative lengths, angles
-Box Box::generate(Vector3 lengths, std::optional<Vector3> angles, bool nonPeriodic)
-{
-    if (!angles)
-        angles = {90.0, 90.0, 90.0};
-    return nonPeriodic ? Box(Box::BoxType::None, lengths, *angles) : Box::generate(lengths, *angles);
-}
-
-// Generate Boxes of a given type
-Box Box::none() { return Box(Box::BoxType::None, Vector3{0, 0, 0}, Vector3{0.0, 0.0, 0.0}); }
-
-Box Box::cubic(double length) { return Box(Box::BoxType::Cubic, Vector3{length, length, length}, Vector3{90.0, 90.0, 90.0}); }
-
-Box Box::orthorhombic(const Vector3 &lengths) { return Box(Box::BoxType::Orthorhombic, lengths, Vector3{90.0, 90.0, 90.0}); }
-
-Box Box::monoclinicAlpha(const Vector3 &lengths, double alpha)
-{
-    return Box(Box::BoxType::MonoclinicAlpha, lengths, Vector3{alpha, 90.0, 90.0});
-}
-
-Box Box::monoclinicBeta(const Vector3 &lengths, double beta)
-{
-    return Box(Box::BoxType::MonoclinicBeta, lengths, Vector3{90.0, beta, 90.0});
-}
-
-Box Box::monoclinicGamma(const Vector3 &lengths, double gamma)
-{
-    return Box(Box::BoxType::MonoclinicGamma, lengths, Vector3{90.0, 90.0, gamma});
-}
-
-Box Box::triclinic(const Vector3 &lengths, const Vector3 &angles) { return Box(Box::BoxType::Triclinic, lengths, angles); }
-
 // Return radius of largest possible inscribed sphere for box
 double Box::inscribedSphereRadius() const
 {
+    if (type_ == BoxType::None)
+        return 0.0;
+
     // Radius of largest inscribed sphere is the smallest of the three calculated values....
     double mag, diameter, result = 0.0;
     Vector3 cross;

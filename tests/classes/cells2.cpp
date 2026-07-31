@@ -31,7 +31,7 @@ class CellsPBCTest : public ::testing::Test
     void createConfiguration(const Vector3 &lengths, const Vector3 &angles, const Vector3 &origin, int nMolecules = 1000)
     {
         // Setup Configuration
-        configuration_.createBoxAndCells(lengths, angles, false);
+        configuration_.setBox(Box(lengths, angles));
 
         // Add a molecule at the origin
         auto central = configuration_.addMolecule(&probe_);

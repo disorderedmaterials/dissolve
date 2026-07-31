@@ -6,51 +6,10 @@
 #include "classes/configuration.h"
 #include "kernels/energy.h"
 
-// Create Box definition with specified lengths and angles
-void Configuration::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
+// Set new box definition and recalculate cells
+void Configuration::setBox(const Box &box)
 {
-    box_ = Box::generate(lengths, angles, nonPeriodic);
-
-    cells_.clear();
-}
-
-// Create Box definition from axes matrix
-void Configuration::createBox(const Matrix3 axes)
-{
-    // Calculate cell lengths
-    Vector3 lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
-
-    // Calculate cell angles
-    Vector3 vecx, vecy, vecz;
-    vecx = axes.columnAsVec3(0);
-    vecy = axes.columnAsVec3(1);
-    vecz = axes.columnAsVec3(2);
-    vecx.normalise();
-    vecy.normalise();
-    vecz.normalise();
-
-    Vector3 angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
-    angles.toDegrees();
-
-    box_ = Box::generate(lengths, angles);
-
-    cells_.clear();
-}
-
-// Create Box definition with specified lengths and angles, and initialise cell array
-void Configuration::createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
-{
-    createBox(lengths, angles, nonPeriodic);
-    cells_.generate(box_, requestedCellDivisionLength_);
-}
-
-// Create Box definition from axes matrix, and initialise cell array
-void Configuration::createBoxAndCells(const Matrix3 axes)
-{
-    // Forcibly clear the cell array so we ensure that it is regenerated following the box change
-    cells_.clear();
-
-    createBox(axes);
+    box_ = box;
     cells_.generate(box_, requestedCellDivisionLength_);
 }
 

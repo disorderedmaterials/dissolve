@@ -80,7 +80,7 @@ NodeConstants::ProcessResult ImportDLPOLYStructureNode::read(std::istream &input
         auto mat = matrix3().parse(input);
         if (!mat)
             return NodeConstants::ProcessResult::Failed;
-        structure.createBox(std::get<0>(*mat));
+        structure.box() = Box(std::get<0>(*mat));
     }
 
     auto atomType = graphs() << inlineSpaces() & natural() << inlineSpaces() &

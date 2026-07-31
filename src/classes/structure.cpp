@@ -6,9 +6,7 @@
 #include "classes/species.h"
 #include "templates/algorithms.h"
 
-Structure::Structure() : box_(Box::none()) {}
-
-Structure::Structure(const Structure &source) : box_(source.box_) { *this = source; }
+Structure::Structure(const Structure &source) { *this = source; }
 
 Structure &Structure::operator=(const Structure &source)
 {
@@ -29,7 +27,7 @@ Structure &Structure::operator=(const Structure &source)
     instances_ = source.instances_;
 
     // Copy source box
-    createBox(source.box_.axisLengths(), source.box_.axisAngles(), source.box_.type() == Box::BoxType::None);
+    box_ = source.box_;
 
     return *this;
 }
@@ -39,7 +37,7 @@ void Structure::clear()
 {
     bonds_.clear();
     atoms_.clear();
-    box_ = Box::none();
+    box_ = Box();
 }
 
 /*
@@ -223,37 +221,8 @@ void Structure::clearBonds()
  */
 
 // Return periodic box
+Box &Structure::box() { return box_; }
 const Box &Structure::box() const { return box_; }
-
-// Remove box definition and revert to single image
-void Structure::removeBox() { box_ = Box::none(); }
-
-// Create box definition with specified lengths and angles
-void Structure::createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic)
-{
-    box_ = Box::generate(lengths, angles, nonPeriodic);
-}
-
-// Create Box definition from axes matrix
-void Structure::createBox(const Matrix3 &axes)
-{
-    // Calculate cell lengths
-    Vector3 lengths(axes.columnMagnitude(0), axes.columnMagnitude(1), axes.columnMagnitude(2));
-
-    // Calculate cell angles
-    Vector3 vecx, vecy, vecz;
-    vecx = axes.columnAsVec3(0);
-    vecy = axes.columnAsVec3(1);
-    vecz = axes.columnAsVec3(2);
-    vecx.normalise();
-    vecy.normalise();
-    vecz.normalise();
-
-    Vector3 angles(acos(vecy.dp(vecz)), acos(vecx.dp(vecz)), acos(vecx.dp(vecy)));
-    angles.toDegrees();
-
-    box_ = Box::generate(lengths, angles);
-}
 
 /*
  * Manipulations
