@@ -8,13 +8,6 @@
 #include "math/matrix3.h"
 #include "math/vector3.h"
 
-#include <map>
-#include <vector>
-
-// Forward Declarations
-class Cell;
-class Data1D;
-
 // Basic Box Definition
 class Box : public Serialisable
 {
