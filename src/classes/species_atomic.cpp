@@ -168,13 +168,13 @@ Structure Species::asStructure(bool includeInstances) const
 {
     Structure result;
 
-    result.createBox(box_.);
+    result.box() = box_;
 
-        for (auto &i : atoms_)
-                result.addAtom(i.Z(), i.r(), i.q())->setIndex(i.index());
+    for (auto &i : atoms_)
+        result.addAtom(i.Z(), i.r(), i.q())->setIndex(i.index());
 
-        for (auto &bond : bonds_)
-               result.addBond(bond.i()->index(), bond.j()->index());
+    for (auto &bond : bonds_)
+        result.addBond(bond.i()->index(), bond.j()->index());
 
     if (includeInstances)
         result.instances() = instances_;
