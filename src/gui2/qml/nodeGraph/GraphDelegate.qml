@@ -11,14 +11,15 @@ NodeBox {
     property double midY: y + height / 2
     property variant rootModel
     property double startX: x + width
+    property string currentDescriptionDisplayText: ""
 
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
 
     image: icon
     nodeType: name
-    px: posX
-    py: posY
+    posX: posX
+    posY: posY
 
     // Ensure that we only display this box for valid node items
     visible: icon != null
@@ -29,6 +30,7 @@ NodeBox {
 
     ColumnLayout {
         anchors.fill: parent
+        spacing: 8
 
         GridLayout {
             columns: 5
@@ -93,15 +95,29 @@ NodeBox {
                 model: inputs
 
                 Text {
+                    id: inputText
+                    property string info: description
                     Layout.alignment: Qt.AlignLeft
                     Layout.column: 1
                     Layout.row: index
-                    ToolTip.text: description
-                    ToolTip.visible: hovered
                     font.pointSize: 10
                     height: 10
                     text: name
                     wrapMode: Text.Wrap
+
+                    MouseArea {
+                        id: inputMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onEntered: {
+                            root.currentDescriptionDisplayText = "<i>Input:</i><br>" + inputText.info
+                        }
+
+                        onExited: {
+                            root.currentDescriptionDisplayText = ""
+                        }
+                    }
                 }
             }
             Repeater {
@@ -173,15 +189,29 @@ NodeBox {
                 model: outputs
 
                 Text {
+                    id: outputText
+                    property string info: description
                     Layout.alignment: Qt.AlignRight
                     Layout.column: 3
                     Layout.row: index
-                    ToolTip.text: description
-                    ToolTip.visible: hovered
                     anchors.margins: 4
                     font.pointSize: 10
                     text: name
                     wrapMode: Text.Wrap
+
+                    MouseArea {
+                        id: outputMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onEntered: {
+                            root.currentDescriptionDisplayText = "<i>Output:</i><br>" + outputText.info
+                        }
+
+                        onExited: {
+                            root.currentDescriptionDisplayText = ""
+                        }
+                    }
                 }
             }
         }
@@ -207,10 +237,26 @@ NodeBox {
                 model: options
 
                 Text {
+                    id: optionText
+                    property string info: description
                     Layout.alignment: Qt.AlignLeft
                     Layout.column: 0
                     Layout.row: index
                     text: name
+
+                    MouseArea {
+                        id: optionMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onEntered: {
+                            root.currentDescriptionDisplayText = "<i>Option:</i><br>" + optionText.info
+                        }
+
+                        onExited: {
+                            root.currentDescriptionDisplayText = ""
+                        }
+                    }
                 }
             }
             Repeater {
@@ -227,6 +273,33 @@ NodeBox {
 
                 delegate: ParameterDelegate {
                 }
+            }
+        }
+        Rectangle {
+            Layout.fillWidth: true
+
+            visible: root.currentDescriptionDisplayText !== ""
+
+            radius: 4
+
+            color: "cyan"
+
+            border.width: 1
+            border.color: "deepskyblue"
+
+            implicitHeight: descriptionText.implicitHeight + 12
+
+            Text {
+                id: descriptionText
+
+                anchors.fill: parent
+                anchors.margins: 6
+
+                text: root.currentDescriptionDisplayText
+                textFormat: Text.RichText
+                wrapMode: Text.WordWrap
+
+                font.pixelSize: 11
             }
         }
     }

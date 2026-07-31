@@ -4,8 +4,11 @@ import QtQuick.Layouts
 import QtQuick3D
 import QtQuick3D.Helpers
 import QtQuick.Dialogs
+import QtQuick.Window
+import NodeRegistryModule
 import Dissolve
 import ProjectDissolve
+import "../../NodeRegistryModule"
 import "../../ProjectDissolve"
 import "../../Dissolve"
 
@@ -14,13 +17,13 @@ ApplicationWindow {
 
     property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
 
-    height: 743
+    height: Screen.height
+    width: Screen.width
     title: "Dissolve"
     visible: true
-    width: 819
 
     // TODO: Custom "DissolveMenuItem/Action" that supports icons, shortcuts, and tooltips simultaneously
-    // (Probably easiest to base off of Action)
+    // (Probably easiest to base off of Action) and make global shortcuts configurable from a separate C++ ShortcutManager
 
     /*
      * Dissolve2 Main Menu
@@ -118,6 +121,8 @@ ApplicationWindow {
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Search the Node registry by node name"
+
+                onTriggered: nodeSearchDialog.open()
             }
 
             MenuSeparator{}
@@ -220,6 +225,7 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.top: parent.top
 
+                    /*
                     FileDialog {
                         id: openDialog
 
@@ -243,6 +249,7 @@ ApplicationWindow {
 
                         onClicked: openDialog.open()
                     }
+                    */
                     Label {
                         text: "Nodes: " + graphModel.nodeCount
                     }
@@ -272,19 +279,28 @@ ApplicationWindow {
                 nodeModel: graphModel.nodes
                 rootModel: graphModel
 
-                delegate: Component {
-                    GraphDelegate {
-                        rootModel: graphModel
+                Repeater{
+                    id: graphDelegateRepeater
+                    model: graph.nodeModel
 
-                        onDescended: function (idx) {
-                            graphModel.descend(idx);
-                        }
-                        onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
-                            graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
+                    delegate: Component {
+                        GraphDelegate {
+                            rootModel: graphModel
+
+                            onDescended: function (idx) {
+                                graphModel.descend(idx);
+                            }
+                            onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
+                                graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
+                            }
                         }
                     }
                 }
             }
         }
+    }
+    
+    NodeSearchDialog {
+        id: nodeSearchDialog
     }
 }

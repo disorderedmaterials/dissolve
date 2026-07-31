@@ -12,6 +12,10 @@ Pane {
     property variant nodeModel
     property variant rootModel
 
+    Component.onCompleted: {
+        nodeRegistry.setGraphModel(rootModel);
+    }
+    /*
     MouseArea {
         id: ctxMenuCatcher
 
@@ -146,7 +150,7 @@ Pane {
             }
         }
     }
-
+    */
     // Edge connections
     Repeater {
         model: graphRoot.edgeModel

@@ -6,7 +6,7 @@
 ClearBondingNode::ClearBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addOutput("Structure", "Input structure", inputStructure_);
+    addInput("Structure", "Input structure", inputStructure_);
 
     // Outputs
     addOutput("Structure", "Modified structure", outputStructure_);
