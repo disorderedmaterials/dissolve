@@ -7,6 +7,7 @@
 #include "nodes/registry.h"
 #include <QAbstractListModel>
 #include <QModelIndex>
+#include <QString>
 #include <tuple>
 #include <vector>
 
@@ -16,12 +17,13 @@ class NodeRegistryModel : public QAbstractListModel
      * NodeRegistryDisplayElement is a type alias for a tuple-like container holing the following
      * information fields about each registered node:
      *
-     * - Name/Node::type (string)
-     * - Description/Node::summary (string)
+     * - Name/Node::type (QString)
+     * - Description/Node::summary (QString)
      * - Category (enum) - currently unavailable
+     * - Icon path (QUrl) - currently unavailable
      *
      */
-    using NodeRegistryDisplayElement = std::tuple<std::string_view, std::string_view>;
+    using NodeRegistryDisplayElement = std::tuple<QString, QString>;
 
     Q_OBJECT
 
@@ -29,15 +31,18 @@ class NodeRegistryModel : public QAbstractListModel
     explicit NodeRegistryModel(QObject *parent = nullptr);
     ~NodeRegistryModel() override = default;
 
+    enum NodeDisplayRoles
+    {
+        Name = Qt::DisplayRole,
+        Description = Qt::UserRole + 1,
+    };
+    Q_ENUM(NodeDisplayRoles);
+
     private:
     // Source node registry data
-    static std::vector<const NodeRegistryDisplayElement> elements_;
+    static std::vector<NodeRegistryDisplayElement> entries_;
 
     public:
-    // Returns bool - true if node list has been populated
-    Q_INVOKABLE bool populated() const;
-    // Populate list
-    void populate();
     // Instantiate node from registry
     void instantiateNode(GraphModel *graphModel, QVariant type, QVariant name);
 
