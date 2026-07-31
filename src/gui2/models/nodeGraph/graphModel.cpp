@@ -103,7 +103,9 @@ void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
         Messenger::exception(
             "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
-    auto node = graph_->createNode(type.toString().toStdString(), type.toString().toStdString());
+    auto nodeType = type.toString().toStdString();
+    auto nodeName = name.toString().toStdString();
+    auto node = graph_->createNode(nodeType, nodeName);
     node->x = x;
     node->y = y;
     auto &item = wrapped_.emplace_back(*node);

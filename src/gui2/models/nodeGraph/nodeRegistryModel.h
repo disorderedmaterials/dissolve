@@ -41,10 +41,13 @@ class NodeRegistryModel : public QAbstractListModel
     private:
     // Source node registry data
     static std::vector<NodeRegistryDisplayElement> entries_;
+    GraphModel *graphModel_{nullptr};
 
     public:
     // Instantiate node from registry
-    void instantiateNode(GraphModel *graphModel, QVariant type, QVariant name);
+    Q_INVOKABLE void instantiateNode(int x, int y, QVariant type, QVariant name);
+    // Set the graph model
+    Q_INVOKABLE void setGraphModel(GraphModel *graphModel);
 
     /*
      * QAbstractItemModel overrides
@@ -54,4 +57,5 @@ class NodeRegistryModel : public QAbstractListModel
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
 };

@@ -13,12 +13,13 @@ void Types::registerDissolveQmlTypes()
 }
 */
 #include "gui2/models/types.h"
+#include "gui2/models/dissolveModel.h"
 #include "gui2/models/legacy/atomTypeModel.h"
 #include "gui2/models/legacy/configurationModel.h"
-#include "gui2/models/dissolveModel.h"
-#include "gui2/models/nodeGraph/graphModel.h"
 #include "gui2/models/legacy/simpleForcefieldModel.h"
 #include "gui2/models/legacy/speciesModel.h"
+#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/nodeGraph/nodeRegistrySortFilterModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
@@ -34,4 +35,5 @@ void Types::registerDissolveQmlTypes()
     qmlRegisterType<CommonTorsionModel>(PROJECT, 1, 0, "CommonTorsionModel");
     qmlRegisterType<GraphModel>(PROJECT, 1, 0, "GraphModel");
     qmlRegisterType<SimpleForcefieldModel>(PROJECT, 1, 0, "SimpleForcefieldModel");
+    qmlRegisterType<NodeRegistrySortFilterModel>(PROJECT, 1, 0, "NodeRegistrySortFilterModel");
 }
