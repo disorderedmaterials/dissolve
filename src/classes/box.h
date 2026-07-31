@@ -51,8 +51,6 @@ class Box : public Serialisable
     double ra_, rb_, rc_;
     // Box angles
     double alpha_, beta_, gamma_;
-    // Flags stating periodicity along x, y, and z
-    std::array<bool, 3> periodic_;
     // Axes
     Matrix3 axes_;
     // Axes as simple array

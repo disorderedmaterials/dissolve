@@ -44,7 +44,6 @@ Box::Box(const Box &other)
     inverseAxes_ = other.inverseAxes_;
     inverseAxesArray_ = other.inverseAxesArray_;
     reciprocalAxes_ = other.reciprocalAxes_;
-    periodic_ = other.periodic_;
     volume_ = other.volume_;
     reciprocalVolume_ = other.reciprocalVolume_;
 }
@@ -69,9 +68,6 @@ void Box::initialise(const Vector3 &lengths, const Vector3 &angles)
 
     // Determine box type
     type_ = type(lengths, angles);
-
-    // Set periodicity flags
-    periodic_ = {type_ != BoxType::None, type_ != BoxType::None, type_ != BoxType::None};
 
     // Construct axes matrix
     axes_.setIdentity();
@@ -570,5 +566,4 @@ void Box::serialise(std::string tag, SerialisedValue &target) const
     auto &box = target[tag];
     box["lengths"] = {a_, b_, c_};
     box["angles"] = {alpha_, beta_, gamma_};
-    box["nonPeriodic"] = {!std::get<0>(periodic_), !std::get<1>(periodic_), !std::get<2>(periodic_)};
 }
