@@ -1,15 +1,15 @@
 { pkgs }:
 
-pkgs.gcc9Stdenv.mkDerivation rec {
+pkgs.stdenv.mkDerivation rec {
   name = "toml11";
-  version = "v3.7.1";
+  version = "v4.4.0";
   cmake = true;
-  buildInputs = [pkgs.cmake];
+  buildInputs = [ pkgs.cmake ];
   src = pkgs.fetchFromGitHub {
     owner = "ToruNiina";
     repo = "toml11";
     rev = version;
-    sha256 = "HnhXBvIjo1JXhp+hUQvjs83t5IBVbNN6o3ZGhB4WESQ=";
+    sha256 = "sha256-sgWKYxNT22nw376ttGsTdg0AMzOwp8QH3E8mx0BZJTQ=";
     fetchSubmodules = true;
   };
   cmakeFlags = [

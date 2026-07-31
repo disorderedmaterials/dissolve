@@ -1,7 +1,7 @@
 {
   inputs = {
     self.submodules = true;
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     outdated.url = "github:NixOS/nixpkgs/nixos-24.05";
     bundlers.url = "github:nix-community/nix-bundle";
     bundlers.inputs.nixpkgs.follows = "outdated";
@@ -22,18 +22,17 @@
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
-      onedpl =
-        pkgs:
-        ((import ./nix/onedpl.nix) {
-          inherit (pkgs)
-            lib
-            stdenv
-            fetchFromGitHub
-            fetchpatch
-            cmake
-            ;
-          tbb = pkgs.tbb_2021_11;
-        });
+      onedpl = pkgs: old: pkgs.onedpl;
+      # ((import ./nix/onedpl.nix) {
+      #   inherit (pkgs)
+      #     lib
+      #     stdenv
+      #     fetchFromGitHub
+      #     fetchpatch
+      #     cmake
+      #     ;
+      #   tbb = old.tbb_2021_11;
+      # });
       exe-name = gui: if gui then "dissolve-gui" else "dissolve";
       cmake-bool = x: if x then "ON" else "OFF";
       version = "1.9.0";
@@ -113,8 +112,8 @@
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
                 pkgs.tbb_2021_11
-                (onedpl pkgs)
-                (onedpl pkgs).dev
+                (onedpl pkgs old)
+                (onedpl pkgs old).dev
               ];
             nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
 
@@ -187,7 +186,7 @@
             ++ (with pkgs; [
               llvmPackages_20.clang-tools
 
-                (onedpl pkgs)
+              (onedpl pkgs old)
 
               ccache
               ccls
@@ -201,7 +200,7 @@
               gtk3
               nixGL.nixGLIntel
               qt.qttools
-              tbb_2021_11
+              old.tbb_2021_11
               valgrind
               weggli
             ]);
