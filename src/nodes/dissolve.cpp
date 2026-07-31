@@ -35,7 +35,8 @@ std::optional<std::string> DissolveGraph::loadFile(std::filesystem::path name)
     }
     catch (toml::type_error err)
     {
-        return std::format("{} at {} on line ", err.what(), err.location().file_name(), err.location().line_str());
+        return std::format("{} in {} at {} through {} ", err.what(), err.location().file_name(), err.location().first_line(),
+                           err.location().last_line());
     }
     return {};
 }

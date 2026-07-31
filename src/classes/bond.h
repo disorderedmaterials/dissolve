@@ -32,5 +32,8 @@ template <class AtomClass> class Bond
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const { target[tag] = {{"i", i_->index()}, {"j", j_->index()}}; }
+    void serialise(std::string tag, SerialisedValue &target) const
+    {
+        target[tag] = Serialisable::table{{"i", i_->index()}, {"j", j_->index()}};
+    }
 };

@@ -151,7 +151,7 @@ void SampledData1D::operator+=(const std::vector<double> &source)
 // Express as a serialisable value
 void SampledData1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"x", x_}};
+    target[tag] = Serialisable::table{{"x", x_}};
     values_.serialise("values", target[tag]);
 }
 

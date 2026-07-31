@@ -215,7 +215,7 @@ Histogram1D Histogram1D::operator+(const Histogram1D &other) const
 // Express as a serialisable value
 void Histogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {
+    target[tag] = Serialisable::table{
         {"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
     Serialisable::vector(averages_, "averages", target[tag]);
 }

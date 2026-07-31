@@ -2,13 +2,13 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "templates/orderedMap.h"
+#include "base/serialiser.h"
 #include <gtest/gtest.h>
 #include <toml11/toml.hpp>
 
 namespace UnitTest
 {
 
-using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
 TEST(OrderedMapTest, BasicOrderedMap)
 {
     SerialisedValue example;

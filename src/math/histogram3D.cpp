@@ -245,9 +245,10 @@ void Histogram3D::operator=(const Histogram3D &source)
 // Express as a serialisable value
 void Histogram3D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"xMinimum", xMinimum_},   {"xMaximum", xMaximum_},   {"xBinWidth", xBinWidth_}, {"yMinimum", yMinimum_},
-                   {"yMaximum", yMaximum_},   {"yBinWidth", yBinWidth_}, {"zMinimum", zMinimum_},   {"zMaximum", zMaximum_},
-                   {"zBinWidth", zBinWidth_}, {"nBinned", nBinned_},     {"nMissed", nMissed_}};
+    target[tag] = Serialisable::table{{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_}, {"xBinWidth", xBinWidth_},
+                                      {"yMinimum", yMinimum_}, {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_},
+                                      {"zMinimum", zMinimum_}, {"zMaximum", zMaximum_}, {"zBinWidth", zBinWidth_},
+                                      {"nBinned", nBinned_},   {"nMissed", nMissed_}};
     Serialisable::vector(averages_.linearArray(), "averages", target[tag]);
 }
 

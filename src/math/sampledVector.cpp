@@ -178,7 +178,7 @@ void SampledVector::operator/=(double x)
 // Express as a serialisable value
 void SampledVector::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"count", count_}, {"mean", mean_}, {"stDev", stDev_}, {"m2", m2_}};
+    target[tag] = Serialisable::table{{"count", count_}, {"mean", mean_}, {"stDev", stDev_}, {"m2", m2_}};
 }
 
 // Read values from a serialisable value

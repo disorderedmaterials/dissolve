@@ -156,7 +156,8 @@ const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedDa
 // Express as a serialisable value
 void IntegerHistogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"zeroCounter", Serialisable::ser(zeroCounter_)}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
+    target[tag] =
+        Serialisable::table{{"zeroCounter", Serialisable::ser(zeroCounter_)}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
 
     if (minimum_)
         target[tag]["minimum"] = *minimum_;

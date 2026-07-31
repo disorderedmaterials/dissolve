@@ -172,18 +172,8 @@ void Number::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Number::deserialise(const SerialisedValue &node)
 {
-    toml::visit(
-        [this](auto &arg)
-        {
-            using T = std::decay_t<decltype(arg)>;
-            if constexpr (std::is_same_v<T, toml::integer>)
-            {
-                set((int)arg);
-            }
-            else if constexpr (std::is_same_v<T, toml::floating>)
-            {
-                set((double)arg);
-            }
-        },
-        node);
+    if (node.is_floating())
+        set(node.as_floating());
+    else
+        set((int)node.as_integer());
 }

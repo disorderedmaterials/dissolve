@@ -119,13 +119,7 @@ template <typename T> void vector(const std::vector<std::shared_ptr<T>> &vec, st
 // A helper function to add the elements of a vector to a node under a name
 template <typename T> void vector(const std::vector<T> &vec, std::string name, SerialisedValue &node)
 {
-    vector(vec, name, node,
-           [](const auto &item)
-           {
-               SerialisedValue outer;
-               item.serialise("inner", outer);
-               return outer["inner"];
-           });
+    vector(vec, name, node, [](const auto &item) { return ser(item); });
 }
 // A helper function to add the elements of a vector to a node under a name
 template <typename T, typename Lambda>
@@ -213,7 +207,7 @@ template <typename Lambda> bool optionalOn(const SerialisedValue &node, std::str
     if (node.contains(name))
     {
         auto child = toml::find(node, name);
-        if (!node.is_uninitialized())
+        if (!child.is_empty())
             action(child);
         return true;
     }

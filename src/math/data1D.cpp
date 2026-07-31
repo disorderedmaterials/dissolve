@@ -419,7 +419,7 @@ void Data1D::operator/=(const double factor)
 // Express as a serialisable value
 void Data1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", values_}};
+    SerialisedValue result = Serialisable::table{{"tag", tag_}, {"x", x_}, {"y", values_}};
     if (hasError_)
         result["errors"] = errors_;
     target[tag] = result;

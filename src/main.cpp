@@ -9,7 +9,6 @@
 #include <format>
 #include <fstream>
 #include <iostream>
-#include <toml11/toml/exception.hpp>
 
 int main(int args, char **argv)
 {
