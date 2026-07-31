@@ -9,14 +9,20 @@ NodeRegistryModel::NodeRegistryModel(QObject *parent)
     if (!entries_.empty())
         return;
 
+    // Force instantiation of registry
+    if (!NodeRegistry::hasNodeType("Graph"))
+        return;
+
     // Retrieve available node names and summaries from registry
     auto registry = NodeRegistry::producers();
     auto dummyGraph = std::make_unique<DissolveGraph>();
+
     for (const auto &node : registry)
     {
         auto &[name, producer] = node;
         auto dummyNode = NodeRegistry::produce(dummyGraph->parentGraph(), name);
-        entries_.push_back({QString::fromStdString(std::string(dummyNode->type())), QString::fromStdString(std::string(dummyNode->summary()))});
+        entries_.push_back({QString::fromStdString(std::string(dummyNode->type())),
+                            QString::fromStdString(std::string(dummyNode->summary()))});
     }
 }
 
@@ -24,13 +30,13 @@ NodeRegistryModel::NodeRegistryModel(QObject *parent)
 std::vector<NodeRegistryModel::NodeRegistryDisplayElement> NodeRegistryModel::entries_;
 
 // Instantiate node from registry
-void NodeRegistryModel::instantiateNode(GraphModel *graphModel, QVariant type, QVariant name)
+void NodeRegistryModel::instantiateNode(int x, int y, QVariant type, QVariant name)
 {
-    auto targetGraph = graphModel->graph();
-    auto nodeType = type.toString().toStdString();
-    auto nodeName = name.toString().toStdString();
-    graphModel->addNode(std::move(NodeRegistry::produce(targetGraph, nodeType)), nodeName);
+    graphModel_->emplace_back(x, y, type, name);
 }
+
+// Set the graph model
+void NodeRegistryModel::setGraphModel(GraphModel *graphModel) { graphModel_ = graphModel; }
 
 /*
  * QAbstractItemModel overrides
@@ -77,4 +83,12 @@ QVariant NodeRegistryModel::headerData(int section, Qt::Orientation orientation,
         }
 
     return {};
+}
+
+QHash<int, QByteArray> NodeRegistryModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Name] = "name";
+    roles[Description] = "description";
+    return roles;
 }

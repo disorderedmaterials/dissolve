@@ -7,3 +7,4 @@ target_link_libraries(gui2 PRIVATE models2 base Qt6::QuickWidgets)
 
 add_subdirectory(models)
 add_subdirectory(qml/icons)
+add_subdirectory(qml/nodeRegistry)
