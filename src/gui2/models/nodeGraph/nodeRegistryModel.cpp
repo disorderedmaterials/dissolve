@@ -2,33 +2,34 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/nodeGraph/nodeRegistryModel.h"
+#include "nodes/dissolve.h"
 
 NodeRegistryModel::NodeRegistryModel(QObject *parent)
 {
-    if (elements_.empty())
-        populate();
-}
+    if (!entries_.empty())
+        return;
 
-// Returns bool - true if node list has been populated
-bool NodeRegistryModel::populated() const { return !elements_.empty(); }
-
-// Populate list
-void NodeRegistryModel::populate()
-{
     // Retrieve available node names and summaries from registry
     auto registry = NodeRegistry::producers();
+    auto dummyGraph = std::make_unique<DissolveGraph>();
     for (const auto &node : registry)
     {
         auto &[name, producer] = node;
-        auto tempInstantiatedNode = NodeRegistry::produce(name);
-        elements_.emplace_back({tempInstantiatedNode->type(), tempInstantiatedNode->summary()});
+        auto dummyNode = NodeRegistry::produce(dummyGraph->parentGraph(), name);
+        entries_.push_back({QString::fromStdString(std::string(dummyNode->type())), QString::fromStdString(std::string(dummyNode->summary()))});
     }
 }
+
+// Source node registry data
+std::vector<NodeRegistryModel::NodeRegistryDisplayElement> NodeRegistryModel::entries_;
 
 // Instantiate node from registry
 void NodeRegistryModel::instantiateNode(GraphModel *graphModel, QVariant type, QVariant name)
 {
-    graphModel->addNode(std::move(NodeRegistry::produce(graphModel_->graph(), type.toString())), name.toString());
+    auto targetGraph = graphModel->graph();
+    auto nodeType = type.toString().toStdString();
+    auto nodeName = name.toString().toStdString();
+    graphModel->addNode(std::move(NodeRegistry::produce(targetGraph, nodeType)), nodeName);
 }
 
 /*
@@ -38,15 +39,21 @@ void NodeRegistryModel::instantiateNode(GraphModel *graphModel, QVariant type, Q
 int NodeRegistryModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return enumOptions_ ? enumOptions_->nOptions() : 0;
+    return entries_.size();
 }
 
 QVariant NodeRegistryModel::data(const QModelIndex &index, int role) const
 {
-    if (role != Qt::DisplayRole || index.column() != 0)
-        return {};
-
-    return QString::fromStdString(enumOptions_->keywordByIndex(index.row()));
+    auto entry = entries_[index.row()];
+    switch (role)
+    {
+        case NodeDisplayRoles::Name:
+            return std::get<0>(entry);
+        case NodeDisplayRoles::Description:
+            return std::get<1>(entry);
+        default:
+            return QVariant();
+    }
 }
 
 Qt::ItemFlags NodeRegistryModel::flags(const QModelIndex &index) const
@@ -60,8 +67,14 @@ QVariant NodeRegistryModel::headerData(int section, Qt::Orientation orientation,
     if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
         return {};
 
-    if (section == 0)
-        return "Option";
+    if (orientation == Qt::Horizontal)
+        switch (section)
+        {
+            case 0:
+                return "Name";
+            case 1:
+                return "Description";
+        }
 
     return {};
 }
