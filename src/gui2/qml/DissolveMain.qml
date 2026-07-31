@@ -4,8 +4,15 @@ import QtQuick.Layouts
 import QtQuick3D
 import QtQuick3D.Helpers
 import QtQuick.Dialogs
+import QtQuick.Window
+import DissolveNodeGraphModule
+import DissolveControlsModule
+import DissolveDialogsModule
 import Dissolve
 import ProjectDissolve
+import "../../DissolveNodeGraphModule"
+import "../../DissolveControlsModule"
+import "../../DissolveDialogsModule"
 import "../../ProjectDissolve"
 import "../../Dissolve"
 
@@ -14,13 +21,56 @@ ApplicationWindow {
 
     property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
 
-    height: 743
+    height: Screen.height
+    width: Screen.width
     title: "Dissolve"
     visible: true
-    width: 819
 
-    // TODO: Custom "DissolveMenuItem/Action" that supports icons, shortcuts, and tooltips simultaneously
-    // (Probably easiest to base off of Action)
+    property Dialog quickRunDialog: null
+
+    Component {
+        id: quickRunDialogComponent
+
+        Dialog {
+            id: quickRunDialog
+
+            x: dissolveWindow.width / 2
+            y: dissolveWindow.height / 2
+
+            height: implicitHeight
+            width: implicitWidth
+
+            required property variant graphModel
+            property string startNode: input.text
+
+            standardButtons: Dialog.Ok | Dialog.Cancel
+
+            contentItem: Item {
+                anchors.fill: parent
+                focus: true
+
+                Keys.onReturnPressed: accept()
+                Keys.onEnterPressed: accept()
+   
+                TextField {
+                    id: input
+                    anchors.fill: parent
+                    font.pixelSize: 14
+                    placeholderText: "Enter a node name to run graph from..."
+                }    
+            }
+
+            onAccepted: {
+                if (quickRunDialog.graphModel.isValidNode(startNode))
+                    graphModel.run(startNode)
+
+                quickRunDialog.close()
+            }
+            onRejected: {
+                quickRunDialog.close()
+            }
+        }
+    }
 
     /*
      * Dissolve2 Main Menu
@@ -99,14 +149,15 @@ ApplicationWindow {
         Menu {
             title: "&Graph"
 
-            MenuItem {
-                //shortcut: "Ctrl+R"
-                text: "&Run"
-            }
-
-            MenuItem {
-                
-                text: "Run N Steps"
+            DissolveMenuItem {
+                dissolveAction: Action {
+                    text: "&Run"
+                    shortcut: "Ctrl+Enter"
+                    onTriggered: {
+                        dissolveWindow.quickRunDialog.open()
+                    }
+                }
+                iconPath: "qrc:/DissolveIconsModule/play.svg"
             }
 
             MenuSeparator{}
@@ -118,6 +169,8 @@ ApplicationWindow {
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Search the Node registry by node name"
+
+                onTriggered: nodeSearchDialog.open()
             }
 
             MenuSeparator{}
@@ -157,6 +210,7 @@ ApplicationWindow {
         id: tabBar
 
         width: parent.width
+        currentIndex: 2
 
         // DEFAULT TABS
         TabButton {
@@ -178,6 +232,7 @@ ApplicationWindow {
      *
      */
     StackLayout {
+        id: applicationTabStack
         anchors.bottom: parent.bottom
         anchors.top: tabBar.bottom
         currentIndex: tabBar.currentIndex
@@ -211,6 +266,10 @@ ApplicationWindow {
                 id: graphModel
 
                 graph: dissolve.graph
+
+                Component.onCompleted: {
+                    dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
+                }
             }
             Pane {
                 id: toolBar
@@ -220,6 +279,7 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.top: parent.top
 
+                    /*
                     FileDialog {
                         id: openDialog
 
@@ -239,10 +299,11 @@ ApplicationWindow {
                         }
                     }
                     Button {
-                        icon.source: "qrc:/IconsModule/open.svg"
+                        icon.source: "qrc:/DissolveIconsModule/open.svg"
 
                         onClicked: openDialog.open()
                     }
+                    */
                     Label {
                         text: "Nodes: " + graphModel.nodeCount
                     }
@@ -252,7 +313,7 @@ ApplicationWindow {
                     ToolButton {
                         enabled: !graphModel.atRoot
                         icon.color: graphModel.atRoot ? "grey" : "transparent"
-                        icon.source: "qrc:/IconsModule/arrowUp.svg"
+                        icon.source: "qrc:/DissolveIconsModule/arrowUp.svg"
 
                         onClicked: graphModel.upLevel()
                     }
@@ -270,21 +331,31 @@ ApplicationWindow {
                 anchors.top: toolBar.bottom
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
-                rootModel: graphModel
+                parameterEndPointsModel: graphModel.parameterEndPoints
+                rootGraphModel: graphModel
 
-                delegate: Component {
-                    GraphDelegate {
-                        rootModel: graphModel
+                Repeater{
+                    id: graphDelegateRepeater
+                    model: graph.nodeModel
 
-                        onDescended: function (idx) {
-                            graphModel.descend(idx);
-                        }
-                        onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
-                            graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
+                    delegate: Component {
+                        GraphDelegate {
+                            rootGraphModel: graphModel
+
+                            onDescended: function (idx) {
+                                graphModel.descend(idx);
+                            }
+                            onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
+                                graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
+                            }
                         }
                     }
                 }
             }
         }
+    }
+    
+    NodeSearchDialog {
+        id: nodeSearchDialog
     }
 }
