@@ -8,7 +8,7 @@
 #include "nodes/dissolve.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr.h"
-#include "nodes/insert.h"
+#include "nodes/insertRandom.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/neutronSQ.h"
 #include "nodes/setCoordinates.h"
@@ -59,7 +59,7 @@ Node *TestGraph::appendNode(const std::string &nodeType, const std::optional<std
 // Create species insertion node chain
 Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSourceOutput,
                                         const std::vector<std::pair<std::string, int>> &species, double rho,
-                                        Units::DensityUnits rhoUnits, InsertNode::BoxActionStyle boxActionStyle)
+                                        Units::DensityUnits rhoUnits, InsertRandomNode::BoxScalingType boxScalingType)
 {
     // Add Species and Insert nodes
     for (auto &[speciesString, population] : species)
@@ -84,10 +84,10 @@ Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSour
         currentGraph_->addNode(std::move(speciesUnique), speciesNode.name());
 
         auto insertNodeName = std::format("Insert-{}", speciesNode.name());
-        EXPECT_TRUE(appendNode("Insert", insertNodeName));
+        EXPECT_TRUE(appendNode("InsertRandom", insertNodeName));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Population", population));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Density", rho));
-        EXPECT_TRUE(fetchHead()->setOption("BoxAction", boxActionStyle));
+        EXPECT_TRUE(fetchHead()->setOption("BoxScaling", boxScalingType));
         EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
         EXPECT_TRUE(currentGraph_->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
         EXPECT_TRUE(
@@ -173,7 +173,8 @@ Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pa
     EXPECT_TRUE(appendNode("Configuration", name));
 
     // Add Species and Insert nodes
-    return createAndInsertSpecies(fetchHead(), "Configuration", species, rho, rhoUnits, InsertNode::BoxActionStyle::AddVolume);
+    return createAndInsertSpecies(fetchHead(), "Configuration", species, rho, rhoUnits,
+                                  InsertRandomNode::BoxScalingType::AddVolume);
 }
 // Create basic configuration graph, returning the last node
 Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
@@ -188,7 +189,7 @@ Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pa
 
     // Add Species and Insert nodes
     return createAndInsertSpecies(fetchHead(), "Output", species, 0.1, Units::DensityUnits::AtomsPerAngstromUnits,
-                                  InsertNode::BoxActionStyle::None);
+                                  InsertRandomNode::BoxScalingType::None);
 }
 // Append a set coordinates node with a structure import input
 Node *TestGraph::appendSetCoordinates(std::string_view importNodeType, std::string filePath, std::string sourceOutpuName)

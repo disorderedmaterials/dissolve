@@ -56,25 +56,25 @@ class CIFNodeTest : public ::testing::Test
             std::unique_ptr<SpeciesNode> speciesUnique;
             speciesUnique = TestGraph::createAtomicSpecies(z);
             EXPECT_TRUE(graph->addNode(std::move(speciesUnique), name));
-            EXPECT_TRUE(graph->appendNode("Insert", std::string("Insert" + name)));
-            ASSERT_TRUE(graph->fetchHead()->setOption("BoxAction", InsertNode::BoxActionStyle::None));
+            EXPECT_TRUE(graph->appendNode("InsertRandom", std::string("InsertRandom" + name)));
+            ASSERT_TRUE(graph->fetchHead()->setOption("BoxScaling", InsertRandomNode::BoxScalingType::None));
         }
 
         // Create species from structure
         ASSERT_TRUE(graph->addEdge({"DetectMolecules", "DetectedMolecule-0", expectedSpecies.front().second, "Structure"}));
 
         // Pass configuration output from set box node to the input configuration of this insert node
-        ASSERT_TRUE(
-            graph->addEdge({"SetBox", "Output", std::string("Insert" + expectedSpecies.front().second), "Configuration"}));
+        ASSERT_TRUE(graph->addEdge(
+            {"SetBox", "Output", std::string("InsertRandom" + expectedSpecies.front().second), "Configuration"}));
 
         // Pass this species to its insert node
-        ASSERT_TRUE(graph->addEdge(
-            {expectedSpecies.front().second, "Species", std::string("Insert" + expectedSpecies.front().second), "Species"}));
+        ASSERT_TRUE(graph->addEdge({expectedSpecies.front().second, "Species",
+                                    std::string("InsertRandom" + expectedSpecies.front().second), "Species"}));
 
         // Pass the corresponding detected molecular structure to this species' insert node
         // TODO: check if we have a reliable molecule name to use here at the structure level
-        ASSERT_TRUE(graph->addEdge(
-            {"DetectMolecules", "DetectedMolecule-0", std::string("Insert" + expectedSpecies.front().second), "Instances"}));
+        ASSERT_TRUE(graph->addEdge({"DetectMolecules", "DetectedMolecule-0",
+                                    std::string("InsertRandom" + expectedSpecies.front().second), "Instances"}));
 
         for (int i = 1; i < expectedSpecies.size() - 1; i++)
         {
@@ -86,21 +86,21 @@ class CIFNodeTest : public ::testing::Test
                 {"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(i)), speciesName, "Structure"}));
 
             // Pass configuration output from preceding insert node to the input configuration of this one
-            ASSERT_TRUE(graph->addEdge({std::string("Insert" + lastSpeciesName), "Configuration",
-                                        std::string("Insert" + speciesName), "Configuration"}));
+            ASSERT_TRUE(graph->addEdge({std::string("InsertRandom" + lastSpeciesName), "Configuration",
+                                        std::string("InsertRandom" + speciesName), "Configuration"}));
 
             // Pass this species to its insert node
-            ASSERT_TRUE(graph->addEdge({speciesName, "Species", std::string("Insert" + speciesName), "Species"}));
+            ASSERT_TRUE(graph->addEdge({speciesName, "Species", std::string("InsertRandom" + speciesName), "Species"}));
 
             // Pass the corresponding detected molecular structure to this species' insert node
             // TODO: check if we have a reliable molecule name to use here at the structure level
             ASSERT_TRUE(graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(i)),
-                                        std::string("Insert" + speciesName), "Instances"}));
+                                        std::string("InsertRandom" + speciesName), "Instances"}));
         }
 
         //
-        ASSERT_TRUE(graph->addEdge({std::string("Insert" + expectedSpecies[nExpectedSpecies - 2].second), "Configuration",
-                                    std::string("Insert" + expectedSpecies.back().second), "Configuration"}));
+        ASSERT_TRUE(graph->addEdge({std::string("InsertRandom" + expectedSpecies[nExpectedSpecies - 2].second), "Configuration",
+                                    std::string("InsertRandom" + expectedSpecies.back().second), "Configuration"}));
 
         // Create species from structure
         ASSERT_TRUE(
@@ -108,18 +108,18 @@ class CIFNodeTest : public ::testing::Test
                             expectedSpecies.back().second, "Structure"}));
 
         // Pass configuration output from set box node to the input configuration of the supercell configuration
-        ASSERT_TRUE(graph->addEdge({std::string("Insert" + expectedSpecies.back().second), "Configuration",
+        ASSERT_TRUE(graph->addEdge({std::string("InsertRandom" + expectedSpecies.back().second), "Configuration",
                                     "SupercellConfiguration", "Configuration"}));
 
         // Pass this species to its insert node
-        ASSERT_TRUE(graph->addEdge(
-            {expectedSpecies.back().second, "Species", std::string("Insert" + expectedSpecies.back().second), "Species"}));
+        ASSERT_TRUE(graph->addEdge({expectedSpecies.back().second, "Species",
+                                    std::string("InsertRandom" + expectedSpecies.back().second), "Species"}));
 
         // Pass the corresponding detected molecular structure to this species' insert node
         // TODO: check if we have a reliable molecule name to use here at the structure level
         ASSERT_TRUE(
             graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(expectedSpecies.size() - 1)),
-                            std::string("Insert" + expectedSpecies.back().second), "Instances"}));
+                            std::string("InsertRandom" + expectedSpecies.back().second), "Instances"}));
     }
     // Test Box definition
     void testBox(const Configuration *cfg, const Vector3 &lengths, const Vector3 &angles, int nAtoms)

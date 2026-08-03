@@ -152,7 +152,7 @@ std::shared_ptr<Molecule> Configuration::addMolecule(const Species *sp,
     // Update the relevant Species population
     ++speciesPopulations_[sp];
 
-    // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
+    // Add Atoms from Species to the Molecule, using either species coordinates or source coordinates supplied
     auto previousNAtoms = atoms_.size();
     if (sourceCoordinates)
     {
@@ -327,6 +327,35 @@ void Configuration::scaleContents(Vector3 scaleFactors)
     }
 
     ++version_;
+}
+
+// Return the scale factors required for the addition of atoms / mass at the specified density
+Vector3 Configuration::getScaleFactors(int nAtomsToAdd, double massToAdd, double density, Units::DensityUnits densityUnits,
+                                       const std::array<bool, 3> &scaleAxes, bool isBoxDensity) const
+{
+    // Determine volume required
+    auto requiredVolume = densityUnits == Units::AtomsPerAngstromUnits
+                              ? nAtomsToAdd / density
+                              : (massToAdd / DissolveMath::Avogadro) / (density / 1.0E24);
+
+    // Get current cell volume
+    auto existingVolume = 0.0;
+    if (isBoxDensity)
+    {
+        // Current box may not have the right density, so we need to work it out again to be sure
+        if (densityUnits == Units::AtomsPerAngstromUnits)
+            existingVolume = nAtoms() / density;
+        else
+            existingVolume = atomicMass() / (density / 1.0E24);
+    }
+    else
+        existingVolume = box_.volume();
+
+    // Account for current volume of box (if it is not empty)
+    if (nAtoms() > 0)
+        requiredVolume += existingVolume;
+
+    return box_.scaleFactors(requiredVolume, scaleAxes);
 }
 
 // Energy stable flag

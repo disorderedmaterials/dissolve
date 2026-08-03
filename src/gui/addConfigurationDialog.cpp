@@ -182,7 +182,7 @@ void AddConfigurationDialog::finalise()
     if (frameworkSpecies_)
     {
         auto frameworkNode = generator.createRootNode<AddGeneratorNode>("Framework", frameworkSpecies_, 1);
-        frameworkNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::Set);
+        frameworkNode->keywords().setEnumeration("BoxScaling", AddGeneratorNode::BoxScalingType::Set);
         frameworkNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Current);
         frameworkNode->keywords().set("Rotate", false);
 
@@ -240,12 +240,12 @@ void AddConfigurationDialog::finalise()
         addNode->keywords().set("Rotate", spInfo.rotate());
         if (frameworkSpecies_)
         {
-            addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
+            addNode->keywords().setEnumeration("BoxScaling", AddGeneratorNode::BoxScalingType::None);
             addNode->keywords().setEnumeration("Positioning", AddGeneratorNode::PositioningType::Region);
             addNode->keywords().set("Region", regionNode);
         }
         else if (ui_.BoxGeometryFixedSizeRadio->isChecked())
-            addNode->keywords().setEnumeration("BoxAction", AddGeneratorNode::BoxActionStyle::None);
+            addNode->keywords().setEnumeration("BoxScaling", AddGeneratorNode::BoxScalingType::None);
     }
 }
 

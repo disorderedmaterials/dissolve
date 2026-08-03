@@ -86,9 +86,9 @@ Pane {
                     onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "GR", "New Node")
                 }
                 MenuItem {
-                    text: "Insert"
+                    text: "InsertRandom"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Insert", "New Node")
+                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "InsertRandom", "New Node")
                 }
                 MenuItem {
                     text: "Molecular Dynamics"

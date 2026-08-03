@@ -9,7 +9,7 @@
 #include "nodes/configuration.h"
 #include "nodes/dissolve.h"
 #include "nodes/importDLPOLYStructure.h"
-#include "nodes/insert.h"
+#include "nodes/insertRandom.h"
 #include "nodes/setCoordinates.h"
 #include "nodes/species.h"
 #include <string>
@@ -59,22 +59,22 @@ template <SystemType systemType> class GraphProblem : public DissolveGraph
         }
 
         // Add an Insert node for the Species
-        auto *insertNode = dynamic_cast<InsertNode *>(createNode("Insert"));
+        auto *insertNode = dynamic_cast<InsertRandomNode *>(createNode("InsertRandom"));
         insertNode->setInput<Number>("Population", speciesPopulation);
         insertNode->setInput<Number>("Density", 0.1);
-        addEdge({"Species", "Species", "Insert", "Species"});
+        addEdge({"Species", "Species", "InsertRandom", "Species"});
 
         // Create a configuration node
         auto *configurationNode = dynamic_cast<ConfigurationNode *>(createNode("Configuration"));
         configuration_ = &configurationNode->configuration();
-        addEdge({"Configuration", "Configuration", "Insert", "Configuration"});
+        addEdge({"Configuration", "Configuration", "InsertRandom", "Configuration"});
 
         // Add SetCoordinates and ImportDLPOLYStructure
         auto *setCoordinatesNode = dynamic_cast<SetCoordinatesNode *>(createNode("SetCoordinates"));
         auto *importStructureNode = dynamic_cast<ImportDLPOLYStructureNode *>(createNode("ImportDLPOLYStructure"));
         importStructureNode->setOption<std::string>("FilePath", referenceCoordinates);
         addEdge({"ImportDLPOLYStructure", "Structure", "SetCoordinates", "Structure"});
-        addEdge({"Insert", "Configuration", "SetCoordinates", "Configuration"});
+        addEdge({"InsertRandom", "Configuration", "SetCoordinates", "Configuration"});
 
         // Adjust pair potential properties
         PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme::NoShortRangeTruncation);
