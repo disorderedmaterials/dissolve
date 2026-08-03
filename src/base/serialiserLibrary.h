@@ -42,11 +42,13 @@ template <Serialisable T> SerialisedValue ser(const T &a)
 // A helper function to add the elements of a map to a node under a name
 template <typename K, typename V> void map(const std::map<K, V> &map, std::string name, SerialisedValue &node)
 {
+    if (map.empty())
+        return;
+
     SerialisedValue result;
     for (auto &[key, value] : map)
         serialiseOnto(value, std::format("{}", key), result);
-    if (!map.empty())
-        node[name] = result;
+    node[name] = result;
 }
 
 // A helper function to add elements of a vector to a node under the named heading
