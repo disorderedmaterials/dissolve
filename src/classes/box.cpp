@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/box.h"
+#include "base/serialiser.h"
 #include "classes/cell.h"
 #include "math/mathFunc.h"
 

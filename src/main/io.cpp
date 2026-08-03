@@ -11,7 +11,6 @@
 #include "main/version.h"
 #include "nodes/dissolve.h"
 #include <fstream>
-#include <toml/parser.hpp>
 
 // Serialise pair potential
 SerialisedValue Dissolve::serialisePairPotentials() const
