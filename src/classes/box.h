@@ -8,13 +8,6 @@
 #include "math/matrix3.h"
 #include "math/vector3.h"
 
-#include <map>
-#include <vector>
-
-// Forward Declarations
-class Cell;
-class Data1D;
-
 // Basic Box Definition
 class Box : public Serialisable
 {
@@ -32,7 +25,9 @@ class Box : public Serialisable
     };
     // Return enum options for BoxType
     static EnumOptions<BoxType> boxTypes();
-    Box(Box::BoxType boxType, const Vector3 lengths, const Vector3 angles);
+    Box() = default;
+    Box(const Vector3 &lengths, const Vector3 &angles = {90.0, 90.0, 90.0});
+    Box(const Matrix3 &axes);
     Box(const Box &other);
     ~Box() = default;
     Box &operator=(const Box &source) = default;
@@ -42,15 +37,13 @@ class Box : public Serialisable
      */
     protected:
     // Box type
-    BoxType type_;
+    BoxType type_{BoxType::None};
     // Box lengths
     double a_, b_, c_;
     // Reciprocal Box lengths
     double ra_, rb_, rc_;
     // Box angles
     double alpha_, beta_, gamma_;
-    // Flags stating periodicity along x, y, and z
-    std::array<bool, 3> periodic_;
     // Axes
     Matrix3 axes_;
     // Axes as simple array
@@ -62,15 +55,19 @@ class Box : public Serialisable
     // Reciprocal axes
     Matrix3 reciprocalAxes_;
     // Volume
-    double volume_;
+    double volume_{0.0};
     // Reciprocal volume
-    double reciprocalVolume_;
+    double reciprocalVolume_{0.0};
+
+    private:
+    // Initialise the box with the supplied lengths and angles
+    void initialise(const Vector3 &lengths, const Vector3 &angles);
 
     public:
     // Return Box type
     BoxType type() const;
     // Determine Box type
-    static std::optional<BoxType> type(Vector3 lengths, Vector3 angles);
+    static BoxType type(const Vector3 &lengths, const Vector3 &angles);
     // Return volume
     double volume() const;
     // Return axis lengths
@@ -143,17 +140,6 @@ class Box : public Serialisable
      * Utility Routines
      */
     public:
-    // Generate a suitable Box given the supplied relative lengths, angles, and volume
-    static Box generate(Vector3 lengths, std::optional<Vector3> angles = {}, bool nonPeriodic = false);
-    static Box generate(Vector3 lengths, Vector3 angles);
-    // Generate Boxes of a given type
-    static Box none();
-    static Box cubic(double length);
-    static Box orthorhombic(const Vector3 &lengths);
-    static Box monoclinicAlpha(const Vector3 &lengths, double alpha);
-    static Box monoclinicBeta(const Vector3 &lengths, double beta);
-    static Box monoclinicGamma(const Vector3 &lengths, double gamma);
-    static Box triclinic(const Vector3 &lengths, const Vector3 &angles);
     // Return radius of largest possible inscribed sphere for box
     double inscribedSphereRadius() const;
     // Return random coordinate inside Box

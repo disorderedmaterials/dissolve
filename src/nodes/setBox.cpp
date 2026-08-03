@@ -44,9 +44,9 @@ NodeConstants::ProcessResult SetBoxNode::process()
             if constexpr (std::is_same_v<T, std::monostate>)
                 return NodeConstants::ProcessResult::Failed;
             else if constexpr (std::is_same_v<T, Configuration *>)
-                arg->createBoxAndCells(lengths_, angles_, nonPeriodic_);
+                arg->setBox(Box(lengths_, angles_));
             else if constexpr (std::is_same_v<T, Structure>)
-                arg.createBox(lengths_, angles_, nonPeriodic_);
+                arg.box() = Box(lengths_, angles_);
             else
                 static_assert(false, "Visitor doesn't cater for all possible types.");
 

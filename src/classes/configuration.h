@@ -150,14 +150,8 @@ class Configuration : public Serialisable
     CellArray cells_;
 
     public:
-    // Create Box definition with specified lengths and angles
-    void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
-    // Create Box definition from axes matrix
-    void createBox(const Matrix3 axes);
-    // Create Box definition with specified lengths and angles, and initialise cell array
-    void createBoxAndCells(const Vector3 lengths, const Vector3 angles, bool nonPeriodic);
-    // Create Box definition from axes matrix, and initialise cell array
-    void createBoxAndCells(const Matrix3 axes);
+    // Set new box definition and recalculate cells
+    void setBox(const Box &box);
     // Update cell array, and reassign atoms to cells
     void updateCells();
     // Return Box

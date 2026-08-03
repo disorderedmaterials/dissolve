@@ -53,7 +53,7 @@ NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
     auto &[nMols, boxSize, temperature] = std::get<0>(*head);
     if (boxSize != -1.0)
     {
-        structure_.createBox({boxSize, boxSize, boxSize}, {90.0, 90.0, 90.0});
+        structure_.box() = Box({boxSize, boxSize, boxSize}, {90.0, 90.0, 90.0});
     }
     else
     {
@@ -66,7 +66,7 @@ NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
         if (!a)
             return NodeConstants::ProcessResult::Failed;
         auto angles = std::get<0>(*a);
-        structure_.createBox(lengths, angles);
+        structure_.box() = Box(lengths, angles);
     }
 
     // 2 : step sizes etc. **IGNORED**

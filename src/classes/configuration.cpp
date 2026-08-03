@@ -9,7 +9,7 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 
-Configuration::Configuration() : box_(Box::BoxType::Cubic, {1.0, 1.0, 1.0}, {90.0, 90.0, 90.0}) {}
+Configuration::Configuration() : box_({1.0, 1.0, 1.0}) {}
 
 Configuration::~Configuration() { clear(); }
 

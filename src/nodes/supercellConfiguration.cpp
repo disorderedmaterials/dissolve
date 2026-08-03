@@ -41,7 +41,7 @@ NodeConstants::ProcessResult SupercellConfigurationNode::process()
     // Set up configuration
     auto supercellLengths = box.axisLengths();
     supercellLengths.multiply(supercellRepeat_.x, supercellRepeat_.y, supercellRepeat_.z);
-    supercellConfiguration_.createBoxAndCells(supercellLengths, box.axisAngles(), false);
+    supercellConfiguration_.setBox(Box(supercellLengths, box.axisAngles()));
 
     // Create images of all molecular unit cell species
     for (auto &mol : targetConfiguration_->molecules())

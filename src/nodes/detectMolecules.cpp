@@ -206,7 +206,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
 
             // Create a provisional structure for the current fragment, using indices in the order matched by NETA
             auto detectedStructure = copyAtomsAndBonds(netaOrdering);
-            detectedStructure.createBox(inputStructure_.box().axes());
+            detectedStructure.box() = Box(inputStructure_.box().axes());
 
             // Find, copy as instances, and then erase all fragments that match the current NETA
             fragments.erase(std::remove_if(fragments.begin(), fragments.end(),

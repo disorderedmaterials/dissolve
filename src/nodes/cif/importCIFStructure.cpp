@@ -430,7 +430,7 @@ bool ImportCIFStructureNode::createStructure()
         return false;
 
     // Configuration
-    structure_.createBox(cellLengths.value(), cellAngles.value(), false);
+    structure_.box() = Box(cellLengths.value(), cellAngles.value());
 
     const auto &box = structure_.box();
 

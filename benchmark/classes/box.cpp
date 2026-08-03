@@ -11,29 +11,19 @@ namespace Benchmarks
 {
 Box createTestBox(Box::BoxType boxType)
 {
-    if (boxType == Box::BoxType::Cubic)
+    switch (boxType)
     {
-        double lengths = 1.00;
-        return Box::cubic(lengths);
+        case (Box::BoxType::Cubic):
+            return Box({1.0, 1.0, 1.0});
+        case (Box::BoxType::Orthorhombic):
+            return Box({1.0, 2.0, 3.0});
+        case (Box::BoxType::MonoclinicAlpha):
+            return Box({1.0, 1.0, 1.0}, {45.0, 90.0, 90.0});
+        case (Box::BoxType::Triclinic):
+            return Box({1.0, 1.0, 1.0}, {45.0, 60.0, 80.0});
+        default:
+            throw std::runtime_error("Invalid box type");
     }
-    else if (boxType == Box::BoxType::Orthorhombic)
-    {
-        Vector3 lengths(1.00, 1.00, 1.00);
-        return Box::orthorhombic(lengths);
-    }
-    else if (boxType == Box::BoxType::MonoclinicAlpha)
-    {
-        Vector3 lengths(1.00, 1.00, 1.00);
-        return Box::monoclinicAlpha(lengths, 45);
-    }
-    else if (boxType == Box::BoxType::Triclinic)
-    {
-        Vector3 lengths(1.00, 1.00, 1.00);
-        Vector3 angles(45, 45, 45);
-        return Box::triclinic(lengths, angles);
-    }
-    else
-        throw std::runtime_error("Invalid box type");
 }
 
 static void BM_Box_MinimumImage(benchmark::State &state, Box::BoxType t)

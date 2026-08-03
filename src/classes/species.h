@@ -210,11 +210,10 @@ class Species : public Serialisable
 
     public:
     // Return periodic box
+    Box &box();
     const Box &box() const;
     // Remove Box definition and revert to single image
     void removeBox();
-    // Create Box definition with specified lengths and angles
-    void createBox(const Vector3 lengths, const Vector3 angles, bool nonPeriodic = false);
 
     /*
      * Isotopologues
