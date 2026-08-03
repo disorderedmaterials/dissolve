@@ -20,8 +20,6 @@ concept SerialisablePointer = requires(T a, std::string tag, SerialisedValue tar
 template <typename T>
 concept SerialisableClass = requires(T a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); };
 
-// template <typename T>
-// concept SerialisableFromInto = requires(T a,
 template <SerialisablePointer T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
 {
     a->serialise(tag, target);
@@ -181,9 +179,6 @@ namespace Deserialisable
 {
 template <typename T>
 concept DeserialisibleClass = requires(T a, SerialisedValue &node) { a.deserialise(node); };
-
-// template <typename T>
-// concept DeserialisableFromInto = requires(T a,
 
 template <DeserialisibleClass T> void deserialiseOnto(T &a, const SerialisedValue &target) { a.deserialise(target); }
 
