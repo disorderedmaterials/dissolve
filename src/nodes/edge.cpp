@@ -197,10 +197,10 @@ void EdgeDefinition::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void EdgeDefinition::deserialise(const SerialisedValue &node)
 {
-    sourceNode = Deserialisable::de<std::string>(node.at("sourceNode"));
-    sourceOutput = Deserialisable::de<std::string>(node.at("sourceOutput"));
-    targetNode = Deserialisable::de<std::string>(node.at("targetNode"));
-    targetInput = Deserialisable::de<std::string>(node.at("targetInput"));
+    sourceNode = Deserialisable::deser<std::string>(node.at("sourceNode"));
+    sourceOutput = Deserialisable::deser<std::string>(node.at("sourceOutput"));
+    targetNode = Deserialisable::deser<std::string>(node.at("targetNode"));
+    targetInput = Deserialisable::deser<std::string>(node.at("targetInput"));
 }
 
 // Pull the data from the source node to the target, returning a ProcessResult

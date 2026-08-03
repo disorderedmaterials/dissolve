@@ -481,8 +481,8 @@ void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void PairPotential::deserialise(const SerialisedValue &node)
 {
-    nameI_ = Deserialisable::de<std::string>(node.at("nameI"));
-    nameJ_ = Deserialisable::de<std::string>(node.at("nameJ"));
+    nameI_ = Deserialisable::deser<std::string>(node.at("nameI"));
+    nameJ_ = Deserialisable::deser<std::string>(node.at("nameJ"));
 
     Functions1D::Form form;
     Deserialisable::optionalOn(node, "form", [&](const auto node)

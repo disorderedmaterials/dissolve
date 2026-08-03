@@ -351,8 +351,8 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Node::deserialise(const SerialisedValue &node)
 {
-    x = Deserialisable::de<int>(node.at("x"));
-    y = Deserialisable::de<int>(node.at("y"));
+    x = Deserialisable::deser<int>(node.at("x"));
+    y = Deserialisable::deser<int>(node.at("y"));
     Deserialisable::map(node, "inputs",
                         [this](const auto &k, const auto &v)
                         {

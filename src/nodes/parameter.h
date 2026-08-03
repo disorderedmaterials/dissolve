@@ -608,26 +608,26 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = Deserialisable::de<double>(node.at("data"));
+                Parameter<DataClass>::data_ = Deserialisable::deser<double>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = Deserialisable::de<Number>(node.at("data"));
+                Parameter<DataClass>::data_ = Deserialisable::deser<Number>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<Data1D>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = Deserialisable::de<Data1D>(node.at("data"));
+                Parameter<DataClass>::data_ = Deserialisable::deser<Data1D>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
         else if constexpr (Deserialisable::Deserialisible<DataClass>)
-            Parameter<DataClass>::data_ = Deserialisable::de<DataClass>(node.at("data"));
+            Parameter<DataClass>::data_ = Deserialisable::deser<DataClass>(node.at("data"));
         else
             throw(std::runtime_error(std::format("Cannot deserialise type {}", typeid(DataClass).name())));
     }

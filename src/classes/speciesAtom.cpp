@@ -174,17 +174,17 @@ void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 }
 void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
-    index_ = Deserialisable::de<int>(node.at("index"));
+    index_ = Deserialisable::deser<int>(node.at("index"));
 
-    set(Deserialisable::de<Elements::Element>(node.at("z")), Deserialisable::de<Vector3>(node.at("r")),
-        Deserialisable::de_or<double>(node, "q", 0));
+    set(Deserialisable::deser<Elements::Element>(node.at("z")), Deserialisable::deser<Vector3>(node.at("r")),
+        Deserialisable::deser_or<double>(node, "q", 0));
 
     Deserialisable::optionalOn(node, "type",
                                [&](const auto innerNode)
                                {
                                    if (Z_ == Elements::Unknown)
                                        return;
-                                   std::string name = Deserialisable::de<std::string>(innerNode);
+                                   std::string name = Deserialisable::deser<std::string>(innerNode);
                                    atomType_ = parent_->findAtomType(name);
                                    if (atomType_ == nullptr)
                                        atomType_ = parent_->addAtomType(Z_, name);

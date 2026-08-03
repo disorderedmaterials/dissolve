@@ -58,8 +58,8 @@ void Range::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Range::deserialise(const SerialisedValue &node)
 {
-    minimum_ = Deserialisable::de<double>(node.at("min"));
-    maximum_ = Deserialisable::de<double>(node.at("max"));
+    minimum_ = Deserialisable::deser<double>(node.at("min"));
+    maximum_ = Deserialisable::deser<double>(node.at("max"));
 }
 
 // Equality

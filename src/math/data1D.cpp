@@ -428,7 +428,7 @@ void Data1D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data1D::deserialise(const SerialisedValue &node)
 {
-    tag_ = Deserialisable::de<std::string>(node.at("tag"));
+    tag_ = Deserialisable::deser<std::string>(node.at("tag"));
     x_ = Deserialisable::vector<double>(node.at("x"));
     values_ = Deserialisable::vector<double>(node.at("y"));
 

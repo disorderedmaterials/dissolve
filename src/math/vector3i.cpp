@@ -358,7 +358,7 @@ void Vector3i::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Vector3i::deserialise(const SerialisedValue &node)
 {
-    x = Deserialisable::de<double>(node[0]);
-    y = Deserialisable::de<double>(node[1]);
-    z = Deserialisable::de<double>(node[2]);
+    x = Deserialisable::deser<double>(node[0]);
+    y = Deserialisable::deser<double>(node[1]);
+    z = Deserialisable::deser<double>(node[2]);
 }

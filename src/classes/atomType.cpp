@@ -88,9 +88,9 @@ void AtomType::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void AtomType::deserialise(SerialisedValue node)
 {
-    Z_ = Deserialisable::de<Elements::Element>(node.at("z"));
-    charge_ = Deserialisable::de_or<double>(node, "charge", 0.0);
-    exchangeable_ = Deserialisable::de_or<bool>(node, "exchangeable", false);
+    Z_ = Deserialisable::deser<Elements::Element>(node.at("z"));
+    charge_ = Deserialisable::deser_or<double>(node, "charge", 0.0);
+    exchangeable_ = Deserialisable::deser_or<bool>(node, "exchangeable", false);
 
     Deserialisable::optionalOn(
         node, "form", [this](const auto node)

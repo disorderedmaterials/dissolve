@@ -233,13 +233,11 @@ void Histogram2D::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    initialise(Deserialisable::de<double>(node.at("xMinimum")), Deserialisable::de<double>(node.at("xMaximum")),
-               Deserialisable::de<double>(node.at("yBinWidth")), Deserialisable::de<double>(node.at("yMinimum")),
-               Deserialisable::de<double>(node.at("yMaximum")), Deserialisable::de<double>(node.at("yBinWidth")));
-
-    nBinned_ = Deserialisable::de<long>(node.at("nBinned"));
-    nMissed_ = Deserialisable::de<long>(node.at("nMissed"));
-
+    initialise(Deserialisable::deser<double>(node.at("xMinimum")), Deserialisable::deser<double>(node.at("xMaximum")),
+               Deserialisable::deser<double>(node.at("yBinWidth")), Deserialisable ::deser<double>(node.at("yMinimum")),
+               Deserialisable::deser<double>(node.at("yMaximum")), Deserialisable::deser<double>(node.at("yBinWidth")));
+    nBinned_ = Deserialisable::deser<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::deser<long>(node.at("nMissed"));
     averages_.linearArray() = Deserialisable::vector<SampledDouble>(node.at("averages"));
 
     updateAccumulatedData();

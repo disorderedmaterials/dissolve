@@ -321,8 +321,8 @@ void Structure::deserialise(const SerialisedValue &node)
     Deserialisable::vector(node, "bonds",
                            [this](const SerialisedValue &bond)
                            {
-                               auto &i = atoms_.at(Deserialisable::de<int>(bond.at("i")));
-                               auto &j = atoms_.at(Deserialisable::de<int>(bond.at("j")));
+                               auto &i = atoms_.at(Deserialisable::deser<int>(bond.at("i")));
+                               auto &j = atoms_.at(Deserialisable::deser<int>(bond.at("j")));
                                bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i.get(), j.get()));
                            });
 }

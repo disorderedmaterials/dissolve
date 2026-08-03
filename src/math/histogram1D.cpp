@@ -225,11 +225,11 @@ void Histogram1D::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    initialise(Deserialisable::de<double>(node.at("minimum")), Deserialisable::de<double>(node.at("maximum")),
-               Deserialisable::de<double>(node.at("binWidth")));
+    initialise(Deserialisable::deser<double>(node.at("minimum")), Deserialisable::deser<double>(node.at("maximum")),
+               Deserialisable::deser<double>(node.at("binWidth")));
 
-    nBinned_ = Deserialisable::de<long>(node.at("nBinned"));
-    nMissed_ = Deserialisable::de<long>(node.at("nMissed"));
+    nBinned_ = Deserialisable::deser<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::deser<long>(node.at("nMissed"));
 
     averages_ = Deserialisable::vector<SampledDouble>(node.at("averages"));
 

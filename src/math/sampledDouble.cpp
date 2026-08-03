@@ -150,7 +150,7 @@ void SampledDouble::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SampledDouble::deserialise(const SerialisedValue &value)
 {
-    mean_ = Deserialisable::de<double>(value.at("mean"));
-    count_ = Deserialisable::de<int>(value.at("count"));
-    m2_ = Deserialisable::de<double>(value.at("m2"));
+    mean_ = Deserialisable::deser<double>(value.at("mean"));
+    count_ = Deserialisable::deser<int>(value.at("count"));
+    m2_ = Deserialisable::deser<double>(value.at("m2"));
 };

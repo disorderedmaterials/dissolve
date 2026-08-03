@@ -532,7 +532,7 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void SpeciesSite::deserialise(const SerialisedValue &node)
 {
-    type_ = siteTypes().deserialise(Deserialisable::de_or(node, "type", std::string("static")));
+    type_ = siteTypes().deserialise(Deserialisable::deser_or(node, "type", std::string("static")));
 
     switch (type_)
     {
@@ -550,15 +550,15 @@ void SpeciesSite::deserialise(const SerialisedValue &node)
 
             break;
         case SiteType::Fragment:
-            fragment_.create(Deserialisable::de<std::string>(node.at("description")));
+            fragment_.create(Deserialisable::deser<std::string>(node.at("description")));
             break;
         case SiteType::Dynamic:
             Deserialisable::vector(node, "element", [this](const auto &element)
-                                   { addDynamicElement(Deserialisable::de<Elements::Element>(element)); });
+                                   { addDynamicElement(Deserialisable::deser<Elements::Element>(element)); });
             break;
     }
 
-    originMassWeighted_ = Deserialisable::de_or<bool>(node, "originMassWeighted", false);
+    originMassWeighted_ = Deserialisable::deser_or<bool>(node, "originMassWeighted", false);
 
     generateInstances();
 }

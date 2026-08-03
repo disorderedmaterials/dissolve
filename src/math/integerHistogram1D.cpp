@@ -174,10 +174,9 @@ void IntegerHistogram1D::deserialise(const SerialisedValue &node)
     Deserialisable::getIfPresent<int>(node, "minimum", minimum_);
     Deserialisable::getIfPresent<int>(node, "maximum", maximum_);
 
-    nBinned_ = Deserialisable::de<long>(node.at("nBinned"));
-    nMissed_ = Deserialisable::de<long>(node.at("nMissed"));
-    zeroCounter_ = Deserialisable::de<SampledDouble>(node.at("nMissed"));
-
+    nBinned_ = Deserialisable::deser<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::deser<long>(node.at("nMissed"));
+    zeroCounter_ = Deserialisable::deser<SampledDouble>(node.at("nMissed"));
     Deserialisable::map(node, "averages",
                         [&](const auto &key, const auto &value) { averages_[std::stoi(key)].deserialise(value); });
 

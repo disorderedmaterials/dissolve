@@ -245,6 +245,6 @@ namespace Deserialisable
 {
 void deserialiseOnto(Elements::Element &elem, const SerialisedValue &node)
 {
-    elem = Elements::element(Deserialisable::de<std::string>(node));
+    elem = Elements::element(Deserialisable::deser<std::string>(node));
 }
 }; // namespace Deserialisable

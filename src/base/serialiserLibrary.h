@@ -187,14 +187,14 @@ template <DeserialisibleClass T> void deserialiseOnto(T &a, const SerialisedValu
 template <typename T>
 concept Deserialisible = requires(T &a, const SerialisedValue &target) { deserialiseOnto(a, target); };
 
-template <Deserialisible T> T de(const SerialisedValue &target)
+template <Deserialisible T> T deser(const SerialisedValue &target)
 {
     T a;
     deserialiseOnto(a, target);
     return a;
 }
 
-template <Deserialisible T> T de_or(const SerialisedValue &target, std::string tag, T def)
+template <Deserialisible T> T deser_or(const SerialisedValue &target, std::string tag, T def)
 {
     T a;
     if (target.contains(tag))
@@ -248,7 +248,7 @@ template <Deserialisible T> std::vector<T> vector(const SerialisedValue &node)
 {
     std::vector<T> result;
     for (auto &x : node.as_array())
-        result.push_back(de<T>(x));
+        result.push_back(deser<T>(x));
     return result;
 }
 

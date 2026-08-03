@@ -68,6 +68,6 @@ void ExpressionVariable::serialise(std::string tag, SerialisedValue &target) con
 // Read values from a serialisable value
 void ExpressionVariable::deserialise(const SerialisedValue &node)
 {
-    value_ = Deserialisable::de<ExpressionValue>(node.at("value"));
-    setBaseName(Deserialisable::de<std::string>(node.at("name")));
+    value_ = Deserialisable::deser<ExpressionValue>(node.at("value"));
+    setBaseName(Deserialisable::deser<std::string>(node.at("name")));
 }

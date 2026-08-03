@@ -274,12 +274,12 @@ void Graph::deserialise(const SerialisedValue &node)
     Deserialisable::map(node, "nodes",
                         [this](const auto name, const auto &value)
                         {
-                            std::string nodeType = Deserialisable::de<std::string>(value.at("type"));
+                            std::string nodeType = Deserialisable::deser<std::string>(value.at("type"));
                             auto child = createNode(nodeType, name);
 
                             child->deserialise(value);
                         });
-    Deserialisable::vector(node, "edges", [this](const auto &value) { addEdge(Deserialisable::de<EdgeDefinition>(value)); });
+    Deserialisable::vector(node, "edges", [this](const auto &value) { addEdge(Deserialisable::deser<EdgeDefinition>(value)); });
 }
 
 /*

@@ -196,7 +196,7 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node)
 {
-    setName(Deserialisable::de<std::string>(node.at("name")));
+    setName(Deserialisable::deser<std::string>(node.at("name")));
 
     Deserialisable::map(node, "atomTypes", [this](const std::string &name, const auto &data)
                         { atomTypes_.emplace_back(std::make_shared<AtomType>(name))->deserialise(data); });
@@ -209,8 +209,8 @@ void Species::deserialise(const SerialisedValue &node)
                            [this](const SerialisedValue &bond)
                            {
                                bonds_
-                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(bond.at("i"))),
-                                                 &atoms_.at(Deserialisable::de<int>(bond.at("j"))))
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(bond.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(bond.at("j"))))
                                    .deserialise(bond);
                            });
 
@@ -220,9 +220,9 @@ void Species::deserialise(const SerialisedValue &node)
                            [this](const SerialisedValue &angle)
                            {
                                angles_
-                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(angle.at("i"))),
-                                                 &atoms_.at(Deserialisable::de<int>(angle.at("j"))),
-                                                 &atoms_.at(Deserialisable::de<int>(angle.at("k"))))
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(angle.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(angle.at("j"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(angle.at("k"))))
                                    .deserialise(angle);
                            });
 
@@ -232,10 +232,10 @@ void Species::deserialise(const SerialisedValue &node)
                            [this](const SerialisedValue &improper)
                            {
                                impropers_
-                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(improper.at("i"))),
-                                                 &atoms_.at(Deserialisable::de<int>(improper.at("j"))),
-                                                 &atoms_.at(Deserialisable::de<int>(improper.at("k"))),
-                                                 &atoms_.at(Deserialisable::de<int>(improper.at("l"))))
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(improper.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(improper.at("j"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(improper.at("k"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(improper.at("l"))))
                                    .deserialise(improper);
                            });
 
@@ -245,10 +245,10 @@ void Species::deserialise(const SerialisedValue &node)
                            [this](const SerialisedValue &torsion)
                            {
                                torsions_
-                                   .emplace_back(this, &atoms_.at(Deserialisable::de<int>(torsion.at("i"))),
-                                                 &atoms_.at(Deserialisable::de<int>(torsion.at("j"))),
-                                                 &atoms_.at(Deserialisable::de<int>(torsion.at("k"))),
-                                                 &atoms_.at(Deserialisable::de<int>(torsion.at("l"))))
+                                   .emplace_back(this, &atoms_.at(Deserialisable::deser<int>(torsion.at("i"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(torsion.at("j"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(torsion.at("k"))),
+                                                 &atoms_.at(Deserialisable::deser<int>(torsion.at("l"))))
                                    .deserialise(torsion);
                            });
 

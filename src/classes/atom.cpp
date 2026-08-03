@@ -145,8 +145,8 @@ void AtomBase::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void AtomBase::deserialise(const SerialisedValue &node)
 {
-    index_ = Deserialisable::de<int>(node.at("index"));
+    index_ = Deserialisable::deser<int>(node.at("index"));
 
-    set(Deserialisable::de<Elements::Element>(node.at("z")), Deserialisable::de<Vector3>(node.at("r")),
-        Deserialisable::de_or<double>(node, "q", 0));
+    set(Deserialisable::deser<Elements::Element>(node.at("z")), Deserialisable::deser<Vector3>(node.at("r")),
+        Deserialisable::deser_or<double>(node, "q", 0));
 }

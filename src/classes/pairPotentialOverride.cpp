@@ -73,8 +73,8 @@ void PairPotentialOverride::serialise(std::string tag, SerialisedValue &target) 
 // Read values from a serialisable value
 void PairPotentialOverride::deserialise(const SerialisedValue &node)
 {
-    matchI_ = Deserialisable::de<std::string>(node.at("matchI"));
-    matchJ_ = Deserialisable::de<std::string>(node.at("matchJ"));
+    matchI_ = Deserialisable::deser<std::string>(node.at("matchI"));
+    matchJ_ = Deserialisable::deser<std::string>(node.at("matchJ"));
 
     Deserialisable::optionalOn(node, "type", [this](const auto node)
                                { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
