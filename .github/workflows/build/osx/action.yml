@@ -36,8 +36,9 @@ runs:
     run: |
       set -ex
       brew update-reset
-      brew install gsl
+      brew install gsl cmake3
       brew uninstall --ignore-dependencies freetype
+      cmake --version
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
