@@ -3,7 +3,7 @@
 
 #include "base/messenger.h"
 #include "gui2/models/dissolveModel.h"
-#include "gui2/models/nodeGraph/nodeRegistryModel.h"
+#include "gui2/models/nodeRegistryModel.h"
 #include "gui2/models/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"

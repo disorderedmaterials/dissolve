@@ -3,7 +3,7 @@
 
 /*
 #include "gui2/models/types.h"
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
@@ -18,8 +18,8 @@ void Types::registerDissolveQmlTypes()
 #include "gui2/models/legacy/configurationModel.h"
 #include "gui2/models/legacy/simpleForcefieldModel.h"
 #include "gui2/models/legacy/speciesModel.h"
-#include "gui2/models/nodeGraph/graphModel.h"
-#include "gui2/models/nodeGraph/nodeRegistrySortFilterModel.h"
+#include "gui2/models/graphModel.h"
+#include "gui2/models/nodeRegistrySortFilterModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 

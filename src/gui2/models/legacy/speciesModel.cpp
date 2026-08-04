@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/speciesModel.h"
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphModel.h"
 #include "nodes/species.h"
 #include "speciesAtomModel.h"
 #include <memory>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui2/models/nodeGraph/enumOptionsModel.h"
+#include "gui2/models/enumOptionsModel.h"
 #include "base/enumOptionsBase.h"
 
 // Set source AtomType data

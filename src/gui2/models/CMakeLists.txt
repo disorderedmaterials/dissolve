@@ -1,26 +1,26 @@
 # NodeGraph ###
 set(nodeGraphModels_MOC_HDRS
-    nodeGraph/enumOptionsModel.h
-    nodeGraph/enumRegistry.h
-    nodeGraph/exampleGraphModel.h
-    nodeGraph/graphModelBase.h
-    nodeGraph/graphEdgeModel.h
-    nodeGraph/graphNodeModel.h
-    nodeGraph/generatorGraphModel.h
-    nodeGraph/nodeWrapper.h
-    nodeGraph/nodeRegistryModel.h
-    nodeGraph/nodeRegistrySortFilterModel.h
+    enumOptionsModel.h
+    enumRegistry.h
+    exampleGraphModel.h
+    graphModelBase.h
+    graphEdgeModel.h
+    graphNodeModel.h
+    generatorGraphModel.h
+    nodeWrapper.h
+    nodeRegistryModel.h
+    nodeRegistrySortFilterModel.h
 )
 
 set(nodeGraphModel_SRCS
-    nodeGraph/enumOptionsModel.cpp
-    nodeGraph/enumRegistry.cpp
-    nodeGraph/graphEdgeModel.cpp
-    nodeGraph/graphModel.cpp
-    nodeGraph/graphNodeModel.cpp
-    nodeGraph/parameterModel.cpp
-    nodeGraph/nodeRegistryModel.cpp
-    nodeGraph/nodeRegistrySortFilterModel.cpp
+    enumOptionsModel.cpp
+    enumRegistry.cpp
+    graphEdgeModel.cpp
+    graphModel.cpp
+    graphNodeModel.cpp
+    parameterModel.cpp
+    nodeRegistryModel.cpp
+    nodeRegistrySortFilterModel.cpp
 )
 
 # QML Types ###

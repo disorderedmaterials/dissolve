@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui2/models/nodeGraph/graphEdgeModel.h"
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphEdgeModel.h"
+#include "gui2/models/graphModel.h"
 #include "nodes/edge.h"
 #include <qnamespace.h>
 

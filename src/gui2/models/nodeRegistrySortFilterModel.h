@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui2/models/nodeGraph/nodeRegistryModel.h"
+#include "gui2/models/nodeRegistryModel.h"
 #include <QObject>
 #include <QSortFilterProxyModel>
 

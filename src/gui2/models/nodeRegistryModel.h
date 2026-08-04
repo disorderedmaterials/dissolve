@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphModel.h"
 #include "nodes/registry.h"
 #include <QAbstractListModel>
 #include <QModelIndex>

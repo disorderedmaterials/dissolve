@@ -3,8 +3,8 @@
 
 #pragma once
 
-// #include "gui2/models/nodeGraph/parameterModel.h"
-#include "gui2/models/nodeGraph/parameterModel.h"
+// #include "gui2/models/parameterModel.h"
+#include "gui2/models/parameterModel.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
 #include <QPointF>
