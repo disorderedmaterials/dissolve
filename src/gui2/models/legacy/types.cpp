@@ -6,7 +6,7 @@
 //#include "gui2/models/legacy/configurationModel.h"
 //#include "gui2/models/legacy/dissolveModel.h"
 //#include "gui2/models/legacy/modifyChargesModel.h"
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphModel.h"
 //#include "gui2/models/legacy/simpleForcefieldModel.h"
 //#include "gui2/models/legacy/sortFilterProxy.h"
 //#include "gui2/models/legacy/speciesModel.h"

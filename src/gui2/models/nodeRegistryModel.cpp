@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "gui2/models/nodeGraph/nodeRegistryModel.h"
+#include "gui2/models/nodeRegistryModel.h"
 #include "nodes/dissolve.h"
 
 NodeRegistryModel::NodeRegistryModel(QObject *parent)
