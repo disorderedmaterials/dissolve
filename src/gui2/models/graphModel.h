@@ -4,8 +4,8 @@
 #pragma once
 
 #include "graphEdgeModel.h"
-#include "gui2/models/nodeGraph/graphNodeModel.h"
-#include "gui2/models/nodeGraph/nodeWrapper.h"
+#include "gui2/models/graphNodeModel.h"
+#include "gui2/models/nodeWrapper.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include <QAbstractListModel>

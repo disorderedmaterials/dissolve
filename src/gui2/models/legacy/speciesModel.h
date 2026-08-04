@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphModel.h"
 #include "gui2/models/legacy/speciesAngleModel.h"
 #include "gui2/models/legacy/speciesAtomModel.h"
 #include "gui2/models/legacy/speciesBondModel.h"
