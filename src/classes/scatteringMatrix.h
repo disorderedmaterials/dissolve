@@ -85,13 +85,15 @@ class ScatteringMatrix
     // Initialise from supplied list of AtomTypes
     void initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &estimatedSQ);
     // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
-    bool addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor = 1.0);
+    bool addReferenceData(std::string_view dataTag, const Data1D &weightedData, const NeutronWeights &dataWeights,
+                          double factor = 1.0);
     // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
-    bool addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor = 1.0);
-    // Update reference data)
-    bool updateReferenceData(const Data1D &weightedData, double factor = 1.0);
+    bool addReferenceData(std::string_view dataTag, const Data1D &weightedData, const XRayWeights &dataWeights,
+                          double factor = 1.0);
+    // Update reference data
+    bool updateReferenceData(std::string_view dataTag, const Data1D &weightedData, double factor = 1.0);
     // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-    bool addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
+    bool addPartialReferenceData(std::string_view dataTag, const Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
                                  const std::shared_ptr<AtomType> &at2, double dataWeight, double factor = 1.0);
     // Return number of currently-defined reference data sets (== matrix rows)
     int nReferenceData() const;
