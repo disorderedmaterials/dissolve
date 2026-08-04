@@ -39,6 +39,11 @@ runs:
       brew install gsl
       brew uninstall --ignore-dependencies freetype
 
+  - name: Install CMake3
+    uses: jwlawson/actions-setup-cmake@v2.2.0
+    with:
+      cmake-version: '3.30'
+
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
     shell: bash
