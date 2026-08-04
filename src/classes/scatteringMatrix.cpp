@@ -366,11 +366,16 @@ void ScatteringMatrix::initialise(const AtomTypeMix &typeMix, Array2D<Data1D> &e
 }
 
 // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
-bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(std::string_view dataTag, const Data1D &weightedData, const NeutronWeights &dataWeights,
+                                        double factor)
 {
+    // Sanity check that we don't already have data by this tag
+    if (std::find_if(data_.begin(), data_.end(), [dataTag](auto &data) { return dataTag == data.tag(); }) != data_.end())
+        return Messenger::error("Data with name '{}' already exists in the scattering matrix.\n", dataTag);
+
     // Make sure that the scattering weights are valid
     if (!dataWeights.isValid())
-        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.tag());
+        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", dataTag);
 
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
@@ -395,7 +400,9 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
     }
 
     // Add reference data and apply the associated factor
-    data_.emplace_back(weightedData) *= factor;
+    auto &data = data_.emplace_back(weightedData);
+    data *= factor;
+    data.setTag(dataTag);
 
     // Neutron data, so store dummy XRay form factor data indicator
     xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);
@@ -404,11 +411,16 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
 }
 
 // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
-bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(std::string_view dataTag, const Data1D &weightedData, const XRayWeights &dataWeights,
+                                        double factor)
 {
+    // Sanity check that we don't already have data by this tag
+    if (std::find_if(data_.begin(), data_.end(), [dataTag](auto &data) { return dataTag == data.tag(); }) != data_.end())
+        return Messenger::error("Data with name '{}' already exists in the scattering matrix.\n", dataTag);
+
     // Make sure that the scattering weights are valid
     if (!dataWeights.isValid())
-        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.tag());
+        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", dataTag);
 
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
@@ -434,7 +446,9 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
     }
 
     // Add reference data and apply the associated factor
-    data_.emplace_back(weightedData) *= factor;
+    auto &data = data_.emplace_back(weightedData);
+    data *= factor;
+    data.setTag(dataTag);
 
     // Store XRay form factor data indicator
     xRayData_.emplace_back(true, dataWeights, StructureFactors::AverageOfSquaresNormalisation);
@@ -443,22 +457,28 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
 }
 
 // Update reference data)
-bool ScatteringMatrix::updateReferenceData(const Data1D &weightedData, double factor)
+bool ScatteringMatrix::updateReferenceData(std::string_view dataTag, const Data1D &weightedData, double factor)
 {
-    auto it = std::find_if(data_.begin(), data_.end(), [weightedData](auto &data) { return weightedData.tag() == data.tag(); });
+    auto it = std::find_if(data_.begin(), data_.end(), [dataTag](auto &data) { return dataTag == data.tag(); });
     if (it == data_.end())
         return false;
 
     *it = weightedData;
+    it->setTag(dataTag);
     *it *= factor;
 
     return true;
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
-                                               const std::shared_ptr<AtomType> &at2, double dataWeight, double factor)
+bool ScatteringMatrix::addPartialReferenceData(std::string_view dataTag, const Data1D &weightedData,
+                                               const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2,
+                                               double dataWeight, double factor)
 {
+    // Sanity check that we don't already have data by this tag
+    if (std::find_if(data_.begin(), data_.end(), [dataTag](auto &data) { return dataTag == data.tag(); }) != data_.end())
+        return Messenger::error("Data with name '{}' already exists in the scattering matrix.\n", dataTag);
+
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
     const auto rowIndex = A_.nRows() - 1;
@@ -473,8 +493,10 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::
     A_.setRow(rowIndex, 0.0);
     A_[{rowIndex, colIndex}] = dataWeight * factor;
 
-    // Add reference data and its associated factor
-    data_.emplace_back(weightedData) *= factor;
+    // Add reference data and apply the associated factor
+    auto &data = data_.emplace_back(weightedData);
+    data *= factor;
+    data.setTag(dataTag);
 
     // Simulated partial data, so store dummy XRay form factor data indicator
     xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);
