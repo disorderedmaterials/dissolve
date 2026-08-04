@@ -436,8 +436,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             for (auto &&[x, y] : zip(refMinusIntra.xAxis(), refMinusIntra.values()))
                 zeroed.addPoint(x, y);
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(zeroed, dataSetWeight)
-                                      : !scatteringMatrix_.addReferenceData(zeroed, weights, dataSetWeight))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(module->name(), zeroed, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(module->name(), zeroed, weights, dataSetWeight))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
                 return ExecutionResult::Failed;
@@ -475,8 +475,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             for (auto &&[x, y] : zip(refMinusIntra.xAxis(), refMinusIntra.values()))
                 zeroed.addPoint(x, y);
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(zeroed, dataSetWeight)
-                                      : !scatteringMatrix_.addReferenceData(zeroed, weights, dataSetWeight))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(module->name(), zeroed, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(module->name(), zeroed, weights, dataSetWeight))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
                 return ExecutionResult::Failed;
@@ -571,13 +571,14 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         atomTypes.begin(), atomTypes.end(),
         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
         {
-            // Copy and rename the data for clarity
-            auto data = calculatedUnweightedSQ[{i, j}];
-            data.setTag(std::format("Simulated {}-{}", at1->name(), at2->name()));
+            // Generate data tag
+            auto dataTag = std::format("Simulated {}-{}", at1->name(), at2->name());
 
             // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
-                                      : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
+            if (scatteringMatrixSetUp
+                    ? !scatteringMatrix_.updateReferenceData(dataTag, calculatedUnweightedSQ[{i, j}], 1.0 - feedback_)
+                    : !scatteringMatrix_.addPartialReferenceData(dataTag, calculatedUnweightedSQ[{i, j}], at1, at2, 1.0,
+                                                                 (1.0 - feedback_)))
             {
                 Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n", at1->name(), at2->name());
                 return false;
