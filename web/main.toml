@@ -47,8 +47,8 @@ latexDashes = true
 # General Parameters
 [params]
 copyright = "Team Dissolve and contributors. Built using Hugo/Docsy."
-releaseVersion = "1.9.0"
-releaseDate = "Friday 21st November 2025"
+releaseVersion = "1.9.1"
+releaseDate = "Tuesday 4th August 2026"
 github_repo = "https://github.com/disorderedmaterials/dissolve"
 github_subdir = "web"
 github_branch = "develop"
