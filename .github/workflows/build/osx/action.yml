@@ -38,13 +38,11 @@ runs:
       brew update-reset
       brew install gsl
       brew uninstall --ignore-dependencies freetype
-      sudo find /usr/local/bin -type l -lname '/Applications/CMake.app/*' -delete
-      sudo rm -rf /Applications/CMake.app
-      curl --silent --location --retry 3 "https://github.com/Kitware/CMake/releases/download/v3.31.7/cmake-3.31.7-macos10.10-universal.dmg" --output ./cmake-macos.dmg
-      yes | PAGER=cat hdiutil attach -quiet -mountpoint /Volumes/cmake-macos ./cmake-macos.dmg
-      cp -R /Volumes/cmake-macos/CMake.app /Applications/
-      hdiutil detach /Volumes/cmake-macos
-      cmake --version
+
+  - name: Install CMake3
+    uses: jwlawson/actions-setup-cmake@v2.2.0
+    with:
+      cmake-version: '3.30'
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
