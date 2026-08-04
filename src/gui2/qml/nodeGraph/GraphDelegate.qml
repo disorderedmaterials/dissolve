@@ -11,7 +11,7 @@ NodeBox {
     property double midY: y + height / 2
     property variant rootModel
     property double startX: x + width
-    property string currentDescriptionDisplayText: ""
+    property string hint: ""
 
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
@@ -111,11 +111,11 @@ NodeBox {
                         hoverEnabled: true
 
                         onEntered: {
-                            root.currentDescriptionDisplayText = "<i>Input:</i><br>" + inputText.info
+                            root.hint = "<i>Input:</i><br>" + inputText.info
                         }
 
                         onExited: {
-                            root.currentDescriptionDisplayText = ""
+                            root.hint = ""
                         }
                     }
                 }
@@ -205,11 +205,11 @@ NodeBox {
                         hoverEnabled: true
 
                         onEntered: {
-                            root.currentDescriptionDisplayText = "<i>Output:</i><br>" + outputText.info
+                            root.hint = "<i>Output:</i><br>" + outputText.info
                         }
 
                         onExited: {
-                            root.currentDescriptionDisplayText = ""
+                            root.hint = ""
                         }
                     }
                 }
@@ -250,11 +250,11 @@ NodeBox {
                         hoverEnabled: true
 
                         onEntered: {
-                            root.currentDescriptionDisplayText = "<i>Option:</i><br>" + optionText.info
+                            root.hint = "<i>Option:</i><br>" + optionText.info
                         }
 
                         onExited: {
-                            root.currentDescriptionDisplayText = ""
+                            root.hint = ""
                         }
                     }
                 }
@@ -278,7 +278,7 @@ NodeBox {
         Rectangle {
             Layout.fillWidth: true
 
-            visible: root.currentDescriptionDisplayText !== ""
+            visible: root.hint !== ""
 
             radius: 4
 
@@ -295,7 +295,7 @@ NodeBox {
                 anchors.fill: parent
                 anchors.margins: 6
 
-                text: root.currentDescriptionDisplayText
+                text: root.hint
                 textFormat: Text.RichText
                 wrapMode: Text.WordWrap
 
