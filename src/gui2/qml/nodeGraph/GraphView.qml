@@ -10,10 +10,10 @@ Pane {
     property variant delegate
     property variant edgeModel
     property variant nodeModel
-    property variant rootModel
+    property variant rootGraphModel
 
     Component.onCompleted: {
-        nodeRegistry.setGraphModel(rootModel);
+        nodeRegistry.setGraphModel(rootGraphModel);
     }
     /*
     MouseArea {
@@ -33,47 +33,47 @@ Pane {
                 MenuItem {
                     text: "Add"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Add", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Add", "New Node")
                 }
                 MenuItem {
                     text: "Derivative"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Derivative", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Derivative", "New Node")
                 }
                 MenuItem {
                     text: "Dot Product"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "DotProduct", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "DotProduct", "New Node")
                 }
                 MenuItem {
                     text: "Integrator"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Integrator", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Integrator", "New Node")
                 }
                 MenuItem {
                     text: "Multiply"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Multiply", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Multiply", "New Node")
                 }
                 MenuItem {
                     text: "Number"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Number", "New Number")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Number", "New Number")
                 }
                 MenuItem {
                     text: "Subtract"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Subtract", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Subtract", "New Node")
                 }
                 MenuItem {
                     text: "Vec3Assembly"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Assembly", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Assembly", "New Node")
                 }
                 MenuItem {
                     text: "Vec3Decompostion"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Decomposition", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Decomposition", "New Node")
                 }
             }
             Menu {
@@ -82,27 +82,27 @@ Pane {
                 MenuItem {
                     text: "Atomic MC"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicMC", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicMC", "New Node")
                 }
                 MenuItem {
                     text: "G(r)"
 
-                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "GR", "New Node")
+                    onClicked: rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "GR", "New Node")
                 }
                 MenuItem {
                     text: "Insert"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Insert", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Insert", "New Node")
                 }
                 MenuItem {
                     text: "Molecular Dynamics"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "MD", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "MD", "New Node")
                 }
                 MenuItem {
                     text: "S(q)"
 
-                    onClicked: rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "SQ", "New Node")
+                    onClicked: rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "SQ", "New Node")
                 }
             }
             Menu {
@@ -111,12 +111,12 @@ Pane {
                 MenuItem {
                     text: "Atomic Species"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicSpecies", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicSpecies", "New Node")
                 }
                 MenuItem {
                     text: "Configuration"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Configuration", "New Node")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Configuration", "New Node")
                 }
                 MenuItem {
                     text: "Forcefield"
@@ -126,7 +126,7 @@ Pane {
                     ForcefieldDialog {
                         id: forcefieldDialog
 
-                        graphModel: graphRoot.rootModel
+                        graphModel: graphRoot.rootGraphModel
                         posx: Math.round(ctxMenuCatcher.mouseX)
                         posy: Math.round(ctxMenuCatcher.mouseY)
                     }
@@ -134,7 +134,7 @@ Pane {
                 MenuItem {
                     text: "Graph"
 
-                    onClicked: graphRoot.rootModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Graph", "New Graph")
+                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Graph", "New Graph")
                 }
                 MenuItem {
                     text: "Species"
@@ -144,7 +144,7 @@ Pane {
                     SpeciesDialog {
                         id: speciesDialog
 
-                        graphModel: graphRoot.rootModel
+                        graphModel: graphRoot.rootGraphModel
                     }
                 }
             }

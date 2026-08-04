@@ -277,7 +277,7 @@ ApplicationWindow {
                 anchors.top: toolBar.bottom
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
-                rootModel: graphModel
+                rootGraphModel: graphModel
 
                 Repeater{
                     id: graphDelegateRepeater
@@ -285,7 +285,7 @@ ApplicationWindow {
 
                     delegate: Component {
                         GraphDelegate {
-                            rootModel: graphModel
+                            rootGraphModel: graphModel
 
                             onDescended: function (idx) {
                                 graphModel.descend(idx);
