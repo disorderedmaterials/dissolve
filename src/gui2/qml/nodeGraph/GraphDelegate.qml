@@ -9,7 +9,7 @@ NodeBox {
 
     property double endX: x
     property double midY: y + height / 2
-    property variant rootModel
+    property variant rootGraphModel
     property double startX: x + width
     property string hint: ""
 
@@ -26,7 +26,7 @@ NodeBox {
     x: posX
     y: posY
 
-    onDeleted: rootModel.deleteNode(index)
+    onDeleted: rootGraphModel.deleteNode(index)
 
     ColumnLayout {
         anchors.fill: parent
@@ -43,7 +43,7 @@ NodeBox {
                 Component.onCompleted: {
                     for (var i = 0; i < inputRepeater.count; i++) {
                         let item = inputRepeater.itemAt(i);
-                        rootModel.addInput(index, item.title, item.x, item.y);
+                        rootGraphModel.addInput(index, item.title, item.x, item.y);
                     }
                 }
 
@@ -137,7 +137,7 @@ NodeBox {
                 Component.onCompleted: {
                     for (var i = 0; i < outputRepeater.count; i++) {
                         let item = outputRepeater.itemAt(i);
-                        rootModel.addOutput(index, item.title, item.x + item.width / 2, item.y);
+                        rootGraphModel.addOutput(index, item.title, item.x + item.width / 2, item.y);
                     }
                 }
 
