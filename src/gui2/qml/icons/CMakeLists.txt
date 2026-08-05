@@ -19,7 +19,7 @@ file(
 qt_add_qml_module(
   icons_module
   URI
-  "IconsModule"
+  "DissolveIconsModule"
   VERSION
   1.0
   RESOURCES

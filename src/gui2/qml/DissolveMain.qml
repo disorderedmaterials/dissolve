@@ -5,10 +5,12 @@ import QtQuick3D
 import QtQuick3D.Helpers
 import QtQuick.Dialogs
 import QtQuick.Window
-import NodeRegistryModule
+import DissolveControlsModule
+import DissolveDialogsModule
 import Dissolve
 import ProjectDissolve
-import "../../NodeRegistryModule"
+import "../../DissolveControlsModule"
+import "../../DissolveDialogsModule"
 import "../../ProjectDissolve"
 import "../../Dissolve"
 
@@ -105,11 +107,6 @@ ApplicationWindow {
             MenuItem {
                 //shortcut: "Ctrl+R"
                 text: "&Run"
-            }
-
-            MenuItem {
-                
-                text: "Run N Steps"
             }
 
             MenuSeparator{}
@@ -245,7 +242,7 @@ ApplicationWindow {
                         }
                     }
                     Button {
-                        icon.source: "qrc:/IconsModule/open.svg"
+                        icon.source: "qrc:/DissolveIconsModule/open.svg"
 
                         onClicked: openDialog.open()
                     }
@@ -259,7 +256,7 @@ ApplicationWindow {
                     ToolButton {
                         enabled: !graphModel.atRoot
                         icon.color: graphModel.atRoot ? "grey" : "transparent"
-                        icon.source: "qrc:/IconsModule/arrowUp.svg"
+                        icon.source: "qrc:/DissolveIconsModule/arrowUp.svg"
 
                         onClicked: graphModel.upLevel()
                     }

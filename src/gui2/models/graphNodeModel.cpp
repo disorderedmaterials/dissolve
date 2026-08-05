@@ -74,7 +74,7 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
         case TYPE:
             return QString::fromStdString(std::string(item.rawValue().type()));
         case ICON:
-            return QString::fromStdString(std::format("qrc:/IconsModule/nodes/{}.svg", item.rawValue().type()));
+            return QString::fromStdString(std::format("qrc:/DissolveIconsModule/nodes/{}.svg", item.rawValue().type()));
         case INPUTS:
             return QVariant::fromValue(item.inputs.get());
         case OUTPUTS:
