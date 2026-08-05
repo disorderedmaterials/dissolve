@@ -100,19 +100,18 @@ void GraphModel::addNode(std::unique_ptr<Node> node, std::string_view name)
     graphChanged();
 }
 
-void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
+void GraphModel::emplace_back(int x, int y, QVariant type, std::string name)
 {
     if (!graph_)
         Messenger::exception(
             "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
     auto nodeType = type.toString().toStdString();
-    auto nodeName = name.toString().toStdString();
-    auto node = graph_->createNode(nodeType, nodeName);
+    auto node = graph_->createNode(nodeType, name);
     node->x = x;
     node->y = y;
     auto &item = wrapped_.emplace_back(*node);
-    item.rawValue().setName(name.toString().toStdString());
+    item.rawValue().setName(name);
     nodes_.endInsertRows();
     graphChanged();
 }
@@ -120,6 +119,7 @@ void GraphModel::emplace_back(int x, int y, QVariant type, QVariant name)
 void GraphModel::deleteNode(int idx)
 {
     nodes_.beginRemoveRows({}, idx, idx);
+    const auto type = wrapped_[idx].rawValue().type();
     std::string index{wrapped_[idx].rawValue().name()};
     if (inputEndPoints_.contains(&wrapped_[idx].rawValue()))
         inputEndPoints_.erase(&wrapped_[idx].rawValue());
@@ -134,6 +134,7 @@ void GraphModel::deleteNode(int idx)
     nodes_.endRemoveRows();
 
     graphChanged();
+    decrementNodeTypeRequired(std::string(type));
 }
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }

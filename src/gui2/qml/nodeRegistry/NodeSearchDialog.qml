@@ -33,7 +33,7 @@ Dialog {
     }
     onAccepted: {
         if (nodeSearchField.text.length > 0)
-            nodeRegistry.instantiateNode(root.nodeEmplaceAtX, root.y, root.selection, "New Node");
+            nodeRegistry.instantiateNode(root.nodeEmplaceAtX, root.y, root.selection);
         root.exitSearchDialog();
     }
     onRejected: {
