@@ -31,7 +31,10 @@ class ParameterEndPointsModel : public QAbstractListModel
         Target = Qt::UserRole + 1,
     };
 
+    // Add a pair of DropArea QQuickItem *, representing the endpoints
     void add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea);
+    // Remove a pair of DropArea QQuickItem *, based on the parent node that has been deleted
+    void remove(const Node *node);
 
     protected:
     // Vector of parameter endpoint QQuickItem * pairs
