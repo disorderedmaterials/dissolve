@@ -21,9 +21,10 @@ class NodeRegistryModel : public QAbstractListModel
      * - Description/Node::summary (QString)
      * - Category (enum) - currently unavailable
      * - Icon path (QUrl) - currently unavailable
+     * - tally (int)
      *
      */
-    using NodeRegistryDisplayElement = std::tuple<QString, QString>;
+    using NodeRegistryDisplayElement = std::tuple<QString, QString, int>;
 
     Q_OBJECT
 
@@ -39,13 +40,19 @@ class NodeRegistryModel : public QAbstractListModel
     Q_ENUM(NodeDisplayRoles);
 
     private:
+    // Increment node type
+    void increment(QString nodeType);
+    // Decrement node type
+    void decrement(QString nodeType);
+    // Return tally for node type
+    int &tally(QString nodeType);
     // Source node registry data
     static std::vector<NodeRegistryDisplayElement> entries_;
     GraphModel *graphModel_{nullptr};
 
     public:
     // Instantiate node from registry
-    Q_INVOKABLE void instantiateNode(int x, int y, QVariant type, QVariant name);
+    Q_INVOKABLE void instantiateNode(int x, int y, QVariant type);
     // Set the graph model
     Q_INVOKABLE void setGraphModel(GraphModel *graphModel);
 
