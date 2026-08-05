@@ -565,6 +565,6 @@ double Box::minimumDistanceSquared(const Vector3 &r1, const Vector3 &r2) const {
 void Box::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &box = target[tag];
-    box["lengths"] = {a_, b_, c_};
-    box["angles"] = {alpha_, beta_, gamma_};
+    box["lengths"] = SerialisedValue::array_type{a_, b_, c_};
+    box["angles"] = SerialisedValue::array_type{alpha_, beta_, gamma_};
 }
