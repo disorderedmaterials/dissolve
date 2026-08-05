@@ -1,9 +1,9 @@
-qt_add_library(nodeRegistry_module STATIC)
+qt_add_library(dialogs_module STATIC)
 
 qt6_add_qml_module(
-  nodeRegistry_module
+  dialogs_module
   URI
-  "NodeRegistryModule"
+  "DissolveDialogsModule"
   VERSION
   1.0
   QML_FILES
@@ -12,4 +12,4 @@ qt6_add_qml_module(
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Core)
-target_link_libraries(nodeRegistry_module PRIVATE Qt6::Core)
+target_link_libraries(dialogs_module PRIVATE Qt6::Core)
