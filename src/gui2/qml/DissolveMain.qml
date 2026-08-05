@@ -277,6 +277,7 @@ ApplicationWindow {
                 anchors.top: toolBar.bottom
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
+                parameterEndPointsModel: graphModel.parameterEndPoints
                 rootGraphModel: graphModel
 
                 Repeater{

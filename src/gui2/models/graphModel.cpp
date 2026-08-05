@@ -16,6 +16,9 @@ GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 
 Graph *GraphModel::graph() { return graph_; }
 
+// Return the ParameterEndPointModel
+ParameterEndPointsModel *GraphModel::parameterEndPoints() { return &endPointsModel_; }
+
 void GraphModel::setGraph(Graph *graph)
 {
     graph_ = graph;
@@ -118,6 +121,10 @@ void GraphModel::deleteNode(int idx)
 {
     nodes_.beginRemoveRows({}, idx, idx);
     std::string index{wrapped_[idx].rawValue().name()};
+    if (inputEndPoints_.contains(&wrapped_[idx].rawValue()))
+        inputEndPoints_.erase(&wrapped_[idx].rawValue());
+    if (outputEndPoints_.contains(&wrapped_[idx].rawValue()))
+        outputEndPoints_.erase(&wrapped_[idx].rawValue());
     wrapped_.erase(wrapped_.begin() + idx);
 
     edges_.deleteNode(index);
@@ -141,6 +148,7 @@ void GraphModel::addEdge(QString srcNode, QString srcOutput, QString tgtNode, QS
 {
     EdgeDefinition edge(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
     edges_.addEdge(edge);
+    addEndPoints(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
 }
 
 // public wrapper of connect_
@@ -162,4 +170,91 @@ int GraphModel::indexByName(std::string_view name)
     return 0;
 }
 
+void GraphModel::initialiseInputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint)
+{
+    auto name = nodeName.toString().toStdString();
+    auto param = paramName.toString().toStdString();
+    auto node = graph_->findNode(name);
+    if (!inputEndPoints_.contains(node))
+        inputEndPoints_.emplace(node, std::map<std::string, QQuickItem *>{});
+    inputEndPoints_[node].emplace(paramName.toString().toStdString(), endPoint);
+}
+
+void GraphModel::initialiseOutputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint)
+{
+    auto name = nodeName.toString().toStdString();
+    auto param = paramName.toString().toStdString();
+    auto node = graph_->findNode(name);
+    if (!outputEndPoints_.contains(node))
+        outputEndPoints_.emplace(node, std::map<std::string, QQuickItem *>{});
+    outputEndPoints_[node].emplace(param, endPoint);
+}
+
+void GraphModel::addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
+                              std::string targetParamName)
+{
+    auto sourceNode = graph_->findNode(sourceNodeName);
+    auto targetNode = graph_->findNode(targetNodeName);
+    endPointsModel_.add(outputEndPoints_[sourceNode][sourceParamName], inputEndPoints_[targetNode][targetParamName]);
+}
+
 void GraphModel::handleReset() { Q_EMIT(graphChanged()); }
+
+void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea)
+{
+    int row = endPoints_.size();
+    beginInsertRows(QModelIndex(), row, row);
+    endPoints_.push_back({sourceDropArea, targetDropArea});
+    endInsertRows();
+}
+
+int ParameterEndPointsModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return endPoints_.size();
+}
+
+QVariant ParameterEndPointsModel::data(const QModelIndex &index, int role) const
+{
+    auto &[source, target] = endPoints_[index.row()];
+    switch (role)
+    {
+        case EndPointDisplayRoles::Source:
+            return QVariant::fromValue(source);
+        case EndPointDisplayRoles::Target:
+            return QVariant::fromValue(target);
+        default:
+            return QVariant();
+    }
+}
+
+Qt::ItemFlags ParameterEndPointsModel::flags(const QModelIndex &index) const
+{
+    return index.column() == 1 ? Qt::ItemIsSelectable | Qt::ItemIsEnabled
+                               : Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
+QVariant ParameterEndPointsModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
+        return {};
+
+    if (orientation == Qt::Horizontal)
+        switch (section)
+        {
+            case 0:
+                return "SourceDropArea";
+            case 1:
+                return "TargetDropArea";
+        }
+
+    return {};
+}
+
+QHash<int, QByteArray> ParameterEndPointsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Source] = "sourceDropArea";
+    roles[Target] = "targetDropArea";
+    return roles;
+}
