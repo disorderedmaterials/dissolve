@@ -114,6 +114,10 @@ class GraphModel : public QObject
     public:
     Q_INVOKABLE void initialiseInputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint);
     Q_INVOKABLE void initialiseOutputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint);
+    // Return bool - true if node exists in graph
+    Q_INVOKABLE bool isValidNode(QVariant nodeName) const;
+    // Return bool - true if graph run was successful/unchanged, false if failed
+    Q_INVOKABLE bool run(QVariant nodeName);
 
     private:
     void addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
