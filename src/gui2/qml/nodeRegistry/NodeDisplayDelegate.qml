@@ -37,7 +37,7 @@ Rectangle {
 
         onDoubleClicked: {
             rootDialog.finaliseSelection(name, true);
-            nodeRegistry.instantiateNode(root.rootDialog.nodeEmplaceAtX, root.rootDialog.y, root.rootDialog.selection, "New Node");
+            nodeRegistry.instantiateNode(root.rootDialog.nodeEmplaceAtX, root.rootDialog.y, root.rootDialog.selection);
             rootDialog.close();
         }
 

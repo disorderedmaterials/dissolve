@@ -129,6 +129,7 @@ class GraphModel : public QObject
 
     Q_SIGNALS:
     void graphChanged();
+    void decrementNodeTypeRequired(const std::string &);
 
     public Q_SLOTS:
     // Reset everything
@@ -148,7 +149,7 @@ class GraphModel : public QObject
     void addOutput(int nodeIndex, QString paramName, double x, double y);
 
     // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, QVariant name);
+    void emplace_back(int x, int y, QVariant type, std::string name);
 
     // Switch to parent graph
     void upLevel();
