@@ -17,7 +17,7 @@ NodeBox {
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
 
     image: icon
-    nodeType: name
+    nodeName: name
     posX: posX
     posY: posY
 
@@ -48,7 +48,8 @@ NodeBox {
                 }
 
                 Shape {
-                    property string nodeName: root.nodeType
+                    id: inputShape
+                    property string nodeName: root.nodeName
                     property string title: name
 
                     Layout.alignment: Qt.AlignLeft
@@ -76,7 +77,13 @@ NodeBox {
                         }
                     }
                     DropArea {
+                        id: inputDropArea
+                        readonly property var parentNodeBox: root
                         anchors.fill: parent
+
+                        Component.onCompleted: {
+                            root.rootGraphModel.initialiseInputEndPoints(parent.nodeName, parent.title, inputDropArea);
+                        }
 
                         onDropped: function (event) {
                             edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, parent.title);
@@ -142,7 +149,8 @@ NodeBox {
                 }
 
                 Shape {
-                    property string nodeName: root.nodeType
+                    id: outputShape
+                    property string nodeName: root.nodeName
                     property string title: name
 
                     Layout.alignment: Qt.AlignRight
@@ -170,7 +178,13 @@ NodeBox {
                         }
                     }
                     DropArea {
+                        id: outputDropArea
+                        readonly property var parentNodeBox: root
                         anchors.fill: parent
+
+                        Component.onCompleted: {
+                            root.rootGraphModel.initialiseOutputEndPoints(parent.nodeName, parent.title, outputDropArea);
+                        }
 
                         onDropped: function (event) {
                             edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title);

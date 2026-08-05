@@ -10,6 +10,7 @@ Pane {
     property variant delegate
     property variant edgeModel
     property variant nodeModel
+    property variant parameterEndPointsModel
     property variant rootGraphModel
 
     Component.onCompleted: {
@@ -153,27 +154,46 @@ Pane {
     */
     // Edge connections
     Repeater {
-        model: graphRoot.edgeModel
+        model: graphRoot.parameterEndPointsModel
 
         delegate: Shape {
             id: edgeShape
 
-            required property double sourceX
-            required property double sourceY
-            required property double targetX
-            required property double targetY
+            required property Item sourceDropArea
+            required property Item targetDropArea
+
+            property point sourcePos: {
+                sourceDropArea.parentNodeBox.x
+                sourceDropArea.parentNodeBox.y
+
+                return sourceDropArea.mapToItem(graphRoot, Qt.point(0, 0))
+            }
+
+            property point targetPos: {
+                targetDropArea.parentNodeBox.x
+                targetDropArea.parentNodeBox.y
+
+                return targetDropArea.mapToItem(graphRoot, Qt.point(0, 0))
+            }
 
             z: -10
 
             ShapePath {
-                /* strokeStyle: ShapePath.DashLine */
+                //strokeStyle: ShapePath.DashLine
                 dashPattern: [1, 4]
                 fillColor: "transparent"
-                startX: sourceX
-                startY: sourceY
+                startX: edgeShape.sourcePos.x
+                startY: edgeShape.sourcePos.y
                 strokeColor: "black"
                 strokeWidth: 4
 
+                PathLine {
+                    //id: edgeLine
+                    x: edgeShape.targetPos.x
+                    y: edgeShape.targetPos.y
+                }
+
+                /*
                 PathCubic {
                     control1X: sourceX + curveOffset
                     control1Y: sourceY
@@ -182,6 +202,7 @@ Pane {
                     x: targetX
                     y: targetY
                 }
+                */
             }
         }
     }

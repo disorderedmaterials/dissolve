@@ -7,9 +7,10 @@ GroupBox {
     id: root
 
     default property alias content: contentArea.data
+    property bool isMoving: dragHandler.active
     property double baseY: header.height
     property string image
-    property string nodeType
+    property string nodeName
     property int posX
     property int posY
     property bool dragActive: false
@@ -69,7 +70,7 @@ GroupBox {
 
                 Layout.fillWidth: true
                 font.pixelSize: 14
-                text: root.nodeType
+                text: root.nodeName
             }
             ToolButton {
                 id: deleteNodeButton
@@ -77,14 +78,6 @@ GroupBox {
                 implicitHeight: titleLabel.height
                 implicitWidth: deleteNodeButton.implicitHeight
 
-                /*
-                contentItem: Image {
-                    fillMode: Image.PreserveAspectFit
-                    source: "qrc:/IconsModule/cross.svg"
-                    sourceSize.height: titleLabel.height
-                    sourceSize.width: titleLabel.height
-                }
-                */
                 background: Rectangle {
                     id: deleteNodeButtonRectangle
 
@@ -118,6 +111,7 @@ GroupBox {
             }
         }
         DragHandler {
+            id: dragHandler
             target: root
 
             xAxis.onActiveValueChanged: delta => posX += delta
@@ -128,27 +122,7 @@ GroupBox {
             }
         }
     }
-    /*
-    ColumnLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
 
-        anchors.top: parent.top
-        anchors.topMargin: 35
-
-        spacing: 8
-
-        Image {
-            clip: true
-            fillMode: Image.PreserveAspectFit
-            source: image
-            sourceSize.height: titleLabel.height
-            sourceSize.width: titleLabel.height
-        }
-
-    }
-    */
     contentItem: Item {
         id: contentArea
 

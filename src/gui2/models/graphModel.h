@@ -9,18 +9,55 @@
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include <QAbstractListModel>
+#include <QQuickItem>
 #include <qtmetamacros.h>
 
 class GraphNodeModel;
 class GraphEdgeModel;
 
+class ParameterEndPointsModel : public QAbstractListModel
+{
+    friend GraphModel;
+
+    Q_OBJECT
+
+    public:
+    using ParameterEndPoints = std::vector<std::pair<QQuickItem *, QQuickItem *>>;
+    ParameterEndPointsModel() = default;
+
+    enum EndPointDisplayRoles
+    {
+        Source = Qt::DisplayRole,
+        Target = Qt::UserRole + 1,
+    };
+
+    void add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea);
+
+    protected:
+    // Vector of parameter endpoint QQuickItem * pairs
+    ParameterEndPoints endPoints_;
+
+    /*
+     * QAbstractListModel overrides
+     */
+    public:
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+};
+
 // This is the base class for any node graph type
 class GraphModel : public QObject
 {
+    using NodeParameterEndPointsMap = std::map<const Node *, std::map<std::string, QQuickItem *>>;
+
     Q_OBJECT;
     Q_PROPERTY(Graph *graph READ graph WRITE setGraph NOTIFY graphChanged);
     Q_PROPERTY(GraphEdgeModel *edges READ edges NOTIFY graphChanged);
     Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
+    Q_PROPERTY(ParameterEndPointsModel *parameterEndPoints READ parameterEndPoints CONSTANT);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
     Q_PROPERTY(QString location READ location NOTIFY graphChanged);
@@ -38,6 +75,8 @@ class GraphModel : public QObject
 
     void setGraph(Graph *graph);
 
+    // Model for the edge end points corresponding to parameter drop areas
+    ParameterEndPointsModel *parameterEndPoints();
     // The model for the edges in the graph
     GraphEdgeModel *edges();
     // The model for the nodes in the graph
@@ -54,6 +93,10 @@ class GraphModel : public QObject
     void addNode(std::unique_ptr<Node> node, std::string_view name);
 
     protected:
+    // Map of node parameters to endpoint QQuickItem pointers within GraphView
+    NodeParameterEndPointsMap inputEndPoints_;
+    NodeParameterEndPointsMap outputEndPoints_;
+    ParameterEndPointsModel endPointsModel_;
     // The abstract data model for the nodes
     GraphNodeModel nodes_;
     // The abstract data model for the edges between nodes
@@ -64,6 +107,14 @@ class GraphModel : public QObject
     std::vector<NodeWrapper> wrapped_;
     // Get index of name
     int indexByName(std::string_view name);
+
+    public:
+    Q_INVOKABLE void initialiseInputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint);
+    Q_INVOKABLE void initialiseOutputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint);
+
+    private:
+    void addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
+                      std::string targetParamName);
 
     private:
     // Check whether a given source and destination can be connected
