@@ -24,8 +24,57 @@ ApplicationWindow {
     title: "Dissolve"
     visible: true
 
-    // TODO: Custom "DissolveMenuItem/Action" that supports icons, shortcuts, and tooltips simultaneously
-    // (Probably easiest to base off of Action) and make global shortcuts configurable from a separate C++ ShortcutManager
+    property Dialog quickRunDialog: null
+
+    Component {
+        id: quickRunDialogComponent
+
+        Dialog {
+            id: quickRunDialog
+
+            x: dissolveWindow.width / 2
+            y: dissolveWindow.height / 2
+
+            height: implicitHeight
+            width: implicitWidth
+
+            required property variant graphModel
+            property string startNode: input.text
+
+            standardButtons: Dialog.Ok | Dialog.Cancel
+
+            contentItem: Item {
+                anchors.fill: parent
+                focus: true
+
+                Keys.onReturnPressed: accept()
+                Keys.onEnterPressed: accept()
+   
+                TextField {
+                    id: input
+                    anchors.fill: parent
+                    font.pixelSize: 14
+                    placeholderText: "Enter a node name to run graph from..."
+                }    
+            }
+
+            onAccepted: {
+                if (quickRunDialog.graphModel.isValidNode(startNode))
+                {
+                    var result = graphModel.run(startNode)
+
+                    if (result)
+                        console.log("Graph run from node '%1' was successful/unchanged")
+                    else
+                        console.log("Graph run from node '%1' was failed")
+                }
+                quickRunDialog.close()
+            }
+            onRejected: {
+                quickRunDialog.close()
+            }
+        }
+    }
 
     /*
      * Dissolve2 Main Menu
@@ -104,9 +153,15 @@ ApplicationWindow {
         Menu {
             title: "&Graph"
 
-            MenuItem {
-                //shortcut: "Ctrl+R"
-                text: "&Run"
+            DissolveMenuItem {
+                dissolveAction: Action {
+                    text: "&Run"
+                    shortcut: "Ctrl+Enter"
+                    onTriggered: {
+                        dissolveWindow.quickRunDialog.open()
+                    }
+                }
+                iconPath: "qrc:/DissolveIconsModule/play.svg"
             }
 
             MenuSeparator{}
@@ -159,6 +214,7 @@ ApplicationWindow {
         id: tabBar
 
         width: parent.width
+        currentIndex: 2
 
         // DEFAULT TABS
         TabButton {
@@ -180,6 +236,7 @@ ApplicationWindow {
      *
      */
     StackLayout {
+        id: applicationTabStack
         anchors.bottom: parent.bottom
         anchors.top: tabBar.bottom
         currentIndex: tabBar.currentIndex
@@ -213,6 +270,10 @@ ApplicationWindow {
                 id: graphModel
 
                 graph: dissolve.graph
+
+                Component.onCompleted: {
+                    dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
+                }
             }
             Pane {
                 id: toolBar
