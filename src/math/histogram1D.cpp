@@ -3,6 +3,7 @@
 
 #include "math/histogram1D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "templates/algorithms.h"
 #include <cassert>
 
@@ -214,8 +215,9 @@ Histogram1D Histogram1D::operator+(const Histogram1D &other) const
 // Express as a serialisable value
 void Histogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_},
-                   {"nBinned", nBinned_}, {"nMissed", nMissed_}, {"averages", averages_}};
+    target[tag] = {
+        {"minimum", minimum_}, {"maximum", maximum_}, {"binWidth", binWidth_}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
+    Serialisable::vector(averages_, "averages", target[tag]);
 }
 
 // Read values from a serialisable value
@@ -223,12 +225,13 @@ void Histogram1D::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    initialise(toml::find<double>(node, "minimum"), toml::find<double>(node, "maximum"), toml::find<double>(node, "binWidth"));
+    initialise(Deserialisable::deser<double>(node.at("minimum")), Deserialisable::deser<double>(node.at("maximum")),
+               Deserialisable::deser<double>(node.at("binWidth")));
 
-    nBinned_ = toml::find<long>(node, "nBinned");
-    nMissed_ = toml::find<long>(node, "nMissed");
+    nBinned_ = Deserialisable::deser<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::deser<long>(node.at("nMissed"));
 
-    averages_ = toml::find<std::vector<SampledDouble>>(node, "averages");
+    averages_ = Deserialisable::vector<SampledDouble>(node.at("averages"));
 
     updateAccumulatedData();
 }

@@ -3,6 +3,7 @@
 
 #include "data/elements.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include <cassert>
 #include <cctype>
@@ -230,3 +231,20 @@ bool isMetallic(Element Z)
 }
 
 } // namespace Elements
+
+// TOML Conversion
+namespace Serialisable
+{
+void serialiseOnto(const Elements::Element &elem, std::string tag, SerialisedValue node)
+{
+    node[tag] = Elements::symbol(elem).data();
+}
+}; // namespace Serialisable
+
+namespace Deserialisable
+{
+void deserialiseOnto(Elements::Element &elem, const SerialisedValue &node)
+{
+    elem = Elements::element(Deserialisable::deser<std::string>(node));
+}
+}; // namespace Deserialisable

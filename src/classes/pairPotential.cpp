@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairPotential.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "math/derivative.h"
@@ -480,22 +481,22 @@ void PairPotential::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void PairPotential::deserialise(const SerialisedValue &node)
 {
-    nameI_ = toml::find<std::string>(node, "nameI");
-    nameJ_ = toml::find<std::string>(node, "nameJ");
+    nameI_ = Deserialisable::deser<std::string>(node.at("nameI"));
+    nameJ_ = Deserialisable::deser<std::string>(node.at("nameJ"));
 
     Functions1D::Form form;
-    Serialisable::optionalOn(node, "form",
-                             [&](const auto node) { form = Functions1D::forms().enumeration(std::string(node.as_string())); });
+    Deserialisable::optionalOn(node, "form", [&](const auto node)
+                               { form = Functions1D::forms().enumeration(std::string(node.as_string())); });
 
     std::vector<double> parameters;
-    Serialisable::optionalOn(node, "parameters",
-                             [&](const auto node)
-                             {
-                                 auto &parameterNames = Functions1D::parameters(form);
-                                 std::transform(parameterNames.begin(), parameterNames.end(), std::back_inserter(parameters),
-                                                [&node](const auto parameterName)
-                                                { return node.at(parameterName).as_floating(); });
-                             });
+    Deserialisable::optionalOn(node, "parameters",
+                               [&](const auto node)
+                               {
+                                   auto &parameterNames = Functions1D::parameters(form);
+                                   std::transform(parameterNames.begin(), parameterNames.end(), std::back_inserter(parameters),
+                                                  [&node](const auto parameterName)
+                                                  { return node.at(parameterName).as_floating(); });
+                               });
 
     setInteractionPotential({form, parameters});
 }

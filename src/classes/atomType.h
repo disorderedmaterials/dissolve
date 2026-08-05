@@ -14,7 +14,7 @@
 #include <vector>
 
 // AtomType Definition
-class AtomType : public Serialisable, public std::enable_shared_from_this<AtomType>
+class AtomType : public std::enable_shared_from_this<AtomType>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
@@ -72,7 +72,7 @@ class AtomType : public Serialisable, public std::enable_shared_from_this<AtomTy
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
     void deserialise(SerialisedValue node);
 };

@@ -11,7 +11,6 @@
 #include "main/version.h"
 #include "nodes/dissolve.h"
 #include <fstream>
-#include <toml/parser.hpp>
 
 // Serialise pair potential
 SerialisedValue Dissolve::serialisePairPotentials() const
@@ -26,17 +25,17 @@ SerialisedValue Dissolve::serialisePairPotentials() const
     if (!useCombinationRules_)
     {
         pairPotentials["useCombinationRules"] = false;
-        Serialisable::fromVector(pairPotentials_, "potentials", pairPotentials,
-                                 [](const auto &term)
-                                 {
-                                     const auto &[at1, at2, pot] = term;
-                                     SerialisedValue target;
-                                     pot->serialise("inner", target);
-                                     auto &value = target["inner"];
-                                     value["atomTypeI"] = at1->name();
-                                     value["atomTypeJ"] = at2->name();
-                                     return value;
-                                 });
+        Serialisable::vector(pairPotentials_, "potentials", pairPotentials,
+                             [](const auto &term)
+                             {
+                                 const auto &[at1, at2, pot] = term;
+                                 SerialisedValue target;
+                                 pot->serialise("inner", target);
+                                 auto &value = target["inner"];
+                                 value["atomTypeI"] = at1->name();
+                                 value["atomTypeJ"] = at2->name();
+                                 return value;
+                             });
     }
     return pairPotentials;
 }
@@ -92,9 +91,9 @@ void Dissolve::deserialise(const SerialisedValue &originalNode)
         Messenger::warn("File does not contain version information.  Assuming the current version: {}", Version::semantic());
     const SerialisedValue node = hasVersion ? dissolve::backwardsUpgrade(originalNode) : originalNode;
 
-    Serialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
+    Deserialisable::optionalOn(node, "graph", [this](const auto node) { graphNode_->deserialise(node); });
 
-    Serialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
+    Deserialisable::optionalOn(node, "pairPotentials", [this](const auto node) { deserialisePairPotentials(node); });
 }
 
 // Load input from supplied file
@@ -156,7 +155,7 @@ bool Dissolve::saveToml(std::string_view filename) const
 {
     std::ofstream outfile;
     outfile.open(std::string(filename));
-    outfile << into_toml() << std::endl;
+    outfile << Serialisable::ser(*this) << std::endl;
     outfile.close();
     return true;
 }

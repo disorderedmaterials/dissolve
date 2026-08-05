@@ -3,6 +3,7 @@
 
 #include "math/data2D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "math/data1D.h"
 #include "math/histogram2D.h"
@@ -330,17 +331,17 @@ void Data2D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data2D::deserialise(const SerialisedValue &node)
 {
-    tag_ = toml::find<std::string>(node, "tag");
-    x_ = toml::find<std::vector<double>>(node, "x");
-    y_ = toml::find<std::vector<double>>(node, "y");
+    tag_ = Deserialisable::deser<std::string>(node.at("tag"));
+    x_ = Deserialisable::vector<double>(node.at("x"));
+    y_ = Deserialisable::vector<double>(node.at("y"));
     values_.initialise(x_.size(), y_.size());
-    values_.linearArray() = toml::find<std::vector<double>>(node, "values");
+    values_.linearArray() = Deserialisable::vector<double>(node.at("values"));
 
-    Serialisable::optionalOn(node, "errors",
-                             [this](const auto errors)
-                             {
-                                 hasError_ = true;
-                                 errors_.initialise(x_.size(), y_.size());
-                                 errors_.linearArray() = toml::get<std::vector<double>>(errors);
-                             });
+    Deserialisable::optionalOn(node, "errors",
+                               [this](const auto errors)
+                               {
+                                   hasError_ = true;
+                                   errors_.initialise(x_.size(), y_.size());
+                                   errors_.linearArray() = Deserialisable::vector<double>(errors);
+                               });
 }

@@ -111,7 +111,7 @@ class Functions1D
 };
 
 // Function 1D Wrapper
-class Function1DWrapper : public Serialisable
+class Function1DWrapper
 {
     public:
     Function1DWrapper(Functions1D::Form form = Functions1D::Form::None, const std::vector<double> &params = {});
@@ -164,7 +164,7 @@ class Function1DWrapper : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };

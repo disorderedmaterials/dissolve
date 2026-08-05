@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/range.h"
+#include "base/serialiserLibrary.h"
 
 Range::Range(std::optional<double> minimum, std::optional<double> maximum) { set(minimum, maximum); }
 
@@ -57,8 +58,8 @@ void Range::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Range::deserialise(const SerialisedValue &node)
 {
-    minimum_ = toml::find<double>(node, "min");
-    maximum_ = toml::find<double>(node, "max");
+    minimum_ = Deserialisable::deser<double>(node.at("min"));
+    maximum_ = Deserialisable::deser<double>(node.at("max"));
 }
 
 // Equality

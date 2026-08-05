@@ -459,22 +459,22 @@ void PartialSet::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &result = target[tag];
 
-    result["realSpeciesPopulations"] = Serialisable::fromVectorToTable(realSpeciesPopulations_);
+    result["realSpeciesPopulations"] = Serialisable::vector(realSpeciesPopulations_);
 
     partials_.serialise("partials", result);
     boundPartials_.serialise("boundPartials", result);
     unboundPartials_.serialise("unboundPartials", result);
 
-    result["total"] = total_;
-    result["boundTotal"] = boundTotal_;
-    result["unboundTotal"] = unboundTotal_;
+    result["total"] = Serialisable::ser(total_);
+    result["boundTotal"] = Serialisable::ser(boundTotal_);
+    result["unboundTotal"] = Serialisable::ser(unboundTotal_);
 }
 
 // Read values from a serialisable value
 void PartialSet::deserialise(SerialisedValue node)
 {
     // Real species populations
-    Serialisable::toMap(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
+    Deserialisable::map(node, "realSpeciesPopulations", [&](const std::string &name, const SerialisedValue &population)
                         { realSpeciesPopulations_[name] = population.as_floating(); });
 
     partials_.deserialise(node["partials"]);

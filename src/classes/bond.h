@@ -9,7 +9,7 @@
 class AtomBase;
 
 // Bond
-template <class AtomClass> class Bond : public Serialisable
+template <class AtomClass> class Bond
 {
     public:
     Bond(AtomClass *i = nullptr, AtomClass *j = nullptr) : i_(i), j_(j) {}
@@ -32,8 +32,5 @@ template <class AtomClass> class Bond : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
-    {
-        target[tag] = {{"i", i_->index()}, {"j", j_->index()}};
-    }
+    void serialise(std::string tag, SerialisedValue &target) const { target[tag] = {{"i", i_->index()}, {"j", j_->index()}}; }
 };

@@ -4,13 +4,14 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "templates/resolvableKeyedVector.h"
 
 // Forward Declarations
 class Species;
 class Isotopologue;
 
 // IsotopologueSet - Isotopologues for one or more Species
-class IsotopologueSet : public Serialisable, ResolvableContext
+class IsotopologueSet : ResolvableContext
 {
     public:
     IsotopologueSet() = default;
@@ -50,9 +51,9 @@ class IsotopologueSet : public Serialisable, ResolvableContext
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
     // Resolve internal resolvable name references with supplied data
     void resolve(const std::map<std::string, const Species *> &speciesInScope) override;
 };

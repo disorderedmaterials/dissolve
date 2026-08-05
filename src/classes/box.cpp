@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/box.h"
+#include "base/serialiser.h"
 #include "classes/cell.h"
 #include "math/mathFunc.h"
 
@@ -275,7 +276,7 @@ void Box::scale(Vector3 scaleFactors)
  */
 
 // Convert specified fractional coordinates to real-space coordinates
-inline void Box::toReal(Vector3 &r) const
+void Box::toReal(Vector3 &r) const
 {
     switch (type_)
     {
@@ -327,7 +328,7 @@ Vector3 Box::getReal(Vector3 r) const
 }
 
 // Convert specified real-space coordinates to fractional coordinates
-inline void Box::toFractional(Vector3 &r) const
+void Box::toFractional(Vector3 &r) const
 {
     switch (type_)
     {

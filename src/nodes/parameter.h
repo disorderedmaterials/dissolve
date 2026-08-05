@@ -6,6 +6,7 @@
 #include "base/context.h"
 #include "base/enumOptions.h"
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "math/data1D.h"
 #include "nodes/number.h"
 #include "templates/algorithms.h"
@@ -38,7 +39,7 @@ struct ParameterLink
 };
 
 // Base type for all parameter templates to inherit from
-class ParameterBase : public Serialisable
+class ParameterBase
 {
     public:
     ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
@@ -160,9 +161,9 @@ class ParameterBase : public Serialisable
      */
     public:
     // Express as a serialised value
-    virtual void serialise(std::string tag, SerialisedValue &target) const override {}
+    virtual void serialise(std::string tag, SerialisedValue &target) const {}
     // Read from a serialised value
-    virtual void deserialise(const SerialisedValue &node) override { return; }
+    virtual void deserialise(const SerialisedValue &node) { return; }
 };
 
 namespace ParameterFactory
@@ -567,7 +568,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
      */
     public:
     // Express as a serialised value
-    void serialise(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         SerialisedValue result = {};
 
@@ -575,21 +576,23 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         if constexpr (HasEnumOptions<DataClass>)
             result["data"] = getEnumOptions(Parameter<DataClass>::data_).serialise(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, Number>::value)
-            result["data"] = Parameter<DataClass>::data_;
+            result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, std::string>::value)
-            result["data"] = Parameter<DataClass>::data_;
+            result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (Parameter<DataClass>::data_)
-                result["data"] = *Parameter<DataClass>::data_;
+                result["data"] = Serialisable::ser(*Parameter<DataClass>::data_);
         }
+        else if constexpr (Serialisable::Serialisable<DataClass>)
+            result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else
-            result["data"] = Parameter<DataClass>::data_;
+            throw(std::runtime_error(std::format("Cannot deserialise type {}", typeid(DataClass).name())));
 
         target[tag] = result;
     };
     // Read from a serialised value
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node)
     {
         if constexpr (std::is_pointer<DataClass>::value)
         {
@@ -605,27 +608,27 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = toml::find<double>(node, "data");
+                Parameter<DataClass>::data_ = Deserialisable::deser<double>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = toml::find<Number>(node, "data");
+                Parameter<DataClass>::data_ = Deserialisable::deser<Number>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<Data1D>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = toml::find<Data1D>(node, "data");
+                Parameter<DataClass>::data_ = Deserialisable::deser<Data1D>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
+        else if constexpr (Deserialisable::Deserialisible<DataClass>)
+            Parameter<DataClass>::data_ = Deserialisable::deser<DataClass>(node.at("data"));
         else
-        {
-            Parameter<DataClass>::data_ = toml::find<DataClass>(node, "data");
-        }
+            throw(std::runtime_error(std::format("Cannot deserialise type {}", typeid(DataClass).name())));
     }
 };

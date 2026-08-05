@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/pairPotentialOverride.h"
+#include "base/serialiserLibrary.h"
 #include "classes/atomType.h"
 
 PairPotentialOverride::PairPotentialOverride() : interactionPotential_(Functions1D::Form::None) {}
@@ -72,23 +73,23 @@ void PairPotentialOverride::serialise(std::string tag, SerialisedValue &target) 
 // Read values from a serialisable value
 void PairPotentialOverride::deserialise(const SerialisedValue &node)
 {
-    matchI_ = toml::find<std::string>(node, "matchI");
-    matchJ_ = toml::find<std::string>(node, "matchJ");
+    matchI_ = Deserialisable::deser<std::string>(node.at("matchI"));
+    matchJ_ = Deserialisable::deser<std::string>(node.at("matchJ"));
 
-    Serialisable::optionalOn(node, "type", [this](const auto node)
-                             { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
+    Deserialisable::optionalOn(node, "type", [this](const auto node)
+                               { type_ = pairPotentialOverrideTypes().enumeration(std::string(node.as_string())); });
 
-    Serialisable::optionalOn(
+    Deserialisable::optionalOn(
         node, "form", [this](const auto node)
         { interactionPotential_.setForm(Functions1D::forms().enumeration(std::string(node.as_string()))); });
 
-    Serialisable::optionalOn(node, "parameters",
-                             [this](const auto node)
-                             {
-                                 auto &parameters = Functions1D::parameters(interactionPotential_.form());
-                                 std::vector<double> values;
-                                 std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
-                                                [&node](const auto parameter) { return node.at(parameter).as_floating(); });
-                                 interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
-                             });
+    Deserialisable::optionalOn(node, "parameters",
+                               [this](const auto node)
+                               {
+                                   auto &parameters = Functions1D::parameters(interactionPotential_.form());
+                                   std::vector<double> values;
+                                   std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                                                  [&node](const auto parameter) { return node.at(parameter).as_floating(); });
+                                   interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
+                               });
 }

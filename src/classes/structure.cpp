@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/structure.h"
+#include "base/serialiserLibrary.h"
 #include "classes/bond.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
@@ -308,20 +309,20 @@ void Structure::unFold()
 void Structure::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &result = target[tag];
-    Serialisable::fromVector<>(atoms_, "atoms", result);
-    Serialisable::fromVector<>(bonds_, "bonds", result);
+    Serialisable::vector<>(atoms_, "atoms", result);
+    Serialisable::vector<>(bonds_, "bonds", result);
 }
 
 // Read values from a serialisable value
 void Structure::deserialise(const SerialisedValue &node)
 {
-    Serialisable::toVector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back()->deserialise(atom); });
+    Deserialisable::vector(node, "atoms", [this](const SerialisedValue &atom) { atoms_.emplace_back()->deserialise(atom); });
 
-    Serialisable::toVector(node, "bonds",
+    Deserialisable::vector(node, "bonds",
                            [this](const SerialisedValue &bond)
                            {
-                               auto &i = atoms_.at(toml::find<int>(bond, "i"));
-                               auto &j = atoms_.at(toml::find<int>(bond, "j"));
+                               auto &i = atoms_.at(Deserialisable::deser<int>(bond.at("i")));
+                               auto &j = atoms_.at(Deserialisable::deser<int>(bond.at("j")));
                                bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i.get(), j.get()));
                            });
 }

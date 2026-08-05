@@ -8,7 +8,7 @@
 #include "templates/array2D.h"
 
 // Two-Dimensional Histogram
-class Histogram2D : public Serialisable
+class Histogram2D
 {
     public:
     Histogram2D();
@@ -106,7 +106,7 @@ class Histogram2D : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };

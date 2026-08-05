@@ -86,14 +86,24 @@ class AtomBase
     AtomGeometry geometry() const;
     // Return whether the geometry of this atom matches that specified
     bool isGeometry(AtomGeometry geom) const;
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Express as a serialisable value
+    void serialise(std::string tag, SerialisedValue &target) const;
+
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };
 
 // Atom
-template <typename BondClass> class Atom : public AtomBase, public Serialisable
+template <typename BondClass> class Atom : public AtomBase
 {
     public:
     Atom() = default;
-    virtual ~Atom() override = default;
+    virtual ~Atom() = default;
 
     /*
      * Coordinate Manipulation Operators
@@ -133,22 +143,5 @@ template <typename BondClass> class Atom : public AtomBase, public Serialisable
         for (const auto *bond : bonds_)
             connections.emplace_back(bond->partner(this));
         return connections;
-    }
-
-    /*
-     * Serialisation
-     */
-    public:
-    // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
-    {
-        target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
-    }
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override
-    {
-        index_ = toml::find<int>(node, "index");
-
-        set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "q", 0));
     }
 };

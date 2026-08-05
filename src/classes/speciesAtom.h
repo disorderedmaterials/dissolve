@@ -13,6 +13,7 @@
 
 // Forward Declarations
 class AtomType;
+class Species;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
@@ -87,7 +88,7 @@ class SpeciesAtom : public Atom<const SpeciesBond>
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };

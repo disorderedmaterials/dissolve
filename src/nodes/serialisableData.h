@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "templates/algorithms.h"
 
 // Base type for serialisable data
@@ -41,23 +42,23 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Optional Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
         requires(is_optional<DataClass> && is_instance_of_v<typename DataClass::value_type, std::vector> &&
-                 std::is_base_of_v<Serialisable, typename DataClass::value_type::value_type>)
+                 Serialisable::Serialisable<typename DataClass::value_type::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
                                                         {
-                                                            return Serialisable::fromVector(data_.value(),
-                                                                                            [&](const auto &item)
-                                                                                            {
-                                                                                                SerialisedValue outer;
-                                                                                                item.serialise("inner", outer);
-                                                                                                return outer["inner"];
-                                                                                            });
+                                                            return Serialisable::vector(data_.value(),
+                                                                                        [&](const auto &item)
+                                                                                        {
+                                                                                            SerialisedValue outer;
+                                                                                            item.serialise("inner", outer);
+                                                                                            return outer["inner"];
+                                                                                        });
                                                         }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {
                   targetData.emplace();
-                  Serialisable::toVector(value, [&](const auto &node) { data_->emplace_back().deserialise(node); });
+                  Deserialisable::vector(value, [&](const auto &node) { data_->emplace_back().deserialise(node); });
               }),
           dataChecker_([&]() { return targetData.has_value() && !targetData.value().empty(); }),
           dataResolver_(
@@ -71,8 +72,8 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Optional Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
-        requires(is_optional<DataClass> && std::is_base_of_v<Serialisable, typename DataClass::value_type>)
-        : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return data_.value().into_toml(); }),
+        requires(is_optional<DataClass> && Serialisable::Serialisable<typename DataClass::value_type>)
+        : SerialisableData(key), data_(targetData), dataSerialiser_([&]() { return Serialisable::ser(data_.value()); }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {
@@ -90,23 +91,23 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     }
     // Vector of Serialisable
     SerialisableClass(std::string_view key, DataClass &targetData)
-        requires(is_instance_of_v<DataClass, std::vector> && std::is_base_of_v<Serialisable, typename DataClass::value_type>)
+        requires(is_instance_of_v<DataClass, std::vector> && Serialisable::Serialisable<typename DataClass::value_type>)
         : SerialisableData(key), data_(targetData), dataSerialiser_(
                                                         [&]()
                                                         {
-                                                            return Serialisable::fromVector(data_,
-                                                                                            [&](const auto &item)
-                                                                                            {
-                                                                                                SerialisedValue outer;
-                                                                                                item.serialise("inner", outer);
-                                                                                                return outer["inner"];
-                                                                                            });
+                                                            return Serialisable::vector(data_,
+                                                                                        [&](const auto &item)
+                                                                                        {
+                                                                                            SerialisedValue outer;
+                                                                                            item.serialise("inner", outer);
+                                                                                            return outer["inner"];
+                                                                                        });
                                                         }),
           dataDeserialiser_(
               [&](const SerialisedValue &value)
               {
                   data_.clear();
-                  Serialisable::toVector(value, [&](const auto &node) { data_.emplace_back().deserialise(node); });
+                  Deserialisable::vector(value, [&](const auto &node) { data_.emplace_back().deserialise(node); });
               }),
           dataChecker_([&]() { return !targetData.empty(); }),
           dataResolver_(
@@ -118,29 +119,9 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
               })
     {
     }
-    // Trivial Non-Serialisable Value
-    SerialisableClass(std::string_view key, DataClass &value)
-        requires(std::is_trivial_v<DataClass>)
-        : SerialisableData(key), data_(value), dataSerialiser_(
-                                                   [&]()
-                                                   {
-                                                       SerialisedValue value;
-                                                       value = data_;
-                                                       return value;
-                                                   }),
-          dataDeserialiser_(
-              [&](const SerialisedValue &value)
-              {
-                  if constexpr (std::is_floating_point_v<DataClass>)
-                      data_ = value.as_floating();
-                  else if constexpr (std::is_integral_v<DataClass>)
-                      data_ = value.as_integer();
-              })
-    {
-    }
     // Serialisable
     SerialisableClass(std::string_view key, DataClass &value)
-        requires(std::is_base_of_v<Serialisable, DataClass>)
+        requires(!is_optional<DataClass> && Serialisable::Serialisable<DataClass>)
         : SerialisableData(key), data_(value), dataResolver_(
                                                    [&](const std::map<std::string, const Species *> &reachableSpecies)
                                                    {
@@ -159,15 +140,10 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     DataClass &data_;
     // Serialiser for target data
     using DataSerialiser = std::function<SerialisedValue()>;
-    DataSerialiser dataSerialiser_{[&]()
-                                   {
-                                       SerialisedValue target;
-                                       data_.serialise("inner", target);
-                                       return target["inner"];
-                                   }};
+    DataSerialiser dataSerialiser_{[&]() { return Serialisable::ser(data_); }};
     // Deserialiser for target data
     using DataDeserialiser = std::function<void(const SerialisedValue &value)>;
-    DataDeserialiser dataDeserialiser_{[&](const SerialisedValue &value) { data_.deserialise(value); }};
+    DataDeserialiser dataDeserialiser_{[&](const SerialisedValue &value) { Deserialisable::deserialiseOnto(data_, value); }};
     // Value checker for data, returning whether there is actually data to write
     using ValueChecker = std::function<bool()>;
     ValueChecker dataChecker_{[&]() { return true; }};
@@ -180,11 +156,11 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
      */
     public:
     // Return whether there is data to serialise
-    bool canSerialise() const override { return dataChecker_(); }
+    bool canSerialise() const { return dataChecker_(); }
     // Express as a serialised value
-    SerialisedValue serialise() const override { return dataSerialiser_(); };
+    SerialisedValue serialise() const { return dataSerialiser_(); };
     // Read from a serialised value
-    void deserialise(const SerialisedValue &node) override { dataDeserialiser_(node); }
+    void deserialise(const SerialisedValue &node) { dataDeserialiser_(node); }
     // Resolve named data
     void resolve(const std::map<std::string, const Species *> &speciesInScope) override { dataResolver_(speciesInScope); };
 };

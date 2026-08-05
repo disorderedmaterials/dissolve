@@ -3,6 +3,7 @@
 
 #include "math/data3D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "math/histogram3D.h"
 #include "templates/array3D.h"
@@ -339,18 +340,18 @@ void Data3D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data3D::deserialise(const SerialisedValue &node)
 {
-    tag_ = toml::find<std::string>(node, "tag");
-    x_ = toml::find<std::vector<double>>(node, "x");
-    y_ = toml::find<std::vector<double>>(node, "y");
-    z_ = toml::find<std::vector<double>>(node, "z");
+    tag_ = Deserialisable::deser<std::string>(node.at("tag"));
+    x_ = Deserialisable::vector<double>(node.at("x"));
+    y_ = Deserialisable::vector<double>(node.at("y"));
+    z_ = Deserialisable::vector<double>(node.at("z"));
     values_.initialise(x_.size(), y_.size(), z_.size());
-    values_.linearArray() = toml::find<std::vector<double>>(node, "values");
+    values_.linearArray() = Deserialisable::vector<double>(node.at("values"));
 
-    Serialisable::optionalOn(node, "errors",
-                             [this](const auto errors)
-                             {
-                                 hasError_ = true;
-                                 errors_.initialise(x_.size(), y_.size(), z_.size());
-                                 errors_.linearArray() = toml::get<std::vector<double>>(errors);
-                             });
+    Deserialisable::optionalOn(node, "errors",
+                               [this](const auto errors)
+                               {
+                                   hasError_ = true;
+                                   errors_.initialise(x_.size(), y_.size(), z_.size());
+                                   errors_.linearArray() = Deserialisable::vector<double>(errors);
+                               });
 }

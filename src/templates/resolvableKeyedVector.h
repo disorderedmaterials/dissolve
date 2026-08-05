@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "templates/keyedVector.h"
 #include "templates/resolvable.h"
 #include <functional>
 #include <vector>

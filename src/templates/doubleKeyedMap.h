@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include "templates/array2D.h"
@@ -17,7 +18,7 @@
  * removing the critical dependence of an immutably ordered vector of AtomTypes.
  */
 using DoubleKeyedMapKey = std::pair<std::string_view, std::string_view>;
-template <typename ValueClass> class DoubleKeyedMap : public Serialisable
+template <typename ValueClass> class DoubleKeyedMap
 {
     public:
     DoubleKeyedMap(bool mirrored = false) : mirroredAreEquivalent_(mirrored) {}
@@ -164,18 +165,18 @@ template <typename ValueClass> class DoubleKeyedMap : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override
+    void serialise(std::string tag, SerialisedValue &target) const
     {
         SerialisedValue result;
-        Serialisable::fromMap(data_, "map", result);
+        Serialisable::map(data_, "map", result);
         target[tag] = result;
     };
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node)
     {
         data_.clear();
 
-        for (auto &[mapKey, value] : toml::find<SerialisedValue::table_type>(node, "map"))
+        for (auto &[mapKey, value] : node.at("map").as_table())
         {
             if constexpr (std::is_same_v<ValueClass, double>)
                 data_[mapKey] = value.as_floating();

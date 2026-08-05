@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/braggReflection.h"
+#include "base/serialiserLibrary.h"
 
 BraggReflectionVector::BraggReflectionVector(const BraggReflectionVector &other) : reflections_(other.reflections_) {}
 
@@ -32,14 +33,14 @@ const BraggReflection &BraggReflectionVector::operator[](int i) const { return r
 // Express as a serialisable value
 void BraggReflectionVector::serialise(std::string tag, SerialisedValue &target) const
 {
-    Serialisable::fromVector(reflections_, tag, target);
+    Serialisable::vector(reflections_, tag, target);
 }
 
 // Read values from a serialisable value
 void BraggReflectionVector::deserialise(const SerialisedValue &node)
 {
     reflections_.clear();
-    return Serialisable::toVector(node,
+    return Deserialisable::vector(node,
                                   [&](const auto &value)
                                   {
                                       auto &reflection = reflections_.emplace_back();
@@ -139,9 +140,9 @@ const Vector3i &BraggReflection::hkl() const { return hkl_; }
 // Read values from a serialisable value
 void BraggReflection::deserialise(const SerialisedValue &node)
 {
-    index_ = toml::find<int>(node, "index");
-    q_ = toml::find<double>(node, "q");
-    nKVectors_ = toml::find<int>(node, "nKVectors");
+    index_ = Deserialisable::deser<int>(node.at("index"));
+    q_ = Deserialisable::deser<double>(node.at("q"));
+    nKVectors_ = Deserialisable::deser<int>(node.at("nKVectors"));
     hkl_.zero();
     hkl_.deserialise(node);
 }

@@ -3,6 +3,7 @@
 
 #include "expression/variable.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include <cstring>
 
 ExpressionVariable::ExpressionVariable(const ExpressionValue &value)
@@ -61,12 +62,12 @@ ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 // Express as a serialisable value
 void ExpressionVariable::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"name", baseName_}, {"value", value_}};
+    target[tag] = {{"name", Serialisable::ser(baseName_)}, {"value", Serialisable::ser(value_)}};
 }
 
 // Read values from a serialisable value
 void ExpressionVariable::deserialise(const SerialisedValue &node)
 {
-    value_ = toml::find<ExpressionValue>(node, "value");
-    setBaseName(toml::find<std::string>(node, "name"));
+    value_ = Deserialisable::deser<ExpressionValue>(node.at("value"));
+    setBaseName(Deserialisable::deser<std::string>(node.at("name")));
 }

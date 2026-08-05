@@ -19,7 +19,7 @@ class AtomType;
 class Configuration;
 class PartialSet;
 
-class EPSRNamedTargetWeights : public Serialisable
+class EPSRNamedTargetWeights
 {
     public:
     EPSRNamedTargetWeights() = default;
@@ -39,9 +39,9 @@ class EPSRNamedTargetWeights : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };
 
 // EPSR Node

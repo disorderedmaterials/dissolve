@@ -3,6 +3,7 @@
 
 #include "math/histogram2D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "math/histogram1D.h"
 
 Histogram2D::Histogram2D()
@@ -222,9 +223,9 @@ void Histogram2D::operator=(const Histogram2D &source)
 // Express as a serialisable value
 void Histogram2D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_}, {"xBinWidth", xBinWidth_},
-                   {"yMinimum", yMinimum_}, {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_},
-                   {"nBinned", nBinned_},   {"nMissed", nMissed_},   {"averages", averages_.linearArray()}};
+    target[tag] = {{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_},   {"xBinWidth", xBinWidth_}, {"yMinimum", yMinimum_},
+                   {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_}, {"nBinned", nBinned_},     {"nMissed", nMissed_}};
+    Serialisable::vector(averages_.linearArray(), "averages", target[tag]);
 }
 
 // Read values from a serialisable value
@@ -232,14 +233,12 @@ void Histogram2D::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    initialise(toml::find<double>(node, "xMinimum"), toml::find<double>(node, "xMaximum"),
-               toml::find<double>(node, "yBinWidth"), toml::find<double>(node, "yMinimum"),
-               toml::find<double>(node, "yMaximum"), toml::find<double>(node, "yBinWidth"));
-
-    nBinned_ = toml::find<long>(node, "nBinned");
-    nMissed_ = toml::find<long>(node, "nMissed");
-
-    averages_.linearArray() = toml::find<std::vector<SampledDouble>>(node, "averages");
+    initialise(Deserialisable::deser<double>(node.at("xMinimum")), Deserialisable::deser<double>(node.at("xMaximum")),
+               Deserialisable::deser<double>(node.at("yBinWidth")), Deserialisable ::deser<double>(node.at("yMinimum")),
+               Deserialisable::deser<double>(node.at("yMaximum")), Deserialisable::deser<double>(node.at("yBinWidth")));
+    nBinned_ = Deserialisable::deser<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::deser<long>(node.at("nMissed"));
+    averages_.linearArray() = Deserialisable::vector<SampledDouble>(node.at("averages"));
 
     updateAccumulatedData();
 }

@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesSites.h"
+#include "base/serialiserLibrary.h"
 #include "classes/species.h"
 
 SpeciesSites::SpeciesSites(const std::vector<const SpeciesSite *> &sites)
@@ -71,8 +72,8 @@ void SpeciesSites::serialise(std::string tag, SerialisedValue &target) const
         return;
 
     SerialisedValue value;
-    value["sites"] = fromVectorToTable(sites_, [](const auto &sites)
-                                       { return fromVectorToTable(sites, [](const auto isoWeight) { return isoWeight; }); });
+    value["sites"] = Serialisable::vector(
+        sites_, [](const auto &sites) { return Serialisable::vector(sites, [](const auto isoWeight) { return isoWeight; }); });
     target[tag] = value;
 }
 
@@ -81,13 +82,13 @@ void SpeciesSites::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    toMap(node, "set",
-          [&](const std::string &speciesName, const SerialisedValue &sites)
-          {
-              auto &set = sites_[speciesName];
-              toMap(sites, [&](const std::string &siteName, const SerialisedValue &population)
-                    { set[siteName] = population.as_floating(); });
-          });
+    Deserialisable::map(node, "set",
+                        [&](const std::string &speciesName, const SerialisedValue &sites)
+                        {
+                            auto &set = sites_[speciesName];
+                            Deserialisable::map(sites, [&](const std::string &siteName, const SerialisedValue &population)
+                                                { set[siteName] = population.as_floating(); });
+                        });
 }
 
 // Resolve internal resolvable name references with supplied data

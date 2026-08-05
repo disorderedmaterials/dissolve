@@ -9,7 +9,7 @@
 #include "math/vector3.h"
 
 // Basic Box Definition
-class Box : public Serialisable
+class Box
 {
     public:
     // Box Type Enum
@@ -156,5 +156,5 @@ class Box : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
 };

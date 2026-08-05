@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesAtom.h"
+#include "base/serialiserLibrary.h"
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/species.h"
@@ -167,24 +168,25 @@ SpeciesAtom::ScaledInteractionDefinition SpeciesAtom::scaling(const SpeciesAtom 
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"index", index_}, {"z", Z_}, {"r", r_}, {"q", q_}};
+    target[tag] = {{"index", index_}, {"z", Serialisable::ser(Z_)}, {"r", Serialisable::ser(r_)}, {"q", q_}};
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
 void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
-    index_ = toml::find<int>(node, "index");
+    index_ = Deserialisable::deser<int>(node.at("index"));
 
-    set(toml::find<Elements::Element>(node, "z"), toml::find<Vector3>(node, "r"), toml::find_or<double>(node, "q", 0));
+    set(Deserialisable::deser<Elements::Element>(node.at("z")), Deserialisable::deser<Vector3>(node.at("r")),
+        Deserialisable::deser_or<double>(node, "q", 0));
 
-    Serialisable::optionalOn(node, "type",
-                             [&](const auto innerNode)
-                             {
-                                 if (Z_ == Elements::Unknown)
-                                     return;
-                                 std::string name = toml::get<std::string>(innerNode);
-                                 atomType_ = parent_->findAtomType(name);
-                                 if (atomType_ == nullptr)
-                                     atomType_ = parent_->addAtomType(Z_, name);
-                             });
+    Deserialisable::optionalOn(node, "type",
+                               [&](const auto innerNode)
+                               {
+                                   if (Z_ == Elements::Unknown)
+                                       return;
+                                   std::string name = Deserialisable::deser<std::string>(innerNode);
+                                   atomType_ = parent_->findAtomType(name);
+                                   if (atomType_ == nullptr)
+                                       atomType_ = parent_->addAtomType(Z_, name);
+                               });
 }

@@ -341,7 +341,7 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
     result["x"] = x;
     result["y"] = y;
 
-    fromMap(options_, "options", result);
+    Serialisable::map(options_, "options", result);
 
     serialiseInternal(result);
 
@@ -351,24 +351,24 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Node::deserialise(const SerialisedValue &node)
 {
-    x = toml::find<int>(node, "x");
-    y = toml::find<int>(node, "y");
-    toMap(node, "inputs",
-          [this](const auto &k, const auto &v)
-          {
-              if (inputs_.contains(k))
-                  inputs_[k]->deserialise(v);
-              else
-                  Messenger::exception("Node {} does not contain a parameter {}", name(), k);
-          });
-    toMap(node, "options",
-          [this](const auto &k, const auto &v)
-          {
-              if (options_.contains(k))
-                  options_[k]->deserialise(v);
-              else
-                  Messenger::exception("Node {} does not contain an option {}", name(), k);
-          });
+    x = Deserialisable::deser<int>(node.at("x"));
+    y = Deserialisable::deser<int>(node.at("y"));
+    Deserialisable::map(node, "inputs",
+                        [this](const auto &k, const auto &v)
+                        {
+                            if (inputs_.contains(k))
+                                inputs_[k]->deserialise(v);
+                            else
+                                Messenger::exception("Node {} does not contain a parameter {}", name(), k);
+                        });
+    Deserialisable::map(node, "options",
+                        [this](const auto &k, const auto &v)
+                        {
+                            if (options_.contains(k))
+                                options_[k]->deserialise(v);
+                            else
+                                Messenger::exception("Node {} does not contain an option {}", name(), k);
+                        });
     deserialiseInternal(node);
 }
 

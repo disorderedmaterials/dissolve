@@ -15,6 +15,8 @@ add_library(
   outputHandler.cpp
   outputHandler.h
   parserLibrary.cpp
+  serialiser.h
+  serialiser.cpp
   sysFunc.cpp
   sysFunc.h
   timer.cpp

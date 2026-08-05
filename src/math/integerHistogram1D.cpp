@@ -3,6 +3,7 @@
 
 #include "math/integerHistogram1D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
@@ -155,14 +156,14 @@ const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedDa
 // Express as a serialisable value
 void IntegerHistogram1D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"zeroCounter", zeroCounter_}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
+    target[tag] = {{"zeroCounter", Serialisable::ser(zeroCounter_)}, {"nBinned", nBinned_}, {"nMissed", nMissed_}};
 
     if (minimum_)
         target[tag]["minimum"] = *minimum_;
     if (maximum_)
         target[tag]["maximum"] = *maximum_;
 
-    fromMap(averages_, "averages", target);
+    Serialisable::map(averages_, "averages", target);
 }
 
 // Read values from a serialisable value
@@ -170,14 +171,14 @@ void IntegerHistogram1D::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    getIfPresent<int>(node, "minimum", minimum_);
-    getIfPresent<int>(node, "maximum", maximum_);
+    Deserialisable::getIfPresent<int>(node, "minimum", minimum_);
+    Deserialisable::getIfPresent<int>(node, "maximum", maximum_);
 
-    nBinned_ = toml::find<long>(node, "nBinned");
-    nMissed_ = toml::find<long>(node, "nMissed");
-    zeroCounter_ = toml::find<SampledDouble>(node, "nMissed");
-
-    toMap(node, "averages", [&](const auto &key, const auto &value) { averages_[std::stoi(key)].deserialise(value); });
+    nBinned_ = Deserialisable::deser<long>(node.at("nBinned"));
+    nMissed_ = Deserialisable::deser<long>(node.at("nMissed"));
+    zeroCounter_ = Deserialisable::deser<SampledDouble>(node.at("nMissed"));
+    Deserialisable::map(node, "averages",
+                        [&](const auto &key, const auto &value) { averages_[std::stoi(key)].deserialise(value); });
 
     updateAccumulatedData();
 }

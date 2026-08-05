@@ -55,7 +55,7 @@ class SpeciesNode : public Node
      */
     private:
     // Serialise any hidden content
-    void serialiseInternal(SerialisedValue &target) const override;
+    void serialiseInternal(SerialisedValue &target) const;
     // Deserialise any hidden content
-    void deserialiseInternal(const SerialisedValue &target) override;
+    void deserialiseInternal(const SerialisedValue &target);
 };

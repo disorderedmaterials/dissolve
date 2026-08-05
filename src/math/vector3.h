@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 // 3D Real Vector
-class Vector3 : public Serialisable
+class Vector3
 {
     public:
     Vector3() = default;
@@ -138,7 +138,7 @@ class Vector3 : public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };

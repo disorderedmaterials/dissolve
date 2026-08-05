@@ -25,7 +25,7 @@ class DissolveGraph;
 class PairPotential;
 
 // Node Base
-class Node : public Serialisable
+class Node
 {
     public:
     Node() {}
@@ -207,7 +207,7 @@ class Node : public Serialisable
         return param;
     }
     // Add serialisable input parameter
-    template <class T>
+    template <Serialisable::Serialisable T>
     std::shared_ptr<ParameterBase> addSerialisableInput(std::string_view inputName, std::string_view description, T &data)
     {
         if (findInput(inputName))
@@ -367,9 +367,9 @@ class Node : public Serialisable
         serialisables_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
     }
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
     // Express persistent data as a serialisable value
     SerialisedValue serialiseData() const;
     // Read persistent data from a serialisable value

@@ -3,6 +3,7 @@
 
 #include "math/vector3.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "math/mathFunc.h"
 #include <cmath>
 #include <format>
@@ -506,7 +507,7 @@ void Vector3::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Vector3::deserialise(const SerialisedValue &node)
 {
-    x = toml::get<double>(node[0]);
-    y = toml::get<double>(node[1]);
-    z = toml::get<double>(node[2]);
+    x = Deserialisable::deser<double>(node[0]);
+    y = Deserialisable::deser<double>(node[1]);
+    z = Deserialisable::deser<double>(node[2]);
 }

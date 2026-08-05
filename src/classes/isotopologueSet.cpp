@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/isotopologueSet.h"
+#include "base/serialiserLibrary.h"
 #include "classes/species.h"
-#include <algorithm>
 
 IsotopologueSet::IsotopologueSet(const std::vector<std::pair<const Isotopologue *, double>> &topes)
 {
@@ -94,8 +94,9 @@ void IsotopologueSet::serialise(std::string tag, SerialisedValue &target) const
         return;
 
     SerialisedValue value;
-    value["set"] = fromVectorToTable(isotopologues_, [](const auto &topes)
-                                     { return fromVectorToTable(topes, [](const auto isoWeight) { return isoWeight; }); });
+    value["set"] =
+        Serialisable::vector(isotopologues_, [](const auto &topes)
+                             { return Serialisable::vector(topes, [](const auto isoWeight) { return isoWeight; }); });
     target[tag] = value;
 }
 
@@ -104,13 +105,13 @@ void IsotopologueSet::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    toMap(node, "set",
-          [&](const std::string &speciesName, const SerialisedValue &topes)
-          {
-              auto &set = isotopologues_[speciesName];
-              toMap(topes, [&](const std::string &isoName, const SerialisedValue &population)
-                    { set[isoName] = population.as_floating(); });
-          });
+    Deserialisable::map(node, "set",
+                        [&](const std::string &speciesName, const SerialisedValue &topes)
+                        {
+                            auto &set = isotopologues_[speciesName];
+                            Deserialisable::map(topes, [&](const std::string &isoName, const SerialisedValue &population)
+                                                { set[isoName] = population.as_floating(); });
+                        });
 }
 
 // Resolve internal resolvable name references with supplied data

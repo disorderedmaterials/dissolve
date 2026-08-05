@@ -12,7 +12,7 @@
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public Data2DBase, public Serialisable
+class Data2D : public Data2DBase
 {
     public:
     Data2D();
@@ -109,7 +109,7 @@ class Data2D : public Data2DBase, public Serialisable
      */
     public:
     // Express as a serialisable value
-    void serialise(std::string tag, SerialisedValue &target) const override;
+    void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node);
 };

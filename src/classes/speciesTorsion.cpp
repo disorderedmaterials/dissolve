@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/speciesTorsion.h"
+#include "base/serialiserLibrary.h"
 #include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "math/mathFunc.h"
@@ -399,7 +400,7 @@ void SpeciesTorsion::deserialise(const SerialisedValue &node)
     SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise(node,
                                                                 [&](auto &form) { return parent_->getCommonTorsion(form); });
 
-    electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
+    electrostatic14Scaling_ = Deserialisable::deser_or<double>(node, "q14", 0.5);
 
-    Serialisable::optionalOn(node, "v14", [this](const auto node) { vdw14Scaling_ = node.as_floating(); });
+    Deserialisable::optionalOn(node, "v14", [this](const auto node) { vdw14Scaling_ = node.as_floating(); });
 }

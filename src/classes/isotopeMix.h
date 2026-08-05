@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/species.h"
 #include "data/isotopes.h"
 #include "templates/keyedVector.h"
 

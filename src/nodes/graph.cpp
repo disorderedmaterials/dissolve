@@ -263,23 +263,23 @@ void Graph::serialise(std::string tag, SerialisedValue &target) const
 {
     Node::serialise(tag, target);
     auto &result = target[tag];
-    fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
-    fromVector(edges_, "edges", result);
+    Serialisable::fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
+    Serialisable::vector(edges_, "edges", result);
 }
 
 // Read values from a serialisable value
 void Graph::deserialise(const SerialisedValue &node)
 {
     Node::deserialise(node);
-    toMap(node, "nodes",
-          [this](const auto name, const auto &value)
-          {
-              std::string nodeType = toml::find<std::string>(value, "type");
-              auto child = createNode(nodeType, name);
+    Deserialisable::map(node, "nodes",
+                        [this](const auto name, const auto &value)
+                        {
+                            std::string nodeType = Deserialisable::deser<std::string>(value.at("type"));
+                            auto child = createNode(nodeType, name);
 
-              child->deserialise(value);
-          });
-    toVector(node, "edges", [this](const auto &value) { addEdge(toml::get<EdgeDefinition>(value)); });
+                            child->deserialise(value);
+                        });
+    Deserialisable::vector(node, "edges", [this](const auto &value) { addEdge(Deserialisable::deser<EdgeDefinition>(value)); });
 }
 
 /*

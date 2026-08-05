@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "math/function1D.h"
+#include "base/serialiserLibrary.h"
 #include "classes/pairPotential.h"
 #include "math/mathFunc.h"
 #include "templates/algorithms.h"
@@ -584,7 +585,7 @@ void Function1DWrapper::serialise(std::string tag, SerialisedValue &target) cons
 
     result["form"] = Functions1D::forms().keywordByIndex(static_cast<int>(form_));
 
-    Serialisable::fromVector(parameters_, "parameters", result, [](const auto &x) { return x; });
+    Serialisable::vector(parameters_, "parameters", result, [](const auto &x) { return x; });
 }
 
 // Read values from a serialisable value
@@ -593,5 +594,6 @@ void Function1DWrapper::deserialise(const SerialisedValue &node)
     Functions1D::Form proxy;
     form_ = getEnumOptions(proxy).deserialise(node);
 
-    Serialisable::toVector(node, "parameters", [this](const auto &x) { parameters_.emplace_back(toml::get<double>(x)); });
+    Deserialisable::vector(node, "parameters",
+                           [this](const auto &x) { parameters_.emplace_back(Deserialisable::deser<double>(x)); });
 }

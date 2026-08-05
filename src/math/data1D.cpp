@@ -3,6 +3,7 @@
 
 #include "math/data1D.h"
 #include "base/messenger.h"
+#include "base/serialiserLibrary.h"
 #include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include <cassert>
@@ -427,14 +428,14 @@ void Data1D::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void Data1D::deserialise(const SerialisedValue &node)
 {
-    tag_ = toml::find<std::string>(node, "tag");
-    x_ = toml::find<std::vector<double>>(node, "x");
-    values_ = toml::find<std::vector<double>>(node, "y");
+    tag_ = Deserialisable::deser<std::string>(node.at("tag"));
+    x_ = Deserialisable::vector<double>(node.at("x"));
+    values_ = Deserialisable::vector<double>(node.at("y"));
 
-    Serialisable::optionalOn(node, "errors",
-                             [this](const auto errors)
-                             {
-                                 hasError_ = true;
-                                 errors_ = toml::get<std::vector<double>>(errors);
-                             });
+    Deserialisable::optionalOn(node, "errors",
+                               [this](const auto errors)
+                               {
+                                   hasError_ = true;
+                                   errors_ = Deserialisable::vector<double>(errors);
+                               });
 }
