@@ -102,6 +102,8 @@ class Graph : public Node
     Node *findNode(std::string_view nodeName);
     // Return container of nodes
     Nodes &nodes();
+    // Return container of reverse nodes
+    ReverseNodes &reverseNodes();
     // Return container of edges between nodes
     Edges &edges();
     // Return a path to this graph from the root

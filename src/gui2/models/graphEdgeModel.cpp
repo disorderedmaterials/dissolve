@@ -19,7 +19,7 @@ GraphEdgeModel::GraphEdgeModel(GraphModel *parent, Graph *&graph) : parent_(pare
 GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : graph_(other.graph_) {}
 
 // Remove an edge from the model (by index). Returns false if edge does not exist
-bool GraphEdgeModel::dropEdge(std::size_t edge)
+bool GraphEdgeModel::deleteEdge(std::size_t edge)
 {
     // Check if edge is in range
     if (edge >= edges().size())
@@ -31,14 +31,14 @@ bool GraphEdgeModel::dropEdge(std::size_t edge)
 }
 
 // Remove an edge by value.  Returns false if the edge does not exist
-bool GraphEdgeModel::dropEdge(Edge &edge)
+bool GraphEdgeModel::deleteEdge(Edge &edge)
 {
     auto index = std::find_if(edges().begin(), edges().end(), [&edge](auto &item) { return &edge == item.get(); });
     // Check if edge is found
     if (index == edges().end())
         return false;
     else
-        return dropEdge(index - edges().begin());
+        return deleteEdge(index - edges().begin());
 }
 
 // Create a new edge

@@ -119,8 +119,8 @@ void GraphModel::emplace_back(int x, int y, QVariant type, std::string name)
 void GraphModel::deleteNode(int idx)
 {
     nodes_.beginRemoveRows({}, idx, idx);
-    const auto type = wrapped_[idx].rawValue().type();
-    std::string index{wrapped_[idx].rawValue().name()};
+    const auto nodeType = wrapped_[idx].rawValue().type();
+    std::string nodeName{wrapped_[idx].rawValue().name()};
     if (inputEndPoints_.contains(&wrapped_[idx].rawValue()))
         inputEndPoints_.erase(&wrapped_[idx].rawValue());
     if (outputEndPoints_.contains(&wrapped_[idx].rawValue()))
@@ -128,13 +128,14 @@ void GraphModel::deleteNode(int idx)
     endPointsModel_.remove(&wrapped_[idx].rawValue());
     wrapped_.erase(wrapped_.begin() + idx);
 
-    edges_.deleteNode(index);
+    edges_.deleteByNode(nodeName);
 
-    graph_->nodes().erase(index);
+    graph_->reverseNodes().erase(graph_->findNode(nodeName));
+    graph_->nodes().erase(nodeName);
     nodes_.endRemoveRows();
 
     graphChanged();
-    decrementNodeTypeRequired(std::string(type));
+    decrementNodeTypeRequired(std::string(nodeType));
 }
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
@@ -223,19 +224,25 @@ void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *target
 
 void ParameterEndPointsModel::remove(const Node *node)
 {
-    endPoints_.erase(std::remove_if(endPoints_.begin(), endPoints_.end(),
-                                    [&node](std::pair<QQuickItem *, QQuickItem *> &endPoints) -> bool
-                                    {
-                                        auto &[sourceDropArea, targetDropArea] = endPoints;
-                                        auto sourceParentNode = sourceDropArea->property("parentNodeBox").value<QObject *>();
-                                        auto sourceParentNodeName =
-                                            sourceParentNode->property("nodeName").toString().toStdString();
-                                        auto targetParentNode = targetDropArea->property("parentNodeBox").value<QObject *>();
-                                        auto targetParentNodeName =
-                                            targetParentNode->property("nodeName").toString().toStdString();
-                                        return sourceParentNodeName == node->name() || targetParentNodeName == node->name();
-                                    }),
-                     endPoints_.end());
+    auto shouldRemove = [&](int i) -> bool
+    {
+        auto &[sourceDropArea, targetDropArea] = endPoints_[i];
+        auto sourceParentNode = sourceDropArea->property("parentNodeBox").value<QObject *>();
+        auto sourceParentNodeName = sourceParentNode->property("nodeName").toString().toStdString();
+        auto targetParentNode = targetDropArea->property("parentNodeBox").value<QObject *>();
+        auto targetParentNodeName = targetParentNode->property("nodeName").toString().toStdString();
+        return sourceParentNodeName == node->name() || targetParentNodeName == node->name();
+    };
+
+    for (int row = endPoints_.size() - 1; row >= 0; --row)
+    {
+        if (shouldRemove(row))
+        {
+            beginRemoveRows(QModelIndex(), row, row);
+            endPoints_.erase(endPoints_.begin() + row);
+            endRemoveRows();
+        }
+    }
 }
 
 int ParameterEndPointsModel::rowCount(const QModelIndex &parent) const

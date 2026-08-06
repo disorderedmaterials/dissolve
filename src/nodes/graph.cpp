@@ -246,6 +246,9 @@ Graph::Nodes &Graph::nodes() { return nodes_; }
 // Return edges on the graph
 Graph::Edges &Graph::edges() { return edges_; }
 
+// Return container of reverse nodes
+Graph::ReverseNodes &Graph::reverseNodes() { return reverseNodes_; }
+
 // Return a path to this graph from the root
 std::string Graph::location() const
 {
