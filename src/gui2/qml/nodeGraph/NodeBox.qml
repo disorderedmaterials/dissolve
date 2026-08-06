@@ -2,6 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.qmlmodels
+//import DissolveControlsModule
+//import DissolveIconsModule
+//import "../DissolveControlsModule"
+//import "../DissolveIconsModule"
 
 GroupBox {
     id: root
@@ -33,7 +37,24 @@ GroupBox {
             easing.type: Easing.OutQuad
         }
     }
+    /*
+    Menu {
+        id: popupMenu
 
+        DissolveMenuItem {
+            dissolveAction: Action {
+                text: "&Run"
+                shortcut: "Ctrl+Enter"
+                onTriggered: {
+                    
+                }
+            }
+            iconPath: "qrc:/DissolveIconsModule/play.svg"
+        }
+
+        MenuSeparator{}
+    }
+*/
     label: Rectangle {
         id: header
 
@@ -120,6 +141,15 @@ GroupBox {
                 onClicked: root.deleted()
             }
         }
+        /*
+        TapHandler {
+            id: TapHandler
+
+            onTapped: {
+
+            }
+        }
+        */
         HoverHandler {
             id: hoverHandler
             target: root

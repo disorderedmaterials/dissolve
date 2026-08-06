@@ -3,6 +3,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Shapes
 import Qt.labs.qmlmodels
+import Dissolve
+import DissolveControlsModule
+import DissolveIconsModule
+import "../Dissolve"
+import "../DissolveControlsModule"
+import "../DissolveIconsModule"
 
 NodeBox {
     id: root
@@ -12,6 +18,8 @@ NodeBox {
     property variant rootGraphModel
     property double startX: x + width
     property string hint: ""
+    property NodeMessages messageStore: nodeMessages
+    property bool popupActive: false
 
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
@@ -26,7 +34,258 @@ NodeBox {
     x: posX
     y: posY
 
+    NodeMessages {
+        id: nodeMessages
+        graphModel: root.rootGraphModel
+        nodeName: root.nodeName
+    }
+
     onDeleted: rootGraphModel.deleteNode(index)
+
+    Menu {
+        id: nodePopupMenu
+
+        DissolveMenuItem {
+            dissolveAction: Action {
+                text: "&Run"
+                shortcut: "Ctrl+Enter"
+                onTriggered: {
+                    var result = rootGraphModel.run(nodeName)
+
+                    if (result)
+                        console.log("Graph run from node '%1' was successful/unchanged")
+                    else
+                        console.log("Graph run from node '%1' was failed")
+                }
+            }
+            iconPath: "qrc:/DissolveIconsModule/play.svg"
+        }
+        MenuSeparator {}
+        MenuItem {
+            id: messagesMenuItem
+            text: "Messages"
+
+            HoverHandler {
+                id: messagesHoverHandler
+
+                onHoveredChanged: {
+                    if (hovered) {
+                        root.messageStore.updateMessages()
+
+                        const p = messagesMenuItem.mapToItem(
+                            Overlay.overlay,
+                            messagesMenuItem.width,
+                            0
+                        )
+
+                        messages.x = p.x
+                        messages.y = p.y
+
+                        root.messageStore.updateMessages()
+                        messages.open()
+                    } else if (!root.popupActive) {
+                        messages.close()
+                    }
+                }
+            }
+        }
+        MenuItem {
+            id: warningsMenuItem
+            text: "Warnings"
+
+            HoverHandler {
+                id: warningsHoverHandler
+
+                onHoveredChanged: {
+                    if (hovered) {
+                        root.messageStore.updateMessages()
+
+                        const p = warningsMenuItem.mapToItem(
+                            Overlay.overlay,
+                            warningsMenuItem.width,
+                            0
+                        )
+
+                        warnings.x = p.x
+                        warnings.y = p.y
+
+                        root.messageStore.updateMessages()
+                        warnings.open()
+                    } else if (!root.popupActive) {
+                        warnings.close()
+                    }
+                }
+            }
+        }
+        MenuItem {
+            id: errorsMenuItem
+            text: "Errors"
+
+            HoverHandler {
+                id: errorsHoverHandler
+
+                onHoveredChanged: {
+                    if (hovered) {
+                        root.messageStore.updateMessages()
+
+                        const p = errorsMenuItem.mapToItem(
+                            Overlay.overlay,
+                            errorsMenuItem.width,
+                            0
+                        )
+
+                        errors.x = p.x
+                        errors.y = p.y
+
+                        root.messageStore.updateMessages()
+                        errors.open()
+                    } else if (!root.popupActive) {
+                        errors.close()
+                    }
+                }
+            }
+        }
+    }
+    Popup {
+        id: messages
+
+        width: 300
+        height: 250
+
+        parent: Overlay.overlay
+
+        padding: 4
+
+        HoverHandler {
+            onHoveredChanged: {
+                root.popupActive = hovered
+
+                if (!hovered)
+                    messages.close()
+            }
+        }
+        ScrollView {
+            id: messagesScrollView
+
+            anchors.fill: parent
+
+            ListView {
+                model: root.messageStore.infoListModel
+
+                delegate: ItemDelegate {
+                    id: messageDelegate
+                    width: messagesScrollView.width
+
+                    contentItem: Text {
+                        text: message
+                        color: "green"
+                        elide: Text.ElideRight
+                        verticalAlignment: Text.AlignVCenter
+
+                        Component.onCompleted: {
+                            console.log("COMPLETED TEXT: info is ", message)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Popup {
+        id: warnings
+
+        width: 300
+        height: 250
+
+        parent: Overlay.overlay
+
+        padding: 4
+
+        HoverHandler {
+            onHoveredChanged: {
+                root.popupActive = hovered
+
+                if (!hovered)
+                    warnings.close()
+            }
+        }
+        ScrollView {
+            id: warningsScrollView
+
+            anchors.fill: parent
+
+            ListView {
+                model: root.messageStore.warningListModel
+
+                delegate: ItemDelegate {
+                    id: messageDelegate
+                    width: warningsScrollView.width
+
+                    contentItem: Text {
+                        text: message
+                        color: "orange"
+                        elide: Text.ElideRight
+                        verticalAlignment: Text.AlignVCenter
+
+                        Component.onCompleted: {
+                            console.log("COMPLETED TEXT: warn is ", message)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Popup {
+        id: errors
+
+        width: 300
+        height: 250
+
+        parent: Overlay.overlay
+
+        padding: 4
+        
+        HoverHandler {
+            onHoveredChanged: {
+                root.popupActive = hovered
+
+                if (!hovered)
+                    errors.close()
+            }
+        }
+        ScrollView {
+            id: errorsScrollView
+
+            anchors.fill: parent
+
+            ListView {
+                model: root.messageStore.errorListModel
+
+                delegate: ItemDelegate {
+                    id: messageDelegate
+                    width: errorsScrollView.width
+
+                    contentItem: Text {
+                        text: message
+                        color: "red"
+                        elide: Text.ElideRight
+                        verticalAlignment: Text.AlignVCenter
+
+                        Component.onCompleted: {
+                            console.log("COMPLETED TEXT: error is ", message)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    TapHandler {
+        id: tapHandler
+        acceptedButtons: Qt.RightButton
+
+        onTapped: {
+            nodePopupMenu.popup(point.position.x, point.position.y)
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent

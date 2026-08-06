@@ -244,13 +244,6 @@ if(GUI)
     Dissolve
     QML_FILES
     ${SRCS}/gui2/qml/DissolveMain.qml
-    ${SRCS}/gui2/qml/nodeGraph/ForcefieldDialog.qml
-    ${SRCS}/gui2/qml/nodeGraph/GraphView.qml
-    ${SRCS}/gui2/qml/nodeGraph/GraphDelegate.qml
-    ${SRCS}/gui2/qml/nodeGraph/ParameterDelegate.qml
-    ${SRCS}/gui2/qml/nodeGraph/NodeBox.qml
-    ${SRCS}/gui2/qml/nodeGraph/SpeciesDialog.qml
-    ${SRCS}/gui2/qml/periodicTable/ElementComboBox.qml
     RESOURCES
   )
 
@@ -336,7 +329,7 @@ if(GUI)
       # QtQuick plotting library
       QuickPlotplugin
       # Icons (.svg)
-      icons_moduleplugin dialogs_moduleplugin controls_moduleplugin
+      icons_moduleplugin dialogs_moduleplugin controls_moduleplugin nodeGraph_moduleplugin periodicTable_moduleplugin
   )
 
   # Main Dissolve GUI

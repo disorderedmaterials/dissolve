@@ -10,6 +10,7 @@ set(nodeGraphModels_MOC_HDRS
     nodeWrapper.h
     nodeRegistryModel.h
     nodeRegistrySortFilterModel.h
+    nodeMessages.h
 )
 
 set(nodeGraphModel_SRCS
@@ -21,6 +22,7 @@ set(nodeGraphModel_SRCS
     parameterModel.cpp
     nodeRegistryModel.cpp
     nodeRegistrySortFilterModel.cpp
+    nodeMessages.cpp
 )
 
 # QML Types ###
