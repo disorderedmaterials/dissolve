@@ -14,6 +14,7 @@ GroupBox {
     property int posX
     property int posY
     property bool dragActive: false
+    property bool headerHovered: false
     property int headerHeight: 32
 
     topPadding: headerHeight + padding
@@ -23,6 +24,15 @@ GroupBox {
 
     width: 250
     height: 200
+
+    scale: headerHovered ? 1.05 : 1.0
+
+    Behavior on scale {
+        NumberAnimation {
+            duration: 150
+            easing.type: Easing.OutQuad
+        }
+    }
 
     label: Rectangle {
         id: header
@@ -108,6 +118,14 @@ GroupBox {
                     verticalAlignment: Text.AlignVCenter
                 }
                 onClicked: root.deleted()
+            }
+        }
+        HoverHandler {
+            id: hoverHandler
+            target: root
+
+            onHoveredChanged: {
+                root.headerHovered = hovered
             }
         }
         DragHandler {
