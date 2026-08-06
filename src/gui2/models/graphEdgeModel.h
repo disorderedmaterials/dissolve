@@ -25,16 +25,20 @@ class GraphEdgeModel : public QAbstractListModel
     GraphEdgeModel(const GraphEdgeModel &other);
 
     // Remove an edge from the model (by index). Returns false if edge does not exist
-    bool dropEdge(std::size_t edge);
+    bool deleteEdge(std::size_t edge);
 
     // Remove an edge by value
-    bool dropEdge(Edge &edge);
+    bool deleteEdge(Edge &edge);
 
-    void deleteNode(std::string index)
+    void deleteByNode(std::string index)
     {
+        // TODO: Something weird happening here - the internal edges() appears to update *later* than the actual source
+        // graph_::edges even though they reference the same thing. This leads to the below iterator returning potentially empty
+        // edges, as the deletion has already happened, but apparently this model doesn't know about it. So, we check the edge
+        // isn't empty.
         for (auto &edge : edges())
-            if (index == edge->sourceNode().name() || index == edge->targetNode().name())
-                dropEdge(*edge);
+            if (edge && (index == edge->sourceNode().name() || index == edge->targetNode().name()))
+                deleteEdge(*edge);
     }
 
     // Create a new edge
