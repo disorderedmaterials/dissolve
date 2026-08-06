@@ -13,7 +13,7 @@
 
 struct wo_comment_config
 {
-    using comment_type = toml::discard_comments; // XXX
+    using comment_type = toml::discard_comments;
 
     using boolean_type = bool;
     using integer_type = std::int64_t;
