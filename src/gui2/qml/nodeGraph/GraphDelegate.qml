@@ -70,6 +70,7 @@ NodeBox {
 
                 onHoveredChanged: {
                     if (hovered) {
+                        root.closeMessages()
                         root.messageStore.updateMessages()
 
                         const p = messagesMenuItem.mapToItem(
@@ -79,12 +80,10 @@ NodeBox {
                         )
 
                         messages.x = p.x
-                        messages.y = p.y
+                        messages.y = p.y - 2
 
                         root.messageStore.updateMessages()
                         messages.open()
-                    } else if (!root.popupActive) {
-                        messages.close()
                     }
                 }
             }
@@ -98,6 +97,7 @@ NodeBox {
 
                 onHoveredChanged: {
                     if (hovered) {
+                        root.closeMessages()
                         root.messageStore.updateMessages()
 
                         const p = warningsMenuItem.mapToItem(
@@ -107,12 +107,10 @@ NodeBox {
                         )
 
                         warnings.x = p.x
-                        warnings.y = p.y
+                        warnings.y = p.y - 2
 
                         root.messageStore.updateMessages()
                         warnings.open()
-                    } else if (!root.popupActive) {
-                        warnings.close()
                     }
                 }
             }
@@ -126,6 +124,7 @@ NodeBox {
 
                 onHoveredChanged: {
                     if (hovered) {
+                        root.closeMessages()
                         root.messageStore.updateMessages()
 
                         const p = errorsMenuItem.mapToItem(
@@ -135,16 +134,20 @@ NodeBox {
                         )
 
                         errors.x = p.x
-                        errors.y = p.y
+                        errors.y = p.y - 2
 
                         root.messageStore.updateMessages()
                         errors.open()
-                    } else if (!root.popupActive) {
-                        errors.close()
                     }
                 }
             }
         }
+    }
+    function closeMessages()
+    {
+        messages.close()
+        warnings.close()
+        errors.close()
     }
     Popup {
         id: messages
@@ -176,15 +179,17 @@ NodeBox {
                     id: messageDelegate
                     width: messagesScrollView.width
 
+                    hoverEnabled: true
+
                     contentItem: Text {
                         text: message
-                        color: "green"
+                        color: messageDelegate.hovered ? "white" : "grey"
+                        font.bold: messageDelegate.hovered
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
-
-                        Component.onCompleted: {
-                            console.log("COMPLETED TEXT: info is ", message)
-                        }
+                    }
+                    background: Rectangle {
+                        color: messageDelegate.hovered ? "#444444" : "transparent"
                     }
                 }
             }
@@ -220,15 +225,17 @@ NodeBox {
                     id: messageDelegate
                     width: warningsScrollView.width
 
+                    hoverEnabled: true
+
                     contentItem: Text {
                         text: message
                         color: "orange"
+                        font.bold: messageDelegate.hovered
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
-
-                        Component.onCompleted: {
-                            console.log("COMPLETED TEXT: warn is ", message)
-                        }
+                    }
+                    background: Rectangle {
+                        color: messageDelegate.hovered ? "#444444" : "transparent"
                     }
                 }
             }
@@ -264,15 +271,17 @@ NodeBox {
                     id: messageDelegate
                     width: errorsScrollView.width
 
+                    hoverEnabled: true
+
                     contentItem: Text {
                         text: message
                         color: "red"
+                        font.bold: messageDelegate.hovered
                         elide: Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
-
-                        Component.onCompleted: {
-                            console.log("COMPLETED TEXT: error is ", message)
-                        }
+                    }
+                    background: Rectangle {
+                        color: messageDelegate.hovered ? "#444444" : "transparent"
                     }
                 }
             }
