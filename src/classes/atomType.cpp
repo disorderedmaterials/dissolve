@@ -69,7 +69,7 @@ void AtomType::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &atomType = target[tag];
 
-    atomType["z"] = Z_;
+    atomType["z"] = Serialisable::ser(Z_);
     atomType["charge"] = charge_;
     atomType["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
     atomType["exchangeable"] = exchangeable_;

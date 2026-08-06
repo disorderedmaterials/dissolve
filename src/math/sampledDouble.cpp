@@ -144,7 +144,7 @@ void SampledDouble::operator/=(double x)
 // Express as a serialisable value
 void SampledDouble::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"mean", mean_}, {"count", count_}, {"m2", m2_}};
+    target[tag] = Serialisable::table{{"mean", mean_}, {"count", count_}, {"m2", m2_}};
 }
 
 // Read values from a serialisable value

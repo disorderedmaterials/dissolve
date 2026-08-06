@@ -52,7 +52,7 @@ bool Range::isDefined() const { return (minimum_ && maximum_); }
 // Express as a serialisable value
 void Range::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"min", minimum()}, {"max", maximum()}};
+    target[tag] = Serialisable::table{{"min", minimum()}, {"max", maximum()}};
 }
 
 // Read values from a serialisable value

@@ -1,7 +1,7 @@
 {
   inputs = {
     self.submodules = true;
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     outdated.url = "github:NixOS/nixpkgs/nixos-24.05";
     bundlers.url = "github:nix-community/nix-bundle";
     bundlers.inputs.nixpkgs.follows = "outdated";
@@ -22,18 +22,17 @@
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
-      onedpl =
-        pkgs:
-        ((import ./nix/onedpl.nix) {
-          inherit (pkgs)
-            lib
-            stdenv
-            fetchFromGitHub
-            fetchpatch
-            cmake
-            ;
-          tbb = pkgs.tbb_2021_11;
-        });
+      onedpl = pkgs: old: pkgs.onedpl;
+      # ((import ./nix/onedpl.nix) {
+      #   inherit (pkgs)
+      #     lib
+      #     stdenv
+      #     fetchFromGitHub
+      #     fetchpatch
+      #     cmake
+      #     ;
+      #   tbb = old.tbb_2021_11;
+      # });
       exe-name = gui: if gui then "dissolve-gui" else "dissolve";
       cmake-bool = x: if x then "ON" else "OFF";
       version = "1.9.0";
@@ -46,6 +45,7 @@
           cmake
           cli11
           freetype
+          gcc14
           gsl
           inetutils # for rsh
           ninja
@@ -90,7 +90,7 @@
             checks ? true,
             benchmarks ? false,
           }:
-          pkgs.stdenv.mkDerivation ({
+          pkgs.gcc14Stdenv.mkDerivation ({
             inherit version;
             pname = exe-name gui;
             src = pkgs.lib.fileset.toSource {
@@ -112,11 +112,10 @@
               ++ pkgs.lib.optionals gui (gui_libs system pkgs qt)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
-                pkgs.tbb_2021_11
-                (onedpl pkgs)
-                (onedpl pkgs).dev
+                old.tbb_2021_11
+                (onedpl pkgs old)
               ];
-            nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
+            nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook3 ];
 
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
@@ -178,7 +177,7 @@
 
         defaultPackage = self.packages.${system}.dissolve;
 
-        devShells.default = pkgs.mkShell {
+        devShells.default = pkgs.mkShellNoCC {
           name = "dissolve-shell";
           buildInputs =
             base_libs pkgs
@@ -187,7 +186,7 @@
             ++ (with pkgs; [
               llvmPackages_20.clang-tools
 
-                (onedpl pkgs)
+              (onedpl pkgs old)
 
               ccache
               ccls
@@ -197,11 +196,12 @@
               conan
               cppcheck
               direnv
+              gcc14
               gdb
               gtk3
               nixGL.nixGLIntel
               qt.qttools
-              tbb_2021_11
+              old.tbb_2021_11
               valgrind
               weggli
             ]);

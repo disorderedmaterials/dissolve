@@ -332,7 +332,7 @@ void Data3D::operator/=(const double factor)
 // Express as a serialisable value
 void Data3D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"tag", tag_}, {"x", x_}, {"y", y_}, {"z", z_}, {"values", values_.linearArray()}};
+    target[tag] = Serialisable::table{{"tag", tag_}, {"x", x_}, {"y", y_}, {"z", z_}, {"values", values_.linearArray()}};
     if (hasError_)
         target[tag]["errors"] = errors_.linearArray();
 }

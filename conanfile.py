@@ -7,6 +7,7 @@ class DissolveRecipe(ConanFile):
     name = "Dissolve"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeToolchain", "CMakeDeps"
+
     def configure(self):
         self.options["puxixml"].header_only = False
         self.options["antlr4-cppruntime"].shared = True
@@ -22,7 +23,7 @@ class DissolveRecipe(ConanFile):
         self.requires("pugixml/1.15")
         self.requires("onetbb/2021.10.0")
         self.requires("onedpl/2022.3.0")
-        self.requires("toml11/3.7.0")
+        self.requires("toml11/4.4.0")
         self.requires("antlr4-cppruntime/4.13.1")
         self.requires("gsl/2.7.1")
         self.requires("gtest/1.17.0")

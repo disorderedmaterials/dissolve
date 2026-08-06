@@ -32,7 +32,10 @@ double Geometry::value() const { return value_; }
 // Return index value
 int Geometry::indices(int i) const { return indices_[i]; }
 
-bool Geometry::operator==(const Geometry &rhs) const { return value_ == rhs.value_ && indices_ == rhs.indices_; }
+bool Geometry::operator==(const Geometry &rhs) const
+{
+    return value_ == rhs.value_ && std::equal(std::begin(indices_), std::end(indices_), std::begin(rhs.indices_));
+}
 bool Geometry::operator!=(const Geometry &rhs) const { return !(rhs == *this); }
 
 namespace Serialisable

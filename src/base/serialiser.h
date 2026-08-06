@@ -5,13 +5,45 @@
 
 #include "templates/orderedMap.h"
 #include <toml11/toml.hpp>
+#include <toml11/toml11/error_info.hpp>
+#include <toml11/toml11/parser.hpp>
+#include <toml11/toml11/result.hpp>
+#include <toml11/toml11/source_location.hpp>
 #include <vector>
 
+struct wo_comment_config
+{
+    using comment_type = toml::discard_comments;
+
+    using boolean_type = bool;
+    using integer_type = std::int64_t;
+    using floating_type = double;
+    using string_type = std::string;
+
+    template <typename T> using array_type = std::vector<T>;
+    template <typename K, typename T> using table_type = dissolve::OrderedMap<K, T>;
+
+    static toml::result<integer_type, toml::error_info> parse_int(const std::string &str, const toml::source_location src,
+                                                                  const std::uint8_t base)
+    {
+        return toml::read_int<integer_type>(str, src, base);
+    }
+
+    static toml::result<floating_type, toml::error_info> parse_float(const std::string &str, const toml::source_location src,
+                                                                     const bool is_hex)
+    {
+        return toml::read_float<floating_type>(str, src, is_hex);
+    }
+};
+
 // The type we use for the nodes of our serialisation tree
-using SerialisedValue = toml::basic_value<toml::discard_comments, dissolve::OrderedMap, std::vector>;
+using SerialisedValue = toml::basic_value<wo_comment_config>;
 
 namespace Serialisable
 {
+
+using array = toml::array;
+using table = toml::table;
 
 void serialiseOnto(const int a, std::string tag, SerialisedValue &target);
 void serialiseOnto(const double a, std::string tag, SerialisedValue &target);

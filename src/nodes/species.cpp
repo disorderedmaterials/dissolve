@@ -3,8 +3,6 @@
 
 #include "species.h"
 #include "nodes/constants.h"
-#include <toml11/toml.hpp>
-#include <toml11/toml/parser.hpp>
 
 SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {

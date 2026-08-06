@@ -223,8 +223,9 @@ void Histogram2D::operator=(const Histogram2D &source)
 // Express as a serialisable value
 void Histogram2D::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_},   {"xBinWidth", xBinWidth_}, {"yMinimum", yMinimum_},
-                   {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_}, {"nBinned", nBinned_},     {"nMissed", nMissed_}};
+    target[tag] = Serialisable::table{{"xMinimum", xMinimum_}, {"xMaximum", xMaximum_}, {"xBinWidth", xBinWidth_},
+                                      {"yMinimum", yMinimum_}, {"yMaximum", yMaximum_}, {"yBinWidth", yBinWidth_},
+                                      {"nBinned", nBinned_},   {"nMissed", nMissed_}};
     Serialisable::vector(averages_.linearArray(), "averages", target[tag]);
 }
 

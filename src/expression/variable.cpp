@@ -62,7 +62,7 @@ ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 // Express as a serialisable value
 void ExpressionVariable::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"name", Serialisable::ser(baseName_)}, {"value", Serialisable::ser(value_)}};
+    target[tag] = Serialisable::table{{"name", Serialisable::ser(baseName_)}, {"value", Serialisable::ser(value_)}};
 }
 
 // Read values from a serialisable value

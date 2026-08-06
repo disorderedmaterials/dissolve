@@ -140,7 +140,7 @@ bool AtomBase::isGeometry(AtomGeometry geom) const { return geometry() == geom; 
 // Express as a serialisable value
 void AtomBase::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"index", index_}, {"z", Serialisable::ser(Z_)}, {"r", Serialisable::ser(r_)}, {"q", q_}};
+    target[tag] = Serialisable::table{{"index", index_}, {"z", Serialisable::ser(Z_)}, {"r", Serialisable::ser(r_)}, {"q", q_}};
 }
 // Read values from a serialisable value
 void AtomBase::deserialise(const SerialisedValue &node)

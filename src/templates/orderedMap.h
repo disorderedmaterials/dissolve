@@ -76,6 +76,20 @@ template <typename Key, typename Value> class OrderedMap
     }
     Value &operator[](const Key &key) { return insistKey(key).second; }
     Value &operator[](Key &&key) { return insistKey(key).second; }
+
+    std::vector<std::pair<Key, Value>>::iterator find(const Key &key)
+    {
+        if (index_.contains(key))
+            return values_.begin() + index_[key];
+        return end();
+    }
+    std::vector<std::pair<Key, Value>>::const_iterator find(const Key &key) const
+    {
+        if (index_.contains(key))
+            return values_.begin() + index_.at(key);
+        return end();
+    }
+    bool empty() const { return index_.empty(); }
 };
 
 } // namespace dissolve

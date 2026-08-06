@@ -15,7 +15,7 @@
 // Serialise pair potential
 SerialisedValue Dissolve::serialisePairPotentials() const
 {
-    SerialisedValue pairPotentials = {
+    SerialisedValue pairPotentials = Serialisable::table{
         {"range", PairPotential::range()},
         {"delta", PairPotential::delta()},
         {"chargeSource", PairPotential::chargeSources().serialise(PairPotential::chargeSource())},

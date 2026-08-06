@@ -168,7 +168,7 @@ SpeciesAtom::ScaledInteractionDefinition SpeciesAtom::scaling(const SpeciesAtom 
 // Express as a serialisable value
 void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
 {
-    target[tag] = {{"index", index_}, {"z", Serialisable::ser(Z_)}, {"r", Serialisable::ser(r_)}, {"q", q_}};
+    target[tag] = Serialisable::table{{"index", index_}, {"z", Serialisable::ser(Z_)}, {"r", Serialisable::ser(r_)}, {"q", q_}};
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
