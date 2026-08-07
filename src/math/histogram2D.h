@@ -95,6 +95,7 @@ class Histogram2D
      */
     public:
     void operator=(const Histogram2D &source);
+    Histogram2D operator+(const Histogram2D &other) const;
 
     /*
      * Serialisation
