@@ -74,15 +74,7 @@ NodeBox {
             dissolveAction: Action {
                 text: "&Run"
                 shortcut: "Ctrl+Enter"
-                onTriggered: {
-                    var result = rootGraphModel.run(nodeName)
-                    /*
-                    if (result)
-                        console.log("Graph run from node '%1' was successful/unchanged")
-                    else
-                        console.log("Graph run from node '%1' was failed")
-                        */
-                }
+                onTriggered: rootGraphModel.run(nodeName)
             }
             iconPath: "qrc:/DissolveIconsModule/play.svg"
         }

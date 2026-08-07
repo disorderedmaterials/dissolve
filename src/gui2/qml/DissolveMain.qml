@@ -62,14 +62,8 @@ ApplicationWindow {
 
             onAccepted: {
                 if (quickRunDialog.graphModel.isValidNode(startNode))
-                {
-                    var result = graphModel.run(startNode)
+                    graphModel.run(startNode)
 
-                    if (result)
-                        console.log("Graph run from node '%1' was successful/unchanged")
-                    else
-                        console.log("Graph run from node '%1' was failed")
-                }
                 quickRunDialog.close()
             }
             onRejected: {
