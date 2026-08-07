@@ -31,4 +31,4 @@ Configuration &ConfigurationNode::configuration() { return configuration_; }
  */
 
 // Perform processing
-NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }
+NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Failed; }

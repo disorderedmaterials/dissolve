@@ -29,28 +29,8 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          if (nodeName_ != QString::fromStdString(name))
                              return;
 
-                         setMessageStore();
-                         switch (status)
-                         {
-                             case NodeConstants::ProcessResult::Success:
-                             {
-                                 messageStore_.push_back({Node::MessageStatus::Info, "Graph run completed successfully"});
-                                 break;
-                             }
-                             case NodeConstants::ProcessResult::Unchanged:
-                             {
-                                 messageStore_.push_back({Node::MessageStatus::Info, "Graph run completed without changes"});
-                                 break;
-                             }
-                             case NodeConstants::ProcessResult::Failed:
-                             {
-                                 messageStore_.push_back({Node::MessageStatus::Error, "Graph run completed unsuccessfully"});
-                                 messageStore_.push_back({Node::MessageStatus::Info, "Graph run completed unsuccessfully"});
-                                 break;
-                             }
-                             default:
-                                 return;
-                         }
+                         graphStatus_.emplace(status);
+                         updateMessages();
                      });
 }
 
@@ -98,6 +78,29 @@ void NodeMessages::updateMessages()
                 default:
                     return;
             }
+
+    if (graphStatus_.has_value())
+        switch (graphStatus_.value())
+        {
+            case NodeConstants::ProcessResult::Success:
+            {
+                info.push_back("Graph run completed successfully");
+                break;
+            }
+            case NodeConstants::ProcessResult::Unchanged:
+            {
+                info.push_back("Graph run completed without any changes");
+                break;
+            }
+            case NodeConstants::ProcessResult::Failed:
+            {
+                info.push_back("Graph run completed unsuccessfully");
+                errors.push_back("Graph run completed unsuccessfully");
+                break;
+            }
+            default:
+                break;
+        }
 
     if (info.empty())
         info.emplace_back(QString::fromStdString("No messages to display"));

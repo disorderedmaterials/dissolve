@@ -66,6 +66,8 @@ class NodeMessages : public QObject
     void setMessageStore();
 
     private:
+    // Graph status
+    std::optional<NodeConstants::ProcessResult> graphStatus_;
     // Info
     NodeMessageModel infoListModel_{Node::MessageStatus::Info};
     // Warnings
