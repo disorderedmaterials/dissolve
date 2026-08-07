@@ -19,6 +19,7 @@ NodeBox {
     property double startX: x + width
     property string hint: ""
     property NodeMessages messageStore: nodeMessages
+    property bool hasErrors: false
 
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
@@ -37,8 +38,30 @@ NodeBox {
         id: nodeMessages
         graphModel: root.rootGraphModel
         nodeName: root.nodeName
+        parent: root
     }
+    Rectangle {
+        id: errorIndicator
+        width: 10
+        height: width
+        radius: width / 2
 
+        color: "red"
+        visible: root.hasErrors
+
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 4
+        anchors.rightMargin: 4
+
+        HoverHandler {
+            id: errorIndicatorHover
+        }
+
+        ToolTip.visible: errorIndicatorHover.hovered
+        ToolTip.text: "There are errors associated with this node. Check the logs."
+
+    }
     onDeleted: rootGraphModel.deleteNode(index)
 
     Menu {
@@ -50,11 +73,12 @@ NodeBox {
                 shortcut: "Ctrl+Enter"
                 onTriggered: {
                     var result = rootGraphModel.run(nodeName)
-
+                    /*
                     if (result)
                         console.log("Graph run from node '%1' was successful/unchanged")
                     else
                         console.log("Graph run from node '%1' was failed")
+                        */
                 }
             }
             iconPath: "qrc:/DissolveIconsModule/play.svg"

@@ -171,11 +171,11 @@ bool GraphModel::disconnect(std::string source, int sourceIndex, std::string des
 bool GraphModel::isValidNode(QVariant nodeName) const { return graph_->findNode(nodeName.toString().toStdString()); }
 
 // Return bool - true if graph run was successful/unchanged, false if failed
-bool GraphModel::run(QVariant nodeName)
+void GraphModel::run(QVariant nodeName)
 {
     auto name = nodeName.toString().toStdString();
     auto node = graph_->findNode(name);
-    return node->run() != NodeConstants::ProcessResult::Failed;
+    graphRunComplete(node->run(), name);
 }
 
 int GraphModel::indexByName(std::string_view name)
