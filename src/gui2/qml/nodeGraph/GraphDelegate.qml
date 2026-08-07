@@ -19,7 +19,6 @@ NodeBox {
     property double startX: x + width
     property string hint: ""
     property NodeMessages messageStore: nodeMessages
-    property bool popupActive: false
 
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
@@ -161,8 +160,6 @@ NodeBox {
 
         HoverHandler {
             onHoveredChanged: {
-                root.popupActive = hovered
-
                 if (!hovered)
                     messages.close()
             }
@@ -207,8 +204,6 @@ NodeBox {
 
         HoverHandler {
             onHoveredChanged: {
-                root.popupActive = hovered
-
                 if (!hovered)
                     warnings.close()
             }
@@ -253,8 +248,6 @@ NodeBox {
         
         HoverHandler {
             onHoveredChanged: {
-                root.popupActive = hovered
-
                 if (!hovered)
                     errors.close()
             }

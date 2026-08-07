@@ -37,24 +37,7 @@ GroupBox {
             easing.type: Easing.OutQuad
         }
     }
-    /*
-    Menu {
-        id: popupMenu
 
-        DissolveMenuItem {
-            dissolveAction: Action {
-                text: "&Run"
-                shortcut: "Ctrl+Enter"
-                onTriggered: {
-                    
-                }
-            }
-            iconPath: "qrc:/DissolveIconsModule/play.svg"
-        }
-
-        MenuSeparator{}
-    }
-*/
     label: Rectangle {
         id: header
 
