@@ -42,17 +42,20 @@ NodeBox {
     }
     Rectangle {
         id: errorIndicator
-        width: 10
+        width: 20
         height: width
         radius: width / 2
 
+        opacity: 0.8
         color: "red"
+        border.width: 2
+        border.color: "grey"
         visible: root.hasErrors
 
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.topMargin: 4
-        anchors.rightMargin: 4
+        anchors.topMargin: -50
+        anchors.rightMargin: -15
 
         HoverHandler {
             id: errorIndicatorHover
