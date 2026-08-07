@@ -48,11 +48,12 @@ class NodeMessages : public QObject
     friend class NodeMessageModel;
 
     Q_OBJECT;
-    Q_PROPERTY(QString nodeName READ nodeName WRITE setNodeName NOTIFY messageRecieved);
-    Q_PROPERTY(GraphModel *graphModel READ graphModel WRITE setGraphModel NOTIFY messageRecieved);
-    Q_PROPERTY(const NodeMessageModel *infoListModel READ infoListModel NOTIFY messageRecieved);
-    Q_PROPERTY(const NodeMessageModel *warningListModel READ warningListModel NOTIFY messageRecieved);
-    Q_PROPERTY(const NodeMessageModel *errorListModel READ errorListModel NOTIFY messageRecieved);
+    Q_PROPERTY(QObject *parent READ parent WRITE setParent NOTIFY messageReceived)
+    Q_PROPERTY(QString nodeName READ nodeName WRITE setNodeName NOTIFY messageReceived);
+    Q_PROPERTY(GraphModel *graphModel READ graphModel WRITE setGraphModel NOTIFY messageReceived);
+    Q_PROPERTY(const NodeMessageModel *infoListModel READ infoListModel NOTIFY messageReceived);
+    Q_PROPERTY(const NodeMessageModel *warningListModel READ warningListModel NOTIFY messageReceived);
+    Q_PROPERTY(const NodeMessageModel *errorListModel READ errorListModel NOTIFY messageReceived);
 
     public:
     NodeMessages() = default;
@@ -62,7 +63,7 @@ class NodeMessages : public QObject
 
     protected:
     // Message store
-    const Node::MessageStore &messageStore();
+    void setMessageStore();
 
     private:
     // Info
@@ -75,6 +76,10 @@ class NodeMessages : public QObject
     GraphModel *graphModel_{nullptr};
     // Node name
     QString nodeName_;
+    // Parent node
+    QObject *parent_;
+    // Message store
+    Node::MessageStore messageStore_;
 
     public:
     // Info
@@ -91,7 +96,11 @@ class NodeMessages : public QObject
     void setNodeName(QString nodeName);
     // Return the node name
     QString nodeName();
+    // Set the parent node
+    void setParent(QObject *parent);
+    // Return the parent node
+    QObject *parent();
 
     Q_SIGNALS:
-    void messageRecieved();
+    void messageReceived();
 };

@@ -117,7 +117,7 @@ class GraphModel : public QObject
     // Return bool - true if node exists in graph
     Q_INVOKABLE bool isValidNode(QVariant nodeName) const;
     // Return bool - true if graph run was successful/unchanged, false if failed
-    Q_INVOKABLE bool run(QVariant nodeName);
+    Q_INVOKABLE void run(QVariant nodeName);
 
     private:
     void addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
@@ -134,6 +134,7 @@ class GraphModel : public QObject
     Q_SIGNALS:
     void graphChanged();
     void decrementNodeTypeRequired(const std::string &);
+    void graphRunComplete(NodeConstants::ProcessResult status, std::string node);
 
     public Q_SLOTS:
     // Reset everything
