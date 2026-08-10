@@ -21,7 +21,6 @@
     }:
     let
 
-      toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
       onedpl = pkgs: old: pkgs.onedpl;
       # ((import ./nix/onedpl.nix) {
       #   inherit (pkgs)
@@ -52,7 +51,7 @@
           jre
           pkg-config
           pugixml
-          (toml pkgs)
+          toml11
         ];
       gui_libs = system: pkgs: qt: [
         pkgs.glib
