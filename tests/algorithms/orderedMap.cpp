@@ -4,7 +4,6 @@
 #include "templates/orderedMap.h"
 #include "base/serialiser.h"
 #include <gtest/gtest.h>
-#include <toml11/toml.hpp>
 
 namespace UnitTest
 {
