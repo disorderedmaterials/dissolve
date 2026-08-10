@@ -114,7 +114,7 @@ template <typename T> void vector(const std::vector<std::unique_ptr<T>> &vec, st
 // A helper function to add the elements of a vector to a node under a name
 template <typename T> void vector(const std::vector<std::shared_ptr<T>> &vec, std::string name, SerialisedValue &node)
 {
-    vector(vector, name, node, [](const auto &item) { return item->serialise(); });
+    vector(vec, name, node, [](const auto &item) { return item->serialise(); });
 }
 // A helper function to add the elements of a vector to a node under a name
 template <typename T> void vector(const std::vector<T> &vec, std::string name, SerialisedValue &node)
