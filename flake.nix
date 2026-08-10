@@ -21,17 +21,6 @@
     }:
     let
 
-      onedpl = pkgs: old: pkgs.onedpl;
-      # ((import ./nix/onedpl.nix) {
-      #   inherit (pkgs)
-      #     lib
-      #     stdenv
-      #     fetchFromGitHub
-      #     fetchpatch
-      #     cmake
-      #     ;
-      #   tbb = old.tbb_2021_11;
-      # });
       exe-name = gui: if gui then "dissolve-gui" else "dissolve";
       cmake-bool = x: if x then "ON" else "OFF";
       version = "1.9.0";
@@ -112,7 +101,7 @@
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optionals threading [
                 old.tbb_2021_11
-                (onedpl pkgs old)
+                pkgs.onedpl
               ];
             nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook3 ];
 
@@ -185,7 +174,7 @@
             ++ (with pkgs; [
               llvmPackages_20.clang-tools
 
-              (onedpl pkgs old)
+              onedpl
 
               ccache
               ccls
