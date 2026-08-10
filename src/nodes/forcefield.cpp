@@ -3,7 +3,6 @@
 
 #include "nodes/forcefield.h"
 #include "data/ff/library.h"
-#include <toml11/toml.hpp>
 
 ForcefieldNode::ForcefieldNode(Graph *parentGraph) : Node(parentGraph)
 {

@@ -4,11 +4,11 @@
 #pragma once
 
 #include "templates/orderedMap.h"
-#include <toml11/toml.hpp>
-#include <toml11/toml11/error_info.hpp>
-#include <toml11/toml11/parser.hpp>
-#include <toml11/toml11/result.hpp>
-#include <toml11/toml11/source_location.hpp>
+#include <toml11/error_info.hpp>
+#include <toml11/find.hpp>
+#include <toml11/parser.hpp>
+#include <toml11/result.hpp>
+#include <toml11/source_location.hpp>
 #include <vector>
 
 struct wo_comment_config
