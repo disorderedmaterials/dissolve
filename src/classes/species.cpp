@@ -192,6 +192,8 @@ void Species::serialise(std::string tag, SerialisedValue &target) const
     Serialisable::vector<>(impropers_, "impropers", result);
     Serialisable::fromVectorToTable<>(isotopologues_, "isotopologues", result);
     Serialisable::fromVectorToTable<>(sites_, "sites", result);
+    if (box_.type() != Box::BoxType::None)
+        result["box"] = Serialisable::ser(box_);
 }
 
 // Read values from a serialisable value
@@ -261,6 +263,8 @@ void Species::deserialise(const SerialisedValue &node)
 
     Deserialisable::map(node, "sites", [this](const std::string &name, const SerialisedValue &site)
                         { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
+
+    box_ = Deserialisable::deser_or(node, "box", Box());
 
     // Always update type indexing after deserialisation
     updateTypeIndexing();
