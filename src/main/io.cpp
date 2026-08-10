@@ -155,7 +155,7 @@ bool Dissolve::saveToml(std::string_view filename) const
 {
     std::ofstream outfile;
     outfile.open(std::string(filename));
-    outfile << Serialisable::ser(*this) << std::endl;
+    outfile << Serialisable::ser(*this).as_string() << std::endl;
     outfile.close();
     return true;
 }

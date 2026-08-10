@@ -62,7 +62,7 @@ int main(int args, char **argv)
         auto toml = Serialisable::ser(&dissolve);
         std::ofstream outfile;
         outfile.open(options.writeInputFilename().value());
-        outfile << toml;
+        outfile << toml.as_string();
         outfile.close();
         result = true;
 
