@@ -127,7 +127,7 @@ class ParameterBase
     template <typename DataClass> DataClass get()
     {
         // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
-        if (std::type_index(typeid(DataClass)) != storedDataType_)
+        if (std::type_index(typeid(DataClass)).name() != storedDataType_.name())
             throw(std::runtime_error(std::format("ParameterBase::get() called with wrong type ({} vs {}), name = {}\n",
                                                  std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
 
@@ -141,7 +141,7 @@ class ParameterBase
     template <typename DataClass> void set(const DataClass &data)
     {
         // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
-        if (std::type_index(typeid(DataClass)) != storedDataType_)
+        if (std::type_index(typeid(DataClass)).name() != storedDataType_.name())
             throw(std::runtime_error(std::format("ParameterBase::set() called with wrong type ({} vs {}), name = {}\n",
                                                  std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
 
