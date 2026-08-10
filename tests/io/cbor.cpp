@@ -17,9 +17,7 @@ class CBORTest : public ::testing::Test
             ASSERT_TRUE(toml2.is_table()) << location;
             for (auto &[k, v] : toml.as_table())
             {
-                ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl
-                                               << "Expected:" << std::endl
-                                               << toml[k].as_string();
+                ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
                 compare_toml(std::format("{}.{}", location, k), v, toml2.at(k));
             }
         }
@@ -27,7 +25,7 @@ class CBORTest : public ::testing::Test
         {
             auto arr = toml.as_array();
             auto arr2 = toml2.as_array();
-            ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml.as_string();
+            ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
             for (int i = 0; i < arr.size(); ++i)
                 compare_toml(std::format("{}[{}]", location, i), arr[i], arr2[i]);
         }
