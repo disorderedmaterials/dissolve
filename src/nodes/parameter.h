@@ -126,8 +126,12 @@ class ParameterBase
     // Get the parameter's value
     template <typename DataClass> DataClass get()
     {
-        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
-        if (std::type_index(typeid(DataClass)) != storedDataType_)
+        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type.
+        // Note: We check by name() here rather than comparing type_index objects since, on OSX, it is possible for the same
+        // type to obtain different hash values within type_index (thus breaking comparison) if the object is only forward-
+        // declared rather than being fully in scope. There is no easy way around this, and it doesn't affect other platforms,
+        // so here we just revert to the name comparison.
+        if (std::type_index(typeid(DataClass)).name() != storedDataType_.name())
             throw(std::runtime_error(std::format("ParameterBase::get() called with wrong type ({} vs {}), name = {}\n",
                                                  std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
 
@@ -140,8 +144,9 @@ class ParameterBase
     // Set the parameter's value
     template <typename DataClass> void set(const DataClass &data)
     {
-        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type
-        if (std::type_index(typeid(DataClass)) != storedDataType_)
+        // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type.
+        // See note in ParameterBase::get() regarding choice of name() comparison.
+        if (std::type_index(typeid(DataClass)).name() != storedDataType_.name())
             throw(std::runtime_error(std::format("ParameterBase::set() called with wrong type ({} vs {}), name = {}\n",
                                                  std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
 
