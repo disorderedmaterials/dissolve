@@ -13,14 +13,14 @@
 InsertRandomNode::InsertRandomNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Inputs
-    addInput("Species", "Source species or molecule set to add", species_);
+    addInput("Species", "Source species to add", species_);
     addInput("Configuration", "Target configuration to insert into", configuration_);
     addInput("Population", "Population of the target to add", population_);
     addInput("Density", "Density at which to add the target", density_);
 
     // Options
     addOption("DensityUnits", "Units of target density", densityUnits_);
-    addOption("BoxScaling", "Action to take on the box volumne on addition of the species", boxScaling_);
+    addOption("BoxScaling", "Action to take on the box volume on addition of the species", boxScaling_);
     addOption("ScaleA", "Scale box length A when modifying volume", scaleA_);
     addOption("ScaleB", "Scale box length B when modifying volume", scaleB_);
     addOption("ScaleC", "Scale box length C when modifying volume", scaleC_);
