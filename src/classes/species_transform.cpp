@@ -314,6 +314,9 @@ void Species::create(const Structure &structure)
     for (auto &bond : structure.bonds())
         bonds_.emplace_back(this, &atoms_[bond->i()->index()], &atoms_[bond->j()->index()]);
 
+    // Copy instances
+    instances_ = structure.instances();
+
     // Perform rest of setup
     finaliseIntramolecularData();
 }
