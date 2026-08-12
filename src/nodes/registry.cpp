@@ -38,6 +38,7 @@
 #include "nodes/importXYZStructure.h"
 #include "nodes/importXYZTrajectory.h"
 #include "nodes/insertRandom.h"
+#include "nodes/instantiate.h"
 #include "nodes/integrator.h"
 #include "nodes/intraAngle.h"
 #include "nodes/intraDistance.h"
@@ -119,6 +120,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
                   {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()},
                   {"InsertRandom", makeDerivedNode<InsertRandomNode>()},
+                  {"Instantiate", makeDerivedNode<InstantiateNode>()},
                   {"Integrator", makeDerivedNode<Integrator1DNode>()},
                   {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
                   {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
