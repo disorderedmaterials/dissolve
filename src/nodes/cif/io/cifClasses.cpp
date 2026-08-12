@@ -96,8 +96,8 @@ int CIFAssembly::nGroups() const { return groups_.size(); }
 CIFMolecularSpecies::CIFMolecularSpecies() : species_(std::make_shared<Species>()) {}
 
 // Return species parent for molecule instances
-std::shared_ptr<Species> &CIFMolecularSpecies::species() { return species_; };
-const std::shared_ptr<Species> &CIFMolecularSpecies::species() const { return species_; };
+std::shared_ptr<Species> &CIFMolecularSpecies::species() { return species_; }
+const std::shared_ptr<Species> &CIFMolecularSpecies::species() const { return species_; }
 
 // Return molecule instances
 const std::vector<LocalMolecule> &CIFMolecularSpecies::instances() const { return instances_; }

@@ -72,7 +72,7 @@ template <typename T> class Parser
 
     public:
     // Parse a string and, if possible, return the value and the remainder
-    ParserOutput<T> parse(std::istream &input) const { return lambda_(input); };
+    ParserOutput<T> parse(std::istream &input) const { return lambda_(input); }
     // Parse a string and, if possible, return the value and the remainder
     ParserOutput<T> operator()(std::istream &input) const { return lambda_(input); }
     // Parse a string and enforce that it parsed the entire input

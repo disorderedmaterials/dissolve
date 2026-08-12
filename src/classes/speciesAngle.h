@@ -80,5 +80,5 @@ class CommonAngle : public SpeciesAngle
     // Set identifying name
     void setName(std::string_view name) override { name_ = name; }
     // Return identifying name
-    std::string_view name() const override { return name_; };
+    std::string_view name() const override { return name_; }
 };

@@ -84,7 +84,7 @@ struct EnergyResult
     GeometryEnergyValue geometry;
     double extended;
 
-    double total() const { return pairPotential.total() + geometry.total() + extended; };
+    double total() const { return pairPotential.total() + geometry.total() + extended; }
     double totalUnbound() const { return pairPotential.total() + extended; }
 };
 

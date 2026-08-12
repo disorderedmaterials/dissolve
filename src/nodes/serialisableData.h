@@ -158,9 +158,9 @@ template <typename DataClass> class SerialisableClass : public SerialisableData
     // Return whether there is data to serialise
     bool canSerialise() const { return dataChecker_(); }
     // Express as a serialised value
-    SerialisedValue serialise() const { return dataSerialiser_(); };
+    SerialisedValue serialise() const { return dataSerialiser_(); }
     // Read from a serialised value
     void deserialise(const SerialisedValue &node) { dataDeserialiser_(node); }
     // Resolve named data
-    void resolve(const std::map<std::string, const Species *> &speciesInScope) override { dataResolver_(speciesInScope); };
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) override { dataResolver_(speciesInScope); }
 };

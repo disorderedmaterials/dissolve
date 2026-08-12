@@ -29,7 +29,7 @@ template <class Functions> class InteractionPotential
         parameters_ = params;
     };
     virtual ~InteractionPotential() = default;
-    InteractionPotential(const InteractionPotential &source) { *this = source; };
+    InteractionPotential(const InteractionPotential &source) { *this = source; }
     InteractionPotential(InteractionPotential &&source) { *this = source; }
     InteractionPotential &operator=(const InteractionPotential &source)
     {

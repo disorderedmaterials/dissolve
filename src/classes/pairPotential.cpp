@@ -162,7 +162,7 @@ void PairPotential::setNames(std::string_view nameI, std::string_view nameJ)
 std::string_view PairPotential::nameI() const { return nameI_; }
 
 // Return name for second source parameters
-std::string_view PairPotential::nameJ() const { return nameJ_; };
+std::string_view PairPotential::nameJ() const { return nameJ_; }
 
 // Set interaction potential
 bool PairPotential::setInteractionPotential(Functions1D::Form form, std::string_view parameters)

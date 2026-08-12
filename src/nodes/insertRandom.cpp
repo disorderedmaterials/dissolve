@@ -35,10 +35,10 @@ InsertRandomNode::InsertRandomNode(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
-std::string_view InsertRandomNode::type() const { return "InsertRandom"; };
+std::string_view InsertRandomNode::type() const { return "InsertRandom"; }
 
 // Return short summary of the node's purpose
-std::string_view InsertRandomNode::summary() const { return "Insert molecules randomly into a configuration"; };
+std::string_view InsertRandomNode::summary() const { return "Insert molecules randomly into a configuration"; }
 
 /*
  * Data

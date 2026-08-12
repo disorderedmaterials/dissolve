@@ -12,4 +12,4 @@ const LocalMolecule &MoleculeSet::localMolecule(int n) const { return localMolec
 
 // Return local molecules
 std::vector<LocalMolecule> &MoleculeSet::localMolecules() { return localMolecules_; }
-const std::vector<LocalMolecule> &MoleculeSet::localMolecules() const { return localMolecules_; };
+const std::vector<LocalMolecule> &MoleculeSet::localMolecules() const { return localMolecules_; }
