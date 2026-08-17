@@ -18,12 +18,9 @@ TEST(RestartTest, Configuration)
     ASSERT_TRUE(grNode) << "Valid GR Node";
     ASSERT_EQ(grNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto configurationNode = testGraph.findNode("Box");
-    ASSERT_TRUE(configurationNode) << "Valid configuration node";
-
     auto path = std::filesystem::temp_directory_path() / "dissolve" / "RestartTest";
     std::filesystem::create_directories(path);
-    configurationNode->saveRestart(path);
+    testGraph.saveRestart(path);
 };
 
 } // namespace UnitTest

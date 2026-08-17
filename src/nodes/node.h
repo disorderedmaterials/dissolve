@@ -338,7 +338,7 @@ class Node
     // Current iteration number
     int iteration_ = 0;
     // Save node in restart file
-    virtual std::optional<SerialisedValue> innerSaveRestart() { return {}; }
+    virtual std::optional<SerialisedValue> innerSaveRestart() const { return {}; }
     // Load node from restart file
     virtual bool innerLoadRestart(SerialisedValue &data) { return false; }
 
@@ -380,7 +380,7 @@ class Node
     // Read persistent data from a serialisable value
     void deserialiseData(const SerialisedValue &node);
     // Save node in restart file
-    void saveRestart(std::filesystem::path directory);
+    virtual void saveRestart(std::filesystem::path directory) const;
     // Load node from restart file
-    bool loadRestart(std::filesystem::path directory);
+    virtual bool loadRestart(std::filesystem::path directory);
 };
