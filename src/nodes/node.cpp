@@ -2,10 +2,12 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/node.h"
+#include "base/cbor.h"
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
 #include <algorithm>
+#include <filesystem>
 #include <iostream>
 
 /*
@@ -422,4 +424,24 @@ std::set<const Node *> Node::allAncestors() const
             }
     }
     return result;
+}
+
+void Node::saveRestart(std::filesystem::path directory)
+{
+    auto filePath = directory / name();
+    std::ofstream outfile(filePath, std::ios::binary | std::ios::out);
+    auto data = CBOR::to(innerSaveRestart());
+    outfile.write(reinterpret_cast<const char *>(data.data()), data.size());
+    outfile.close();
+}
+
+bool Node::loadRestart(std::filesystem::path directory)
+{
+    auto filePath = directory / name();
+    if (!std::filesystem::exists(filePath))
+        return false;
+    std::ifstream infile(filePath, std::ios::binary | std::ios::in);
+    auto data = CBOR::from(std::move(infile));
+    infile.close();
+    return innerLoadRestart(data);
 }
