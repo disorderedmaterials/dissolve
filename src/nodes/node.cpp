@@ -430,7 +430,10 @@ void Node::saveRestart(std::filesystem::path directory)
 {
     auto filePath = directory / name();
     std::ofstream outfile(filePath, std::ios::binary | std::ios::out);
-    auto data = CBOR::to(innerSaveRestart());
+    auto node = innerSaveRestart();
+    if (!node)
+        return;
+    auto data = CBOR::to(*node);
     outfile.write(reinterpret_cast<const char *>(data.data()), data.size());
     outfile.close();
 }
