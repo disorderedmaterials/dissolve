@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "data/ff/library.h"
-#include "gui/models/nodeGraph/graphModel.h"
-#include "gui/models/simpleForcefieldModel.h"
+#include "gui2/models/graphModel.h"
+#include "gui2/models/legacy/simpleForcefieldModel.h"
 #include "nodes/forcefield.h"
 #include <gtest/gtest.h>
 

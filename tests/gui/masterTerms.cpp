@@ -2,9 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/species.h"
-#include "gui/models/commonAngleModel.h"
-#include "gui/models/commonBondModel.h"
-#include "gui/models/commonTorsionModel.h"
+#include "gui2/models/legacy/commonAngleModel.h"
+#include "gui2/models/legacy/commonBondModel.h"
+#include "gui2/models/legacy/commonTorsionModel.h"
 #include "main/dissolve.h"
 #include <QTableView>
 #include <gmock/gmock.h>

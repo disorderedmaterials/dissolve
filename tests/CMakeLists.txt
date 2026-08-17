@@ -47,7 +47,7 @@ function(dissolve_add_test)
     target_include_directories(${TEST_NAME} PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
     target_link_libraries(
       ${TEST_NAME}
-      PUBLIC models2 widgets delegates gui2
+      PUBLIC models2 gui2
       PRIVATE Qt6::Quick3D Qt6::Qml Qt6::Widgets
     )
   endif(DISSOLVE_UNIT_TEST_GUI)
