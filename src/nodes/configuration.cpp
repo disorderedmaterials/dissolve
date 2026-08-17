@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/configuration.h"
+#include "base/serialiser.h"
 
 ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -32,3 +33,21 @@ Configuration &ConfigurationNode::configuration() { return configuration_; }
 
 // Perform processing
 NodeConstants::ProcessResult ConfigurationNode::process() { return NodeConstants::ProcessResult::Unchanged; }
+
+// Save node in restart file
+std::optional<SerialisedValue> ConfigurationNode::innerSaveRestart() const
+{
+    SerialisedValue result;
+    result["temperature"] = configuration_.temperature();
+    return {result};
+}
+
+// Load node from restart file
+bool ConfigurationNode::innerLoadRestart(SerialisedValue &data)
+{
+    if (data.contains("temperature"))
+        configuration_.setTemperature(data["temperature"].as_floating());
+    else
+        return false;
+    return true;
+}

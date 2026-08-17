@@ -118,4 +118,8 @@ class Graph : public Node
     void serialise(std::string tag, SerialisedValue &target) const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
+    // Save node in restart file
+    void saveRestart(std::filesystem::path directory) const override;
+    // Load node from restart file
+    bool loadRestart(std::filesystem::path directory) override;
 };

@@ -8,7 +8,7 @@
 #include "nodes/graph.h"
 #include <algorithm>
 #include <filesystem>
-#include <iostream>
+#include <fstream>
 
 /*
  * Definition
@@ -426,13 +426,14 @@ std::set<const Node *> Node::allAncestors() const
     return result;
 }
 
-void Node::saveRestart(std::filesystem::path directory)
+void Node::saveRestart(std::filesystem::path directory) const
 {
-    auto filePath = directory / name();
-    std::ofstream outfile(filePath, std::ios::binary | std::ios::out);
     auto node = innerSaveRestart();
     if (!node)
         return;
+    auto filePath = directory / name();
+    filePath += ".cbor";
+    std::ofstream outfile(filePath, std::ios::binary | std::ios::out);
     auto data = CBOR::to(*node);
     outfile.write(reinterpret_cast<const char *>(data.data()), data.size());
     outfile.close();
@@ -441,6 +442,7 @@ void Node::saveRestart(std::filesystem::path directory)
 bool Node::loadRestart(std::filesystem::path directory)
 {
     auto filePath = directory / name();
+    filePath += ".cbor";
     if (!std::filesystem::exists(filePath))
         return false;
     std::ifstream infile(filePath, std::ios::binary | std::ios::in);
