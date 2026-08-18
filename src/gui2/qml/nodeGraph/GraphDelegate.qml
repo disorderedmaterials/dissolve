@@ -30,7 +30,7 @@ NodeBox {
     posY: posY
 
     // Ensure that we only display this box for valid node items
-    visible: icon != null
+    visible: (icon != null) && !(isRootNode && (nodeName == "Outputs" || nodeName == "Inputs"))
     x: posX
     y: posY
 
