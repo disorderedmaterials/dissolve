@@ -3,6 +3,8 @@
 
 #include "nodes/configuration.h"
 #include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
+#include <algorithm>
 
 ConfigurationNode::ConfigurationNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -39,6 +41,14 @@ std::optional<SerialisedValue> ConfigurationNode::innerSaveRestart() const
 {
     SerialisedValue result;
     result["temperature"] = configuration_.temperature();
+    Serialisable::vector(configuration_.atoms(), "atoms", result,
+                         [](const ConfigurationAtom &atom)
+                         {
+                             SerialisedValue result;
+                             atom.r().serialise("r", result);
+                             return result["r"];
+                         });
+
     return {result};
 }
 
@@ -47,6 +57,15 @@ bool ConfigurationNode::innerLoadRestart(SerialisedValue &data)
 {
     if (data.contains("temperature"))
         configuration_.setTemperature(data["temperature"].as_floating());
+    else
+        return false;
+    if (data.contains("atoms"))
+    {
+        auto pos = Deserialisable::vector<Vector3>(data["atoms"]);
+        auto &atoms = configuration_.atoms();
+        for (auto i = 0; i < atoms.size(); ++i)
+            atoms[i].setR(pos[i]);
+    }
     else
         return false;
     return true;
