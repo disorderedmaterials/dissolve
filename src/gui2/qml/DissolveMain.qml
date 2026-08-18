@@ -26,8 +26,14 @@ ApplicationWindow {
     title: "Dissolve"
     visible: true
 
-    property Dialog quickRunDialog: null
+    property NodeSearchDialog nodeSearchDialog: null
+    Component {
+        id: nodeSearchDialogComponent
 
+        NodeSearchDialog {
+        }
+    }
+    property Dialog quickRunDialog: null
     Component {
         id: quickRunDialogComponent
 
@@ -66,9 +72,7 @@ ApplicationWindow {
 
                 quickRunDialog.close()
             }
-            onRejected: {
-                quickRunDialog.close()
-            }
+            onRejected: quickRunDialog.close()
         }
     }
 
@@ -153,9 +157,7 @@ ApplicationWindow {
                 dissolveAction: Action {
                     text: "&Run"
                     shortcut: "Ctrl+Enter"
-                    onTriggered: {
-                        dissolveWindow.quickRunDialog.open()
-                    }
+                    onTriggered: dissolveWindow.quickRunDialog.open()
                 }
                 iconPath: "qrc:/DissolveIconsModule/play.svg"
             }
@@ -163,14 +165,14 @@ ApplicationWindow {
             MenuSeparator{}
 
             MenuItem {
-                //shortcut: "Ctrl+F"
-                text: "&Find Node"
+                //shortcut: "Ctrl+A"
+                text: "&Add Node"
 
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
-                ToolTip.text: "Search the Node registry by node name"
+                ToolTip.text: "Search the Node registry by node name, and add the selection to the graph"
 
-                onTriggered: nodeSearchDialog.open()
+                onTriggered: dissolveWindow.nodeSearchDialog.open()
             }
 
             MenuSeparator{}
@@ -266,10 +268,7 @@ ApplicationWindow {
                 id: graphModel
 
                 graph: dissolve.graph
-
-                Component.onCompleted: {
-                    dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
-                }
+                Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
             }
             Pane {
                 id: toolBar
@@ -334,7 +333,7 @@ ApplicationWindow {
                 parameterEndPointsModel: graphModel.parameterEndPoints
                 rootGraphModel: graphModel
 
-                Repeater{
+                Repeater {
                     id: graphDelegateRepeater
                     model: graph.nodeModel
 
@@ -351,11 +350,12 @@ ApplicationWindow {
                         }
                     }
                 }
+
+                Component.onCompleted: {
+                    graphModel.canvasDimensions = Qt.size(graph.width, graph.height)
+                    dissolveWindow.nodeSearchDialog = nodeSearchDialogComponent.createObject(dissolveWindow, {initialLandingArea: Qt.point(graph.width / 2, graph.height / 2)})
+                }
             }
         }
-    }
-    
-    NodeSearchDialog {
-        id: nodeSearchDialog
     }
 }

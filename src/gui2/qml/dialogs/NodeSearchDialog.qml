@@ -13,11 +13,11 @@ Dialog {
 
     modal: true
     closePolicy: Popup.NoAutoClose
-    title: "Find Node"
+    title: "Add Node"
 
     standardButtons: Dialog.Ok | Dialog.Cancel
 
-    readonly property var nodeEmplaceAtX: (root.x + root.width + 50)
+    required property var initialLandingArea
     property var selection: ""
     function finaliseSelection(nodeName: string, reset: bool) {
         root.selection = nodeName;
@@ -33,12 +33,12 @@ Dialog {
     }
     onAccepted: {
         if (nodeSearchField.text.length > 0)
-            nodeRegistry.instantiateNode(root.nodeEmplaceAtX, root.y, root.selection);
+            nodeRegistry.instantiateNode(initialLandingArea.x, initialLandingArea.y, root.selection);
+
         root.exitSearchDialog();
     }
-    onRejected: {
-        root.exitSearchDialog();
-    }
+    onRejected: root.exitSearchDialog();
+
     NodeRegistrySortFilterModel {
         id: searchFilterModel
         sourceModel: nodeRegistry

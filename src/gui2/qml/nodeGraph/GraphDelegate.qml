@@ -26,13 +26,15 @@ NodeBox {
 
     image: icon
     nodeName: name
-    posX: posX
-    posY: posY
+    coords: Qt.point(posX, posY)
+
+    height: nodeColumnLayout.implicitHeight + label.height + padding
+    width: 250
 
     // Ensure that we only display this box for valid node items
-    visible: icon != null
-    x: posX
-    y: posY
+    visible: (icon != null) && !(isRootNode && (nodeName == "Outputs" || nodeName == "Inputs"))
+    x: coords.x
+    y: coords.y
 
     NodeMessages {
         id: nodeMessages
@@ -98,7 +100,7 @@ NodeBox {
                         )
 
                         messages.x = p.x
-                        messages.y = p.y - 2
+                        messages.y = p.y
 
                         root.messageStore.updateMessages()
                         messages.open()
@@ -125,7 +127,7 @@ NodeBox {
                         )
 
                         warnings.x = p.x
-                        warnings.y = p.y - 2
+                        warnings.y = p.y
 
                         root.messageStore.updateMessages()
                         warnings.open()
@@ -152,7 +154,7 @@ NodeBox {
                         )
 
                         errors.x = p.x
-                        errors.y = p.y - 2
+                        errors.y = p.y
 
                         root.messageStore.updateMessages()
                         errors.open()
@@ -303,13 +305,16 @@ NodeBox {
         id: tapHandler
         acceptedButtons: Qt.RightButton
 
-        onTapped: {
-            nodePopupMenu.popup(point.position.x, point.position.y)
-        }
+        onTapped: nodePopupMenu.popup(point.position.x, point.position.y)
     }
 
     ColumnLayout {
-        anchors.fill: parent
+        id: nodeColumnLayout
+
+        anchors.left: header.left
+        anchors.right: header.right
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
         spacing: 8
 
         GridLayout {
@@ -361,9 +366,7 @@ NodeBox {
                         readonly property var parentNodeBox: root
                         anchors.fill: parent
 
-                        Component.onCompleted: {
-                            root.rootGraphModel.initialiseInputEndPoints(parent.nodeName, parent.title, inputDropArea);
-                        }
+                        Component.onCompleted: root.rootGraphModel.initialiseInputEndPoints(parent.nodeName, parent.title, inputDropArea)
 
                         onDropped: function (event) {
                             edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, parent.title);
@@ -396,14 +399,9 @@ NodeBox {
                         id: inputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-
-                        onEntered: {
-                            root.hint = "<i>Input:</i><br>" + inputText.info
-                        }
-
-                        onExited: {
-                            root.hint = ""
-                        }
+                        ToolTip.text: "<i>Input:</i><br>" + inputText.info
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
                     }
                 }
             }
@@ -462,9 +460,7 @@ NodeBox {
                         readonly property var parentNodeBox: root
                         anchors.fill: parent
 
-                        Component.onCompleted: {
-                            root.rootGraphModel.initialiseOutputEndPoints(parent.nodeName, parent.title, outputDropArea);
-                        }
+                        Component.onCompleted: root.rootGraphModel.initialiseOutputEndPoints(parent.nodeName, parent.title, outputDropArea);
 
                         onDropped: function (event) {
                             edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title);
@@ -497,14 +493,9 @@ NodeBox {
                         id: outputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-
-                        onEntered: {
-                            root.hint = "<i>Output:</i><br>" + outputText.info
-                        }
-
-                        onExited: {
-                            root.hint = ""
-                        }
+                        ToolTip.text: "<i>Output:</i><br>" + outputText.info
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
                     }
                 }
             }
@@ -519,13 +510,10 @@ NodeBox {
             text: "Inner Graph"
             visible: inner_graph
 
-            onClicked: {
-                descended(index);
-            }
+            onClicked: descended(index)
         }
         GridLayout {
             columns: 3
-            width: parent.width
 
             Repeater {
                 model: options
@@ -542,14 +530,9 @@ NodeBox {
                         id: optionMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-
-                        onEntered: {
-                            root.hint = "<i>Option:</i><br>" + optionText.info
-                        }
-
-                        onExited: {
-                            root.hint = ""
-                        }
+                        ToolTip.text: "<i>Option:</i><br>" + optionText.info
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
                     }
                 }
             }
@@ -567,33 +550,6 @@ NodeBox {
 
                 delegate: ParameterDelegate {
                 }
-            }
-        }
-        Rectangle {
-            Layout.fillWidth: true
-
-            visible: root.hint !== ""
-
-            radius: 4
-
-            color: "cyan"
-
-            border.width: 1
-            border.color: "deepskyblue"
-
-            implicitHeight: descriptionText.implicitHeight + 12
-
-            Text {
-                id: descriptionText
-
-                anchors.fill: parent
-                anchors.margins: 6
-
-                text: root.hint
-                textFormat: Text.RichText
-                wrapMode: Text.WordWrap
-
-                font.pixelSize: 11
             }
         }
     }
