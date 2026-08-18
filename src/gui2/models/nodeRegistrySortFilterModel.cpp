@@ -11,7 +11,7 @@ NodeRegistrySortFilterModel::NodeRegistrySortFilterModel(QObject *parent) : QSor
 bool NodeRegistrySortFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &source) const
 {
     if (searchText_.isEmpty())
-        return false;
+        return true;
 
     auto index = sourceModel()->index(sourceRow, 0, source);
     auto rowName = sourceModel()->data(index, NodeRegistryModel::Name).toString().toStdString();
