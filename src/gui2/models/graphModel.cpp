@@ -111,7 +111,6 @@ QSizeF GraphModel::canvasDimensions() const { return canvasDimensions_; }
 // Set graph canvas dimensions
 void GraphModel::setCanvasDimensions(const QSizeF &canvasDimensions)
 {
-    qDebug() << "Setting canvas dimensions to X: " << canvasDimensions.width() << ", Y: " << canvasDimensions.height() << "\n";
     canvasDimensions_ = canvasDimensions;
     Q_EMIT canvasDimensionsChanged();
 }
@@ -127,7 +126,6 @@ void GraphModel::emplace_back(int x, int y, QVariant type, std::string name, boo
     auto dX = 0, dY = 0;
     if (avoidSamePosition)
         findUniqueXY(x, y, dX, dY);
-    qDebug() << "C++: Node with name " << name << " to be emplaced at " << x + dX << " ," << y + dY << "\n";
     node->x = x + dX;
     node->y = y + dY;
     auto &item = wrapped_.emplace_back(*node);
@@ -245,9 +243,6 @@ void GraphModel::findUniqueXY(int x, int y, int &dX, int &dY)
                                auto &val = wrappedNode.rawValue();
                                return std::pair{val.x, val.y};
                            });
-
-    for (const auto &i : occupied)
-        qDebug() << "Graph space at " << i.first << " ," << i.second << " already occupied\n";
 
     // Check that the only existing nodes in the graph are not the graph's inputs/outputs and therefore we can safely position
     // this node in the central landing point
