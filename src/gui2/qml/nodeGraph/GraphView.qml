@@ -13,9 +13,8 @@ Pane {
     property variant parameterEndPointsModel
     property variant rootGraphModel
 
-    Component.onCompleted: {
-        nodeRegistry.setGraphModel(rootGraphModel);
-    }
+    Component.onCompleted: nodeRegistry.setGraphModel(rootGraphModel);
+
     /*
     MouseArea {
         id: ctxMenuCatcher

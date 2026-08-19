@@ -30,7 +30,8 @@ ApplicationWindow {
     Component {
         id: nodeSearchDialogComponent
 
-        NodeSearchDialog {}
+        NodeSearchDialog {
+        }
     }
     property Dialog quickRunDialog: null
     Component {
@@ -71,9 +72,7 @@ ApplicationWindow {
 
                 quickRunDialog.close()
             }
-            onRejected: {
-                quickRunDialog.close()
-            }
+            onRejected: quickRunDialog.close()
         }
     }
 
@@ -158,9 +157,7 @@ ApplicationWindow {
                 dissolveAction: Action {
                     text: "&Run"
                     shortcut: "Ctrl+Enter"
-                    onTriggered: {
-                        dissolveWindow.quickRunDialog.open()
-                    }
+                    onTriggered: dissolveWindow.quickRunDialog.open()
                 }
                 iconPath: "qrc:/DissolveIconsModule/play.svg"
             }
@@ -271,9 +268,7 @@ ApplicationWindow {
                 id: graphModel
 
                 graph: dissolve.graph
-                Component.onCompleted: {
-                    dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
-                }
+                Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
             }
             Pane {
                 id: toolBar
