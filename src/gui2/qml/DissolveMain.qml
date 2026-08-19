@@ -163,12 +163,12 @@ ApplicationWindow {
             MenuSeparator{}
 
             MenuItem {
-                //shortcut: "Ctrl+F"
-                text: "&Find Node"
+                //shortcut: "Ctrl+A"
+                text: "&Add Node"
 
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
-                ToolTip.text: "Search the Node registry by node name"
+                ToolTip.text: "Search the Node registry by node name, and add the selection to the graph"
 
                 onTriggered: nodeSearchDialog.open()
             }
