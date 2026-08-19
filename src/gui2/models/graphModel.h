@@ -11,6 +11,7 @@
 #include <QAbstractListModel>
 #include <QQuickItem>
 #include <qtmetamacros.h>
+#include <random>
 
 class GraphNodeModel;
 class GraphEdgeModel;
@@ -65,6 +66,7 @@ class GraphModel : public QObject
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
     Q_PROPERTY(QString location READ location NOTIFY graphChanged);
     Q_PROPERTY(bool atRoot READ atRoot NOTIFY graphChanged);
+    Q_PROPERTY(QSizeF canvasDimensions READ canvasDimensions WRITE setCanvasDimensions NOTIFY canvasDimensionsChanged);
 
     friend GraphNodeModel;
     friend GraphEdgeModel;
@@ -94,6 +96,15 @@ class GraphModel : public QObject
     bool atRoot() const;
     // Add a pre-created node
     void addNode(std::unique_ptr<Node> node, std::string_view name);
+    // Return graph canvas dimensions
+    QSizeF canvasDimensions() const;
+    // Set graph canvas dimensions
+    void setCanvasDimensions(const QSizeF &canvasDimensions);
+
+    private:
+    inline static std::mt19937 rnG_{std::random_device{}()};
+    // Graph canvas dimensions
+    QSizeF canvasDimensions_;
 
     protected:
     // Map of node parameters to endpoint QQuickItem pointers within GraphView
@@ -122,6 +133,8 @@ class GraphModel : public QObject
     private:
     void addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
                       std::string targetParamName);
+    // Find a unique point in the graph's x-y space for positioning when instantiated
+    void findUniqueXY(int x, int y, int &dX, int &dY);
 
     private:
     // Check whether a given source and destination can be connected
@@ -133,6 +146,7 @@ class GraphModel : public QObject
 
     Q_SIGNALS:
     void graphChanged();
+    void canvasDimensionsChanged();
     void decrementNodeTypeRequired(const std::string &);
     void graphRunComplete(NodeConstants::ProcessResult status, std::string node);
 
@@ -154,7 +168,7 @@ class GraphModel : public QObject
     void addOutput(int nodeIndex, QString paramName, double x, double y);
 
     // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, std::string name);
+    void emplace_back(int x, int y, QVariant type, std::string name, bool avoidSamePosition = false);
 
     // Switch to parent graph
     void upLevel();

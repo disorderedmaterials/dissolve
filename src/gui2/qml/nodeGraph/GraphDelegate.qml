@@ -26,13 +26,12 @@ NodeBox {
 
     image: icon
     nodeName: name
-    posX: posX
-    posY: posY
+    coords: Qt.point(posX, posY)
 
     // Ensure that we only display this box for valid node items
     visible: (icon != null) && !(isRootNode && (nodeName == "Outputs" || nodeName == "Inputs"))
-    x: posX
-    y: posY
+    x: coords.x
+    y: coords.y
 
     NodeMessages {
         id: nodeMessages

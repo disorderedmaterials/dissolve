@@ -5,9 +5,14 @@
 #include "graphEdgeModel.h"
 #include "graphNodeModel.h"
 #include "nodes/edge.h"
+#include "nodes/inputs.h"
+#include "nodes/outputs.h"
 #include <QAbstractItemModel>
 #include <QVariant>
+#include <algorithm>
 #include <iostream>
+#include <ranges>
+#include <set>
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 {
@@ -100,7 +105,18 @@ void GraphModel::addNode(std::unique_ptr<Node> node, std::string_view name)
     graphChanged();
 }
 
-void GraphModel::emplace_back(int x, int y, QVariant type, std::string name)
+// Return graph canvas dimensions
+QSizeF GraphModel::canvasDimensions() const { return canvasDimensions_; }
+
+// Set graph canvas dimensions
+void GraphModel::setCanvasDimensions(const QSizeF &canvasDimensions)
+{
+    qDebug() << "Setting canvas dimensions to X: " << canvasDimensions.width() << ", Y: " << canvasDimensions.height() << "\n";
+    canvasDimensions_ = canvasDimensions;
+    Q_EMIT canvasDimensionsChanged();
+}
+
+void GraphModel::emplace_back(int x, int y, QVariant type, std::string name, bool avoidSamePosition)
 {
     if (!graph_)
         Messenger::exception(
@@ -108,8 +124,12 @@ void GraphModel::emplace_back(int x, int y, QVariant type, std::string name)
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
     auto nodeType = type.toString().toStdString();
     auto node = graph_->createNode(nodeType, name);
-    node->x = x;
-    node->y = y;
+    auto dX = 0, dY = 0;
+    if (avoidSamePosition)
+        findUniqueXY(x, y, dX, dY);
+    qDebug() << "C++: Node with name " << name << " to be emplaced at " << x + dX << " ," << y + dY << "\n";
+    node->x = x + dX;
+    node->y = y + dY;
     auto &item = wrapped_.emplace_back(*node);
     item.rawValue().setName(name);
     nodes_.endInsertRows();
@@ -210,6 +230,46 @@ void GraphModel::addEndPoints(std::string sourceNodeName, std::string sourcePara
     auto sourceNode = graph_->findNode(sourceNodeName);
     auto targetNode = graph_->findNode(targetNodeName);
     endPointsModel_.add(outputEndPoints_[sourceNode][sourceParamName], inputEndPoints_[targetNode][targetParamName]);
+}
+
+// Find a unique point in the graph's x-y space for positioning when instantiated
+void GraphModel::findUniqueXY(int x, int y, int &dX, int &dY)
+{
+    const int maxX = canvasDimensions_.width();
+    const int maxY = canvasDimensions_.height();
+    const auto border = 100;
+    std::set<std::pair<int, int>> occupied;
+    std::ranges::transform(wrapped_, std::inserter(occupied, occupied.end()),
+                           [](const auto &wrappedNode)
+                           {
+                               auto &val = wrappedNode.rawValue();
+                               return std::pair{val.x, val.y};
+                           });
+
+    for (const auto &i : occupied)
+        qDebug() << "Graph space at " << i.first << " ," << i.second << " already occupied\n";
+
+    // Check that the only existing nodes in the graph are not the graph's inputs/outputs and therefore we can safely position
+    // this node in the central landing point
+    if (wrapped_.size() == 2 && dynamic_cast<InputsNode *>(&wrapped_.at(0).rawValue()) &&
+        dynamic_cast<OutputsNode *>(&wrapped_.at(1).rawValue()))
+        return;
+
+    const int displacement = 500;
+    std::uniform_int_distribution<int> dist(-displacement, displacement);
+    bool isOccupied = true;
+    while (isOccupied)
+    {
+        dX = dist(rnG_);
+        dY = dist(rnG_);
+
+        // If we are outside the graph view's border area, continue
+        if ((x + dX < border || x + dX > (maxX - border)) || (y + dY < border || y + dY > (maxY - border)))
+            continue;
+
+        if (!occupied.contains({x + dX, y + dY}))
+            isOccupied = false;
+    }
 }
 
 void GraphModel::handleReset() { Q_EMIT(graphChanged()); }

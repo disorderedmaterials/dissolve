@@ -49,7 +49,7 @@ void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
     const auto count = tally(type.toString());
     std::string prefix = type.toString().toStdString() + "_";
     auto name = prefix + std::format("{}", count);
-    graphModel_->emplace_back(x, y, type, name);
+    graphModel_->emplace_back(x, y, type, name, true);
 }
 
 // Set the graph model
