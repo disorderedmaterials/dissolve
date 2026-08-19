@@ -13,9 +13,7 @@ Dialog {
     standardButtons: Dialog.Ok | Dialog.Cancel
     title: "Define Species: " + sp.name
 
-    onAccepted: {
-        sp.create(graphModel);
-    }
+    onAccepted: sp.create(graphModel)
 
     SpeciesModel {
         id: sp
