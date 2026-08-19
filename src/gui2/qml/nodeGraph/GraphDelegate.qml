@@ -302,9 +302,7 @@ NodeBox {
         id: tapHandler
         acceptedButtons: Qt.RightButton
 
-        onTapped: {
-            nodePopupMenu.popup(point.position.x, point.position.y)
-        }
+        onTapped: nodePopupMenu.popup(point.position.x, point.position.y)
     }
 
     ColumnLayout {
@@ -360,9 +358,7 @@ NodeBox {
                         readonly property var parentNodeBox: root
                         anchors.fill: parent
 
-                        Component.onCompleted: {
-                            root.rootGraphModel.initialiseInputEndPoints(parent.nodeName, parent.title, inputDropArea);
-                        }
+                        Component.onCompleted: root.rootGraphModel.initialiseInputEndPoints(parent.nodeName, parent.title, inputDropArea)
 
                         onDropped: function (event) {
                             edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, parent.title);
@@ -395,14 +391,8 @@ NodeBox {
                         id: inputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-
-                        onEntered: {
-                            root.hint = "<i>Input:</i><br>" + inputText.info
-                        }
-
-                        onExited: {
-                            root.hint = ""
-                        }
+                        onEntered: root.hint = "<i>Input:</i><br>" + inputText.info
+                        onExited: root.hint = ""
                     }
                 }
             }
@@ -461,9 +451,7 @@ NodeBox {
                         readonly property var parentNodeBox: root
                         anchors.fill: parent
 
-                        Component.onCompleted: {
-                            root.rootGraphModel.initialiseOutputEndPoints(parent.nodeName, parent.title, outputDropArea);
-                        }
+                        Component.onCompleted: root.rootGraphModel.initialiseOutputEndPoints(parent.nodeName, parent.title, outputDropArea);
 
                         onDropped: function (event) {
                             edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title);
@@ -496,14 +484,8 @@ NodeBox {
                         id: outputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-
-                        onEntered: {
-                            root.hint = "<i>Output:</i><br>" + outputText.info
-                        }
-
-                        onExited: {
-                            root.hint = ""
-                        }
+                        onEntered: root.hint = "<i>Output:</i><br>" + outputText.info
+                        onExited: root.hint = ""
                     }
                 }
             }
@@ -518,9 +500,7 @@ NodeBox {
             text: "Inner Graph"
             visible: inner_graph
 
-            onClicked: {
-                descended(index);
-            }
+            onClicked: descended(index)
         }
         GridLayout {
             columns: 3
@@ -541,14 +521,8 @@ NodeBox {
                         id: optionMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-
-                        onEntered: {
-                            root.hint = "<i>Option:</i><br>" + optionText.info
-                        }
-
-                        onExited: {
-                            root.hint = ""
-                        }
+                        onEntered: root.hint = "<i>Option:</i><br>" + optionText.info
+                        onExited: root.hint = ""
                     }
                 }
             }

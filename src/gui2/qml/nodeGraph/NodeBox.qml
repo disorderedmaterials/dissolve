@@ -132,9 +132,7 @@ GroupBox {
             id: hoverHandler
             target: root
 
-            onHoveredChanged: {
-                root.headerHovered = hovered
-            }
+            onHoveredChanged: root.headerHovered = hovered
         }
         DragHandler {
             id: dragHandler
@@ -143,9 +141,7 @@ GroupBox {
             xAxis.onActiveValueChanged: delta => x += delta
             yAxis.onActiveValueChanged: delta => y += delta
 
-            onActiveChanged: {
-                root.dragActive = active
-            }
+            onActiveChanged: root.dragActive = active
         }
     }
 
