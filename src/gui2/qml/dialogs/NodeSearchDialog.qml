@@ -13,7 +13,7 @@ Dialog {
 
     modal: true
     closePolicy: Popup.NoAutoClose
-    title: "Find Node"
+    title: "Add Node"
 
     standardButtons: Dialog.Ok | Dialog.Cancel
 
