@@ -2,10 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.qmlmodels
-//import DissolveControlsModule
-//import DissolveIconsModule
-//import "../DissolveControlsModule"
-//import "../DissolveIconsModule"
 
 GroupBox {
     id: root
@@ -15,8 +11,7 @@ GroupBox {
     property double baseY: header.height
     property string image
     property string nodeName
-    property int posX
-    property int posY
+    property point coords
     property bool dragActive: false
     property bool headerHovered: false
     property int headerHeight: 32
@@ -145,8 +140,8 @@ GroupBox {
             id: dragHandler
             target: root
 
-            xAxis.onActiveValueChanged: delta => posX += delta
-            yAxis.onActiveValueChanged: delta => posY += delta
+            xAxis.onActiveValueChanged: delta => x += delta
+            yAxis.onActiveValueChanged: delta => y += delta
 
             onActiveChanged: {
                 root.dragActive = active
