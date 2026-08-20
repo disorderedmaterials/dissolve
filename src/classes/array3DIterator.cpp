@@ -22,23 +22,15 @@ void Array3DIterator::fromIndex(int index)
 
 int Array3DIterator::toIndex() const { return x_ + sizeX_ * y_ + sizeX_ * sizeY_ * z_; }
 
-bool Array3DIterator::operator<(const Array3DIterator &other) const
+std::strong_ordering Array3DIterator::operator<=>(const Array3DIterator &other) const
 {
     if (z_ != other.z_)
-        return z_ < other.z_;
+        return z_ <=> other.z_;
     if (y_ != other.y_)
-        return y_ < other.y_;
-    return x_ < other.x_;
-}
-bool Array3DIterator::operator==(const Array3DIterator &other) const
-{
-    return x_ == other.x_ && y_ == other.y_ && z_ == other.z_;
+        return y_ <=> other.y_;
+    return x_ <=> other.x_;
 }
 
-bool Array3DIterator::operator!=(const Array3DIterator &other) const
-{
-    return x_ != other.x_ || y_ != other.y_ || z_ != other.z_;
-}
 Array3DIterator::value_type Array3DIterator::operator*() { return {x_, y_, z_}; }
 
 Array3DIterator &Array3DIterator::operator++()
