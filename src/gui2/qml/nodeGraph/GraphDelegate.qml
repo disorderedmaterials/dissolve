@@ -399,8 +399,9 @@ NodeBox {
                         id: inputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: root.hint = "<i>Input:</i><br>" + inputText.info
-                        onExited: root.hint = ""
+                        ToolTip.text: "<i>Input:</i><br>" + inputText.info
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
                     }
                 }
             }
@@ -492,8 +493,9 @@ NodeBox {
                         id: outputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: root.hint = "<i>Output:</i><br>" + outputText.info
-                        onExited: root.hint = ""
+                        ToolTip.text: "<i>Output:</i><br>" + outputText.info
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
                     }
                 }
             }
@@ -528,8 +530,9 @@ NodeBox {
                         id: optionMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        onEntered: root.hint = "<i>Option:</i><br>" + optionText.info
-                        onExited: root.hint = ""
+                        ToolTip.text: "<i>Option:</i><br>" + optionText.info
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
                     }
                 }
             }
@@ -547,33 +550,6 @@ NodeBox {
 
                 delegate: ParameterDelegate {
                 }
-            }
-        }
-        Rectangle {
-            Layout.fillWidth: true
-
-            visible: root.hint !== ""
-
-            radius: 4
-
-            color: "cyan"
-
-            border.width: 1
-            border.color: "deepskyblue"
-
-            implicitHeight: descriptionText.implicitHeight + 12
-
-            Text {
-                id: descriptionText
-
-                anchors.fill: parent
-                anchors.margins: 6
-
-                text: root.hint
-                textFormat: Text.RichText
-                wrapMode: Text.WordWrap
-
-                font.pixelSize: 11
             }
         }
     }
