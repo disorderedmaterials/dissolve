@@ -244,12 +244,6 @@ void GraphModel::findUniqueXY(int x, int y, int &dX, int &dY)
                                return std::pair{val.x, val.y};
                            });
 
-    // Check that the only existing nodes in the graph are not the graph's inputs/outputs and therefore we can safely position
-    // this node in the central landing point
-    if (wrapped_.size() == 2 && dynamic_cast<InputsNode *>(&wrapped_.at(0).rawValue()) &&
-        dynamic_cast<OutputsNode *>(&wrapped_.at(1).rawValue()))
-        return;
-
     const int displacement = 500;
     std::uniform_int_distribution<int> dist(-displacement, displacement);
     bool isOccupied = true;
