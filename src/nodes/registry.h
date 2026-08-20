@@ -7,15 +7,35 @@
 #include <vector>
 
 using NodeProducer = std::function<std::unique_ptr<Node>(Graph *parent)>;
+using ProducerMap = std::map<std::string_view, NodeProducer>;
 
 // Registry of all Producible Node Types
 class NodeRegistry
 {
-    private:
-    // Available Node producers
-    static std::map<std::string_view, NodeProducer> producers_;
+    public:
+    enum Category
+    {
+        Action,
+        Data,
+        Export,
+        Graphs,
+        Import,
+        Math,
+        Other
+    };
+    // Return enum option info for Category
+    static EnumOptions<Category> category();
+
+    public:
+    static std::map<Category, ProducerMap> categoricalProducers_;
 
     private:
+    // Available Node producers
+    static ProducerMap producers_;
+
+    private:
+    // Remove categories from categorial node producer map, returning a 'flat' producer map
+    static ProducerMap decategoriseProducers();
     // Instantiate Node Producers
     static void instantiateNodeProducers();
 

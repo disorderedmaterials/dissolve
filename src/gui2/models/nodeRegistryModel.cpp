@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/nodeRegistryModel.h"
+#include "enumRegistry.h"
 #include "nodes/dissolve.h"
 
 NodeRegistryModel::NodeRegistryModel(QObject *parent)
@@ -42,14 +43,50 @@ int &NodeRegistryModel::tally(QString nodeType)
     return std::get<int>(entries_[idx]);
 }
 
-// Instantiate node from registry
-void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
+// Return node names by category
+QList<QVariantMap> NodeRegistryModel::nodeNames(QString category)
+{
+    QList<QVariantMap> names;
+    auto categoryEnum = NodeRegistry::category().enumeration(category.toStdString());
+    for (const auto &[name, _] : NodeRegistry::categoricalProducers_[categoryEnum])
+    {
+        auto nodeName = QString::fromStdString(std::string(name));
+        auto descriptionIt = std::find_if(entries_.begin(), entries_.end(),
+                                          [&nodeName](const auto &entry) { return std::get<0>(entry) == nodeName; });
+        auto descriptionIdx = std::distance(entries_.begin(), descriptionIt);
+        auto nodeDescription = std::get<1>(entries_[descriptionIdx]);
+        QVariantMap nodeInfo;
+        nodeInfo[QString::fromStdString("name")] = nodeName;
+        nodeInfo[QString::fromStdString("description")] = nodeDescription;
+        names.push_back(nodeInfo);
+    }
+    return names;
+}
+
+// Return the enum options for the node categories
+EnumOptionsModel *NodeRegistryModel::categories() { return EnumRegistry::options(typeid(NodeRegistry::Category)).get(); }
+
+// Return a unique default node name for a given node type
+QString NodeRegistryModel::uniqueNodeName(QVariant type)
 {
     increment(type.toString());
     const auto count = tally(type.toString());
     std::string prefix = type.toString().toStdString() + "_";
     auto name = prefix + std::format("{}", count);
-    graphModel_->emplace_back(x, y, type, name, true);
+    return QString::fromStdString(name);
+}
+
+// Instantiate node from registry
+void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
+{
+    /*
+    increment(type.toString());
+    const auto count = tally(type.toString());
+    std::string prefix = type.toString().toStdString() + "_";
+    auto name = prefix + std::format("{}", count);
+    */
+    // graphModel_->emplace_back(x, y, type, QString::fromStdString(name), true);
+    graphModel_->emplace_back(x, y, type, uniqueNodeName(type), true);
 }
 
 // Set the graph model

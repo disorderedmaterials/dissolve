@@ -15,7 +15,6 @@ Pane {
 
     Component.onCompleted: nodeRegistry.setGraphModel(rootGraphModel);
 
-    /*
     MouseArea {
         id: ctxMenuCatcher
 
@@ -24,133 +23,51 @@ Pane {
 
         onClicked: contextMenu.popup()
 
+        property point mousePos: Qt.point(ctxMenuCatcher.mouseX, ctxMenuCatcher.mouseY)
+
         Menu {
             id: contextMenu
 
-            Menu {
-                title: "Math"
+            Instantiator {
+                model: nodeRegistry.categories()
 
-                MenuItem {
-                    text: "Add"
+                delegate: Menu {
+                    id: nodeCategoryMenu
 
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Add", "New Node")
-                }
-                MenuItem {
-                    text: "Derivative"
+                    required property var option
+                    title: option
 
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Derivative", "New Node")
-                }
-                MenuItem {
-                    text: "Dot Product"
+                    Instantiator {
+                        model: nodeRegistry.nodeNames(option)
 
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "DotProduct", "New Node")
-                }
-                MenuItem {
-                    text: "Integrator"
+                        delegate: MenuItem {
+                            required property var modelData
+                            text: modelData.name
+                            onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name, nodeRegistry.uniqueNodeName(modelData.name), false)
+                            ToolTip.text: modelData.description
+                            ToolTip.visible: hovered
+                            ToolTip.delay: 500
+                        }
 
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Integrator", "New Node")
-                }
-                MenuItem {
-                    text: "Multiply"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Multiply", "New Node")
-                }
-                MenuItem {
-                    text: "Number"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Number", "New Number")
-                }
-                MenuItem {
-                    text: "Subtract"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Subtract", "New Node")
-                }
-                MenuItem {
-                    text: "Vec3Assembly"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Assembly", "New Node")
-                }
-                MenuItem {
-                    text: "Vec3Decompostion"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Vec3Decomposition", "New Node")
-                }
-            }
-            Menu {
-                title: "Action"
-
-                MenuItem {
-                    text: "Atomic MC"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicMC", "New Node")
-                }
-                MenuItem {
-                    text: "G(r)"
-
-                    onClicked: rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "GR", "New Node")
-                }
-                MenuItem {
-                    text: "Insert"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Insert", "New Node")
-                }
-                MenuItem {
-                    text: "Molecular Dynamics"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "MD", "New Node")
-                }
-                MenuItem {
-                    text: "S(q)"
-
-                    onClicked: rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "SQ", "New Node")
-                }
-            }
-            Menu {
-                title: "Data"
-
-                MenuItem {
-                    text: "Atomic Species"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "AtomicSpecies", "New Node")
-                }
-                MenuItem {
-                    text: "Configuration"
-
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Configuration", "New Node")
-                }
-                MenuItem {
-                    text: "Forcefield"
-
-                    onClicked: forcefieldDialog.open()
-
-                    ForcefieldDialog {
-                        id: forcefieldDialog
-
-                        graphModel: graphRoot.rootGraphModel
-                        posx: Math.round(ctxMenuCatcher.mouseX)
-                        posy: Math.round(ctxMenuCatcher.mouseY)
+                        onObjectAdded: (index, object) => {
+                            nodeCategoryMenu.addItem(object)
+                        }
+                        onObjectRemoved: (index, object) => {
+                            nodeCategoryMenu.removeItem(object)
+                        }
                     }
                 }
-                MenuItem {
-                    text: "Graph"
 
-                    onClicked: graphRoot.rootGraphModel.emplace_back(Math.round(ctxMenuCatcher.mouseX), Math.round(ctxMenuCatcher.mouseY), "Graph", "New Graph")
+                onObjectAdded: (index, object) => {
+                    contextMenu.addMenu(object)
                 }
-                MenuItem {
-                    text: "Species"
-
-                    onClicked: speciesDialog.open()
-
-                    SpeciesDialog {
-                        id: speciesDialog
-
-                        graphModel: graphRoot.rootGraphModel
-                    }
+                onObjectRemoved: (index, object) => {
+                    contextMenu.removeMenu(object)
                 }
             }
         }
     }
-    */
+
     // Edge connections
     Repeater {
         model: graphRoot.parameterEndPointsModel

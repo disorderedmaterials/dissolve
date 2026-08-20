@@ -68,7 +68,23 @@
 #include <ranges>
 
 // Static Singletons
-std::map<std::string_view, NodeProducer> NodeRegistry::producers_;
+std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalProducers_;
+ProducerMap NodeRegistry::producers_;
+
+// Return enum option info for Category
+EnumOptions<NodeRegistry::Category> NodeRegistry::category()
+{
+    return EnumOptions<NodeRegistry::Category>("Category", {
+                                                               {Category::Action, "Action"},
+                                                               {Category::Data, "Data"},
+                                                               {Category::Export, "Export"},
+                                                               {Category::Graphs, "Graphs"},
+                                                               {Category::Import, "Import"},
+                                                               {Category::Math, "Math"},
+                                                               {Category::Other, "Other (TODO: finish categories)"},
+                                                           });
+}
+EnumOptions<NodeRegistry::Category> getEnumOptions(NodeRegistry::Category) { return NodeRegistry::category(); }
 
 // Makes unique pointer to derived node instance
 template <typename T> NodeProducer makeDerivedNode()
@@ -76,75 +92,94 @@ template <typename T> NodeProducer makeDerivedNode()
     return [=](Graph *parent) -> std::unique_ptr<Node> { return std::make_unique<T>(parent); };
 }
 
+// Remove categories from categorial node producer map, returning a 'flat' producer map
+ProducerMap NodeRegistry::decategoriseProducers()
+{
+    ProducerMap producers;
+    for (const auto &[_, map] : categoricalProducers_)
+        producers.insert(map.begin(), map.end());
+
+    return producers;
+}
+
 // Instantiate Node Producers
 void NodeRegistry::instantiateNodeProducers()
 {
     // Only need to do this once
-    if (!producers_.empty())
+    if (!categoricalProducers_.empty())
         return;
 
-    producers_ = {{"Add", makeDerivedNode<AddNode>()},
-                  {"Angle", makeDerivedNode<AngleNode>()},
-                  {"AxisAngle", makeDerivedNode<AxisAngleNode>()},
-                  {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
-                  {"AverageMolecule", makeDerivedNode<AverageMoleculeNode>()},
-                  {"Bragg", makeDerivedNode<BraggNode>()},
-                  {"CalculateBonding", makeDerivedNode<CalculateBondingNode>()},
-                  {"ClearBonding", makeDerivedNode<ClearBondingNode>()},
-                  {"Configuration", makeDerivedNode<ConfigurationNode>()},
-                  {"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
-                  {"DAngle", makeDerivedNode<DAngleNode>()},
-                  {"Derivative", makeDerivedNode<DerivativeNode>()},
-                  {"DetectMolecules", makeDerivedNode<DetectMoleculesNode>()},
-                  {"DotProduct", makeDerivedNode<DotProductNode>()},
-                  {"Energy", makeDerivedNode<EnergyNode>()},
-                  {"EPSR", makeDerivedNode<EPSRNode>()},
-                  {"ExportBlockData", makeDerivedNode<ExportBlockDataNode>()},
-                  {"ExportData", makeDerivedNode<ExportDataNode>()},
-                  {"ExportDLPUtilsPDensData", makeDerivedNode<ExportDLPUtilsPDensDataNode>()},
-                  {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfigurationNode>()},
-                  {"ExportXYZTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
-                  {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfigurationNode>()},
-                  {"Forcefield", makeDerivedNode<ForcefieldNode>()},
-                  {"Graph", makeDerivedNode<Graph>()},
-                  {"GR", makeDerivedNode<GRNode>()},
-                  {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
-                  {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
-                  {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
-                  {"ImportDLPUtilsPDens", makeDerivedNode<ImportDLPUtilsPDensNode>()},
-                  {"ImportDLPUtilsSurface", makeDerivedNode<ImportDLPUtilsSurfaceNode>()},
-                  {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
-                  {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
-                  {"ImportXYData", makeDerivedNode<ImportXYDataNode>()},
-                  {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
-                  {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()},
-                  {"Insert", makeDerivedNode<InsertNode>()},
-                  {"Integrator", makeDerivedNode<Integrator1DNode>()},
-                  {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
-                  {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
-                  {"IntraMC", makeDerivedNode<IntraMCNode>()},
-                  {"Iterator", makeDerivedNode<IterableGraph>()},
-                  {"MC", makeDerivedNode<MCNode>()},
-                  {"MD", makeDerivedNode<MDNode>()},
-                  {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
-                  {"MoleculeTorsion", makeDerivedNode<MoleculeTorsionNode>()},
-                  {"Multiply", makeDerivedNode<MultiplyNode>()},
-                  {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
-                  {"Number", makeDerivedNode<NumberNode>()},
-                  {"OrientedSDF", makeDerivedNode<OrientedSDFNode>()},
-                  {"QSpecies", makeDerivedNode<QSpeciesNode>()},
-                  {"SDF", makeDerivedNode<SDFNode>()},
-                  {"SetBox", makeDerivedNode<SetBoxNode>()},
-                  {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
-                  {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
-                  {"SQ", makeDerivedNode<SQNode>()},
-                  {"Species", makeDerivedNode<SpeciesNode>()},
-                  {"Subtract", makeDerivedNode<SubtractNode>()},
-                  {"SupercellConfiguration", makeDerivedNode<SupercellConfigurationNode>()},
-                  {"Vector3Assemble", makeDerivedNode<Vector3AssembleNode>()},
-                  {"Vector3Decompose", makeDerivedNode<Vector3DecomposeNode>()},
-                  {"XRaySQ", makeDerivedNode<XRaySQNode>()},
-                  {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}};
+    categoricalProducers_ = {{Action,
+                              {
+                                  {"AtomicMC", makeDerivedNode<AtomicMCNode>()},
+                                  {"GR", makeDerivedNode<GRNode>()},
+                                  {"Insert", makeDerivedNode<InsertNode>()},
+                                  {"MD", makeDerivedNode<MDNode>()},
+                                  {"SQ", makeDerivedNode<SQNode>()},
+                              }},
+                             {Data,
+                              {{"Configuration", makeDerivedNode<ConfigurationNode>()},
+                               {"Forcefield", makeDerivedNode<ForcefieldNode>()},
+                               {"Species", makeDerivedNode<SpeciesNode>()}}},
+                             {Export,
+                              {{"ExportBlockData", makeDerivedNode<ExportBlockDataNode>()},
+                               {"ExportData", makeDerivedNode<ExportDataNode>()},
+                               {"ExportDLPUtilsPDensData", makeDerivedNode<ExportDLPUtilsPDensDataNode>()},
+                               {"ExportDLPOLYConfiguration", makeDerivedNode<ExportDLPOLYConfigurationNode>()},
+                               {"ExportXYZTrajectory", makeDerivedNode<ExportXYZTrajectoryNode>()},
+                               {"ExportXYZConfiguration", makeDerivedNode<ExportXYZConfigurationNode>()}}},
+                             {Graphs, {{"Iterator", makeDerivedNode<IterableGraph>()}, {"Graph", makeDerivedNode<Graph>()}}},
+                             {Import,
+                              {{"ImportCIFStructure", makeDerivedNode<ImportCIFStructureNode>()},
+                               {"ImportDLPOLYStructure", makeDerivedNode<ImportDLPOLYStructureNode>()},
+                               {"ImportDLPOLYTrajectory", makeDerivedNode<ImportDLPOLYTrajectoryNode>()},
+                               {"ImportDLPUtilsPDens", makeDerivedNode<ImportDLPUtilsPDensNode>()},
+                               {"ImportDLPUtilsSurface", makeDerivedNode<ImportDLPUtilsSurfaceNode>()},
+                               {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
+                               {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
+                               {"ImportXYData", makeDerivedNode<ImportXYDataNode>()},
+                               {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
+                               {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()}}},
+                             {Math,
+                              {{"Add", makeDerivedNode<AddNode>()},
+                               {"Derivative", makeDerivedNode<DerivativeNode>()},
+                               {"DotProduct", makeDerivedNode<DotProductNode>()},
+                               {"Integrator", makeDerivedNode<Integrator1DNode>()},
+                               {"Multiply", makeDerivedNode<MultiplyNode>()},
+                               {"Number", makeDerivedNode<NumberNode>()},
+                               {"Subtract", makeDerivedNode<SubtractNode>()},
+                               {"Vector3Assemble", makeDerivedNode<Vector3AssembleNode>()},
+                               {"Vector3Decompose", makeDerivedNode<Vector3DecomposeNode>()}}},
+                             {Other,
+                              {{"Angle", makeDerivedNode<AngleNode>()},
+                               {"AxisAngle", makeDerivedNode<AxisAngleNode>()},
+                               {"AverageMolecule", makeDerivedNode<AverageMoleculeNode>()},
+                               {"Bragg", makeDerivedNode<BraggNode>()},
+                               {"CalculateBonding", makeDerivedNode<CalculateBondingNode>()},
+                               {"ClearBonding", makeDerivedNode<ClearBondingNode>()},
+                               {"DAngle", makeDerivedNode<DAngleNode>()},
+                               {"DetectMolecules", makeDerivedNode<DetectMoleculesNode>()},
+                               {"Energy", makeDerivedNode<EnergyNode>()},
+                               {"EPSR", makeDerivedNode<EPSRNode>()},
+                               {"HistogramCN", makeDerivedNode<HistogramCNNode>()},
+                               {"IntraAngle", makeDerivedNode<IntraAngleNode>()},
+                               {"IntraDistance", makeDerivedNode<IntraDistanceNode>()},
+                               {"IntraMC", makeDerivedNode<IntraMCNode>()},
+                               {"MC", makeDerivedNode<MCNode>()},
+                               {"ModifierOSites", makeDerivedNode<ModifierOSitesNode>()},
+                               {"MoleculeTorsion", makeDerivedNode<MoleculeTorsionNode>()},
+                               {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
+                               {"OrientedSDF", makeDerivedNode<OrientedSDFNode>()},
+                               {"QSpecies", makeDerivedNode<QSpeciesNode>()},
+                               {"SDF", makeDerivedNode<SDFNode>()},
+                               {"SetBox", makeDerivedNode<SetBoxNode>()},
+                               {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
+                               {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
+                               {"SupercellConfiguration", makeDerivedNode<SupercellConfigurationNode>()},
+                               {"XRaySQ", makeDerivedNode<XRaySQNode>()},
+                               {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}}}};
+
+    producers_ = decategoriseProducers();
 }
 
 // Check whether the supplied node type is known
