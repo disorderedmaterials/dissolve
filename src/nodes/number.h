@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include <compare>
 #include <optional>
 #include <variant>
 
@@ -27,12 +28,13 @@ class Number
     Number &operator/=(const Number &other);
     Number &operator++();
     Number &operator--();
-    bool operator==(const Number &value) const;
-    bool operator!=(const Number &value) const;
-    bool operator<(const Number &other) const;
-    bool operator<=(const Number &other) const;
-    bool operator>(const Number &other) const;
-    bool operator>=(const Number &other) const;
+    bool operator==(const Number &value) const = default;
+    bool operator!=(const Number &value) const = default;
+    bool operator<(const Number &other) const = default;
+    bool operator<=(const Number &other) const = default;
+    bool operator>(const Number &other) const = default;
+    bool operator>=(const Number &other) const = default;
+    std::strong_ordering operator<=>(const Number &value) const;
 
     /*
      * Data
