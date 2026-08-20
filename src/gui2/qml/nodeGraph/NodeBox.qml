@@ -21,8 +21,7 @@ GroupBox {
 
     signal deleted
 
-    width: 250
-    height: 200
+    implicitWidth: 250
 
     scale: headerHovered ? 1.05 : 1.0
 
@@ -33,11 +32,45 @@ GroupBox {
         }
     }
 
+    background: Rectangle {
+        id: creationPulsedBorder
+
+        anchors.fill: parent
+        color: "transparent"
+        border.color: "black"
+        border.width: 1
+        radius: 4
+        z: -1
+
+        Component.onCompleted: creationPulsedAnimation.start()
+    }
+
+    SequentialAnimation {
+        id: creationPulsedAnimation
+
+        NumberAnimation {
+            target: creationPulsedBorder
+            property: "border.width"
+            from: 1
+            to: 5
+            duration: 300
+            easing.type: Easing.OutQuad
+        }
+        NumberAnimation {
+            target: creationPulsedBorder
+            property: "border.width"
+            from: 5
+            to: 1
+            duration: 500
+            easing.type: Easing.OutQuad   
+        }
+    }
+
     label: Rectangle {
         id: header
 
         implicitHeight: root.headerHeight
-        implicitWidth: root.width
+        width: root.width
 
         color: '#a9f0f4ff'
         radius: 4
@@ -153,7 +186,6 @@ GroupBox {
             right: parent.right
             top: header.bottom
             bottom: parent.bottom
-
             margins: 8
         }
     }
