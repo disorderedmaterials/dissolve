@@ -28,6 +28,9 @@ NodeBox {
     nodeName: name
     coords: Qt.point(posX, posY)
 
+    height: nodeColumnLayout.implicitHeight + label.height + padding
+    width: 250
+
     // Ensure that we only display this box for valid node items
     visible: (icon != null) && !(isRootNode && (nodeName == "Outputs" || nodeName == "Inputs"))
     x: coords.x
@@ -97,7 +100,7 @@ NodeBox {
                         )
 
                         messages.x = p.x
-                        messages.y = p.y - 2
+                        messages.y = p.y
 
                         root.messageStore.updateMessages()
                         messages.open()
@@ -124,7 +127,7 @@ NodeBox {
                         )
 
                         warnings.x = p.x
-                        warnings.y = p.y - 2
+                        warnings.y = p.y
 
                         root.messageStore.updateMessages()
                         warnings.open()
@@ -151,7 +154,7 @@ NodeBox {
                         )
 
                         errors.x = p.x
-                        errors.y = p.y - 2
+                        errors.y = p.y
 
                         root.messageStore.updateMessages()
                         errors.open()
@@ -306,7 +309,12 @@ NodeBox {
     }
 
     ColumnLayout {
-        anchors.fill: parent
+        id: nodeColumnLayout
+
+        anchors.left: header.left
+        anchors.right: header.right
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
         spacing: 8
 
         GridLayout {
@@ -504,7 +512,6 @@ NodeBox {
         }
         GridLayout {
             columns: 3
-            width: parent.width
 
             Repeater {
                 model: options
