@@ -77,17 +77,7 @@ QString NodeRegistryModel::uniqueNodeName(QVariant type)
 }
 
 // Instantiate node from registry
-void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
-{
-    /*
-    increment(type.toString());
-    const auto count = tally(type.toString());
-    std::string prefix = type.toString().toStdString() + "_";
-    auto name = prefix + std::format("{}", count);
-    */
-    // graphModel_->emplace_back(x, y, type, QString::fromStdString(name), true);
-    graphModel_->emplace_back(x, y, type, uniqueNodeName(type), true);
-}
+void NodeRegistryModel::instantiateNode(int x, int y, QVariant type) { graphModel_->emplace_back(x, y, type, uniqueNodeName(type), true); }
 
 // Set the graph model
 void NodeRegistryModel::setGraphModel(GraphModel *graphModel)
