@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "enumOptionsModel.h"
 #include "gui2/models/graphModel.h"
 #include "nodes/registry.h"
 #include <QAbstractListModel>
@@ -51,6 +52,12 @@ class NodeRegistryModel : public QAbstractListModel
     GraphModel *graphModel_{nullptr};
 
     public:
+    // Return a unique default node name for a given node type
+    Q_INVOKABLE QString uniqueNodeName(QVariant type);
+    // Return node names by category
+    Q_INVOKABLE QList<QVariantMap> nodeNames(QString category);
+    // Return the enum options for the node categories
+    Q_INVOKABLE EnumOptionsModel *categories();
     // Instantiate node from registry
     Q_INVOKABLE void instantiateNode(int x, int y, QVariant type);
     // Set the graph model

@@ -16,7 +16,6 @@ void EnumOptionsModel::setData(std::shared_ptr<const EnumOptionsBase> options)
 /*
  * QAbstractItemModel overrides
  */
-
 int EnumOptionsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

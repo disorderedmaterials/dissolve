@@ -7,6 +7,7 @@
 #include "math/windowFunction.h"
 #include "nodes/gr.h"
 #include "nodes/md.h"
+#include "nodes/registry.h"
 
 std::map<std::type_index, std::shared_ptr<EnumOptionsModel>> EnumRegistry::options_;
 
@@ -35,6 +36,7 @@ void EnumRegistry::instantiateOptions()
     };
 
     options_ = {{typeid(StructureFactors::NormalisationType), wrap(StructureFactors::normalisationTypes())},
+                {typeid(NodeRegistry::Category), wrap(NodeRegistry::category())},
                 {typeid(GRNode::PartialsMethod), wrap(GRNode::partialsMethods())},
                 {typeid(MDNode::TimestepType), wrap(MDNode::timestepType())},
                 {typeid(WindowFunction::Form), wrap(WindowFunction::forms())}};
