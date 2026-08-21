@@ -27,7 +27,7 @@ class NodeRegistry
     static EnumOptions<Category> category();
 
     public:
-    static std::map<Category, ProducerMap> categoricalProducers_;
+    static const std::map<Category, ProducerMap> categoricalProducers_;
 
     private:
     // Available Node producers

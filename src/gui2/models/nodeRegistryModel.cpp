@@ -48,7 +48,8 @@ QList<QVariantMap> NodeRegistryModel::nodeNames(QString category)
 {
     QList<QVariantMap> names;
     auto categoryEnum = NodeRegistry::category().enumeration(category.toStdString());
-    for (const auto &[name, _] : NodeRegistry::categoricalProducers_[categoryEnum])
+    auto nodes = NodeRegistry::categoricalProducers_;
+    for (const auto &[name, _] : nodes[categoryEnum])
     {
         auto nodeName = QString::fromStdString(std::string(name));
         auto descriptionIt = std::find_if(entries_.begin(), entries_.end(),
