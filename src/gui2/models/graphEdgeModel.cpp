@@ -49,11 +49,14 @@ void GraphEdgeModel::addEdge(Edge &newEdge)
     endInsertRows();
 }
 
-void GraphEdgeModel::addEdge(EdgeDefinition &newEdge)
+bool GraphEdgeModel::addEdge(EdgeDefinition &newEdge)
 {
     auto edge = Edge::create(parent_->graph(), newEdge);
     if (edge)
         addEdge(*edge);
+    else
+        return false;
+    return true;
 }
 
 // Return number of edges (required by QAbstractListModel)
