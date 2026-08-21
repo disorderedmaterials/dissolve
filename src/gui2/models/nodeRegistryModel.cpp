@@ -24,6 +24,13 @@ NodeRegistryModel::NodeRegistryModel(QObject *parent)
         auto dummyNode = NodeRegistry::produce(dummyGraph->parentGraph(), name);
         entries_.push_back(NodeRegistryDisplayElement{QString::fromStdString(std::string(dummyNode->type())),
                                                       QString::fromStdString(std::string(dummyNode->summary())), 0});
+
+        // Register parameters
+        for (const auto &[name, _] : dummyNode->inputs())
+            allInputs_.try_emplace(name, 0);
+
+        for (const auto &[name, _] : dummyNode->outputs())
+            allOutputs_.try_emplace(name, 0);
     }
 }
 

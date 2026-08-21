@@ -37,7 +37,7 @@ std::string_view ExportXYZConfigurationNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult ExportXYZConfigurationNode::process()
 {
-    auto path = filePath_;
+    auto path = filePath_.string();
     if (tagWithIteration_)
         path = std::format("{}.{}", path, iteration_);
 

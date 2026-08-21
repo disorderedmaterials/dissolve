@@ -40,7 +40,7 @@ class CIFNodeTest : public ::testing::Test
     {
         importCIFStructureNode_ = static_cast<ImportCIFStructureNode *>(testGraph_.appendNode("ImportCIFStructure"));
         ASSERT_TRUE(importCIFStructureNode_);
-        importCIFStructureNode_->setOption("FilePath", "cif/" + cifFile);
+        importCIFStructureNode_->setOption("FilePath", std::filesystem::path("cif/" + cifFile));
 
         if (calculateBonding)
         {
@@ -189,7 +189,7 @@ TEST_F(CIFNodeTest, Parse)
     for (auto &[cif, nStructureAtoms] : cifs)
     {
         ASSERT_TRUE(testGraph_.appendNode("ImportCIFStructure", cif));
-        testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+        testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/" + cif));
         ASSERT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);
         const auto structure = testGraph_.fetchHead()->getOutputValue<Structure>("Structure");
         ASSERT_EQ(structure.atoms().size(), nStructureAtoms);
@@ -271,7 +271,7 @@ TEST_F(CIFNodeTest, CuBTC)
     auto cif = std::string("CuBTC-7108574.cif");
 
     EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/" + cif));
     ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
     testGraph_.fetchHead()->setOption("Clear", true);
     ASSERT_TRUE(testGraph_.appendNode("DetectMolecules"));
@@ -359,7 +359,7 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimple)
     auto cif = std::string("molecule-test-simple-ordered.cif");
 
     EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/" + cif));
     ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
     ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
     testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
@@ -386,7 +386,7 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnordered)
     auto cif = std::string("molecule-test-simple-ordered.cif");
 
     EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/" + cif));
     ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
     ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
     testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
@@ -413,7 +413,7 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnorderedRotated)
     auto cif = std::string("molecule-test-simple-unordered-rotated.cif");
 
     EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/" + cif));
     ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
     ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
     testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
@@ -440,7 +440,7 @@ TEST_F(CIFNodeTest, BigMoleculeOrdering)
     const auto cif = std::string("Bisphen_n_arenes_1517789.cif");
 
     EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/" + cif));
     ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
     testGraph_.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
 
