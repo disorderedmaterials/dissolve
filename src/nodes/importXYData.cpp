@@ -30,10 +30,10 @@ ImportXYDataNode::ImportXYDataNode(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
-std::string_view ImportXYDataNode::type() const { return "Data1DImport"; }
+std::string_view ImportXYDataNode::type() const { return "ImportXYData"; }
 
 // Return short summary of the node's purpose
-std::string_view ImportXYDataNode::summary() const { return "Import 1D data"; }
+std::string_view ImportXYDataNode::summary() const { return "Import 1D (XY) data"; }
 
 /*
  * Processing
