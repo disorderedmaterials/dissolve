@@ -104,22 +104,15 @@ Pane {
                 strokeColor: "black"
                 strokeWidth: 4
 
-                PathLine {
-                    //id: edgeLine
+                PathCubic {
+                    id: edgeLine
+                    control1X: edgeShape.sourcePos.x + curveOffset
+                    control1Y: edgeShape.sourcePos.y
+                    control2X: edgeShape.targetPos.x - graphRoot.curveOffset
+                    control2Y: edgeShape.targetPos.y
                     x: edgeShape.targetPos.x
                     y: edgeShape.targetPos.y
                 }
-
-                /*
-                PathCubic {
-                    control1X: sourceX + curveOffset
-                    control1Y: sourceY
-                    control2X: x - graphRoot.curveOffset
-                    control2Y: y
-                    x: targetX
-                    y: targetY
-                }
-                */
             }
         }
     }
