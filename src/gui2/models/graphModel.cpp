@@ -168,8 +168,8 @@ int GraphModel::nEdges()
 void GraphModel::addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput)
 {
     EdgeDefinition edge(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
-    edges_.addEdge(edge);
-    addEndPoints(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
+    if (edges_.addEdge(edge))
+        addEndPoints(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
 }
 
 // public wrapper of connect_
