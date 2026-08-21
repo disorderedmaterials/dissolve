@@ -16,14 +16,6 @@ void EnumOptionsModel::setData(std::shared_ptr<const EnumOptionsBase> options)
 /*
  * QAbstractItemModel overrides
  */
-
-QHash<int, QByteArray> EnumOptionsModel::roleNames() const
-{
-    QHash<int, QByteArray> roles;
-    roles[Qt::DisplayRole] = "option";
-    return roles;
-}
-
 int EnumOptionsModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);

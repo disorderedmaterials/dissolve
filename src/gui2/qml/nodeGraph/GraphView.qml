@@ -33,7 +33,7 @@ Pane {
 
                 delegate: Item {
                         id: menuDelegateItem
-                        required property var option
+                        required property var display
                         property Menu innerMenu: innerMenuComponent.createObject(parent)
 
                         Component {
@@ -42,10 +42,10 @@ Pane {
                             Menu {
                                 id: nodeCategoryMenu
 
-                                title: menuDelegateItem.option
+                                title: menuDelegateItem.display
 
                                 Repeater {
-                                    model: nodeRegistry.nodeNames(menuDelegateItem.option)
+                                    model: nodeRegistry.nodeNames(menuDelegateItem.display)
 
                                     delegate: MenuItem {
                                         required property var modelData
