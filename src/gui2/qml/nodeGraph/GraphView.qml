@@ -28,41 +28,42 @@ Pane {
         Menu {
             id: contextMenu
 
-            Instantiator {
+            Repeater {
                 model: nodeRegistry.categories()
 
-                delegate: Menu {
-                    id: nodeCategoryMenu
+                delegate: Item {
+                        id: menuDelegateItem
+                        required property var option
+                        property Menu innerMenu: innerMenuComponent.createObject(parent)
 
-                    required property var option
-                    title: option
+                        Component {
+                            id: innerMenuComponent
 
-                    Instantiator {
-                        model: nodeRegistry.nodeNames(option)
+                            Menu {
+                                id: nodeCategoryMenu
 
-                        delegate: MenuItem {
-                            required property var modelData
-                            text: modelData.name
-                            onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name, nodeRegistry.uniqueNodeName(modelData.name), false)
-                            ToolTip.text: modelData.description
-                            ToolTip.visible: hovered
-                            ToolTip.delay: 500
+                                title: menuDelegateItem.option
+
+                                Repeater {
+                                    model: nodeRegistry.nodeNames(menuDelegateItem.option)
+
+                                    delegate: MenuItem {
+                                        required property var modelData
+                                        text: modelData.name
+                                        onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name, nodeRegistry.uniqueNodeName(modelData.name), false)
+                                        ToolTip.text: modelData.description
+                                        ToolTip.visible: hovered
+                                        ToolTip.delay: 500
+                                    }
+                                }
+                            }
                         }
-
-                        onObjectAdded: (index, object) => {
-                            nodeCategoryMenu.addItem(object)
-                        }
-                        onObjectRemoved: (index, object) => {
-                            nodeCategoryMenu.removeItem(object)
-                        }
-                    }
                 }
-
-                onObjectAdded: (index, object) => {
-                    contextMenu.addMenu(object)
+                onItemAdded: (index, item) => {
+                    contextMenu.addMenu(item.innerMenu)
                 }
-                onObjectRemoved: (index, object) => {
-                    contextMenu.removeMenu(object)
+                onItemRemoved: (index, item) => {
+                    contextMenu.removeMenu(item.innerMenu)
                 }
             }
         }
