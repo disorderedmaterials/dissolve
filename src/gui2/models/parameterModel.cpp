@@ -19,6 +19,13 @@ enum Roles
 
 ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
 
+// Reset parameter model
+void ParameterModel::resetParameters()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 // Return number of parameters (required by QAbstractListModel)
 int ParameterModel::rowCount(const QModelIndex &parent) const { return values_.size(); }
 

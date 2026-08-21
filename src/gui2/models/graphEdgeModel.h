@@ -19,40 +19,28 @@ class GraphModel;
 class GraphEdgeModel : public QAbstractListModel
 {
     Q_OBJECT;
+    // Edge edit mode
+    Q_PROPERTY(bool edgeEditMode READ edgeEditMode NOTIFY edgeEditModeChanged);
 
     public:
     GraphEdgeModel(GraphModel *parent, Graph *&graph);
     GraphEdgeModel(const GraphEdgeModel &other);
 
     // Remove an edge from the model (by index). Returns false if edge does not exist
-    bool deleteEdge(std::size_t edge);
-
+    bool remove(std::size_t edge);
     // Remove an edge by value
-    bool deleteEdge(Edge &edge);
-
-    void deleteByNode(std::string index)
-    {
-        // TODO: Something weird happening here - the internal edges() appears to update *later* than the actual source
-        // graph_::edges even though they reference the same thing. This leads to the below iterator returning potentially empty
-        // edges, as the deletion has already happened, but apparently this model doesn't know about it. So, we check the edge
-        // isn't empty.
-        for (auto &edge : edges())
-            if (edge && (index == edge->sourceNode().name() || index == edge->targetNode().name()))
-                deleteEdge(*edge);
-    }
-
+    bool remove(Edge &edge);
+    // Remove any edges connected to a node with a given name
+    void removeConnected(std::string nodeName);
     // Create a new edge
-    void addEdge(Edge &newEdge);
-    bool addEdge(EdgeDefinition &newEdge);
+    void add(Edge &newEdge);
+    bool add(EdgeDefinition &newEdge);
 
-    // Return number of edges (required by QAbstractListModel)
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-
-    // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
-    // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
-    QHash<int, QByteArray> roleNames() const override;
+    public:
+    // Toggles the edge edit mode
+    Q_INVOKABLE void toggleEdgeEditMode();
+    // Returns the current edge edit mode
+    Q_INVOKABLE bool edgeEditMode();
 
     public Q_SLOTS:
     // Update all edges connected to the node at idx
@@ -60,13 +48,31 @@ class GraphEdgeModel : public QAbstractListModel
     // Drop cache and pull all data from graph
     void reset();
 
+    Q_SIGNALS:
+    void edgeEditModeChanged();
+
     private:
     // The graph whose edges we model
     Graph *&graph_;
     // The owner of this edge model
     GraphModel *parent_;
+    // Graph edge edit mode (default to TRUE = add edge, FALSE = remove edge)
+    bool edgeEditMode_{true};
 
+    private:
     // The edges of the graph
     Graph::Edges &edges();
     const Graph::Edges &edges() const;
+
+    /*
+     * QAbstractListModel overrides
+     */
+
+    public:
+    // Return number of edges (required by QAbstractListModel)
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    // Access edge by QModelIndex.  The correct role can be found in the roleNames function.
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    // Return the mapping between role index and QML value name.  This is required by QAbstractListModel
+    QHash<int, QByteArray> roleNames() const override;
 };

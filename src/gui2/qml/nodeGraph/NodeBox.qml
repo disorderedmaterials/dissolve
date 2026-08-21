@@ -15,11 +15,15 @@ GroupBox {
     property bool dragActive: false
     property bool headerHovered: false
     property int headerHeight: 32
+    property bool isInputsNode: false
+    property bool isOutputsNode: false
+    property bool isLoopBacksNode: false
 
     topPadding: headerHeight + padding
     padding: 8
 
     signal deleted
+    signal renamed(string currentNodeName, string newNodeName, var label)
 
     implicitWidth: 250
 
@@ -113,12 +117,49 @@ GroupBox {
                 Layout.fillWidth: true
                 font.pixelSize: 14
                 text: root.nodeName
+                color: "black"
+                enabled: !(isInputsNode || isOutputsNode || isLoopBacksNode)
+                property var rejectAnimation: null
+                property color resultColor: "black"
+
+                onAccepted: function (event) {
+                        renamed(nodeName, titleLabel.text, titleLabel);
+                }
+
+                background: Rectangle {
+                    color: "transparent"
+                    border.width: 1
+                    border.color: titleLabel.resultColor
+                    radius: 3
+                }
+
+                SequentialAnimation {
+                    id: rejectAnimation
+
+                    Component.onCompleted: titleLabel.rejectAnimation = rejectAnimation
+
+                    PropertyAnimation {
+                        target: titleLabel
+                        property: "resultColor"
+                        to: "red"
+                        duration: 150
+                    }
+                    PropertyAnimation {
+                        target: titleLabel
+                        property: "resultColor"
+                        to: "black"
+                        duration: 500
+                    }
+                }
+
             }
             ToolButton {
                 id: deleteNodeButton
 
                 implicitHeight: titleLabel.height
                 implicitWidth: deleteNodeButton.implicitHeight
+
+                visible: !(isInputsNode || isOutputsNode || isLoopBacksNode)
 
                 background: Rectangle {
                     id: deleteNodeButtonRectangle

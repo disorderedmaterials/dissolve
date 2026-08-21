@@ -3,7 +3,6 @@
 
 #pragma once
 
-// #include "gui2/models/parameterModel.h"
 #include "nodes/node.h"
 #include "nodes/parameter.h"
 #include <QAbstractListModel>
@@ -14,6 +13,9 @@ class ParameterModel : public QAbstractListModel
 {
     public:
     ParameterModel(Node::NodeParameterMap &values);
+
+    // Reset parameter model
+    void resetParameters();
 
     // Return number of parameters (required by QAbstractListModel)
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

@@ -13,7 +13,7 @@ Pane {
     property variant parameterEndPointsModel
     property variant rootGraphModel
 
-    Component.onCompleted: nodeRegistry.setGraphModel(rootGraphModel);
+    Component.onCompleted: nodeRegistry.setGraphModel(rootGraphModel)
 
     MouseArea {
         id: ctxMenuCatcher
@@ -60,10 +60,10 @@ Pane {
                         }
                 }
                 onItemAdded: (index, item) => {
-                    contextMenu.addMenu(item.innerMenu)
+                    contextMenu.addMenu(item.innerMenu);
                 }
                 onItemRemoved: (index, item) => {
-                    contextMenu.removeMenu(item.innerMenu)
+                    contextMenu.removeMenu(item.innerMenu);
                 }
             }
         }
@@ -72,6 +72,15 @@ Pane {
     // Edge connections
     Repeater {
         model: graphRoot.parameterEndPointsModel
+
+        onItemAdded: function (index, item) {
+            var node = item.targetDropArea.parentNodeBox;
+            const originalTargetPos = Qt.point(node.x, node.y);
+            node.x = originalTargetPos.x + 1;
+            Qt.callLater(function() {
+                    node.x = originalTargetPos.x
+                });
+        }
 
         delegate: Shape {
             id: edgeShape

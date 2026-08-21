@@ -5,6 +5,7 @@
 #include "gui2/models/graphModel.h"
 #include "nodes/edge.h"
 #include <qnamespace.h>
+#include <stdexcept>
 
 enum Role
 {
@@ -18,8 +19,18 @@ GraphEdgeModel::GraphEdgeModel(GraphModel *parent, Graph *&graph) : parent_(pare
 
 GraphEdgeModel::GraphEdgeModel(const GraphEdgeModel &other) : graph_(other.graph_) {}
 
+// Toggles the edge edit mode
+void GraphEdgeModel::toggleEdgeEditMode()
+{
+    edgeEditMode_ = !edgeEditMode_;
+    Q_EMIT edgeEditModeChanged();
+}
+
+// Returns the current edge edit mode
+bool GraphEdgeModel::edgeEditMode() { return edgeEditMode_; }
+
 // Remove an edge from the model (by index). Returns false if edge does not exist
-bool GraphEdgeModel::deleteEdge(std::size_t edge)
+bool GraphEdgeModel::remove(std::size_t edge)
 {
     // Check if edge is in range
     if (edge >= edges().size())
@@ -31,33 +42,87 @@ bool GraphEdgeModel::deleteEdge(std::size_t edge)
 }
 
 // Remove an edge by value.  Returns false if the edge does not exist
-bool GraphEdgeModel::deleteEdge(Edge &edge)
+bool GraphEdgeModel::remove(Edge &edge)
 {
     auto index = std::find_if(edges().begin(), edges().end(), [&edge](auto &item) { return &edge == item.get(); });
     // Check if edge is found
     if (index == edges().end())
         return false;
     else
-        return deleteEdge(index - edges().begin());
+        return remove(index - edges().begin());
+}
+
+// Remove any edges connected to a node with a given name
+void GraphEdgeModel::removeConnected(std::string nodeName)
+{
+    auto toRemove = [&nodeName](auto &edgePtr)
+    {
+        auto sourceNodeName = edgePtr->sourceNode().name();
+        auto targetNodeName = edgePtr->targetNode().name();
+        return (nodeName == sourceNodeName || nodeName == targetNodeName);
+    };
+
+    auto &allEdges = edges();
+    for (auto edgeIt = allEdges.begin(); edgeIt != allEdges.end();)
+    {
+        if (toRemove(*edgeIt))
+        {
+            const int row = std::distance(allEdges.begin(), edgeIt);
+            beginRemoveRows(QModelIndex(), row, row);
+            edgeIt = allEdges.erase(edgeIt);
+            endRemoveRows();
+        }
+        else
+            edgeIt++;
+    }
 }
 
 // Create a new edge
-void GraphEdgeModel::addEdge(Edge &newEdge)
+void GraphEdgeModel::add(Edge &newEdge)
 {
     beginInsertRows({}, edges().size(), edges().size());
     edges().emplace_back(std::make_unique<Edge>(newEdge));
     endInsertRows();
 }
 
-bool GraphEdgeModel::addEdge(EdgeDefinition &newEdge)
+bool GraphEdgeModel::add(EdgeDefinition &newEdge)
 {
     auto edge = Edge::create(parent_->graph(), newEdge);
     if (edge)
-        addEdge(*edge);
+        add(*edge);
     else
         return false;
     return true;
 }
+
+// Update all edges connected to the node at idx
+void GraphEdgeModel::updatePosition(const int idx)
+{
+    const auto &node = parent_->wrapped_[idx].rawValue();
+    for (auto j = 0; j < graph_->edges().size(); ++j)
+    {
+        const auto &edge = graph_->edges()[j];
+        if (&edge->sourceNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j), {Role::SOURCE_X, Role::SOURCE_Y});
+        else if (&edge->targetNode() == &node)
+            Q_EMIT dataChanged(index(j), index(j), {Role::TARGET_X, Role::TARGET_Y});
+    }
+}
+
+// The edges of the graph
+Graph::Edges &GraphEdgeModel::edges() { return graph_->edges(); }
+const Graph::Edges &GraphEdgeModel::edges() const { return graph_->edges(); }
+
+// Drop cache and pull all data from graph
+void GraphEdgeModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
+/*
+ * QAbstractListModel overrides
+ */
 
 // Return number of edges (required by QAbstractListModel)
 int GraphEdgeModel::rowCount(const QModelIndex &parent) const
@@ -120,29 +185,4 @@ QHash<int, QByteArray> GraphEdgeModel::roleNames() const
     roles[Role::TARGET_X] = "targetX";
     roles[Role::TARGET_Y] = "targetY";
     return roles;
-}
-
-// Update all edges connected to the node at idx
-void GraphEdgeModel::updatePosition(const int idx)
-{
-    const auto &node = parent_->wrapped_[idx].rawValue();
-    for (auto j = 0; j < graph_->edges().size(); ++j)
-    {
-        const auto &edge = graph_->edges()[j];
-        if (&edge->sourceNode() == &node)
-            Q_EMIT dataChanged(index(j), index(j), {Role::SOURCE_X, Role::SOURCE_Y});
-        else if (&edge->targetNode() == &node)
-            Q_EMIT dataChanged(index(j), index(j), {Role::TARGET_X, Role::TARGET_Y});
-    }
-}
-
-// The edges of the graph
-Graph::Edges &GraphEdgeModel::edges() { return graph_->edges(); }
-const Graph::Edges &GraphEdgeModel::edges() const { return graph_->edges(); }
-
-// Drop cache and pull all data from graph
-void GraphEdgeModel::reset()
-{
-    beginResetModel();
-    endResetModel();
 }

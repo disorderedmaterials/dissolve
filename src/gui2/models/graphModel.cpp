@@ -13,6 +13,7 @@
 #include <iostream>
 #include <ranges>
 #include <set>
+#include <stdexcept>
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 {
@@ -21,27 +22,30 @@ GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 
 Graph *GraphModel::graph() { return graph_; }
 
-// Return the ParameterEndPointModel
-ParameterEndPointsModel *GraphModel::parameterEndPoints() { return &endPointsModel_; }
-
 void GraphModel::setGraph(Graph *graph)
 {
+    // If the new graph already contains edges, we will need to reconstruct each node's edge connections in the UI.
+    // Therefore the connected nodes are added to a queue of 'reconstructibles' whose existing edges will be re-rendered.
+    if (!graph->edges().empty())
+    {
+        reconstructibleNodes_.emplace();
+        auto &existingNodes = graph->nodes();
+        for (const auto &[name, _] : existingNodes)
+            reconstructibleNodes_->push_back(name);
+    }
+
     graph_ = graph;
-
-    nodes_.beginResetModel();
-    wrapped_.clear();
-    int idx = 0;
-    for (auto &[name, node] : graph->nodes())
-        auto &item = wrapped_.emplace_back(*node);
-    nodes_.endResetModel();
-
-    nodes_.updateGraph();
+    parameterEndPoints_.clear();
+    nodes_.reset();
     edges_.reset();
-    graphChanged();
+    Q_EMIT graphChanged();
 }
 
+// Return the parameter endpoints model for a given graph
+ParameterEndPointsModel *GraphModel::parameterEndPoints() { return &parameterEndPoints_; }
+
 // Access the GraphNodeModel
-QAbstractListModel *GraphModel::nodes() { return &nodes_; }
+GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
 int GraphModel::count() { return nodes_.rowCount(); }
 
@@ -60,8 +64,11 @@ bool GraphModel::atRoot() const
 }
 
 // Provide relative coordinates for an input on a node
-void GraphModel::addInput(int nodeIndex, QString paramName, double x, double y)
+void GraphModel::addInput(QString nodeName, QString paramName, double x, double y)
 {
+    auto nodeIndex =
+        std::distance(wrapped_.begin(), std::find_if(wrapped_.begin(), wrapped_.end(), [&](const auto &wrappedNode)
+                                                     { return wrappedNode.rawValue().name() == nodeName.toStdString(); }));
     auto &node = wrapped_[nodeIndex];
     x += 16;
     y += 64;
@@ -69,8 +76,11 @@ void GraphModel::addInput(int nodeIndex, QString paramName, double x, double y)
 }
 
 // Provide relative coordinates for an output on a node
-void GraphModel::addOutput(int nodeIndex, QString paramName, double x, double y)
+void GraphModel::addOutput(QString nodeName, QString paramName, double x, double y)
 {
+    auto nodeIndex =
+        std::distance(wrapped_.begin(), std::find_if(wrapped_.begin(), wrapped_.end(), [&](const auto &wrappedNode)
+                                                     { return wrappedNode.rawValue().name() == nodeName.toStdString(); }));
     auto &node = wrapped_[nodeIndex];
     x += 16;
     y += 64;
@@ -102,7 +112,7 @@ void GraphModel::addNode(std::unique_ptr<Node> node, std::string_view name)
     graph_->addNode(std::move(node), name);
     wrapped_.emplace_back(*graph_->nodes()[std::string(name)]);
     nodes_.endInsertRows();
-    graphChanged();
+    Q_EMIT graphChanged();
 }
 
 // Return graph canvas dimensions
@@ -131,7 +141,7 @@ void GraphModel::emplace_back(int x, int y, QVariant type, QString name, bool av
     auto &item = wrapped_.emplace_back(*node);
     item.rawValue().setName(name.toStdString());
     nodes_.endInsertRows();
-    graphChanged();
+    Q_EMIT graphChanged();
 }
 
 void GraphModel::deleteNode(int idx)
@@ -139,21 +149,28 @@ void GraphModel::deleteNode(int idx)
     nodes_.beginRemoveRows({}, idx, idx);
     const auto nodeType = wrapped_[idx].rawValue().type();
     std::string nodeName{wrapped_[idx].rawValue().name()};
-    if (inputEndPoints_.contains(&wrapped_[idx].rawValue()))
-        inputEndPoints_.erase(&wrapped_[idx].rawValue());
-    if (outputEndPoints_.contains(&wrapped_[idx].rawValue()))
-        outputEndPoints_.erase(&wrapped_[idx].rawValue());
-    endPointsModel_.remove(&wrapped_[idx].rawValue());
+
+    // Remove any endpoints corresponding to this node
+    if (curveInputEndPoints_.contains(&wrapped_[idx].rawValue()))
+        curveInputEndPoints_.erase(&wrapped_[idx].rawValue());
+    if (curveOutputEndPoints_.contains(&wrapped_[idx].rawValue()))
+        curveOutputEndPoints_.erase(&wrapped_[idx].rawValue());
+    parameterEndPoints()->remove(&wrapped_[idx].rawValue());
+
+    // Erase the wrapped node
     wrapped_.erase(wrapped_.begin() + idx);
 
-    edges_.deleteByNode(nodeName);
+    // Delete the edges corresponding to this node
+    edges_.removeConnected(nodeName);
 
+    // Erase the underlying graph node
     graph_->reverseNodes().erase(graph_->findNode(nodeName));
     graph_->nodes().erase(nodeName);
+
     nodes_.endRemoveRows();
 
-    graphChanged();
-    decrementNodeTypeRequired(std::string(nodeType));
+    Q_EMIT graphChanged();
+    Q_EMIT decrementNodeTypeRequired(std::string(nodeType));
 }
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }
@@ -165,13 +182,75 @@ int GraphModel::nEdges()
     return edges_.rowCount();
 }
 
+// Select a specific output for connection
 void GraphModel::addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput)
 {
     EdgeDefinition edge(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
-    if (edges_.addEdge(edge))
+    if (edges_.add(edge))
         addEndPoints(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
 }
 
+// Adds a new edge, but the connection (addition of QML endpoints corresponding to the edge's input/output) is deferred until
+// later
+void GraphModel::deferEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput, QQuickItem *creator)
+{
+    EdgeDefinition edge(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
+    if (edges_.add(edge))
+    {
+        auto parentNode = creator->property("parentNodeBox").value<QObject *>();
+        auto parentNodeName = parentNode->property("nodeName").toString().toStdString();
+        auto nodeIt = std::find_if(wrapped_.begin(), wrapped_.end(), [&](const NodeWrapper &wrappedNode)
+                                   { return wrappedNode.rawValue().name() == parentNodeName; });
+        auto &creatorNode = wrapped_[std::distance(wrapped_.begin(), nodeIt)];
+        if (creator->property("connectionType").value<int>() == 1)
+            return creatorNode.inputs->resetParameters();
+        if (creator->property("connectionType").value<int>() == 0)
+            return creatorNode.outputs->resetParameters();
+    }
+}
+
+// Rename a node in the graph
+bool GraphModel::renameNode(QString currentName, QString newName)
+{
+    auto nodeIt = std::find_if(wrapped_.begin(), wrapped_.end(), [&](const auto &wrappedNode)
+                               { return wrappedNode.rawValue().name() == currentName.toStdString(); });
+
+    if (nodeIt != wrapped_.end() && !(graph_->findNode(newName.toStdString())))
+        nodes_.setData(nodes_.index(std::distance(wrapped_.begin(), nodeIt)), QVariant::fromValue(newName),
+                       Qt::UserRole + GraphNodeModel::NAME);
+    else
+        return false;
+    return true;
+}
+
+// Select an existing edge for deletion, determined from the target node and input parameter name
+void GraphModel::deleteEdgeFromTarget(QString tgtNode, QString tgtInput)
+{
+    auto edge = graph_->findEdgeByTarget(tgtNode.toStdString(), tgtInput.toStdString());
+    auto sourceNode = std::string(edge->sourceNode().name());
+    auto targetNode = std::string(edge->targetNode().name());
+    auto sourceOutput = std::string(edge->sourceOutput().name());
+    auto targetInput = std::string(edge->targetInput().name());
+    if (edges_.remove(*edge))
+        parameterEndPoints()->remove(sourceNode, sourceOutput, targetNode, targetInput);
+}
+
+// Select all relevant edges for deletion, determined from the source node and output parameter name
+void GraphModel::deleteEdgeFromSource(QString sourceNode, QString sourceInput)
+{
+    auto edges = graph_->findEdgesBySource(sourceNode.toStdString(), sourceInput.toStdString());
+    for (const auto &edge : edges)
+    {
+        auto sourceNode = std::string(edge->sourceNode().name());
+        auto targetNode = std::string(edge->targetNode().name());
+        auto sourceOutput = std::string(edge->sourceOutput().name());
+        auto targetInput = std::string(edge->targetInput().name());
+        if (edges_.remove(*edge))
+            parameterEndPoints()->remove(sourceNode, sourceOutput, targetNode, targetInput);
+    }
+}
+
+/* UNUSED
 // public wrapper of connect_
 bool GraphModel::connect(std::string source, int sourceIndex, std::string destination, int destinationIndex)
 {
@@ -184,6 +263,7 @@ bool GraphModel::disconnect(std::string source, int sourceIndex, std::string des
     // FIXME
     return false;
 }
+*/
 
 // Return bool - true if node exists in graph
 bool GraphModel::isValidNode(QVariant nodeName) const { return graph_->findNode(nodeName.toString().toStdString()); }
@@ -193,7 +273,7 @@ void GraphModel::run(QVariant nodeName)
 {
     auto name = nodeName.toString().toStdString();
     auto node = graph_->findNode(name);
-    graphRunComplete(node->run(), name);
+    Q_EMIT graphRunComplete(node->run(), name);
 }
 
 int GraphModel::indexByName(std::string_view name)
@@ -202,24 +282,73 @@ int GraphModel::indexByName(std::string_view name)
     return 0;
 }
 
-void GraphModel::initialiseInputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint)
+// Returns bool - true if we are currently reconstructing existing nodes in the current graph
+bool GraphModel::nodeReconstructionInProgress() { return reconstructibleNodes_.has_value() && !reconstructibleNodes_->empty(); }
+
+// Record that a node with a given name has been reconstructed
+void GraphModel::reconstructed(QString constructedName)
 {
-    auto name = nodeName.toString().toStdString();
-    auto param = paramName.toString().toStdString();
-    auto node = graph_->findNode(name);
-    if (!inputEndPoints_.contains(node))
-        inputEndPoints_.emplace(node, std::map<std::string, QQuickItem *>{});
-    inputEndPoints_[node].emplace(paramName.toString().toStdString(), endPoint);
+    bool updateEndPoints = false;
+    if (nodeReconstructionInProgress())
+    {
+        updateEndPoints = reconstructibleNodes_->size() == 1;
+        auto removeIt =
+            std::find_if(reconstructibleNodes_->begin(), reconstructibleNodes_->end(),
+                         [&constructedName](const auto &otherName) { return constructedName.toStdString() == otherName; });
+        reconstructibleNodes_->erase(removeIt);
+
+        if (updateEndPoints)
+        {
+            reconstructibleNodes_.reset();
+            parameterEndPoints_.resetFromEdges(graph_->edges(), curveOutputEndPoints_, curveInputEndPoints_);
+        }
+    }
 }
 
-void GraphModel::initialiseOutputEndPoints(QVariant nodeName, QVariant paramName, QQuickItem *endPoint)
+// Returns bool - true if the node's parameter is connected to anything
+bool GraphModel::hasConnections(QString nodeName, QString paramName)
+{
+    if (graph_->findNode(nodeName.toStdString())->findInput(paramName.toStdString()))
+        return graph_->findEdgeByTarget(nodeName.toStdString(), paramName.toStdString()) != nullptr;
+    else if (graph_->findNode(nodeName.toStdString())->findOutput(paramName.toStdString()))
+        return !graph_->findEdgesBySource(nodeName.toStdString(), paramName.toStdString()).empty();
+    else
+        return false;
+}
+
+// Add endpoints between the source node and its output to a target node and its input, where the edge connection has previously
+// been deferred
+void GraphModel::addDeferredEndPoints()
+{
+    const auto &edges = graph_->edges();
+    if (edges.empty())
+        return;
+
+    const auto edge = edges.back().get();
+    addEndPoints(std::string(edge->sourceNode().name()), std::string(edge->sourceOutput().name()),
+                 std::string(edge->targetNode().name()), std::string(edge->targetInput().name()));
+}
+
+// Map an available input endpoint for a node parameter to an input QML DropArea
+void GraphModel::mapInputEndPoint(QVariant nodeName, QVariant paramName, QQuickItem *endPoint)
 {
     auto name = nodeName.toString().toStdString();
     auto param = paramName.toString().toStdString();
     auto node = graph_->findNode(name);
-    if (!outputEndPoints_.contains(node))
-        outputEndPoints_.emplace(node, std::map<std::string, QQuickItem *>{});
-    outputEndPoints_[node].emplace(param, endPoint);
+    if (!curveInputEndPoints_.contains(node))
+        curveInputEndPoints_.emplace(node, std::map<std::string, QQuickItem *>{});
+    curveInputEndPoints_[node].emplace(paramName.toString().toStdString(), endPoint);
+}
+
+// Map an available output endpoint for a node parameter to an output QML DropArea
+void GraphModel::mapOutputEndPoint(QVariant nodeName, QVariant paramName, QQuickItem *endPoint)
+{
+    auto name = nodeName.toString().toStdString();
+    auto param = paramName.toString().toStdString();
+    auto node = graph_->findNode(name);
+    if (!curveOutputEndPoints_.contains(node))
+        curveOutputEndPoints_.emplace(node, std::map<std::string, QQuickItem *>{});
+    curveOutputEndPoints_[node].emplace(param, endPoint);
 }
 
 void GraphModel::addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
@@ -227,7 +356,9 @@ void GraphModel::addEndPoints(std::string sourceNodeName, std::string sourcePara
 {
     auto sourceNode = graph_->findNode(sourceNodeName);
     auto targetNode = graph_->findNode(targetNodeName);
-    endPointsModel_.add(outputEndPoints_[sourceNode][sourceParamName], inputEndPoints_[targetNode][targetParamName]);
+    auto sourceDropArea = curveOutputEndPoints_[sourceNode][sourceParamName];
+    auto targetDropArea = curveInputEndPoints_[targetNode][targetParamName];
+    parameterEndPoints()->add(sourceDropArea, targetDropArea);
 }
 
 // Find a unique point in the graph's x-y space for positioning when instantiated
@@ -261,86 +392,4 @@ void GraphModel::findUniqueXY(int x, int y, int &dX, int &dY)
     }
 }
 
-void GraphModel::handleReset() { Q_EMIT(graphChanged()); }
-
-void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea)
-{
-    int row = endPoints_.size();
-    beginInsertRows(QModelIndex(), row, row);
-    endPoints_.push_back({sourceDropArea, targetDropArea});
-    endInsertRows();
-}
-
-void ParameterEndPointsModel::remove(const Node *node)
-{
-    auto shouldRemove = [&](int i) -> bool
-    {
-        auto &[sourceDropArea, targetDropArea] = endPoints_[i];
-        auto sourceParentNode = sourceDropArea->property("parentNodeBox").value<QObject *>();
-        auto sourceParentNodeName = sourceParentNode->property("nodeName").toString().toStdString();
-        auto targetParentNode = targetDropArea->property("parentNodeBox").value<QObject *>();
-        auto targetParentNodeName = targetParentNode->property("nodeName").toString().toStdString();
-        return sourceParentNodeName == node->name() || targetParentNodeName == node->name();
-    };
-
-    for (int row = endPoints_.size() - 1; row >= 0; --row)
-    {
-        if (shouldRemove(row))
-        {
-            beginRemoveRows(QModelIndex(), row, row);
-            endPoints_.erase(endPoints_.begin() + row);
-            endRemoveRows();
-        }
-    }
-}
-
-int ParameterEndPointsModel::rowCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
-    return endPoints_.size();
-}
-
-QVariant ParameterEndPointsModel::data(const QModelIndex &index, int role) const
-{
-    auto &[source, target] = endPoints_[index.row()];
-    switch (role)
-    {
-        case EndPointDisplayRoles::Source:
-            return QVariant::fromValue(source);
-        case EndPointDisplayRoles::Target:
-            return QVariant::fromValue(target);
-        default:
-            return QVariant();
-    }
-}
-
-Qt::ItemFlags ParameterEndPointsModel::flags(const QModelIndex &index) const
-{
-    return index.column() == 1 ? Qt::ItemIsSelectable | Qt::ItemIsEnabled
-                               : Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
-}
-
-QVariant ParameterEndPointsModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
-        return {};
-
-    if (orientation == Qt::Horizontal)
-        switch (section)
-        {
-            case 0:
-                return "SourceDropArea";
-            case 1:
-                return "TargetDropArea";
-        }
-
-    return {};
-}
-
-QHash<int, QByteArray> ParameterEndPointsModel::roleNames() const
-{
-    QHash<int, QByteArray> roles;
-    roles[Source] = "sourceDropArea";
-    roles[Target] = "targetDropArea";
-    return roles;
-}
+void GraphModel::handleReset() { Q_EMIT(Q_EMIT graphChanged()); }
