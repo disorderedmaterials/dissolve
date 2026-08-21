@@ -226,6 +226,47 @@ Edge *Graph::findEdge(const EdgeDefinition &definition) const
     return {};
 }
 
+// Find edge between nodes based on the target node and input
+Edge *Graph::findEdgeByTarget(const std::string &targetNode, const std::string &targetInput) const
+{
+    auto it = std::find_if(edges_.begin(), edges_.end(),
+                           [&](const auto &edge)
+                           {
+                               auto otherDefinition = edge->definition();
+                               return otherDefinition.targetNode == targetNode && otherDefinition.targetInput == targetInput;
+                           });
+
+    if (it != edges_.end())
+        return it->get();
+
+    return {};
+}
+
+// Find edges between nodes based on the source node and output
+std::vector<Edge *> Graph::findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput) const
+{
+    std::vector<Edge *> edges;
+    auto it = std::find_if(edges_.begin(), edges_.end(),
+                           [&](const auto &edge)
+                           {
+                               auto otherDefinition = edge->definition();
+                               return otherDefinition.sourceNode == sourceNode && otherDefinition.sourceOutput == sourceOutput;
+                           });
+
+    while (it != edges_.end())
+    {
+        edges.push_back(edges_[std::distance(edges_.begin(), it)].get());
+        it = std::find_if(it + 1, edges_.end(),
+                          [&](const auto &edge)
+                          {
+                              auto otherDefinition = edge->definition();
+                              return otherDefinition.sourceNode == sourceNode && otherDefinition.sourceOutput == sourceOutput;
+                          });
+    }
+
+    return edges;
+}
+
 // Return named node, if it exists
 Node *Graph::findNode(std::string_view nodeName)
 {

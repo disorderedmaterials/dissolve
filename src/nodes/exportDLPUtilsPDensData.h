@@ -28,7 +28,7 @@ class ExportDLPUtilsPDensDataNode : public Node
     // Data to export
     Data3D data_;
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
 
     /*
      * Processing

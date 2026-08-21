@@ -33,7 +33,7 @@ class ExportDataNode : public Node
     // Data to export
     DataContainingVariant data_;
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
 
     /*
      * Processing

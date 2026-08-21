@@ -12,7 +12,7 @@ TEST(UFF4MOFMOF5AssignmentTest, MOF5)
     TestGraph testGraph;
     auto *importNode = testGraph.createNode("ImportXYZStructure");
     ASSERT_TRUE(importNode);
-    ASSERT_TRUE(importNode->setOption<std::string>("FilePath", "xyz/mof5.xyz"));
+    ASSERT_TRUE(importNode->setOption("FilePath", std::filesystem::path("xyz/mof5.xyz")));
     auto *setBox = testGraph.createNode("SetBox");
     ASSERT_TRUE(setBox);
     ASSERT_TRUE(setBox->setOption("Lengths", Vector3(25.8320, 25.8320, 25.8320)));

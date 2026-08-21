@@ -42,15 +42,17 @@ std::string_view ImportXYDataNode::summary() const { return "Import 1D (XY) data
 // Perform processing
 NodeConstants::ProcessResult ImportXYDataNode::process()
 {
+    auto filePath = filePath_.string();
+
     // Clear the structure, and initialise error arrays if necessary
     data_.emplace();
     if (errorColumn_)
         data_->addErrors();
 
     // Parse the file
-    if (!read(*data_, filePath_, xColumn_.asInteger(), yColumn_.asInteger(), errorColumn_.value_or(Number(0)).asInteger(),
+    if (!read(*data_, filePath, xColumn_.asInteger(), yColumn_.asInteger(), errorColumn_.value_or(Number(0)).asInteger(),
               histogram_))
-        return error("Failed to read Data1D from file '{}'\n", filePath_);
+        return error("Failed to read Data1D from file '{}'\n", filePath);
 
     // Handle any additional options
     // -- Remove points from the start of the data?
@@ -73,7 +75,7 @@ NodeConstants::ProcessResult ImportXYDataNode::process()
 
     // Validity check on number of points in loaded file
     if (data_->nValues() == 0)
-        return error("File '{}' contains no data.\n", filePath_);
+        return error("File '{}' contains no data.\n", filePath);
 
     return NodeConstants::ProcessResult::Success;
 }

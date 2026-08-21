@@ -48,6 +48,7 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
      *
      * Units are:  distance = nm, velocities = nm ps-1, forces = kJ mol-1 nm-1
      */
+    auto filePath = filePath_.string();
     using namespace Parsers;
     auto firstLine = inlineSpaces() >> vector3() << newlines();
     auto secondLine = inlineSpaces() >> natural() << newlines();
@@ -58,13 +59,13 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
                     inlineSpaces() >> natural() << newlines() & some(atom);
     auto fileStructure = firstLine & secondLine << thirdLine & some(molecule);
 
-    std::ifstream infile(filePath_);
+    std::ifstream infile(filePath);
     if (!infile)
-        return error("Couldn't open file '{}' for loading Moscito data.\n", filePath_);
+        return error("Couldn't open file '{}' for loading Moscito data.\n", filePath);
 
     auto parsed = fileStructure.exact(infile);
     if (!parsed)
-        return error("Couldn't parse file '{}' for loading Moscito data.\n", filePath_);
+        return error("Couldn't parse file '{}' for loading Moscito data.\n", filePath);
 
     auto &[box, nmolecules, molecules] = *parsed;
 

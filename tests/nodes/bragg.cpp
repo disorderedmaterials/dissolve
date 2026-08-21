@@ -36,7 +36,7 @@ class BraggNodeTest : public ::testing::Test
         auto root = testGraph_.dissolveGraph();
 
         ASSERT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-        ASSERT_TRUE(testGraph_.fetchHead()->setOption<std::string>("FilePath", "cif/1000053.cif"));
+        ASSERT_TRUE(testGraph_.fetchHead()->setOption("FilePath", std::filesystem::path("cif/1000053.cif")));
 
         ASSERT_TRUE(testGraph_.appendNode("CIFBondingOptions", "CIFBonds"));
         ASSERT_TRUE(root->addEdge({"ImportCIFStructure", "CIFContext", "CIFBonds", "CIFContext"}));

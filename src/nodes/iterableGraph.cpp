@@ -13,9 +13,6 @@ IterableGraph::IterableGraph(Graph *parentGraph) : Graph(parentGraph)
  * Definition
  */
 
-// Return node name
-std::string_view IterableGraph::name() const { return "Iterator"; }
-
 // Return type of the node
 std::string_view IterableGraph::type() const { return "Iterator"; }
 
@@ -34,6 +31,9 @@ LoopBacksNode *IterableGraph::loopBacks() const { return loopBacks_; }
 
 // Return loop edges
 const Graph::Edges &IterableGraph::loopEdges() const { return loopEdges_; }
+
+//
+void IterableGraph::updateInputs() { setLoopBacks(); }
 
 // Current loop iteration
 int IterableGraph::currentIteration() const { return i_; }

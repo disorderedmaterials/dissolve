@@ -26,7 +26,7 @@ class ImportDLPUtilsSurfaceNode : public Node
      */
     private:
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // Imported data
     std::optional<Data2D> data_;
 
