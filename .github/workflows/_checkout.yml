@@ -16,6 +16,9 @@ on:
       qtVersion:
         type: string
         default: 6.11.1
+      gitCliffVersion:
+        type: string
+        default: 2.13.1
       hugoVersion:
         type: string
         default: "0.135.0"
@@ -145,11 +148,11 @@ jobs:
           sed -i -e "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
           cat src/main/version.cpp
 
-      - name: Install Dependencies
+      - name: Install Prerequisites
         shell: bash
         run: |
           set -ex
-          wget https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1.deb -Ogit-cliff.deb
+          wget https://github.com/orhun/git-cliff/releases/download/v${{ inputs.gitCliffVersion }}/git-cliff-${{ inputs.gitCliffVersion }}.deb -Ogit-cliff.deb
           sudo apt install ./git-cliff.deb
 
       - name: Generate ChangeLog.md
