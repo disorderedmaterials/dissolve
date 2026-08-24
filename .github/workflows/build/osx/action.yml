@@ -44,14 +44,18 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install aqtinstall conan --break-system-packages
+      pip3 install conan --break-system-packages
 
   - name: Install Qt
-    shell: bash
-    run: |
-      export PATH="$(python3 -m site --user-base)/bin:$PATH"
-      aqt list-qt mac desktop
-      aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ inputs.qtVersion }} -m all
+    uses: jdpurcell/install-qt-action@v5
+    with:
+      version: '6.11.2'
+      host: 'mac'
+      target: 'desktop'
+      arch: 'clang_64'
+      cache: true
+      use-naqt: true
+      setup-python: false
 
   #
   # Main Build
