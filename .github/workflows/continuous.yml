@@ -36,6 +36,7 @@ jobs:
       currentVersion: ${{ needs.Checkout.outputs.currentVersion }}
       osxTargetDeploymentVersion: ${{ needs.Checkout.outputs.osxTargetDeploymentVersion }}
       osxRunner: ${{ needs.Checkout.outputs.osxRunner }}
+      windowsRunner: ${{ needs.Checkout.outputs.windowsRunner }}
       qtVersion: ${{ needs.Checkout.outputs.qtVersion }}
       antlrVersion: ${{ needs.Checkout.outputs.antlrVersion }}
       conanHash: ${{ needs.Checkout.outputs.conanHash }}

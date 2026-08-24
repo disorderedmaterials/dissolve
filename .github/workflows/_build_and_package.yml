@@ -13,6 +13,9 @@ on:
       osxRunner:
         type: string
         default: 'UNKNOWN'
+      windowsRunner:
+        type: string
+        default: 'UNKNOWN'
       osxTargetDeploymentVersion:
         type: string
         default: 'UNKNOWN'
@@ -38,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "${{ inputs.osxRunner }}", windows-2022 ]
+        os: [ "${{ inputs.osxRunner }}", "${{ inputs.windowsRunner }}" ]
     runs-on: ${{ matrix.os }}
     steps:
     - name: 'Download Source Tarfiles'
