@@ -145,8 +145,12 @@ jobs:
           sed -i -e "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
           cat src/main/version.cpp
 
-      - name: Get Cliff
-        uses: "./.github/workflows/get-cliff"
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          set -ex
+          wget https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1.deb -o git-cliff.deb
+          apt install -y ./git-cliff.deb
 
       - name: Generate ChangeLog.md
         if: inputs.publishType != 'none'
