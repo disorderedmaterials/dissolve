@@ -149,8 +149,8 @@ jobs:
         shell: bash
         run: |
           set -ex
-          wget https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1.deb -o git-cliff.deb
-          sudo apt install -y ./git-cliff.deb
+          wget https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1.deb -o ./git-cliff.deb
+          sudo apt install ./git-cliff.deb
 
       - name: Generate ChangeLog.md
         if: inputs.publishType != 'none'
