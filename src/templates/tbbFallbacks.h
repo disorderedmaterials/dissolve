@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 #pragma once
 #include <cassert>
+#include <compare>
 #include <iterator>
 #include <type_traits>
 
@@ -58,12 +59,9 @@ template <typename IntType> class counting_iterator
     counting_iterator operator-(difference_type backward) const { return counting_iterator(counter_ - backward); };
 
     // Operators : comparison
-    bool operator==(const counting_iterator &other) const { return this->counter_ == other.counter_; };
-    bool operator!=(const counting_iterator &other) const { return !(*this == other); };
-    bool operator<(const counting_iterator &other) const { return *this - other < 0; };
-    bool operator>(const counting_iterator &other) const { return other < *this; };
-    bool operator<=(const counting_iterator &other) const { return !(*this > other); };
-    bool operator>=(const counting_iterator &other) const { return !(*this < other); };
+    std::strong_ordering operator<=>(const counting_iterator &other) const { return this->counter_ <=> other.counter_; };
+    bool operator==(const counting_iterator &other) const = default;
+    bool operator<(const counting_iterator &other) const = default;
 
     private:
     IntType counter_;

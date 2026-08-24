@@ -20,16 +20,12 @@ void FullPairIterator::fromIndex(int index)
 
 int FullPairIterator::toIndex() const { return x_ * size_ + y_; }
 
-bool FullPairIterator::operator<(const FullPairIterator &other) const
+std::strong_ordering FullPairIterator::operator<=>(const FullPairIterator &other) const
 {
     if (x_ != other.x_)
-        return x_ < other.x_;
-    return y_ < other.y_;
+        return x_ <=> other.x_;
+    return y_ <=> other.y_;
 }
-
-bool FullPairIterator::operator==(const FullPairIterator &other) const { return x_ == other.x_ && y_ == other.y_; }
-
-bool FullPairIterator::operator!=(const FullPairIterator &other) const { return x_ != other.x_ || y_ != other.y_; }
 
 FullPairIterator::value_type FullPairIterator::operator*() { return {x_, y_}; }
 

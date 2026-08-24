@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 #pragma once
 
+#include <compare>
 #include <iterator>
 #include <tuple>
 
@@ -49,10 +50,7 @@ class FullPairIterator
     FullPairIterator operator-(difference_type backward) const;
 
     // Operators : comparison
-    bool operator==(const FullPairIterator &other) const;
-    bool operator!=(const FullPairIterator &other) const;
-    bool operator<(const FullPairIterator &other) const;
-    bool operator>(const FullPairIterator &other) const;
-    bool operator<=(const FullPairIterator &other) const;
-    bool operator>=(const FullPairIterator &other) const;
+    bool operator==(const FullPairIterator &other) const = default;
+    bool operator<(const FullPairIterator &other) const = default;
+    std::strong_ordering operator<=>(const FullPairIterator &value) const;
 };

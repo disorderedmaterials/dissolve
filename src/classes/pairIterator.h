@@ -49,10 +49,7 @@ class PairIterator
     PairIterator operator-(difference_type backward) const;
 
     // Operators : comparison
-    bool operator==(const PairIterator &other) const;
-    bool operator!=(const PairIterator &other) const;
-    bool operator<(const PairIterator &other) const;
-    bool operator>(const PairIterator &other) const;
-    bool operator<=(const PairIterator &other) const;
-    bool operator>=(const PairIterator &other) const;
+    bool operator==(const PairIterator &other) const = default;
+    bool operator<(const PairIterator &other) const = default;
+    std::strong_ordering operator<=>(const PairIterator &value) const;
 };

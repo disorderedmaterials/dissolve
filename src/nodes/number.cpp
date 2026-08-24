@@ -2,7 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/number.h"
+#include <compare>
 #include <string>
+#include <type_traits>
 
 Number::Number(const std::variant<int, double> &value) : value_(value) {}
 
@@ -60,28 +62,30 @@ Number &Number::operator/=(const Number &other)
     return *this;
 }
 
-bool Number::operator==(const Number &other) const { return value_ == other.value_; }
-
-bool Number::operator!=(const Number &other) const { return value_ != other.value_; }
-
-bool Number::operator<(const Number &other) const
+std::strong_ordering Number::operator<=>(const Number &other) const
 {
-    return std::visit([](auto a, auto b) -> bool { return a < b; }, value_, other.value_);
-}
-
-bool Number::operator<=(const Number &other) const
-{
-    return std::visit([](auto a, auto b) -> bool { return a <= b; }, value_, other.value_);
-}
-
-bool Number::operator>(const Number &other) const
-{
-    return std::visit([](auto a, auto b) -> bool { return a > b; }, value_, other.value_);
-}
-
-bool Number::operator>=(const Number &other) const
-{
-    return std::visit([](auto a, auto b) -> bool { return a >= b; }, value_, other.value_);
+    return std::visit(
+        [](auto a, auto b) -> std::strong_ordering
+        {
+            using T = std::decay_t<decltype(a)>;
+            using U = std::decay_t<decltype(b)>;
+            if constexpr (std::is_floating_point_v<T> || std::is_floating_point_v<U>)
+            {
+                auto cmp = a <=> b;
+                if (cmp == std::partial_ordering::less)
+                    return std::strong_ordering::less;
+                else if (cmp == std::partial_ordering::equivalent)
+                    return std::strong_ordering::equivalent;
+                else if (cmp == std::partial_ordering::greater)
+                    return std::strong_ordering::greater;
+                else
+                    // Just need a dummy ordering for NaN on floating point
+                    return std::strong_ordering::less;
+            }
+            else
+                return a <=> b;
+        },
+        value_, other.value_);
 }
 
 /*

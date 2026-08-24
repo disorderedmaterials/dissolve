@@ -26,16 +26,12 @@ int PairIterator::toIndex() const
     return front + y_ - x_;
 }
 
-bool PairIterator::operator<(const PairIterator &other) const
+std::strong_ordering PairIterator::operator<=>(const PairIterator &other) const
 {
     if (x_ != other.x_)
-        return x_ < other.x_;
-    return y_ < other.y_;
+        return x_ <=> other.x_;
+    return y_ <=> other.y_;
 }
-
-bool PairIterator::operator==(const PairIterator &other) const { return x_ == other.x_ && y_ == other.y_; }
-
-bool PairIterator::operator!=(const PairIterator &other) const { return x_ != other.x_ || y_ != other.y_; }
 
 PairIterator::value_type PairIterator::operator*() { return {x_, y_}; }
 
