@@ -13,11 +13,7 @@ add_library(
 )
 
 target_include_directories(
-  gui
-  PRIVATE ${PROJECT_SOURCE_DIR}/src
-          ${PROJECT_BINARY_DIR}/src
-          ${Qt6Core_INCLUDE_DIRS}
-          ${Qt6Widgets_INCLUDE_DIRS}
+  gui PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Core_INCLUDE_DIRS} ${Qt6Widgets_INCLUDE_DIRS}
 )
 
 target_link_libraries(
