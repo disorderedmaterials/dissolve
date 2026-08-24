@@ -34,29 +34,29 @@ on:
 
 jobs:
 
-  # Build:
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [ "${{ inputs.osxRunner }}", windows-2022 ]
-  #   runs-on: ${{ matrix.os }}
-  #   steps:
-  #   - name: 'Download Source Tarfiles'
-  #     uses: actions/download-artifact@v4
-  #     with:
-  #       name: source
+  Build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "${{ inputs.osxRunner }}", windows-2022 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: 'Download Source Tarfiles'
+      uses: actions/download-artifact@v4
+      with:
+        name: source
 
-  #   - name: 'Unpack Source'
-  #     shell: bash
-  #     run: tar -xvf dissolve-versioned-source.tar
+    - name: 'Unpack Source'
+      shell: bash
+      run: tar -xvf dissolve-versioned-source.tar
 
-  #   - name: "Build (${{ matrix.os }})"
-  #     uses: "./.github/workflows/build"
-  #     with:
-  #       qtVersion: ${{ inputs.qtVersion }}
-  #       antlrVersion: ${{ inputs.antlrVersion }}
-  #       conanHash: ${{ inputs.conanHash }}
-  #       osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
+    - name: "Build (${{ matrix.os }})"
+      uses: "./.github/workflows/build"
+      with:
+        qtVersion: ${{ inputs.qtVersion }}
+        antlrVersion: ${{ inputs.antlrVersion }}
+        conanHash: ${{ inputs.conanHash }}
+        osxTargetDeploymentVersion: ${{ inputs.osxTargetDeploymentVersion }}
 
   BuildLinux:
     strategy:
