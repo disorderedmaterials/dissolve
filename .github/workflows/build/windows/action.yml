@@ -63,7 +63,7 @@ runs:
       cache: true
       use-naqt: true
       setup-python: false
-      modules: 'all'
+      modules: 'qtquick3d'
 
   - name: Setup MSVC Compiler
     uses: ilammy/msvc-dev-cmd@v1
