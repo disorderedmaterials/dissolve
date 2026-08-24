@@ -61,11 +61,7 @@ template <typename IntType> class counting_iterator
     // Operators : comparison
     std::strong_ordering operator<=>(const counting_iterator &other) const { return this->counter_ <=> other.counter_; };
     bool operator==(const counting_iterator &other) const = default;
-    bool operator!=(const counting_iterator &other) const = default;
     bool operator<(const counting_iterator &other) const = default;
-    bool operator>(const counting_iterator &other) const = default;
-    bool operator<=(const counting_iterator &other) const = default;
-    bool operator>=(const counting_iterator &other) const = default;
 
     private:
     IntType counter_;

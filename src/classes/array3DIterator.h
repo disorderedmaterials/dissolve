@@ -52,10 +52,6 @@ class Array3DIterator
 
     // Operators : comparison
     bool operator==(const Array3DIterator &other) const = default;
-    bool operator!=(const Array3DIterator &other) const = default;
     bool operator<(const Array3DIterator &other) const = default;
-    bool operator>(const Array3DIterator &other) const = default;
-    bool operator<=(const Array3DIterator &other) const = default;
-    bool operator>=(const Array3DIterator &other) const = default;
     std::strong_ordering operator<=>(const Array3DIterator &value) const;
 };

@@ -29,11 +29,7 @@ class Number
     Number &operator++();
     Number &operator--();
     bool operator==(const Number &value) const = default;
-    bool operator!=(const Number &value) const = default;
     bool operator<(const Number &other) const = default;
-    bool operator<=(const Number &other) const = default;
-    bool operator>(const Number &other) const = default;
-    bool operator>=(const Number &other) const = default;
     std::strong_ordering operator<=>(const Number &value) const;
 
     /*
