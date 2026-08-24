@@ -56,7 +56,7 @@ runs:
       cache: true
       use-naqt: true
       setup-python: false
-      modules: 'quick3d'
+      modules: 'all'
 
   #
   # Main Build
