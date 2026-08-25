@@ -37,13 +37,12 @@ const Species &SpeciesNode::species() const { return species_; }
 // Perform processing
 NodeConstants::ProcessResult SpeciesNode::process()
 {
-    if (structure_ && recipe_)
-    {
-        species_.create(*structure_);
-        return recipe_->apply(species_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
-    }
+    species_.create(*structure_);
 
-    return NodeConstants::ProcessResult::Unchanged;
+    if (recipe_)
+        return recipe_->apply(species_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+
+    return NodeConstants::ProcessResult::Success;
 }
 
 /*
