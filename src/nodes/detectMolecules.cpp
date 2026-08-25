@@ -29,7 +29,7 @@ std::string_view DetectMoleculesNode::summary() const { return "Detect molecular
  */
 
 // Return detected structures
-const std::vector<Structure> &DetectMoleculesNode::detectedStructures() const { return detectedStructures_; }
+const std::map<std::string, Structure> &DetectMoleculesNode::detectedStructures() const { return detectedStructures_; }
 
 /*
  * Processing
@@ -194,7 +194,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             auto structure = copyAtomsAndBonds(fragments.front());
             structure.instances().push_back(getAtomCoordinates(fragments.front()));
 
-            detectedStructures_.emplace_back(structure);
+            detectedStructures_[EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); })] = structure;
 
             continue;
         }
@@ -233,34 +233,32 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                                            }),
                             fragments.end());
 
-            // Store the detected structure
-            detectedStructures_.emplace_back(detectedStructure);
+            // Store the detected structure (under a unique name)
+            auto name = DissolveSys::uniqueName(
+                EmpiricalFormula::formula(detectedStructure.atoms(), [](const auto &i) { return i->Z(); }), detectedStructures_,
+                [](const auto &pair) { return pair.first; });
+            detectedStructures_[name] = detectedStructure;
         }
     }
 
     message("Detected {} distinct fragment structures:\n\n", detectedStructures_.size());
-    message("   ID     N  Empirical Formula\n");
+    message("   ID     N  Name / Empirical Formula\n");
     auto count = 1;
-    for (const auto &structure : detectedStructures_)
-        message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(),
-                EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); }));
+    for (const auto &[name, structure] : detectedStructures_)
+        message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(), name);
     message("");
 
-    /*
-     * Dynamic outputs
-     */
-
     // Register dynamic outputs
-    for (auto i = 0; i < detectedStructures_.size(); ++i)
+    for (auto &[name, structure] : detectedStructures_)
     {
-        auto val = detectedStructures_[i];
-        auto paramName = std::string("DetectedMolecule" + std::format("-{}", i));
-
-        // Check if output already exists - do not add if it does
-        if (outputs_.find(paramName) != outputs_.end())
-            continue;
-
-        addOutput(paramName, "Detected molecular structure", detectedStructures_[i]);
+        // Update output data if it already exists, otherwise create new
+        auto outputIt = outputs_.find(name);
+        if (outputIt == outputs_.end())
+            addOutput(name, "Detected molecular structure", structure);
+        else
+        {
+            // TODO Need to update the underlying ParameterBase here, but how?
+        }
     }
 
     return NodeConstants::ProcessResult::Success;

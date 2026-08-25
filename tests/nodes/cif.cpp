@@ -123,11 +123,11 @@ class CIFNodeTest : public ::testing::Test
         EXPECT_NEAR(cfg->box().axisAngles().z, angles.z, 1.0e-6);
     }
     // Test molecular species information provided
-    void testDetectedMolecularStructure(const Structure &structure, const MolecularSpeciesInfo &info)
+    void testDetectedMolecularStructure(const std::map<std::string, Structure> &structures, const MolecularSpeciesInfo &info)
     {
-        // EXPECT_EQ(structure.name(), std::get<0>(info));
-        EXPECT_EQ(structure.instances().size(), std::get<1>(info));
-        EXPECT_EQ(structure.nAtoms(), std::get<2>(info));
+        ASSERT_TRUE(structures.contains(std::get<0>(info)));
+        EXPECT_EQ(structures.at(std::get<0>(info)).instances().size(), std::get<1>(info));
+        EXPECT_EQ(structures.at(std::get<0>(info)).nAtoms(), std::get<2>(info));
     }
     /*
     // Check instance consistency with reference coordinates
@@ -225,11 +225,11 @@ TEST_F(CIFNodeTest, NaClMolecules)
     std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
     auto structures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(structures.size(), 2);
-    testDetectedMolecularStructure(structures.at(0), {"Na", 4, 1});
-    for (auto &&[instance, r2] : zip(structures.at(0).instances(), R))
+    testDetectedMolecularStructure(structures, {"Na", 4, 1});
+    for (auto &&[instance, r2] : zip(structures["Na"].instances(), R))
         EXPECT_TRUE(testVector3("Molecular instance coordinates", instance[0], r2));
-    testDetectedMolecularStructure(structures.at(1), {"Cl", 4, 1});
-    for (auto &&[instance, r2] : zip(structures.at(1).instances(), R))
+    testDetectedMolecularStructure(structures, {"Cl", 4, 1});
+    for (auto &&[instance, r2] : zip(structures["Cl"].instances(), R))
         EXPECT_TRUE(testVector3("Molecular instance coordinates", instance[0], (r2 - A / 2).abs()));
 
     // 2x2x2 supercell
@@ -268,9 +268,9 @@ TEST_F(CIFNodeTest, NaClO3)
 
     auto detectedMoleculeStructuresA = detectMoleculesNode->detectedStructures();
     ASSERT_EQ(detectedMoleculeStructuresA.size(), 3);
-    testDetectedMolecularStructure(detectedMoleculeStructuresA.at(0), {"Na", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresA.at(1), {"Cl", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresA.at(2), {"O", 12, 1});
+    testDetectedMolecularStructure(detectedMoleculeStructuresA, {"Na", 4, 1});
+    testDetectedMolecularStructure(detectedMoleculeStructuresA, {"Cl", 4, 1});
+    testDetectedMolecularStructure(detectedMoleculeStructuresA, {"O", 12, 1});
 
     // Check box
     constexpr double A = 6.55;
@@ -289,8 +289,8 @@ TEST_F(CIFNodeTest, NaClO3)
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
     auto detectedMoleculeStructuresB = detectMoleculesNode->detectedStructures();
     ASSERT_EQ(detectedMoleculeStructuresB.size(), 2);
-    testDetectedMolecularStructure(detectedMoleculeStructuresB.at(0), {"Na", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresB.at(1), {"ClO3", 4, 4});
+    testDetectedMolecularStructure(detectedMoleculeStructuresB, {"Na", 4, 1});
+    testDetectedMolecularStructure(detectedMoleculeStructuresB, {"ClO3", 4, 4});
 }
 
 TEST_F(CIFNodeTest, CuBTC)
@@ -316,7 +316,6 @@ TEST_F(CIFNodeTest, CuBTC)
 
     auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 2);
-    const auto box = detectedMoleculeStructures[0].box();
 
     EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_225);
@@ -402,10 +401,9 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimple)
     auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
-    auto &molStructure = detectedMoleculeStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
         {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
+    testDetectedMolecularStructure(detectedMoleculeStructures, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);
@@ -430,10 +428,9 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnordered)
     auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
-    auto &molStructure = detectedMoleculeStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
         {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
+    testDetectedMolecularStructure(detectedMoleculeStructures, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);
@@ -458,10 +455,9 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnorderedRotated)
     auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
-    auto &molStructure = detectedMoleculeStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
         {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
+    testDetectedMolecularStructure(detectedMoleculeStructures, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);
@@ -484,9 +480,8 @@ TEST_F(CIFNodeTest, BigMoleculeOrdering)
     auto detectedStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedStructures.size(), 1);
 
-    auto &molStructure = detectedStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {{Elements::O, 6}, {Elements::C, 51}, {Elements::H, 54}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
+    testDetectedMolecularStructure(detectedStructures, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);
