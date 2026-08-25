@@ -44,4 +44,8 @@ class ExportXYZConfigurationNode : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Export the specified configuration
+    static void exportConfiguration(const Configuration *cfg, std::string filePath);
 };

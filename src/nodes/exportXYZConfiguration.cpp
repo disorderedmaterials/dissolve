@@ -40,21 +40,28 @@ NodeConstants::ProcessResult ExportXYZConfigurationNode::process()
     auto path = filePath_;
     if (tagWithIteration_)
         path = std::format("{}.{}", path, iteration_);
-    std::ofstream outfile(filePath_);
-    std::ostream_iterator<char> out(outfile);
 
-    // Export number of atoms and title
-    std::format_to(out, "{}\n", configuration_->nAtoms());
-    std::format_to(out, "{} @ {}\n", configuration_->name(), configuration_->version());
-
-    // Export Atoms
-    for (const auto &i : configuration_->atoms())
-        std::format_to(out, "{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i.speciesAtom()->Z()), i.r().x, i.r().y,
-                       i.r().z);
-
-    outfile.close();
+    exportConfiguration(configuration_, path);
 
     ++iteration_;
 
     return NodeConstants::ProcessResult::Success;
+}
+
+// Export the specified configuration
+void ExportXYZConfigurationNode::exportConfiguration(const Configuration *cfg, std::string filePath)
+{
+    std::ofstream outfile(filePath);
+    std::ostream_iterator<char> out(outfile);
+
+    // Export number of atoms and title
+    std::format_to(out, "{}\n", cfg->nAtoms());
+    std::format_to(out, "{} @ {}\n", cfg->name(), cfg->version());
+
+    // Export Atoms
+    for (const auto &i : cfg->atoms())
+        std::format_to(out, "{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i.speciesAtom()->Z()), i.r().x, i.r().y,
+                       i.r().z);
+
+    outfile.close();
 }
