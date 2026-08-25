@@ -39,30 +39,26 @@ NodeConstants::ProcessResult ReplicatedConfigurationNode::process()
     const auto &box = configuration_->box();
 
     // Set up configuration
-    auto supercellLengths = box.axisLengths();
-    supercellLengths.multiply(repeat_.x, repeat_.y, repeat_.z);
-    replicated_.setBox(Box(supercellLengths, box.axisAngles()));
+    auto newLengths = box.axisLengths();
+    newLengths.multiply(repeat_.x, repeat_.y, repeat_.z);
+    replicated_.setBox(Box(newLengths, box.axisAngles()));
 
-    // Create images of all molecular unit cell species
-    for (auto &mol : configuration_->molecules())
-    {
-        const auto *sp = mol->species();
-
-        // Loop over cell images
-        for (auto ix = 0; ix < repeat_.x; ++ix)
-        {
-            for (auto iy = 0; iy < repeat_.y; ++iy)
+    // Loop over cell images
+    for (auto ix = 0; ix < repeat_.x; ++ix)
+        for (auto iy = 0; iy < repeat_.y; ++iy)
+            for (auto iz = 0; iz < repeat_.z; ++iz)
             {
-                // Create and translate molecule
-                for (auto iz = 0; iz < repeat_.z; ++iz)
-                    replicated_.addMolecule(sp)->translate(box.axes() * Vector3(ix, iy, iz));
+                // Determine translation vector
+                auto delta = box.axes() * Vector3(ix, iy, iz);
+
+                // Copy all molecules in the original configuration
+                for (auto &mol : configuration_->molecules())
+                    replicated_.copyMolecule(*mol)->translate(delta);
             }
-        }
-    }
 
     replicated_.updateObjectRelationships();
 
-    message("Created ({}, {}, {}) replica - {} atoms total.\n", repeat_.x, repeat_.y, repeat_.z, replicated_.nAtoms());
+    message("Created {}x{}x{} replica - {} atoms total.\n", repeat_.x, repeat_.y, repeat_.z, replicated_.nAtoms());
 
     return NodeConstants::ProcessResult::Success;
 }
