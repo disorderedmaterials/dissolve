@@ -313,13 +313,6 @@ TEST_F(CIFNodeTest, NaCl)
         EXPECT_TRUE(testVector3("Molecular instance coordinates", instance[0], (r2 - A / 2).abs()));
 
     ASSERT_TRUE(testReconstructed(importCIFStructureNode_->getOutputValue<Structure>("Structure"), Vector3i(2, 2, 2)));
-
-    // 2x2x2 supercell
-    // extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A, A, A}, {90, 90, 90}, {2, 2, 2});
-    // auto supercellConfigurationNode = static_cast<SupercellConfigurationNode
-    // *>(testGraph_.findNode("SupercellConfiguration")); ASSERT_EQ(supercellConfigurationNode->run(),
-    // NodeConstants::ProcessResult::Success); testBox(supercellConfigurationNode->getOutputValue<Configuration
-    // *>("SupercellConfiguration"), {A * 2, A * 2, A * 2}, {90, 90, 90}, 8 * 8);
 }
 
 TEST_F(CIFNodeTest, NaClO3Atomic)
@@ -334,21 +327,14 @@ TEST_F(CIFNodeTest, NaClO3Atomic)
     EXPECT_EQ(testGraph_.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_198);
 
-    // No bonding defs in the CIF, so we expect species for each atomic
-    // component (4 Na, 4 Cl, and 12 O)
+    // No bonding defs in the CIF, so we expect species for each atomic component (4 Na, 4 Cl, and 12 O)
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(detectMoleculesNode_->detectedStructures().size(), 3);
     testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Na", 4, 1});
     testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Cl", 4, 1});
     testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"O", 12, 1});
-    //
-    // // Check box
-    // constexpr double A = 6.55;
-    // extendToSupercell(&testGraph_, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}, {Elements::O, "O"}}, {A, A, A}, {90, 90,
-    // 90}); auto supercellConfigurationNode = static_cast<ReplicatedConfigurationNode
-    // *>(testGraph_.findNode("SupercellConfiguration")); ASSERT_EQ(supercellConfigurationNode->run(),
-    // NodeConstants::ProcessResult::Success); testBox(supercellConfigurationNode->getOutputValue<Configuration
-    // *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 20);
+
+    ASSERT_TRUE(testReconstructed(importCIFStructureNode_->getOutputValue<Structure>("Structure"), Vector3i(2, 2, 2)));
 }
 
 TEST_F(CIFNodeTest, NaClO3Molecular)
@@ -360,6 +346,8 @@ TEST_F(CIFNodeTest, NaClO3Molecular)
     ASSERT_EQ(detectMoleculesNode_->detectedStructures().size(), 2);
     testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Na", 4, 1});
     testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"ClO3", 4, 4});
+
+    ASSERT_TRUE(testReconstructed(importCIFStructureNode_->getOutputValue<Structure>("Structure"), Vector3i(2, 2, 2)));
 }
 
 TEST_F(CIFNodeTest, CuBTC)
