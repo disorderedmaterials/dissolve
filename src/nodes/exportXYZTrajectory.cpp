@@ -21,7 +21,7 @@ ExportXYZTrajectoryNode::ExportXYZTrajectoryNode(Graph *parentGraph) : Node(pare
  */
 
 // Return type of the node
-std::string_view ExportXYZTrajectoryNode::type() const { return "ExportTrajectory"; }
+std::string_view ExportXYZTrajectoryNode::type() const { return "ExportXYZTrajectory"; }
 
 // Return short summary of the node's purpose
 std::string_view ExportXYZTrajectoryNode::summary() const
