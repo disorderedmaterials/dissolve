@@ -295,19 +295,11 @@ TEST_F(CIFNodeTest, NaCl)
     // *>("SupercellConfiguration"), {A * 2, A * 2, A * 2}, {90, 90, 90}, 8 * 8);
 }
 
-TEST_F(CIFNodeTest, NaClO3)
+TEST_F(CIFNodeTest, NaClO3Atomic)
 {
-    TestGraph testGraph;
+    setUp("NaClO3-1010057", false);
 
-    // Load the CIF file
-    auto cif = std::string("NaClO3-1010057.cif");
-
-    EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
-    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph_.appendNode("DetectMolecules"));
-    testGraph_.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
-
-    ASSERT_EQ(testGraph_.findNode("ImportCIFStructure")->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importCIFStructureNode_->run(), NodeConstants::ProcessResult::Success);
 
     // Check basic info
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
@@ -318,12 +310,10 @@ TEST_F(CIFNodeTest, NaClO3)
     // No bonding defs in the CIF, so we expect species for each atomic
     // component (4 Na, 4 Cl, and 12 O)
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-
-    auto detectedMoleculeStructuresA = detectMoleculesNode->detectedStructures();
-    ASSERT_EQ(detectedMoleculeStructuresA.size(), 3);
-    testDetectedMolecularStructure(detectedMoleculeStructuresA, {"Na", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresA, {"Cl", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresA, {"O", 12, 1});
+    ASSERT_EQ(detectMoleculesNode_->detectedStructures().size(), 3);
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Na", 4, 1});
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Cl", 4, 1});
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"O", 12, 1});
 
     // Check box
     constexpr double A = 6.55;
@@ -331,19 +321,18 @@ TEST_F(CIFNodeTest, NaClO3)
     auto supercellConfigurationNode = static_cast<SupercellConfigurationNode *>(testGraph_.findNode("SupercellConfiguration"));
     ASSERT_EQ(supercellConfigurationNode->run(), NodeConstants::ProcessResult::Success);
     testBox(supercellConfigurationNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 20);
+}
 
-    // Calculate bonding ourselves to get the correct species
-    EXPECT_TRUE(testGraph_.appendNode("CalculateBonding"));
-    testGraph_.removeEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
-    testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph_.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
-    testGraph_.setUpdateRequired();
-    ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-    auto detectedMoleculeStructuresB = detectMoleculesNode->detectedStructures();
-    ASSERT_EQ(detectedMoleculeStructuresB.size(), 2);
-    testDetectedMolecularStructure(detectedMoleculeStructuresB, {"Na", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresB, {"ClO3", 4, 4});
+TEST_F(CIFNodeTest, NaClO3Molecular)
+{
+    setUp("NaClO3-1010057");
+
+    ASSERT_EQ(detectMoleculesNode_->run(), NodeConstants::ProcessResult::Success);
+
+    ASSERT_EQ(detectMoleculesNode_->detectedStructures().size(), 2);
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Na", 4, 1});
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"ClO3", 4, 4});
 }
 
 TEST_F(CIFNodeTest, CuBTC)
