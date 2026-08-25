@@ -174,6 +174,7 @@ TEST_F(CIFNodeTest, Parse)
         ASSERT_EQ(structure.atoms().size(), nStructureAtoms);
     }
 }
+
 TEST_F(CIFNodeTest, NaClContinuous)
 {
     TestGraph testGraph;
