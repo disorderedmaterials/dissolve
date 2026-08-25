@@ -25,17 +25,6 @@ class CIFNodeTest : public ::testing::Test
     public:
     // Molecular species information
     using MolecularSpeciesInfo = std::tuple<std::string, int, int>;
-    // Retrieve detected molecule structures
-    std::vector<Structure> getDetectedMolecularStructures(const DetectMoleculesNode *node, int N)
-    {
-        std::vector<Structure> structures;
-        for (int i = 0; i < N; i++)
-        {
-            auto structureI = node->findOutput("DetectedMolecule-" + std::to_string(i));
-            structures.push_back(structureI->get<Structure>());
-        }
-        return structures;
-    }
     // Extend graph to convert detected species to a supercell configuration
     void extendToSupercell(TestGraph *graph, std::vector<std::pair<Elements::Element, std::string>> expectedSpecies,
                            const Vector3 &boxLengths, const Vector3 &boxAngles, Vector3i supercellRepeat = {1, 1, 1})
@@ -234,7 +223,7 @@ TEST_F(CIFNodeTest, NaClMolecules)
 
     // Check atomic positions
     std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
-    auto structures = getDetectedMolecularStructures(detectMoleculesNode, 2);
+    auto structures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(structures.size(), 2);
     testDetectedMolecularStructure(structures.at(0), {"Na", 4, 1});
     for (auto &&[instance, r2] : zip(structures.at(0).instances(), R))
@@ -277,7 +266,8 @@ TEST_F(CIFNodeTest, NaClO3)
     // component (4 Na, 4 Cl, and 12 O)
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructuresA = getDetectedMolecularStructures(detectMoleculesNode, 3);
+    auto detectedMoleculeStructuresA = detectMoleculesNode->detectedStructures();
+    ASSERT_EQ(detectedMoleculeStructuresA.size(), 3);
     testDetectedMolecularStructure(detectedMoleculeStructuresA.at(0), {"Na", 4, 1});
     testDetectedMolecularStructure(detectedMoleculeStructuresA.at(1), {"Cl", 4, 1});
     testDetectedMolecularStructure(detectedMoleculeStructuresA.at(2), {"O", 12, 1});
@@ -297,7 +287,7 @@ TEST_F(CIFNodeTest, NaClO3)
 
     testGraph.setUpdateRequired();
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-    auto detectedMoleculeStructuresB = getDetectedMolecularStructures(detectMoleculesNode, 2);
+    auto detectedMoleculeStructuresB = detectMoleculesNode->detectedStructures();
     ASSERT_EQ(detectedMoleculeStructuresB.size(), 2);
     testDetectedMolecularStructure(detectedMoleculeStructuresB.at(0), {"Na", 4, 1});
     testDetectedMolecularStructure(detectedMoleculeStructuresB.at(1), {"ClO3", 4, 4});
@@ -324,7 +314,7 @@ TEST_F(CIFNodeTest, CuBTC)
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 2);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 2);
     const auto box = detectedMoleculeStructures[0].box();
 
@@ -409,7 +399,7 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimple)
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
     auto &molStructure = detectedMoleculeStructures.front();
@@ -437,7 +427,7 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnordered)
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
     auto &molStructure = detectedMoleculeStructures.front();
@@ -465,7 +455,7 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnorderedRotated)
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
     auto &molStructure = detectedMoleculeStructures.front();
@@ -491,7 +481,7 @@ TEST_F(CIFNodeTest, BigMoleculeOrdering)
     auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedStructures.size(), 1);
 
     auto &molStructure = detectedStructures.front();
