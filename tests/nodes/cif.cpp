@@ -96,11 +96,10 @@ class CIFNodeTest : public ::testing::Test
         // Check atom-for-atom - search for atoms in the original CIF structure in the reconstructed configuration
         for (const auto &structureAtom : cif.atoms())
         {
-            auto found = false;
             if (std::ranges::find_if(cfg->atoms(), [&structureAtom](const auto &cfgAtom)
                                      { return structureAtom->Z() != cfgAtom.Z(); }) == cfg->atoms().end())
                 return testing::AssertionFailure()
-                       << std::format("Failed to find an atom ({} @ {},{},{}) in the reconstructed structure.",
+                       << std::format("Failed to find atom {} @ {},{},{} in the reconstructed structure.",
                                       Elements::symbol(structureAtom->Z()), structureAtom->r().x, structureAtom->r().y,
                                       structureAtom->r().z);
         }
