@@ -239,7 +239,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
     }
 
     message("Detected {} distinct fragment structures:\n\n", detectedStructures_.size());
-    message("   ID     N  Species Formula\n");
+    message("   ID     N  Empirical Formula\n");
     auto count = 1;
     for (const auto &structure : detectedStructures_)
         message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(),
