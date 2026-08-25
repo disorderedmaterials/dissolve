@@ -6,11 +6,11 @@
 #include "classes/configuration.h"
 #include "nodes/node.h"
 
-class SupercellConfigurationNode : public Node
+class ReplicatedConfigurationNode : public Node
 {
     public:
-    SupercellConfigurationNode(Graph *parentGraph);
-    ~SupercellConfigurationNode() override = default;
+    ReplicatedConfigurationNode(Graph *parentGraph);
+    ~ReplicatedConfigurationNode() override = default;
 
     /*
      * Definition
@@ -24,11 +24,11 @@ class SupercellConfigurationNode : public Node
      */
     private:
     // Input configuration
-    Configuration *targetConfiguration_{nullptr};
-    // Supercell repeat
-    Vector3i supercellRepeat_;
+    Configuration *configuration_{nullptr};
+    // Repeat amounts
+    Vector3i repeat_;
     // Supercell configuration
-    Configuration supercellConfiguration_;
+    Configuration replicated_;
 
     /*
      * Processing

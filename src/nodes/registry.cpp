@@ -53,6 +53,7 @@
 #include "nodes/numberNode.h"
 #include "nodes/orientedSDF.h"
 #include "nodes/qSpecies.h"
+#include "nodes/replicatedConfiguration.h"
 #include "nodes/sdf.h"
 #include "nodes/setBox.h"
 #include "nodes/setCoordinates.h"
@@ -60,7 +61,6 @@
 #include "nodes/species.h"
 #include "nodes/sq.h"
 #include "nodes/subtract.h"
-#include "nodes/supercellConfiguration.h"
 #include "nodes/vector3Assemble.h"
 #include "nodes/vector3Decompose.h"
 #include "nodes/voxelDensity.h"
@@ -142,7 +142,7 @@ void NodeRegistry::instantiateNodeProducers()
                   {"SQ", makeDerivedNode<SQNode>()},
                   {"Species", makeDerivedNode<SpeciesNode>()},
                   {"Subtract", makeDerivedNode<SubtractNode>()},
-                  {"SupercellConfiguration", makeDerivedNode<SupercellConfigurationNode>()},
+                  {"ReplicatedConfiguration", makeDerivedNode<ReplicatedConfigurationNode>()},
                   {"Vector3Assemble", makeDerivedNode<Vector3AssembleNode>()},
                   {"Vector3Decompose", makeDerivedNode<Vector3DecomposeNode>()},
                   {"XRaySQ", makeDerivedNode<XRaySQNode>()},
