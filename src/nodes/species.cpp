@@ -37,7 +37,8 @@ const Species &SpeciesNode::species() const { return species_; }
 // Perform processing
 NodeConstants::ProcessResult SpeciesNode::process()
 {
-    species_.create(*structure_);
+    if (structure_)
+        species_.create(*structure_);
 
     if (recipe_)
         return recipe_->apply(species_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
