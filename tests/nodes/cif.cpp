@@ -232,7 +232,7 @@ TEST_F(CIFNodeTest, NaCl)
 
 TEST_F(CIFNodeTest, NaClO3Atomic)
 {
-    setUp("NaClO3-1010057", false);
+    setUp("NaClO3-1010057.cif", false);
 
     ASSERT_EQ(importCIFStructureNode_->run(), NodeConstants::ProcessResult::Success);
 
@@ -254,7 +254,7 @@ TEST_F(CIFNodeTest, NaClO3Atomic)
 
 TEST_F(CIFNodeTest, NaClO3Molecular)
 {
-    setUp("NaClO3-1010057");
+    setUp("NaClO3-1010057.cif");
 
     ASSERT_EQ(detectMoleculesNode_->run(), NodeConstants::ProcessResult::Success);
 
