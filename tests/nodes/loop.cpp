@@ -7,7 +7,7 @@
 #include "nodes/numberNode.h"
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
-#include "tests/testGraphFixture.h"
+#include "tests/testing.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -65,7 +65,7 @@ class IterableGraphTest : public ::testing::Test
     }
 
     protected:
-    TestGraph root_;
+    DissolveGraph root_;
     NumberNode *i_{nullptr};
     AddNode *x_{nullptr}, *y_{nullptr};
     IterableGraph *loopGraph_{nullptr};

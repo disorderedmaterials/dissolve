@@ -202,22 +202,22 @@ void IterableGraph::serialise(std::string tag, SerialisedValue &target) const
 {
     Graph::serialise(tag, target);
     auto &result = target[tag];
-    fromVector(loopEdges_, "loopEdges", result);
+    Serialisable::vector(loopEdges_, "loopEdges", result);
 }
 
 // Read values from a serialisable value
 void IterableGraph::deserialise(const SerialisedValue &node)
 {
     Graph::deserialise(node);
-    toVector(node, "loopEdges",
-             [this](const auto &value)
-             {
-                 auto definition = toml::get<EdgeDefinition>(value);
-                 auto edge = Edge::create(
-                     this, {definition.sourceNode, definition.sourceOutput, definition.targetNode, definition.targetInput});
-                 if (!edge)
-                     return false;
+    Deserialisable::vector(node, "loopEdges",
+                           [this](const auto &value)
+                           {
+                               auto edge = Edge::create(
+                                   this, {value.at("sourceNode").as_string(), value.at("sourceOutput").as_string(),
+                                          value.at("targetNode").as_string(), value.at("targetInput").as_string()});
+                               if (!edge)
+                                   return false;
 
-                 return addLoopEdge(std::move(edge), definition.sourceOutput);
-             });
+                               return addLoopEdge(std::move(edge), value.at("sourceOutput").as_string());
+                           });
 }
