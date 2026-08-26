@@ -212,9 +212,9 @@ void IterableGraph::deserialise(const SerialisedValue &node)
     Deserialisable::vector(node, "loopEdges",
                            [this](const auto &value)
                            {
-                               auto edge = Edge::create(
-                                   this, {value.at("sourceNode").as_string(), value.at("sourceOutput").as_string(),
-                                          value.at("targetNode").as_string(), value.at("targetInput").as_string()});
+                               auto edgeDefinition = Deserialisable::deser<EdgeDefinition>(value);
+                               auto edge = Edge::create(this, {edgeDefinition.sourceNode, edgeDefinition.sourceOutput,
+                                                               edgeDefinition.targetNode, edgeDefinition.targetInput});
                                if (!edge)
                                    return false;
 
