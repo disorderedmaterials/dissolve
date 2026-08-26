@@ -21,6 +21,7 @@ enum ModuleType
     Compare,
     DAngle,
     DataTest,
+    DrivenMD,
     Energy,
     EPSR,
     EPSRManager,

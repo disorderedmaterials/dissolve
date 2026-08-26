@@ -12,6 +12,7 @@
 #include "modules/clustering/clustering.h"
 #include "modules/compare/compare.h"
 #include "modules/dAngle/dAngle.h"
+#include "modules/drivenMD/drivenMD.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsrManager/epsrManager.h"
@@ -57,6 +58,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ClusteringModule>(ModuleTypes::Clustering, "Analyse clustering between sites", "Analysis");
     registerProducer<CompareModule>(ModuleTypes::Compare, "Compare data sets and calculate errors", "Checks & Tests");
     registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
+    registerProducer<DrivenMDModule>(ModuleTypes::DrivenMD, "SAXS/SANS driven molecular dynamics test", "Forcefield");
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
     registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
                                  "Forcefield");
