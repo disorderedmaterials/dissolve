@@ -135,10 +135,7 @@ TEST_F(SubGraphTest, RoundTrip)
     ASSERT_NO_THROW(UnitTest::compareToml("", graphTOML, compareTOML));
 }
 
-TEST_F(SubGraphTest, Connections)
-{
-    createGraph();
-}
+TEST_F(SubGraphTest, Connections) { createGraph(); }
 
 TEST_F(SubGraphTest, Flow)
 {
