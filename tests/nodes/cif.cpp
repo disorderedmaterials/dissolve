@@ -109,7 +109,7 @@ class CIFNodeTest : public ::testing::Test
         ExportXYZConfigurationNode::exportConfiguration(cfg, "THIS.xyz");
 
         // Check atom-for-atom - search for atoms in the original CIF structure in the reconstructed configuration
-        auto repeats = repeat.value_or({1, 1, 1});
+        auto repeats = repeat.value_or(Vector3i({1, 1, 1}));
         for (auto repeatX = 0; repeatX < repeats.x; ++repeatX)
             for (auto repeatY = 0; repeatY < repeats.y; ++repeatY)
                 for (auto repeatZ = 0; repeatZ < repeats.z; ++repeatZ)
