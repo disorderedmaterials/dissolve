@@ -4,10 +4,6 @@ description: Build on Windows
 inputs:
   threading:
     default: true
-  freeTypeArchive:
-    default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
-  ftglRepo:
-    default: https://github.com/disorderedmaterials/ftgl-2.4.0
   cacheOnly:
     type: boolean
     default: false
@@ -44,96 +40,34 @@ runs:
 
   - name: Install Python Dependencies
     shell: bash
-    run: pip3 install py7zr==1.1.0 aqtinstall conan
+    run: pip3 install py7zr==1.1.0 conan
+
+  - name: Get ANTLR
+    working-directory: ${{ runner.temp }}
+    shell: bash
+    run: |
+      set -ex
+      wget https://www.antlr.org/download/antlr-${{ inputs.antlrVersion }}-complete.jar -Oantlr-${{ inputs.antlrVersion }}-complete.jar
 
   #
   # Install Qt
   #
 
   - name: Install Qt
-    shell: bash
-    run: |
-      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ inputs.qtVersion }} win64_msvc2019_64 -m all
+    uses: jdpurcell/install-qt-action@v5
+    with:
+      version: ${{ inputs.qtVersion }}
+      host: 'windows'
+      target: 'desktop'
+      arch: 'win64_msvc2022_64'
+      cache: true
+      use-naqt: true
+      setup-python: false
+      modules: 'qt3d qtquick3d qtshadertools'
 
   - name: Setup MSVC Compiler
     uses: ilammy/msvc-dev-cmd@v1
 
-  #
-  # Build / Retrieve Freetype
-  #
-
-  - name: Retrieve FreeType Cache
-    id: cache-freetype
-    uses: actions/cache@v4
-    with:
-      key: windows-freetype
-      path: |
-        ${{ runner.temp }}\freetype-latest
-        ${{ runner.temp }}\freetype-install
-
-  - name: Download FreeType
-    if: ${{ steps.cache-freetype.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      wget ${{ inputs.freeTypeArchive }} -Ofreetype.tgz
-      tar -zxvf freetype.tgz
-      rm freetype.tgz
-      mv freetype-* freetype-latest
-
-  - name: Build FreeType
-    if: ${{ steps.cache-freetype.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      mkdir freetype-build && cd freetype-build
-      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install
-      cmake --build . --target install --config Release
-
-  #
-  # Build / Retrieve FTGL
-  #
-
-  - name: Retrieve FTGL Cache
-    id: cache-ftgl
-    uses: actions/cache@v4
-    with:
-      key: windows-ftgl
-      path: |
-        ${{ runner.temp }}\ftgl-latest
-        ${{ runner.temp }}\ftgl-install
-
-  - name: Download FTGL
-    if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      git clone ${{ inputs.ftglRepo }} ftgl-latest
-
-  - name: Build FTGL
-    if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      mkdir ftgl-build && cd ftgl-build
-      INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
-      LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
-      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
-      cmake --build . --target install --config Release
-
-  - name: Get ANTLR and Java
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      wget https://www.antlr.org/download/antlr-${{ inputs.antlrVersion }}-complete.jar -Oantlr-${{ inputs.antlrVersion }}-complete.jar
-      wget https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.zip -Ojava.zip
-      unzip java.zip
-      
   #
   # Main Build
   #

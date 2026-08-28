@@ -6,10 +6,6 @@ inputs:
     default: true
   osxTargetDeploymentVersion:
     default: 13.3
-  freeTypeArchive:
-    default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
-  ftglRepo:
-    default: https://github.com/disorderedmaterials/ftgl-2.4.0
   cacheOnly:
     type: boolean
     default: false
@@ -37,7 +33,6 @@ runs:
       set -ex
       brew update-reset
       brew install gsl
-      brew uninstall --ignore-dependencies freetype
 
   - name: Get ANTLR
     working-directory: ${{ runner.temp }}
@@ -49,81 +44,19 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install aqtinstall conan --break-system-packages
+      pip3 install conan --break-system-packages
 
   - name: Install Qt
-    shell: bash
-    run: |
-      export PATH="$(python3 -m site --user-base)/bin:$PATH"
-      aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ inputs.qtVersion }} -m all
-
-  #
-  # Build / Retrieve Freetype
-  #
-
-  - name: Retrieve FreeType Cache
-    id: cache-freetype
-    uses: actions/cache@v4
+    uses: jdpurcell/install-qt-action@v5
     with:
-      key: osx-freetype
-      path: |
-        ${{ runner.temp }}/freetype-latest
-        ${{ runner.temp }}/freetype-install
-
-  - name: Download FreeType
-    if: ${{ steps.cache-freetype.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      wget ${{ inputs.freeTypeArchive }} -Ofreetype.tgz
-      tar -zxvf freetype.tgz
-      rm freetype.tgz
-      mv freetype-* freetype-latest
-
-  - name: Build FreeType
-    if: ${{ steps.cache-freetype.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      mkdir freetype-build && cd freetype-build
-      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install -DBUILD_SHARED_LIBS:bool=OFF  -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.osxTargetDeploymentVersion }}
-      cmake --build . --target install --config Release
-
-  #
-  # Build / Retrieve FTGL
-  #
-
-  - name: Retrieve FTGL Cache
-    id: cache-ftgl
-    uses: actions/cache@v4
-    with:
-      key: osx-ftgl
-      path: |
-        ${{ runner.temp }}/ftgl-latest
-        ${{ runner.temp }}/ftgl-install
-
-  - name: Download FTGL
-    if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      git clone ${{ inputs.ftglRepo }} ftgl-latest
-
-  - name: Build FTGL
-    if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
-    working-directory: ${{ runner.temp }}
-    shell: bash
-    run: |
-      set -ex
-      mkdir ftgl-build && cd ftgl-build
-      INCLUDE="${RUNNER_TEMP}/freetype-latest;$INCLUDE"
-      LIB="${RUNNER_TEMP}/freetype-install/lib;${RUNNER_TEMP}/freetype-install/bin;$LIB"
-      export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
-      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_INSTALL_PREFIX:path=../ftgl-install -DBUILD_SHARED_LIBS:bool=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=${{ inputs.osxTargetDeploymentVersion }}
-      cmake --build . --target install --config Release
+      version: ${{ inputs.qtVersion }}
+      host: 'mac'
+      target: 'desktop'
+      arch: 'clang_64'
+      cache: true
+      use-naqt: true
+      setup-python: false
+      modules: 'qt3d qtquick3d qtshadertools'
 
   #
   # Main Build
@@ -155,8 +88,6 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       Qt6_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos/lib/cmake/Qt6
       QT_BASE_DIR=${{ runner.temp }}/qt/${{ inputs.qtVersion }}/macos
-      export FTGL_DIR="${RUNNER_TEMP}/ftgl-install"
-      export FREETYPE_DIR="${RUNNER_TEMP}/freetype-install"
 
       # Find ANTLR4
       ANTLR_EXE="${{ runner.temp }}/antlr-${{ inputs.antlrVersion }}-complete.jar"

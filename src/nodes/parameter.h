@@ -11,6 +11,7 @@
 #include "nodes/number.h"
 #include "templates/algorithms.h"
 #include "templates/flags.h"
+#include <cstring>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
@@ -131,7 +132,7 @@ class ParameterBase
         // type to obtain different hash values within type_index (thus breaking comparison) if the object is only forward-
         // declared rather than being fully in scope. There is no easy way around this, and it doesn't affect other platforms,
         // so here we just revert to the name comparison.
-        if (std::type_index(typeid(DataClass)).name() != storedDataType_.name())
+        if (std::strcmp(std::type_index(typeid(DataClass)).name(), storedDataType_.name()) != 0)
             throw(std::runtime_error(std::format("ParameterBase::get() called with wrong type ({} vs {}), name = {}\n",
                                                  std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
 
@@ -146,7 +147,7 @@ class ParameterBase
     {
         // Requested DataClass must always match the storedDataType_, regardless of the underlying parameter type.
         // See note in ParameterBase::get() regarding choice of name() comparison.
-        if (std::type_index(typeid(DataClass)).name() != storedDataType_.name())
+        if (std::strcmp(std::type_index(typeid(DataClass)).name(), storedDataType_.name()) != 0)
             throw(std::runtime_error(std::format("ParameterBase::set() called with wrong type ({} vs {}), name = {}\n",
                                                  std::type_index(typeid(DataClass)).name(), storedDataType_.name(), name_)));
 

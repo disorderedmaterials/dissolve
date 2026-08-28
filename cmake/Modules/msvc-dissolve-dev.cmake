@@ -24,20 +24,6 @@
             list(APPEND ALL_INSTALL_FILES ${CONAN_FILES})
         endforeach()
 
-        # Find GUI dependencies (FTGL and Freetype)
-        if(GUI)
-            set(INSTALLATION_DIR "${CMAKE_BINARY_DIR}/bin")
-            set(GUI_DEPENDENCIES_DIR "${CMAKE_BINARY_DIR}/../dependencies")
-
-            if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-                list(APPEND ALL_INSTALL_FILES "${GUI_DEPENDENCIES_DIR}/ftgl-install/bin/ftgld.dll")
-                list(APPEND ALL_INSTALL_FILES "${GUI_DEPENDENCIES_DIR}/freetype-install/bin/freetyped.dll")
-            else()
-                list(APPEND ALL_INSTALL_FILES "${GUI_DEPENDENCIES_DIR}/ftgl-install/bin/ftgl.dll")
-                list(APPEND ALL_INSTALL_FILES "${GUI_DEPENDENCIES_DIR}/freetype-install/bin/freetype.dll")
-            endif()
-        endif()
-
         # Find Conan2 packages
         if(EXISTS "${PROJECT_SOURCE_DIR}/conan" AND IS_DIRECTORY "${PROJECT_SOURCE_DIR}/conan")
             file(GLOB_RECURSE CONAN2_DLL "${PROJECT_SOURCE_DIR}/conan/*.dll")

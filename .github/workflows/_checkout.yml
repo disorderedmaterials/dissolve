@@ -7,12 +7,18 @@ on:
       osxRunner:
         type: string
         default: macos-latest
+      windowsRunner:
+        type: string
+        default: windows-2022
       osxTargetDeploymentVersion:
         type: string
         default: 13.3
       qtVersion:
         type: string
-        default: 6.4.2
+        default: 6.11.1
+      gitCliffVersion:
+        type: string
+        default: 2.13.1
       hugoVersion:
         type: string
         default: "0.135.0"
@@ -65,6 +71,9 @@ on:
       osxRunner:
         description: "Runner target for OSX"
         value: ${{ jobs.Checkout.outputs.osxRunner }}
+      windowsRunner:
+        description: "Runner target for Windows"
+        value: ${{ jobs.Checkout.outputs.windowsRunner }}
       osxTargetDeploymentVersion:
         description: "Minimum version of OSX to target for deployment"
         value: ${{ jobs.Checkout.outputs.osxTargetDeploymentVersion }}
@@ -80,6 +89,7 @@ jobs:
       currentVersionPatch: ${{ steps.authVersion.outputs.currentVersionPatch }}
       currentShortHash: ${{ steps.authVersion.outputs.currentShortHash }}
       osxRunner: ${{ steps.versions.outputs.osxRunner }}
+      windowsRunner: ${{ steps.versions.outputs.windowsRunner }}
       osxTargetDeploymentVersion: ${{ steps.versions.outputs.osxTargetDeploymentVersion }}
       qtVersion: ${{ steps.versions.outputs.qtVersion }}
       antlrVersion: ${{ steps.versions.outputs.antlrVersion }}
@@ -114,6 +124,7 @@ jobs:
 
           echo "osxRunner=${{ inputs.osxRunner }}" >> $GITHUB_OUTPUT
           echo "osxTargetDeploymentVersion=${{ inputs.osxTargetDeploymentVersion }}" >> $GITHUB_OUTPUT
+          echo "windowsRunner=${{ inputs.windowsRunner }}" >> $GITHUB_OUTPUT
 
       - name: Get Hashes
         id: hashes
@@ -137,8 +148,12 @@ jobs:
           sed -i -e "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
           cat src/main/version.cpp
 
-      - name: Get Cliff
-        uses: "./.github/workflows/get-cliff"
+      - name: Install Prerequisites
+        shell: bash
+        run: |
+          set -ex
+          wget https://github.com/orhun/git-cliff/releases/download/v${{ inputs.gitCliffVersion }}/git-cliff-${{ inputs.gitCliffVersion }}.deb -Ogit-cliff.deb
+          sudo apt install ./git-cliff.deb
 
       - name: Generate ChangeLog.md
         if: inputs.publishType != 'none'
