@@ -58,7 +58,8 @@ NodeConstants::ProcessResult ReplicatedConfigurationNode::process()
 
     replicated_.updateObjectRelationships();
 
-    message("Created {}x{}x{} replica - {} atoms total.\n", repeat_.x, repeat_.y, repeat_.z, replicated_.nAtoms());
+    message("Configuration replicated ({}x{}x{}) - {} atoms total in new configuration.\n", repeat_.x, repeat_.y, repeat_.z,
+            replicated_.nAtoms());
 
     return NodeConstants::ProcessResult::Success;
 }
