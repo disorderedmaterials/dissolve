@@ -189,7 +189,7 @@ int NETAConnectionNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) co
         totalScore += jScore;
 
         // Track atoms matched in the neighbour branch
-        matchPath.merge(jMatchPath);
+        matchPath.append(jMatchPath);
 
         // Add identifiers to the match data
         for (auto &id : identifiers())

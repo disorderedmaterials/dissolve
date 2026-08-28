@@ -229,7 +229,7 @@ int NETARingNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
                 for (auto &jInfo : matchedRingAtoms)
                 {
                     auto &&[jScore, jMatchPath] = jInfo.second;
-                    totalRingMatch.merge(jMatchPath);
+                    totalRingMatch.append(jMatchPath);
                 }
 
                 // Matched the ring starting from this ring atom, so break out of the loop
@@ -255,7 +255,7 @@ int NETARingNode::score(const AtomBase *i, NETAMatchedGroup &matchPath) const
         totalScore += ringScore;
 
         // Track atoms matched in the neighbour branch
-        matchPath.merge(ringMatchPath);
+        matchPath.append(ringMatchPath);
     }
 
     return totalScore;

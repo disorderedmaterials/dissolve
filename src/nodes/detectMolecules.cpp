@@ -162,7 +162,7 @@ NETAMatchedGroup DetectMoleculesNode::matchFragment(const NETADefinition &neta, 
     for (auto index : fragmentAtoms)
     {
         auto matchedGroup = neta.matchedPath(inputStructure_.atom(index));
-        if (!matchedGroup.set().empty())
+        if (!matchedGroup.matched().empty())
             return matchedGroup;
     }
 
@@ -208,8 +208,8 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
 
             // Apply the NETA match back over the fragement in order to get the matched atom ordering, and create a structure
             auto netaMatch = matchFragment(neta, currentFragment);
-            std::vector<int> netaOrdering(netaMatch.set().size());
-            std::ranges::transform(netaMatch.set(), netaOrdering.begin(), [](auto atom) { return atom->index(); });
+            std::vector<int> netaOrdering(netaMatch.matched().size());
+            std::ranges::transform(netaMatch.matched(), netaOrdering.begin(), [](auto atom) { return atom->index(); });
 
             // Create a provisional structure for the current fragment, using indices in the order matched by NETA
             auto detectedStructure = copyAtomsAndBonds(netaOrdering);
@@ -221,13 +221,19 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                                            {
                                                // Attempt to match this fragment
                                                auto fragmentMatch = matchFragment(neta, fragment);
-                                               if (fragmentMatch.set().empty())
+                                               if (fragmentMatch.matched().empty())
                                                    return false;
 
+                                               std::cout << "Fragment:\n";
                                                // Store this match as an instance
                                                auto &instanceAtoms = detectedStructure.instances().emplace_back();
-                                               for (const auto fragmentAtom : fragmentMatch.set())
+                                               for (const auto fragmentAtom : fragmentMatch.matched())
+                                               {
+                                                   std::cout << std::format(
+                                                       "{} @ {} {} {}\n", Elements::symbol(fragmentAtom->Z()),
+                                                       fragmentAtom->r().x, fragmentAtom->r().y, fragmentAtom->r().z);
                                                    instanceAtoms.push_back(fragmentAtom->r());
+                                               }
 
                                                return true;
                                            }),

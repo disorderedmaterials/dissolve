@@ -382,7 +382,7 @@ bool SpeciesSite::generateInstances()
                 {
                     // Determine the path of matched atoms - i.e. the atoms in the fragment.
                     auto matchedGroup = fragment_.matchedPath(&i);
-                    const auto &matchedAtoms = matchedGroup.set();
+                    const auto &matchedAtoms = matchedGroup.matched();
 
                     // Create vector of indices of all matched atoms
                     std::vector<int> matchedAtomIndices(matchedAtoms.size());
