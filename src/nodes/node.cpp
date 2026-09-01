@@ -357,14 +357,14 @@ void Node::deserialise(const SerialisedValue &node)
                         [this](const auto &k, const auto &v)
                         {
                             if (inputs_.contains(k))
-                            try
-                            {
-                                inputs_[k]->deserialise(v);
-                            }
-                  catch (std::exception &ex)
-                  {
-                      Messenger::exception("Error reading input {} in node {} ({}).", k, name(), ex.what());
-                  }
+                                try
+                                {
+                                    inputs_[k]->deserialise(v);
+                                }
+                                catch (std::exception &ex)
+                                {
+                                    Messenger::exception("Error reading input {} in node {} ({}).", k, name(), ex.what());
+                                }
                             else
                                 Messenger::exception("Node {} does not contain a parameter {}", name(), k);
                         });
@@ -372,14 +372,14 @@ void Node::deserialise(const SerialisedValue &node)
                         [this](const auto &k, const auto &v)
                         {
                             if (options_.contains(k))
-                            try
-                            {
-                                options_[k]->deserialise(v);
-                            }
-                  catch (std::exception &ex)
-                  {
-                      Messenger::exception("Error reading option {} in node {} ({}).", k, name(), ex.what());
-                  }
+                                try
+                                {
+                                    options_[k]->deserialise(v);
+                                }
+                                catch (std::exception &ex)
+                                {
+                                    Messenger::exception("Error reading option {} in node {} ({}).", k, name(), ex.what());
+                                }
                             else
                                 Messenger::exception("Node {} does not contain an option {}", name(), k);
                         });
