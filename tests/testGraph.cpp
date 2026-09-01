@@ -83,7 +83,7 @@ Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSour
         // Move the species node into the graph
         currentGraph_->addNode(std::move(speciesUnique), speciesNode.name());
 
-        auto insertNodeName = std::format("Insert-{}", speciesNode.name());
+        auto insertNodeName = std::format("InsertRandom-{}", speciesNode.name());
         EXPECT_TRUE(appendNode("InsertRandom", insertNodeName));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Population", population));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Density", rho));
