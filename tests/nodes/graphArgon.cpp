@@ -18,7 +18,7 @@ TEST(GraphArgonTest, InitSimulation)
     testGraph.createConfiguration("Box", {{"Ar", 1000}}, 0.0213);
 
     // Get the Insert node and run the graph
-    auto insertNode = testGraph.findNode("Insert-Ar");
+    auto insertNode = testGraph.findNode("InsertRandom-Ar");
     ASSERT_TRUE(insertNode);
     ASSERT_EQ(insertNode->run(), NodeConstants::ProcessResult::Success);
 

@@ -25,7 +25,7 @@ TEST(TrajectoryNodesTest, RoundTrip)
     ASSERT_TRUE(trajectoryImport);
     ASSERT_TRUE(trajectoryImport->setOption<std::string>("FilePath", importFile));
     ASSERT_TRUE(testGraph_.createNode("SetCoordinates"));
-    ASSERT_TRUE(testGraph_.addEdge({"Insert-Water", "Configuration", "SetCoordinates", "Configuration"}));
+    ASSERT_TRUE(testGraph_.addEdge({"InsertRandom-Water", "Configuration", "SetCoordinates", "Configuration"}));
     ASSERT_TRUE(testGraph_.addEdge({"ImportXYZTrajectory", "Structure", "SetCoordinates", "Structure"}));
 
     // Create an export configuration trajectory node
