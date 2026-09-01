@@ -314,23 +314,15 @@ void Species::create(const Structure &structure)
     for (auto &bond : structure.bonds())
         bonds_.emplace_back(this, &atoms_[bond->i()->index()], &atoms_[bond->j()->index()]);
 
+    // Copy box
+    box_ = structure.box();
+
+    // Copy instances
+    instances_ = structure.instances();
+
     // Perform rest of setup
     finaliseIntramolecularData();
 }
 
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
-
-// Return as a Structure
-Structure Species::asStructure() const
-{
-    Structure result;
-
-    for (auto &i : atoms_)
-        result.addAtom(i.Z(), i.r(), i.q())->setIndex(i.index());
-
-    for (auto &bond : bonds_)
-        result.addBond(bond.i()->index(), bond.j()->index());
-
-    return result;
-}

@@ -43,7 +43,7 @@ void AtomBase::setQ(double q) { q_ = q; }
 double AtomBase::q() const { return q_; }
 
 // Return index (0->[N-1])
-int AtomBase::index() const { return index_; };
+int AtomBase::index() const { return index_; }
 
 // Set index
 void AtomBase::setIndex(int index) { index_ = index; }

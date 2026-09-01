@@ -171,7 +171,7 @@ int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const AtomBa
 {
     auto totalScore = 0;
     auto newMatchPath = matchPath;
-    newMatchPath.insert(i);
+    newMatchPath.append(i);
 
     // Loop over nodes in sequence
     for (const auto &node : sequence)

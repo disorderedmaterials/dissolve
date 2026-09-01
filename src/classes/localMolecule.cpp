@@ -68,4 +68,4 @@ const ConfigurationAtom &LocalMolecule::localAtom(int n) const { return localAto
 
 // Return local atoms
 std::vector<ConfigurationAtom> &LocalMolecule::localAtoms() { return localAtoms_; }
-const std::vector<ConfigurationAtom> &LocalMolecule::localAtoms() const { return localAtoms_; };
+const std::vector<ConfigurationAtom> &LocalMolecule::localAtoms() const { return localAtoms_; }

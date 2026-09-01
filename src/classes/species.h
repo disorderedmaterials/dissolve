@@ -12,6 +12,7 @@
 #include "classes/speciesImproper.h"
 #include "classes/speciesSite.h"
 #include "classes/speciesTorsion.h"
+#include "classes/structure.h"
 #include "templates/keyedVector.h"
 #include <memory>
 #include <vector>
@@ -21,7 +22,6 @@ class CommonBond;
 class CommonAngle;
 class CommonTorsion;
 class CommonImproper;
-class Structure;
 
 // Species Definition
 class Species
@@ -59,6 +59,8 @@ class Species
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
     // Flag stating whether local Atom type indices are up-to-date
     bool typeIndicesValid_{false};
+    // Positional instances of the species
+    std::vector<std::vector<Vector3>> instances_;
 
     public:
     // Return the number of atoms in the species (or only those with the specified presence)
@@ -91,6 +93,10 @@ class Species
     double totalCharge(bool useAtomTypes) const;
     // Update type indices per Atom
     void updateTypeIndexing();
+    // Return positional instances
+    const std::vector<std::vector<Vector3>> &instances() const;
+    // Return as a Structure
+    Structure asStructure(bool includeInstances = false) const;
 
     /*
      * Intramolecular Data
@@ -301,8 +307,6 @@ class Species
     void create(const Structure &structure);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
-    // Return as a Structure
-    Structure asStructure() const;
 
     /*
      * Serialisation

@@ -172,6 +172,8 @@ void SpeciesAtom::serialise(std::string tag, SerialisedValue &target) const
     if (atomType_)
         target[tag]["type"] = atomType_->name().data();
 }
+
+// Read values from a serialisable value
 void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
     index_ = Deserialisable::deser<int>(node.at("index"));

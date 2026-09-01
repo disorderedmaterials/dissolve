@@ -25,6 +25,13 @@ std::string_view DetectMoleculesNode::type() const { return "DetectMolecules"; }
 std::string_view DetectMoleculesNode::summary() const { return "Detect molecular instances within a structure"; }
 
 /*
+ * Data
+ */
+
+// Return detected structures
+const std::map<std::string, Structure> &DetectMoleculesNode::detectedStructures() const { return detectedStructures_; }
+
+/*
  * Processing
  */
 
@@ -155,7 +162,7 @@ NETAMatchedGroup DetectMoleculesNode::matchFragment(const NETADefinition &neta, 
     for (auto index : fragmentAtoms)
     {
         auto matchedGroup = neta.matchedPath(inputStructure_.atom(index));
-        if (!matchedGroup.set().empty())
+        if (!matchedGroup.matched().empty())
             return matchedGroup;
     }
 
@@ -187,7 +194,7 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
             auto structure = copyAtomsAndBonds(fragments.front());
             structure.instances().push_back(getAtomCoordinates(fragments.front()));
 
-            detectedStructures_.emplace_back(structure);
+            detectedStructures_[EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); })] = structure;
 
             continue;
         }
@@ -201,8 +208,8 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
 
             // Apply the NETA match back over the fragement in order to get the matched atom ordering, and create a structure
             auto netaMatch = matchFragment(neta, currentFragment);
-            std::vector<int> netaOrdering(netaMatch.set().size());
-            std::ranges::transform(netaMatch.set(), netaOrdering.begin(), [](auto atom) { return atom->index(); });
+            std::vector<int> netaOrdering(netaMatch.matched().size());
+            std::ranges::transform(netaMatch.matched(), netaOrdering.begin(), [](auto atom) { return atom->index(); });
 
             // Create a provisional structure for the current fragment, using indices in the order matched by NETA
             auto detectedStructure = copyAtomsAndBonds(netaOrdering);
@@ -214,46 +221,50 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                                            {
                                                // Attempt to match this fragment
                                                auto fragmentMatch = matchFragment(neta, fragment);
-                                               if (fragmentMatch.set().empty())
+                                               if (fragmentMatch.matched().empty())
                                                    return false;
 
+                                               std::cout << "Fragment:\n";
                                                // Store this match as an instance
                                                auto &instanceAtoms = detectedStructure.instances().emplace_back();
-                                               for (const auto fragmentAtom : fragmentMatch.set())
+                                               for (const auto fragmentAtom : fragmentMatch.matched())
+                                               {
+                                                   std::cout << std::format(
+                                                       "{} @ {} {} {}\n", Elements::symbol(fragmentAtom->Z()),
+                                                       fragmentAtom->r().x, fragmentAtom->r().y, fragmentAtom->r().z);
                                                    instanceAtoms.push_back(fragmentAtom->r());
+                                               }
 
                                                return true;
                                            }),
                             fragments.end());
 
-            // Store the detected structure
-            detectedStructures_.emplace_back(detectedStructure);
+            // Store the detected structure (under a unique name)
+            auto name = DissolveSys::uniqueName(
+                EmpiricalFormula::formula(detectedStructure.atoms(), [](const auto &i) { return i->Z(); }), detectedStructures_,
+                [](const auto &pair) { return pair.first; });
+            detectedStructures_[name] = detectedStructure;
         }
     }
 
     message("Detected {} distinct fragment structures:\n\n", detectedStructures_.size());
-    message("   ID     N  Species Formula\n");
+    message("   ID     N  Name / Empirical Formula\n");
     auto count = 1;
-    for (const auto &structure : detectedStructures_)
-        message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(),
-                EmpiricalFormula::formula(structure.atoms(), [](const auto &i) { return i->Z(); }));
+    for (const auto &[name, structure] : detectedStructures_)
+        message("  {:3d}  {:4d}  {}\n", count++, structure.instances().size(), name);
     message("");
 
-    /*
-     * Dynamic outputs
-     */
-
     // Register dynamic outputs
-    for (auto i = 0; i < detectedStructures_.size(); ++i)
+    for (auto &[name, structure] : detectedStructures_)
     {
-        auto val = detectedStructures_[i];
-        auto paramName = std::string("DetectedMolecule" + std::format("-{}", i));
-
-        // Check if output already exists - do not add if it does
-        if (outputs_.find(paramName) != outputs_.end())
-            continue;
-
-        addOutput(paramName, "Detected molecular structure", detectedStructures_[i]);
+        // Update output data if it already exists, otherwise create new
+        auto outputIt = outputs_.find(name);
+        if (outputIt == outputs_.end())
+            addOutput(name, "Detected molecular structure", structure);
+        else
+        {
+            // TODO Need to update the underlying ParameterBase here, but how?
+        }
     }
 
     return NodeConstants::ProcessResult::Success;

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "species.h"
+#include "nodes/species.h"
 #include "nodes/constants.h"
 
 SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
-    addInput("Structure", "Structure of the species", structure_);
+    addInput("Structure", "Structure of the species", structure_)->setFlags(ParameterBase::ParameterFlags::Required);
     addInput("Recipe", "Forcefield recipe to apply to the species", recipe_);
 
     addPointerOutput<const Species>("Species", "Created species", species_);
@@ -37,13 +37,13 @@ const Species &SpeciesNode::species() const { return species_; }
 // Perform processing
 NodeConstants::ProcessResult SpeciesNode::process()
 {
-    if (structure_ && recipe_)
-    {
+    if (structure_)
         species_.create(*structure_);
-        return recipe_->apply(species_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
-    }
 
-    return NodeConstants::ProcessResult::Unchanged;
+    if (recipe_)
+        return recipe_->apply(species_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+
+    return NodeConstants::ProcessResult::Success;
 }
 
 /*

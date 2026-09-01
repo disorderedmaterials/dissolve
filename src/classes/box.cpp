@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/box.h"
-#include "base/serialiser.h"
+#include "base/serialiserLibrary.h"
 #include "classes/cell.h"
 #include "math/mathFunc.h"
 
@@ -567,4 +567,10 @@ void Box::serialise(std::string tag, SerialisedValue &target) const
     auto &box = target[tag];
     box["lengths"] = SerialisedValue::array_type{a_, b_, c_};
     box["angles"] = SerialisedValue::array_type{alpha_, beta_, gamma_};
+}
+
+// Read values from a serialisable value
+void Box::deserialise(const SerialisedValue &node)
+{
+    initialise(Deserialisable::deser<Vector3>(node.at("lengths")), Deserialisable::deser<Vector3>(node.at("angles")));
 }

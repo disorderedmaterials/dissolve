@@ -7,8 +7,9 @@
 #include "nodes/calculateBonding.h"
 #include "nodes/cif/importCIFStructure.h"
 #include "nodes/detectMolecules.h"
+#include "nodes/exportXYZConfiguration.h"
+#include "nodes/replicatedConfiguration.h"
 #include "nodes/species.h"
-#include "nodes/supercellConfiguration.h"
 #include "tests/testGraph.h"
 #include <gtest/gtest.h>
 #include <optional>
@@ -22,104 +23,115 @@ class CIFNodeTest : public ::testing::Test
     CIFNodeTest() = default;
     ~CIFNodeTest() = default;
 
-    public:
+    protected:
+    // The test graph
+    TestGraph testGraph_;
+    // Nodes
+    ImportCIFStructureNode *importCIFStructureNode_{nullptr};
+    CalculateBondingNode *calculateBondingNode_{nullptr};
+    DetectMoleculesNode *detectMoleculesNode_{nullptr};
     // Molecular species information
     using MolecularSpeciesInfo = std::tuple<std::string, int, int>;
-    // Retrieve detected molecule structures
-    std::vector<Structure> getDetectedMolecularStructures(const DetectMoleculesNode *node, int N)
+
+    protected:
+    // Set up and load the specified CIF
+    void setUp(std::string cifFile, bool calculateBonding = true)
     {
-        std::vector<Structure> structures;
-        for (int i = 0; i < N; i++)
+        importCIFStructureNode_ = static_cast<ImportCIFStructureNode *>(testGraph_.appendNode("ImportCIFStructure"));
+        ASSERT_TRUE(importCIFStructureNode_);
+        importCIFStructureNode_->setOption("FilePath", "cif/" + cifFile);
+
+        if (calculateBonding)
         {
-            auto structureI = node->findOutput("DetectedMolecule-" + std::to_string(i));
-            structures.push_back(structureI->get<Structure>());
+            calculateBondingNode_ = static_cast<CalculateBondingNode *>(testGraph_.appendNode("CalculateBonding"));
+            ASSERT_TRUE(calculateBondingNode_);
+            calculateBondingNode_->setOption("Clear", true);
+
+            testGraph_.addEdge({std::string(importCIFStructureNode_->name()), "Structure",
+                                std::string(calculateBondingNode_->name()), "Structure"});
         }
-        return structures;
+
+        detectMoleculesNode_ = static_cast<DetectMoleculesNode *>(testGraph_.appendNode("DetectMolecules"));
+        ASSERT_TRUE(detectMoleculesNode_);
+        testGraph_.addEdge({std::string(calculateBonding ? calculateBondingNode_->name() : importCIFStructureNode_->name()),
+                            "Structure", std::string(detectMoleculesNode_->name()), "Structure"});
     }
-    // Extend graph to convert detected species to a supercell configuration
-    void extendToSupercell(TestGraph *graph, std::vector<std::pair<Elements::Element, std::string>> expectedSpecies,
-                           const Vector3 &boxLengths, const Vector3 &boxAngles, Vector3i supercellRepeat = {1, 1, 1})
+    // Test supplied structure against that reconstructed from detected sub-structures
+    [[nodiscard]] testing::AssertionResult testReconstructed(const Structure &cif, std::optional<Vector3i> repeat = {})
     {
-        EXPECT_TRUE(graph->appendNode("Configuration"));
-        EXPECT_TRUE(graph->appendNode("SetBox"));
-        ASSERT_TRUE(graph->fetchHead()->setOption("Lengths", boxLengths));
-        ASSERT_TRUE(graph->fetchHead()->setOption("Angles", boxAngles));
-        EXPECT_TRUE(graph->appendNode("SupercellConfiguration"));
-        ASSERT_TRUE(graph->fetchHead()->setOption("SupercellRepeat", supercellRepeat));
-        ASSERT_TRUE(graph->addEdge({"Configuration", "Configuration", "SetBox", "Input"}));
+        // Create a configuration
+        auto *lastNode = testGraph_.appendNode("Configuration", "Reconstructed");
+        if (!lastNode)
+            return testing::AssertionFailure() << "Failed to create Configuration node.";
 
-        const auto nExpectedSpecies = expectedSpecies.size();
-
-        for (const auto &sp : expectedSpecies)
+        // Instantiate detected structures
+        for (const auto &[name, structure] : detectMoleculesNode_->detectedStructures())
         {
-            auto [z, name] = sp;
-            std::unique_ptr<SpeciesNode> speciesUnique;
-            speciesUnique = TestGraph::createAtomicSpecies(z);
-            EXPECT_TRUE(graph->addNode(std::move(speciesUnique), name));
-            EXPECT_TRUE(graph->appendNode("InsertRandom", std::string("InsertRandom" + name)));
-            ASSERT_TRUE(graph->fetchHead()->setOption("BoxScaling", InsertRandomNode::BoxScalingType::None));
+            // Take the output from detectedMoleculesNode and create a Species from it
+            auto *speciesNode = static_cast<SpeciesNode *>(testGraph_.appendNode("Species", name));
+            if (!speciesNode)
+                return testing::AssertionFailure() << std::format("Failed to create Species node '{}'.", name);
+
+            testGraph_.addEdge({std::string(detectMoleculesNode_->name()), name, name, "Structure"});
+
+            // Instantiate the species in the configuration
+            auto *instantiateNode = testGraph_.appendNode("Instantiate", std::format("Instantiate{}", name));
+            if (!instantiateNode)
+                return testing::AssertionFailure() << std::format("Failed to create Instantiate node 'Instantiate{}'.", name);
+            testGraph_.addEdge({name, "Species", std::string(instantiateNode->name()), "Species"});
+            testGraph_.addEdge(
+                {std::string(lastNode->name()), "Configuration", std::string(instantiateNode->name()), "Configuration"});
+            lastNode = instantiateNode;
         }
 
-        // Create species from structure
-        ASSERT_TRUE(graph->addEdge({"DetectMolecules", "DetectedMolecule-0", expectedSpecies.front().second, "Structure"}));
-
-        // Pass configuration output from set box node to the input configuration of this insert node
-        ASSERT_TRUE(graph->addEdge(
-            {"SetBox", "Output", std::string("InsertRandom" + expectedSpecies.front().second), "Configuration"}));
-
-        // Pass this species to its insert node
-        ASSERT_TRUE(graph->addEdge({expectedSpecies.front().second, "Species",
-                                    std::string("InsertRandom" + expectedSpecies.front().second), "Species"}));
-
-        // Pass the corresponding detected molecular structure to this species' insert node
-        // TODO: check if we have a reliable molecule name to use here at the structure level
-        ASSERT_TRUE(graph->addEdge({"DetectMolecules", "DetectedMolecule-0",
-                                    std::string("InsertRandom" + expectedSpecies.front().second), "Instances"}));
-
-        for (int i = 1; i < expectedSpecies.size() - 1; i++)
+        // Replicate?
+        if (repeat)
         {
-            auto lastSpeciesName = expectedSpecies[i - 1].second;
-            auto speciesName = expectedSpecies[i].second;
+            auto *replicatedConfigurationNode =
+                static_cast<ReplicatedConfigurationNode *>(testGraph_.appendNode("ReplicatedConfiguration"));
+            if (!replicatedConfigurationNode)
+                return testing::AssertionFailure() << "Failed to create ReplicatedConfigurationNode.";
 
-            // Create species from structure
-            ASSERT_TRUE(graph->addEdge(
-                {"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(i)), speciesName, "Structure"}));
-
-            // Pass configuration output from preceding insert node to the input configuration of this one
-            ASSERT_TRUE(graph->addEdge({std::string("InsertRandom" + lastSpeciesName), "Configuration",
-                                        std::string("InsertRandom" + speciesName), "Configuration"}));
-
-            // Pass this species to its insert node
-            ASSERT_TRUE(graph->addEdge({speciesName, "Species", std::string("InsertRandom" + speciesName), "Species"}));
-
-            // Pass the corresponding detected molecular structure to this species' insert node
-            // TODO: check if we have a reliable molecule name to use here at the structure level
-            ASSERT_TRUE(graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(i)),
-                                        std::string("InsertRandom" + speciesName), "Instances"}));
+            replicatedConfigurationNode->setOption("Repeat", *repeat);
+            testGraph_.addEdge({std::string(lastNode->name()), "Configuration",
+                                std::string(replicatedConfigurationNode->name()), "Configuration"});
+            lastNode = replicatedConfigurationNode;
         }
 
-        //
-        ASSERT_TRUE(graph->addEdge({std::string("InsertRandom" + expectedSpecies[nExpectedSpecies - 2].second), "Configuration",
-                                    std::string("InsertRandom" + expectedSpecies.back().second), "Configuration"}));
+        // Run the graph from the last node
+        if (lastNode->run() != NodeConstants::ProcessResult::Success)
+            return testing::AssertionFailure() << "Failed to run the reconstruction graph.";
 
-        // Create species from structure
-        ASSERT_TRUE(
-            graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(expectedSpecies.size() - 1)),
-                            expectedSpecies.back().second, "Structure"}));
+        // Get the configuration from the last node
+        auto *cfg = lastNode->getOutputValue<Configuration *>("Configuration");
+        if (!cfg)
+            return testing::AssertionFailure() << "Failed to retrieve reconstructed configuration.";
+        ExportXYZConfigurationNode::exportConfiguration(cfg, "THIS.xyz");
 
-        // Pass configuration output from set box node to the input configuration of the supercell configuration
-        ASSERT_TRUE(graph->addEdge({std::string("InsertRandom" + expectedSpecies.back().second), "Configuration",
-                                    "SupercellConfiguration", "Configuration"}));
+        // Check atom-for-atom - search for atoms in the original CIF structure in the reconstructed configuration
+        auto repeats = repeat.value_or(Vector3i({1, 1, 1}));
+        for (auto repeatX = 0; repeatX < repeats.x; ++repeatX)
+            for (auto repeatY = 0; repeatY < repeats.y; ++repeatY)
+                for (auto repeatZ = 0; repeatZ < repeats.z; ++repeatZ)
+                {
+                    for (const auto &structureAtom : cif.atoms())
+                    {
+                        auto r = structureAtom->r() + cif.box().axes() * Vector3(repeatX, repeatY, repeatZ);
+                        if (std::ranges::find_if(cfg->atoms(),
+                                                 [&structureAtom, r](const auto &cfgAtom)
+                                                 {
+                                                     return structureAtom->Z() == cfgAtom.Z() &&
+                                                            fabs(r.x - cfgAtom.r().x) < 1.0e-6 &&
+                                                            fabs(r.y - cfgAtom.r().y) < 1.0e-6 &&
+                                                            fabs(r.z - cfgAtom.r().z) < 1.0e-6;
+                                                 }) == cfg->atoms().end())
+                            return testing::AssertionFailure()
+                                   << std::format("Failed to find atom {} @ {},{},{} in the reconstructed structure.",
+                                                  Elements::symbol(structureAtom->Z()), r.x, r.y, r.z);
+                    }
+                }
 
-        // Pass this species to its insert node
-        ASSERT_TRUE(graph->addEdge({expectedSpecies.back().second, "Species",
-                                    std::string("InsertRandom" + expectedSpecies.back().second), "Species"}));
-
-        // Pass the corresponding detected molecular structure to this species' insert node
-        // TODO: check if we have a reliable molecule name to use here at the structure level
-        ASSERT_TRUE(
-            graph->addEdge({"DetectMolecules", std::string("DetectedMolecule-" + std::to_string(expectedSpecies.size() - 1)),
-                            std::string("InsertRandom" + expectedSpecies.back().second), "Instances"}));
+        return testing::AssertionSuccess();
     }
     // Test Box definition
     void testBox(const Configuration *cfg, const Vector3 &lengths, const Vector3 &angles, int nAtoms)
@@ -134,11 +146,11 @@ class CIFNodeTest : public ::testing::Test
         EXPECT_NEAR(cfg->box().axisAngles().z, angles.z, 1.0e-6);
     }
     // Test molecular species information provided
-    void testDetectedMolecularStructure(const Structure &structure, const MolecularSpeciesInfo &info)
+    void testDetectedMolecularStructure(const std::map<std::string, Structure> &structures, const MolecularSpeciesInfo &info)
     {
-        // EXPECT_EQ(structure.name(), std::get<0>(info));
-        EXPECT_EQ(structure.instances().size(), std::get<1>(info));
-        EXPECT_EQ(structure.nAtoms(), std::get<2>(info));
+        ASSERT_TRUE(structures.contains(std::get<0>(info)));
+        EXPECT_EQ(structures.at(std::get<0>(info)).instances().size(), std::get<1>(info));
+        EXPECT_EQ(structures.at(std::get<0>(info)).nAtoms(), std::get<2>(info));
     }
     /*
     // Check instance consistency with reference coordinates
@@ -170,165 +182,112 @@ class CIFNodeTest : public ::testing::Test
 
 TEST_F(CIFNodeTest, Parse)
 {
-    TestGraph testGraph;
-
     // Test files with expected number of structure atoms
     std::vector<std::pair<std::string, int>> cifs = {{"1557470.cif", 86}, {"1557599.cif", 56}, {"7705246.cif", 364},
                                                      {"9000004.cif", 6},  {"9000095.cif", 30}, {"9000418.cif", 64}};
 
     for (auto &[cif, nStructureAtoms] : cifs)
     {
-        ASSERT_TRUE(testGraph.appendNode("ImportCIFStructure", cif));
-        testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-        ASSERT_EQ(testGraph.fetchHead()->run(), NodeConstants::ProcessResult::Success);
-        const auto structure = testGraph.fetchHead()->getOutputValue<Structure>("Structure");
+        ASSERT_TRUE(testGraph_.appendNode("ImportCIFStructure", cif));
+        testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+        ASSERT_EQ(testGraph_.fetchHead()->run(), NodeConstants::ProcessResult::Success);
+        const auto structure = testGraph_.fetchHead()->getOutputValue<Structure>("Structure");
         ASSERT_EQ(structure.atoms().size(), nStructureAtoms);
     }
 }
+
 TEST_F(CIFNodeTest, NaClContinuous)
 {
-    TestGraph testGraph;
-
-    // Load the CIF file
-    auto cif = std::string("NaCl-1000041.cif");
-
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    EXPECT_TRUE(testGraph.appendNode("CalculateBonding"));
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
+    setUp("NaCl-1000041.cif");
 
     // Basic info
-    ASSERT_EQ(testGraph.findNode("CalculateBonding")->run(), NodeConstants::ProcessResult::Success);
-    EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
+    ASSERT_EQ(importCIFStructureNode_->run(), NodeConstants::ProcessResult::Success);
+    EXPECT_EQ(importCIFStructureNode_->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_225);
-
-    // constexpr double A = 5.62;
 
     // We should find a continuous framework after rebonding and the detect molecules node should fail accordingly
-    ASSERT_EQ(testGraph.findNode("DetectMolecules")->run(), NodeConstants::ProcessResult::Failed);
+    ASSERT_EQ(detectMoleculesNode_->run(), NodeConstants::ProcessResult::Failed);
 }
 
-TEST_F(CIFNodeTest, NaClMolecules)
+TEST_F(CIFNodeTest, NaCl)
 {
-    TestGraph testGraph;
+    setUp("NaCl-1000041.cif", false);
 
-    GTEST_SKIP() << "Known WIP Segfault";
-
-    // Load the CIF file
-    auto cif = std::string("NaCl-1000041.cif");
-
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
-
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
-    ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-
-    // Basic info
-    EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
-              SpaceGroups::SpaceGroup_225);
-    constexpr double A = 5.62;
+    ASSERT_EQ(detectMoleculesNode_->run(), NodeConstants::ProcessResult::Success);
 
     // Check atomic positions
+    constexpr double A = 5.62;
     std::vector<Vector3> R = {{0.0, 0.0, 0.0}, {0.0, A / 2, A / 2}, {A / 2, 0.0, A / 2}, {A / 2, A / 2, 0.0}};
-    auto structures = getDetectedMolecularStructures(detectMoleculesNode, 2);
+    auto structures = detectMoleculesNode_->detectedStructures();
     EXPECT_EQ(structures.size(), 2);
-    testDetectedMolecularStructure(structures.at(0), {"Na", 4, 1});
-    for (auto &&[instance, r2] : zip(structures.at(0).instances(), R))
+    testDetectedMolecularStructure(structures, {"Na", 4, 1});
+    for (auto &&[instance, r2] : zip(structures["Na"].instances(), R))
         EXPECT_TRUE(testVector3("Molecular instance coordinates", instance[0], r2));
-    testDetectedMolecularStructure(structures.at(1), {"Cl", 4, 1});
-    for (auto &&[instance, r2] : zip(structures.at(1).instances(), R))
+    testDetectedMolecularStructure(structures, {"Cl", 4, 1});
+    for (auto &&[instance, r2] : zip(structures["Cl"].instances(), R))
         EXPECT_TRUE(testVector3("Molecular instance coordinates", instance[0], (r2 - A / 2).abs()));
 
-    // 2x2x2 supercell
-    extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}}, {A, A, A}, {90, 90, 90}, {2, 2, 2});
-    auto supercellConfigurationNode = static_cast<SupercellConfigurationNode *>(testGraph.findNode("SupercellConfiguration"));
-    ASSERT_EQ(supercellConfigurationNode->run(), NodeConstants::ProcessResult::Success);
-    testBox(supercellConfigurationNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A * 2, A * 2, A * 2},
-            {90, 90, 90}, 8 * 8);
+    ASSERT_TRUE(testReconstructed(importCIFStructureNode_->getOutputValue<Structure>("Structure"), Vector3i(2, 2, 2)));
 }
 
-TEST_F(CIFNodeTest, NaClO3)
+TEST_F(CIFNodeTest, NaClO3Atomic)
 {
-    TestGraph testGraph;
+    setUp("NaClO3-1010057.cif", false);
 
-    GTEST_SKIP() << "Known WIP Segfault";
-
-    // Load the CIF file
-    auto cif = std::string("NaClO3-1010057.cif");
-
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
-
-    ASSERT_EQ(testGraph.findNode("ImportCIFStructure")->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(importCIFStructureNode_->run(), NodeConstants::ProcessResult::Success);
 
     // Check basic info
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
+    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
 
-    EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
+    EXPECT_EQ(testGraph_.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_198);
 
-    // No bonding defs in the CIF, so we expect species for each atomic
-    // component (4 Na, 4 Cl, and 12 O)
+    // No bonding defs in the CIF, so we expect species for each atomic component (4 Na, 4 Cl, and 12 O)
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(detectMoleculesNode_->detectedStructures().size(), 3);
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Na", 4, 1});
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Cl", 4, 1});
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"O", 12, 1});
 
-    auto detectedMoleculeStructuresA = getDetectedMolecularStructures(detectMoleculesNode, 3);
-    testDetectedMolecularStructure(detectedMoleculeStructuresA.at(0), {"Na", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresA.at(1), {"Cl", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresA.at(2), {"O", 12, 1});
+    ASSERT_TRUE(testReconstructed(importCIFStructureNode_->getOutputValue<Structure>("Structure"), Vector3i(2, 2, 2)));
+}
 
-    // Check box
-    constexpr double A = 6.55;
-    extendToSupercell(&testGraph, {{Elements::Na, "Na"}, {Elements::Cl, "Cl"}, {Elements::O, "O"}}, {A, A, A}, {90, 90, 90});
-    auto supercellConfigurationNode = static_cast<SupercellConfigurationNode *>(testGraph.findNode("SupercellConfiguration"));
-    ASSERT_EQ(supercellConfigurationNode->run(), NodeConstants::ProcessResult::Success);
-    testBox(supercellConfigurationNode->getOutputValue<Configuration *>("SupercellConfiguration"), {A, A, A}, {90, 90, 90}, 20);
+TEST_F(CIFNodeTest, NaClO3Molecular)
+{
+    setUp("NaClO3-1010057.cif");
 
-    // Calculate bonding ourselves to get the correct species
-    EXPECT_TRUE(testGraph.appendNode("CalculateBonding"));
-    testGraph.removeEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
+    ASSERT_EQ(detectMoleculesNode_->run(), NodeConstants::ProcessResult::Success);
 
-    testGraph.setUpdateRequired();
-    ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
-    auto detectedMoleculeStructuresB = getDetectedMolecularStructures(detectMoleculesNode, 2);
-    ASSERT_EQ(detectedMoleculeStructuresB.size(), 2);
-    testDetectedMolecularStructure(detectedMoleculeStructuresB.at(0), {"Na", 4, 1});
-    testDetectedMolecularStructure(detectedMoleculeStructuresB.at(1), {"ClO3", 4, 4});
+    ASSERT_EQ(detectMoleculesNode_->detectedStructures().size(), 2);
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"Na", 4, 1});
+    testDetectedMolecularStructure(detectMoleculesNode_->detectedStructures(), {"ClO3", 4, 4});
+
+    ASSERT_TRUE(testReconstructed(importCIFStructureNode_->getOutputValue<Structure>("Structure"), Vector3i(2, 2, 2)));
 }
 
 TEST_F(CIFNodeTest, CuBTC)
 {
-    TestGraph testGraph;
-
     // Load the CIF file
     auto cif = std::string("CuBTC-7108574.cif");
 
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph.appendNode("CalculateBonding"));
-    testGraph.fetchHead()->setOption("Clear", true);
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
+    EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
+    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
+    testGraph_.fetchHead()->setOption("Clear", true);
+    ASSERT_TRUE(testGraph_.appendNode("DetectMolecules"));
+    testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
+    testGraph_.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
-    ASSERT_EQ(testGraph.findNode("ImportCIFStructure")->run(), NodeConstants::ProcessResult::Success);
+    ASSERT_EQ(testGraph_.findNode("ImportCIFStructure")->run(), NodeConstants::ProcessResult::Success);
 
     // Check basic info
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
+    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 2);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 2);
-    const auto box = detectedMoleculeStructures[0].box();
 
-    EXPECT_EQ(testGraph.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
+    EXPECT_EQ(testGraph_.findNode("ImportCIFStructure")->findOption("SpaceGroupID")->get<SpaceGroups::SpaceGroupId>(),
               SpaceGroups::SpaceGroup_225);
 
     /* TODO: Handle supercell configurations
@@ -357,25 +316,25 @@ TEST_F(CIFNodeTest, CuBTCActiveAssemblies)
     EmpiricalFormula::EmpiricalFormulaMap cellFormulaNH2 = cellFormulaH;
     cellFormulaNH2[Elements::N] = 6 * N;
     cellFormulaNH2[Elements::H] *= 2;
-    EXPECT_TRUE(testGraph.appendNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupA1"));
-    testGraph.fetchHead()->setOption("Assembly", std::string("A"));
-    testGraph.fetchHead()->setOption("AtomGroup", std::string("1"));
-    testGraph.fetchHead()->setOption("SetActive", false);
-    EXPECT_TRUE(testGraph.appendNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupB2"));
-    testGraph.fetchHead()->setOption("Assembly", std::string("B"));
-    testGraph.fetchHead()->setOption("AtomGroup", std::string("2"));
-    testGraph.fetchHead()->setOption("SetActive", true);
-    EXPECT_TRUE(testGraph.appendNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupC2"));
-    testGraph.fetchHead()->setOption("Assembly", std::string("C"));
-    testGraph.fetchHead()->setOption("AtomGroup", std::string("2"));
-    testGraph.fetchHead()->setOption("SetActive", true);
-    testGraph.removeEdge(
+    EXPECT_TRUE(testGraph_.appendNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupA1"));
+    testGraph_.fetchHead()->setOption("Assembly", std::string("A"));
+    testGraph_.fetchHead()->setOption("AtomGroup", std::string("1"));
+    testGraph_.fetchHead()->setOption("SetActive", false);
+    EXPECT_TRUE(testGraph_.appendNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupB2"));
+    testGraph_.fetchHead()->setOption("Assembly", std::string("B"));
+    testGraph_.fetchHead()->setOption("AtomGroup", std::string("2"));
+    testGraph_.fetchHead()->setOption("SetActive", true);
+    EXPECT_TRUE(testGraph_.appendNode("SetCIFAtomGroupActivity", cifNameFromFile(cif) + "//AtomGroupC2"));
+    testGraph_.fetchHead()->setOption("Assembly", std::string("C"));
+    testGraph_.fetchHead()->setOption("AtomGroup", std::string("2"));
+    testGraph_.fetchHead()->setOption("SetActive", true);
+    testGraph_.removeEdge(
         {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", std::string(detectMoleculesNode->name()),
-"CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", cifNameFromFile(cif) +
-"//AtomGroupA1", "CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) + "//AtomGroupA1", "CIFContext",
-cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) + "//AtomGroupB2",
-"CIFContext", cifNameFromFile(cif) + "//AtomGroupC2", "CIFContext"}); testGraph.addEdge( {cifNameFromFile(cif) +
-"//AtomGroupC2", "CIFContext", std::string(detectMoleculesNode->name()), "CIFContext"}); testGraph.setUpdateRequired();
+"CIFContext"}); testGraph_.addEdge( {cifNameFromFile(cif) + "//StructureCleanup", "CIFContext", cifNameFromFile(cif) +
+"//AtomGroupA1", "CIFContext"}); testGraph_.addEdge( {cifNameFromFile(cif) + "//AtomGroupA1", "CIFContext",
+cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext"}); testGraph_.addEdge( {cifNameFromFile(cif) + "//AtomGroupB2",
+"CIFContext", cifNameFromFile(cif) + "//AtomGroupC2", "CIFContext"}); testGraph_.addEdge( {cifNameFromFile(cif) +
+"//AtomGroupC2", "CIFContext", std::string(detectMoleculesNode->name()), "CIFContext"}); testGraph_.setUpdateRequired();
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
     EXPECT_EQ(EmpiricalFormula::formula(detectMoleculesNode->getOutputValue<Configuration
 *>("SupercellConfiguration")->atoms(),
@@ -383,9 +342,9 @@ cifNameFromFile(cif) + "//AtomGroupB2", "CIFContext"}); testGraph.addEdge( {cifN
               EmpiricalFormula::formula(cellFormulaNH2));
 
     // Remove those free oxygens so we just have a framework
-    auto removeAtomicsNode = testGraph.findNode(cifNameFromFile(cif) + "//RemoveAtomic");
+    auto removeAtomicsNode = testGraph_.findNode(cifNameFromFile(cif) + "//RemoveAtomic");
     removeAtomicsNode->setOption("RemoveAtomics", true);
-    testGraph.setUpdateRequired();
+    testGraph_.setUpdateRequired();
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
     auto detectedMoleculeStructuresB = getDetectedMolecularStructures(detectMoleculesNode, 2);
     EXPECT_EQ(detectedMoleculeStructuresB.size(), 0);
@@ -399,23 +358,22 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimple)
 
     auto cif = std::string("molecule-test-simple-ordered.cif");
 
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph.appendNode("CalculateBonding"));
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules", "DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
+    EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
+    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
+    ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
+    testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
+    testGraph_.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
+    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
-    auto &molStructure = detectedMoleculeStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
         {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
+    testDetectedMolecularStructure(detectedMoleculeStructures, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);
@@ -427,23 +385,22 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnordered)
 
     auto cif = std::string("molecule-test-simple-ordered.cif");
 
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph.appendNode("CalculateBonding"));
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules", "DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
+    EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
+    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
+    ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
+    testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
+    testGraph_.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
+    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
-    auto &molStructure = detectedMoleculeStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
         {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
+    testDetectedMolecularStructure(detectedMoleculeStructures, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);
@@ -455,23 +412,22 @@ TEST_F(CIFNodeTest, MoleculeOrderingSimpleUnorderedRotated)
 
     auto cif = std::string("molecule-test-simple-unordered-rotated.cif");
 
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph.appendNode("CalculateBonding"));
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules", "DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
-    testGraph.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
+    EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
+    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph_.appendNode("CalculateBonding"));
+    ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
+    testGraph_.addEdge({"ImportCIFStructure", "Structure", "CalculateBonding", "Structure"});
+    testGraph_.addEdge({"CalculateBonding", "Structure", "DetectMolecules", "Structure"});
 
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
+    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedMoleculeStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedMoleculeStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedMoleculeStructures.size(), 1);
 
-    auto &molStructure = detectedMoleculeStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {
         {Elements::Cl, 1}, {Elements::O, 1}, {Elements::C, 1}, {Elements::H, 3}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
+    testDetectedMolecularStructure(detectedMoleculeStructures, {EmpiricalFormula::formula(moleculeFormula), 6, 6});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);
@@ -483,20 +439,19 @@ TEST_F(CIFNodeTest, BigMoleculeOrdering)
 
     const auto cif = std::string("Bisphen_n_arenes_1517789.cif");
 
-    EXPECT_TRUE(testGraph.appendNode("ImportCIFStructure"));
-    testGraph.fetchHead()->setOption("FilePath", "cif/" + cif);
-    ASSERT_TRUE(testGraph.appendNode("DetectMolecules", "DetectMolecules"));
-    testGraph.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
+    EXPECT_TRUE(testGraph_.appendNode("ImportCIFStructure"));
+    testGraph_.fetchHead()->setOption("FilePath", "cif/" + cif);
+    ASSERT_TRUE(testGraph_.appendNode("DetectMolecules", "DetectMolecules"));
+    testGraph_.addEdge({"ImportCIFStructure", "Structure", "DetectMolecules", "Structure"});
 
-    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph.findNode("DetectMolecules"));
+    auto detectMoleculesNode = static_cast<DetectMoleculesNode *>(testGraph_.findNode("DetectMolecules"));
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
 
-    auto detectedStructures = getDetectedMolecularStructures(detectMoleculesNode, 1);
+    auto detectedStructures = detectMoleculesNode->detectedStructures();
     EXPECT_EQ(detectedStructures.size(), 1);
 
-    auto &molStructure = detectedStructures.front();
     EmpiricalFormula::EmpiricalFormulaMap moleculeFormula = {{Elements::O, 6}, {Elements::C, 51}, {Elements::H, 54}};
-    testDetectedMolecularStructure(molStructure, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
+    testDetectedMolecularStructure(detectedStructures, {EmpiricalFormula::formula(moleculeFormula), 4, 111});
 
     // auto &unitCellSpecies = static_cast<CIFMolecularSpeciesNode *>(detectMoleculesNode)->cleanedUnitCellSpecies();
     // testInstanceConsistency(cifMolecule, unitCellSpecies);

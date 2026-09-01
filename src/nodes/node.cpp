@@ -262,7 +262,7 @@ std::shared_ptr<ParameterBase> Node::findInput(std::string_view name) const
 }
 
 // Return input parameters
-Node::NodeParameterMap &Node::inputs() { return inputs_; };
+Node::NodeParameterMap &Node::inputs() { return inputs_; }
 
 // Return named output parameter if it exists
 std::shared_ptr<ParameterBase> Node::findOutput(std::string_view outputName) const
@@ -273,7 +273,7 @@ std::shared_ptr<ParameterBase> Node::findOutput(std::string_view outputName) con
 }
 
 // Return output parameters
-Node::NodeParameterMap &Node::outputs() { return outputs_; };
+Node::NodeParameterMap &Node::outputs() { return outputs_; }
 
 // Return named input parameter if it exists
 std::shared_ptr<ParameterBase> Node::findOption(std::string_view optionName) const
@@ -284,7 +284,7 @@ std::shared_ptr<ParameterBase> Node::findOption(std::string_view optionName) con
 }
 
 // Return Options
-Node::NodeParameterMap &Node::options() { return options_; };
+Node::NodeParameterMap &Node::options() { return options_; }
 
 // Get the incoming edges to this node
 Node::EdgeMap &Node::inputEdges() { return inputEdges_; }

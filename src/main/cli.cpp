@@ -100,7 +100,7 @@ bool CLIOptions::writeInputAndReload() const { return writeInputAndReload_; }
 bool CLIOptions::ignoreRestartFile() const { return ignoreRestartFile_; }
 
 // Return whether to prevent writing of the restart file
-bool CLIOptions::noRestartFile() const { return noRestartFile_; };
+bool CLIOptions::noRestartFile() const { return noRestartFile_; }
 
 // Return whether to simply export the graph as mermaid and quit
-bool CLIOptions::exportMermaid() const { return exportMermaid_; };
+bool CLIOptions::exportMermaid() const { return exportMermaid_; }

@@ -3,18 +3,18 @@
 
 #pragma once
 
+#include "base/units.h"
+#include "math/vector3.h"
 #include "nodes/node.h"
-#include <iostream>
-#include <sstream>
 
 // Forward Declarations
 class Configuration;
 
-class ExportXYZConfigurationNode : public Node
+class InstantiateNode : public Node
 {
     public:
-    ExportXYZConfigurationNode(Graph *parentGraph);
-    ~ExportXYZConfigurationNode() override = default;
+    InstantiateNode(Graph *parentGraph);
+    ~InstantiateNode() override = default;
 
     /*
      * Definition
@@ -25,18 +25,13 @@ class ExportXYZConfigurationNode : public Node
     // Return short summary of the node's purpose
     std::string_view summary() const override;
 
-    /*
-     * Data
-     */
     private:
-    // File path
-    std::string filePath_;
-    // Whether to tag (suffix) the filename with the current iteration index
-    bool tagWithIteration_{false};
-    // Target configuration
+    // Source Species
+    const Species *species_;
+    // Target configuration to insert into
     Configuration *configuration_{nullptr};
-    // Iteration count
-    int iteration_{1};
+    // Whether to set the configuration's box with that of the species (if one exists)
+    bool applyBox_{true};
 
     /*
      * Processing
@@ -44,8 +39,4 @@ class ExportXYZConfigurationNode : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
-
-    public:
-    // Export the specified configuration
-    static void exportConfiguration(const Configuration *cfg, std::string filePath);
 };

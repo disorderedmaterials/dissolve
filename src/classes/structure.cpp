@@ -311,6 +311,8 @@ void Structure::serialise(std::string tag, SerialisedValue &target) const
     auto &result = target[tag];
     Serialisable::vector<>(atoms_, "atoms", result);
     Serialisable::vector<>(bonds_, "bonds", result);
+    Serialisable::vector<>(instances_, "instances", result, [](const auto &instance)
+                           { return Serialisable::vector(instance, [](const auto &v) { return Serialisable::ser(v); }); });
 }
 
 // Read values from a serialisable value
@@ -324,5 +326,13 @@ void Structure::deserialise(const SerialisedValue &node)
                                auto &i = atoms_.at(Deserialisable::deser<int>(bond.at("i")));
                                auto &j = atoms_.at(Deserialisable::deser<int>(bond.at("j")));
                                bonds_.emplace_back(std::make_unique<Bond<StructureAtom>>(i.get(), j.get()));
+                           });
+
+    Deserialisable::vector(node, "instances",
+                           [this](const SerialisedValue &instanceNode)
+                           {
+                               auto &instance = instances_.emplace_back();
+                               Deserialisable::vector(instanceNode, [instance](const auto &vector3Node)
+                                                      { return Deserialisable::deser<Vector3>(vector3Node); });
                            });
 }

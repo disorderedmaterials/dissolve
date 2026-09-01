@@ -57,11 +57,11 @@ class NETATest : public ::testing::Test
 
         auto matchedPath = neta.matchedPath(&sp.atom(targetAtomIndex));
         std::cout << std::format("-- Actual matched atom set : {}",
-                                 joinStrings(matchedPath.set(), " ", [](const auto *i) { return i->index(); }))
+                                 joinStrings(matchedPath.matched(), " ", [](const auto *i) { return i->index(); }))
                   << std::endl;
-        EXPECT_EQ(matchedPath.set().size(), matchingIndices.size());
+        EXPECT_EQ(matchedPath.matched().size(), matchingIndices.size());
 
-        for (auto *i : matchedPath.set())
+        for (auto *i : matchedPath.matched())
             EXPECT_TRUE(std::find(matchingIndices.begin(), matchingIndices.end(), i->index()) != matchingIndices.end());
 
         return matchedPath;

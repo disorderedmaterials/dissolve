@@ -18,18 +18,25 @@ class DetectMoleculesNode : public Node
     DetectMoleculesNode(Graph *parentGraph);
     ~DetectMoleculesNode() override = default;
 
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
 
     /*
-     * Definition
+     * Data
      */
     private:
     // Input structure
     Structure inputStructure_;
-    // Output structures
-    std::vector<Structure> detectedStructures_;
+    // Detected structures
+    std::map<std::string, Structure> detectedStructures_;
+
+    public:
+    // Return detected structures
+    const std::map<std::string, Structure> &detectedStructures() const;
 
     /*
      * Processing
