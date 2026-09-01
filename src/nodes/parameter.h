@@ -578,9 +578,10 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
     {
         SerialisedValue result = {};
 
-        // Serialise non-pointer values
         if constexpr (HasEnumOptions<DataClass>)
             result["data"] = getEnumOptions(Parameter<DataClass>::data_).serialise(Parameter<DataClass>::data_);
+        else if constexpr (std::is_trivial_v<DataClass>)
+            result["data"] = Parameter<DataClass>::data_;
         else if constexpr (std::is_convertible<DataClass, Number>::value)
             result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, std::string>::value)
@@ -601,9 +602,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
     void deserialise(const SerialisedValue &node)
     {
         if constexpr (std::is_pointer<DataClass>::value)
-        {
             Parameter<DataClass>::data_ = nullptr;
-        }
         else if constexpr (is_ptr_vector<DataClass>::value)
             Parameter<DataClass>::data_.clear();
         else if constexpr (HasEnumOptions<DataClass>)
@@ -611,6 +610,8 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
             DataClass proxy; // Fake T value to get the correct overload
             Parameter<DataClass>::data_ = getEnumOptions(proxy).enumeration(toml::find<std::string>(node, "data"));
         }
+        else if constexpr (std::is_trivial_v<DataClass>)
+            Parameter<DataClass>::data_ = Deserialisable::deser<DataClass>(node.at("data"));
         else if constexpr (std::is_same_v<DataClass, std::optional<double>>)
         {
             if (node.contains("data"))
