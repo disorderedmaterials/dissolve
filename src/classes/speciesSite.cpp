@@ -514,7 +514,7 @@ void SpeciesSite::serialise(std::string tag, SerialisedValue &target) const
     switch (type_)
     {
         case SiteType::Dynamic:
-            Serialisable::vector(dynamicElements_, "element", site);
+            Serialisable::vector(dynamicElements_, "element", site, [&](const auto Z) { return Elements::symbol(Z); });
             break;
         case SiteType::Fragment:
             site["description"] = fragment_.definitionString();
@@ -554,7 +554,7 @@ void SpeciesSite::deserialise(const SerialisedValue &node)
             break;
         case SiteType::Dynamic:
             Deserialisable::vector(node, "element", [this](const auto &element)
-                                   { addDynamicElement(Deserialisable::deser<Elements::Element>(element)); });
+                                   { addDynamicElement(Elements::element(Deserialisable::deser<std::string>(element))); });
             break;
     }
 
