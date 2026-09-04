@@ -26,8 +26,6 @@ class GraphEdgeModel : public QAbstractListModel
     GraphEdgeModel(GraphModel *parent, Graph *&graph);
     GraphEdgeModel(const GraphEdgeModel &other);
 
-    // Remove an edge from the model (by index). Returns false if edge does not exist
-    bool remove(std::size_t edge);
     // Remove an edge by value
     bool remove(Edge &edge);
     // Remove any edges connected to a node with a given name

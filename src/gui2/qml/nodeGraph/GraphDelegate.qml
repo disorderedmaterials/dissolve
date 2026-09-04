@@ -346,14 +346,14 @@ NodeBox {
                         var lastOfItems = index + 1 == model.rowCount();
 
                         // If we are dealing with a node that has dynamic inputs (such as a graph node)
-                        // *and* we are not currently reconstructing the graph's existing connections, we handle the dynamic input creation
+                        // and we are not currently reconstructing the graph's existing connections, we handle the dynamic input creation
                         if (hasDynamicParameters && !rootGraphModel.nodeReconstructionInProgress()) {
                             // If this is the last item (the most recently connected input) render the deferred edge conection
                             if (lastOfItems)
                                 rootGraphModel.addDeferredEndPoints();
 
-                            // Unless this is the first created input, update the target endpoint for this input since it will have changed with the QML
-                            // If this input is *not* connected, don't do anything
+                            // Unless this is the first created input, update the target endpoint for this input since it will have changed with the QML.
+                            // If this input is not connected, don't do anything.
                             if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
                                 rootGraphModel.parameterEndPoints.replaceTarget(item.nodeName, item.title, item.childDropArea);
                         }
@@ -466,14 +466,14 @@ NodeBox {
                         var lastOfItems = index + 1 == model.rowCount();
 
                         // If we are dealing with a node that has dynamic outputs (such as a graph node)
-                        // *and* we are not currently reconstructing the graph's existing connections, we handle the dynamic output creation
+                        // and we are not currently reconstructing the graph's existing connections, we handle the dynamic output creation
                         if (hasDynamicParameters && !rootGraphModel.nodeReconstructionInProgress()) {
                             // If this is the last item (the most recently connected output) render the deferred edge conection
                             if (lastOfItems)
                                 rootGraphModel.addDeferredEndPoints();
 
-                            // Unless this is the first created output, update the target endpoint for this output since it will have changed with the QML
-                            // If this output is *not* connected, don't do anything
+                            // Unless this is the first created output, update the target endpoint for this output since it will have changed with the QML.
+                            // If this output is not connected, don't do anything.
                             if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
                                 rootGraphModel.parameterEndPoints.replaceSource(item.nodeName, item.title, item.childDropArea);
                         }

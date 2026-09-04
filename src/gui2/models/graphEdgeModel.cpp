@@ -29,18 +29,6 @@ void GraphEdgeModel::toggleEdgeEditMode()
 // Returns the current edge edit mode
 bool GraphEdgeModel::edgeEditMode() { return edgeEditMode_; }
 
-// Remove an edge from the model (by index). Returns false if edge does not exist
-bool GraphEdgeModel::remove(std::size_t edge)
-{
-    // Check if edge is in range
-    if (edge >= edges().size())
-        return false;
-    beginRemoveRows({}, edge, edge);
-    edges().erase(edges().begin() + edge);
-    endRemoveRows();
-    return true;
-}
-
 // Remove an edge by value.  Returns false if the edge does not exist
 bool GraphEdgeModel::remove(Edge &edge)
 {
@@ -49,7 +37,15 @@ bool GraphEdgeModel::remove(Edge &edge)
     if (index == edges().end())
         return false;
     else
-        return remove(index - edges().begin());
+    {
+        std::size_t row = index - edges().begin();
+        if (row >= edges().size())
+            return false;
+        beginRemoveRows({}, row, row);
+        graph_->removeEdge(edge.definition());
+        endRemoveRows();
+        return true;
+    }
 }
 
 // Remove any edges connected to a node with a given name
