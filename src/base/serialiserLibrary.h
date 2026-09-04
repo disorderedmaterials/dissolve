@@ -20,15 +20,12 @@ concept SerialisablePointer = requires(T a, std::string tag, SerialisedValue tar
 template <typename T>
 concept SerialisableClass = requires(T a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); };
 
-template <SerialisablePointer T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
+template <SerialisablePointer T> void serialiseOnto(T &a, std::string tag, SerialisedValue &target)
 {
     a->serialise(tag, target);
 }
 
-template <SerialisableClass T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
-{
-    a.serialise(tag, target);
-}
+template <SerialisableClass T> void serialiseOnto(T &a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); }
 
 template <typename T>
 concept Serialisable = requires(const T a, std::string tag, SerialisedValue &target) { serialiseOnto(a, tag, target); };
