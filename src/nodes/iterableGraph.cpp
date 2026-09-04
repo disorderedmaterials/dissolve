@@ -13,9 +13,6 @@ IterableGraph::IterableGraph(Graph *parentGraph) : Graph(parentGraph)
  * Definition
  */
 
-// Return node name
-std::string_view IterableGraph::name() const { return "Iterator"; }
-
 // Return type of the node
 std::string_view IterableGraph::type() const { return "Iterator"; }
 
