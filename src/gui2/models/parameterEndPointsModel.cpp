@@ -16,9 +16,9 @@ void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *target
     endInsertRows();
 }
 
-void ParameterEndPointsModel::remove(const Node *node)
+ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(const Node *node)
 {
-    remove(
+    return remove(
         [&](int i) -> bool
         {
             auto &[sourceDropArea, targetDropArea] = endPoints_[i];
@@ -30,10 +30,12 @@ void ParameterEndPointsModel::remove(const Node *node)
         });
 }
 
-void ParameterEndPointsModel::remove(const std::string &sourceNode, const std::string &sourceOutput,
-                                     const std::string &targetNode, const std::string &targetInput)
+ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(const std::string &sourceNode,
+                                                                            const std::string &sourceOutput,
+                                                                            const std::string &targetNode,
+                                                                            const std::string &targetInput)
 {
-    remove(
+    return remove(
         [&](int i) -> bool
         {
             auto &[sourceDropArea, targetDropArea] = endPoints_[i];
@@ -115,17 +117,20 @@ void ParameterEndPointsModel::replaceSource(QString nodeName, QString paramName,
     endResetModel();
 }
 
-void ParameterEndPointsModel::remove(std::function<bool(int)> lambda)
+ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(std::function<bool(int)> lambda)
 {
+    ParameterEndPoints removed;
     for (int row = endPoints_.size() - 1; row >= 0; --row)
     {
         if (lambda(row))
         {
+            removed.emplace_back(endPoints_.at(row));
             beginRemoveRows(QModelIndex(), row, row);
             endPoints_.erase(endPoints_.begin() + row);
             endRemoveRows();
         }
     }
+    return removed;
 }
 
 int ParameterEndPointsModel::rowCount(const QModelIndex &parent) const

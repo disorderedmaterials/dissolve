@@ -32,10 +32,10 @@ class ParameterEndPointsModel : public QAbstractListModel
     // Add a pair of DropArea QQuickItem *, representing the endpoints
     void add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea);
     // Remove any number of pairs of DropArea QQuickItem *, based on the parent node that has been deleted
-    void remove(const Node *node);
+    ParameterEndPoints remove(const Node *node);
     // Remove a pair of DropArea QQuickItem *, based on the edge that has been deleted
-    void remove(const std::string &sourceNode, const std::string &sourceOutput, const std::string &targetNode,
-                const std::string &targetInput);
+    ParameterEndPoints remove(const std::string &sourceNode, const std::string &sourceOutput, const std::string &targetNode,
+                              const std::string &targetInput);
     // Clear all end points
     void clear();
     // Add all parameter endpoint DropArea pairs from a graph's edges
@@ -50,7 +50,7 @@ class ParameterEndPointsModel : public QAbstractListModel
     Q_INVOKABLE void replaceSource(QString nodeName, QString paramName, QQuickItem *newDropArea);
 
     private:
-    void remove(std::function<bool(int)> lambda);
+    ParameterEndPoints remove(std::function<bool(int)> lambda);
 
     /*
      * QAbstractListModel overrides

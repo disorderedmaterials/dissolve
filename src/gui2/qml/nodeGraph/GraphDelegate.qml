@@ -396,12 +396,14 @@ NodeBox {
                         readonly property var parentNodeBox: root
                         property string nodeName: parent.nodeName
                         property string paramName: parent.title
+                        property bool locked: false
                         anchors.fill: parent
-                        enabled: root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
+                        enabled: !locked && root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
 
                         Component.onCompleted: root.rootGraphModel.mapInputEndPoint(parent.nodeName, paramName, inputDropArea)
 
                         onDropped: function (event) {
+                            inputDropArea.locked = true;
                             edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName);
                         }
                     }
