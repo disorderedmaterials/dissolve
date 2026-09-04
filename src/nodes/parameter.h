@@ -54,6 +54,7 @@ class ParameterBase
         ClearData, /* Indicates that any local data should be cleared if the parameter is changed */
         Input,     /* Indicates that the parameter is meant to be a sink for data and not a source */
         Output,    /* Indicates that the parameter is meant to be a source of data and not a sink */
+        Serialise  /* Indicates that the (input) parameter should be serialised */
     };
     // Allowed Edge Count
     enum AllowedEdgeCount

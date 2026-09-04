@@ -15,8 +15,8 @@ InsertRandomNode::InsertRandomNode(Graph *parentGraph) : Node(parentGraph)
     // Inputs
     addInput("Species", "Source species to add", species_);
     addInput("Configuration", "Target configuration to insert into", configuration_);
-    addInput("Population", "Population of the target to add", population_);
-    addInput("Density", "Density at which to add the target", density_);
+    addSerialisableInput("Population", "Population of the target to add", population_);
+    addSerialisableInput("Density", "Density at which to add the target", density_);
 
     // Options
     addOption("DensityUnits", "Units of target density", densityUnits_);
