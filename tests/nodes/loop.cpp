@@ -79,6 +79,14 @@ TEST_F(IterableGraphTest, RoundTrip)
     SerialisedValue graphTOML;
     ASSERT_NO_THROW(root_.serialise("graph", graphTOML));
 
+    // count how many loop edges were made
+    auto loop = dynamic_cast<IterableGraph *>(root_.findNode("Iterator"));
+    ASSERT_TRUE(loop);
+    auto correctEdges = loop->loopEdges().size();
+
+    // Confirm that loop edges were rebuilt
+    ASSERT_EQ(loop->loopEdges().size(), 1);
+
     // Deserialise from the stored TOML
     auto deserialisedGraph = std::make_unique<DissolveGraph>();
     ASSERT_NO_THROW(deserialisedGraph->deserialise(graphTOML["graph"]));
@@ -87,6 +95,11 @@ TEST_F(IterableGraphTest, RoundTrip)
     SerialisedValue compareTOML;
     ASSERT_NO_THROW(deserialisedGraph->serialise("graph", compareTOML));
     ASSERT_NO_THROW(UnitTest::compareToml("", graphTOML, compareTOML));
+
+    // Confirm that loop edges were rebuilt
+    loop = dynamic_cast<IterableGraph *>(deserialisedGraph->findNode("Iterator"));
+    ASSERT_TRUE(loop);
+    ASSERT_EQ(loop->loopEdges().size(), correctEdges);
 }
 
 TEST_F(IterableGraphTest, BasicNonLoopingSeries)

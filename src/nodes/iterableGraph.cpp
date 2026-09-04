@@ -214,7 +214,7 @@ void IterableGraph::deserialise(const SerialisedValue &node)
                            {
                                auto edgeDefinition = Deserialisable::deser<EdgeDefinition>(value);
                                auto edge = Edge::create(this, {edgeDefinition.sourceNode, edgeDefinition.sourceOutput,
-                                                               edgeDefinition.targetNode, edgeDefinition.targetInput});
+                                                               "LoopBacks", edgeDefinition.targetInput});
                                if (!edge)
                                    return false;
 
