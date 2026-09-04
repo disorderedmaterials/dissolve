@@ -342,6 +342,8 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
     result["y"] = y;
 
     Serialisable::map(options_, "options", result);
+    Serialisable::map(inputs_, "inputs", result,
+                      [](const auto &parameter) { return parameter->flags().isSet(ParameterBase::ParameterFlags::Serialise); });
 
     serialiseInternal(result);
 
