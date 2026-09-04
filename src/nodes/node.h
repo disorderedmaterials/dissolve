@@ -10,6 +10,7 @@
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include "nodes/serialisableData.h"
+#include <filesystem>
 #include <iterator>
 #include <map>
 #include <ranges>
@@ -336,6 +337,10 @@ class Node
     SampledDouble timing_;
     // Current iteration number
     int iteration_ = 0;
+    // Save node in restart file
+    virtual std::optional<SerialisedValue> innerSaveRestart() const { return {}; }
+    // Load node from restart file
+    virtual bool innerLoadRestart(SerialisedValue &data) { return false; }
 
     public:
     // Clear any local data
@@ -374,4 +379,8 @@ class Node
     SerialisedValue serialiseData() const;
     // Read persistent data from a serialisable value
     void deserialiseData(const SerialisedValue &node);
+    // Save node in restart file
+    virtual void saveRestart(std::filesystem::path directory) const;
+    // Load node from restart file
+    virtual bool loadRestart(std::filesystem::path directory);
 };

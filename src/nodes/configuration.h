@@ -27,6 +27,10 @@ class ConfigurationNode : public Node
     private:
     // Configuration object
     Configuration configuration_;
+    // Save node in restart file
+    std::optional<SerialisedValue> innerSaveRestart() const override;
+    // Load node from restart file
+    bool innerLoadRestart(SerialisedValue &data) override;
 
     public:
     // Return configuration object
