@@ -216,7 +216,7 @@ class Node
         auto param =
             inputs_.emplace(std::make_pair(inputName, ParameterFactory::createSerialisable(this, inputName, description, data)))
                 .first->second;
-        param->setFlags(ParameterBase::ParameterFlags::Input);
+        param->setFlags({ParameterBase::ParameterFlags::Input, ParameterBase::ParameterFlags::Serialise});
         return param;
     }
     // Add output parameter

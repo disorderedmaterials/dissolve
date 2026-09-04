@@ -69,7 +69,7 @@ void AtomType::serialise(std::string tag, SerialisedValue &target) const
 {
     auto &atomType = target[tag];
 
-    atomType["z"] = Serialisable::ser(Z_);
+    atomType["z"] = Serialisable::ser(Elements::symbol(Z_));
     atomType["charge"] = charge_;
     atomType["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
     atomType["exchangeable"] = exchangeable_;
@@ -88,7 +88,7 @@ void AtomType::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void AtomType::deserialise(SerialisedValue node)
 {
-    Z_ = Deserialisable::deser<Elements::Element>(node.at("z"));
+    Z_ = Elements::element(Deserialisable::deser<std::string>(node.at("z")));
     charge_ = Deserialisable::deser_or<double>(node, "charge", 0.0);
     exchangeable_ = Deserialisable::deser_or<bool>(node, "exchangeable", false);
 

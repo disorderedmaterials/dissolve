@@ -54,6 +54,7 @@ class ParameterBase
         ClearData, /* Indicates that any local data should be cleared if the parameter is changed */
         Input,     /* Indicates that the parameter is meant to be a sink for data and not a source */
         Output,    /* Indicates that the parameter is meant to be a source of data and not a sink */
+        Serialise  /* Indicates that the (input) parameter should be serialised */
     };
     // Allowed Edge Count
     enum AllowedEdgeCount
@@ -578,9 +579,10 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
     {
         SerialisedValue result = {};
 
-        // Serialise non-pointer values
         if constexpr (HasEnumOptions<DataClass>)
             result["data"] = getEnumOptions(Parameter<DataClass>::data_).serialise(Parameter<DataClass>::data_);
+        else if constexpr (std::is_trivial_v<DataClass>)
+            result["data"] = Parameter<DataClass>::data_;
         else if constexpr (std::is_convertible<DataClass, Number>::value)
             result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, std::string>::value)
@@ -601,31 +603,31 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
     void deserialise(const SerialisedValue &node)
     {
         if constexpr (std::is_pointer<DataClass>::value)
-        {
             Parameter<DataClass>::data_ = nullptr;
-        }
         else if constexpr (is_ptr_vector<DataClass>::value)
             Parameter<DataClass>::data_.clear();
         else if constexpr (HasEnumOptions<DataClass>)
         {
             DataClass proxy; // Fake T value to get the correct overload
-            Parameter<DataClass>::data_ = getEnumOptions(proxy).deserialise(node);
+            Parameter<DataClass>::data_ = getEnumOptions(proxy).enumeration(toml::find<std::string>(node, "data"));
         }
-        else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
+        else if constexpr (std::is_trivial_v<DataClass>)
+            Parameter<DataClass>::data_ = Deserialisable::deser<DataClass>(node.at("data"));
+        else if constexpr (std::is_same_v<DataClass, std::optional<double>>)
         {
             if (node.contains("data"))
                 Parameter<DataClass>::data_ = Deserialisable::deser<double>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
-        else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
+        else if constexpr (std::is_same_v<DataClass, std::optional<Number>>)
         {
             if (node.contains("data"))
                 Parameter<DataClass>::data_ = Deserialisable::deser<Number>(node.at("data"));
             else
                 Parameter<DataClass>::data_ = {};
         }
-        else if constexpr (std::is_convertible<DataClass, std::optional<Data1D>>::value)
+        else if constexpr (std::is_same_v<DataClass, std::optional<Data1D>>)
         {
             if (node.contains("data"))
                 Parameter<DataClass>::data_ = Deserialisable::deser<Data1D>(node.at("data"));

@@ -20,15 +20,12 @@ concept SerialisablePointer = requires(T a, std::string tag, SerialisedValue tar
 template <typename T>
 concept SerialisableClass = requires(T a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); };
 
-template <SerialisablePointer T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
+template <SerialisablePointer T> void serialiseOnto(T &a, std::string tag, SerialisedValue &target)
 {
     a->serialise(tag, target);
 }
 
-template <SerialisableClass T> void serialiseOnto(const T &a, std::string tag, SerialisedValue &target)
-{
-    a.serialise(tag, target);
-}
+template <SerialisableClass T> void serialiseOnto(T &a, std::string tag, SerialisedValue &target) { a.serialise(tag, target); }
 
 template <typename T>
 concept Serialisable = requires(const T a, std::string tag, SerialisedValue &target) { serialiseOnto(a, tag, target); };
@@ -50,7 +47,21 @@ template <typename K, typename V> void map(const std::map<K, V> &map, std::strin
         serialiseOnto(value, std::format("{}", key), result);
     node[name] = result;
 }
+template <typename K, typename V, typename Lambda>
+void map(const std::map<K, V> &map, std::string name, SerialisedValue &node, Lambda shouldSerialise)
+{
+    auto hasData = false;
+    SerialisedValue result;
+    for (auto &[key, value] : map)
+        if (shouldSerialise(value))
+        {
+            serialiseOnto(value, std::format("{}", key), result);
+            hasData = true;
+        }
 
+    if (hasData)
+        node[name] = result;
+}
 // A helper function to add elements of a vector to a node under the named heading
 template <SerialisablePointer T> void fromVectorToTable(const std::vector<T> &vec, std::string name, SerialisedValue &node)
 {
