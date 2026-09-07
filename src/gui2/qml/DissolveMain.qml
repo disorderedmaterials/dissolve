@@ -392,6 +392,9 @@ ApplicationWindow {
                         GraphDelegate {
                             rootGraphModel: graphModel
 
+                            onReloadGraphRequired: function (idx) {
+                                graphModel.reload();
+                            }
                             onDescended: function (idx) {
                                 graphModel.descend(idx);
                             }

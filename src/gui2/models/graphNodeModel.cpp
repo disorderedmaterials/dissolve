@@ -79,6 +79,7 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + (int)OPTIONS] = "options";
     roles[Qt::UserRole + (int)HAS_INNER_GRAPH] = "hasInnerGraph";
     roles[Qt::UserRole + (int)IS_ROOT_NODE] = "isRootNode";
+    roles[Qt::UserRole + (int)IS_ITERABLE] = "isIterable";
     roles[Qt::UserRole + (int)HAS_DYNAMIC_PARAMETERS] = "hasDynamicParameters";
     return roles;
 }

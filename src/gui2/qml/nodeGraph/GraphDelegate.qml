@@ -21,6 +21,7 @@ NodeBox {
     property NodeMessages messageStore: nodeMessages
     property bool hasErrors: false
 
+    signal reloadGraphRequired()
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
     signal edgeDeferred(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
@@ -344,10 +345,11 @@ NodeBox {
 
                 onItemAdded: function(index, item) {
                         var lastOfItems = index + 1 == model.rowCount();
+                        var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
 
                         // If we are dealing with a node that has dynamic inputs (such as a graph node)
                         // and we are not currently reconstructing the graph's existing connections, we handle the dynamic input creation
-                        if (hasDynamicParameters && !rootGraphModel.nodeReconstructionInProgress()) {
+                        if (hasDynamicParameters && !reconstructingNodes) {
                             // If this is the last item (the most recently connected input) render the deferred edge conection
                             if (lastOfItems)
                                 rootGraphModel.addDeferredEndPoints();
@@ -355,7 +357,7 @@ NodeBox {
                             // Unless this is the first created input, update the target endpoint for this input since it will have changed with the QML.
                             // If this input is not connected, don't do anything.
                             if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
-                                rootGraphModel.parameterEndPoints.replaceTarget(item.nodeName, item.title, item.childDropArea);
+                                rootGraphModel.replaceTargetEndPoint(item.nodeName, item.title, item.childDropArea);
                         }
                         rootGraphModel.addInput(item.nodeName, item.title, item.x, item.y);
                 }
@@ -418,6 +420,8 @@ NodeBox {
                 }
             }
             Repeater {
+                id: inputLabelRepeater
+
                 model: inputs
                 visible: !(isInputsNode)
 
@@ -431,18 +435,50 @@ NodeBox {
                     height: 10
                     text: name
                     wrapMode: Text.Wrap
-                    visible: inputs.visible
+                    visible: inputLabelRepeater.visible
 
                     MouseArea {
                         id: inputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        ToolTip.text: "<i>Input:</i><br>" + inputText.info
-                        ToolTip.visible: containsMouse && inputs.visible
+                        ToolTip.text: !(hasInnerGraph || isOutputsNode) ? "<i>Input:</i><br>" + inputText.info : "Double-click to rename this input"
+                        ToolTip.visible: containsMouse && inputLabelRepeater.visible
                         ToolTip.delay: 500
                         onDoubleClicked: {
+                            // If edgeEditMode is false, double-clicking the input text performs an edge deletion
                             if (!rootGraphModel.edges.edgeEditMode)
-                                rootGraphModel.deleteEdgeFromTarget(nodeName, name);
+                                return rootGraphModel.deleteEdgeFromTarget(nodeName, name);
+
+                            // If edgeEditMode is true, double-clicking the input text performs input renaming (not applicable to all node types)
+                            if (!((isOutputsNode || hasInnerGraph)))
+                                return;
+
+                            renameInputPopup.open();
+                        }
+                        Popup {
+                            id: renameInputPopup
+
+                            x: -5
+                            y: -5
+                            width: inputText.width + 10
+                            height: inputText.height + 10
+                            padding: 0
+
+                            onOpened: {
+                                renameInput.forceActiveFocus();
+                                renameInput.selectAll();
+                            }
+                            contentItem: ParameterTextInput {
+                                    id: renameInput
+                                    graphModel: rootGraphModel
+                                    parentNodeName: nodeName
+                                    parentLabel: inputText
+                                    paramType: 1
+                                    onRenameAccepted: {
+                                        renameInputPopup.close();
+                                        rootGraphModel.reload();
+                                    }
+                                }
                         }
                     }
                 }
@@ -464,10 +500,11 @@ NodeBox {
 
                 onItemAdded: function(index, item) {
                         var lastOfItems = index + 1 == model.rowCount();
+                        var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
 
                         // If we are dealing with a node that has dynamic outputs (such as a graph node)
                         // and we are not currently reconstructing the graph's existing connections, we handle the dynamic output creation
-                        if (hasDynamicParameters && !rootGraphModel.nodeReconstructionInProgress()) {
+                        if (hasDynamicParameters && !reconstructingNodes) {
                             // If this is the last item (the most recently connected output) render the deferred edge conection
                             if (lastOfItems)
                                 rootGraphModel.addDeferredEndPoints();
@@ -536,6 +573,8 @@ NodeBox {
                 }
             }
             Repeater {
+                id: outputLabelRepeater
+
                 model: outputs
                 visible: !(isOutputsNode || isLoopBacksNode)
 
@@ -549,18 +588,47 @@ NodeBox {
                     font.pointSize: 10
                     text: name
                     wrapMode: Text.Wrap
-                    visible: outputs.visible
+                    visible: outputLabelRepeater.visible
 
                     MouseArea {
                         id: outputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        ToolTip.text: "<i>Output:</i><br>" + outputText.info
-                        ToolTip.visible: containsMouse && outputs.visible
+                        ToolTip.text: !(hasInnerGraph || isInputsNode) ? "<i>Output:</i><br>" + outputText.info : "Double-click to rename this output"
+                        ToolTip.visible: containsMouse && outputLabelRepeater.visible
                         ToolTip.delay: 500
                         onDoubleClicked: {
+                            // If edgeEditMode is false, double-clicking the output text performs an edge deletion
                             if (!rootGraphModel.edges.edgeEditMode)
-                                rootGraphModel.deleteEdgeFromSource(nodeName, name);
+                                return rootGraphModel.deleteEdgeFromSource(nodeName, name);
+
+                            // If edgeEditMode is true, double-clicking the output text performs output renaming (not applicable to all node types)
+                            if (!((isInputsNode || hasInnerGraph)))
+                                return;
+
+                            renameOutputPopup.open();
+                        }
+                        Popup {
+                            id: renameOutputPopup
+
+                            x: -5
+                            y: -5
+                            width: outputText.width + 10
+                            height: outputText.height + 10
+                            padding: 0
+
+                            onOpened: {
+                                renameOutput.forceActiveFocus();
+                                renameOutput.selectAll();
+                            }
+                            contentItem: ParameterTextInput {
+                                    id: renameOutput
+                                    graphModel: rootGraphModel
+                                    parentNodeName: nodeName
+                                    parentLabel: outputText
+                                    paramType: 0
+                                    onRenameAccepted: renameOutputPopup.close()
+                                }
                         }
                     }
                 }

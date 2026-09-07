@@ -286,6 +286,212 @@ int GraphModel::indexByName(std::string_view name)
     return 0;
 }
 
+//
+void GraphModel::reload() { setGraph(graph_); }
+
+//
+void GraphModel::resetEndPoints()
+{
+    parameterEndPoints_.resetFromEdges(graph_->edges(), curveOutputEndPoints_, curveInputEndPoints_);
+}
+
+// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+void GraphModel::replaceTargetEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea)
+{
+    auto endPoints = parameterEndPoints_.endPoints();
+    // If no endpoints present, don't do anything
+    if (endPoints.empty())
+        return;
+
+    // Find the new DropArea in the input endpoints, inorder to replace the current target endpoint with it
+    auto replaceIt = std::find_if(endPoints.begin(), endPoints.end(),
+                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
+                                  {
+                                      auto &target = pair.second;
+                                      auto targetNodeName = target->property("nodeName").toString();
+                                      auto targetParam = target->property("paramName").toString();
+                                      return targetNodeName == nodeName && targetParam == paramName;
+                                  });
+    parameterEndPoints_.replaceTarget(std::distance(endPoints.begin(), replaceIt), newDropArea);
+}
+
+// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+void GraphModel::replaceSourceEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea)
+{
+    auto endPoints = parameterEndPoints_.endPoints();
+    // If no endpoints present, don't do anything
+    if (endPoints.empty())
+        return;
+
+    // Find the new DropArea in the input endpoints, inorder to replace the current target endpoint with it
+    auto replaceIt = std::find_if(endPoints.begin(), endPoints.end(),
+                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
+                                  {
+                                      auto &source = pair.first;
+                                      auto sourceNodeName = source->property("nodeName").toString();
+                                      auto sourceParam = source->property("paramName").toString();
+                                      return sourceNodeName == nodeName && sourceParam == paramName;
+                                  });
+    parameterEndPoints_.replaceSource(std::distance(endPoints.begin(), replaceIt), newDropArea);
+}
+
+//
+bool GraphModel::renameInput(QString nodeName, QString currentName, QString newName)
+{
+    auto node = graph_->findNode(nodeName.toStdString());
+    auto focusNodeIsGraph = dynamic_cast<Graph *>(node);
+    auto focusNodeIsOutputs = dynamic_cast<OutputsNode *>(node);
+
+    // If the node owning the input is not of type Graph or Outputs, input rename is not permitted
+    if (!(focusNodeIsGraph || focusNodeIsOutputs))
+        return false;
+
+    auto it = std::find_if(wrapped_.begin(), wrapped_.end(),
+                           [&](const auto &wrappedNode) { return wrappedNode.rawValue().name() == nodeName.toStdString(); });
+    auto focusNodeIdx = std::distance(wrapped_.begin(), it);
+    auto &focusNode = wrapped_[focusNodeIdx];
+
+    // New name cannot be already in use within this node's own inputs
+    if (focusNode.inputs->values().contains(newName.toStdString()))
+        return false;
+
+    // Rename the underlying parameter
+    if (!focusNode.inputs->values().at(currentName.toStdString())->setName(newName.toStdString()))
+        return false;
+
+    // Remove the current name from the input endpoints map
+    curveInputEndPoints_.find(node)->second.erase(currentName.toStdString());
+
+    // Rename the input entry within the node parameter map
+    focusNode.inputs->rename(currentName.toStdString(), newName.toStdString());
+
+    if (focusNodeIsGraph)
+    {
+        /*
+         * Propagate change - due to renaming the graph's input - to the the graph's inputs node
+         */
+
+        auto graph = dynamic_cast<Graph *>(node);
+        auto inputsNode = graph->findNode("Inputs");
+        auto model = ParameterModel(inputsNode->outputs());
+
+        // Rename the underlying parameter
+        if (!model.values().at(currentName.toStdString())->setName(newName.toStdString()))
+            return false;
+
+        // Remove the current name from the output endpoints map (if the graph's inputs have been mapped yet)
+        if (curveOutputEndPoints_.find(inputsNode) != curveOutputEndPoints_.end())
+            curveOutputEndPoints_[inputsNode].erase(currentName.toStdString());
+
+        // Rename the input entry within the node parameter map
+        model.rename(currentName.toStdString(), newName.toStdString());
+
+        return true;
+    }
+    else if (focusNodeIsOutputs)
+    {
+        /*
+         * Propagate change - due to renaming an outputs node input - to the parent graph (node) outputs
+         */
+
+        auto graph = node->parentGraph();
+        auto model = ParameterModel(graph->outputs());
+
+        // Rename the underlying parameter
+        if (!model.values().at(currentName.toStdString())->setName(newName.toStdString()))
+            return false;
+
+        // Remove the current name from the input endpoints map
+        if (curveInputEndPoints_.find(graph) != curveInputEndPoints_.end())
+            curveInputEndPoints_[graph].erase(currentName.toStdString());
+
+        // Rename the input entry within the node parameter map
+        model.rename(currentName.toStdString(), newName.toStdString());
+
+        return true;
+    }
+
+    return false;
+}
+
+//
+bool GraphModel::renameOutput(QString nodeName, QString currentName, QString newName)
+{
+    auto node = graph_->findNode(nodeName.toStdString());
+    auto focusNodeIsGraph = dynamic_cast<Graph *>(node);
+    auto focusNodeIsInputs = dynamic_cast<InputsNode *>(node);
+
+    // If the node owning the output is not of type Graph or Outputs, output rename is not permitted
+    if (!(focusNodeIsGraph || focusNodeIsInputs))
+        return false;
+
+    auto it = std::find_if(wrapped_.begin(), wrapped_.end(),
+                           [&](const auto &wrappedNode) { return wrappedNode.rawValue().name() == nodeName.toStdString(); });
+    auto focusNodeIdx = std::distance(wrapped_.begin(), it);
+    auto &focusNode = wrapped_[focusNodeIdx];
+
+    // New name cannot be already in use within this node's own outputs
+    if (focusNode.outputs->values().contains(newName.toStdString()))
+        return false;
+
+    if (!focusNode.outputs->values().at(currentName.toStdString())->setName(newName.toStdString()))
+        return false;
+
+    // Remove the current name from the output endpoints map
+    curveOutputEndPoints_.find(node)->second.erase(currentName.toStdString());
+
+    // Rename the output entry within the node parameter map
+    focusNode.outputs->rename(currentName.toStdString(), newName.toStdString());
+
+    if (focusNodeIsGraph)
+    {
+        /*
+         * Propagate change - due to renaming the graph's output - to the the graph's outputs node
+         */
+
+        auto graph = dynamic_cast<Graph *>(node);
+        auto outputsNode = graph->findNode("Outputs");
+        auto model = ParameterModel(outputsNode->inputs());
+
+        // Rename the underlying parameter
+        if (!model.values().at(currentName.toStdString())->setName(newName.toStdString()))
+            return false;
+
+        // Remove the current name from the input endpoints map (if the graph's outputs have been mapped yet)
+        if (curveInputEndPoints_.find(outputsNode) != curveInputEndPoints_.end())
+            curveInputEndPoints_[outputsNode].erase(currentName.toStdString());
+
+        // Rename the input entry within the node parameter map
+        model.rename(currentName.toStdString(), newName.toStdString());
+
+        return true;
+    }
+    else if (focusNodeIsInputs)
+    {
+        /*
+         * Propagate change - due to renaming an inputs node output - to the parent graph (node) inputs
+         */
+
+        auto graph = node->parentGraph();
+        auto model = ParameterModel(graph->inputs());
+
+        // Rename the underlying parameter
+        if (!model.values().at(currentName.toStdString())->setName(newName.toStdString()))
+            return false;
+
+        // Remove the current name from the input endpoints map
+        if (curveOutputEndPoints_.find(graph) != curveInputEndPoints_.end())
+            curveOutputEndPoints_[graph].erase(currentName.toStdString());
+
+        // Rename the input entry within the node parameter map
+        model.rename(currentName.toStdString(), newName.toStdString());
+
+        return true;
+    }
+
+    return false;
+}
+
 // Returns bool - true if we are currently reconstructing existing nodes in the current graph
 bool GraphModel::nodeReconstructionInProgress() { return reconstructibleNodes_.has_value() && !reconstructibleNodes_->empty(); }
 

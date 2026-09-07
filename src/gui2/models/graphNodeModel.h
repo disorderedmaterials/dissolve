@@ -31,6 +31,7 @@ class GraphNodeModel : public QAbstractListModel
         OPTIONS,
         HAS_INNER_GRAPH,
         IS_ROOT_NODE,
+        IS_ITERABLE,
         HAS_DYNAMIC_PARAMETERS
     };
 

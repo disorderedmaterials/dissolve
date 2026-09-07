@@ -151,7 +151,6 @@ GroupBox {
                         duration: 500
                     }
                 }
-
             }
             ToolButton {
                 id: deleteNodeButton

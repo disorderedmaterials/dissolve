@@ -8,6 +8,14 @@
 ParameterEndPointsModel::ParameterEndPoints &ParameterEndPointsModel::endPoints() { return endPoints_; }
 const ParameterEndPointsModel::ParameterEndPoints &ParameterEndPointsModel::endPoints() const { return endPoints_; }
 
+void ParameterEndPointsModel::removeDuplicates()
+{
+    beginResetModel();
+    std::sort(endPoints_.begin(), endPoints_.end());
+    endPoints_.erase(std::unique(endPoints_.begin(), endPoints_.end()), endPoints_.end());
+    endResetModel();
+}
+
 void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea)
 {
     int row = endPoints_.size();
@@ -50,19 +58,12 @@ ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(cons
         });
 }
 
-// Clear all end points
-void ParameterEndPointsModel::clear()
-{
-    beginResetModel();
-    endPoints_.clear();
-    endResetModel();
-}
-
 // Add all parameter endpoint pairs from a graph's edges
 void ParameterEndPointsModel::resetFromEdges(const std::vector<std::unique_ptr<Edge>> &edges,
                                              const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveOutputsMap,
                                              const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveInputsMap)
 {
+    clear();
     for (const auto &edge : edges)
     {
         const auto *sourceNodePtr = &(edge->sourceNode());
@@ -75,45 +76,27 @@ void ParameterEndPointsModel::resetFromEdges(const std::vector<std::unique_ptr<E
     }
 }
 
-// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-void ParameterEndPointsModel::replaceTarget(QString nodeName, QString paramName, QQuickItem *newDropArea)
+// Clear all end points
+void ParameterEndPointsModel::clear()
 {
-    // If no endpoints present, don't do anything
-    if (endPoints_.empty())
-        return;
-
-    auto replaceIt = std::find_if(endPoints_.begin(), endPoints_.end(),
-                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
-                                  {
-                                      auto &target = pair.second;
-                                      auto targetNodeName = target->property("nodeName").toString();
-                                      auto targetParam = target->property("paramName").toString();
-                                      return targetNodeName == nodeName && targetParam == paramName;
-                                  });
-    auto idx = std::distance(endPoints_.begin(), replaceIt);
     beginResetModel();
-    endPoints_[idx].second = newDropArea;
+    endPoints_.clear();
+    endResetModel();
+}
+
+// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+void ParameterEndPointsModel::replaceTarget(int index, QQuickItem *newDropArea)
+{
+    beginResetModel();
+    endPoints_[index].second = newDropArea;
     endResetModel();
 }
 
 // Replace the source DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-void ParameterEndPointsModel::replaceSource(QString nodeName, QString paramName, QQuickItem *newDropArea)
+void ParameterEndPointsModel::replaceSource(int index, QQuickItem *newDropArea)
 {
-    // If no endpoints present, don't do anything
-    if (endPoints_.empty())
-        return;
-
-    auto replaceIt = std::find_if(endPoints_.begin(), endPoints_.end(),
-                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
-                                  {
-                                      auto &source = pair.first;
-                                      auto sourceNodeName = source->property("nodeName").toString();
-                                      auto sourceParam = source->property("paramName").toString();
-                                      return sourceNodeName == nodeName && sourceParam == paramName;
-                                  });
-    auto idx = std::distance(endPoints_.begin(), replaceIt);
     beginResetModel();
-    endPoints_[idx].first = newDropArea;
+    endPoints_[index].first = newDropArea;
     endResetModel();
 }
 
@@ -132,6 +115,10 @@ ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(std:
     }
     return removed;
 }
+
+/*
+ * QAbstractListModel overrides
+ */
 
 int ParameterEndPointsModel::rowCount(const QModelIndex &parent) const
 {

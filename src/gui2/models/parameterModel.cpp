@@ -4,7 +4,10 @@
 #include "parameterModel.h"
 #include "gui2/models/enumOptionsModel.h"
 #include "gui2/models/enumRegistry.h"
+#include "nodes/graph.h"
+#include "nodes/inputs.h"
 #include "nodes/number.h"
+#include "nodes/outputs.h"
 #include "nodes/registry.h"
 #include <qvariant.h>
 
@@ -19,12 +22,63 @@ enum Roles
 
 ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
 
+// Returns the reference to the parameters from the model
+Node::NodeParameterMap &ParameterModel::values() { return values_; }
+const Node::NodeParameterMap &ParameterModel::values() const { return values_; }
+
 // Reset parameter model
 void ParameterModel::resetParameters()
 {
     beginResetModel();
     endResetModel();
 }
+
+//
+QString ParameterModel::renamedFrom(QString newName)
+{
+    auto renameIt =
+        std::find_if(renamed_.begin(), renamed_.end(), [&](const auto &pair) { return pair.second == newName.toStdString(); });
+    if (renameIt == renamed_.end())
+        return "";
+    return QString::fromStdString(renamed_[std::distance(renamed_.begin(), renameIt)].first);
+}
+
+//
+bool ParameterModel::renameInProgress(QString newName)
+{
+    auto renameIt =
+        std::find_if(renamed_.begin(), renamed_.end(), [&](const auto &pair) { return pair.second == newName.toStdString(); });
+    return renameIt != renamed_.end();
+}
+
+//
+void ParameterModel::renameComplete(QString newName)
+{
+    renamed_.erase(std::remove_if(renamed_.begin(), renamed_.end(),
+                                  [&](const auto &pair) { return pair.second == newName.toStdString(); }));
+}
+
+//
+void ParameterModel::rename(const std::string &currentName, const std::string &newName)
+{
+    // TODO: This could do with being wrapped in a begin/end reset model/insert rows
+    // *if* we defer the onItemAdded callback in the GraphDelegate, probably using a "renameInProgress" flag
+    // therefore preventing the call to GraphModel::replaceTargetEndPoints while the endPoints are not in their final state.
+    auto row = int(std::distance(values_.begin(), values_.find(currentName)));
+    auto element = values_.extract(currentName);
+
+    Graph::NodeParameterMap newMap = values_;
+    newMap.erase(element.key());
+    newMap.insert({newName, element.mapped()});
+    row = int(std::distance(newMap.begin(), newMap.find(newName)));
+
+    values_ = newMap;
+    renamed_.emplace_back(currentName, newName);
+}
+
+/*
+ * QAbstractListModel overrides
+ */
 
 // Return number of parameters (required by QAbstractListModel)
 int ParameterModel::rowCount(const QModelIndex &parent) const { return values_.size(); }

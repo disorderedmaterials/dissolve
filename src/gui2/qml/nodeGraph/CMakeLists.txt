@@ -11,6 +11,7 @@ qt_add_qml_module(
   GraphView.qml
   GraphDelegate.qml
   ParameterDelegate.qml
+  ParameterTextInput.qml
   NodeBox.qml
   SpeciesDialog.qml
   RESOURCES

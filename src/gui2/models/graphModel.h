@@ -86,8 +86,6 @@ class GraphModel : public QObject
     NodeParameterEndPointsMap curveOutputEndPoints_;
 
     protected:
-    //
-    std::set<Graph *> knownGraphSet_;
     // The abstract data model for the parameter endpoints
     ParameterEndPointsModel parameterEndPoints_;
     // The abstract data model for the nodes
@@ -102,6 +100,18 @@ class GraphModel : public QObject
     int indexByName(std::string_view name);
 
     public:
+    //
+    Q_INVOKABLE void reload();
+    //
+    Q_INVOKABLE void resetEndPoints();
+    // Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+    Q_INVOKABLE void replaceTargetEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea);
+    // Replace the source DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+    Q_INVOKABLE void replaceSourceEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea);
+    //
+    Q_INVOKABLE bool renameInput(QString nodeName, QString currentName, QString newName);
+    //
+    Q_INVOKABLE bool renameOutput(QString nodeName, QString currentName, QString newName);
     // Returns bool - true if we are currently reconstructing existing nodes in the current graph
     Q_INVOKABLE bool nodeReconstructionInProgress();
     // Record that a node with a given name has been reconstructed
