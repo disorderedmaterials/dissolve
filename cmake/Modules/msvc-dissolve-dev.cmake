@@ -32,6 +32,6 @@
 
         # Install all dependencies
         foreach(DEPENDENCY IN LISTS ALL_INSTALL_FILES)
-            file(COPY ${DEPENDENCY} DESTINATION "${INSTALLATION_DIR}")
+            file(COPY ${DEPENDENCY} DESTINATION "${INSTALLATION_DIR}/bin")
         endforeach()
     endfunction()
