@@ -69,3 +69,5 @@ class InsertRandomNode : public Node
     // Perform processing
     NodeConstants::ProcessResult process() override;
 };
+
+EnumOptions<InsertRandomNode::BoxScalingType> getEnumOptions(InsertRandomNode::BoxScalingType);
