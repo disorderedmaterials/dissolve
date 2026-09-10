@@ -44,6 +44,7 @@ bool GraphEdgeModel::remove(Edge &edge)
         beginRemoveRows({}, row, row);
         graph_->removeEdge(edge.definition());
         endRemoveRows();
+        Q_EMIT parent_->connectionsChanged();
         return true;
     }
 }
@@ -67,6 +68,7 @@ void GraphEdgeModel::removeConnected(std::string nodeName)
             beginRemoveRows(QModelIndex(), row, row);
             edgeIt = allEdges.erase(edgeIt);
             endRemoveRows();
+            Q_EMIT parent_->connectionsChanged();
         }
         else
             edgeIt++;
@@ -79,6 +81,7 @@ void GraphEdgeModel::add(Edge &newEdge)
     beginInsertRows({}, edges().size(), edges().size());
     edges().emplace_back(std::make_unique<Edge>(newEdge));
     endInsertRows();
+    Q_EMIT parent_->connectionsChanged();
 }
 
 bool GraphEdgeModel::add(EdgeDefinition &newEdge)

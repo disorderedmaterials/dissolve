@@ -13,6 +13,7 @@ qt_add_qml_module(
   ParameterDelegate.qml
   ParameterTextInput.qml
   NodeBox.qml
+  NodeStatusIndicator.qml
   SpeciesDialog.qml
   RESOURCES
 )

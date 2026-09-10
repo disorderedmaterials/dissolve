@@ -18,10 +18,11 @@ NodeBox {
     property variant rootGraphModel
     property double startX: x + width
     property string hint: ""
-    property NodeMessages messageStore: nodeMessages
-    property bool hasErrors: false
+    property NodeMessages messageStore: NodeMessages {
+            graphModel: rootGraphModel
+            nodeName: name
+        }
 
-    signal reloadGraphRequired()
     signal descended(int idx)
     signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
     signal edgeDeferred(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
@@ -54,38 +55,13 @@ NodeBox {
     isOutputsNode: nodeName == "Outputs"
     isLoopBacksNode: nodeName == "LoopBacks"
 
-    NodeMessages {
-        id: nodeMessages
-        graphModel: root.rootGraphModel
-        nodeName: root.nodeName
-        parent: root
+    NodeStatusIndicator {
+        border.color: messageStore.indicatorColor
+        iconColor: messageStore.indicatorColor
+        iconText: messageStore.indicatorText
+        visible: messageStore.indicatorVisible
+        summary: messageStore.indicatorSummary
     }
-    Rectangle {
-        id: errorIndicator
-        width: 20
-        height: width
-        radius: width / 2
-
-        opacity: 0.8
-        color: "red"
-        border.width: 2
-        border.color: "grey"
-        visible: root.hasErrors
-
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: -50
-        anchors.rightMargin: -15
-
-        HoverHandler {
-            id: errorIndicatorHover
-        }
-
-        ToolTip.visible: errorIndicatorHover.hovered
-        ToolTip.text: "There are errors associated with this node. Check the logs."
-
-    }
-
     Menu {
         id: nodePopupMenu
 

@@ -149,6 +149,7 @@ class GraphModel : public QObject
 
     Q_SIGNALS:
     void graphChanged();
+    void connectionsChanged();
     void canvasDimensionsChanged();
     void decrementNodeTypeRequired(const std::string &);
     void graphRunComplete(NodeConstants::ProcessResult status, std::string node);
