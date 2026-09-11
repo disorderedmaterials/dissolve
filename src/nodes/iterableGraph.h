@@ -52,6 +52,8 @@ class IterableGraph : public Graph
     Edge *removeOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
 
     public:
+    //
+    void updateInputs();
     // Current loop iteration
     int currentIteration() const;
     // Number of loops (iterations) to perform

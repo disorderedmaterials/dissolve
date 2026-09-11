@@ -6,6 +6,7 @@
 #include "graphNodeModel.h"
 #include "nodes/edge.h"
 #include "nodes/inputs.h"
+#include "nodes/iterableGraph.h"
 #include "nodes/outputs.h"
 #include <QAbstractItemModel>
 #include <QVariant>
@@ -35,6 +36,11 @@ void GraphModel::setGraph(Graph *graph)
     }
 
     graph_ = graph;
+
+    auto iterator = dynamic_cast<IterableGraph *>(graph_);
+    if (iterator)
+        iterator->updateInputs();
+
     parameterEndPoints_.clear();
     nodes_.reset();
     edges_.reset();

@@ -50,6 +50,7 @@ class NodeMessages : public QObject
 
     Q_OBJECT;
     Q_PROPERTY(bool indicatorVisible READ indicatorVisible NOTIFY messagesUpdated);
+    Q_PROPERTY(double indicatorOpacity READ indicatorOpacity NOTIFY messagesUpdated);
     Q_PROPERTY(QString indicatorText READ indicatorText NOTIFY messagesUpdated);
     Q_PROPERTY(QString indicatorSummary READ indicatorSummary NOTIFY messagesUpdated);
     Q_PROPERTY(QColor indicatorColor READ indicatorColor NOTIFY messagesUpdated);
@@ -106,6 +107,8 @@ class NodeMessages : public QObject
     public:
     //
     bool indicatorVisible();
+    //
+    double indicatorOpacity();
     //
     QString indicatorSummary();
     //

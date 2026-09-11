@@ -13,9 +13,9 @@ import "../DissolveIconsModule"
 NodeBox {
     id: root
 
+    property variant rootGraphModel
     property double endX: x
     property double midY: y + height / 2
-    property variant rootGraphModel
     property double startX: x + width
     property string hint: ""
     property NodeMessages messageStore: NodeMessages {
@@ -49,13 +49,14 @@ NodeBox {
 
     // Ensure that we only display this box for valid node items
     visible: (icon != null) && !(isRootNode && (isInputsNode || isOutputsNode))
-    x: isInputsNode ? 0 : (isOutputsNode ? (rootGraphModel.canvasDimensions.width - width) : coords.x)
-    y: coords.y
+    x: isInputsNode ? 0 : (isOutputsNode || isLoopBacksNode ? (rootGraphModel.canvasDimensions.width - width) : coords.x)
+    y: isLoopBacksNode ? (rootGraphModel.canvasDimensions.height - (height * 4)) : coords.y
     isInputsNode: nodeName == "Inputs"
     isOutputsNode: nodeName == "Outputs"
     isLoopBacksNode: nodeName == "LoopBacks"
 
     NodeStatusIndicator {
+        opacity: messageStore.indicatorOpacity
         border.color: messageStore.indicatorColor
         iconColor: messageStore.indicatorColor
         iconText: messageStore.indicatorText

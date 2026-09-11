@@ -32,6 +32,9 @@ LoopBacksNode *IterableGraph::loopBacks() const { return loopBacks_; }
 // Return loop edges
 const Graph::Edges &IterableGraph::loopEdges() const { return loopEdges_; }
 
+//
+void IterableGraph::updateInputs() { setLoopBacks(); }
+
 // Current loop iteration
 int IterableGraph::currentIteration() const { return i_; }
 

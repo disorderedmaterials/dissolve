@@ -21,6 +21,9 @@ void NodeMessages::setMessageStore()
 bool NodeMessages::indicatorVisible() { return !flags_.isSetOrNone(NodeMessages::Default); }
 
 //
+double NodeMessages::indicatorOpacity() { return flags_.isSet(NodeMessages::Standby) ? 0.2 : 0.8; }
+
+//
 QString NodeMessages::indicatorSummary()
 {
     if (flags_.isSet(NodeMessages::Error))

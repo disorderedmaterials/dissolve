@@ -13,7 +13,6 @@ Rectangle {
     width: 25
     height: width
     radius: width / 2
-    opacity: 0.8
     border.width: 3
 
     anchors.top: parent.top
