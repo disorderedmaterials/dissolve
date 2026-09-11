@@ -323,6 +323,7 @@ NodeBox {
                 onItemAdded: function(index, item) {
                         var lastOfItems = index + 1 == model.rowCount();
                         var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
+                        var endPoints = rootGraphModel.parameterEndPoints;
 
                         // If we are dealing with a node that has dynamic inputs (such as a graph node)
                         // and we are not currently reconstructing the graph's existing connections, we handle the dynamic input creation
@@ -334,7 +335,7 @@ NodeBox {
                             // Unless this is the first created input, update the target endpoint for this input since it will have changed with the QML.
                             // If this input is not connected, don't do anything.
                             if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
-                                rootGraphModel.replaceTargetEndPoint(item.nodeName, item.title, item.childDropArea);
+                                endPoints.replaceTarget(item.nodeName, item.title, item.childDropArea);
                         }
                         rootGraphModel.addInput(item.nodeName, item.title, item.x, item.y);
                 }
@@ -478,6 +479,7 @@ NodeBox {
                 onItemAdded: function(index, item) {
                         var lastOfItems = index + 1 == model.rowCount();
                         var reconstructingNodes = rootGraphModel.nodeReconstructionInProgress();
+                        var endPoints = rootGraphModel.parameterEndPoints;
 
                         // If we are dealing with a node that has dynamic outputs (such as a graph node)
                         // and we are not currently reconstructing the graph's existing connections, we handle the dynamic output creation
@@ -489,7 +491,7 @@ NodeBox {
                             // Unless this is the first created output, update the target endpoint for this output since it will have changed with the QML.
                             // If this output is not connected, don't do anything.
                             if (model.rowCount() > 1 && rootGraphModel.hasConnections(item.nodeName, item.title))
-                                rootGraphModel.parameterEndPoints.replaceSource(item.nodeName, item.title, item.childDropArea);
+                                endPoints.replaceSource(item.nodeName, item.title, item.childDropArea);
                         }
                         rootGraphModel.addOutput(item.nodeName, item.title, item.x + item.width / 2, item.y);
                 }

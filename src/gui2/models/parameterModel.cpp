@@ -33,32 +33,7 @@ void ParameterModel::resetParameters()
     endResetModel();
 }
 
-//
-QString ParameterModel::renamedFrom(QString newName)
-{
-    auto renameIt =
-        std::find_if(renamed_.begin(), renamed_.end(), [&](const auto &pair) { return pair.second == newName.toStdString(); });
-    if (renameIt == renamed_.end())
-        return "";
-    return QString::fromStdString(renamed_[std::distance(renamed_.begin(), renameIt)].first);
-}
-
-//
-bool ParameterModel::renameInProgress(QString newName)
-{
-    auto renameIt =
-        std::find_if(renamed_.begin(), renamed_.end(), [&](const auto &pair) { return pair.second == newName.toStdString(); });
-    return renameIt != renamed_.end();
-}
-
-//
-void ParameterModel::renameComplete(QString newName)
-{
-    renamed_.erase(std::remove_if(renamed_.begin(), renamed_.end(),
-                                  [&](const auto &pair) { return pair.second == newName.toStdString(); }));
-}
-
-//
+// Rename a parameter
 void ParameterModel::rename(const std::string &currentName, const std::string &newName)
 {
     // TODO: This could do with being wrapped in a begin/end reset model/insert rows
@@ -73,7 +48,6 @@ void ParameterModel::rename(const std::string &currentName, const std::string &n
     row = int(std::distance(newMap.begin(), newMap.find(newName)));
 
     values_ = newMap;
-    renamed_.emplace_back(currentName, newName);
 }
 
 /*

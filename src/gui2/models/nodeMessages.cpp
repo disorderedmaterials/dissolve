@@ -17,13 +17,13 @@ void NodeMessages::setMessageStore()
         messageStore_ = sourceNode->messages();
 }
 
-//
+// Returns bool - true if the indicator should be visible (false if Default state)
 bool NodeMessages::indicatorVisible() { return !flags_.isSetOrNone(NodeMessages::Default); }
 
-//
+// Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
 double NodeMessages::indicatorOpacity() { return flags_.isSet(NodeMessages::Standby) ? 0.2 : 0.8; }
 
-//
+// Returns the indicator status summary
 QString NodeMessages::indicatorSummary()
 {
     if (flags_.isSet(NodeMessages::Error))
@@ -37,7 +37,7 @@ QString NodeMessages::indicatorSummary()
     return "";
 }
 
-//
+// Returns the indicator icon text
 QString NodeMessages::indicatorText()
 {
     if (flags_.isSet(NodeMessages::Error))
@@ -51,7 +51,7 @@ QString NodeMessages::indicatorText()
     return "";
 }
 
-//
+// Returns the indicator icon color
 QColor NodeMessages::indicatorColor()
 {
     if (flags_.isSet(NodeMessages::Error))
@@ -65,7 +65,7 @@ QColor NodeMessages::indicatorColor()
     return QColor("transparent");
 }
 
-//
+// Reset flags
 void NodeMessages::resetFlags()
 {
     flags_.removeFlag(NodeMessages::Default);
@@ -101,7 +101,7 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          resetFlags();
                          updateMessages();
                      });
-    QObject::connect(graphModel_, &GraphModel::connectionsChanged, this,
+    QObject::connect(graphModel_, &GraphModel::graphInvalidated, this,
                      [this]()
                      {
                          // Place node on standby since graph's connections have changed since last successful run

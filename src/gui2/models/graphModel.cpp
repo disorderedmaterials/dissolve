@@ -292,56 +292,16 @@ int GraphModel::indexByName(std::string_view name)
     return 0;
 }
 
-//
+// Reload the graph
 void GraphModel::reload() { setGraph(graph_); }
 
-//
+// Reset the end points (this completely re-renders the edges from the base graph's knowledge of them)
 void GraphModel::resetEndPoints()
 {
     parameterEndPoints_.resetFromEdges(graph_->edges(), curveOutputEndPoints_, curveInputEndPoints_);
 }
 
-// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-void GraphModel::replaceTargetEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea)
-{
-    auto endPoints = parameterEndPoints_.endPoints();
-    // If no endpoints present, don't do anything
-    if (endPoints.empty())
-        return;
-
-    // Find the new DropArea in the input endpoints, inorder to replace the current target endpoint with it
-    auto replaceIt = std::find_if(endPoints.begin(), endPoints.end(),
-                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
-                                  {
-                                      auto &target = pair.second;
-                                      auto targetNodeName = target->property("nodeName").toString();
-                                      auto targetParam = target->property("paramName").toString();
-                                      return targetNodeName == nodeName && targetParam == paramName;
-                                  });
-    parameterEndPoints_.replaceTarget(std::distance(endPoints.begin(), replaceIt), newDropArea);
-}
-
-// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-void GraphModel::replaceSourceEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea)
-{
-    auto endPoints = parameterEndPoints_.endPoints();
-    // If no endpoints present, don't do anything
-    if (endPoints.empty())
-        return;
-
-    // Find the new DropArea in the input endpoints, inorder to replace the current target endpoint with it
-    auto replaceIt = std::find_if(endPoints.begin(), endPoints.end(),
-                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
-                                  {
-                                      auto &source = pair.first;
-                                      auto sourceNodeName = source->property("nodeName").toString();
-                                      auto sourceParam = source->property("paramName").toString();
-                                      return sourceNodeName == nodeName && sourceParam == paramName;
-                                  });
-    parameterEndPoints_.replaceSource(std::distance(endPoints.begin(), replaceIt), newDropArea);
-}
-
-//
+// Rename an input parameter
 bool GraphModel::renameInput(QString nodeName, QString currentName, QString newName)
 {
     auto node = graph_->findNode(nodeName.toStdString());
@@ -420,7 +380,7 @@ bool GraphModel::renameInput(QString nodeName, QString currentName, QString newN
     return false;
 }
 
-//
+// Rename an output parameter
 bool GraphModel::renameOutput(QString nodeName, QString currentName, QString newName)
 {
     auto node = graph_->findNode(nodeName.toStdString());

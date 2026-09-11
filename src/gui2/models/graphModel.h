@@ -100,17 +100,13 @@ class GraphModel : public QObject
     int indexByName(std::string_view name);
 
     public:
-    //
+    // Reload the graph
     Q_INVOKABLE void reload();
-    //
+    // Reset the end points (this completely re-renders the edges from the base graph's knowledge of them)
     Q_INVOKABLE void resetEndPoints();
-    // Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-    Q_INVOKABLE void replaceTargetEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea);
-    // Replace the source DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-    Q_INVOKABLE void replaceSourceEndPoint(QString nodeName, QString paramName, QQuickItem *newDropArea);
-    //
+    // Rename an input parameter
     Q_INVOKABLE bool renameInput(QString nodeName, QString currentName, QString newName);
-    //
+    // Rename an output parameter
     Q_INVOKABLE bool renameOutput(QString nodeName, QString currentName, QString newName);
     // Returns bool - true if we are currently reconstructing existing nodes in the current graph
     Q_INVOKABLE bool nodeReconstructionInProgress();
@@ -149,7 +145,7 @@ class GraphModel : public QObject
 
     Q_SIGNALS:
     void graphChanged();
-    void connectionsChanged();
+    void graphInvalidated();
     void canvasDimensionsChanged();
     void decrementNodeTypeRequired(const std::string &);
     void graphRunComplete(NodeConstants::ProcessResult status, std::string node);

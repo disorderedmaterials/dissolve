@@ -44,13 +44,16 @@ class ParameterEndPointsModel : public QAbstractListModel
                         const std::map<const Node *, std::map<std::string, QQuickItem *>> &curveInputsMap);
     // Clear all end points
     void clear();
-    // Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-    void replaceTarget(int index, QQuickItem *newDropArea);
-    // Replace the source DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-    void replaceSource(int index, QQuickItem *newDropArea);
 
     private:
+    // Remove a pair of DropArea QQuickItem *, based on a lambda determining which pairs are to be deleted
     ParameterEndPoints remove(std::function<bool(int)> lambda);
+
+    public:
+    // Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+    Q_INVOKABLE void replaceTarget(QString nodeName, QString paramName, QQuickItem *newDropArea);
+    // Replace the source DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+    Q_INVOKABLE void replaceSource(QString nodeName, QString paramName, QQuickItem *newDropArea);
 
     /*
      * QAbstractListModel overrides

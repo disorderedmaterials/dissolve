@@ -20,25 +20,17 @@ class ParameterModel : public QAbstractListModel
     private:
     // A reference to the parameters from the model
     Node::NodeParameterMap &values_;
-    //
-    std::vector<std::pair<std::string, std::string>> renamed_;
 
     public:
     // Returns the reference to the parameters from the model
     Node::NodeParameterMap &values();
     const Node::NodeParameterMap &values() const;
-    //
+    // Rename a parameter
     void rename(const std::string &currentName, const std::string &newName);
 
     public:
     // Reset parameter model
     Q_INVOKABLE void resetParameters();
-    //
-    Q_INVOKABLE QString renamedFrom(QString newName);
-    //
-    Q_INVOKABLE bool renameInProgress(QString newName);
-    //
-    Q_INVOKABLE void renameComplete(QString newName);
 
     /*
      * QAbstractListModel overrides

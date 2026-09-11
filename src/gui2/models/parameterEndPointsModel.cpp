@@ -84,22 +84,7 @@ void ParameterEndPointsModel::clear()
     endResetModel();
 }
 
-// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-void ParameterEndPointsModel::replaceTarget(int index, QQuickItem *newDropArea)
-{
-    beginResetModel();
-    endPoints_[index].second = newDropArea;
-    endResetModel();
-}
-
-// Replace the source DropArea, for instance when the existing underlying QQuickItem * is no longer valid
-void ParameterEndPointsModel::replaceSource(int index, QQuickItem *newDropArea)
-{
-    beginResetModel();
-    endPoints_[index].first = newDropArea;
-    endResetModel();
-}
-
+// Remove a pair of DropArea QQuickItem *, based on a lambda determining which pairs are to be deleted
 ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(std::function<bool(int)> lambda)
 {
     ParameterEndPoints removed;
@@ -114,6 +99,52 @@ ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(std:
         }
     }
     return removed;
+}
+
+// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+void ParameterEndPointsModel::replaceTarget(QString nodeName, QString paramName, QQuickItem *newDropArea)
+{
+    // If no endpoints present, don't do anything
+    if (endPoints_.empty())
+        return;
+
+    // Find the new DropArea in the input endpoints, inorder to replace the current target endpoint with it
+    auto replaceIt = std::find_if(endPoints_.begin(), endPoints_.end(),
+                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
+                                  {
+                                      auto &target = pair.second;
+                                      auto targetNodeName = target->property("nodeName").toString();
+                                      auto targetParam = target->property("paramName").toString();
+                                      return targetNodeName == nodeName && targetParam == paramName;
+                                  });
+
+    beginResetModel();
+    auto index = std::distance(endPoints_.begin(), replaceIt);
+    endPoints_[index].second = newDropArea;
+    endResetModel();
+}
+
+// Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid
+void ParameterEndPointsModel::replaceSource(QString nodeName, QString paramName, QQuickItem *newDropArea)
+{
+    // If no endpoints present, don't do anything
+    if (endPoints_.empty())
+        return;
+
+    // Find the new DropArea in the input endpoints, inorder to replace the current target endpoint with it
+    auto replaceIt = std::find_if(endPoints_.begin(), endPoints_.end(),
+                                  [&](const std::pair<QQuickItem *, QQuickItem *> &pair)
+                                  {
+                                      auto &source = pair.first;
+                                      auto sourceNodeName = source->property("nodeName").toString();
+                                      auto sourceParam = source->property("paramName").toString();
+                                      return sourceNodeName == nodeName && sourceParam == paramName;
+                                  });
+
+    auto index = std::distance(endPoints_.begin(), replaceIt);
+    beginResetModel();
+    endPoints_[index].first = newDropArea;
+    endResetModel();
 }
 
 /*

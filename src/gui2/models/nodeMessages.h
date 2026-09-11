@@ -77,7 +77,7 @@ class NodeMessages : public QObject
     Q_INVOKABLE void updateMessages();
 
     private:
-    //
+    // Reset flags
     void resetFlags();
 
     protected:
@@ -105,15 +105,15 @@ class NodeMessages : public QObject
     Flags<NodeMessages::NodeStatusFlags> flags_;
 
     public:
-    //
+    // Returns bool - true if the indicator should be visible (false if Default state)
     bool indicatorVisible();
-    //
+    // Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
     double indicatorOpacity();
-    //
+    // Returns the indicator status summary
     QString indicatorSummary();
-    //
+    // Returns the indicator icon text
     QString indicatorText();
-    //
+    // Returns the indicator icon color
     QColor indicatorColor();
     // Flags for the node status
     const Flags<NodeMessages::NodeStatusFlags> &flags() const;
