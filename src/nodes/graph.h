@@ -98,10 +98,16 @@ class Graph : public Node
     bool removeEdge(Edge *edgeToRemove);
     // Find edge between nodes
     Edge *findEdge(const EdgeDefinition &definition) const;
+    // Find edge between nodes based on the target node and input
+    Edge *findEdgeByTarget(const std::string &targetNode, const std::string &targetInput) const;
+    // Find edges between nodes based on the source node and output
+    std::vector<Edge *> findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput) const;
     // Return named node, if it exists
     Node *findNode(std::string_view nodeName);
     // Return container of nodes
     Nodes &nodes();
+    // Return container of reverse nodes
+    ReverseNodes &reverseNodes();
     // Return container of edges between nodes
     Edges &edges();
     // Return a path to this graph from the root

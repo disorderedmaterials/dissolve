@@ -5,7 +5,7 @@
 #define MyAppVersion GetEnv('DISSOLVE_VERSION')
 #define MyAppPublisher "Team Dissolve"
 #define MyAppURL "https://www.projectdissolve.com/"
-#define MyAppExeName "Dissolve-GUI-QML.exe"
+#define MyAppExeName "Dissolve2-GUI.exe"
 
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
 #define DissolveDir GetEnv('DISSOLVE_DIR')
@@ -27,11 +27,11 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={commonpf}\Dissolve-GUI-QML
+DefaultDirName={commonpf}\Dissolve2-GUI
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
-OutputBaseFilename=Dissolve-GUI-QML-{#MyAppVersion}-Win64
+OutputBaseFilename=Dissolve2-GUI-{#MyAppVersion}-Win64
 SetupIconFile=Dissolve.ico
 Compression=lzma
 SolidCompression=yes

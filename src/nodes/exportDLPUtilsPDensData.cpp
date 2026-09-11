@@ -17,7 +17,7 @@ ExportDLPUtilsPDensDataNode::ExportDLPUtilsPDensDataNode(Graph *parentGraph) : N
  */
 
 // Return type of the node
-std::string_view ExportDLPUtilsPDensDataNode::type() const { return "ExportPDensData"; }
+std::string_view ExportDLPUtilsPDensDataNode::type() const { return "ExportDLPUtilsPDensData"; }
 
 // Return short summary of the node's purpose
 std::string_view ExportDLPUtilsPDensDataNode::summary() const { return "Export 3D data in DLPUtils PDens format"; }
