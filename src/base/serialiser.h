@@ -41,9 +41,10 @@ namespace Serialisable
 using array = toml::array;
 using table = toml::table;
 
-void serialiseOnto(const int a, std::string tag, SerialisedValue &target);
-void serialiseOnto(const double a, std::string tag, SerialisedValue &target);
-void serialiseOnto(const std::string a, std::string tag, SerialisedValue &target);
+void serialiseOnto(int a, std::string tag, SerialisedValue &target);
+void serialiseOnto(double a, std::string tag, SerialisedValue &target);
+void serialiseOnto(std::string_view a, std::string tag, SerialisedValue &target);
+void serialiseOnto(std::string a, std::string tag, SerialisedValue &target);
 } // namespace Serialisable
 
 namespace Deserialisable

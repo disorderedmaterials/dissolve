@@ -144,7 +144,7 @@ bool IterableGraph::addEdge(const EdgeDefinition &definition)
                          !loopBacks_->findInput(definition.targetInput);
 
     // If not invertible, create and return a standard edge
-    if (nonInvertible)
+    if (nonInvertible || definition.targetNode != "LoopBacks")
         return Graph::addEdge(definition);
 
     // Create loop edge
