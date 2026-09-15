@@ -10,6 +10,7 @@
 #include "nodes/exportXYZConfiguration.h"
 #include "nodes/replicatedConfiguration.h"
 #include "nodes/species.h"
+#include "tests/tempFile.h"
 #include "tests/testGraph.h"
 #include <gtest/gtest.h>
 #include <optional>
@@ -106,7 +107,6 @@ class CIFNodeTest : public ::testing::Test
         auto *cfg = lastNode->getOutputValue<Configuration *>("Configuration");
         if (!cfg)
             return testing::AssertionFailure() << "Failed to retrieve reconstructed configuration.";
-        ExportXYZConfigurationNode::exportConfiguration(cfg, "THIS.xyz");
 
         // Check atom-for-atom - search for atoms in the original CIF structure in the reconstructed configuration
         auto repeats = repeat.value_or(Vector3i({1, 1, 1}));
