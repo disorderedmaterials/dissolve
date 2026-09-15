@@ -9,8 +9,7 @@ add_subdirectory(math)
 add_subdirectory(neta)
 
 if(GUI)
-  add_subdirectory(gui)
-  add_subdirectory(gui-qml)
+  add_subdirectory(gui2)
 endif(GUI)
 
 add_subdirectory(nodes)
