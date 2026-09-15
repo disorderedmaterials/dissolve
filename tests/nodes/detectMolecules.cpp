@@ -37,27 +37,21 @@ TEST(DetectMoleculesNodeTest, Water33Unordered)
     // Run to get detected structures
     ASSERT_EQ(detectMoleculesNode->run(), NodeConstants::ProcessResult::Success);
     ASSERT_EQ(detectMoleculesNode->detectedStructures().size(), 1);
-    ASSERT_EQ(detectMoleculesNode->detectedStructures().at(0).instances().size(), 33);
-
-    // Create a configuration
-    ASSERT_TRUE(testGraph.appendNode("Configuration"));
-    auto setBoxConfigurationNode = testGraph.appendNode("SetBox", "SetBoxConfiguration");
-    ASSERT_TRUE(setBoxConfigurationNode);
-    setBoxConfigurationNode->setOption("Lengths", Vector3(10.0, 10.0, 10.0));
-    ASSERT_TRUE(testGraph.addEdge({"Configuration", "Configuration", "SetBoxConfiguration", "Input"}));
+    ASSERT_EQ(detectMoleculesNode->detectedStructures().at("OH2").instances().size(), 33);
 
     // Create a species from the detected structure
     auto speciesNode = testGraph.appendNode("Species", "Water");
     ASSERT_TRUE(speciesNode);
-    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-0", "Water", "Structure"}));
+    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "OH2", "Water", "Structure"}));
 
-    auto insertNode = testGraph.appendNode("Insert");
-    ASSERT_TRUE(insertNode);
-    ASSERT_TRUE(insertNode->setOption("BoxAction", InsertNode::BoxActionStyle::None));
-    ASSERT_TRUE(testGraph.addEdge({"SetBoxConfiguration", "Output", "Insert", "Configuration"}));
-    ASSERT_TRUE(testGraph.addEdge({"Water", "Species", "Insert", "Species"}));
-    ASSERT_TRUE(testGraph.addEdge({"DetectMolecules", "DetectedMolecule-0", "Insert", "Instances"}));
+    // Create a configuration
+    ASSERT_TRUE(testGraph.appendNode("Configuration"));
+    auto instantiateNode = testGraph.appendNode("Instantiate");
+    ASSERT_TRUE(instantiateNode);
+    ASSERT_TRUE(testGraph.addEdge({"Configuration", "Configuration", "Instantiate", "Configuration"}));
+    ASSERT_TRUE(testGraph.addEdge({"Water", "Species", "Instantiate", "Species"}));
 
-    ASSERT_EQ(insertNode->run(), NodeConstants::ProcessResult::Success);
+    // Run from the instantiate node
+    ASSERT_EQ(instantiateNode->run(), NodeConstants::ProcessResult::Success);
 }
 } // namespace UnitTest
