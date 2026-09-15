@@ -19,8 +19,6 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
     // Add positionals
     auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile);
 
-    auto nodeOption = app.add_option("node", node_, "Node to run");
-
     // Basic Control
     app.add_flag_callback(
            "-q,--quiet", []() { Messenger::setQuiet(true); },
@@ -38,9 +36,12 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
     app.add_option("--restart", restartFilename_,
                    "Read restart file specified instead of the default one (but still write to the default one)")
         ->group("Input Files")
-        ->check(CLI::ExistingFile);
+        ->check(CLI::ExistingPath);
     if (!isGUI)
     {
+        inputFileOption->required();
+        app.add_option("node", node_, "Node to run")->required();
+
         app.add_option("-w,--write-input", writeInputFilename_,
                        "Write out the current simulation input to the file specified and then quit")
             ->group("Input Files");
@@ -54,12 +55,8 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
         ->group("Output Files");
     app.add_flag("-x,--no-restart-file", noRestartFile_, "Don't write restart file at all")->group("Output Files");
 
-    // Add GUI-specific options - if this is not the GUI, make the input file and node into required parameters
-    if (!isGUI)
-        inputFileOption->required();
-
     // Tweak formatting
-    app.get_formatter()->label("TEXT", "<filename>");
+    app.get_formatter()->label("TEXT:FILE", "<filename>");
     app.get_formatter()->label("INT", "<n>");
 
     // Parse the supplied options.
@@ -75,7 +72,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
 std::optional<std::filesystem::path> CLIOptions::inputFile() const { return inputFile_; }
 
 // Return the node to run
-std::optional<std::string> CLIOptions::node() const { return node_; }
+std::string CLIOptions::node() const { return node_; }
 
 // Return frequency at which to write restart file
 int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }
