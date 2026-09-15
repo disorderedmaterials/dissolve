@@ -116,24 +116,22 @@ int main(int args, char **argv)
 
     // Run main simulation
     auto result = true;
-    if (options.node())
-    {
-        auto node = dissolve.findNode(*options.node());
-        if (!node)
-        {
-            Messenger::error("Node \"{}\" not found", *options.node());
-            return 1;
-        }
 
-        switch (node->run())
-        {
-            case NodeConstants::ProcessResult::Failed:
-                result = false;
-                break;
-            case NodeConstants::ProcessResult::Unchanged:
-            case NodeConstants::ProcessResult::Success:
-                break;
-        }
+    auto node = dissolve.findNode(options.node());
+    if (!node)
+    {
+        Messenger::error("Node \"{}\" not found", options.node());
+        return 1;
+    }
+
+    switch (node->run())
+    {
+        case NodeConstants::ProcessResult::Failed:
+            result = false;
+            break;
+        case NodeConstants::ProcessResult::Unchanged:
+        case NodeConstants::ProcessResult::Success:
+            break;
     }
 
     if (result)
