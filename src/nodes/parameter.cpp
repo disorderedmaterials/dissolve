@@ -2,7 +2,10 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/parameter.h"
+#include "nodes/graph.h"
+#include "nodes/inputs.h"
 #include "nodes/node.h"
+#include "nodes/outputs.h"
 
 ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType)
     : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType)
@@ -15,6 +18,18 @@ ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_vi
 
 // Set node parent
 void ParameterBase::setParent(Node *parent) { parent_ = parent; }
+
+// Return the parameter name
+bool ParameterBase::setName(std::string name)
+{
+    if (!(dynamic_cast<Graph *>(parent_) || dynamic_cast<InputsNode *>(parent_) || dynamic_cast<OutputsNode *>(parent_)))
+        return Messenger::error("Can't rename a parameter belonging to a node of type other than Graph, Inputs, or Outputs.");
+
+    if (parent_->findInput(name) || parent_->findOutput(name))
+        return Messenger::error("Parameter rename failed - could not find the parameter to be renamed.");
+
+    name_ = name;
+}
 
 // Return the parameter name
 std::string_view ParameterBase::name() const { return name_; }

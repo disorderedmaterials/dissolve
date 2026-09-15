@@ -1,17 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-/*
-#include "gui2/models/types.h"
-#include "gui2/models/graphModel.h"
-#include <QQmlEngine>
-#include <QSortFilterProxyModel>
-
-void Types::registerDissolveQmlTypes()
-{
-    qmlRegisterType<GraphModel>(PROJECT, 1, 0, "GraphModel");
-}
-*/
 #include "gui2/models/types.h"
 #include "gui2/models/dissolveModel.h"
 #include "gui2/models/graphModel.h"

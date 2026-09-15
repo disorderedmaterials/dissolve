@@ -37,7 +37,7 @@ Dialog {
 
         root.exitSearchDialog();
     }
-    onRejected: root.exitSearchDialog();
+    onRejected: root.exitSearchDialog()
 
     NodeRegistrySortFilterModel {
         id: searchFilterModel

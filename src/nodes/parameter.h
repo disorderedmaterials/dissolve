@@ -82,6 +82,8 @@ class ParameterBase
     // Set node parent
     void setParent(Node *parent);
     // Return the parameter name
+    bool setName(std::string name);
+    // Return the parameter name
     std::string_view name() const;
     // Return the parameter description
     std::string_view description() const;

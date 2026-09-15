@@ -139,11 +139,11 @@ const std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalPro
       {"NeutronSQ", makeDerivedNode<NeutronSQNode>()},
       {"OrientedSDF", makeDerivedNode<OrientedSDFNode>()},
       {"QSpecies", makeDerivedNode<QSpeciesNode>()},
+      {"ReplicatedConfiguration", makeDerivedNode<ReplicatedConfigurationNode>()},
       {"SDF", makeDerivedNode<SDFNode>()},
       {"SetBox", makeDerivedNode<SetBoxNode>()},
       {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
       {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
-      {"SupercellConfiguration", makeDerivedNode<SupercellConfigurationNode>()},
       {"XRaySQ", makeDerivedNode<XRaySQNode>()},
       {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}}}};
 

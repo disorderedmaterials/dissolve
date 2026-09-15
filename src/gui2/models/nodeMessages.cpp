@@ -3,12 +3,80 @@
 
 #include "nodeMessages.h"
 
+NodeMessages::NodeMessages()
+{
+    if (!flags_.anySet())
+        flags_.setFlag(NodeMessages::Default);
+}
+
 // Message store
 void NodeMessages::setMessageStore()
 {
     auto sourceNode = graphModel_->graph()->findNode(nodeName_.toStdString());
-    messageStore_ = sourceNode->messages();
+    if (sourceNode)
+        messageStore_ = sourceNode->messages();
 }
+
+// Returns bool - true if the indicator should be visible (false if Default state)
+bool NodeMessages::indicatorVisible() { return !flags_.isSetOrNone(NodeMessages::Default); }
+
+// Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
+double NodeMessages::indicatorOpacity() { return flags_.isSet(NodeMessages::Standby) ? 0.2 : 0.8; }
+
+// Returns the indicator status summary
+QString NodeMessages::indicatorSummary()
+{
+    if (flags_.isSet(NodeMessages::Error))
+        return "There are errors associated with this node. Check the logs.";
+    else if (flags_.isSet(NodeMessages::Warn))
+        return "There are warnings associated with this node. Check the logs.";
+    else if (flags_.isSet(NodeMessages::Success))
+        return "Node ran successfully.";
+    else if (flags_.isSet(NodeMessages::Standby))
+        return "Graph has recent changes - node's inputs or outputs may be invalid.";
+    return "";
+}
+
+// Returns the indicator icon text
+QString NodeMessages::indicatorText()
+{
+    if (flags_.isSet(NodeMessages::Error))
+        return "!";
+    else if (flags_.isSet(NodeMessages::Warn))
+        return "!";
+    else if (flags_.isSet(NodeMessages::Success))
+        return QStringLiteral("\u2713");
+    else if (flags_.isSet(NodeMessages::Standby))
+        return QStringLiteral("\u2713");
+    return "";
+}
+
+// Returns the indicator icon color
+QColor NodeMessages::indicatorColor()
+{
+    if (flags_.isSet(NodeMessages::Error))
+        return QColor("red");
+    else if (flags_.isSet(NodeMessages::Warn))
+        return QColor("orange");
+    else if (flags_.isSet(NodeMessages::Success))
+        return QColor("green");
+    else if (flags_.isSet(NodeMessages::Standby))
+        return QColor("grey");
+    return QColor("transparent");
+}
+
+// Reset flags
+void NodeMessages::resetFlags()
+{
+    flags_.removeFlag(NodeMessages::Default);
+    flags_.removeFlag(NodeMessages::Standby);
+    flags_.removeFlag(NodeMessages::Error);
+    flags_.removeFlag(NodeMessages::Warn);
+    flags_.removeFlag(NodeMessages::Success);
+}
+
+// Flags for the node status
+const Flags<NodeMessages::NodeStatusFlags> &NodeMessages::flags() const { return flags_; }
 
 // Info
 const NodeMessageModel *NodeMessages::infoListModel() { return &infoListModel_; }
@@ -30,7 +98,19 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                              return;
 
                          graphStatus_.emplace(status);
+                         resetFlags();
                          updateMessages();
+                     });
+    QObject::connect(graphModel_, &GraphModel::graphInvalidated, this,
+                     [this]()
+                     {
+                         // Place node on standby since graph's connections have changed since last successful run
+                         if (flags_.isSetOrNone(NodeMessages::Success))
+                         {
+                             resetFlags();
+                             flags_.setFlag(NodeMessages::Standby);
+                             Q_EMIT messagesUpdated();
+                         }
                      });
 }
 
@@ -44,10 +124,10 @@ void NodeMessages::setNodeName(QString nodeName) { nodeName_ = nodeName; }
 QString NodeMessages::nodeName() { return nodeName_; }
 
 // Return the parent node
-void NodeMessages::setParent(QObject *parent) { parent_ = parent; }
+void NodeMessages::setParent(QQuickItem *parent) { parent_ = parent; }
 
 // Set the parent node
-QObject *NodeMessages::parent() { return parent_; }
+QQuickItem *NodeMessages::parent() { return parent_; }
 
 // Update all
 void NodeMessages::updateMessages()
@@ -56,6 +136,8 @@ void NodeMessages::updateMessages()
     std::vector<QString> warnings;
     std::vector<QString> errors;
     setMessageStore();
+
+    // Update message vectors
     if (!messageStore_.empty())
         for (const auto &[status, msg] : messageStore_)
             switch (status)
@@ -79,6 +161,7 @@ void NodeMessages::updateMessages()
                     return;
             }
 
+    // Check overall status of graph run
     if (graphStatus_.has_value())
         switch (graphStatus_.value())
         {
@@ -102,21 +185,31 @@ void NodeMessages::updateMessages()
                 break;
         }
 
+    // Check for messages
     if (info.empty())
         info.emplace_back(QString::fromStdString("No messages to display"));
+
+    // Check for warnings
     if (warnings.empty())
         warnings.emplace_back(QString::fromStdString("No warning messages to display"));
-    if (errors.empty())
-    {
-        parent_->setProperty("hasErrors", false);
-        errors.emplace_back(QString::fromStdString("No error messages to display"));
-    }
     else
-        parent_->setProperty("hasErrors", true);
+        flags_.setFlag(NodeMessages::Warn);
+
+    // Check for errors
+    if (errors.empty())
+        errors.emplace_back(QString::fromStdString("No error messages to display"));
+    else
+        flags_.setFlag(NodeMessages::Error);
+
+    // Check for success
+    if (!(flags_.isSet(NodeMessages::Error) && flags_.isSet(NodeMessages::Warn)))
+        flags_.setFlag(NodeMessages::Success);
 
     infoListModel_.setMessages(info);
     warningListModel_.setMessages(warnings);
     errorListModel_.setMessages(errors);
+
+    Q_EMIT messagesUpdated();
 }
 
 // Return the message list

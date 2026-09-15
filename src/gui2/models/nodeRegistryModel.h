@@ -50,6 +50,9 @@ class NodeRegistryModel : public QAbstractListModel
     // Source node registry data
     static std::vector<NodeRegistryDisplayElement> entries_;
     GraphModel *graphModel_{nullptr};
+    // Record of all parameters and their tally
+    std::map<std::string, int> allInputs_;
+    std::map<std::string, int> allOutputs_;
 
     public:
     // Return a unique default node name for a given node type
