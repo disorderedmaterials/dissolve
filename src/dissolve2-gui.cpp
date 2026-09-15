@@ -88,7 +88,7 @@ int main(int args, char **argv)
         }
 
         // Iterate before launching the GUI?
-        if (loadSuccessful && options.nIterations() > 0)
+        if (loadSuccessful)
         {
             // Prepare for run
             if (!dissolve.prepare())
