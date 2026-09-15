@@ -13,7 +13,7 @@
 class NodeRegistryModel : public QAbstractListModel
 {
     /*
-     * NodeRegistryDisplayElement is a type alias for a tuple-like container holing the following
+     * NodeRegistryDisplayElement is a type alias for a tuple-like container holding the following
      * information fields about each registered node:
      *
      * - Name/Node::type (string)
