@@ -15,7 +15,7 @@ DotProductNode::DotProductNode(Graph *parentGraph) : Node(parentGraph)
  */
 
 // Return type of the node
-std::string_view DotProductNode::type() const { return "Dot Product"; }
+std::string_view DotProductNode::type() const { return "DotProduct"; }
 
 // Return short summary of the node's purpose
 std::string_view DotProductNode::summary() const { return "Compute the dot product of vectors u and v"; }
