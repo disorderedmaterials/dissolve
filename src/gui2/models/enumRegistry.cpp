@@ -3,7 +3,7 @@
 
 #include "enumRegistry.h"
 #include "data/structureFactors.h"
-#include "gui2/models/nodeGraph/enumOptionsModel.h"
+#include "gui2/models/enumOptionsModel.h"
 #include "math/windowFunction.h"
 #include "nodes/gr.h"
 #include "nodes/md.h"

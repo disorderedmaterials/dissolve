@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/ff/ff.h"
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphModel.h"
 #include <QObject>
 #include <QStringList>
 
