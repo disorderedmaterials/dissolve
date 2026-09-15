@@ -22,7 +22,6 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
     auto nodeOption = app.add_option("node", node_, "Node to run");
 
     // Basic Control
-    app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 0)")->group("Basic Control");
     app.add_flag_callback(
            "-q,--quiet", []() { Messenger::setQuiet(true); },
            "Be quiet - don't output any messages whatsoever (output files are still written)")
@@ -77,9 +76,6 @@ std::optional<std::filesystem::path> CLIOptions::inputFile() const { return inpu
 
 // Return the node to run
 std::optional<std::string> CLIOptions::node() const { return node_; }
-
-// Return number of iterations to perform
-int CLIOptions::nIterations() const { return nIterations_; }
 
 // Return frequency at which to write restart file
 int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }

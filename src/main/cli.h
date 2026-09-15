@@ -22,8 +22,6 @@ class CLIOptions
     std::optional<std::filesystem::path> inputFile_;
     // Node to run
     std::optional<std::string> node_;
-    // Number of iterations to perform
-    int nIterations_{0};
     // Frequency at which to write restart file
     int restartFileFrequency_{10};
     // Seed for random number generator
@@ -53,8 +51,6 @@ class CLIOptions
     std::optional<std::filesystem::path> inputFile() const;
     // Return the node to run
     std::optional<std::string> node() const;
-    // Return number of iterations to perform
-    int nIterations() const;
     // Return frequency at which to write restart file
     int restartFileFrequency() const;
     // Return seed for random number generator

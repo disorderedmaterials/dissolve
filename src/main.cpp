@@ -114,13 +114,9 @@ int main(int args, char **argv)
     //     }
     // }
 
-    // If we're just checking the input and restart files, exit now
-    if (!options.nIterations())
-        return 0;
-
     // Run main simulation
     auto result = true;
-    if (options.nIterations() > 0 && options.node())
+    if (options.node())
     {
         auto node = dissolve.findNode(*options.node());
         if (!node)
@@ -129,16 +125,15 @@ int main(int args, char **argv)
             return 1;
         }
 
-        for (int loop = 0; loop < options.nIterations(); ++loop)
-            switch (node->run())
-            {
-                case NodeConstants::ProcessResult::Failed:
-                    result = false;
-                    break;
-                case NodeConstants::ProcessResult::Unchanged:
-                case NodeConstants::ProcessResult::Success:
-                    break;
-            }
+        switch (node->run())
+        {
+            case NodeConstants::ProcessResult::Failed:
+                result = false;
+                break;
+            case NodeConstants::ProcessResult::Unchanged:
+            case NodeConstants::ProcessResult::Success:
+                break;
+        }
     }
 
     if (result)
