@@ -7,7 +7,7 @@
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
 #include <algorithm>
-#include <codecvt>
+#include <filesystem>
 
 Graph::Graph(Graph *parentGraph) : Node(parentGraph)
 {
@@ -344,4 +344,24 @@ std::ostream &operator<<(std::ostream &stream, const Graph &node)
     stream << "    classDef math fill:#D0FFD0,color:#000000" << std::endl;
     stream << node.toMermaid(4);
     return stream;
+}
+
+// Export the entire graph for restart
+void Graph::saveRestart(std::filesystem::path directory) const
+{
+    auto path = directory / name();
+    std::filesystem::create_directories(path);
+    for (auto &[name, node] : nodes_)
+        node->saveRestart(path);
+}
+
+// Export the entire graph for restart
+bool Graph::loadRestart(std::filesystem::path directory)
+{
+    auto path = directory / name();
+    std::filesystem::create_directories(path);
+    for (auto &[name, node] : nodes_)
+        if (!node->loadRestart(path))
+            return false;
+    return true;
 }
