@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/detectMolecules.h"
+#include "classes/configuration.h"
 #include "nodes/calculateBonding.h"
 #include "nodes/importXYZStructure.h"
 #include "tests/testGraph.h"
@@ -10,6 +11,25 @@
 
 namespace UnitTest
 {
+testing::AssertionResult compareContents(const Structure &structure, const Configuration *configuration, bool fold = true)
+{
+    for (const auto &structureAtom : structure.atoms())
+    {
+        auto r = fold ? configuration->box().fold(structureAtom->r()) : structureAtom->r();
+        if (std::ranges::find_if(configuration->atoms(),
+                                 [&structureAtom, r](const auto &cfgAtom)
+                                 {
+                                     return structureAtom->Z() == cfgAtom.Z() && fabs(r.x - cfgAtom.r().x) < 1.0e-6 &&
+                                            fabs(r.y - cfgAtom.r().y) < 1.0e-6 && fabs(r.z - cfgAtom.r().z) < 1.0e-6;
+                                 }) == configuration->atoms().end())
+            return testing::AssertionFailure()
+                   << std::format("Failed to find atom {} @ {},{},{} in the reconstructed structure.",
+                                  Elements::symbol(structureAtom->Z()), r.x, r.y, r.z);
+    }
+
+    return testing::AssertionSuccess();
+}
+
 TEST(DetectMoleculesNodeTest, Water33Unordered)
 {
     TestGraph testGraph;
@@ -53,5 +73,9 @@ TEST(DetectMoleculesNodeTest, Water33Unordered)
 
     // Run from the instantiate node
     ASSERT_EQ(instantiateNode->run(), NodeConstants::ProcessResult::Success);
+
+    // Check consistency between the original XYZ structure and the reconstructed configuration
+    ASSERT_TRUE(compareContents(importXYZStructureNode->getOutputValue<Structure>("Structure"),
+                                instantiateNode->getOutputValue<Configuration *>("Configuration")));
 }
 } // namespace UnitTest
