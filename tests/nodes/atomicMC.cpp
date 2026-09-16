@@ -29,7 +29,7 @@ TEST(AtomShakeTest, Water)
     ASSERT_TRUE(testGraph.fetchHead()->setOption<Number>("X", 0));
 
     // Set connections
-    EXPECT_TRUE(testGraph.addEdge({"Insert-Water", "Configuration", "Iterator", "Configuration"}));
+    EXPECT_TRUE(testGraph.addEdge({"InsertRandom-Water", "Configuration", "Iterator", "Configuration"}));
     EXPECT_TRUE(iterator->addEdge({"Inputs", "Configuration", "AtomicMC", "Configuration"}));
     // TODO: Output parameter name cannot be the same as loopback (although loopback param CAN match input).
     // May need to enforce this.

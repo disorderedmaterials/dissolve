@@ -7,6 +7,7 @@ namespace Serialisable
 {
 void serialiseOnto(int a, std::string tag, SerialisedValue &target) { target[tag] = a; }
 void serialiseOnto(double a, std::string tag, SerialisedValue &target) { target[tag] = a; }
+void serialiseOnto(std::string_view a, std::string tag, SerialisedValue &target) { target[tag] = std::string(a); }
 void serialiseOnto(std::string a, std::string tag, SerialisedValue &target) { target[tag] = a; }
 } // namespace Serialisable
 

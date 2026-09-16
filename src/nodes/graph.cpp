@@ -283,7 +283,7 @@ void Graph::deserialise(const SerialisedValue &node)
 }
 
 /*
- *Mermaid processing code
+ * Mermaid processing code
  */
 
 // Node types that represent data sources
