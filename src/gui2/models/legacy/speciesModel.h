@@ -4,11 +4,11 @@
 #pragma once
 
 #include "gui2/models/graphModel.h"
+#include "gui2/models/legacy/speciesAngleModel.h"
 #include "gui2/models/legacy/speciesAtomModel.h"
 #include "gui2/models/legacy/speciesBondModel.h"
 #include "gui2/models/legacy/speciesImproperModel.h"
 #include "gui2/models/legacy/speciesTorsionModel.h"
-#include "gui2/models/nodeGraph/graphModel.h"
 #include "nodes/species.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>

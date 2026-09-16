@@ -2,14 +2,14 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "gui2/models/legacy/types.h"
-//#include "gui2/models/legacy/atomTypeModel.h"
-//#include "gui2/models/legacy/configurationModel.h"
-//#include "gui2/models/legacy/dissolveModel.h"
-//#include "gui2/models/legacy/modifyChargesModel.h"
+// #include "gui2/models/legacy/atomTypeModel.h"
+// #include "gui2/models/legacy/configurationModel.h"
+// #include "gui2/models/legacy/dissolveModel.h"
+// #include "gui2/models/legacy/modifyChargesModel.h"
 #include "gui2/models/graphModel.h"
-//#include "gui2/models/legacy/simpleForcefieldModel.h"
-//#include "gui2/models/legacy/sortFilterProxy.h"
-//#include "gui2/models/legacy/speciesModel.h"
+// #include "gui2/models/legacy/simpleForcefieldModel.h"
+// #include "gui2/models/legacy/sortFilterProxy.h"
+// #include "gui2/models/legacy/speciesModel.h"
 #include <QQmlEngine>
 #include <QSortFilterProxyModel>
 
