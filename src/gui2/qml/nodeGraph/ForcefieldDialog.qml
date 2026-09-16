@@ -14,9 +14,7 @@ Dialog {
     standardButtons: Dialog.Ok | Dialog.Cancel
     title: "Define Forcefield: " + sp.name
 
-    onAccepted: {
-        sp.create(root.posx, root.posy);
-    }
+    onAccepted: sp.create(root.posx, root.posy)
 
     SimpleForcefieldModel {
         id: sp

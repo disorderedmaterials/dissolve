@@ -6,7 +6,7 @@
 // #include "gui2/models/legacy/configurationModel.h"
 // #include "gui2/models/legacy/dissolveModel.h"
 // #include "gui2/models/legacy/modifyChargesModel.h"
-#include "gui2/models/nodeGraph/graphModel.h"
+#include "gui2/models/graphModel.h"
 // #include "gui2/models/legacy/simpleForcefieldModel.h"
 // #include "gui2/models/legacy/sortFilterProxy.h"
 // #include "gui2/models/legacy/speciesModel.h"
@@ -16,7 +16,6 @@
 void Types::registerDissolveQmlTypes()
 {
     // qmlRegisterType<DissolveModel>(PROJECT, 1, 0, "DissolveModel");
-    // qmlRegisterType<SpeciesModel>(PROJECT, 1, 0, "SpeciesModel");
     // qmlRegisterType<ConfigurationModel>(PROJECT, 1, 0, "ConfigurationModel");
     // qmlRegisterType<AtomTypeModel>(PROJECT, 1, 0, "AtomTypeModel");
     // qmlRegisterType<CommonAngleModel>(PROJECT, 1, 0, "CommonAngleModel");

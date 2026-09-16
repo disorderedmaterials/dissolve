@@ -3,6 +3,7 @@
 
 #include "graphNodeModel.h"
 #include "graphModel.h"
+#include "nodes/dissolve.h"
 #include <qvariant.h>
 
 GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) {}
@@ -19,6 +20,7 @@ enum Role
     OUTPUTS,
     OPTIONS,
     INNER_GRAPH,
+    IS_ROOT_NODE
 };
 
 GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
@@ -56,6 +58,7 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + (int)OUTPUTS] = "outputs";
     roles[Qt::UserRole + (int)OPTIONS] = "options";
     roles[Qt::UserRole + (int)INNER_GRAPH] = "inner_graph";
+    roles[Qt::UserRole + (int)IS_ROOT_NODE] = "isRootNode";
     return roles;
 }
 
@@ -74,7 +77,7 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
         case TYPE:
             return QString::fromStdString(std::string(item.rawValue().type()));
         case ICON:
-            return QString::fromStdString(std::format("qrc:/IconsModule/nodes/{}.svg", item.rawValue().type()));
+            return QString::fromStdString(std::format("qrc:/DissolveIconsModule/nodes/{}.svg", item.rawValue().type()));
         case INPUTS:
             return QVariant::fromValue(item.inputs.get());
         case OUTPUTS:
@@ -83,6 +86,8 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(item.options.get());
         case INNER_GRAPH:
             return item.hasInner();
+        case IS_ROOT_NODE:
+            return dynamic_cast<DissolveGraph *>(item.rawValue().parentGraph()) != nullptr;
     }
     return {};
 }
