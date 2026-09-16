@@ -115,21 +115,21 @@ void GraphModel::setCanvasDimensions(const QSizeF &canvasDimensions)
     Q_EMIT canvasDimensionsChanged();
 }
 
-void GraphModel::emplace_back(int x, int y, QVariant type, std::string name, bool avoidSamePosition)
+void GraphModel::emplace_back(int x, int y, QVariant type, QString name, bool avoidSamePosition)
 {
     if (!graph_)
         Messenger::exception(
             "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
     auto nodeType = type.toString().toStdString();
-    auto node = graph_->createNode(nodeType, name);
+    auto node = graph_->createNode(nodeType, name.toStdString());
     auto dX = 0, dY = 0;
     if (avoidSamePosition)
         findUniqueXY(x, y, dX, dY);
     node->x = x + dX;
     node->y = y + dY;
     auto &item = wrapped_.emplace_back(*node);
-    item.rawValue().setName(name);
+    item.rawValue().setName(name.toStdString());
     nodes_.endInsertRows();
     graphChanged();
 }

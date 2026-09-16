@@ -168,7 +168,7 @@ class GraphModel : public QObject
     void addOutput(int nodeIndex, QString paramName, double x, double y);
 
     // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, std::string name, bool avoidSamePosition = false);
+    void emplace_back(int x, int y, QVariant type, QString name, bool avoidSamePosition = false);
 
     // Switch to parent graph
     void upLevel();
