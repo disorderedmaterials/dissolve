@@ -1,0 +1,126 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2026 Team Dissolve and contributors
+
+#include "gui2/models/legacy/speciesAngleModel.h"
+
+SpeciesAngleModel::SpeciesAngleModel() : angles_(nullptr) {}
+
+void SpeciesAngleModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
+void SpeciesAngleModel::setAngles(std::vector<SpeciesAngle> &angles)
+{
+    beginResetModel();
+    angles_ = &angles;
+    endResetModel();
+}
+
+int SpeciesAngleModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return angles_->size();
+}
+
+int SpeciesAngleModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return nDataTypes;
+}
+
+QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
+{
+    if (role == Qt::ToolTipRole)
+        return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
+
+    auto angle = angles_->at(index.row());
+
+    if (role == Qt::UserRole)
+        return QVariant::fromValue(&angle);
+
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
+        switch (index.column())
+        {
+            case (DataType::IndexI):
+                return angle.i()->index() + 1;
+            case (DataType::IndexJ):
+                return angle.j()->index() + 1;
+            case (DataType::IndexK):
+                return angle.k()->index() + 1;
+            case (DataType::Form):
+                return angle.commonTerm() ? QString::fromStdString("@" + std::string(angle.commonTerm()->name()))
+                                          : QString::fromStdString(AngleFunctions::forms().keyword(angle.interactionForm()));
+            case (DataType::Parameters):
+                return angle.commonTerm()
+                           ? QString::fromStdString(angle.commonTerm()->interactionPotential().parametersAsString())
+                           : QString::fromStdString(angle.interactionPotential().parametersAsString());
+            default:
+                return {};
+        }
+
+    return {};
+}
+
+QVariant SpeciesAngleModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
+        return {};
+    switch (section)
+    {
+        case (DataType::IndexI):
+            return "I";
+        case (DataType::IndexJ):
+            return "J";
+        case (DataType::IndexK):
+            return "K";
+        case (DataType::Form):
+            return "Form";
+        case (DataType::Parameters):
+            return "Parameters";
+        default:
+            return {};
+    }
+}
+
+Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
+{
+    if (index.column() <= DataType::IndexK)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    if (index.column() > DataType::Form && angles_->at(index.row()).commonTerm())
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
+bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    auto &angle = angles_->at(index.row());
+    switch (index.column())
+    {
+        case (DataType::IndexI):
+        case (DataType::IndexJ):
+        case (DataType::IndexK):
+            return false;
+        case (DataType::Form):
+            try
+            {
+                auto af = AngleFunctions::forms().enumeration(value.toString().toStdString());
+                angle.detachFromCommonTerm();
+                angle.setInteractionForm(af);
+            }
+            catch (std::runtime_error &e)
+            {
+                return false;
+            }
+            break;
+        case (DataType::Parameters):
+            if (!angle.setInteractionParameters(value.toString().toStdString()))
+                return false;
+            break;
+        default:
+            return false;
+    }
+    Q_EMIT dataChanged(index, index);
+    return true;
+}
