@@ -337,6 +337,10 @@ class Node
     SampledDouble timing_;
     // Current iteration number
     int iteration_ = 0;
+    // Persistent state serialisables
+    std::map<std::string, std::shared_ptr<SerialisableData>> state_;
+
+    private:
     // Save node in restart file
     virtual std::optional<SerialisedValue> innerSaveRestart() const { return {}; }
     // Load node from restart file
@@ -345,6 +349,15 @@ class Node
     public:
     // Clear any local data
     virtual void clearData();
+    // Flag an item of state data
+    template <typename DataClass> void addSerialisable(std::string_view key, DataClass &data)
+    {
+        state_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
+    }
+    // Express state as a serialisable value
+    SerialisedValue serialiseState() const;
+    // Read persistent data from a serialisable value
+    void deserialiseState(const SerialisedValue &node);
     // Return timing information (in seconds)
     SampledDouble timing() const;
 
@@ -354,8 +367,6 @@ class Node
     protected:
     // Length for POD history serialisables
     int podHistoryLength_{1000};
-    // Persistent data serialisables
-    std::map<std::string, std::shared_ptr<SerialisableData>> serialisables_;
     // Serialise any hidden content
     virtual void serialiseInternal(SerialisedValue &target) const {}
     // Deserialise any hidden content
@@ -366,19 +377,10 @@ class Node
     void setParent(Graph *graph);
     // Is it appropriate to bother serialising this node?
     virtual bool shouldSerialise() const { return true; }
-    // Flag a persistent serialisable quantity
-    template <typename DataClass> void addSerialisable(std::string_view key, DataClass &data)
-    {
-        serialisables_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
-    }
     // Express as a serialisable value
     virtual void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node);
-    // Express persistent data as a serialisable value
-    SerialisedValue serialiseData() const;
-    // Read persistent data from a serialisable value
-    void deserialiseData(const SerialisedValue &node);
     // Save node in restart file
     virtual void saveRestart(std::filesystem::path directory) const;
     // Load node from restart file

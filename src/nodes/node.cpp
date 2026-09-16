@@ -327,6 +327,39 @@ DissolveGraph *Node::dissolveGraph() { return parentGraph_->dissolveGraph(); }
 // Clear any local data
 void Node::clearData() {}
 
+// Express state data as a serialisable value
+SerialisedValue Node::serialiseState() const
+{
+    SerialisedValue result;
+    timing_.serialise("timing", result);
+
+    for (auto &[key, serialisable] : state_)
+        if (serialisable->canSerialise())
+            result[key] = serialisable->serialise();
+
+    return result;
+}
+
+// Read state data from a serialisable value
+void Node::deserialiseState(const SerialisedValue &node)
+{
+    // Obtain resolvable data // TODO
+    std::map<std::string, const Species *> reachableSpecies;
+
+    timing_.deserialise(node.at("timing"));
+
+    // Read in defined serialisables if they exist
+    for (auto &[key, serialisable] : state_)
+        if (node.contains(key))
+        {
+            // Deserialise the data
+            serialisable->deserialise(node.at(key));
+
+            // Resolve any named data
+            serialisable->resolve(reachableSpecies);
+        }
+}
+
 // Return timing information (in seconds) for this Module
 SampledDouble Node::timing() const { return timing_; }
 
@@ -372,39 +405,6 @@ void Node::deserialise(const SerialisedValue &node)
                                 Messenger::exception("Node {} does not contain an option {}", name(), k);
                         });
     deserialiseInternal(node);
-}
-
-// Express persistent data as a serialisable value
-SerialisedValue Node::serialiseData() const
-{
-    SerialisedValue result;
-    timing_.serialise("timing", result);
-
-    for (auto &[key, serialisable] : serialisables_)
-        if (serialisable->canSerialise())
-            result[key] = serialisable->serialise();
-
-    return result;
-}
-
-// Read persistent data from a serialisable value
-void Node::deserialiseData(const SerialisedValue &node)
-{
-    // Obtain resolvable data // TODO
-    std::map<std::string, const Species *> reachableSpecies;
-
-    timing_.deserialise(node.at("timing"));
-
-    // Read in defined serialisables if they exist
-    for (auto &[key, serialisable] : serialisables_)
-        if (node.contains(key))
-        {
-            // Deserialise the data
-            serialisable->deserialise(node.at(key));
-
-            // Resolve any named data
-            serialisable->resolve(reachableSpecies);
-        }
 }
 
 // Get all nodes that lead into this node
