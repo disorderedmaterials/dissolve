@@ -21,6 +21,10 @@ class DetectMoleculesNode : public Node
     /*
      * Definition
      */
+
+    /*
+     * Definition
+     */
     public:
     std::string_view type() const override;
     std::string_view summary() const override;
