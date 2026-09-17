@@ -6,10 +6,15 @@
 
 SpeciesNode::SpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
+    // Inputs
     addInput("Structure", "Structure of the species", structure_)->setFlags(ParameterBase::ParameterFlags::Required);
     addInput("Recipe", "Forcefield recipe to apply to the species", recipe_);
 
+    // Outputs
     addPointerOutput<const Species>("Species", "Created species", species_);
+
+    // State data
+    addStateData("Species", species_);
 }
 
 /*
@@ -45,13 +50,3 @@ NodeConstants::ProcessResult SpeciesNode::process()
 
     return NodeConstants::ProcessResult::Success;
 }
-
-/*
- * Serialisation
- */
-
-// Serialise any hidden content
-void SpeciesNode::serialiseInternal(SerialisedValue &target) const { species_.serialise("species", target); }
-
-// Deserialise any hidden content
-void SpeciesNode::deserialiseInternal(const SerialisedValue &node) { species_.deserialise(node.at("species")); }
