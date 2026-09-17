@@ -31,8 +31,7 @@ class GraphEdgeModel : public QAbstractListModel
     // Remove any edges connected to a node with a given name
     void removeConnected(std::string nodeName);
     // Create a new edge
-    void add(Edge &newEdge);
-    bool add(EdgeDefinition &newEdge);
+    bool add(EdgeDefinition &definition);
 
     public:
     // Toggles the edge edit mode

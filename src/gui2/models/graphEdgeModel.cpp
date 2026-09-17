@@ -42,7 +42,12 @@ bool GraphEdgeModel::remove(Edge &edge)
         if (row >= edges().size())
             return false;
         beginRemoveRows({}, row, row);
-        graph_->removeEdge(edge.definition());
+        if (!graph_->removeEdge(edge.definition()))
+        {
+            endRemoveRows();
+            reset();
+            return false;
+        }
         endRemoveRows();
         Q_EMIT parent_->graphInvalidated();
         return true;
@@ -75,22 +80,17 @@ void GraphEdgeModel::removeConnected(std::string nodeName)
     }
 }
 
-// Create a new edge
-void GraphEdgeModel::add(Edge &newEdge)
+bool GraphEdgeModel::add(EdgeDefinition &definition)
 {
     beginInsertRows({}, edges().size(), edges().size());
-    edges().emplace_back(std::make_unique<Edge>(newEdge));
+    if (!graph_->addEdge(definition))
+    {
+        endInsertRows();
+        reset();
+        return false;
+    }
     endInsertRows();
     Q_EMIT parent_->graphInvalidated();
-}
-
-bool GraphEdgeModel::add(EdgeDefinition &newEdge)
-{
-    auto edge = Edge::create(parent_->graph(), newEdge);
-    if (edge)
-        add(*edge);
-    else
-        return false;
     return true;
 }
 
