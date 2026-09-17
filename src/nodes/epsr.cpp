@@ -49,12 +49,12 @@ EPSRNode::EPSRNode(Graph *parentGraph) : Node(parentGraph)
               fluctuationSmoothing_);
     addOption("OverwritePotentials", "Overwrite potentials each time rather than summing them", overwritePotentials_);
 
-    // Serialisables
-    // addSerialisable("potentialCoefficients", potentialCoefficients_);
-    addSerialisable("estimatedSQ", estimatedSQ_);
-    addSerialisable("estimatedGR", estimatedGR_);
-    addSerialisable("additionalPotentials", additionalPotentials_);
-    addSerialisable("phiArray", phiArray_);
+    // State data
+    // addStateData("potentialCoefficients", potentialCoefficients_);
+    addStateData("estimatedSQ", estimatedSQ_);
+    addStateData("estimatedGR", estimatedGR_);
+    addStateData("additionalPotentials", additionalPotentials_);
+    addStateData("phiArray", phiArray_);
 }
 
 // Return type of the node

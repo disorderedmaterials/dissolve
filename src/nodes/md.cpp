@@ -37,8 +37,8 @@ MDNode::MDNode(Graph *parentGraph) : Node(parentGraph)
     // Outputs
     addOutput("Configuration", "Output configuration", targetConfiguration_);
 
-    // Serialisables
-    addSerialisable("velocities", velocities_);
+    // State data
+    addStateData("velocities", velocities_);
 }
 
 /*

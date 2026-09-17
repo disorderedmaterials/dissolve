@@ -22,19 +22,19 @@ ModifierOSitesNode::ModifierOSitesNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ModifierDistanceRange", "Distance range (min, max) over which to calculate from the central site",
               modifierDistanceRange_);
 
-    // Serialisables
-    addSerialisable("totalOxygensHistogram", totalOxygensHistogram_);
-    addSerialisable("totalOxygens", totalOxygens_);
-    addSerialisable("oxygenSitesHistogram", oxygenSitesHistogram_);
-    addSerialisable("oxygenSites", oxygenSites_);
-    addSerialisable("histMFO", histMFO_);
-    addSerialisable("distanceMFO", distanceMFO_);
-    addSerialisable("histMNBO", histMNBO_);
-    addSerialisable("distanceMNBO", distanceMNBO_);
-    addSerialisable("histMBO", histMBO_);
-    addSerialisable("distanceMBO", distanceMBO_);
-    addSerialisable("histMOtherO", histMOtherO_);
-    addSerialisable("distanceMOtherO", distanceMOtherO_);
+    // State data
+    addStateData("totalOxygensHistogram", totalOxygensHistogram_);
+    addStateData("totalOxygens", totalOxygens_);
+    addStateData("oxygenSitesHistogram", oxygenSitesHistogram_);
+    addStateData("oxygenSites", oxygenSites_);
+    addStateData("histMFO", histMFO_);
+    addStateData("distanceMFO", distanceMFO_);
+    addStateData("histMNBO", histMNBO_);
+    addStateData("distanceMNBO", distanceMNBO_);
+    addStateData("histMBO", histMBO_);
+    addStateData("distanceMBO", distanceMBO_);
+    addStateData("histMOtherO", histMOtherO_);
+    addStateData("distanceMOtherO", distanceMOtherO_);
 }
 
 /*

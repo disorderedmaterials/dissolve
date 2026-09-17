@@ -19,9 +19,9 @@ SDFNode::SDFNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule",
               excludeSameMolecule_);
 
-    // Serialisables
-    addSerialisable("histogram", histogram_);
-    addSerialisable("sdf", sdf_);
+    // State data
+    addStateData("histogram", histogram_);
+    addStateData("sdf", sdf_);
 }
 
 /*

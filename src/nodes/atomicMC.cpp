@@ -25,8 +25,8 @@ AtomicMCNode::AtomicMCNode(Graph *parentGraph) : Node(parentGraph)
     // Outputs
     addOutput("Configuration", "Output configuration", targetConfiguration_);
 
-    // Serialisables
-    addSerialisable("stepSize", stepSize_);
+    // State data
+    addStateData("stepSize", stepSize_);
 }
 
 /*

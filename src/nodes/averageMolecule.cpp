@@ -15,10 +15,10 @@ AverageMoleculeNode::AverageMoleculeNode(Graph *parentGraph) : Node(parentGraph)
     addOption("Site", "Target site about which to calculate average molecule geometry", targetSite_)
         ->setFlags({ParameterBase::Required});
 
-    // Serialisables
-    addSerialisable("sampledX", sampledX_);
-    addSerialisable("sampledY", sampledY_);
-    addSerialisable("sampledZ", sampledZ_);
+    // State data
+    addStateData("sampledX", sampledX_);
+    addStateData("sampledY", sampledY_);
+    addStateData("sampledZ", sampledZ_);
 }
 
 /*
