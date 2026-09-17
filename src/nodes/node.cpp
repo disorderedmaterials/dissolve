@@ -304,12 +304,11 @@ void Node::markIncomingEdgesForPull(const ParameterBase *toParameter) const
         edge->forceNextPull();
 }
 
+// Update the parent graph
+void Node::setParent(Graph *graph) { parentGraph_ = graph; }
+
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
-
-// Update the parent graph after a move
-// This is private so that only designated friend classes can do this.
-void Node::setParent(Graph *graph) { parentGraph_ = graph; }
 
 // Return the current iteration count
 int Node::iteration() const { return iteration_; }
