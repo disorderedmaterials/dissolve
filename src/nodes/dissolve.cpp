@@ -180,7 +180,7 @@ void DissolveGraph::serialise(std::string tag, SerialisedValue &target) const
 // Read values from a serialisable value
 void DissolveGraph::deserialise(const SerialisedValue &node)
 {
-    Graph::deserialise(node["graph"]);
+    Graph::deserialise(node.at("graph"));
     Deserialisable::vector(node, "pairPotentialOverrides",
                            [this](const auto ppOverrideNode) { addPairPotentialOverride()->deserialise(ppOverrideNode); });
 }
