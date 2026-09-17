@@ -6,6 +6,7 @@
 #include "nodes/inputs.h"
 #include "nodes/outputs.h"
 #include "nodes/registry.h"
+#include "nodes/species.h"
 #include <algorithm>
 #include <filesystem>
 
@@ -285,8 +286,22 @@ void Graph::deserialise(const SerialisedValue &node)
     Deserialisable::vector(node, "edges", [this](const auto &value) { addEdge(Deserialisable::deser<EdgeDefinition>(value)); });
 }
 
+// Resolve internal resolvable name references with supplied data
+void Graph::resolve()
+{
+    std::map<std::string, const Species *> reachableSpecies;
+    for (auto &node : ancestors<SpeciesNode>())
+        reachableSpecies[std::string(node->name())] = &node->species();
+
+    for (auto &option : std::views::values(options_))
+        option->resolve(reachableSpecies);
+
+    for (auto &node : std::views::values(nodes_))
+        node->resolve();
+}
+
 /*
- *Mermaid processing code
+ * Mermaid processing code
  */
 
 // Node types that represent data sources

@@ -4,8 +4,10 @@
 #include "nodes/parameter.h"
 #include "nodes/node.h"
 
-ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType)
-    : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType)
+ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType,
+                             DataResolver resolver)
+    : parent_(parent), name_(name), description_(description), storedDataType_(storedDataType),
+      dataResolver_(std::move(resolver))
 {
 }
 
