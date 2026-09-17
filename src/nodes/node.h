@@ -320,6 +320,8 @@ class Node
     virtual EdgeMap &outputEdges();
     // Mark incoming edges to the specified parameter as needing a re-pull
     void markIncomingEdgesForPull(const ParameterBase *toParameter) const;
+    // Update the parent graph after a move
+    void setParent(Graph *graph);
     // Returns the node parent graph
     Graph *parentGraph() const;
     // Return the current iteration count
@@ -369,8 +371,6 @@ class Node
     int podHistoryLength_{1000};
 
     public:
-    // Update the parent graph after a move
-    void setParent(Graph *graph);
     // Is it appropriate to bother serialising this node?
     virtual bool shouldSerialise() const { return true; }
     // Express as a serialisable value
