@@ -83,8 +83,8 @@ class Dissolve
      * Simulation
      */
     private:
-    // Frequency at which to write restart file
-    int restartFileFrequency_;
+    // Frequency at which to write restart directory
+    int restartDirectoryFrequency_;
     // Current simulation step
     int iteration_;
     // Number of iterations performed
@@ -96,9 +96,9 @@ class Dissolve
 
     public:
     // Set frequency with which to write various iteration data
-    void setRestartFileFrequency(int n);
-    // Return frequency with which to write restart file
-    int restartFileFrequency() const;
+    void setRestartDirectoryFrequency(int n);
+    // Return frequency with which to write restart directory
+    int restartDirectoryFrequency() const;
     // Prepare for main simulation
     bool prepare();
 
@@ -108,9 +108,9 @@ class Dissolve
     private:
     // Filename of current input file
     std::string inputFilename_;
-    // Filename of current restart file
-    std::string restartFilename_;
-    // Accumulated timing information for saving restart file
+    // Filename of current restart directory
+    std::string restartDirectoryName_;
+    // Accumulated timing information for saving restart directory
     SampledDouble saveRestartTimes_;
 
     public:
@@ -133,7 +133,7 @@ class Dissolve
     // Return current input filename
     std::string_view inputFilename() const;
     // Return restart filename
-    std::string_view restartFilename() const;
-    // Return whether a restart filename has been set
-    bool hasRestartFilename() const;
+    std::string_view restartDirectoryName() const;
+    // Return whether a restart directory name has been set
+    bool hasRestartDirectoryName() const;
 };

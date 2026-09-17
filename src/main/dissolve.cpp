@@ -2,13 +2,12 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "classes/kVector.h"
 #include "nodes/dissolve.h"
 
 Dissolve::Dissolve()
 {
     // Set core simulation variables
-    restartFileFrequency_ = 10;
+    restartDirectoryFrequency_ = 10;
 
     graphNode_ = std::make_unique<DissolveGraph>();
 
@@ -44,6 +43,6 @@ void Dissolve::clear()
 
     // I/O
     setInputFilename("");
-    restartFilename_.clear();
+    restartDirectoryName_.clear();
     saveRestartTimes_.clear();
 }

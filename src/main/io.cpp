@@ -168,14 +168,14 @@ void Dissolve::setInputFilename(std::string_view filename)
 {
     inputFilename_ = filename;
 
-    restartFilename_ = std::format("{}.restart", inputFilename_);
+    restartDirectoryName_ = std::format("{}.restart", inputFilename_);
 }
 
 // Return current input filename
 std::string_view Dissolve::inputFilename() const { return inputFilename_; }
 
-// Return restart filename
-std::string_view Dissolve::restartFilename() const { return restartFilename_; }
+// Return restart directory name
+std::string_view Dissolve::restartDirectoryName() const { return restartDirectoryName_; }
 
-// Return whether a restart filename has been set
-bool Dissolve::hasRestartFilename() const { return (!restartFilename_.empty()); }
+// Return whether a restart directory name has been set
+bool Dissolve::hasRestartDirectoryName() const { return (!restartDirectoryName_.empty()); }
