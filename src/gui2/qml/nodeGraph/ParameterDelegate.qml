@@ -99,6 +99,10 @@ DelegateChooser {
                 icon.source: "qrc:/DissolveIconsModule/documents.svg"
                 display: AbstractButton.iconOnly
                 onClicked: fileDialog.open()
+
+                ToolTip.text: "Select a file"
+                ToolTip.visible: hovered
+                ToolTip.delay: 500
             }
 
             FileDialog {

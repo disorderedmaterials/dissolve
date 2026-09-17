@@ -3,6 +3,7 @@
 
 #include "graphNodeModel.h"
 #include "graphModel.h"
+#include "nodes/detectMolecules.h"
 #include "nodes/dissolve.h"
 #include "nodes/inputs.h"
 #include "nodes/iterableGraph.h"
@@ -80,7 +81,8 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + (int)HAS_INNER_GRAPH] = "hasInnerGraph";
     roles[Qt::UserRole + (int)IS_ROOT_NODE] = "isRootNode";
     roles[Qt::UserRole + (int)IS_ITERABLE] = "isIterable";
-    roles[Qt::UserRole + (int)HAS_DYNAMIC_PARAMETERS] = "hasDynamicParameters";
+    roles[Qt::UserRole + (int)HAS_PROXY_PARAMETERS] = "hasProxyParameters";
+    roles[Qt::UserRole + (int)HAS_DYNAMIC_OUTPUTS] = "hasDynamicOutputs";
     return roles;
 }
 
@@ -110,11 +112,13 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
             return item.hasInner();
         case IS_ROOT_NODE:
             return dynamic_cast<DissolveGraph *>(item.rawValue().parentGraph()) != nullptr;
-        case HAS_DYNAMIC_PARAMETERS:
+        case HAS_PROXY_PARAMETERS:
             return dynamic_cast<InputsNode *>(&item.rawValue()) != nullptr ||
                    dynamic_cast<OutputsNode *>(&item.rawValue()) != nullptr ||
                    dynamic_cast<Graph *>(&item.rawValue()) != nullptr ||
                    dynamic_cast<IterableGraph *>(&item.rawValue()) != nullptr;
+        case HAS_DYNAMIC_OUTPUTS:
+            return dynamic_cast<DetectMoleculesNode *>(&item.rawValue()) != nullptr;
     }
     return {};
 }

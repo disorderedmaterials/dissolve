@@ -327,7 +327,7 @@ NodeBox {
 
                         // If we are dealing with a node that has dynamic inputs (such as a graph node)
                         // and we are not currently reconstructing the graph's existing connections, we handle the dynamic input creation
-                        if (hasDynamicParameters && !reconstructingNodes) {
+                        if (hasProxyParameters && !reconstructingNodes) {
                             // If this is the last item (the most recently connected input) render the deferred edge conection
                             if (lastOfItems)
                                 rootGraphModel.addDeferredEndPoints();
@@ -483,7 +483,7 @@ NodeBox {
 
                         // If we are dealing with a node that has dynamic outputs (such as a graph node)
                         // and we are not currently reconstructing the graph's existing connections, we handle the dynamic output creation
-                        if (hasDynamicParameters && !reconstructingNodes) {
+                        if (hasProxyParameters && !reconstructingNodes) {
                             // If this is the last item (the most recently connected output) render the deferred edge conection
                             if (lastOfItems)
                                 rootGraphModel.addDeferredEndPoints();
@@ -621,7 +621,7 @@ NodeBox {
                 id: createInputRectangle
                 property bool enabled: root.rootGraphModel.edges.edgeEditMode && !isInputsNode
                 property string nodeName: root.nodeName
-                visible: hasDynamicParameters
+                visible: hasProxyParameters
                 color: "transparent"
                 Layout.preferredWidth: 120
                 Layout.fillWidth: true
@@ -679,7 +679,7 @@ NodeBox {
                 id: createOutputRectangle
                 property bool enabled: root.rootGraphModel.edges.edgeEditMode && !(isOutputsNode || isLoopBacksNode)
                 property string nodeName: root.nodeName
-                visible: hasDynamicParameters
+                visible: hasProxyParameters
                 color: "transparent"
                 Layout.preferredWidth: 120
                 Layout.fillWidth: true
