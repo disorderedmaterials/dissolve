@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "main/cli.h"
+#include "CLI/CLI.hpp"
 #include "base/messenger.h"
 #include "main/version.h"
 #include <CLI/App.hpp>
@@ -32,11 +33,12 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
     app.add_flag("-m, --mermaid", exportMermaid_, "Export graph as a mermaid diagram and exit")->group("Basic Control");
 
     // Input Files
-    app.add_flag("-i,--ignore-restart", ignoreRestartFile_, "Ignore restart file (if it exists)")->group("Input Files");
-    app.add_option("--restart", restartFilename_,
-                   "Read restart file specified instead of the default one (but still write to the default one)")
+    app.add_flag("-i,--ignore-restart", ignoreRestartDirectory_, "Ignore restart directory (if it exists)")
+        ->group("Input Files");
+    app.add_option("--restart", restartDirectoryName_,
+                   "Read restart directory specified instead of the default one (but still write to the default one)")
         ->group("Input Files")
-        ->check(CLI::ExistingPath);
+        ->check(CLI::ExistingDirectory);
     if (!isGUI)
     {
         inputFileOption->required();
@@ -51,12 +53,13 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI)
     }
 
     // Output Files
-    app.add_option("-f,--frequency", restartFileFrequency_, "Frequency at which to write restart file (default = 10)")
+    app.add_option("-f,--frequency", restartDirectoryFrequency_, "Frequency at which to write directory (default = 10)")
         ->group("Output Files");
-    app.add_flag("-x,--no-restart-file", noRestartFile_, "Don't write restart file at all")->group("Output Files");
+    app.add_flag("-x,--no-restart-file", noRestartDirectory_, "Don't write restart directory at all")->group("Output Files");
 
     // Tweak formatting
     app.get_formatter()->label("TEXT:FILE", "<filename>");
+    app.get_formatter()->label("TEXT:DIR", "<directory>");
     app.get_formatter()->label("INT", "<n>");
 
     // Parse the supplied options.
@@ -75,13 +78,13 @@ std::optional<std::filesystem::path> CLIOptions::inputFile() const { return inpu
 std::string CLIOptions::node() const { return node_; }
 
 // Return frequency at which to write restart file
-int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }
+int CLIOptions::restartDirectoryFrequency() const { return restartDirectoryFrequency_; }
 
 // Return seed for random number generator
 std::optional<int> CLIOptions::randomSeed() const { return randomSeed_; }
 
 // Return restart file to load, overriding default
-std::optional<std::filesystem::path> CLIOptions::restartFilename() const { return restartFilename_; }
+std::optional<std::filesystem::path> CLIOptions::restartDirectoryName() const { return restartDirectoryName_; }
 
 // Return new input file to write (after reading supplied file)
 std::optional<std::filesystem::path> CLIOptions::writeInputFilename() const { return writeInputFilename_; }
@@ -89,11 +92,11 @@ std::optional<std::filesystem::path> CLIOptions::writeInputFilename() const { re
 // Return whether to reload the file written to writeInputFilename_ and continue
 bool CLIOptions::writeInputAndReload() const { return writeInputAndReload_; }
 
-// Return whether to ignore restart file if it exists
-bool CLIOptions::ignoreRestartFile() const { return ignoreRestartFile_; }
+// Return whether to ignore restart directory if it exists
+bool CLIOptions::ignoreRestartDirectory() const { return ignoreRestartDirectory_; }
 
-// Return whether to prevent writing of the restart file
-bool CLIOptions::noRestartFile() const { return noRestartFile_; }
+// Return whether to prevent writing of the restart directory
+bool CLIOptions::noRestartDirectory() const { return noRestartDirectory_; }
 
 // Return whether to simply export the graph as mermaid and quit
 bool CLIOptions::exportMermaid() const { return exportMermaid_; }

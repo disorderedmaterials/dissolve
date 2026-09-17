@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
-#include "base/sysFunc.h"
-#include "classes/species.h"
 #include "main/dissolve.h"
-#include <cstdio>
 
 // Set frequency with which to write various iteration data
-void Dissolve::setRestartFileFrequency(int n) { restartFileFrequency_ = n; }
+void Dissolve::setRestartDirectoryFrequency(int n) { restartDirectoryFrequency_ = n; }
 
 // Return frequency with which to write restart file
-int Dissolve::restartFileFrequency() const { return restartFileFrequency_; }
+int Dissolve::restartDirectoryFrequency() const { return restartDirectoryFrequency_; }
 
 // Prepare for main simulation
 bool Dissolve::prepare()
