@@ -1,13 +1,22 @@
+version = "2.0.0"
+
 [graph]
 name = "Root"
 type = "Dissolve"
 x = 0
 y = 0
 
-[graph.edges] = [
-  {sourceNode = "x", sourceOutput = "Result", targetNode = "z", targetInput = "X"},
-  {sourceNode = "y", sourceOutput = "Result", targetNode = "z" ,targetInput = "Y"}
-]
+[[graph.edges]]
+sourceNode = "x"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "X"
+
+[[graph.edges]]
+sourceNode = "y"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "Y"
 
 [graph.nodes]
 
