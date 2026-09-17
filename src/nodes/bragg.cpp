@@ -34,9 +34,9 @@ BraggNode::BraggNode(Graph *parentGraph)
         ->setFlags({ParameterBase::ClearData});
     addOption("BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)", braggQBroadening_);
 
-    // Serialisables
-    addSerialisable("braggReflections", braggReflections_);
-    addSerialisable("braggReflectionHistory", braggReflectionHistory_);
+    // State data
+    addStateData("braggReflections", braggReflections_);
+    addStateData("braggReflectionHistory", braggReflectionHistory_);
     // addSerialisable("braggPartials", braggPartials_);
 }
 

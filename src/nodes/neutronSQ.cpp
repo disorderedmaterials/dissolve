@@ -38,10 +38,10 @@ NeutronSQNode::NeutronSQNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
               referenceWindowFunction_);
 
-    // Serialisables
-    addSerialisable("weightedGR", weightedGR_);
-    addSerialisable("weightedSQ", weightedSQ_);
-    addSerialisable("representativeGR", representativeGR_);
+    // State data
+    addStateData("weightedGR", weightedGR_);
+    addStateData("weightedSQ", weightedSQ_);
+    addStateData("representativeGR", representativeGR_);
 }
 
 /*

@@ -41,10 +41,10 @@ GRNode::GRNode(Graph *parentGraph)
     addOption("Smoothing", "Specifies the degree of smoothing to apply to calculated g(r)", nSmooths_);
     addOption("Method", "Calculation method for partial radial distribution functions", partialsMethod_);
 
-    // Serialisables
-    addSerialisable("rawGR", rawGR_);
-    addSerialisable("rawGRHistory", rawGRHistory_);
-    addSerialisable("unweightedGR", unweightedGR_);
+    // State data
+    addStateData("rawGR", rawGR_);
+    addStateData("rawGRHistory", rawGRHistory_);
+    addStateData("unweightedGR", unweightedGR_);
 }
 
 // Return enum option info for PartialsMethod

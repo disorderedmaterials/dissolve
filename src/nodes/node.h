@@ -350,7 +350,7 @@ class Node
     // Clear any local data
     virtual void clearData();
     // Flag an item of state data
-    template <typename DataClass> void addSerialisable(std::string_view key, DataClass &data)
+    template <typename DataClass> void addStateData(std::string_view key, DataClass &data)
     {
         state_[std::string(key)] = std::make_shared<SerialisableClass<DataClass>>(key, data);
     }
