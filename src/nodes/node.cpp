@@ -6,6 +6,7 @@
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/species.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -304,12 +305,11 @@ void Node::markIncomingEdgesForPull(const ParameterBase *toParameter) const
         edge->forceNextPull();
 }
 
+// Update the parent graph
+void Node::setParent(Graph *graph) { parentGraph_ = graph; }
+
 // Returns the node parent graph
 Graph *Node::parentGraph() const { return parentGraph_; }
-
-// Update the parent graph after a move
-// This is private so that only designated friend classes can do this.
-void Node::setParent(Graph *graph) { parentGraph_ = graph; }
 
 // Return the current iteration count
 int Node::iteration() const { return iteration_; }
@@ -326,6 +326,39 @@ DissolveGraph *Node::dissolveGraph() { return parentGraph_->dissolveGraph(); }
 
 // Clear any local data
 void Node::clearData() {}
+
+// Express state data as a serialisable value
+SerialisedValue Node::serialiseState() const
+{
+    SerialisedValue result;
+    timing_.serialise("timing", result);
+
+    for (auto &[key, serialisable] : state_)
+        if (serialisable->canSerialise())
+            result[key] = serialisable->serialise();
+
+    return result;
+}
+
+// Read state data from a serialisable value
+void Node::deserialiseState(const SerialisedValue &node)
+{
+    // Obtain resolvable data // TODO
+    std::map<std::string, const Species *> reachableSpecies;
+
+    timing_.deserialise(node.at("timing"));
+
+    // Read in defined serialisables if they exist
+    for (auto &[key, serialisable] : state_)
+        if (node.contains(key))
+        {
+            // Deserialise the data
+            serialisable->deserialise(node.at(key));
+
+            // Resolve any named data
+            serialisable->resolve(reachableSpecies);
+        }
+}
 
 // Return timing information (in seconds) for this Module
 SampledDouble Node::timing() const { return timing_; }
@@ -344,8 +377,6 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
     result["y"] = y;
 
     Serialisable::map(options_, "options", result);
-
-    serialiseInternal(result);
 
     target[tag] = result;
 }
@@ -371,40 +402,17 @@ void Node::deserialise(const SerialisedValue &node)
                             else
                                 Messenger::exception("Node {} does not contain an option {}", name(), k);
                         });
-    deserialiseInternal(node);
 }
 
-// Express persistent data as a serialisable value
-SerialisedValue Node::serialiseData() const
+// Resolve internal resolvable name references with supplied data
+void Node::resolve()
 {
-    SerialisedValue result;
-    timing_.serialise("timing", result);
-
-    for (auto &[key, serialisable] : serialisables_)
-        if (serialisable->canSerialise())
-            result[key] = serialisable->serialise();
-
-    return result;
-}
-
-// Read persistent data from a serialisable value
-void Node::deserialiseData(const SerialisedValue &node)
-{
-    // Obtain resolvable data // TODO
     std::map<std::string, const Species *> reachableSpecies;
+    for (auto &node : ancestors<SpeciesNode>())
+        reachableSpecies[std::string(node->name())] = &node->species();
 
-    timing_.deserialise(node.at("timing"));
-
-    // Read in defined serialisables if they exist
-    for (auto &[key, serialisable] : serialisables_)
-        if (node.contains(key))
-        {
-            // Deserialise the data
-            serialisable->deserialise(node.at(key));
-
-            // Resolve any named data
-            serialisable->resolve(reachableSpecies);
-        }
+    for (auto &option : std::views::values(options_))
+        option->resolve(reachableSpecies);
 }
 
 // Get all nodes that lead into this node

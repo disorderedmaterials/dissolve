@@ -43,7 +43,10 @@ struct ParameterLink
 class ParameterBase
 {
     public:
-    ParameterBase(Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType);
+    using DataResolver = std::function<void(const std::map<std::string, const Species *> &)>;
+    ParameterBase(
+        Node *parent, std::string_view name, std::string_view description, std::type_index storedDataType,
+        DataResolver resolver = [](const std::map<std::string, const Species *> &reachableSpecies) {});
     virtual ~ParameterBase() = default;
 
     // Parameter Flags
@@ -101,6 +104,10 @@ class ParameterBase
     /*
      * Data
      */
+    private:
+    // Resolver function for data
+    DataResolver dataResolver_{[&](const std::map<std::string, const Species *> &reachableSpecies) {}};
+
     public:
     // Return whether the contained data is an instance of std::vector
     virtual bool isVector() const { return false; }
@@ -161,6 +168,8 @@ class ParameterBase
     virtual void invalidateVector() {}
     // Create a parameter link (input - data proxy - output) for the derived class type
     virtual ParameterLink createParameterLink(std::string_view newName, std::string_view newDescription = "") const = 0;
+    // Resolve named data
+    void resolve(const std::map<std::string, const Species *> &speciesInScope) { dataResolver_(speciesInScope); }
 
     /*
      * Serialisation
@@ -250,6 +259,14 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
         requires(is_instance_of_v<DataClass, std::vector>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
+    {
+    }
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+        requires(std::is_base_of_v<ResolvableContext, DataClass>)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass)),
+                        [&](const std::map<std::string, const Species *> &reachableSpecies)
+                        { value.resolve(reachableSpecies); }),
+          data_(value), default_(value)
     {
     }
     Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value)

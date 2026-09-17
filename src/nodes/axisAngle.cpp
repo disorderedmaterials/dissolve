@@ -23,13 +23,13 @@ AxisAngleNode::AxisAngleNode(Graph *parentGraph) : Node(parentGraph)
               excludeSameMolecule_);
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
-    // Serialisables
-    addSerialisable("distanceHistogram", distanceHistogram_);
-    addSerialisable("rdf", rdf_);
-    addSerialisable("axisAngleHistogram", axisAngleHistogram_);
-    addSerialisable("axisAngle", axisAngle_);
-    addSerialisable("dAxisAngleHistogram", dAxisAngleHistogram_);
-    addSerialisable("dAxisAngle", dAxisAngle_);
+    // State data
+    addStateData("distanceHistogram", distanceHistogram_);
+    addStateData("rdf", rdf_);
+    addStateData("axisAngleHistogram", axisAngleHistogram_);
+    addStateData("axisAngle", axisAngle_);
+    addStateData("dAxisAngleHistogram", dAxisAngleHistogram_);
+    addStateData("dAxisAngle", dAxisAngle_);
 }
 
 /*
