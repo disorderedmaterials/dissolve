@@ -377,6 +377,8 @@ class Node
     virtual void serialise(std::string tag, SerialisedValue &target) const;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node);
+    // Resolve internal resolvable name references with supplied data
+    virtual void resolve();
     // Save node in restart file
     virtual void saveRestart(std::filesystem::path directory) const;
     // Load node from restart file

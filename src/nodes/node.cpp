@@ -6,6 +6,7 @@
 #include "base/sysFunc.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/species.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -401,6 +402,17 @@ void Node::deserialise(const SerialisedValue &node)
                             else
                                 Messenger::exception("Node {} does not contain an option {}", name(), k);
                         });
+}
+
+// Resolve internal resolvable name references with supplied data
+void Node::resolve()
+{
+    std::map<std::string, const Species *> reachableSpecies;
+    for (auto &node : ancestors<SpeciesNode>())
+        reachableSpecies[std::string(node->name())] = &node->species();
+
+    for (auto &option : std::views::values(options_))
+        option->resolve(reachableSpecies);
 }
 
 // Get all nodes that lead into this node
