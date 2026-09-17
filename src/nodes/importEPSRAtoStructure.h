@@ -26,7 +26,7 @@ class ImportEPSRAtoStructureNode : public Node
      */
     private:
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // Structure
     Structure structure_;
 

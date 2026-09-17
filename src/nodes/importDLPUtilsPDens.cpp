@@ -31,11 +31,13 @@ std::string_view ImportDLPUtilsPDensNode::summary() const { return "Import DLPUt
 // Perform processing
 NodeConstants::ProcessResult ImportDLPUtilsPDensNode::process()
 {
+    auto filePath = filePath_.string();
+
     // Create the data
     data_.emplace();
 
-    if (!read(*data_, filePath_))
-        return error("Failed to read DLPUtils Surface data from file '{}'.\n", filePath_);
+    if (!read(*data_, filePath))
+        return error("Failed to read DLPUtils Surface data from file '{}'.\n", filePath);
 
     return NodeConstants::ProcessResult::Success;
 }

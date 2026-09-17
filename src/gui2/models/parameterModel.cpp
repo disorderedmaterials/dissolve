@@ -79,6 +79,8 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
             }
             if (it->second->storedDataType() == typeid(std::string))
                 return QString::fromStdString(it->second->get<std::string>());
+            if (it->second->storedDataType() == typeid(std::filesystem::path))
+                return QString::fromStdString(it->second->get<std::filesystem::path>().string());
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return QVariant::fromValue(it->second->getAsInt());
             return QString::fromStdString("Unrepresentable");
@@ -91,6 +93,8 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return "bool";
             if (it->second->storedDataType() == typeid(std::string))
                 return "string";
+            if (it->second->storedDataType() == typeid(std::filesystem::path))
+                return "file path";
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return "enum";
             if (it->second->storedDataType() == typeid(std::shared_ptr<Species>))
@@ -132,6 +136,11 @@ bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, in
             else
                 it->set<std::optional<Number>>(value.toString().toInt());
         }
+    }
+    if (it->storedDataType() == typeid(std::filesystem::path))
+    {
+        auto path = value.toString().toStdString();
+        it->set<std::filesystem::path>(std::filesystem::path(path));
     }
     if (EnumRegistry::hasEnumOption(it->storedDataType()))
         it->setFromInt(value.toInt());

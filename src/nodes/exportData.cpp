@@ -29,6 +29,7 @@ std::string_view ExportDataNode::summary() const { return "Export data in a simp
 // Perform processing
 NodeConstants::ProcessResult ExportDataNode::process()
 {
+    auto filePath = filePath_.string();
     return std::visit(
         [&](auto &&arg)
         {
@@ -36,11 +37,11 @@ NodeConstants::ProcessResult ExportDataNode::process()
             if constexpr (std::is_same_v<T, std::monostate>)
                 return NodeConstants::ProcessResult::Failed;
             else if constexpr (std::is_same_v<T, Data1D>)
-                return write(arg, filePath_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+                return write(arg, filePath) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
             else if constexpr (std::is_same_v<T, Data2D>)
-                return write(arg, filePath_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+                return write(arg, filePath) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
             else if constexpr (std::is_same_v<T, Data3D>)
-                return write(arg, filePath_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+                return write(arg, filePath) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
             else
                 static_assert(false, "Visitor doesn't cater for all possible types.");
 

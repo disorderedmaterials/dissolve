@@ -1,7 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import Qt.labs.qmlmodels
+import DissolveIconsModule
+import "../DissolveIconsModule"
 
 DelegateChooser {
     id: root
@@ -72,6 +75,39 @@ DelegateChooser {
             text: param
 
             onTextChanged: param = text
+        }
+    }
+    DelegateChoice {
+        roleValue: "file path"
+
+        Row {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+            Layout.fillWidth: true
+            spacing: 0
+
+            TextField {
+                id: filePathField
+
+                text: param
+            }
+
+            ToolButton {
+                id: filePickerButton
+
+                icon.source: "qrc:/DissolveIconsModule/documents.svg"
+                display: AbstractButton.iconOnly
+                onClicked: fileDialog.open()
+            }
+
+            FileDialog {
+                id: fileDialog
+
+                title: "Choose a file..."
+                fileMode: FileDialog.OpenFile
+                onAccepted: param = selectedFile.toString().replace("file:///", "")
+            }
         }
     }
     DelegateChoice {

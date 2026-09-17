@@ -26,7 +26,7 @@ class ImportDLPOLYTrajectoryNode : public Node
      */
     private:
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // Last read file position
     std::streampos filePosition_;
     // Structure

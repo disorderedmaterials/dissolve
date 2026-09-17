@@ -10,6 +10,7 @@
 #include "nodes/constants.h"
 #include "nodes/parameter.h"
 #include "nodes/serialisableData.h"
+#include <filesystem>
 #include <iterator>
 #include <map>
 #include <ranges>
