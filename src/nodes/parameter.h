@@ -252,6 +252,13 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value)
     {
     }
+    Parameter(Node *parent, std::string_view name, std::string_view description, DataClass &value)
+        requires(std::is_base_of_v<ResolvableContext, DataClass>)
+        : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(value), default_(value),
+          dataResolver_([&](const std::map<std::string, const Species *> &reachableSpecies)
+                        { value.resolve(reachableSpecies); })
+    {
+    }
     Parameter(Node *parent, std::string_view name, std::string_view description, std::remove_pointer_t<DataClass> &value)
         requires(std::is_pointer_v<DataClass>)
         : ParameterBase(parent, name, description, std::type_index(typeid(DataClass))), data_(localPointer_), default_(nullptr),
@@ -329,6 +336,9 @@ template <typename DataClass> class Parameter : public ParameterBase, public std
     // Setter for target data, defaulting to simple 1-to-1 copy as long as equality fails
     using DataSetter = std::function<void(const DataClass &value)>;
     DataSetter dataSetter_{[&](const DataClass &value) { data_ = value; }};
+    // Resolver function for data
+    using DataResolver = std::function<void(const std::map<std::string, const Species *> &)>;
+    DataResolver dataResolver_{[&](const std::map<std::string, const Species *> &reachableSpecies) {}};
     // Initial value
     const DataClass default_;
     // Parameter proxy data (if a ParameterLink)
