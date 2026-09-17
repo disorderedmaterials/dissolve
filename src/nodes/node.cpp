@@ -378,8 +378,6 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
 
     Serialisable::map(options_, "options", result);
 
-    serialiseInternal(result);
-
     target[tag] = result;
 }
 
@@ -404,7 +402,6 @@ void Node::deserialise(const SerialisedValue &node)
                             else
                                 Messenger::exception("Node {} does not contain an option {}", name(), k);
                         });
-    deserialiseInternal(node);
 }
 
 // Get all nodes that lead into this node

@@ -367,10 +367,6 @@ class Node
     protected:
     // Length for POD history serialisables
     int podHistoryLength_{1000};
-    // Serialise any hidden content
-    virtual void serialiseInternal(SerialisedValue &target) const {}
-    // Deserialise any hidden content
-    virtual void deserialiseInternal(const SerialisedValue &node) {}
 
     public:
     // Update the parent graph after a move
