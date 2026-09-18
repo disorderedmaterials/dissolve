@@ -97,7 +97,7 @@ TEST_F(CBORTest, CBORCompare)
     SerialisedValue tomlFile = toml::parse("graph/simple_addition_graph.toml");
     std::ifstream infile("cbor/simple_addition_graph.cbor", std::ios::binary | std::ios::in);
     SerialisedValue cborFile = CBOR::from(std::move(infile));
-    compare_toml("", tomlFile, cborFile);
+    compare_toml("", tomlFile["graph"], cborFile);
 }
 
 TEST_F(CBORTest, CBORExtractSimple)
