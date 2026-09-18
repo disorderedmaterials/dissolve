@@ -24,7 +24,7 @@ NodeBox {
         }
 
     signal descended(int idx)
-    signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput)
+    signal edgeCreated(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
     signal edgeDeferred(string srcNode, string srcOutput, string tgtNode, string tgtInput, DropArea creator)
 
     onRenamed: function (currentName, newName, label) {
@@ -384,7 +384,7 @@ NodeBox {
 
                         onDropped: function (event) {
                             inputDropArea.locked = true;
-                            edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName);
+                            edgeCreated(event.source.parent.nodeName, event.source.parent.title, parent.nodeName, paramName, inputDropArea);
                         }
                     }
                     MouseArea {
@@ -538,7 +538,7 @@ NodeBox {
                         Component.onCompleted: root.rootGraphModel.mapOutputEndPoint(parent.nodeName, paramName, outputDropArea)
 
                         onDropped: function (event) {
-                                edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title);
+                                edgeCreated(parent.nodeName, parent.title, event.source.parent.nodeName, event.source.parent.title, outputDropArea);
                         }
                     }
                     MouseArea {

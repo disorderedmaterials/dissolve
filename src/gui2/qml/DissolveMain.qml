@@ -395,8 +395,8 @@ ApplicationWindow {
                             onDescended: function (idx) {
                                 graphModel.descend(idx);
                             }
-                            onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
-                                graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
+                            onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput, creator) {
+                                graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput, creator);
                             }
                             onEdgeDeferred: function (srcNode, srcOutput, tgtNode, tgtInput, creator) {
                                 graphModel.deferEdge(srcNode, srcOutput, tgtNode, tgtInput, creator);

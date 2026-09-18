@@ -200,11 +200,13 @@ int GraphModel::nEdges()
 }
 
 // Select a specific output for connection
-void GraphModel::addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput)
+void GraphModel::addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput, QQuickItem *creator)
 {
     EdgeDefinition edge(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
     if (edges_.add(edge))
         addEndPoints(srcNode.toStdString(), srcOutput.toStdString(), tgtNode.toStdString(), tgtInput.toStdString());
+    else
+        creator->setProperty("locked", false);
 }
 
 // Adds a new edge, but the connection (addition of QML endpoints corresponding to the edge's input/output) is deferred until
@@ -224,6 +226,8 @@ void GraphModel::deferEdge(QString srcNode, QString srcOutput, QString tgtNode, 
         if (creator->property("connectionType").value<int>() == 0)
             return creatorNode.outputs->resetParameters();
     }
+    else
+        creator->setProperty("locked", false);
 }
 
 // Rename a node in the graph

@@ -162,7 +162,7 @@ class GraphModel : public QObject
     // Remove a node
     void deleteNode(int index);
     // Select a specific output for connection
-    void addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput);
+    void addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput, QQuickItem *creator);
     // Adds a new edge, but the connection (addition of QML endpoints corresponding to the edge's input/output) is deferred
     // until later
     void deferEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput, QQuickItem *creator);
