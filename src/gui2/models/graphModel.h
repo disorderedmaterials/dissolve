@@ -48,6 +48,9 @@ class GraphModel : public QObject
     GraphModel();
 
     public:
+    // Return the graph status
+    std::optional<NodeConstants::ProcessResult> &graphStatus();
+    const std::optional<NodeConstants::ProcessResult> &graphStatus() const;
     // Access the actual nodes in the model
     Graph *graph();
     // Set the current graph being modelled
@@ -74,6 +77,8 @@ class GraphModel : public QObject
     void setCanvasDimensions(const QSizeF &canvasDimensions);
 
     private:
+    // Graph status
+    std::optional<NodeConstants::ProcessResult> graphStatus_;
     // List of node names corresponding to the current graph's existing nodes, that will be reconstructed
     std::optional<std::vector<std::string>> reconstructibleNodes_;
     // Random number generator
@@ -148,7 +153,7 @@ class GraphModel : public QObject
     void graphInvalidated();
     void canvasDimensionsChanged();
     void decrementNodeTypeRequired(const std::string &);
-    void graphRunComplete(NodeConstants::ProcessResult status, std::string node);
+    void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
 
     public Q_SLOTS:
     // Reset everything

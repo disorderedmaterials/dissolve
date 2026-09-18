@@ -74,7 +74,7 @@ class NodeMessages : public QObject
     };
 
     // Update all
-    Q_INVOKABLE void updateMessages();
+    Q_INVOKABLE void updateMessages(bool reportsGraphFailure = false);
 
     private:
     // Reset flags
@@ -85,8 +85,6 @@ class NodeMessages : public QObject
     void setMessageStore();
 
     private:
-    // Graph status
-    std::optional<NodeConstants::ProcessResult> graphStatus_;
     // Info
     NodeMessageModel infoListModel_{Node::MessageStatus::Info};
     // Warnings

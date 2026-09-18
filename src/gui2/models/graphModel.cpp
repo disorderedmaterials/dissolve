@@ -21,6 +21,10 @@ GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
     QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
 }
 
+// Return the graph status
+std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() { return graphStatus_; }
+const std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() const { return graphStatus_; }
+
 Graph *GraphModel::graph() { return graph_; }
 
 void GraphModel::setGraph(Graph *graph)

@@ -92,20 +92,19 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
 {
     graphModel_ = graphModel;
     QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
-                     [this](NodeConstants::ProcessResult status, const std::string &name)
+                     [this](NodeConstants::ProcessResult status, const std::string &graphRunnerName)
                      {
-                         if (nodeName_ != QString::fromStdString(name))
-                             return;
-
-                         graphStatus_.emplace(status);
+                         auto &graphStatus = this->graphModel_->graphStatus();
+                         if (!graphStatus.has_value())
+                             graphStatus.emplace(status);
                          resetFlags();
-                         updateMessages();
+                         updateMessages(nodeName_ != QString::fromStdString(graphRunnerName));
                      });
     QObject::connect(graphModel_, &GraphModel::graphInvalidated, this,
                      [this]()
                      {
                          // Place node on standby since graph's connections have changed since last successful run
-                         if (flags_.isSetOrNone(NodeMessages::Success))
+                         if (flags_.isSetOrNone(NodeMessages::Success) && !flags_.isSetOrNone(NodeMessages::Default))
                          {
                              resetFlags();
                              flags_.setFlag(NodeMessages::Standby);
@@ -130,7 +129,7 @@ void NodeMessages::setParent(QQuickItem *parent) { parent_ = parent; }
 QQuickItem *NodeMessages::parent() { return parent_; }
 
 // Update all
-void NodeMessages::updateMessages()
+void NodeMessages::updateMessages(bool reportsGraphFailure)
 {
     std::vector<QString> info;
     std::vector<QString> warnings;
@@ -161,9 +160,11 @@ void NodeMessages::updateMessages()
                     return;
             }
 
+    const auto graphStatus = graphModel_->graphStatus();
+
     // Check overall status of graph run
-    if (graphStatus_.has_value())
-        switch (graphStatus_.value())
+    if (graphStatus.has_value())
+        switch (graphStatus.value())
         {
             case NodeConstants::ProcessResult::Success:
             {
@@ -178,7 +179,11 @@ void NodeMessages::updateMessages()
             case NodeConstants::ProcessResult::Failed:
             {
                 info.push_back("Graph run completed unsuccessfully");
-                errors.push_back("Graph run completed unsuccessfully");
+
+                // If this node is the selected runner node for the current graph run, it should report the overall graph result
+                // when the run has failed
+                if (reportsGraph)
+                    errors.push_back("Graph run completed unsuccessfully");
                 break;
             }
             default:
