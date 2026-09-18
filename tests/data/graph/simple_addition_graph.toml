@@ -1,10 +1,22 @@
+[graph]
 name = "Root"
 type = "Dissolve"
 x = 0
 y = 0
 
-[nodes]
-[nodes.x]
+[[graph.edges]]
+sourceNode = "x"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "X"
+[[graph.edges]]
+sourceNode = "y"
+sourceOutput = "Result"
+targetNode = "z"
+targetInput = "Y"
+
+[graph.nodes]
+[graph.nodes.x]
 name = "x"
 type = "Add"
 x = 300
@@ -17,7 +29,7 @@ data = 0
 [nodes.x.inputs.Y]
 data = 0
 
-[nodes.y]
+[graph.nodes.y]
 name = "y"
 type = "Add"
 x = 350
@@ -30,7 +42,7 @@ data = 0
 [nodes.y.inputs.Y]
 data = 0
 
-[nodes.z]
+[graph.nodes.z]
 name = "z"
 type = "Add"
 x = 750
