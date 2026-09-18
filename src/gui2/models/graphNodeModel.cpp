@@ -54,6 +54,22 @@ void GraphNodeModel::updateGraph()
 }
 */
 
+//
+std::vector<NodeWrapper *> GraphNodeModel::findAllByRole(int role)
+{
+    std::vector<NodeWrapper *> nodes;
+    for (int i = 0; i < rowCount(); i++)
+    {
+        auto matches = qvariant_cast<bool>(data(index(i, 0), role));
+        if (matches)
+        {
+            auto node = &parent_->wrapped_[i];
+            nodes.push_back(node);
+        }
+    }
+    return nodes;
+}
+
 /*
  * QAbstractListModel overrides
  */

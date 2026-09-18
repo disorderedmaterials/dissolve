@@ -224,14 +224,16 @@ NodeConstants::ProcessResult DetectMoleculesNode::process()
                                                if (fragmentMatch.matched().empty())
                                                    return false;
 
-                                               std::cout << "Fragment:\n";
-                                               // Store this match as an instance
+                                               // std::cout << "Fragment:\n";
+                                               //  Store this match as an instance
                                                auto &instanceAtoms = detectedStructure.instances().emplace_back();
                                                for (const auto fragmentAtom : fragmentMatch.matched())
                                                {
-                                                   std::cout << std::format(
-                                                       "{} @ {} {} {}\n", Elements::symbol(fragmentAtom->Z()),
-                                                       fragmentAtom->r().x, fragmentAtom->r().y, fragmentAtom->r().z);
+                                                   /*
+                                                      std::cout << std::format(
+                                                          "{} @ {} {} {}\n", Elements::symbol(fragmentAtom->Z()),
+                                                          fragmentAtom->r().x, fragmentAtom->r().y, fragmentAtom->r().z);
+                                                          */
                                                    instanceAtoms.push_back(fragmentAtom->r());
                                                }
 

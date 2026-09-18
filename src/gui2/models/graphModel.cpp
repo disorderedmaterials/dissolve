@@ -22,8 +22,15 @@ GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 }
 
 // Return the graph status
-std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() { return graphStatus_; }
 const std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() const { return graphStatus_; }
+
+// Set the graph status
+void GraphModel::setGraphStatus(NodeConstants::ProcessResult status)
+{
+    if (graphStatus_.has_value())
+        graphStatus_.reset();
+    graphStatus_.emplace(status);
+}
 
 Graph *GraphModel::graph() { return graph_; }
 
@@ -287,7 +294,13 @@ void GraphModel::run(QVariant nodeName)
 {
     auto name = nodeName.toString().toStdString();
     auto node = graph_->findNode(name);
-    Q_EMIT graphRunComplete(node->run(), name);
+    setGraphStatus(node->run());
+
+    // Update dynamic outputs
+    auto dynamicNodes = nodes_.findAllByRole(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
+    for (auto &nodeWrapper : dynamicNodes)
+        nodeWrapper->outputs->resetParameters();
+    Q_EMIT graphRunComplete(graphStatus_.value(), name);
 }
 
 int GraphModel::indexByName(std::string_view name)

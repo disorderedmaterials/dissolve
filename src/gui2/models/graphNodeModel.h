@@ -8,6 +8,7 @@
 #include <qvariant.h>
 
 class GraphModel;
+class NodeWrapper;
 
 // GraphModel class)
 class GraphNodeModel : public QAbstractListModel
@@ -59,6 +60,10 @@ class GraphNodeModel : public QAbstractListModel
     private:
     // The GraphModel that this is part of (which will hold the actual vector of nodes
     GraphModel *parent_;
+
+    public:
+    //
+    std::vector<NodeWrapper *> findAllByRole(int role);
 
     /*
      * QAbstractListModel overrides

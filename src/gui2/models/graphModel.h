@@ -48,8 +48,9 @@ class GraphModel : public QObject
     GraphModel();
 
     public:
+    // Set the graph status
+    void setGraphStatus(NodeConstants::ProcessResult status);
     // Return the graph status
-    std::optional<NodeConstants::ProcessResult> &graphStatus();
     const std::optional<NodeConstants::ProcessResult> &graphStatus() const;
     // Access the actual nodes in the model
     Graph *graph();

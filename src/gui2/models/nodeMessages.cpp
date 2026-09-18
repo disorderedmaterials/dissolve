@@ -94,9 +94,6 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
     QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
                      [this](NodeConstants::ProcessResult status, const std::string &graphRunnerName)
                      {
-                         auto &graphStatus = this->graphModel_->graphStatus();
-                         if (!graphStatus.has_value())
-                             graphStatus.emplace(status);
                          resetFlags();
                          updateMessages(nodeName_ != QString::fromStdString(graphRunnerName));
                      });
@@ -182,7 +179,7 @@ void NodeMessages::updateMessages(bool reportsGraphFailure)
 
                 // If this node is the selected runner node for the current graph run, it should report the overall graph result
                 // when the run has failed
-                if (reportsGraph)
+                if (reportsGraphFailure)
                     errors.push_back("Graph run completed unsuccessfully");
                 break;
             }
