@@ -5,9 +5,6 @@
 #include "graphEdgeModel.h"
 #include "graphNodeModel.h"
 #include "nodes/edge.h"
-#include "nodes/inputs.h"
-#include "nodes/iterableGraph.h"
-#include "nodes/outputs.h"
 #include <QAbstractItemModel>
 #include <QVariant>
 #include <algorithm>
@@ -18,11 +15,22 @@
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 {
-    QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
+    // TODO: Using the current edge management method (by rendering edges between the positions of QML objects corresponding to
+    // drag/drop locations) this connection has no effect. This model's exposed roles sourceX, sourceY, targetX, and targetY,
+    // are not used. We should consider a refactor to remove this unused code, and potentially relegate the GraphEdgeModel to a
+    // QObject derivate, or even a simple struct interface for edges.
+    //
+    // QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
 }
 
 // Return the graph status
 const std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() const { return graphStatus_; }
+
+// Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+std::function<std::optional<double>(Node *)> &GraphModel::nodeXPositionInitialiser() { return nodeXPositionInitialiser_; }
+
+// Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+std::function<std::optional<double>(Node *)> &GraphModel::nodeYPositionInitialiser() { return nodeYPositionInitialiser_; }
 
 // Set the graph status
 void GraphModel::setGraphStatus(NodeConstants::ProcessResult status)

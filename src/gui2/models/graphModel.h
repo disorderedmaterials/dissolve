@@ -9,6 +9,9 @@
 #include "gui2/models/parameterEndPointsModel.h"
 #include "nodes/edge.h"
 #include "nodes/graph.h"
+#include "nodes/inputs.h"
+#include "nodes/iterableGraph.h"
+#include "nodes/outputs.h"
 #include <QAbstractListModel>
 #include <QQuickItem>
 #include <functional>
@@ -48,6 +51,10 @@ class GraphModel : public QObject
     GraphModel();
 
     public:
+    // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+    std::function<std::optional<double>(Node *)> &nodeXPositionInitialiser();
+    // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+    std::function<std::optional<double>(Node *)> &nodeYPositionInitialiser();
     // Set the graph status
     void setGraphStatus(NodeConstants::ProcessResult status);
     // Return the graph status
@@ -78,6 +85,27 @@ class GraphModel : public QObject
     void setCanvasDimensions(const QSizeF &canvasDimensions);
 
     private:
+    // Lambda to assign a default position to nodes of type input/output/loopbacks
+    std::function<std::optional<double>(Node *)> nodeXPositionInitialiser_{[&](Node *node) -> std::optional<double>
+                                                                           {
+                                                                               const auto nodeWidth = 250;
+                                                                               if (dynamic_cast<InputsNode *>(node))
+                                                                                   return 0;
+                                                                               else if (dynamic_cast<OutputsNode *>(node) ||
+                                                                                        dynamic_cast<LoopBacksNode *>(node))
+                                                                                   return canvasDimensions().width() -
+                                                                                          nodeWidth;
+                                                                               else
+                                                                                   return {};
+                                                                           }};
+    // Lambda to assign a default position to nodes of type input/output/loopbacks
+    std::function<std::optional<double>(Node *)> nodeYPositionInitialiser_{[&](Node *node) -> std::optional<double>
+                                                                           {
+                                                                               const auto nodeHeight = 94;
+                                                                               if (!dynamic_cast<LoopBacksNode *>(node))
+                                                                                   return {};
+                                                                               return canvasDimensions().height() - (nodeHeight * 4);
+                                                                           }};
     // Graph status
     std::optional<NodeConstants::ProcessResult> graphStatus_;
     // List of node names corresponding to the current graph's existing nodes, that will be reconstructed

@@ -211,8 +211,8 @@ GroupBox {
             id: dragHandler
             target: root
 
-            xAxis.onActiveValueChanged: delta => x += delta
-            yAxis.onActiveValueChanged: delta => y += delta
+            xAxis.onActiveValueChanged: delta => posX += delta
+            yAxis.onActiveValueChanged: delta => posY += delta
 
             onActiveChanged: root.dragActive = active
         }

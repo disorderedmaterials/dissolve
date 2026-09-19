@@ -25,10 +25,10 @@ class NodeWrapper
     // Relative positions of parameters with respect to the node
     std::map<std::string, QPointF> inputsPos, outputPos;
 
+    public:
     // Get the actual value of the node
     Node &rawValue() { return *value_; }
     const Node &rawValue() const { return *value_; }
-
     // Does this node contain other nodes?
     bool hasInner() { return dynamic_cast<Graph *>(value_) != nullptr; }
 

@@ -42,15 +42,15 @@ NodeBox {
 
     image: icon
     nodeName: name
-    coords: Qt.point(posX, posY)
+    coords: Qt.point(x, y)
 
     height: nodeColumnLayout.implicitHeight + label.height + padding
     width: 250
 
     // Ensure that we only display this box for valid node items
     visible: (icon != null) && !(isRootNode && (isInputsNode || isOutputsNode))
-    x: isInputsNode ? 0 : (isOutputsNode || isLoopBacksNode ? (rootGraphModel.canvasDimensions.width - width) : coords.x)
-    y: isLoopBacksNode ? (rootGraphModel.canvasDimensions.height - (height * 4)) : coords.y
+    x: posX
+    y: posY
     isInputsNode: nodeName == "Inputs"
     isOutputsNode: nodeName == "Outputs"
     isLoopBacksNode: nodeName == "LoopBacks"

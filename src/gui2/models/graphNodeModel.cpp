@@ -111,9 +111,31 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
         case NAME:
             return QString::fromStdString(std::string(item.rawValue().name()));
         case POSX:
+        {
+            // If node belongs to a new graph (not a reconstructed graph) attempt to position inputs, outputs and loopbacks in
+            // their default x position
+            if (!parent_->nodeReconstructionInProgress())
+            {
+                auto *nodePtr = &item.rawValue();
+                auto optInitialX = parent_->nodeXPositionInitialiser()(nodePtr);
+                if (optInitialX.has_value())
+                    nodePtr->x = *optInitialX;
+            }
             return item.rawValue().x;
+        }
         case POSY:
+        {
+            // If node belongs to a new graph (not a reconstructed graph) attempt to position inputs, outputs and loopbacks in
+            // their default y position
+            if (!parent_->nodeReconstructionInProgress())
+            {
+                auto *nodePtr = &item.rawValue();
+                auto optInitialY = parent_->nodeYPositionInitialiser()(nodePtr);
+                if (optInitialY.has_value())
+                    nodePtr->y = *optInitialY;
+            }
             return item.rawValue().y;
+        }
         case TYPE:
             return QString::fromStdString(std::string(item.rawValue().type()));
         case ICON:
@@ -153,11 +175,13 @@ bool GraphNodeModel::setData(const QModelIndex &index, const QVariant &value, in
         }
         case POSX:
             item.rawValue().x = value.toInt();
-            Q_EMIT updatePosition(index.row());
+            // Q_EMIT updatePosition(index.row());
+            Q_EMIT dataChanged(index, index, {role});
             return true;
         case POSY:
             item.rawValue().y = value.toInt();
-            Q_EMIT updatePosition(index.row());
+            // Q_EMIT updatePosition(index.row());
+            Q_EMIT dataChanged(index, index, {role});
             return true;
     }
     return false;
