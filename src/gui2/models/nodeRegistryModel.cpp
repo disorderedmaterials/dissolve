@@ -52,13 +52,12 @@ QList<QVariantMap> NodeRegistryModel::nodeNames(QString category)
     for (const auto &[name, _] : nodes[categoryEnum])
     {
         auto nodeName = QString::fromStdString(std::string(name));
-        auto descriptionIt = std::find_if(entries_.begin(), entries_.end(),
-                                          [&nodeName](const auto &entry) { return std::get<0>(entry) == nodeName; });
+        auto descriptionIt =
+            std::find_if(entries_.begin(), entries_.end(), [&nodeName](const auto &entry) { return entry.name == nodeName; });
         auto descriptionIdx = std::distance(entries_.begin(), descriptionIt);
-        auto nodeDescription = std::get<1>(entries_[descriptionIdx]);
         QVariantMap nodeInfo;
         nodeInfo[QString::fromStdString("name")] = nodeName;
-        nodeInfo[QString::fromStdString("description")] = nodeDescription;
+        nodeInfo[QString::fromStdString("description")] = entries_[descriptionIdx].description;
         names.push_back(nodeInfo);
     }
     return names;
@@ -78,7 +77,10 @@ QString NodeRegistryModel::uniqueNodeName(QVariant type)
 }
 
 // Instantiate node from registry
-void NodeRegistryModel::instantiateNode(int x, int y, QVariant type) { graphModel_->emplace_back(x, y, type, uniqueNodeName(type), true); }
+void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
+{
+    graphModel_->emplace_back(x, y, type, uniqueNodeName(type).toStdString());
+}
 
 // Set the graph model
 void NodeRegistryModel::setGraphModel(GraphModel *graphModel)

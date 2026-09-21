@@ -143,7 +143,6 @@ const std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalPro
       {"SetBox", makeDerivedNode<SetBoxNode>()},
       {"SetCoordinates", makeDerivedNode<SetCoordinatesNode>()},
       {"SiteRDF", makeDerivedNode<SiteRDFNode>()},
-      {"SupercellConfiguration", makeDerivedNode<SupercellConfigurationNode>()},
       {"XRaySQ", makeDerivedNode<XRaySQNode>()},
       {"VoxelDensity", makeDerivedNode<VoxelDensityNode>()}}}};
 
@@ -164,7 +163,7 @@ EnumOptions<NodeRegistry::Category> NodeRegistry::category()
 }
 EnumOptions<NodeRegistry::Category> getEnumOptions(NodeRegistry::Category) { return NodeRegistry::category(); }
 
-// Remove categories from categorial node producer map, returning a 'flat' producer map
+// Remove categories from categorical node producer map, returning a 'flat' producer map
 ProducerMap NodeRegistry::decategoriseProducers()
 {
     ProducerMap producers;

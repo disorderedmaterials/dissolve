@@ -34,7 +34,7 @@ class NodeRegistry
     static ProducerMap producers_;
 
     private:
-    // Remove categories from categorial node producer map, returning a 'flat' producer map
+    // Remove categories from categorical node producer map, returning a 'flat' producer map
     static ProducerMap decategoriseProducers();
     // Instantiate Node Producers
     static void instantiateNodeProducers();

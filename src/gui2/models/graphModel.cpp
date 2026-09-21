@@ -126,7 +126,7 @@ void GraphModel::emplace_back(int x, int y, QVariant type, std::string name)
     node->x = x;
     node->y = y;
     auto &item = wrapped_.emplace_back(*node);
-    item.rawValue().setName(name.toStdString());
+    item.rawValue().setName(name);
     nodes_.endInsertRows();
     graphChanged();
 }
