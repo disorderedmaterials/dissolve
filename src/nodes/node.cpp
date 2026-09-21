@@ -431,6 +431,8 @@ std::set<const Node *> Node::allAncestors() const
                     stack.insert(source);
             }
     }
+    if (parentGraph())
+        result.merge(parentGraph()->allAncestors());
     return result;
 }
 
