@@ -60,7 +60,6 @@ class TestGraphFixture : public testing::Test
         EXPECT_TRUE(node);
         return dynamic_cast<NodeClass *>(node);
     }
-
     // Go
     void go()
     {
