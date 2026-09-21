@@ -82,7 +82,7 @@ void SpeciesSites::deserialise(const SerialisedValue &node)
 {
     clear();
 
-    Deserialisable::map(node, "set",
+    Deserialisable::map(node, "sites",
                         [&](const std::string &speciesName, const SerialisedValue &sites)
                         {
                             auto &set = sites_[speciesName];

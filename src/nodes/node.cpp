@@ -343,8 +343,10 @@ SerialisedValue Node::serialiseState() const
 // Read state data from a serialisable value
 void Node::deserialiseState(const SerialisedValue &node)
 {
-    // Obtain resolvable data // TODO
+    // Obtain resolvable data
     std::map<std::string, const Species *> reachableSpecies;
+    for (auto &node : ancestors<SpeciesNode>())
+        reachableSpecies[std::string(node->name())] = &node->species();
 
     timing_.deserialise(node.at("timing"));
 
@@ -377,6 +379,8 @@ void Node::serialise(std::string tag, SerialisedValue &target) const
     result["y"] = y;
 
     Serialisable::map(options_, "options", result);
+    Serialisable::map(inputs_, "inputs", result,
+                      [](const auto &parameter) { return parameter->flags().isSet(ParameterBase::ParameterFlags::Serialise); });
 
     target[tag] = result;
 }
@@ -390,7 +394,14 @@ void Node::deserialise(const SerialisedValue &node)
                         [this](const auto &k, const auto &v)
                         {
                             if (inputs_.contains(k))
-                                inputs_[k]->deserialise(v);
+                                try
+                                {
+                                    inputs_[k]->deserialise(v);
+                                }
+                                catch (std::exception &ex)
+                                {
+                                    Messenger::exception("Error reading input {} in node {} ({}).", k, name(), ex.what());
+                                }
                             else
                                 Messenger::exception("Node {} does not contain a parameter {}", name(), k);
                         });
@@ -398,7 +409,14 @@ void Node::deserialise(const SerialisedValue &node)
                         [this](const auto &k, const auto &v)
                         {
                             if (options_.contains(k))
-                                options_[k]->deserialise(v);
+                                try
+                                {
+                                    options_[k]->deserialise(v);
+                                }
+                                catch (std::exception &ex)
+                                {
+                                    Messenger::exception("Error reading option {} in node {} ({}).", k, name(), ex.what());
+                                }
                             else
                                 Messenger::exception("Node {} does not contain an option {}", name(), k);
                         });
