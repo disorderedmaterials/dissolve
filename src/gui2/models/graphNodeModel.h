@@ -64,7 +64,7 @@ class GraphNodeModel : public QAbstractListModel
 
     public:
     //
-    std::vector<NodeWrapper *> findAllByRoleSatisifed(int role);
+    std::vector<NodeWrapper *> findAllByRoleTrue(int role);
 
     private:
     //
