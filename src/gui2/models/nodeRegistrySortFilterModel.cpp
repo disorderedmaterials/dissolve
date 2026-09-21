@@ -14,7 +14,7 @@ bool NodeRegistrySortFilterModel::filterAcceptsRow(int sourceRow, const QModelIn
         return true;
 
     auto index = sourceModel()->index(sourceRow, 0, source);
-    auto rowName = sourceModel()->data(index, NodeRegistryModel::Role::Name).toString().toStdString();
+    auto rowName = sourceModel()->data(index, NodeRegistryModel::NodeDisplayRoles::Name).toString().toStdString();
 
     auto fuzzyTypes = NodeRegistry::getNodeTypesFuzzy(searchText_.toStdString());
 

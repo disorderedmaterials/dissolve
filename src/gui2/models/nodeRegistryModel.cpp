@@ -86,7 +86,7 @@ QString NodeRegistryModel::uniqueNodeName(QVariant type)
 // Instantiate node from registry
 void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
 {
-    graphModel_->emplace_back(x, y, type, uniqueNodeName(type).toStdString());
+    graphModel_->emplace_back(x, y, type.toString(), uniqueNodeName(type));
 }
 
 // Set the graph model

@@ -150,18 +150,18 @@ void GraphModel::setCanvasDimensions(const QSizeF &canvasDimensions)
     Q_EMIT canvasDimensionsChanged();
 }
 
-void GraphModel::emplace_back(int x, int y, QVariant type, std::string name)
+void GraphModel::emplace_back(int x, int y, QString type, QString name)
 {
     if (!graph_)
         Messenger::exception(
             "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
-    auto nodeType = type.toString().toStdString();
-    auto node = graph_->createNode(nodeType, name);
+    auto nodeType = type.toStdString();
+    auto node = graph_->createNode(nodeType, name.toStdString());
     node->x = x;
     node->y = y;
     auto &item = wrapped_.emplace_back(*node);
-    item.rawValue().setName(name);
+    item.rawValue().setName(name.toStdString());
     nodes_.endInsertRows();
     Q_EMIT graphChanged();
 }

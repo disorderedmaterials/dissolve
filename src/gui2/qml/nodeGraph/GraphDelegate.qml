@@ -305,8 +305,10 @@ NodeBox {
     ColumnLayout {
         id: nodeColumnLayout
 
+        /*
         anchors.left: header.left
         anchors.right: header.right
+        */
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         spacing: 8
