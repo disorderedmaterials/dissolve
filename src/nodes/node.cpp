@@ -343,8 +343,10 @@ SerialisedValue Node::serialiseState() const
 // Read state data from a serialisable value
 void Node::deserialiseState(const SerialisedValue &node)
 {
-    // Obtain resolvable data // TODO
+    // Obtain resolvable data
     std::map<std::string, const Species *> reachableSpecies;
+    for (auto &node : ancestors<SpeciesNode>())
+        reachableSpecies[std::string(node->name())] = &node->species();
 
     timing_.deserialise(node.at("timing"));
 
