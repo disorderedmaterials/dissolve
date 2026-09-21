@@ -202,7 +202,7 @@ class GraphModel : public QObject
     // Provide relative coordinates for an output on a node
     void addOutput(QString nodeName, QString paramName, double x, double y);
     // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, QString name);
+    void emplace_back(int x, int y, QString type, QString name);
     // Switch to parent graph
     void upLevel();
     // Move into an inner graph
