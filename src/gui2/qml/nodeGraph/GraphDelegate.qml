@@ -60,7 +60,7 @@ NodeBox {
         border.color: messageStore.indicatorColor
         iconColor: messageStore.indicatorColor
         iconText: messageStore.indicatorText
-        visible: messageStore.indicatorVisible
+        visible: !(version < 0) && messageStore.indicatorVisible
         summary: messageStore.indicatorSummary
     }
     Menu {

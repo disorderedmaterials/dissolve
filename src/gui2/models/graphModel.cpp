@@ -309,9 +309,10 @@ void GraphModel::run(QVariant nodeName)
     setGraphStatus(node->run());
 
     // Update dynamic outputs
-    auto dynamicNodes = nodes_.findAllByRole(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
+    auto dynamicNodes = nodes_.findAllByRoleTrue(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
     for (auto &nodeWrapper : dynamicNodes)
         nodeWrapper->outputs->resetParameters();
+
     Q_EMIT graphRunComplete(graphStatus_.value(), name);
 }
 

@@ -34,7 +34,8 @@ class GraphNodeModel : public QAbstractListModel
         IS_ROOT_NODE,
         IS_ITERABLE,
         HAS_PROXY_PARAMETERS,
-        HAS_DYNAMIC_OUTPUTS
+        HAS_DYNAMIC_OUTPUTS,
+        VERSION
     };
 
     GraphNodeModel &operator=(const GraphNodeModel &other);
@@ -63,7 +64,11 @@ class GraphNodeModel : public QAbstractListModel
 
     public:
     //
-    std::vector<NodeWrapper *> findAllByRole(int role);
+    std::vector<NodeWrapper *> findAllByRoleSatisifed(int role);
+
+    private:
+    //
+    void setConnections();
 
     /*
      * QAbstractListModel overrides

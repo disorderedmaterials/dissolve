@@ -10,8 +10,8 @@
 #include "nodes/outputs.h"
 #include <qvariant.h>
 
-GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) {}
-GraphNodeModel::GraphNodeModel(const GraphNodeModel &other) : parent_(other.parent_) {}
+GraphNodeModel::GraphNodeModel(GraphModel *parent) : parent_(parent) { setConnections(); }
+GraphNodeModel::GraphNodeModel(const GraphNodeModel &other) : parent_(other.parent_) { setConnections(); }
 
 GraphNodeModel &GraphNodeModel::operator=(const GraphNodeModel &other)
 {
@@ -55,7 +55,7 @@ void GraphNodeModel::updateGraph()
 */
 
 //
-std::vector<NodeWrapper *> GraphNodeModel::findAllByRole(int role)
+std::vector<NodeWrapper *> GraphNodeModel::findAllByRoleTrue(int role)
 {
     std::vector<NodeWrapper *> nodes;
     for (int i = 0; i < rowCount(); i++)
@@ -68,6 +68,21 @@ std::vector<NodeWrapper *> GraphNodeModel::findAllByRole(int role)
         }
     }
     return nodes;
+}
+
+//
+void GraphNodeModel::setConnections()
+{
+    QObject::connect(parent_, &GraphModel::graphRunComplete, this,
+                     [this]()
+                     {
+                         const auto nNodes = parent_->wrapped_.size();
+                         for (int i = 0; i < nNodes; i++)
+                         {
+                             auto index = this->index(i, 0);
+                             Q_EMIT dataChanged(index, index, {Qt::UserRole + VERSION});
+                         }
+                     });
 }
 
 /*
@@ -99,6 +114,7 @@ QHash<int, QByteArray> GraphNodeModel::roleNames() const
     roles[Qt::UserRole + (int)IS_ITERABLE] = "isIterable";
     roles[Qt::UserRole + (int)HAS_PROXY_PARAMETERS] = "hasProxyParameters";
     roles[Qt::UserRole + (int)HAS_DYNAMIC_OUTPUTS] = "hasDynamicOutputs";
+    roles[Qt::UserRole + (int)VERSION] = "version";
     return roles;
 }
 
@@ -157,6 +173,8 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
                    dynamic_cast<IterableGraph *>(&item.rawValue()) != nullptr;
         case HAS_DYNAMIC_OUTPUTS:
             return dynamic_cast<DetectMoleculesNode *>(&item.rawValue()) != nullptr;
+        case VERSION:
+            return item.rawValue().versionIndex();
     }
     return {};
 }
