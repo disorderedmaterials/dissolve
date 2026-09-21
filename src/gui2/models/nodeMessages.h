@@ -61,10 +61,6 @@ class NodeMessages : public QObject
     // Update all
     Q_INVOKABLE void updateMessages();
 
-    protected:
-    // Message store
-    void setMessageStore();
-
     private:
     // Graph status
     std::optional<NodeConstants::ProcessResult> graphStatus_;

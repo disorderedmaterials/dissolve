@@ -21,8 +21,8 @@ NodeRegistryModel::NodeRegistryModel(QObject *parent)
     {
         auto &[name, producer] = node;
         auto dummyNode = NodeRegistry::produce(dummyGraph->parentGraph(), name);
-        entries_.push_back({QString::fromStdString(std::string(dummyNode->type())),
-                            QString::fromStdString(std::string(dummyNode->summary())), 0});
+        entries_.push_back(NodeRegistryDisplayElement{QString::fromStdString(std::string(dummyNode->type())),
+                                                      QString::fromStdString(std::string(dummyNode->summary())), 0});
     }
 }
 
@@ -37,9 +37,9 @@ void NodeRegistryModel::decrement(QString nodeType) { tally(nodeType)--; }
 
 int &NodeRegistryModel::tally(QString nodeType)
 {
-    auto it = std::find_if(entries_.begin(), entries_.end(), [&](const auto &entry) { return std::get<0>(entry) == nodeType; });
+    auto it = std::find_if(entries_.begin(), entries_.end(), [&](const auto &entry) { return entry.name == nodeType; });
     std::size_t idx = std::distance(entries_.begin(), it);
-    return std::get<int>(entries_[idx]);
+    return entries_[idx].tally;
 }
 
 // Instantiate node from registry
@@ -49,7 +49,7 @@ void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
     const auto count = tally(type.toString());
     std::string prefix = type.toString().toStdString() + "_";
     auto name = prefix + std::format("{}", count);
-    graphModel_->emplace_back(x, y, type, name, true);
+    graphModel_->emplace_back(x, y, type, name);
 }
 
 // Set the graph model
@@ -76,12 +76,12 @@ int NodeRegistryModel::rowCount(const QModelIndex &parent) const
 QVariant NodeRegistryModel::data(const QModelIndex &index, int role) const
 {
     auto entry = entries_[index.row()];
-    switch (role)
+    switch (role - Qt::UserRole)
     {
-        case NodeDisplayRoles::Name:
-            return std::get<0>(entry);
-        case NodeDisplayRoles::Description:
-            return std::get<1>(entry);
+        case Name:
+            return entry.name;
+        case Description:
+            return entry.description;
         default:
             return QVariant();
     }
@@ -113,7 +113,7 @@ QVariant NodeRegistryModel::headerData(int section, Qt::Orientation orientation,
 QHash<int, QByteArray> NodeRegistryModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Name] = "name";
-    roles[Description] = "description";
+    roles[Qt::UserRole + (int)Name] = "name";
+    roles[Qt::UserRole + (int)Description] = "description";
     return roles;
 }

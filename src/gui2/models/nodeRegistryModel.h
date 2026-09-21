@@ -14,7 +14,7 @@
 class NodeRegistryModel : public QAbstractListModel
 {
     /*
-     * NodeRegistryDisplayElement is a type alias for a tuple-like container holding the following
+     * NodeRegistryDisplayElement is a type alias for a container holding the following
      * information fields about each registered node:
      *
      * - Name/Node::type (QString)
@@ -24,7 +24,12 @@ class NodeRegistryModel : public QAbstractListModel
      * - tally (int)
      *
      */
-    using NodeRegistryDisplayElement = std::tuple<QString, QString, int>;
+    struct NodeRegistryDisplayElement
+    {
+        QString name;
+        QString description;
+        int tally;
+    };
 
     Q_OBJECT
 
@@ -32,12 +37,11 @@ class NodeRegistryModel : public QAbstractListModel
     explicit NodeRegistryModel(QObject *parent = nullptr);
     ~NodeRegistryModel() override = default;
 
-    enum NodeDisplayRoles
+    enum Role
     {
-        Name = Qt::DisplayRole,
-        Description = Qt::UserRole + 1,
+        Name = 0,
+        Description
     };
-    Q_ENUM(NodeDisplayRoles);
 
     private:
     // Increment node type

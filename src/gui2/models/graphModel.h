@@ -10,7 +10,6 @@
 #include "nodes/graph.h"
 #include <QAbstractListModel>
 #include <QQuickItem>
-#include <qtmetamacros.h>
 #include <random>
 
 class GraphNodeModel;
@@ -133,8 +132,6 @@ class GraphModel : public QObject
     private:
     void addEndPoints(std::string sourceNodeName, std::string sourceParamName, std::string targetNodeName,
                       std::string targetParamName);
-    // Find a unique point in the graph's x-y space for positioning when instantiated
-    void findUniqueXY(int x, int y, int &dX, int &dY);
 
     private:
     // Check whether a given source and destination can be connected
@@ -168,7 +165,7 @@ class GraphModel : public QObject
     void addOutput(int nodeIndex, QString paramName, double x, double y);
 
     // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, std::string name, bool avoidSamePosition = false);
+    void emplace_back(int x, int y, QVariant type, std::string name);
 
     // Switch to parent graph
     void upLevel();

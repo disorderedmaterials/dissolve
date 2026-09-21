@@ -3,13 +3,6 @@
 
 #include "nodeMessages.h"
 
-// Message store
-void NodeMessages::setMessageStore()
-{
-    auto sourceNode = graphModel_->graph()->findNode(nodeName_.toStdString());
-    messageStore_ = sourceNode->messages();
-}
-
 // Info
 const NodeMessageModel *NodeMessages::infoListModel() { return &infoListModel_; }
 
@@ -38,7 +31,13 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
 GraphModel *NodeMessages::graphModel() { return graphModel_; }
 
 // Set the node name
-void NodeMessages::setNodeName(QString nodeName) { nodeName_ = nodeName; }
+void NodeMessages::setNodeName(QString nodeName)
+{
+    nodeName_ = nodeName;
+    auto sourceNode = graphModel_->graph()->findNode(nodeName_.toStdString());
+    if (sourceNode)
+        messageStore_ = sourceNode->messages();
+}
 
 // Return the node name
 QString NodeMessages::nodeName() { return nodeName_; }
@@ -55,7 +54,6 @@ void NodeMessages::updateMessages()
     std::vector<QString> info;
     std::vector<QString> warnings;
     std::vector<QString> errors;
-    setMessageStore();
     if (!messageStore_.empty())
         for (const auto &[status, msg] : messageStore_)
             switch (status)

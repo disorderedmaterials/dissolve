@@ -26,53 +26,11 @@ ApplicationWindow {
     title: "Dissolve"
     visible: true
 
-    property NodeSearchDialog nodeSearchDialog: null
-    Component {
-        id: nodeSearchDialogComponent
-
-        NodeSearchDialog {
-        }
-    }
     property Dialog quickRunDialog: null
     Component {
         id: quickRunDialogComponent
 
-        Dialog {
-            id: quickRunDialog
-
-            x: dissolveWindow.width / 2
-            y: dissolveWindow.height / 2
-
-            height: implicitHeight
-            width: implicitWidth
-
-            required property variant graphModel
-            property string startNode: input.text
-
-            standardButtons: Dialog.Ok | Dialog.Cancel
-
-            contentItem: Item {
-                anchors.fill: parent
-                focus: true
-
-                Keys.onReturnPressed: accept()
-                Keys.onEnterPressed: accept()
-   
-                TextField {
-                    id: input
-                    anchors.fill: parent
-                    font.pixelSize: 14
-                    placeholderText: "Enter a node name to run graph from..."
-                }    
-            }
-
-            onAccepted: {
-                if (quickRunDialog.graphModel.isValidNode(startNode))
-                    graphModel.run(startNode)
-
-                quickRunDialog.close()
-            }
-            onRejected: quickRunDialog.close()
+        QuickRunDialog {
         }
     }
 
@@ -172,7 +130,7 @@ ApplicationWindow {
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Search the Node registry by node name, and add the selection to the graph"
 
-                onTriggered: dissolveWindow.nodeSearchDialog.open()
+                //onTriggered: dissolveWindow.nodeSearchDialog.open()
             }
 
             MenuSeparator{}
@@ -353,7 +311,6 @@ ApplicationWindow {
 
                 Component.onCompleted: {
                     graphModel.canvasDimensions = Qt.size(graph.width, graph.height)
-                    dissolveWindow.nodeSearchDialog = nodeSearchDialogComponent.createObject(dissolveWindow, {initialLandingArea: Qt.point(graph.width / 2, graph.height / 2)})
                 }
             }
         }
