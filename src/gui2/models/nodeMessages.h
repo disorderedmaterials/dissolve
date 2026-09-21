@@ -5,10 +5,7 @@
 #include "nodes/node.h"
 #include <QObject>
 #include <memory>
-<<<<<<< HEAD
-=======
 #include <qquickitem.h>
->>>>>>> 8eeb35bf5 (2nd phase changes)
 
 class NodeMessageModel : public QAbstractListModel
 {

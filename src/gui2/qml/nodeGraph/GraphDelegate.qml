@@ -419,12 +419,9 @@ NodeBox {
                         id: inputMouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        ToolTip.text: "<i>Input:</i><br>" + inputText.info
-                        ToolTip.visible: containsMouse
                         ToolTip.delay: 500
                         ToolTip.text: !(hasInnerGraph || isOutputsNode) ? "<i>Input:</i><br>" + inputText.info : "Double-click to rename this input"
                         ToolTip.visible: containsMouse && inputLabelRepeater.visible
-                        ToolTip.delay: 500
                         onDoubleClicked: {
                             // If edgeEditMode is false, double-clicking the input text performs an edge deletion
                             if (!rootGraphModel.edges.edgeEditMode)

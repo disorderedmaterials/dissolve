@@ -187,22 +187,6 @@ class GraphModel : public QObject
     // Remove a node
     void deleteNode(int index);
     // Select a specific output for connection
-<<<<<<< HEAD
-    void addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput);
-    // public wrapper of connect_
-    bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
-    // Public wrapper of disconnect_
-    bool disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
-
-    // Provide relative coordinates for an input on a node
-    void addInput(int nodeIndex, QString paramName, double x, double y);
-    // Provide relative coordinates for an output on a node
-    void addOutput(int nodeIndex, QString paramName, double x, double y);
-
-    // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, std::string name);
-
-=======
     void addEdge(QString srcNode, QString srcOutput, QString tgtNode, QString tgtInput, QQuickItem *creator);
     // Adds a new edge, but the connection (addition of QML endpoints corresponding to the edge's input/output) is deferred
     // until later
@@ -218,19 +202,15 @@ class GraphModel : public QObject
     // Provide relative coordinates for an output on a node
     void addOutput(QString nodeName, QString paramName, double x, double y);
     // Add a new node at a specific position
-    void emplace_back(int x, int y, QVariant type, QString name, bool avoidSamePosition = false);
->>>>>>> 8eeb35bf5 (2nd phase changes)
+    void emplace_back(int x, int y, QVariant type, QString name);
     // Switch to parent graph
     void upLevel();
     // Move into an inner graph
     void descend(int index);
-<<<<<<< HEAD
-=======
     /* UNUSED
     // public wrapper of connect_
     bool connect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     // Public wrapper of disconnect_
     bool disconnect(std::string source, int sourceIndex, std::string destination, int destinationIndex);
     */
->>>>>>> 8eeb35bf5 (2nd phase changes)
 };
