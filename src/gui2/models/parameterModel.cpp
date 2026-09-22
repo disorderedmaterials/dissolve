@@ -2,8 +2,8 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "parameterModel.h"
-#include "gui2/models/nodeGraph/enumOptionsModel.h"
-#include "gui2/models/nodeGraph/enumRegistry.h"
+#include "gui2/models/enumOptionsModel.h"
+#include "gui2/models/enumRegistry.h"
 #include "nodes/number.h"
 #include "nodes/registry.h"
 #include <qvariant.h>

@@ -1,9 +1,8 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #pragma once
 
-#include "gui2/models/nodeGraph/parameterModel.h"
+#include "gui2/models/parameterModel.h"
 #include "nodes/node.h"
 #include <QAbstractListModel>
 #include <QPointF>
