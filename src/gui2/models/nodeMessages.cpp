@@ -2,6 +2,9 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodeMessages.h"
+#include <chrono>
+#include <format>
+#include <string>
 
 NodeMessages::NodeMessages()
 {
@@ -9,16 +12,19 @@ NodeMessages::NodeMessages()
         flags_.setFlag(NodeMessages::Default);
 }
 
-// Message store
-void NodeMessages::setMessageStore()
+//
+bool NodeMessages::hasAlerts()
 {
-    auto sourceNode = graphModel_->graph()->findNode(nodeName_.toStdString());
-    if (sourceNode)
-        messageStore_ = sourceNode->messages();
+    auto hasAlerts = flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn);
+    return hasAlerts;
 }
 
 // Returns bool - true if the indicator should be visible (false if Default state)
-bool NodeMessages::indicatorVisible() { return !flags_.isSetOrNone(NodeMessages::Default); }
+bool NodeMessages::indicatorVisible()
+{
+    auto isDefaultState = flags_.isSetOrNone(NodeMessages::Default);
+    return !isDefaultState;
+}
 
 // Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
 double NodeMessages::indicatorOpacity() { return flags_.isSet(NodeMessages::Standby) ? 0.2 : 0.8; }
@@ -79,34 +85,29 @@ void NodeMessages::resetFlags()
 const Flags<NodeMessages::NodeStatusFlags> &NodeMessages::flags() const { return flags_; }
 
 // Info
-const NodeMessageModel *NodeMessages::infoListModel() { return &infoListModel_; }
-
-// Warnings
-const NodeMessageModel *NodeMessages::warningListModel() { return &warningListModel_; }
-
-// Errors
-const NodeMessageModel *NodeMessages::errorListModel() { return &errorListModel_; }
+const NodeMessageModel *NodeMessages::model() { return &model_; }
 
 // Set the graph model
 void NodeMessages::setGraphModel(GraphModel *graphModel)
 {
     graphModel_ = graphModel;
+    QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::updateMessages);
     QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
-                     [this](NodeConstants::ProcessResult status, const std::string &graphRunnerName)
+                     [this]()
                      {
                          resetFlags();
-                         updateMessages(nodeName_ != QString::fromStdString(graphRunnerName));
+                         updateMessages();
                      });
     QObject::connect(graphModel_, &GraphModel::graphInvalidated, this,
                      [this]()
                      {
+                         if (hasAlerts())
+                             return;
+
                          // Place node on standby since graph's connections have changed since last successful run
-                         if (flags_.isSetOrNone(NodeMessages::Success) && !flags_.isSetOrNone(NodeMessages::Default))
-                         {
-                             resetFlags();
-                             flags_.setFlag(NodeMessages::Standby);
-                             Q_EMIT messagesUpdated();
-                         }
+                         resetFlags();
+                         flags_.setFlag(NodeMessages::Standby);
+                         Q_EMIT messagesUpdated();
                      });
 }
 
@@ -119,7 +120,7 @@ void NodeMessages::setNodeName(QString nodeName)
     nodeName_ = nodeName;
     auto sourceNode = graphModel_->graph()->findNode(nodeName_.toStdString());
     if (sourceNode)
-        messageStore_ = sourceNode->messages();
+        messageStore_ = &sourceNode->messages();
 }
 
 // Return the node name
@@ -132,99 +133,82 @@ void NodeMessages::setParent(QQuickItem *parent) { parent_ = parent; }
 QQuickItem *NodeMessages::parent() { return parent_; }
 
 // Update all
-void NodeMessages::updateMessages(bool reportsGraphFailure)
+void NodeMessages::updateMessages()
 {
-    std::vector<QString> info;
-    std::vector<QString> warnings;
-    std::vector<QString> errors;
-    if (!messageStore_.empty())
-        for (const auto &[status, msg] : messageStore_)
-            switch (status)
-            {
-                case Node::MessageStatus::Info:
-                {
-                    info.emplace_back(QString::fromStdString(msg));
-                    break;
-                }
-                case Node::MessageStatus::Warn:
-                {
-                    warnings.emplace_back(QString::fromStdString(msg));
-                    break;
-                }
-                case Node::MessageStatus::Error:
-                {
-                    errors.emplace_back(QString::fromStdString(msg));
-                    break;
-                }
-                default:
-                    return;
-            }
+    if (!graphModel_->graph()->findNode(nodeName_.toStdString()))
+        return;
 
-    const auto graphStatus = graphModel_->graphStatus();
+    Node::MessageStore messages;
+    for (const auto &[level, msg] : *messageStore_)
+        messages.emplace_back(level, msg);
 
     // Check overall status of graph run
+    const auto graphStatus = graphModel_->graphStatus();
+    const auto lineBreak = std::string("###---LAST-RUN-@-") +
+                           std::format("{:%Y/%m/%d--%H:%M}", std::chrono::system_clock::now()) + std::string(" ------###");
     if (graphStatus.has_value())
         switch (graphStatus.value())
         {
             case NodeConstants::ProcessResult::Success:
             {
-                info.push_back("Graph run completed successfully");
+                messages.emplace_back(Node::MessageStatus::Info, "Graph run completed successfully");
+                messages.emplace_back(Node::MessageStatus::Info, lineBreak);
                 break;
             }
             case NodeConstants::ProcessResult::Unchanged:
             {
-                info.push_back("Graph run completed without any changes");
+                messages.emplace_back(Node::MessageStatus::Info, "Graph run completed without any changes");
+                messages.emplace_back(Node::MessageStatus::Info, lineBreak);
+
                 break;
             }
             case NodeConstants::ProcessResult::Failed:
             {
-                info.push_back("Graph run completed unsuccessfully");
-
-                // If this node is the selected runner node for the current graph run, it should report the overall graph result
-                // when the run has failed
-                if (reportsGraphFailure)
-                    errors.push_back("Graph run completed unsuccessfully");
+                messages.emplace_back(Node::MessageStatus::Info, "Graph run completed unsuccessfully");
+                messages.emplace_back(Node::MessageStatus::Info, lineBreak);
                 break;
             }
-            default:
-                break;
         }
 
+    auto hasNone = messages.empty();
+    auto hasWarnings =
+        std::any_of(messages.begin(), messages.end(), [](const auto &pair) { return pair.first == Node::MessageStatus::Warn; });
+    auto hasErrors = std::any_of(messages.begin(), messages.end(),
+                                 [](const auto &pair) { return pair.first == Node::MessageStatus::Error; });
+
     // Check for messages
-    if (info.empty())
-        info.emplace_back(QString::fromStdString("No messages to display"));
-
-    // Check for warnings
-    if (warnings.empty())
-        warnings.emplace_back(QString::fromStdString("No warning messages to display"));
+    if (hasNone)
+        messages.emplace_back(Node::MessageStatus::Info, "No messages to display");
     else
-        flags_.setFlag(NodeMessages::Warn);
+    {
+        // Check for warnings
+        if (hasWarnings)
+            flags_.setFlag(NodeMessages::Warn);
 
-    // Check for errors
-    if (errors.empty())
-        errors.emplace_back(QString::fromStdString("No error messages to display"));
-    else
-        flags_.setFlag(NodeMessages::Error);
+        // Check for errors
+        if (hasErrors)
+            flags_.setFlag(NodeMessages::Error);
 
-    // Check for success
-    if (!(flags_.isSet(NodeMessages::Error) && flags_.isSet(NodeMessages::Warn)))
-        flags_.setFlag(NodeMessages::Success);
+        // Check for success
+        if (!(flags_.isSet(NodeMessages::Error) && flags_.isSet(NodeMessages::Warn)))
+            flags_.setFlag(NodeMessages::Success);
 
-    infoListModel_.setMessages(info);
-    warningListModel_.setMessages(warnings);
-    errorListModel_.setMessages(errors);
+        flags_.removeFlag(NodeMessages::Default);
+    }
+
+    model_.setMessages(messages);
 
     Q_EMIT messagesUpdated();
 }
 
 // Return the message list
-std::vector<QString> &NodeMessageModel::messageList() { return messageList_; }
+Node::MessageStore &NodeMessageModel::messageList() { return messages_; }
 
 // Set the message list
-void NodeMessageModel::setMessages(std::vector<QString> messages)
+void NodeMessageModel::setMessages(Node::MessageStore messages)
 {
     beginResetModel();
-    messageList_ = messages;
+    messages_ = messages;
     endResetModel();
 }
 
@@ -235,15 +219,29 @@ void NodeMessageModel::setMessages(std::vector<QString> messages)
 int NodeMessageModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return messageList_.size();
+    return messages_.size();
 }
 
 QVariant NodeMessageModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Roles::Message)
-        return messageList_[index.row()];
-
-    return {};
+    auto &[status, msg] = messages_[index.row()];
+    switch (role - Qt::UserRole)
+    {
+        case Roles::Message:
+            return QString::fromStdString(msg);
+        case Roles::StatusColor:
+        {
+            if (status == Node::MessageStatus::Info)
+                return QColor("white");
+            if (status == Node::MessageStatus::Info)
+                return QColor("warning");
+            if (status == Node::MessageStatus::Error)
+                return QColor("red");
+            return QColor{};
+        }
+        default:
+            return {};
+    }
 }
 
 Qt::ItemFlags NodeMessageModel::flags(const QModelIndex &index) const
@@ -252,24 +250,10 @@ Qt::ItemFlags NodeMessageModel::flags(const QModelIndex &index) const
                                : Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
-QVariant NodeMessageModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
-        return {};
-
-    if (orientation == Qt::Horizontal)
-        switch (section)
-        {
-            case 0:
-                return "Message";
-        }
-
-    return {};
-}
-
 QHash<int, QByteArray> NodeMessageModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[Roles::Message] = "message";
+    roles[Qt::UserRole + (int)Roles::Message] = "message";
+    roles[Qt::UserRole + (int)Roles::StatusColor] = "statusColor";
     return roles;
 }

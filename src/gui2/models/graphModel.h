@@ -27,6 +27,7 @@ class GraphModel : public QObject
 {
     Q_OBJECT;
     // Read-only graph properties
+    Q_PROPERTY(QUrl statusIcon READ statusIcon NOTIFY graphRunComplete);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
     Q_PROPERTY(QString location READ location NOTIFY graphChanged);
@@ -69,6 +70,8 @@ class GraphModel : public QObject
     GraphEdgeModel *edges();
     // The model for the nodes in the graph
     GraphNodeModel *nodes();
+    // Returns the graph status icon
+    QUrl statusIcon();
     // The total number of nodes in the graph
     int count();
     // The total number of edges in the graph
@@ -86,25 +89,25 @@ class GraphModel : public QObject
 
     private:
     // Lambda to assign a default position to nodes of type input/output/loopbacks
-    std::function<std::optional<double>(Node *)> nodeXPositionInitialiser_{[&](Node *node) -> std::optional<double>
-                                                                           {
-                                                                               const auto nodeWidth = 250;
-                                                                               if (dynamic_cast<InputsNode *>(node))
-                                                                                   return 0;
-                                                                               else if (dynamic_cast<OutputsNode *>(node) ||
-                                                                                        dynamic_cast<LoopBacksNode *>(node))
-                                                                                   return canvasDimensions().width() -
-                                                                                          nodeWidth;
-                                                                               else
-                                                                                   return {};
-                                                                           }};
+    std::function<std::optional<double>(Node *)> nodeXPositionInitialiser_{
+        [&](Node *node) -> std::optional<double>
+        {
+            const auto nodeWidth = 250;
+            if (dynamic_cast<InputsNode *>(node))
+                return 0;
+            else if (dynamic_cast<OutputsNode *>(node) || dynamic_cast<LoopBacksNode *>(node))
+                return canvasDimensions().width() - nodeWidth;
+            else
+                return {};
+        }};
     // Lambda to assign a default position to nodes of type input/output/loopbacks
     std::function<std::optional<double>(Node *)> nodeYPositionInitialiser_{[&](Node *node) -> std::optional<double>
                                                                            {
                                                                                const auto nodeHeight = 94;
                                                                                if (!dynamic_cast<LoopBacksNode *>(node))
                                                                                    return {};
-                                                                               return canvasDimensions().height() - (nodeHeight * 4);
+                                                                               return canvasDimensions().height() -
+                                                                                      (nodeHeight * 4);
                                                                            }};
     // Graph status
     std::optional<NodeConstants::ProcessResult> graphStatus_;
@@ -180,6 +183,7 @@ class GraphModel : public QObject
     void canvasDimensionsChanged();
     void decrementNodeTypeRequired(const std::string &);
     void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
+    void graphReconstructionComplete();
 
     public Q_SLOTS:
     // Reset everything

@@ -72,6 +72,16 @@ ParameterEndPointsModel *GraphModel::parameterEndPoints() { return &parameterEnd
 // Access the GraphNodeModel
 GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 
+// Returns the graph status icon
+QUrl GraphModel::statusIcon()
+{
+    if (!graphStatus_.has_value())
+        return QUrl("qrc:/DissolveIconsModule/unknown.svg");
+    if (*graphStatus_ == NodeConstants::ProcessResult::Unchanged || *graphStatus_ == NodeConstants::ProcessResult::Success)
+        return QUrl("qrc:/DissolveIconsModule/true.svg");
+    return QUrl("qrc:/DissolveIconsModule/false.svg");
+}
+
 int GraphModel::count() { return nodes_.rowCount(); }
 
 QString GraphModel::location() const
@@ -499,6 +509,9 @@ void GraphModel::reconstructed(QString constructedName)
             std::find_if(reconstructibleNodes_->begin(), reconstructibleNodes_->end(),
                          [&constructedName](const auto &otherName) { return constructedName.toStdString() == otherName; });
         reconstructibleNodes_->erase(removeIt);
+
+        if (reconstructibleNodes_->empty())
+            Q_EMIT graphReconstructionComplete();
 
         if (updateEndPoints)
         {

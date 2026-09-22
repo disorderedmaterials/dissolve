@@ -60,7 +60,8 @@ NodeBox {
         border.color: messageStore.indicatorColor
         iconColor: messageStore.indicatorColor
         iconText: messageStore.indicatorText
-        visible: !(version < 0) && messageStore.indicatorVisible
+        //visible: !(version < 0) && messageStore.indicatorVisible
+        visible: (version < 0) ? messageStore.hasAlerts : messageStore.indicatorVisible
         summary: messageStore.indicatorSummary
     }
     Menu {
@@ -102,6 +103,8 @@ NodeBox {
                 }
             }
         }
+        // TODO: Could use a SortFilterProxyModel to generate these later on
+        /*
         MenuItem {
             id: warningsMenuItem
             text: "Warnings"
@@ -156,12 +159,15 @@ NodeBox {
                 }
             }
         }
+        */
     }
     function closeMessages()
     {
         messages.close()
+        /*
         warnings.close()
         errors.close()
+        */
     }
     Popup {
         id: messages
@@ -173,40 +179,51 @@ NodeBox {
 
         padding: 4
 
-        HoverHandler {
-            onHoveredChanged: {
-                if (!hovered)
-                    messages.close()
-            }
-        }
-        ScrollView {
-            id: messagesScrollView
-
+        Item {
             anchors.fill: parent
 
-            ListView {
-                model: root.messageStore.infoListModel
+            HoverHandler {
+                onHoveredChanged: {
+                    if (!hovered)
+                        messages.close()
+                }
+            }
+            ScrollView {
+                id: messagesScrollView
 
-                delegate: ItemDelegate {
-                    id: messageDelegate
-                    width: messagesScrollView.width
+                anchors.fill: parent
 
-                    hoverEnabled: true
+                ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+                ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
-                    contentItem: Text {
-                        text: message
-                        color: messageDelegate.hovered ? "white" : "grey"
-                        font.bold: messageDelegate.hovered
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    background: Rectangle {
-                        color: messageDelegate.hovered ? "#444444" : "transparent"
+                ListView {
+                    model: root.messageStore.model
+
+                    delegate: ItemDelegate {
+                        id: messageDelegate
+
+                        hoverEnabled: true
+
+                        contentItem: Text {
+                            id: messageText
+
+                            text: message
+                            color: messageDelegate.hovered ? statusColor : "grey"
+                            font.bold: messageDelegate.hovered
+                            elide: Text.ElideRight
+                            wrapMode: Text.NoWrap
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                        background: Rectangle {
+                            color: messageDelegate.hovered ? "#444444" : "transparent"
+                        }
                     }
                 }
             }
         }
+
     }
+    /*
     Popup {
         id: warnings
 
@@ -295,6 +312,7 @@ NodeBox {
             }
         }
     }
+    */
     TapHandler {
         id: tapHandler
         acceptedButtons: Qt.RightButton
