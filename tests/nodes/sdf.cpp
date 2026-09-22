@@ -115,7 +115,7 @@ class SDFNodeBenzeneTest : public TestGraphFixture
     }
 };
 
-TEST_F(SDFNodeBenzeneTest, Water) { go(); }
+TEST_F(SDFNodeBenzeneTest, Benzene) { go(); }
 
 // TEST(SDFNodeTest, Benzene)
 // {
