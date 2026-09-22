@@ -78,8 +78,7 @@ QString NodeRegistryModel::uniqueNodeName(QVariant type)
 {
     increment(type.toString());
     const auto count = tally(type.toString());
-    std::string prefix = type.toString().toStdString() + "_";
-    auto name = prefix + std::format("{}", count);
+    auto name = type.toString().toStdString() + std::string(count < 2 ? "" : "_" + std::format("{}", count));
     return QString::fromStdString(name);
 }
 
