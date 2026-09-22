@@ -50,7 +50,7 @@ Pane {
                                     delegate: MenuItem {
                                         required property var modelData
                                         text: modelData.name
-                                        onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name, nodeRegistry.uniqueNodeName(modelData.name), false)
+                                        onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name, nodeRegistry.uniqueNodeName(modelData.name))
                                         ToolTip.text: modelData.description
                                         ToolTip.visible: hovered
                                         ToolTip.delay: 500

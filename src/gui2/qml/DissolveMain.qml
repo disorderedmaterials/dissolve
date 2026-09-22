@@ -222,18 +222,46 @@ ApplicationWindow {
                     }
                 }
                 ToolButton {
-                    text: "Edge mode: " + (graphModel.edges.edgeEditMode ? "<b><font color='green'>ADD</font></b>" : "<b><font color='red'>DELETE</font></b>")
-                    padding: 2
-                    background: Rectangle {
-                        radius: 2
-                        border.width: 1
-                        border.color: "grey"
-                        color: parent.hovered ? "white" : "transparent"
-                    }
+                    id: edgeEditModeToolButton
+                    padding: 4
+                    contentItem: RowLayout {
+                            spacing: 2
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: "Edge mode: "
+                            }
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: graphModel.edges.edgeEditMode ? "ADD" : "DELETE"
+                                color: graphModel.edges.edgeEditMode ? "green" : "red"
+                                font.bold: true
+                            }
+                        }
                     onClicked: graphModel.edges.toggleEdgeEditMode()
                     ToolTip.text: (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted")
                     ToolTip.visible: hovered
                     ToolTip.delay: 500
+                }
+                ToolButton {
+                    id: graphStatusToolButton
+                    property var iconPath: graphModel.statusIcon
+                    padding: 4
+                    contentItem: RowLayout {
+                            spacing: 2
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: "Graph status"
+                            }
+                            Image {
+                                source: graphStatusToolButton.iconPath
+                                sourceSize.width: 20
+                                sourceSize.height: 20
+                                fillMode: Image.PreserveAspectFit
+                                Layout.preferredWidth: 20
+                                Layout.preferredHeight: 20
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+                        }
                 }
             }
         }
