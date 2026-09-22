@@ -3,6 +3,10 @@
 
 #include "nodes/calculateBonding.h"
 #include "data/atomicRadii.h"
+#include "main/dissolve.h"
+#include "templates/algorithms.h"
+#include "templates/parallelDefs.h"
+#include <mutex>
 
 CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -50,31 +54,36 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
         structure.clearBonds();
 
     auto box = structure.box();
-    auto nAtoms = structure.nAtoms();
-    for (auto indexI = 0; indexI < nAtoms - 1; ++indexI)
-    {
-        // Get StructureAtom 'i' and its radius
-        auto i = structure.atom(indexI);
-        auto radiusI = AtomicRadii::radius(i->Z());
-        for (auto indexJ = indexI + 1; indexJ < nAtoms; ++indexJ)
+    auto nAtoms = PairIterator(structure.nAtoms());
+    std::mutex structureMutex;
+    dissolve::for_each_pair(
+        ParallelPolicies::par_unseq, structure.nAtoms(),
+        [&structureMutex, &structure, &box, tolerance, preventMetallic, clearBefore](auto indexI, auto indexJ)
         {
+            if (indexI == indexJ)
+                return;
+            auto i = structure.atom(indexI);
+            // Get StructureAtom 'i' and its radius
+            auto radiusI = AtomicRadii::radius(i->Z());
             // Get StructureAtom 'j'
             auto j = structure.atom(indexJ);
 
             // If the two atoms are both metal ions and prevent metallic bonds = true, continue
             if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
-                continue;
-
-            // If the two atoms are already bound, continue
-            if (structure.getBond(i, j))
-                continue;
+                return;
 
             // Calculate distance between atoms
             auto r = box.minimumDistance(j->r(), i->r());
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (r <= (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
-                structure.addBond(i, j);
-        }
-    }
+            if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
+                return;
+
+            std::lock_guard<std::mutex> guard(structureMutex);
+            // If the two atoms are already bound, continue
+            if (structure.getBond(i, j))
+                return;
+
+            structure.addBond(i, j);
+        });
 }
