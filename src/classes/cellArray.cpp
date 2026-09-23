@@ -165,6 +165,16 @@ const std::vector<CellNeighbour> &CellArray::neighbours(const Cell &cell) const 
 // Return vector of all unique cell neighbour pairs
 const std::vector<CellNeighbourPair> &CellArray::getCellNeighbourPairs() const { return neighbourPairs_; }
 
+// Return vector of all unique cell neighbour pairs with self cell pairs
+const std::vector<CellNeighbourPair> CellArray::getCellNeighbourPairsWithSelf() const
+{
+    auto result = neighbourPairs_;
+    for (auto &cell : cells_)
+        result.emplace_back(cell, cell, false);
+
+    return result;
+}
+
 // Return whether minimum image calculation is required between the supplied cells
 bool CellArray::minimumImageRequired(const Cell &a, const Cell &b) const
 {
