@@ -9,6 +9,8 @@
 #include "data/elements.h"
 #include "math/vector3.h"
 
+class Cell;
+
 // Atom Base
 class AtomBase
 {
@@ -26,6 +28,8 @@ class AtomBase
     int index_{-1};
     // Atom type index in parent object
     int atomTypeIndex_{AtomConstants::TypeIndex::Ignore};
+    // Cell in which the atom exists
+    Cell *cell_{nullptr};
 
     public:
     // Set basic properties
@@ -52,6 +56,10 @@ class AtomBase
     void setAtomTypeIndex(int id);
     // Return associated atom type index
     int atomTypeIndex() const;
+    // Set cell in which the atom exists
+    void setCell(Cell *cell);
+    // Return cell in which the atom exists
+    Cell *cell() const;
 
     /*
      * General Connectivity
