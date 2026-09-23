@@ -60,7 +60,6 @@ NodeBox {
         border.color: messageStore.indicatorColor
         iconColor: messageStore.indicatorColor
         iconText: messageStore.indicatorText
-        //visible: !(version < 0) && messageStore.indicatorVisible
         visible: (version < 0) ? messageStore.hasAlerts : messageStore.indicatorVisible
         summary: messageStore.indicatorSummary
     }
