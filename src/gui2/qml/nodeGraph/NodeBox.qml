@@ -15,6 +15,10 @@ GroupBox {
     property bool dragActive: false
     property bool headerHovered: false
     property int headerHeight: 32
+    property bool isInputsNode: false
+    property bool isOutputsNode: false
+    property bool isLoopBacksNode: false
+    property bool isAnyIONode: false
 
     topPadding: headerHeight + padding
     padding: 8

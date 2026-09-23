@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <stdexcept>
 
 /*
  * Definition
@@ -91,6 +92,31 @@ void Node::setUpdateRequired()
 // Return whether the node is volatile
 bool Node::isVolatile() const { return volatile_; }
 
+//
+void Node::started()
+{
+    if (processComplete_.has_value())
+        throw std::runtime_error(std::format(
+            "{}::processComplete_ already has a value, which should not be possible when node process starts.", name()));
+    processComplete_.emplace(false);
+}
+
+//
+void Node::finished()
+{
+    if (!processComplete_.has_value() || !processComplete_.value() == false)
+        throw std::runtime_error(std::format("{}::processComplete_ either does not already have a value, or the value is true; "
+                                             "neither case should be possible when node process finishes.",
+                                             name()));
+    *processComplete_ = true;
+}
+
+//
+const std::optional<bool> &Node::processComplete() const { return processComplete_; }
+
+//
+void Node::resetProgressTracker() { processComplete_.reset(); }
+
 // Return whether the node's data is up-to-date
 bool Node::isUpToDate() const { return upToDate_; }
 
@@ -137,7 +163,9 @@ NodeConstants::ProcessResult Node::run()
     auto result = NodeConstants::ProcessResult::Unchanged;
     if (!upToDate_ || versionIndex_ == NodeConstants::InvalidVersion)
     {
+        started();
         result = process();
+        finished();
         switch (result)
         {
             case (NodeConstants::ProcessResult::Failed):

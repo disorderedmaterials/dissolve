@@ -172,10 +172,65 @@ ApplicationWindow {
         width: parent.width
         currentIndex: 2
 
-        // DEFAULT TABS
-        TabButton {
-            text: "Messages"
-            width: implicitWidth
+            RowLayout {
+                anchors.fill: parent
+                spacing: 6
+
+                ToolButton {
+                    enabled: !graphModel.atRoot
+                    icon.color: graphModel.atRoot ? "grey" : "transparent"
+                    icon.source: "qrc:/DissolveIconsModule/arrowUp.svg"
+                    hoverEnabled: true
+                    onClicked: graphModel.upLevel()
+
+                    ToolTip.text: "Go up one level to the parent graph"
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 500
+                }
+                ToolButton {
+                    id: edgeEditModeToolButton
+                    padding: 4
+                    contentItem: RowLayout {
+                            spacing: 2
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: "Edge mode: "
+                            }
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: graphModel.edges.edgeEditMode ? "ADD" : "DELETE"
+                                color: graphModel.edges.edgeEditMode ? "green" : "red"
+                                font.bold: true
+                            }
+                        }
+                    enabled: graphModel.graphControlsEnabled
+                    onClicked: graphModel.edges.toggleEdgeEditMode()
+                    ToolTip.text: enabled ? (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted") : "Edges cannot be changed while graph runnning"
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 500
+                }
+                ToolButton {
+                    id: graphStatusToolButton
+                    property var iconPath: graphModel.statusIcon
+                    padding: 4
+                    contentItem: RowLayout {
+                            spacing: 2
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: "Graph status"
+                            }
+                            Image {
+                                source: graphStatusToolButton.iconPath
+                                sourceSize.width: 20
+                                sourceSize.height: 20
+                                fillMode: Image.PreserveAspectFit
+                                Layout.preferredWidth: 20
+                                Layout.preferredHeight: 20
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+                        }
+                }
+            }
         }
         TabButton {
             text: "Pair Potentials"

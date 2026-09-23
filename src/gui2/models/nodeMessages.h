@@ -48,12 +48,16 @@ class NodeMessages : public QObject
     friend class NodeMessageModel;
 
     Q_OBJECT;
-    Q_PROPERTY(QObject *parent READ parent WRITE setParent NOTIFY messageReceived)
-    Q_PROPERTY(QString nodeName READ nodeName WRITE setNodeName NOTIFY messageReceived);
-    Q_PROPERTY(GraphModel *graphModel READ graphModel WRITE setGraphModel NOTIFY messageReceived);
-    Q_PROPERTY(const NodeMessageModel *infoListModel READ infoListModel NOTIFY messageReceived);
-    Q_PROPERTY(const NodeMessageModel *warningListModel READ warningListModel NOTIFY messageReceived);
-    Q_PROPERTY(const NodeMessageModel *errorListModel READ errorListModel NOTIFY messageReceived);
+
+    // Read-only Node status indicator properties
+    Q_PROPERTY(QUrl indicator READ indicator NOTIFY peeked);
+    Q_PROPERTY(double indicatorOpacity READ indicatorOpacity NOTIFY messagesUpdated);
+    Q_PROPERTY(QString indicatorSummary READ indicatorSummary NOTIFY messagesUpdated);
+
+    // Basic properties associated with the underlying Node delegate
+    Q_PROPERTY(GraphModel *graphModel READ graphModel WRITE setGraphModel NOTIFY nodeDelegateUpdated);
+    Q_PROPERTY(QString nodeName READ nodeName WRITE setNodeName NOTIFY nodeDelegateUpdated);
+    Q_PROPERTY(const NodeMessageModel *model READ model NOTIFY nodeDelegateUpdated);
 
     public:
     NodeMessages() = default;
@@ -77,9 +81,25 @@ class NodeMessages : public QObject
     // Parent node
     QObject *parent_;
     // Message store
-    Node::MessageStore messageStore_;
+    const Node::MessageStore *messageStore_;
+    // Flags for the node status
+    Flags<NodeMessages::NodeStatusFlags> flags_;
+    //
+    bool ready_{false};
+    //
+    QTimer *peekTimer_{nullptr};
 
     public:
+    //
+    bool hasAlerts();
+    //
+    QUrl indicator();
+    // Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
+    double indicatorOpacity();
+    // Returns the indicator status summary
+    QString indicatorSummary();
+    // Flags for the node status
+    const Flags<NodeMessages::NodeStatusFlags> &flags() const;
     // Info
     const NodeMessageModel *infoListModel();
     // Warnings
@@ -100,5 +120,14 @@ class NodeMessages : public QObject
     QObject *parent();
 
     Q_SIGNALS:
-    void messageReceived();
+    //
+    void nodeDelegateUpdated();
+    //
+    void messagesUpdated();
+    //
+    void peeked();
+
+    private Q_SLOTS:
+    //
+    void peekNode();
 };

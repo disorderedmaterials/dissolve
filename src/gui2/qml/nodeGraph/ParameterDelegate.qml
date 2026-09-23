@@ -8,6 +8,8 @@ DelegateChooser {
 
     role: "type"
 
+    property bool enabled: true
+
     DelegateChoice {
         roleValue: "bool"
 
@@ -16,6 +18,7 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             checked: param
+            enabled: root.enabled
 
             onClicked: param = !param
         }
@@ -31,6 +34,7 @@ DelegateChooser {
             from: -1000000
             to: 1000000
             value: param
+            enabled: root.enabled
 
             onValueModified: param = value
         }
@@ -45,6 +49,7 @@ DelegateChooser {
 
             CheckBox {
                 checked: param != null
+                enabled: root.enabled
 
                 onClicked: {
                     if (param == null) {
@@ -55,7 +60,7 @@ DelegateChooser {
                 }
             }
             SpinBox {
-                enabled: param != null
+                enabled: (param != null) && root.enabled
                 value: param
 
                 onValueModified: param = value
@@ -70,8 +75,48 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             text: param
+            enabled: root.enabled
 
             onTextChanged: param = text
+        }
+    }
+    DelegateChoice {
+        roleValue: "file path"
+
+        Row {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+            Layout.fillWidth: true
+            spacing: 0
+
+            TextField {
+                id: filePathField
+
+                text: param
+                enabled: root.enabled
+            }
+
+            ToolButton {
+                id: filePickerButton
+
+                icon.source: "qrc:/DissolveIconsModule/documents.svg"
+                display: AbstractButton.iconOnly
+                onClicked: fileDialog.open()
+                enabled: root.enabled
+
+                ToolTip.text: "Select a file"
+                ToolTip.visible: hovered
+                ToolTip.delay: 500
+            }
+
+            FileDialog {
+                id: fileDialog
+
+                title: "Choose a file..."
+                fileMode: FileDialog.OpenFile
+                onAccepted: param = selectedFile.toString().replace("file:///", "")
+            }
         }
     }
     DelegateChoice {
@@ -85,6 +130,7 @@ DelegateChooser {
             model: innerModel
             textRole: "display"
             valueRole: "display"
+            enabled: root.enabled
 
             onActivated: idx => param = idx
         }
@@ -95,6 +141,7 @@ DelegateChooser {
             Layout.column: 2
             Layout.row: index
             text: param
+            enabled: root.enabled
         }
     }
 }

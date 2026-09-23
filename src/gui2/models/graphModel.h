@@ -10,6 +10,9 @@
 #include "nodes/graph.h"
 #include <QAbstractListModel>
 #include <QQuickItem>
+#include <QThread>
+#include <functional>
+#include <qtmetamacros.h>
 #include <random>
 
 class GraphNodeModel;
@@ -57,10 +60,17 @@ class GraphModel : public QObject
     using NodeParameterEndPointsMap = std::map<const Node *, std::map<std::string, QQuickItem *>>;
 
     Q_OBJECT;
+<<<<<<< HEAD
     Q_PROPERTY(Graph *graph READ graph WRITE setGraph NOTIFY graphChanged);
     Q_PROPERTY(GraphEdgeModel *edges READ edges NOTIFY graphChanged);
     Q_PROPERTY(QAbstractListModel *nodes READ nodes NOTIFY graphChanged);
     Q_PROPERTY(ParameterEndPointsModel *parameterEndPoints READ parameterEndPoints CONSTANT);
+=======
+
+    // Read-only graph properties
+    Q_PROPERTY(bool graphControlsEnabled READ graphControlsEnabled NOTIFY graphProgressChanged);
+    Q_PROPERTY(QUrl statusIcon READ statusIcon NOTIFY graphProgressChanged);
+>>>>>>> 678eeb372 (attempt 1 - multithreaded dissolve simulation)
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
     Q_PROPERTY(QString location READ location NOTIFY graphChanged);
@@ -74,6 +84,16 @@ class GraphModel : public QObject
     GraphModel();
 
     public:
+    //
+    bool graphControlsEnabled();
+    // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+    std::function<std::optional<double>(Node *)> &nodeXPositionInitialiser();
+    // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+    std::function<std::optional<double>(Node *)> &nodeYPositionInitialiser();
+    // Set the graph status
+    void setGraphStatus(NodeConstants::ProcessResult status);
+    // Return the graph status
+    const std::optional<NodeConstants::ProcessResult> &graphStatus() const;
     // Access the actual nodes in the model
     Graph *graph();
 
@@ -104,6 +124,12 @@ class GraphModel : public QObject
     inline static std::mt19937 rnG_{std::random_device{}()};
     // Graph canvas dimensions
     QSizeF canvasDimensions_;
+    // Rendered edge curve endpoints for all inputs
+    NodeParameterEndPointsMap curveInputEndPoints_;
+    // Rendered edge curve endpoints for all outputs
+    NodeParameterEndPointsMap curveOutputEndPoints_;
+    //
+    bool graphProgressComplete_{true};
 
     protected:
     // Map of node parameters to endpoint QQuickItem pointers within GraphView
@@ -145,7 +171,10 @@ class GraphModel : public QObject
     void graphChanged();
     void canvasDimensionsChanged();
     void decrementNodeTypeRequired(const std::string &);
-    void graphRunComplete(NodeConstants::ProcessResult status, std::string node);
+    void graphRunStarted();
+    void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
+    void graphReconstructionComplete();
+    void graphProgressChanged();
 
     public Q_SLOTS:
     // Reset everything

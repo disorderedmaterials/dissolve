@@ -16,7 +16,32 @@
 
 GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 {
-    QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
+    // TODO: Using the current edge management method (by rendering edges between the positions of QML objects corresponding to
+    // drag/drop locations) this connection has no effect. This model's exposed roles sourceX, sourceY, targetX, and targetY,
+    // are not used. We should consider a refactor to remove this unused code, and potentially relegate the GraphEdgeModel to a
+    // QObject derivate, or even a simple struct interface for edges.
+    //
+    // QObject::connect(&nodes_, &GraphNodeModel::updatePosition, &edges_, &GraphEdgeModel::updatePosition);
+}
+
+// Return the graph status
+const std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() const { return graphStatus_; }
+
+//
+bool GraphModel::graphControlsEnabled() { return graphProgressComplete_; }
+
+// Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+std::function<std::optional<double>(Node *)> &GraphModel::nodeXPositionInitialiser() { return nodeXPositionInitialiser_; }
+
+// Returns a lambda to assign a default position to nodes of type input/output/loopbacks
+std::function<std::optional<double>(Node *)> &GraphModel::nodeYPositionInitialiser() { return nodeYPositionInitialiser_; }
+
+// Set the graph status
+void GraphModel::setGraphStatus(NodeConstants::ProcessResult status)
+{
+    if (graphStatus_.has_value())
+        graphStatus_.reset();
+    graphStatus_.emplace(status);
 }
 
 Graph *GraphModel::graph() { return graph_; }
@@ -41,7 +66,19 @@ void GraphModel::setGraph(Graph *graph)
 }
 
 // Access the GraphNodeModel
-QAbstractListModel *GraphModel::nodes() { return &nodes_; }
+GraphNodeModel *GraphModel::nodes() { return &nodes_; }
+
+// Returns the graph status icon
+QUrl GraphModel::statusIcon()
+{
+    if (!graphProgressComplete_)
+        return QUrl("qrc:/DissolveIconsModule/waiting.svg");
+    if (!graphStatus_.has_value())
+        return QUrl("qrc:/DissolveIconsModule/unknown.svg");
+    if (*graphStatus_ == NodeConstants::ProcessResult::Unchanged || *graphStatus_ == NodeConstants::ProcessResult::Success)
+        return QUrl("qrc:/DissolveIconsModule/true.svg");
+    return QUrl("qrc:/DissolveIconsModule/false.svg");
+}
 
 int GraphModel::count() { return nodes_.rowCount(); }
 
@@ -190,7 +227,44 @@ void GraphModel::run(QVariant nodeName)
 {
     auto name = nodeName.toString().toStdString();
     auto node = graph_->findNode(name);
-    graphRunComplete(node->run(), name);
+    auto result = std::make_shared<NodeConstants::ProcessResult>();
+    auto *dissolveThread = QThread::create([this, node, result] { *result = node->run(); });
+    QObject::connect(dissolveThread, &QThread::started, this, [this]() { Q_EMIT graphRunStarted(); });
+    QObject::connect(this, &GraphModel::graphRunStarted, this,
+                     [this]()
+                     {
+                         graphProgressComplete_ = false;
+
+                         // Graph progress changed (started), so update controls enabled
+                         Q_EMIT graphProgressChanged();
+                     });
+    QObject::connect(dissolveThread, &QThread::finished, this,
+                     [this, node, result]()
+                     {
+                         if (!result)
+                         {
+                             Q_EMIT graphRunComplete(NodeConstants::ProcessResult::Failed, std::string(node->name()));
+                             return;
+                         }
+                         setGraphStatus(*result.get());
+
+                         // Update dynamic outputs
+                         auto dynamicNodes = nodes_.findAllByRoleTrue(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
+                         for (auto &nodeWrapper : dynamicNodes)
+                             nodeWrapper->outputs->resetParameters();
+
+                         Q_EMIT graphRunComplete(*result.get(), std::string(node->name()));
+                     });
+    QObject::connect(this, &GraphModel::graphRunComplete, this,
+                     [this]()
+                     {
+                         graphProgressComplete_ = true;
+
+                         // Graph progress changed (finished), so update controls enabled
+                         Q_EMIT graphProgressChanged();
+                     });
+    QObject::connect(dissolveThread, &QThread::finished, dissolveThread, &QObject::deleteLater);
+    dissolveThread->start();
 }
 
 int GraphModel::indexByName(std::string_view name)

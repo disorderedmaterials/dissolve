@@ -37,6 +37,9 @@ NodeConstants::ProcessResult Graph::process()
         if (node->isVolatile())
             node->setUpdateRequired();
 
+    // Reset the progress trackers for all of the graph's child nodes
+    resetChildNodeProgressTrackers();
+
     /*
      * Processing a Graph involves running any child nodes we have, but we can only detect the nodes that need to be run in
      * one of two ways. Either 1) We cycle over Edge connections to inputs on our Outputs node and pull() those in, or 2) we
@@ -67,6 +70,18 @@ NodeConstants::ProcessResult Graph::process()
         }
 
     return outputsResult == terminalNodeResult ? outputsResult : NodeConstants::ProcessResult::Success;
+}
+
+//
+void Graph::resetChildNodeProgressTrackers()
+{
+    for (auto &[_, node] : nodes_)
+    {
+        node->resetProgressTracker();
+        auto graph = dynamic_cast<Graph *>(node.get());
+        if (graph)
+            graph->resetChildNodeProgressTrackers();
+    }
 }
 
 // Flag that the node data needs to be updated

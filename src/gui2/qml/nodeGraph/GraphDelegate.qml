@@ -32,15 +32,18 @@ NodeBox {
     width: 250
 
     // Ensure that we only display this box for valid node items
-    visible: (icon != null) && !(isRootNode && (nodeName == "Outputs" || nodeName == "Inputs"))
-    x: coords.x
-    y: coords.y
+    visible: (icon != null) && !(isRootNode && (isInputsNode || isOutputsNode))
+    x: posX
+    y: posY
+    isInputsNode: nodeName == "Inputs"
+    isOutputsNode: nodeName == "Outputs"
+    isLoopBacksNode: nodeName == "LoopBacks"
+    isAnyIONode: isInputsNode || isOutputsNode || isLoopBacksNode
 
-    NodeMessages {
-        id: nodeMessages
-        graphModel: root.rootGraphModel
-        nodeName: root.nodeName
-        parent: root
+    NodeStatusIndicator {
+        opacity: messageStore.indicatorOpacity
+        summary: messageStore.indicatorSummary
+        imageSource: messageStore.indicator
     }
     Rectangle {
         id: errorIndicator
@@ -365,6 +368,7 @@ NodeBox {
                         id: inputDropArea
                         readonly property var parentNodeBox: root
                         anchors.fill: parent
+                        enabled: !locked && root.rootGraphModel.graphControlsEnabled && root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
 
                         Component.onCompleted: root.rootGraphModel.initialiseInputEndPoints(parent.nodeName, parent.title, inputDropArea)
 
@@ -549,6 +553,7 @@ NodeBox {
                 model: options
 
                 delegate: ParameterDelegate {
+                    enabled: rootGraphModel.graphControlsEnabled
                 }
             }
         }
