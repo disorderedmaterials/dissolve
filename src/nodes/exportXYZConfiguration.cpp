@@ -14,7 +14,9 @@ ExportXYZConfigurationNode::ExportXYZConfigurationNode(Graph *parentGraph) : Nod
     // Options
     addOption("FilePath", "File path", filePath_);
     addOption("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index", tagWithIteration_);
-    addSerialisable("Iteration", iteration_);
+
+    // State data
+    addStateData("Iteration", iteration_);
 }
 
 /*

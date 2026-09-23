@@ -35,9 +35,9 @@ SQNode::SQNode(Graph *parentGraph)
     addOption("WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", windowFunction_);
     addOption("Averaging", "Number of historical partial sets to combine into final partials", averagingLength_);
 
-    // Serialisables
-    addSerialisable("unweightedSQ", unweightedSQ_);
-    addSerialisable("unweightedSQHistory", unweightedSQHistory_);
+    // State data
+    addStateData("unweightedSQ", unweightedSQ_);
+    addStateData("unweightedSQHistory", unweightedSQHistory_);
 }
 
 /*

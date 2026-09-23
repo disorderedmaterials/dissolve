@@ -20,9 +20,9 @@ IntraDistanceNode::IntraDistanceNode(Graph *parentGraph) : Node(parentGraph)
     addOption("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C", b_);
     addOption("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_);
 
-    // Serialisables
-    addSerialisable("histAB", histAB_);
-    addSerialisable("rdfAB", rdfAB_);
+    // State data
+    addStateData("histAB", histAB_);
+    addStateData("rdfAB", rdfAB_);
 }
 
 /*

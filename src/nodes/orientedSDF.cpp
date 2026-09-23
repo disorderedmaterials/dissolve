@@ -23,9 +23,9 @@ OrientedSDFNode::OrientedSDFNode(Graph *parentGraph) : Node(parentGraph)
               excludeSameMolecule_);
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
-    // Serialisables
-    addSerialisable("histogram", histogram_);
-    addSerialisable("sdf", sdf_);
+    // State data
+    addStateData("histogram", histogram_);
+    addStateData("sdf", sdf_);
 }
 
 // Return type of the node

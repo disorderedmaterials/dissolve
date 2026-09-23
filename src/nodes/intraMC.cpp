@@ -31,10 +31,10 @@ IntraMCNode::IntraMCNode(Graph *parentGraph) : Node(parentGraph)
     // Outputs
     addOutput("Configuration", "Output configuration", targetConfiguration_);
 
-    // Serialisables
-    addSerialisable("BondStepSize", bondStepSize_);
-    addSerialisable("AngleStepSize", angleStepSize_);
-    addSerialisable("TorsionStepSize", torsionStepSize_);
+    // State data
+    addStateData("BondStepSize", bondStepSize_);
+    addStateData("AngleStepSize", angleStepSize_);
+    addStateData("TorsionStepSize", torsionStepSize_);
 }
 
 /*

@@ -23,16 +23,16 @@ EnergyNode::EnergyNode(Graph *parentGraph) : Node(parentGraph)
     addOption("StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)",
               stabilityWindow_);
 
-    // Serialisables
-    addSerialisable("totalEnergyHistory", totalEnergyHistory_);
-    addSerialisable("totalPairPotentialHistory", totalPairPotentialHistory_);
-    addSerialisable("totalMoleculePPHistory", totalMoleculePPHistory_);
-    addSerialisable("totalGeometryHistory", totalGeometryHistory_);
-    addSerialisable("totalCohesiveHistory", totalCohesiveHistory_);
-    addSerialisable("bondHistory", bondHistory_);
-    addSerialisable("angleHistory", angleHistory_);
-    addSerialisable("torsionHistory", torsionHistory_);
-    addSerialisable("improperHistory", improperHistory_);
+    // State data
+    addStateData("totalEnergyHistory", totalEnergyHistory_);
+    addStateData("totalPairPotentialHistory", totalPairPotentialHistory_);
+    addStateData("totalMoleculePPHistory", totalMoleculePPHistory_);
+    addStateData("totalGeometryHistory", totalGeometryHistory_);
+    addStateData("totalCohesiveHistory", totalCohesiveHistory_);
+    addStateData("bondHistory", bondHistory_);
+    addStateData("angleHistory", angleHistory_);
+    addStateData("torsionHistory", torsionHistory_);
+    addStateData("improperHistory", improperHistory_);
 }
 
 /*

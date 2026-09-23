@@ -24,9 +24,9 @@ IntraAngleNode::IntraAngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_);
     addOption("Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
-    // Serialisables
-    addSerialisable("intraAngleHist", intraAngleHist_);
-    addSerialisable("angleABC", angleABC_);
+    // State data
+    addStateData("intraAngleHist", intraAngleHist_);
+    addStateData("angleABC", angleABC_);
 }
 
 /*

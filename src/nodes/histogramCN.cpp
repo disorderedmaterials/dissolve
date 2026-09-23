@@ -17,9 +17,9 @@ HistogramCNNode::HistogramCNNode(Graph *parentGraph) : Node(parentGraph)
     addOption("RangeAB", "Distance range (min, max) over which to calculate coordination number from central site",
               distanceRange_);
 
-    // Serialisables
-    addSerialisable("histogram", histogram_);
-    addSerialisable("cn", cn_);
+    // State data
+    addStateData("histogram", histogram_);
+    addStateData("cn", cn_);
 }
 
 /*

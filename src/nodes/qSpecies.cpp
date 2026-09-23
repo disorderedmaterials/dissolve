@@ -20,11 +20,11 @@ QSpeciesNode::QSpeciesNode(Graph *parentGraph) : Node(parentGraph)
               networkFormerSpeciesSites_);
     addOption("DistanceRange", "Distance range (min, max) over which to calculate Q-Species from central site", distanceRange_);
 
-    // Serialisables
-    addSerialisable("qSpeciesHistogram", qSpeciesHistogram_);
-    addSerialisable("qSpecies", qSpecies_);
-    addSerialisable("oxygenSitesHistogram", oxygenSitesHistogram_);
-    addSerialisable("oxygenSites", oxygenSites_);
+    // State data
+    addStateData("qSpeciesHistogram", qSpeciesHistogram_);
+    addStateData("qSpecies", qSpecies_);
+    addStateData("oxygenSitesHistogram", oxygenSitesHistogram_);
+    addStateData("oxygenSites", oxygenSites_);
 }
 
 /*

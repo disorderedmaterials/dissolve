@@ -436,4 +436,12 @@ TEST_F(IterableGraphTest, UpstreamChange)
     EXPECT_EQ(loopGraph_->loopBacks()->versionIndex(), 197);
 }
 
+TEST_F(IterableGraphTest, Ancestors)
+{
+    createGraph();
+
+    EXPECT_EQ(x_->ancestors<NumberNode>().size(), 1);
+    EXPECT_EQ(y_->ancestors<NumberNode>().size(), 1);
+}
+
 } // namespace UnitTest
