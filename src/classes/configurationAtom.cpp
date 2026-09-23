@@ -23,12 +23,6 @@ void ConfigurationAtom::setMolecule(std::shared_ptr<Molecule> mol) { molecule_ =
 // Return Molecule in which this Atom exists
 const std::shared_ptr<Molecule> &ConfigurationAtom::molecule() const { return molecule_; }
 
-// Set cell in which the atom exists
-void ConfigurationAtom::setCell(Cell *cell) { cell_ = cell; }
-
-// Return cell in which the atom exists
-Cell *ConfigurationAtom::cell() const { return cell_; }
-
 /*
  * Intramolecular Information
  */

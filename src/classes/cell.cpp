@@ -35,14 +35,14 @@ const Vector3 &Cell::centre() const { return centre_; }
  */
 
 // Return vector of contained Atoms
-std::vector<ConfigurationAtom *> &Cell::atoms() { return atoms_; }
-const std::vector<ConfigurationAtom *> &Cell::atoms() const { return atoms_; }
+std::vector<AtomBase *> &Cell::atoms() { return atoms_; }
+const std::vector<AtomBase *> &Cell::atoms() const { return atoms_; }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-void Cell::addAtom(ConfigurationAtom *atom)
+void Cell::addAtom(AtomBase *atom)
 {
     assert(atom);
     assert(!atom->cell());
@@ -52,7 +52,7 @@ void Cell::addAtom(ConfigurationAtom *atom)
 }
 
 // Remove Atom from Cell
-void Cell::removeAtom(ConfigurationAtom *atom)
+void Cell::removeAtom(AtomBase *atom)
 {
     auto it = std::find(atoms_.begin(), atoms_.end(), atom);
     assert(it != atoms_.end());

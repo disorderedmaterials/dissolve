@@ -11,6 +11,8 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
+auto castToConfiguration = std::ranges::views::transform([](AtomBase *x) { return static_cast<ConfigurationAtom *>(x); });
+
 ForceKernel::ForceKernel(const Configuration *cfg, const PotentialMap &potentialMap)
     : GeometryKernel(cfg->box(), potentialMap), configuration_(cfg)
 {
@@ -96,24 +98,24 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
     // Loop over all atom pairs excluding any within the same molecule
     if (applyMim)
     {
-        for (const auto &i : centralAtoms)
+        for (const auto &i : centralAtoms | castToConfiguration)
         {
             molI = i->molecule();
             auto indexI = molI->globalAtomIndex(i);
 
-            for (auto *j : otherAtoms)
+            for (auto *j : otherAtoms | castToConfiguration)
                 if (molI != j->molecule())
                     forcesWithMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
         }
     }
     else
     {
-        for (const auto &i : centralAtoms)
+        for (const auto &i : centralAtoms | castToConfiguration)
         {
             molI = i->molecule();
             auto indexI = molI->globalAtomIndex(i);
 
-            for (auto *j : otherAtoms)
+            for (auto *j : otherAtoms | castToConfiguration)
                 if (molI != j->molecule())
                     forcesWithoutMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
         }
@@ -160,7 +162,7 @@ void ForceKernel::totalForces(std::vector<Vector3> &ppForceVector, std::vector<V
             auto &fLocal = combinablePP.local();
 
             // Interatomic interactions between atoms in this cell, excluding those within the same molecule
-            dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms(),
+            dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms() | castToConfiguration,
                                     [&](int indexI, const auto &i, int indexJ, const auto &j)
                                     {
                                         if (indexI == indexJ)
