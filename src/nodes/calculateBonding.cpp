@@ -3,6 +3,8 @@
 
 #include "nodes/calculateBonding.h"
 #include "data/atomicRadii.h"
+#include "main/dissolve.h"
+#include "templates/parallelDefs.h"
 
 CalculateBondingNode::CalculateBondingNode(Graph *parentGraph) : Node(parentGraph)
 {
@@ -50,31 +52,59 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
         structure.clearBonds();
 
     auto box = structure.box();
-    auto nAtoms = structure.nAtoms();
-    for (auto indexI = 0; indexI < nAtoms - 1; ++indexI)
+    auto nAtoms = PairIterator(structure.nAtoms());
+
+    PairIterator pairs(structure.nAtoms());
+
+    // Look at two indices and check to see if it would be a vaild
+    // bond.  If so, return a list with that bond, otherwise an empty
+    // list.  From an information theory standpoint, a list of at most
+    // one element is identical to a std::optional, but the lists can
+    // be trivially combined during the reduce part of
+    // transform_reduce
+    auto validBond = [&structure, &box, tolerance, preventMetallic,
+                      clearBefore](std::tuple<int, int> pair) -> std::vector<std::tuple<StructureAtom *, StructureAtom *>>
     {
-        // Get StructureAtom 'i' and its radius
+        auto [indexI, indexJ] = pair;
+        if (indexI == indexJ)
+            return {};
         auto i = structure.atom(indexI);
+        // Get StructureAtom 'i' and its radius
         auto radiusI = AtomicRadii::radius(i->Z());
-        for (auto indexJ = indexI + 1; indexJ < nAtoms; ++indexJ)
-        {
-            // Get StructureAtom 'j'
-            auto j = structure.atom(indexJ);
+        // Get StructureAtom 'j'
+        auto j = structure.atom(indexJ);
 
-            // If the two atoms are both metal ions and prevent metallic bonds = true, continue
-            if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
-                continue;
+        // If the two atoms are both metal ions and prevent metallic bonds = true, continue
+        if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
+            return {};
 
-            // If the two atoms are already bound, continue
-            if (structure.getBond(i, j))
-                continue;
+        // Calculate distance between atoms
+        auto r = box.minimumDistance(j->r(), i->r());
 
-            // Calculate distance between atoms
-            auto r = box.minimumDistance(j->r(), i->r());
+        // Compare distance to sum of atomic radii (multiplied by tolerance factor)
+        if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
+            return {};
 
-            // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (r <= (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
-                structure.addBond(i, j);
-        }
-    }
+        if (structure.getBond(i, j))
+            return {};
+
+        return {{i, j}};
+    };
+
+    // Combine two lists of bonds into a single list
+    auto joinBonds = [](auto a, auto b)
+    {
+        auto ab = a;
+        ab.insert(ab.end(), b.begin(), b.end());
+        return ab;
+    };
+
+    // Create an empty vector of the correct shape
+    std::vector<std::tuple<StructureAtom *, StructureAtom *>> empty;
+    // In parallel, construct the list of the bonds that need to be added
+    auto results = std::transform_reduce(ParallelPolicies::par_unseq, pairs.begin(), pairs.end(), empty, joinBonds, validBond);
+
+    // Add the bonds serially
+    for (auto [i, j] : results)
+        structure.addBond(i, j);
 }

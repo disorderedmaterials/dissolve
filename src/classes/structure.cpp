@@ -191,7 +191,7 @@ bool Structure::hasBond(const StructureAtom *i, const StructureAtom *j) const
 // Return the bond between the specified atoms
 Bond<StructureAtom> *Structure::getBond(StructureAtom *i, StructureAtom *j)
 {
-    auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond->isBetween(i, j); });
+    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond->isBetween(i, j); });
     if (it == bonds_.end())
         return {};
 
