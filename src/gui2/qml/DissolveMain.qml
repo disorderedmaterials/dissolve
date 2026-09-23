@@ -20,6 +20,7 @@ ApplicationWindow {
     id: dissolveWindow
 
     property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
+    property ToolBar toolBar: null
 
     height: Screen.height
     width: Screen.width
@@ -177,19 +178,12 @@ ApplicationWindow {
         ToolBar {
             id: toolBar
 
+            Component.onCompleted: dissolveWindow.toolBar = toolBar
+
             RowLayout {
                 anchors.fill: parent
                 spacing: 6
-                Label {
-                    text: "Location: " + "<b>%1</b>".arg(graphModel.location)
-                    padding: 2
-                    background: Rectangle {
-                        radius: 2
-                        border.width: 1
-                        border.color: "grey"
-                        color: "transparent"
-                    }
-                }
+
                 ToolButton {
                     enabled: !graphModel.atRoot
                     icon.color: graphModel.atRoot ? "grey" : "transparent"
@@ -200,26 +194,6 @@ ApplicationWindow {
                     ToolTip.text: "Go up one level to the parent graph"
                     ToolTip.visible: hovered
                     ToolTip.delay: 500
-                }
-                Label {
-                    text: "Nodes: " + "<b>%1</b>".arg(graphModel.nodeCount - 2) // Ignore two (inputs and outputs)
-                    padding: 2
-                    background: Rectangle {
-                        radius: 2
-                        border.width: 1
-                        border.color: "grey"
-                        color: "transparent"
-                    }
-                }
-                Label {
-                    text: "Edges: " +  "<b>%1</b>".arg(graphModel.edgeCount)
-                    padding: 2
-                    background: Rectangle {
-                        radius: 2
-                        border.width: 1
-                        border.color: "grey"
-                        color: "transparent"
-                    }
                 }
                 ToolButton {
                     id: edgeEditModeToolButton
@@ -369,6 +343,33 @@ ApplicationWindow {
                 nodeModel: graphModel.nodes
                 parameterEndPointsModel: graphModel.parameterEndPoints
                 rootGraphModel: graphModel
+
+                Rectangle {
+                    id: graphInfoArea
+                    color: "transparent"
+                    border.color: "black"
+                    border.width: 2
+                    radius: 1
+                    height: dissolveWindow.toolBar
+                    width: locationPath.width
+                    y: graphModel.canvasDimensions.height - 180
+
+                    ColumnLayout {
+                        Label {
+                            id: locationPath
+                            text: "Location: " + "<b>%1</b>".arg(graphModel.location)
+                            padding: 2
+                        }
+                        Label {
+                            text: "Nodes: " + "<b>%1</b>".arg(graphModel.nodeCount - 2) // Ignore two (inputs and outputs)
+                            padding: 2
+                        }
+                        Label {
+                            text: "Edges: " +  "<b>%1</b>".arg(graphModel.edgeCount)
+                            padding: 2
+                        }
+                    }
+                }
 
                 Repeater {
                     id: graphDelegateRepeater
