@@ -70,7 +70,7 @@ int main(int args, char **argv)
     auto loadSuccessful = true;
 
     // Set restart file frequency
-    dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
+    dissolve.setRestartDirectoryFrequency(options.noRestartDirectory() ? 0 : options.restartDirectoryFrequency());
 
     // If an input file was specified, load it here
     // if (options.inputFile())
@@ -79,16 +79,16 @@ int main(int args, char **argv)
     // Load restart file if input file load was specified and loaded successfully
     if (options.inputFile() && loadSuccessful)
     {
-        if (options.ignoreRestartFile())
+        if (options.ignoreRestartDirectory())
             Messenger::print("Restart file (if it exists) will be ignored.\n");
         else
         {
-            auto actualRestartFile{options.restartFilename().value_or(std::string(dissolve.restartFilename()))};
+            auto actualRestartFile{options.restartDirectoryName().value_or(std::string(dissolve.restartDirectoryName()))};
             // loadSuccessful = dissolveWindow.loadRestartFile(actualRestartFile);
         }
 
         // Iterate before launching the GUI?
-        if (loadSuccessful && options.nIterations() > 0)
+        if (loadSuccessful)
         {
             // Prepare for run
             if (!dissolve.prepare())
