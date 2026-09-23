@@ -26,6 +26,9 @@ GraphModel::GraphModel() : nodes_(this), graph_(nullptr), edges_(this, graph_)
 // Return the graph status
 const std::optional<NodeConstants::ProcessResult> &GraphModel::graphStatus() const { return graphStatus_; }
 
+// Returns bool - true if the graph progress is complete, therefore enabling the graph controls in the GUI
+bool GraphModel::graphControlsEnabled() { return graphProgressComplete_; }
+
 // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
 std::function<std::optional<double>(Node *)> &GraphModel::nodeXPositionInitialiser() { return nodeXPositionInitialiser_; }
 
@@ -75,6 +78,8 @@ GraphNodeModel *GraphModel::nodes() { return &nodes_; }
 // Returns the graph status icon
 QUrl GraphModel::statusIcon()
 {
+    if (!graphProgressComplete_)
+        return QUrl("qrc:/DissolveIconsModule/waiting.svg");
     if (!graphStatus_.has_value())
         return QUrl("qrc:/DissolveIconsModule/unknown.svg");
     if (*graphStatus_ == NodeConstants::ProcessResult::Unchanged || *graphStatus_ == NodeConstants::ProcessResult::Success)
@@ -312,14 +317,44 @@ void GraphModel::run(QVariant nodeName)
 {
     auto name = nodeName.toString().toStdString();
     auto node = graph_->findNode(name);
-    setGraphStatus(node->run());
+    auto result = std::make_shared<NodeConstants::ProcessResult>();
+    auto *dissolveThread = QThread::create([this, node, result] { *result = node->run(); });
+    QObject::connect(dissolveThread, &QThread::started, this, [this]() { Q_EMIT graphRunStarted(); });
+    QObject::connect(this, &GraphModel::graphRunStarted, this,
+                     [this]()
+                     {
+                         graphProgressComplete_ = false;
 
-    // Update dynamic outputs
-    auto dynamicNodes = nodes_.findAllByRoleTrue(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
-    for (auto &nodeWrapper : dynamicNodes)
-        nodeWrapper->outputs->resetParameters();
+                         // Graph progress changed (started), so update controls enabled
+                         Q_EMIT graphProgressChanged();
+                     });
+    QObject::connect(dissolveThread, &QThread::finished, this,
+                     [this, node, result]()
+                     {
+                         if (!result)
+                         {
+                             Q_EMIT graphRunComplete(NodeConstants::ProcessResult::Failed, std::string(node->name()));
+                             return;
+                         }
+                         setGraphStatus(*result.get());
 
-    Q_EMIT graphRunComplete(graphStatus_.value(), name);
+                         // Update dynamic outputs
+                         auto dynamicNodes = nodes_.findAllByRoleTrue(GraphNodeModel::HAS_DYNAMIC_OUTPUTS + Qt::UserRole);
+                         for (auto &nodeWrapper : dynamicNodes)
+                             nodeWrapper->outputs->resetParameters();
+
+                         Q_EMIT graphRunComplete(*result.get(), std::string(node->name()));
+                     });
+    QObject::connect(this, &GraphModel::graphRunComplete, this,
+                     [this]()
+                     {
+                         graphProgressComplete_ = true;
+
+                         // Graph progress changed (finished), so update controls enabled
+                         Q_EMIT graphProgressChanged();
+                     });
+    QObject::connect(dissolveThread, &QThread::finished, dissolveThread, &QObject::deleteLater);
+    dissolveThread->start();
 }
 
 int GraphModel::indexByName(std::string_view name)

@@ -54,7 +54,7 @@ void GraphNodeModel::updateGraph()
 }
 */
 
-//
+// Find all wrapped nodes that have a boolean role evaluating to true for a given role
 std::vector<NodeWrapper *> GraphNodeModel::findAllByRoleTrue(int role)
 {
     std::vector<NodeWrapper *> nodes;
@@ -70,7 +70,7 @@ std::vector<NodeWrapper *> GraphNodeModel::findAllByRoleTrue(int role)
     return nodes;
 }
 
-//
+// Set the connections for the model
 void GraphNodeModel::setConnections()
 {
     QObject::connect(parent_, &GraphModel::graphRunComplete, this,

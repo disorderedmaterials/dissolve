@@ -63,11 +63,11 @@ class GraphNodeModel : public QAbstractListModel
     GraphModel *parent_;
 
     public:
-    //
+    // Find all wrapped nodes that have a boolean role evaluating to true for a given role
     std::vector<NodeWrapper *> findAllByRoleTrue(int role);
 
     private:
-    //
+    // Set the connections for the model
     void setConnections();
 
     /*

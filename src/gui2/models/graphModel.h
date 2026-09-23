@@ -14,6 +14,7 @@
 #include "nodes/outputs.h"
 #include <QAbstractListModel>
 #include <QQuickItem>
+#include <QThread>
 #include <functional>
 #include <qtmetamacros.h>
 #include <random>
@@ -26,8 +27,10 @@ class GraphEdgeModel;
 class GraphModel : public QObject
 {
     Q_OBJECT;
+
     // Read-only graph properties
-    Q_PROPERTY(QUrl statusIcon READ statusIcon NOTIFY graphRunComplete);
+    Q_PROPERTY(bool graphControlsEnabled READ graphControlsEnabled NOTIFY graphProgressChanged);
+    Q_PROPERTY(QUrl statusIcon READ statusIcon NOTIFY graphProgressChanged);
     Q_PROPERTY(int nodeCount READ count NOTIFY graphChanged);
     Q_PROPERTY(int edgeCount READ nEdges NOTIFY graphChanged);
     Q_PROPERTY(QString location READ location NOTIFY graphChanged);
@@ -52,6 +55,8 @@ class GraphModel : public QObject
     GraphModel();
 
     public:
+    // Returns bool - true if the graph progress is complete, therefore enabling the graph controls in the GUI
+    bool graphControlsEnabled();
     // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
     std::function<std::optional<double>(Node *)> &nodeXPositionInitialiser();
     // Returns a lambda to assign a default position to nodes of type input/output/loopbacks
@@ -121,6 +126,8 @@ class GraphModel : public QObject
     NodeParameterEndPointsMap curveInputEndPoints_;
     // Rendered edge curve endpoints for all outputs
     NodeParameterEndPointsMap curveOutputEndPoints_;
+    // Bool - true if the graph progress is complete, therefore enabling the graph controls in the GUI
+    bool graphProgressComplete_{true};
 
     protected:
     // The abstract data model for the parameter endpoints
@@ -182,8 +189,10 @@ class GraphModel : public QObject
     void graphInvalidated();
     void canvasDimensionsChanged();
     void decrementNodeTypeRequired(const std::string &);
+    void graphRunStarted();
     void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
     void graphReconstructionComplete();
+    void graphProgressChanged();
 
     public Q_SLOTS:
     // Reset everything

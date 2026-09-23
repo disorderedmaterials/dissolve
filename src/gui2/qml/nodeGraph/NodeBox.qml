@@ -18,6 +18,7 @@ GroupBox {
     property bool isInputsNode: false
     property bool isOutputsNode: false
     property bool isLoopBacksNode: false
+    property bool isAnyIONode: false
 
     topPadding: headerHeight + padding
     padding: 8
