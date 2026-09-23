@@ -54,14 +54,12 @@ NodeBox {
     isInputsNode: nodeName == "Inputs"
     isOutputsNode: nodeName == "Outputs"
     isLoopBacksNode: nodeName == "LoopBacks"
+    isAnyIONode: isInputsNode || isOutputsNode || isLoopBacksNode
 
     NodeStatusIndicator {
         opacity: messageStore.indicatorOpacity
-        border.color: messageStore.indicatorColor
-        iconColor: messageStore.indicatorColor
-        iconText: messageStore.indicatorText
-        visible: (version < 0) ? messageStore.hasAlerts : messageStore.indicatorVisible
         summary: messageStore.indicatorSummary
+        imageSource: messageStore.indicator
     }
     Menu {
         id: nodePopupMenu
@@ -397,7 +395,7 @@ NodeBox {
                         property string paramName: parent.title
                         property bool locked: false
                         anchors.fill: parent
-                        enabled: !locked && root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
+                        enabled: !locked && root.rootGraphModel.graphControlsEnabled && root.rootGraphModel.edges.edgeEditMode && inputRepeater.visible
 
                         Component.onCompleted: root.rootGraphModel.mapInputEndPoint(parent.nodeName, paramName, inputDropArea)
 
@@ -807,6 +805,7 @@ NodeBox {
                 model: options
 
                 delegate: ParameterDelegate {
+                    enabled: rootGraphModel.graphControlsEnabled
                 }
             }
         }

@@ -29,8 +29,6 @@ class ParameterEndPointsModel : public QAbstractListModel
     // Return vector of parameter endpoint QQuickItem * pairs
     ParameterEndPoints &endPoints();
     const ParameterEndPoints &endPoints() const;
-    //
-    void removeDuplicates();
     // Add a pair of DropArea QQuickItem *, representing the endpoints
     void add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea);
     // Remove any number of pairs of DropArea QQuickItem *, based on the parent node that has been deleted

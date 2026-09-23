@@ -38,6 +38,8 @@ class Graph : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
+    // Reset all progress trackers across all of the graph's child nodes
+    void resetChildNodeProgressTrackers();
 
     public:
     // Flag that the node data needs to be updated

@@ -8,14 +8,6 @@
 ParameterEndPointsModel::ParameterEndPoints &ParameterEndPointsModel::endPoints() { return endPoints_; }
 const ParameterEndPointsModel::ParameterEndPoints &ParameterEndPointsModel::endPoints() const { return endPoints_; }
 
-void ParameterEndPointsModel::removeDuplicates()
-{
-    beginResetModel();
-    std::sort(endPoints_.begin(), endPoints_.end());
-    endPoints_.erase(std::unique(endPoints_.begin(), endPoints_.end()), endPoints_.end());
-    endResetModel();
-}
-
 void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea)
 {
     int row = endPoints_.size();
