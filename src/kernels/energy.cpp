@@ -13,9 +13,6 @@
 #include <iterator>
 #include <numeric>
 
-auto castToConstConfiguration =
-    std::ranges::views::transform([](const AtomBase *x) { return static_cast<const ConfigurationAtom *>(x); });
-
 EnergyKernel::EnergyKernel(const Configuration *cfg, const PotentialMap &potentialMap)
     : GeometryKernel(cfg->box(), potentialMap), configuration_(cfg)
 {
@@ -94,13 +91,13 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
     // Loop over central cell atoms
     if (applyMim)
     {
-        for (auto ii : centralAtoms | castToConstConfiguration)
+        for (auto ii : centralAtoms | castView<const ConfigurationAtom *>())
         {
             auto molI = ii->molecule();
             auto &rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (const auto jj : otherAtoms | castToConstConfiguration)
+            for (const auto jj : otherAtoms | castView<const ConfigurationAtom *>())
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = box_.minimumDistanceSquared(rI, jj->r());
@@ -126,13 +123,13 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
     }
     else
     {
-        for (auto ii : centralAtoms | castToConstConfiguration)
+        for (auto ii : centralAtoms | castView<const ConfigurationAtom *>())
         {
             auto &molI = ii->molecule();
             auto &rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (const auto jj : otherAtoms | castToConstConfiguration)
+            for (const auto jj : otherAtoms | castView<const ConfigurationAtom *>())
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = (rI - jj->r()).magnitudeSq();

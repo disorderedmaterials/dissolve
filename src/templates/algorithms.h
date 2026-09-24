@@ -304,3 +304,18 @@ template <class T, template <class...> class U> inline constexpr bool is_instanc
 template <template <class...> class U, class... Vs> inline constexpr bool is_instance_of_v<U<Vs...>, U> = std::true_type{};
 template <typename> constexpr bool is_optional = false;
 template <typename T> constexpr bool is_optional<std::optional<T>> = true;
+
+// View that statically casts the elements in a range into a new type
+// given by the template.  For example,
+//
+// for (auto *atom : atoms | castView<ConfigurationAtom *>())
+//    foo(atom)
+//
+// is equivalent to
+//
+// for (auto atom : atoms)
+//     for(static_cast<ConfigurationAtom *>(atom))
+template <typename T> auto castView()
+{
+    return std::ranges::views::transform([](auto x) { return static_cast<T>(x); });
+}
