@@ -150,3 +150,9 @@ void AtomBase::deserialise(const SerialisedValue &node)
     set(Deserialisable::deser<Elements::Element>(node.at("z")), Deserialisable::deser<Vector3>(node.at("r")),
         Deserialisable::deser_or<double>(node, "q", 0));
 }
+
+// Set cell in which the atom exists
+void AtomBase::setCell(Cell *cell) { cell_ = cell; }
+
+// Return cell in which the atom exists
+Cell *AtomBase::cell() const { return cell_; }

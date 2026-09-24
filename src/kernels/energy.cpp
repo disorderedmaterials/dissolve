@@ -5,6 +5,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
+#include "classes/configurationAtom.h"
 #include "classes/molecule.h"
 #include "classes/potentialMap.h"
 #include "classes/species.h"
@@ -46,7 +47,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool
 
     for (auto i = 0; i < atoms.size(); ++i)
     {
-        auto &ii = atoms[i];
+        auto ii = static_cast<ConfigurationAtom *>(atoms[i]);
         auto molI = ii->molecule();
         auto &rI = ii->r();
 
@@ -54,7 +55,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellEnergy(const Cell &cell, bool
         for (auto j = i + 1; j < atoms.size(); ++j)
         {
             // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-            auto &jj = atoms[j];
+            auto jj = static_cast<ConfigurationAtom *>(atoms[j]);
 
             auto rSq = (rI - jj->r()).magnitudeSq();
             if (rSq > cutoffDistanceSquared_)
@@ -90,13 +91,13 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
     // Loop over central cell atoms
     if (applyMim)
     {
-        for (auto &ii : centralAtoms)
+        for (auto ii : centralAtoms | castView<const ConfigurationAtom *>())
         {
             auto molI = ii->molecule();
             auto &rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (const auto &jj : otherAtoms)
+            for (const auto jj : otherAtoms | castView<const ConfigurationAtom *>())
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = box_.minimumDistanceSquared(rI, jj->r());
@@ -122,13 +123,13 @@ Kernel::PairPotentialEnergyValue EnergyKernel::cellToCellEnergy(const Cell &cent
     }
     else
     {
-        for (auto &ii : centralAtoms)
+        for (auto ii : centralAtoms | castView<const ConfigurationAtom *>())
         {
             auto &molI = ii->molecule();
             auto &rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (const auto &jj : otherAtoms)
+            for (const auto jj : otherAtoms | castView<const ConfigurationAtom *>())
             {
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 auto rSq = (rI - jj->r()).magnitudeSq();
@@ -172,7 +173,7 @@ double EnergyKernel::pairPotentialEnergy(const ConfigurationAtom &i) const
                                           return std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                                                  [&i, mimRequired, this](const auto innerAcc, const auto *j)
                                                                  {
-                                                                     auto &jj = *j;
+                                                                     auto &jj = *static_cast<const ConfigurationAtom *>(j);
 
                                                                      // Calculate rSquared distance between atoms, and check it
                                                                      // against the stored cutoff distance
@@ -230,7 +231,7 @@ Kernel::PairPotentialEnergyValue EnergyKernel::pairPotentialEnergy(const Molecul
                                 return acc + std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
                                                              [&ii, mimRequired, this](const auto innerAcc, const auto *j)
                                                              {
-                                                                 auto &jj = *j;
+                                                                 auto &jj = *static_cast<const ConfigurationAtom *>(j);
 
                                                                  // Don't consider atoms within the target molecule here - add
                                                                  // it on afterwards
