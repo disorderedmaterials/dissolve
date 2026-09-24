@@ -58,15 +58,8 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     cells.generate(box, box.inscribedSphereRadius() * 2.0 / 3.0);
 
     // Populate cells
-    //
-    // As an ugly hack for the moment, we'll shove the StructureAtom
-    // pointers into the ConfigurationAtom points that the cell
-    // expects.
     for (auto &atom : structure.atoms())
         cells.cell(atom->r())->addAtom(atom.get());
-
-    // We'll eventually need a view to transform these pointers back
-    auto castToStructure = std::ranges::views::transform([](const auto x) { return (StructureAtom *)x; });
 
     // Look at two indices and check to see if it would be a vaild
     // bond.  If so, return a list with that bond, otherwise an empty
@@ -74,7 +67,7 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     // one element is identical to a std::optional, but the lists can
     // be trivially combined during the reduce part of
     // transform_reduce
-    auto validBond = [&castToStructure, &structure, &box, tolerance, preventMetallic,
+    auto validBond = [&structure, &box, tolerance, preventMetallic,
                       clearBefore](const CellNeighbourPair idx) -> std::set<std::tuple<StructureAtom *, StructureAtom *>>
     {
         auto cellI = idx.cell;
@@ -84,8 +77,8 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
 
         bool sameCell = cellI.index() == cellJ.index();
 
-        for (auto i : cellI.atoms() | castToStructure)
-            for (auto j : cellJ.atoms() | castToStructure)
+        for (auto i : cellI.atoms() | castView<StructureAtom *>())
+            for (auto j : cellJ.atoms() | castView<StructureAtom *>())
             {
                 // Don't bond atoms to themselves
                 if (sameCell && i->index() == j->index())
