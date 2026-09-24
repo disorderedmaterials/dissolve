@@ -16,15 +16,15 @@ testing::AssertionResult compareContents(const Structure &structure, const Confi
     for (const auto &structureAtom : structure.atoms())
     {
         auto r = fold ? configuration->box().fold(structureAtom->r()) : structureAtom->r();
-        if (std::ranges::find_if(configuration->atoms(),
+        if (std::ranges::none_of(configuration->atoms(),
                                  [&structureAtom, r](const auto &cfgAtom)
                                  {
-auto isSameAtom = structureAtom->Z() == cfgAtom.Z();
-auto isCloseX = fabs(r.x - cfgAtom.r().x) < 1.0e-6;
-auto isCloseY = fabs(r.y - cfgAtom.r().y) < 1.0e-6;
-auto isCloseZ = fabs(r.z - cfgAtom.r().z) < 1.0e-6;
+                                     auto isSameAtom = structureAtom->Z() == cfgAtom.Z();
+                                     auto isCloseX = fabs(r.x - cfgAtom.r().x) < 1.0e-6;
+                                     auto isCloseY = fabs(r.y - cfgAtom.r().y) < 1.0e-6;
+                                     auto isCloseZ = fabs(r.z - cfgAtom.r().z) < 1.0e-6;
                                      return isSameAtom && isCloseX && isCloseY && isCloseZ;
-                                 }) == configuration->atoms().end())
+                                 }))
             return testing::AssertionFailure()
                    << std::format("Failed to find atom {} @ {},{},{} in the reconstructed structure.",
                                   Elements::symbol(structureAtom->Z()), r.x, r.y, r.z);
