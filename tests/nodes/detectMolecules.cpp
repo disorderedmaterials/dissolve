@@ -19,8 +19,11 @@ testing::AssertionResult compareContents(const Structure &structure, const Confi
         if (std::ranges::find_if(configuration->atoms(),
                                  [&structureAtom, r](const auto &cfgAtom)
                                  {
-                                     return structureAtom->Z() == cfgAtom.Z() && fabs(r.x - cfgAtom.r().x) < 1.0e-6 &&
-                                            fabs(r.y - cfgAtom.r().y) < 1.0e-6 && fabs(r.z - cfgAtom.r().z) < 1.0e-6;
+auto isSameAtom = structureAtom->Z() == cfgAtom.Z();
+auto isCloseX = fabs(r.x - cfgAtom.r().x) < 1.0e-6;
+auto isCloseY = fabs(r.y - cfgAtom.r().y) < 1.0e-6;
+auto isCloseZ = fabs(r.z - cfgAtom.r().z) < 1.0e-6;
+                                     return isSameAtom && isCloseX && isCloseY && isCloseZ;
                                  }) == configuration->atoms().end())
             return testing::AssertionFailure()
                    << std::format("Failed to find atom {} @ {},{},{} in the reconstructed structure.",
