@@ -55,7 +55,7 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     auto box = structure.box();
 
     CellArray cells;
-    cells.generate(box, box.inscribedSphereRadius() * 2.0 / 3.0);
+    cells.generate(box, 6.0);
 
     // Populate cells
     for (auto &atom : structure.atoms())
