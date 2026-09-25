@@ -5,6 +5,7 @@
 #include "gui2/models/dissolveModel.h"
 #include "gui2/models/nodeRegistryModel.h"
 #include "gui2/models/types.h"
+#include "gui2/singletons/types.h"
 #include "main/cli.h"
 #include "main/dissolve.h"
 #include "main/version.h"
@@ -41,6 +42,7 @@ int main(int args, char **argv)
     engine.rootContext()->setContextProperty("nodeRegistry", &nodeRegistryModel);
     const QUrl url(u"qrc:/Dissolve/qml/DissolveMain.qml"_qs);
     Types::registerDissolveQmlTypes();
+    Types::registerDissolveQmlSingletonTypes();
 
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },

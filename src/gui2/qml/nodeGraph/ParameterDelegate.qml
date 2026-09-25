@@ -3,8 +3,10 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import Qt.labs.qmlmodels
+import Dissolve
 import DissolveIconsModule
 import "../DissolveIconsModule"
+import "../Dissolve"
 
 DelegateChooser {
     id: root
@@ -110,9 +112,69 @@ DelegateChooser {
 
                 title: "Choose a file..."
                 fileMode: FileDialog.OpenFile
-                onAccepted: param = selectedFile.toString().replace("file:///", "")
+                onAccepted: param = Utility.urlToLocalFile(selectedFile)
             }
         }
+    }
+    DelegateChoice {
+        id: delegateRoot
+        roleValue: "vector3"
+
+        function createVector(xInput, yInput, zInput) {
+            var x = Number(xInput);
+            var y = Number(yInput);
+            var z = Number(zInput);
+            console.log("Creating vector from ", x, ", ", y, ", ", z);
+            return [x, y, z]
+        }
+
+        Row {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+            Layout.fillWidth: true
+            spacing: 2
+
+            TextField {
+                id: xInput
+                text: "0.0"
+                width: 30
+                validator: DoubleValidator {
+                    bottom: -10e9
+                    top: 10e9
+                    decimals: 5
+                }
+                onTextChanged: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onActiveFocusChanged: if (activeFocus) selectAll()
+            }
+
+            TextField {
+                id: yInput
+                text: "0.0"
+                width: 30
+                validator: DoubleValidator {
+                    bottom: -10e9
+                    top: 10e9
+                    decimals: 5
+                }
+                onTextChanged: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onActiveFocusChanged: if (activeFocus) selectAll()
+            }
+
+            TextField {
+                id: zInput
+                text: "0.0"
+                width: 30
+                validator: DoubleValidator {
+                    bottom: -10e9
+                    top: 10e9
+                    decimals: 5
+                }
+                onTextChanged: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onActiveFocusChanged: if (activeFocus) selectAll()
+            }
+        }
+
     }
     DelegateChoice {
         roleValue: "enum"
