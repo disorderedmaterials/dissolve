@@ -321,7 +321,7 @@ if(GUI)
 
   # Link to models when developing QML Dissolve in Visual Studio
   if(MSVC_DEV)
-    set(QML_GUI_LIBS models2)
+    set(QML_GUI_LIBS models2 dissolveSingletons)
   endif(MSVC_DEV)
 
   # Dissolve2 QML plugins

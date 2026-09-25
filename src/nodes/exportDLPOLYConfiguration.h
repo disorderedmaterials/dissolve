@@ -30,7 +30,7 @@ class ExportDLPOLYConfigurationNode : public Node
      */
     private:
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // Whether to tag (suffix) the filename with the current iteration index
     bool tagWithIteration_{false};
     // Target configuration
@@ -44,4 +44,8 @@ class ExportDLPOLYConfigurationNode : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
+
+    public:
+    // Export the specified configuration
+    static void exportConfiguration(const Configuration *cfg, std::string filePath);
 };

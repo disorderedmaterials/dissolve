@@ -30,7 +30,7 @@ class ExportXYZConfigurationNode : public Node
      */
     private:
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // Whether to tag (suffix) the filename with the current iteration index
     bool tagWithIteration_{false};
     // Target configuration

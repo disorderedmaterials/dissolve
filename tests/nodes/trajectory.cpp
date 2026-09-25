@@ -23,7 +23,7 @@ TEST(TrajectoryNodesTest, RoundTrip)
     // Create an import configuration trajectory node
     auto trajectoryImport = dynamic_cast<ImportXYZTrajectoryNode *>(testGraph_.createNode("ImportXYZTrajectory"));
     ASSERT_TRUE(trajectoryImport);
-    ASSERT_TRUE(trajectoryImport->setOption<std::string>("FilePath", importFile));
+    ASSERT_TRUE(trajectoryImport->setOption("FilePath", std::filesystem::path(importFile)));
     ASSERT_TRUE(testGraph_.createNode("SetCoordinates"));
     ASSERT_TRUE(testGraph_.addEdge({"Insert-Water", "Configuration", "SetCoordinates", "Configuration"}));
     ASSERT_TRUE(testGraph_.addEdge({"ImportXYZTrajectory", "Structure", "SetCoordinates", "Structure"}));
@@ -31,7 +31,7 @@ TEST(TrajectoryNodesTest, RoundTrip)
     // Create an export configuration trajectory node
     auto trajectoryExport = dynamic_cast<ExportXYZTrajectoryNode *>(testGraph_.createNode("ExportXYZTrajectory"));
     ASSERT_TRUE(trajectoryExport);
-    ASSERT_TRUE(trajectoryExport->setOption<std::string>("FilePath", exportFile));
+    ASSERT_TRUE(trajectoryExport->setOption("FilePath", std::filesystem::path(exportFile)));
     ASSERT_TRUE(trajectoryExport->setOption<bool>("Extended", false));
     ASSERT_TRUE(testGraph_.addEdge({"SetCoordinates", "Configuration", "ExportXYZTrajectory", "Configuration"}));
 

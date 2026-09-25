@@ -31,12 +31,13 @@ std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an
 // Perform processing
 NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
 {
+    auto filePath = filePath_.string();
     structure_.clear();
 
     // Open file and check that we're OK to proceed importing from it
-    std::ifstream infile(filePath_);
+    std::ifstream infile(filePath);
     if (!infile)
-        return error("Couldn't open file '{}' for loading EPSR ato data.\n", filePath_);
+        return error("Couldn't open file '{}' for loading EPSR ato data.\n", filePath);
 
     // File header:
     // Either  1   : nmols, box length, temperature   (for cubic systems)

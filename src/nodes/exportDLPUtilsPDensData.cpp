@@ -29,7 +29,7 @@ std::string_view ExportDLPUtilsPDensDataNode::summary() const { return "Export 3
 // Perform processing
 NodeConstants::ProcessResult ExportDLPUtilsPDensDataNode::process()
 {
-    return write(data_, filePath_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+    return write(data_, filePath_.string()) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
 }
 
 // Write data specified

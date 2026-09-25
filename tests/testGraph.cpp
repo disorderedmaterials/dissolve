@@ -144,7 +144,7 @@ SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name
     // Create structure import node
     auto structureNode = createNode(structureNodeType);
     EXPECT_TRUE(structureNode);
-    structureNode->setOption<std::string>("FilePath", structureFilePath);
+    structureNode->setOption("FilePath", std::filesystem::path(structureFilePath));
 
     // Create rebonding node?
     if (calculateBonding)
@@ -199,7 +199,7 @@ Node *TestGraph::appendSetCoordinates(std::string_view importNodeType, std::stri
     EXPECT_TRUE(appendNode("SetCoordinates"));
     auto structureNode = createNode(importNodeType);
     EXPECT_TRUE(structureNode);
-    EXPECT_TRUE(structureNode->setOption<std::string>("FilePath", filePath));
+    EXPECT_TRUE(structureNode->setOption("FilePath", std::filesystem::path(filePath)));
 
     EXPECT_TRUE(currentGraph_->addEdge({std::string(structureNode->name()), "Structure", "SetCoordinates", "Structure"}));
 
@@ -226,7 +226,7 @@ IterableGraph *TestGraph::appendTrajectoryIterator(std::string trajectoryImportN
     // Within the iterator graph create SetCoordinates and trajectory import nodes
     auto trajectoryNode = appendNode(trajectoryImportNodeType);
     EXPECT_TRUE(trajectoryNode);
-    EXPECT_TRUE(trajectoryNode->setOption<std::string>("FilePath", filePath));
+    EXPECT_TRUE(trajectoryNode->setOption("FilePath", std::filesystem::path(filePath)));
     EXPECT_TRUE(appendNode("SetCoordinates"));
 
     EXPECT_TRUE(currentGraph_->addEdge({std::string(trajectoryNode->name()), "Structure", "SetCoordinates", "Structure"}));
@@ -293,7 +293,7 @@ NeutronSQNode *TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
     {
         auto data1DImportNode = createNode("ImportXYData", std::format("Reference-{}", name));
         EXPECT_TRUE(data1DImportNode);
-        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData)));
+        EXPECT_TRUE(data1DImportNode->setOption("FilePath", std::filesystem::path(referenceData)));
         EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", isHistogram));
         EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
     }
@@ -312,7 +312,7 @@ XRaySQNode *TestGraph::appendXRaySQ(SQNode *sqNode, std::string name, std::strin
     {
         auto data1DImportNode = createNode("ImportXYData", std::format("Reference-{}", name));
         EXPECT_TRUE(data1DImportNode);
-        EXPECT_TRUE(data1DImportNode->setOption<std::string>("FilePath", std::string(referenceData)));
+        EXPECT_TRUE(data1DImportNode->setOption("FilePath", std::filesystem::path(referenceData)));
         EXPECT_TRUE(data1DImportNode->setOption<bool>("Histogram", isHistogram));
         EXPECT_TRUE(currentGraph_->addEdge({std::format("Reference-{}", name), "Data", name, "ReferenceData"}));
     }

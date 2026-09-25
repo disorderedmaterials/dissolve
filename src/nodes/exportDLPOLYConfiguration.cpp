@@ -35,30 +35,41 @@ std::string_view ExportDLPOLYConfigurationNode::summary() const { return "Export
 // Perform processing
 NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
 {
-    auto path = filePath_;
+    auto filePath = filePath_.string();
+    auto path = filePath;
     if (tagWithIteration_)
         path = std::format("{}.{}", path, iteration_);
 
-    std::ofstream outfile(filePath_);
+    exportConfiguration(configuration_, path);
+
+    ++iteration_;
+
+    return NodeConstants::ProcessResult::Success;
+}
+
+// Export the specified configuration
+void ExportDLPOLYConfigurationNode::exportConfiguration(const Configuration *cfg, std::string filePath)
+{
+    std::ofstream outfile(filePath);
     std::ostream_iterator<char> out(outfile);
 
     // Export title
-    std::format_to(out, "{} @ {}\n", configuration_->name(), configuration_->version());
+    std::format_to(out, "{} @ {}\n", cfg->name(), cfg->version());
 
     // Export keytrj and imcon
-    if (configuration_->box().type() == Box::BoxType::None)
+    if (cfg->box().type() == Box::BoxType::None)
         std::format_to(out, "{:10d}{:10d}\n", 0, 0);
-    else if (configuration_->box().type() == Box::BoxType::Cubic)
+    else if (cfg->box().type() == Box::BoxType::Cubic)
         std::format_to(out, "{:10d}{:10d}\n", 0, 1);
-    else if (configuration_->box().type() == Box::BoxType::Orthorhombic)
+    else if (cfg->box().type() == Box::BoxType::Orthorhombic)
         std::format_to(out, "{:10d}{:10d}\n", 0, 2);
     else
         std::format_to(out, "{:10d}{:10d}\n", 0, 3);
 
     // Export Cell
-    if (configuration_->box().type() != Box::BoxType::None)
+    if (cfg->box().type() != Box::BoxType::None)
     {
-        Matrix3 axes = configuration_->box().axes();
+        Matrix3 axes = cfg->box().axes();
         std::format_to(out, "{:20.12f}{:20.12f}{:20.12f}\n", axes[0], axes[1], axes[2]);
         std::format_to(out, "{:20.12f}{:20.12f}{:20.12f}\n", axes[3], axes[4], axes[5]);
         std::format_to(out, "{:20.12f}{:20.12f}{:20.12f}\n", axes[6], axes[7], axes[8]);
@@ -66,13 +77,9 @@ NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
 
     // Export Atoms
     auto n = 0;
-    for (const auto &i : configuration_->atoms())
+    for (const auto &i : cfg->atoms())
         std::format_to(out, "{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n", i.speciesAtom()->atomType()->name(), n++ + 1,
                        AtomicMass::mass(i.speciesAtom()->Z()), i.r().x, i.r().y, i.r().z);
 
     outfile.close();
-
-    ++iteration_;
-
-    return NodeConstants::ProcessResult::Success;
 }

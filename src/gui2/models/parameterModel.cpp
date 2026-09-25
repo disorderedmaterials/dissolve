@@ -4,7 +4,11 @@
 #include "parameterModel.h"
 #include "gui2/models/enumOptionsModel.h"
 #include "gui2/models/enumRegistry.h"
+#include "math/vector3.h"
+#include "nodes/graph.h"
+#include "nodes/inputs.h"
 #include "nodes/number.h"
+#include "nodes/outputs.h"
 #include "nodes/registry.h"
 #include <qvariant.h>
 
@@ -18,6 +22,38 @@ enum Roles
 };
 
 ParameterModel::ParameterModel(Node::NodeParameterMap &values) : values_(values) {}
+
+// Returns the reference to the parameters from the model
+Node::NodeParameterMap &ParameterModel::values() { return values_; }
+const Node::NodeParameterMap &ParameterModel::values() const { return values_; }
+
+// Reset parameter model
+void ParameterModel::resetParameters()
+{
+    beginResetModel();
+    endResetModel();
+}
+
+// Rename a parameter
+void ParameterModel::rename(const std::string &currentName, const std::string &newName)
+{
+    // TODO: This could do with being wrapped in a begin/end reset model/insert rows
+    // *if* we defer the onItemAdded callback in the GraphDelegate, probably using a "renameInProgress" flag
+    // therefore preventing the call to GraphModel::replaceTargetEndPoints while the endPoints are not in their final state.
+    auto row = int(std::distance(values_.begin(), values_.find(currentName)));
+    auto element = values_.extract(currentName);
+
+    Graph::NodeParameterMap newMap = values_;
+    newMap.erase(element.key());
+    newMap.insert({newName, element.mapped()});
+    row = int(std::distance(newMap.begin(), newMap.find(newName)));
+
+    values_ = newMap;
+}
+
+/*
+ * QAbstractListModel overrides
+ */
 
 // Return number of parameters (required by QAbstractListModel)
 int ParameterModel::rowCount(const QModelIndex &parent) const { return values_.size(); }
@@ -44,6 +80,17 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
             }
             if (it->second->storedDataType() == typeid(std::string))
                 return QString::fromStdString(it->second->get<std::string>());
+            if (it->second->storedDataType() == typeid(std::filesystem::path))
+                return QString::fromStdString(it->second->get<std::filesystem::path>().string());
+            if (it->second->storedDataType() == typeid(Vector3))
+            {
+                QVariantList vector;
+                auto item = it->second->get<Vector3>();
+                vector.push_back(item.x);
+                vector.push_back(item.y);
+                vector.push_back(item.z);
+                return vector;
+            }
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return QVariant::fromValue(it->second->getAsInt());
             return QString::fromStdString("Unrepresentable");
@@ -56,6 +103,10 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return "bool";
             if (it->second->storedDataType() == typeid(std::string))
                 return "string";
+            if (it->second->storedDataType() == typeid(std::filesystem::path))
+                return "file path";
+            if (it->second->storedDataType() == typeid(Vector3))
+                return "vector3";
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return "enum";
             if (it->second->storedDataType() == typeid(std::shared_ptr<Species>))
@@ -97,6 +148,19 @@ bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, in
             else
                 it->set<std::optional<Number>>(value.toString().toInt());
         }
+    }
+    if (it->storedDataType() == typeid(std::filesystem::path))
+    {
+        auto path = value.toString().toStdString();
+        it->set<std::filesystem::path>(std::filesystem::path(path));
+    }
+    if (it->storedDataType() == typeid(Vector3))
+    {
+        auto vector = qvariant_cast<QVariantList>(value);
+        auto x = qvariant_cast<double>(vector[0]);
+        auto y = qvariant_cast<double>(vector[1]);
+        auto z = qvariant_cast<double>(vector[2]);
+        it->set<Vector3>({x, y, z});
     }
     if (EnumRegistry::hasEnumOption(it->storedDataType()))
         it->setFromInt(value.toInt());

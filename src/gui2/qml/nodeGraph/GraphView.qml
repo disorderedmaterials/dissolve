@@ -13,7 +13,7 @@ Pane {
     property variant parameterEndPointsModel
     property variant rootGraphModel
 
-    Component.onCompleted: nodeRegistry.setGraphModel(rootGraphModel);
+    Component.onCompleted: nodeRegistry.setGraphModel(rootGraphModel)
 
     MouseArea {
         id: ctxMenuCatcher
@@ -50,7 +50,7 @@ Pane {
                                     delegate: MenuItem {
                                         required property var modelData
                                         text: modelData.name
-                                        onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name, nodeRegistry.uniqueNodeName(modelData.name), false)
+                                        onClicked: graphRoot.rootGraphModel.emplace_back(ctxMenuCatcher.mousePos.x, ctxMenuCatcher.mousePos.y, modelData.name, nodeRegistry.uniqueNodeName(modelData.name))
                                         ToolTip.text: modelData.description
                                         ToolTip.visible: hovered
                                         ToolTip.delay: 500
@@ -60,10 +60,10 @@ Pane {
                         }
                 }
                 onItemAdded: (index, item) => {
-                    contextMenu.addMenu(item.innerMenu)
+                    contextMenu.addMenu(item.innerMenu);
                 }
                 onItemRemoved: (index, item) => {
-                    contextMenu.removeMenu(item.innerMenu)
+                    contextMenu.removeMenu(item.innerMenu);
                 }
             }
         }
@@ -71,6 +71,15 @@ Pane {
     // Edge connections
     Repeater {
         model: graphRoot.parameterEndPointsModel
+
+        onItemAdded: function (index, item) {
+            var node = item.targetDropArea.parentNodeBox;
+            const originalTargetPos = Qt.point(node.x, node.y);
+            node.x = originalTargetPos.x + 1;
+            Qt.callLater(function() {
+                    node.x = originalTargetPos.x
+                });
+        }
 
         delegate: Shape {
             id: edgeShape
@@ -103,22 +112,15 @@ Pane {
                 strokeColor: "black"
                 strokeWidth: 4
 
-                PathLine {
-                    //id: edgeLine
+                PathCubic {
+                    id: edgeLine
+                    control1X: edgeShape.sourcePos.x + curveOffset
+                    control1Y: edgeShape.sourcePos.y
+                    control2X: edgeShape.targetPos.x - graphRoot.curveOffset
+                    control2Y: edgeShape.targetPos.y
                     x: edgeShape.targetPos.x
                     y: edgeShape.targetPos.y
                 }
-
-                /*
-                PathCubic {
-                    control1X: sourceX + curveOffset
-                    control1Y: sourceY
-                    control2X: x - graphRoot.curveOffset
-                    control2Y: y
-                    x: targetX
-                    y: targetY
-                }
-                */
             }
         }
     }

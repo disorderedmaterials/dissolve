@@ -498,10 +498,12 @@ bool ImportCIFStructureNode::createStructure()
 // Perform processing
 NodeConstants::ProcessResult ImportCIFStructureNode::process()
 {
+    auto filePath = filePath_.string();
+
     structure_.clear();
 
     // Read contents of CIF file
-    if (read(filePath_))
+    if (read(filePath))
     {
         if (!createStructure())
             return error("Did not successfully create a basic structure from the CIF file.");
