@@ -38,11 +38,12 @@ class NodeRegistryModel : public QAbstractListModel
     explicit NodeRegistryModel(QObject *parent = nullptr);
     ~NodeRegistryModel() override = default;
 
-    enum Role
+    enum NodeDisplayRoles
     {
-        Name = 0,
-        Description
+        Name = Qt::DisplayRole,
+        Description = Qt::UserRole + 1,
     };
+    Q_ENUM(NodeDisplayRoles);
 
     private:
     // Increment node type
@@ -54,6 +55,9 @@ class NodeRegistryModel : public QAbstractListModel
     // Source node registry data
     static std::vector<NodeRegistryDisplayElement> entries_;
     GraphModel *graphModel_{nullptr};
+    // Record of all parameters and their tally
+    std::map<std::string, int> allInputs_;
+    std::map<std::string, int> allOutputs_;
 
     public:
     // Return a unique default node name for a given node type

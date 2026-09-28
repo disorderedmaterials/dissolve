@@ -40,13 +40,14 @@ std::string_view ImportDLPOLYTrajectoryNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult ImportDLPOLYTrajectoryNode::process()
 {
+    auto filePath = filePath_.string();
     using namespace Parsers;
-    message("Reading DL_POLY trajectory file frame from '{}'...\n", filePath_);
+    message("Reading DL_POLY trajectory file frame from '{}'...\n", filePath);
 
-    std::ifstream infile{filePath_};
+    std::ifstream infile{filePath};
     if (!infile)
     {
-        error("Couldn't open trajectory file '{}'.\n", filePath_);
+        error("Couldn't open trajectory file '{}'.\n", filePath);
         return NodeConstants::ProcessResult::Failed;
     }
 

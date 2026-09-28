@@ -24,6 +24,13 @@ NodeRegistryModel::NodeRegistryModel(QObject *parent)
         auto dummyNode = NodeRegistry::produce(dummyGraph->parentGraph(), name);
         entries_.push_back(NodeRegistryDisplayElement{QString::fromStdString(std::string(dummyNode->type())),
                                                       QString::fromStdString(std::string(dummyNode->summary())), 0});
+
+        // Register parameters
+        for (const auto &[name, _] : dummyNode->inputs())
+            allInputs_.try_emplace(name, 0);
+
+        for (const auto &[name, _] : dummyNode->outputs())
+            allOutputs_.try_emplace(name, 0);
     }
 }
 
@@ -71,15 +78,14 @@ QString NodeRegistryModel::uniqueNodeName(QVariant type)
 {
     increment(type.toString());
     const auto count = tally(type.toString());
-    std::string prefix = type.toString().toStdString() + "_";
-    auto name = prefix + std::format("{}", count);
+    auto name = type.toString().toStdString() + std::string(count < 2 ? "" : "_" + std::format("{}", count));
     return QString::fromStdString(name);
 }
 
 // Instantiate node from registry
 void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
 {
-    graphModel_->emplace_back(x, y, type, uniqueNodeName(type).toStdString());
+    graphModel_->emplace_back(x, y, type.toString(), uniqueNodeName(type));
 }
 
 // Set the graph model

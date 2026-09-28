@@ -76,7 +76,7 @@ TEST(StructureTest, Unfold)
     // Import XYZ node
     auto importXYZNode = graph.createNode("ImportXYZStructure");
     ASSERT_TRUE(importXYZNode);
-    ASSERT_TRUE(importXYZNode->setOption("FilePath", std::string("xyz/ch4_folded.xyz")));
+    ASSERT_TRUE(importXYZNode->setOption("FilePath", std::filesystem::path("xyz/ch4_folded.xyz")));
 
     // Calculate bonding node
     auto calculateBondingNode = graph.createNode("CalculateBonding");

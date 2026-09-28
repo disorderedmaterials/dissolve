@@ -1,7 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import Qt.labs.qmlmodels
+import Dissolve
+import DissolveIconsModule
+import "../DissolveIconsModule"
+import "../Dissolve"
 
 DelegateChooser {
     id: root
@@ -23,16 +28,16 @@ DelegateChooser {
     DelegateChoice {
         roleValue: "number"
 
-        SpinBox {
-            Layout.alignment: Qt.AlignRight
-            Layout.column: 2
-            Layout.row: index
-            editable: true
-            from: -1000000
-            to: 1000000
-            value: param
-
-            onValueModified: param = value
+        TextField {
+            text: Number(param).toFixed(5)
+            width: 30
+            validator: DoubleValidator {
+                bottom: -10e9
+                top: 10e9
+                decimals: 5
+            }
+            onAccepted: {console.log(Number(text)); param = Number(text); console.log(param); }
+            onActiveFocusChanged: { if (activeFocus) { selectAll(); } else {param = Number(text); }}
         }
     }
     DelegateChoice {
@@ -73,6 +78,103 @@ DelegateChooser {
 
             onTextChanged: param = text
         }
+    }
+    DelegateChoice {
+        roleValue: "file path"
+
+        Row {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+            Layout.fillWidth: true
+            spacing: 0
+
+            TextField {
+                id: filePathField
+
+                text: param
+            }
+
+            ToolButton {
+                id: filePickerButton
+
+                icon.source: "qrc:/DissolveIconsModule/documents.svg"
+                display: AbstractButton.iconOnly
+                onClicked: fileDialog.open()
+
+                ToolTip.text: "Select a file"
+                ToolTip.visible: hovered
+                ToolTip.delay: 500
+            }
+
+            FileDialog {
+                id: fileDialog
+
+                title: "Choose a file..."
+                fileMode: FileDialog.OpenFile
+                onAccepted: param = Utility.urlToLocalFile(selectedFile)
+            }
+        }
+    }
+    DelegateChoice {
+        id: delegateRoot
+        roleValue: "vector3"
+
+        function createVector(xInput, yInput, zInput) {
+            var x = Number(xInput);
+            var y = Number(yInput);
+            var z = Number(zInput);
+            console.log("Creating vector from ", x, ", ", y, ", ", z);
+            return [x, y, z]
+        }
+
+        Row {
+            Layout.alignment: Qt.AlignRight
+            Layout.column: 2
+            Layout.row: index
+            Layout.fillWidth: true
+            spacing: 2
+
+            TextField {
+                id: xInput
+                text: Number(param[0]).toFixed(5)
+                width: 30
+                validator: DoubleValidator {
+                    bottom: -10e9
+                    top: 10e9
+                    decimals: 5
+                }
+                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onActiveFocusChanged: if (activeFocus) selectAll()
+            }
+
+            TextField {
+                id: yInput
+                text: Number(param[1]).toFixed(5)
+                width: 30
+                validator: DoubleValidator {
+                    bottom: -10e9
+                    top: 10e9
+                    decimals: 5
+                }
+                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onActiveFocusChanged: if (activeFocus) selectAll()
+            }
+
+            TextField {
+                id: zInput
+                text: Number(param[2]).toFixed(5)
+                width: 30
+                validator: DoubleValidator {
+                    bottom: -10e9
+                    top: 10e9
+                    decimals: 5
+                }
+                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onActiveFocusChanged: if (activeFocus) selectAll()
+            }
+        }
+
     }
     DelegateChoice {
         roleValue: "enum"

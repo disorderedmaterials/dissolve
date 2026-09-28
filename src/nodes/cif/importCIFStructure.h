@@ -34,7 +34,7 @@ class ImportCIFStructureNode : public Node
     // Space group ID
     SpaceGroups::SpaceGroupId spaceGroup_{SpaceGroups::SpaceGroupId::NoSpaceGroup};
     // CIF filepath
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // Vector of enumerated data items
     CIFImportVisitor::CIFTags tags_;
     // Tolerance for removal of overlapping atoms

@@ -20,7 +20,7 @@ ReplicatedConfigurationNode::ReplicatedConfigurationNode(Graph *parentGraph) : N
  * Definition
  */
 
-std::string_view ReplicatedConfigurationNode::type() const { return "Replicate"; }
+std::string_view ReplicatedConfigurationNode::type() const { return "ReplicatedConfiguration"; }
 
 std::string_view ReplicatedConfigurationNode::summary() const
 {
