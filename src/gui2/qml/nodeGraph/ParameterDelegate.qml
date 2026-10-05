@@ -28,16 +28,16 @@ DelegateChooser {
     DelegateChoice {
         roleValue: "number"
 
-        SpinBox {
-            Layout.alignment: Qt.AlignRight
-            Layout.column: 2
-            Layout.row: index
-            editable: true
-            from: -1000000
-            to: 1000000
-            value: param
-
-            onValueModified: param = value
+        TextField {
+            text: Number(param).toFixed(5)
+            width: 30
+            validator: DoubleValidator {
+                bottom: -10e9
+                top: 10e9
+                decimals: 5
+            }
+            onAccepted: {console.log(Number(text)); param = Number(text); console.log(param); }
+            onActiveFocusChanged: { if (activeFocus) { selectAll(); } else {param = Number(text); }}
         }
     }
     DelegateChoice {
