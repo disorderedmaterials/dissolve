@@ -588,10 +588,7 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         else if constexpr (std::is_convertible<DataClass, std::string>::value)
             result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else if constexpr (std::is_convertible<DataClass, std::optional<Number>>::value)
-        {
-            if (Parameter<DataClass>::data_)
-                result["data"] = Serialisable::ser(*Parameter<DataClass>::data_);
-        }
+            Serialisable::serialiseOnto(Parameter<DataClass>::data_, "data", result);
         else if constexpr (Serialisable::Serialisable<DataClass>)
             result["data"] = Serialisable::ser(Parameter<DataClass>::data_);
         else
