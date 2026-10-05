@@ -70,7 +70,10 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(std::string(it->second->description()));
         case DATA:
             if (it->second->storedDataType() == typeid(Number))
-                return QVariant::fromValue(it->second->get<Number>().asInteger());
+            {
+                const auto n = it->second->get<Number>();
+                return QVariant::fromValue(n.isInteger() ? n.asInteger() : n.asDouble());
+            }
             if (it->second->storedDataType() == typeid(bool))
                 return QVariant::fromValue(it->second->get<bool>());
             if (it->second->storedDataType() == typeid(std::optional<Number>))
