@@ -95,6 +95,19 @@ ApplicationWindow {
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Save the current Dissolve graph to a TOML file"
+
+                FileDialog {
+                    id: saveDialog
+
+                    fileMode: FileDialog.SaveFile
+                    defaultSuffix: "toml"
+
+                    nameFilters: ["Input file (*.toml)", "All files (*)"]
+
+                    onAccepted: {
+                        dissolve.saveAs(selectedFile);
+                    }
+                }
             }
 
             MenuSeparator {}
@@ -321,15 +334,6 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.top: parent.top
 
-                    FileDialog {
-                        id: saveDialog
-
-                        fileMode: FileDialog.SaveFile
-
-                        onAccepted: {
-                            dissolve.saveAs(selectedFile);
-                        }
-                    }
                     Button {
                         icon.source: "qrc:/DissolveIconsModule/open.svg"
 
