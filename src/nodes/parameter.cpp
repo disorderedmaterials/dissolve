@@ -29,6 +29,7 @@ bool ParameterBase::setName(std::string name)
         return Messenger::error("Parameter rename failed - could not find the parameter to be renamed.");
 
     name_ = name;
+    return true;
 }
 
 // Return the parameter name
