@@ -137,40 +137,40 @@ DelegateChooser {
 
             TextField {
                 id: xInput
-                text: "0.0"
+                text: Number(param[0]).toFixed(5)
                 width: 30
                 validator: DoubleValidator {
                     bottom: -10e9
                     top: 10e9
                     decimals: 5
                 }
-                onTextChanged: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus) selectAll()
             }
 
             TextField {
                 id: yInput
-                text: "0.0"
+                text: Number(param[1]).toFixed(5)
                 width: 30
                 validator: DoubleValidator {
                     bottom: -10e9
                     top: 10e9
                     decimals: 5
                 }
-                onTextChanged: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus) selectAll()
             }
 
             TextField {
                 id: zInput
-                text: "0.0"
+                text: Number(param[2]).toFixed(5)
                 width: 30
                 validator: DoubleValidator {
                     bottom: -10e9
                     top: 10e9
                     decimals: 5
                 }
-                onTextChanged: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
+                onAccepted: param = delegateRoot.createVector(xInput.text, yInput.text, zInput.text)
                 onActiveFocusChanged: if (activeFocus) selectAll()
             }
         }
