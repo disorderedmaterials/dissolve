@@ -7,5 +7,6 @@
 
 void Types::registerDissolveQmlSingletonTypes()
 {
-    qmlRegisterSingletonType<Utility>(PROJECT, 1, 0, "Utility", [](QQmlEngine *, QJSEngine*) -> QObject * { return new Utility(); });
+    qmlRegisterSingletonType<Utility>(PROJECT, 1, 0, "Utility",
+                                      [](QQmlEngine *, QJSEngine *) -> QObject * { return new Utility(); });
 }

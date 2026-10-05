@@ -5,7 +5,4 @@
 
 Utility::Utility(QObject *parent) : QObject(parent) {}
 
-QString Utility::urlToLocalFile(QUrl url) const
-{
-    return url.toLocalFile();
-}
+QString Utility::urlToLocalFile(QUrl url) const { return url.toLocalFile(); }
