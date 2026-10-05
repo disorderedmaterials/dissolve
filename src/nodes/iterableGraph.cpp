@@ -32,12 +32,6 @@ LoopBacksNode *IterableGraph::loopBacks() const { return loopBacks_; }
 // Return loop edges
 const Graph::Edges &IterableGraph::loopEdges() const { return loopEdges_; }
 
-//
-void IterableGraph::updateInputs() { setLoopBacks(); }
-
-// Current loop iteration
-int IterableGraph::currentIteration() const { return i_; }
-
 // Set the loopbacks corresponding to the graph inputs
 void IterableGraph::setLoopBacks()
 {
@@ -46,6 +40,9 @@ void IterableGraph::setLoopBacks()
     for (const auto &[name, param] : sources)
         loopBacks_->inputs().insert_or_assign(name, param);
 }
+
+// Current loop iteration
+int IterableGraph::currentIteration() const { return i_; }
 
 // Release loopback by name
 void IterableGraph::releaseLoopBack(const std::string &name)

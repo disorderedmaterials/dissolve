@@ -69,7 +69,7 @@ void GraphEdgeModel::removeConnected(std::string nodeName)
     {
         if (toRemove(*edgeIt))
         {
-            const int row = std::distance(allEdges.begin(), edgeIt);
+            const auto row = std::distance(allEdges.begin(), edgeIt);
             beginRemoveRows(QModelIndex(), row, row);
             edgeIt = allEdges.erase(edgeIt);
             endRemoveRows();

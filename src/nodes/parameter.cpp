@@ -19,7 +19,7 @@ ParameterBase::ParameterBase(Node *parent, std::string_view name, std::string_vi
 // Set node parent
 void ParameterBase::setParent(Node *parent) { parent_ = parent; }
 
-// Return the parameter name
+// Set the parameter name
 bool ParameterBase::setName(std::string name)
 {
     if (!(dynamic_cast<Graph *>(parent_) || dynamic_cast<InputsNode *>(parent_) || dynamic_cast<OutputsNode *>(parent_)))

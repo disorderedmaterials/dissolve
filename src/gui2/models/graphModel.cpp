@@ -58,7 +58,7 @@ void GraphModel::setGraph(Graph *graph)
 
     auto iterator = dynamic_cast<IterableGraph *>(graph_);
     if (iterator)
-        iterator->updateInputs();
+        iterator->setLoopBacks();
 
     parameterEndPoints_.clear();
     nodes_.reset();
@@ -166,8 +166,7 @@ void GraphModel::emplace_back(int x, int y, QString type, QString name)
         Messenger::exception(
             "GraphModel has no graph.  This should have been impossible.  Please let the Dissolve developers know about this.");
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
-    auto nodeType = type.toStdString();
-    auto node = graph_->createNode(nodeType, name.toStdString());
+    auto node = graph_->createNode(type.toStdString(), name.toStdString());
     node->x = x;
     node->y = y;
     auto &item = wrapped_.emplace_back(*node);

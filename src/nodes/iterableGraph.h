@@ -38,8 +38,6 @@ class IterableGraph : public Graph
     LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
     Edges loopEdges_;
-    // Set the loopbacks corresponding to the graph inputs
-    void setLoopBacks();
     // Release a loopback by name
     void releaseLoopBack(const std::string &name);
 
@@ -52,8 +50,8 @@ class IterableGraph : public Graph
     Edge *removeOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
 
     public:
-    //
-    void updateInputs();
+    // Set the loopbacks corresponding to the graph inputs
+    void setLoopBacks();
     // Current loop iteration
     int currentIteration() const;
     // Number of loops (iterations) to perform
