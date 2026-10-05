@@ -608,12 +608,12 @@ template <typename DataClass> class SerialisableParameter : public Parameter<Dat
         else if constexpr (HasEnumOptions<DataClass>)
         {
             DataClass proxy; // Fake T value to get the correct overload
-            Parameter<DataClass>::data_ = getEnumOptions(proxy).deserialise(node);
+            Parameter<DataClass>::data_ = getEnumOptions(proxy).deserialise(node.at("data"));
         }
         else if constexpr (std::is_convertible<DataClass, std::optional<double>>::value)
         {
             if (node.contains("data"))
-                Parameter<DataClass>::data_ = Deserialisable::deser<double>(node.at("data"));
+                Parameter<DataClass>::data_ = Deserialisable::deser<double>(node);
             else
                 Parameter<DataClass>::data_ = {};
         }
