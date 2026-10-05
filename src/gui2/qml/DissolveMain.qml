@@ -73,6 +73,18 @@ ApplicationWindow {
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Load an existing Dissolve graph from a TOML file"
+
+                FileDialog {
+                    id: openDialog
+
+                    fileMode: FileDialog.OpenFile
+
+                    onAccepted: {
+                        dissolve.file = selectedFile;
+                    }
+
+                    nameFilters: ["Input file (*.toml)", "All files (*)"]
+                }
             }
             MenuItem {
                 //shortcut: "Ctrl+S"
@@ -309,15 +321,6 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.top: parent.top
 
-                    FileDialog {
-                        id: openDialog
-
-                        fileMode: FileDialog.OpenFile
-
-                        onAccepted: {
-                            dissolve.file = selectedFile;
-                        }
-                    }
                     FileDialog {
                         id: saveDialog
 
