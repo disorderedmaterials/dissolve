@@ -25,6 +25,9 @@ std::string_view ExportBlockDataNode::summary() const { return "Export data valu
 NodeConstants::ProcessResult ExportBlockDataNode::process()
 {
     auto filePath = filePath_.string();
+
+    message("Exporting data values in block format to '{}'...\n", filePath);
+
     return std::visit(
         [&](auto &&arg)
         {

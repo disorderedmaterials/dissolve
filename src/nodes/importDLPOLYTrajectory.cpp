@@ -41,6 +41,9 @@ std::string_view ImportDLPOLYTrajectoryNode::summary() const
 NodeConstants::ProcessResult ImportDLPOLYTrajectoryNode::process()
 {
     auto filePath = filePath_.string();
+
+    message("Reading a formatted DL_POLY trajectory in sequential frames from '{}'...\n", filePath);
+
     using namespace Parsers;
     message("Reading DL_POLY trajectory file frame from '{}'...\n", filePath);
 

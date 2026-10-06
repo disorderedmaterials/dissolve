@@ -33,6 +33,8 @@ NodeConstants::ProcessResult ImportDLPUtilsSurfaceNode::process()
 {
     auto filePath = filePath_.string();
 
+    message("Reading DLPUtils 2D surface data from '{}'...\n", filePath);
+
     // Create the data
     data_.emplace();
 

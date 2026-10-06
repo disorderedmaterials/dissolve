@@ -34,6 +34,8 @@ NodeConstants::ProcessResult ImportXYZStructureNode::process()
 {
     auto filePath = filePath_.string();
 
+    message("Reading XYZ structure from '{}'...\n", filePath);
+
     structure_.clear();
 
     std::ifstream infile{filePath};

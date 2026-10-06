@@ -33,6 +33,8 @@ NodeConstants::ProcessResult ImportDLPUtilsPDensNode::process()
 {
     auto filePath = filePath_.string();
 
+    message("Reading DLPUtils 3D pdens data from '{}'...\n", filePath);
+
     // Create the data
     data_.emplace();
 

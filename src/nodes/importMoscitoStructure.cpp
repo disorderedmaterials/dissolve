@@ -49,6 +49,9 @@ NodeConstants::ProcessResult ImportMoscitoStructureNode::process()
      * Units are:  distance = nm, velocities = nm ps-1, forces = kJ mol-1 nm-1
      */
     auto filePath = filePath_.string();
+
+    message("Reading Moscito structure from '{}'...\n", filePath);
+
     using namespace Parsers;
     auto firstLine = inlineSpaces() >> vector3() << newlines();
     auto secondLine = inlineSpaces() >> natural() << newlines();

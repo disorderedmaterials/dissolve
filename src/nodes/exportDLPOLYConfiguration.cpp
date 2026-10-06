@@ -36,6 +36,9 @@ std::string_view ExportDLPOLYConfigurationNode::summary() const { return "Export
 NodeConstants::ProcessResult ExportDLPOLYConfigurationNode::process()
 {
     auto filePath = filePath_.string();
+
+    message("Exporting DL_POLY configuration to '{}'...\n", filePath);
+
     auto path = filePath;
     if (tagWithIteration_)
         path = std::format("{}.{}", path, iteration_);

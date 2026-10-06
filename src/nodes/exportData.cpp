@@ -30,6 +30,9 @@ std::string_view ExportDataNode::summary() const { return "Export data in a simp
 NodeConstants::ProcessResult ExportDataNode::process()
 {
     auto filePath = filePath_.string();
+
+    message("Exporting multi-column format data to '{}'...\n", filePath);
+
     return std::visit(
         [&](auto &&arg)
         {

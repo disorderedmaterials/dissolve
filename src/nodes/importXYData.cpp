@@ -44,6 +44,8 @@ NodeConstants::ProcessResult ImportXYDataNode::process()
 {
     auto filePath = filePath_.string();
 
+    message("Reading XYZ data from '{}'...\n", filePath);
+
     // Clear the structure, and initialise error arrays if necessary
     data_.emplace();
     if (errorColumn_)

@@ -32,6 +32,9 @@ std::string_view ImportEPSRAtoStructureNode::summary() const { return "Import an
 NodeConstants::ProcessResult ImportEPSRAtoStructureNode::process()
 {
     auto filePath = filePath_.string();
+
+    message("Reading EPSR ato structure from '{}'...\n", filePath);
+
     structure_.clear();
 
     // Open file and check that we're OK to proceed importing from it
