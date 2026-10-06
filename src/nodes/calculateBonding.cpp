@@ -67,21 +67,18 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     // one element is identical to a std::optional, but the lists can
     // be trivially combined during the reduce part of
     // transform_reduce
-    auto validBond = [&structure, &box, tolerance, preventMetallic,
-                      clearBefore](const CellNeighbourPair idx) -> std::set<std::tuple<StructureAtom *, StructureAtom *>>
+    auto validBond = [&box, tolerance, preventMetallic](const CellNeighbourPair idx) -> std::set<std::pair<int, int>>
     {
         auto cellI = idx.cell;
         auto cellJ = idx.neighbour;
 
-        std::set<std::tuple<StructureAtom *, StructureAtom *>> result;
-
-        bool sameCell = cellI.index() == cellJ.index();
+        std::set<std::pair<int, int>> result;
 
         for (auto i : cellI.atoms() | castView<StructureAtom *>())
             for (auto j : cellJ.atoms() | castView<StructureAtom *>())
             {
                 // Don't bond atoms to themselves
-                if (sameCell && i->index() == j->index())
+                if (i == j)
                     continue;
 
                 // Get StructureAtom 'i' and its radius
@@ -99,7 +96,7 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
                 if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
                     continue;
 
-                result.insert({i, j});
+                result.insert({std::min(i->index(), j->index()), std::max(i->index(), j->index())});
             }
 
         return result;
@@ -113,11 +110,10 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
         return ab;
     };
 
-    // Create an empty vector of the correct shape
-    std::set<std::tuple<StructureAtom *, StructureAtom *>> empty;
     // In parallel, construct the list of the bonds that need to be added
     auto pairs = cells.getCellNeighbourPairsWithSelf();
-    auto results = std::transform_reduce(ParallelPolicies::par_unseq, pairs.begin(), pairs.end(), empty, joinBonds, validBond);
+    auto results = std::transform_reduce(ParallelPolicies::par_unseq, pairs.begin(), pairs.end(),
+                                         std::set<std::pair<int, int>>(), joinBonds, validBond);
 
     // Add the bonds serially
     for (auto [i, j] : results)
