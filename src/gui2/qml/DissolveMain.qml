@@ -65,36 +65,51 @@ ApplicationWindow {
                 ToolTip.text: "Create a new Dissolve project"
             }
             MenuItem {
-                //shortcut: "Ctrl+O"
-                text: "&Load project from TOML"
+                action: Action {
+                    text: "&Open project from TOML"
+                    shortcut: StandardKey.Open
+                    onTriggered: openDialog.open()
+                }
 
-                onTriggered: openDialog.open()
+                FileDialog {
+                    id: openDialog
+                    fileMode: FileDialog.OpenFile
+                    onAccepted: dissolve.file = selectedFile
+                    nameFilters: ["Input file (*.toml)", "All files (*)"]
+                }
+
 
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
                 ToolTip.text: "Load an existing Dissolve graph from a TOML file"
-
-                FileDialog {
-                    id: openDialog
-
-                    fileMode: FileDialog.OpenFile
-
-                    onAccepted: {
-                        dissolve.file = selectedFile;
+            }
+            MenuItem {
+                action: Action {
+                    text: "&Save"
+                    shortcut: StandardKey.Save
+                    onTriggered: {
+                        if (dissolve.file == "")
+                        {
+                            saveDialog.open()
+                        }
+                        else
+                        {
+                            dissolve.save()
+                        }
                     }
-
-                    nameFilters: ["Input file (*.toml)", "All files (*)"]
                 }
             }
             MenuItem {
-                //shortcut: "Ctrl+S"
-                text: "&Save project to TOML"
+                action: Action {
+                    text: "&Save As..."
+                    shortcut: StandardKey.SaveAs
+                    onTriggered: saveDialog.open()
+                }
 
-                onTriggered: saveDialog.open()
 
                 ToolTip.visible: hovered
                 ToolTip.delay: Application.styleHints.mousePressAndHoldInterval
-                ToolTip.text: "Save the current Dissolve graph to a TOML file"
+                ToolTip.text: "Save the current Dissolve graph to a new TOML file"
 
                 FileDialog {
                     id: saveDialog
@@ -104,9 +119,7 @@ ApplicationWindow {
 
                     nameFilters: ["Input file (*.toml)", "All files (*)"]
 
-                    onAccepted: {
-                        dissolve.saveAs(selectedFile);
-                    }
+                    onAccepted: dissolve.saveAs(selectedFile)
                 }
             }
 
