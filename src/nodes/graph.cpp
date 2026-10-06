@@ -246,23 +246,9 @@ Edge *Graph::findEdgeByTarget(const std::string &targetNode, const std::string &
 std::vector<Edge *> Graph::findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput) const
 {
     std::vector<Edge *> edges;
-    auto it = std::find_if(edges_.begin(), edges_.end(),
-                           [&](const auto &edge)
-                           {
-                               auto otherDefinition = edge->definition();
-                               return otherDefinition.sourceNode == sourceNode && otherDefinition.sourceOutput == sourceOutput;
-                           });
-
-    while (it != edges_.end())
-    {
-        edges.push_back(edges_[std::distance(edges_.begin(), it)].get());
-        it = std::find_if(it + 1, edges_.end(),
-                          [&](const auto &edge)
-                          {
-                              auto otherDefinition = edge->definition();
-                              return otherDefinition.sourceNode == sourceNode && otherDefinition.sourceOutput == sourceOutput;
-                          });
-    }
+    for (const auto &edge : edges_)
+        if (edge->definition().sourceNode == sourceNode && edge->definition().sourceOutput == sourceOutput)
+            edges.push_back(edge.get());
 
     return edges;
 }

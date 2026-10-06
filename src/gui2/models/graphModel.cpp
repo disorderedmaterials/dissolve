@@ -188,11 +188,11 @@ void GraphModel::deleteNode(int idx)
         curveOutputEndPoints_.erase(&wrapped_[idx].rawValue());
     parameterEndPoints()->remove(&wrapped_[idx].rawValue());
 
-    // Erase the wrapped node
-    wrapped_.erase(wrapped_.begin() + idx);
-
     // Delete the edges corresponding to this node
     edges_.removeConnected(nodeName);
+
+    // Erase the wrapped node
+    wrapped_.erase(wrapped_.begin() + idx);
 
     // Erase the underlying graph node
     graph_->reverseNodes().erase(graph_->findNode(nodeName));
