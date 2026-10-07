@@ -40,7 +40,7 @@ TEST(DetectMoleculesNodeTest, Water33Unordered)
     // Load the xyz file - a system of 33 water molecules in a 10x10x10 Angstrom cubic box, atoms randomly ordered
     auto importXYZStructureNode = testGraph.appendNode("ImportXYZStructure");
     ASSERT_TRUE(importXYZStructureNode);
-    importXYZStructureNode->setOption("FilePath", std::string("xyz/water33unordered.xyz"));
+    importXYZStructureNode->setOption("FilePath", std::filesystem::path("xyz/water33unordered.xyz"));
 
     // Set the periodic box in the structure
     auto setBoxNode = testGraph.appendNode("SetBox");
