@@ -28,9 +28,9 @@ MCNode::MCNode(Graph *parentGraph) : Node(parentGraph)
     // Outputs
     addOutput("Configuration", "Output configuration", targetConfiguration_);
 
-    // Serialisables
-    addSerialisable("RotationStepSize", rotationStepSize_);
-    addSerialisable("TranslationStepSize", translationStepSize_);
+    // State data
+    addStateData("RotationStepSize", rotationStepSize_);
+    addStateData("TranslationStepSize", translationStepSize_);
 }
 
 /*

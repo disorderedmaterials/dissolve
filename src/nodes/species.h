@@ -49,13 +49,4 @@ class SpeciesNode : public Node
     protected:
     // Perform processing
     NodeConstants::ProcessResult process() override;
-
-    /*
-     * Serialisation
-     */
-    private:
-    // Serialise any hidden content
-    void serialiseInternal(SerialisedValue &target) const;
-    // Deserialise any hidden content
-    void deserialiseInternal(const SerialisedValue &target);
 };

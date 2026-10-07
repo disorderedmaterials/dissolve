@@ -26,16 +26,3 @@ std::string_view ForcefieldNode::summary() const { return "Set up a forcefield t
 
 // Perform processing
 NodeConstants::ProcessResult ForcefieldNode::process() { return NodeConstants::ProcessResult::Success; }
-
-/*
- * Serialisation
- */
-
-// Serialise any hidden content
-void ForcefieldNode::serialiseInternal(SerialisedValue &target) const { target["forcefield"] = recipe_.ff->name(); }
-
-// Deserialise any hidden content
-void ForcefieldNode::deserialiseInternal(const SerialisedValue &node)
-{
-    recipe_.ff = ForcefieldLibrary::forcefield(std::string_view(node.at("forcefield").as_string())).get();
-}

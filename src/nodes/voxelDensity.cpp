@@ -16,9 +16,9 @@ VoxelDensityNode::VoxelDensityNode(Graph *parentGraph) : Node(parentGraph)
     addOption("VoxelSideLength", "Requested side length of a single analysis voxel (Angstroms)", requestedVoxelSideLength_);
     addOption("TargetProperty", "Target property for analysis", targetProperty_);
 
-    // Serialisables
-    addSerialisable("histogram", histogram_);
-    addSerialisable("values", values_);
+    // State data
+    addStateData("histogram", histogram_);
+    addStateData("values", values_);
 }
 
 /*

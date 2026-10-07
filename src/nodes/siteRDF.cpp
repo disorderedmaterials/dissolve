@@ -36,10 +36,10 @@ SiteRDFNode::SiteRDFNode(Graph *parentGraph) : Node(parentGraph)
     addOption("Instantaneous", "Whether to calculate instantaneous coordination numbers rather than forming an average",
               instantaneous_);
 
-    // Serialisables
+    // State data
     // addSerialisable("sums", sums_);
-    addSerialisable("dataRDF", dataRDF_);
-    addSerialisable("histAB", histAB_);
+    addStateData("dataRDF", dataRDF_);
+    addStateData("histAB", histAB_);
 }
 
 /*

@@ -183,4 +183,6 @@ void DissolveGraph::deserialise(const SerialisedValue &node)
     Graph::deserialise(node);
     Deserialisable::vector(node, "pairPotentialOverrides",
                            [this](const auto ppOverrideNode) { addPairPotentialOverride()->deserialise(ppOverrideNode); });
+
+    resolve();
 }

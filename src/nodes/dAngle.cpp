@@ -22,13 +22,13 @@ DAngleNode::DAngleNode(Graph *parentGraph) : Node(parentGraph)
     addOption("ExcludeSameMolecule", "Whether to exclude correlations between B and C sites on the same molecule",
               excludeSameMolecule_);
 
-    // Serialisables
-    addSerialisable("distanceHistogramBC", distanceHistogramBC_);
-    addSerialisable("rdfBC", rdfBC_);
-    addSerialisable("angleHistogram", angleHistogram_);
-    addSerialisable("angle", angle_);
-    addSerialisable("distanceAngleMap", distanceAngleMap_);
-    addSerialisable("dAngle", dAngle_);
+    // State data
+    addStateData("distanceHistogramBC", distanceHistogramBC_);
+    addStateData("rdfBC", rdfBC_);
+    addStateData("angleHistogram", angleHistogram_);
+    addStateData("angle", angle_);
+    addStateData("distanceAngleMap", distanceAngleMap_);
+    addStateData("dAngle", dAngle_);
 }
 
 /*
