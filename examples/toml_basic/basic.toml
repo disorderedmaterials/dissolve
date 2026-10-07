@@ -1,3 +1,5 @@
+version = "2.0.0"
+
 [graph]
 name = "Root"
 type = "Dissolve"
@@ -9,6 +11,7 @@ sourceNode = "x"
 sourceOutput = "Result"
 targetNode = "z"
 targetInput = "X"
+
 [[graph.edges]]
 sourceNode = "y"
 sourceOutput = "Result"
