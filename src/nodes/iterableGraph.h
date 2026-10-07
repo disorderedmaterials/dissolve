@@ -21,8 +21,6 @@ class IterableGraph : public Graph
      * Definition
      */
     public:
-    // Return node name
-    std::string_view name() const override;
     // Return type of the node
     std::string_view type() const override;
     // Return short summary of the node's purpose
@@ -40,8 +38,6 @@ class IterableGraph : public Graph
     LoopBacksNode *loopBacks_{nullptr};
     // Loop edges
     Edges loopEdges_;
-    // Set the loopbacks corresponding to the graph inputs
-    void setLoopBacks();
     // Release a loopback by name
     void releaseLoopBack(const std::string &name);
 
@@ -54,6 +50,8 @@ class IterableGraph : public Graph
     Edge *removeOutputLoopEdge(std::string_view sourceOutput, Edge *edge);
 
     public:
+    // Set the loopbacks corresponding to the graph inputs
+    void setLoopBacks();
     // Current loop iteration
     int currentIteration() const;
     // Number of loops (iterations) to perform

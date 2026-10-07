@@ -32,11 +32,15 @@ std::string_view ImportXYZStructureNode::summary() const { return "Import an XYZ
 // Perform processing
 NodeConstants::ProcessResult ImportXYZStructureNode::process()
 {
+    auto filePath = filePath_.string();
+
+    message("Reading XYZ structure from '{}'...\n", filePath);
+
     structure_.clear();
 
-    std::ifstream infile{filePath_};
+    std::ifstream infile{filePath};
     if (!infile)
-        return error("Couldn't open file '{}' for loading XYZ data.\n", filePath_);
+        return error("Couldn't open file '{}' for loading XYZ data.\n", filePath);
     return read(infile, structure_);
 }
 

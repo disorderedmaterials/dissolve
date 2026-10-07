@@ -38,12 +38,14 @@ std::string_view ImportXYZTrajectoryNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult ImportXYZTrajectoryNode::process()
 {
-    message("Reading XYZ trajectory file frame from '{}'...\n", filePath_);
+    auto filePath = filePath_.string();
 
-    std::ifstream infile{filePath_};
+    message("Reading XYZ trajectory file frame from '{}'...\n", filePath);
+
+    std::ifstream infile{filePath};
     if (!infile)
     {
-        error("Couldn't open trajectory file '{}'.\n", filePath_);
+        error("Couldn't open trajectory file '{}'.\n", filePath);
         return NodeConstants::ProcessResult::Failed;
     }
     infile.seekg(filePosition_);

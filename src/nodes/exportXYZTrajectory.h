@@ -28,7 +28,7 @@ class ExportXYZTrajectoryNode : public Node
      */
     private:
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // File format
     bool extended_{false};
     // Last read file position

@@ -25,7 +25,7 @@ class ImportXYDataNode : public Node
      */
     private:
     // File path
-    std::string filePath_;
+    std::filesystem::path filePath_;
     // Whether file format is histogram
     bool histogram_;
     // Column index of data X values

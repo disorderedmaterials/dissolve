@@ -20,11 +20,19 @@ ApplicationWindow {
     id: dissolveWindow
 
     property vector3d scale: Qt.vector3d(Math.min(graphView.width / 2.5, graphView.height / 2.5), Math.min(graphView.width / 2.5, graphView.height / 2.5), 200)
+    property ToolBar toolBar: null
 
     height: Screen.height
     width: Screen.width
     title: "Dissolve"
     visible: true
+
+    GraphModel {
+        id: graphModel
+
+        graph: dissolve.graph
+        Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
+    }
 
     property Dialog quickRunDialog: null
     Component {
@@ -163,27 +171,97 @@ ApplicationWindow {
         }
     }
 
-    /*
-     * TabBar
-     */
-    TabBar {
-        id: tabBar
+    header: Column {
+        /*
+         * ToolBar
+         */
+        ToolBar {
+            id: toolBar
 
-        width: parent.width
-        currentIndex: 2
+            Component.onCompleted: dissolveWindow.toolBar = toolBar
 
-        // DEFAULT TABS
-        TabButton {
-            text: "Messages"
-            width: implicitWidth
+            RowLayout {
+                anchors.fill: parent
+                spacing: 6
+
+                ToolButton {
+                    enabled: !graphModel.atRoot
+                    icon.color: graphModel.atRoot ? "grey" : "transparent"
+                    icon.source: "qrc:/DissolveIconsModule/arrowUp.svg"
+                    hoverEnabled: true
+                    onClicked: graphModel.upLevel()
+
+                    ToolTip.text: "Go up one level to the parent graph"
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 500
+                }
+                ToolButton {
+                    id: edgeEditModeToolButton
+                    padding: 4
+                    contentItem: RowLayout {
+                            spacing: 2
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: "Edge mode: "
+                            }
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: graphModel.edges.edgeEditMode ? "ADD" : "DELETE"
+                                color: graphModel.edges.edgeEditMode ? "green" : "red"
+                                font.bold: true
+                            }
+                        }
+                    onClicked: graphModel.edges.toggleEdgeEditMode()
+                    ToolTip.text: (graphModel.edges.edgeEditMode ? "Edges can be added" : "Selected edges can be deleted")
+                    ToolTip.visible: hovered
+                    ToolTip.delay: 500
+                }
+                ToolButton {
+                    id: graphStatusToolButton
+                    property var iconPath: graphModel.statusIcon
+                    padding: 4
+                    contentItem: RowLayout {
+                            spacing: 2
+                            Label {
+                                Layout.alignment: Qt.AlignVCenter
+                                text: "Graph status"
+                            }
+                            Image {
+                                source: graphStatusToolButton.iconPath
+                                sourceSize.width: 20
+                                sourceSize.height: 20
+                                fillMode: Image.PreserveAspectFit
+                                Layout.preferredWidth: 20
+                                Layout.preferredHeight: 20
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+                        }
+                }
+            }
         }
-        TabButton {
-            text: "Pair Potentials"
-            width: implicitWidth
-        }
-        TabButton {
-            text: "Graph"
-            width: implicitWidth
+
+        /*
+         * TabBar
+         */
+        TabBar {
+            id: tabBar
+
+            width: parent.width
+            currentIndex: 2
+
+            // DEFAULT TABS
+            TabButton {
+                text: "Messages"
+                width: implicitWidth
+            }
+            TabButton {
+                text: "Pair Potentials"
+                width: implicitWidth
+            }
+            TabButton {
+                text: "Graph"
+                width: implicitWidth
+            }
         }
     }
 
@@ -193,8 +271,8 @@ ApplicationWindow {
      */
     StackLayout {
         id: applicationTabStack
-        anchors.bottom: parent.bottom
-        anchors.top: tabBar.bottom
+
+        anchors.fill:parent
         currentIndex: tabBar.currentIndex
         width: parent.width
 
@@ -222,12 +300,7 @@ ApplicationWindow {
 
                 target: dissolve.configurationsModel
             }
-            GraphModel {
-                id: graphModel
-
-                graph: dissolve.graph
-                Component.onCompleted: dissolveWindow.quickRunDialog = quickRunDialogComponent.createObject(dissolveWindow, {graphModel : graphModel})
-            }
+            /*
             Pane {
                 id: toolBar
 
@@ -236,7 +309,6 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.top: parent.top
 
-                    /*
                     FileDialog {
                         id: openDialog
 
@@ -260,36 +332,44 @@ ApplicationWindow {
 
                         onClicked: openDialog.open()
                     }
-                    */
-                    Label {
-                        text: "Nodes: " + graphModel.nodeCount
-                    }
-                    Label {
-                        text: "Edges: " + graphModel.edgeCount
-                    }
-                    ToolButton {
-                        enabled: !graphModel.atRoot
-                        icon.color: graphModel.atRoot ? "grey" : "transparent"
-                        icon.source: "qrc:/DissolveIconsModule/arrowUp.svg"
-
-                        onClicked: graphModel.upLevel()
-                    }
-                    Label {
-                        text: "Location: " + graphModel.location
-                    }
                 }
             }
+            */
             GraphView {
                 id: graph
 
-                anchors.bottom: graphTab.bottom
-                anchors.left: graphTab.left
-                anchors.right: graphTab.right
-                anchors.top: toolBar.bottom
+                anchors.fill: parent
                 edgeModel: graphModel.edges
                 nodeModel: graphModel.nodes
                 parameterEndPointsModel: graphModel.parameterEndPoints
                 rootGraphModel: graphModel
+
+                Rectangle {
+                    id: graphInfoArea
+                    color: "transparent"
+                    border.color: "black"
+                    border.width: 2
+                    radius: 1
+                    height: dissolveWindow.toolBar
+                    width: locationPath.width
+                    y: graphModel.canvasDimensions.height - 180
+
+                    ColumnLayout {
+                        Label {
+                            id: locationPath
+                            text: "Location: " + "<b>%1</b>".arg(graphModel.location)
+                            padding: 2
+                        }
+                        Label {
+                            text: "Nodes: " + "<b>%1</b>".arg(graphModel.nodeCount - 2) // Ignore two (inputs and outputs)
+                            padding: 2
+                        }
+                        Label {
+                            text: "Edges: " +  "<b>%1</b>".arg(graphModel.edgeCount)
+                            padding: 2
+                        }
+                    }
+                }
 
                 Repeater {
                     id: graphDelegateRepeater
@@ -302,8 +382,11 @@ ApplicationWindow {
                             onDescended: function (idx) {
                                 graphModel.descend(idx);
                             }
-                            onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput) {
-                                graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput);
+                            onEdgeCreated: function (srcNode, srcOutput, tgtNode, tgtInput, creator) {
+                                graphModel.addEdge(srcNode, srcOutput, tgtNode, tgtInput, creator);
+                            }
+                            onEdgeDeferred: function (srcNode, srcOutput, tgtNode, tgtInput, creator) {
+                                graphModel.deferEdge(srcNode, srcOutput, tgtNode, tgtInput, creator);
                             }
                         }
                     }

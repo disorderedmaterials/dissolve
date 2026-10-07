@@ -37,11 +37,14 @@ std::string_view ExportXYZConfigurationNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult ExportXYZConfigurationNode::process()
 {
-    auto path = filePath_;
-    if (tagWithIteration_)
-        path = std::format("{}.{}", path, iteration_);
+    auto filePath = filePath_.string();
 
-    exportConfiguration(configuration_, path);
+    message("Exporting XYZ configuration to '{}'...\n", filePath);
+
+    if (tagWithIteration_)
+        filePath = std::format("{}.{}", filePath, iteration_);
+
+    exportConfiguration(configuration_, filePath);
 
     ++iteration_;
 

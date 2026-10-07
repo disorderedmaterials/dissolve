@@ -33,9 +33,13 @@ std::string_view ImportDLPOLYStructureNode::summary() const { return "Import a D
 // Perform processing
 NodeConstants::ProcessResult ImportDLPOLYStructureNode::process()
 {
-    std::ifstream infile{filePath_};
+    auto filePath = filePath_.string();
+
+    message("Reading structures of a DL_POLY CONFIG or REVCON file from '{}'...\n", filePath);
+
+    std::ifstream infile{filePath};
     if (!infile)
-        return error("Couldn't open file '{}' for loading coordinates data.\n", filePath_);
+        return error("Couldn't open file '{}' for loading coordinates data.\n", filePath);
     auto head = header().parse(infile);
     if (!head)
         return error("Failed to parse file header");

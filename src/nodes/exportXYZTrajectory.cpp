@@ -36,7 +36,11 @@ std::string_view ExportXYZTrajectoryNode::summary() const
 // Perform processing
 NodeConstants::ProcessResult ExportXYZTrajectoryNode::process()
 {
-    std::ofstream outfile(filePath_);
+    auto filePath = filePath_.string();
+
+    message("Exporting XYZ trajectory file to '{}'...\n", filePath);
+
+    std::ofstream outfile(filePath);
     std::ostream_iterator<char> out(outfile);
 
     std::format_to(out, "{}\n", configuration_->nAtoms());

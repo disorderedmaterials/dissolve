@@ -31,11 +31,15 @@ std::string_view ImportDLPUtilsSurfaceNode::summary() const { return "Import DLP
 // Perform processing
 NodeConstants::ProcessResult ImportDLPUtilsSurfaceNode::process()
 {
+    auto filePath = filePath_.string();
+
+    message("Reading DLPUtils 2D surface data from '{}'...\n", filePath);
+
     // Create the data
     data_.emplace();
 
-    if (!read(*data_, filePath_))
-        return error("Failed to read DLPUtils Surface data from file '{}'.\n", filePath_);
+    if (!read(*data_, filePath))
+        return error("Failed to read DLPUtils Surface data from file '{}'.\n", filePath);
 
     return NodeConstants::ProcessResult::Success;
 }
