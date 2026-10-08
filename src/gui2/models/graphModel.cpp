@@ -272,11 +272,7 @@ void GraphModel::deleteEdgeFromTarget(QString tgtNode, QString tgtInput)
     auto sourceOutput = std::string(edge->sourceOutput().name());
     auto targetInput = std::string(edge->targetInput().name());
     if (edges_.remove(*edge))
-    {
-        auto removed = parameterEndPoints()->remove(sourceNode, sourceOutput, targetNode, targetInput);
-        for (auto &[_, target] : removed)
-            target->setProperty("locked", false);
-    }
+        parameterEndPoints()->remove(sourceNode, sourceOutput, targetNode, targetInput);
 }
 
 // Select all relevant edges for deletion, determined from the source node and output parameter name
