@@ -126,6 +126,8 @@ class Node
     private:
     // Whether the node's data is up-to-date
     bool upToDate_{false};
+    // Current state of the node's progress tracker
+    std::optional<bool> processComplete_{};
 
     protected:
     // Version index for the node, bumped whenever result outputs change
@@ -146,6 +148,14 @@ class Node
     virtual void setUpdateRequired();
     // Return whether the node is volatile
     bool isVolatile() const;
+    // Set the progress tracker to a false state since the node's progress has started
+    void started();
+    // Set the progress tracker to a true state since the node's progress has finished
+    void finished();
+    // Returns the current state of the node's progress tracker
+    const std::optional<bool> &processComplete() const;
+    // Reset the progress tracker for the node
+    void resetProgressTracker();
     // Return whether the node's data is up-to-date
     bool isUpToDate() const;
     // Check that all required inputs are present, and that all inputs are valid

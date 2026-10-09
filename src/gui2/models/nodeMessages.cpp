@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodeMessages.h"
+#include <QTimer>
 #include <chrono>
 #include <format>
 #include <string>
@@ -12,18 +13,46 @@ NodeMessages::NodeMessages()
         flags_.setFlag(NodeMessages::Default);
 }
 
-//
+// Returns bool - true if this node has any alerts (errors or warnings) associated with it
 bool NodeMessages::hasAlerts()
 {
     auto hasAlerts = flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn);
     return hasAlerts;
 }
 
-// Returns bool - true if the indicator should be visible (false if Default state)
-bool NodeMessages::indicatorVisible()
+// Returns the indicator image path depending on the current notification state of the node
+QUrl NodeMessages::indicator()
 {
-    auto isDefaultState = flags_.isSetOrNone(NodeMessages::Default);
-    return !isDefaultState;
+    auto defaultValue = QUrl("qrc:/DissolveIconsModule/recent.svg");
+    if (!ready_)
+        return defaultValue;
+
+    auto node = graphModel_->graph()->findNode(nodeName_.toStdString());
+    if (!node)
+        return defaultValue;
+
+    auto finished = node->processComplete();
+
+    if (!finished.has_value())
+    {
+        flags_.setFlag(NodeMessages::Standby);
+        Q_EMIT messagesUpdated();
+        return defaultValue;
+    }
+
+    if (!*finished)
+        return QUrl("qrc:/DissolveIconsModule/waiting.svg");
+
+    if (flags_.isSet(NodeMessages::Error))
+        return QUrl("qrc:/DissolveIconsModule/false.svg");
+
+    if (flags_.isSet(NodeMessages::Warn))
+        return QUrl("qrc:/DissolveIconsModule/warn.svg");
+
+    if (flags_.isSet(NodeMessages::Success))
+        return QUrl("qrc:/DissolveIconsModule/true.svg");
+
+    return defaultValue;
 }
 
 // Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
@@ -43,42 +72,14 @@ QString NodeMessages::indicatorSummary()
     return "";
 }
 
-// Returns the indicator icon text
-QString NodeMessages::indicatorText()
-{
-    if (flags_.isSet(NodeMessages::Error))
-        return "!";
-    else if (flags_.isSet(NodeMessages::Warn))
-        return "!";
-    else if (flags_.isSet(NodeMessages::Success))
-        return QStringLiteral("\u2713");
-    else if (flags_.isSet(NodeMessages::Standby))
-        return QStringLiteral("\u2713");
-    return "";
-}
-
-// Returns the indicator icon color
-QColor NodeMessages::indicatorColor()
-{
-    if (flags_.isSet(NodeMessages::Error))
-        return QColor("red");
-    else if (flags_.isSet(NodeMessages::Warn))
-        return QColor("orange");
-    else if (flags_.isSet(NodeMessages::Success))
-        return QColor("green");
-    else if (flags_.isSet(NodeMessages::Standby))
-        return QColor("grey");
-    return QColor("transparent");
-}
-
 // Reset flags
 void NodeMessages::resetFlags()
 {
-    flags_.removeFlag(NodeMessages::Default);
     flags_.removeFlag(NodeMessages::Standby);
     flags_.removeFlag(NodeMessages::Error);
     flags_.removeFlag(NodeMessages::Warn);
     flags_.removeFlag(NodeMessages::Success);
+    flags_.setFlag(NodeMessages::Default);
 }
 
 // Flags for the node status
@@ -92,15 +93,35 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
 {
     graphModel_ = graphModel;
     QObject::connect(graphModel_, &GraphModel::graphReconstructionComplete, this, &NodeMessages::updateMessages);
+    QObject::connect(graphModel_, &GraphModel::graphRunStarted, this,
+                     [this]()
+                     {
+                         // Reset the node messages to default state for the start of a new graph run
+                         resetFlags();
+                         flags_.setFlag(NodeMessages::Standby);
+                         Q_EMIT messagesUpdated();
+
+                         // Start the timer to peek the node progress at 250 ms intervals
+                         if (!peekTimer_)
+                             peekTimer_ = new QTimer(this);
+                         QObject::connect(peekTimer_, &QTimer::timeout, this, &NodeMessages::peekNode);
+                         peekTimer_->start(250);
+                     });
     QObject::connect(graphModel_, &GraphModel::graphRunComplete, this,
                      [this]()
                      {
-                         resetFlags();
-                         updateMessages();
+                         // Stop the timer and reset it
+                         if (peekTimer_)
+                         {
+                             peekTimer_->stop();
+                             peekTimer_ = nullptr;
+                         }
+                         peekNode();
                      });
     QObject::connect(graphModel_, &GraphModel::graphInvalidated, this,
                      [this]()
                      {
+                         // The graph has been invalidated, but alerts are present on this node - keep them visible
                          if (hasAlerts())
                              return;
 
@@ -109,6 +130,7 @@ void NodeMessages::setGraphModel(GraphModel *graphModel)
                          flags_.setFlag(NodeMessages::Standby);
                          Q_EMIT messagesUpdated();
                      });
+    ready_ = true;
 }
 
 // Return the graph model
@@ -132,11 +154,21 @@ void NodeMessages::setParent(QQuickItem *parent) { parent_ = parent; }
 // Set the parent node
 QQuickItem *NodeMessages::parent() { return parent_; }
 
+// 'Peeks' at the node's progress while the graph is running, updating the messages and signalling that the update is complete
+void NodeMessages::peekNode()
+{
+    updateMessages();
+    Q_EMIT peeked();
+}
+
 // Update all
 void NodeMessages::updateMessages()
 {
-    if (!graphModel_->graph()->findNode(nodeName_.toStdString()))
+    auto node = graphModel_->graph()->findNode(nodeName_.toStdString());
+    if (!node)
         return;
+
+    resetFlags();
 
     Node::MessageStore messages;
     for (const auto &[level, msg] : *messageStore_)
@@ -189,10 +221,13 @@ void NodeMessages::updateMessages()
         if (hasErrors)
             flags_.setFlag(NodeMessages::Error);
 
-        // Check for success
-        if (!(flags_.isSet(NodeMessages::Error) && flags_.isSet(NodeMessages::Warn)))
-            flags_.setFlag(NodeMessages::Success);
+        flags_.removeFlag(NodeMessages::Default);
+    }
 
+    // Check for success
+    if (!(flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn)))
+    {
+        flags_.setFlag(NodeMessages::Success);
         flags_.removeFlag(NodeMessages::Default);
     }
 

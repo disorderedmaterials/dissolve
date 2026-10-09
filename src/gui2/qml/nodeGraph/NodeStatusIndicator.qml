@@ -7,8 +7,7 @@ Rectangle {
     id: root
 
     required property string summary
-    required property color iconColor
-    required property string iconText
+    required property var imageSource
 
     width: 25
     height: width
@@ -17,22 +16,21 @@ Rectangle {
 
     anchors.top: parent.top
     anchors.right: parent.right
-    anchors.topMargin: -60//-50
-    anchors.rightMargin: -20//-15
+    anchors.topMargin: -60
+    anchors.rightMargin: -20
 
-    Text {
-        anchors.fill: parent
-        text: iconText
-        color: iconColor
-        font.pixelSize: 16
-        font.bold: true
-        font.family: "DejaVu Sans"
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-    }
     HoverHandler {
         id: errorIndicatorHover
     }
     ToolTip.text: summary
-    ToolTip.visible: errorIndicatorHover.hovered
+    ToolTip.visible: errorIndicatorHover.hovered && (summary.length > 0)
+    ToolTip.delay: 500
+
+    Image {
+        id: indicatorImage
+
+        anchors.fill: parent
+        source: root.imageSource
+        fillMode: Image.PreserveAspectFit
+    }
 }

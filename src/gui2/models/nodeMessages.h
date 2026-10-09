@@ -47,15 +47,16 @@ class NodeMessages : public QObject
     friend class NodeMessageModel;
 
     Q_OBJECT;
-    Q_PROPERTY(bool hasAlerts READ hasAlerts NOTIFY messagesUpdated);
-    Q_PROPERTY(bool indicatorVisible READ indicatorVisible NOTIFY messagesUpdated);
+
+    // Read-only Node status indicator properties
+    Q_PROPERTY(QUrl indicator READ indicator NOTIFY peeked);
     Q_PROPERTY(double indicatorOpacity READ indicatorOpacity NOTIFY messagesUpdated);
-    Q_PROPERTY(QString indicatorText READ indicatorText NOTIFY messagesUpdated);
     Q_PROPERTY(QString indicatorSummary READ indicatorSummary NOTIFY messagesUpdated);
-    Q_PROPERTY(QColor indicatorColor READ indicatorColor NOTIFY messagesUpdated);
-    Q_PROPERTY(GraphModel *graphModel READ graphModel WRITE setGraphModel NOTIFY messageReceived);
-    Q_PROPERTY(QString nodeName READ nodeName WRITE setNodeName NOTIFY messageReceived);
-    Q_PROPERTY(const NodeMessageModel *model READ model NOTIFY messageReceived);
+
+    // Basic properties associated with the underlying Node delegate
+    Q_PROPERTY(GraphModel *graphModel READ graphModel WRITE setGraphModel NOTIFY nodeDelegateUpdated);
+    Q_PROPERTY(QString nodeName READ nodeName WRITE setNodeName NOTIFY nodeDelegateUpdated);
+    Q_PROPERTY(const NodeMessageModel *model READ model NOTIFY nodeDelegateUpdated);
 
     public:
     NodeMessages();
@@ -90,20 +91,20 @@ class NodeMessages : public QObject
     const Node::MessageStore *messageStore_;
     // Flags for the node status
     Flags<NodeMessages::NodeStatusFlags> flags_;
+    // Bool - true if the node's graph model has been set
+    bool ready_{false};
+    // Timer object to run during the threaded Dissolve graph execution
+    QTimer *peekTimer_{nullptr};
 
     public:
-    //
+    // Returns bool - true if this node has any alerts (errors or warnings) associated with it
     bool hasAlerts();
-    // Returns bool - true if the indicator should be visible (false if Default state)
-    bool indicatorVisible();
+    // Returns the indicator image path depending on the current notification state of the node
+    QUrl indicator();
     // Returns the indicator opacity (essentially 'greys out' the indicator if the graph has been invalidated)
     double indicatorOpacity();
     // Returns the indicator status summary
     QString indicatorSummary();
-    // Returns the indicator icon text
-    QString indicatorText();
-    // Returns the indicator icon color
-    QColor indicatorColor();
     // Flags for the node status
     const Flags<NodeMessages::NodeStatusFlags> &flags() const;
     // Info
@@ -122,8 +123,15 @@ class NodeMessages : public QObject
     QQuickItem *parent();
 
     Q_SIGNALS:
-    //
-    void messageReceived();
-    //
+    // Signal emitted when the nodes's QML delegate has been updated
+    void nodeDelegateUpdated();
+    // Signal emitted when the nodes's messages have been updated
     void messagesUpdated();
+    // Signal emitted when the node's progress has been 'peeked'
+    void peeked();
+
+    private Q_SLOTS:
+    // 'Peeks' at the node's progress while the graph is running, updating the messages and signalling that the update is
+    // complete
+    void peekNode();
 };
