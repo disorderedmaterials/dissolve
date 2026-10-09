@@ -50,8 +50,8 @@ void GraphModel::setGraph(Graph *graph)
     {
         reconstructibleNodes_.emplace();
         auto &existingNodes = graph->nodes();
-        for (const auto &[name, _] : existingNodes)
-            reconstructibleNodes_->push_back(name);
+        for (const auto &node : existingNodes)
+            reconstructibleNodes_->push_back(std::string(node->name()));
     }
 
     graph_ = graph;
@@ -145,7 +145,7 @@ void GraphModel::addNode(std::unique_ptr<Node> node, std::string_view name)
 {
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
     graph_->addNode(std::move(node), name);
-    wrapped_.emplace_back(*graph_->nodes()[std::string(name)]);
+    wrapped_.emplace_back(*graph_->findNode(name));
     nodes_.endInsertRows();
     Q_EMIT graphChanged();
 }
@@ -195,8 +195,7 @@ void GraphModel::deleteNode(int idx)
     wrapped_.erase(wrapped_.begin() + idx);
 
     // Erase the underlying graph node
-    graph_->reverseNodes().erase(graph_->findNode(nodeName));
-    graph_->nodes().erase(nodeName);
+    graph_->removeNode(graph_->findNode(nodeName));
 
     nodes_.endRemoveRows();
 

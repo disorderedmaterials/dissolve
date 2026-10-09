@@ -40,8 +40,8 @@ void GraphNodeModel::reset()
 
     // Emplace all nodes
     int idx = 0;
-    for (auto &[name, node] : graph->nodes())
-        auto &item = nodes.emplace_back(*node);
+    for (auto &node : graph->nodes())
+        nodes.emplace_back(*node);
 
     endResetModel();
 }

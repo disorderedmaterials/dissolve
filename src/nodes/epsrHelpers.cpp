@@ -32,12 +32,12 @@ EPSRNode::TargetCorrelationDataMap EPSRNode::findTargetCorrelationData()
 
     auto &allNodes = dissolveGraph()->nodes();
     auto filterOn = !namedWeights_.value().empty();
-    for (const auto &[nodeName, nodePtr] : allNodes)
+    for (const auto &nodePtr : allNodes)
     {
         // Filter by name (if any names set)
         if (filterOn)
         {
-            auto it = std::find(targetNames_.begin(), targetNames_.end(), nodeName);
+            auto it = std::find(targetNames_.begin(), targetNames_.end(), nodePtr->name());
             if (it == targetNames_.end())
                 continue;
         }
