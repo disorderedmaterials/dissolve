@@ -103,7 +103,7 @@ void GraphModel::addInput(QString nodeName, QString paramName, double x, double 
 {
     auto nodeIndex =
         std::distance(wrapped_.begin(), std::find_if(wrapped_.begin(), wrapped_.end(), [&](const auto &wrappedNode)
-                                                     { return wrappedNode.rawValue().name() == nodeName.toStdString(); }));
+                                                     { return wrappedNode.node()->name() == nodeName.toStdString(); }));
     auto &node = wrapped_[nodeIndex];
     x += 16;
     y += 64;
@@ -115,7 +115,7 @@ void GraphModel::addOutput(QString nodeName, QString paramName, double x, double
 {
     auto nodeIndex =
         std::distance(wrapped_.begin(), std::find_if(wrapped_.begin(), wrapped_.end(), [&](const auto &wrappedNode)
-                                                     { return wrappedNode.rawValue().name() == nodeName.toStdString(); }));
+                                                     { return wrappedNode.node()->name() == nodeName.toStdString(); }));
     auto &node = wrapped_[nodeIndex];
     x += 16;
     y += 64;
@@ -133,10 +133,10 @@ void GraphModel::upLevel()
 // Move into an inner graph
 void GraphModel::descend(int index)
 {
-    auto &node = wrapped_[index];
-    if (node.hasInner())
+    auto &wrapper = wrapped_[index];
+    if (wrapper.hasInner())
     {
-        setGraph(static_cast<Graph *>(&node.rawValue()));
+        setGraph(static_cast<Graph *>(wrapper.node()));
     }
 }
 
@@ -144,8 +144,8 @@ void GraphModel::descend(int index)
 void GraphModel::addNode(std::unique_ptr<Node> node, std::string_view name)
 {
     nodes_.beginInsertRows({}, graph_->nodes().size(), graph_->nodes().size() + 1);
+    wrapped_.emplace_back(node.get());
     graph_->addNode(std::move(node), name);
-    wrapped_.emplace_back(*graph_->findNode(name));
     nodes_.endInsertRows();
     Q_EMIT graphChanged();
 }
@@ -169,8 +169,8 @@ void GraphModel::emplace_back(int x, int y, QString type, QString name)
     auto node = graph_->createNode(type.toStdString(), name.toStdString());
     node->x = x;
     node->y = y;
-    auto &item = wrapped_.emplace_back(*node);
-    item.rawValue().setName(name.toStdString());
+    auto &item = wrapped_.emplace_back(node);
+    item.node()->setName(name.toStdString());
     nodes_.endInsertRows();
     Q_EMIT graphChanged();
 }
@@ -178,15 +178,15 @@ void GraphModel::emplace_back(int x, int y, QString type, QString name)
 void GraphModel::deleteNode(int idx)
 {
     nodes_.beginRemoveRows({}, idx, idx);
-    const auto nodeType = wrapped_[idx].rawValue().type();
-    std::string nodeName{wrapped_[idx].rawValue().name()};
+    const auto nodeType = wrapped_[idx].node()->type();
+    std::string nodeName{wrapped_[idx].node()->name()};
 
     // Remove any endpoints corresponding to this node
-    if (curveInputEndPoints_.contains(&wrapped_[idx].rawValue()))
-        curveInputEndPoints_.erase(&wrapped_[idx].rawValue());
-    if (curveOutputEndPoints_.contains(&wrapped_[idx].rawValue()))
-        curveOutputEndPoints_.erase(&wrapped_[idx].rawValue());
-    parameterEndPoints()->remove(&wrapped_[idx].rawValue());
+    if (curveInputEndPoints_.contains(wrapped_[idx].node()))
+        curveInputEndPoints_.erase(wrapped_[idx].node());
+    if (curveOutputEndPoints_.contains(wrapped_[idx].node()))
+        curveOutputEndPoints_.erase(wrapped_[idx].node());
+    parameterEndPoints()->remove(wrapped_[idx].node());
 
     // Delete the edges corresponding to this node
     edges_.removeConnected(nodeName);
@@ -232,7 +232,7 @@ void GraphModel::deferEdge(QString srcNode, QString srcOutput, QString tgtNode, 
         auto parentNode = creator->property("parentNodeBox").value<QObject *>();
         auto parentNodeName = parentNode->property("nodeName").toString().toStdString();
         auto nodeIt = std::find_if(wrapped_.begin(), wrapped_.end(), [&](const NodeWrapper &wrappedNode)
-                                   { return wrappedNode.rawValue().name() == parentNodeName; });
+                                   { return wrappedNode.node()->name() == parentNodeName; });
         auto &creatorNode = wrapped_[std::distance(wrapped_.begin(), nodeIt)];
         if (creator->property("connectionType").value<int>() == 1)
             return creatorNode.inputs->resetParameters();
@@ -247,7 +247,7 @@ void GraphModel::deferEdge(QString srcNode, QString srcOutput, QString tgtNode, 
 bool GraphModel::renameNode(QString currentName, QString newName)
 {
     auto nodeIt = std::find_if(wrapped_.begin(), wrapped_.end(), [&](const auto &wrappedNode)
-                               { return wrappedNode.rawValue().name() == currentName.toStdString(); });
+                               { return wrappedNode.node()->name() == currentName.toStdString(); });
 
     if (nodeIt != wrapped_.end() && !(graph_->findNode(newName.toStdString())))
         nodes_.setData(nodes_.index(std::distance(wrapped_.begin(), nodeIt)), QVariant::fromValue(newName),
@@ -348,7 +348,7 @@ bool GraphModel::renameInput(QString nodeName, QString currentName, QString newN
         return false;
 
     auto it = std::find_if(wrapped_.begin(), wrapped_.end(),
-                           [&](const auto &wrappedNode) { return wrappedNode.rawValue().name() == nodeName.toStdString(); });
+                           [&](const auto &wrappedNode) { return wrappedNode.node()->name() == nodeName.toStdString(); });
     auto focusNodeIdx = std::distance(wrapped_.begin(), it);
     auto &focusNode = wrapped_[focusNodeIdx];
 
@@ -427,7 +427,7 @@ bool GraphModel::renameOutput(QString nodeName, QString currentName, QString new
         return false;
 
     auto it = std::find_if(wrapped_.begin(), wrapped_.end(),
-                           [&](const auto &wrappedNode) { return wrappedNode.rawValue().name() == nodeName.toStdString(); });
+                           [&](const auto &wrappedNode) { return wrappedNode.node()->name() == nodeName.toStdString(); });
     auto focusNodeIdx = std::distance(wrapped_.begin(), it);
     auto &focusNode = wrapped_[focusNodeIdx];
 

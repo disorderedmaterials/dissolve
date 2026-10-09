@@ -31,17 +31,16 @@ void GraphNodeModel::reset()
     // Remove node-parameter end points corresponding to the previous node set
     for (const auto &wrappedNode : nodes)
     {
-        parent_->curveInputEndPoints_.erase(&wrappedNode.rawValue());
-        parent_->curveOutputEndPoints_.erase(&wrappedNode.rawValue());
+        parent_->curveInputEndPoints_.erase(wrappedNode.node());
+        parent_->curveOutputEndPoints_.erase(wrappedNode.node());
     }
 
     // Clear the nodes
     nodes.clear();
 
     // Emplace all nodes
-    int idx = 0;
     for (auto &node : graph->nodes())
-        nodes.emplace_back(*node);
+        nodes.emplace_back(node.get());
 
     endResetModel();
 }
@@ -125,19 +124,19 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
     switch (role - Qt::UserRole)
     {
         case NAME:
-            return QString::fromStdString(std::string(item.rawValue().name()));
+            return QString::fromStdString(std::string(item.node()->name()));
         case POSX:
         {
             // If node belongs to a new graph (not a reconstructed graph) attempt to position inputs, outputs and loopbacks in
             // their default x position
             if (!parent_->nodeReconstructionInProgress())
             {
-                auto *nodePtr = &item.rawValue();
+                auto *nodePtr = item.node();
                 auto optInitialX = parent_->nodeXPositionInitialiser()(nodePtr);
                 if (optInitialX.has_value())
                     nodePtr->x = *optInitialX;
             }
-            return item.rawValue().x;
+            return item.node()->x;
         }
         case POSY:
         {
@@ -145,17 +144,17 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
             // their default y position
             if (!parent_->nodeReconstructionInProgress())
             {
-                auto *nodePtr = &item.rawValue();
+                auto *nodePtr = item.node();
                 auto optInitialY = parent_->nodeYPositionInitialiser()(nodePtr);
                 if (optInitialY.has_value())
                     nodePtr->y = *optInitialY;
             }
-            return item.rawValue().y;
+            return item.node()->y;
         }
         case TYPE:
-            return QString::fromStdString(std::string(item.rawValue().type()));
+            return QString::fromStdString(std::string(item.node()->type()));
         case ICON:
-            return QString::fromStdString(std::format("qrc:/DissolveIconsModule/nodes/{}.svg", item.rawValue().type()));
+            return QString::fromStdString(std::format("qrc:/DissolveIconsModule/nodes/{}.svg", item.node()->type()));
         case INPUTS:
             return QVariant::fromValue(item.inputs.get());
         case OUTPUTS:
@@ -165,16 +164,14 @@ QVariant GraphNodeModel::data(const QModelIndex &index, int role) const
         case HAS_INNER_GRAPH:
             return item.hasInner();
         case IS_ROOT_NODE:
-            return dynamic_cast<DissolveGraph *>(item.rawValue().parentGraph()) != nullptr;
+            return dynamic_cast<DissolveGraph *>(item.node()->parentGraph()) != nullptr;
         case HAS_PROXY_PARAMETERS:
-            return dynamic_cast<InputsNode *>(&item.rawValue()) != nullptr ||
-                   dynamic_cast<OutputsNode *>(&item.rawValue()) != nullptr ||
-                   dynamic_cast<Graph *>(&item.rawValue()) != nullptr ||
-                   dynamic_cast<IterableGraph *>(&item.rawValue()) != nullptr;
+            return dynamic_cast<InputsNode *>(item.node()) != nullptr || dynamic_cast<OutputsNode *>(item.node()) != nullptr ||
+                   dynamic_cast<Graph *>(item.node()) != nullptr || dynamic_cast<IterableGraph *>(item.node()) != nullptr;
         case HAS_DYNAMIC_OUTPUTS:
-            return dynamic_cast<DetectMoleculesNode *>(&item.rawValue()) != nullptr;
+            return dynamic_cast<DetectMoleculesNode *>(item.node()) != nullptr;
         case VERSION:
-            return item.rawValue().versionIndex();
+            return item.node()->versionIndex();
     }
     return {};
 }
@@ -187,17 +184,17 @@ bool GraphNodeModel::setData(const QModelIndex &index, const QVariant &value, in
         case NAME:
         {
             auto name = value.toString().toStdString();
-            item.rawValue().setName(name);
+            item.node()->setName(name);
             Q_EMIT dataChanged(index, index, {role});
             return true;
         }
         case POSX:
-            item.rawValue().x = value.toInt();
+            item.node()->x = value.toInt();
             // Q_EMIT updatePosition(index.row());
             Q_EMIT dataChanged(index, index, {role});
             return true;
         case POSY:
-            item.rawValue().y = value.toInt();
+            item.node()->y = value.toInt();
             // Q_EMIT updatePosition(index.row());
             Q_EMIT dataChanged(index, index, {role});
             return true;

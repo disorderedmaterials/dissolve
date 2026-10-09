@@ -97,13 +97,13 @@ bool GraphEdgeModel::add(EdgeDefinition &definition)
 // Update all edges connected to the node at idx
 void GraphEdgeModel::updatePosition(const int idx)
 {
-    const auto &node = parent_->wrapped_[idx].rawValue();
+    const auto *node = parent_->wrapped_[idx].node();
     for (auto j = 0; j < graph_->edges().size(); ++j)
     {
         const auto &edge = graph_->edges()[j];
-        if (&edge->sourceNode() == &node)
+        if (&edge->sourceNode() == node)
             Q_EMIT dataChanged(index(j), index(j), {Role::SOURCE_X, Role::SOURCE_Y});
-        else if (&edge->targetNode() == &node)
+        else if (&edge->targetNode() == node)
             Q_EMIT dataChanged(index(j), index(j), {Role::TARGET_X, Role::TARGET_Y});
     }
 }
@@ -139,10 +139,10 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
     auto &edge = edges()[row];
 
     auto source = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
-                               [&edge](const auto &x) { return &x.rawValue() == &edge->sourceNode(); });
+                               [&edge](const auto &x) { return x.node() == &edge->sourceNode(); });
 
     auto target = std::find_if(parent_->wrapped_.begin(), parent_->wrapped_.end(),
-                               [&edge](const auto &x) { return &x.rawValue() == &edge->targetNode(); });
+                               [&edge](const auto &x) { return x.node() == &edge->targetNode(); });
 
     std::optional<QPointF> sourceOffset, targetOffset;
 
@@ -163,13 +163,13 @@ QVariant GraphEdgeModel::data(const QModelIndex &index, int role) const
     switch (role)
     {
         case Role::SOURCE_X:
-            return source->rawValue().x + (sourceOffset ? sourceOffset->x() : 0);
+            return source->node()->x + (sourceOffset ? sourceOffset->x() : 0);
         case Role::SOURCE_Y:
-            return source->rawValue().y + (sourceOffset ? sourceOffset->y() : 0);
+            return source->node()->y + (sourceOffset ? sourceOffset->y() : 0);
         case Role::TARGET_X:
-            return target->rawValue().x + (targetOffset ? targetOffset->x() : 0);
+            return target->node()->x + (targetOffset ? targetOffset->x() : 0);
         case Role::TARGET_Y:
-            return target->rawValue().y + (targetOffset ? targetOffset->y() : 0);
+            return target->node()->y + (targetOffset ? targetOffset->y() : 0);
         default:
             return {};
     }
