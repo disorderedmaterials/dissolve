@@ -10,6 +10,8 @@ The `QSpecies` module calculates the Qn distribution of a site, where n is the n
 
 {{< cimage src="qspecies.png" caption="Representation of Qn species." >}}
 
+A note about how the distance range affects the calculation - the range specified here affects, as one would expect, the allowed distances between network former and bonding oxygen sites. However, this implicitly also affects which oxygen sites are considered as bonding / bridging oxygens. Increasing the distance range means that oxygen atoms will "see" more network former sites, but an oxygen must be near to exactly two network former sites in order to be considered a bridging oxygen. Thus, increasing the cutoff beyond a reasonable distance will not generate higher-order Qn species as one might expect. The trend will instead be towards Q0 as the number of bridging oxygen sites will also tend to zero.
+
 ## Options
 
 ### Targets
