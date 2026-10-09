@@ -42,6 +42,7 @@ NodeConstants::ProcessResult TestGraph::runDynamic(Node *startNode, std::vector<
         if (!currentGraph_->addEdge(edge) ||
             currentGraph_->findNode(edge.targetNode)->run() == NodeConstants::ProcessResult::Failed)
             return NodeConstants::ProcessResult::Failed;
+
     return result;
 }
 // Append new node to the graph
@@ -238,18 +239,20 @@ IterableGraph *TestGraph::appendTrajectoryIterator(std::string trajectoryImportN
 // Append GR and SQ nodes
 std::pair<GRNode *, SQNode *> TestGraph::appendGRSQ(bool noAveraging, bool noIntraBroadening)
 {
+    auto oldHead = head_;
+
     // Create and setup the GR node
-    auto grNode = dynamic_cast<GRNode *>(createNode("GR"));
+    auto grNode = dynamic_cast<GRNode *>(appendNode("GR"));
     EXPECT_TRUE(grNode);
     if (noAveraging)
         EXPECT_TRUE(grNode->setOption("Averaging", std::optional<Number>()));
     if (noIntraBroadening)
         EXPECT_TRUE(grNode->setOption("IntraBroadening", Function1DWrapper()));
 
-    EXPECT_TRUE(currentGraph_->addEdge({std::string(fetchHead()->name()), "Configuration", "GR", "Configuration"}));
+    EXPECT_TRUE(currentGraph_->addEdge({std::string(oldHead->name()), "Configuration", "GR", "Configuration"}));
 
     // Create the SQ node
-    auto sqNode = dynamic_cast<SQNode *>(createNode("SQ"));
+    auto sqNode = dynamic_cast<SQNode *>(appendNode("SQ"));
     EXPECT_TRUE(sqNode);
     EXPECT_TRUE(currentGraph_->addEdge({"GR", "UnweightedGR", "SQ", "UnweightedGR"}));
 
