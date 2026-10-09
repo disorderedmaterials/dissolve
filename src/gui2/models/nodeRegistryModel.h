@@ -60,8 +60,6 @@ class NodeRegistryModel : public QAbstractListModel
     std::map<std::string, int> allOutputs_;
 
     public:
-    // Return a unique default node name for a given node type
-    Q_INVOKABLE QString uniqueNodeName(QVariant type);
     // Return node names by category
     Q_INVOKABLE QList<QVariantMap> nodeNames(QString category);
     // Return the enum options for the node categories

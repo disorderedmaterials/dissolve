@@ -73,20 +73,8 @@ QList<QVariantMap> NodeRegistryModel::nodeNames(QString category)
 // Return the enum options for the node categories
 EnumOptionsModel *NodeRegistryModel::categories() { return EnumRegistry::options(typeid(NodeRegistry::Category)).get(); }
 
-// Return a unique default node name for a given node type
-QString NodeRegistryModel::uniqueNodeName(QVariant type)
-{
-    increment(type.toString());
-    const auto count = tally(type.toString());
-    auto name = type.toString().toStdString() + std::string(count < 2 ? "" : "_" + std::format("{}", count));
-    return QString::fromStdString(name);
-}
-
 // Instantiate node from registry
-void NodeRegistryModel::instantiateNode(int x, int y, QVariant type)
-{
-    graphModel_->emplace_back(x, y, type.toString(), uniqueNodeName(type));
-}
+void NodeRegistryModel::instantiateNode(int x, int y, QVariant type) { graphModel_->emplace_back(x, y, type.toString()); }
 
 // Set the graph model
 void NodeRegistryModel::setGraphModel(GraphModel *graphModel)
