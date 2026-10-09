@@ -23,7 +23,7 @@ NodeRegistryModel::NodeRegistryModel(QObject *parent)
         auto &[name, producer] = node;
         auto dummyNode = NodeRegistry::produce(dummyGraph->parentGraph(), name);
         entries_.push_back(NodeRegistryDisplayElement{QString::fromStdString(std::string(dummyNode->type())),
-                                                      QString::fromStdString(std::string(dummyNode->summary())), 0});
+                                                      QString::fromStdString(std::string(dummyNode->summary()))});
 
         // Register parameters
         for (const auto &[name, _] : dummyNode->inputs())
@@ -36,19 +36,6 @@ NodeRegistryModel::NodeRegistryModel(QObject *parent)
 
 // Source node registry data
 std::vector<NodeRegistryModel::NodeRegistryDisplayElement> NodeRegistryModel::entries_;
-
-// Increment node type
-void NodeRegistryModel::increment(QString nodeType) { tally(nodeType)++; }
-
-// Decrement node type
-void NodeRegistryModel::decrement(QString nodeType) { tally(nodeType)--; }
-
-int &NodeRegistryModel::tally(QString nodeType)
-{
-    auto it = std::find_if(entries_.begin(), entries_.end(), [&](const auto &entry) { return entry.name == nodeType; });
-    std::size_t idx = std::distance(entries_.begin(), it);
-    return entries_[idx].tally;
-}
 
 // Return node names by category
 QList<QVariantMap> NodeRegistryModel::nodeNames(QString category)
@@ -77,15 +64,7 @@ EnumOptionsModel *NodeRegistryModel::categories() { return EnumRegistry::options
 void NodeRegistryModel::instantiateNode(int x, int y, QVariant type) { graphModel_->emplace_back(x, y, type.toString()); }
 
 // Set the graph model
-void NodeRegistryModel::setGraphModel(GraphModel *graphModel)
-{
-    graphModel_ = graphModel;
-    if (!graphModel)
-        return;
-
-    QObject::connect(graphModel_, &GraphModel::decrementNodeTypeRequired, this,
-                     [this](const std::string &type) { decrement(QString::fromStdString(type)); });
-}
+void NodeRegistryModel::setGraphModel(GraphModel *graphModel) { graphModel_ = graphModel; }
 
 /*
  * QAbstractItemModel overrides

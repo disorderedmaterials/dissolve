@@ -199,7 +199,6 @@ void GraphModel::deleteNode(int idx)
     nodes_.endRemoveRows();
 
     Q_EMIT graphChanged();
-    Q_EMIT decrementNodeTypeRequired(std::string(nodeType));
 }
 
 GraphEdgeModel *GraphModel::edges() { return &edges_; }

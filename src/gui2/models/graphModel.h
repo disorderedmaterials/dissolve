@@ -181,7 +181,6 @@ class GraphModel : public QObject
     void graphChanged();
     void graphInvalidated();
     void canvasDimensionsChanged();
-    void decrementNodeTypeRequired(const std::string &);
     void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
     void graphReconstructionComplete();
 
