@@ -9,6 +9,7 @@
 #include "math/windowFunction.h"
 #include "nodes/node.h"
 #include <optional>
+#include "classes/partialSetAccumulator.h"
 
 // Forward Declarations
 class Configuration;
@@ -60,6 +61,7 @@ class NeutronSQNode : public Node
     std::optional<PartialSet> weightedGR_;
     // Representative g(r) calculated from FT of total weighted F(Q)
     Data1D representativeGR_;
+    PartialSetAccumulator accumulator_;
 
     public:
     // Clear any local data

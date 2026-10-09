@@ -74,10 +74,13 @@ std::map<const AtomType *, int> Configuration::atomTypeIndexMap() const
     return typeMap;
 }
 
+#include <iostream>
 // Return used atom type vector
 std::vector<const AtomType *> Configuration::atomTypeVector() const
 {
     auto populations = atomTypePopulations();
+    for (auto &&[at, pop] : populations)
+        std::cout << std::format(" AT = {}  pop = {}\n", at->name(), pop);
     std::vector<const AtomType *> result(populations.size());
     std::transform(populations.vector().begin(), populations.vector().end(), result.begin(),
                    [](const auto &pop) { return pop.first; });

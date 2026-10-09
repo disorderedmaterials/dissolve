@@ -470,6 +470,8 @@ bool GRNode::calculateRawGR(const double grRange, bool &alreadyUpToDate)
     timer.stop();
     message("Finished summation and normalisation of partial g(r) data ({}).\n", timer.totalTimeString());
 
+    rawGR_->save("RawGR", "test", "xy", "g(r)");
+
     /*
      * Partials are now up-to-date
      */

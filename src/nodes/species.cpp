@@ -42,6 +42,16 @@ NodeConstants::ProcessResult SpeciesNode::process()
 
     if (recipe_)
         return recipe_->apply(species_) ? NodeConstants::ProcessResult::Success : NodeConstants::ProcessResult::Failed;
+    else
+    {
+        for (auto &i : species_.atoms())
+        {
+            auto at = species_.findAtomType(Elements::symbol(i.Z()));
+            if (!at)
+                at = species_.addAtomType(i.Z());
+            i.setAtomType(at);
+        }
+    }
 
     return NodeConstants::ProcessResult::Success;
 }

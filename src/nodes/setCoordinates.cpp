@@ -40,7 +40,12 @@ NodeConstants::ProcessResult SetCoordinatesNode::process()
     for (auto &&[cfgAtom, structureAtom] : zip(configuration_->atoms(), structure_.atoms()))
         cfgAtom.setR(structureAtom->r());
 
-    configuration_->notifyAtomicPositionsChanged();
+    for (auto i = 0; i < 9; ++i)
+        configuration_->atom(i).r().print();
 
+    // configuration_->updateAtomLocations();
+    configuration_->notifyAtomicPositionsChanged();
+    // for (auto i = 0; i < 9; ++i)
+        // configuration_->atom(i).r().print();
     return NodeConstants::ProcessResult::Success;
 }

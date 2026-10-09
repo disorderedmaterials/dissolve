@@ -301,5 +301,11 @@ NodeConstants::ProcessResult NeutronSQNode::process()
     WindowFunction window(referenceWindowFunction_);
     Fourier::sineFT(representativeGR_, 1.0 / (2.0 * M_PI * M_PI * unweightedGR_->effectiveDensity()), rMin, 0.05, rMax, window);
 
+    // weightedSQ_->save("SQ", "test", "xy", "barns/sr/atom");
+    // weightedGR_->save("GR", "test", "xy", "g(r)");
+
+    accumulator_ += *weightedSQ_;
+
+    accumulator_.save("NeutronSQ", "test", "xy", "barns/sr/atom");
     return NodeConstants::ProcessResult::Success;
 }
