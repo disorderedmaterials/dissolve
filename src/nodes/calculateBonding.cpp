@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "nodes/calculateBonding.h"
+#include "classes/cellArray.h"
 #include "data/atomicRadii.h"
 #include "main/dissolve.h"
 #include "templates/parallelDefs.h"
@@ -52,9 +53,13 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
         structure.clearBonds();
 
     auto box = structure.box();
-    auto nAtoms = PairIterator(structure.nAtoms());
 
-    PairIterator pairs(structure.nAtoms());
+    CellArray cells;
+    cells.generate(box, 6.0);
+
+    // Populate cells
+    for (auto &atom : structure.atoms())
+        cells.cell(atom->r())->addAtom(atom.get());
 
     // Look at two indices and check to see if it would be a vaild
     // bond.  If so, return a list with that bond, otherwise an empty
@@ -62,47 +67,53 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     // one element is identical to a std::optional, but the lists can
     // be trivially combined during the reduce part of
     // transform_reduce
-    auto validBond = [&structure, &box, tolerance, preventMetallic,
-                      clearBefore](std::tuple<int, int> pair) -> std::vector<std::tuple<StructureAtom *, StructureAtom *>>
+    auto validBond = [&box, tolerance, preventMetallic](const CellNeighbourPair idx) -> std::set<std::pair<int, int>>
     {
-        auto [indexI, indexJ] = pair;
-        if (indexI == indexJ)
-            return {};
-        auto i = structure.atom(indexI);
-        // Get StructureAtom 'i' and its radius
-        auto radiusI = AtomicRadii::radius(i->Z());
-        // Get StructureAtom 'j'
-        auto j = structure.atom(indexJ);
+        auto cellI = idx.cell;
+        auto cellJ = idx.neighbour;
 
-        // If the two atoms are both metal ions and prevent metallic bonds = true, continue
-        if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
-            return {};
+        std::set<std::pair<int, int>> result;
 
-        // Calculate distance between atoms
-        auto r = box.minimumDistance(j->r(), i->r());
+        for (auto i : cellI.atoms() | castView<StructureAtom *>())
+            for (auto j : cellJ.atoms() | castView<StructureAtom *>())
+            {
+                // Don't bond atoms to themselves
+                if (i == j)
+                    continue;
 
-        // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-        if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
-            return {};
+                // Get StructureAtom 'i' and its radius
+                auto radiusI = AtomicRadii::radius(i->Z());
+                // Get StructureAtom 'j'
 
-        if (structure.getBond(i, j))
-            return {};
+                // If the two atoms are both metal ions and prevent metallic bonds = true, continue
+                if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
+                    continue;
 
-        return {{i, j}};
+                // Calculate distance between atoms
+                auto r = box.minimumDistance(j->r(), i->r());
+
+                // Compare distance to sum of atomic radii (multiplied by tolerance factor)
+                if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
+                    continue;
+
+                result.insert({std::min(i->index(), j->index()), std::max(i->index(), j->index())});
+            }
+
+        return result;
     };
 
     // Combine two lists of bonds into a single list
     auto joinBonds = [](auto a, auto b)
     {
         auto ab = a;
-        ab.insert(ab.end(), b.begin(), b.end());
+        ab.merge(b);
         return ab;
     };
 
-    // Create an empty vector of the correct shape
-    std::vector<std::tuple<StructureAtom *, StructureAtom *>> empty;
     // In parallel, construct the list of the bonds that need to be added
-    auto results = std::transform_reduce(ParallelPolicies::par_unseq, pairs.begin(), pairs.end(), empty, joinBonds, validBond);
+    auto pairs = cells.getCellNeighbourPairsWithSelf();
+    auto results = std::transform_reduce(ParallelPolicies::par_unseq, pairs.begin(), pairs.end(),
+                                         std::set<std::pair<int, int>>(), joinBonds, validBond);
 
     // Add the bonds serially
     for (auto [i, j] : results)
