@@ -12,9 +12,9 @@
 class NodeWrapper
 {
     public:
-    NodeWrapper(Node &value)
-        : value_(&value), inputs(std::make_unique<ParameterModel>(value.inputs())),
-          outputs(std::make_unique<ParameterModel>(value.outputs())), options(std::make_unique<ParameterModel>(value.options()))
+    NodeWrapper(Node *node)
+        : node_(node), inputs(std::make_unique<ParameterModel>(node->inputs())),
+          outputs(std::make_unique<ParameterModel>(node->outputs())), options(std::make_unique<ParameterModel>(node->options()))
     {
     }
 
@@ -24,13 +24,13 @@ class NodeWrapper
     std::map<std::string, QPointF> inputsPos, outputPos;
 
     public:
-    // Get the actual value of the node
-    Node &rawValue() { return *value_; }
-    const Node &rawValue() const { return *value_; }
+    // Return the wrapped node
+    Node *node() { return node_; }
+    const Node *node() const { return node_; }
     // Does this node contain other nodes?
-    bool hasInner() { return dynamic_cast<Graph *>(value_) != nullptr; }
+    bool hasInner() { return dynamic_cast<Graph *>(node_) != nullptr; }
 
     private:
-    // The actual value of the node
-    Node *value_;
+    // Pointer to the node we're wrapping
+    Node *node_;
 };

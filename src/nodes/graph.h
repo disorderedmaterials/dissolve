@@ -66,16 +66,13 @@ class Graph : public Node
      */
     public:
     // Typedefs for Node and Edge storage
-    using Nodes = std::map<std::string, std::unique_ptr<Node>>;
-    using ReverseNodes = std::map<const Node *, std::string>;
+    using Nodes = std::vector<std::unique_ptr<Node>>;
     using Edges = std::vector<std::unique_ptr<Edge>>;
 
     protected:
-    // Map of node names to nodes
+    // Nodes in the graph
     Nodes nodes_;
-    // Map of nodes to node names
-    ReverseNodes reverseNodes_;
-    // Container of edges
+    // Edges between nodes in the graph
     Edges edges_;
 
     private:
@@ -87,10 +84,10 @@ class Graph : public Node
     Node *createNode(std::string_view type, std::string_view name = {});
     // Add node to graph
     Node *addNode(std::unique_ptr<Node> node, std::string_view name = {});
-    // Get name of specified child node
-    std::string_view nodeName(const Node *node) const;
+    // Remove node from the graph
+    void removeNode(Node *node);
     // Set name of specified child node
-    void setNodeName(const Node *node, std::string_view nodeName);
+    void setNodeName(Node *node, std::string_view nodeName);
     // Add edge between nodes
     virtual bool addEdge(const EdgeDefinition &definition);
     // Remove edge between nodes
@@ -104,10 +101,9 @@ class Graph : public Node
     std::vector<Edge *> findEdgesBySource(const std::string &sourceNode, const std::string &sourceOutput) const;
     // Return named node, if it exists
     Node *findNode(std::string_view nodeName);
+    const Node *findNode(std::string_view nodeName) const;
     // Return container of nodes
     Nodes &nodes();
-    // Return container of reverse nodes
-    ReverseNodes &reverseNodes();
     // Return container of edges between nodes
     Edges &edges();
     // Return a path to this graph from the root

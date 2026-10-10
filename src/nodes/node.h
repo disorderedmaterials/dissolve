@@ -39,6 +39,8 @@ class Node
     protected:
     // Node parent graph
     Graph *parentGraph_;
+    // Name of the node
+    std::string name_;
 
     public:
     // Position when presented graphically
