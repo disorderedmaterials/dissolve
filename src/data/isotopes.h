@@ -17,6 +17,17 @@ enum Isotope
     H_1,
     H_2,
     H_3,
+    H100D0,
+    H90D10,
+    H80D20,
+    H70D30,
+    H60D40,
+    H50D50,
+    H40D60,
+    H30D70,
+    H20D80,
+    H10D90,
+    H0D100,
     He_Natural,
     He_3,
     He_4,
@@ -444,6 +455,8 @@ bool hasIsotope(Elements::Element Z, int A);
 std::vector<Isotope> isotopes(Elements::Element Z);
 // Return isotope enum corresponding element and A (if it exists)
 Isotope isotope(Elements::Element Z, int A);
+// Return isotope data corresponding element and A (if it exists)
+const IsotopeData &isotopeData(Elements::Element Z, int A);
 // Return natural isotope for element (if it exists)
 Isotope naturalIsotope(Elements::Element Z);
 // Return element (Z) of Isotope

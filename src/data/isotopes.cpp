@@ -42,6 +42,22 @@ static std::vector<IsotopeData> sears91Data_ = {
     {Isotope::H_1, Elements::H, 1, "1/2(+)", 1.00783, -3.7406, 25.274, 1.7583, 80.27, 82.03, 0.3326},
     {Isotope::H_2, Elements::H, 2, "1(+)", 2.014, 6.671, 4.04, 5.592, 2.05, 7.64, 0.000519},
     {Isotope::H_3, Elements::H, 3, "1/2(+)", 3.01605, 4.792, -1.04, 2.89, 0.14, 3.03, 0},
+    {Isotope::H100D0, Elements::H, 10, "", 1.00797, -3.739, 0, 1.7568, 80.26, 82.02, 0.3326},
+    {Isotope::H90D10, Elements::H, 11, "", 1.108573, -2.698, 0.404, 2.14032, 72.43900000000001, 74.582, 0.2993919},
+    {Isotope::H80D20, Elements::H, 12, "", 1.209176, -1.657, 0.808, 2.52384, 64.61800000000001, 67.144, 0.2661838},
+    {Isotope::H70D30, Elements::H, 13, "", 1.309779, -0.6159999999999992, 1.2120000000000002, 2.90736, 56.797000000000004,
+     59.705999999999996, 0.2329757},
+    {Isotope::H60D40, Elements::H, 14, "", 1.410382, 0.42500000000000027, 1.616, 3.29088, 48.976, 52.267999999999994,
+     0.1997676},
+    {Isotope::H50D50, Elements::H, 15, "", 1.5109849999999998, 1.4660000000000002, 2.02, 3.6744, 41.155, 44.83, 0.1665595},
+    {Isotope::H40D60, Elements::H, 16, "", 1.611588, 2.5070000000000014, 2.4240000000000004, 4.05792, 33.33399999999999,
+     37.391999999999996, 0.13335139999999995},
+    {Isotope::H30D70, Elements::H, 17, "", 1.7121909999999998, 3.548000000000001, 2.8280000000000003, 4.44144,
+     25.512999999999995, 29.953999999999994, 0.10014329999999998},
+    {Isotope::H20D80, Elements::H, 18, "", 1.812794, 4.589, 3.232, 4.82496, 17.691999999999997, 22.516, 0.06693519999999999},
+    {Isotope::H10D90, Elements::H, 19, "", 1.9133969999999998, 5.630000000000001, 3.636, 5.20848, 9.870999999999999,
+     15.077999999999998, 0.03372709999999999},
+    {Isotope::H0D100, Elements::H, 20, "", 2.014, 6.671, 4.04, 5.592, 2.05, 7.64, 0.000519},
     {Isotope::He_Natural, Elements::He, 0, "", 4.0026, 3.26, 0, 1.34, 0, 1.34, 0.00747},
     {Isotope::He_3, Elements::He, 3, "1/2(+)", 3.01603, 5.74, -2.5, 4.42, 1.6, 6, 5333},
     {Isotope::He_4, Elements::He, 4, "0(+)", 4.0026, 3.26, 0, 1.34, 0, 1.34, 0},
@@ -471,6 +487,17 @@ Isotope isotope(Elements::Element Z, int A)
         Messenger::exception("No isotope with A = {} available for element {}.\n", A, Elements::symbol(Z));
 
     return it->isotope();
+}
+
+// Return isotope data corresponding element and A (if it exists)
+const IsotopeData &isotopeData(Elements::Element Z, int A)
+{
+    auto it = std::find_if(sears91Data_.begin(), sears91Data_.end(),
+                           [Z, A](const auto &topeData) { return topeData.Z() == Z && topeData.A() == A; });
+    if (it == sears91Data_.end())
+        Messenger::exception("No isotope with A = {} available for element {}.\n", A, Elements::symbol(Z));
+
+    return *it;
 }
 
 // Return natural isotope for element (if it exists)
