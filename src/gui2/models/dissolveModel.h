@@ -53,6 +53,7 @@ class DissolveModel : public QObject
 
     public Q_SLOTS:
     // Export to a file
+    bool save();
     bool saveAs(QUrl filename);
 
     public:

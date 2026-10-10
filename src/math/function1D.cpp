@@ -592,7 +592,7 @@ void Function1DWrapper::serialise(std::string tag, SerialisedValue &target) cons
 void Function1DWrapper::deserialise(const SerialisedValue &node)
 {
     Functions1D::Form proxy;
-    form_ = getEnumOptions(proxy).deserialise(node);
+    form_ = getEnumOptions(proxy).deserialise(node.at("form"));
 
     Deserialisable::vector(node, "parameters",
                            [this](const auto &x) { parameters_.emplace_back(Deserialisable::deser<double>(x)); });
