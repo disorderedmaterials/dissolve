@@ -157,13 +157,7 @@ void fromMap(const std::map<K, V> &map, std::string name, SerialisedValue &node,
         if (!filter(key, value))
             continue;
         changed = true;
-        if constexpr (SerialisablePointer<V>)
-            value->serialise(std::string(key), result);
-        else
-            // We use the direct value (with casting) instead of
-            // value.serialise() to handle the case where the value
-            // is a raw type (e.g. int)
-            result[std::string(key)] = value;
+        serialiseOnto(value, key, result);
     }
     if (changed)
         node[name] = result;
