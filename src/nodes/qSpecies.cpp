@@ -14,11 +14,11 @@ QSpeciesNode::QSpeciesNode(Graph *parentGraph) : Node(parentGraph)
     addInput("Configuration", "Set target configuration for the module", configuration_)->setFlags({ParameterBase::Required});
 
     // Options
-    addOption("BondingOxygen", "Set the site(s) 'BO' which are to represent the bonding oxygen", bridgingOxygenSpeciesSites_);
+    addOption("BridgingOxygen", "Set the site(s) 'BO' which are to represent the bridging oxygen", bridgingOxygenSpeciesSites_);
     addOption("NetworkFormer",
-              "Set the site(s) 'NF' for which the distribution around the bonding oxygen sites should be calculated",
+              "Set the site(s) 'NF' for which the distribution around the bridging oxygen sites should be calculated",
               networkFormerSpeciesSites_);
-    addOption("DistanceRange", "Distance range (min, max) over which to calculate Q-Species from central site", distanceRange_);
+    addOption("DistanceRange", "Allowed distance range (min, max) for NF-BO interactions", distanceRange_);
 
     // State data
     addStateData("qSpeciesHistogram", qSpeciesHistogram_);

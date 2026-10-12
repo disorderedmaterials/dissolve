@@ -106,6 +106,7 @@ bool Dissolve::loadInput(std::string_view filename)
         {
             SerialisedValue contents = toml::parse(std::string(filename));
             deserialise(contents);
+            inputFilename_ = filename;
             return true;
         }
         catch (toml::syntax_error &e)
