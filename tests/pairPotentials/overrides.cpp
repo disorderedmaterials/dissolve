@@ -13,7 +13,7 @@ TEST(PairPotentialOverridesTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
@@ -22,9 +22,8 @@ TEST(PairPotentialOverridesTest, Water)
     PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
     // Set all atomtype charges zero
-    auto waterSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterSpeciesNode);
-    for (auto &at : waterSpeciesNode->species().atomTypes())
+    auto &species = *testGraph.findSpecies("Water");
+    for (auto &at : species.atomTypes())
         at->setCharge(0.0);
 
     // Run the graph from the Import node to set up the configuration
@@ -41,7 +40,7 @@ TEST(PairPotentialOverridesTest, Water)
     EXPECT_NEAR(productionEnergy.pairPotential.interMolecular, expectedVanDerWaalsEnergy, 4.3e-2);
 
     // Set all short-range interaction potentials to zero
-    for (auto &at : waterSpeciesNode->species().atomTypes())
+    for (auto &at : species.atomTypes())
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
 
     // TODO Need to manually clear the pair potential data so it is correctly regenerated

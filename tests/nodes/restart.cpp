@@ -15,7 +15,8 @@ TEST(RestartTest, Configuration)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 5000}}, 0.0213)) << "Created Configuration";
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.createAtomicSpecies(Elements::Ar), 5000}}, 0.0213))
+        << "Created Configuration";
     auto sqNode = testGraph.appendGRSQ(true, true);
     auto grNode = testGraph.findNode("GR");
     ASSERT_TRUE(grNode->setOption<GRNode::PartialsMethod>("Method", GRNode::PartialsMethod::TestMethod));

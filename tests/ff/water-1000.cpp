@@ -12,7 +12,7 @@ TEST(Water1000EnergyTest, Full)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
@@ -44,7 +44,7 @@ TEST(Water1000ForceTest, Full)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/full.REVCON"));
     auto importNode = testGraph.findNode("ImportDLPOLYStructure");
     ASSERT_TRUE(importNode);
@@ -74,7 +74,7 @@ TEST(Water1000ForceTest, Intra)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/intra.REVCON"));
     auto importNode = testGraph.findNode("ImportDLPOLYStructure");
     ASSERT_TRUE(importNode);
@@ -105,7 +105,7 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
@@ -114,10 +114,9 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto hw = waterNode->species().findAtomType("HW");
-    auto ow = waterNode->species().findAtomType("OW");
+    auto &species = *testGraph.findSpecies("Water");
+    auto hw = species.findAtomType("HW");
+    auto ow = species.findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     hw->setCharge(0.0);
     ow->setCharge(0.0);
@@ -142,7 +141,7 @@ TEST(Water1000ForceTest, ShortRangeOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/vdw.REVCON"));
     auto importNode = testGraph.findNode("ImportDLPOLYStructure");
     ASSERT_TRUE(importNode);
@@ -153,10 +152,9 @@ TEST(Water1000ForceTest, ShortRangeOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto hw = waterNode->species().findAtomType("HW");
-    auto ow = waterNode->species().findAtomType("OW");
+    auto &species = *testGraph.findSpecies("Water");
+    auto hw = species.findAtomType("HW");
+    auto ow = species.findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     hw->setCharge(0.0);
     ow->setCharge(0.0);
@@ -183,7 +181,7 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
@@ -191,9 +189,8 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove short range from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto ow = waterNode->species().findAtomType("OW");
+    auto &species = *testGraph.findSpecies("Water");
+    auto ow = species.findAtomType("OW");
     ASSERT_TRUE(ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=3.0");
 
@@ -217,7 +214,7 @@ TEST(Water1000ForceTest, CoulombOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/coulomb.REVCON"));
     auto importNode = testGraph.findNode("ImportDLPOLYStructure");
     ASSERT_TRUE(importNode);
@@ -227,9 +224,8 @@ TEST(Water1000ForceTest, CoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove short range from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto ow = waterNode->species().findAtomType("OW");
+    auto &species = *testGraph.findSpecies("Water");
+    auto ow = species.findAtomType("OW");
     ASSERT_TRUE(ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
@@ -255,7 +251,7 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/shifted.REVCON"));
     auto importNode = testGraph.findNode("ImportDLPOLYStructure");
     ASSERT_TRUE(importNode);
@@ -264,10 +260,9 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto hw = waterNode->species().findAtomType("HW");
-    auto ow = waterNode->species().findAtomType("OW");
+    auto &species = *testGraph.findSpecies("Water");
+    auto hw = species.findAtomType("HW");
+    auto ow = species.findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
@@ -292,7 +287,7 @@ TEST(Water1000EnergyTest, Override)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
@@ -300,9 +295,8 @@ TEST(Water1000EnergyTest, Override)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Set all charge and short-range interaction potentials to zero
-    auto waterSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterSpeciesNode);
-    for (auto &at : waterSpeciesNode->species().atomTypes())
+    auto &species = *testGraph.findSpecies("Water");
+    for (auto &at : species.atomTypes())
     {
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
         at->setCharge(0.0);
@@ -331,7 +325,7 @@ TEST(Water1000ForceTest, Overrides)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/vdw.REVCON"));
     auto importNode = testGraph.findNode("ImportDLPOLYStructure");
     ASSERT_TRUE(importNode);
@@ -341,9 +335,8 @@ TEST(Water1000ForceTest, Overrides)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Set all charge and short-range interaction potentials to zero
-    auto waterSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterSpeciesNode);
-    for (auto &at : waterSpeciesNode->species().atomTypes())
+    auto &species = *testGraph.findSpecies("Water");
+    for (auto &at : species.atomTypes())
     {
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
         at->setCharge(0.0);

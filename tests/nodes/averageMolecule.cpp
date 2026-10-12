@@ -12,7 +12,7 @@ TEST(AverageMoleculeNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water-dlpoly.toml"), 267}}, 0.1);
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
@@ -21,7 +21,7 @@ TEST(AverageMoleculeNodeTest, Water)
     // Add the analysis node to the iterator
     auto avgMol = dynamic_cast<AverageMoleculeNode *>(iterator->createNode("AverageMolecule"));
     ASSERT_TRUE(avgMol);
-    auto *water = testGraph.findNode("Water")->getOutputValue<const Species *>("Species");
+    auto *water = testGraph.findSpecies("Water");
     ASSERT_TRUE(water);
     ASSERT_TRUE(avgMol->setOption<const SpeciesSite *>("Site", water->findSite("HMidpoint")));
     ASSERT_TRUE(iterator->addEdge({testGraph.fetchHeadName(), "Configuration", "AverageMolecule", "Configuration"}));
@@ -40,7 +40,7 @@ TEST(AverageMoleculeNodeTest, BeNDy)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/bendy.toml", 1}}, 1.0e-4);
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/bendy.toml"), 1}}, 1.0e-4);
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "xyz/bendy-trajectory.xyz");
@@ -49,7 +49,7 @@ TEST(AverageMoleculeNodeTest, BeNDy)
     // Add the analysis node to the iterator
     auto avgMol = dynamic_cast<AverageMoleculeNode *>(iterator->createNode("AverageMolecule"));
     ASSERT_TRUE(avgMol);
-    auto *bendy = testGraph.findNode("BeNDy")->getOutputValue<const Species *>("Species");
+    auto *bendy = testGraph.findSpecies("BeNDy");
     ASSERT_TRUE(bendy);
     ASSERT_TRUE(avgMol->setOption<const SpeciesSite *>("Site", bendy->findSite("Origin")));
     ASSERT_TRUE(iterator->addEdge({testGraph.fetchHeadName(), "Configuration", "AverageMolecule", "Configuration"}));

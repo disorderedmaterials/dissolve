@@ -16,7 +16,7 @@ class HexaneForcefieldTest : public ::testing::Test
     {
         ASSERT_TRUE(testGraph_.createConfiguration("Box",
                                                    {
-                                                       {"species/hexane.toml", nMols},
+                                                       {testGraph_.importSpecies("species/hexane.toml"), nMols},
                                                    },
                                                    {30.769064857500, 46.153597286200, 30.769064857500}));
         ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));

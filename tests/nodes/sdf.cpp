@@ -13,7 +13,7 @@ TEST(SDFNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water-dlpoly.toml"), 267}}, 0.1);
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
@@ -22,7 +22,7 @@ TEST(SDFNodeTest, Water)
     // Add the analysis module to the iterator
     auto sdf = dynamic_cast<SDFNode *>(iterator->createNode("SDF"));
     ASSERT_TRUE(sdf);
-    auto *water = testGraph.findNode("Water")->getOutputValue<const Species *>("Species");
+    auto *water = testGraph.findSpecies("Water");
     ASSERT_TRUE(water);
     ASSERT_TRUE(sdf->setOption<SpeciesSites>("SiteA", {{water->findSite("HMidpoint")}}));
     ASSERT_TRUE(sdf->setOption<SpeciesSites>("SiteB", {{water->findSite("HMidpoint")}}));
@@ -44,7 +44,8 @@ TEST(SDFNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/benzene.toml", 181}}, {29.925089931000, 29.925089931000, 29.925089931000});
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/benzene.toml"), 181}},
+                                  {29.925089931000, 29.925089931000, 29.925089931000});
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/benzene181/benzene181.xyz");
@@ -53,7 +54,7 @@ TEST(SDFNodeTest, Benzene)
     // Add the analysis module to the iterator
     auto sdf = dynamic_cast<SDFNode *>(iterator->createNode("SDF"));
     ASSERT_TRUE(sdf);
-    auto *benzene = testGraph.findNode("Benzene")->getOutputValue<const Species *>("Species");
+    auto *benzene = testGraph.findSpecies("Benzene");
     ASSERT_TRUE(benzene);
     ASSERT_TRUE(sdf->setOption<SpeciesSites>("SiteA", {{benzene->findSite("Ring")}}));
     ASSERT_TRUE(sdf->setOption<SpeciesSites>("SiteB", {{benzene->findSite("Ring")}}));

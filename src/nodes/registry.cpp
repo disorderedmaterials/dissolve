@@ -5,6 +5,7 @@
 #include "nodes/add.h"
 #include "nodes/angle.h"
 #include "nodes/atomicMC.h"
+#include "nodes/atomicSpecies.h"
 #include "nodes/averageMolecule.h"
 #include "nodes/axisAngle.h"
 #include "nodes/bragg.h"
@@ -34,6 +35,7 @@
 #include "nodes/importDLPUtilsSurface.h"
 #include "nodes/importEPSRAtoStructure.h"
 #include "nodes/importMoscitoStructure.h"
+#include "nodes/importSpecies.h"
 #include "nodes/importXYData.h"
 #include "nodes/importXYZStructure.h"
 #include "nodes/importXYZTrajectory.h"
@@ -86,9 +88,12 @@ const std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalPro
          {"SQ", makeDerivedNode<SQNode>()},
      }},
     {Data,
-     {{"Configuration", makeDerivedNode<ConfigurationNode>()},
+     {{"AtomicSpecies", makeDerivedNode<AtomicSpeciesNode>()},
+      {"Configuration", makeDerivedNode<ConfigurationNode>()},
       {"Forcefield", makeDerivedNode<ForcefieldNode>()},
-      {"Species", makeDerivedNode<SpeciesNode>()}}},
+      {"Species", makeDerivedNode<SpeciesNode>()}}
+
+    },
     {Export,
      {{"ExportBlockData", makeDerivedNode<ExportBlockDataNode>()},
       {"ExportData", makeDerivedNode<ExportDataNode>()},
@@ -105,6 +110,7 @@ const std::map<NodeRegistry::Category, ProducerMap> NodeRegistry::categoricalPro
       {"ImportDLPUtilsSurface", makeDerivedNode<ImportDLPUtilsSurfaceNode>()},
       {"ImportEPSRAtoStructure", makeDerivedNode<ImportEPSRAtoStructureNode>()},
       {"ImportMoscitoStructure", makeDerivedNode<ImportMoscitoStructureNode>()},
+      {"ImportSpecies", makeDerivedNode<ImportSpeciesNode>()},
       {"ImportXYData", makeDerivedNode<ImportXYDataNode>()},
       {"ImportXYZStructure", makeDerivedNode<ImportXYZStructureNode>()},
       {"ImportXYZTrajectory", makeDerivedNode<ImportXYZTrajectoryNode>()}}},

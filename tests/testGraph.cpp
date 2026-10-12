@@ -4,10 +4,12 @@
 #include "tests/testGraph.h"
 #include "classes/isotopologueSet.h"
 #include "main/dissolve.h"
+#include "nodes/atomicSpecies.h"
 #include "nodes/bragg.h"
 #include "nodes/dissolve.h"
 #include "nodes/forcefield.h"
 #include "nodes/gr.h"
+#include "nodes/importSpecies.h"
 #include "nodes/insertRandom.h"
 #include "nodes/iterableGraph.h"
 #include "nodes/neutronSQ.h"
@@ -59,38 +61,19 @@ Node *TestGraph::appendNode(const std::string &nodeType, const std::optional<std
 }
 // Create species insertion node chain
 Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSourceOutput,
-                                        const std::vector<std::pair<std::string, int>> &species, double rho,
+                                        const std::vector<std::pair<const Species *, int>> &species, double rho,
                                         Units::DensityUnits rhoUnits, InsertRandomNode::BoxScalingType boxScalingType)
 {
     // Add Species and Insert nodes
-    for (auto &[speciesString, population] : species)
+    for (auto &[speciesPtr, population] : species)
     {
-        // Create the species node and get the species pointer
-        std::unique_ptr<SpeciesNode> speciesUnique;
-        if (speciesString.ends_with(".toml"))
-            speciesUnique = loadTOMLSpecies(speciesString);
-        else
-        {
-            if (speciesString.find('|') == std::string::npos)
-                speciesUnique = createAtomicSpecies(Elements::element(speciesString), {ShortRangeFunctions::Form::Undefined});
-            else
-                speciesUnique =
-                    createAtomicSpecies(Elements::element(DissolveSys::beforeChar(speciesString, '|')),
-                                        {ShortRangeFunctions::Form::LennardJones, DissolveSys::afterChar(speciesString, '|')});
-        }
-        EXPECT_TRUE(speciesUnique);
-        auto &species = speciesUnique->species();
-
-        // Move the species node into the graph
-        currentGraph_->addNode(std::move(speciesUnique), species.name());
-
-        auto insertNodeName = std::format("Insert-{}", species.name());
+        auto insertNodeName = std::format("Insert-{}", speciesPtr->name());
         EXPECT_TRUE(appendNode("InsertRandom", insertNodeName));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Population", population));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Density", rho));
         EXPECT_TRUE(fetchHead()->setOption("BoxScaling", boxScalingType));
         EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
-        EXPECT_TRUE(currentGraph_->addEdge({std::string(species.name()), "Species", insertNodeName, "Species"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(speciesPtr->name()), "Species", insertNodeName, "Species"}));
         EXPECT_TRUE(
             currentGraph_->addEdge({std::string(cfgSourceNode->name()), cfgSourceOutput, insertNodeName, "Configuration"}));
 
@@ -103,30 +86,33 @@ Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSour
 
     return fetchHead();
 }
-
-// Create and return atomic SpeciesNode
-std::unique_ptr<SpeciesNode> TestGraph::createAtomicSpecies(Elements::Element element,
-                                                            InteractionPotential<ShortRangeFunctions> potential)
+// Find a species corresponding to a species node belonging to the graph of any type (Species/ImportSpecies/AtomicSpecies)Node
+const Species *TestGraph::findSpecies(std::string name)
 {
-    // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
-    auto speciesNodePtr = speciesNodeUniquePtr.get();
-    auto species = &speciesNodePtr->species();
-    species->setName(Elements::symbol(element));
-    species->createAtomic(element, potential);
+    auto node = findNode(name);
+    if (!node)
+        return nullptr;
 
-    return speciesNodeUniquePtr;
+    return node->findOutput("Species")->get<const Species *>();
 }
-// Create species from TOML file
-std::unique_ptr<SpeciesNode> TestGraph::loadTOMLSpecies(std::string_view path)
+// Create atomic species
+const Species *TestGraph::createAtomicSpecies(Elements::Element element, std::string interactionPotential)
 {
-    // Add species node
-    auto speciesNodeUniquePtr = std::make_unique<SpeciesNode>(nullptr);
-    auto speciesNodePtr = speciesNodeUniquePtr.get();
-    auto &species = speciesNodePtr->species();
-    species.load(path);
-
-    return speciesNodeUniquePtr;
+    auto node = createNode("AtomicSpecies", Elements::symbol(element));
+    node->setOption("Element", element);
+    node->setOption("InteractionPotential", interactionPotential);
+    node->run();
+    return node->findOutput("Species")->get<const Species *>();
+}
+// Import species
+const Species *TestGraph::importSpecies(std::filesystem::path tomlPath)
+{
+    auto node = std::make_unique<ImportSpeciesNode>(this);
+    node->setOption("FilePath", tomlPath);
+    node->run();
+    auto species = node->findOutput("Species")->get<const Species *>();
+    addNode(std::move(node), species->name());
+    return species;
 }
 // Create a species node with structure and forcefield data sources
 SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name, std::string structureNodeType,
@@ -167,7 +153,7 @@ SpeciesNode *TestGraph::createSpeciesFromStructureAndForcefield(std::string name
     return speciesNodePtr;
 }
 // Create basic configuration graph, returning the last node
-Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species, double rho,
+Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const Species *, int>> &species, double rho,
                                      Units::DensityUnits rhoUnits)
 {
     // Create configuration
@@ -178,7 +164,7 @@ Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pa
                                   InsertRandomNode::BoxScalingType::AddVolume);
 }
 // Create basic configuration graph, returning the last node
-Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<std::string, int>> &species,
+Node *TestGraph::createConfiguration(std::string name, const std::vector<std::pair<const Species *, int>> &species,
                                      const Vector3 &cellLengths, const Vector3 &cellAngles)
 {
     // Create configuration and SetBox nodes
@@ -260,27 +246,23 @@ std::pair<GRNode *, SQNode *> TestGraph::appendGRSQ(bool noAveraging, bool noInt
 }
 // Create a NeutronSQ node with optional reference data
 NeutronSQNode *TestGraph::appendNeutronSQ(SQNode *sqNode, std::string name,
-                                          const std::vector<std::tuple<std::string, std::string, double>> isotopologues,
+                                          const std::vector<std::tuple<const Species *, std::string, double>> isotopologues,
                                           std::string referenceData, bool isHistogram)
 {
     // Construct the isotopologue set
     IsotopologueSet isotopologueSet;
-    for (auto &&[speciesName, isotopologueName, relativeWeight] : isotopologues)
+    for (auto &&[species, isotopologueName, relativeWeight] : isotopologues)
     {
-        // Find the named species node
-        auto speciesNode = dynamic_cast<SpeciesNode *>(findNode(speciesName));
-        if (!speciesNode)
+        if (!species)
         {
-            std::cout << std::format("No species named '{}' exists in the graph - can't construct IsotopologueSet\n",
-                                     speciesName);
+            std::cout << std::format("Null species found - can't construct IsotopologueSet\n");
             return nullptr;
         }
-        auto &species = speciesNode->species();
-        auto isotopologue = species.findIsotopologue(isotopologueName);
+        auto isotopologue = species->findIsotopologue(isotopologueName);
         if (!isotopologue)
         {
             std::cout << std::format("No isotopologue named '{}' exists in species '{}' - can't construct IsotopologueSet\n",
-                                     isotopologueName, speciesName);
+                                     isotopologueName, species->name());
             return nullptr;
         }
         isotopologueSet.add(isotopologue, relativeWeight);

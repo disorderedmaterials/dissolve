@@ -16,7 +16,7 @@ class BenzeneForcefieldTest : public ::testing::Test
     {
         ASSERT_TRUE(testGraph_.createConfiguration("Box",
                                                    {
-                                                       {"species/benzene.toml", 181},
+                                                       {testGraph_.importSpecies("species/benzene.toml"), 181},
                                                    },
                                                    {29.925089931, 29.925089931, 29.925089931}));
         ASSERT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
@@ -36,10 +36,9 @@ class BenzeneForcefieldTest : public ::testing::Test
         configuration_ = testGraph_.fetchHead()->getOutputValue<Configuration *>("Configuration");
 
         // Get the species atom types
-        auto benzeneNode = dynamic_cast<SpeciesNode *>(testGraph_.findNode("Benzene"));
-        ASSERT_TRUE(benzeneNode);
-        CA_ = benzeneNode->species().findAtomType("CA");
-        HA_ = benzeneNode->species().findAtomType("HA");
+        auto benzene = testGraph_.findSpecies("Benzene");
+        CA_ = benzene->findAtomType("CA");
+        HA_ = benzene->findAtomType("HA");
         ASSERT_TRUE(CA_ && HA_);
     }
 

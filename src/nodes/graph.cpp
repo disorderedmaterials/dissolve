@@ -251,8 +251,11 @@ Node *Graph::findNode(std::string_view nodeName)
 
     // Search through child nodes
     for (auto &node : nodes_)
-        if (node->name() == nodeName)
+    {
+        auto otherName = node->name();
+        if (otherName == nodeName)
             return node.get();
+    }
 
     return nullptr;
 }

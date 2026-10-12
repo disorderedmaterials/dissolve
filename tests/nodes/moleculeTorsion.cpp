@@ -11,7 +11,8 @@ TEST(MoleculeTorsionNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/benzene.toml", 181}}, {29.925089931000, 29.925089931000, 29.925089931000});
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/benzene.toml"), 181}},
+                                  {29.925089931000, 29.925089931000, 29.925089931000});
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/benzene181/benzene181.xyz");
@@ -20,7 +21,7 @@ TEST(MoleculeTorsionNodeTest, Benzene)
     // Add the analysis node to the iterator
     auto moleculeTorsion = dynamic_cast<MoleculeTorsionNode *>(iterator->createNode("MoleculeTorsion"));
     ASSERT_TRUE(moleculeTorsion);
-    auto *benzene = testGraph.findNode("Benzene")->getOutputValue<const Species *>("Species");
+    auto *benzene = testGraph.findSpecies("Benzene");
     ASSERT_TRUE(benzene);
     ASSERT_TRUE(moleculeTorsion->setOption("Species", benzene));
     ASSERT_TRUE(moleculeTorsion->setOption<Number>("I", 0));

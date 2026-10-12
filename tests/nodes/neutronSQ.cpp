@@ -13,7 +13,7 @@ TEST(NeutronSQNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato"));
 
     // Add correlation function nodes
@@ -24,8 +24,9 @@ TEST(NeutronSQNodeTest, Water)
 
     // Add in NeutronSQ
     auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O");
-    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}});
-    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}});
+    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{testGraph.findSpecies("Water"), "D2O", 1.0}});
+    auto HDO = testGraph.appendNeutronSQ(
+        sqNode, "5050", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Water"), "D2O", 1.0}});
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
@@ -54,7 +55,7 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato"));
 
     // Add correlation function nodes
@@ -65,9 +66,11 @@ TEST(NeutronSQNodeTest, WaterReferenceFT)
 
     // Add in NeutronSQ
     auto H2O = testGraph.appendNeutronSQ(sqNode, "H2O", {}, "epsr25/water1000-neutron-xray/H2O.mint01");
-    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{"Water", "D2O", 1.0}}, "epsr25/water1000-neutron-xray/D2O.mint01");
-    auto HDO = testGraph.appendNeutronSQ(sqNode, "5050", {{"Water", "Natural", 1.0}, {"Water", "D2O", 1.0}},
-                                         "epsr25/water1000-neutron-xray/HDO.mint01");
+    auto D2O = testGraph.appendNeutronSQ(sqNode, "D2O", {{testGraph.findSpecies("Water"), "D2O", 1.0}},
+                                         "epsr25/water1000-neutron-xray/D2O.mint01");
+    auto HDO = testGraph.appendNeutronSQ(
+        sqNode, "5050", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Water"), "D2O", 1.0}},
+        "epsr25/water1000-neutron-xray/HDO.mint01");
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(H2O);
@@ -95,7 +98,9 @@ TEST(NeutronSQNodeTest, WaterMethanol)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 300}, {"species/methanol.toml", 600}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration(
+        "Box", {{testGraph.importSpecies("species/water.toml"), 300}, {testGraph.importSpecies("species/methanol.toml"), 600}},
+        0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water300methanol600/watermeth.ato"));
 
     // Add correlation function nodes
@@ -106,15 +111,18 @@ TEST(NeutronSQNodeTest, WaterMethanol)
     ASSERT_TRUE(sqNode->setOption<WindowFunction::Form>("WindowFunction", WindowFunction::Form::Lorch0));
 
     // Add in NeutronSQ
-    std::vector<std::tuple<std::string, std::vector<std::tuple<std::string, std::string, double>>>> samples = {
-        {"HHH", {{"Water", "Natural", 1.0}, {"Methanol", "Natural", 1.0}}},
-        {"H5H", {{"Water", "Natural", 1.0}, {"Methanol", "Natural", 0.5}, {"Methanol", "OD-MethylH", 0.5}}},
-        {"DHH", {{"Water", "D2O", 1.0}, {"Methanol", "Natural", 1.0}}},
-        {"HDH", {{"Water", "Natural", 1.0}, {"Methanol", "OD-MethylH", 1.0}}},
-        {"HHD", {{"Water", "Natural", 1.0}, {"Methanol", "MethylD-OH", 1.0}}},
-        {"DDH", {{"Water", "D2O", 1.0}, {"Methanol", "OD-MethylH", 1.0}}},
-        {"HDD", {{"Water", "Natural", 1.0}, {"Methanol", "Deuteriated", 1.0}}},
-        {"DDD", {{"Water", "D2O", 1.0}, {"Methanol", "Deuteriated", 1.0}}}};
+    std::vector<std::tuple<std::string, std::vector<std::tuple<const Species *, std::string, double>>>> samples = {
+        {"HHH", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Methanol"), "Natural", 1.0}}},
+        {"H5H",
+         {{testGraph.findSpecies("Water"), "Natural", 1.0},
+          {testGraph.findSpecies("Methanol"), "Natural", 0.5},
+          {testGraph.findSpecies("Methanol"), "OD-MethylH", 0.5}}},
+        {"DHH", {{testGraph.findSpecies("Water"), "D2O", 1.0}, {testGraph.findSpecies("Methanol"), "Natural", 1.0}}},
+        {"HDH", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Methanol"), "OD-MethylH", 1.0}}},
+        {"HHD", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Methanol"), "MethylD-OH", 1.0}}},
+        {"DDH", {{testGraph.findSpecies("Water"), "D2O", 1.0}, {testGraph.findSpecies("Methanol"), "OD-MethylH", 1.0}}},
+        {"HDD", {{testGraph.findSpecies("Water"), "Natural", 1.0}, {testGraph.findSpecies("Methanol"), "Deuteriated", 1.0}}},
+        {"DDD", {{testGraph.findSpecies("Water"), "D2O", 1.0}, {testGraph.findSpecies("Methanol"), "Deuteriated", 1.0}}}};
     std::map<std::string, NeutronSQNode *> neutronSQ;
     for (const auto &[name, isotopologues] : samples)
         neutronSQ[name] = testGraph.appendNeutronSQ(sqNode, name, isotopologues);
@@ -153,7 +161,7 @@ TEST(NeutronSQNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/benzene.toml", 200}}, 0.876,
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/benzene.toml"), 200}}, 0.876,
                                               Units::DensityUnits::GramsPerCentimetreCubedUnits));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/benzene200-neutron/boxbenz.ato"));
 
@@ -166,8 +174,9 @@ TEST(NeutronSQNodeTest, Benzene)
 
     // Add in NeutronSQ
     auto C6H6 = testGraph.appendNeutronSQ(sqNode, "C6H6");
-    auto C6D6 = testGraph.appendNeutronSQ(sqNode, "C6D6", {{"Benzene", "C6D6", 1.0}});
-    auto FiftyFifty = testGraph.appendNeutronSQ(sqNode, "5050", {{"Benzene", "Natural", 1.0}, {"Benzene", "C6D6", 1.0}});
+    auto C6D6 = testGraph.appendNeutronSQ(sqNode, "C6D6", {{testGraph.findSpecies("Benzene"), "C6D6", 1.0}});
+    auto FiftyFifty = testGraph.appendNeutronSQ(
+        sqNode, "5050", {{testGraph.findSpecies("Benzene"), "Natural", 1.0}, {testGraph.findSpecies("Benzene"), "C6D6", 1.0}});
 
     // Run the graph from each NeutronSQ node
     ASSERT_TRUE(C6H6);

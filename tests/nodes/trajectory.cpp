@@ -18,7 +18,7 @@ TEST(TrajectoryNodesTest, RoundTrip)
     auto exportFile = TempFile("water-267-298K_copy.xyz");
 
     TestGraph testGraph_;
-    testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
+    testGraph_.createConfiguration("Box", {{testGraph_.importSpecies("species/water-dlpoly.toml"), 267}}, 0.1);
 
     // Create an import configuration trajectory node
     auto trajectoryImport = dynamic_cast<ImportXYZTrajectoryNode *>(testGraph_.createNode("ImportXYZTrajectory"));

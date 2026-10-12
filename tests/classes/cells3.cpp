@@ -27,8 +27,9 @@ class CellsEnergyTest : public ::testing::Test
     // Set up graph
     Configuration *setUp(const Vector3 &lengths, const Vector3 &angles, int nMolecules, std::string referenceCoordinates)
     {
-        EXPECT_TRUE(
-            testGraph_.createConfiguration("Box", {{"Ar|epsilon=0.774040 sigma=3.445996", nMolecules}}, lengths, angles));
+        EXPECT_TRUE(testGraph_.createConfiguration(
+            "Box", {{testGraph_.createAtomicSpecies(Elements::Ar, "epsilon=0.774040 sigma=3.445996"), nMolecules}}, lengths,
+            angles));
         EXPECT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
 
         // Run the graph from the head node to set up the configuration
@@ -36,9 +37,7 @@ class CellsEnergyTest : public ::testing::Test
         EXPECT_EQ(testGraph_.fetchHead()->versionIndex(), 0);
 
         // Get the species atom type for pair potential generation
-        auto arSpeciesNode = dynamic_cast<SpeciesNode *>(testGraph_.findNode("Ar"));
-        EXPECT_TRUE(arSpeciesNode);
-        atomType_ = arSpeciesNode->species().atom(0).atomType();
+        atomType_ = testGraph_.findSpecies("Ar")->atom(0).atomType();
 
         return testGraph_.fetchHead()->getOutputValue<Configuration *>("Configuration");
     }

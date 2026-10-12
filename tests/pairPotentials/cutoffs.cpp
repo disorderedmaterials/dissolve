@@ -14,7 +14,7 @@ TEST(PairPotentialCutoffTest, ShortRange)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
@@ -22,10 +22,9 @@ TEST(PairPotentialCutoffTest, ShortRange)
     PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto hw = waterNode->species().findAtomType("HW");
-    auto ow = waterNode->species().findAtomType("OW");
+    auto &species = *testGraph.findSpecies("Water");
+    auto hw = species.findAtomType("HW");
+    auto ow = species.findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     hw->setCharge(0.0);
     ow->setCharge(0.0);
@@ -52,17 +51,14 @@ TEST(PairPotentialCutoffTest, Coulomb)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportDLPOLYStructure", "dlpoly/water1000/CONFIG"));
 
     // Adjust pair potential properties
     PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
 
     // Remove charges from atom types
-    auto waterNode = dynamic_cast<SpeciesNode *>(testGraph.findNode("Water"));
-    ASSERT_TRUE(waterNode);
-    auto ow = waterNode->species().findAtomType("OW");
-    ASSERT_TRUE(ow);
+    auto ow = testGraph.findSpecies("Water")->findAtomType("OW");
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
     // Run the graph from the head node to set up the configuration

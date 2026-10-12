@@ -15,7 +15,7 @@ TEST(GraphArgonTest, InitSimulation)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"Ar", 1000}}, 0.0213);
+    testGraph.createConfiguration("Box", {{testGraph.createAtomicSpecies(Elements::Ar), 1000}}, 0.0213);
 
     // Get the Insert node and run the graph
     auto insertNode = testGraph.findNode("Insert-Ar");
@@ -32,14 +32,15 @@ TEST(GraphArgonTest, AllCorrelations)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 1000}}, 0.0213));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.createAtomicSpecies(Elements::Ar), 1000}}, 0.0213));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "dissolve2/argon/Ar_bulk_step1000.xyz"));
 
     // Append GR and SQ nodes
     auto &&[grNode, sqNode] = testGraph.appendGRSQ(true, true);
 
     // Set up neutron SQ
-    auto neutronSQNode = testGraph.appendNeutronSQ(sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}}, {"dissolve2/argon/yarnell.sq"});
+    auto neutronSQNode = testGraph.appendNeutronSQ(sqNode, "Yarnell", {{testGraph.findSpecies("Ar"), "Ar36", 1.0}},
+                                                   {"dissolve2/argon/yarnell.sq"});
 
     // Run the Graph from the NeutronSQ node
     ASSERT_EQ(neutronSQNode->run(), NodeConstants::ProcessResult::Success);

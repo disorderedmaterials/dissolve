@@ -11,12 +11,11 @@ TEST(GRNodeTest, Methods)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 5000}}, 0.0213));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.createAtomicSpecies(Elements::Ar), 5000}}, 0.0213));
 
     // Append GR and SQ nodes
     auto sqNode = testGraph.appendGRSQ(true, true);
-    auto arSpeciesNode = testGraph.findNode("Ar");
-    ASSERT_TRUE(arSpeciesNode);
+    ASSERT_TRUE(testGraph.findSpecies("Ar"));
     auto grNode = testGraph.findNode("GR");
 
     // Calculate baseline GR with the "Test" method, a simple, serial double-loop
@@ -50,7 +49,7 @@ TEST(GRNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato"));
 
     // Add correlation function nodes
@@ -86,7 +85,9 @@ TEST(GRNodeTest, WaterMethanol)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 300}, {"species/methanol.toml", 600}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration(
+        "Box", {{testGraph.importSpecies("species/water.toml"), 300}, {testGraph.importSpecies("species/methanol.toml"), 600}},
+        0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water300methanol600/watermeth.ato"));
 
     // Add correlation function nodes
@@ -205,7 +206,7 @@ TEST(GRNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/benzene.toml", 200}}, 0.876,
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/benzene.toml"), 200}}, 0.876,
                                               Units::DensityUnits::GramsPerCentimetreCubedUnits));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/benzene200-neutron/boxbenz.ato"));
 

@@ -14,7 +14,7 @@ TEST(DAngleNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water-dlpoly.toml"), 267}}, 0.1);
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
@@ -23,7 +23,7 @@ TEST(DAngleNodeTest, Water)
     // Add the analysis module to the iterator
     auto dAngle = dynamic_cast<DAngleNode *>(iterator->createNode("DAngle"));
     ASSERT_TRUE(dAngle);
-    auto *water = testGraph.findNode("Water")->getOutputValue<const Species *>("Species");
+    auto *water = testGraph.findSpecies("Water");
     ASSERT_TRUE(water);
     ASSERT_TRUE(dAngle->setOption<SpeciesSites>("SiteA", {{water->findSite("O")}}));
     ASSERT_TRUE(dAngle->setOption<SpeciesSites>("SiteB", {{water->findSite("H-dyn")}}));
