@@ -22,14 +22,12 @@ class NodeRegistryModel : public QAbstractListModel
      * - Description/Node::summary (QString)
      * - Category (enum) - currently unavailable
      * - Icon path (QUrl) - currently unavailable
-     * - tally (int)
      *
      */
     struct NodeRegistryDisplayElement
     {
         QString name;
         QString description;
-        int tally;
     };
 
     Q_OBJECT
@@ -46,12 +44,6 @@ class NodeRegistryModel : public QAbstractListModel
     Q_ENUM(NodeDisplayRoles);
 
     private:
-    // Increment node type
-    void increment(QString nodeType);
-    // Decrement node type
-    void decrement(QString nodeType);
-    // Return tally for node type
-    int &tally(QString nodeType);
     // Source node registry data
     static std::vector<NodeRegistryDisplayElement> entries_;
     GraphModel *graphModel_{nullptr};
@@ -60,8 +52,6 @@ class NodeRegistryModel : public QAbstractListModel
     std::map<std::string, int> allOutputs_;
 
     public:
-    // Return a unique default node name for a given node type
-    Q_INVOKABLE QString uniqueNodeName(QVariant type);
     // Return node names by category
     Q_INVOKABLE QList<QVariantMap> nodeNames(QString category);
     // Return the enum options for the node categories

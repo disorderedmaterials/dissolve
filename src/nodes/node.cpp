@@ -16,16 +16,10 @@
  */
 
 // Set node name
-void Node::setName(std::string_view newName)
-{
-    if (parentGraph_)
-        parentGraph_->setNodeName(this, newName);
-    else
-        error("Can't set node name to '{}' as it is not part of a Graph.", newName);
-}
+void Node::setName(std::string_view newName) { name_ = newName; }
 
 // Return node name
-std::string_view Node::name() const { return parentGraph_ ? parentGraph_->nodeName(this) : "UnparentedNode"; }
+std::string_view Node::name() const { return name_; }
 
 /*
  * Node message

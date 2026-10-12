@@ -34,7 +34,7 @@ std::string_view Graph::summary() const { return "A node which contains its own 
 NodeConstants::ProcessResult Graph::process()
 {
     // Outdate any volatile nodes
-    for (auto &node : std::views::values(nodes_))
+    for (auto &node : nodes_)
         if (node->isVolatile())
             node->setUpdateRequired();
 
@@ -52,7 +52,7 @@ NodeConstants::ProcessResult Graph::process()
 
     // Check each node for output edges - any that have zero output edges need to be run()
     auto terminalNodeResult = NodeConstants::ProcessResult::Unchanged;
-    for (auto &&[nodeName, node] : nodes_)
+    for (auto &node : nodes_)
         if (node->outputEdges().empty())
         {
             switch (node->run())
@@ -115,10 +115,13 @@ std::string Graph::uniqueNodeName(const Node *node, std::string_view baseName) c
 {
     auto newName = std::string(baseName);
 
-    // Check for existing node with this name and suffix until we get a unique key
-    auto count = 1;
-    while (nodes_.contains(newName) && nodes_.at(newName).get() != node)
-        newName = std::format("{}{:02d}", baseName, count++);
+    auto *existingNode = findNode(newName);
+    auto index = 0;
+    while (existingNode && existingNode != node)
+    {
+        newName = std::format("{}{:02d}", baseName, ++index);
+        existingNode = findNode(newName);
+    }
 
     return newName;
 }
@@ -143,37 +146,22 @@ Node *Graph::addNode(std::unique_ptr<Node> node, std::string_view newName)
     node->setParent(this);
     auto nodePtr = node.get();
 
-    auto uniqueName = uniqueNodeName(node.get(), newName.empty() ? node->type() : newName);
-    reverseNodes_.insert(std::make_pair<Node *, std::string>(node.get(), std::string(uniqueName)));
-    nodes_.insert(std::make_pair<std::string, std::unique_ptr<Node>>(std::string(uniqueName), std::move(node)));
+    node->setName(uniqueNodeName(node.get(), newName.empty() ? node->type() : newName));
+    nodes_.push_back(std::unique_ptr<Node>(std::move(node)));
 
     return nodePtr;
 }
 
-// Get name of specified child node
-std::string_view Graph::nodeName(const Node *node) const
+// Remove node from the graph
+void Graph::removeNode(Node *node)
 {
-    if (reverseNodes_.contains(node))
-        return reverseNodes_.at(node);
-
-    return "UNKNOWN_NODE";
+    auto it = std::ranges::find_if(nodes_, [node](const auto &uniqueNode) { return uniqueNode.get() == node; });
+    if (it != nodes_.end())
+        nodes_.erase(it);
 }
 
 // Set name of specified child node
-void Graph::setNodeName(const Node *node, std::string_view nodeName)
-{
-    auto uniqueName = uniqueNodeName(node, nodeName);
-
-    // Extract the forward node mapping (name -> node) using its current name in reverseNodes_
-    auto nodeHandle = nodes_.extract(reverseNodes_.at(node));
-
-    // Set the new name and reinsert
-    nodeHandle.key() = uniqueName;
-    nodes_.insert(std::move(nodeHandle));
-
-    // Update reverseNodes_
-    reverseNodes_[node] = uniqueName;
-}
+void Graph::setNodeName(Node *node, std::string_view nodeName) { node->setName(uniqueNodeName(node, nodeName)); }
 
 // Add parameter link between nodes
 bool Graph::addEdge(const EdgeDefinition &definition)
@@ -262,8 +250,22 @@ Node *Graph::findNode(std::string_view nodeName)
         return this;
 
     // Search through child nodes
-    if (nodes_.contains(std::string(nodeName)))
-        return nodes_[std::string(nodeName)].get();
+    for (auto &node : nodes_)
+        if (node->name() == nodeName)
+            return node.get();
+
+    return nullptr;
+}
+const Node *Graph::findNode(std::string_view nodeName) const
+{
+    // Return ourself if this is our name
+    if (name() == nodeName)
+        return this;
+
+    // Search through child nodes
+    for (auto &node : nodes_)
+        if (node->name() == nodeName)
+            return node.get();
 
     return nullptr;
 }
@@ -273,9 +275,6 @@ Graph::Nodes &Graph::nodes() { return nodes_; }
 
 // Return edges on the graph
 Graph::Edges &Graph::edges() { return edges_; }
-
-// Return container of reverse nodes
-Graph::ReverseNodes &Graph::reverseNodes() { return reverseNodes_; }
 
 // Return a path to this graph from the root
 std::string Graph::location() const
@@ -294,7 +293,15 @@ void Graph::serialise(std::string tag, SerialisedValue &target) const
 {
     Node::serialise(tag, target);
     auto &result = target[tag];
-    Serialisable::fromMap(nodes_, "nodes", result, [](const auto key, const auto &value) { return value->shouldSerialise(); });
+    SerialisedValue nodeData;
+    for (auto &node : nodes_)
+    {
+        if (!node->shouldSerialise())
+            continue;
+        node->serialise(std::string(node->name()), nodeData);
+    }
+    if (!nodeData.is_empty())
+        result["nodes"] = nodeData;
     Serialisable::vector(edges_, "edges", result);
 }
 
@@ -323,7 +330,7 @@ void Graph::resolve()
     for (auto &option : std::views::values(options_))
         option->resolve(reachableSpecies);
 
-    for (auto &node : std::views::values(nodes_))
+    for (auto &node : nodes_)
         node->resolve();
 }
 
@@ -354,25 +361,25 @@ std::string Graph::toMermaid(int depth) const
     spacer.resize(depth);
     std::ranges::fill(spacer, ' ');
     std::map<Node *, std::string> pseudo_names;
-    for (auto &[k, v] : nodes_)
+    for (auto &node : nodes_)
     {
         auto name = randomName();
-        pseudo_names[v.get()] = name;
-        if (std::ranges::find(DATA_NAMES, v->type()) != DATA_NAMES.end())
+        pseudo_names[node.get()] = name;
+        if (std::ranges::find(DATA_NAMES, node->type()) != DATA_NAMES.end())
             result += spacer + std::string("class ") + name + " data\n";
-        else if (std::ranges::find(MATH_NAMES, v->type()) != MATH_NAMES.end())
+        else if (std::ranges::find(MATH_NAMES, node->type()) != MATH_NAMES.end())
             result += spacer + std::string("class ") + name + " math\n";
-        else if (std::ranges::find(GRAPH_NAMES, v->type()) != GRAPH_NAMES.end())
+        else if (std::ranges::find(GRAPH_NAMES, node->type()) != GRAPH_NAMES.end())
         {
             result += spacer + std::string("state ") + name + " {\n";
-            auto casted = dynamic_cast<Graph *>(v.get());
+            auto casted = dynamic_cast<Graph *>(node.get());
             if (casted)
             {
                 result += casted->toMermaid(depth + 4);
             }
             result += spacer + "}\n";
         }
-        result += spacer + name + " : " + std::string(v->name()) + "\n";
+        result += spacer + name + " : " + std::string(node->name()) + "\n";
     }
     for (auto &edge : edges_)
     {
@@ -396,7 +403,7 @@ void Graph::saveRestart(std::filesystem::path directory) const
 {
     auto path = directory / name();
     std::filesystem::create_directories(path);
-    for (auto &[name, node] : nodes_)
+    for (auto &node : nodes_)
         node->saveRestart(path);
 }
 
@@ -405,7 +412,7 @@ bool Graph::loadRestart(std::filesystem::path directory)
 {
     auto path = directory / name();
     std::filesystem::create_directories(path);
-    for (auto &[name, node] : nodes_)
+    for (auto &node : nodes_)
         if (!node->loadRestart(path))
             return false;
     return true;

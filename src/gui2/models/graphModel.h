@@ -181,7 +181,6 @@ class GraphModel : public QObject
     void graphChanged();
     void graphInvalidated();
     void canvasDimensionsChanged();
-    void decrementNodeTypeRequired(const std::string &);
     void graphRunComplete(NodeConstants::ProcessResult status, std::string runnerNode);
     void graphReconstructionComplete();
 
@@ -206,7 +205,7 @@ class GraphModel : public QObject
     // Provide relative coordinates for an output on a node
     void addOutput(QString nodeName, QString paramName, double x, double y);
     // Add a new node at a specific position
-    void emplace_back(int x, int y, QString type, QString name);
+    void emplace_back(int x, int y, QString type);
     // Switch to parent graph
     void upLevel();
     // Move into an inner graph
