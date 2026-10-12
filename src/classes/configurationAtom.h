@@ -24,8 +24,6 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     const SpeciesAtom *speciesAtom_{nullptr};
     // Molecule in which this Atom exists
     std::shared_ptr<Molecule> molecule_{nullptr};
-    // Cell in which the atom exists
-    Cell *cell_{nullptr};
 
     public:
     // Set SpeciesAtom that this Atom represents
@@ -36,10 +34,6 @@ class ConfigurationAtom : public Atom<SpeciesBond>
     void setMolecule(std::shared_ptr<Molecule> mol);
     // Return Molecule in which this Atom exists
     const std::shared_ptr<Molecule> &molecule() const;
-    // Set cell in which the atom exists
-    void setCell(Cell *cell);
-    // Return cell in which the atom exists
-    Cell *cell() const;
 
     /*
      * Intramolecular Information

@@ -47,18 +47,18 @@ class Cell
      */
     private:
     // Vector of Atoms contained in this Cell
-    std::vector<ConfigurationAtom *> atoms_;
+    std::vector<AtomBase *> atoms_;
 
     public:
     // Return array of contained Atoms
-    std::vector<ConfigurationAtom *> &atoms();
-    const std::vector<ConfigurationAtom *> &atoms() const;
+    std::vector<AtomBase *> &atoms();
+    const std::vector<AtomBase *> &atoms() const;
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell
-    void addAtom(ConfigurationAtom *atom);
+    void addAtom(AtomBase *atom);
     // Remove Atom from Cell
-    void removeAtom(ConfigurationAtom *atom);
+    void removeAtom(AtomBase *atom);
     // Clear all atoms from cell
     void clearAtoms();
 };
