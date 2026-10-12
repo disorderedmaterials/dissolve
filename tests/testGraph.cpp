@@ -79,18 +79,18 @@ Node *TestGraph::createAndInsertSpecies(Node *cfgSourceNode, std::string cfgSour
                                         {ShortRangeFunctions::Form::LennardJones, DissolveSys::afterChar(speciesString, '|')});
         }
         EXPECT_TRUE(speciesUnique);
-        auto &speciesNode = speciesUnique->species();
+        auto &species = speciesUnique->species();
 
         // Move the species node into the graph
-        currentGraph_->addNode(std::move(speciesUnique), speciesNode.name());
+        currentGraph_->addNode(std::move(speciesUnique), species.name());
 
-        auto insertNodeName = std::format("Insert-{}", speciesNode.name());
+        auto insertNodeName = std::format("Insert-{}", species.name());
         EXPECT_TRUE(appendNode("InsertRandom", insertNodeName));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Population", population));
         EXPECT_TRUE(fetchHead()->setInput<Number>("Density", rho));
         EXPECT_TRUE(fetchHead()->setOption("BoxScaling", boxScalingType));
         EXPECT_TRUE(fetchHead()->setOption<Units::DensityUnits>("DensityUnits", rhoUnits));
-        EXPECT_TRUE(currentGraph_->addEdge({std::string(speciesNode.name()), "Species", insertNodeName, "Species"}));
+        EXPECT_TRUE(currentGraph_->addEdge({std::string(species.name()), "Species", insertNodeName, "Species"}));
         EXPECT_TRUE(
             currentGraph_->addEdge({std::string(cfgSourceNode->name()), cfgSourceOutput, insertNodeName, "Configuration"}));
 
