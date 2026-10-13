@@ -67,37 +67,30 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     // one element is identical to a std::optional, but the lists can
     // be trivially combined during the reduce part of
     // transform_reduce
-    auto validBond = [&box, tolerance, preventMetallic](const CellNeighbourPair idx) -> std::set<std::pair<int, int>>
+    auto validBond = [&box, tolerance, preventMetallic,
+                      &atoms = structure.atoms()](std::tuple<int, int> pair) -> std::set<std::pair<int, int>>
     {
-        auto cellI = idx.cell;
-        auto cellJ = idx.neighbour;
+        auto [ii, jj] = pair;
+        auto &i = atoms[ii];
+        auto &j = atoms[jj];
 
-        std::set<std::pair<int, int>> result;
+        // Don't bond atoms to themselves
+        if (i == j)
+            return {};
 
-        for (auto i : cellI.atoms() | castView<StructureAtom *>())
-            for (auto j : cellJ.atoms() | castView<StructureAtom *>())
-            {
-                // Don't bond atoms to themselves
-                if (i == j)
-                    continue;
+        auto radiusI = AtomicRadii::radius(i->Z());
 
-                auto radiusI = AtomicRadii::radius(i->Z());
+        // If the two atoms are both metal ions and prevent metallic bonds = true, continue
+        if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
+            return {};
 
-                // If the two atoms are both metal ions and prevent metallic bonds = true, continue
-                if (preventMetallic && Elements::isMetallic(i->Z()) && Elements::isMetallic(j->Z()))
-                    continue;
+        // Calculate distance between atoms
+        auto r = box.minimumDistance(j->r(), i->r());
 
-                // Calculate distance between atoms
-                auto r = box.minimumDistance(j->r(), i->r());
-
-                // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-                if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
-                    continue;
-
-                result.insert({std::min(i->index(), j->index()), std::max(i->index(), j->index())});
-            }
-
-        return result;
+        // Compare distance to sum of atomic radii (multiplied by tolerance factor)
+        if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
+            return {};
+        return {{ii, jj}};
     };
 
     // Combine two lists of bonds into a single list
@@ -109,9 +102,9 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     };
 
     // In parallel, construct the list of the bonds that need to be added
-    auto pairs = cells.getCellNeighbourPairsWithSelf();
-    auto results = std::transform_reduce(ParallelPolicies::par_unseq, pairs.begin(), pairs.end(),
-                                         std::set<std::pair<int, int>>(), joinBonds, validBond);
+    auto pairs = cells.iterateItemPairs();
+    auto results = std::transform_reduce(ParallelPolicies::par, pairs.begin(), pairs.end(), std::set<std::pair<int, int>>(),
+                                         joinBonds, validBond);
 
     // Add the bonds serially
     for (auto [i, j] : results)

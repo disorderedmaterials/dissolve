@@ -6,6 +6,8 @@
 #include "classes/cell.h"
 #include "math/matrix3.h"
 #include "templates/array3D.h"
+#include <concepts>
+#include <iterator>
 
 // Forward Declarations
 class Box;
@@ -34,6 +36,50 @@ struct CellNeighbourPair
                (&this->neighbour == &other.cell && &this->cell == &other.neighbour);
     }
 };
+
+class CellArrayIterator
+{
+    // CellArrayIterator();
+    // CellArrayIterator(const std::vector<Cell> &cells);
+    // CellArrayIterator(CellArrayIterator &&other);
+
+    private:
+    const std::vector<Cell> *cells_;
+
+    public:
+    using value = std::tuple<int, int>;
+    using value_type = std::tuple<int, int>;
+    using difference_type = int;
+
+    CellArrayIterator begin() const;
+    CellArrayIterator end() const;
+
+    value_type operator*();
+    value_type operator*() const;
+
+    difference_type operator-(const CellArrayIterator &it) const;
+    CellArrayIterator &operator+=(difference_type forward);
+    CellArrayIterator &operator-=(difference_type backward);
+
+    // Operators : arithmetic
+    CellArrayIterator &operator++();
+
+    CellArrayIterator &operator--();
+
+    CellArrayIterator operator++(int);
+
+    CellArrayIterator operator--(int);
+
+    CellArrayIterator operator+(difference_type forward) const;
+    CellArrayIterator operator-(difference_type backward) const;
+
+    // Operators : comparison
+    bool operator==(const CellArrayIterator &other) const = default;
+    bool operator!=(const CellArrayIterator &other) const = default;
+    std::strong_ordering operator<=>(const CellArrayIterator &value) const;
+};
+
+static_assert(std::bidirectional_iterator<CellArrayIterator>);
 
 // Cell Array
 class CellArray
@@ -114,6 +160,7 @@ class CellArray
     const std::vector<CellNeighbourPair> getCellNeighbourPairsWithSelf() const;
     // Return whether minimum image calculation is required between the supplied cells
     bool minimumImageRequired(const Cell &a, const Cell &b) const;
+    CellArrayIterator iterateItemPairs();
 
     /*
      * Generation
