@@ -35,13 +35,15 @@ struct CellNeighbourPair
         return (&this->cell == &other.cell && &this->neighbour == &other.neighbour) ||
                (&this->neighbour == &other.cell && &this->cell == &other.neighbour);
     }
+
+    int total_size() const { return cell.nAtoms() * neighbour.nAtoms(); }
 };
 
 class CellArrayIterator
 {
     public:
     CellArrayIterator() = default; // std::forward_iterator requires default constructable
-    CellArrayIterator(const std::vector<Cell> &cells);
+    CellArrayIterator(const std::vector<CellNeighbourPair> &cells);
     CellArrayIterator(const CellArrayIterator &other);
     CellArrayIterator(CellArrayIterator &&other) noexcept;
 
@@ -62,7 +64,6 @@ class CellArrayIterator
     value_type operator*() const;
     value_type operator[](difference_type i) const;
     CellArrayIterator &operator=(const CellArrayIterator &other);
-    CellArrayIterator &operator=(CellArrayIterator &&other);
 
     difference_type operator-(const CellArrayIterator &it) const;
     CellArrayIterator &operator+=(difference_type forward);
@@ -169,7 +170,6 @@ class CellArray
     const std::vector<CellNeighbourPair> getCellNeighbourPairsWithSelf() const;
     // Return whether minimum image calculation is required between the supplied cells
     bool minimumImageRequired(const Cell &a, const Cell &b) const;
-    CellArrayIterator iterateItemPairs();
 
     /*
      * Generation

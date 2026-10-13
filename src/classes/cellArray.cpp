@@ -2,11 +2,165 @@
 // Copyright (c) 2026 Team Dissolve and contributors
 
 #include "classes/cellArray.h"
+#include "base/messenger.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/pairPotential.h"
 #include "math/mathFunc.h"
 
+/*
+ *CellArrayIterator
+ */
+
+CellArrayIterator::CellArrayIterator(const std::vector<CellNeighbourPair> &cells) : pairs_(&cells) {}
+CellArrayIterator::CellArrayIterator(const CellArrayIterator &other)
+    : pairs_(other.pairs_), idx_(other.idx_), pair_(other.pair_)
+{
+}
+CellArrayIterator::CellArrayIterator(CellArrayIterator &&other) noexcept
+    : pairs_(other.pairs_), idx_(other.idx_), pair_(other.pair_)
+{
+}
+
+CellArrayIterator CellArrayIterator::begin() const
+{
+    CellArrayIterator result(*this);
+    result.idx_ = 0;
+    result.pair_ = 0;
+    return result;
+}
+
+CellArrayIterator CellArrayIterator::end() const
+{
+    CellArrayIterator result(*this);
+    result.idx_ = 0;
+    result.pair_ = pairs_->size();
+    return result;
+}
+
+CellArrayIterator::value_type CellArrayIterator::operator*()
+{
+    auto &pair = pairs_->at(pair_);
+    return {idx_ / pair.cell.nAtoms(), idx_ % pair.cell.nAtoms()};
+}
+CellArrayIterator::value_type CellArrayIterator::operator*() const
+{
+    auto &pair = pairs_->at(pair_);
+    return {idx_ / pair.cell.nAtoms(), idx_ % pair.cell.nAtoms()};
+}
+CellArrayIterator::value_type CellArrayIterator::operator[](difference_type i) const
+{
+    CellArrayIterator result(*this);
+    result += i;
+    return *result;
+}
+CellArrayIterator &CellArrayIterator::operator=(const CellArrayIterator &other)
+{
+    pairs_ = other.pairs_;
+    idx_ = other.idx_;
+    pair_ = other.pair_;
+    return *this;
+}
+
+CellArrayIterator &CellArrayIterator::operator+=(difference_type forward)
+{
+    ++idx_;
+    auto total_size = pairs_->at(pair_).total_size();
+    while (idx_ >= total_size)
+    {
+        ++pair_;
+        idx_ -= total_size;
+
+        // Don't try and move past the end
+        if (pair_ >= pairs_->size())
+        {
+            pair_ = pairs_->size();
+            idx_ = 0;
+            break;
+        }
+        else
+            total_size = pairs_->at(pair_).total_size();
+    }
+    return *this;
+}
+CellArrayIterator &CellArrayIterator::operator-=(difference_type backward)
+{
+    --idx_;
+    while (idx_ < 0)
+    {
+        --pair_;
+        if (pair_ < 0)
+        {
+            pair_ = 0;
+            idx_ = 0;
+            break;
+        }
+        auto total_size = pairs_->at(pair_).total_size();
+        idx_ += total_size;
+    }
+    return *this;
+}
+
+// Operators : arithmetic
+CellArrayIterator &CellArrayIterator::operator++()
+{
+    *this += 1;
+    return *this;
+}
+
+CellArrayIterator &CellArrayIterator::operator--()
+{
+    *this -= 1;
+    return *this;
+}
+
+CellArrayIterator CellArrayIterator::operator++(int)
+{
+    auto temp = *this;
+    ++*this;
+    return temp;
+}
+
+CellArrayIterator CellArrayIterator::operator--(int)
+{
+    auto temp = *this;
+    --*this;
+    return temp;
+}
+
+CellArrayIterator CellArrayIterator::operator+(difference_type forward) const
+{
+    auto result = *this;
+    result.idx_ += forward;
+    auto total_size = pairs_->at(pair_).total_size();
+    while (result.idx_ >= total_size)
+    {
+        result.idx_ -= total_size;
+        --result.pair_;
+        total_size = pairs_->at(pair_).total_size();
+    }
+    return result;
+}
+CellArrayIterator operator+(CellArrayIterator::difference_type forward, const CellArrayIterator &it) { return it + forward; }
+CellArrayIterator CellArrayIterator::operator-(difference_type backward) const
+{
+    auto result = *this;
+    result.idx_ -= backward;
+    while (result.idx_ < 0)
+    {
+        --result.pair_;
+        result.idx_ += pairs_->at(pair_).total_size();
+    }
+    return result;
+}
+
+// Operators : comparison
+std::strong_ordering CellArrayIterator::operator<=>(const CellArrayIterator &value) const
+{
+    if (pair_ != value.pair_)
+        return pair_ <=> value.pair_;
+    return idx_ <=> value.idx_;
+}
 /*
  * Cell Data
  */
@@ -328,8 +482,8 @@ bool CellArray::generate(const Box &box, double cellSize)
     axes_ = box_->axes();
     axes_.columnMultiply(fractionalCellSize_);
 
-    // Create cell distance matrix giving us the minimum "corner distances" between a cell at 0,0,0 and the max cell divisions.
-    // These represent the minimum and maximum possible contact distances between any atoms located in each cell.
+    // Create cell distance matrix giving us the minimum "corner distances" between a cell at 0,0,0 and the max cell
+    // divisions. These represent the minimum and maximum possible contact distances between any atoms located in each cell.
     cellMinimumDistances_.initialise(-divisions_.x, divisions_.x, -divisions_.y, divisions_.y, -divisions_.z, divisions_.z);
     std::vector<Vector3i> neighbourIndices;
     std::set<const Cell *> neighbourCells;
@@ -344,7 +498,8 @@ bool CellArray::generate(const Box &box, double cellSize)
                 if (x == 0 && y == 0 && z == 0)
                     continue;
 
-                // Determine shortest distance between the edges of the surrounding cell j and the corners of the central cell
+                // Determine shortest distance between the edges of the surrounding cell j and the corners of the central
+                // cell
                 cellMinimumDistances_[{x, y, z}] = 1.0e10;
                 auto minLiteral = 1.0e10;
 

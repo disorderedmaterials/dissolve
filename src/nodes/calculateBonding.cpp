@@ -102,7 +102,9 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     };
 
     // In parallel, construct the list of the bonds that need to be added
-    auto pairs = cells.iterateItemPairs();
+    auto body = cells.getCellNeighbourPairsWithSelf();
+    CellArrayIterator pairs(body);
+
     auto results = std::transform_reduce(ParallelPolicies::par, pairs.begin(), pairs.end(), std::set<std::pair<int, int>>(),
                                          joinBonds, validBond);
 
