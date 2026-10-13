@@ -76,7 +76,7 @@ NodeConstants::ProcessResult Graph::process()
 // Reset all progress trackers across all of the graph's child nodes
 void Graph::resetChildNodeProgressTrackers()
 {
-    for (auto &[_, node] : nodes_)
+    for (auto &node : nodes_)
     {
         node->resetProgressTracker();
         auto graph = dynamic_cast<Graph *>(node.get());
