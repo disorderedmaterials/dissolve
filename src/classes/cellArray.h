@@ -39,12 +39,16 @@ struct CellNeighbourPair
 
 class CellArrayIterator
 {
-    // CellArrayIterator();
-    // CellArrayIterator(const std::vector<Cell> &cells);
-    // CellArrayIterator(CellArrayIterator &&other);
+    public:
+    CellArrayIterator() = default; // std::forward_iterator requires default constructable
+    CellArrayIterator(const std::vector<Cell> &cells);
+    CellArrayIterator(const CellArrayIterator &other);
+    CellArrayIterator(CellArrayIterator &&other) noexcept;
 
     private:
-    const std::vector<Cell> *cells_;
+    const std::vector<CellNeighbourPair> *pairs_;
+    int idx_ = 0;
+    int pair_ = 0;
 
     public:
     using value = std::tuple<int, int>;
@@ -56,6 +60,9 @@ class CellArrayIterator
 
     value_type operator*();
     value_type operator*() const;
+    value_type operator[](difference_type i) const;
+    CellArrayIterator &operator=(const CellArrayIterator &other);
+    CellArrayIterator &operator=(CellArrayIterator &&other);
 
     difference_type operator-(const CellArrayIterator &it) const;
     CellArrayIterator &operator+=(difference_type forward);
@@ -71,6 +78,7 @@ class CellArrayIterator
     CellArrayIterator operator--(int);
 
     CellArrayIterator operator+(difference_type forward) const;
+    friend CellArrayIterator operator+(difference_type forward, const CellArrayIterator &it);
     CellArrayIterator operator-(difference_type backward) const;
 
     // Operators : comparison
@@ -79,7 +87,8 @@ class CellArrayIterator
     std::strong_ordering operator<=>(const CellArrayIterator &value) const;
 };
 
-static_assert(std::bidirectional_iterator<CellArrayIterator>);
+static_assert(std::movable<CellArrayIterator>);
+static_assert(std::random_access_iterator<CellArrayIterator>);
 
 // Cell Array
 class CellArray
