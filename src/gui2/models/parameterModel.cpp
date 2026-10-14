@@ -209,16 +209,22 @@ bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, in
             it->set<RangedVector3>(Vector3{x, y, z});
         else
         {
-            auto minX = qvariant_cast<double>(min[0]);
-            auto minY = qvariant_cast<double>(min[1]);
-            auto minZ = qvariant_cast<double>(min[2]);
-            auto maxX = qvariant_cast<double>(max[0]);
-            auto maxY = qvariant_cast<double>(max[1]);
-            auto maxZ = qvariant_cast<double>(max[2]);
             auto optMin = std::optional<Vector3>();
-            optMin.emplace(minX, minY, minZ);
             auto optMax = std::optional<Vector3>();
-            optMax.emplace(maxX, maxY, maxZ);
+            if (!min.empty())
+            {
+                auto minX = qvariant_cast<double>(min[0]);
+                auto minY = qvariant_cast<double>(min[1]);
+                auto minZ = qvariant_cast<double>(min[2]);
+                optMin.emplace(minX, minY, minZ);
+            }
+            if (!max.empty())
+            {
+                auto maxX = qvariant_cast<double>(max[0]);
+                auto maxY = qvariant_cast<double>(max[1]);
+                auto maxZ = qvariant_cast<double>(max[2]);
+                optMax.emplace(maxX, maxY, maxZ);
+            }
             it->set<RangedVector3>(RangedVector3{Vector3{x, y, z}, optMin, optMax});
         }
     }
