@@ -130,7 +130,6 @@ DelegateChooser {
             var x = Number(xInput);
             var y = Number(yInput);
             var z = Number(zInput);
-            console.log("Creating vector from ", x, ", ", y, ", ", z);
             return [x, y, z]
         }
 
