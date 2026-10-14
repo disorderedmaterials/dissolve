@@ -14,11 +14,7 @@ NodeMessages::NodeMessages()
 }
 
 // Returns bool - true if this node has any alerts (errors or warnings) associated with it
-bool NodeMessages::hasAlerts()
-{
-    auto hasAlerts = flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn);
-    return hasAlerts;
-}
+bool NodeMessages::hasAlerts() { return flags_.isSet(NodeMessages::Error) || flags_.isSet(NodeMessages::Warn); }
 
 // Returns the indicator image path depending on the current notification state of the node
 QUrl NodeMessages::indicator()
