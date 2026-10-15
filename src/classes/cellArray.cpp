@@ -27,6 +27,9 @@ CellArrayIterator CellArrayIterator::begin() const
     CellArrayIterator result(*this);
     result.idx_ = 0;
     result.pair_ = 0;
+    // Iterate to first full dataset
+    while (pairs_->at(result.pair_).total_size() == 0)
+        ++result.pair_;
     return result;
 }
 

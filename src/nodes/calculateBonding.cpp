@@ -103,8 +103,8 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     auto body = cells.getCellNeighbourPairsWithSelf();
     CellArrayIterator pairs(body);
 
-    auto results = std::transform_reduce(ParallelPolicies::par, pairs.begin(), pairs.end(), std::set<std::pair<int, int>>(),
-                                         joinBonds, validBond);
+    auto results = std::transform_reduce(ParallelPolicies::par_unseq, pairs.begin(), pairs.end(),
+                                         std::set<std::pair<int, int>>(), joinBonds, validBond);
 
     // Add the bonds serially
     for (auto [i, j] : results)
