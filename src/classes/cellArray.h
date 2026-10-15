@@ -60,7 +60,6 @@ class CellArrayIterator
     CellArrayIterator begin() const;
     CellArrayIterator end() const;
 
-    value_type operator*();
     value_type operator*() const;
     value_type operator[](difference_type i) const;
     CellArrayIterator &operator=(const CellArrayIterator &other);

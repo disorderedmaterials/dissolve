@@ -38,15 +38,14 @@ CellArrayIterator CellArrayIterator::end() const
     return result;
 }
 
-CellArrayIterator::value_type CellArrayIterator::operator*()
-{
-    auto &pair = pairs_->at(pair_);
-    return {idx_ / pair.cell.nAtoms(), idx_ % pair.cell.nAtoms()};
-}
 CellArrayIterator::value_type CellArrayIterator::operator*() const
 {
     auto &pair = pairs_->at(pair_);
-    return {idx_ / pair.cell.nAtoms(), idx_ % pair.cell.nAtoms()};
+    auto ii = idx_ / pair.cell.nAtoms();
+    auto jj = idx_ % pair.cell.nAtoms();
+    auto i = pair.neighbour.atoms()[ii]->index();
+    auto j = pair.cell.atoms()[jj]->index();
+    return {i, j};
 }
 CellArrayIterator::value_type CellArrayIterator::operator[](difference_type i) const
 {
