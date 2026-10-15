@@ -68,11 +68,9 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
     // be trivially combined during the reduce part of
     // transform_reduce
     auto validBond = [&box, tolerance, preventMetallic,
-                      &atoms = structure.atoms()](std::tuple<int, int> pair) -> std::set<std::pair<int, int>>
+                      &atoms = structure.atoms()](std::tuple<AtomBase *, AtomBase *> pair) -> std::set<std::pair<int, int>>
     {
-        auto [ii, jj] = pair;
-        auto &i = atoms[ii];
-        auto &j = atoms[jj];
+        auto [i, j] = pair;
 
         // Don't bond atoms to themselves
         if (i == j)
@@ -90,7 +88,7 @@ void CalculateBondingNode::calculate(Structure &structure, double tolerance, boo
         // Compare distance to sum of atomic radii (multiplied by tolerance factor)
         if (r > (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
             return {};
-        return {{ii, jj}};
+        return {{i->index(), j->index()}};
     };
 
     // Combine two lists of bonds into a single list

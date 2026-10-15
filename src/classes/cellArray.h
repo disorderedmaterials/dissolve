@@ -53,8 +53,8 @@ class CellArrayIterator
     int pair_ = 0;
 
     public:
-    using value = std::tuple<int, int>;
-    using value_type = std::tuple<int, int>;
+    using value = std::tuple<AtomBase *, AtomBase *>;
+    using value_type = std::tuple<AtomBase *, AtomBase *>;
     using difference_type = int;
 
     CellArrayIterator begin() const;

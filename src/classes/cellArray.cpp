@@ -43,8 +43,8 @@ CellArrayIterator::value_type CellArrayIterator::operator*() const
     auto &pair = pairs_->at(pair_);
     auto ii = idx_ / pair.cell.nAtoms();
     auto jj = idx_ % pair.cell.nAtoms();
-    auto i = pair.neighbour.atoms()[ii]->index();
-    auto j = pair.cell.atoms()[jj]->index();
+    auto i = pair.neighbour.atoms()[ii];
+    auto j = pair.cell.atoms()[jj];
     return {i, j};
 }
 CellArrayIterator::value_type CellArrayIterator::operator[](difference_type i) const
