@@ -155,6 +155,43 @@ CellArrayIterator CellArrayIterator::operator-(difference_type backward) const
     }
     return result;
 }
+CellArrayIterator::difference_type CellArrayIterator::operator-(const CellArrayIterator &it) const
+{
+    auto ordering = *this <=> it;
+    int result = 0, idx = idx, pair = pair_;
+    if (ordering == std::strong_ordering::equal || ordering == std::strong_ordering::equivalent)
+        return result;
+    else if (ordering == std::strong_ordering::less)
+    {
+        while (pair < it.pair_)
+        {
+            if (idx == 0)
+                result += pairs_->at(pair).pair_count();
+            else
+            {
+                result += pairs_->at(pair).pair_count() - idx;
+                idx = 0;
+            }
+            ++pair;
+        }
+        result += it.idx_ - idx;
+    }
+    else
+    {
+        while (pair > it.pair_)
+        {
+            if (idx == 0)
+                result -= pairs_->at(pair).pair_count();
+            else
+            {
+                result -= pairs_->at(pair).pair_count() - idx;
+                idx = 0;
+            }
+            --pair;
+        }
+        result -= it.idx_ - idx;
+    }
+}
 
 // Operators : comparison
 std::strong_ordering CellArrayIterator::operator<=>(const CellArrayIterator &value) const

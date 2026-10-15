@@ -71,7 +71,6 @@ class CellArrayIterator
     value_type operator[](difference_type i) const;
     CellArrayIterator &operator=(const CellArrayIterator &other);
 
-    difference_type operator-(const CellArrayIterator &it) const;
     CellArrayIterator &operator+=(difference_type forward);
     CellArrayIterator &operator-=(difference_type backward);
 
@@ -87,6 +86,7 @@ class CellArrayIterator
     CellArrayIterator operator+(difference_type forward) const;
     friend CellArrayIterator operator+(difference_type forward, const CellArrayIterator &it);
     CellArrayIterator operator-(difference_type backward) const;
+    difference_type operator-(const CellArrayIterator &it) const;
 
     // Operators : comparison
     bool operator==(const CellArrayIterator &other) const = default;
