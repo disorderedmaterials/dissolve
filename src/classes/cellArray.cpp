@@ -28,7 +28,7 @@ CellArrayIterator CellArrayIterator::begin() const
     result.idx_ = 0;
     result.pair_ = 0;
     // Iterate to first full dataset
-    while (pairs_->at(result.pair_).total_size() == 0)
+    while (pairs_->at(result.pair_).pair_count() == 0)
         ++result.pair_;
     return result;
 }
@@ -67,7 +67,7 @@ CellArrayIterator &CellArrayIterator::operator=(const CellArrayIterator &other)
 CellArrayIterator &CellArrayIterator::operator+=(difference_type forward)
 {
     ++idx_;
-    auto total_size = pairs_->at(pair_).total_size();
+    auto total_size = pairs_->at(pair_).pair_count();
     while (idx_ >= total_size)
     {
         ++pair_;
@@ -81,7 +81,7 @@ CellArrayIterator &CellArrayIterator::operator+=(difference_type forward)
             break;
         }
         else
-            total_size = pairs_->at(pair_).total_size();
+            total_size = pairs_->at(pair_).pair_count();
     }
     return *this;
 }
@@ -97,7 +97,7 @@ CellArrayIterator &CellArrayIterator::operator-=(difference_type backward)
             idx_ = 0;
             break;
         }
-        auto total_size = pairs_->at(pair_).total_size();
+        auto total_size = pairs_->at(pair_).pair_count();
         idx_ += total_size;
     }
     return *this;
@@ -134,12 +134,12 @@ CellArrayIterator CellArrayIterator::operator+(difference_type forward) const
 {
     auto result = *this;
     result.idx_ += forward;
-    auto total_size = pairs_->at(pair_).total_size();
+    auto total_size = pairs_->at(pair_).pair_count();
     while (result.idx_ >= total_size)
     {
         result.idx_ -= total_size;
         --result.pair_;
-        total_size = pairs_->at(pair_).total_size();
+        total_size = pairs_->at(pair_).pair_count();
     }
     return result;
 }
@@ -151,7 +151,7 @@ CellArrayIterator CellArrayIterator::operator-(difference_type backward) const
     while (result.idx_ < 0)
     {
         --result.pair_;
-        result.idx_ += pairs_->at(pair_).total_size();
+        result.idx_ += pairs_->at(pair_).pair_count();
     }
     return result;
 }

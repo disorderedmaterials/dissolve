@@ -36,20 +36,27 @@ struct CellNeighbourPair
                (&this->neighbour == &other.cell && &this->cell == &other.neighbour);
     }
 
-    int total_size() const { return cell.nAtoms() * neighbour.nAtoms(); }
+    // The total number of possible pairs between the two cells
+    int pair_count() const { return cell.nAtoms() * neighbour.nAtoms(); }
 };
 
+// Create an iterator that goes through every pair of atoms that can be found in neighbouring cells
 class CellArrayIterator
 {
     public:
-    CellArrayIterator() = default; // std::forward_iterator requires default constructable
+    // std::forward_iterator requires default constructable
+    CellArrayIterator() = default;
+    // Create an iteration range over the given collection of cell pairs
     CellArrayIterator(const std::vector<CellNeighbourPair> &cells);
     CellArrayIterator(const CellArrayIterator &other);
     CellArrayIterator(CellArrayIterator &&other) noexcept;
 
     private:
+    // The collection of cell pairs that are being iterated over
     const std::vector<CellNeighbourPair> *pairs_;
+    // The atom pair index *within* the current pair of cells
     int idx_ = 0;
+    // The pair of cells
     int pair_ = 0;
 
     public:
