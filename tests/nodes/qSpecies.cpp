@@ -27,7 +27,7 @@ TEST(QSpeciesNodeTest, Simple)
     auto qSpecies = dynamic_cast<QSpeciesNode *>(testGraph.createNode("QSpecies"));
     ASSERT_TRUE(qSpecies);
     ASSERT_TRUE(qSpecies->setOption<SpeciesSites>("NetworkFormer", {{speciesSi.findSite("Origin")}}));
-    ASSERT_TRUE(qSpecies->setOption<SpeciesSites>("BondingOxygen", {{speciesO.findSite("Origin")}}));
+    ASSERT_TRUE(qSpecies->setOption<SpeciesSites>("BridgingOxygen", {{speciesO.findSite("Origin")}}));
     ASSERT_TRUE(qSpecies->setOption<Range>("DistanceRange", {0.0, 2.1}));
     EXPECT_TRUE(testGraph.addEdge({testGraph.fetchHeadName(), "Configuration", "QSpecies", "Configuration"}));
 
