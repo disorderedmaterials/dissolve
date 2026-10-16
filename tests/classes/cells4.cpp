@@ -23,8 +23,9 @@ class CellsMIMTest : public ::testing::Test
     // Set up graph
     Configuration *setUp(const Vector3 &lengths, const Vector3 &angles, int nMolecules, std::string referenceCoordinates)
     {
-        EXPECT_TRUE(
-            testGraph_.createConfiguration("Box", {{"Ar|epsilon=0.774040 sigma=3.445996", nMolecules}}, lengths, angles));
+        EXPECT_TRUE(testGraph_.createConfiguration(
+            "Box", {{testGraph_.createAtomicSpecies(Elements::Ar, "epsilon=0.774040 sigma=3.445996"), nMolecules}}, lengths,
+            angles));
         EXPECT_TRUE(testGraph_.appendSetCoordinates("ImportDLPOLYStructure", referenceCoordinates));
 
         // Run the graph from the head node to set up the configuration

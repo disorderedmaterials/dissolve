@@ -25,17 +25,14 @@ class SiteRDFNodeTest : public ::testing::Test
     void createGraph(const std::string &importTrajectoryNodeType, const std::string &trajectoryFilename)
     {
         // Create the water configuration
-        testGraph_.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, 0.1);
+        testGraph_.createConfiguration("Box", {{testGraph_.importSpecies("species/water-dlpoly.toml"), 267}}, 0.1);
 
         // Add trajectory iterator
         iterator_ = testGraph_.appendTrajectoryIterator(importTrajectoryNodeType, trajectoryFilename);
         EXPECT_TRUE(iterator_);
 
         // Grab the water species for convenience
-        auto waterNode = testGraph_.findNode("Water");
-        ASSERT_TRUE(waterNode);
-        water_ = waterNode->getOutputValue<const Species *>("Species");
-        ASSERT_TRUE(waterNode);
+        water_ = testGraph_.findSpecies("Water");
     }
     // Create SiteRDF node
     SiteRDFNode *createSiteRDFNode(std::pair<std::string, std::string> sites, const RangedVector3 &distanceRange,

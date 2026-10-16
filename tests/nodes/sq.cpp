@@ -12,7 +12,7 @@ TEST(SQNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 1000}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water.toml"), 1000}}, 0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water1000-neutron/waterbox.ato"));
 
     // Add correlation function nodes
@@ -53,7 +53,9 @@ TEST(SQNodeTest, WaterMethanol)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/water.toml", 300}, {"species/methanol.toml", 600}}, 0.1));
+    EXPECT_TRUE(testGraph.createConfiguration(
+        "Box", {{testGraph.importSpecies("species/water.toml"), 300}, {testGraph.importSpecies("species/methanol.toml"), 600}},
+        0.1));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/water300methanol600/watermeth.ato"));
 
     // Add correlation function nodes
@@ -176,7 +178,7 @@ TEST(SQNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"species/benzene.toml", 200}}, 0.876,
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/benzene.toml"), 200}}, 0.876,
                                               Units::DensityUnits::GramsPerCentimetreCubedUnits));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/benzene200-neutron/boxbenz.ato"));
 

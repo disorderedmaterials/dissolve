@@ -13,17 +13,14 @@ TEST(HistogramCNNodeTest, Simple)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"P", 9}, {"F", 28}}, {20.0, 20.0, 20.0}));
+    ASSERT_TRUE(testGraph.createConfiguration(
+        "Box", {{testGraph.createAtomicSpecies(Elements::P), 9}, {testGraph.createAtomicSpecies(Elements::F), 28}},
+        {20.0, 20.0, 20.0}));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/histogramCN-simple.xyz"));
 
     // Grab atomic species and set up simple sites
-    auto *P = dynamic_cast<SpeciesNode *>(testGraph.findNode("P"));
-    ASSERT_TRUE(P);
-    auto &speciesP = P->species();
-
-    auto *F = dynamic_cast<SpeciesNode *>(testGraph.findNode("F"));
-    ASSERT_TRUE(F);
-    auto &speciesF = F->species();
+    auto &speciesP = *testGraph.findSpecies("P");
+    auto &speciesF = *testGraph.findSpecies("F");
 
     // Add the analysis module to the iterator
     auto histoCN = dynamic_cast<HistogramCNNode *>(testGraph.createNode("HistogramCN"));
@@ -51,14 +48,15 @@ TEST(HistogramCNNodeTest, Water)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"species/water-dlpoly.toml", 267}}, {20.0, 20.0, 20.0}));
+    ASSERT_TRUE(testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/water-dlpoly.toml"), 267}},
+                                              {20.0, 20.0, 20.0}));
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/water267-analysis/water-267-298K.xyz");
     EXPECT_TRUE(iterator);
 
     // Get the water species
-    auto *water = testGraph.findNode("Water")->getOutputValue<const Species *>("Species");
+    auto *water = testGraph.findSpecies("Water");
     ASSERT_TRUE(water);
 
     // Add the analysis module to the iterator

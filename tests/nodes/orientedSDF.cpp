@@ -13,7 +13,8 @@ TEST(OrientedSDFNodeTest, Benzene)
 {
     // Set up the test graph
     TestGraph testGraph;
-    testGraph.createConfiguration("Box", {{"species/benzene.toml", 181}}, {29.925089931000, 29.925089931000, 29.925089931000});
+    testGraph.createConfiguration("Box", {{testGraph.importSpecies("species/benzene.toml"), 181}},
+                                  {29.925089931000, 29.925089931000, 29.925089931000});
 
     // Create trajectory iterator
     auto iterator = testGraph.appendTrajectoryIterator("ImportXYZTrajectory", "dlpoly/benzene181/benzene181.xyz");
@@ -22,7 +23,7 @@ TEST(OrientedSDFNodeTest, Benzene)
     // Add the analysis module to the iterator
     auto osdf = dynamic_cast<OrientedSDFNode *>(iterator->createNode("OrientedSDF"));
     ASSERT_TRUE(osdf);
-    auto *benzene = testGraph.findNode("Benzene")->getOutputValue<const Species *>("Species");
+    auto *benzene = testGraph.findSpecies("Benzene");
     ASSERT_TRUE(benzene);
     ASSERT_TRUE(osdf->setOption<SpeciesSites>("SiteA", {{benzene->findSite("Ring")}}));
     ASSERT_TRUE(osdf->setOption<Site::SiteAxis>("AxisA", Site::SiteAxis::ZAxis));

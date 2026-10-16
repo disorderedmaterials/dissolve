@@ -11,15 +11,19 @@ TEST(ModifierOSitesNodeTest, Simple)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"Si", 9}, {"O", 13}, {"P", 8}}, {30.0, 30.0, 30.0}));
+    ASSERT_TRUE(testGraph.createConfiguration("Box",
+                                              {{testGraph.createAtomicSpecies(Elements::Si), 9},
+                                               {testGraph.createAtomicSpecies(Elements::O), 13},
+                                               {testGraph.createAtomicSpecies(Elements::P), 8}},
+                                              {30.0, 30.0, 30.0}));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/modifierOSites.xyz"));
 
     // Grab species pointers
-    auto *Si = testGraph.findNode("Si")->getOutputValue<const Species *>("Species");
+    auto *Si = testGraph.findSpecies("Si");
     ASSERT_TRUE(Si);
-    auto *O = testGraph.findNode("O")->getOutputValue<const Species *>("Species");
+    auto *O = testGraph.findSpecies("O");
     ASSERT_TRUE(O);
-    auto *P = testGraph.findNode("P")->getOutputValue<const Species *>("Species");
+    auto *P = testGraph.findSpecies("P");
     ASSERT_TRUE(P);
 
     // Add the analysis module to the iterator
@@ -63,15 +67,19 @@ TEST(ModifierOSitesNodeTest, Simple2)
 {
     // Set up the test graph
     TestGraph testGraph;
-    ASSERT_TRUE(testGraph.createConfiguration("Box", {{"Si", 5}, {"O", 9}, {"P", 10}}, {30.0, 30.0, 30.0}));
+    ASSERT_TRUE(testGraph.createConfiguration("Box",
+                                              {{testGraph.createAtomicSpecies(Elements::Si), 5},
+                                               {testGraph.createAtomicSpecies(Elements::O), 9},
+                                               {testGraph.createAtomicSpecies(Elements::P), 10}},
+                                              {30.0, 30.0, 30.0}));
     ASSERT_TRUE(testGraph.appendSetCoordinates("ImportXYZStructure", "xyz/modifierOSites2.xyz"));
 
     // Grab species pointers
-    auto *Si = testGraph.findNode("Si")->getOutputValue<const Species *>("Species");
+    auto *Si = testGraph.findSpecies("Si");
     ASSERT_TRUE(Si);
-    auto *O = testGraph.findNode("O")->getOutputValue<const Species *>("Species");
+    auto *O = testGraph.findSpecies("O");
     ASSERT_TRUE(O);
-    auto *P = testGraph.findNode("P")->getOutputValue<const Species *>("Species");
+    auto *P = testGraph.findSpecies("P");
     ASSERT_TRUE(P);
 
     // Add the analysis module to the iterator

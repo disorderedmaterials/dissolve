@@ -13,14 +13,14 @@ TEST(BroadeningTest, ArgonBroadening)
 {
     // Set up the test graph
     TestGraph testGraph;
-    EXPECT_TRUE(testGraph.createConfiguration("Box", {{"Ar", 10000}}, 0.0213));
+    EXPECT_TRUE(testGraph.createConfiguration("Box", {{testGraph.createAtomicSpecies(Elements::Ar), 10000}}, 0.0213));
     EXPECT_TRUE(testGraph.appendSetCoordinates("ImportEPSRAtoStructure", "epsr25/argon10000/argonbox.ato"));
 
     // Append GR and SQ nodes
     auto &&[grNode, sqNode] = testGraph.appendGRSQ(true, true);
 
     // Set up neutron SQ
-    auto neutronSQNode = testGraph.appendNeutronSQ(sqNode, "Yarnell", {{"Ar", "Ar36", 1.0}});
+    auto neutronSQNode = testGraph.appendNeutronSQ(sqNode, "Yarnell", {{testGraph.findSpecies("Ar"), "Ar36", 1.0}});
     ASSERT_TRUE(neutronSQNode);
 
     std::vector<std::tuple<std::string, Functions1D::Form, std::vector<double>>> tests = {
