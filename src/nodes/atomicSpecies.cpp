@@ -6,6 +6,7 @@
 AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph)
 {
     // Options
+    addOption("Charge", "Charge on the atom", q_);
     addOption("Element", "Species atomic element symbol", element_);
     addOption("InteractionPotential",
               "String containing the parameters for the short range function describing the species interaction potential",
@@ -23,7 +24,7 @@ AtomicSpeciesNode::AtomicSpeciesNode(Graph *parentGraph) : Node(parentGraph)
 std::string_view AtomicSpeciesNode::type() const { return "AtomicSpecies"; }
 
 // Return short summary of the node's purpose
-std::string_view AtomicSpeciesNode::summary() const { return "Create atomic species"; }
+std::string_view AtomicSpeciesNode::summary() const { return "Create an atomic species"; }
 
 /*
  * Processing

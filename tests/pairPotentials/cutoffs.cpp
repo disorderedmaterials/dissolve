@@ -22,9 +22,9 @@ TEST(PairPotentialCutoffTest, ShortRange)
     PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
     // Remove charges from atom types
-    auto &species = *testGraph.findSpecies("Water");
-    auto hw = species.findAtomType("HW");
-    auto ow = species.findAtomType("OW");
+    auto *species = testGraph.findSpecies("Water");
+    auto hw = species->findAtomType("HW");
+    auto ow = species->findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     hw->setCharge(0.0);
     ow->setCharge(0.0);

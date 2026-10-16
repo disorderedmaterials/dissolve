@@ -9,7 +9,7 @@ ImportSpeciesNode::ImportSpeciesNode(Graph *parentGraph) : Node(parentGraph)
     addOption("FilePath", "File path", filePath_);
 
     // Outputs
-    addPointerOutput<const Species>("Species", "Created species", species_);
+    addPointerOutput<const Species>("Species", "Imported species", species_);
 }
 
 /*

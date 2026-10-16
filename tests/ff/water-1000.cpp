@@ -114,9 +114,9 @@ TEST(Water1000EnergyTest, ShortRangeOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto &species = *testGraph.findSpecies("Water");
-    auto hw = species.findAtomType("HW");
-    auto ow = species.findAtomType("OW");
+    auto *species = testGraph.findSpecies("Water");
+    auto hw = species->findAtomType("HW");
+    auto ow = species->findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     hw->setCharge(0.0);
     ow->setCharge(0.0);
@@ -152,9 +152,9 @@ TEST(Water1000ForceTest, ShortRangeOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto &species = *testGraph.findSpecies("Water");
-    auto hw = species.findAtomType("HW");
-    auto ow = species.findAtomType("OW");
+    auto *species = testGraph.findSpecies("Water");
+    auto hw = species->findAtomType("HW");
+    auto ow = species->findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     hw->setCharge(0.0);
     ow->setCharge(0.0);
@@ -189,8 +189,8 @@ TEST(Water1000EnergyTest, ShiftedCoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove short range from atom types
-    auto &species = *testGraph.findSpecies("Water");
-    auto ow = species.findAtomType("OW");
+    auto *species = testGraph.findSpecies("Water");
+    auto ow = species->findAtomType("OW");
     ASSERT_TRUE(ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=3.0");
 
@@ -224,8 +224,8 @@ TEST(Water1000ForceTest, CoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove short range from atom types
-    auto &species = *testGraph.findSpecies("Water");
-    auto ow = species.findAtomType("OW");
+    auto *species = testGraph.findSpecies("Water");
+    auto ow = species->findAtomType("OW");
     ASSERT_TRUE(ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
@@ -260,9 +260,9 @@ TEST(Water1000ForceTest, ShiftedCoulombOnly)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Remove charges from atom types
-    auto &species = *testGraph.findSpecies("Water");
-    auto hw = species.findAtomType("HW");
-    auto ow = species.findAtomType("OW");
+    auto *species = testGraph.findSpecies("Water");
+    auto hw = species->findAtomType("HW");
+    auto ow = species->findAtomType("OW");
     ASSERT_TRUE(hw && ow);
     ow->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
@@ -295,8 +295,8 @@ TEST(Water1000EnergyTest, Override)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Set all charge and short-range interaction potentials to zero
-    auto &species = *testGraph.findSpecies("Water");
-    for (auto &at : species.atomTypes())
+    auto *species = testGraph.findSpecies("Water");
+    for (auto &at : species->atomTypes())
     {
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
         at->setCharge(0.0);
@@ -335,8 +335,8 @@ TEST(Water1000ForceTest, Overrides)
     PairPotential::setRange(15.0, 1.0e-4);
 
     // Set all charge and short-range interaction potentials to zero
-    auto &species = *testGraph.findSpecies("Water");
-    for (auto &at : species.atomTypes())
+    auto *species = testGraph.findSpecies("Water");
+    for (auto &at : species->atomTypes())
     {
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
         at->setCharge(0.0);

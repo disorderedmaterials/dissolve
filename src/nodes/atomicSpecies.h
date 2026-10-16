@@ -31,6 +31,8 @@ class AtomicSpeciesNode : public Node
     std::string parameters_{""};
     // Species
     Species species_;
+    // Charge on the atom
+    Number q_;
 
     /*
      * Processing

@@ -11,7 +11,7 @@
 namespace Elements
 {
 
-// Return EnumOptions for FunctionType
+// Return EnumOptions for Element
 EnumOptions<Element> elements()
 {
     return EnumOptions<Element>(

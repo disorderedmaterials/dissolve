@@ -27,7 +27,7 @@ class ImportSpeciesNode : public Node
     private:
     // File path
     std::filesystem::path filePath_;
-    //
+    // Species
     Species species_;
 
     /*

@@ -91,7 +91,7 @@ TEST(History, CustomClassWithInitialiser)
 {
     TestGraph graph;
     const auto avgLength = 3;
-    auto &Ar = *graph.createAtomicSpecies(Elements::Ar);
+    auto Ar = graph.createAtomicSpecies(Elements::Ar);
 
     KeyedVector<const Species *, int> pop;
     pop.add(&Ar, 100);

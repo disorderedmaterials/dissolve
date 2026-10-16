@@ -22,8 +22,8 @@ TEST(PairPotentialOverridesTest, Water)
     PairPotential::setChargeSource(PairPotential::ChargeSource::AtomTypes);
 
     // Set all atomtype charges zero
-    auto &species = *testGraph.findSpecies("Water");
-    for (auto &at : species.atomTypes())
+    auto *species = testGraph.findSpecies("Water");
+    for (auto &at : species->atomTypes())
         at->setCharge(0.0);
 
     // Run the graph from the Import node to set up the configuration
@@ -40,7 +40,7 @@ TEST(PairPotentialOverridesTest, Water)
     EXPECT_NEAR(productionEnergy.pairPotential.interMolecular, expectedVanDerWaalsEnergy, 4.3e-2);
 
     // Set all short-range interaction potentials to zero
-    for (auto &at : species.atomTypes())
+    for (auto &at : species->atomTypes())
         at->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::Undefined, "");
 
     // TODO Need to manually clear the pair potential data so it is correctly regenerated
