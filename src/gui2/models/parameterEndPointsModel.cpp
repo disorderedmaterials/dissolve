@@ -8,14 +8,6 @@
 ParameterEndPointsModel::ParameterEndPoints &ParameterEndPointsModel::endPoints() { return endPoints_; }
 const ParameterEndPointsModel::ParameterEndPoints &ParameterEndPointsModel::endPoints() const { return endPoints_; }
 
-void ParameterEndPointsModel::removeDuplicates()
-{
-    beginResetModel();
-    std::sort(endPoints_.begin(), endPoints_.end());
-    endPoints_.erase(std::unique(endPoints_.begin(), endPoints_.end()), endPoints_.end());
-    endResetModel();
-}
-
 void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *targetDropArea)
 {
     int row = endPoints_.size();
@@ -24,9 +16,9 @@ void ParameterEndPointsModel::add(QQuickItem *sourceDropArea, QQuickItem *target
     endInsertRows();
 }
 
-ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(const Node *node)
+void ParameterEndPointsModel::remove(const Node *node)
 {
-    return remove(
+    remove(
         [&](int i) -> bool
         {
             auto &[sourceDropArea, targetDropArea] = endPoints_[i];
@@ -38,12 +30,10 @@ ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(cons
         });
 }
 
-ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(const std::string &sourceNode,
-                                                                            const std::string &sourceOutput,
-                                                                            const std::string &targetNode,
-                                                                            const std::string &targetInput)
+void ParameterEndPointsModel::remove(const std::string &sourceNode, const std::string &sourceOutput,
+                                     const std::string &targetNode, const std::string &targetInput)
 {
-    return remove(
+    remove(
         [&](int i) -> bool
         {
             auto &[sourceDropArea, targetDropArea] = endPoints_[i];
@@ -85,7 +75,7 @@ void ParameterEndPointsModel::clear()
 }
 
 // Remove a pair of DropArea QQuickItem *, based on a lambda determining which pairs are to be deleted
-ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(std::function<bool(int)> lambda)
+void ParameterEndPointsModel::remove(std::function<bool(int)> lambda)
 {
     ParameterEndPoints removed;
     for (int row = endPoints_.size() - 1; row >= 0; --row)
@@ -98,7 +88,10 @@ ParameterEndPointsModel::ParameterEndPoints ParameterEndPointsModel::remove(std:
             endRemoveRows();
         }
     }
-    return removed;
+    // Unlock the target parameter end point on the QML side, since it is no longer connected and can accept new input
+    // connections
+    for (auto &[_, target] : removed)
+        target->setProperty("locked", false);
 }
 
 // Replace the target DropArea, for instance when the existing underlying QQuickItem * is no longer valid

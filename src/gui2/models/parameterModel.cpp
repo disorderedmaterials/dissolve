@@ -4,6 +4,7 @@
 #include "parameterModel.h"
 #include "gui2/models/enumOptionsModel.h"
 #include "gui2/models/enumRegistry.h"
+#include "math/rangedVector3.h"
 #include "math/vector3.h"
 #include "nodes/graph.h"
 #include "nodes/inputs.h"
@@ -94,6 +95,33 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 vector.push_back(item.z);
                 return vector;
             }
+            if (it->second->storedDataType() == typeid(RangedVector3))
+            {
+                QVariantList rangedVector;
+                QVariantList min;
+                QVariantList value;
+                QVariantList max;
+                auto item = it->second->get<RangedVector3>();
+                if (item.hasLowerBound())
+                {
+                    min.push_back(item.min()->x);
+                    min.push_back(item.min()->y);
+                    min.push_back(item.min()->z);
+                }
+                if (item.hasUpperBound())
+                {
+                    max.push_back(item.max()->x);
+                    max.push_back(item.max()->y);
+                    max.push_back(item.max()->z);
+                }
+                value.push_back(item.value().x);
+                value.push_back(item.value().y);
+                value.push_back(item.value().z);
+                rangedVector.push_back(min);
+                rangedVector.push_back(value);
+                rangedVector.push_back(max);
+                return rangedVector;
+            }
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return QVariant::fromValue(it->second->getAsInt());
             return QString::fromStdString("Unrepresentable");
@@ -110,6 +138,8 @@ QVariant ParameterModel::data(const QModelIndex &index, int role) const
                 return "file path";
             if (it->second->storedDataType() == typeid(Vector3))
                 return "vector3";
+            if (it->second->storedDataType() == typeid(RangedVector3))
+                return "ranged vector3";
             if (EnumRegistry::hasEnumOption(it->second->storedDataType()))
                 return "enum";
             if (it->second->storedDataType() == typeid(std::shared_ptr<Species>))
@@ -164,6 +194,39 @@ bool ParameterModel::setData(const QModelIndex &index, const QVariant &value, in
         auto y = qvariant_cast<double>(vector[1]);
         auto z = qvariant_cast<double>(vector[2]);
         it->set<Vector3>({x, y, z});
+    }
+    if (it->storedDataType() == typeid(RangedVector3))
+    {
+        auto rangedVector = qvariant_cast<QVariantList>(value);
+        auto min = qvariant_cast<QVariantList>(rangedVector[0]);
+        auto value = qvariant_cast<QVariantList>(rangedVector[1]);
+        auto max = qvariant_cast<QVariantList>(rangedVector[1]);
+        auto x = qvariant_cast<double>(value[0]);
+        auto y = qvariant_cast<double>(value[1]);
+        auto z = qvariant_cast<double>(value[2]);
+
+        if (min.empty() && max.empty())
+            it->set<RangedVector3>(Vector3{x, y, z});
+        else
+        {
+            auto optMin = std::optional<Vector3>();
+            auto optMax = std::optional<Vector3>();
+            if (!min.empty())
+            {
+                auto minX = qvariant_cast<double>(min[0]);
+                auto minY = qvariant_cast<double>(min[1]);
+                auto minZ = qvariant_cast<double>(min[2]);
+                optMin.emplace(minX, minY, minZ);
+            }
+            if (!max.empty())
+            {
+                auto maxX = qvariant_cast<double>(max[0]);
+                auto maxY = qvariant_cast<double>(max[1]);
+                auto maxZ = qvariant_cast<double>(max[2]);
+                optMax.emplace(maxX, maxY, maxZ);
+            }
+            it->set<RangedVector3>(RangedVector3{Vector3{x, y, z}, optMin, optMax});
+        }
     }
     if (EnumRegistry::hasEnumOption(it->storedDataType()))
         it->setFromInt(value.toInt());
