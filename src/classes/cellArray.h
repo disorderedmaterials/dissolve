@@ -6,6 +6,8 @@
 #include "classes/cell.h"
 #include "math/matrix3.h"
 #include "templates/array3D.h"
+#include <concepts>
+#include <iterator>
 
 // Forward Declarations
 class Box;
@@ -33,7 +35,67 @@ struct CellNeighbourPair
         return (&this->cell == &other.cell && &this->neighbour == &other.neighbour) ||
                (&this->neighbour == &other.cell && &this->cell == &other.neighbour);
     }
+
+    // The total number of possible pairs between the two cells
+    int pair_count() const { return cell.nAtoms() * neighbour.nAtoms(); }
 };
+
+// Create an iterator that goes through every pair of atoms that can be found in neighbouring cells
+class CellArrayIterator
+{
+    public:
+    // std::forward_iterator requires default constructable
+    CellArrayIterator() = default;
+    // Create an iteration range over the given collection of cell pairs
+    CellArrayIterator(const std::vector<CellNeighbourPair> &cells);
+    CellArrayIterator(const CellArrayIterator &other);
+    CellArrayIterator(CellArrayIterator &&other) noexcept;
+
+    private:
+    // The collection of cell pairs that are being iterated over
+    const std::vector<CellNeighbourPair> *pairs_;
+    // The atom pair index *within* the current pair of cells
+    int idx_ = 0;
+    // The pair of cells
+    int pair_ = 0;
+
+    public:
+    using value = std::tuple<AtomBase *, AtomBase *>;
+    using value_type = std::tuple<AtomBase *, AtomBase *>;
+    using difference_type = int;
+
+    CellArrayIterator begin() const;
+    CellArrayIterator end() const;
+
+    value_type operator*() const;
+    value_type operator[](difference_type i) const;
+    CellArrayIterator &operator=(const CellArrayIterator &other);
+
+    CellArrayIterator &operator+=(difference_type forward);
+    CellArrayIterator &operator-=(difference_type backward);
+
+    // Operators : arithmetic
+    CellArrayIterator &operator++();
+
+    CellArrayIterator &operator--();
+
+    CellArrayIterator operator++(int);
+
+    CellArrayIterator operator--(int);
+
+    CellArrayIterator operator+(difference_type forward) const;
+    friend CellArrayIterator operator+(difference_type forward, const CellArrayIterator &it);
+    CellArrayIterator operator-(difference_type backward) const;
+    difference_type operator-(const CellArrayIterator &it) const;
+
+    // Operators : comparison
+    bool operator==(const CellArrayIterator &other) const = default;
+    bool operator!=(const CellArrayIterator &other) const = default;
+    std::strong_ordering operator<=>(const CellArrayIterator &value) const;
+};
+
+static_assert(std::movable<CellArrayIterator>);
+static_assert(std::random_access_iterator<CellArrayIterator>);
 
 // Cell Array
 class CellArray
